@@ -1,0 +1,21 @@
+package jetbrains.datalore.base.observable.collections.list
+
+import jetbrains.datalore.base.observable.collections.CollectionItemEvent
+import jetbrains.datalore.base.observable.collections.CollectionListener
+import jetbrains.datalore.base.observable.event.EventHandler
+import jetbrains.datalore.base.registration.Registration
+
+class UnmodifiableObservableList<ElementT>(wrappedList: ObservableList<ElementT>) :
+        UnmodifiableList<ElementT>(wrappedList), ObservableList<ElementT> {
+    override val wrappedList: ObservableList<ElementT>
+        get() = super.wrappedList as ObservableList<ElementT>
+
+
+    override fun addListener(l: CollectionListener<ElementT>): Registration {
+        return wrappedList.addListener(l)
+    }
+
+    override fun addHandler(handler: EventHandler<CollectionItemEvent<ElementT>>): Registration {
+        return wrappedList.addHandler(handler)
+    }
+}

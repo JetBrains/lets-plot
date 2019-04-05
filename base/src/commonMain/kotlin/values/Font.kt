@@ -1,0 +1,27 @@
+package jetbrains.datalore.base.values
+
+import kotlin.jvm.JvmOverloads
+
+class Font @JvmOverloads constructor(val family: FontFamily, val size: Int, val isBold: Boolean = false, val isItalic: Boolean = false) {
+
+    override fun toString(): String {
+        return "$family $size ${if (isBold) "bold" else ""} ${if (isItalic) "italic" else ""}"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Font) return false
+        return family === other.family &&
+                size == other.size &&
+                isBold == other.isBold &&
+                isItalic == other.isItalic
+    }
+
+    override fun hashCode(): Int {
+        var result = family.hashCode()
+        result = 31 * result + size
+        result = 31 * result + if (isBold) 1 else 0
+        result = 31 * result + if (isItalic) 1 else 0
+        return result
+    }
+}

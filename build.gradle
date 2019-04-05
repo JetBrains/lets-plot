@@ -1,0 +1,9 @@
+allprojects {
+    group 'jetbrains.datalore'
+    version = "0.0.1"
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}

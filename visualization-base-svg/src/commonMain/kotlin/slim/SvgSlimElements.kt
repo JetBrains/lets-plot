@@ -1,0 +1,65 @@
+package jetbrains.datalore.visualization.base.svg.slim
+
+import com.google.gwt.core.shared.GWT
+
+object SvgSlimElements {
+    private val IS_GWT = GWT.isClient()
+    val GROUP = "g"
+    val LINE = "line"
+    val CIRCLE = "circle"
+    val RECT = "rect"
+    val PATH = "path"
+
+    private fun createElement(name: String): SlimBase {
+        return if (IS_GWT)
+            ElementNative(name)
+        else
+            ElementJava(name)
+    }
+
+    fun g(initialCapacity: Int): SvgSlimGroup {
+        return if (IS_GWT)
+            GroupNative(initialCapacity)
+        else
+            GroupJava(initialCapacity)
+    }
+
+    fun g(initialCapacity: Int, transform: Any): SvgSlimGroup {
+        return if (IS_GWT)
+            GroupNative(initialCapacity, transform)
+        else
+            GroupJava(initialCapacity, transform)
+    }
+
+    fun line(x1: Double, y1: Double, x2: Double, y2: Double): SvgSlimShape {
+        val element = createElement(LINE)
+        element.setAttribute(SlimBase.x1, x1)
+        element.setAttribute(SlimBase.y1, y1)
+        element.setAttribute(SlimBase.x2, x2)
+        element.setAttribute(SlimBase.y2, y2)
+        return element
+    }
+
+    fun circle(cx: Double, cy: Double, r: Double): SvgSlimShape {
+        val element = createElement(CIRCLE)
+        element.setAttribute(SlimBase.cx, cx)
+        element.setAttribute(SlimBase.cy, cy)
+        element.setAttribute(SlimBase.r, r)
+        return element
+    }
+
+    fun rect(x: Double, y: Double, width: Double, height: Double): SvgSlimShape {
+        val element = createElement(RECT)
+        element.setAttribute(SlimBase.x, x)
+        element.setAttribute(SlimBase.y, y)
+        element.setAttribute(SlimBase.width, width)
+        element.setAttribute(SlimBase.height, height)
+        return element
+    }
+
+    fun path(pathData: Any): SvgSlimShape {
+        val element = createElement(PATH)
+        element.setAttribute(SlimBase.pathData, pathData.toString())
+        return element
+    }
+}
