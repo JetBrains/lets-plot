@@ -8,14 +8,14 @@ import jetbrains.datalore.base.registration.Registration
  */
 class ReadOnlyProperty<ValueT>(private val myProperty: ReadableProperty<ValueT>) : BaseReadableProperty<ValueT>() {
 
-    val propExpr: String
-        get() = "readOnly(" + myProperty.getPropExpr() + ")"
+    override val propExpr: String
+        get() = "readOnly(" + myProperty.propExpr + ")"
 
-    fun get(): ValueT {
+    override fun get(): ValueT {
         return myProperty.get()
     }
 
-    fun addHandler(handler: EventHandler<PropertyChangeEvent<ValueT>>): Registration {
+    override fun addHandler(handler: EventHandler<PropertyChangeEvent<ValueT>>): Registration {
         return myProperty.addHandler(handler)
     }
 }

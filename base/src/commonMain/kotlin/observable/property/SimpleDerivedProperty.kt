@@ -10,7 +10,8 @@ import jetbrains.datalore.base.registration.Registration
 class SimpleDerivedProperty<ValueT>(
         private val mySupplier: Supplier<ValueT>,
         vararg deps: ReadableProperty<*>) :
-        BaseDerivedProperty<ValueT>(mySupplier.get()) {
+//        BaseDerivedProperty<ValueT>(mySupplier.get()) {
+        BaseDerivedProperty<ValueT>() {
     private val myDependencies: Array<ReadableProperty<*>>
     private var myRegistrations: Array<Registration>? = null
 
@@ -64,7 +65,7 @@ class SimpleDerivedProperty<ValueT>(
         myRegistrations = null
     }
 
-    override fun doGet(): ValueT? {
+    override fun doGet(): ValueT {
         return mySupplier.get()
     }
 }

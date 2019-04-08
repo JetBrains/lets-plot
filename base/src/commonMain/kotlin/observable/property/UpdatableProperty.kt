@@ -5,9 +5,11 @@ package jetbrains.datalore.base.observable.property
  * Used to wrap with interface properties which we don't have observable interface to.
  * In such cases the update() method is called by timer.
  */
-abstract class UpdatableProperty<ValueT> protected constructor() : BaseDerivedProperty<ValueT>(null) {
+abstract class UpdatableProperty<ValueT> protected constructor() :
+//        BaseDerivedProperty<ValueT>(null) {
+        BaseDerivedProperty<ValueT>() {
 
-    val propExpr: String
+    override val propExpr: String
         get() = "updatable property"
 
     fun update() {

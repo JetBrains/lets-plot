@@ -5,26 +5,31 @@ import jetbrains.datalore.base.observable.collections.CollectionListener
 import jetbrains.datalore.base.observable.collections.ObservableCollection
 import jetbrains.datalore.base.registration.Registration
 
-abstract class SimpleCollectionProperty<ItemT, ValueT> protected constructor(protected val collection: ObservableCollection<ItemT>, initialValue: ValueT) : BaseDerivedProperty<ValueT>(initialValue) {
+abstract class SimpleCollectionProperty<ItemT, ValueT>
+protected constructor(
+        protected val collection: ObservableCollection<ItemT>) :
+//        initialValue: ValueT) :
+//        BaseDerivedProperty<ValueT>(initialValue) {
+        BaseDerivedProperty<ValueT>() {
     private var myRegistration: Registration? = null
 
-    protected fun doAddListeners() {
-        myRegistration = collection.addListener(object : CollectionListener<ItemT>() {
-            fun onItemAdded(event: CollectionItemEvent<ItemT>) {
+    override fun doAddListeners() {
+        myRegistration = collection.addListener(object : CollectionListener<ItemT> {
+            override fun onItemAdded(event: CollectionItemEvent<ItemT>) {
                 somethingChanged()
             }
 
-            fun onItemSet(event: CollectionItemEvent<ItemT>) {
+            override fun onItemSet(event: CollectionItemEvent<ItemT>) {
                 somethingChanged()
             }
 
-            fun onItemRemoved(event: CollectionItemEvent<ItemT>) {
+            override fun onItemRemoved(event: CollectionItemEvent<ItemT>) {
                 somethingChanged()
             }
         })
     }
 
-    protected fun doRemoveListeners() {
+    override fun doRemoveListeners() {
         myRegistration!!.remove()
     }
 }

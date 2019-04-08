@@ -1,8 +1,6 @@
 package jetbrains.datalore.base.observable.property
 
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 
@@ -11,10 +9,10 @@ import jetbrains.datalore.base.registration.Registration
  */
 object PropertyBinding {
     fun <ValueT> bindOneWay(
-            source: ReadableProperty<out ValueT>, target: WritableProperty<in ValueT>): Registration {
+            source: ReadableProperty<ValueT>, target: WritableProperty<ValueT?>): Registration {
         target.set(source.get())
-        return source.addHandler(object : EventHandler<PropertyChangeEvent<ValueT>>() {
-            fun onEvent(event: PropertyChangeEvent<ValueT>) {
+        return source.addHandler(object : EventHandler<PropertyChangeEvent<ValueT>> {
+            override fun onEvent(event: PropertyChangeEvent<ValueT>) {
                 target.set(event.newValue)
             }
         })
@@ -26,8 +24,8 @@ object PropertyBinding {
 
         class UpdatingEventHandler(private val myForward: Boolean) : EventHandler<PropertyChangeEvent<ValueT>> {
 
-            fun onEvent(event: PropertyChangeEvent<ValueT>) {
-                if (syncing.get()) return
+            override fun onEvent(event: PropertyChangeEvent<ValueT>) {
+                if (syncing.get()!!) return
 
                 syncing.set(true)
                 try {

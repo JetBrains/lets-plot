@@ -78,7 +78,8 @@ object ObservableCollections {
             collection: ObservableCollection<ItemT?>,
             predicate: Predicate<in ItemT?>): ReadableProperty<Int> {
 
-        return object : BaseDerivedProperty<Int>(simpleCount(predicate, collection)) {
+//        return object : BaseDerivedProperty<Int>(simpleCount(predicate, collection)) {
+        return object : BaseDerivedProperty<Int>() {
             private var myCollectionRegistration: Registration? = null
             private var myCount: Int = 0
 
@@ -116,7 +117,7 @@ object ObservableCollections {
         }
     }
 
-    private fun <ItemT> simpleCount(predicate: Predicate<in ItemT>, collection: Collection<ItemT>): Int {
+    private fun <ItemT> simpleCount(predicate: Predicate<in ItemT?>, collection: Collection<ItemT?>): Int {
         var count = 0
         for (i in collection) {
             if (predicate.test(i)) {

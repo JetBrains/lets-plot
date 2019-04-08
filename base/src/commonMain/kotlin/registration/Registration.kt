@@ -19,7 +19,7 @@ abstract class Registration : Disposable {
         remove()
     }
 
-    private class EmptyRegistration private constructor() : Registration() {
+    private class EmptyRegistration internal constructor() : Registration() {
 
         override fun doRemove() {}
 

@@ -8,10 +8,18 @@ import jetbrains.datalore.base.registration.Registration
 /**
  * Base class for creation of derived properties, i.e. properties whose values are calculated based on other values
  */
-abstract class BaseDerivedProperty<ValueT> protected constructor(private var myValue: ValueT) :
+abstract class BaseDerivedProperty<ValueT>
+protected constructor(
+        /*private var myValue: ValueT*/) :
         BaseReadableProperty<ValueT>() {
 
     private var myHandlers: Listeners<EventHandler<PropertyChangeEvent<ValueT>>>? = null
+
+    private var myValue: ValueT
+
+    init {
+        myValue = doGet()
+    }
 
     /**
      * Start listening to the objects which our value depend on
