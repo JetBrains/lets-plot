@@ -194,7 +194,7 @@ object ObservableCollections {
             })
         }
 
-        operator fun contains(o: ItemT): Boolean {
+        override operator fun contains(o: ItemT?): Boolean {
             return if (isFollowing) {
                 super.contains(o)
             } else {
