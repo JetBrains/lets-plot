@@ -15,7 +15,7 @@ class UnmodifiableObservableSet<ElementT>(wrappedSet: ObservableSet<ElementT>) :
         return wrappedSet.addListener(l)
     }
 
-    override fun addHandler(handler: EventHandler<CollectionItemEvent<ElementT>>): Registration {
+    override fun addHandler(handler: EventHandler<in CollectionItemEvent<ElementT>>): Registration {
         return wrappedSet.addHandler(handler)
     }
 

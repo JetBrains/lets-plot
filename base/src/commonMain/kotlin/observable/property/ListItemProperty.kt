@@ -17,11 +17,11 @@ class ListItemProperty<ValueT>(private val myList: ObservableList<ValueT?>, inde
         BaseReadableProperty<ValueT?>(),
         Property<ValueT?>, Disposable {
 
-    private val myHandlers: Listeners<EventHandler<PropertyChangeEvent<ValueT?>>> = Listeners()
+    private val myHandlers: Listeners<EventHandler<in PropertyChangeEvent<ValueT?>>> = Listeners()
     private val myReg: Registration
     private var myDisposed = false
 
-    private val index = ValueProperty(index)
+    val index = ValueProperty<Int?>(index)
 
     val isValid: Boolean
         get() = index.get() != null
@@ -46,8 +46,8 @@ class ListItemProperty<ValueT>(private val myList: ObservableList<ValueT?>, inde
             override fun onItemSet(event: CollectionItemEvent<ValueT?>) {
                 if (event.index == this@ListItemProperty.index.get()) {
                     val e = PropertyChangeEvent<ValueT?>(event.oldItem, event.newItem)
-                    myHandlers.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<ValueT?>>> {
-                        override fun call(l: EventHandler<PropertyChangeEvent<ValueT?>>) {
+                    myHandlers.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<ValueT?>>> {
+                        override fun call(l: EventHandler<in PropertyChangeEvent<ValueT?>>) {
                             l.onEvent(e)
                         }
                     })
@@ -63,8 +63,8 @@ class ListItemProperty<ValueT>(private val myList: ObservableList<ValueT?>, inde
                     } else if (event.index == index) {
                         invalidate()
                         val e = PropertyChangeEvent<ValueT?>(event.oldItem, null)
-                        myHandlers.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<ValueT?>>> {
-                            override fun call(l: EventHandler<PropertyChangeEvent<ValueT?>>) {
+                        myHandlers.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<ValueT?>>> {
+                            override fun call(l: EventHandler<in PropertyChangeEvent<ValueT?>>) {
                                 l.onEvent(e)
                             }
                         })
@@ -74,7 +74,7 @@ class ListItemProperty<ValueT>(private val myList: ObservableList<ValueT?>, inde
         })
     }
 
-    override fun addHandler(handler: EventHandler<PropertyChangeEvent<ValueT?>>): Registration {
+    override fun addHandler(handler: EventHandler<in PropertyChangeEvent<ValueT?>>): Registration {
         return myHandlers.add(handler)
     }
 

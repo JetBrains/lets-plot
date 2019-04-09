@@ -9,24 +9,31 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                compileOnly "io.github.microutils:kotlin-logging-common:$kotlinLoggingVersion"
+                compileOnly "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
             }
         }
         commonTest {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
+                compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
             }
         }
         jvmTest {
             dependencies {
+//                implementation kotlin('stdlib-jdk8')
                 implementation kotlin('test')
                 implementation kotlin('test-junit')
+                implementation "org.hamcrest:hamcrest-core:$hamcrest_version"
+                implementation "org.hamcrest:hamcrest-library:$hamcrest_version"
+                implementation "org.mockito:mockito-core:$mockito_version"
             }
         }
         jsMain {

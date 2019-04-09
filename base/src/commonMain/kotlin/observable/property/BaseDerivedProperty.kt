@@ -10,16 +10,16 @@ import jetbrains.datalore.base.registration.Registration
  */
 abstract class BaseDerivedProperty<ValueT>
 protected constructor(
-        /*private var myValue: ValueT*/) :
+        private var myValue: ValueT) :
         BaseReadableProperty<ValueT>() {
 
-    private var myHandlers: Listeners<EventHandler<PropertyChangeEvent<ValueT>>>? = null
+    private var myHandlers: Listeners<EventHandler<in PropertyChangeEvent<ValueT>>>? = null
 
-    private var myValue: ValueT
+//    private var myValue: ValueT
 
-    init {
-        myValue = doGet()
-    }
+//    init {
+//        myValue = doGet()
+//    }
 
     /**
      * Start listening to the objects which our value depend on
@@ -52,17 +52,17 @@ protected constructor(
         myValue = newValue
 
         if (myHandlers != null) {
-            myHandlers!!.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<ValueT>>> {
-                override fun call(l: EventHandler<PropertyChangeEvent<ValueT>>) {
+            myHandlers!!.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<ValueT>>> {
+                override fun call(l: EventHandler<in PropertyChangeEvent<ValueT>>) {
                     l.onEvent(event)
                 }
             })
         }
     }
 
-    override fun addHandler(handler: EventHandler<PropertyChangeEvent<ValueT>>): Registration {
+    override fun addHandler(handler: EventHandler<in PropertyChangeEvent<ValueT>>): Registration {
         if (myHandlers == null) {
-            myHandlers = object : Listeners<EventHandler<PropertyChangeEvent<ValueT>>>() {
+            myHandlers = object : Listeners<EventHandler<in PropertyChangeEvent<ValueT>>>() {
                 override fun beforeFirstAdded() {
                     myValue = doGet()
                     doAddListeners()

@@ -15,7 +15,7 @@ class UnmodifiableObservableList<ElementT>(wrappedList: ObservableList<ElementT>
         return wrappedList.addListener(l)
     }
 
-    override fun addHandler(handler: EventHandler<CollectionItemEvent<ElementT>>): Registration {
+    override fun addHandler(handler: EventHandler<in CollectionItemEvent<ElementT>>): Registration {
         return wrappedList.addHandler(handler)
     }
 }

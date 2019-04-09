@@ -15,7 +15,7 @@ class ReadOnlyProperty<ValueT>(private val myProperty: ReadableProperty<ValueT>)
         return myProperty.get()
     }
 
-    override fun addHandler(handler: EventHandler<PropertyChangeEvent<ValueT>>): Registration {
+    override fun addHandler(handler: EventHandler<in PropertyChangeEvent<ValueT>>): Registration {
         return myProperty.addHandler(handler)
     }
 }

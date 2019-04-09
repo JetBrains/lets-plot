@@ -52,17 +52,17 @@ open class ChildList<ParentT, ChildT : SimpleComposite<in ParentT?, in ChildT>>(
         })
     }
 
-    protected override fun checkSet(index: Int, oldItem: ChildT, newItem: ChildT) {
+    override fun checkSet(index: Int, oldItem: ChildT, newItem: ChildT) {
         super.checkSet(index, oldItem, newItem)
         checkRemove(index, oldItem)
         checkAdd(index, newItem)
     }
 
-    protected override fun beforeItemSet(index: Int, oldItem: ChildT, newItem: ChildT) {
+    override fun beforeItemSet(index: Int, oldItem: ChildT, newItem: ChildT) {
         beforeItemAdded(index, newItem)
     }
 
-    protected override fun checkRemove(index: Int, item: ChildT) {
+    override fun checkRemove(index: Int, item: ChildT) {
         super.checkRemove(index, item)
         if (item.parent().get() !== myParent) {
             throw IllegalArgumentException()

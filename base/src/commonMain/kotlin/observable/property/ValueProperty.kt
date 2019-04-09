@@ -12,20 +12,20 @@ import kotlin.jvm.JvmOverloads
 open class ValueProperty<ValueT>
 @JvmOverloads
 constructor(
-        private var myValue: ValueT? = null) :
-        BaseReadableProperty<ValueT?>(),
-        Property<ValueT?> {
+        private var myValue: ValueT) :
+        BaseReadableProperty<ValueT>(),
+        Property<ValueT> {
 
-    private var myHandlers: Listeners<EventHandler<PropertyChangeEvent<ValueT?>>>? = null
+    private var myHandlers: Listeners<EventHandler<in PropertyChangeEvent<ValueT>>>? = null
 
     override val propExpr: String
         get() = "valueProperty()"
 
-    override fun get(): ValueT? {
+    override fun get(): ValueT {
         return myValue
     }
 
-    override fun set(value: ValueT?) {
+    override fun set(value: ValueT) {
         if (value == myValue) return
         val oldValue = myValue
         myValue = value
@@ -35,18 +35,18 @@ constructor(
 
     protected fun fireEvents(oldValue: ValueT?, newValue: ValueT?) {
         if (myHandlers != null) {
-            val event = PropertyChangeEvent<ValueT?>(oldValue, newValue)
-            myHandlers!!.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<ValueT?>>> {
-                override fun call(l: EventHandler<PropertyChangeEvent<ValueT?>>) {
+            val event = PropertyChangeEvent<ValueT>(oldValue, newValue)
+            myHandlers!!.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<ValueT>>> {
+                override fun call(l: EventHandler<in PropertyChangeEvent<ValueT>>) {
                     l.onEvent(event)
                 }
             })
         }
     }
 
-    override fun addHandler(handler: EventHandler<PropertyChangeEvent<ValueT?>>): Registration {
+    override fun addHandler(handler: EventHandler<in PropertyChangeEvent<ValueT>>): Registration {
         if (myHandlers == null) {
-            myHandlers = object : Listeners<EventHandler<PropertyChangeEvent<ValueT?>>>() {
+            myHandlers = object : Listeners<EventHandler<in PropertyChangeEvent<ValueT>>>() {
                 override fun afterLastRemoved() {
                     myHandlers = null
                 }

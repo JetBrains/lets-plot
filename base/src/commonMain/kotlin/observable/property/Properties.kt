@@ -17,36 +17,36 @@ object Properties {
     val TRUE = Properties.constant(true)
     val FALSE = Properties.constant(false)
 
-    fun not(prop: ReadableProperty<Boolean>): ReadableProperty<Boolean> {
+    fun not(prop: ReadableProperty<Boolean?>): ReadableProperty<Boolean?> {
         return map(prop,
-                object : Function<Boolean, Boolean> {
-                    override fun apply(value: Boolean): Boolean {
-//                        return if (value == null) {
-//                            null
-//                        } else !value
-                        return !value
+                object : Function<Boolean?, Boolean?> {
+                    override fun apply(value: Boolean?): Boolean? {
+                        return if (value == null) {
+                            null
+                        } else !value
                     }
                 })
     }
 
-    fun <ValueT> notNull(prop: ReadableProperty<ValueT>): ReadableProperty<Boolean> {
-        return map(prop, object : Function<ValueT?, Boolean> {
-            override fun apply(value: ValueT?): Boolean {
-                return value != null
+    fun <ValueT> notNull(prop: ReadableProperty<ValueT?>): ReadableProperty<Boolean> {
+        return map(prop, object : Function<ValueT?, Boolean?> {
+            override fun apply(value: ValueT?): Boolean? {
+                return (value != null)
             }
-        })
+        }) as ReadableProperty<Boolean>
     }
 
-    fun <ValueT> isNull(prop: ReadableProperty<ValueT>): ReadableProperty<Boolean> {
-        return map(prop, object : Function<ValueT?, Boolean> {
-            override fun apply(value: ValueT?): Boolean {
+    fun <ValueT> isNull(prop: ReadableProperty<ValueT?>): ReadableProperty<Boolean> {
+        return map(prop, object : Function<ValueT?, Boolean?> {
+            override fun apply(value: ValueT?): Boolean? {
                 return value == null
             }
-        })
+        }) as ReadableProperty<Boolean>
     }
 
     fun startsWith(string: ReadableProperty<String?>, prefix: ReadableProperty<String?>): ReadableProperty<Boolean> {
-        val value = object : DerivedProperty<Boolean>(string, prefix) {
+
+        return object : DerivedProperty<Boolean>(false, string, prefix) {
             override val propExpr: String
                 get() = "startsWith(" + string.propExpr + ", " + prefix.propExpr + ")"
 
@@ -55,12 +55,10 @@ object Properties {
                 return if (prefix.get() == null) false else string.get()!!.startsWith(prefix.get()!!)
             }
         }
-
-        return value as ReadableProperty<Boolean>
     }
 
     fun isNullOrEmpty(prop: ReadableProperty<String?>): ReadableProperty<Boolean> {
-        val value = object : DerivedProperty<Boolean>(prop) {
+        return object : DerivedProperty<Boolean>(false, prop) {
 
             override val propExpr: String
                 get() = "isEmptyString(" + prop.propExpr + ")"
@@ -70,22 +68,21 @@ object Properties {
                 return `val` == null || `val`.isEmpty()
             }
         }
-        return value as ReadableProperty<Boolean>
     }
 
-    fun and(op1: ReadableProperty<Boolean>, op2: ReadableProperty<Boolean>): ReadableProperty<Boolean> {
-        return object : DerivedProperty<Boolean>(op1, op2) {
+    fun and(op1: ReadableProperty<Boolean?>, op2: ReadableProperty<Boolean?>): ReadableProperty<Boolean?> {
+        return object : DerivedProperty<Boolean?>(null, op1, op2) {
 
             override val propExpr: String
                 get() = "(" + op1.propExpr + " && " + op2.propExpr + ")"
 
-            override fun doGet(): Boolean {
+            override fun doGet(): Boolean? {
                 return and(op1.get(), op2.get())
             }
         }
     }
 
-    private fun and(b1: Boolean?, b2: Boolean?): Boolean {
+    private fun and(b1: Boolean?, b2: Boolean?): Boolean? {
         if (b1 == null) {
             return andWithNull(b2)
         }
@@ -94,26 +91,25 @@ object Properties {
         } else b1 && b2
     }
 
-    private fun andWithNull(b: Boolean?): Boolean {
-//        return if (b == null || b) {
-//            null
-//        } else false
-        return false
+    private fun andWithNull(b: Boolean?): Boolean? {
+        return if (b == null || b) {
+            null
+        } else false
     }
 
-    fun or(op1: ReadableProperty<Boolean>, op2: ReadableProperty<Boolean>): ReadableProperty<Boolean> {
-        return object : DerivedProperty<Boolean>(op1, op2) {
+    fun or(op1: ReadableProperty<Boolean?>, op2: ReadableProperty<Boolean?>): ReadableProperty<Boolean?> {
+        return object : DerivedProperty<Boolean?>(null, op1, op2) {
 
             override val propExpr: String
                 get() = "(" + op1.propExpr + " || " + op2.propExpr + ")"
 
-            override fun doGet(): Boolean {
+            override fun doGet(): Boolean? {
                 return or(op1.get(), op2.get())
             }
         }
     }
 
-    private fun or(b1: Boolean?, b2: Boolean?): Boolean {
+    private fun or(b1: Boolean?, b2: Boolean?): Boolean? {
         if (b1 == null) {
             return orWithNull(b2)
         }
@@ -122,15 +118,15 @@ object Properties {
         } else b1 || b2
     }
 
-    private fun orWithNull(b: Boolean?): Boolean {
-//        return if (b == null || !b) {
-//            null
-//        } else true
-        return !(b == null || !b)
+    private fun orWithNull(b: Boolean?): Boolean? {
+        return if (b == null || !b) {
+            null
+        } else true
+//        return !(b == null || !b)
     }
 
     fun add(p1: ReadableProperty<Int?>, p2: ReadableProperty<Int?>): ReadableProperty<Int?> {
-        return object : DerivedProperty<Int?>(p1, p2) {
+        return object : DerivedProperty<Int?>(null, p1, p2) {
 
             override val propExpr: String
                 get() = "(" + p1.propExpr + " + " + p2.propExpr + ")"
@@ -142,12 +138,12 @@ object Properties {
     }
 
     fun <SourceT, TargetT> select(
-            source: ReadableProperty<SourceT>, `fun`: Function<in SourceT, ReadableProperty<TargetT>>): ReadableProperty<TargetT?> {
+            source: ReadableProperty<SourceT?>, `fun`: Function<in SourceT?, ReadableProperty<TargetT?>>): ReadableProperty<TargetT?> {
         return select(source, `fun`, null)
     }
 
     fun <SourceT, TargetT> select(
-            source: ReadableProperty<SourceT>, `fun`: Function<in SourceT, ReadableProperty<TargetT>>,
+            source: ReadableProperty<SourceT?>, `fun`: Function<in SourceT?, ReadableProperty<TargetT?>>,
             nullValue: TargetT?
     ): ReadableProperty<TargetT?> {
 
@@ -159,9 +155,9 @@ object Properties {
             }
         }
 
-//        return object : BaseDerivedProperty<TargetT?>(null) {
-        return object : BaseDerivedProperty<TargetT?>() {
-            private var myTargetProperty: ReadableProperty<TargetT>? = null
+        return object : BaseDerivedProperty<TargetT?>(null) {
+            //        return object : BaseDerivedProperty<TargetT?>() {
+            private var myTargetProperty: ReadableProperty<TargetT?>? = null
 
             private var mySourceRegistration: Registration? = null
             private var myTargetRegistration: Registration? = null
@@ -169,16 +165,16 @@ object Properties {
             override val propExpr: String
                 get() = "select(" + source.propExpr + ", " + `fun` + ")"
 
-            protected override fun doAddListeners() {
+            override fun doAddListeners() {
                 myTargetProperty = if (source.get() == null) null else `fun`.apply(source.get())
 
-                val targetHandler = object : EventHandler<PropertyChangeEvent<TargetT>> {
-                    override fun onEvent(event: PropertyChangeEvent<TargetT>) {
+                val targetHandler = object : EventHandler<PropertyChangeEvent<TargetT?>> {
+                    override fun onEvent(event: PropertyChangeEvent<TargetT?>) {
                         somethingChanged()
                     }
                 }
-                val sourceHandler = object : EventHandler<PropertyChangeEvent<SourceT>> {
-                    override fun onEvent(event: PropertyChangeEvent<SourceT>) {
+                val sourceHandler = object : EventHandler<PropertyChangeEvent<SourceT?>> {
+                    override fun onEvent(event: PropertyChangeEvent<SourceT?>) {
                         if (myTargetProperty != null) {
                             myTargetRegistration!!.remove()
                         }
@@ -223,8 +219,8 @@ object Properties {
             }
         }
 
-        //        class MyProperty : BaseDerivedProperty<TargetT?>(calc.get()), Property<TargetT?> {
-        class MyProperty : BaseDerivedProperty<TargetT?>(), Property<TargetT?> {
+        class MyProperty : BaseDerivedProperty<TargetT?>(calc.get()), Property<TargetT?> {
+            //        class MyProperty : BaseDerivedProperty<TargetT?>(), Property<TargetT?> {
             private var myTargetProperty: Property<TargetT?>? = null
 
             private var mySourceRegistration: Registration? = null
@@ -287,14 +283,14 @@ object Properties {
     fun <EventT, ValueT> selectEvent(
             prop: ReadableProperty<ValueT>, selector: Function<ValueT, EventSource<EventT>>): EventSource<EventT> {
         return object : EventSource<EventT> {
-            override fun addHandler(handler: EventHandler<EventT>): Registration {
+            override fun addHandler(handler: EventHandler<in EventT>): Registration {
                 val esReg = Value(Registration.EMPTY)
 
                 val update = object : Runnable {
                     override fun run() {
-                        esReg.get()!!.remove()
+                        esReg.get().remove()
                         if (prop.get() != null) {
-                            esReg.set(selector.apply(prop.get())!!.addHandler(handler))
+                            esReg.set(selector.apply(prop.get()).addHandler(handler))
                         } else {
                             esReg.set(Registration.EMPTY)
                         }
@@ -312,31 +308,31 @@ object Properties {
                 return object : Registration() {
                     override fun doRemove() {
                         propReg.remove()
-                        esReg.get()!!.remove()
+                        esReg.get().remove()
                     }
                 }
             }
         }
     }
 
-    fun <ValueT> same(prop: ReadableProperty<ValueT?>, value: ValueT?): ReadableProperty<Boolean> {
-        return map(prop, object : Function<ValueT?, Boolean> {
-            override fun apply(value: ValueT?): Boolean {
+    fun <ValueT> same(prop: ReadableProperty<ValueT?>, value: ValueT?): ReadableProperty<Boolean?> {
+        return map(prop, object : Function<ValueT?, Boolean?> {
+            override fun apply(value: ValueT?): Boolean? {
                 return value === value
             }
         })
     }
 
-    fun <ValueT> equals(prop: ReadableProperty<ValueT?>, value: ValueT?): ReadableProperty<Boolean> {
-        return map(prop, object : Function<ValueT?, Boolean> {
-            override fun apply(value: ValueT?): Boolean {
+    fun <ValueT> equals(prop: ReadableProperty<ValueT?>, value: ValueT?): ReadableProperty<Boolean?> {
+        return map(prop, object : Function<ValueT?, Boolean?> {
+            override fun apply(value: ValueT?): Boolean? {
                 return value == value
             }
         })
     }
 
     fun <ValueT> equals(p1: ReadableProperty<ValueT?>, p2: ReadableProperty<ValueT?>): ReadableProperty<Boolean> {
-        return object : DerivedProperty<Boolean>(p1, p2) {
+        return object : DerivedProperty<Boolean>(false, p1, p2) {
 
             override val propExpr: String
                 get() = "equals(" + p1.propExpr + ", " + p2.propExpr + ")"
@@ -347,31 +343,30 @@ object Properties {
         }
     }
 
-    fun <ValueT> notEquals(prop: ReadableProperty<ValueT?>, value: ValueT?): ReadableProperty<Boolean> {
-        val prop1 = equals(prop, value)
-        return not(prop1)
+    fun <ValueT> notEquals(prop: ReadableProperty<ValueT?>, value: ValueT?): ReadableProperty<Boolean?> {
+        return not(equals(prop, value) as ReadableProperty<Boolean?>)
     }
 
-    fun <ValueT> notEquals(p1: ReadableProperty<ValueT?>, p2: ReadableProperty<ValueT?>): ReadableProperty<Boolean> {
-        return not(equals(p1, p2))
+    fun <ValueT> notEquals(p1: ReadableProperty<ValueT?>, p2: ReadableProperty<ValueT?>): ReadableProperty<Boolean?> {
+        return not(equals(p1, p2) as ReadableProperty<Boolean?>)
     }
 
     fun <SourceT, TargetT> map(
-            prop: ReadableProperty<SourceT>, f: Function<in SourceT, out TargetT>): ReadableProperty<TargetT> {
-        return object : DerivedProperty<TargetT>(prop) {
+            prop: ReadableProperty<out SourceT?>, f: Function<in SourceT?, out TargetT?>): ReadableProperty<TargetT?> {
+        return object : DerivedProperty<TargetT?>(null, prop) {
 
             override val propExpr: String
                 get() = "transform(" + prop.propExpr + ", " + f + ")"
 
-            override fun doGet(): TargetT {
+            override fun doGet(): TargetT? {
                 return f.apply(prop.get())
             }
         }
     }
 
     fun <SourceT, TargetT> map(
-            prop: Property<SourceT>, sToT: Function<in SourceT?, out TargetT>,
-            tToS: Function<in TargetT?, out SourceT>
+            prop: Property<SourceT?>, sToT: Function<in SourceT?, out TargetT?>,
+            tToS: Function<in TargetT?, out SourceT?>
     ): Property<TargetT?> {
         class TransformedProperty : Property<TargetT?> {
 
@@ -382,9 +377,9 @@ object Properties {
                 return sToT.apply(prop.get())
             }
 
-            override fun addHandler(handler: EventHandler<PropertyChangeEvent<TargetT?>>): Registration {
-                return prop.addHandler(object : EventHandler<PropertyChangeEvent<SourceT>> {
-                    override fun onEvent(event: PropertyChangeEvent<SourceT>) {
+            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<TargetT?>>): Registration {
+                return prop.addHandler(object : EventHandler<PropertyChangeEvent<out SourceT?>> {
+                    override fun onEvent(event: PropertyChangeEvent<out SourceT?>) {
                         val oldValue = sToT.apply(event.oldValue)
                         val newValue = sToT.apply(event.newValue)
 
@@ -413,15 +408,15 @@ object Properties {
                 return value
             }
 
-            override fun addHandler(handler: EventHandler<PropertyChangeEvent<ValueT>>): Registration {
+            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<ValueT>>): Registration {
                 return Registration.EMPTY
             }
         }
     }
 
     fun <ItemT> isEmpty(collection: ObservableCollection<ItemT>): ReadableProperty<Boolean> {
-//        return object : SimpleCollectionProperty<ItemT, Boolean>(collection, collection.isEmpty()) {
-        return object : SimpleCollectionProperty<ItemT, Boolean>(collection) {
+        return object : SimpleCollectionProperty<ItemT, Boolean>(collection, collection.isEmpty()) {
+//        return object : SimpleCollectionProperty<ItemT, Boolean>(collection) {
 
             override val propExpr: String
                 get() = "isEmpty($collection)"
@@ -433,8 +428,8 @@ object Properties {
     }
 
     fun <ItemT> size(collection: ObservableCollection<ItemT>): ReadableProperty<Int> {
-//        return object : SimpleCollectionProperty<ItemT, Int>(collection, collection.size) {
-        return object : SimpleCollectionProperty<ItemT, Int>(collection) {
+        return object : SimpleCollectionProperty<ItemT, Int>(collection, collection.size) {
+//        return object : SimpleCollectionProperty<ItemT, Int>(collection) {
 
             override val propExpr: String
                 get() = "size($collection)"
@@ -506,13 +501,13 @@ object Properties {
     }
 */
 
-    fun <ItemT> notEmpty(collection: ObservableCollection<ItemT>): ReadableProperty<Boolean> {
-        return not(empty(collection))
+    fun <ItemT> notEmpty(collection: ObservableCollection<ItemT>): ReadableProperty<Boolean?> {
+        return not(empty(collection) as ReadableProperty<Boolean?>)
     }
 
     fun <ItemT> empty(collection: ObservableCollection<ItemT>): ReadableProperty<Boolean> {
-//        return object : BaseDerivedProperty<Boolean>(collection.isEmpty()) {
-        return object : BaseDerivedProperty<Boolean>() {
+        return object : BaseDerivedProperty<Boolean>(collection.isEmpty()) {
+            //        return object : BaseDerivedProperty<Boolean>() {
             private var myCollectionRegistration: Registration? = null
 
             override val propExpr: String
@@ -530,7 +525,7 @@ object Properties {
                 myCollectionRegistration!!.remove()
             }
 
-            protected override fun doGet(): Boolean {
+            override fun doGet(): Boolean {
                 return collection.isEmpty()
             }
         }
@@ -549,8 +544,8 @@ object Properties {
     }
 
     fun <ValueT> ifProp(
-            cond: ReadableProperty<Boolean>, ifTrue: ReadableProperty<ValueT>, ifFalse: ReadableProperty<ValueT>): ReadableProperty<ValueT> {
-        return object : DerivedProperty<ValueT>(cond, ifTrue, ifFalse) {
+            cond: ReadableProperty<Boolean>, ifTrue: ReadableProperty<ValueT>, ifFalse: ReadableProperty<ValueT>): ReadableProperty<ValueT?> {
+        return object : DerivedProperty<ValueT?>(null, cond, ifTrue, ifFalse) {
 
             override val propExpr: String
                 get() = "if(" + cond.propExpr + ", " + ifTrue.propExpr + ", " + ifFalse.propExpr + ")"
@@ -561,7 +556,7 @@ object Properties {
         }
     }
 
-    fun <ValueT> ifProp(cond: ReadableProperty<Boolean>, ifTrue: ValueT, ifFalse: ValueT): ReadableProperty<ValueT> {
+    fun <ValueT> ifProp(cond: ReadableProperty<Boolean>, ifTrue: ValueT, ifFalse: ValueT): ReadableProperty<ValueT?> {
         return ifProp<ValueT>(cond, constant(ifTrue), constant(ifFalse))
     }
 
@@ -578,7 +573,7 @@ object Properties {
     }
 
     fun <ValueT> withDefaultValue(prop: ReadableProperty<ValueT>, ifNull: ValueT): ReadableProperty<ValueT> {
-        return object : DerivedProperty<ValueT>(prop) {
+        return object : DerivedProperty<ValueT>(ifNull, prop) {
             override fun doGet(): ValueT {
                 return if (prop.get() == null) {
                     ifNull
@@ -590,7 +585,7 @@ object Properties {
     }
 
     fun <ValueT> firstNotNull(vararg values: ReadableProperty<ValueT?>): ReadableProperty<ValueT?> {
-        return object : DerivedProperty<ValueT?>(*values) {
+        return object : DerivedProperty<ValueT?>(null, *values) {
 
             override val propExpr: String
                 get() {
@@ -622,7 +617,7 @@ object Properties {
     }
 
     fun <ValueT> isPropertyValid(source: ReadableProperty<ValueT>, validator: Predicate<ValueT>): ReadableProperty<Boolean> {
-        return object : DerivedProperty<Boolean>(source) {
+        return object : DerivedProperty<Boolean>(false, source) {
 
             override val propExpr: String
                 get() = "isValid(" + source.propExpr + ", " + validator + ")"
@@ -635,7 +630,7 @@ object Properties {
 
     fun <ValueT> validatedProperty(source: Property<ValueT?>, validator: Predicate<ValueT?>): Property<ValueT?> {
 
-        class ValidatedProperty : DerivedProperty<ValueT?>(source), Property<ValueT?> {
+        class ValidatedProperty : DerivedProperty<ValueT?>(null, source), Property<ValueT?> {
             private var myLastValid: ValueT? = null
 
             override val propExpr: String
@@ -662,10 +657,10 @@ object Properties {
 
     @JvmOverloads
     fun toStringOf(p: ReadableProperty<*>, nullValue: String = "null"): ReadableProperty<String> {
-        return object : DerivedProperty<String>(p) {
+        return object : DerivedProperty<String>(nullValue, p) {
             override fun doGet(): String {
                 val value = p.get()
-                return if (value != null) "" + value!! else nullValue
+                return if (value != null) "" + value else nullValue
             }
         }
     }
@@ -679,7 +674,7 @@ object Properties {
                 return read.get()
             }
 
-            override fun addHandler(handler: EventHandler<PropertyChangeEvent<ValueT>>): Registration {
+            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<ValueT>>): Registration {
                 return read.addHandler(handler)
             }
 
@@ -754,11 +749,11 @@ object Properties {
     }
 */
 
-    fun and(vararg props: ReadableProperty<Boolean>): ReadableProperty<Boolean> {
+    fun and(vararg props: ReadableProperty<Boolean?>): ReadableProperty<Boolean?> {
         if (props.isEmpty()) {
             throw IllegalArgumentException("No arguments")
         }
-        return object : DerivedProperty<Boolean>(*props) {
+        return object : DerivedProperty<Boolean?>(null, *props) {
 
             override val propExpr: String
                 get() {
@@ -770,8 +765,8 @@ object Properties {
                     return propExpr.append(")").toString()
                 }
 
-            override fun doGet(): Boolean {
-                var res: Boolean = true
+            override fun doGet(): Boolean? {
+                var res: Boolean? = true
                 for (prop in props) {
                     res = and(res, prop.get())
                 }
@@ -780,11 +775,11 @@ object Properties {
         }
     }
 
-    fun or(vararg props: ReadableProperty<Boolean>): ReadableProperty<Boolean> {
+    fun or(vararg props: ReadableProperty<Boolean?>): ReadableProperty<Boolean?> {
         if (props.isEmpty()) {
             throw IllegalArgumentException("No arguments")
         }
-        return object : DerivedProperty<Boolean>(*props) {
+        return object : DerivedProperty<Boolean?>(null, *props) {
 
             override val propExpr: String
                 get() {
@@ -796,8 +791,8 @@ object Properties {
                     return propExpr.append(")").toString()
                 }
 
-            override fun doGet(): Boolean {
-                var res: Boolean = false
+            override fun doGet(): Boolean? {
+                var res: Boolean? = false
                 for (prop in props) {
                     res = or(res, prop.get())
                 }

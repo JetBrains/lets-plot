@@ -51,7 +51,7 @@ object ObservableCollections {
                 }
             }
 
-            override fun addHandler(handler: EventHandler<PropertyChangeEvent<List<ItemT?>?>>): Registration {
+            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<List<ItemT?>?>>): Registration {
                 return list.addHandler(object : EventHandler<CollectionItemEvent<ItemT?>> {
                     private var myLastValue: List<ItemT?> = ArrayList(list)
 
@@ -78,8 +78,8 @@ object ObservableCollections {
             collection: ObservableCollection<ItemT?>,
             predicate: Predicate<in ItemT?>): ReadableProperty<Int> {
 
-//        return object : BaseDerivedProperty<Int>(simpleCount(predicate, collection)) {
-        return object : BaseDerivedProperty<Int>() {
+        return object : BaseDerivedProperty<Int>(simpleCount(predicate, collection)) {
+            //        return object : BaseDerivedProperty<Int>() {
             private var myCollectionRegistration: Registration? = null
             private var myCount: Int = 0
 
@@ -130,10 +130,11 @@ object ObservableCollections {
     fun <ItemT> all(
             collection: ObservableCollection<ItemT?>,
             predicate: Predicate<in ItemT?>):
-            ReadableProperty<Boolean> {
+            ReadableProperty<Boolean?> {
 
-        return Properties.map(count(collection, predicate), object : Function<Int, Boolean> {
-            override fun apply(value: Int): Boolean {
+        val prop = count(collection, predicate)
+        return Properties.map(prop, object : Function<Int?, Boolean> {
+            override fun apply(value: Int?): Boolean {
                 return value == collection.size
             }
         })
@@ -142,11 +143,12 @@ object ObservableCollections {
     fun <ItemT> any(
             collection: ObservableCollection<ItemT?>,
             predicate: Predicate<in ItemT?>):
-            ReadableProperty<Boolean> {
+            ReadableProperty<Boolean?> {
 
-        return Properties.map(count(collection, predicate), object : Function<Int, Boolean> {
-            override fun apply(value: Int): Boolean {
-                return value > 0
+        val prop = count(collection, predicate)
+        return Properties.map(prop, object : Function<Int?, Boolean> {
+            override fun apply(value: Int?): Boolean {
+                return value!! > 0
             }
         })
     }

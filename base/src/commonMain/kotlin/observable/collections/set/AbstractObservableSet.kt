@@ -139,7 +139,7 @@ abstract class AbstractObservableSet<ItemT> : AbstractMutableSet<ItemT>(), Obser
     protected fun afterItemRemoved(item: ItemT?, success: Boolean) {}
 
 
-    override fun addHandler(handler: EventHandler<CollectionItemEvent<ItemT>>): Registration {
+    override fun addHandler(handler: EventHandler<in CollectionItemEvent<ItemT>>): Registration {
         return addListener(object : CollectionAdapter<ItemT>() {
             override fun onItemAdded(event: CollectionItemEvent<ItemT>) {
                 handler.onEvent(event)

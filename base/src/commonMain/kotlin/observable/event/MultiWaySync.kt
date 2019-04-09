@@ -13,7 +13,7 @@ class MultiWaySync {
 
     fun <EventT> inSync(source: EventSource<EventT>): EventSource<EventT> {
         return object : EventSource<EventT> {
-            override fun addHandler(handler: EventHandler<EventT>): Registration {
+            override fun addHandler(handler: EventHandler<in EventT>): Registration {
                 return source.addHandler(object : EventHandler<EventT> {
                     override fun onEvent(event: EventT) {
                         sync(object : Runnable {
