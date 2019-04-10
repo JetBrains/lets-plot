@@ -13,42 +13,46 @@ class ListMap<K, V> {
     val isEmpty: Boolean
         get() = size() == 0
 
-    fun containsKey(key: K): Boolean {
+    fun containsKey(key: K?): Boolean {
         return findByKey(key) >= 0
     }
 
-    fun remove(key: K): V? {
+    fun remove(key: K?): V? {
         val index = findByKey(key)
         if (index >= 0) {
-            val value = myData[index + 1] as V
+            val value = myData[index + 1]
             removeAt(index)
-            return value
+            return value as V?
         } else {
             return null
         }
     }
 
-    fun keySet(): Set<K> {
-        return object : AbstractSet<K>() {
+    fun keySet(): MutableSet<K?> {
+        return object : AbstractMutableSet<K?>() {
             override val size: Int
                 get() = this@ListMap.size()
 
-            override fun iterator(): Iterator<K> {
+            override fun add(element: K?): Boolean {
+                throw IllegalStateException("Not available in keySet")
+            }
+
+            override fun iterator(): MutableIterator<K?> {
                 return mapIterator(object : IteratorSpec {
-                    override operator fun get(index: Int): Any {
-                        return myData[index]!!
+                    override operator fun get(index: Int): Any? {
+                        return myData[index]
                     }
                 })
             }
         }
     }
 
-    fun values(): Collection<V> {
-        return object : AbstractCollection<V>() {
+    fun values(): Collection<V?> {
+        return object : AbstractCollection<V?>() {
             override val size: Int
                 get() = this@ListMap.size()
 
-            override fun iterator(): Iterator<V> {
+            override fun iterator(): Iterator<V?> {
                 return mapIterator(object : IteratorSpec {
                     override operator fun get(index: Int): Any? {
                         return myData[index + 1]
@@ -77,19 +81,19 @@ class ListMap<K, V> {
         return myData.size / 2
     }
 
-    fun put(key: K, value: V): V? {
+    fun put(key: K?, value: V?): V? {
         val index = findByKey(key)
         if (index >= 0) {
-            val oldValue = myData[index + 1] as V
+            val oldValue = myData[index + 1]
             myData[index + 1] = value
-            return oldValue
+            return oldValue as V?
         }
 
 //        val newArray = arrayOfNulls<Any>(myData.size + 2)
 //        System.arraycopy(myData, 0, newArray, 0, myData.size)
 
         val newArray = Array(myData.size + 2) { i ->
-            myData[i]
+            if (i < myData.size) myData[i] else null
         }
 
         newArray[myData.size] = key
@@ -98,11 +102,11 @@ class ListMap<K, V> {
         return null
     }
 
-    operator fun get(key: K): V? {
+    operator fun get(key: K?): V? {
         val index = findByKey(key)
         return if (index == -1) {
             null
-        } else myData[index + 1] as V
+        } else myData[index + 1] as V?
     }
 
     override fun toString(): String {
@@ -110,8 +114,8 @@ class ListMap<K, V> {
         builder.append("{")
         var i = 0
         while (i < myData.size) {
-            val k = myData[i] as K
-            val v = myData[i + 1] as V
+            val k = myData[i]
+            val v = myData[i + 1]
             if (i != 0) {
                 builder.append(",")
             }
@@ -153,10 +157,10 @@ class ListMap<K, V> {
         }
     }
 
-    private fun findByKey(key: K): Int {
+    private fun findByKey(key: K?): Int {
         var i = 0
         while (i < myData.size) {
-            val k = myData[i] as K
+            val k = myData[i]
             if (key == k) {
                 return i
             }
