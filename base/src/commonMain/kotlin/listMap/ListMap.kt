@@ -8,16 +8,20 @@ package jetbrains.datalore.base.listMap
  */
 class ListMap<K, V> {
 
+    companion object {
+        private val EMPTY_ARRAY = arrayOfNulls<Any>(0)
+    }
+
     private var myData = EMPTY_ARRAY
 
     val isEmpty: Boolean
         get() = size() == 0
 
-    fun containsKey(key: K?): Boolean {
+    fun containsKey(key: K): Boolean {
         return findByKey(key) >= 0
     }
 
-    fun remove(key: K?): V? {
+    fun remove(key: K): V? {
         val index = findByKey(key)
         if (index >= 0) {
             val value = myData[index + 1]
@@ -28,16 +32,16 @@ class ListMap<K, V> {
         }
     }
 
-    fun keySet(): MutableSet<K?> {
-        return object : AbstractMutableSet<K?>() {
+    fun keySet(): MutableSet<K> {
+        return object : AbstractMutableSet<K>() {
             override val size: Int
                 get() = this@ListMap.size()
 
-            override fun add(element: K?): Boolean {
+            override fun add(element: K): Boolean {
                 throw IllegalStateException("Not available in keySet")
             }
 
-            override fun iterator(): MutableIterator<K?> {
+            override fun iterator(): MutableIterator<K> {
                 return mapIterator(object : IteratorSpec {
                     override operator fun get(index: Int): Any? {
                         return myData[index]
@@ -81,7 +85,7 @@ class ListMap<K, V> {
         return myData.size / 2
     }
 
-    fun put(key: K?, value: V?): V? {
+    fun put(key: K, value: V?): V? {
         val index = findByKey(key)
         if (index >= 0) {
             val oldValue = myData[index + 1]
@@ -102,7 +106,7 @@ class ListMap<K, V> {
         return null
     }
 
-    operator fun get(key: K?): V? {
+    operator fun get(key: K): V? {
         val index = findByKey(key)
         return if (index == -1) {
             null
@@ -157,7 +161,7 @@ class ListMap<K, V> {
         }
     }
 
-    private fun findByKey(key: K?): Int {
+    private fun findByKey(key: K): Int {
         var i = 0
         while (i < myData.size) {
             val k = myData[i]
@@ -195,16 +199,12 @@ class ListMap<K, V> {
             return myData[myIndex] as K
         }
 
-        fun value(): V {
-            return myData[myIndex + 1] as V
+        fun value(): V? {
+            return myData[myIndex + 1] as V?
         }
     }
 
     private interface IteratorSpec {
         operator fun get(index: Int): Any?
-    }
-
-    companion object {
-        private val EMPTY_ARRAY = arrayOfNulls<Any>(0)
     }
 }

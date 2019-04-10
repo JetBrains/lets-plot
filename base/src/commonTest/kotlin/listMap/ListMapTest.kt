@@ -12,7 +12,7 @@ class ListMapTest {
         private val RANDOM_STEPS = 100000
     }
 
-    private val list = ListMap<String, String>()
+    private val list = ListMap<String?, String>()
     private val map = HashMap<String?, String?>()
     private val random = Random(1000)
 
@@ -137,7 +137,7 @@ class ListMapTest {
         return index.toString()
     }
 
-    private fun entriesToKeys(entries: Set<ListMap<String, String>.Entry>): Set<String?> {
+    private fun entriesToKeys(entries: Set<ListMap<String?, String>.Entry>): Set<String?> {
         val keys = HashSet<String?>()
         for (entry in entries) {
             keys.add(entry.key())
@@ -145,7 +145,7 @@ class ListMapTest {
         return keys
     }
 
-    private fun entriesToValues(entries: Set<ListMap<String, String>.Entry>): MutableList<String?> {
+    private fun entriesToValues(entries: Set<ListMap<String?, String>.Entry>): MutableList<String?> {
         val values = ArrayList<String?>(entries.size)
         for (entry in entries) {
             values.add(entry.value())
