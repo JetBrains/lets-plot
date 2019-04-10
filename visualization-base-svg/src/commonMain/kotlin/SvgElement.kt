@@ -39,7 +39,7 @@ abstract class SvgElement : SvgNode() {
     val attributeKeys: Set<SvgAttributeSpec<*>>
         get() = myAttributes.keySet()
 
-    fun id(): Property<String> {
+    fun id(): Property<String?> {
         return getAttribute(ID)
     }
 
@@ -63,29 +63,28 @@ abstract class SvgElement : SvgNode() {
         return SvgAttributeSpec.createSpec(name)
     }
 
-    protected fun <ValueT> getAttribute(spec: SvgAttributeSpec<ValueT>): Property<ValueT> {
-        return object : Property<ValueT> {
+    fun <ValueT> getAttribute(spec: SvgAttributeSpec<ValueT>): Property<ValueT?> {
+        return object : Property<ValueT?> {
             override val propExpr: String
                 get() = "$this.$spec"
 
             override fun get(): ValueT? {
-                return myAttributes.get<ValueT>(spec)
+                return myAttributes.get(spec)
             }
 
             override fun set(value: ValueT?) {
                 myAttributes[spec] = value
             }
 
-            override fun addHandler(handler: EventHandler<PropertyChangeEvent<ValueT>>): Registration {
+            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<ValueT?>>): Registration {
                 return addListener(object : SvgElementListener {
                     override fun onAttrSet(event: SvgAttributeEvent<*>) {
                         if (spec !== event.attrSpec) {
                             return
                         }
-                        val oldValue = event.oldValue as ValueT
-                        val newValue = event.newValue as ValueT
-                        handler.onEvent(PropertyChangeEvent(
-                                oldValue, newValue))
+                        val oldValue = event.oldValue as ValueT?
+                        val newValue = event.newValue as ValueT?
+                        handler.onEvent(PropertyChangeEvent(oldValue, newValue))
 
                     }
                 })
@@ -93,12 +92,12 @@ abstract class SvgElement : SvgNode() {
         }
     }
 
-    fun <ValueT> getAttribute(name: String): Property<ValueT> {
+    fun <ValueT> getAttribute(name: String): Property<ValueT?> {
         val spec = getSpecByName<ValueT>(name)
         return getAttribute(spec)
     }
 
-    protected fun <ValueT> setAttribute(spec: SvgAttributeSpec<ValueT>, value: ValueT) {
+    fun <ValueT> setAttribute(spec: SvgAttributeSpec<ValueT>, value: ValueT) {
         getAttribute(spec).set(value)
     }
 
@@ -188,8 +187,11 @@ abstract class SvgElement : SvgNode() {
 
         fun keySet(): Set<SvgAttributeSpec<*>> {
             return if (myAttrs == null) {
-                emptySet<SvgAttributeSpec<*>>()
-            } else myAttrs!!.keySet()
+                emptySet()
+            } else {
+                val keySet = myAttrs!!.keySet()
+                keySet
+            }
         }
 
         internal fun toSvgString(): String {

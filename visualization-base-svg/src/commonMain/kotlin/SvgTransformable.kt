@@ -4,9 +4,9 @@ import jetbrains.datalore.base.observable.property.Property
 
 interface SvgTransformable : SvgLocatable {
 
-    fun transform(): Property<SvgTransform>
-
     companion object {
-        val TRANSFORM = SvgAttributeSpec.createSpec("transform")
+        val TRANSFORM: SvgAttributeSpec<SvgTransform> = SvgAttributeSpec.createSpec("transform")
     }
+
+    fun transform(): Property<SvgTransform?>
 }

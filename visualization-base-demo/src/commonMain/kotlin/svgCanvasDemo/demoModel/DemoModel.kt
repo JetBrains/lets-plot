@@ -3,7 +3,7 @@ package svgCanvasDemo.demoModel
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgCircleElement
-import jetbrains.datalore.visualization.base.svg.SvgColor
+import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
@@ -15,8 +15,6 @@ import jetbrains.datalore.visualization.base.svg.SvgTextElement
 import jetbrains.datalore.visualization.base.svg.SvgTransformBuilder
 import jetbrains.datalore.visualization.base.svg.SvgUtils
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimGroup
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimShape
 
 import java.util.ArrayList
 
@@ -42,7 +40,7 @@ object DemoModel {
         text = SvgTextElement(20.0, 225.0, "Svg elements")
         text.getAttribute(SVG_STYLE_ATTRIBUTE).set("font-size:20; font-weight:500;")
         text.fillColor().set(Color.RED)
-        text.stroke().set(SvgColor.CORAL)
+        text.stroke().set(SvgColors.CORAL)
         text.strokeWidth().set(1.0)
         svgRoot.children().add(text)
 

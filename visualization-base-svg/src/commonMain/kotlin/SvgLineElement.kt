@@ -5,13 +5,25 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.base.svg.SvgShape.Companion.FILL
+import jetbrains.datalore.visualization.base.svg.SvgShape.Companion.FILL_OPACITY
+import jetbrains.datalore.visualization.base.svg.SvgShape.Companion.STROKE
+import jetbrains.datalore.visualization.base.svg.SvgShape.Companion.STROKE_OPACITY
+import jetbrains.datalore.visualization.base.svg.SvgShape.Companion.STROKE_WIDTH
+import jetbrains.datalore.visualization.base.svg.SvgTransformable.Companion.TRANSFORM
 
 class SvgLineElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
 
-    val elementName: String
-        get() = "line"
+    companion object {
+        private val X1: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x1")
+        private val Y1: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y1")
+        private val X2: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x2")
+        private val Y2: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y2")
+    }
 
-    val bBox: DoubleRectangle
+    override val elementName = "line"
+
+    override val bBox: DoubleRectangle
         get() = container().getPeer().getBBox(this)
 
     constructor(x1: Double, y1: Double, x2: Double, y2: Double) : this() {
@@ -22,66 +34,59 @@ class SvgLineElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
         setAttribute(Y2, y2)
     }
 
-    fun x1(): Property<Double> {
+    fun x1(): Property<Double?> {
         return getAttribute(X1)
     }
 
-    fun y1(): Property<Double> {
+    fun y1(): Property<Double?> {
         return getAttribute(Y1)
     }
 
-    fun x2(): Property<Double> {
+    fun x2(): Property<Double?> {
         return getAttribute(X2)
     }
 
-    fun y2(): Property<Double> {
+    fun y2(): Property<Double?> {
         return getAttribute(Y2)
     }
 
-    fun transform(): Property<SvgTransform> {
+    override fun transform(): Property<SvgTransform?> {
         return getAttribute(TRANSFORM)
     }
 
-    fun fill(): Property<SvgColor> {
+    override fun fill(): Property<SvgColor?> {
         return getAttribute(FILL)
     }
 
-    fun fillColor(): WritableProperty<Color> {
+    override fun fillColor(): WritableProperty<Color?> {
         return SvgUtils.colorAttributeTransform(fill(), fillOpacity())
     }
 
-    fun fillOpacity(): Property<Double> {
+    override fun fillOpacity(): Property<Double?> {
         return getAttribute(FILL_OPACITY)
     }
 
-    fun stroke(): Property<SvgColor> {
+    override fun stroke(): Property<SvgColor?> {
         return getAttribute(STROKE)
     }
 
-    fun strokeColor(): WritableProperty<Color> {
+    override fun strokeColor(): WritableProperty<Color?> {
         return SvgUtils.colorAttributeTransform(stroke(), strokeOpacity())
     }
 
-    fun strokeOpacity(): Property<Double> {
+    override fun strokeOpacity(): Property<Double?> {
         return getAttribute(STROKE_OPACITY)
     }
 
-    fun strokeWidth(): Property<Double> {
+    override fun strokeWidth(): Property<Double?> {
         return getAttribute(STROKE_WIDTH)
     }
 
-    fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
+    override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
         return container().getPeer().invertTransform(this, point)
     }
 
-    fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
+    override fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
         return container().getPeer().applyTransform(this, point)
-    }
-
-    companion object {
-        private val X1 = SvgAttributeSpec.createSpec("x1")
-        private val Y1 = SvgAttributeSpec.createSpec("y1")
-        private val X2 = SvgAttributeSpec.createSpec("x2")
-        private val Y2 = SvgAttributeSpec.createSpec("y2")
     }
 }

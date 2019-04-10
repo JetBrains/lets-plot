@@ -3,7 +3,11 @@ package jetbrains.datalore.visualization.base.svg
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgPathData.Action
 
-import java.util.ArrayList
+import kotlin.jvm.JvmOverloads
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sqrt
 
 class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute: Boolean = true) {
 
@@ -145,9 +149,9 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
     fun ellipticalArc(rx: Double, ry: Double, xAxisRotation: Double, largeArc: Boolean, sweep: Boolean,
                       x: Double, y: Double, absolute: Boolean = myDefaultAbsolute): SvgPathDataBuilder {
         addActionWithStringTokens(Action.ELLIPTICAL_ARC, absolute,
-                java.lang.Double.toString(rx), java.lang.Double.toString(ry), java.lang.Double.toString(xAxisRotation),
+                rx.toString(), ry.toString(), xAxisRotation.toString(),
                 if (largeArc) "1" else "0", if (sweep) "1" else "0",
-                java.lang.Double.toString(x), java.lang.Double.toString(y))
+                x.toString(), y.toString())
         return this
     }
 
@@ -179,12 +183,12 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
 
     private fun finiteDifferences(points: List<DoubleVector>): MutableList<Double> {
         val result = ArrayList<Double>(points.size)
-        var curSlope: Double? = lineSlope(points[0], points[1])
+        var curSlope = lineSlope(points[0], points[1])
         result.add(curSlope)
 
         for (i in 1 until points.size - 1) {
             val newSlope = lineSlope(points[i], points[i + 1])
-            result.add((curSlope!! + newSlope) / 2)
+            result.add((curSlope + newSlope) / 2)
             curSlope = newSlope
         }
 
@@ -267,17 +271,17 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
         for (i in 0 until points.size - 1) {
             val slope = lineSlope(points[i], points[i + 1])
 
-            if (Math.abs(slope) < eps) {
+            if (abs(slope) < eps) {
                 m[i] = 0.0
                 m[i + 1] = 0.0
             } else {
                 val a = m[i] / slope
                 val b = m[i + 1] / slope
 
-                var s: Double? = a * a + b * b
+                var s = a * a + b * b
                 if (s > 9) {
-                    s = slope * 3 / Math.sqrt(s!!)
-                    m[i] = s!! * a
+                    s = slope * 3 / sqrt(s)
+                    m[i] = s * a
                     m[i + 1] = s * b
                 }
             }
@@ -287,7 +291,7 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
 
         for (i in points.indices) {
             val slope = (points[min(i + 1, points.size - 1)].x - points[max(i - 1, 0)].x) / (6 * (1 + m[i] * m[i]))
-            tangents.add(DoubleVector(slope, m[i] * slope!!))
+            tangents.add(DoubleVector(slope, m[i] * slope))
         }
 
         return tangents

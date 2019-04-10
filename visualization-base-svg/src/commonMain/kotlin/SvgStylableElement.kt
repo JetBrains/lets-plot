@@ -1,16 +1,18 @@
 package jetbrains.datalore.visualization.base.svg
 
 import jetbrains.datalore.base.observable.property.Property
-import java.util.ArrayList
-import java.util.Arrays
 
 abstract class SvgStylableElement : SvgElement() {
 
-    fun classAttribute(): Property<String> {
+    companion object {
+        private val CLASS: SvgAttributeSpec<String> = SvgAttributeSpec.createSpec("class")
+    }
+
+    fun classAttribute(): Property<String?> {
         return getAttribute(CLASS)
     }
 
-    fun addClass(@Nonnull cl: String): Boolean {
+    fun addClass(cl: String): Boolean {
         validateClassName(cl)
 
         val attr = classAttribute()
@@ -19,7 +21,7 @@ abstract class SvgStylableElement : SvgElement() {
             return true
         }
 
-        if (Arrays.asList(attr.get().split(" ")).contains(cl)) {
+        if (attr.get()!!.split(" ").contains(cl)) {
             return false
         }
 
@@ -27,7 +29,7 @@ abstract class SvgStylableElement : SvgElement() {
         return true
     }
 
-    fun removeClass(@Nonnull cl: String): Boolean {
+    fun removeClass(cl: String): Boolean {
         validateClassName(cl)
 
         val attr = classAttribute()
@@ -35,7 +37,7 @@ abstract class SvgStylableElement : SvgElement() {
             return false
         }
 
-        val classes = ArrayList(Arrays.asList(attr.get().split(" ")))
+        val classes = ArrayList(attr.get()!!.split(" "))
         val result = classes.remove(cl)
 
         if (result) {
@@ -45,7 +47,7 @@ abstract class SvgStylableElement : SvgElement() {
         return result
     }
 
-    fun replaceClass(@Nonnull oldClass: String, @Nonnull newClass: String) {
+    fun replaceClass(oldClass: String, newClass: String) {
         validateClassName(oldClass)
         validateClassName(newClass)
 
@@ -54,17 +56,18 @@ abstract class SvgStylableElement : SvgElement() {
             throw IllegalStateException("Trying to replace class when class is empty")
         }
 
-        val classes = Arrays.asList(attr.get().split(" "))
+        val classes = attr.get()!!.split(" ")
         if (!classes.contains(oldClass)) {
             throw IllegalStateException("Class attribute does not contain specified oldClass")
         }
 
-        classes.set(classes.indexOf(oldClass), newClass)
+        val mutableClasses = MutableList(classes.size) { i -> classes[i] }
+        mutableClasses[classes.indexOf(oldClass)] = newClass
 
         attr.set(buildClassString(classes))
     }
 
-    fun toggleClass(@Nonnull cl: String): Boolean {
+    fun toggleClass(cl: String): Boolean {
         if (hasClass(cl)) {
             removeClass(cl)
             return false
@@ -74,16 +77,16 @@ abstract class SvgStylableElement : SvgElement() {
         }
     }
 
-    fun hasClass(@Nonnull cl: String): Boolean {
+    fun hasClass(cl: String): Boolean {
         validateClassName(cl)
 
         val attr = classAttribute()
-        return attr.get() != null && Arrays.asList(attr.get().split(" ")).contains(cl)
+        return attr.get() != null && ArrayList(attr.get()!!.split(" ")).contains(cl)
     }
 
     fun fullClass(): String {
         val attr = classAttribute()
-        return if (attr.get() == null) "" else attr.get()
+        return if (attr.get() == null) "" else attr.get()!!
     }
 
     private fun buildClassString(classes: List<String>): String {
@@ -97,13 +100,9 @@ abstract class SvgStylableElement : SvgElement() {
         return builder.toString()
     }
 
-    private fun validateClassName(@Nonnull cl: String) {
+    private fun validateClassName(cl: String) {
         if (cl.contains(" ")) {
             throw IllegalArgumentException("Class name cannot contain spaces")
         }
-    }
-
-    companion object {
-        private val CLASS = SvgAttributeSpec.createSpec("class")
     }
 }

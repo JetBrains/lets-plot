@@ -10,26 +10,28 @@ import jetbrains.datalore.base.registration.Registration
  * During mapping process it will be mapped to svg image element where 'bitmap' is encoded as image data url
  * and set as a value of 'href' attribute.
  */
-class SvgImageElementEx(x: Double, y: Double, width: Double, height: Double, private val myBitmap: Bitmap) : SvgImageElement(x, y, width, height) {
+class SvgImageElementEx(x: Double, y: Double, width: Double, height: Double, private val myBitmap: Bitmap) :
 
-    fun href(): Property<String> {
+        SvgImageElement(x, y, width, height) {
+
+    override fun href(): Property<String?> {
         // Make href read-only
         // The 'href' shouldn't be present in the set returned by SvgElement#getAttributeKeys()
         val hrefProp = super.href()
-        return object : Property<String>() {
-            val propExpr: String
-                get() = hrefProp.getPropExpr()
+        return object : Property<String?> {
+            override val propExpr: String
+                get() = hrefProp.propExpr
 
-            fun get(): String {
+            override fun get(): String? {
                 return hrefProp.get()
             }
 
-            fun addHandler(handler: EventHandler<PropertyChangeEvent<String>>): Registration {
+            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<String?>>): Registration {
                 return hrefProp.addHandler(handler)
             }
 
-            fun set(value: String) {
-                throw IllegalStateException("href property is read-only in " + this@SvgImageElementEx.getClass().getSimpleName())
+            override fun set(value: String?) {
+                throw IllegalStateException("href property is read-only in " + this@SvgImageElementEx::class.simpleName)
             }
         }
     }
@@ -59,11 +61,6 @@ class SvgImageElementEx(x: Double, y: Double, width: Double, height: Double, pri
      * The array is filled by-row.
      */
     (val width: Int, val height: Int, argbValues: IntArray) {
-        val argbValues: IntArray
-
-        init {
-            this.argbValues = IntArray(argbValues.size)
-            System.arraycopy(argbValues, 0, this.argbValues, 0, argbValues.size)
-        }
+        val argbValues: IntArray = intArrayOf(*argbValues)
     }
 }

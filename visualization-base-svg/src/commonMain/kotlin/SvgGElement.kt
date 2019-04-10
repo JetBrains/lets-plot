@@ -3,23 +3,23 @@ package jetbrains.datalore.visualization.base.svg
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
+import jetbrains.datalore.visualization.base.svg.SvgTransformable.Companion.TRANSFORM
 
 class SvgGElement : SvgGraphicsElement(), SvgTransformable, SvgContainer {
-    val elementName: String
-        get() = "g"
+    override val elementName = "g"
 
-    val bBox: DoubleRectangle
+    override val bBox: DoubleRectangle
         get() = container().getPeer().getBBox(this)
 
-    fun transform(): Property<SvgTransform> {
+    override fun transform(): Property<SvgTransform?> {
         return getAttribute(TRANSFORM)
     }
 
-    fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
+    override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
         return container().getPeer().invertTransform(this, point)
     }
 
-    fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
+    override fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
         return container().getPeer().applyTransform(this, point)
     }
 }

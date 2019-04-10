@@ -5,7 +5,7 @@ import jetbrains.datalore.base.observable.children.SimpleComposite
 import jetbrains.datalore.base.observable.collections.list.ObservableList
 
 
-abstract class SvgNode : SimpleComposite<SvgNode, SvgNode>() {
+abstract class SvgNode : SimpleComposite<SvgNode?, SvgNode>() {
     private var myContainer: SvgNodeContainer? = null
 
     private var myChildren: SvgChildList? = null
@@ -67,7 +67,9 @@ abstract class SvgNode : SimpleComposite<SvgNode, SvgNode>() {
         myContainer = null
     }
 
-    private inner class SvgChildList internal constructor(parent: SvgNode) : ChildList<SvgNode, SvgNode>(parent) {
+    private inner class SvgChildList internal constructor(parent: SvgNode) :
+
+            ChildList<SvgNode, SvgNode>(parent) {
 
         protected override fun beforeItemAdded(index: Int, item: SvgNode) {
             if (isAttached()) {

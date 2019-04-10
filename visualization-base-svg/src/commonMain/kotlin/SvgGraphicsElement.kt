@@ -4,19 +4,28 @@ import jetbrains.datalore.base.observable.property.Property
 
 abstract class SvgGraphicsElement : SvgStylableElement() {
 
-    fun pointerEvents(): Property<PointerEvents> {
+    companion object {
+
+        private val POINTER_EVENTS: SvgAttributeSpec<PointerEvents> = SvgAttributeSpec.createSpec("pointer-events")
+        private val OPACITY: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("opacity")
+        private val VISIBILITY: SvgAttributeSpec<Visibility> = SvgAttributeSpec.createSpec("visibility")
+        private val CLIP_PATH: SvgAttributeSpec<SvgIRI> = SvgAttributeSpec.createSpec("clip-path")
+    }
+
+
+    fun pointerEvents(): Property<PointerEvents?> {
         return getAttribute(POINTER_EVENTS)
     }
 
-    fun opacity(): Property<Double> {
+    fun opacity(): Property<Double?> {
         return getAttribute(OPACITY)
     }
 
-    fun visibility(): Property<Visibility> {
+    fun visibility(): Property<Visibility?> {
         return getAttribute(VISIBILITY)
     }
 
-    fun clipPath(): Property<SvgIRI> {
+    fun clipPath(): Property<SvgIRI?> {
         return getAttribute(CLIP_PATH)
     }
 
@@ -47,13 +56,4 @@ abstract class SvgGraphicsElement : SvgStylableElement() {
             return myAttrString
         }
     }
-
-    companion object {
-
-        private val POINTER_EVENTS = SvgAttributeSpec.createSpec("pointer-events")
-        private val OPACITY = SvgAttributeSpec.createSpec("opacity")
-        private val VISIBILITY = SvgAttributeSpec.createSpec("visibility")
-        private val CLIP_PATH = SvgAttributeSpec.createSpec("clip-path")
-    }
-
 }

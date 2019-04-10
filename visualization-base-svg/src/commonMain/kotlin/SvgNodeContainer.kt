@@ -8,7 +8,7 @@ import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.svg.event.SvgAttributeEvent
 
 class SvgNodeContainer(root: SvgSvgElement) {
-    private val mySvgRoot = object : ValueProperty<SvgSvgElement>() {
+    private val mySvgRoot = object : ValueProperty<SvgSvgElement?>(null) {
         fun set(value: SvgSvgElement) {
             if (this.get() != null) {
                 this.get()!!.detach()
@@ -26,7 +26,7 @@ class SvgNodeContainer(root: SvgSvgElement) {
 
     fun getPeer(): SvgPlatformPeer = peer!!
 
-    fun root(): Property<SvgSvgElement> {
+    fun root(): Property<SvgSvgElement?> {
         return mySvgRoot
     }
 

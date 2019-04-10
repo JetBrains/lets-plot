@@ -1,7 +1,5 @@
 package jetbrains.datalore.visualization.base.svg
 
-import java.util.HashMap
-
 class SvgPathData internal constructor(private val myPathData: String) {
 
     enum class Action private constructor(private val myChar: Char) {
@@ -21,7 +19,7 @@ class SvgPathData internal constructor(private val myPathData: String) {
         }
 
         fun absoluteCmd(): Char {
-            return Character.toUpperCase(myChar)
+            return myChar.toUpperCase()
         }
 
         companion object {
@@ -37,9 +35,9 @@ class SvgPathData internal constructor(private val myPathData: String) {
 
             operator fun get(c: Char): Action {
                 if (MAP.containsKey(c)) {
-                    return MAP[c]
+                    return MAP[c]!!
                 }
-                throw IllegalArgumentException("No enum constant " + Action::class.java + "@myChar." + c)
+                throw IllegalArgumentException("No enum constant " + Action::class + "@myChar." + c)
             }
         }
     }

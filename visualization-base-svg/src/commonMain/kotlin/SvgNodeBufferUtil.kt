@@ -1,30 +1,31 @@
 package jetbrains.datalore.visualization.base.svg
 
+import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.visualization.base.svg.slim.WithTextGen
 
 object SvgNodeBufferUtil {
 
-    fun generateSvgNodeBuffer(source: SvgNode): StringBuffer {
+    fun generateSvgNodeBuffer(source: SvgNode): StringBuilder {
         if (source is WithTextGen) {
-            val sb = StringBuffer()
+            val sb = StringBuilder()
             (source as WithTextGen).appendTo(sb)
             return sb
         } else if (source is SvgElement) {
             return generateSvgElementBuffer(source as SvgElement)
         } else if (source is SvgTextNode) {
-            return StringBuffer((source as SvgTextNode).textContent().get())
+            return StringBuilder((source as SvgTextNode).textContent().get())
         }
 
-        throw IllegalStateException("Can't generate dom for svg node " + source.getClass().getSimpleName())
+        throw IllegalStateException("Can't generate dom for svg node " + source::class.simpleName)
     }
 
-    private fun generateSvgElementBuffer(source: SvgElement): StringBuffer {
+    private fun generateSvgElementBuffer(source: SvgElement): StringBuilder {
         // head
-        val elementName = source.getElementName()
-        val sb = StringBuffer()
+        val elementName = source.elementName
+        val sb = StringBuilder()
         sb.append('<').append(elementName)
-        for (key in source.getAttributeKeys()) {
-            sb.append(' ').append(key).append("=\"").append(source.getAttribute(key.getName()).get()).append('\"')
+        for (key in source.attributeKeys) {
+            sb.append(' ').append(key).append("=\"").append(source.getAttribute<Property<*>>(key.name).get()).append('\"')
         }
         sb.append('>')
 
