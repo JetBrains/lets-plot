@@ -75,24 +75,23 @@ object ObservableCollections {
     }
 
     fun <ItemT> count(
-            collection: ObservableCollection<ItemT?>,
-            predicate: Predicate<in ItemT?>): ReadableProperty<Int> {
+            collection: ObservableCollection<ItemT>,
+            predicate: Predicate<in ItemT?>): ReadableProperty<out Int> {
 
         return object : BaseDerivedProperty<Int>(simpleCount(predicate, collection)) {
-            //        return object : BaseDerivedProperty<Int>() {
             private var myCollectionRegistration: Registration? = null
             private var myCount: Int = 0
 
             override fun doAddListeners() {
-                myCollectionRegistration = collection.addListener(object : CollectionAdapter<ItemT?>() {
-                    override fun onItemAdded(event: CollectionItemEvent<ItemT?>) {
+                myCollectionRegistration = collection.addListener(object : CollectionAdapter<ItemT>() {
+                    override fun onItemAdded(event: CollectionItemEvent<ItemT>) {
                         if (predicate.test(event.newItem)) {
                             myCount++
                         }
                         somethingChanged()
                     }
 
-                    override fun onItemRemoved(event: CollectionItemEvent<ItemT?>) {
+                    override fun onItemRemoved(event: CollectionItemEvent<ItemT>) {
                         if (predicate.test(event.oldItem)) {
                             myCount--
                         }
@@ -117,7 +116,7 @@ object ObservableCollections {
         }
     }
 
-    private fun <ItemT> simpleCount(predicate: Predicate<in ItemT?>, collection: Collection<ItemT?>): Int {
+    private fun <ItemT> simpleCount(predicate: Predicate<in ItemT>, collection: Collection<ItemT>): Int {
         var count = 0
         for (i in collection) {
             if (predicate.test(i)) {
@@ -128,9 +127,10 @@ object ObservableCollections {
     }
 
     fun <ItemT> all(
-            collection: ObservableCollection<ItemT?>,
+            collection: ObservableCollection<out ItemT>,
             predicate: Predicate<in ItemT?>):
-            ReadableProperty<Boolean?> {
+
+            ReadableProperty<out Boolean?> {
 
         val prop = count(collection, predicate)
         return Properties.map(prop, object : Function<Int?, Boolean> {
@@ -141,7 +141,7 @@ object ObservableCollections {
     }
 
     fun <ItemT> any(
-            collection: ObservableCollection<ItemT?>,
+            collection: ObservableCollection<ItemT>,
             predicate: Predicate<in ItemT?>):
             ReadableProperty<Boolean?> {
 
@@ -162,8 +162,9 @@ object ObservableCollections {
     }
 
     fun <ValueT, ItemT> selectList(
-            p: ReadableProperty<ValueT>,
-            s: Function<ValueT, ObservableList<ItemT?>>):
+            p: ReadableProperty<out ValueT>,
+            s: Function<in ValueT, out ObservableList<ItemT?>>):
+
             ObservableList<ItemT?> {
 
         return UnmodifiableObservableList(SelectorDerivedList(p, s))
@@ -196,11 +197,11 @@ object ObservableCollections {
             })
         }
 
-        override operator fun contains(o: ItemT?): Boolean {
+        override operator fun contains(element: ItemT?): Boolean {
             return if (isFollowing) {
-                super.contains(o)
+                super.contains(element)
             } else {
-                select().contains(o)
+                select().contains(element)
             }
         }
 
@@ -215,10 +216,10 @@ object ObservableCollections {
 
     private class SelectorDerivedList<ValueT, ItemT>
     internal constructor(
-            source: ReadableProperty<ValueT>,
-            `fun`: Function<ValueT, ObservableList<ItemT?>>) :
-            SelectedCollection<ValueT, ItemT?,
-                    ObservableList<ItemT?>>(source, `fun`) {
+            source: ReadableProperty<out ValueT>,
+            `fun`: Function<in ValueT, out ObservableList<ItemT?>>) :
+
+            SelectedCollection<ValueT, ItemT?, ObservableList<ItemT?>>(source, `fun`) {
 
         override fun empty(): ObservableList<ItemT?> {
             return ObservableCollections.emptyList()

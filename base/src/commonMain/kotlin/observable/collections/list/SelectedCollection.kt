@@ -9,10 +9,11 @@ import jetbrains.datalore.base.registration.Registration
 
 internal abstract class SelectedCollection<ValueT, ItemT, CollectionT : ObservableCollection<*>>
 protected constructor(
-        private val mySource: ReadableProperty<ValueT>,
-        private val mySelector: Function<ValueT, CollectionT>) :
+        private val mySource: ReadableProperty<out ValueT>,
+        private val mySelector: Function<in ValueT, out CollectionT>) :
+
         ObservableArrayList<ItemT>(),
-        EventHandler<PropertyChangeEvent<ValueT>> {
+        EventHandler<PropertyChangeEvent<out ValueT>> {
 
     private var mySourcePropertyRegistration = Registration.EMPTY
     private var mySourceListRegistration = Registration.EMPTY
@@ -41,7 +42,7 @@ protected constructor(
         return empty()
     }
 
-    override fun onEvent(event: PropertyChangeEvent<ValueT>) {
+    override fun onEvent(event: PropertyChangeEvent<out ValueT>) {
         if (isFollowing) {
             mySourceListRegistration.remove()
             mySourceListRegistration = follow(select())
@@ -49,7 +50,8 @@ protected constructor(
     }
 
     override fun onListenersAdded() {
-        mySourcePropertyRegistration = mySource.addHandler(this)
+        val handler = this
+        mySourcePropertyRegistration = mySource.addHandler(handler)
         isFollowing = true
         mySourceListRegistration = follow(select())
     }

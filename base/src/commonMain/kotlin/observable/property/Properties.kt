@@ -352,7 +352,7 @@ object Properties {
     }
 
     fun <SourceT, TargetT> map(
-            prop: ReadableProperty<out SourceT?>, f: Function<in SourceT?, out TargetT?>): ReadableProperty<TargetT?> {
+            prop: ReadableProperty<out SourceT>, f: Function<in SourceT, out TargetT>): ReadableProperty<TargetT?> {
         return object : DerivedProperty<TargetT?>(null, prop) {
 
             override val propExpr: String
@@ -365,21 +365,21 @@ object Properties {
     }
 
     fun <SourceT, TargetT> map(
-            prop: Property<SourceT?>, sToT: Function<in SourceT?, out TargetT?>,
-            tToS: Function<in TargetT?, out SourceT?>
-    ): Property<TargetT?> {
-        class TransformedProperty : Property<TargetT?> {
+            prop: Property<SourceT>, sToT: Function<in SourceT?, out TargetT>,
+            tToS: Function<in TargetT, out SourceT>
+    ): Property<TargetT> {
+        class TransformedProperty : Property<TargetT> {
 
             override val propExpr: String
                 get() = "transform(" + prop.propExpr + ", " + sToT + ", " + tToS + ")"
 
-            override fun get(): TargetT? {
+            override fun get(): TargetT {
                 return sToT.apply(prop.get())
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<TargetT?>>): Registration {
-                return prop.addHandler(object : EventHandler<PropertyChangeEvent<out SourceT?>> {
-                    override fun onEvent(event: PropertyChangeEvent<out SourceT?>) {
+            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<TargetT>>): Registration {
+                return prop.addHandler(object : EventHandler<PropertyChangeEvent<out SourceT>> {
+                    override fun onEvent(event: PropertyChangeEvent<out SourceT>) {
                         val oldValue = sToT.apply(event.oldValue)
                         val newValue = sToT.apply(event.newValue)
 
@@ -390,7 +390,7 @@ object Properties {
                 })
             }
 
-            override fun set(value: TargetT?) {
+            override fun set(value: TargetT) {
                 prop.set(tToS.apply(value))
             }
         }
