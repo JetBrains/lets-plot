@@ -59,7 +59,7 @@ abstract class SvgElement : SvgNode() {
         }
     }
 
-    private fun <ValueT> getSpecByName(name: String): SvgAttributeSpec<ValueT> {
+    private fun getSpecByName(name: String): SvgAttributeSpec<Any> {
         return SvgAttributeSpec.createSpec(name)
     }
 
@@ -94,8 +94,8 @@ abstract class SvgElement : SvgNode() {
         }
     }
 
-    fun <ValueT> getAttribute(name: String): Property<ValueT?> {
-        val spec = getSpecByName<ValueT>(name)
+    fun getAttribute(name: String): Property<Any?> {
+        val spec = getSpecByName(name)
         return getAttribute(spec)
     }
 
@@ -105,7 +105,7 @@ abstract class SvgElement : SvgNode() {
 
     // if attr is one of pre-defined typed attrs (like CX in ellipse), the behaviour of this method is undefined
     fun setAttribute(name: String, value: String) {
-        getAttribute<Any>(name).set(value)
+        getAttribute(name).set(value)
     }
 
     private fun onAttributeChanged(event: SvgAttributeEvent<*>) {

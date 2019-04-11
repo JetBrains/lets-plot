@@ -9,9 +9,9 @@ internal open class ElementJava(elementName: String) :
     override val attributes: Iterable<SvgSlimNode.Attr>
         get() {
             return myAttributes
-                    .mapIndexed { i, any ->
+                    .mapIndexed { i, value ->
                         val key = ATTR_KEYS[i]
-                        val value = getAttribute(i)
+//                        val value = getAttribute(i)
                         if (value == null) {
                             null
                         } else {

@@ -325,7 +325,6 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
             } else {
                 doHermiteInterpolation(points, monotoneTangents(points))
             }
-            else -> throw IllegalArgumentException("Unsupported interpolation parameter")
         }
 
         return this

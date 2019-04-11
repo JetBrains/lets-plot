@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.base.svg
 
-import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.visualization.base.svg.slim.WithTextGen
 
 object SvgNodeBufferUtil {
@@ -11,9 +10,9 @@ object SvgNodeBufferUtil {
             (source as WithTextGen).appendTo(sb)
             return sb
         } else if (source is SvgElement) {
-            return generateSvgElementBuffer(source as SvgElement)
+            return generateSvgElementBuffer(source)
         } else if (source is SvgTextNode) {
-            return StringBuilder((source as SvgTextNode).textContent().get())
+            return StringBuilder(source.textContent().get())
         }
 
         throw IllegalStateException("Can't generate dom for svg node " + source::class.simpleName)
@@ -25,7 +24,7 @@ object SvgNodeBufferUtil {
         val sb = StringBuilder()
         sb.append('<').append(elementName)
         for (key in source.attributeKeys) {
-            sb.append(' ').append(key).append("=\"").append(source.getAttribute<Property<*>>(key.name).get()).append('\"')
+            sb.append(' ').append(key).append("=\"").append(source.getAttribute(key.name).get()).append('\"')
         }
         sb.append('>')
 

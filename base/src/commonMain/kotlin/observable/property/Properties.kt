@@ -315,18 +315,18 @@ object Properties {
         }
     }
 
-    fun <ValueT> same(prop: ReadableProperty<ValueT?>, value: ValueT?): ReadableProperty<Boolean?> {
+    fun <ValueT> same(prop: ReadableProperty<ValueT?>, v: ValueT?): ReadableProperty<Boolean?> {
         return map(prop, object : Function<ValueT?, Boolean?> {
             override fun apply(value: ValueT?): Boolean? {
-                return value === value
+                return value === v
             }
         })
     }
 
-    fun <ValueT> equals(prop: ReadableProperty<ValueT?>, value: ValueT?): ReadableProperty<Boolean?> {
+    fun <ValueT> equals(prop: ReadableProperty<ValueT?>, v: ValueT?): ReadableProperty<Boolean?> {
         return map(prop, object : Function<ValueT?, Boolean?> {
             override fun apply(value: ValueT?): Boolean? {
-                return value == value
+                return value == v
             }
         })
     }
@@ -344,11 +344,11 @@ object Properties {
     }
 
     fun <ValueT> notEquals(prop: ReadableProperty<ValueT?>, value: ValueT?): ReadableProperty<Boolean?> {
-        return not(equals(prop, value) as ReadableProperty<Boolean?>)
+        return not(equals(prop, value))
     }
 
     fun <ValueT> notEquals(p1: ReadableProperty<ValueT?>, p2: ReadableProperty<ValueT?>): ReadableProperty<Boolean?> {
-        return not(equals(p1, p2) as ReadableProperty<Boolean?>)
+        return not(equals(p1, p2) )
     }
 
     fun <SourceT, TargetT> map(

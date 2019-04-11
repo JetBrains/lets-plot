@@ -16,8 +16,6 @@ import jetbrains.datalore.visualization.base.svg.SvgTransformBuilder
 import jetbrains.datalore.visualization.base.svg.SvgUtils
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 
-import java.util.ArrayList
-
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
 
@@ -31,7 +29,7 @@ object DemoModel {
         var text = SvgTextElement(0.0, 0.0, "Slim elements")
         text.getAttribute(SVG_STYLE_ATTRIBUTE).set("font-size:15;font-style:italic;")
 
-        SvgUtils.transformRotate(text, -45, 20, 100)
+        SvgUtils.transformRotate(text, -45.0, 20.0, 100.0)
         text.fillColor().set(Color.RED)
         svgRoot.children().add(text)
 
@@ -44,7 +42,7 @@ object DemoModel {
         text.strokeWidth().set(1.0)
         svgRoot.children().add(text)
 
-        val circle = SvgCircleElement(300, 260, 50)
+        val circle = SvgCircleElement(300.0, 260.0, 50.0)
         circle.fillColor().set(Color.LIGHT_PINK)
         svgRoot.children().add(circle)
 
@@ -58,7 +56,7 @@ object DemoModel {
         path.fillColor().set(Color.TRANSPARENT)
         path.strokeColor().set(Color.ORANGE)
         path.strokeWidth().set(2.0)
-        path.transform().set(SvgTransformBuilder().translate(0, -30).skewY(10).build())
+        path.transform().set(SvgTransformBuilder().translate(0.0, -30.0).skewY(10.0).build())
         svgRoot.children().add(path)
 
         path = SvgPathElement(createUnclosedPathFrom(0.0, 200.0))
@@ -75,9 +73,10 @@ object DemoModel {
     }
 
     private fun createSlimGroup(): SvgNode {
-        val slimGroup = SvgSlimElements.g(14, SvgTransformBuilder().rotate(180, 400, 200).build())
+        val slimGroup = SvgSlimElements.g(14,
+                SvgTransformBuilder().rotate(180.0, 400.0, 200.0).build())
 
-        var i = 20
+        var i = 20.0
         while (i < 400) {
             val line = SvgSlimElements.line(i, 0.0, i, 200.0)
             line.setStroke(Color.LIGHT_GREEN, 1.0)
@@ -109,7 +108,7 @@ object DemoModel {
 
     private fun createHLineGroup(): SvgNode {
         val g = SvgGElement()
-        var i = 220
+        var i = 220.0
         while (i < 400) {
             val line = SvgLineElement(0.0, i, 400.0, i)
             line.strokeColor().set(Color.LIGHT_GREEN)
@@ -139,14 +138,14 @@ object DemoModel {
     private fun createHoledPathFrom(x: Double, y: Double): SvgPathData {
         return SvgPathDataBuilder(false)
                 .moveTo(x, y, true)
-                .horizontalLineTo(50)
-                .verticalLineTo(50)
-                .horizontalLineTo(-50)
+                .horizontalLineTo(50.0)
+                .verticalLineTo(50.0)
+                .horizontalLineTo(-50.0)
                 .closePath()
                 .moveTo(x + 10, y + 10, true)
-                .horizontalLineTo(30)
-                .verticalLineTo(30)
-                .horizontalLineTo(-30)
+                .horizontalLineTo(30.0)
+                .verticalLineTo(30.0)
+                .horizontalLineTo(-30.0)
                 .closePath()
                 .build()
     }
@@ -154,7 +153,7 @@ object DemoModel {
     private fun createSawPointsFrom(x: Double, y: Double): List<DoubleVector> {
         val points = ArrayList<DoubleVector>(21)
         points.add(DoubleVector(x, y))
-        var i = 0
+        var i = 0.0
         while (i < 400) {
             points.add(DoubleVector(i + 20, y - 10))
             points.add(DoubleVector(i + 40, y))
