@@ -1,5 +1,5 @@
 package jetbrains.datalore.visualization.base.svg.slim
 
 interface WithTextGen {
-    fun appendTo(sb: StringBuffer)
+    fun appendTo(sb: StringBuilder)
 }

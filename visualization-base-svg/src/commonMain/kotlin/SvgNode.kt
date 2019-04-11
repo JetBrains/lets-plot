@@ -9,6 +9,7 @@ abstract class SvgNode : SimpleComposite<SvgNode?, SvgNode>() {
     private var myContainer: SvgNodeContainer? = null
 
     private var myChildren: SvgChildList? = null
+
     /**
      * @return `true` if subtree below this node is absolutely not going to
      * change once the process of mapping is completed.
@@ -34,7 +35,7 @@ abstract class SvgNode : SimpleComposite<SvgNode?, SvgNode>() {
         return myContainer!!
     }
 
-    fun children(): ObservableList<SvgNode> {
+    open fun children(): ObservableList<SvgNode> {
         if (myChildren == null) {
             myChildren = SvgChildList(this)
         }
@@ -71,14 +72,14 @@ abstract class SvgNode : SimpleComposite<SvgNode?, SvgNode>() {
 
             ChildList<SvgNode, SvgNode>(parent) {
 
-        protected override fun beforeItemAdded(index: Int, item: SvgNode) {
+        override fun beforeItemAdded(index: Int, item: SvgNode) {
             if (isAttached()) {
                 item.attach(container())
             }
             super.beforeItemAdded(index, item)
         }
 
-        protected override fun beforeItemSet(index: Int, oldItem: SvgNode, newItem: SvgNode) {
+        override fun beforeItemSet(index: Int, oldItem: SvgNode, newItem: SvgNode) {
             if (isAttached()) {
                 oldItem.detach()
                 newItem.attach(container())
@@ -86,7 +87,7 @@ abstract class SvgNode : SimpleComposite<SvgNode?, SvgNode>() {
             super.beforeItemSet(index, oldItem, newItem)
         }
 
-        protected override fun beforeItemRemoved(index: Int, item: SvgNode) {
+        override fun beforeItemRemoved(index: Int, item: SvgNode) {
             if (isAttached()) {
                 item.detach()
             }

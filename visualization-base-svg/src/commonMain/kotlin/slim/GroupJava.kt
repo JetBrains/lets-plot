@@ -1,19 +1,15 @@
 package jetbrains.datalore.visualization.base.svg.slim
 
-import com.google.common.collect.Lists
 import jetbrains.datalore.visualization.base.svg.SvgNode
 
-import java.util.ArrayList
+internal class GroupJava(initialCapacity: Int) :
+        ElementJava(SvgSlimElements.GROUP),
+        SvgSlimGroup {
 
-internal class GroupJava(initialCapacity: Int) : ElementJava(SvgSlimElements.GROUP), SvgSlimGroup {
-    private val myChildren: MutableList<ElementJava>
+    private val myChildren: MutableList<ElementJava> = ArrayList(initialCapacity)
 
-    val children: Iterable<SvgSlimNode>
-        get() = Lists.transform(myChildren, { v -> v })
-
-    init {
-        myChildren = ArrayList<ElementJava>(initialCapacity)
-    }
+    override val slimChildren: Iterable<SvgSlimNode>
+        get() = myChildren.map { v -> v }
 
     constructor(initialCapacity: Int, transform: Any) : this(initialCapacity) {
         setAttribute(SlimBase.transform, transform)
@@ -27,26 +23,29 @@ internal class GroupJava(initialCapacity: Int) : ElementJava(SvgSlimElements.GRO
         context.restore()
     }
 
-    protected fun addChild(o: ElementJava) {
+    internal fun addChild(o: ElementJava) {
         myChildren.add(o)
     }
 
-    fun asDummySvgNode(): SvgNode {
+    override fun asDummySvgNode(): SvgNode {
         return MyDummySvgNode(this)
     }
 
-    private class MyDummySvgNode internal constructor(private val myGroup: GroupJava) : DummySvgNode(), SvgSlimNode, CanvasAware {
+    private class MyDummySvgNode internal constructor(private val myGroup: GroupJava) :
+            DummySvgNode(),
+            SvgSlimNode,
+            CanvasAware {
 
-        val elementName: String
-            get() = myGroup.getElementName()
+        override val elementName: String
+            get() = myGroup.elementName
 
-        val attributes: Iterable<Attr>
-            get() = myGroup.getAttributes()
+        override val attributes: Iterable<SvgSlimNode.Attr>
+            get() = myGroup.attributes
 
-        val children: Iterable<SvgSlimNode>
-            get() = myGroup.children
+        override val slimChildren: Iterable<SvgSlimNode>
+            get() = myGroup.slimChildren
 
-        fun draw(context: CanvasContext) {
+        override fun draw(context: CanvasContext) {
             myGroup.draw(context)
         }
     }

@@ -51,7 +51,7 @@ abstract class SvgElement : SvgNode() {
         return myEventPeer.addEventHandler(spec, handler)
     }
 
-    fun <EventT : Event> dispatch(spec: SvgEventSpec, event: EventT) {
+    private fun <EventT : Event> dispatch(spec: SvgEventSpec, event: EventT) {
         myEventPeer.dispatch(spec, event, this)
 
         if (parent().get() != null && !event.isConsumed && parent().get() is SvgElement) {
@@ -82,7 +82,9 @@ abstract class SvgElement : SvgNode() {
                         if (spec !== event.attrSpec) {
                             return
                         }
+                        @Suppress("UNCHECKED_CAST")
                         val oldValue = event.oldValue as ValueT?
+                        @Suppress("UNCHECKED_CAST")
                         val newValue = event.newValue as ValueT?
                         handler.onEvent(PropertyChangeEvent(oldValue, newValue))
 

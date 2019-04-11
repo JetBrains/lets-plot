@@ -1,11 +1,8 @@
 package jetbrains.datalore.visualization.base.svg
 
-import jetbrains.datalore.base.observable.collections.list.ObservableList
-
 class SvgStyleElement : SvgElement {
 
-    val elementName: String
-        get() = "style"
+    override val elementName = "style"
 
     constructor() {}
 
@@ -19,7 +16,7 @@ class SvgStyleElement : SvgElement {
     fun setContent(content: String) {
         val children = children()
         while (!children.isEmpty()) {
-            children.remove(0)
+            children.removeAt(0)
         }
         val textNode = SvgTextNode(content)
         children.add(textNode)

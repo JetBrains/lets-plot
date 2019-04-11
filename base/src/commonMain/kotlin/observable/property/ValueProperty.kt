@@ -11,8 +11,7 @@ import kotlin.jvm.JvmOverloads
  */
 open class ValueProperty<ValueT>
 @JvmOverloads
-constructor(
-        private var myValue: ValueT) :
+constructor(private var myValue: ValueT) :
         BaseReadableProperty<ValueT>(),
         Property<ValueT> {
 

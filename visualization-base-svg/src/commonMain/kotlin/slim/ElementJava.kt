@@ -1,46 +1,67 @@
 package jetbrains.datalore.visualization.base.svg.slim
 
-import java.util.ArrayList
-import java.util.Collections
+internal open class ElementJava(elementName: String) :
+        SlimBase(elementName),
+        SvgSlimNode {
 
-internal class ElementJava protected constructor(elementName: String) : SlimBase(elementName), SvgSlimNode {
     private val myAttributes = arrayOfNulls<Any>(ATTR_COUNT)
 
-    val attributes: Iterable<Attr>
+    override val attributes: Iterable<SvgSlimNode.Attr>
         get() {
-            val l = ArrayList<Attr>()
+            return myAttributes
+                    .mapIndexed { i, any ->
+                        val key = ATTR_KEYS[i]
+                        val value = getAttribute(i)
+                        if (value == null) {
+                            null
+                        } else {
+                            object : SvgSlimNode.Attr {
+                                override val key: String
+                                    get() = key
+
+                                override val value: String
+                                    get() = value.toString()
+                            }
+                        }
+                    }
+                    .filterNotNull()
+
+
+/*
+            val l = ArrayList<SvgSlimNode.Attr>()
             for (i in 0 until ATTR_COUNT) {
                 if (hasAttribute(i)) {
                     val key = ATTR_KEYS[i]
                     val value = getAttribute(i)
-                    l.add(object : Attr() {
-                        val key: String
+                    l.add(object : SvgSlimNode.Attr {
+                        override val key: String
                             get() = key
 
-                        val value: String
+                        override val value: String
                             get() = value.toString()
                     })
                 }
             }
             return l
+*/
         }
 
-    val children: Iterable<SvgSlimNode>
-        get() = emptyList<SvgSlimNode>()
+    override val slimChildren: Iterable<SvgSlimNode>
+        get() = emptyList()
 
-    protected fun setAttribute(index: Int, v: Any) {
+    override fun setAttribute(index: Int, v: Any) {
         myAttributes[index] = v
     }
 
-    protected fun hasAttribute(index: Int): Boolean {
+    override fun hasAttribute(index: Int): Boolean {
         return myAttributes[index] != null
     }
 
-    protected fun getAttribute(index: Int): Any {
+    override fun getAttribute(index: Int): Any? {
         return myAttributes[index]
     }
 
-    fun appendTo(g: SvgSlimGroup) {
+    override fun appendTo(g: SvgSlimGroup) {
         (g as GroupJava).addChild(this)
     }
 }

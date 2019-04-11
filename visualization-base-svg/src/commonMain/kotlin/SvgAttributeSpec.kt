@@ -2,28 +2,6 @@ package jetbrains.datalore.visualization.base.svg
 
 class SvgAttributeSpec<ValueT> private constructor(val name: String, val namespaceUri: String?) {
 
-    fun hasNamespace(): Boolean {
-        return namespaceUri != null
-    }
-
-    override fun toString(): String {
-        return name
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is SvgAttributeSpec<*>) return false
-
-        val that = o as SvgAttributeSpec<*>?
-
-        return if (name != that!!.name) false else true
-
-    }
-
-    override fun hashCode(): Int {
-        return name.hashCode()
-    }
-
     companion object {
         fun <ValueT> createSpec(name: String): SvgAttributeSpec<ValueT> {
             return SvgAttributeSpec(name, null)
@@ -32,5 +10,37 @@ class SvgAttributeSpec<ValueT> private constructor(val name: String, val namespa
         fun <ValueT> createSpecNS(name: String, prefix: String, namespaceUri: String): SvgAttributeSpec<ValueT> {
             return SvgAttributeSpec("$prefix:$name", namespaceUri)
         }
+    }
+
+    fun hasNamespace(): Boolean {
+        return namespaceUri != null
+    }
+
+    override fun toString(): String {
+        return name
+    }
+
+//    override fun equals(other: Any?): Boolean {
+//        if (this === other) return true
+//        if (other !is SvgAttributeSpec<*>) return false
+//
+//        val that = other as SvgAttributeSpec<*>?
+//
+//        return if (name != that!!.name) false else true
+//
+//    }
+
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as SvgAttributeSpec<*>
+        if (name != other.name) return false
+        return true
     }
 }

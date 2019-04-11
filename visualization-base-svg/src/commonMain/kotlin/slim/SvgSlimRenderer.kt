@@ -8,9 +8,9 @@ import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements.LINE
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements.PATH
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements.RECT
 
-object SvgSlimRenderer {
+internal object SvgSlimRenderer {
     fun draw(element: SlimBase, context: CanvasContext) {
-        when (element.getElementName()) {
+        when (element.elementName) {
             CIRCLE -> context.drawCircle(
                     zeroIfNull(element, SlimBase.cx),
                     zeroIfNull(element, SlimBase.cy),
@@ -54,7 +54,7 @@ object SvgSlimRenderer {
                     oneIfNull(element, SlimBase.strokeOpacity),
                     zeroIfNull(element, SlimBase.strokeWidth)
             )
-            else -> throw IllegalArgumentException("Unknown element with name: " + element.getElementName())
+            else -> throw IllegalArgumentException("Unknown element with name: " + element.elementName)
         }
     }
 }

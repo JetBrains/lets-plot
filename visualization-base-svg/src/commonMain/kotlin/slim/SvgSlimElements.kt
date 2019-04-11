@@ -1,9 +1,7 @@
 package jetbrains.datalore.visualization.base.svg.slim
 
-import com.google.gwt.core.shared.GWT
 
 object SvgSlimElements {
-    private val IS_GWT = GWT.isClient()
     val GROUP = "g"
     val LINE = "line"
     val CIRCLE = "circle"
@@ -11,24 +9,15 @@ object SvgSlimElements {
     val PATH = "path"
 
     private fun createElement(name: String): SlimBase {
-        return if (IS_GWT)
-            ElementNative(name)
-        else
-            ElementJava(name)
+        return ElementJava(name)
     }
 
     fun g(initialCapacity: Int): SvgSlimGroup {
-        return if (IS_GWT)
-            GroupNative(initialCapacity)
-        else
-            GroupJava(initialCapacity)
+        return GroupJava(initialCapacity)
     }
 
     fun g(initialCapacity: Int, transform: Any): SvgSlimGroup {
-        return if (IS_GWT)
-            GroupNative(initialCapacity, transform)
-        else
-            GroupJava(initialCapacity, transform)
+        return GroupJava(initialCapacity, transform)
     }
 
     fun line(x1: Double, y1: Double, x2: Double, y2: Double): SvgSlimShape {

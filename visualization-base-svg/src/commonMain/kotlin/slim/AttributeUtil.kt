@@ -4,7 +4,12 @@ internal object AttributeUtil {
 
     private fun doubleOrDefault(e: SlimBase, attrIndex: Int, d: Double): Double {
         val o = e.getAttribute(attrIndex)
-        return if (o == null) d else java.lang.Double.parseDouble(o!!.toString())
+        if (o == null) {
+            return d
+        } else if (o is Number) {
+            return o.toDouble()
+        }
+        return o.toString().toDouble()
     }
 
     fun zeroIfNull(e: SlimBase, attrIndex: Int): Double {
@@ -16,7 +21,6 @@ internal object AttributeUtil {
     }
 
     fun stringOrNull(e: SlimBase, attrIndex: Int): String? {
-        val o = e.getAttribute(attrIndex)
-        return if (o == null) null else o!!.toString()
+        return e.getAttribute(attrIndex)?.toString()
     }
 }

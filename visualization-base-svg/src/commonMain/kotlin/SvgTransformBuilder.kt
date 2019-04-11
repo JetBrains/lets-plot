@@ -1,13 +1,12 @@
 package jetbrains.datalore.visualization.base.svg
 
 import jetbrains.datalore.base.geometry.DoubleVector
-
-import jetbrains.datalore.visualization.base.svg.SvgTransform.MATRIX
-import jetbrains.datalore.visualization.base.svg.SvgTransform.ROTATE
-import jetbrains.datalore.visualization.base.svg.SvgTransform.SCALE
-import jetbrains.datalore.visualization.base.svg.SvgTransform.SKEW_X
-import jetbrains.datalore.visualization.base.svg.SvgTransform.SKEW_Y
-import jetbrains.datalore.visualization.base.svg.SvgTransform.TRANSLATE
+import jetbrains.datalore.visualization.base.svg.SvgTransform.Companion.MATRIX
+import jetbrains.datalore.visualization.base.svg.SvgTransform.Companion.ROTATE
+import jetbrains.datalore.visualization.base.svg.SvgTransform.Companion.SCALE
+import jetbrains.datalore.visualization.base.svg.SvgTransform.Companion.SKEW_X
+import jetbrains.datalore.visualization.base.svg.SvgTransform.Companion.SKEW_Y
+import jetbrains.datalore.visualization.base.svg.SvgTransform.Companion.TRANSLATE
 
 class SvgTransformBuilder {
     private val myStringBuilder = StringBuilder()
