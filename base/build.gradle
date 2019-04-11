@@ -10,7 +10,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 compileOnly "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
-                compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
         commonTest {
@@ -23,6 +23,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
                 compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
             }
@@ -30,6 +31,7 @@ kotlin {
         jvmTest {
             dependencies {
 //                implementation kotlin('stdlib-jdk8')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation kotlin('test')
                 implementation kotlin('test-junit')
                 implementation "org.hamcrest:hamcrest-core:$hamcrest_version"

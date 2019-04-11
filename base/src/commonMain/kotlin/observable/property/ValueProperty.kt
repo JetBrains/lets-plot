@@ -32,7 +32,7 @@ constructor(private var myValue: ValueT) :
         fireEvents(oldValue, myValue)
     }
 
-    protected fun fireEvents(oldValue: ValueT?, newValue: ValueT?) {
+    private fun fireEvents(oldValue: ValueT?, newValue: ValueT?) {
         if (myHandlers != null) {
             val event = PropertyChangeEvent(oldValue, newValue)
             myHandlers!!.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<out ValueT>>> {

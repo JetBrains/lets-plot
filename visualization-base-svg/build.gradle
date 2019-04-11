@@ -10,17 +10,21 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':base')
+//                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
         commonTest {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
+//                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+//                compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
         jvmTest {

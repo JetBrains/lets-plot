@@ -64,7 +64,7 @@ abstract class SvgStylableElement : SvgElement() {
         val mutableClasses = MutableList(classes.size) { i -> classes[i] }
         mutableClasses[classes.indexOf(oldClass)] = newClass
 
-        attr.set(buildClassString(classes))
+        attr.set(buildClassString(mutableClasses))
     }
 
     fun toggleClass(cl: String): Boolean {
