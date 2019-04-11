@@ -13,13 +13,7 @@ protected constructor(
         private var myValue: ValueT) :
         BaseReadableProperty<ValueT>() {
 
-    private var myHandlers: Listeners<EventHandler<in PropertyChangeEvent<ValueT>>>? = null
-
-//    private var myValue: ValueT
-
-//    init {
-//        myValue = doGet()
-//    }
+    private var myHandlers: Listeners<EventHandler<in PropertyChangeEvent<out ValueT>>>? = null
 
     /**
      * Start listening to the objects which our value depend on
@@ -52,17 +46,17 @@ protected constructor(
         myValue = newValue
 
         if (myHandlers != null) {
-            myHandlers!!.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<ValueT>>> {
-                override fun call(l: EventHandler<in PropertyChangeEvent<ValueT>>) {
+            myHandlers!!.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<out ValueT>>> {
+                override fun call(l: EventHandler<in PropertyChangeEvent<out ValueT>>) {
                     l.onEvent(event)
                 }
             })
         }
     }
 
-    override fun addHandler(handler: EventHandler<in PropertyChangeEvent<ValueT>>): Registration {
+    override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out ValueT>>): Registration {
         if (myHandlers == null) {
-            myHandlers = object : Listeners<EventHandler<in PropertyChangeEvent<ValueT>>>() {
+            myHandlers = object : Listeners<EventHandler<in PropertyChangeEvent<out ValueT>>>() {
                 override fun beforeFirstAdded() {
                     myValue = doGet()
                     doAddListeners()

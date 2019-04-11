@@ -8,10 +8,8 @@ import observable.collections.Collections
 /**
  * Simplified version of [BaseDerivedProperty] which can depend on generic observable objects.
  */
-abstract class DerivedProperty<ValueT> constructor(initialValue: ValueT, vararg deps: EventSource<*>) :
+abstract class DerivedProperty<ValueT>(initialValue: ValueT, vararg deps: EventSource<*>) :
         BaseDerivedProperty<ValueT>(initialValue) {
-//abstract class DerivedProperty<ValueT> constructor(vararg deps: EventSource<*>) :
-//        BaseDerivedProperty<ValueT>() {
 
     private val myDeps: Array<EventSource<*>> = Collections.arrayCopy(deps)
     private var myRegistrations: Array<Registration>? = null

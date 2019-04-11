@@ -51,8 +51,8 @@ class SimpleDerivedProperty<ValueT>(
     }
 
     private fun <DependencyT> register(prop: ReadableProperty<DependencyT>): Registration {
-        return prop.addHandler(object : EventHandler<PropertyChangeEvent<DependencyT>> {
-            override fun onEvent(event: PropertyChangeEvent<DependencyT>) {
+        return prop.addHandler(object : EventHandler<PropertyChangeEvent<out DependencyT>> {
+            override fun onEvent(event: PropertyChangeEvent<out DependencyT>) {
                 somethingChanged()
             }
         })

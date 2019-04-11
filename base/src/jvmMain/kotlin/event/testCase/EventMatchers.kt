@@ -120,9 +120,9 @@ object EventMatchers {
         }
     }
 
-    fun <ValueT> newValue(valueMatcher: Matcher<in ValueT>): Matcher<PropertyChangeEvent<ValueT>> {
-        return object : TypeSafeDiagnosingMatcher<PropertyChangeEvent<ValueT>>() {
-            override fun matchesSafely(item: PropertyChangeEvent<ValueT>, mismatchDescription: Description): Boolean {
+    fun <ValueT> newValue(valueMatcher: Matcher<in ValueT>): Matcher<PropertyChangeEvent<out ValueT>> {
+        return object : TypeSafeDiagnosingMatcher<PropertyChangeEvent<out ValueT>>() {
+            override fun matchesSafely(item: PropertyChangeEvent<out ValueT>, mismatchDescription: Description): Boolean {
                 if (valueMatcher.matches(item.newValue)) {
                     return true
                 } else {
@@ -138,13 +138,13 @@ object EventMatchers {
         }
     }
 
-    fun <ValueT> newValueIs(value: ValueT): Matcher<PropertyChangeEvent<ValueT>> {
+    fun <ValueT> newValueIs(value: ValueT): Matcher<PropertyChangeEvent<out ValueT>> {
         return newValue(CoreMatchers.`is`(value))
     }
 
-    fun <ValueT> oldValue(valueMatcher: Matcher<in ValueT>): Matcher<PropertyChangeEvent<ValueT>> {
-        return object : TypeSafeDiagnosingMatcher<PropertyChangeEvent<ValueT>>() {
-            override fun matchesSafely(item: PropertyChangeEvent<ValueT>, mismatchDescription: Description): Boolean {
+    fun <ValueT> oldValue(valueMatcher: Matcher<in ValueT>): Matcher<PropertyChangeEvent<out ValueT>> {
+        return object : TypeSafeDiagnosingMatcher<PropertyChangeEvent<out ValueT>>() {
+            override fun matchesSafely(item: PropertyChangeEvent<out ValueT>, mismatchDescription: Description): Boolean {
                 if (valueMatcher.matches(item.oldValue)) {
                     return true
                 } else {
@@ -160,7 +160,7 @@ object EventMatchers {
         }
     }
 
-    fun <ValueT> oldValueIs(value: ValueT): Matcher<PropertyChangeEvent<ValueT>> {
+    fun <ValueT> oldValueIs(value: ValueT): Matcher<PropertyChangeEvent<out ValueT>> {
         return oldValue(CoreMatchers.`is`(value))
     }
 

@@ -121,8 +121,8 @@ class ListItemPropertyTest {
         list[3] = 12
 
         assertThat(p1Handler, noEvents())
-        val singleEvent: Matcher<EventMatchers.MatchingHandler<PropertyChangeEvent<Int?>>> = singleEvent(
-                allOf(oldValueIs(2), newValueIs(12)) as Matcher<PropertyChangeEvent<Int?>>)
+        val singleEvent: Matcher<EventMatchers.MatchingHandler<PropertyChangeEvent<out Int?>>> = singleEvent(
+                allOf(oldValueIs(2), newValueIs(12)) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p2Handler, singleEvent)
         assertThat(p3Handler, noEvents())
     }
@@ -132,7 +132,7 @@ class ListItemPropertyTest {
         list.removeAt(2)
 
         val singleEvent = singleEvent(
-                allOf(oldValueIs(2), newValue(nullValue(Int::class.java))) as Matcher<PropertyChangeEvent<Int?>>)
+                allOf(oldValueIs(2), newValue(nullValue(Int::class.java))) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p2indexHandler, singleEvent)
     }
 
@@ -146,7 +146,7 @@ class ListItemPropertyTest {
         p2.set(12)
 
         val singleEvent = singleEvent(
-                allOf(oldValueIs(2), newValueIs(12)) as Matcher<PropertyChangeEvent<Int?>>)
+                allOf(oldValueIs(2), newValueIs(12)) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p2handler, singleEvent)
     }
 
@@ -156,7 +156,7 @@ class ListItemPropertyTest {
 
         assertThat(p1indexHandler, noEvents())
         val singleEvent = singleEvent(
-                allOf(oldValueIs(2), newValueIs(3)) as Matcher<PropertyChangeEvent<Int?>>)
+                allOf(oldValueIs(2), newValueIs(3)) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p2indexHandler, singleEvent)
     }
 
@@ -166,10 +166,10 @@ class ListItemPropertyTest {
 
         assertThat(p1indexHandler, noEvents())
         val singleEvent = singleEvent(
-                allOf(oldValueIs(2), newValue(nullValue(Int::class.java))) as Matcher<PropertyChangeEvent<Int?>>)
+                allOf(oldValueIs(2), newValue(nullValue(Int::class.java))) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p2indexHandler, singleEvent)
         val singleEvent1 = singleEvent(
-                allOf(oldValueIs(3), newValueIs(2)) as Matcher<PropertyChangeEvent<Int?>>)
+                allOf(oldValueIs(3), newValueIs(2)) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p3indexHandler, singleEvent1)
     }
 

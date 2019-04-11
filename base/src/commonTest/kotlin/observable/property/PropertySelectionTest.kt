@@ -16,8 +16,8 @@ class PropertySelectionTest {
     private var changed = false
 
     private fun addListener() {
-        selProp.addHandler(object : EventHandler<PropertyChangeEvent<Int?>> {
-            override fun onEvent(event: PropertyChangeEvent<Int?>) {
+        selProp.addHandler(object : EventHandler<PropertyChangeEvent<out Int?>> {
+            override fun onEvent(event: PropertyChangeEvent<out Int?>) {
                 changed = true
             }
         })

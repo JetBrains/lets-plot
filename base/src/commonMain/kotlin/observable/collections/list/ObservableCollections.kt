@@ -51,7 +51,7 @@ object ObservableCollections {
                 }
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<List<ItemT?>?>>): Registration {
+            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out List<ItemT?>?>>): Registration {
                 return list.addHandler(object : EventHandler<CollectionItemEvent<ItemT?>> {
                     private var myLastValue: List<ItemT?> = ArrayList(list)
 
@@ -143,7 +143,7 @@ object ObservableCollections {
     fun <ItemT> any(
             collection: ObservableCollection<ItemT>,
             predicate: Predicate<in ItemT?>):
-            ReadableProperty<Boolean?> {
+            ReadableProperty<out Boolean?> {
 
         val prop = count(collection, predicate)
         return Properties.map(prop, object : Function<Int?, Boolean> {

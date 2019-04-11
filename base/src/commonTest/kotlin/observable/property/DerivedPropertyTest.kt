@@ -24,8 +24,8 @@ class DerivedPropertyTest {
 
     @Test
     fun handlerAddThenRemoved() {
-        val reg = length.addHandler(object : EventHandler<PropertyChangeEvent<Int>> {
-            override fun onEvent(event: PropertyChangeEvent<Int>) {}
+        val reg = length.addHandler(object : EventHandler<PropertyChangeEvent<out Int>> {
+            override fun onEvent(event: PropertyChangeEvent<out Int>) {}
         })
         reg.remove()
 
@@ -38,14 +38,14 @@ class DerivedPropertyTest {
         val lengthValue = Value(0)
         val lengthEventFired = Value(false)
 
-        string.addHandler(object : EventHandler<PropertyChangeEvent<String>> {
-            override fun onEvent(event: PropertyChangeEvent<String>) {
+        string.addHandler(object : EventHandler<PropertyChangeEvent<out String>> {
+            override fun onEvent(event: PropertyChangeEvent<out String>) {
                 assertFalse(lengthEventFired.get())
                 lengthValue.set(length.get())
             }
         })
-        length.addHandler(object : EventHandler<PropertyChangeEvent<Int>> {
-            override fun onEvent(event: PropertyChangeEvent<Int>) {
+        length.addHandler(object : EventHandler<PropertyChangeEvent<out Int>> {
+            override fun onEvent(event: PropertyChangeEvent<out Int>) {
                 lengthEventFired.set(true)
             }
         })

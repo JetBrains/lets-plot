@@ -12,7 +12,7 @@ import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
 
 internal class SvgEventPeer {
     private var myEventHandlers: MutableMap<SvgEventSpec, Listeners<SvgEventHandler<*>>>? = null
-    private var myListeners: Listeners<EventHandler<in PropertyChangeEvent<Set<SvgEventSpec>>>>? = null
+    private var myListeners: Listeners<EventHandler<in PropertyChangeEvent<out Set<SvgEventSpec>>>>? = null
 
     fun handlersSet(): ReadableProperty<Set<SvgEventSpec>> {
         return object : ReadableProperty<Set<SvgEventSpec>> {
@@ -23,7 +23,7 @@ internal class SvgEventPeer {
                 return handlersKeySet()
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<Set<SvgEventSpec>>>): Registration {
+            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out Set<SvgEventSpec>>>): Registration {
                 if (myListeners == null) {
                     myListeners = Listeners()
                 }
@@ -66,8 +66,8 @@ internal class SvgEventPeer {
             }
         }
 //        if (myListeners != null) {
-        myListeners?.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<Set<SvgEventSpec>>>> {
-            override fun call(l: EventHandler<in PropertyChangeEvent<Set<SvgEventSpec>>>) {
+        myListeners?.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<out Set<SvgEventSpec>>>> {
+            override fun call(l: EventHandler<in PropertyChangeEvent<out Set<SvgEventSpec>>>) {
                 l.onEvent(PropertyChangeEvent(oldHandlersSet, handlersKeySet()))
             }
         })

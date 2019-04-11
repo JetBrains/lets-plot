@@ -23,7 +23,7 @@ class PropertyTest {
 
         val handler = mock(EventHandler::class.java)
 
-        derived.addHandler(handler as EventHandler<PropertyChangeEvent<Int>>)
+        derived.addHandler(handler as EventHandler<PropertyChangeEvent<out Int>>)
 
         prop.set("")
 

@@ -9,10 +9,10 @@ import jetbrains.datalore.base.registration.Registration
  */
 object PropertyBinding {
     fun <ValueT> bindOneWay(
-            source: ReadableProperty<ValueT>, target: WritableProperty<ValueT?>): Registration {
+            source: ReadableProperty<out ValueT>, target: WritableProperty<in ValueT?>): Registration {
         target.set(source.get())
-        return source.addHandler(object : EventHandler<PropertyChangeEvent<ValueT>> {
-            override fun onEvent(event: PropertyChangeEvent<ValueT>) {
+        return source.addHandler(object : EventHandler<PropertyChangeEvent<out ValueT>> {
+            override fun onEvent(event: PropertyChangeEvent<out ValueT>) {
                 target.set(event.newValue)
             }
         })
@@ -22,10 +22,10 @@ object PropertyBinding {
         val syncing = ValueProperty<Boolean>(false)
         target.set(source.get())
 
-        class UpdatingEventHandler(private val myForward: Boolean) : EventHandler<PropertyChangeEvent<ValueT>> {
+        class UpdatingEventHandler(private val myForward: Boolean) : EventHandler<PropertyChangeEvent<out ValueT>> {
 
-            override fun onEvent(event: PropertyChangeEvent<ValueT>) {
-                if (syncing.get()!!) return
+            override fun onEvent(event: PropertyChangeEvent<out ValueT>) {
+                if (syncing.get()) return
 
                 syncing.set(true)
                 try {
