@@ -1,5 +1,5 @@
 plugins {
-    id 'kotlin-multiplatform' version '1.3.21'
+    id 'kotlin-multiplatform' version '1.3.30'
 }
 repositories {
     mavenCentral()
@@ -69,8 +69,21 @@ kotlin {
     }
 }
 
+// ---------------------------------
+// Trick to copy kotlin.js to output
+configurations {
+    kotlinJsLibs
+}
+
+dependencies {
+    kotlinJsLibs "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+}
+// ---------------------------------
+
 task copyJsDependencies(type: Copy) {
-    configurations.jsMainImplementation.each {
+// since 1.3.30: Resolving configuration 'jsMainImplementation' directly is not allowed    
+//    configurations.jsMainImplementation.each {
+    configurations.kotlinJsLibs.each {
         from zipTree(it.absolutePath).matching { include '*.js' }
     }
     into "${project.buildDir}/out/js"
