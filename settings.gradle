@@ -10,5 +10,6 @@ pluginManagement {
 
 include 'base',
         'visualization-base-svg',
+        'visualization-base-canvas',
         'visualization-base-demo',
         'demo-hello'

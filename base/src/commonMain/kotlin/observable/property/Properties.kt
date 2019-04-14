@@ -1,6 +1,6 @@
 package jetbrains.datalore.base.observable.property
 
-import function.Runnable
+import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.function.Supplier

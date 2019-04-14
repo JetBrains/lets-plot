@@ -1,6 +1,6 @@
 package jetbrains.datalore.base.observable.event
 
-import function.Runnable
+import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.registration.Registration
 
 /**
