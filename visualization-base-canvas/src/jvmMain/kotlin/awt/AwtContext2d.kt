@@ -85,7 +85,7 @@ internal class AwtContext2d(graphics2D: Graphics2D) : Context2d {
         current().color = Color.decode(fillStyleColor)
     }
 
-    override fun setStrokeStyle(strokeStyleColor: String) {
+    override fun setStrokeStyle(strokeStyleColor: String?) {
         current().color = Color.decode(strokeStyleColor)
     }
 

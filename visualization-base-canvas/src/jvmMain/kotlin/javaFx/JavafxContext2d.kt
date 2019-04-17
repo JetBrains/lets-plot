@@ -126,7 +126,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.fill = convertCssColor(fillStyleColor)
     }
 
-    override fun setStrokeStyle(strokeStyleColor: String) {
+    override fun setStrokeStyle(strokeStyleColor: String?) {
         myContext2d.stroke = convertCssColor(strokeStyleColor)
     }
 

@@ -18,7 +18,7 @@ interface Context2d {
     fun save()
     fun restore()
     fun setFillStyle(fillStyleColor: String)
-    fun setStrokeStyle(strokeStyleColor: String)
+    fun setStrokeStyle(strokeStyleColor: String?)
     fun setGlobalAlpha(alpha: Double)
     fun setFont(f: String)
     fun setLineWidth(lineWidth: Double)

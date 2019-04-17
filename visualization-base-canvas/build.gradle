@@ -21,6 +21,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                implementation project(':visualization-base-svg')
             }
         }
         jvmTest {

@@ -81,7 +81,7 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.setFillStyle(fillStyleColor)
     }
 
-    override fun setStrokeStyle(strokeStyleColor: String) {
+    override fun setStrokeStyle(strokeStyleColor: String?) {
         myContext2d.setStrokeStyle(strokeStyleColor)
     }
 

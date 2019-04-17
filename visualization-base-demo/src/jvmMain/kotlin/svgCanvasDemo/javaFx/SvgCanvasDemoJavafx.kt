@@ -5,6 +5,7 @@ import jetbrains.datalore.visualization.base.canvas.CanvasUtil
 import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvasDemoUtil
 import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxGraphicsCanvasControlFactory
+import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
 import jetbrains.datalore.visualization.baseDemo.svgCanvasDemo.demoModel.DemoModel
 import javax.swing.SwingUtilities
 
