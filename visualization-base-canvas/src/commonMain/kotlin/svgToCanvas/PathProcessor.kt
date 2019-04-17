@@ -14,7 +14,7 @@ internal class PathProcessor private constructor(private val myContext: Context2
   private fun applyPath(path: List<ParsingUtil.Result>) {
     for (r in path) {
       val name = r.name[0]
-      val absolute = name == Character.toUpperCase(name)
+      val absolute = name == name.toUpperCase()
       val action = SvgPathData.Action.get(name)
 
       if (action != SvgPathData.Action.VERTICAL_LINE_TO && action != SvgPathData.Action.HORIZONTAL_LINE_TO) {

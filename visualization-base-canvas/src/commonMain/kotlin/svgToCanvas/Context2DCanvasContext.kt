@@ -7,7 +7,10 @@ import jetbrains.datalore.visualization.base.svgToCanvas.ParsingUtil.Result
 import jetbrains.datalore.visualization.base.canvas.Context2d.LineJoin.BEVEL
 import jetbrains.datalore.visualization.base.canvas.Context2d.TextBaseline.ALPHABETIC
 import jetbrains.datalore.visualization.base.canvas.CssStyleUtil.extractStyleFont
+import jetbrains.datalore.visualization.base.canvas.svgToCanvas.toRadians
 import jetbrains.datalore.visualization.base.svg.SvgTransform
+import kotlin.math.PI
+import kotlin.math.tan
 
 internal class Context2DCanvasContext(private val myContext: Context2d) : CanvasContext {
 
@@ -47,7 +50,7 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
                             fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
         drawNextElement(lineDash, transform, fillColor, strokeColor, strokeWidth)
         myContext.beginPath()
-        myContext.arc(cx, cy, r, 0.0, 2 * Math.PI)
+        myContext.arc(cx, cy, r, 0.0, 2 * PI)
         myContext.setGlobalAlpha(fillOpacity)
         myContext.fill()
         stroke(strokeColor != null, strokeOpacity)
@@ -108,11 +111,11 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
         for (t in transforms) {
             when (t.name) {
                 SvgTransform.SCALE -> myContext.scale(t.getParam(SCALE_X)!!, if (t.containsParam(SCALE_Y)) t.getParam(SCALE_Y)!! else t.getParam(SCALE_X)!!)
-                SvgTransform.SKEW_X -> myContext.transform(1.0, 0.0, Math.tan(Math.toRadians(t.getParam(SKEW_X_ANGLE)!!)), 1.0, 0.0, 0.0)
-                SvgTransform.SKEW_Y -> myContext.transform(1.0, Math.tan(Math.toRadians(t.getParam(SKEW_Y_ANGLE)!!)), 0.0, 1.0, 0.0, 0.0)
+                SvgTransform.SKEW_X -> myContext.transform(1.0, 0.0, tan(toRadians(t.getParam(SKEW_X_ANGLE)!!)), 1.0, 0.0, 0.0)
+                SvgTransform.SKEW_Y -> myContext.transform(1.0, tan(toRadians(t.getParam(SKEW_Y_ANGLE)!!)), 0.0, 1.0, 0.0, 0.0)
                 SvgTransform.ROTATE -> if (t.paramCount == 3) {
                     myContext.translate(t.getParam(ROTATE_X)!!, t.getParam(ROTATE_Y)!!)
-                    myContext.rotate(Math.toRadians(t.getParam(ROTATE_ANGLE)!!))
+                    myContext.rotate(toRadians(t.getParam(ROTATE_ANGLE)!!))
                 } else {
                     myContext.rotate(t.getParam(ROTATE_ANGLE)!!)
                 }

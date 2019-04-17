@@ -1,9 +1,8 @@
 package jetbrains.datalore.visualization.base.svgToCanvas
 
 import jetbrains.datalore.base.geometry.DoubleVector
-
-import java.util.ArrayList
-import java.util.NoSuchElementException
+import jetbrains.datalore.visualization.base.canvas.svgToCanvas.toRadians
+import kotlin.math.*
 
 internal class ArcConverter(private var myFrom: DoubleVector, to: DoubleVector, r: DoubleVector,
                             angle: Double?, largeArcFlag: Boolean, sweepFlag: Boolean) {
@@ -27,11 +26,11 @@ internal class ArcConverter(private var myFrom: DoubleVector, to: DoubleVector, 
         if (myFrom.x != to.x || myFrom.y != to.y) {
             // Convert to center parameterization as shown in
             // http://www.w3.org/TR/SVG/implnote.htmls
-            myRx = Math.abs(r.x)
-            myRy = Math.abs(r.y)
+            myRx = abs(r.x)
+            myRy = abs(r.y)
 
-            mySin = Math.sin(Math.toRadians(angle!!))
-            myCos = Math.cos(Math.toRadians(angle))
+            mySin = sin(toRadians(angle!!))
+            myCos = cos(toRadians(angle))
 
             val x1dash = myCos * (myFrom.x - to.x) / 2 + mySin * (myFrom.y - to.y) / 2
             val y1dash = -mySin * (myFrom.x - to.x) / 2 + myCos * (myFrom.y - to.y) / 2
@@ -44,12 +43,12 @@ internal class ArcConverter(private var myFrom: DoubleVector, to: DoubleVector, 
             //  exactly one solution (until the ellipse is just big enough).
             //  -> find factor s, such that numerator' with mRx'=s*mRx and mRy'=s*mRy becomes 0
             if (numerator < 0) {
-                val s = Math.sqrt(1 - numerator / (myRx * myRx * myRy * myRy))
+                val s = sqrt(1 - numerator / (myRx * myRx * myRy * myRy))
                 myRx = s * myRx
                 myRy = s * myRy
                 root = 0.0
             } else {
-                root = (if (largeArcFlag == sweepFlag) -1 else 1) * Math.sqrt(numerator / (myRx * myRx * y1dash * y1dash + myRy * myRy * x1dash * x1dash))
+                root = (if (largeArcFlag == sweepFlag) -1 else 1) * sqrt(numerator / (myRx * myRx * y1dash * y1dash + myRy * myRy * x1dash * x1dash))
             }
 
             val cxdash = root * myRx * y1dash / myRy
@@ -68,24 +67,24 @@ internal class ArcConverter(private var myFrom: DoubleVector, to: DoubleVector, 
                     (-x1dash - cxdash) / myRx, (-y1dash - cydash) / myRy)
 
             if (!sweepFlag && dtheta > 0) {
-                dtheta -= 2 * Math.PI
+                dtheta -= 2 * PI
             } else if (sweepFlag && dtheta < 0) {
-                dtheta += 2 * Math.PI
+                dtheta += 2 * PI
             }
 
             // Convert into cubic bezier segments <= 90deg
-            mySegNum = Math.ceil(Math.abs(dtheta / (Math.PI / 2)))
+            mySegNum = ceil(abs(dtheta / (PI / 2)))
             myDelta = dtheta / mySegNum
-            myT = (8 / 3).toDouble() * Math.sin(myDelta / 4) * Math.sin(myDelta / 4) / Math.sin(myDelta / 2)
+            myT = (8 / 3).toDouble() * sin(myDelta / 4) * sin(myDelta / 4) / sin(myDelta / 2)
         }
     }
 
     private fun calcVectorAngle(ux: Double, uy: Double, vx: Double, vy: Double): Double {
-        val ta = Math.atan2(uy, ux)
-        val tb = Math.atan2(vy, vx)
+        val ta = atan2(uy, ux)
+        val tb = atan2(vy, vx)
         return if (tb >= ta) {
             tb - ta
-        } else 2 * Math.PI - (ta - tb)
+        } else 2 * PI - (ta - tb)
     }
 
     fun hasNextSegment(): Boolean {
@@ -97,13 +96,13 @@ internal class ArcConverter(private var myFrom: DoubleVector, to: DoubleVector, 
             throw NoSuchElementException("There are no more segments.")
         }
 
-        val cosTheta1 = Math.cos(myTheta)
-        val sinTheta1 = Math.sin(myTheta)
+        val cosTheta1 = cos(myTheta)
+        val sinTheta1 = sin(myTheta)
         val theta2 = myTheta + myDelta
-        val cosTheta2 = Math.cos(theta2)
-        val sinTheta2 = Math.sin(theta2)
+        val cosTheta2 = cos(theta2)
+        val sinTheta2 = sin(theta2)
 
-        val list = ArrayList<Double>(6)
+        val list = mutableListOf<Double>()
         // a) calculate endpoint of the segment:
         val to = DoubleVector(
                 myCos * myRx * cosTheta2 - mySin * myRy * sinTheta2 + myC!!.x,

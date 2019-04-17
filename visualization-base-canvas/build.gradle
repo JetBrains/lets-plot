@@ -10,6 +10,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':base')
+                implementation project(':visualization-base-svg')
             }
         }
         commonTest {
@@ -21,7 +22,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation project(':visualization-base-svg')
             }
         }
         jvmTest {

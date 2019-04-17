@@ -4,9 +4,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.collections.DataloreIndexOutOfBoundsException
 import jetbrains.datalore.visualization.base.svg.SvgPathData.Action
 
-import java.util.ArrayList
-
-import java.lang.Double.parseDouble
 import jetbrains.datalore.visualization.base.svg.SvgTransform
 
 internal object ParsingUtil {
@@ -25,8 +22,8 @@ internal object ParsingUtil {
     private val PATH = MyPatternBuilder("(").charset(Action.values()).append(") ?")
             .pluralAppend(OPTIONAL_PARAM, 7).toString()
 
-    private val TRANSFORM_EXP = Regex(TRANSFORM, RegexOption.DOT_MATCHES_ALL) //RegExp.compile(TRANSFORM, "g")
-    private val PATH_EXP = Regex(PATH, RegexOption.DOT_MATCHES_ALL) //RegExp.compile(PATH, "g")
+    private val TRANSFORM_EXP = Regex(TRANSFORM) //RegExp.compile(TRANSFORM, "g")
+    private val PATH_EXP = Regex(PATH) //RegExp.compile(PATH, "g")
 
     private const val NAME_INDEX = 1
     private const val FIRST_PARAM_INDEX = 2
@@ -84,10 +81,13 @@ internal object ParsingUtil {
         }
 
         internal fun or(vararg ss: String): MyPatternBuilder {
-            for (s in ss) {
+            val ssLastIndex = ss.size - 1
+            for ((index, s) in ss.withIndex()) {
                 sb.append(s).append('|')
+                if (index < ssLastIndex) {
+                    sb.append('|')
+                }
             }
-            sb.deleteCharAt(sb.length - 1)
             return this
         }
 
@@ -116,7 +116,7 @@ internal object ParsingUtil {
             get() = myParams.size
 
         fun addParam(p: String?) {
-            myParams.add(if (p == "") null else parseDouble(p))
+            myParams.add(if (p == "") null else p?.toDouble())
         }
 
         fun getParam(i: Int): Double? {

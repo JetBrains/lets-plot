@@ -16,7 +16,6 @@ import jetbrains.datalore.visualization.base.svg.slim.CanvasAware
 import jetbrains.datalore.visualization.base.svg.slim.CanvasContext
 import jetbrains.datalore.base.function.Runnable
 
-import java.lang.Double.parseDouble
 import jetbrains.datalore.visualization.base.canvas.CanvasControlUtil.drawLater
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
@@ -135,7 +134,7 @@ object SvgCanvasRenderer {
         val arr = attr.toString().split(",".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
         val dashes = DoubleArray(arr.size)
         for (i in arr.indices) {
-            dashes[i] = parseDouble(arr[i])
+            dashes[i] = arr[i].toDouble()
         }
         return dashes
     }
