@@ -31,9 +31,9 @@ actual class ThreadSafeAsync<ItemT> : ResolvableAsync<ItemT> {
         }
     }
 
-    override fun <ResultT> flatMap(success: Function<in ItemT, Async<ResultT>>): Async<ResultT> {
+    override fun <ResultT> flatMap(success: Function<in ItemT, out Async<ResultT>?>): Async<ResultT?> {
         synchronized(myAsync) {
-            return Asyncs.select(this, success, ThreadSafeAsync())
+            return Asyncs.select(this, success, ThreadSafeAsync<ResultT?>())
         }
     }
 

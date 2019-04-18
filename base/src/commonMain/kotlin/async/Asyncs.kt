@@ -1,11 +1,11 @@
 package jetbrains.datalore.base.async
 
-import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Function
+import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.function.Supplier
 import jetbrains.datalore.base.function.Value
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.base.function.Function as Func
 
 object Asyncs {
     fun isFinished(async: Async<*>): Boolean {
@@ -39,7 +39,7 @@ object Asyncs {
                 return Registration.EMPTY
             }
 
-            override fun <ResultT> map(success: Function<in ValueT, out ResultT>): Async<ResultT> {
+            override fun <ResultT> map(success: Func<in ValueT, out ResultT>): Async<ResultT> {
                 val result: ResultT
                 try {
                     result = success.apply(value)
@@ -51,8 +51,8 @@ object Asyncs {
                 return Asyncs.constant(result)
             }
 
-            override fun <ResultT> flatMap(success: Function<in ValueT, Async<ResultT>>): Async<ResultT> {
-                val result: Async<ResultT>
+            override fun <ResultT> flatMap(success: Func<in ValueT, out Async<ResultT>?>): Async<ResultT?> {
+                val result: Async<ResultT>?
                 try {
                     result = success.apply(value)
                 } catch (t: Throwable) {
@@ -60,8 +60,11 @@ object Asyncs {
                 }
 
                 //return cannot be moved to try block to avoid catching possible errors from Asyncs.constant call
-//                return result ?: Asyncs.constant(null)
-                return result
+                if (result == null) {
+                    return Asyncs.constant<ResultT?>(null)
+                } else {
+                    return result as Async<ResultT?>
+                }
             }
         }
     }
@@ -81,11 +84,11 @@ object Asyncs {
                 return Registration.EMPTY
             }
 
-            override fun <ResultT> map(success: Function<in ValueT, out ResultT>): Async<ResultT> {
+            override fun <ResultT> map(success: Func<in ValueT, out ResultT>): Async<ResultT> {
                 return Asyncs.failure(t)
             }
 
-            override fun <ResultT> flatMap(success: Function<in ValueT, Async<ResultT>>): Async<ResultT> {
+            override fun <ResultT> flatMap(success: Func<in ValueT, out Async<ResultT>?>): Async<ResultT?> {
                 return Asyncs.failure(t)
             }
         }
@@ -96,7 +99,7 @@ object Asyncs {
     }
 
 //    fun <ResultT> toUnit(async: Async<ResultT>): Async<Unit> {
-//        return map<ResultT, Unit, ResultT>(async, object : Function<ResultT, Unit> {
+//        return map<ResultT, Unit, ResultT>(async, object : Func<ResultT, Unit> {
 //            override fun apply(input: ResultT): Unit? {
 //                return null
 //            }
@@ -105,7 +108,7 @@ object Asyncs {
 
     internal fun <SourceT, TargetT, AsyncResultT : SourceT> map(
             async: Async<AsyncResultT>,
-            f: Function<SourceT, out TargetT>,
+            f: Func<SourceT, out TargetT>,
             resultAsync: ResolvableAsync<TargetT>):
             Async<TargetT> {
 
@@ -133,9 +136,9 @@ object Asyncs {
 
     internal fun <SourceT, TargetT> select(
             async: Async<SourceT>,
-            f: Function<in SourceT, Async<TargetT>>,
-            resultAsync: ResolvableAsync<TargetT>):
-            Async<TargetT> {
+            f: Func<in SourceT, out Async<TargetT>?>,
+            resultAsync: ResolvableAsync<TargetT?>):
+            Async<TargetT?> {
 
         async.onResult(
                 object : Consumer<SourceT> {
@@ -148,8 +151,11 @@ object Asyncs {
                             return
                         }
 
-//                        delegate(async1, resultAsync) ?: resultAsync.success(null)
-                        delegate(async1, resultAsync)
+                        if (async1 == null) {
+                            resultAsync.success(null)
+                        } else {
+                            delegate(async1, resultAsync)
+                        }
                     }
                 },
                 object : Consumer<Throwable> {
@@ -160,13 +166,19 @@ object Asyncs {
         return resultAsync
     }
 
-    fun <FirstT, SecondT> seq(first: Async<FirstT>, second: Async<SecondT>): Async<SecondT> {
-        return select(first, object : Function<FirstT, Async<SecondT>> {
-            override fun apply(value: FirstT): Async<SecondT> {
+    fun <FirstT, SecondT> seq(first: Async<FirstT>, second: Async<SecondT>): Async<SecondT?> {
+        val f = object : Func<FirstT, Async<SecondT>?> {
+            override fun apply(value: FirstT): Async<SecondT>? {
                 return second
             }
-        }, ThreadSafeAsync())
+        }
+
+        return select(first, f, ThreadSafeAsync<SecondT?>())
     }
+
+
+// When converting `parallel` to Kotlin
+// uncomment parallel tests in AsyncsTest
 
 //    fun parallel(vararg asyncs: Async<*>): Async<Unit> {
 //        return parallel(Arrays.asList(*asyncs))
@@ -225,9 +237,13 @@ object Asyncs {
 //        return result
 //    }
 
-//    fun <ItemT> composite(asyncs: List<Async<ItemT>>): Async<List<ItemT>> {
-//        return runParallel(asyncs, false)
-//    }
+    fun <ItemT> composite(asyncs: List<Async<ItemT>>): Async<List<ItemT>> {
+        throw IllegalStateException("was not converted to Kotlin")
+
+        // while converting to Kotlin,
+        // jetbrains.datalore.base.async.CompositeAsyncTest
+        // should also be converted
+    }
 
     fun onAnyResult(async: Async<*>, r: Runnable): Registration {
         return async.onResult(object : Consumer<Any?> {
@@ -245,8 +261,8 @@ object Asyncs {
         val result = SimpleAsync<ResultT>()
         val async: Async<ResultT>
         val successConsumer = object : Consumer<ResultT> {
-            override fun accept(item: ResultT) {
-                result.success(item)
+            override fun accept(value: ResultT) {
+                result.success(value)
             }
         }
         try {
@@ -277,6 +293,10 @@ object Asyncs {
             }
         })
     }
+
+// When converting to Kotlin
+// jetbrains.datalore.base.async.AsyncsPairTest
+// should also be converted
 
 //    fun <FirstT, SecondT> pair(first: Async<FirstT>, second: Async<SecondT>): Async<Pair<FirstT, SecondT>> {
 //        val res = SimpleAsync<Pair<FirstT, SecondT>>()

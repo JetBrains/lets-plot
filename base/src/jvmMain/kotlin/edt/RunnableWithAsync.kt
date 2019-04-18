@@ -79,7 +79,7 @@ private actual constructor(
         return myAsync.map(success)
     }
 
-    override fun <ResultT> flatMap(success: Function<in ItemT, Async<ResultT>>): Async<ResultT> {
+    override fun <ResultT> flatMap(success: Function<in ItemT, out Async<ResultT>?>): Async<ResultT?> {
         return myAsync.flatMap(success)
     }
 

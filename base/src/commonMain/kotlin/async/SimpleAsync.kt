@@ -52,8 +52,8 @@ class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
         return Asyncs.map(this, success, SimpleAsync<ResultT>())
     }
 
-    override fun <ResultT> flatMap(success: Function<in ItemT, Async<ResultT>>): Async<ResultT> {
-        return Asyncs.select(this, success, SimpleAsync<ResultT>())
+    override fun <ResultT> flatMap(success: Function<in ItemT, out Async<ResultT>?>): Async<ResultT?> {
+        return Asyncs.select(this, success, SimpleAsync<ResultT?>())
     }
 
     override fun success(result: ItemT) {
