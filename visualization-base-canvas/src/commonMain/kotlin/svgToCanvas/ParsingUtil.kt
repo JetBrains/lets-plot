@@ -57,6 +57,7 @@ internal object ParsingUtil {
             val r = Result(getName(matcher), paramCount)
             for (i in 0 until paramCount) {
                 val g = getParam(matcher, i) ?: break
+                if (g == "") break
                 r.addParam(g)
             }
             results.add(r)
@@ -83,7 +84,7 @@ internal object ParsingUtil {
         internal fun or(vararg ss: String): MyPatternBuilder {
             val ssLastIndex = ss.size - 1
             for ((index, s) in ss.withIndex()) {
-                sb.append(s).append('|')
+                sb.append(s)
                 if (index < ssLastIndex) {
                     sb.append('|')
                 }
