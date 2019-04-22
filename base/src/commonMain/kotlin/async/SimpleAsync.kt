@@ -19,7 +19,7 @@ class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
 
         if (alreadyHandled()) {
             if (mySucceeded) {
-                successHandler.accept(mySuccessItem!!)
+                successHandler(mySuccessItem!!)
             }
             return Registration.EMPTY
         }
@@ -40,7 +40,7 @@ class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
     override fun onFailure(failureHandler: Consumer<Throwable>): Registration {
         if (alreadyHandled()) {
             if (myFailed) {
-                failureHandler.accept(myFailureThrowable!!)
+                failureHandler(myFailureThrowable!!)
             }
             return Registration.EMPTY
         }
@@ -64,7 +64,7 @@ class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
 
         mySuccessHandlers!!.fire(object : ListenerCaller<Consumer<in ItemT>> {
             override fun call(l: Consumer<in ItemT>) {
-                l.accept(mySuccessItem!!)
+                l(mySuccessItem!!)
             }
         })
         clearHandlers()
@@ -79,7 +79,7 @@ class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
 
         myFailureHandlers!!.fire(object : ListenerCaller<Consumer<Throwable>> {
             override fun call(l: Consumer<Throwable>) {
-                l.accept(myFailureThrowable!!)
+                l(myFailureThrowable!!)
             }
         })
         clearHandlers()

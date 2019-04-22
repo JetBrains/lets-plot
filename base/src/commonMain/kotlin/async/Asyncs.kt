@@ -10,23 +10,16 @@ object Asyncs {
     fun isFinished(async: Async<*>): Boolean {
         val finished = Value(false)
         async.onResult(
-                object : Consumer<Any?> {
-                    override fun accept(value: Any?) {
-                        finished.set(true)
-                    }
-                },
-                object : Consumer<Throwable> {
-                    override fun accept(value: Throwable) {
-                        finished.set(true)
-                    }
-                }).remove()
+                { value -> finished.set(true) },
+                { value -> finished.set(true) }
+        ).remove()
         return finished.get()
     }
 
     fun <ValueT> constant(value: ValueT): Async<ValueT> {
         return object : Async<ValueT> {
             override fun onSuccess(successHandler: Consumer<in ValueT>): Registration {
-                successHandler.accept(value)
+                successHandler(value)
                 return Registration.EMPTY
             }
 
@@ -79,7 +72,7 @@ object Asyncs {
             }
 
             override fun onFailure(failureHandler: Consumer<Throwable>): Registration {
-                failureHandler.accept(t)
+                failureHandler(t)
                 return Registration.EMPTY
             }
 
@@ -108,24 +101,18 @@ object Asyncs {
             Async<TargetT> {
 
         async.onResult(
-                object : Consumer<AsyncResultT> {
-                    override fun accept(value: AsyncResultT) {
-                        val result: TargetT
-                        try {
-                            result = f(value)
-                        } catch (e: Exception) {
-                            resultAsync.failure(e)
-                            return
-                        }
+                { value ->
+                    val result: TargetT
+                    try {
+                        result = f(value)
+                    } catch (e: Exception) {
+                        resultAsync.failure(e)
+                        return@onResult
+                    }
 
-                        resultAsync.success(result)
-                    }
+                    resultAsync.success(result)
                 },
-                object : Consumer<Throwable> {
-                    override fun accept(value: Throwable) {
-                        resultAsync.failure(value)
-                    }
-                })
+                { value -> resultAsync.failure(value) })
         return resultAsync
     }
 
@@ -136,28 +123,22 @@ object Asyncs {
             Async<TargetT?> {
 
         async.onResult(
-                object : Consumer<SourceT> {
-                    override fun accept(value: SourceT) {
-                        val async1: Async<TargetT>?
-                        try {
-                            async1 = f(value)
-                        } catch (e: Exception) {
-                            resultAsync.failure(e)
-                            return
-                        }
+                { value ->
+                    val async1: Async<TargetT>?
+                    try {
+                        async1 = f(value)
+                    } catch (e: Exception) {
+                        resultAsync.failure(e)
+                        return@onResult
+                    }
 
-                        if (async1 == null) {
-                            resultAsync.success(null)
-                        } else {
-                            delegate(async1, resultAsync)
-                        }
+                    if (async1 == null) {
+                        resultAsync.success(null)
+                    } else {
+                        delegate(async1, resultAsync)
                     }
                 },
-                object : Consumer<Throwable> {
-                    override fun accept(value: Throwable) {
-                        resultAsync.failure(value)
-                    }
-                })
+                { value -> resultAsync.failure(value) })
         return resultAsync
     }
 
@@ -235,25 +216,13 @@ object Asyncs {
     }
 
     fun onAnyResult(async: Async<*>, r: Runnable): Registration {
-        return async.onResult(object : Consumer<Any?> {
-            override fun accept(value: Any?) {
-                r.run()
-            }
-        }, object : Consumer<Throwable> {
-            override fun accept(value: Throwable) {
-                r.run()
-            }
-        })
+        return async.onResult({ r.run() }, { r.run() })
     }
 
     fun <ResultT> untilSuccess(s: Supplier<Async<ResultT>>): Async<ResultT> {
         val result = SimpleAsync<ResultT>()
         val async: Async<ResultT>
-        val successConsumer = object : Consumer<ResultT> {
-            override fun accept(value: ResultT) {
-                result.success(value)
-            }
-        }
+        val successConsumer: Consumer<ResultT> = { value -> result.success(value) }
         try {
             async = s.get()
         } catch (ignore: Exception) {
@@ -261,26 +230,12 @@ object Asyncs {
             return result
         }
 
-        async.onResult(successConsumer,
-                object : Consumer<Throwable> {
-                    override fun accept(value: Throwable) {
-                        untilSuccess(s).onSuccess(successConsumer)
-                    }
-                })
+        async.onResult(successConsumer, { untilSuccess(s).onSuccess(successConsumer) })
         return result
     }
 
     internal fun <ValueT> delegate(from: Async<out ValueT>, to: AsyncResolver<in ValueT>): Registration {
-        return from.onResult(
-                object : Consumer<ValueT> {
-                    override fun accept(value: ValueT) {
-                        to.success(value)
-                    }
-                }, object : Consumer<Throwable> {
-            override fun accept(value: Throwable) {
-                to.failure(value)
-            }
-        })
+        return from.onResult({ value -> to.success(value) }, { value -> to.failure(value) })
     }
 
 // When converting to Kotlin

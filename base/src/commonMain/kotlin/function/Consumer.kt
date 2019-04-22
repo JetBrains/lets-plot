@@ -1,5 +1,3 @@
 package jetbrains.datalore.base.function
 
-interface Consumer<ValueT> {
-    fun accept(value: ValueT)
-}
+typealias Consumer<T> = (T) -> Unit

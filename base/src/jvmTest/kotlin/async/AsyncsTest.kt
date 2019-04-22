@@ -1,7 +1,6 @@
 package jetbrains.datalore.base.async
 
 import jetbrains.datalore.base.async.asyncAssert.AsyncAssert.Companion.assertThat
-import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.function.Supplier
 import kotlin.test.Test
 import kotlin.test.fail
@@ -37,16 +36,8 @@ class AsyncsTest {
     fun ignoreHandlerException() {
         val async = SimpleAsync<Int>()
         val res = async.map { value -> value + 1 }
-        res.onSuccess(object : Consumer<Int> {
-            override fun accept(value: Int) {
-                throw IllegalArgumentException()
-            }
-        })
-        res.onFailure(object : Consumer<Throwable> {
-            override fun accept(value: Throwable) {
-                fail()
-            }
-        })
+        res.onSuccess { throw IllegalArgumentException() }
+        res.onFailure { fail() }
         async.success(1)
     }
 

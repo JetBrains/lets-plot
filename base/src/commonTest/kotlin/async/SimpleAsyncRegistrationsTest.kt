@@ -40,11 +40,7 @@ class SimpleAsyncRegistrationsTest {
     @Test
     fun removeRegistrationInSuccessHandler() {
         val regValue = Value(Registration.EMPTY)
-        val reg = async.onSuccess(object : Consumer<Unit> {
-            override fun accept(value: Unit) {
-                regValue.get().remove()
-            }
-        })
+        val reg = async.onSuccess { regValue.get().remove() }
         regValue.set(reg)
         async.success(Unit)
     }
@@ -52,11 +48,7 @@ class SimpleAsyncRegistrationsTest {
     @Test
     fun removeRegistrationInFailureHandler() {
         val regValue = Value(Registration.EMPTY)
-        val reg = async.onFailure(object : Consumer<Throwable> {
-            override fun accept(value: Throwable) {
-                regValue.get().remove()
-            }
-        })
+        val reg = async.onFailure { regValue.get().remove() }
         regValue.set(reg)
         async.failure(RuntimeException())
     }
@@ -64,53 +56,41 @@ class SimpleAsyncRegistrationsTest {
     @Test
     fun addSuccessHandlerAfterFailure() {
         async.failure(Throwable())
-        val reg = async.onSuccess(object : Consumer<Unit> {
-            override fun accept(value: Unit) {}
-        })
+        val reg = async.onSuccess {}
         reg.remove()
     }
 
     @Test
     fun addFailureHandlerAfterSuccess() {
         async.success(Unit)
-        val reg = async.onFailure(object : Consumer<Throwable> {
-            override fun accept(value: Throwable) {}
-        })
+        val reg = async.onFailure {}
         reg.remove()
     }
 
     @Test
     fun removeSuccessRegistrationAfterSuccess() {
-        val reg = async.onSuccess(object : Consumer<Unit> {
-            override fun accept(value: Unit) {}
-        })
+        val reg = async.onSuccess {}
         async.success(Unit)
         reg.remove()
     }
 
     @Test
     fun removeSuccessRegistrationAfterFailure() {
-        val reg = async.onSuccess(object : Consumer<Unit> {
-            override fun accept(value: Unit) {}
-        })
+        val reg = async.onSuccess {}
         async.failure(RuntimeException())
         reg.remove()
     }
 
     @Test
     fun removeFailureRegistrationAfterSuccess() {
-        val reg = async.onFailure(object : Consumer<Throwable> {
-            override fun accept(value: Throwable) {}
-        })
+        val reg = async.onFailure {}
         async.success(Unit)
         reg.remove()
     }
 
     @Test
     fun removeFailureRegistrationAfterFailure() {
-        val reg = async.onFailure(object : Consumer<Throwable> {
-            override fun accept(value: Throwable) {}
-        })
+        val reg = async.onFailure {}
         async.failure(RuntimeException())
         reg.remove()
     }
@@ -120,10 +100,6 @@ class SimpleAsyncRegistrationsTest {
     }
 
     private fun <ItemT> throwingHandler(): Consumer<ItemT> {
-        return object : Consumer<ItemT> {
-            override fun accept(value: ItemT) {
-                throw RuntimeException()
-            }
-        }
+        return { throw RuntimeException() }
     }
 }

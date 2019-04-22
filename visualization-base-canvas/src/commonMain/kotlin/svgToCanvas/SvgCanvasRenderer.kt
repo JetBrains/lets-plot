@@ -1,24 +1,14 @@
 package jetbrains.datalore.visualization.base.svgToCanvas
 
-import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.visualization.base.canvas.Canvas
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
-import jetbrains.datalore.visualization.base.svg.SvgCircleElement
-import jetbrains.datalore.visualization.base.svg.SvgElement
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.base.svg.SvgPathElement
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.base.svg.SvgTextElement
-import jetbrains.datalore.visualization.base.svg.SvgTextNode
-import jetbrains.datalore.visualization.base.svg.slim.CanvasAware
-import jetbrains.datalore.visualization.base.svg.slim.CanvasContext
 import jetbrains.datalore.base.function.Runnable
-
+import jetbrains.datalore.base.observable.property.Property
+import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.base.canvas.CanvasControlUtil.drawLater
+import jetbrains.datalore.visualization.base.svg.*
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
+import jetbrains.datalore.visualization.base.svg.slim.CanvasAware
+import jetbrains.datalore.visualization.base.svg.slim.CanvasContext
 
 object SvgCanvasRenderer {
     fun draw(rootGroup: SvgGElement, canvasControl: CanvasControl) {
@@ -27,15 +17,14 @@ object SvgCanvasRenderer {
 
         val virtualCanvas = canvasControl.createCanvas(canvasControl.size)
         draw(rootGroup, Context2DCanvasContext(virtualCanvas.context2d))
-        virtualCanvas.takeSnapshot().onSuccess(object : Consumer<Canvas.Snapshot> {
-            override fun accept(value: Canvas.Snapshot) {
-                drawLater(canvasControl, object : Runnable {
-                    override fun run() {
-                        rootCanvas.context2d.drawImage(value, 0, 0)
-                    }
-                })
-            }
-        })
+
+        virtualCanvas.takeSnapshot().onSuccess { value ->
+            drawLater(canvasControl, object : Runnable {
+                override fun run() {
+                    rootCanvas.context2d.drawImage(value, 0, 0)
+                }
+            })
+        }
     }
 
     private fun draw(g: SvgGElement, context: CanvasContext) {

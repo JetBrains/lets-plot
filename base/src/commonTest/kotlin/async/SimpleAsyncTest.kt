@@ -66,26 +66,14 @@ class SimpleAsyncTest {
     }
 
     private fun <ResultT> throwingHandler(): Consumer<ResultT> {
-        return object : Consumer<ResultT> {
-            override fun accept(value: ResultT) {
-                throw RuntimeException()
-            }
-        }
+        return { throw RuntimeException() }
     }
 
     private fun <ResultT> succeedingHandler(async: SimpleAsync<Unit>): Consumer<ResultT> {
-        return object : Consumer<ResultT> {
-            override fun accept(value: ResultT) {
-                async.success(Unit)
-            }
-        }
+        return { async.success(Unit) }
     }
 
     private fun <ResultT> failingHandler(async: SimpleAsync<Unit>): Consumer<ResultT> {
-        return object : Consumer<ResultT> {
-            override fun accept(value: ResultT) {
-                async.failure(Throwable())
-            }
-        }
+        return { async.failure(Throwable()) }
     }
 }
