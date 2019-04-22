@@ -40,7 +40,7 @@ object EventSources {
             override fun addHandler(handler: EventHandler<in EventT>): Registration {
                 return source.addHandler(object : EventHandler<EventT> {
                     override fun onEvent(event: EventT) {
-                        if (pred.test(event)) {
+                        if (pred(event)) {
                             handler.onEvent(event)
                         }
                     }

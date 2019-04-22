@@ -84,14 +84,14 @@ object ObservableCollections {
             override fun doAddListeners() {
                 myCollectionRegistration = collection.addListener(object : CollectionAdapter<ItemT>() {
                     override fun onItemAdded(event: CollectionItemEvent<ItemT>) {
-                        if (predicate.test(event.newItem)) {
+                        if (predicate(event.newItem)) {
                             myCount++
                         }
                         somethingChanged()
                     }
 
                     override fun onItemRemoved(event: CollectionItemEvent<ItemT>) {
-                        if (predicate.test(event.oldItem)) {
+                        if (predicate(event.oldItem)) {
                             myCount--
                         }
                         somethingChanged()
@@ -118,7 +118,7 @@ object ObservableCollections {
     private fun <ItemT> simpleCount(predicate: Predicate<in ItemT>, collection: Collection<ItemT>): Int {
         var count = 0
         for (i in collection) {
-            if (predicate.test(i)) {
+            if (predicate(i)) {
                 count++
             }
         }

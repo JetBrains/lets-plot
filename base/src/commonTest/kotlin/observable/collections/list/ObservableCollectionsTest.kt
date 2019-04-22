@@ -13,11 +13,7 @@ import kotlin.test.assertTrue
 class ObservableCollectionsTest {
     companion object {
 
-        private val STARTS_WITH_A = object : Predicate<String?> {
-            override fun test(value: String?): Boolean {
-                return value?.startsWith("a") ?: false
-            }
-        }
+        private val STARTS_WITH_A: Predicate<String?> = { value -> value?.startsWith("a") ?: false }
     }
 
 /*

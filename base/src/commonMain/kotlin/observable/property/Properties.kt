@@ -598,7 +598,7 @@ object Properties {
                 get() = "isValid(" + source.propExpr + ", " + validator + ")"
 
             override fun doGet(): Boolean {
-                return validator.test(source.get())
+                return validator(source.get())
             }
         }
     }
@@ -613,14 +613,14 @@ object Properties {
 
             override fun doGet(): ValueT? {
                 val sourceValue = source.get()
-                if (validator.test(sourceValue)) {
+                if (validator(sourceValue)) {
                     myLastValid = sourceValue
                 }
                 return myLastValid
             }
 
             override fun set(value: ValueT?) {
-                if (!validator.test(value)) {
+                if (!validator(value)) {
                     return
                 }
                 source.set(value)

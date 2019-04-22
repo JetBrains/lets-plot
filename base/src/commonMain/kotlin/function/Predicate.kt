@@ -1,5 +1,3 @@
 package jetbrains.datalore.base.function
 
-interface Predicate<ValueT> {
-    fun test(value: ValueT): Boolean
-}
+typealias Predicate<T> = (T) -> Boolean
