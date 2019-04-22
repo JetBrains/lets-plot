@@ -2,7 +2,6 @@ package jetbrains.datalore.base.edt
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.function.Supplier
 import jetbrains.datalore.base.registration.Registration
@@ -24,11 +23,11 @@ private actual constructor(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun <ResultT> map(success: Function<in ItemT, out ResultT>): Async<ResultT> {
+    override fun <ResultT> map(success: (ItemT) -> ResultT): Async<ResultT> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun <ResultT> flatMap(success: Function<in ItemT, out Async<ResultT>?>): Async<ResultT?> {
+    override fun <ResultT> flatMap(success: (ItemT) -> Async<ResultT>?): Async<ResultT?> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

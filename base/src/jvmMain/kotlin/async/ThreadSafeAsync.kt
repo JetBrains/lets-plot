@@ -1,7 +1,6 @@
 package jetbrains.datalore.base.async
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.registration.Registration
 
 actual class ThreadSafeAsync<ItemT> : ResolvableAsync<ItemT> {
@@ -25,13 +24,13 @@ actual class ThreadSafeAsync<ItemT> : ResolvableAsync<ItemT> {
         }
     }
 
-    override fun <ResultT> map(success: Function<in ItemT, out ResultT>): Async<ResultT> {
+    override fun <ResultT> map(success: (ItemT) -> ResultT): Async<ResultT> {
         synchronized(myAsync) {
             return Asyncs.map(this, success, ThreadSafeAsync())
         }
     }
 
-    override fun <ResultT> flatMap(success: Function<in ItemT, out Async<ResultT>?>): Async<ResultT?> {
+    override fun <ResultT> flatMap(success: (ItemT) -> Async<ResultT>?): Async<ResultT?> {
         synchronized(myAsync) {
             return Asyncs.select(this, success, ThreadSafeAsync<ResultT?>())
         }

@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.base.canvas.javaFx
 import javafx.embed.swing.JFXPanel
 import javafx.scene.image.WritableImage
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.base.canvas.ScaledCanvas
@@ -38,15 +37,9 @@ private constructor(
 
     override fun takeSnapshot(): Async<Canvas.Snapshot> {
         return asyncTakeSnapshotImage(nativeCanvas).map(
-                success = object : Function<WritableImage, Canvas.Snapshot> {
-                    override fun apply(value: WritableImage): Canvas.Snapshot {
-                        return JavafxSnapshot(value)
-                    }
-
-                }
+                success = { image -> JavafxSnapshot(image) }
         )
     }
 
     internal class JavafxSnapshot(val image: WritableImage) : Canvas.Snapshot
-
 }

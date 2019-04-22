@@ -1,6 +1,5 @@
 package jetbrains.datalore.base.observable.collections.list
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.observable.collections.*
 import jetbrains.datalore.base.observable.collections.set.ObservableHashSet
@@ -133,11 +132,7 @@ object ObservableCollections {
             ReadableProperty<out Boolean?> {
 
         val prop = count(collection, predicate)
-        return Properties.map(prop, object : Function<Int?, Boolean> {
-            override fun apply(value: Int?): Boolean {
-                return value == collection.size
-            }
-        })
+        return Properties.map(prop) { value -> value == collection.size }
     }
 
     fun <ItemT> any(
@@ -146,16 +141,12 @@ object ObservableCollections {
             ReadableProperty<out Boolean?> {
 
         val prop = count(collection, predicate)
-        return Properties.map(prop, object : Function<Int?, Boolean> {
-            override fun apply(value: Int?): Boolean {
-                return value!! > 0
-            }
-        })
+        return Properties.map(prop) { value -> value > 0 }
     }
 
     fun <ValueT, ItemT> selectCollection(
             p: ReadableProperty<ValueT>,
-            s: Function<ValueT, ObservableCollection<ItemT?>>):
+            s: (ValueT) -> ObservableCollection<ItemT?>):
             ObservableCollection<ItemT?> {
 
         return UnmodifiableObservableCollection(SelectorDerivedCollection(p, s))
@@ -163,7 +154,7 @@ object ObservableCollections {
 
     fun <ValueT, ItemT> selectList(
             p: ReadableProperty<out ValueT>,
-            s: Function<in ValueT, out ObservableList<ItemT?>>):
+            s: (ValueT) -> ObservableList<ItemT?>):
 
             ObservableList<ItemT?> {
 
@@ -173,7 +164,7 @@ object ObservableCollections {
     private class SelectorDerivedCollection<ValueT, ItemT>
     internal constructor(
             source: ReadableProperty<ValueT>,
-            `fun`: Function<ValueT, ObservableCollection<ItemT?>>) :
+            `fun`: (ValueT) -> ObservableCollection<ItemT?>) :
             SelectedCollection<ValueT, ItemT?, ObservableCollection<ItemT?>>(source, `fun`) {
 
         override fun empty(): ObservableCollection<ItemT?> {
@@ -217,7 +208,7 @@ object ObservableCollections {
     private class SelectorDerivedList<ValueT, ItemT>
     internal constructor(
             source: ReadableProperty<out ValueT>,
-            `fun`: Function<in ValueT, out ObservableList<ItemT?>>) :
+            `fun`: (ValueT) -> ObservableList<ItemT?>) :
 
             SelectedCollection<ValueT, ItemT?, ObservableList<ItemT?>>(source, `fun`) {
 

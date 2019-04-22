@@ -24,17 +24,9 @@ class ObservableCollectionsTest {
     @Test
     fun testReadingHandlerOnSelectList() {
         val property = ValueProperty<List<String>?>(null)
-        val collection = ObservableCollections.selectList(
-                property,
-//                { value -> toObservable(ArrayList(value)) }
-                object : Function<List<String>?, ObservableList<String>> {
-                    override fun apply(value: List<String>?): ObservableList<String> {
-                        return toObservable(value!!)
-                    }
-                }
-        )
+        val collection = ObservableCollections.selectList<List<String>?, String>(property) { value -> toObservable(value!!)}
 
-        val registration = collection.addHandler({ event : CollectionItemEvent<String?> -> })
+    val registration = collection.addHandler({ event : CollectionItemEvent<String?> -> })
         property.set(listOf("1", "2"))
         registration.dispose()
 

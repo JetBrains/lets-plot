@@ -1,8 +1,7 @@
 package jetbrains.datalore.base.observable.property
 
-import jetbrains.datalore.base.function.Runnable
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Predicate
+import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.function.Supplier
 import jetbrains.datalore.base.function.Value
 import jetbrains.datalore.base.observable.collections.CollectionAdapter
@@ -18,30 +17,15 @@ object Properties {
     val FALSE = Properties.constant(false)
 
     fun not(prop: ReadableProperty<out Boolean?>): ReadableProperty<out Boolean?> {
-        return map(prop,
-                object : Function<Boolean?, Boolean?> {
-                    override fun apply(value: Boolean?): Boolean? {
-                        return if (value == null) {
-                            null
-                        } else !value
-                    }
-                })
+        return map(prop) { value -> if (value == null) null else !value }
     }
 
     fun <ValueT> notNull(prop: ReadableProperty<out ValueT?>): ReadableProperty<out Boolean> {
-        return map(prop, object : Function<ValueT?, Boolean?> {
-            override fun apply(value: ValueT?): Boolean? {
-                return (value != null)
-            }
-        }) as ReadableProperty<out Boolean>
+        return map(prop) { value -> value != null } as ReadableProperty<out Boolean>
     }
 
     fun <ValueT> isNull(prop: ReadableProperty<out ValueT?>): ReadableProperty<out Boolean> {
-        return map(prop, object : Function<ValueT?, Boolean?> {
-            override fun apply(value: ValueT?): Boolean? {
-                return value == null
-            }
-        }) as ReadableProperty<out Boolean>
+        return map(prop) { value -> value == null } as ReadableProperty<out Boolean>
     }
 
     fun startsWith(string: ReadableProperty<String?>, prefix: ReadableProperty<String?>): ReadableProperty<out Boolean> {
@@ -138,19 +122,19 @@ object Properties {
     }
 
     fun <SourceT, TargetT> select(
-            source: ReadableProperty<SourceT?>, `fun`: Function<in SourceT?, ReadableProperty<TargetT?>>): ReadableProperty<TargetT?> {
+            source: ReadableProperty<SourceT?>, `fun`: (SourceT?) -> ReadableProperty<TargetT?>): ReadableProperty<TargetT?> {
         return select(source, `fun`, null)
     }
 
     fun <SourceT, TargetT> select(
-            source: ReadableProperty<SourceT?>, `fun`: Function<in SourceT?, ReadableProperty<TargetT?>>,
+            source: ReadableProperty<SourceT?>, `fun`: (SourceT?) -> ReadableProperty<TargetT?>,
             nullValue: TargetT?
     ): ReadableProperty<TargetT?> {
 
         val calc = object : Supplier<TargetT?> {
             override fun get(): TargetT? {
                 val value = source.get() ?: return nullValue
-                val prop = `fun`.apply(value) ?: return null
+                val prop = `fun`(value) ?: return null
                 return prop.get()
             }
         }
@@ -166,7 +150,7 @@ object Properties {
                 get() = "select(" + source.propExpr + ", " + `fun` + ")"
 
             override fun doAddListeners() {
-                myTargetProperty = if (source.get() == null) null else `fun`.apply(source.get())
+                myTargetProperty = if (source.get() == null) null else `fun`(source.get())
 
                 val targetHandler = object : EventHandler<PropertyChangeEvent<out TargetT?>> {
                     override fun onEvent(event: PropertyChangeEvent<out TargetT?>) {
@@ -180,7 +164,7 @@ object Properties {
                         }
                         val sourceValue = source.get()
                         if (sourceValue != null) {
-                            myTargetProperty = `fun`.apply(sourceValue)
+                            myTargetProperty = `fun`(sourceValue)
                         } else {
                             myTargetProperty = null
                         }
@@ -210,11 +194,11 @@ object Properties {
     }
 
     fun <SourceT, TargetT> selectRw(
-            source: ReadableProperty<SourceT>, `fun`: Function<SourceT, Property<TargetT?>>): Property<TargetT?> {
+            source: ReadableProperty<SourceT>, `fun`: (SourceT) -> Property<TargetT?>): Property<TargetT?> {
         val calc = object : Supplier<TargetT?> {
             override fun get(): TargetT? {
                 val value = source.get() ?: return null
-                val prop = `fun`.apply(value) ?: return null
+                val prop = `fun`(value) ?: return null
                 return prop.get()
             }
         }
@@ -230,7 +214,7 @@ object Properties {
                 get() = "select(" + source.propExpr + ", " + `fun` + ")"
 
             override fun doAddListeners() {
-                myTargetProperty = if (source.get() == null) null else `fun`.apply(source.get())
+                myTargetProperty = if (source.get() == null) null else `fun`(source.get())
 
                 val targetHandler = object : EventHandler<PropertyChangeEvent<out TargetT?>> {
                     override fun onEvent(event: PropertyChangeEvent<out TargetT?>) {
@@ -244,7 +228,7 @@ object Properties {
                         }
                         val sourceValue = source.get()
                         if (sourceValue != null) {
-                            myTargetProperty = `fun`.apply(sourceValue)
+                            myTargetProperty = `fun`(sourceValue)
                         } else {
                             myTargetProperty = null
                         }
@@ -281,7 +265,7 @@ object Properties {
     }
 
     fun <EventT, ValueT> selectEvent(
-            prop: ReadableProperty<out ValueT>, selector: Function<ValueT, EventSource<EventT>>): EventSource<EventT> {
+            prop: ReadableProperty<out ValueT>, selector: (ValueT) -> EventSource<EventT>): EventSource<EventT> {
         return object : EventSource<EventT> {
             override fun addHandler(handler: EventHandler<in EventT>): Registration {
                 val esReg = Value(Registration.EMPTY)
@@ -290,7 +274,7 @@ object Properties {
                     override fun run() {
                         esReg.get().remove()
                         if (prop.get() != null) {
-                            esReg.set(selector.apply(prop.get()).addHandler(handler))
+                            esReg.set(selector(prop.get()).addHandler(handler))
                         } else {
                             esReg.set(Registration.EMPTY)
                         }
@@ -316,19 +300,11 @@ object Properties {
     }
 
     fun <ValueT> same(prop: ReadableProperty<out ValueT?>, v: ValueT?): ReadableProperty<out Boolean> {
-        return map(prop, object : Function<ValueT?, Boolean> {
-            override fun apply(value: ValueT?): Boolean {
-                return value === v
-            }
-        }) as ReadableProperty<out Boolean>
+        return map(prop) { value -> value === v } as ReadableProperty<out Boolean>
     }
 
     fun <ValueT> equals(prop: ReadableProperty<out ValueT?>, v: ValueT?): ReadableProperty<out Boolean> {
-        return map(prop, object : Function<ValueT?, Boolean> {
-            override fun apply(value: ValueT?): Boolean {
-                return value == v
-            }
-        }) as ReadableProperty<out Boolean>
+        return map(prop) { value -> value == v } as ReadableProperty<out Boolean>
     }
 
     fun <ValueT> equals(p1: ReadableProperty<out ValueT?>, p2: ReadableProperty<out ValueT?>): ReadableProperty<out Boolean> {
@@ -352,21 +328,21 @@ object Properties {
     }
 
     fun <SourceT, TargetT> map(
-            prop: ReadableProperty<out SourceT>, f: Function<in SourceT, out TargetT>): ReadableProperty<out TargetT?> {
+            prop: ReadableProperty<out SourceT>, f: (SourceT) -> TargetT): ReadableProperty<out TargetT?> {
         return object : DerivedProperty<TargetT?>(null, prop) {
 
             override val propExpr: String
                 get() = "transform(" + prop.propExpr + ", " + f + ")"
 
             override fun doGet(): TargetT? {
-                return f.apply(prop.get())
+                return f(prop.get())
             }
         }
     }
 
     fun <SourceT, TargetT> map(
-            prop: Property<SourceT>, sToT: Function<in SourceT?, out TargetT>,
-            tToS: Function<in TargetT, out SourceT>
+            prop: Property<SourceT>, sToT: (SourceT?) -> TargetT,
+            tToS: (TargetT) -> SourceT
     ): Property<TargetT> {
         class TransformedProperty : Property<TargetT> {
 
@@ -374,14 +350,14 @@ object Properties {
                 get() = "transform(" + prop.propExpr + ", " + sToT + ", " + tToS + ")"
 
             override fun get(): TargetT {
-                return sToT.apply(prop.get())
+                return sToT(prop.get())
             }
 
             override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out TargetT>>): Registration {
                 return prop.addHandler(object : EventHandler<PropertyChangeEvent<out SourceT>> {
                     override fun onEvent(event: PropertyChangeEvent<out SourceT>) {
-                        val oldValue = sToT.apply(event.oldValue)
-                        val newValue = sToT.apply(event.newValue)
+                        val oldValue = sToT(event.oldValue)
+                        val newValue = sToT(event.newValue)
 
                         if (oldValue == newValue) return
 
@@ -391,7 +367,7 @@ object Properties {
             }
 
             override fun set(value: TargetT) {
-                prop.set(tToS.apply(value))
+                prop.set(tToS(value))
             }
         }
 
@@ -802,11 +778,7 @@ object Properties {
 
 /*
     fun <EnumT : Enum<EnumT>> enumAsInteger(source: Property<EnumT>, enumClass: KClass<out EnumT>): Property<Int> {
-        return property(map(source, object : Function<EnumT, Int> {
-            override fun apply(value: EnumT?): Int? {
-                return value?.ordinal
-            }
-        }),
+        return property(map(source) { value -> value.ordinal },
                 object : WritableProperty<Int> {
                     override fun set(value: Int?) {
                         if (value == null) {

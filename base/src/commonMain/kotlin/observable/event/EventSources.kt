@@ -1,6 +1,5 @@
 package jetbrains.datalore.base.observable.event
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.observable.collections.CollectionAdapter
 import jetbrains.datalore.base.observable.collections.CollectionItemEvent
@@ -50,23 +49,23 @@ object EventSources {
         }
     }
 
-    fun <SourceEventT, TargetEventT> map(src: EventSource<SourceEventT>, f: Function<SourceEventT, TargetEventT>): EventSource<TargetEventT> {
+    fun <SourceEventT, TargetEventT> map(src: EventSource<SourceEventT>, f: (SourceEventT) -> TargetEventT): EventSource<TargetEventT> {
         return MappingEventSource<SourceEventT, TargetEventT>(src, f)
     }
 
     fun <EventT, ItemT> selectList(
-            list: ObservableList<ItemT>, selector: Function<ItemT?, EventSource<EventT>>): EventSource<EventT> {
+            list: ObservableList<ItemT>, selector: (ItemT?) -> EventSource<EventT>): EventSource<EventT> {
         return object : EventSource<EventT> {
             override fun addHandler(handler: EventHandler<in EventT>): Registration {
                 val itemRegs = ArrayList<Registration>()
                 for (item in list) {
-                    itemRegs.add(selector.apply(item).addHandler(handler))
+                    itemRegs.add(selector(item).addHandler(handler))
                 }
 
 
                 val listReg = list.addListener(object : CollectionAdapter<ItemT>() {
                     override fun onItemAdded(event: CollectionItemEvent<ItemT>) {
-                        itemRegs.add(event.index, selector.apply(event.newItem).addHandler(handler))
+                        itemRegs.add(event.index, selector(event.newItem).addHandler(handler))
                     }
 
                     override fun onItemRemoved(event: CollectionItemEvent<ItemT>) {

@@ -1,7 +1,6 @@
 package jetbrains.datalore.base.async
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.registration.Registration
 
 /**
@@ -22,7 +21,7 @@ interface Async<ItemT> {
      * This method must always create new async every time it's called.
      * Every error thrown in `success` should fail async with corresponding `Throwable`
      */
-    fun <ResultT> map(success: Function<in ItemT, out ResultT>): Async<ResultT>
+    fun <ResultT> map(success: (ItemT) -> ResultT): Async<ResultT>
 
     /**
      * Should comply with A+ promise 'then' method except it has no failure handler.
@@ -30,5 +29,5 @@ interface Async<ItemT> {
      * This method must always create new async every time it's called.
      * Every error thrown in `success` should fail async with corresponding `Throwable`
      */
-    fun <ResultT> flatMap(success: Function<in ItemT, out Async<ResultT>?>): Async<ResultT?>
+    fun <ResultT> flatMap(success: (ItemT) -> Async<ResultT>?): Async<ResultT?>
 }

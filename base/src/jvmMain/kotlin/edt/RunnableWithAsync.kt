@@ -2,7 +2,6 @@ package jetbrains.datalore.base.edt
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.function.Supplier
 import jetbrains.datalore.base.registration.Registration
@@ -75,11 +74,11 @@ private actual constructor(
         return myAsync.onFailure(failureHandler)
     }
 
-    override fun <ResultT> map(success: Function<in ItemT, out ResultT>): Async<ResultT> {
+    override fun <ResultT> map(success: (ItemT) -> ResultT): Async<ResultT> {
         return myAsync.map(success)
     }
 
-    override fun <ResultT> flatMap(success: Function<in ItemT, out Async<ResultT>?>): Async<ResultT?> {
+    override fun <ResultT> flatMap(success: (ItemT) -> Async<ResultT>?): Async<ResultT?> {
         return myAsync.flatMap(success)
     }
 

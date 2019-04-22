@@ -5,7 +5,6 @@ import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.function.Supplier
 import jetbrains.datalore.base.function.Value
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.base.function.Function as Func
 
 object Asyncs {
     fun isFinished(async: Async<*>): Boolean {
@@ -39,10 +38,10 @@ object Asyncs {
                 return Registration.EMPTY
             }
 
-            override fun <ResultT> map(success: Func<in ValueT, out ResultT>): Async<ResultT> {
+            override fun <ResultT> map(success: (ValueT) -> ResultT): Async<ResultT> {
                 val result: ResultT
                 try {
-                    result = success.apply(value)
+                    result = success(value)
                 } catch (t: Throwable) {
                     return Asyncs.failure(t)
                 }
@@ -51,10 +50,10 @@ object Asyncs {
                 return Asyncs.constant(result)
             }
 
-            override fun <ResultT> flatMap(success: Func<in ValueT, out Async<ResultT>?>): Async<ResultT?> {
+            override fun <ResultT> flatMap(success: (ValueT) -> Async<ResultT>?): Async<ResultT?> {
                 val result: Async<ResultT>?
                 try {
-                    result = success.apply(value)
+                    result = success(value)
                 } catch (t: Throwable) {
                     return Asyncs.failure(t)
                 }
@@ -84,11 +83,11 @@ object Asyncs {
                 return Registration.EMPTY
             }
 
-            override fun <ResultT> map(success: Func<in ValueT, out ResultT>): Async<ResultT> {
+            override fun <ResultT> map(success: (ValueT) -> ResultT): Async<ResultT> {
                 return Asyncs.failure(t)
             }
 
-            override fun <ResultT> flatMap(success: Func<in ValueT, out Async<ResultT>?>): Async<ResultT?> {
+            override fun <ResultT> flatMap(success: (ValueT) -> Async<ResultT>?): Async<ResultT?> {
                 return Asyncs.failure(t)
             }
         }
@@ -99,16 +98,12 @@ object Asyncs {
     }
 
 //    fun <ResultT> toUnit(async: Async<ResultT>): Async<Unit> {
-//        return map<ResultT, Unit, ResultT>(async, object : Func<ResultT, Unit> {
-//            override fun apply(input: ResultT): Unit? {
-//                return null
-//            }
-//        }, ThreadSafeAsync<Unit>())
+//        return map<ResultT, Unit, ResultT>(async, { null }, ThreadSafeAsync<Unit>())
 //    }
 
     internal fun <SourceT, TargetT, AsyncResultT : SourceT> map(
             async: Async<AsyncResultT>,
-            f: Func<SourceT, out TargetT>,
+            f: (SourceT) -> TargetT,
             resultAsync: ResolvableAsync<TargetT>):
             Async<TargetT> {
 
@@ -117,7 +112,7 @@ object Asyncs {
                     override fun accept(value: AsyncResultT) {
                         val result: TargetT
                         try {
-                            result = f.apply(value)
+                            result = f(value)
                         } catch (e: Exception) {
                             resultAsync.failure(e)
                             return
@@ -136,7 +131,7 @@ object Asyncs {
 
     internal fun <SourceT, TargetT> select(
             async: Async<SourceT>,
-            f: Func<in SourceT, out Async<TargetT>?>,
+            f: (SourceT) -> Async<TargetT>?,
             resultAsync: ResolvableAsync<TargetT?>):
             Async<TargetT?> {
 
@@ -145,7 +140,7 @@ object Asyncs {
                     override fun accept(value: SourceT) {
                         val async1: Async<TargetT>?
                         try {
-                            async1 = f.apply(value)
+                            async1 = f(value)
                         } catch (e: Exception) {
                             resultAsync.failure(e)
                             return
@@ -167,13 +162,7 @@ object Asyncs {
     }
 
     fun <FirstT, SecondT> seq(first: Async<FirstT>, second: Async<SecondT>): Async<SecondT?> {
-        val f = object : Func<FirstT, Async<SecondT>?> {
-            override fun apply(value: FirstT): Async<SecondT>? {
-                return second
-            }
-        }
-
-        return select(first, f, ThreadSafeAsync<SecondT?>())
+        return select(first, { second }, ThreadSafeAsync<SecondT?>())
     }
 
 

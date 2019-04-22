@@ -2,7 +2,6 @@ package jetbrains.datalore.base.async
 
 import jetbrains.datalore.base.async.asyncAssert.AsyncAssert.Companion.assertThat
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Supplier
 import kotlin.test.Test
 import kotlin.test.fail
@@ -23,33 +22,21 @@ class AsyncsTest {
     @Test
     fun map() {
         val c = Asyncs.constant(239)
-        val mapped = c.map(object : Function<Int, Int> {
-            override fun apply(value: Int): Int {
-                return value + 1
-            }
-        })
+        val mapped = c.map { value -> value + 1 }
         assertThat(mapped).succeededWith(240)
     }
 
     @Test
     fun mapFailure() {
         val a = Asyncs.constant(1)
-        val mapped = a.map(object : Function<Int, Int> {
-            override fun apply(value: Int): Int {
-                throw RuntimeException("test")
-            }
-        })
+        val mapped = a.map { value -> throw RuntimeException("test") }
         assertThat(mapped).failed()
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun ignoreHandlerException() {
         val async = SimpleAsync<Int>()
-        val res = async.map(object : Function<Int, Int> {
-            override fun apply(value: Int): Int {
-                return value + 1
-            }
-        })
+        val res = async.map { value -> value + 1 }
         res.onSuccess(object : Consumer<Int> {
             override fun accept(value: Int) {
                 throw IllegalArgumentException()
@@ -66,61 +53,32 @@ class AsyncsTest {
     @Test
     fun select() {
         val c = Asyncs.constant(239)
-        val assertThat = assertThat(
-                c.flatMap(object : Function<Int, Async<Int>> {
-                    override fun apply(value: Int): Async<Int> {
-                        return Asyncs.constant(value + 1)
-                    }
-                }))
-        assertThat
-                .succeededWith(240)
+        val assertThat = assertThat(c.flatMap { value -> Asyncs.constant(value + 1) })
+        assertThat.succeededWith(240)
     }
 
     @Test
     fun selectException() {
         val a = Asyncs.constant(1)
-        assertThat(
-                a.flatMap(object : Function<Int, Async<Any>> {
-                    override fun apply(value: Int): Async<Any> {
-                        throw RuntimeException("test")
-                    }
-                }))
-                .failureIs(RuntimeException::class.java, "test")
+        assertThat(a.flatMap<Any> { throw RuntimeException("test") }).failureIs(RuntimeException::class.java, "test")
     }
 
     @Test
     fun selectFirstFailure() {
         val failure = Asyncs.failure<Int>(Throwable())
-        assertThat(
-                failure.flatMap(object : Function<Int, Async<Int>> {
-                    override fun apply(value: Int): Async<Int> {
-                        return Asyncs.constant(value + 1)
-                    }
-                }))
-                .failed()
+        assertThat(failure.flatMap { value -> Asyncs.constant(value + 1) }).failed()
     }
 
     @Test
     fun selectReturnedFailure() {
         val async = Asyncs.constant(1)
-        assertThat(
-                async.flatMap(object : Function<Int, Async<Int>> {
-                    override fun apply(value: Int): Async<Int> {
-                        return Asyncs.failure(Throwable())
-                    }
-                })).failed()
+        assertThat(async.flatMap { Asyncs.failure<Int>(Throwable()) }).failed()
     }
 
     @Test
     fun selectReturnsNull() {
         val async = Asyncs.constant(1)
-        assertThat(
-                async.flatMap(object : Function<Int, Async<Int>?> {
-                    override fun apply(value: Int): Async<Int>? {
-                        return null
-                    }
-                }))
-                .succeededWith(null)
+        assertThat(async.flatMap<Int> { null }).succeededWith(null)
     }
 
 //    @Test

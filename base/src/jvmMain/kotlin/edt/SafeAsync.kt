@@ -4,7 +4,6 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.async.ThreadSafeAsync
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.registration.Registration
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -46,11 +45,11 @@ actual class SafeAsync<ItemT> actual constructor() : Async<ItemT> {
         return myAsync.onFailure(failureHandler)
     }
 
-    override fun <ResultT> map(success: Function<in ItemT, out ResultT>): Async<ResultT> {
+    override fun <ResultT> map(success: (ItemT) -> ResultT): Async<ResultT> {
         return myAsync.map(success)
     }
 
-    override fun <ResultT> flatMap(success: Function<in ItemT, out Async<ResultT>?>): Async<ResultT?> {
+    override fun <ResultT> flatMap(success: (ItemT) -> Async<ResultT>?): Async<ResultT?> {
         return myAsync.flatMap(success)
     }
 }

@@ -1,7 +1,6 @@
 package jetbrains.datalore.base.async
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.observable.event.ListenerCaller
 import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.registration.Registration
@@ -48,12 +47,12 @@ class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
         return myFailureHandlers!!.add(failureHandler)
     }
 
-    override fun <ResultT> map(success: Function<in ItemT, out ResultT>): Async<ResultT> {
-        return Asyncs.map(this, success, SimpleAsync<ResultT>())
+    override fun <ResultT> map(success: (ItemT) -> ResultT): Async<ResultT> {
+        return Asyncs.map(this, success, SimpleAsync())
     }
 
-    override fun <ResultT> flatMap(success: Function<in ItemT, out Async<ResultT>?>): Async<ResultT?> {
-        return Asyncs.select(this, success, SimpleAsync<ResultT?>())
+    override fun <ResultT> flatMap(success: (ItemT) -> Async<ResultT>?): Async<ResultT?> {
+        return Asyncs.select<ItemT, ResultT>(this, success, SimpleAsync())
     }
 
     override fun success(result: ItemT) {

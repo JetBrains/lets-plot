@@ -1,8 +1,6 @@
 package jetbrains.datalore.base.observable.property
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.event.EventSource
 import jetbrains.datalore.base.observable.event.SimpleEventSource
 import jetbrains.datalore.base.registration.Registration
 import org.junit.Before
@@ -14,13 +12,7 @@ class EventSelectionTest {
     private val es2 = SimpleEventSource<Any?>()
     private val prop = ValueProperty(false)
 
-    private val result = Properties.selectEvent(
-            prop,
-            object : Function<Boolean, EventSource<Any?>> {
-                override fun apply(source: Boolean): EventSource<Any?> {
-                    return if (source) es1 else es2
-                }
-            })
+    private val result = Properties.selectEvent(prop) { source -> if (source) es1 else es2 }
 
     private val handler: EventHandler<Any?> = Mockito.mock(EventHandler::class.java) as EventHandler<Any?>
     private var reg: Registration? = null

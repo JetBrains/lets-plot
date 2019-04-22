@@ -1,6 +1,5 @@
 package jetbrains.datalore.base.observable.property
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.observable.event.EventHandler
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -8,11 +7,7 @@ import kotlin.test.assertTrue
 
 class PropertySelectionTest {
     private val c2 = C2()
-    private val selProp = Properties.select(c2.ref, object : Function<C1?, ReadableProperty<Int?>> {
-        override fun apply(value: C1?): ReadableProperty<Int?> {
-            return value!!.value
-        }
-    }, 30)
+    private val selProp = Properties.select(c2.ref, { value -> value!!.value }, 30)
     private var changed = false
 
     private fun addListener() {

@@ -1,6 +1,5 @@
 package jetbrains.datalore.base.observable.collections.list
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.observable.collections.ObservableCollection
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.PropertyChangeEvent
@@ -10,7 +9,7 @@ import jetbrains.datalore.base.registration.Registration
 internal abstract class SelectedCollection<ValueT, ItemT, CollectionT : ObservableCollection<*>>
 protected constructor(
         private val mySource: ReadableProperty<out ValueT>,
-        private val mySelector: Function<in ValueT, out CollectionT>) :
+        private val mySelector: (ValueT) -> CollectionT) :
 
         ObservableArrayList<ItemT>(),
         EventHandler<PropertyChangeEvent<out ValueT>> {
@@ -35,7 +34,7 @@ protected constructor(
     protected fun select(): CollectionT {
         val sourceVal = mySource.get()
         if (sourceVal != null) {
-            val res = mySelector.apply(sourceVal)
+            val res = mySelector(sourceVal)
             if (res != null) return res
         }
 
