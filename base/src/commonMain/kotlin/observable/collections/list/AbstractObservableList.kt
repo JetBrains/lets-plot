@@ -56,7 +56,7 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), Obs
 
     protected fun onItemAdd(index: Int, item: ItemT) {}
 
-    protected fun afterItemAdded(index: Int, item: ItemT, success: Boolean) {}
+    protected open fun afterItemAdded(index: Int, item: ItemT, success: Boolean) {}
 
     override operator fun set(index: Int, element: ItemT): ItemT {
         val old = get(index)
@@ -121,7 +121,7 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), Obs
 
     protected fun onItemRemove(index: Int, item: ItemT) {}
 
-    protected fun afterItemRemoved(index: Int, item: ItemT, success: Boolean) {}
+    protected open fun afterItemRemoved(index: Int, item: ItemT, success: Boolean) {}
 
     override fun addListener(l: CollectionListener<ItemT>): Registration {
         if (myListeners == null) {

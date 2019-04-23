@@ -122,21 +122,14 @@ abstract class AbstractObservableSet<ItemT> : AbstractMutableSet<ItemT>(), Obser
     protected abstract fun doAdd(item: ItemT): Boolean
     protected abstract fun doRemove(item: ItemT): Boolean
 
-    protected fun checkAdd(item: ItemT?) {}
-
-    protected fun checkRemove(item: ItemT?) {}
-
-    protected fun beforeItemAdded(item: ItemT?) {}
-
-    protected fun onItemAdd(item: ItemT?) {}
-
-    protected fun afterItemAdded(item: ItemT?, success: Boolean) {}
-
-    protected fun beforeItemRemoved(item: ItemT?) {}
-
-    protected fun onItemRemove(item: ItemT) {}
-
-    protected fun afterItemRemoved(item: ItemT?, success: Boolean) {}
+    protected open fun checkAdd(item: ItemT?) {}
+    protected open fun checkRemove(item: ItemT?) {}
+    protected open fun beforeItemAdded(item: ItemT?) {}
+    protected open fun onItemAdd(item: ItemT?) {}
+    protected open fun afterItemAdded(item: ItemT?, success: Boolean) {}
+    protected open fun beforeItemRemoved(item: ItemT?) {}
+    protected open fun onItemRemove(item: ItemT) {}
+    protected open fun afterItemRemoved(item: ItemT?, success: Boolean) {}
 
 
     override fun addHandler(handler: EventHandler<in CollectionItemEvent<ItemT>>): Registration {

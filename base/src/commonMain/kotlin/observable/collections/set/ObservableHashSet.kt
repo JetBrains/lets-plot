@@ -1,7 +1,7 @@
 package jetbrains.datalore.base.observable.collections.set
 
 
-class ObservableHashSet<ItemT> : AbstractObservableSet<ItemT>() {
+open class ObservableHashSet<ItemT> : AbstractObservableSet<ItemT>() {
     override val size: Int
         get() = mySet?.size ?: 0
 

@@ -9,7 +9,11 @@ pluginManagement {
 }
 
 include 'base',
+        'mapper-core',
         'visualization-base-svg',
+        'visualization-base-svg-mapper',
         'visualization-base-canvas',
         'visualization-base-demo',
+        'visualization-plot-gog',
+        'visualization-plot-demo',
         'demo-hello'
