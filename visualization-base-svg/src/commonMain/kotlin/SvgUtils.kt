@@ -55,11 +55,13 @@ ToDo: move to JVM target
     }
 */
 
+/*
     fun pngDataURI(base64EncodedPngImage: String): String {
         return StringBuilder("data:image/png;base64,")
                 .append(base64EncodedPngImage)
                 .toString()
     }
+*/
 
     internal fun colorAttributeTransform(color: Property<SvgColor?>, opacity: Property<Double?>): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {

@@ -22,7 +22,7 @@ class SvgNodeContainer(root: SvgSvgElement) {
         mySvgRoot.get().attach(this)
     }
 
-    fun setPeer(peer: SvgPlatformPeer) {
+    fun setPeer(peer: SvgPlatformPeer?) {
         myPeer = peer
     }
 

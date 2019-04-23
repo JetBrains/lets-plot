@@ -1,0 +1,46 @@
+plugins {
+    id 'kotlin-multiplatform' version '1.3.30'
+}
+repositories {
+    mavenCentral()
+}
+
+kotlin {
+    jvm()
+    js()
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation project(':base')
+                implementation project(':mapper-core')
+                implementation project(':visualization-base-svg')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+
+                implementation "org.apache.xmlgraphics:batik-anim:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-awt-util:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-bridge:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-codec:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-css:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-dom:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-ext:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-gvt:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-parser:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-script:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-svg-dom:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-swing:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-util:$batik_version"
+                implementation "org.apache.xmlgraphics:batik-xml:$batik_version"
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+            }
+        }
+    }
+}

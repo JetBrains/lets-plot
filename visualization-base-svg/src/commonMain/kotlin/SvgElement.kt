@@ -51,7 +51,7 @@ abstract class SvgElement : SvgNode() {
         return myEventPeer.addEventHandler(spec, handler)
     }
 
-    private fun <EventT : Event> dispatch(spec: SvgEventSpec, event: EventT) {
+    fun <EventT : Event> dispatch(spec: SvgEventSpec, event: EventT) {
         myEventPeer.dispatch(spec, event, this)
 
         if (parent().get() != null && !event.isConsumed && parent().get() is SvgElement) {
@@ -104,7 +104,7 @@ abstract class SvgElement : SvgNode() {
     }
 
     // if attr is one of pre-defined typed attrs (like CX in ellipse), the behaviour of this method is undefined
-    fun setAttribute(name: String, value: String) {
+    fun setAttribute(name: String, value: String?) {
         getAttribute(name).set(value)
     }
 
