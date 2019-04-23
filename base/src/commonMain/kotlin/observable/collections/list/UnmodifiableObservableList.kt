@@ -11,7 +11,7 @@ class UnmodifiableObservableList<ElementT>(wrappedList: ObservableList<ElementT>
         get() = super.wrappedList as ObservableList<ElementT>
 
 
-    override fun addListener(l: CollectionListener<ElementT>): Registration {
+    override fun addListener(l: CollectionListener<in ElementT>): Registration {
         return wrappedList.addListener(l)
     }
 

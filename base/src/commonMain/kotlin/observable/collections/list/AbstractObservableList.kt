@@ -9,7 +9,7 @@ import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.registration.Registration
 
 abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), ObservableList<ItemT> {
-    private var myListeners: Listeners<CollectionListener<ItemT>>? = null
+    private var myListeners: Listeners<CollectionListener<in ItemT>>? = null
 
     protected open fun checkAdd(index: Int, item: ItemT) {
         if (index < 0 || index > size) {
@@ -39,8 +39,8 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), Obs
             onItemAdd(index, element)
             if (myListeners != null) {
                 val event = CollectionItemEvent(null, element, index, CollectionItemEvent.EventType.ADD)
-                myListeners!!.fire(object : ListenerCaller<CollectionListener<ItemT>> {
-                    override fun call(l: CollectionListener<ItemT>) {
+                myListeners!!.fire(object : ListenerCaller<CollectionListener<in ItemT>> {
+                    override fun call(l: CollectionListener<in ItemT>) {
                         l.onItemAdded(event)
                     }
                 })
@@ -54,7 +54,7 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), Obs
 
     protected open fun beforeItemAdded(index: Int, item: ItemT) {}
 
-    protected fun onItemAdd(index: Int, item: ItemT) {}
+    protected open fun onItemAdd(index: Int, item: ItemT) {}
 
     protected open fun afterItemAdded(index: Int, item: ItemT, success: Boolean) {}
 
@@ -69,8 +69,8 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), Obs
             onItemSet(index, old, element)
             if (myListeners != null) {
                 val event = CollectionItemEvent(old, element, index, CollectionItemEvent.EventType.SET)
-                myListeners!!.fire(object : ListenerCaller<CollectionListener<ItemT>> {
-                    override fun call(l: CollectionListener<ItemT>) {
+                myListeners!!.fire(object : ListenerCaller<CollectionListener<in ItemT>> {
+                    override fun call(l: CollectionListener<in ItemT>) {
                         l.onItemSet(event)
                     }
                 })
@@ -103,8 +103,8 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), Obs
             onItemRemove(index, item)
             if (myListeners != null) {
                 val event = CollectionItemEvent(item, null, index, CollectionItemEvent.EventType.REMOVE)
-                myListeners!!.fire(object : ListenerCaller<CollectionListener<ItemT>> {
-                    override fun call(l: CollectionListener<ItemT>) {
+                myListeners!!.fire(object : ListenerCaller<CollectionListener<in ItemT>> {
+                    override fun call(l: CollectionListener<in ItemT>) {
                         l.onItemRemoved(event)
                     }
                 })
@@ -119,13 +119,13 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), Obs
 
     protected open fun beforeItemRemoved(index: Int, item: ItemT) {}
 
-    protected fun onItemRemove(index: Int, item: ItemT) {}
+    protected open fun onItemRemove(index: Int, item: ItemT) {}
 
     protected open fun afterItemRemoved(index: Int, item: ItemT, success: Boolean) {}
 
-    override fun addListener(l: CollectionListener<ItemT>): Registration {
+    override fun addListener(l: CollectionListener<in ItemT>): Registration {
         if (myListeners == null) {
-            myListeners = object : Listeners<CollectionListener<ItemT>>() {
+            myListeners = object : Listeners<CollectionListener<in ItemT>>() {
                 override fun beforeFirstAdded() {
                     onListenersAdded()
                 }

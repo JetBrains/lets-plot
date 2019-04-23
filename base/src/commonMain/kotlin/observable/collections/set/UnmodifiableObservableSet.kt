@@ -11,7 +11,7 @@ class UnmodifiableObservableSet<ElementT>(wrappedSet: ObservableSet<ElementT>) :
     override val wrappedSet: ObservableSet<ElementT>
         get() = super.wrappedSet as ObservableSet<ElementT>
 
-    override fun addListener(l: CollectionListener<ElementT>): Registration {
+    override fun addListener(l: CollectionListener<in ElementT>): Registration {
         return wrappedSet.addListener(l)
     }
 

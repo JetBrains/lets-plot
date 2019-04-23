@@ -9,10 +9,10 @@ import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.registration.Registration
 
 abstract class AbstractObservableSet<ItemT> : AbstractMutableSet<ItemT>(), ObservableSet<ItemT> {
-    private var myListeners: Listeners<CollectionListener<ItemT>>? = null
+    private var myListeners: Listeners<CollectionListener<in ItemT>>? = null
     abstract val actualIterator: MutableIterator<ItemT>
 
-    override fun addListener(l: CollectionListener<ItemT>): Registration {
+    override fun addListener(l: CollectionListener<in ItemT>): Registration {
         if (myListeners == null) {
             myListeners = Listeners()
         }
@@ -40,8 +40,8 @@ abstract class AbstractObservableSet<ItemT> : AbstractMutableSet<ItemT>(), Obser
     private fun doAfterAdd(item: ItemT, success: Boolean) {
         try {
             if (success && myListeners != null) {
-                myListeners!!.fire(object : ListenerCaller<CollectionListener<ItemT>> {
-                    override fun call(l: CollectionListener<ItemT>) {
+                myListeners!!.fire(object : ListenerCaller<CollectionListener<in ItemT>> {
+                    override fun call(l: CollectionListener<in ItemT>) {
                         l.onItemAdded(CollectionItemEvent(null, item, -1, CollectionItemEvent.EventType.ADD))
                     }
                 })
@@ -108,8 +108,8 @@ abstract class AbstractObservableSet<ItemT> : AbstractMutableSet<ItemT>(), Obser
     private fun doAfterRemove(item: ItemT, success: Boolean) {
         try {
             if (success && myListeners != null) {
-                myListeners!!.fire(object : ListenerCaller<CollectionListener<ItemT>> {
-                    override fun call(l: CollectionListener<ItemT>) {
+                myListeners!!.fire(object : ListenerCaller<CollectionListener<in ItemT>> {
+                    override fun call(l: CollectionListener<in ItemT>) {
                         l.onItemRemoved(CollectionItemEvent(item, null, -1, CollectionItemEvent.EventType.REMOVE))
                     }
                 })

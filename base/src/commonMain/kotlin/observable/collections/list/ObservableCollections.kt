@@ -265,7 +265,7 @@ object ObservableCollections {
             throw UnsupportedOperationException()
         }
 
-        override fun addListener(l: CollectionListener<ItemT>): Registration {
+        override fun addListener(l: CollectionListener<in ItemT>): Registration {
             return Registration.EMPTY
         }
     }

@@ -39,22 +39,22 @@ object Synchronizers {
         return TransformingObservableCollectionRoleSynchronizer(mapper, source, transformer, target, factory)
     }
 
-//    fun <SourceT, TargetItemT, TargetT : TargetItemT> forObservableRole(
-//            mapper: Mapper<*, *>,
-//            source: ObservableList<out SourceT>,
-//            target: List<TargetItemT>,
-//            factory: MapperFactory<SourceT, TargetT>): RoleSynchronizer<SourceT, TargetT> {
-//        return forObservableRole(mapper, source, target, factory, null)
-//    }
+    fun <SourceT, TargetItemT, TargetT : TargetItemT> forObservableRole(
+            mapper: Mapper<*, *>,
+            source: ObservableList<out SourceT>,
+            target: MutableList<TargetItemT>,
+            factory: MapperFactory<SourceT, TargetT>): RoleSynchronizer<SourceT, TargetT> {
+        return forObservableRole(mapper, source, target, factory, null)
+    }
 
-//    fun <SourceT, TargetItemT, TargetT : TargetItemT> forObservableRole(
-//            mapper: Mapper<*, *>,
-//            source: ObservableList<out SourceT>,
-//            target: List<TargetItemT>,
-//            factory: MapperFactory<SourceT, TargetT>,
-//            errorMapperFactory: MapperFactory<SourceT, TargetT>?): RoleSynchronizer<SourceT, TargetT> {
-//        return ObservableCollectionRoleSynchronizer(mapper, source, target, factory, errorMapperFactory)
-//    }
+    fun <SourceT, TargetItemT, TargetT : TargetItemT> forObservableRole(
+            mapper: Mapper<*, *>,
+            source: ObservableList<out SourceT>,
+            target: MutableList<TargetItemT>,
+            factory: MapperFactory<SourceT, TargetT>,
+            errorMapperFactory: MapperFactory<SourceT, TargetT>?): RoleSynchronizer<SourceT, TargetT> {
+        return ObservableCollectionRoleSynchronizer(mapper, source, target, factory, errorMapperFactory)
+    }
 
 //    fun <SourceT, TargetT, KindTargetT : TargetT> forConstantRole(
 //            mapper: Mapper<*, *>,
