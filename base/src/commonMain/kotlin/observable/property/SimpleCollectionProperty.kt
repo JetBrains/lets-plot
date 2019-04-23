@@ -15,15 +15,15 @@ protected constructor(
 
     override fun doAddListeners() {
         myRegistration = collection.addListener(object : CollectionListener<ItemT> {
-            override fun onItemAdded(event: CollectionItemEvent<ItemT>) {
+            override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                 somethingChanged()
             }
 
-            override fun onItemSet(event: CollectionItemEvent<ItemT>) {
+            override fun onItemSet(event: CollectionItemEvent<out ItemT>) {
                 somethingChanged()
             }
 
-            override fun onItemRemoved(event: CollectionItemEvent<ItemT>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                 somethingChanged()
             }
         })

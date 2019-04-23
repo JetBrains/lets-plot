@@ -3,7 +3,7 @@ package jetbrains.datalore.base.observable.collections
 import jetbrains.datalore.base.observable.event.EventSource
 import jetbrains.datalore.base.registration.Registration
 
-interface ObservableCollection<ItemT> : MutableCollection<ItemT>, EventSource<CollectionItemEvent<ItemT>> {
+interface ObservableCollection<ItemT> : MutableCollection<ItemT>, EventSource<CollectionItemEvent<out ItemT>> {
 
     fun addListener(l: CollectionListener<ItemT>): Registration
 }

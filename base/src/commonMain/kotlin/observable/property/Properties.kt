@@ -508,11 +508,11 @@ object Properties {
 
     private fun <ItemT> simpleAdapter(r: Runnable): CollectionAdapter<ItemT> {
         return object : CollectionAdapter<ItemT>() {
-            override fun onItemAdded(event: CollectionItemEvent<ItemT>) {
+            override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                 r.run()
             }
 
-            override fun onItemRemoved(event: CollectionItemEvent<ItemT>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                 r.run()
             }
         }

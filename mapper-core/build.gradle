@@ -9,6 +9,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                compileOnly "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
                 implementation project(':base')
             }
         }
@@ -21,6 +22,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
             }
         }
         jvmTest {
@@ -32,6 +34,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
+                compileOnly "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
             }
         }
         jsTest {

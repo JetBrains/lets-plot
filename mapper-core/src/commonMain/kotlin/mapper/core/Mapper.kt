@@ -84,7 +84,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
     /**
      * Lifecycle method to register [Synchronizer]s in this mapper
      */
-    protected fun registerSynchronizers(conf: SynchronizersConfiguration) {}
+    protected open fun registerSynchronizers(conf: SynchronizersConfiguration) {}
 
     private fun instantiateSynchronizers() {
         registerSynchronizers(object : SynchronizersConfiguration {
@@ -288,7 +288,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         }
     }
 
-    protected fun <MapperT : Mapper<*, *>> createChildList(): ObservableList<MapperT> {
+    internal fun <MapperT : Mapper<*, *>> createChildList(): ObservableList<MapperT> {
         return ChildList()
     }
 

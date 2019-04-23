@@ -51,10 +51,10 @@ object ObservableCollections {
             }
 
             override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out List<ItemT?>?>>): Registration {
-                return list.addHandler(object : EventHandler<CollectionItemEvent<ItemT?>> {
+                return list.addHandler(object : EventHandler<CollectionItemEvent<out ItemT?>> {
                     private var myLastValue: List<ItemT?> = ArrayList(list)
 
-                    override fun onEvent(event: CollectionItemEvent<ItemT?>) {
+                    override fun onEvent(event: CollectionItemEvent<out ItemT?>) {
                         val newValue = ArrayList(list)
                         handler.onEvent(PropertyChangeEvent(
                                 Collections.unmodifiableList(myLastValue), Collections.unmodifiableList(newValue)))
@@ -83,14 +83,14 @@ object ObservableCollections {
 
             override fun doAddListeners() {
                 myCollectionRegistration = collection.addListener(object : CollectionAdapter<ItemT>() {
-                    override fun onItemAdded(event: CollectionItemEvent<ItemT>) {
+                    override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                         if (predicate(event.newItem)) {
                             myCount++
                         }
                         somethingChanged()
                     }
 
-                    override fun onItemRemoved(event: CollectionItemEvent<ItemT>) {
+                    override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                         if (predicate(event.oldItem)) {
                             myCount--
                         }
@@ -178,11 +178,11 @@ object ObservableCollections {
             }
 
             return source.addListener(object : CollectionAdapter<ItemT?>() {
-                override fun onItemAdded(event: CollectionItemEvent<ItemT?>) {
+                override fun onItemAdded(event: CollectionItemEvent<out ItemT?>) {
                     add(event.newItem)
                 }
 
-                override fun onItemRemoved(event: CollectionItemEvent<ItemT?>) {
+                override fun onItemRemoved(event: CollectionItemEvent<out ItemT?>) {
                     remove(event.oldItem)
                 }
             })
@@ -223,11 +223,11 @@ object ObservableCollections {
             }
 
             return source.addListener(object : CollectionAdapter<ItemT?>() {
-                override fun onItemAdded(event: CollectionItemEvent<ItemT?>) {
+                override fun onItemAdded(event: CollectionItemEvent<out ItemT?>) {
                     add(event.index, event.newItem)
                 }
 
-                override fun onItemRemoved(event: CollectionItemEvent<ItemT?>) {
+                override fun onItemRemoved(event: CollectionItemEvent<out ItemT?>) {
                     removeAt(event.index)
                 }
             })

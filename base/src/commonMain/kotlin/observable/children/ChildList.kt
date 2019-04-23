@@ -9,11 +9,11 @@ open class ChildList<ParentT, ChildT : SimpleComposite<in ParentT?, in ChildT>>(
 
     init {
         addListener(object : CollectionAdapter<ChildT>() {
-            override fun onItemAdded(event: CollectionItemEvent<ChildT>) {
+            override fun onItemAdded(event: CollectionItemEvent<out ChildT>) {
                 event.newItem!!.parent().flush()
             }
 
-            override fun onItemRemoved(event: CollectionItemEvent<ChildT>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out ChildT>) {
                 val item = event.oldItem
                 item!!.parent().set(null)
                 item.setPositionData(null)

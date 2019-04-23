@@ -64,11 +64,11 @@ object EventSources {
 
 
                 val listReg = list.addListener(object : CollectionAdapter<ItemT>() {
-                    override fun onItemAdded(event: CollectionItemEvent<ItemT>) {
+                    override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                         itemRegs.add(event.index, selector(event.newItem).addHandler(handler))
                     }
 
-                    override fun onItemRemoved(event: CollectionItemEvent<ItemT>) {
+                    override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                         itemRegs.removeAt(event.index).remove()
                     }
                 })
