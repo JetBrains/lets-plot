@@ -216,8 +216,10 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
     private fun addPart(o: Any) {
 //        val newParts = arrayOfNulls<Any>(myParts.size + 1)
 //        System.arraycopy(myParts, 0, newParts, 0, myParts.size)
-        val newParts = Array(myParts.size + 1) { i -> myParts[i] }
-        newParts[newParts.size - 1] = o
+        val newParts = Array(myParts.size + 1) { i ->
+            if (i < myParts.size) myParts[i]
+            else o
+        }
         myParts = newParts
     }
 
