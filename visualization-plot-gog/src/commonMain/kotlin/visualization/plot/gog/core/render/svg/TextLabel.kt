@@ -21,10 +21,9 @@ class TextLabel(text: String) : SvgComponent() {
 
     }
 
-    fun textColor(): WritableProperty<Color> {
-        //return myText.fillColor();
-        return object : WritableProperty<Color> {
-            override fun set(value: Color) {
+    fun textColor(): WritableProperty<Color?> {
+        return object : WritableProperty<Color?> {
+            override fun set(value: Color?) {
                 // set attribute for svg->canvas mapping to work
                 myText.fillColor()
 
@@ -57,7 +56,7 @@ class TextLabel(text: String) : SvgComponent() {
     /**
      * @param cssName : normal, bold, bolder, lighter
      */
-    fun setFontWeight(cssName: String) {
+    fun setFontWeight(cssName: String?) {
         myFontWeight = cssName
         updateStyleAttribute()
     }
@@ -65,7 +64,7 @@ class TextLabel(text: String) : SvgComponent() {
     /**
      * @param cssName : normal, italic, oblique
      */
-    fun setFontStyle(cssName: String) {
+    fun setFontStyle(cssName: String?) {
         myFontStyle = cssName
         updateStyleAttribute()
     }
@@ -73,7 +72,7 @@ class TextLabel(text: String) : SvgComponent() {
     /**
      * @param fontFamily : for example 'sans-serif' or 'Times New Roman'
      */
-    fun setFontFamily(fontFamily: String) {
+    fun setFontFamily(fontFamily: String?) {
         myFontFamily = fontFamily
         updateStyleAttribute()
     }
