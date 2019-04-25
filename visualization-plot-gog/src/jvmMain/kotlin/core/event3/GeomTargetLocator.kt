@@ -2,10 +2,10 @@ package jetbrains.datalore.visualization.plot.gog.core.event3
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomTargetInteraction.TooltipAesSpec
-import jetbrains.datalore.visualization.plot.gog.plot.GeomKind
+import jetbrains.datalore.visualization.plot.core.GeomKind
 
 interface GeomTargetLocator {
+
     fun findTargets(coord: DoubleVector): LocatedTargets?
 
     enum class LookupSpace {
@@ -16,7 +16,11 @@ interface GeomTargetLocator {
         HOVER, NEAREST, NONE
     }
 
-    class LocatedTargets(val geomTargets: List<GeomTarget>, private val myDistance: Double, val geomKind: GeomKind, val tooltipAesSpec: TooltipAesSpec) {
+    class LocatedTargets(
+            val geomTargets: List<GeomTarget>,
+            private val myDistance: Double,
+            val geomKind: GeomKind,
+            val contextualMapping: ContextualMapping) {
 
         val distance: Double
             get() {

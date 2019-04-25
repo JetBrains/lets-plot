@@ -49,8 +49,9 @@ import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
  *
  * @param <SourceT> - source object
  * @param <TargetT> - target object. Usually it's some kind of view
-</TargetT></SourceT> */
+ */
 abstract class Mapper<SourceT, TargetT>
+
 /**
  * Construct a mapper with SourceT source and TargetT target
  * NB: DO NOT create disposable resources in constructors. Use either registerSynchronizers or onAttach method.
@@ -109,7 +110,8 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         detach()
     }
 
-    private fun attach(ctx: MappingContext?) {
+    // ToDo: ctx not nullable
+    private fun attach(ctx: MappingContext) {
         if (mappingContext != null) {
             throw IllegalStateException("Mapper is already attached")
         }
@@ -130,7 +132,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
 
         mappingContext!!.register(this)
 
-        for (part in myParts!!) {
+        for (part in myParts) {
             if (part is Synchronizer) {
                 part.attach(object : SynchronizerContext {
                     override val mappingContext: MappingContext
@@ -143,7 +145,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         }
 
         myState = State.ATTACHING_CHILDREN
-        for (part in myParts!!) {
+        for (part in myParts) {
             if (part is ChildContainer<*>) {
                 for (m in part) {
                     m.attach(ctx)
@@ -154,7 +156,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         myState = State.ATTACHED
 
         try {
-            onAttach(ctx!!)
+            onAttach(ctx)
         } catch (t: Throwable) {
             ThrowableHandlers.instance.handle(t)
         }
@@ -195,7 +197,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         myParts = EMPTY_PARTS
     }
 
-    protected fun onBeforeAttach(ctx: MappingContext?) {}
+    protected open fun onBeforeAttach(ctx: MappingContext?) {}
 
     protected open fun onAttach(ctx: MappingContext) {}
 
@@ -278,14 +280,14 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         return ChildProperty()
     }
 
-    private fun addChild(child: Mapper<*, *>?) {
+    private fun addChild(child: Mapper<*, *>) {
         if (myState != State.ATTACHING_SYNCHRONIZERS && myState != State.ATTACHING_CHILDREN && myState != State.ATTACHED) {
             throw IllegalStateException("State =  $myState")
         }
 
-        child!!.parent = this
+        child.parent = this
         if (myState != State.ATTACHING_SYNCHRONIZERS) {
-            child.attach(mappingContext)
+            child.attach(mappingContext!!)
         }
     }
 
@@ -406,7 +408,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
 
         override fun afterItemAdded(item: MapperT?, success: Boolean) {
             super.afterItemAdded(item, success)
-            addChild(item)
+            addChild(item!!)
         }
 
         override fun beforeItemRemoved(item: MapperT?) {

@@ -25,6 +25,7 @@ object Preconditions {
         }
     }
 
+    // ToDo: use `checkNotNull` from kotlin std-lib
     fun <T> checkNotNull(reference: T?): T {
         if (reference == null) {
             throw NullPointerException()

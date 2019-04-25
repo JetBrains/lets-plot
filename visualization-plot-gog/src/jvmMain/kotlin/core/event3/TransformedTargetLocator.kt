@@ -18,7 +18,7 @@ abstract class TransformedTargetLocator protected constructor(private val myTarg
                 convertGeomTargets(locatedTargets.geomTargets),
                 convertToPlotDistance(locatedTargets.distance),
                 locatedTargets.geomKind,
-                locatedTargets.tooltipAesSpec
+                locatedTargets.contextualMapping
         )
     }
 
