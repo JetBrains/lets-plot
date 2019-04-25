@@ -36,6 +36,7 @@ actual object Iterables {
         return (iterable as? Collection<*>)?.isEmpty() ?: !iterable.iterator().hasNext()
     }
 
+    // ToDo: ues Kotlin `filter`
     actual fun <T> filter(unfiltered: Iterable<T>, retainIfTrue: Predicate<in T>): Iterable<T> {
         return fromStream { toStream(unfiltered).filter(retainIfTrue) }
     }

@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.geom.util
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -16,7 +15,6 @@ import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext
 import java.util.*
 import java.util.Arrays.asList
 import java.util.Collections.emptyList
-import java.util.function.Predicate
 
 object GeomUtil {
     val TO_LOCATION_X_Y = { p: DataPointAesthetics -> toLocationOrNull(p.x(), p.y()) }
@@ -60,28 +58,26 @@ object GeomUtil {
     }
 
     fun with_X_Y(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
-        return Iterables.filter(dataPoints, Predicate { p -> WITH_X_Y.invoke(p) })
+        return dataPoints.filter { p -> WITH_X_Y.invoke(p) }
     }
 
     fun with_Y(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
-        return Iterables.filter(dataPoints, Predicate { p -> WITH_Y.invoke(p) })
+        return dataPoints.filter { p -> WITH_Y.invoke(p) }
     }
 
     fun ordered_X(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
-        var dataPoints = dataPoints
-        if (!ORDERING_X.isOrdered(dataPoints)) {
-            dataPoints = ORDERING_X.sortedCopy(dataPoints)
+        if (ORDERING_X.isOrdered(dataPoints)) {
+            return dataPoints
         }
-        return dataPoints
+        return ORDERING_X.sortedCopy(dataPoints)
     }
 
     fun ordered_Y(dataPoints: Iterable<DataPointAesthetics>, reversed: Boolean): Iterable<DataPointAesthetics> {
-        var dataPoints = dataPoints
         val ordering = if (reversed) ORDERING_Y.reverse() else ORDERING_Y
-        if (!ordering.isOrdered(dataPoints)) {
-            dataPoints = ordering.sortedCopy(dataPoints)
+        if (ordering.isOrdered(dataPoints)) {
+            return dataPoints
         }
-        return dataPoints
+        return ordering.sortedCopy(dataPoints)
     }
 
     fun widthPx(p: DataPointAesthetics, ctx: GeomContext, minWidth: Double): Double {
@@ -91,14 +87,16 @@ object GeomUtil {
     }
 
     fun withDefined(dataPoints: Iterable<DataPointAesthetics>, vararg required: Aes<*>): Iterable<DataPointAesthetics> {
-        return Iterables.filter(dataPoints, Predicate { p ->
+        return dataPoints.filter { p ->
+            var match = true
             for (aes in required) {
                 if (!p.defined(aes)) {
-                    return@Predicate false
+                    match = false
+                    break
                 }
             }
-            true
-        })
+            match
+        }
     }
 
     fun rectangleByDataPoint(p: DataPointAesthetics, ctx: GeomContext): DoubleRectangle {
