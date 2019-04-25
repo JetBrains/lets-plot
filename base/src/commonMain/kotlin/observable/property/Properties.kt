@@ -328,13 +328,13 @@ object Properties {
     }
 
     fun <SourceT, TargetT> map(
-            prop: ReadableProperty<out SourceT>, f: (SourceT) -> TargetT): ReadableProperty<out TargetT?> {
-        return object : DerivedProperty<TargetT?>(null, prop) {
+            prop: ReadableProperty<out SourceT>, f: (SourceT) -> TargetT): ReadableProperty<out TargetT> {
+        return object : DerivedProperty<TargetT>(f(prop.get()), prop) {
 
             override val propExpr: String
                 get() = "transform(" + prop.propExpr + ", " + f + ")"
 
-            override fun doGet(): TargetT? {
+            override fun doGet(): TargetT {
                 return f(prop.get())
             }
         }

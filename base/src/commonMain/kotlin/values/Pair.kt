@@ -9,7 +9,7 @@ class Pair<FirstT, SecondT>(val first: FirstT?, val second: SecondT?) {
         val pair = other as Pair<*, *>?
 
         if (if (first != null) first != pair!!.first else pair!!.first != null) return false
-        return if (if (second != null) second != pair.second else pair.second != null) false else true
+        return !if (second != null) second != pair.second else pair.second != null
 
     }
 

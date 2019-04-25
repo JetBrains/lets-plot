@@ -1,5 +1,5 @@
 package jetbrains.datalore.base.composite
 
-interface HasParent<ParentT> {
+interface HasParent<ParentT : HasParent<ParentT>> {
     val parent: ParentT?
 }

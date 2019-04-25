@@ -27,7 +27,7 @@ object EventSources {
     }
 
     fun <EventT> composite(vararg sources: EventSource<EventT>): EventSource<EventT> {
-        return CompositeEventSource<EventT>(*sources)
+        return CompositeEventSource(*sources)
     }
 
 

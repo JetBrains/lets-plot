@@ -1,0 +1,86 @@
+package jetbrains.datalore.base.projectionGeometry
+
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
+
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.FULL_LONGITUDE
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.MAX_LONGITUDE
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.MIN_LONGITUDE
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.limitLon
+
+internal class LongitudeRange(lower: Double, upper: Double) {
+    private val myLower: Double
+    private val myUpper: Double
+
+    val isEmpty: Boolean
+        get() = myUpper == myLower
+
+    init {
+        this.myLower = limitLon(lower)
+        this.myUpper = limitLon(upper)
+    }
+
+    fun lower(): Double {
+        return myLower
+    }
+
+    fun upper(): Double {
+        return myUpper
+    }
+
+    fun length(): Double {
+        return myUpper - myLower + if (myUpper < myLower) FULL_LONGITUDE else 0.0
+    }
+
+    fun encloses(longitudeRange: LongitudeRange): Boolean {
+        val externalRanges = splitByAntiMeridian()
+        val internalRanges = longitudeRange.splitByAntiMeridian()
+
+        for (internalRange in internalRanges) {
+            if (!disjointRangesEncloseRange(externalRanges, internalRange)) {
+                return false
+            }
+        }
+        return true
+    }
+
+    fun invert(): LongitudeRange {
+        return LongitudeRange(myUpper, myLower)
+    }
+
+    fun splitByAntiMeridian(): List<ClosedRange<Double>> {
+        val result = ArrayList<ClosedRange<Double>>()
+        splitRange(myLower, myUpper, MIN_LONGITUDE, MAX_LONGITUDE, result)
+        return result
+    }
+
+//    override fun equals(other: Any?): Boolean {
+//        if (this === other) return true
+//        if (other == null || this::class != other::class) return false
+//        val that = other as LongitudeRange
+//        return that.myLower.equals(myLower) && that.myUpper.equals(myUpper)
+//    }
+//
+//    override fun hashCode(): Int {
+//        return Objects.hash(myLower, myUpper)
+//    }
+
+    companion object {
+        fun splitRange(lower: Double, upper: Double, min: Double, max: Double, result: MutableCollection<ClosedRange<Double>>) {
+            if (upper < lower) {
+                result.add(ClosedRange.closed(lower, max))
+                result.add(ClosedRange.closed(min, upper))
+            } else {
+                result.add(ClosedRange.closed(lower, upper))
+            }
+        }
+
+        private fun disjointRangesEncloseRange(ranges: List<ClosedRange<Double>>, internalRange: ClosedRange<Double>): Boolean {
+            for (range in ranges) {
+                if (range.encloses(internalRange)) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+}

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.registration.Registration
  */
 object PropertyBinding {
     fun <ValueT> bindOneWay(
-            source: ReadableProperty<out ValueT>, target: WritableProperty<in ValueT?>): Registration {
+            source: ReadableProperty<out ValueT>, target: WritableProperty<in ValueT>): Registration {
         target.set(source.get())
         return source.addHandler(object : EventHandler<PropertyChangeEvent<out ValueT>> {
             override fun onEvent(event: PropertyChangeEvent<out ValueT>) {
