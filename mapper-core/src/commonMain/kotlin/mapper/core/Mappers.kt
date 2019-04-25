@@ -1,7 +1,6 @@
 package jetbrains.datalore.mapper.core
 
 import jetbrains.datalore.base.composite.Composites
-import jetbrains.datalore.base.observable.collections.list.ObservableList
 import jetbrains.datalore.base.registration.Registration
 
 object Mappers {
@@ -22,20 +21,23 @@ object Mappers {
         }
     }
 
-//    fun <SourceT, Target1T, Target2T> compose(f1: MapperFactory<SourceT, Target1T>, f2: MapperFactory<Target1T, Target2T>): MapperFactory<SourceT, Target2T> {
-//        return object : MapperFactory<SourceT, Target2T>() {
-//            fun createMapper(source: SourceT): Mapper<out SourceT, out Target2T> {
-//                val m1 = f1.createMapper(source)
-//                val m2 = f2.createMapper(m1.target)
-//                return object : Mapper<SourceT, Target2T>(m1.source, m2.target) {
-//                    private val children = createChildList<Mapper<*, *>>()
-//
-//                    init {
-//                        children.add(m1)
-//                        children.add(m2)
-//                    }
-//                }
-//            }
-//        }
-//    }
+    fun <SourceT, Target1T, Target2T> compose(
+            f1: MapperFactory<SourceT, Target1T>,
+            f2: MapperFactory<Target1T, Target2T>
+    ): MapperFactory<SourceT, Target2T> {
+        return object : MapperFactory<SourceT, Target2T> {
+            override fun createMapper(source: SourceT): Mapper<out SourceT, out Target2T> {
+                val m1 = f1.createMapper(source)
+                val m2 = f2.createMapper(m1.target)
+                return object : Mapper<SourceT, Target2T>(m1.source, m2.target) {
+                    private val children = createChildList<Mapper<*, *>>()
+
+                    init {
+                        children.add(m1)
+                        children.add(m2)
+                    }
+                }
+            }
+        }
+    }
 }

@@ -8,8 +8,6 @@ import jetbrains.datalore.base.observable.collections.set.ObservableSet
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
-import kotlin.jvm.JvmOverloads
-
 
 /**
  * Mapper is an object encapsulating a mapping (usually UI related) from source to target.
@@ -50,32 +48,25 @@ import kotlin.jvm.JvmOverloads
  * - detached
  *
  * @param <SourceT> - source object
- * @param <TargetT> - target object. Usually it's some kind of view </TargetT></SourceT>
- *
- */
+ * @param <TargetT> - target object. Usually it's some kind of view
+</TargetT></SourceT> */
 abstract class Mapper<SourceT, TargetT>
 /**
  * Construct a mapper with SourceT source and TargetT target
  * NB: DO NOT create disposable resources in constructors. Use either registerSynchronizers or onAttach method.
  */
 protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapper<*, *>> {
-
-    companion object {
-        private val EMPTY_PARTS = arrayOfNulls<Any>(0)
-    }
-
-    private var mappingContext: MappingContext? = null
-    //        private set
+    var mappingContext: MappingContext? = null
+        private set
     private var myState = State.NOT_ATTACHED
 
     private var myParts: Array<Any?> = EMPTY_PARTS
     override var parent: Mapper<*, *>? = null
-//        private set
 
     /**
      * @return Whether this mapper should be findable in [MappingContext]
      */
-    internal val isFindable: Boolean
+    val isFindable: Boolean
         get() = true
 
     val isAttached: Boolean
@@ -98,7 +89,6 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         return mappingContext!!.getMapper(this, source)
     }
 
-    @JvmOverloads
     fun attachRoot(ctx: MappingContext = MappingContext()) {
         if (mappingContext != null) {
             throw IllegalStateException()
@@ -119,7 +109,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         detach()
     }
 
-    internal fun attach(ctx: MappingContext) {
+    private fun attach(ctx: MappingContext?) {
         if (mappingContext != null) {
             throw IllegalStateException("Mapper is already attached")
         }
@@ -140,10 +130,9 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
 
         mappingContext!!.register(this)
 
-        for (part in myParts) {
+        for (part in myParts!!) {
             if (part is Synchronizer) {
-                val s = part as Synchronizer
-                s.attach(object : SynchronizerContext {
+                part.attach(object : SynchronizerContext {
                     override val mappingContext: MappingContext
                         get() = this@Mapper.mappingContext!!
 
@@ -154,7 +143,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         }
 
         myState = State.ATTACHING_CHILDREN
-        for (part in myParts) {
+        for (part in myParts!!) {
             if (part is ChildContainer<*>) {
                 for (m in part) {
                     m.attach(ctx)
@@ -165,14 +154,14 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         myState = State.ATTACHED
 
         try {
-            onAttach(ctx)
+            onAttach(ctx!!)
         } catch (t: Throwable) {
             ThrowableHandlers.instance.handle(t)
         }
 
     }
 
-    internal fun detach() {
+    private fun detach() {
         if (mappingContext == null) {
             throw IllegalStateException()
         }
@@ -185,9 +174,8 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
 
         for (part in myParts) {
             if (part is Synchronizer) {
-                val s = part as Synchronizer
                 try {
-                    s.detach()
+                    part.detach()
                 } catch (t: Throwable) {
                     ThrowableHandlers.instance.handle(t)
                 }
@@ -214,26 +202,17 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
     protected open fun onDetach() {}
 
     private fun addPart(o: Any) {
-//        val newParts = arrayOfNulls<Any>(myParts.size + 1)
-//        System.arraycopy(myParts, 0, newParts, 0, myParts.size)
-        val newParts = Array(myParts.size + 1) { i ->
-            if (i < myParts.size) myParts[i]
-            else o
-        }
+        val newParts = arrayOfNulls<Any>(myParts.size + 1)
+        myParts.copyInto(newParts)
+        newParts[newParts.size - 1] = o
         myParts = newParts
     }
 
     private fun removePart(o: Any) {
-//        val index = Arrays.asList(*myParts).indexOf(o)
         val index = myParts.indexOf(o)
-//        val newParts = arrayOfNulls<Any>(myParts.size - 1)
-//        System.arraycopy(myParts, 0, newParts, 0, index)
-//        System.arraycopy(myParts, index + 1, newParts, index, myParts.size - index - 1)
-
-        val newParts = Array(myParts.size - 1) { i ->
-            if (i < index) myParts[i]
-            else myParts[i + 1]
-        }
+        val newParts = arrayOfNulls<Any>(myParts.size - 1)
+        myParts.copyInto(newParts, 0, 0, index)
+        myParts.copyInto(newParts, index, index + 1)
         myParts = newParts
     }
 
@@ -241,9 +220,8 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         return object : Iterable<Synchronizer> {
             override fun iterator(): Iterator<Synchronizer> {
                 return object : Mapper<SourceT, TargetT>.PartsIterator<Synchronizer>() {
-                    override fun getNext(): Synchronizer {
-                        return myParts[currIndex] as Synchronizer
-                    }
+                    override val nextItem: Synchronizer
+                        get() = myParts[currIndex] as Synchronizer
 
                     override fun toNext(index: Int): Int {
                         var i = index
@@ -255,7 +233,6 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
                         }
                         return i
                     }
-
                 }
             }
         }
@@ -267,9 +244,8 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
                 return object : Mapper<SourceT, TargetT>.PartsIterator<Mapper<*, *>>() {
                     private var myChildContainerIterator: Iterator<Mapper<*, *>>? = null
 
-                    override fun getNext(): Mapper<*, *> {
-                        return myChildContainerIterator!!.next()
-                    }
+                    override val nextItem: Mapper<*, *>
+                        get() = myChildContainerIterator!!.next()
 
                     override fun toNext(index: Int): Int {
                         var i = index
@@ -290,7 +266,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         }
     }
 
-    internal fun <MapperT : Mapper<*, *>> createChildList(): ObservableList<MapperT> {
+    fun <MapperT : Mapper<*, *>> createChildList(): ObservableList<MapperT> {
         return ChildList()
     }
 
@@ -302,14 +278,14 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         return ChildProperty()
     }
 
-    private fun addChild(child: Mapper<*, *>) {
+    private fun addChild(child: Mapper<*, *>?) {
         if (myState != State.ATTACHING_SYNCHRONIZERS && myState != State.ATTACHING_CHILDREN && myState != State.ATTACHED) {
             throw IllegalStateException("State =  $myState")
         }
 
-        child.parent = this
+        child!!.parent = this
         if (myState != State.ATTACHING_SYNCHRONIZERS) {
-            child.attach(mappingContext!!)
+            child.attach(mappingContext)
         }
     }
 
@@ -352,7 +328,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         }
 
         override fun iterator(): Iterator<MapperT> {
-            val value: MapperT = get() ?: return emptyList<MapperT>().iterator()
+            val value = get() ?: return emptyList<MapperT>().iterator()
             return listOf(value).iterator()
         }
     }
@@ -411,11 +387,13 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
     private inner class ChildSet<MapperT : Mapper<*, *>> : ObservableHashSet<MapperT>(), ChildContainer<MapperT> {
         override fun checkAdd(item: MapperT?) {
             checkCanAdd(item!!)
+
             super.checkAdd(item)
         }
 
         override fun checkRemove(item: MapperT?) {
             checkCanRemove(item!!)
+
             super.checkRemove(item)
         }
 
@@ -428,7 +406,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
 
         override fun afterItemAdded(item: MapperT?, success: Boolean) {
             super.afterItemAdded(item, success)
-            addChild(item!!)
+            addChild(item)
         }
 
         override fun beforeItemRemoved(item: MapperT?) {
@@ -452,8 +430,9 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
 
     private abstract inner class PartsIterator<ItemT> : Iterator<ItemT> {
         internal var currIndex = toNext(0)
+            private set
 
-        protected abstract fun getNext(): ItemT
+        protected abstract val nextItem: ItemT
         protected abstract fun toNext(index: Int): Int
 
         override fun hasNext(): Boolean {
@@ -464,7 +443,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
             if (!hasNext()) {
                 throw NoSuchElementException()
             }
-            val next = getNext()
+            val next = nextItem
             currIndex = toNext(currIndex + 1)
             return next
         }
@@ -476,5 +455,9 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
         ATTACHING_CHILDREN,
         ATTACHED,
         DETACHED
+    }
+
+    companion object {
+        private val EMPTY_PARTS = arrayOfNulls<Any>(0)
     }
 }
