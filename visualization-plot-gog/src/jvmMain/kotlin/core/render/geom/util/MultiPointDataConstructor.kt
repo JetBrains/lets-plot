@@ -4,9 +4,7 @@ import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
-
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 import java.util.function.Function
@@ -22,7 +20,8 @@ object MultiPointDataConstructor {
     }
 
     fun singlePointAppender(
-            toPoint: (DataPointAesthetics) -> DoubleVector): BiConsumer<DataPointAesthetics, Consumer<DoubleVector>> {
+            toPoint: (DataPointAesthetics) -> DoubleVector?):
+            BiConsumer<DataPointAesthetics, Consumer<DoubleVector?>> {
         return BiConsumer { aes, coordinateConsumer -> coordinateConsumer.accept(toPoint(aes)) }
     }
 
@@ -33,7 +32,7 @@ object MultiPointDataConstructor {
 
     fun createMultiPointDataByGroup(
             dataPoints: Iterable<DataPointAesthetics>,
-            coordinateAppender: BiConsumer<DataPointAesthetics, Consumer<DoubleVector>>,
+            coordinateAppender: BiConsumer<DataPointAesthetics, Consumer<DoubleVector?>>,
             pointCollectorSupplier: Supplier<PointCollector>): List<MultiPointData> {
         val multiPointDataCombiners = HashMap<Int, MultiPointDataCombiner>()
 
@@ -63,10 +62,13 @@ object MultiPointDataConstructor {
     interface PointCollector {
 
         val points: Pair<List<DoubleVector>, List<Int>>
-        fun add(coord: DoubleVector, index: Int)
+        fun add(coord: DoubleVector?, index: Int)
     }
 
-    private class MultiPointDataCombiner internal constructor(private val myCoordinateAppender: BiConsumer<DataPointAesthetics, Consumer<DoubleVector>>, private val myPointCollector: PointCollector) {
+    private class MultiPointDataCombiner internal constructor(
+            private val myCoordinateAppender: BiConsumer<DataPointAesthetics, Consumer<DoubleVector?>>,
+            private val myPointCollector: PointCollector) {
+
         private var myFirstAes: DataPointAesthetics? = null
 
         internal fun add(aes: DataPointAesthetics) {
@@ -89,8 +91,8 @@ object MultiPointDataConstructor {
         override val points: Pair<List<DoubleVector>, List<Int>>
             get() = Pair(myPoints, myIndexes)
 
-        override fun add(coord: DoubleVector, index: Int) {
-            myPoints.add(coord)
+        override fun add(coord: DoubleVector?, index: Int) {
+            myPoints.add(coord!!)
             myIndexes.add(index)
         }
     }
@@ -118,7 +120,7 @@ object MultiPointDataConstructor {
             return Math.abs(p0.x - p1.x) < distance && Math.abs(p0.y - p1.y) < distance
         }
 
-        override fun add(coord: DoubleVector, index: Int) {
+        override fun add(coord: DoubleVector?, index: Int) {
             if (coord == null) {
                 return
             }

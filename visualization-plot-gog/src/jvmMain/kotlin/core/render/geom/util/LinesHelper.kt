@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.geom.util
 
-import jetbrains.datalore.base.gcommon.collect.ImmutableList
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
@@ -49,11 +48,12 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
     }
 
     private fun createPaths(dataPoints: Iterable<DataPointAesthetics>,
-                            toLocation: Function<DataPointAesthetics, DoubleVector>, closePath: Boolean): List<LinePath> {
+                            toLocation: Function<DataPointAesthetics, DoubleVector>,
+                            closePath: Boolean): List<LinePath> {
         val paths = ArrayList<LinePath>()
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
                 dataPoints,
-                singlePointAppender(toClientLocation(toLocation)),
+                singlePointAppender(toClientLocation {toLocation.apply(it)}),
                 reducer(0.999, closePath)
         )
 
@@ -86,7 +86,7 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
 
         // draw step for each group
         for (multiPointData in multiPointDataList) {
-            val points = multiPointData.getPoints()
+            val points = multiPointData.points
             if (!points.isEmpty()) {
                 val newPoints = ArrayList<DoubleVector>()
                 var prev: DoubleVector? = null
@@ -101,8 +101,8 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
                 }
 
                 val path = LinePath.line(newPoints)
-                decorate(path, multiPointData.getAes(), false)
-                pathInfos.add(PathInfo(path, multiPointData.getAes(), multiPointData.getGroup()))
+                decorate(path, multiPointData.aes, false)
+                pathInfos.add(PathInfo(path, multiPointData.aes, multiPointData.group))
             }
         }
 
@@ -117,14 +117,15 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
         val pointsByGroup = GeomUtil.createGroups(dataPoints)
 
         // draw line for each group
-        for (group in Ordering.natural().sortedCopy(pointsByGroup.keys)) {
+        for (group in Ordering.natural<Int>().sortedCopy(pointsByGroup.keys)) {
             val groupDataPoints = pointsByGroup[group]
             // upper margin points
-            val points = ArrayList(project(groupDataPoints, toLocationUpper))
+            val points = ArrayList(project(groupDataPoints!!) {toLocationUpper.apply(it)})
 
             // lower margin point in reversed order
-            val lowerPoints = ImmutableList.reverse(groupDataPoints)
-            points.addAll(project(lowerPoints, toLocationLower))
+//            val lowerPoints = ImmutableList.reverse(groupDataPoints)
+            val lowerPoints = groupDataPoints.reversed()
+            points.addAll(project(lowerPoints) {toLocationLower.apply(it)})
 
             if (!points.isEmpty()) {
                 val path = LinePath.polygon(points)
@@ -173,5 +174,5 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
     }
 
     // ToDo: get rid of PathInfo class
-    class PathInfo private constructor(val path: LinePath, aes: DataPointAesthetics, group: Int)
+    class PathInfo internal constructor(val path: LinePath, aes: DataPointAesthetics, group: Int)
 }

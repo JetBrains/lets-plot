@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.core.render.geom
 import jetbrains.datalore.visualization.plot.gog.core.render.*
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.LinesHelper
 
-internal class StepGeom : LineGeom() {
+class StepGeom : LineGeom() {
     private var myDirection = DEF_DIRECTION
 
     fun setDirection(dir: String) {
