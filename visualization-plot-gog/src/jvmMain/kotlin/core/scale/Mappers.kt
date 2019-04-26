@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.plot.gog.core.scale
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.plot.scale.breaks.QuantizeScale
 
 object Mappers {
     val IDENTITY = { v: Double -> v }
@@ -64,18 +63,20 @@ object Mappers {
         return DiscreteFun(outputValues, defaultOutputValue)
     }
 
-    fun <T> quantized(domain: ClosedRange<Double>?, outputValues: Collection<T>, defaultOutputValue: T): (Double) -> T {
-        if (domain == null) {
-            return { defaultOutputValue }
-        }
-
-        // todo: extract quantizer
-        val quantizer = QuantizeScale<T>()
-        quantizer.domain(domain.lowerEndpoint(), domain.upperEndpoint())
-        quantizer.range(outputValues)
-
-        return QuantizedFun(quantizer, defaultOutputValue)
-    }
+    // todo: extract quantizer
+    fun <T> quantized(domain: ClosedRange<Double>?, outputValues: Collection<T>, defaultOutputValue: T): Nothing = throw IllegalStateException("Not implemented")
+//    fun <T> quantized(domain: ClosedRange<Double>?, outputValues: Collection<T>, defaultOutputValue: T): (Double) -> T {
+//        if (domain == null) {
+//            return { defaultOutputValue }
+//        }
+//
+//        // todo: extract quantizer
+//        val quantizer = QuantizeScale<T>()
+//        quantizer.domain(domain.lowerEndpoint(), domain.upperEndpoint())
+//        quantizer.range(outputValues)
+//
+//        return QuantizedFun(quantizer, defaultOutputValue)
+//    }
 
     private class DiscreteFun<T> internal constructor(private val myOutputValues: List<T>, private val myDefaultOutputValue: T) : (Double?) -> T {
         override fun invoke(input: Double?): T {
@@ -92,9 +93,10 @@ object Mappers {
         }
     }
 
-    private class QuantizedFun<T> internal constructor(private val myQuantizer: QuantizeScale<T>, private val myDefaultOutputValue: T) : (Double) -> T {
-        override fun invoke(input: Double): T {
-            return if (!SeriesUtil.isFinite(input)) myDefaultOutputValue else myQuantizer.quantize(input)
-        }
-    }
+    // todo: extract quantizer
+//    private class QuantizedFun<T> internal constructor(private val myQuantizer: QuantizeScale<T>, private val myDefaultOutputValue: T) : (Double) -> T {
+//        override fun invoke(input: Double): T {
+//            return if (!SeriesUtil.isFinite(input)) myDefaultOutputValue else myQuantizer.quantize(input)
+//        }
+//    }
 }

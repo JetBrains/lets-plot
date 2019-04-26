@@ -1,6 +1,6 @@
 package jetbrains.datalore.base.datetime
 
-class Date(val day: Int, val month: Month?, val year: Int) : Comparable<Date> {
+class Date(val day: Int, val month: Month, val year: Int) : Comparable<Date> {
 
     val weekDay: WeekDay
         get() {
@@ -15,17 +15,12 @@ class Date(val day: Int, val month: Month?, val year: Int) : Comparable<Date> {
         get() = DateTime(this, Time.DAY_END)
 
     init {
-
         validate()
     }
 
     private fun validate() {
-        if (month == null) {
-            throw NullPointerException()
-        }
-
-        val daysInMonth = month!!.getDaysInYear(year)
-        val isValid = day > 0 && day <= daysInMonth
+        val daysInMonth = month.getDaysInYear(year)
+        val isValid = day in 1..daysInMonth
 
         if (!isValid) {
             throw IllegalArgumentException()
@@ -52,15 +47,16 @@ class Date(val day: Int, val month: Month?, val year: Int) : Comparable<Date> {
 
     internal fun daysFromYearStart(): Int {
         var result = day
-        var current = month!!.prev()
+        var current = month.prev()
         while (current != null) {
-            result += current!!.getDaysInYear(year)
-            current = current!!.prev()
+            result += current.getDaysInYear(year)
+            current = current.prev()
         }
         return result
     }
 
     fun addDays(days: Int): Date {
+        @Suppress("NAME_SHADOWING")
         var days = days
         if (days < 0) {
             throw IllegalArgumentException()
@@ -80,12 +76,12 @@ class Date(val day: Int, val month: Month?, val year: Int) : Comparable<Date> {
         }
 
         while (days > 0) {
-            val daysToNextMonth = month!!.getDaysInYear(year) - day + 1
+            val daysToNextMonth = month.getDaysInYear(year) - day + 1
             if (days < daysToNextMonth) {
                 return Date(day + days, month, year)
             } else {
                 if (lessThanYear) {
-                    month = month!!.next()
+                    month = month.next()!!
                     day = 1
                     days -= daysToNextMonth
                 } else {
@@ -96,7 +92,7 @@ class Date(val day: Int, val month: Month?, val year: Int) : Comparable<Date> {
                         year += 1
                         days -= daysToNextYear
                     } else {
-                        month = month!!.next()
+                        month = month.next()!!
                         day = 1
                         days -= daysToNextMonth
                         lessThanYear = true
@@ -129,28 +125,28 @@ class Date(val day: Int, val month: Month?, val year: Int) : Comparable<Date> {
             return if (days > daysToPrevYear) {
                 lastDayOf(year - 1).subtractDays(days - daysToPrevYear - 1)
             } else {
-                lastDayOf(year, month!!.prev()!!).subtractDays(days - day)
+                lastDayOf(year, month.prev()!!).subtractDays(days - day)
             }
         }
     }
 
-    override fun compareTo(o: Date): Int {
-        if (year != o.year) return year - o.year
-        return if (month!!.ordinal() !== o.month!!.ordinal()) month!!.ordinal() - o.month!!.ordinal() else day - o.day
+    override fun compareTo(other: Date): Int {
+        if (year != other.year) return year - other.year
+        return if (month.ordinal() != other.month.ordinal()) month.ordinal() - other.month.ordinal() else day - other.day
 
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj !is Date) return false
+    override fun equals(other: Any?): Boolean {
+        if (other !is Date) return false
 
-        val date = obj as Date?
+        val date = other as Date?
         return date!!.year == year &&
                 date.month === month &&
                 date.day == day
     }
 
     override fun hashCode(): Int {
-        return year * 239 + month!!.hashCode() * 31 + day
+        return year * 239 + month.hashCode() * 31 + day
     }
 
     override fun toString(): String {
@@ -169,7 +165,7 @@ class Date(val day: Int, val month: Month?, val year: Int) : Comparable<Date> {
     }
 
     private fun appendMonth(result: StringBuilder) {
-        val month = this.month!!.ordinal() + 1
+        val month = this.month.ordinal() + 1
         if (month < 10) {
             result.append("0")
         }

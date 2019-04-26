@@ -128,11 +128,13 @@ object ScaleUtil {
     }
 
     fun transform(l: List<*>, scale: Scale2<*>): List<Double> {
-        val transform = scale.transform
-        if (transform != null) {
-            return transform.apply(l)
-        }
-        throw IllegalStateException("Scale transform is not defined (" + scale.name + ")")
+//        val transform = scale.transform
+//        if (transform != null) {
+//            return transform.apply(l)
+//        }
+//        throw IllegalStateException("Scale transform is not defined (" + scale.name + ")")
+
+        return scale.transform.apply(l)
     }
 
     fun inverseTransformToContinuousDomain(l: List<Double>, scale: Scale2<*>): List<Double> {

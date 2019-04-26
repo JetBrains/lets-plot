@@ -1,23 +1,16 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.gog.plot.scale.transform.Transforms
+import jetbrains.datalore.visualization.plot.gog.core.scale.transform.Transforms
 
 internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val isContinuous: Boolean
     override val domainLimits: ClosedRange<Double>
 
-    override val isContinuousDomain: Boolean
-        get() = true
+    override val isContinuousDomain: Boolean = true
 
     override val defaultTransform: Transform
         get() = Transforms.IDENTITY
-
-    /*
-  ContinuousScale(String name, Function<Double, T> mapper) {
-    this(name, mapper, false);
-  }
-  */
 
     constructor(name: String, mapper: ((Double) -> T)?, continuousOutput: Boolean) : super(name, mapper) {
         isContinuous = continuousOutput

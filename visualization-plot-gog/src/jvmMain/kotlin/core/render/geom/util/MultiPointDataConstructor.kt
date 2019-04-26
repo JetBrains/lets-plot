@@ -78,7 +78,7 @@ object MultiPointDataConstructor {
             myCoordinateAppender.accept(aes, Consumer { dv -> myPointCollector.add(dv, aes.index()) })
         }
 
-        internal fun create(group: Int?): MultiPointData {
+        internal fun create(group: Int): MultiPointData {
             val points = myPointCollector.points
             return MultiPointData(myFirstAes!!, points.first!!, Function { points.second!![it] }, group)
         }
