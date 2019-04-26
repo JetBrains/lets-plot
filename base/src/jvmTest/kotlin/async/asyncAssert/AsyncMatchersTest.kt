@@ -2,6 +2,7 @@ package jetbrains.datalore.base.async.asyncAssert
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
+import jetbrains.datalore.base.async.PlatformAsyncs
 import jetbrains.datalore.base.async.SimpleAsync
 import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.failed
 import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.failureIs
@@ -12,7 +13,6 @@ import org.junit.Assert.assertThat
 import org.junit.Assert.fail
 import org.junit.Test
 import java.util.*
-import kotlin.test.assertFailsWith
 
 class AsyncMatchersTest {
 
@@ -38,20 +38,13 @@ class AsyncMatchersTest {
     fun resultUnfinished() {
         val first = SimpleAsync<Int>()
         val second = SimpleAsync<Int>()
-/*
-        val composite = Asyncs.composite(Arrays.asList<Async<Int>>(first, second))
+        val composite = PlatformAsyncs.composite(Arrays.asList<Async<Int>>(first, second))
         first.success(0)
-        assertionFailure(composite, AsyncMatchers.succeeded<List<Int>>(),
+        assertionFailure(composite, AsyncMatchers.succeeded(),
                 "\n" +
                         "Expected: a successful async which result ANYTHING\n" +
                         "     but: isn't finished yet"
         )
-*/
-
-        // `composite` was not converted to Kotlin
-        assertFailsWith(IllegalStateException::class) {
-            Asyncs.composite(Arrays.asList<Async<Int>>(first, second))
-        }
     }
 
     @Test

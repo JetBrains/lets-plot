@@ -90,9 +90,9 @@ object Asyncs {
         return Asyncs.constant<Unit?>(null)
     }
 
-//    fun <ResultT> toUnit(async: Async<ResultT>): Async<Unit> {
-//        return map<ResultT, Unit, ResultT>(async, { null }, ThreadSafeAsync<Unit>())
-//    }
+    fun <ResultT> toUnit(async: Async<ResultT>): Async<Unit> {
+        return map(async, {}, ThreadSafeAsync())
+    }
 
     internal fun <SourceT, TargetT, AsyncResultT : SourceT> map(
             async: Async<AsyncResultT>,
@@ -144,75 +144,6 @@ object Asyncs {
 
     fun <FirstT, SecondT> seq(first: Async<FirstT>, second: Async<SecondT>): Async<SecondT?> {
         return select(first, { second }, ThreadSafeAsync<SecondT?>())
-    }
-
-
-// When converting `parallel` to Kotlin
-// uncomment parallel tests in AsyncsTest
-
-//    fun parallel(vararg asyncs: Async<*>): Async<Unit> {
-//        return parallel(Arrays.asList(*asyncs))
-//    }
-
-//    fun <ItemT> parallelResult(asyncs: Collection<Async<out ItemT>>): Async<List<ItemT>> {
-//        return runParallel(asyncs, true)
-//    }
-
-//    @JvmOverloads
-//    fun parallel(asyncs: Collection<Async<*>>, alwaysSucceed: Boolean = false): Async<Unit> {
-//        return toUnit(runParallel<Any>(asyncs, alwaysSucceed))
-//    }
-
-//    private fun <ItemT> runParallel(asyncs: Collection<Async<out ItemT>>,
-//                                    alwaysSucceed: Boolean): Async<List<ItemT>> {
-//        val result = ThreadSafeAsync()
-//        val inProgress = AtomicInteger(asyncs.size)
-//        val values = OrderedValues<ItemT>()
-//        val exceptions = ThreadSafeThrowables()
-//
-//        val checkTermination = object : Runnable {
-//            override fun run() {
-//                if (inProgress.decrementAndGet() <= 0) {
-//                    if (!exceptions.isEmpty && !alwaysSucceed) {
-//                        result.failure(exceptions.toSingleException())
-//                    } else {
-//                        result.success(values.get())
-//                    }
-//                }
-//            }
-//        }
-//
-//        var i = 0
-//        for (async in asyncs) {
-//            val index = i++
-//            async.onResult(
-//                    object : Consumer<ItemT> {
-//                        override fun accept(item: ItemT) {
-//                            values[index] = item
-//                            checkTermination.run()
-//                        }
-//                    },
-//                    object : Consumer<Throwable> {
-//                        override fun accept(failure: Throwable) {
-//                            exceptions.add(failure)
-//                            checkTermination.run()
-//                        }
-//                    })
-//        }
-//
-//        if (asyncs.isEmpty()) {
-//            checkTermination.run()
-//        }
-//
-//        return result
-//    }
-
-    fun <ItemT> composite(asyncs: List<Async<ItemT>>): Async<List<ItemT>> {
-        throw IllegalStateException("was not converted to Kotlin")
-
-        // while converting to Kotlin,
-        // jetbrains.datalore.base.async.CompositeAsyncTest
-        // should also be converted
     }
 
     fun onAnyResult(async: Async<*>, r: Runnable): Registration {
@@ -298,47 +229,5 @@ object Asyncs {
 //        }
 //    }
 
-//    private class OrderedValues<ValueT> {
-//        private val myLock = Any()
-//        private val myMap = TreeMap<Int, ValueT>()
-//
-//        internal operator fun set(index: Int, value: ValueT) {
-//            synchronized(myLock) {
-//                myMap.put(index, value)
-//            }
-//        }
-//
-//        internal fun get(): List<ValueT> {
-//            synchronized(myLock) {
-//                return ArrayList<ValueT>(myMap.values)
-//            }
-//        }
-//    }
 
-//    private class ThreadSafeThrowables {
-//        private val myLock = Any()
-//        private val myThrowables = ArrayList<Throwable>(0)
-//
-//        internal val isEmpty: Boolean
-//            get() = synchronized(myLock) {
-//                return myThrowables.isEmpty()
-//            }
-//
-//        internal fun add(t: Throwable) {
-//            synchronized(myLock) {
-//                myThrowables.add(t)
-//            }
-//        }
-//
-//        internal fun toSingleException(): Throwable {
-//            synchronized(myLock) {
-//                if (myThrowables.isEmpty()) {
-//                    throw IllegalStateException("Empty collection")
-//                }
-//                return if (myThrowables.size == 1) {
-//                    myThrowables[0]
-//                } else ThrowableCollectionException(ArrayList<E>(myThrowables))
-//            }
-//        }
-//    }
 }

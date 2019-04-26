@@ -5,6 +5,7 @@ import jetbrains.datalore.base.async.asyncAssert.AsyncResult.Companion.getResult
 import org.hamcrest.*
 import org.hamcrest.core.IsAnything
 
+@Suppress("MemberVisibilityCanBePrivate")
 object AsyncMatchers {
     fun <T> result(valueMatcher: Matcher<in T>): Matcher<Async<T>> {
         return object : TypeSafeDiagnosingMatcher<Async<T>>() {
@@ -128,5 +129,4 @@ object AsyncMatchers {
     fun failed(): Matcher<Async<*>> {
         return failure(IsAnything<Any>())
     }
-
 }

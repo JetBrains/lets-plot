@@ -9,14 +9,15 @@ import org.assertj.core.api.AbstractThrowableAssert
 import org.assertj.core.api.Assertions
 
 
+@Suppress("MemberVisibilityCanBePrivate")
 class AsyncAssert<ItemT> private constructor(actual: Async<ItemT>) :
         AbstractAssert<AsyncAssert<ItemT>, Async<ItemT>>(actual, AsyncAssert::class.java) {
 
     companion object {
 
-        internal val FORMAT_SUCCEEDED_ASYNC = "async is succeeded with %s"
-        internal val FORMAT_FAILED_ASYNC = "async is failed with %s"
-        internal val UNFINISHED_ASYNC = "async isn't finished yet"
+        internal const val FORMAT_SUCCEEDED_ASYNC = "async is succeeded with %s"
+        internal const val FORMAT_FAILED_ASYNC = "async is failed with %s"
+        internal const val UNFINISHED_ASYNC = "async isn't finished yet"
 
         fun <ItemT> assertThat(actual: Async<ItemT>): AsyncAssert<ItemT> {
             return AsyncAssert(actual)
