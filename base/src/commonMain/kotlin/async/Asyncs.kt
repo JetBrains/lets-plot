@@ -10,8 +10,8 @@ object Asyncs {
     fun isFinished(async: Async<*>): Boolean {
         val finished = Value(false)
         async.onResult(
-                { value -> finished.set(true) },
-                { value -> finished.set(true) }
+                { finished.set(true) },
+                { finished.set(true) }
         ).remove()
         return finished.get()
     }
@@ -36,11 +36,11 @@ object Asyncs {
                 try {
                     result = success(value)
                 } catch (t: Throwable) {
-                    return Asyncs.failure(t)
+                    return failure(t)
                 }
 
                 //return cannot be moved to try block to avoid catching possible errors from Asyncs.constant call
-                return Asyncs.constant(result)
+                return constant(result)
             }
 
             override fun <ResultT> flatMap(success: (ValueT) -> Async<ResultT>?): Async<ResultT?> {
@@ -48,12 +48,12 @@ object Asyncs {
                 try {
                     result = success(value)
                 } catch (t: Throwable) {
-                    return Asyncs.failure(t)
+                    return failure(t)
                 }
 
                 //return cannot be moved to try block to avoid catching possible errors from Asyncs.constant call
                 if (result == null) {
-                    return Asyncs.constant<ResultT?>(null)
+                    return constant(null)
                 } else {
                     return result as Async<ResultT?>
                 }
@@ -77,17 +77,17 @@ object Asyncs {
             }
 
             override fun <ResultT> map(success: (ValueT) -> ResultT): Async<ResultT> {
-                return Asyncs.failure(t)
+                return failure(t)
             }
 
             override fun <ResultT> flatMap(success: (ValueT) -> Async<ResultT>?): Async<ResultT?> {
-                return Asyncs.failure(t)
+                return failure(t)
             }
         }
     }
 
-    fun voidAsync(): Async<Unit?> {
-        return Asyncs.constant<Unit?>(null)
+    fun voidAsync(): Async<Unit> {
+        return constant(Unit)
     }
 
     fun <ResultT> toUnit(async: Async<ResultT>): Async<Unit> {
