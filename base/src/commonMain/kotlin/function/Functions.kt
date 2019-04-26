@@ -70,7 +70,7 @@ object Functions {
 
     fun <ValueT> same(value: Any?): Predicate<ValueT> {
         return {
-            it == value
+            it === value
         }
     }
 

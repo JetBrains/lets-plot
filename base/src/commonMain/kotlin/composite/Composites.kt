@@ -82,7 +82,7 @@ object Composites {
         while (true) {
             val prevSibling = current.prevSibling()
             if (prevSibling != null) {
-                return lastLeaf(prevSibling!!)
+                return lastLeaf(prevSibling)
             }
 
             if (isNonCompositeChild(current)) return null
@@ -135,13 +135,13 @@ object Composites {
 
     fun <CompositeT : NavComposite<CompositeT>> nextNavOrder(current: CompositeT): Iterable<CompositeT> {
         return iterate(current, function<CompositeT, CompositeT?> {
-            nextNavOrder(current, it)!!
+            nextNavOrder(current, it)
         })
     }
 
     fun <CompositeT : NavComposite<CompositeT>> prevNavOrder(current: CompositeT): Iterable<CompositeT> {
         return iterate(current, function<CompositeT, CompositeT?> {
-            prevNavOrder(current, it)!!
+            prevNavOrder(current, it)
         })
     }
 
@@ -177,14 +177,14 @@ object Composites {
         val c1a = reverseAncestors(c1)
         val c2a = reverseAncestors(c2)
 
-        if (c1a.get(0) !== c2a.get(0)) {
+        if (c1a[0] !== c2a[0]) {
             throw IllegalArgumentException("Items are in different trees")
         }
 
         val commonLength = min(c1a.size, c2a.size)
         for (i in 1 until commonLength) {
-            val first = c1a.get(i)
-            val second = c2a.get(i)
+            val first = c1a[i]
+            val second = c2a[i]
             if (first !== second) {
                 return deltaBetween(first, second) > 0
             }
@@ -245,7 +245,7 @@ object Composites {
         } else {
             do {
                 val pop1 = stack1.removeAt(stack1.size - 1)
-                val pop2 = stack2.removeAt(stack1.size - 1)
+                val pop2 = stack2.removeAt(stack2.size - 1)
                 if (pop1 !== pop2) {
                     return pop1.parent
                 }
@@ -402,6 +402,7 @@ object Composites {
 
     fun <CompositeT> prevFocusable(v: CompositeT): CompositeT?
             where CompositeT : NavComposite<CompositeT>, CompositeT : HasFocusability, CompositeT : HasVisibility {
+
         for (cv in prevNavOrder(v)) {
             if (isFocusable(cv)) return cv
         }
@@ -509,6 +510,8 @@ object Composites {
             where CompositeT : NavComposite<CompositeT>, CompositeT : HasFocusability, CompositeT : HasVisibility, CompositeT : HasBounds {
         return ourWithBounds.lowerFocusable(v, xOffset)
     }
+
+    // See also test: CompositesTest#iterateBranch
 
 //    fun <CompositeT : Composite<CompositeT>> preOrderTraversal(root: CompositeT): Iterable<CompositeT> {
 //        return Composites.createCompositeTreeTraverser<CompositeT>().preOrderTraversal(root)

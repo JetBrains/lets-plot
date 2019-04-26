@@ -1,6 +1,7 @@
 package jetbrains.datalore.base.observable.children
 
 import jetbrains.datalore.base.observable.property.DelayedValueProperty
+import kotlin.js.JsName
 
 open class SimpleComposite<ParentT, SiblingT> {
     private val myParent = DelayedValueProperty<ParentT>()
@@ -19,6 +20,7 @@ open class SimpleComposite<ParentT, SiblingT> {
         myPositionData!!.remove()
     }
 
+    @JsName("parentProperty")   // `parent` clashes with HasParent.parent
     fun parent(): DelayedValueProperty<ParentT> {
         return myParent
     }
