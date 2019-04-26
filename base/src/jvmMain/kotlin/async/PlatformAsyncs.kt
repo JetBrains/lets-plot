@@ -8,20 +8,19 @@ import kotlin.collections.ArrayList
 
 actual object PlatformAsyncs {
 
-    fun parallel(vararg asyncs: Async<*>): Async<Unit> {
+    actual fun parallel(vararg asyncs: Async<*>): Async<Unit> {
         return parallel(Arrays.asList(*asyncs))
     }
 
-    fun <ItemT> parallelResult(asyncs: Collection<Async<out ItemT>>): Async<List<ItemT>> {
+    actual fun <ItemT> parallelResult(asyncs: Collection<Async<out ItemT>>): Async<List<ItemT>> {
         return runParallel(asyncs, true)
     }
 
-    @JvmOverloads
-    fun <ItemT> parallel(asyncs: Collection<Async<out ItemT>>, alwaysSucceed: Boolean = false): Async<Unit> {
+    actual fun <ItemT> parallel(asyncs: Collection<Async<out ItemT>>, alwaysSucceed: Boolean): Async<Unit> {
         return toUnit(runParallel(asyncs, alwaysSucceed))
     }
 
-    fun <ItemT> composite(asyncs: List<Async<ItemT>>): Async<List<ItemT>> {
+    actual fun <ItemT> composite(asyncs: List<Async<ItemT>>): Async<List<ItemT>> {
         return runParallel(asyncs, false)
     }
 
