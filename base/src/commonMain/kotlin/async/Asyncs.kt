@@ -169,65 +169,55 @@ object Asyncs {
         return from.onResult({ value -> to.success(value) }, { value -> to.failure(value) })
     }
 
-// When converting to Kotlin
-// jetbrains.datalore.base.async.AsyncsPairTest
-// should also be converted
+    fun <FirstT, SecondT> pair(first: Async<FirstT>, second: Async<SecondT>): Async<Pair<FirstT, SecondT>> {
+        val res = SimpleAsync<Pair<FirstT, SecondT>>()
+        val proxy = SimpleAsync<Unit>()
+        val firstPaired = PairedAsync(first)
+        val secondPaired = PairedAsync(second)
+        proxy.onResult(
+                {
+                    if (firstPaired.mySucceeded && secondPaired.mySucceeded) {
+                        @Suppress("UNCHECKED_CAST")
+                        res.success(Pair(
+                                firstPaired.myItem as FirstT,
+                                secondPaired.myItem as SecondT))
+                    } else {
+                        res.failure(Throwable("internal error in pair async"))
+                    }
+                },
+                { throwable ->
+                    res.failure(throwable)
+                })
+        firstPaired.pair(secondPaired, proxy)
+        secondPaired.pair(firstPaired, proxy)
+        return res
+    }
 
-//    fun <FirstT, SecondT> pair(first: Async<FirstT>, second: Async<SecondT>): Async<Pair<FirstT, SecondT>> {
-//        val res = SimpleAsync<Pair<FirstT, SecondT>>()
-//        val proxy = SimpleAsync<Unit>()
-//        val firstPaired = PairedAsync(first)
-//        val secondPaired = PairedAsync(second)
-//        proxy.onResult(
-//                object : Consumer<Unit> {
-//                    override fun accept(item: Unit) {
-//                        if (firstPaired.mySucceeded!! && secondPaired.mySucceeded!!) {
-//                            res.success(Pair(firstPaired.myItem, secondPaired.myItem))
-//                        } else {
-//                            res.failure(Throwable("internal error in pair async"))
-//                        }
-//                    }
-//                },
-//                object : Consumer<Throwable> {
-//                    override fun accept(throwable: Throwable) {
-//                        res.failure(throwable)
-//                    }
-//                })
-//        firstPaired.pair(secondPaired, proxy)
-//        secondPaired.pair(firstPaired, proxy)
-//        return res
-//    }
+    private class PairedAsync<ItemT>(private val myAsync: Async<ItemT>) {
 
-//    private class PairedAsync<ItemT> private constructor(private val myAsync: Async<ItemT>) {
-//        private var myItem: ItemT? = null
-//        private var mySucceeded: Boolean? = false
-//        private var myReg: Registration? = null
-//
-//        private fun <AnotherItemT> pair(anotherInfo: PairedAsync<AnotherItemT>, async: SimpleAsync<Unit>) {
-//            if (async.hasSucceeded() || async.hasFailed()) {
-//                return
-//            }
-//            myReg = myAsync.onResult(
-//                    object : Consumer<ItemT> {
-//                        override fun accept(item: ItemT) {
-//                            myItem = item
-//                            mySucceeded = true
-//                            if (anotherInfo.mySucceeded!!) {
-//                                async.success(null)
-//                            }
-//                        }
-//                    },
-//                    object : Consumer<Throwable> {
-//                        override fun accept(failure: Throwable) {
-//                            //reg == null can happen in case if myAsync fails instantly
-//                            if (anotherInfo.myReg != null) {
-//                                anotherInfo.myReg!!.remove()
-//                            }
-//                            async.failure(failure)
-//                        }
-//                    })
-//        }
-//    }
+        internal var myItem: ItemT? = null
+        internal var mySucceeded: Boolean = false
+        private var myReg: Registration? = null
 
-
+        internal fun <AnotherItemT> pair(anotherInfo: PairedAsync<AnotherItemT>, async: SimpleAsync<Unit>) {
+            if (async.hasSucceeded() || async.hasFailed()) {
+                return
+            }
+            myReg = myAsync.onResult(
+                    { item ->
+                        myItem = item
+                        mySucceeded = true
+                        if (anotherInfo.mySucceeded) {
+                            async.success(Unit)
+                        }
+                    },
+                    { failure ->
+                        //reg == null can happen in case if myAsync fails instantly
+                        if (anotherInfo.myReg != null) {
+                            anotherInfo.myReg!!.remove()
+                        }
+                        async.failure(failure)
+                    })
+        }
+    }
 }

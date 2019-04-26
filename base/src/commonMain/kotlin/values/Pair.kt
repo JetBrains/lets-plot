@@ -1,5 +1,6 @@
 package jetbrains.datalore.base.values
 
+// ToDo: use Kotlin Pair
 class Pair<FirstT, SecondT>(val first: FirstT?, val second: SecondT?) {
 
     override fun equals(other: Any?): Boolean {

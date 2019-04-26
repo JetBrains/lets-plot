@@ -64,7 +64,8 @@ class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
 
         mySuccessHandlers!!.fire(object : ListenerCaller<Consumer<in ItemT>> {
             override fun call(l: Consumer<in ItemT>) {
-                l(mySuccessItem!!)
+                @Suppress("UNCHECKED_CAST")
+                l(mySuccessItem as ItemT)
             }
         })
         clearHandlers()
