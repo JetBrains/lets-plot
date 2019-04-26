@@ -4,7 +4,6 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.core.scale.BreaksGenerator
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleBreaks
 import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.DateTimeBreaksHelper
-import java.util.*
 
 class DateTimeBreaksGen : BreaksGenerator {
     override fun generate(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {

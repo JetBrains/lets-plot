@@ -59,17 +59,17 @@ class DateTime @JvmOverloads constructor(val date: Date, val time: Time = Time.D
         return date.hashCode() * 31 + time.hashCode()
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj !is DateTime) return false
+    override fun equals(other: Any?): Boolean {
+        if (other !is DateTime) return false
 
-        val otherDateTime = obj as DateTime?
+        val otherDateTime = other as DateTime?
 
         return date == otherDateTime!!.date && time.equals(otherDateTime.time)
     }
 
-    override fun compareTo(o: DateTime): Int {
-        val dateComparison = date.compareTo(o.date)
-        return if (dateComparison != 0) dateComparison else time.compareTo(o.time)
+    override fun compareTo(other: DateTime): Int {
+        val dateComparison = date.compareTo(other.date)
+        return if (dateComparison != 0) dateComparison else time.compareTo(other.time)
     }
 
     override fun toString(): String {

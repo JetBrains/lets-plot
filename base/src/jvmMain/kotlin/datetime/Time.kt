@@ -17,21 +17,21 @@ class Time @JvmOverloads constructor(val hours: Int, val minutes: Int, val secon
         }
     }
 
-    override fun compareTo(o: Time): Int {
-        var delta = hours - o.hours
+    override fun compareTo(other: Time): Int {
+        var delta = hours - other.hours
         if (delta != 0) return delta
-        delta = minutes - o.minutes
+        delta = minutes - other.minutes
         if (delta != 0) return delta
-        delta = seconds - o.seconds
-        return if (delta != 0) delta else milliseconds - o.milliseconds
+        delta = seconds - other.seconds
+        return if (delta != 0) delta else milliseconds - other.milliseconds
     }
 
     override fun hashCode(): Int {
         return hours * 239 + minutes * 491 + seconds * 41 + milliseconds
     }
 
-    override fun equals(obj: Any?): Boolean {
-        return if (obj !is Time) false else compareTo((obj as Time?)!!) == 0
+    override fun equals(other: Any?): Boolean {
+        return if (other !is Time) false else compareTo((other as Time?)!!) == 0
 
     }
 

@@ -2,9 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
-import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleBreaks
 
-import java.util.ArrayList
 
 object ScaleBreaksUtil {
     fun <TargetT> withBreaks(scale: Scale2<TargetT>, scaleDomain: ClosedRange<Double>, breakCount: Int): Scale2<TargetT> {

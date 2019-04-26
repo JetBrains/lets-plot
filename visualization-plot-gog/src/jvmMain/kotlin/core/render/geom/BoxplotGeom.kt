@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.geom
 
+import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
@@ -16,9 +17,6 @@ import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.*
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.HintColorUtil.fromColor
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.HintsCollection.HintConfigFactory
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
-import java.util.*
-import java.util.function.Consumer
-import java.util.function.Function
 
 internal class BoxplotGeom : GeomBase() {
 
@@ -92,7 +90,7 @@ internal class BoxplotGeom : GeomBase() {
         // rectangles
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx)
         val rectangles = helper.createRectangles(rectangleByDataPoint(ctx))
-        rectangles.forEach(Consumer { root.add(it) })
+        rectangles.forEach { root.add(it) }
     }
 
     private fun buildLines(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
@@ -105,7 +103,7 @@ internal class BoxplotGeom : GeomBase() {
             val width = if (hasWidth)
                 GeomUtil.widthPx(p, ctx, 2.0)
             else
-                java.lang.Double.NaN
+                Double.NaN
 
             val lines = ArrayList<SvgLineElement>()
 
@@ -159,7 +157,7 @@ internal class BoxplotGeom : GeomBase() {
             p));
         */
 
-                lines.forEach(Consumer<SvgLineElement> { root.add(it) })
+                lines.forEach { root.add(it) }
             }
         }
     }
@@ -271,7 +269,7 @@ internal class BoxplotGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = Arrays.asList<Aes<*>>(
+        val RENDERS = listOf(
                 Aes.LOWER, // NaN for 'outlier' data-point
                 Aes.MIDDLE, // NaN for 'outlier' data-point
                 Aes.UPPER, // NaN for 'outlier' data-point

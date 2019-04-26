@@ -2,14 +2,13 @@ package jetbrains.datalore.visualization.plot.gog.common.geometry
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import java.util.*
 import java.util.stream.Collectors.toList
 import java.util.stream.IntStream
 import java.util.stream.Stream
 
 class PolylineSimplifier private constructor(private val myPoints: List<DoubleVector>, strategy: RankingStrategy) {
     private val myWeights: List<Double>
-    private var myWeightLimit = java.lang.Double.NaN
+    private var myWeightLimit = Double.NaN
     private var myCountLimit = -1
 
     val points: List<DoubleVector>
@@ -38,7 +37,7 @@ class PolylineSimplifier private constructor(private val myPoints: List<DoubleVe
         }
 
     private val isWeightLimitSet: Boolean
-        get() = !java.lang.Double.isNaN(myWeightLimit)
+        get() = !myWeightLimit.isNaN()
 
     init {
         myWeights = strategy.getWeights(myPoints)
@@ -51,7 +50,7 @@ class PolylineSimplifier private constructor(private val myPoints: List<DoubleVe
     }
 
     fun setCountLimit(countLimit: Int): PolylineSimplifier {
-        myWeightLimit = java.lang.Double.NaN
+        myWeightLimit = Double.NaN
         myCountLimit = countLimit
         return this
     }

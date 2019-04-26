@@ -21,8 +21,8 @@ class Duration(val duration: Long) : Comparable<Duration> {
         return this.duration / duration.duration.toDouble()
     }
 
-    override fun compareTo(o: Duration): Int {
-        val delta = duration - o.duration
+    override fun compareTo(other: Duration): Int {
+        val delta = duration - other.duration
         return if (delta > 0) {
             1
         } else if (delta == 0L) {
@@ -36,8 +36,8 @@ class Duration(val duration: Long) : Comparable<Duration> {
         return duration.toInt()
     }
 
-    override fun equals(obj: Any?): Boolean {
-        return if (obj !is Duration) false else duration == obj.duration
+    override fun equals(other: Any?): Boolean {
+        return if (other !is Duration) false else duration == other.duration
 
     }
 

@@ -1,7 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.common.time.interval
 
+import jetbrains.datalore.base.function.Function
+import jetbrains.datalore.base.function.Functions.function
 import jetbrains.datalore.visualization.plot.gog.common.text.DateTimeFormatUtil
-import java.util.function.Function
 
 internal class SemesterInterval(count: Int) : TimeInterval(count) {
 
@@ -17,7 +18,7 @@ internal class SemesterInterval(count: Int) : TimeInterval(count) {
 
     companion object {
 
-        private val TIME_FORMAT_FUNCTION = Function<Any, String> { input ->
+        private val TIME_FORMAT_FUNCTION: Function<Any, String> = function { input ->
             var result = DateTimeFormatUtil.formatDateUTC(input as Number, "Q")
             if (result.length == 2 && result.startsWith("Q")) {
                 try {

@@ -1,11 +1,10 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
+import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.visualization.plot.gog.common.time.TimeUtil
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.NiceTimeInterval
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.TimeInterval
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.YearInterval
-import java.util.*
-import java.util.function.Function
 
 class DateTimeBreaksHelper internal constructor(
         rangeStart: Double,
@@ -63,7 +62,7 @@ class DateTimeBreaksHelper internal constructor(
             }
 
             if (isReversed) {
-                Collections.reverse(ticks)
+                ticks.reverse()
             }
             breaks = ticks
         }

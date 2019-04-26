@@ -1,13 +1,12 @@
 package jetbrains.datalore.visualization.plot.gog.core.data
 
+import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleUtil
-import java.util.*
-import java.util.function.Predicate
 
 
 object DataFrameUtil {
@@ -35,23 +34,23 @@ object DataFrameUtil {
 
         if (scale.isContinuousDomain) {
             val limits = scale.domainLimits
-            return filterTransformSource(data.getNumeric(`var`), Predicate { input ->
+            return filterTransformSource(data.getNumeric(`var`)) { input: Double? ->
                 // keep null(s)
-                input == null || limits.contains(input!!)   // faster then 'scale.isInDomainLimits(Object v)'
-            })
+                input == null || limits.contains(input)   // faster then 'scale.isInDomainLimits(Object v)'
+            }
         }
 
         // discrete domain
-        return filterTransformSource(data[`var`], Predicate { input ->
+        return filterTransformSource(data[`var`]) { input: Any? ->
             // keep null(s)
-            input == null || scale.isInDomainLimits(input!!)
-        })
+            input == null || scale.isInDomainLimits(input)
+        }
     }
 
     private fun <T> filterTransformSource(rawData: List<T>, retain: Predicate<T>): List<T?> {
         val result = ArrayList<T?>(rawData.size)
         for (v in rawData) {
-            if (retain.test(v)) {
+            if (retain(v)) {
                 result.add(v)
             } else {
                 // drop this value
@@ -141,8 +140,8 @@ object DataFrameUtil {
     fun fromMap(map: Map<*, *>): DataFrame {
         val frameBuilder = DataFrame.Builder()
         for ((key, value) in map) {
-            checkArgument(key is String, "Map to data-frame: key expected a String but was " + key!!.javaClass.simpleName + " : " + key)
-            checkArgument(key is String, "Map to data-frame: value expected a List but was " + value!!.javaClass.simpleName + " : " + value)
+            checkArgument(key is String, "Map to data-frame: key expected a String but was " + key!!::class.simpleName + " : " + key)
+            checkArgument(key is String, "Map to data-frame: value expected a List but was " + value!!::class.simpleName + " : " + value)
             frameBuilder.put(createVariable(key as String), value as List<*>)
         }
         return frameBuilder.build()

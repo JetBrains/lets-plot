@@ -2,8 +2,10 @@ package jetbrains.datalore.visualization.plot.gog.common.geometry
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.gog.common.geometry.PolylineSimplifier.RankingStrategy
-import java.util.*
-import java.util.Collections.nCopies
+import java.util.Collections
+import kotlin.Comparator
+import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 
 // Reference: https://bost.ocks.org/mike/simplify/
@@ -20,7 +22,7 @@ internal class VisvalingamWhyattSimplification : RankingStrategy {
     override fun getWeights(points: List<DoubleVector>): List<Double> {
         myTriangles = ArrayList(points.size - 2)
         initTriangles(points)
-        val weights = ArrayList(nCopies(points.size, INITIAL_AREA))
+        val weights = MutableList(points.size) { INITIAL_AREA }
         var lastRemovedVertexArea = 0.0
         while (!isSimplificationDone) {
             val triangle = takeTriangle()
@@ -138,12 +140,12 @@ internal class VisvalingamWhyattSimplification : RankingStrategy {
             val b = myPoints[currentVertex]
             val c = myPoints[nextVertex]
 
-            return Math.abs(((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) / 2.0)
+            return abs(((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) / 2.0)
         }
     }
 
     companion object {
 
-        private val INITIAL_AREA = java.lang.Double.MAX_VALUE
+        private val INITIAL_AREA = Double.MAX_VALUE
     }
 }

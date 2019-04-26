@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.geom.util
 
+import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
 
-import java.util.function.Function
 import java.util.stream.StreamSupport
 
 class MappedAesthetics(private val myAesthetics: Aesthetics, private val myPointAestheticsMapper: Function<DataPointAesthetics, DataPointAesthetics>) : Aesthetics {
@@ -24,7 +24,7 @@ class MappedAesthetics(private val myAesthetics: Aesthetics, private val myPoint
     override fun dataPoints(): Iterable<DataPointAesthetics> {
         val source = myAesthetics.dataPoints()
         val stream = StreamSupport.stream(source.spliterator(), false)
-        return Iterable { stream.map(myPointAestheticsMapper).iterator() }
+        return Iterable { stream.map { value -> myPointAestheticsMapper.apply(value) }.iterator() }
     }
 
     override fun range(aes: Aes<Double>): ClosedRange<Double> {

@@ -1,8 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
+import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-
-import java.util.function.Function
 
 /*package*/ internal class LinearScaleTickFormatterFactory
 /**

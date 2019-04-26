@@ -3,12 +3,12 @@ package jetbrains.datalore.visualization.plot.gog.core.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
-
-import java.util.ArrayList
-import java.util.HashSet
-import java.util.LinkedHashMap
-import java.util.LinkedHashSet
 import java.util.TreeMap
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
+import kotlin.collections.LinkedHashMap
+import kotlin.collections.LinkedHashSet
+import kotlin.collections.set
 
 internal class DiscreteScale<T> : AbstractScale<Any, T> {
     private val myNumberByDomainValue = LinkedHashMap<Any, Double>()
@@ -25,7 +25,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             return SeriesUtil.pickAtIndices(breaks, indices)
         }
 
-    override val labels: MutableList<String>
+    override val labels: List<String>
         get() {
             val labels = super.labels
             if (!hasDomainLimits() || !hasBreaks()) {

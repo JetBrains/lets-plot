@@ -1,8 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
+import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.visualization.plot.gog.common.text.Formatter
-
-import java.util.function.Function
 
 class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Boolean) : Function<Any, String> {
     private var myFormatter: Function<Any, String>

@@ -89,10 +89,10 @@ class Rectangle(val origin: Vector, val dimension: Vector) {
         return origin.hashCode() * 31 + dimension.hashCode()
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj !is Rectangle) return false
+    override fun equals(other: Any?): Boolean {
+        if (other !is Rectangle) return false
 
-        val otherRect = obj as Rectangle?
+        val otherRect = other as Rectangle?
         return origin == otherRect!!.origin && dimension == otherRect.dimension
     }
 

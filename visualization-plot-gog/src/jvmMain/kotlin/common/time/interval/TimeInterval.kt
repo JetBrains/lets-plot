@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.gog.common.time.interval
 
 import jetbrains.datalore.base.datetime.Duration
+import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.visualization.plot.gog.common.data.DataType
 import jetbrains.datalore.visualization.plot.gog.common.text.Formatter
-import java.util.function.Function
 
 abstract class TimeInterval protected constructor(val count: Int) {
 

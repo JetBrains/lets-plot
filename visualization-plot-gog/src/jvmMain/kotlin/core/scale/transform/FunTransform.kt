@@ -1,12 +1,11 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.transform
 
+import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.core.scale.BreaksGenerator
 import jetbrains.datalore.visualization.plot.gog.core.scale.MapperUtil
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleBreaks
 import jetbrains.datalore.visualization.plot.gog.core.scale.Transform
-import java.util.*
-import java.util.function.Function
 
 open class FunTransform(
         private val myFun: Function<Double, Double>,

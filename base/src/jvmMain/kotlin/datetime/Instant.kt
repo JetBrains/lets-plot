@@ -14,8 +14,8 @@ class Instant @JvmOverloads constructor(val timeSinceEpoch: Long = System.curren
         return Duration(instant.timeSinceEpoch - timeSinceEpoch)
     }
 
-    override fun compareTo(o: Instant): Int {
-        val delta = timeSinceEpoch - o.timeSinceEpoch
+    override fun compareTo(other: Instant): Int {
+        val delta = timeSinceEpoch - other.timeSinceEpoch
         return if (delta > 0) {
             1
         } else if (delta == 0L) {
@@ -33,8 +33,8 @@ class Instant @JvmOverloads constructor(val timeSinceEpoch: Long = System.curren
         return "" + timeSinceEpoch
     }
 
-    override fun equals(obj: Any?): Boolean {
-        return if (obj !is Instant) false else timeSinceEpoch == obj.timeSinceEpoch
+    override fun equals(other: Any?): Boolean {
+        return if (other !is Instant) false else timeSinceEpoch == other.timeSinceEpoch
 
     }
 }

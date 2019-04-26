@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.common.time.interval
 
 import jetbrains.datalore.base.datetime.Duration
-import java.util.*
 
 internal class DurationInterval(private val myDuration: Duration, count: Int) : TimeInterval(count) {
 
