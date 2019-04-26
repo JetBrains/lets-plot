@@ -112,7 +112,7 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
     }
 
     companion object {
-        private val NO_MESH = object : RegularMeshDetector(0.0) {
+        private val NO_MESH: RegularMeshDetector = object : RegularMeshDetector(0.0) {
             override var isMesh: Boolean
                 get() = false
                 set(value: Boolean) {
