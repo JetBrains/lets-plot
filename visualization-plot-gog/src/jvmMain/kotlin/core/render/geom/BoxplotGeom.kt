@@ -6,37 +6,19 @@ import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
-import jetbrains.datalore.visualization.plot.gog.core.render.AestheticsUtil
-import jetbrains.datalore.visualization.plot.gog.core.render.CoordinateSystem
-import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
-import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext
-import jetbrains.datalore.visualization.plot.gog.core.render.LegendKeyElementFactory
-import jetbrains.datalore.visualization.plot.gog.core.render.PositionAdjustment
-import jetbrains.datalore.visualization.plot.gog.core.render.SvgRoot
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.DataPointAestheticsDelegate
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GeomHelper
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GeomUtil
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.HintsCollection
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.HintsCollection.HintConfigFactory
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.MappedAesthetics
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.RectanglesHelper
-import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
-import jetbrains.datalore.visualization.plot.gog.plot.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.NullGeomTargetCollector
-
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.function.Function
-
+import jetbrains.datalore.visualization.plot.core.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetCollector.TooltipParams.Companion.params
+import jetbrains.datalore.visualization.plot.gog.core.event3.NullGeomTargetCollector
 import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+import jetbrains.datalore.visualization.plot.gog.core.render.*
+import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.*
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.HintColorUtil.fromColor
+import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.HintsCollection.HintConfigFactory
+import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
+import java.util.*
 import java.util.function.Consumer
+import java.util.function.Function
 
 internal class BoxplotGeom : GeomBase() {
 

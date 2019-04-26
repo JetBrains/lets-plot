@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.geom
 
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GeomUtil

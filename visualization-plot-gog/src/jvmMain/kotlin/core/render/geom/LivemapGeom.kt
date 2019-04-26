@@ -2,10 +2,10 @@ package jetbrains.datalore.visualization.plot.gog.core.render.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.gog.core.event3.MouseEventSource
 import jetbrains.datalore.visualization.plot.gog.core.render.*
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.LivemapProvider.LivemapData
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GenericLegendKeyElementFactory
-import jetbrains.datalore.visualization.plot.gog.plot.event3.MouseEventSource
 import java.util.*
 
 

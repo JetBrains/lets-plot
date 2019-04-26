@@ -2,27 +2,19 @@ package jetbrains.datalore.visualization.plot.gog.core.render.geom.util
 
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.core.render.AestheticsUtil
-import jetbrains.datalore.visualization.plot.gog.core.render.CoordinateSystem
-import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
-import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext
-import jetbrains.datalore.visualization.plot.gog.core.render.PositionAdjustment
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.StepGeom
-import jetbrains.datalore.visualization.plot.gog.core.render.linetype.LineType
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.LinePath
-
-import java.util.ArrayList
-import java.util.function.Function
-
 import jetbrains.datalore.base.values.Colors.withOpacity
+import jetbrains.datalore.visualization.plot.gog.core.render.*
+import jetbrains.datalore.visualization.plot.gog.core.render.geom.StepGeom
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.MultiPointDataConstructor.singlePointAppender
+import jetbrains.datalore.visualization.plot.gog.core.render.svg.LinePath
+import java.util.*
+import java.util.function.Function
 
 class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) : GeomHelper(pos, coord, ctx) {
 
-    private var myAlphaFilter = Function.identity<Double>()
-    private var myWidthFilter = Function.identity<Double>()
+    private var myAlphaFilter = { v: Double -> v }
+    private var myWidthFilter = { v: Double -> v }
     private var myAlphaEnabled = true
 
     private fun insertPathSeparators(rings: Iterable<List<DoubleVector>>): List<DoubleVector?> {
@@ -76,7 +68,7 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
         return paths
     }
 
-    fun createSteps(dataPoints: Iterable<DataPointAesthetics>, dir: StepGeom.Direction): List<PathInfo> {
+    internal fun createSteps(dataPoints: Iterable<DataPointAesthetics>, dir: StepGeom.Direction): List<PathInfo> {
         val pathInfos = ArrayList<PathInfo>()
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
                 dataPoints,
@@ -140,7 +132,7 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
     protected fun decorate(path: LinePath, p: DataPointAesthetics, filled: Boolean) {
 
         val stroke = p.color()
-        val strokeAlpha = myAlphaFilter.apply(AestheticsUtil.alpha(stroke!!, p))
+        val strokeAlpha = myAlphaFilter(AestheticsUtil.alpha(stroke!!, p))
         path.color().set(withOpacity(stroke, strokeAlpha))
         if (!AestheticsUtil.ALPHA_CONTROLS_BOTH && (filled || !myAlphaEnabled)) {
             path.color().set(stroke)
@@ -150,7 +142,7 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
             decorateFillingPart(path, p)
         }
 
-        val size = myWidthFilter.apply(AestheticsUtil.strokeWidth(p))
+        val size = myWidthFilter(AestheticsUtil.strokeWidth(p))
         path.width().set(size)
 
         val lineType = p.lineType()
@@ -161,15 +153,15 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
 
     private fun decorateFillingPart(path: LinePath, p: DataPointAesthetics) {
         val fill = p.fill()
-        val fillAlpha = myAlphaFilter.apply(AestheticsUtil.alpha(fill!!, p))
+        val fillAlpha = myAlphaFilter(AestheticsUtil.alpha(fill!!, p))
         path.fill().set(withOpacity(fill, fillAlpha))
     }
 
-    fun setAlphaFilter(alphaFilter: Function<Double, Double>) {
+    fun setAlphaFilter(alphaFilter: (Double) -> Double) {
         myAlphaFilter = alphaFilter
     }
 
-    fun setWidthFilter(widthFilter: Function<Double, Double>) {
+    fun setWidthFilter(widthFilter: (Double) -> Double) {
         myWidthFilter = widthFilter
     }
 
