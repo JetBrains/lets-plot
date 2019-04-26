@@ -9,14 +9,14 @@ import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.base.canvas.CanvasUtil.drawGraphicsCanvasControl
 import jetbrains.datalore.visualization.base.canvas.GraphicsCanvasControl
 import jetbrains.datalore.visualization.base.canvas.GraphicsCanvasControlFactory
-import java.awt.Component
 import java.awt.Graphics
+import javax.swing.JComponent
 import javax.swing.JPanel
 
 class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactory, size: Vector) : CanvasControl {
     private var myGraphicsCanvasControl: GraphicsCanvasControl? = null
-    val component: Component
     private val myEventPeer: AwtEventPeer
+    val component: JComponent
 
     override val size: Vector
         get() = myGraphicsCanvasControl!!.size
