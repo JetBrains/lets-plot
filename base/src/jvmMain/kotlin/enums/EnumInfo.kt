@@ -8,15 +8,15 @@ interface EnumInfo<EnumT : Enum<EnumT>> {
 
     val originalNames: List<String>
 
-    fun hasValue(name: String): Boolean
+    fun hasValue(name: String?): Boolean
 
     /**
      * Similar to valueOf(). See the notes for this interface.
      */
     fun unsafeValueOf(name: String): EnumT
 
-    fun safeValueOf(name: String): EnumT?
+    fun safeValueOf(name: String?): EnumT?
 
-    fun safeValueOf(name: String, defaultValue: EnumT): EnumT
+    fun safeValueOf(name: String?, defaultValue: EnumT): EnumT
 
 }

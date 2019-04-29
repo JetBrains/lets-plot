@@ -32,22 +32,22 @@ internal class EnumInfoImpl<EnumT : Enum<EnumT>>(enumClass: Class<EnumT>) : Enum
         myNormalizedValueMap = Collections.unmodifiableMap(valueMap)
     }
 
-    override fun safeValueOf(name: String, defaultValue: EnumT): EnumT {
+    override fun safeValueOf(name: String?, defaultValue: EnumT): EnumT {
         val value = safeValueOf(name)
         return value ?: defaultValue
     }
 
-    override fun safeValueOf(name: String): EnumT? {
+    override fun safeValueOf(name: String?): EnumT? {
         val result: EnumT?
         if (hasValue(name)) {
-            result = myNormalizedValueMap[toNormalizedName(name)]
+            result = myNormalizedValueMap[toNormalizedName(name!!)]
         } else {
             result = null
         }
         return result
     }
 
-    override fun hasValue(name: String): Boolean {
+    override fun hasValue(name: String?): Boolean {
         return name != null && myNormalizedValueMap.containsKey(toNormalizedName(name))
     }
 
