@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.geom.util
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.function.Functions.function
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
@@ -78,7 +77,7 @@ object MultiPointDataConstructor {
 
         internal fun create(group: Int): MultiPointData {
             val points = myPointCollector.points
-            return MultiPointData(myFirstAes!!, points.first!!, function { points.second!![it] }, group)
+            return MultiPointData(myFirstAes!!, points.first!!, { points.second!![it] }, group)
         }
     }
 

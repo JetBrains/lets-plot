@@ -21,10 +21,10 @@ object Mappers {
 
     fun constant(v: Double): (Double) -> Double = { v }
 
-    fun mul(domain: ClosedRange<Double>, rangeSpan: Double): Function<Double, Double> {
+    fun mul(domain: ClosedRange<Double>, rangeSpan: Double): (Double) -> Double {
         val factor = rangeSpan / (domain.upperEndpoint() - domain.lowerEndpoint())
         checkState(!(factor.isInfinite() || factor.isNaN()), "Can't create mapper with ratio: $factor")
-        return MulFunction(factor)
+        return { MulFunction(factor).apply(it) }
     }
 
     fun mul(factor: Double): Function<Double, Double> {
@@ -62,7 +62,7 @@ object Mappers {
     }
 
     fun <T> discrete(outputValues: List<T>, defaultOutputValue: T): (Double?) -> T {
-        return { v -> DiscreteFun(outputValues, defaultOutputValue).apply(v) }
+        return { DiscreteFun(outputValues, defaultOutputValue).apply(it) }
     }
 
     // todo: extract quantizer

@@ -491,12 +491,6 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         }
     }
 
-    private class CollectionAes<ValueT> internal constructor(private val myVal: Collection<ValueT>) : Function<Int, ValueT> {
-        override fun apply(value: Int): ValueT {
-            return Iterables[myVal, value]
-        }
-    }
-
     private class MapperAes<ValueT> internal constructor(private val myL: List<Double>, private val myF: ((Double) -> ValueT)) : Function<Int, ValueT> {
         override fun apply(value: Int): ValueT {
             return myF(myL[value])
@@ -506,16 +500,16 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
     companion object {
         fun <T> constant(v: T): (Int) -> T = { v }
 
-        fun <T> array(vararg v: T): Function<Int, T> {
-            return ArrayAes<T>(v)
+        fun <T> array(vararg v: T): (Int) -> T {
+            return { value -> v[value] }
         }
 
-        fun <T> collection(v: Collection<T>): Function<Int, T> {
-            return CollectionAes(v)
+        fun <T> collection(v: Collection<T>): (Int) -> T {
+            return { value -> Iterables[v, value] }
         }
 
-        fun <T> listMapper(v: List<Double>, f: (Double) -> T): Function<Int, T> {
-            return MapperAes(v, f)
+        fun <T> listMapper(v: List<Double>, f: (Double) -> T): (Int) -> T {
+            return { value -> f(v[value]) }
         }
     }
 

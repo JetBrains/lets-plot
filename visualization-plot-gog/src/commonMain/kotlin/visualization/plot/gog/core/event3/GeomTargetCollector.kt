@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.event3
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
@@ -12,7 +11,7 @@ interface GeomTargetCollector {
 
     fun addRectangle(index: Int, rectangle: DoubleRectangle, tooltipParams: TooltipParams)
 
-    fun addPath(points: List<DoubleVector>, localToGlobalIndex: Function<Int, Int>, tooltipParams: TooltipParams, closePath: Boolean)
+    fun addPath(points: List<DoubleVector>, localToGlobalIndex: (Int) -> Int, tooltipParams: TooltipParams, closePath: Boolean)
 
     class TooltipParams {
 
