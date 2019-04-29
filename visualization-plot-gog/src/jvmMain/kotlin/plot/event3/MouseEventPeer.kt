@@ -6,9 +6,9 @@ import jetbrains.datalore.base.observable.event.ListenerCaller
 import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.visualization.plot.gog.core.event3.MouseEventSource
 import java.util.EnumMap
 import kotlin.collections.ArrayList
-import kotlin.collections.forEach
 
 class MouseEventPeer : MouseEventSource {
     private val myEventHandlers = EnumMap<MouseEventSource.MouseEventSpec, Listeners<EventHandler<MouseEvent>>>(MouseEventSource.MouseEventSpec::class.java)

@@ -4,10 +4,11 @@ import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.visualization.plot.gog.core.event3.MouseEventSource
 
-class TileMouseEventPeer(eventPeer: MouseEventPeer, private val myRect: Rectangle) : MouseEventSource {
+class TileMouseEventPeer(eventSource: MouseEventSource, private val myRect: Rectangle) : MouseEventSource {
 
-    private val myEventPeer: MouseEventPeer
+    private val myEventPeer: MouseEventPeer = MouseEventPeer()
     private var myInside: Boolean = false
     private var myLastDragMouseEvent: MouseEvent? = null
     private fun unsupportedEventSpec(eventSpec: MouseEventSource.MouseEventSpec): Boolean {
@@ -15,8 +16,7 @@ class TileMouseEventPeer(eventPeer: MouseEventPeer, private val myRect: Rectangl
     }
 
     init {
-        myEventPeer = MouseEventPeer()
-        myEventPeer.addEventSource(eventPeer)
+        myEventPeer.addEventSource(eventSource)
         myInside = false
     }
 

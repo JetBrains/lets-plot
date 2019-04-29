@@ -2,18 +2,18 @@ package jetbrains.datalore.visualization.plot.gog.config.event3
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomTargetInteraction.TooltipAesSpec
 import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess.MappedData
+import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTarget
 import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipSpec
 
-class TooltipSpecFactory(tooltipAesSpec: TooltipAesSpec, private val myAxisOrigin: DoubleVector) {
-    private val myTooltipAes: List<Aes<*>> = tooltipAesSpec.tooltipAes
-    private val myAxisAes: List<Aes<*>> = tooltipAesSpec.axisAes
-    private val myDataAccess: MappedDataAccess = tooltipAesSpec.dataAccess
+class TooltipSpecFactory(contextualMapping: ContextualMapping, private val myAxisOrigin: DoubleVector) {
+    private val myTooltipAes: List<Aes<*>> = contextualMapping.tooltipAes
+    private val myAxisAes: List<Aes<*>> = contextualMapping.axisAes
+    private val myDataAccess: MappedDataAccess = contextualMapping.dataAccess
 
     fun create(geomTarget: GeomTarget): List<TooltipSpec> {
         return TargetTootipSpecBuilder(geomTarget).createTooltipSpecs()

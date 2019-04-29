@@ -25,8 +25,8 @@ open class VarBinding// ToDo: ?Type VarBinding can be generified
     }
 
     companion object {
-        fun deferred(`var`: DataFrame.Variable, aes: Aes<*>, scaleProvider: ScaleProvider<*>): VarBinding {
-            return object : VarBinding(`var`, aes, null) {
+        fun deferred(variable: DataFrame.Variable, aes: Aes<*>, scaleProvider: ScaleProvider<*>): VarBinding {
+            return object : VarBinding(variable, aes, null) {
                 override val scale: Scale2<*>
                     get() = throw IllegalStateException("Scale not defined for deferred var binding")
 
@@ -36,8 +36,8 @@ open class VarBinding// ToDo: ?Type VarBinding can be generified
                 override fun bindDeferred(data: DataFrame): VarBinding {
                     // ToDo: remove this method because the scale is only created in the client config and
                     // 'stat' var must be present (stat vars are added on server side)
-                    val scale = scaleProvider.createScale(data, `var`)
-                    return VarBinding(`var`, aes, scale)
+                    val scale = scaleProvider.createScale(data, variable)
+                    return VarBinding(variable, aes, scale)
                 }
             }
         }

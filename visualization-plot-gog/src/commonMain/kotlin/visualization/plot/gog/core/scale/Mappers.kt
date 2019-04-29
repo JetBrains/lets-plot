@@ -27,8 +27,8 @@ object Mappers {
         return { MulFunction(factor).apply(it) }
     }
 
-    fun mul(factor: Double): Function<Double, Double> {
-        return MulFunction(factor)
+    fun mul(factor: Double): (Double) -> Double {
+        return { v -> MulFunction(factor).apply(v) }
     }
 
     fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>): (Double) -> Double {

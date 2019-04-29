@@ -21,7 +21,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
     private var myLabels: List<String>? = null
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
-    private var myLimits: List<Any>? = null
+    private var myLimits: List<*>? = null
     private var myTransform: Transform? = null
 
     private var myDiscreteDomain = false
@@ -66,7 +66,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         return this
     }
 
-    fun limits(v: List<Any>): ScaleProviderBuilder<T> {
+    fun limits(v: List<*>): ScaleProviderBuilder<T> {
         // Limits for continuous scale : list(min, max)
         // Limits for discrete scale : list ("a", "b", "c")
         myLimits = v
@@ -107,7 +107,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         private val myLabels: List<String>?
         private val myMultiplicativeExpand: Double?
         private val myAdditiveExpand: Double?
-        private val myLimits: List<Any>?
+        private val myLimits: List<*>?
         private val myDiscreteDomain: Boolean
         private val myContinuousTransform: Transform?
 

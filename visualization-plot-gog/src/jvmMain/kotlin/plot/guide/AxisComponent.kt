@@ -20,7 +20,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
 
     val breaks: Property<List<Double>?> = ValueProperty(null)
-    val labels: Property<MutableList<String>?> = ValueProperty(null)
+    val labels: Property<List<String>?> = ValueProperty(null)
     // layout
     val tickLabelRotationDegree: Property<Double> = ValueProperty(0.0)
     val tickLabelHorizontalAnchor: Property<TextLabel.HorizontalAnchor>
@@ -137,7 +137,7 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
             val breaks = this.breaks.get()
             if (!(breaks == null || breaks.isEmpty())) {
 
-                var labels: MutableList<String>? = this.labels.get()
+                var labels: List<String>? = this.labels.get()
                 if (labels == null || labels.isEmpty()) {
                     labels = ArrayList()
                     for (i in breaks.indices) {

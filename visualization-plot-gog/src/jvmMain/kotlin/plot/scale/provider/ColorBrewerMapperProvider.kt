@@ -24,7 +24,7 @@ internal class ColorBrewerMapperProvider
  * If -1, the order of colors is reversed
  * @param naValue
  */
-(type: String, palette: Any, direction: Int?, naValue: Color) : MapperProviderBase<Color>(naValue), WithGuideBreaks {
+(type: String, palette: Any, direction: Double?, naValue: Color) : MapperProviderBase<Color>(naValue), WithGuideBreaks {
 
     private val myColorScheme: ColorScheme
     private val myReversedColors: Boolean
@@ -100,7 +100,7 @@ internal class ColorBrewerMapperProvider
         }
 
         myColorScheme = colorScheme
-        myReversedColors = direction != null && direction == -1
+        myReversedColors = direction != null && direction == -1.0
     }
 
     override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Color> {

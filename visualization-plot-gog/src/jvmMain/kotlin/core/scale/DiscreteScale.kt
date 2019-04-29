@@ -12,7 +12,7 @@ import kotlin.collections.set
 
 internal class DiscreteScale<T> : AbstractScale<Any, T> {
     private val myNumberByDomainValue = LinkedHashMap<Any, Double>()
-    private var myDomainLimits: Set<Any> = emptySet()
+    private var myDomainLimits: Set<Any?> = emptySet()
     private var myDomainValueByNumber: TreeMap<Double, Any>? = null
 
     override var breaks: List<Any> = super.breaks
@@ -74,10 +74,10 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         updateDomain(b.myIndexByValue.keys, b.myDomainLimits)
     }
 
-    private fun updateDomain(domainValues: Collection<Any>, domainLimits: Set<Any>) {
+    private fun updateDomain(domainValues: Collection<Any>, domainLimits: Set<Any?>) {
         val effectiveDomain: MutableList<Any>
         if (domainLimits.isEmpty()) {
-            effectiveDomain = ArrayList<Any>(domainValues)
+            effectiveDomain = ArrayList(domainValues)
         } else {
             effectiveDomain = ArrayList()
             for (domainValue in domainValues) {
@@ -158,7 +158,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     private class MyBuilder<T> internal constructor(scale: DiscreteScale<T>) : AbstractScale.AbstractBuilder<Any, T>(scale) {
         internal val myIndexByValue: Map<Any, Double>
         private var myNewBreaks: List<Any>? = null
-        internal var myDomainLimits: Set<Any> = emptySet()
+        internal var myDomainLimits: Set<Any?> = emptySet()
 
         init {
             myIndexByValue = scale.myNumberByDomainValue
@@ -173,7 +173,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             throw IllegalArgumentException("Not applicable to scale with discrete domain")
         }
 
-        override fun limits(domainValues: Set<Any>): Scale2.Builder<T> {
+        override fun limits(domainValues: Set<*>): Scale2.Builder<T> {
             myDomainLimits = domainValues
             return this
         }

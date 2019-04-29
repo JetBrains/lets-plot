@@ -11,16 +11,16 @@ object ColorMapper {
     val DEF_GRADIENT_LOW = Color.parseHex("#132B43")
     val DEF_GRADIENT_HIGH = Color.parseHex("#56B1F7")
 
-    fun gradientDefault(domain: ClosedRange<Double>): (Double) -> Color {
+    fun gradientDefault(domain: ClosedRange<Double>): (Double?) -> Color {
         return gradient(domain, DEF_GRADIENT_LOW, DEF_GRADIENT_HIGH, NA_VALUE)
     }
 
-    fun gradient(domain: ClosedRange<Double>, low: Color, high: Color, naColor: Color): (Double) -> Color {
+    fun gradient(domain: ClosedRange<Double>, low: Color, high: Color, naColor: Color): (Double?) -> Color {
         return gradientHSV(domain, Colors.hsvFromRgb(low), Colors.hsvFromRgb(high), true, naColor)
     }
 
     fun gradientHSV(
-            domain: ClosedRange<Double>, lowHSV: DoubleArray, highHSV: DoubleArray, autoHueDirection: Boolean, naColor: Color): (Double) -> Color {
+            domain: ClosedRange<Double>, lowHSV: DoubleArray, highHSV: DoubleArray, autoHueDirection: Boolean, naColor: Color): (Double?) -> Color {
 
         var lowHue = lowHSV[0]
         var highHue = highHSV[0]

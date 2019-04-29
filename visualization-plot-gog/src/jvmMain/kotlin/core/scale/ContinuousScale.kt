@@ -68,7 +68,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
             return this
         }
 
-        override fun limits(domainValues: Set<Any>): Scale2.Builder<T> {
+        override fun limits(domainValues: Set<*>): Scale2.Builder<T> {
             throw IllegalArgumentException("Can't apply discrete limits to scale with continuous domain")
         }
 

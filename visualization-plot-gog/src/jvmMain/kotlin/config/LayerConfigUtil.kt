@@ -11,7 +11,6 @@ import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PosProvider
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
 import jetbrains.datalore.visualization.plot.gog.plot.scale.ScaleProviderHelper
-import java.util.*
 
 internal object LayerConfigUtil {
 

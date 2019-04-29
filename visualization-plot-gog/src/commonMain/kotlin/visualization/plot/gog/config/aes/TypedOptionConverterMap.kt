@@ -1,7 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.config.aes
 
-import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.function.Functions.function
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes.Companion.ALPHA
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes.Companion.ANGLE
@@ -41,7 +39,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes.Companion.Z
 
 internal class TypedOptionConverterMap {
 
-    private val myMap = HashMap<Aes<*>, Function<Any?, *>>()
+    private val myMap = HashMap<Aes<*>, (Any?) -> Any?>()
 
     init {
         this.put(X, DOUBLE_CVT)
@@ -87,14 +85,14 @@ internal class TypedOptionConverterMap {
         this.put(ANGLE, DOUBLE_CVT)
     }
 
-    operator fun <T> get(aes: Aes<T>): Function<Any, T> {
+    operator fun <T> get(aes: Aes<T>): (Any) -> T {
         // Safe cast if 'put' is used responsibly.
-        return myMap[aes] as Function<Any, T>
+        return myMap[aes] as (Any) -> T
     }
 
-    private fun <T> put(aes: Aes<T>, value: Function<Any?, T?>): Function<Any?, T?> {
+    private fun <T> put(aes: Aes<T>, value: (Any?) -> T?): (Any?) -> T? {
         // Used responsibly, private access
-        return myMap.put(aes, value) as Function<Any?, T?>
+        return myMap.put(aes, value) as (Any?) -> T?
     }
 
     fun containsKey(aes: Aes<*>): Boolean {
@@ -102,11 +100,11 @@ internal class TypedOptionConverterMap {
     }
 
     companion object {
-        private val IDENTITY_O_CVT = function { o: Any? -> o }
-        private val IDENTITY_S_CVT = function { o: Any? -> if (o == null) null else o.toString() }
-        private val DOUBLE_CVT = NumericOptionConverter()
-        private val COLOR_CVT = ColorOptionConverter()
-        private val SHAPE_CVT = ShapeOptionConverter()
-        private val LINETYPE_CVT = LineTypeOptionConverter()
+        private val IDENTITY_O_CVT = { o: Any? -> o }
+        private val IDENTITY_S_CVT = { o: Any? -> if (o == null) null else o.toString() }
+        private val DOUBLE_CVT = { o: Any? -> NumericOptionConverter().apply(o) }
+        private val COLOR_CVT = { o: Any? -> ColorOptionConverter().apply(o) }
+        private val SHAPE_CVT = { o: Any? -> ShapeOptionConverter().apply(o) }
+        private val LINETYPE_CVT = { o: Any? -> LineTypeOptionConverter().apply(o) }
     }
 }
