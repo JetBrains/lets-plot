@@ -13,7 +13,7 @@ class ClosedRange<T : Comparable<T>>(private val myLower: T, private val myUpper
         get() = myLower.compareTo(myUpper) == 0
 
     init {
-        if (myLower.compareTo(myUpper) > 0) {
+        if (myLower > myUpper) {
             throw IllegalArgumentException("`lower` must be less or equal to `upper` (lower=$myLower upper=$myUpper")
         }
     }

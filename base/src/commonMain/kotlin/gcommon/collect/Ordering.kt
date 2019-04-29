@@ -14,7 +14,6 @@ abstract class Ordering<T> : Comparator<T> {
                 prev = next
             }
         }
-        val c = Comparator<Any> { o1, o2 -> 0 }
         return true
     }
 
@@ -22,6 +21,7 @@ abstract class Ordering<T> : Comparator<T> {
      * @return immutable sorted list
      */
     fun <E : T> sortedCopy(elements: Iterable<E>): List<E> {
+        @Suppress("UNCHECKED_CAST")
         val array = Iterables.toArray(elements) as Array<E>
         array.sortWith(object : Comparator<E> {
             override fun compare(a: E, b: E): Int {

@@ -64,7 +64,7 @@ actual object Iterables {
     }
 
     actual fun <T> find(iterable: Iterable<T>, predicate: Predicate<in T>, defaultValue: T): T {
-        return iterable.find(predicate)?:defaultValue
+        return iterable.find(predicate) ?: defaultValue
     }
 
     actual fun <T> getLast(iterable: Iterable<T>): T {

@@ -109,7 +109,7 @@ actual object Iterables {
     }
 
     internal actual fun toArray(iterable: Iterable<*>): Array<*> {
-        if (iterable is Collection<*>) {
+        if (iterable is Collection) {
             return iterable.toTypedArray()
         }
 
