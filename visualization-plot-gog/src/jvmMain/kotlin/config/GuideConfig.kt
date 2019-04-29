@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
-import jetbrains.datalore.base.function.MyRunnable
+import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.visualization.plot.gog.config.Option.Guide.COLOR_BAR
 import jetbrains.datalore.visualization.plot.gog.config.Option.Guide.COLOR_BAR_GB
 import jetbrains.datalore.visualization.plot.gog.config.Option.Guide.ColorBar.BIN_COUNT
@@ -25,9 +25,9 @@ internal abstract class GuideConfig private constructor(opts: Map<String, Any>) 
 
     protected abstract fun createGuideOptionsIntern(): GuideOptions
 
-    protected fun trySafe(r: MyRunnable) {
+    protected fun trySafe(r: Runnable) {
         try {
-            r()
+            r.run()
         } catch (ignored: RuntimeException) {
             // ok
         }
@@ -46,8 +46,17 @@ internal abstract class GuideConfig private constructor(opts: Map<String, Any>) 
 
         override fun createGuideOptionsIntern(): GuideOptions {
             val options = LegendOptions()
-            trySafe({ options.colCount = getDouble(COL_COUNT)!!.toInt() })
-            trySafe({ options.rowCount = getDouble(ROW_COUNT)!!.toInt() })
+            trySafe(object : Runnable {
+                override fun run() {
+                    options.colCount = getDouble(COL_COUNT)!!.toInt()
+                }
+
+            })
+            trySafe(object : Runnable {
+                override fun run() {
+                    options.rowCount = getDouble(ROW_COUNT)!!.toInt()
+                }
+            })
 
             options.isByRow = getBoolean(BY_ROW)
             return options
@@ -58,9 +67,21 @@ internal abstract class GuideConfig private constructor(opts: Map<String, Any>) 
 
         override fun createGuideOptionsIntern(): GuideOptions {
             val options = ColorBarOptions()
-            trySafe({ options.width = getDouble(WIDTH) })
-            trySafe({ options.height = getDouble(HEIGHT) })
-            trySafe({ options.binCount = getDouble(BIN_COUNT)!!.toInt() })
+            trySafe(object : Runnable {
+                override fun run() {
+                    options.width = getDouble(WIDTH)
+                }
+            })
+            trySafe(object : Runnable {
+                override fun run() {
+                    options.height = getDouble(HEIGHT)
+                }
+            })
+            trySafe(object : Runnable {
+                override fun run() {
+                    options.binCount = getDouble(BIN_COUNT)!!.toInt()
+                }
+            })
             return options
         }
     }
