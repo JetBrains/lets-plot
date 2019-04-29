@@ -1,9 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.data
 
-import jetbrains.datalore.base.function.Function
-
 interface GroupAwareSampling : Sampling {
-    fun isApplicable(population: DataFrame, groupMapper: Function<Int, Int>): Boolean
+    fun isApplicable(population: DataFrame, groupMapper: (Int) -> Int): Boolean
 
-    fun apply(population: DataFrame, groupMapper: Function<Int, Int>): DataFrame
+    fun apply(population: DataFrame, groupMapper: (Int) -> Int): DataFrame
 }
