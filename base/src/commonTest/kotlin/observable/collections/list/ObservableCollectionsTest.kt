@@ -3,8 +3,11 @@ package jetbrains.datalore.base.observable.collections.list
 import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.function.Supplier
 import jetbrains.datalore.base.function.Value
+import jetbrains.datalore.base.observable.collections.CollectionItemEvent
+import jetbrains.datalore.base.observable.collections.list.ObservableCollections.toObservable
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.PropertyChangeEvent
+import jetbrains.datalore.base.observable.property.ValueProperty
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -12,24 +15,27 @@ import kotlin.test.assertTrue
 
 class ObservableCollectionsTest {
     companion object {
-
         private val STARTS_WITH_A: Predicate<String?> = { value -> value?.startsWith("a") ?: false }
     }
 
-/*
     @Test
     fun testReadingHandlerOnSelectList() {
         val property = ValueProperty<List<String>?>(null)
-        val collection = ObservableCollections.selectList<List<String>?, String>(property) { value -> toObservable(value!!)}
+        val collection = ObservableCollections.selectList<List<String>?, String>(property) { value -> toObservable(value!!) }
 
-    val registration = collection.addHandler({ event : CollectionItemEvent<String?> -> })
+        val emptyEventHandler = object : EventHandler<CollectionItemEvent<out String?>> {
+            override fun onEvent(event: CollectionItemEvent<out String?>) {
+            }
+
+        }
+        val registration = collection.addHandler(emptyEventHandler)
         property.set(listOf("1", "2"))
         registration.dispose()
 
-        collection.addHandler({ event -> })
-        assertThat(collection).containsExactlyElementsOf(property.get())
+        collection.addHandler(emptyEventHandler)
+        val expected: List<String?> = property.get()!!
+        assertEquals(expected, collection as List<String?>)
     }
-*/
 
     @Test
     fun count() {
@@ -47,7 +53,7 @@ class ObservableCollectionsTest {
         val lastUpdate: Value<Int> = Value(0)
         count.addHandler(object : EventHandler<PropertyChangeEvent<out Int>> {
             override fun onEvent(event: PropertyChangeEvent<out Int>) {
-                lastUpdate.set(event.newValue!!)
+                lastUpdate.set(event.newValue)
             }
         })
 
