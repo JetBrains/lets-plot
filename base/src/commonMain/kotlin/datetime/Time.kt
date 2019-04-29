@@ -1,5 +1,7 @@
 package jetbrains.datalore.base.datetime
 
+import kotlin.jvm.JvmOverloads
+
 class Time @JvmOverloads constructor(val hours: Int, val minutes: Int, val seconds: Int = 0, val milliseconds: Int = 0) : Comparable<Time> {
 
     init {
@@ -65,9 +67,9 @@ class Time @JvmOverloads constructor(val hours: Int, val minutes: Int, val secon
                 throw IllegalArgumentException()
             }
 
-            val hours = Integer.parseInt(s.substring(0, 2))
-            val minutes = Integer.parseInt(s.substring(2, 4))
-            val seconds = Integer.parseInt(s.substring(4, 6))
+            val hours = s.substring(0, 2).toInt()
+            val minutes = s.substring(2, 4).toInt()
+            val seconds = s.substring(4, 6).toInt()
 
             return Time(hours, minutes, seconds)
         }
@@ -82,7 +84,9 @@ class Time @JvmOverloads constructor(val hours: Int, val minutes: Int, val secon
             }
             val hourLength = if (length == 4) 1 else 2
             try {
-                return Time(Integer.parseInt(time.substring(0, hourLength)), Integer.parseInt(time.substring(hourLength + 1, length)), 0)
+                return Time(
+                        time.substring(0, hourLength).toInt(),
+                        time.substring(hourLength + 1, length).toInt(), 0)
             } catch (ignored: NumberFormatException) {
                 throw IllegalArgumentException()
             }

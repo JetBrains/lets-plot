@@ -2,14 +2,13 @@ package jetbrains.datalore.base.datetime.tz
 
 import jetbrains.datalore.base.datetime.*
 import jetbrains.datalore.base.datetime.Date
-import java.util.*
 
 abstract class TimeZone protected constructor(val id: String?) {
 
     init {
-        if (id != null) {
-            ourTimeZones.put(id, this)
-        }
+//        if (id != null) {
+//            ourTimeZones.put(id, this)
+//        }
     }
 
     abstract fun toDateTime(instant: Instant): DateTime
@@ -41,7 +40,7 @@ abstract class TimeZone protected constructor(val id: String?) {
     }
 
     companion object {
-        private val ourTimeZones = TreeMap<String, TimeZone>()
+//        private val ourTimeZones = TreeMap<String, TimeZone>()
 
         val UTC = TimeZones.utc()
         val BERLIN = TimeZones.withEuSummerTime("Europe/Berlin", Duration.HOUR.mul(1))

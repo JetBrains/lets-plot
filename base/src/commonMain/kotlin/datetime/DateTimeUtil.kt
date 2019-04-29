@@ -1,12 +1,10 @@
 package jetbrains.datalore.base.datetime
 
 
-import jetbrains.datalore.base.datetime.tz.TimeZone
-
 object DateTimeUtil {
-    val BASE_YEAR = 1900
-    val MAX_SUPPORTED_YEAR = 2100 //inclusive; defined by LEAP_YEARS_FROM_1969 length
-    internal val MIN_SUPPORTED_YEAR = 1970 //inclusive
+    const val BASE_YEAR = 1900
+    const val MAX_SUPPORTED_YEAR = 2100 //inclusive; defined by LEAP_YEARS_FROM_1969 length
+    internal const val MIN_SUPPORTED_YEAR = 1970 //inclusive
     internal val DAYS_IN_YEAR: Int
     internal val DAYS_IN_LEAP_YEAR: Int
 
@@ -49,46 +47,5 @@ object DateTimeUtil {
         if (year > MAX_SUPPORTED_YEAR || year < MIN_SUPPORTED_YEAR) {
             throw IllegalArgumentException(year.toString() + "")
         }
-    }
-
-    fun toJavaDate(time: DateTime?): java.util.Date? {
-        return if (time == null) null else java.util.Date(
-                time.year - BASE_YEAR,
-                time.month!!.ordinal(), time.day, time.hours, time.minutes, time.seconds
-        )
-
-    }
-
-    fun toJavaDate(date: Date?): java.util.Date? {
-        return if (date == null) null else java.util.Date(date.year - BASE_YEAR, date.month!!.ordinal(), date.day)
-
-    }
-
-    fun fromJavaDate(date: java.util.Date?, sourceZone: TimeZone?, targetZone: TimeZone?): DateTime? {
-        if (date == null) return null
-
-        var dateTime = fromJavaDate(date)
-        if (sourceZone == null && targetZone == null) {
-            return dateTime
-        }
-        dateTime = targetZone!!.convertTo(dateTime!!, sourceZone!!)
-        return dateTime
-    }
-
-    fun fromJavaDate(date: java.util.Date?): DateTime? {
-        return if (date == null) null else DateTime(
-                Date(date!!.getDate(), Month.values()[date!!.getMonth()], BASE_YEAR + date!!.getYear()),
-                Time(date!!.getHours(), date!!.getMinutes(), date!!.getSeconds())
-        )
-
-    }
-
-    fun now(): DateTime? {
-        return fromJavaDate(java.util.Date(System.currentTimeMillis()))
-    }
-
-    fun toJavaDate(time: DateTime?, sourceZone: TimeZone, targetZone: TimeZone): java.util.Date? {
-        return if (time == null) null else toJavaDate(sourceZone.convertTo(time, targetZone))
-
     }
 }

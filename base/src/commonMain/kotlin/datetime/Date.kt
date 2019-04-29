@@ -1,5 +1,7 @@
 package jetbrains.datalore.base.datetime
 
+import kotlin.jvm.JvmOverloads
+
 class Date(val day: Int, val month: Month, val year: Int) : Comparable<Date> {
 
     val weekDay: WeekDay
@@ -194,9 +196,9 @@ class Date(val day: Int, val month: Month, val year: Int) : Comparable<Date> {
                 throw RuntimeException()
             }
 
-            val year = Integer.parseInt(str.substring(0, 4))
-            val month = Integer.parseInt(str.substring(4, 6))
-            val day = Integer.parseInt(str.substring(6, 8))
+            val year = str.substring(0, 4).toInt()
+            val month = str.substring(4, 6).toInt()
+            val day = str.substring(6, 8).toInt()
             return Date(day, Month.values()[month - 1], year)
         }
 

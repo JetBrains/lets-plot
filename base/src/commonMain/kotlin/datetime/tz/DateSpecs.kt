@@ -3,6 +3,7 @@ package jetbrains.datalore.base.datetime.tz
 import jetbrains.datalore.base.datetime.Date
 import jetbrains.datalore.base.datetime.Month
 import jetbrains.datalore.base.datetime.WeekDay
+import kotlin.jvm.JvmOverloads
 
 internal object DateSpecs {
     fun last(weekDay: WeekDay, month: Month): DateSpec {

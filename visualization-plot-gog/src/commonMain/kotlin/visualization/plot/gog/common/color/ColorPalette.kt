@@ -7,7 +7,7 @@ object ColorPalette {
     private val MIN_COLOR_SET_SIZE = 3
 
     private fun colors(scheme: ColorScheme, count: Int): Array<String> {
-        var count = count
+        @Suppress("NAME_SHADOWING") var count = count
         count = max(MIN_COLOR_SET_SIZE, count)
         count = min(scheme.maxColors, count)
         return scheme.colorSet[count - MIN_COLOR_SET_SIZE]

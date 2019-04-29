@@ -1,6 +1,7 @@
 package jetbrains.datalore.base.datetime
 
-class Instant @JvmOverloads constructor(val timeSinceEpoch: Long = System.currentTimeMillis()) : Comparable<Instant> {
+//class Instant @JvmOverloads constructor(val timeSinceEpoch: Long = System.currentTimeMillis()) : Comparable<Instant> {
+class Instant(val timeSinceEpoch: Long) : Comparable<Instant> {
 
     fun add(duration: Duration): Instant {
         return Instant(timeSinceEpoch + duration.duration)

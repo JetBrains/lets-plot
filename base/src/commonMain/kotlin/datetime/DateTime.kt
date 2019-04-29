@@ -1,6 +1,7 @@
 package jetbrains.datalore.base.datetime
 
 import jetbrains.datalore.base.datetime.tz.TimeZone
+import kotlin.jvm.JvmOverloads
 
 class DateTime @JvmOverloads constructor(val date: Date, val time: Time = Time.DAY_START) : Comparable<DateTime> {
 
@@ -64,7 +65,7 @@ class DateTime @JvmOverloads constructor(val date: Date, val time: Time = Time.D
 
         val otherDateTime = other as DateTime?
 
-        return date == otherDateTime!!.date && time.equals(otherDateTime.time)
+        return date == otherDateTime!!.date && time == otherDateTime.time
     }
 
     override fun compareTo(other: DateTime): Int {
