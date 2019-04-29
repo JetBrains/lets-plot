@@ -9,7 +9,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.*
 
 class RectanglesHelper(private val myAesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) : GeomHelper(pos, coord, ctx) {
 
-    fun createRectangles(rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?): List<SvgNode> {
+    fun createRectangles(rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?): MutableList<SvgNode> {
         val result = ArrayList<SvgNode>()
 
         for (index in 0 until myAesthetics.dataPointCount()) {
@@ -25,7 +25,7 @@ class RectanglesHelper(private val myAesthetics: Aesthetics, pos: PositionAdjust
         return result
     }
 
-    fun iterateRectangleGeometry(rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle,
+    fun iterateRectangleGeometry(rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?,
                                  iterator: (DataPointAesthetics, DoubleRectangle) -> Unit) {
         for (index in 0 until myAesthetics.dataPointCount()) {
             val p = myAesthetics.dataPointAt(index)

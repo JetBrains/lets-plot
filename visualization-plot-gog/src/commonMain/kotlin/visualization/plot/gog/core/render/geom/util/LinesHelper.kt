@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.geom.util
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors.withOpacity
@@ -10,10 +9,10 @@ import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.MultiPoin
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.LinePath
 
-class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) : GeomHelper(pos, coord, ctx) {
+open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) : GeomHelper(pos, coord, ctx) {
 
-    private var myAlphaFilter = { v: Double -> v }
-    private var myWidthFilter = { v: Double -> v }
+    private var myAlphaFilter = { v: Double? -> v }
+    private var myWidthFilter = { v: Double? -> v }
     private var myAlphaEnabled = true
 
     private fun insertPathSeparators(rings: Iterable<List<DoubleVector>>): List<DoubleVector?> {
@@ -34,17 +33,17 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
     }
 
     fun createLines(dataPoints: Iterable<DataPointAesthetics>,
-                    toLocation: Function<DataPointAesthetics, DoubleVector>): List<LinePath> {
+                    toLocation: (DataPointAesthetics) -> DoubleVector?): MutableList<LinePath> {
         return createPaths(dataPoints, toLocation, false)
     }
 
     private fun createPaths(dataPoints: Iterable<DataPointAesthetics>,
-                            toLocation: Function<DataPointAesthetics, DoubleVector>,
-                            closePath: Boolean): List<LinePath> {
+                            toLocation: (DataPointAesthetics) -> DoubleVector?,
+                            closePath: Boolean): MutableList<LinePath> {
         val paths = ArrayList<LinePath>()
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
                 dataPoints,
-                singlePointAppender(toClientLocation { toLocation.apply(it) }),
+                singlePointAppender(toClientLocation { toLocation(it) }),
                 reducer(0.999, closePath)
         )
 
@@ -101,8 +100,8 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
     }
 
     fun createBands(dataPoints: Iterable<DataPointAesthetics>,
-                    toLocationUpper: Function<DataPointAesthetics, DoubleVector>,
-                    toLocationLower: Function<DataPointAesthetics, DoubleVector>): List<LinePath> {
+                    toLocationUpper: (DataPointAesthetics) -> DoubleVector?,
+                    toLocationLower: (DataPointAesthetics) -> DoubleVector?): MutableList<LinePath> {
 
         val lines = ArrayList<LinePath>()
         val pointsByGroup = GeomUtil.createGroups(dataPoints)
@@ -111,17 +110,17 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
         for (group in Ordering.natural<Int>().sortedCopy(pointsByGroup.keys)) {
             val groupDataPoints = pointsByGroup[group]
             // upper margin points
-            val points = ArrayList(project(groupDataPoints!!) { toLocationUpper.apply(it) })
+            val points = ArrayList(project(groupDataPoints!!) { toLocationUpper(it) })
 
             // lower margin point in reversed order
 //            val lowerPoints = ImmutableList.reverse(groupDataPoints)
             val lowerPoints = groupDataPoints.reversed()
-            points.addAll(project(lowerPoints) { toLocationLower.apply(it) })
+            points.addAll(project(lowerPoints) { toLocationLower(it) })
 
             if (!points.isEmpty()) {
                 val path = LinePath.polygon(points)
                 //decorate(path, groupDataPoints.get(0), true);
-                decorateFillingPart(path, groupDataPoints.get(0))
+                decorateFillingPart(path, groupDataPoints[0])
                 lines.add(path)
             }
         }
@@ -131,7 +130,7 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
     protected fun decorate(path: LinePath, p: DataPointAesthetics, filled: Boolean) {
 
         val stroke = p.color()
-        val strokeAlpha = myAlphaFilter(AestheticsUtil.alpha(stroke!!, p))
+        val strokeAlpha = myAlphaFilter(AestheticsUtil.alpha(stroke!!, p))!!
         path.color().set(withOpacity(stroke, strokeAlpha))
         if (!AestheticsUtil.ALPHA_CONTROLS_BOTH && (filled || !myAlphaEnabled)) {
             path.color().set(stroke)
@@ -141,7 +140,7 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
             decorateFillingPart(path, p)
         }
 
-        val size = myWidthFilter(AestheticsUtil.strokeWidth(p))
+        val size = myWidthFilter(AestheticsUtil.strokeWidth(p))!!
         path.width().set(size)
 
         val lineType = p.lineType()
@@ -152,15 +151,15 @@ class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomCon
 
     private fun decorateFillingPart(path: LinePath, p: DataPointAesthetics) {
         val fill = p.fill()
-        val fillAlpha = myAlphaFilter(AestheticsUtil.alpha(fill!!, p))
+        val fillAlpha = myAlphaFilter(AestheticsUtil.alpha(fill!!, p))!!
         path.fill().set(withOpacity(fill, fillAlpha))
     }
 
-    fun setAlphaFilter(alphaFilter: (Double) -> Double) {
+    fun setAlphaFilter(alphaFilter: (Double?) -> Double?) {
         myAlphaFilter = alphaFilter
     }
 
-    fun setWidthFilter(widthFilter: (Double) -> Double) {
+    fun setWidthFilter(widthFilter: (Double?) -> Double?) {
         myWidthFilter = widthFilter
     }
 

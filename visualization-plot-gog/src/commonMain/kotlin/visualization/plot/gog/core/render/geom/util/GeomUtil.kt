@@ -24,7 +24,7 @@ object GeomUtil {
         if (SeriesUtil.allFinite(p.xmin(), p.ymin(), p.xmax(), p.ymax())) {
             rectToGeometry(p.xmin()!!, p.ymin()!!, p.xmax()!!, p.ymax()!!)
         } else {
-            emptyList<DoubleVector>()
+            emptyList()
         }
     }
     private val ORDERING_X = Ordering.from(object : Comparator<DataPointAesthetics?> {
