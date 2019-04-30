@@ -10,19 +10,17 @@ import jetbrains.datalore.visualization.plot.gog.core.data.sampling.VertexSampli
 import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
 import jetbrains.datalore.visualization.plot.gog.core.util.MutableDouble
 import jetbrains.datalore.visualization.plot.gog.core.util.MutableInteger
-import java.util.stream.Collectors.toList
-import java.util.stream.IntStream.range
 import kotlin.math.min
 import kotlin.random.Random
 
 internal object SamplingUtil {
 
     fun groupCount(groupMapper: (Int) -> Int, size: Int): Int {
-        return range(0, size).boxed().map { groupMapper(it) }.distinct().count().toInt()
+        return (0 until size).map { groupMapper(it) }.distinct().count()
     }
 
     fun distinctGroups(groupMapper: (Int) -> Int, size: Int): MutableList<Int> {
-        return range(0, size).boxed().map { groupMapper(it) }.distinct().collect(toList())
+        return (0 until size).map { groupMapper(it) }.distinct().toMutableList()
     }
 
     //static DataFrame randomSample(int sampleSize, DataFrame population, Random rand) {
@@ -105,14 +103,14 @@ internal object SamplingUtil {
     }
 
     fun calculateRingLimits(rings: List<List<DoubleVector>>, totalPointsLimit: Int): List<Int> {
-        val totalArea = rings.stream().mapToDouble { ring -> calculateArea(ring) }.sum()
+        val totalArea = rings.map { calculateArea(it) }.sum()
 
         val areaProceed = MutableDouble(0.0)
         val pointsProceed = MutableInteger(0)
 
-        return range(0, rings.size)
-                .mapToObj<Pair<Int, Double>> { i -> Pair(i, calculateArea(rings[i])) }
-                .sorted(Comparator.comparing { it: Pair<*, Double> -> getRingArea(it) }.reversed())
+        return (0 until rings.size)
+                .map { Pair(it, calculateArea(rings[it])) }
+                .sortedWith(compareBy<Pair<*, Double>> { getRingArea(it) }.reversed())
                 .map { p ->
                     var limit = min((p.second!! / (totalArea - areaProceed.get()) * (totalPointsLimit - pointsProceed.get())).toInt(),
                             rings[getRingIndex(p)].size
@@ -127,9 +125,8 @@ internal object SamplingUtil {
 
                     Pair(getRingIndex(p), limit)
                 }
-                .sorted(Comparator.comparingInt { getRingIndex(it) })
+                .sortedWith(compareBy { getRingIndex(it) })
                 .map { getRingLimit(it) }
-                .collect(toList())
     }
 
     fun getRingIndex(pair: Pair<Int, *>): Int {

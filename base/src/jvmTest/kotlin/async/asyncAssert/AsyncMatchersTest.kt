@@ -12,7 +12,6 @@ import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Assert.fail
 import org.junit.Test
-import java.util.*
 
 class AsyncMatchersTest {
 
@@ -38,7 +37,7 @@ class AsyncMatchersTest {
     fun resultUnfinished() {
         val first = SimpleAsync<Int>()
         val second = SimpleAsync<Int>()
-        val composite = PlatformAsyncs.composite(Arrays.asList<Async<Int>>(first, second))
+        val composite = PlatformAsyncs.composite(listOf(first, second))
         first.success(0)
         assertionFailure(composite, AsyncMatchers.succeeded(),
                 "\n" +

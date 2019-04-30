@@ -14,7 +14,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
     constructor(name: String, mapper: ((Double) -> T)?, continuousOutput: Boolean) : super(name, mapper) {
         isContinuous = continuousOutput
-        domainLimits = ClosedRange.closed(java.lang.Double.NEGATIVE_INFINITY, java.lang.Double.POSITIVE_INFINITY)
+        domainLimits = ClosedRange.closed(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
 
         // see: http://docs.ggplot2.org/current/scale_continuous.html
         // defaults for continuous scale.
@@ -32,14 +32,14 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     }
 
     override fun hasDomainLimits(): Boolean {
-        return domainLimits.lowerEndpoint() > java.lang.Double.NEGATIVE_INFINITY || domainLimits.upperEndpoint() < java.lang.Double.POSITIVE_INFINITY
+        return domainLimits.lowerEndpoint() > Double.NEGATIVE_INFINITY || domainLimits.upperEndpoint() < Double.POSITIVE_INFINITY
     }
 
     override fun asNumber(input: Any?): Double? {
         if (input == null || input is Double) {
             return input as Double?
         }
-        throw IllegalArgumentException("Double is expected but was " + input.javaClass.simpleName + " : " + input.toString())
+        throw IllegalArgumentException("Double is expected but was " + input::class.simpleName + " : " + input.toString())
     }
 
     override fun with(): Scale2.Builder<T> {

@@ -239,7 +239,7 @@ class GeomLayerBuilder {
             if (geom is LivemapGeom) {
                 geom.setLivemapProvider(livemapProvider)
             } else {
-                throw IllegalStateException("Not Livemap: " + geom.javaClass.simpleName)
+                throw IllegalStateException("Not Livemap: " + geom::class.simpleName)
             }
         }
     }

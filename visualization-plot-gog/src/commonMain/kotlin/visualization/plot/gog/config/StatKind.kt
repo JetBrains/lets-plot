@@ -17,7 +17,7 @@ internal enum class StatKind {
 
     companion object {
 
-        private val ENUM_INFO = EnumInfoFactory.createEnumInfo(StatKind::class.java)
+        private val ENUM_INFO = EnumInfoFactory.createEnumInfo<StatKind>()
 
         fun safeValueOf(name: String): StatKind {
             return ENUM_INFO.safeValueOf(name) ?: throw IllegalArgumentException("Unknown stat name: '$name'")

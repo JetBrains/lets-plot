@@ -8,8 +8,6 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.GuideOptions
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
-import java.util.*
-import java.util.stream.Collectors.toList
 
 object PlotConfigUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -93,7 +91,7 @@ object PlotConfigUtil {
             throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(spec))
         }
 
-        return result.stream().distinct().collect(toList())
+        return result.distinct()
     }
 
     private fun getComputationMessages(opts: Map<*, *>): List<String> {

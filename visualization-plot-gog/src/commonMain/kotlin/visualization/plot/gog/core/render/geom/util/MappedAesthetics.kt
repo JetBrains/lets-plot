@@ -6,8 +6,6 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
 
-import java.util.stream.StreamSupport
-
 class MappedAesthetics(private val myAesthetics: Aesthetics, private val myPointAestheticsMapper: Function<DataPointAesthetics, DataPointAesthetics>) : Aesthetics {
 
     override val isEmpty: Boolean
@@ -23,8 +21,7 @@ class MappedAesthetics(private val myAesthetics: Aesthetics, private val myPoint
 
     override fun dataPoints(): Iterable<DataPointAesthetics> {
         val source = myAesthetics.dataPoints()
-        val stream = StreamSupport.stream(source.spliterator(), false)
-        return Iterable { stream.map { value -> myPointAestheticsMapper.apply(value) }.iterator() }
+        return source.map { myPointAestheticsMapper.apply(it) }
     }
 
     override fun range(aes: Aes<Double>): ClosedRange<Double> {

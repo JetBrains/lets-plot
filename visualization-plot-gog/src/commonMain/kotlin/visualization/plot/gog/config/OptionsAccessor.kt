@@ -5,13 +5,14 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.gog.config.aes.AesOptionConversion
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
+import kotlin.jvm.JvmOverloads
 
 open class OptionsAccessor protected constructor(private val myOptions: Map<*, *>, defaultOptions: Map<*, *>) {
     private val myDefaultOptions: Map<*, *>
 
     internal val mergedOptions: Map<*, *>
         get() {
-            val mergedOptions = HashMap<Any, Any>(myDefaultOptions)
+            val mergedOptions = HashMap(myDefaultOptions)
             mergedOptions.putAll(myOptions as Map<Any, Any>)
             return mergedOptions
         }
@@ -58,7 +59,7 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
         if (v is List<*>) {
             return v
         }
-        throw IllegalArgumentException("Not a List: " + option + ": " + v.javaClass.simpleName)
+        throw IllegalArgumentException("Not a List: " + option + ": " + v::class.simpleName)
     }
 
     internal fun getRange(option: String): ClosedRange<Double> {
@@ -81,7 +82,7 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
         if (v is Map<*, *>) {
             return v
         }
-        throw IllegalArgumentException("Not a Map: " + option + ": " + v.javaClass.simpleName)
+        throw IllegalArgumentException("Not a Map: " + option + ": " + v::class.simpleName)
     }
 
     @JvmOverloads

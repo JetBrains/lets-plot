@@ -1,18 +1,21 @@
 package jetbrains.datalore.base.enums
 
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class EnumsTest {
 
     @Test
     fun enumParsing() {
-        assertEquals(TestEnum.A, Enums.valueOf(TestEnum::class.java, "aaa"))
+        assertEquals(TestEnum.A, Enums.valueOf<TestEnum>("aaa"))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun illegalArgument() {
-        Enums.valueOf(TestEnum::class.java, "A")
+        assertFailsWith<IllegalArgumentException> {
+            Enums.valueOf<TestEnum>("A")
+        }
     }
 
     internal enum class TestEnum {

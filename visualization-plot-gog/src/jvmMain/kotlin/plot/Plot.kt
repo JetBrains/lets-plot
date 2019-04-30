@@ -32,7 +32,6 @@ import jetbrains.datalore.visualization.plot.gog.plot.guide.Orientation
 import jetbrains.datalore.visualization.plot.gog.plot.layout.*
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 import jetbrains.datalore.visualization.plot.gog.plot.theme.Theme
-import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -92,7 +91,7 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
             ThrowableHandlers.instance.handle(e)
 
             val rootCause = Throwables.getRootCause(e)
-            val messages = arrayOf("Error building plot: " + rootCause.javaClass.getSimpleName(), if (rootCause.message != null)
+            val messages = arrayOf("Error building plot: " + rootCause::class.simpleName, if (rootCause.message != null)
                 "'" + rootCause.message + "'"
             else
                 "<no message>")

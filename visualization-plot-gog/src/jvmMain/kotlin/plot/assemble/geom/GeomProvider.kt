@@ -42,7 +42,6 @@ import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.DefaultSampl
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.DefaultSampling.V_LINE
 import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProviders
-import java.util.*
 
 abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 
@@ -87,19 +86,19 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             private val myAestheticsDefaults: AestheticsDefaults,
             private val myHandlesGroups: Boolean,
             private val myGeomSupplier: () -> Geom) {
-        private var myPreferredCoordSystemProvider = Optional.empty<CoordProvider>()
-        private var myAutoMappedAes = Optional.empty<List<Aes<*>>>()
-        private var myPos = Optional.empty<PosProvider>()
+        private var myPreferredCoordSystemProvider: CoordProvider? = null
+        private var myAutoMappedAes: List<Aes<*>>? = null
+        private var myPos: PosProvider? = null
         private var myPreferDiscreteForAutoMapping = false
         private var myPreferredSampling: Sampling = Samplings.NONE
 
         internal fun preferredCoordSystemProvider(preferredCoordSystemProvider: CoordProvider): GeomProviderBuilder {
-            myPreferredCoordSystemProvider = Optional.of(preferredCoordSystemProvider)
+            myPreferredCoordSystemProvider = preferredCoordSystemProvider
             return this
         }
 
         internal fun autoMappedAes(vararg autoMappedAes: Aes<*>): GeomProviderBuilder {
-            myAutoMappedAes = Optional.of(listOf(*autoMappedAes))
+            myAutoMappedAes = listOf(*autoMappedAes)
             return this
         }
 
@@ -109,7 +108,7 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
         }
 
         internal fun posProvider(pos: PosProvider): GeomProviderBuilder {
-            myPos = Optional.of<PosProvider>(pos)
+            myPos = pos
             return this
         }
 
@@ -122,13 +121,13 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             return object : GeomProvider(myKind) {
 
                 override val autoMappedAes: List<Aes<*>>
-                    get() = myAutoMappedAes.orElseGet { super.autoMappedAes }
+                    get() = myAutoMappedAes ?: super.autoMappedAes
 
                 override val preferredCoordinateSystem: CoordProvider
-                    get() = myPreferredCoordSystemProvider.orElseGet { super.preferredCoordinateSystem }
+                    get() = myPreferredCoordSystemProvider ?: super.preferredCoordinateSystem
 
                 override val preferredPos: PosProvider
-                    get() = myPos.orElseGet { super.preferredPos }
+                    get() = myPos ?: super.preferredPos
 
                 override val preferredSampling: Sampling
                     get() = myPreferredSampling
@@ -150,7 +149,7 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 }
 
                 override fun hasPreferredCoordinateSystem(): Boolean {
-                    return myPreferredCoordSystemProvider.isPresent
+                    return myPreferredCoordSystemProvider != null
                 }
 
                 override fun preferDiscreteForAutoMapping(aes: Aes<*>): Boolean {

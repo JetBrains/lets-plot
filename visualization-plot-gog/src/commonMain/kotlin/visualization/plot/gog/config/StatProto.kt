@@ -5,7 +5,6 @@ import jetbrains.datalore.visualization.plot.gog.core.data.Stat
 import jetbrains.datalore.visualization.plot.gog.core.data.stat.*
 import jetbrains.datalore.visualization.plot.gog.core.data.stat.BoxplotStat.Companion.P_COEF
 import jetbrains.datalore.visualization.plot.gog.core.data.stat.BoxplotStat.Companion.P_VARWIDTH
-import java.util.*
 
 class StatProto {
 

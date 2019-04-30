@@ -18,9 +18,9 @@ interface TooltipManager {
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
-            if (other == null || javaClass != other.javaClass) return false
+            if (other == null || javaClass != other::class) return false
             val that = other as TooltipContent?
-            return java.lang.Double.compare(that!!.fontSize, fontSize) == 0 &&
+            return that!!.fontSize.compareTo(fontSize) == 0 &&
                     fill == that.fill &&
                     text == that.text
         }
@@ -34,7 +34,7 @@ interface TooltipManager {
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
-            if (other == null || javaClass != other.javaClass) return false
+            if (other == null || javaClass != other::class) return false
             val that = other as TooltipEntry?
             return tooltipContent == that!!.tooltipContent &&
                     tooltipCoord == that.tooltipCoord &&

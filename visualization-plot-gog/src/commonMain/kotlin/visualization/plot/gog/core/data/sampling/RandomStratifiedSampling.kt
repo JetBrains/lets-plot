@@ -4,8 +4,6 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.GroupAwareSampling
 import jetbrains.datalore.visualization.plot.gog.plot.data.GroupUtil
-import java.util.stream.Collectors.toList
-import java.util.stream.IntStream
 import kotlin.math.max
 import kotlin.math.round
 import kotlin.random.Random
@@ -48,14 +46,12 @@ internal class RandomStratifiedSampling internal constructor(sampleSize: Int, pr
 
                 val sampleGroupIndices = SamplingUtil.sampleWithoutReplacement<List<Int>>(stratumSize, stratumSampleSize, rand,
                         { indexSet ->
-                            IntStream.range(0, groupIndices.size).boxed()
-                                    .filter({ indexSet.contains(it) })
-                                    .collect(toList())
+                            (0 until groupIndices.size)
+                                    .filter { indexSet.contains(it) }
                         },
                         { indexSet ->
-                            IntStream.range(0, groupIndices.size).boxed()
+                            (0 until groupIndices.size)
                                     .filter { i -> !indexSet.contains(i) }
-                                    .collect(toList())
                         })
 
                 for (i in sampleGroupIndices) {

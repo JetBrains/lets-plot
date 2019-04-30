@@ -13,8 +13,8 @@ internal open class DirectlyProportionalMapperProvider
  */
 (private val myMax: Double, naValue: Double) : MapperProviderBase<Double>(naValue) {
 
-    override fun createContinuousMapper(data: DataFrame, `var`: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform): GuideMapper<Double> {
-        val dataMax = MapperUtil.rangeWithLimitsAfterTransform(data, `var`, lowerLimit, upperLimit, trans).upperEndpoint()
+    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform): GuideMapper<Double> {
+        val dataMax = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans).upperEndpoint()
         return GuideMappers.continuousToContinuous(ClosedRange.closed(0.0, dataMax), ClosedRange.closed(0.0, myMax), naValue)
     }
 }

@@ -5,8 +5,7 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.Dummies
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import java.util.*
-import java.util.stream.Collectors
+import observable.collections.Collections.unmodifiableMap
 
 object ConfigUtil {
     fun featureName(options: Map<*, *>): String {
@@ -20,11 +19,11 @@ object ConfigUtil {
     internal fun featuresInFeatureList(options: MutableMap<*, *>): List<Map<*, *>> {
         val list = OptionsAccessor.over(options).getList("feature-list")
 
-        return list.stream()
+        return list
                 .map { o: Any? ->
                     val featureOptionsByKind = o as Map<*, *>
                     featureOptionsByKind.values.iterator().next() as Map<*, *>
-                }.collect(Collectors.toList())
+                }
     }
 
     internal fun createDataFrame(rawData: Any?): DataFrame {
@@ -128,7 +127,7 @@ object ConfigUtil {
             }
 
         } else {
-            throw IllegalArgumentException("Unsupported data structure: " + data.javaClass.simpleName)
+            throw IllegalArgumentException("Unsupported data structure: " + data::class.simpleName)
         }
 
         return varNameMap
@@ -158,7 +157,7 @@ object ConfigUtil {
             return listOf(o.toDouble())
         }
         if (o is Iterable<*>) {
-            throw IllegalArgumentException("Can't cast/transform to list: " + o.javaClass.simpleName)
+            throw IllegalArgumentException("Can't cast/transform to list: " + o::class.simpleName)
         }
         return listOf(o.toString())
     }
@@ -185,7 +184,7 @@ object ConfigUtil {
                 result[aes] = variable
             }
         }
-        return Collections.unmodifiableMap(result)
+        return unmodifiableMap(result)
     }
 
     fun toNumericPair(twoValueList: List<*>): DoubleVector {
@@ -194,7 +193,7 @@ object ConfigUtil {
         val it = twoValueList.iterator()
         if (it.hasNext()) {
             try {
-                x = java.lang.Double.parseDouble("" + it.next())
+                x = ("" + it.next()).toDouble()
             } catch (ignored: NumberFormatException) {
                 // ok
             }
@@ -202,7 +201,7 @@ object ConfigUtil {
         }
         if (it.hasNext()) {
             try {
-                y = java.lang.Double.parseDouble("" + it.next())
+                y = ("" + it.next()).toDouble()
             } catch (ignored: NumberFormatException) {
                 // ok
             }

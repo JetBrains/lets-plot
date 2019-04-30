@@ -13,7 +13,6 @@ import jetbrains.datalore.visualization.plot.gog.core.data.sampling.SamplingUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.sampling.SamplingUtil.getRingLimit
 import jetbrains.datalore.visualization.plot.gog.core.data.sampling.SamplingUtil.splitRings
 import jetbrains.datalore.visualization.plot.gog.core.util.MutableInteger
-import java.util.stream.IntStream
 
 internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSize), PointSampling {
 
@@ -39,13 +38,11 @@ internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSiz
         val indices = ArrayList<Int>()
         val ringBase = MutableInteger(0)
 
-        IntStream
-                .range(0, limits.size)
-                .mapToObj { i -> Pair<Int, Int>(i, limits.get(i)) }
+        (0 until limits.size)
+                .map { Pair(it, limits[it]) }
                 .forEach { p ->
                     simplify(rings.get(getRingIndex(p)), getRingLimit(p))
                             .forEach { index -> indices.add(ringBase.get() + index) }
-
                     ringBase.getAndAdd(rings.get(getRingIndex(p)).size)
                 }
 

@@ -2,13 +2,7 @@ package jetbrains.datalore.visualization.base.svgToAwt
 
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MapperFactory
-import jetbrains.datalore.visualization.base.svg.SvgConstants
-import jetbrains.datalore.visualization.base.svg.SvgElement
-import jetbrains.datalore.visualization.base.svg.SvgImageElement
-import jetbrains.datalore.visualization.base.svg.SvgImageElementEx
-import jetbrains.datalore.visualization.base.svg.SvgNode
-import jetbrains.datalore.visualization.base.svg.SvgTextNode
-import jetbrains.datalore.visualization.base.svg.SvgUtils
+import jetbrains.datalore.visualization.base.svg.*
 import org.apache.batik.dom.AbstractDocument
 import org.apache.batik.dom.svg.SVGOMElement
 import org.w3c.dom.Node
@@ -38,7 +32,7 @@ internal class SvgNodeMapperFactory(private val myDoc: AbstractDocument, private
         when (src) {
             is SvgElement -> result = SvgElementMapper(src, target as SVGOMElement, myDoc, myPeer)
             is SvgTextNode -> result = SvgTextNodeMapper(src, target as Text, myDoc, myPeer)
-            else -> throw IllegalArgumentException("Unsupported SvgElement: " + src.javaClass.simpleName)
+            else -> throw IllegalArgumentException("Unsupported SvgElement: " + src::class.simpleName)
         }
 
         return result

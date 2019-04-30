@@ -2,14 +2,14 @@ package jetbrains.datalore.base.async
 
 import jetbrains.datalore.base.async.Asyncs.toUnit
 import jetbrains.datalore.base.function.Runnable
-import java.util.*
+import java.util.TreeMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.collections.ArrayList
 
 actual object PlatformAsyncs {
 
     actual fun parallel(vararg asyncs: Async<*>): Async<Unit> {
-        return parallel(Arrays.asList(*asyncs))
+        return parallel(listOf(*asyncs))
     }
 
     actual fun <ItemT> parallelResult(asyncs: Collection<Async<out ItemT>>): Async<List<ItemT>> {

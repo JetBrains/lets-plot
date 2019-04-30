@@ -2,7 +2,6 @@ package jetbrains.datalore.visualization.plot.gog.common.base64
 
 import java.util.Base64
 import kotlin.collections.ArrayList
-import kotlin.collections.List
 
 actual object BinaryUtil {
     fun encodeList(l: List<Double>): String {
@@ -22,7 +21,7 @@ actual object BinaryUtil {
         val data = ByteArray(l.size * 8)
         var pos = 0
         for (d in l) {
-            d?.let { toBytes(it, data, pos) } ?: toBytes(java.lang.Double.NaN, data, pos)
+            d?.let { toBytes(it, data, pos) } ?: toBytes(Double.NaN, data, pos)
             pos += 8
         }
         return data

@@ -5,7 +5,7 @@ import java.text.DecimalFormat
 object NumberFormatUtil {
 
     fun formatNumber(num: Number, pattern: String): String {
-        if (num is Double && java.lang.Double.isNaN(num)) return "NaN"
+        if (num is Double && num.isNaN()) return "NaN"
         // We have 'super-source' partial implementation of java.text.DecimalFormat
         // which is based on com.google.gwt.i18n.client.NumberFormat
         // and can be used on client side.

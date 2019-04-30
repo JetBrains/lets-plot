@@ -2,7 +2,6 @@ package jetbrains.datalore.visualization.plot.gog.core.data.sampling
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import java.util.stream.Collectors.toSet
 import kotlin.random.Random
 
 internal class GroupRandomSampling(sampleSize: Int, private val mySeed: Long?) : GroupSamplingBase(sampleSize) {
@@ -18,7 +17,7 @@ internal class GroupRandomSampling(sampleSize: Int, private val mySeed: Long?) :
         val distinctGroups = SamplingUtil.distinctGroups(groupMapper, population.rowCount())
 
         distinctGroups.shuffle(createRandom())
-        val pickedGroups = distinctGroups.stream().limit(sampleSize.toLong()).collect(toSet())
+        val pickedGroups = distinctGroups.take(sampleSize).toSet()
         return doSelect(population, pickedGroups, groupMapper)
     }
 

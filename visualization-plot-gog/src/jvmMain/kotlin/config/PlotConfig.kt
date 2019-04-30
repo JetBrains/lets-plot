@@ -18,8 +18,8 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
-import java.util.*
-import java.util.Collections.unmodifiableList
+import observable.collections.Collections.unmodifiableList
+import java.util.Collections.singletonMap
 
 abstract class PlotConfig protected constructor(opts: Map<String, Any>) : OptionsAccessor(opts, DEF_OPTIONS) {
 
@@ -85,7 +85,7 @@ abstract class PlotConfig protected constructor(opts: Map<String, Any>) : Option
         val layerConfigs = ArrayList<LayerConfig>()
         val layerOptionsList = getList(LAYERS)
         for (layerOptions in layerOptionsList) {
-            checkArgument(layerOptions is Map<*, *>, "Layer options: expected Map but was " + layerOptions!!.javaClass.simpleName)
+            checkArgument(layerOptions is Map<*, *>, "Layer options: expected Map but was " + layerOptions!!::class.simpleName)
             val layerConfig = createLayerConfig(layerOptions as Map<*, *>,
                     sharedData,
                     getMap(MAPPING),
@@ -117,9 +117,9 @@ abstract class PlotConfig protected constructor(opts: Map<String, Any>) : Option
 
         fun failure(e: Exception): Map<String, Any> {
             val message = e.message
-            return Collections.singletonMap<String, Any>(PlotConfig.ERROR_MESSAGE,
+            return singletonMap<String, Any>(PlotConfig.ERROR_MESSAGE,
                     if (Strings.isNullOrEmpty(message))
-                        e.javaClass.simpleName
+                        e::class.simpleName
                     else
                         "Error: $message")
         }

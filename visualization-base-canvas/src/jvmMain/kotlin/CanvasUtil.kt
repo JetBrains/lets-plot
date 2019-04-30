@@ -7,7 +7,7 @@ object CanvasUtil {
 
     fun readDevicePixelRatio(defaultValue: Double): Double {
         return if (System.getProperties().containsKey(DEVICE_PIXEL_RATIO_NAME)) {
-            java.lang.Double.parseDouble(System.getProperty(DEVICE_PIXEL_RATIO_NAME))
+            System.getProperty(DEVICE_PIXEL_RATIO_NAME).toDouble()
         } else defaultValue
     }
 

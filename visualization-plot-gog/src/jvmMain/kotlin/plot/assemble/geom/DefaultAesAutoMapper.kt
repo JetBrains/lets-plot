@@ -12,8 +12,6 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.AesAutoMapper
-import java.util.*
-import java.util.Arrays.asList
 
 internal class DefaultAesAutoMapper(private val myAutoMappedAes: List<Aes<*>>, private val myPreferDiscreteValues: Predicate<Aes<*>>) : AesAutoMapper {
 
@@ -56,12 +54,12 @@ internal class DefaultAesAutoMapper(private val myAutoMappedAes: List<Aes<*>>, p
 
     companion object {
         private val AES_DEFAULT_LABELS = mapOf(
-                Aes.X to asList(POINT_X),
-                Aes.Y to asList(POINT_Y),
-                Aes.XMIN to asList(RECT_XMIN),
-                Aes.YMIN to asList(RECT_YMIN),
-                Aes.XMAX to asList(RECT_XMAX),
-                Aes.YMAX to asList(RECT_YMAX)
+                Aes.X to listOf(POINT_X),
+                Aes.Y to listOf(POINT_Y),
+                Aes.XMIN to listOf(RECT_XMIN),
+                Aes.YMIN to listOf(RECT_YMIN),
+                Aes.XMAX to listOf(RECT_XMAX),
+                Aes.YMAX to listOf(RECT_YMAX)
         )
     }
 }

@@ -17,7 +17,6 @@ import org.apache.batik.util.SVGConstants
 import org.w3c.dom.events.EventListener
 import java.util.*
 
-
 internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGOMElement>(source: SourceT, target: TargetT, doc: AbstractDocument, peer: SvgAwtPeer) : SvgNodeMapper<SourceT, TargetT>(source, target, doc, peer) {
     private var myHandlerRegs: MutableMap<SvgEventSpec, Registration>? = null
 

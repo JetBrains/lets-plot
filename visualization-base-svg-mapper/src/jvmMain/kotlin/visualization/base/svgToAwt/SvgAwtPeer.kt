@@ -10,7 +10,6 @@ import org.apache.batik.dom.svg.SVGOMTextContentElement
 import org.w3c.dom.Node
 import org.w3c.dom.svg.SVGLocatable
 import org.w3c.dom.svg.SVGTransformable
-import java.util.*
 
 internal class SvgAwtPeer : SvgPlatformPeer {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()

@@ -1,9 +1,7 @@
 package jetbrains.datalore.base.enums
 
 import jetbrains.datalore.base.enums.EnumInfoTest.Scope.*
-import org.junit.Assert.*
-import org.junit.Test
-import java.util.*
+import kotlin.test.*
 
 class EnumInfoTest {
 
@@ -42,21 +40,25 @@ class EnumInfoTest {
         checkValid(CLASS, "class")
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun duplicateValues() {
-        checkEnumConstant(EnumWithDuplicates.TEST, "TEST", "TEST")
-        checkEnumConstant(EnumWithDuplicates.CLASS, "CLASS", "test")
-        EnumInfoFactory.createEnumInfo(EnumWithDuplicates::class.java)
+        assertFailsWith<IllegalArgumentException> {
+            checkEnumConstant(EnumWithDuplicates.TEST, "TEST", "TEST")
+            checkEnumConstant(EnumWithDuplicates.CLASS, "CLASS", "test")
+            EnumInfoFactory.createEnumInfo<EnumWithDuplicates>()
+        }
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun unsafeValueOf() {
-        Scope.unsafeValueOf("method")
+        assertFailsWith<IllegalArgumentException> {
+            Scope.unsafeValueOf("method")
+        }
     }
 
     @Test
     fun originalNames() {
-        assertEquals(Arrays.asList("TEST", "CLASS", "SUITE"), Scope.originalNames)
+        assertEquals(listOf("TEST", "CLASS", "SUITE"), Scope.originalNames)
     }
 
     private fun checkValid(expected: Scope, text: String) {
@@ -82,7 +84,7 @@ class EnumInfoTest {
         TEST, CLASS, SUITE;
 
         companion object {
-            private val ENUM_INFO = EnumInfoFactory.createEnumInfo(Scope::class.java)
+            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Scope>()
 
             internal fun hasValue(text: String?): Boolean {
                 return ENUM_INFO.hasValue(text)

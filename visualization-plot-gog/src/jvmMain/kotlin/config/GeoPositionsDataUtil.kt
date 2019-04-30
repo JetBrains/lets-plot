@@ -7,25 +7,20 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import java.util.*
-import java.util.Arrays.asList
-import java.util.function.Function
-import java.util.stream.Collectors.joining
-
 
 object GeoPositionsDataUtil {
     // Fixed columns in dataframe supplied by 'geo-coding'
-    val OBJECT_OSM_ID = "id"
+    const val OBJECT_OSM_ID = "id"
 
     // Key used for join from MAP
-    val DATA_COLUMN_JOIN_KEY = "__key__"
+    const val DATA_COLUMN_JOIN_KEY = "__key__"
     // Key used for join into DATA
-    val MAP_COLUMN_JOIN_KEY = "key"
+    const val MAP_COLUMN_JOIN_KEY = "key"
 
-    val MAP_COLUMN_REQUEST = "request"
-    val MAP_COLUMN_REGION = "region"
-    val MAP_COLUMN_OSM_ID = "__geoid__"
-    val MAP_COLUMN_GEOJSON = "__geometry__"
+    const val MAP_COLUMN_REQUEST = "request"
+    const val MAP_COLUMN_REGION = "region"
+    const val MAP_COLUMN_OSM_ID = "__geoid__"
+    const val MAP_COLUMN_GEOJSON = "__geometry__"
 
     // additional fixed colums in 'boundaries' of 'centroids' dataframes
     val POINT_X = "lon"
@@ -38,7 +33,7 @@ object GeoPositionsDataUtil {
     val RECT_YMAX = "latmax"
 
     // Columns can be used as request
-    val GEO_POSITIONS_KEYS = asList(MAP_COLUMN_REGION, MAP_COLUMN_JOIN_KEY)
+    val GEO_POSITIONS_KEYS = listOf(MAP_COLUMN_REGION, MAP_COLUMN_JOIN_KEY)
 
     private val GEOMS_SUPPORT = mapOf(
             GeomKind.MAP to GeoDataSupport.boundary(),
@@ -121,7 +116,7 @@ object GeoPositionsDataUtil {
 
     private fun geoPositionsColumnNotFoundError(what: String, names: List<String>): String {
         return "Can't draw map: " + what + " not found. Geo position data must contain column " +
-                names.stream().map { s -> "'$s'" }.collect(joining(" or "))
+                names.joinToString(" or ") { s -> "'$s'" }
     }
 
     enum class GeoDataKind {
@@ -130,38 +125,38 @@ object GeoPositionsDataUtil {
         BOUNDARY
     }
 
-    internal class GeoDataSupport(val geoDataKind: GeoDataKind, private val mappingsGenerator: Function<DataFrame, Map<Aes<*>, Variable>>) {
+    internal class GeoDataSupport(val geoDataKind: GeoDataKind, private val mappingsGenerator: (DataFrame) -> Map<Aes<*>, Variable>) {
 
         fun generateMapping(df: DataFrame): Map<Aes<*>, Variable> {
-            return mappingsGenerator.apply(df)
+            return mappingsGenerator(df)
         }
 
         companion object {
             fun boundary(): GeoDataSupport {
-                return GeoDataSupport(GeoDataKind.BOUNDARY, Function { createPointMapping(it) })
+                return GeoDataSupport(GeoDataKind.BOUNDARY, { createPointMapping(it) })
             }
 
             fun centroid(): GeoDataSupport {
-                return GeoDataSupport(GeoDataKind.CENTROID, Function { createPointMapping(it) })
+                return GeoDataSupport(GeoDataKind.CENTROID, { createPointMapping(it) })
             }
 
             fun limit(): GeoDataSupport {
-                return GeoDataSupport(GeoDataKind.LIMIT, Function { createRectMapping(it) })
+                return GeoDataSupport(GeoDataKind.LIMIT, { createRectMapping(it) })
             }
 
             private fun createRectMapping(dataFrame: DataFrame): Map<Aes<*>, Variable> {
                 val mapping = HashMap<Aes<*>, Variable>()
-                mapping.putAll(findMapping(Aes.XMIN, asList(RECT_XMIN), dataFrame))
-                mapping.putAll(findMapping(Aes.XMAX, asList(RECT_XMAX), dataFrame))
-                mapping.putAll(findMapping(Aes.YMIN, asList(RECT_YMIN), dataFrame))
-                mapping.putAll(findMapping(Aes.YMAX, asList(RECT_YMAX), dataFrame))
+                mapping.putAll(findMapping(Aes.XMIN, listOf(RECT_XMIN), dataFrame))
+                mapping.putAll(findMapping(Aes.XMAX, listOf(RECT_XMAX), dataFrame))
+                mapping.putAll(findMapping(Aes.YMIN, listOf(RECT_YMIN), dataFrame))
+                mapping.putAll(findMapping(Aes.YMAX, listOf(RECT_YMAX), dataFrame))
                 return mapping
             }
 
             private fun createPointMapping(dataFrame: DataFrame): Map<Aes<*>, Variable> {
                 val mapping = HashMap<Aes<*>, Variable>()
-                mapping.putAll(findMapping(Aes.X, asList(POINT_X, "x", "long"), dataFrame))
-                mapping.putAll(findMapping(Aes.Y, asList(POINT_Y, "y"), dataFrame))
+                mapping.putAll(findMapping(Aes.X, listOf(POINT_X, "x", "long"), dataFrame))
+                mapping.putAll(findMapping(Aes.Y, listOf(POINT_Y, "y"), dataFrame))
 
                 return mapping
             }

@@ -6,8 +6,6 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.GEOM
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.LAYERS
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.LivemapGeom
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.LivemapGeom.*
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 class LivemapConfig private constructor(options: Map<*, *>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
 
@@ -160,12 +158,10 @@ class LivemapConfig private constructor(options: Map<*, *>) : OptionsAccessor(op
         }
 
         fun <ValueT : Enum<ValueT>> validValues(values: Array<ValueT>): String {
-            val enumNames = Stream.of(*values)
-                    .map<String> { it.name }
-                    .map<String> { it.toLowerCase() }
-                    .map { s -> "'$s'" }
-                    .collect(Collectors.toList())
-            return "=[" + enumNames.joinToString("|") + "]"
+            return values
+                    .map { it.name }
+                    .map { it.toLowerCase() }
+                    .joinToString("|", "=[", "]") { s -> "'$s'" }
         }
 
         fun getDisplayMode(displayMode: String?): LivemapGeom.DisplayMode {

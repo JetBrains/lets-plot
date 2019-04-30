@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.visualization.plot.gog.config.Option.Sampling.NONE
 import jetbrains.datalore.visualization.plot.gog.core.data.Sampling
 import jetbrains.datalore.visualization.plot.gog.core.data.sampling.Samplings
-import java.util.*
 
 internal object SamplingConfig {
     fun create(sampling: Any): List<Sampling> {

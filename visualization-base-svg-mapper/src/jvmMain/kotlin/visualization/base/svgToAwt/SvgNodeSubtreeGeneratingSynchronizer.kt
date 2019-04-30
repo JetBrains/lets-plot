@@ -21,7 +21,6 @@ import org.apache.batik.util.SVGConstants
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.events.EventListener
-import java.util.*
 
 internal class SvgNodeSubtreeGeneratingSynchronizer(
         private val mySource: SvgNode,
@@ -62,7 +61,7 @@ internal class SvgNodeSubtreeGeneratingSynchronizer(
         } else if (source is SvgTextNode) {
             return generateTextNode(source)
         }
-        throw IllegalStateException("Can't generate dom for svg node " + source.javaClass.simpleName)
+        throw IllegalStateException("Can't generate dom for svg node " + source::class.simpleName)
     }
 
     private fun generateElement(source: SvgElement): Element {
@@ -101,7 +100,7 @@ internal class SvgNodeSubtreeGeneratingSynchronizer(
             CIRCLE -> target = SVGOMCircleElement(null, myDoc)
             RECT -> target = SVGOMRectElement(null, myDoc)
             PATH -> target = SVGOMPathElement(null, myDoc)
-            else -> throw IllegalStateException("Unsupported slim node " + source.javaClass.simpleName + " '" + source.elementName + "'")
+            else -> throw IllegalStateException("Unsupported slim node " + source::class.simpleName + " '" + source.elementName + "'")
         }
 
         for (attr in source.attributes) {

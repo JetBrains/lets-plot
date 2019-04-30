@@ -194,11 +194,11 @@ internal class BoxplotGeom : GeomBase() {
             }
         }
 
-        override fun apply(p: DataPointAesthetics): DataPointAesthetics {
-            return if (!p.defined(Aes.Y)) {
+        override fun apply(value: DataPointAesthetics): DataPointAesthetics {
+            return if (!value.defined(Aes.Y)) {
                 // not an outlier data-point
-                p
-            } else object : DataPointAestheticsDelegate(p) {
+                value
+            } else object : DataPointAestheticsDelegate(value) {
                 override operator fun <T> get(aes: Aes<T>): T? {
                     return getIntern(aes, super.get(aes))
                 }
@@ -288,7 +288,7 @@ internal class BoxplotGeom : GeomBase() {
                 Aes.WIDTH
         )
 
-        val HANDLES_GROUPS = false
+        const val HANDLES_GROUPS = false
 
         private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->

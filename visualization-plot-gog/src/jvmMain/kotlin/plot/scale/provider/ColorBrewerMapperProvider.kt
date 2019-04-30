@@ -13,7 +13,6 @@ import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideBreak
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideMapper
 import jetbrains.datalore.visualization.plot.gog.plot.scale.WithGuideBreaks
 import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.GuideMappers
-import java.util.*
 
 internal class ColorBrewerMapperProvider
 /**
