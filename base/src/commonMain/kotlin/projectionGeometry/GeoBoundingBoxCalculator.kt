@@ -7,7 +7,10 @@ import jetbrains.datalore.base.projectionGeometry.LongitudeRange.Companion.split
 import kotlin.math.max
 import kotlin.math.min
 
-class GeoBoundingBoxCalculator(private val myMapRect: DoubleRectangle, private val myLoopX: Boolean, private val myLoopY: Boolean) {
+class GeoBoundingBoxCalculator(
+        private val myMapRect: DoubleRectangle,
+        private val myLoopX: Boolean,
+        private val myLoopY: Boolean) {
 
     fun calculateBoundingBox(xyCoords: List<Double>): DoubleRectangle {
         checkArgument(xyCoords.size % 2 == 0, "Longitude-Latitude list is not even-numbered.")
@@ -151,71 +154,72 @@ class GeoBoundingBoxCalculator(private val myMapRect: DoubleRectangle, private v
         private fun oddItemGetter(values: List<Double>): (Int) -> Double {
             return { index -> values[2 * index + 1] }
         }
-    }
 
-    internal fun calculateLoopLimitRange(helper: CoordinateHelper, mapRange: ClosedRange<Double>): ClosedRange<Double> {
-        if (helper.size() == 0) {
-            throw RuntimeException("No coordinates for bounding box calculation.")
-        }
-
-        val coordRanges = combineCoordRanges(helper, mapRange.lowerEndpoint(), mapRange.upperEndpoint())
-        val maxGapRange = findMaxGapBetweenRanges(coordRanges, length(mapRange))
-        return normalizeCenter(invertRange(maxGapRange, length(mapRange)), mapRange)
-    }
-
-    private fun normalizeCenter(range: ClosedRange<Double>, mapRange: ClosedRange<Double>): ClosedRange<Double> {
-        return if (mapRange.contains((range.upperEndpoint() + range.lowerEndpoint()) / 2)) {
-            range
-        } else {
-            ClosedRange.closed(
-                    range.lowerEndpoint() - length(mapRange),
-                    range.upperEndpoint() - length(mapRange)
-            )
-        }
-    }
-
-    private fun combineCoordRanges(helper: CoordinateHelper, min: Double, max: Double): List<ClosedRange<Double>> {
-        val coordRanges = ArrayList<ClosedRange<Double>>()
-
-        for (i in 0 until helper.size()) {
-            splitRange(helper.minCoord(i), helper.maxCoord(i), min, max, coordRanges)
-        }
-        return coordRanges
-    }
-
-    private fun findMaxGapBetweenRanges(ranges: List<ClosedRange<Double>>, width: Double): ClosedRange<Double> {
-        val sortedRanges = ranges.sortedBy(LOWER_ENDPOINT_GETTER)
-        var prevUpper = sortedRanges.maxBy(UPPER_ENDPOINT_GETTER)!!.upperEndpoint()
-        var nextLower = sortedRanges.first().lowerEndpoint()
-        val gapRight = max(width + nextLower, prevUpper)
-        var maxGapRange = ClosedRange.closed(prevUpper, gapRight)
-
-        val it = sortedRanges.iterator()
-        prevUpper = it.next().upperEndpoint()
-
-        while (it.hasNext()) {
-            val range = it.next()
-
-            nextLower = range.lowerEndpoint()
-            if (nextLower > prevUpper && nextLower - prevUpper > length(maxGapRange)) {
-                maxGapRange = ClosedRange.closed(prevUpper, nextLower)
+        internal fun calculateLoopLimitRange(helper: CoordinateHelper, mapRange: ClosedRange<Double>): ClosedRange<Double> {
+            if (helper.size() == 0) {
+                throw RuntimeException("No coordinates for bounding box calculation.")
             }
-            prevUpper = max(prevUpper, range.upperEndpoint())
-        }
-        return maxGapRange
-    }
 
-    private fun invertRange(range: ClosedRange<Double>, width: Double): ClosedRange<Double> {
-        return if (length(range) > width) {
-            ClosedRange.closed(range.lowerEndpoint(), range.lowerEndpoint())
-        } else if (range.upperEndpoint() > width) {
-            ClosedRange.closed(range.upperEndpoint() - width, range.lowerEndpoint())
-        } else {
-            ClosedRange.closed(range.upperEndpoint(), width + range.lowerEndpoint())
+            val coordRanges = combineCoordRanges(helper, mapRange.lowerEndpoint(), mapRange.upperEndpoint())
+            val maxGapRange = findMaxGapBetweenRanges(coordRanges, length(mapRange))
+            return normalizeCenter(invertRange(maxGapRange, length(mapRange)), mapRange)
         }
-    }
 
-    private fun length(range: ClosedRange<Double>): Double {
-        return range.upperEndpoint() - range.lowerEndpoint()
+        private fun normalizeCenter(range: ClosedRange<Double>, mapRange: ClosedRange<Double>): ClosedRange<Double> {
+            return if (mapRange.contains((range.upperEndpoint() + range.lowerEndpoint()) / 2)) {
+                range
+            } else {
+                ClosedRange.closed(
+                        range.lowerEndpoint() - length(mapRange),
+                        range.upperEndpoint() - length(mapRange)
+                )
+            }
+        }
+
+        private fun combineCoordRanges(helper: CoordinateHelper, min: Double, max: Double): List<ClosedRange<Double>> {
+            val coordRanges = ArrayList<ClosedRange<Double>>()
+
+            for (i in 0 until helper.size()) {
+                splitRange(helper.minCoord(i), helper.maxCoord(i), min, max, coordRanges)
+            }
+            return coordRanges
+        }
+
+        private fun findMaxGapBetweenRanges(ranges: List<ClosedRange<Double>>, width: Double): ClosedRange<Double> {
+            val sortedRanges = ranges.sortedBy(LOWER_ENDPOINT_GETTER)
+            var prevUpper = sortedRanges.maxBy(UPPER_ENDPOINT_GETTER)!!.upperEndpoint()
+            var nextLower = sortedRanges.first().lowerEndpoint()
+            val gapRight = max(width + nextLower, prevUpper)
+            var maxGapRange = ClosedRange.closed(prevUpper, gapRight)
+
+            val it = sortedRanges.iterator()
+            prevUpper = it.next().upperEndpoint()
+
+            while (it.hasNext()) {
+                val range = it.next()
+
+                nextLower = range.lowerEndpoint()
+                if (nextLower > prevUpper && nextLower - prevUpper > length(maxGapRange)) {
+                    maxGapRange = ClosedRange.closed(prevUpper, nextLower)
+                }
+                prevUpper = max(prevUpper, range.upperEndpoint())
+            }
+            return maxGapRange
+        }
+
+        private fun invertRange(range: ClosedRange<Double>, width: Double): ClosedRange<Double> {
+            return when {
+                length(range) > width ->
+                    ClosedRange.closed(range.lowerEndpoint(), range.lowerEndpoint())
+                range.upperEndpoint() > width ->
+                    ClosedRange.closed(range.upperEndpoint() - width, range.lowerEndpoint())
+                else ->
+                    ClosedRange.closed(range.upperEndpoint(), width + range.lowerEndpoint())
+            }
+        }
+
+        private fun length(range: ClosedRange<Double>): Double {
+            return range.upperEndpoint() - range.lowerEndpoint()
+        }
     }
 }
