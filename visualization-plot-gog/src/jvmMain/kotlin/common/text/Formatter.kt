@@ -7,6 +7,12 @@ import jetbrains.datalore.visualization.plot.gog.common.data.DataType
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.TimeInterval
 
 object Formatter {
+    private const val YEAR = "MMM y"
+    private const val YEAR_QUARTER = "Q y"
+    private const val YEAR_MONTH = "MMMM y"
+    private const val DATE_MEDIUM = "EEE, MMM d, y"
+    private const val DATE_MEDIUM_TIME_SHORT = "EEE, MMM d, y h:mm a"
+
     private val SCI_NOTATION_EXP_REGEX = Regex("(.+)([eE][0-9]+)(.*)")
 
     private val DEF_NUMBER_FORMATTER: Function<Any, String> = function { input ->
@@ -68,11 +74,11 @@ object Formatter {
         return when (dataType) {
             DataType.NUMBER -> DEF_NUMBER_FORMATTER
             DataType.STRING -> function { it.toString() } // no formatting really (toSting)
-            DataType.INSTANT -> time(DateTimeFormatUtil.DATE_MEDIUM_TIME_SHORT)
-            DataType.INSTANT_OF_DAY -> time(DateTimeFormatUtil.DATE_MEDIUM)
-            DataType.INSTANT_OF_MONTH -> time(DateTimeFormatUtil.YEAR_MONTH)
-            DataType.INSTANT_OF_QUARTER, DataType.INSTANT_OF_HALF_YEAR -> time(DateTimeFormatUtil.YEAR_QUARTER)
-            DataType.INSTANT_OF_YEAR -> time(DateTimeFormatUtil.YEAR)
+            DataType.INSTANT -> time(DATE_MEDIUM_TIME_SHORT)
+            DataType.INSTANT_OF_DAY -> time(DATE_MEDIUM)
+            DataType.INSTANT_OF_MONTH -> time(YEAR_MONTH)
+            DataType.INSTANT_OF_QUARTER, DataType.INSTANT_OF_HALF_YEAR -> time(YEAR_QUARTER)
+            DataType.INSTANT_OF_YEAR -> time(YEAR)
         }
     }
 
