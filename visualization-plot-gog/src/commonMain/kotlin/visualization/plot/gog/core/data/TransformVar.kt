@@ -4,7 +4,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable.Source.TRANSFORM
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.AesVisitor
-import observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.Collections
 
 object TransformVar {
     val X = DataFrame.Variable("transform.X", TRANSFORM)

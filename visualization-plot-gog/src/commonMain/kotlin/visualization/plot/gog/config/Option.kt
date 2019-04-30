@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.core.GeomKind
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.Collections
 
 object Option {
 
@@ -25,7 +25,7 @@ object Option {
 
         object GeoDataFrame {
             val TAG = "geodataframe"
-            val GEOMETRY = "geometry"
+            val GEOMETRY = "base/geometry"
         }
 
         object GeoReference {
@@ -149,7 +149,7 @@ object Option {
         val EXPAND = "expand"
         val LIMITS = "limits"
         val DISCRETE_DOMAIN = "discrete"
-        val DATE_TIME = "datetime"
+        val DATE_TIME = "base/datetime"
         val NA_VALUE = "na_value"
         val GUIDE = "guide"
 
@@ -157,7 +157,7 @@ object Option {
         val CONTINUOUS_TRANSFORM = "trans"
 
         // discrete scale output values
-        val OUTPUT_VALUES = "values"
+        val OUTPUT_VALUES = "base/values"
         // shape scale
         val SHAPE_SOLID = "solid"
         // gradient scale

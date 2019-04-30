@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
-import observable.collections.Collections.unmodifiableSet
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableSet
 
 internal class PointDataAccess(private val myData: DataFrame, private val myBindings: Map<Aes<*>, VarBinding>) : MappedDataAccess {
     private val myMappedAes: Set<Aes<*>>

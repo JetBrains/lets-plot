@@ -3,7 +3,7 @@ package jetbrains.datalore.base.observable.property
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.EventSource
 import jetbrains.datalore.base.registration.Registration
-import observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.Collections
 
 /**
  * Simplified version of [BaseDerivedProperty] which can depend on generic observable objects.

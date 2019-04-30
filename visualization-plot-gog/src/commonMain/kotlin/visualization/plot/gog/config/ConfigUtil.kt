@@ -5,7 +5,7 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.Dummies
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import observable.collections.Collections.unmodifiableMap
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableMap
 
 object ConfigUtil {
     fun featureName(options: Map<*, *>): String {

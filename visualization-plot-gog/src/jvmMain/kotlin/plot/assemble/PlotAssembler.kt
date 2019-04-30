@@ -9,7 +9,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.*
 import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.gog.plot.layout.*
 import jetbrains.datalore.visualization.plot.gog.plot.theme.Theme
-import observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class PlotAssembler private constructor(layersByTile: List<List<GeomLayer>>, private val myCoordProvider: CoordProvider, private val myTheme: Theme) {
 

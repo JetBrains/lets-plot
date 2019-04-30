@@ -1,7 +1,7 @@
 package jetbrains.datalore.base.enums
 
-import observable.collections.Collections.unmodifiableList
-import observable.collections.Collections.unmodifiableMap
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableMap
 
 class EnumInfoImpl<EnumT : Enum<EnumT>>(enumConstants: Array<EnumT>) : EnumInfo<EnumT> {
 

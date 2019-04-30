@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.plot.layout.axis
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class GuideBreaks(domainValues: List<*>, transformedValues: List<Double>, labels: List<String>) {
     val domainValues: List<*>

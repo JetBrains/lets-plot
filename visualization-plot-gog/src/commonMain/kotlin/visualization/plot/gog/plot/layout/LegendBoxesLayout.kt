@@ -5,7 +5,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendArrangement
 import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendPosition
 import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
-import observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import kotlin.math.max
 
 class LegendBoxesLayout(private val myPlotBounds: DoubleRectangle, private val myTheme: LegendTheme) {

@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable.So
 import jetbrains.datalore.visualization.plot.gog.core.data.Stat
 import jetbrains.datalore.visualization.plot.gog.core.data.StatContext
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.Collections
 
 object Stats {
     // stat variables can be referenced by name ..name.. (p 54)

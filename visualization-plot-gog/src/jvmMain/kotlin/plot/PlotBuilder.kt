@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.gog.plot.layout.LegendBoxInfo
 import jetbrains.datalore.visualization.plot.gog.plot.layout.PlotLayout
 import jetbrains.datalore.visualization.plot.gog.plot.theme.Theme
-import observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class PlotBuilder(private val myTheme: Theme) {
     private val myLayersByTile = ArrayList<List<GeomLayer>>()

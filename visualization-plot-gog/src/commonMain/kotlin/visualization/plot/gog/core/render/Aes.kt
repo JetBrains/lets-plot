@@ -5,7 +5,7 @@ import jetbrains.datalore.base.typedKey.TypedKey
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.gog.core.render.linetype.LineType
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
-import observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class Aes<T> private constructor(private val myName: String, val isNumeric: Boolean = true) : TypedKey<T> {
 

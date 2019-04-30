@@ -4,7 +4,7 @@ import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.visualization.plot.gog.core.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShapes
-import observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.Collections
 
 internal class ShapeOptionConverter : Function<Any?, PointShape?> {
 

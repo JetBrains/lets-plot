@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
-import observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.Collections
 
 internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
 

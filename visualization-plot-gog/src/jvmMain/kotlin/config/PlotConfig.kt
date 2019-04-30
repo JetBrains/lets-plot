@@ -18,7 +18,7 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
-import observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import java.util.Collections.singletonMap
 
 abstract class PlotConfig protected constructor(opts: Map<String, Any>) : OptionsAccessor(opts, DEF_OPTIONS) {

@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.core.data
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
-import observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.Collections
 import kotlin.jvm.JvmOverloads
 
 class DataFrame private constructor(builder: Builder) {

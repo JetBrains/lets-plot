@@ -1,4 +1,4 @@
-package observable.collections
+package jetbrains.datalore.base.observable.collections
 
 import jetbrains.datalore.base.observable.collections.ObservableCollection
 

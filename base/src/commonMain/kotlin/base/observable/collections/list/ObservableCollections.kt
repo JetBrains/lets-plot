@@ -7,8 +7,8 @@ import jetbrains.datalore.base.observable.collections.set.ObservableSet
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.*
 import jetbrains.datalore.base.registration.Registration
-import observable.collections.Collections
-import observable.collections.UnmodifiableObservableCollection
+import jetbrains.datalore.base.observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.UnmodifiableObservableCollection
 
 object ObservableCollections {
     fun <ItemT> toObservable(l: List<ItemT>): ObservableList<ItemT> {

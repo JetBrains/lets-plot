@@ -1,6 +1,6 @@
 package jetbrains.datalore.base.gcommon.collect
 
-import observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.Collections
 
 object Sets {
     /**

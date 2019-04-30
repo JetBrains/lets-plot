@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.plot.event3
 
 import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipSpec
-import observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class TargetTooltipSpec(tooltipSpecs: List<TooltipSpec>) {
 

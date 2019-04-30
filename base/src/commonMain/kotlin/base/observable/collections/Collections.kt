@@ -1,4 +1,4 @@
-package observable.collections
+package jetbrains.datalore.base.observable.collections
 
 object Collections {
     fun <T> unmodifiableCollection(collection: Collection<T>): Collection<T> {

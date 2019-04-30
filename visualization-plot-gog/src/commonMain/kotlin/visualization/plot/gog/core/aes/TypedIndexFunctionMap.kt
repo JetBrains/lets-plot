@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.aes
 
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.Collections
 
 internal class TypedIndexFunctionMap(indexFunctionMap: MutableMap<Aes<*>, (Int) -> Any?>) {
     private var myMap: Map<Aes<*>, (Int) -> Any?> = Collections.unmodifiableMap(indexFunctionMap)

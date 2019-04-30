@@ -16,8 +16,8 @@ import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PosProvider
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.GeomProvider
-import observable.collections.Collections.unmodifiableList
-import observable.collections.Collections.unmodifiableMap
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableMap
 
 class LayerConfig(opts: Map<*, *>,
                   sharedData: DataFrame,

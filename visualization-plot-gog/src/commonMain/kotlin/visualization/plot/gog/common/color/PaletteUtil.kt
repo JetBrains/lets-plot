@@ -4,7 +4,7 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Iterables.concat
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.QuantizeScale
-import observable.collections.Collections.unmodifiableSet
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableSet
 
 object PaletteUtil {
     val NULL_COLOR = Color.LIGHT_GRAY

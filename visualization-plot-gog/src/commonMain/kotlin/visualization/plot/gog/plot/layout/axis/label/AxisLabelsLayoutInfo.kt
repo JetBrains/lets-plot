@@ -4,7 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.GuideBreaks
-import observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class AxisLabelsLayoutInfo private constructor(b: Builder) {
     val breaks: GuideBreaks?

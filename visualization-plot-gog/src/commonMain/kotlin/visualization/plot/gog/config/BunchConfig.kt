@@ -4,7 +4,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.gog.config.Option.GGBunch
 import jetbrains.datalore.visualization.plot.gog.config.Option.GGBunch.Item
-import observable.collections.Collections.unmodifiableList
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class BunchConfig(opts: MutableMap<*, *>) : OptionsAccessor(opts) {
     private val myItems = ArrayList<BunchItem>()

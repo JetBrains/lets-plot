@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import observable.collections.Collections
+import jetbrains.datalore.base.observable.collections.Collections
 import kotlin.math.max
 import kotlin.math.min
 
