@@ -16,10 +16,6 @@ open class ObservableArrayList<ItemT> : AbstractObservableList<ItemT>() {
         return myContainer!![index]
     }
 
-//    fun size(): Int {
-//        return if (myContainer == null) 0 else myContainer!!.size
-//    }
-
     override fun doAdd(index: Int, item: ItemT) {
         ensureContainerInitialized()
         myContainer!!.add(index, item)

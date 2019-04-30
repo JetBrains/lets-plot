@@ -23,7 +23,7 @@ class DefaultTheme : Theme {
     companion object {
         private val AXIS_THEME = DefaultAxisTheme()
 
-        private val LEGEND_THEME = object : LegendTheme {
+        private val LEGEND_THEME: LegendTheme = object : LegendTheme {
             override fun keySize(): Double {
                 return 23.0
             }

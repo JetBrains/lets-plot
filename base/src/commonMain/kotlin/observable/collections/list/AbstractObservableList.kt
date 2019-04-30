@@ -88,9 +88,9 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), Obs
 
     protected open fun beforeItemSet(index: Int, oldItem: ItemT, newItem: ItemT) {}
 
-    protected fun onItemSet(index: Int, oldItem: ItemT, newItem: ItemT) {}
+    protected open fun onItemSet(index: Int, oldItem: ItemT, newItem: ItemT) {}
 
-    protected fun afterItemSet(index: Int, oldItem: ItemT, newItem: ItemT, success: Boolean) {}
+    protected open fun afterItemSet(index: Int, oldItem: ItemT, newItem: ItemT, success: Boolean) {}
 
     override fun removeAt(index: Int): ItemT {
         val item = get(index)

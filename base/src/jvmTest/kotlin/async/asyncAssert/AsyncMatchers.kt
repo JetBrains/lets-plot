@@ -113,7 +113,7 @@ object AsyncMatchers {
             }
 
             private fun classMatches(o: Any?): Boolean {
-                return o != null && o::class == failureClass
+                return o != null && o::class.java == failureClass
             }
 
             private fun messageMatches(actual: String?): Boolean {
