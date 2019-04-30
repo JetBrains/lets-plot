@@ -1,14 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale
 
-
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.TreeMap
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
-import java.util.TreeMap
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
-import kotlin.collections.LinkedHashMap
-import kotlin.collections.LinkedHashSet
-import kotlin.collections.set
 import kotlin.math.abs
 
 internal class DiscreteScale<T> : AbstractScale<Any, T> {
@@ -127,7 +121,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         if (myDomainValueByNumber == null) {
             myDomainValueByNumber = TreeMap()
             for (domainValue in myNumberByDomainValue.keys) {
-                myDomainValueByNumber!![myNumberByDomainValue[domainValue]!!] = domainValue
+                myDomainValueByNumber!!.put(myNumberByDomainValue[domainValue]!!, domainValue)
             }
         }
 

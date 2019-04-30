@@ -2,6 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import kotlin.jvm.JvmStatic
 import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.max

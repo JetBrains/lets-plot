@@ -47,8 +47,6 @@ import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.LineTypeMappe
 import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.ShapeMapper
 import jetbrains.datalore.visualization.plot.gog.plot.scale.provider.AlphaMapperProvider
 import jetbrains.datalore.visualization.plot.gog.plot.scale.provider.SizeMapperProvider
-import java.util.Collections
-import kotlin.collections.HashMap
 
 object DefaultMapperProvider {
 
@@ -129,12 +127,6 @@ object DefaultMapperProvider {
 
         internal fun containsKey(aes: Aes<*>): Boolean {
             return myMap.containsKey(aes)
-        }
-
-        internal fun unmodifiableCopy(): TypedMapperProviderMap {
-            val copy = TypedMapperProviderMap()
-            copy.myMap = Collections.unmodifiableMap(HashMap(myMap))
-            return copy
         }
 
         companion object {

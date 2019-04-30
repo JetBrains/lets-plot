@@ -5,6 +5,7 @@ import jetbrains.datalore.base.function.Functions.function
 import jetbrains.datalore.base.numberFormat.NumberFormatUtil
 import jetbrains.datalore.visualization.plot.gog.common.data.DataType
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.TimeInterval
+import kotlin.jvm.JvmOverloads
 
 object Formatter {
     private const val YEAR = "MMM y"

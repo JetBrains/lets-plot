@@ -22,7 +22,7 @@ internal class SemesterInterval(count: Int) : TimeInterval(count) {
             var result = DateTimeFormatUtil.formatDateUTC(input as Number, "Q")
             if (result.length == 2 && result.startsWith("Q")) {
                 try {
-                    val quarterNum = Integer.parseInt(result.substring(1))
+                    val quarterNum = result.substring(1).toInt()
                     val semesterNumber = (quarterNum + 1) / 2
                     if (semesterNumber == 1 || semesterNumber == 2) {
                         result = "Semester $semesterNumber"

@@ -6,6 +6,7 @@ import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.scale.BreaksGenerator
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleBreaks
 import jetbrains.datalore.visualization.plot.gog.core.scale.Transform
+import kotlin.jvm.JvmOverloads
 
 internal class IdentityTransform @JvmOverloads constructor(
         private val myBreaksGenerator: BreaksGenerator = LinearBreaksGen()) :
