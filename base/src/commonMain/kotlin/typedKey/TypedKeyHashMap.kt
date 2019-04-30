@@ -5,6 +5,7 @@ class TypedKeyHashMap : TypedKeyContainer {
     val map = hashMapOf<TypedKey<*>, Any>()
 
     override operator fun <T> get(key: TypedKey<T>): T {
+        @Suppress("UNCHECKED_CAST")
         return map[key] as T
     }
 
@@ -13,6 +14,7 @@ class TypedKeyHashMap : TypedKeyContainer {
     }
 
     override fun <T> put(key: TypedKey<T>, value: T): T {
+        @Suppress("UNCHECKED_CAST")
         return map.put(key, value!!) as T
     }
 
@@ -25,6 +27,7 @@ class TypedKeyHashMap : TypedKeyContainer {
     }
 
     fun <T> keys(): Set<TypedKey<T>> {
+        @Suppress("UNCHECKED_CAST")
         return map.keys as Set<TypedKey<T>>
     }
 }
