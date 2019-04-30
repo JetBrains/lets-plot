@@ -1,15 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.config.transform
 
-import java.util.Arrays
-import java.util.Objects
-import java.util.stream.Stream
-import kotlin.collections.ArrayList
-import kotlin.collections.List
-import kotlin.collections.MutableList
-import kotlin.collections.dropLastWhile
-import kotlin.collections.joinToString
-import kotlin.collections.toTypedArray
-
 class SpecSelector private constructor(builder: Builder) {
 
     private val myKey: String
@@ -24,13 +14,13 @@ class SpecSelector private constructor(builder: Builder) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || javaClass != other.javaClass) return false
+        if (other == null || this::class != other::class) return false
         val that = other as SpecSelector?
         return myKey == that!!.myKey
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(myKey)
+        return listOf(myKey).hashCode()
     }
 
     override fun toString(): String {
@@ -75,14 +65,10 @@ class SpecSelector private constructor(builder: Builder) {
             //  builder.part(part);
             //}
             //return builder.build();
-            return from(Arrays.stream(parts))
+            return from(listOf(*parts))
         }
 
-        fun from(parts: List<String>): SpecSelector {
-            return from(parts.stream())
-        }
-
-        private fun from(parts: Stream<String>): SpecSelector {
+        fun from(parts: Iterable<String>): SpecSelector {
             val builder = Builder()
             val iterator = parts.iterator()
             while (iterator.hasNext()) {

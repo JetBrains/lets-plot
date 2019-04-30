@@ -5,16 +5,10 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Layer
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.DATA
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecSelector.Companion.from
-import java.util.Arrays
-import java.util.Arrays.asList
-import java.util.stream.Collectors
-import java.util.stream.Stream
-import kotlin.collections.ArrayList
-import kotlin.collections.List
 
 object PlotSpecTransformUtil {
     val GGBUNCH_KEY_PARTS = arrayOf(GGBunch.ITEMS, GGBunch.Item.FEATURE_SPEC)
-    private val PLOT_WITH_LAYERS_TARGETS = asList(
+    private val PLOT_WITH_LAYERS_TARGETS = listOf(
             TargetSpec.PLOT,
             TargetSpec.LAYER,
             TargetSpec.GEOM,
@@ -44,21 +38,21 @@ object PlotSpecTransformUtil {
     }
 
     private fun toSelectors(keyCollections: List<List<String>>): List<SpecSelector> {
-        return keyCollections.stream().map { parts: List<String> -> from(parts) }.collect(Collectors.toList())
+        return keyCollections.map { parts: List<String> -> from(parts) }
     }
 
     private fun getPlotAndLayersSpecSelectorKeys(isGGBunch: Boolean, vararg minorKeys: String): List<List<String>> {
         val keyCollections = ArrayList<List<String>>()
         for (target in PLOT_WITH_LAYERS_TARGETS) {
             val keys = selectorKeys(target, isGGBunch)
-            val keyCollection = asList(*concat(keys, minorKeys))
+            val keyCollection = listOf(*concat(keys, minorKeys))
             keyCollections.add(keyCollection)
         }
         return keyCollections
     }
 
     private fun concat(a: Array<String>, b: Array<out String>): Array<String> {
-        return Stream.concat(Arrays.stream(a), Arrays.stream(b)).toArray { size -> arrayOfNulls<String>(size) }
+        return (a + b)
     }
 
     private fun selectorKeys(target: TargetSpec, isGGBunch: Boolean): Array<String> {

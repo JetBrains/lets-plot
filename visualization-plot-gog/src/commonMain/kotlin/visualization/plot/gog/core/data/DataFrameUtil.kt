@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleUtil
-
+import kotlin.jvm.JvmOverloads
 
 object DataFrameUtil {
     fun transformVarFor(aes: Aes<*>): DataFrame.Variable {
@@ -85,8 +85,8 @@ object DataFrameUtil {
     /**
      * ToDo: Cache in DataFrame (similar to 'factor')
      */
-    fun distinctValues(data: DataFrame, `var`: DataFrame.Variable): Collection<Any> {
-        return LinkedHashSet<Any>(data[`var`])
+    fun distinctValues(data: DataFrame, variable: DataFrame.Variable): Collection<Any> {
+        return LinkedHashSet(data[variable] as List<Any>)
     }
 
     fun hasValues(data: DataFrame, `var`: DataFrame.Variable): Boolean {

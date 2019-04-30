@@ -45,6 +45,6 @@ object PlotSpecCleaner {
     }
 
     private fun containSpecs(list: List<*>): Boolean {
-        return list.stream().anyMatch { o -> o is Map<*, *> || o is List<*> }
+        return list.any { o -> o is Map<*, *> || o is List<*> }
     }
 }

@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.core.GeomKind
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import java.util.*
+import observable.collections.Collections
 
 object Option {
 
