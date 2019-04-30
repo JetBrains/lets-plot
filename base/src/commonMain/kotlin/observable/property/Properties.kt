@@ -13,19 +13,19 @@ import jetbrains.datalore.base.registration.Registration
 import kotlin.jvm.JvmOverloads
 
 object Properties {
-    val TRUE = Properties.constant(true)
-    val FALSE = Properties.constant(false)
+    val TRUE = constant(true)
+    val FALSE = constant(false)
 
     fun not(prop: ReadableProperty<out Boolean?>): ReadableProperty<out Boolean?> {
         return map(prop) { value -> if (value == null) null else !value }
     }
 
     fun <ValueT> notNull(prop: ReadableProperty<out ValueT?>): ReadableProperty<out Boolean> {
-        return map(prop) { value -> value != null } as ReadableProperty<out Boolean>
+        return map(prop) { value -> value != null }
     }
 
     fun <ValueT> isNull(prop: ReadableProperty<out ValueT?>): ReadableProperty<out Boolean> {
-        return map(prop) { value -> value == null } as ReadableProperty<out Boolean>
+        return map(prop) { value -> value == null }
     }
 
     fun startsWith(string: ReadableProperty<String?>, prefix: ReadableProperty<String?>): ReadableProperty<out Boolean> {
@@ -134,7 +134,7 @@ object Properties {
         val calc = object : Supplier<TargetT?> {
             override fun get(): TargetT? {
                 val value = source.get() ?: return nullValue
-                val prop = `fun`(value) ?: return null
+                val prop = `fun`(value)
                 return prop.get()
             }
         }
@@ -198,7 +198,7 @@ object Properties {
         val calc = object : Supplier<TargetT?> {
             override fun get(): TargetT? {
                 val value = source.get() ?: return null
-                val prop = `fun`(value) ?: return null
+                val prop = `fun`(value)
                 return prop.get()
             }
         }
@@ -300,11 +300,11 @@ object Properties {
     }
 
     fun <ValueT> same(prop: ReadableProperty<out ValueT?>, v: ValueT?): ReadableProperty<out Boolean> {
-        return map(prop) { value -> value === v } as ReadableProperty<out Boolean>
+        return map(prop) { value -> value === v }
     }
 
     fun <ValueT> equals(prop: ReadableProperty<out ValueT?>, v: ValueT?): ReadableProperty<out Boolean> {
-        return map(prop) { value -> value == v } as ReadableProperty<out Boolean>
+        return map(prop) { value -> value == v }
     }
 
     fun <ValueT> equals(p1: ReadableProperty<out ValueT?>, p2: ReadableProperty<out ValueT?>): ReadableProperty<out Boolean> {
@@ -404,7 +404,6 @@ object Properties {
 
     fun <ItemT> size(collection: ObservableCollection<ItemT>): ReadableProperty<Int> {
         return object : SimpleCollectionProperty<ItemT, Int>(collection, collection.size) {
-//        return object : SimpleCollectionProperty<ItemT, Int>(collection) {
 
             override val propExpr: String
                 get() = "size($collection)"
@@ -489,7 +488,7 @@ object Properties {
                 get() = "empty($collection)"
 
             override fun doAddListeners() {
-                myCollectionRegistration = collection.addListener(Properties.simpleAdapter(object : Runnable {
+                myCollectionRegistration = collection.addListener(simpleAdapter(object : Runnable {
                     override fun run() {
                         somethingChanged()
                     }
@@ -532,7 +531,7 @@ object Properties {
     }
 
     fun <ValueT> ifProp(cond: ReadableProperty<out Boolean>, ifTrue: ValueT, ifFalse: ValueT): ReadableProperty<out ValueT?> {
-        return ifProp<ValueT>(cond, constant(ifTrue), constant(ifFalse))
+        return ifProp(cond, constant(ifTrue), constant(ifFalse))
     }
 
     fun <ValueT> ifProp(cond: WritableProperty<ValueT>, ifTrue: ValueT, ifFalse: ValueT): WritableProperty<Boolean> {
@@ -670,24 +669,23 @@ object Properties {
     }
 
 
-/*
-    fun <ItemT> forSingleItemCollection(coll: ObservableCollection<ItemT>): Property<ItemT> {
+    fun <ItemT> forSingleItemCollection(coll: ObservableCollection<ItemT>): Property<ItemT?> {
         if (coll.size > 1) {
             throw IllegalStateException("Collection $coll has more than one item")
         }
 
-        return object : Property<ItemT> {
+        return object : Property<ItemT?> {
 
             override val propExpr: String
                 get() = "singleItemCollection($coll)"
 
-            override fun get(): ItemT {
+            override fun get(): ItemT? {
                 return if (coll.isEmpty()) {
                     null
                 } else coll.iterator().next()
             }
 
-            override fun set(value: ItemT) {
+            override fun set(value: ItemT?) {
                 val current = get()
                 if (current == value) return
                 coll.clear()
@@ -696,23 +694,23 @@ object Properties {
                 }
             }
 
-            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out ItemT>>): Registration {
+            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out ItemT?>>): Registration {
                 return coll.addListener(object : CollectionAdapter<ItemT>() {
-                    override fun onItemAdded(event: CollectionItemEvent<ItemT>) {
+                    override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                         if (coll.size != 1) {
                             throw IllegalStateException()
                         }
                         handler.onEvent(PropertyChangeEvent(null, event.newItem))
                     }
 
-                    override fun onItemSet(event: CollectionItemEvent<ItemT>) {
-                        if (event.index !== 0) {
+                    override fun onItemSet(event: CollectionItemEvent<out ItemT>) {
+                        if (event.index != 0) {
                             throw IllegalStateException()
                         }
                         handler.onEvent(PropertyChangeEvent(event.oldItem, event.newItem))
                     }
 
-                    override fun onItemRemoved(event: CollectionItemEvent<ItemT>) {
+                    override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                         if (!coll.isEmpty()) {
                             throw IllegalStateException()
                         }
@@ -722,7 +720,6 @@ object Properties {
             }
         }
     }
-*/
 
     fun and(vararg props: ReadableProperty<out Boolean?>): ReadableProperty<out Boolean?> {
         if (props.isEmpty()) {

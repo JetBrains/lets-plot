@@ -53,7 +53,7 @@ class ObservableCollectionsTest {
         val lastUpdate: Value<Int> = Value(0)
         count.addHandler(object : EventHandler<PropertyChangeEvent<out Int>> {
             override fun onEvent(event: PropertyChangeEvent<out Int>) {
-                lastUpdate.set(event.newValue)
+                lastUpdate.set(event.newValue!!)
             }
         })
 

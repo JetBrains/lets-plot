@@ -1,6 +1,6 @@
 package jetbrains.datalore.base.observable.property
 
-class PropertyChangeEvent<ValueT>(val oldValue: ValueT?, val newValue: ValueT) {
+class PropertyChangeEvent<ValueT>(val oldValue: ValueT?, val newValue: ValueT?) {
 
     override fun toString(): String {
         return oldValue.toString() + " -> " + newValue

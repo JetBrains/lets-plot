@@ -30,14 +30,11 @@ class PropertyTest {
         verify(handler).onEvent(PropertyChangeEvent(3, 0))
     }
 
-/*
     @Test(expected = IllegalStateException::class)
     fun wrapTooBigCollection() {
         val list = ObservableArrayList<Int>()
         list.add(0)
         list.add(1)
-        // ToDo: method was temporarily removed
         Properties.forSingleItemCollection(list)
     }
-*/
 }

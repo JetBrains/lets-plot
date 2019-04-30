@@ -13,7 +13,7 @@ object PropertyBinding {
         target.set(source.get())
         return source.addHandler(object : EventHandler<PropertyChangeEvent<out ValueT>> {
             override fun onEvent(event: PropertyChangeEvent<out ValueT>) {
-                target.set(event.newValue)
+                target.set(event.newValue as ValueT)
             }
         })
     }
