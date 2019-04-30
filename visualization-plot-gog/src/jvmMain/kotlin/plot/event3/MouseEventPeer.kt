@@ -17,14 +17,14 @@ class MouseEventPeer : MouseEventSource {
 
     override fun addEventHandler(eventSpec: MouseEventSource.MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
         if (!myEventHandlers.containsKey(eventSpec)) {
-            myEventHandlers.put(eventSpec, Listeners())
+            myEventHandlers[eventSpec] = Listeners()
             onAddSpec(eventSpec)
         }
-        val addReg = myEventHandlers.get(eventSpec)?.add(eventHandler)
+        val addReg = myEventHandlers[eventSpec]?.add(eventHandler)
         return object : Registration() {
             override fun doRemove() {
                 addReg?.remove()
-                if (myEventHandlers.get(eventSpec)!!.isEmpty) {
+                if (myEventHandlers[eventSpec]!!.isEmpty) {
                     myEventHandlers.remove(eventSpec)
                     onRemoveSpec(eventSpec)
                 }
@@ -34,7 +34,7 @@ class MouseEventPeer : MouseEventSource {
 
     fun dispatch(eventSpec: MouseEventSource.MouseEventSpec, mouseEvent: MouseEvent) {
         if (myEventHandlers.containsKey(eventSpec)) {
-            myEventHandlers.get(eventSpec)?.fire(object : ListenerCaller<EventHandler<MouseEvent>> {
+            myEventHandlers[eventSpec]?.fire(object : ListenerCaller<EventHandler<MouseEvent>> {
                 override fun call(l: EventHandler<MouseEvent>) {
                     l.onEvent(mouseEvent)
                 }
@@ -54,14 +54,14 @@ class MouseEventPeer : MouseEventSource {
     private fun startHandleSpecInSource(eventSource: MouseEventSource, eventSpec: MouseEventSource.MouseEventSpec) {
         val registration = eventSource.addEventHandler(eventSpec, object : EventHandler<MouseEvent> {
             override fun onEvent(event: MouseEvent) {
-                dispatch(eventSpec, event);
+                dispatch(eventSpec, event)
             }
         })
 
         if (!mySourceRegistrations.containsKey(eventSpec)) {
-            mySourceRegistrations.put(eventSpec, CompositeRegistration())
+            mySourceRegistrations[eventSpec] = CompositeRegistration()
         }
-        mySourceRegistrations.get(eventSpec)?.add(registration)
+        mySourceRegistrations[eventSpec]?.add(registration)
     }
 
     private fun onRemoveSpec(eventSpec: MouseEventSource.MouseEventSpec) {

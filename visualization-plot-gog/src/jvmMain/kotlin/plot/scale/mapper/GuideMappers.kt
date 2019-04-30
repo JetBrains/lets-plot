@@ -9,7 +9,6 @@ import jetbrains.datalore.visualization.plot.gog.core.scale.Mappers
 import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideBreak
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideMapper
-import java.util.*
 
 object GuideMappers {
     val IDENTITY: GuideMapper<Double> = GuideMapperAdapter(Mappers.IDENTITY)

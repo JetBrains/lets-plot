@@ -173,7 +173,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
                     for (limit in myLimits) {
                         if (limit is Number) {
                             val v = limit.toDouble()
-                            if (java.lang.Double.isFinite(v)) {
+                            if (v.isFinite()) {
                                 if (lower) {
                                     lowerLimit = v
                                 } else {

@@ -2,6 +2,9 @@ package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.visualization.plot.gog.common.text.Formatter
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.log10
 
 class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Boolean) : Function<Any, String> {
     private var myFormatter: Function<Any, String>
@@ -12,12 +15,12 @@ class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Bool
             // do not proceed because log10(0) = - Infinity
             myFormatter = Formatter.number("#,##0.#", false)
         } else {
-            step = Math.abs(step)
+            step = abs(step)
             if (step == 0.0) {
                 step = value / 10
             }
-            val domain10Power = Math.log10(value)
-            val step10Power = Math.log10(step)
+            val domain10Power = log10(value)
+            val step10Power = log10(step)
 
             var precision = -step10Power
             var scientificNotation = false
@@ -32,7 +35,7 @@ class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Bool
             if (precision < 0) {
                 precision = 0.0
             }
-            precision = Math.ceil(precision)
+            precision = ceil(precision)
 
             val sb = StringBuilder()
             var useMetricPrefix = false

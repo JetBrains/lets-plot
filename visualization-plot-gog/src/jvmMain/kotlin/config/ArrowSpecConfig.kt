@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.ArrowSpec
 
 internal class ArrowSpecConfig private constructor(options: Map<*, *>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
@@ -35,7 +36,7 @@ internal class ArrowSpecConfig private constructor(options: Map<*, *>) : Options
             }
         }
 
-        return ArrowSpec(Math.toRadians(angle), length, end, type)
+        return ArrowSpec(toRadians(angle), length, end, type)
     }
 
     companion object {

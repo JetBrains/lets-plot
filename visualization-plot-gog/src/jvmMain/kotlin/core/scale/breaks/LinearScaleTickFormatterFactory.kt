@@ -2,6 +2,9 @@ package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import kotlin.math.abs
+import kotlin.math.log10
+import kotlin.math.max
 
 /*package*/ internal class LinearScaleTickFormatterFactory
 /**
@@ -11,7 +14,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
     override fun getFormatter(range: ClosedRange<Double>, step: Double): Function<Any, String> {
         // avoid 0 values because log10(0) = - Infinity
-        var referenceValue = Math.max(Math.abs(range.lowerEndpoint()), range.upperEndpoint())
+        var referenceValue = max(abs(range.lowerEndpoint()), range.upperEndpoint())
         if (referenceValue == 0.0) {
             referenceValue = 1.0
         }
@@ -22,7 +25,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            println(Math.log10(0.0))
+            println(log10(0.0))
         }
     }
 }

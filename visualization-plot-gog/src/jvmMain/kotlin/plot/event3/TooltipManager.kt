@@ -16,10 +16,10 @@ interface TooltipManager {
 
     class TooltipContent(val text: List<String>, val fill: Color, val fontSize: Double) {
 
-        override fun equals(o: Any?): Boolean {
-            if (this === o) return true
-            if (o == null || javaClass != o.javaClass) return false
-            val that = o as TooltipContent?
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || javaClass != other.javaClass) return false
+            val that = other as TooltipContent?
             return java.lang.Double.compare(that!!.fontSize, fontSize) == 0 &&
                     fill == that.fill &&
                     text == that.text
@@ -32,10 +32,10 @@ interface TooltipManager {
 
     class TooltipEntry(val tooltipContent: TooltipContent, val tooltipCoord: DoubleVector, val stemCoord: DoubleVector, val orientation: TooltipOrientation) {
 
-        override fun equals(o: Any?): Boolean {
-            if (this === o) return true
-            if (o == null || javaClass != o.javaClass) return false
-            val that = o as TooltipEntry?
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || javaClass != other.javaClass) return false
+            val that = other as TooltipEntry?
             return tooltipContent == that!!.tooltipContent &&
                     tooltipCoord == that.tooltipCoord &&
                     stemCoord == that.stemCoord &&

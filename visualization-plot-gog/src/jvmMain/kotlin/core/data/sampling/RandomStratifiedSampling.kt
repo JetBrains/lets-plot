@@ -6,6 +6,8 @@ import jetbrains.datalore.visualization.plot.gog.core.data.GroupAwareSampling
 import jetbrains.datalore.visualization.plot.gog.plot.data.GroupUtil
 import java.util.stream.Collectors.toList
 import java.util.stream.IntStream
+import kotlin.math.max
+import kotlin.math.round
 import kotlin.random.Random
 
 internal class RandomStratifiedSampling internal constructor(sampleSize: Int, private val mySeed: Long?, private val myMinSubsampleSize: Int?) : SamplingBase(sampleSize), GroupAwareSampling {
@@ -26,7 +28,7 @@ internal class RandomStratifiedSampling internal constructor(sampleSize: Int, pr
         val indicesByGroup = GroupUtil.indicesByGroup(population.rowCount(), groupMapper)
 
         var minSubSampleSize = myMinSubsampleSize ?: DEF_MIN_SUBSAMPLE_SIZE
-        minSubSampleSize = Math.max(0, minSubSampleSize)
+        minSubSampleSize = max(0, minSubSampleSize)
         val popSize = population.rowCount()
 
         val pickIndices = ArrayList<Int>()
@@ -37,8 +39,8 @@ internal class RandomStratifiedSampling internal constructor(sampleSize: Int, pr
             // proportionate allocation
             val ratio = stratumSize.toDouble() / popSize
 
-            var stratumSampleSize = Math.round(sampleSize * ratio).toInt()
-            stratumSampleSize = Math.max(stratumSampleSize, minSubSampleSize)
+            var stratumSampleSize = round(sampleSize * ratio).toInt()
+            stratumSampleSize = max(stratumSampleSize, minSubSampleSize)
 
             if (stratumSampleSize >= stratumSize) {
                 pickIndices.addAll(groupIndices)

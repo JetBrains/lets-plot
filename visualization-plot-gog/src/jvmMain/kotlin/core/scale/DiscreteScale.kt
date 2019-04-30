@@ -9,6 +9,7 @@ import kotlin.collections.HashSet
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.LinkedHashSet
 import kotlin.collections.set
+import kotlin.math.abs
 
 internal class DiscreteScale<T> : AbstractScale<Any, T> {
     private val myNumberByDomainValue = LinkedHashMap<Any, Double>()
@@ -143,8 +144,8 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             } else if (floorKey == null) {
                 keyNumber = ceilingKey
             } else {
-                val ceilingDist = Math.abs(ceilingKey - v)
-                val floorDist = Math.abs(floorKey - v)
+                val ceilingDist = abs(ceilingKey - v)
+                val floorDist = abs(floorKey - v)
                 keyNumber = if (ceilingDist < floorDist) ceilingKey else floorKey
             }
         }

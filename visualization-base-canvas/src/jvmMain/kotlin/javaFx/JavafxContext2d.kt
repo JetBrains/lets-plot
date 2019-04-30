@@ -10,6 +10,7 @@ import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.scene.text.TextAlignment
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.CssFontParser
@@ -111,7 +112,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double) {
-        myContext2d.arc(x, y, radius, radius, -Math.toDegrees(startAngle), Math.toDegrees(startAngle) - Math.toDegrees(endAngle))
+        myContext2d.arc(x, y, radius, radius, -toDegrees(startAngle), toDegrees(startAngle) - toDegrees(endAngle))
     }
 
     override fun save() {
@@ -159,7 +160,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun rotate(angle: Double) {
-        myContext2d.rotate(Math.toDegrees(angle))
+        myContext2d.rotate(toDegrees(angle))
     }
 
     override fun translate(x: Double, y: Double) {

@@ -70,7 +70,7 @@ class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
     }
 
     fun hideTooltip() {
-        drawTooltips(emptyList<PositionedTooltip>())
+        drawTooltips(emptyList())
     }
 
     companion object {
@@ -99,25 +99,20 @@ class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
         }
 
         private fun getOrientation(kind: Kind): TooltipOrientation {
-            when (kind) {
-                Kind.VERTICAL_TOOLTIP -> return TooltipOrientation.ANY
+            return when (kind) {
+                Kind.VERTICAL_TOOLTIP -> TooltipOrientation.ANY
 
-                Kind.HORIZONTAL_TOOLTIP, Kind.Y_AXIS_TOOLTIP -> return TooltipOrientation.HORIZONTAL
+                Kind.HORIZONTAL_TOOLTIP, Kind.Y_AXIS_TOOLTIP -> TooltipOrientation.HORIZONTAL
 
-                Kind.CURSOR_TOOLTIP, Kind.X_AXIS_TOOLTIP -> return TooltipOrientation.VERTICAL
-
-                else -> throw IllegalArgumentException("Unknown layout hint kind")
+                Kind.CURSOR_TOOLTIP, Kind.X_AXIS_TOOLTIP -> TooltipOrientation.VERTICAL
             }
         }
 
         private fun getFontSize(tooltipSpec: TooltipSpec): Double {
-            when (tooltipSpec.layoutHint.kind) {
+            return when (tooltipSpec.layoutHint.kind) {
+                Kind.VERTICAL_TOOLTIP, Kind.HORIZONTAL_TOOLTIP, Kind.CURSOR_TOOLTIP -> Tooltip.FONT_SIZE.toDouble()
 
-                Kind.VERTICAL_TOOLTIP, Kind.HORIZONTAL_TOOLTIP, Kind.CURSOR_TOOLTIP -> return Tooltip.FONT_SIZE.toDouble()
-
-                Kind.X_AXIS_TOOLTIP, Kind.Y_AXIS_TOOLTIP -> return Tooltip.AXIS_FONT_SIZE.toDouble()
-
-                else -> throw IllegalArgumentException("Unknown hint kind: " + tooltipSpec.layoutHint.kind)
+                Kind.X_AXIS_TOOLTIP, Kind.Y_AXIS_TOOLTIP -> Tooltip.AXIS_FONT_SIZE.toDouble()
             }
         }
 

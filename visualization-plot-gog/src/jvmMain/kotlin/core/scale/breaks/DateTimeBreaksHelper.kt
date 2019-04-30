@@ -5,6 +5,7 @@ import jetbrains.datalore.visualization.plot.gog.common.time.TimeUtil
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.NiceTimeInterval
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.TimeInterval
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.YearInterval
+import kotlin.math.round
 
 class DateTimeBreaksHelper internal constructor(
         rangeStart: Double,
@@ -52,7 +53,7 @@ class DateTimeBreaksHelper internal constructor(
                 val endYear = TimeUtil.asDateTimeUTC(end).year
                 val helper = LinearBreaksHelper(startYear.toDouble(), endYear.toDouble(), count)
                 for (tickYear in helper.breaks) {
-                    val tickDate = TimeUtil.yearStart(Math.round(tickYear!!).toInt())
+                    val tickDate = TimeUtil.yearStart(round(tickYear!!).toInt())
                     ticks.add(TimeUtil.asInstantUTC(tickDate).toDouble())
                 }
             } else {

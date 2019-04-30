@@ -2,6 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.common.text
 
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.round
 
 object DateTimeFormatUtil {
     internal const val YEAR = "MMM y"
@@ -11,7 +12,7 @@ object DateTimeFormatUtil {
     internal const val DATE_MEDIUM_TIME_SHORT = "EEE, MMM d, y h:mm a"
 
     fun formatDateUTC(instant: Number, pattern: String): String {
-        val date = Date(Math.round(instant.toDouble()))
+        val date = Date(round(instant.toDouble()).toLong())
         return formatDateUTC(date, pattern)
     }
 

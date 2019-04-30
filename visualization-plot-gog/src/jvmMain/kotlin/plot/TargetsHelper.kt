@@ -8,8 +8,6 @@ import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.L
 import jetbrains.datalore.visualization.plot.gog.core.event3.TransformedTargetLocator
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TargetTooltipSpec
 import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipSpec
-import java.util.*
-import java.util.function.Consumer
 
 internal class TargetsHelper {
     private val myTileInfoList = ArrayList<TileInfo>()
@@ -43,7 +41,7 @@ internal class TargetsHelper {
 
     fun addTileTargetLocators(tileRect: DoubleRectangle, targetLocators: List<GeomTargetLocator>) {
         val tileInfo = TileInfo(tileRect)
-        targetLocators.forEach(Consumer { tileInfo.addTargetLocator(it) })
+        targetLocators.forEach { tileInfo.addTargetLocator(it) }
         myTileInfoList.add(tileInfo)
     }
 

@@ -18,11 +18,6 @@ import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PosProvider
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.GeomProvider
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
-import kotlin.collections.LinkedHashSet
 
 object DataProcessing {
 
@@ -98,7 +93,7 @@ object DataProcessing {
                     if (groupingVar != null) {
                         val size = sd[sd.variables().iterator().next()].size
                         val v = d[groupingVar!!][0]
-                        sd = sd.builder().put(groupingVar!!, Collections.nCopies<Any>(size, v)).build()
+                        sd = sd.builder().put(groupingVar!!, List(size) { v }).build()
                     }
                 }
 
@@ -196,8 +191,8 @@ object DataProcessing {
 
         val newInputSeries = HashMap<Variable, List<*>>()
         for (binding in bindings) {
-            val `var` = binding.`var`
-            if (`var`.isStat || facetVars.contains(`var`)) {
+            val variable = binding.`var`
+            if (variable.isStat || facetVars.contains(variable)) {
                 continue
             }
 
@@ -211,18 +206,18 @@ object DataProcessing {
                     val statSerie = statData.getNumeric(defaultStatVar)
                     newInputSerie = ScaleUtil.inverseTransform(statSerie, binding.scale!!)
                 }
-                newInputSeries[`var`] = newInputSerie
+                newInputSeries[variable] = newInputSerie
             } else {
                 // Do not override series obtained via 'default stat var'
-                if (!newInputSeries.containsKey(`var`)) {
+                if (!newInputSeries.containsKey(variable)) {
                     val value: Any?
-                    if (data.isNumeric(`var`)) {
-                        value = SeriesUtil.mean(data.getNumeric(`var`), null)
+                    if (data.isNumeric(variable)) {
+                        value = SeriesUtil.mean(data.getNumeric(variable), null)
                     } else {
-                        value = SeriesUtil.firstNotNull(data[`var`], null)
+                        value = SeriesUtil.firstNotNull(data[variable], null)
                     }
-                    val newInputSerie = Collections.nCopies<Any>(statDataSize, value)
-                    newInputSeries[`var`] = newInputSerie
+                    val newInputSerie = List(statDataSize) { value }
+                    newInputSeries[variable] = newInputSerie
                 }
             }
         }

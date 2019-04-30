@@ -6,6 +6,8 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.gog.core.scale.MapperUtil
 import jetbrains.datalore.visualization.plot.gog.core.scale.Transform
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideMapper
+import kotlin.math.max
+import kotlin.math.min
 
 // http://docs.ggplot2.org/current/scale_hue.html
 internal class ColorHueMapperProvider(hueRange: List<Double>?, chroma: Double?, luminance: Double?, startHue: Double?, direction: Double?, naValue: Color) : HSVColorMapperProvider(naValue) {
@@ -52,8 +54,8 @@ internal class ColorHueMapperProvider(hueRange: List<Double>?, chroma: Double?, 
             if (hueRange != null && hueRange.size == 2) {
                 val v0 = hueRange[0] % 360
                 val v1 = hueRange[1] % 360
-                result[0] = Math.min(v0, v1)
-                result[1] = Math.max(v0, v1)
+                result[0] = min(v0, v1)
+                result[1] = max(v0, v1)
             }
             return result
         }

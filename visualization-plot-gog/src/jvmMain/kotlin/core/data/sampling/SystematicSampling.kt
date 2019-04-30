@@ -3,6 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.core.data.sampling
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.PointSampling
+import kotlin.math.round
 
 /**
  * Take points at indices selected at regular intervals starting from index 0
@@ -34,14 +35,14 @@ internal class SystematicSampling(sampleSize: Int) : SamplingBase(sampleSize), P
     }
 
     private fun computeStep(popSize: Int): Int {
-        return Math.round(popSize.toDouble() / (sampleSize - 1)).toInt()
+        return round(popSize.toDouble() / (sampleSize - 1)).toInt()
     }
 
     companion object {
         val ALIAS = "systematic"
 
         fun computeStep(popSize: Int, sampleSize: Int): Int {
-            return Math.round((popSize - 1).toDouble() / (sampleSize - 1)).toInt()
+            return round((popSize - 1).toDouble() / (sampleSize - 1)).toInt()
         }
     }
 }

@@ -9,6 +9,8 @@ import jetbrains.datalore.visualization.plot.gog.core.scale.Transform
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideMapper
 import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.ColorMapper
 import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.GuideMappers
+import kotlin.math.max
+import kotlin.math.min
 
 internal class ColorGradient2MapperProvider(low: Color?, mid: Color?, high: Color?, midpoint: Double?, naValue: Color) : MapperProviderBase<Color>(naValue) {
 
@@ -27,8 +29,8 @@ internal class ColorGradient2MapperProvider(low: Color?, mid: Color?, high: Colo
     override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform): GuideMapper<Color> {
         val domain = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
 
-        val lowDomain = ClosedRange.closed(domain.lowerEndpoint(), Math.max(myMidpoint!!, domain.lowerEndpoint()))
-        val highDomain = ClosedRange.closed(Math.min(myMidpoint, domain.upperEndpoint()), domain.upperEndpoint())
+        val lowDomain = ClosedRange.closed(domain.lowerEndpoint(), max(myMidpoint!!, domain.lowerEndpoint()))
+        val highDomain = ClosedRange.closed(min(myMidpoint, domain.upperEndpoint()), domain.upperEndpoint())
 
         val lowMapper = ColorMapper.gradient(lowDomain, myLow, myMid, naValue)
         val highMapper = ColorMapper.gradient(highDomain, myMid, myHigh, naValue)

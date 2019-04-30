@@ -99,7 +99,7 @@ internal object JavafxCanvasUtil {
     }
 
     private fun round(v: Double): Int {
-        return Math.round(v).toInt()
+        return kotlin.math.round(v).toInt()
     }
 
     private fun eventOptions(

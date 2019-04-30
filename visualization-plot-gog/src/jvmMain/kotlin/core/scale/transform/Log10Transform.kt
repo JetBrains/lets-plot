@@ -5,6 +5,8 @@ import jetbrains.datalore.base.function.Functions.function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleBreaks
 import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.NumericBreakFormatter
+import kotlin.math.log10
+import kotlin.math.pow
 
 internal class Log10Transform : FunTransform(F, F_INVERSE) {
 
@@ -41,19 +43,19 @@ internal class Log10Transform : FunTransform(F, F_INVERSE) {
         private val F: Function<Double, Double> = function { v ->
             // nullable or not?
 //            if (v != null)
-//                Math.log10(v)
+//                log10(v)
 //            else
 //                null
-            Math.log10(v)
+            log10(v)
 
         }
         private val F_INVERSE: Function<Double, Double> = function { v ->
             // nullable or not?
 //            if (v != null)
-//                Math.pow(10.0, v)
+//                10.0.pow(v)
 //            else
 //                null
-            Math.pow(10.0, v)
+            10.0.pow(v)
         }
     }
 }

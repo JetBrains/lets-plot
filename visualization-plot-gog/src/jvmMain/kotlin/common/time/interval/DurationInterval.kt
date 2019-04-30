@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.common.time.interval
 
 import jetbrains.datalore.base.datetime.Duration
+import kotlin.math.ceil
 
 internal class DurationInterval(private val myDuration: Duration, count: Int) : TimeInterval(count) {
 
@@ -36,7 +37,7 @@ internal class DurationInterval(private val myDuration: Duration, count: Int) : 
 
     override fun range(start: Double, end: Double): List<Double> {
         val step = (myDuration.duration * count).toDouble()
-        var tick = Math.ceil(start / step) * step
+        var tick = ceil(start / step) * step
         val result = ArrayList<Double>()
         while (tick <= end) {
             result.add(tick)
