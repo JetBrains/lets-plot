@@ -7,6 +7,7 @@ import jetbrains.datalore.base.registration.Registration
 
 class UnmodifiableObservableList<ElementT>(wrappedList: ObservableList<ElementT>) :
         UnmodifiableList<ElementT>(wrappedList), ObservableList<ElementT> {
+
     override val wrappedList: ObservableList<ElementT>
         get() = super.wrappedList as ObservableList<ElementT>
 

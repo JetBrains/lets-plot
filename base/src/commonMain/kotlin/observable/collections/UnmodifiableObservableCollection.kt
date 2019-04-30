@@ -2,5 +2,6 @@ package observable.collections
 
 import jetbrains.datalore.base.observable.collections.ObservableCollection
 
-class UnmodifiableObservableCollection<ItemT>(private val myWrappedCollection: ObservableCollection<ItemT>) :
+class UnmodifiableObservableCollection<ItemT>(
+        private val myWrappedCollection: ObservableCollection<ItemT>) :
         ObservableCollection<ItemT> by myWrappedCollection

@@ -40,7 +40,7 @@ object ObservableCollections {
                 get() = "list $list"
 
             override fun get(): List<ItemT?>? {
-                return ArrayList(list) ?: null
+                return ArrayList(list)
             }
 
             override fun set(value: List<ItemT?>?) {
@@ -145,50 +145,52 @@ object ObservableCollections {
     }
 
     fun <ValueT, ItemT> selectCollection(
-            p: ReadableProperty<ValueT>,
-            s: (ValueT) -> ObservableCollection<ItemT?>):
-            ObservableCollection<ItemT?> {
+            p: ReadableProperty<out ValueT>,
+            s: (ValueT) -> ObservableCollection<ItemT>):
+            ObservableCollection<ItemT> {
 
-        return UnmodifiableObservableCollection(SelectorDerivedCollection(p, s))
+        val myWrappedCollection: ObservableCollection<ItemT> = SelectorDerivedCollection(p, s)
+        return UnmodifiableObservableCollection(myWrappedCollection)
     }
 
     fun <ValueT, ItemT> selectList(
             p: ReadableProperty<out ValueT>,
-            s: (ValueT) -> ObservableList<ItemT?>):
+            s: (ValueT) -> ObservableList<ItemT>):
 
-            ObservableList<ItemT?> {
+            ObservableList<ItemT> {
 
-        return UnmodifiableObservableList(SelectorDerivedList(p, s))
+        val wrappedList = SelectorDerivedList(p, s)
+        return UnmodifiableObservableList(wrappedList)
     }
 
-    private class SelectorDerivedCollection<ValueT, ItemT>
-    internal constructor(
+    private class SelectorDerivedCollection<ValueT, ItemT>(
             source: ReadableProperty<ValueT>,
-            `fun`: (ValueT) -> ObservableCollection<ItemT?>) :
-            SelectedCollection<ValueT, ItemT?, ObservableCollection<ItemT?>>(source, `fun`) {
+            `fun`: (ValueT) -> ObservableCollection<ItemT>) :
+            SelectedCollection<ValueT, ItemT, ObservableCollection<ItemT>>(source, `fun`) {
 
-        override fun empty(): ObservableCollection<ItemT?> {
+        override fun empty(): ObservableCollection<ItemT> {
             return ObservableCollections.empty()
         }
 
-        override fun follow(source: ObservableCollection<ItemT?>): Registration {
+        override fun follow(source: ObservableCollection<ItemT>): Registration {
             clear()
             for (i in source) {
                 add(i)
             }
 
-            return source.addListener(object : CollectionAdapter<ItemT?>() {
-                override fun onItemAdded(event: CollectionItemEvent<out ItemT?>) {
-                    add(event.newItem)
+            return source.addListener(object : CollectionAdapter<ItemT>() {
+                override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
+                    @Suppress("UNCHECKED_CAST")
+                    add(event.newItem as ItemT)
                 }
 
-                override fun onItemRemoved(event: CollectionItemEvent<out ItemT?>) {
+                override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                     remove(event.oldItem)
                 }
             })
         }
 
-        override operator fun contains(element: ItemT?): Boolean {
+        override operator fun contains(element: ItemT): Boolean {
             return if (isFollowing) {
                 super.contains(element)
             } else {
@@ -196,7 +198,7 @@ object ObservableCollections {
             }
         }
 
-        override operator fun iterator(): MutableIterator<ItemT?> {
+        override operator fun iterator(): MutableIterator<ItemT> {
             return if (isFollowing) {
                 super.iterator()
             } else {
@@ -208,40 +210,40 @@ object ObservableCollections {
     private class SelectorDerivedList<ValueT, ItemT>
     internal constructor(
             source: ReadableProperty<out ValueT>,
-            `fun`: (ValueT) -> ObservableList<ItemT?>) :
+            `fun`: (ValueT) -> ObservableList<ItemT>) :
+            SelectedCollection<ValueT, ItemT, ObservableList<ItemT>>(source, `fun`) {
 
-            SelectedCollection<ValueT, ItemT?, ObservableList<ItemT?>>(source, `fun`) {
-
-        override fun empty(): ObservableList<ItemT?> {
-            return ObservableCollections.emptyList()
+        override fun empty(): ObservableList<ItemT> {
+            return emptyList()
         }
 
-        override fun follow(source: ObservableList<ItemT?>): Registration {
+        override fun follow(source: ObservableList<ItemT>): Registration {
             clear()
             for (i in 0 until source.size) {
-                add(i, source.get(i))
+                add(i, source[i])
             }
 
-            return source.addListener(object : CollectionAdapter<ItemT?>() {
-                override fun onItemAdded(event: CollectionItemEvent<out ItemT?>) {
-                    add(event.index, event.newItem)
+            return source.addListener(object : CollectionAdapter<ItemT>() {
+                override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
+                    @Suppress("UNCHECKED_CAST")
+                    add(event.index, event.newItem as ItemT)
                 }
 
-                override fun onItemRemoved(event: CollectionItemEvent<out ItemT?>) {
+                override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                     removeAt(event.index)
                 }
             })
         }
 
-        override operator fun get(index: Int): ItemT? {
+        override operator fun get(index: Int): ItemT {
             return if (isFollowing) {
                 super.get(index)
             } else {
-                select().get(index)
+                select()[index]
             }
         }
 
-        override operator fun iterator(): MutableIterator<ItemT?> {
+        override operator fun iterator(): MutableIterator<ItemT> {
             return if (isFollowing) {
                 super.iterator()
             } else {
