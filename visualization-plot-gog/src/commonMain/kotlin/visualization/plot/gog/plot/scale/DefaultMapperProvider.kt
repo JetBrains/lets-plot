@@ -131,7 +131,7 @@ object DefaultMapperProvider {
 
         companion object {
             // For most of numeric (positional) aesthetics the initial mapper is IDENTITY mapper as we don't yet know the range of positional aesthetics.
-            private val NUMERIC_IDENTITY = object : MapperProvider<Double> {
+            private val NUMERIC_IDENTITY: MapperProvider<Double> = object : MapperProvider<Double> {
                 override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
