@@ -1,7 +1,7 @@
 package jetbrains.datalore.base.gcommon.collect
 
 class Stack<T> {
-    private val elements: MutableList<T> = mutableListOf()
+    private val elements: MutableList<T> = ArrayList()
 
     fun empty() = elements.isEmpty()
 
