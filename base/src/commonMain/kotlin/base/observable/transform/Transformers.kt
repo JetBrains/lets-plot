@@ -1,9 +1,16 @@
 package jetbrains.datalore.base.observable.transform
 
+import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.observable.collections.CollectionAdapter
 import jetbrains.datalore.base.observable.collections.CollectionItemEvent
+import jetbrains.datalore.base.observable.collections.CollectionListener
+import jetbrains.datalore.base.observable.collections.ObservableCollection
 import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
 import jetbrains.datalore.base.observable.collections.list.ObservableList
+import jetbrains.datalore.base.observable.event.EventHandler
+import jetbrains.datalore.base.observable.property.PropertyChangeEvent
+import jetbrains.datalore.base.observable.property.ReadableProperty
+import jetbrains.datalore.base.registration.Registration
 
 object Transformers {
 
@@ -166,133 +173,139 @@ object Transformers {
 //    fun <SourceT, TargetT> listMap(f: Function<SourceT, TargetT>): Transformer<ObservableList<SourceT>, ObservableList<TargetT>> {
 //        return listMap(fromFun(f))
 //    }
-//
-//    fun <SpecItemT, ItemT : SpecItemT, ValueT : Comparable<ValueT>, CollectionT : ObservableCollection<ItemT>> sortBy(
-//            propSpec: Function<SpecItemT, out ReadableProperty<ValueT>>): Transformer<CollectionT, ObservableList<ItemT>> {
-//        return sortBy(propSpec, Order.ASCENDING)
-//    }
-//
-//    fun <SpecItemT, ItemT : SpecItemT, ValueT : Comparable<ValueT>, CollectionT : ObservableCollection<ItemT>> sortBy(
-//            propSpec: Function<SpecItemT, out ReadableProperty<ValueT>>, order: Order): Transformer<CollectionT, ObservableList<ItemT>> {
-//        return sortBy(propSpec, object : Comparator<ValueT> {
-//            override fun compare(o1: ValueT, o2: ValueT): Int {
-//                return if (order === Order.DESCENDING) {
-//                    -o1.compareTo(o2)
-//                } else o1.compareTo(o2)
-//            }
-//        })
-//    }
-//
-//    fun <SpecItemT, ItemT : SpecItemT, ValueT, CollectionT : ObservableCollection<ItemT>> sortBy(
-//            propSpec: Function<SpecItemT, out ReadableProperty<ValueT>>, cmp: Comparator<ValueT>): Transformer<CollectionT, ObservableList<ItemT>> {
-//        val comparator = object : Comparator<ItemT> {
-//            override fun compare(i1: ItemT, i2: ItemT): Int {
-//                val p1 = propSpec.apply(i1)
-//                val p2 = propSpec.apply(i2)
-//
-//                if (p1 == null || p2 == null) {
-//                    throw NullPointerException()
-//                }
-//
-//                val v1 = p1.get()
-//                val v2 = p2.get()
-//
-//                return if (v1 == null || v2 == null) {
-//                    compareNulls(v1, v2)
-//                } else cmp.compare(v1, v2)
-//
-//            }
-//        }
-//
-//        return object : BaseTransformer<CollectionT, ObservableList<ItemT>>() {
-//
-//            @JvmOverloads
-//            fun transform(
-//                    from: CollectionT, to: ObservableList<ItemT> = ObservableArrayList()): Transformation<CollectionT, ObservableList<ItemT>> {
-//                return object : Transformation<CollectionT, ObservableList<ItemT>>() {
-//                    private var myCollectionReg: Registration? = null
-//                    private var myCollectionListener: CollectionListener<ItemT>? = null
-//                    private val myListeners = HashMap<ItemT, Registration>()
-//
-//
-//                    override val source: CollectionT
-//                        get() = from
-//
-//                    override val target: ObservableList<ItemT>
-//                        get() = to
-//
-//                    init {
-//                        myCollectionReg = from.addListener(myCollectionListener = object : CollectionAdapter<ItemT>() {
-//                            override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
-//                                val item = event.newItem
-//                                watch(item, to)
-//
-//                                val pos = Collections.binarySearch(to, item, comparator)
-//                                val insertIndex = if (pos >= 0) pos + 1 else -(pos + 1)
-//                                to.add(insertIndex, item)
-//                            }
-//
-//                            override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
-//                                val item = event.oldItem
-//
-//                                val sortedIndex = to.indexOf(item)
-//                                if (sortedIndex == -1) {
-//                                    throw IllegalStateException()
-//                                }
-//
-//                                to.removeAt(sortedIndex)
-//                                unwatch(item)
-//                            }
-//                        })
-//
-//
-//                        for (item in from) {
-//                            watch(item, to)
-//                            to.add(item)
-//                        }
+
+    fun <SpecItemT, ItemT : SpecItemT, ValueT : Comparable<ValueT>, CollectionT : ObservableCollection<ItemT>> sortBy(
+            propSpec: Function<in SpecItemT, out ReadableProperty<out ValueT>>): Transformer<CollectionT, ObservableList<ItemT>> {
+        return sortBy(propSpec, Order.ASCENDING)
+    }
+
+    fun <SpecItemT, ItemT : SpecItemT, ValueT : Comparable<ValueT>, CollectionT : ObservableCollection<ItemT>> sortBy(
+            propSpec: Function<SpecItemT, out ReadableProperty<out ValueT>>, order: Order): Transformer<CollectionT, ObservableList<ItemT>> {
+        return sortBy(propSpec, object : Comparator<ValueT> {
+            override fun compare(a: ValueT, b: ValueT): Int {
+                return if (order === Order.DESCENDING) {
+                    -a.compareTo(b)
+                } else a.compareTo(b)
+            }
+        })
+    }
+
+    fun <SpecItemT, ItemT : SpecItemT, ValueT, CollectionT : ObservableCollection<ItemT>> sortBy(
+            propSpec: Function<SpecItemT, out ReadableProperty<out ValueT>>, cmp: Comparator<ValueT>): Transformer<CollectionT, ObservableList<ItemT>> {
+        val comparator = object : Comparator<ItemT> {
+            override fun compare(a: ItemT, b: ItemT): Int {
+                val p1 = propSpec.apply(a)
+                val p2 = propSpec.apply(b)
+
+                val v1 = p1.get()
+                val v2 = p2.get()
+
+                return if (v1 == null || v2 == null) {
+                    compareNulls(v1, v2)
+                } else cmp.compare(v1, v2)
+
+            }
+        }
+
+        return object : BaseTransformer<CollectionT, ObservableList<ItemT>>() {
+
+            override fun transform(
+                    from: CollectionT):
+                    Transformation<CollectionT, ObservableList<ItemT>> {
+                return transform(from, ObservableArrayList())
+            }
+
+            override fun transform(
+                    from: CollectionT,
+                    to: ObservableList<ItemT>):
+                    Transformation<CollectionT, ObservableList<ItemT>> {
+
+                return object : Transformation<CollectionT, ObservableList<ItemT>>() {
+                    private var myCollectionReg: Registration
+                    private var myCollectionListener: CollectionListener<ItemT>
+                    private val myListeners = HashMap<ItemT, Registration>()
+
+
+                    override val source: CollectionT
+                        get() = from
+
+                    override val target: ObservableList<ItemT>
+                        get() = to
+
+                    init {
+                        myCollectionListener = object : CollectionAdapter<ItemT>() {
+                            override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
+                                val item = event.newItem!!
+                                watch(item, to)
+
+                                val pos = to.binarySearch(item, comparator)
+                                val insertIndex = if (pos >= 0) pos + 1 else -(pos + 1)
+                                to.add(insertIndex, item)
+                            }
+
+                            override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
+                                val item = event.oldItem
+
+                                val sortedIndex = to.indexOf(item)
+                                if (sortedIndex == -1) {
+                                    throw IllegalStateException()
+                                }
+
+                                to.removeAt(sortedIndex)
+                                unwatch(item)
+                            }
+                        }
+                        myCollectionReg = from.addListener(myCollectionListener)
+
+
+                        for (item in from) {
+                            watch(item, to)
+                            to.add(item)
+                        }
 //                        Collections.sort(to, comparator)
-//                    }
-//
-//                    override fun doDispose() {
-//                        myCollectionReg!!.remove()
-//                        for (item in from) {
-//                            unwatch(item)
-//                        }
-//                    }
-//
-//                    private fun watch(item: ItemT?, to: ObservableList<ItemT>) {
-//                        val property = propSpec.apply(item) ?: throw NullPointerException()
-//                        myListeners[item] = property.addHandler(object : EventHandler<PropertyChangeEvent<ValueT>> {
-//                            override fun onEvent(event: PropertyChangeEvent<ValueT>) {
-//                                var needMove = false
-//                                val sortedIndex = to.indexOf(item)
-//                                if (sortedIndex > 0) {
-//                                    val before = to[sortedIndex - 1]
-//                                    if (comparator.compare(before, item) > 0) {
-//                                        needMove = true
-//                                    }
-//                                }
-//                                if (sortedIndex < to.size - 1) {
-//                                    val after = to[sortedIndex + 1]
-//                                    if (comparator.compare(item, after) > 0) {
-//                                        needMove = true
-//                                    }
-//                                }
-//                                if (needMove) {
-//                                    myCollectionListener!!.onItemSet(CollectionItemEvent(item, item, -1, EventType.SET))
-//                                }
-//                            }
-//                        })
-//                    }
-//
-//                    private fun unwatch(item: ItemT?) {
-//                        myListeners.remove(item).remove()
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
+                        to.sortWith(comparator)
+                    }
+
+                    override fun doDispose() {
+                        myCollectionReg.remove()
+                        for (item in from) {
+                            unwatch(item)
+                        }
+                    }
+
+                    private fun watch(item: ItemT?, to: ObservableList<ItemT>) {
+                        val property = propSpec.apply(item!!)
+                        myListeners[item] = property.addHandler(object : EventHandler<PropertyChangeEvent<out ValueT>> {
+                            override fun onEvent(event: PropertyChangeEvent<out ValueT>) {
+                                var needMove = false
+                                val sortedIndex = to.indexOf(item)
+                                if (sortedIndex > 0) {
+                                    val before = to[sortedIndex - 1]
+                                    if (comparator.compare(before, item) > 0) {
+                                        needMove = true
+                                    }
+                                }
+                                if (sortedIndex < to.size - 1) {
+                                    val after = to[sortedIndex + 1]
+                                    if (comparator.compare(item, after) > 0) {
+                                        needMove = true
+                                    }
+                                }
+                                if (needMove) {
+                                    myCollectionListener.onItemSet(CollectionItemEvent(item, item, -1, CollectionItemEvent.EventType.SET))
+                                }
+                            }
+                        })
+                    }
+
+                    private fun unwatch(item: ItemT?) {
+                        myListeners.remove(item)?.remove()
+                    }
+                }
+            }
+        }
+    }
+
 //    fun <SpecItemT, ItemT : SpecItemT, ValueT, CollectionT : ObservableCollection<ItemT>> sortByConstant(
 //            propSpec: Function<SpecItemT, out ValueT>, cmp: Comparator<ValueT>): Transformer<CollectionT, ObservableList<ItemT>> {
 //        val comparator = object : Comparator<ItemT> {
@@ -359,17 +372,17 @@ object Transformers {
 //            }
 //        }//tree list has much better asymptotics of insert
 //    }
-//
-//    private fun compareNulls(o1: Any?, o2: Any?): Int {
-//        if (o1 === o2) return 0
-//        return if (o1 == null) {
-//            -1
-//        } else {
-//            1
-//        }
-//    }
-//
-//
+
+    private fun compareNulls(o1: Any?, o2: Any?): Int {
+        if (o1 === o2) return 0
+        return if (o1 == null) {
+            -1
+        } else {
+            1
+        }
+    }
+
+
 //    fun <ItemT, CollectionT : ObservableCollection<out ItemT>> listFilter(filterBy: Function<ItemT, ReadableProperty<Boolean>>): Transformer<CollectionT, ObservableList<ItemT>> {
 //        return object : BaseFilterTransformer<ItemT, CollectionT, ObservableList<ItemT>>(filterBy) {
 //            protected fun add(item: ItemT, from: CollectionT, to: ObservableList<ItemT>) {

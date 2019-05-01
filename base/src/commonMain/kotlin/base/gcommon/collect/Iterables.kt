@@ -13,6 +13,10 @@ object Iterables {
         return iterable.toList()
     }
 
+    fun size(iterable: Iterable<*>): Int {
+        return iterable.count()
+    }
+
     fun isEmpty(iterable: Iterable<*>): Boolean {
         return (iterable as? Collection<*>)?.isEmpty() ?: !iterable.iterator().hasNext()
     }

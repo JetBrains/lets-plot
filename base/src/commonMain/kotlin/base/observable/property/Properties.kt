@@ -383,7 +383,7 @@ object Properties {
                 return value
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out ValueT>>): Registration {
+            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out ValueT>>): Registration {
                 return Registration.EMPTY
             }
         }

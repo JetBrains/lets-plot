@@ -1,7 +1,10 @@
 package jetbrains.datalore.mapper.core
 
+import jetbrains.datalore.base.function.Consumer
+import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.observable.collections.list.ObservableList
 import jetbrains.datalore.base.observable.event.EventHandler
+import jetbrains.datalore.base.observable.event.EventSource
 import jetbrains.datalore.base.observable.property.*
 import jetbrains.datalore.base.observable.transform.Transformer
 import jetbrains.datalore.base.registration.Disposable
@@ -175,16 +178,16 @@ object Synchronizers {
 //            }
 //        }
 //    }
-//
-//    fun forRegistration(r: Registration): Synchronizer {
-//        return object : Synchronizer {
-//            override fun attach(ctx: SynchronizerContext) {}
-//
-//            override fun detach() {
-//                r.remove()
-//            }
-//        }
-//    }
+
+    fun forRegistration(r: Registration): Synchronizer {
+        return object : Synchronizer {
+            override fun attach(ctx: SynchronizerContext) {}
+
+            override fun detach() {
+                r.remove()
+            }
+        }
+    }
 
     fun forDisposable(disposable: Disposable): Synchronizer {
         return object : Synchronizer {
@@ -227,42 +230,42 @@ object Synchronizers {
 //            }
 //        }
 //    }
-//
-//    /**
-//     * Creates a synchronizer which invokes the specified runnable on an event from the passed [EventSource]
-//     */
-//    fun forEventSource(src: EventSource<*>, r: Runnable): Synchronizer {
-//        return object : RegistrationSynchronizer() {
-//            protected fun doAttach(ctx: SynchronizerContext): Registration {
-//                r.run()
-//                return src.addHandler(object : EventHandler<Any> {
-//                    override fun onEvent(event: Any) {
-//                        r.run()
-//                    }
-//                })
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Creates a synchronizer which invokes a handler with an event as a parameter when such an event happens on
-//     * the passed [EventSource]
-//     *
-//     *
-//     * NB: It isn't called on attach
-//     */
-//    fun <EventT> forEventSource(src: EventSource<EventT>, h: Consumer<EventT>): Synchronizer {
-//        return object : RegistrationSynchronizer() {
-//            protected fun doAttach(ctx: SynchronizerContext): Registration {
-//                return src.addHandler(object : EventHandler<EventT> {
-//                    override fun onEvent(value: EventT) {
-//                        h.accept(value)
-//                    }
-//                })
-//            }
-//        }
-//    }
-//
+
+    /**
+     * Creates a synchronizer which invokes the specified runnable on an event from the passed [EventSource]
+     */
+    fun forEventSource(src: EventSource<*>, r: Runnable): Synchronizer {
+        return object : RegistrationSynchronizer() {
+            override fun doAttach(ctx: SynchronizerContext): Registration {
+                r.run()
+                return src.addHandler(object : EventHandler<Any?> {
+                    override fun onEvent(event: Any?) {
+                        r.run()
+                    }
+                })
+            }
+        }
+    }
+
+    /**
+     * Creates a synchronizer which invokes a handler with an event as a parameter when such an event happens on
+     * the passed [EventSource]
+     *
+     *
+     * NB: It isn't called on attach
+     */
+    fun <EventT> forEventSource(src: EventSource<EventT>, h: Consumer<EventT>): Synchronizer {
+        return object : RegistrationSynchronizer() {
+            override fun doAttach(ctx: SynchronizerContext): Registration {
+                return src.addHandler(object : EventHandler<EventT> {
+                    override fun onEvent(event: EventT) {
+                        h(event)
+                    }
+                })
+            }
+        }
+    }
+
 //    fun measuringSynchronizer(name: String, sync: Synchronizer): Synchronizer {
 //        return object : Synchronizer {
 //            override fun attach(ctx: SynchronizerContext) {

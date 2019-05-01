@@ -111,7 +111,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
     }
 
     // ToDo: ctx not nullable
-    private fun attach(ctx: MappingContext) {
+    fun attach(ctx: MappingContext) {
         if (mappingContext != null) {
             throw IllegalStateException("Mapper is already attached")
         }
@@ -163,7 +163,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
 
     }
 
-    private fun detach() {
+    fun detach() {
         if (mappingContext == null) {
             throw IllegalStateException()
         }
