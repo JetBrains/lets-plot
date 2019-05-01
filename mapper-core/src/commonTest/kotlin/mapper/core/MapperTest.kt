@@ -2,8 +2,7 @@ package jetbrains.datalore.mapper.core
 
 import jetbrains.datalore.base.observable.collections.set.ObservableSet
 import mapper.core.Item
-import org.junit.Test
-import org.mockito.Mockito
+import kotlin.js.JsName
 import kotlin.test.*
 
 class MapperTest {
@@ -133,6 +132,7 @@ class MapperTest {
         mapper.detachRoot()
     }
 
+/*
     @Test
     fun mappingContextListeners() {
         val l = Mockito.mock(MappingContextListener::class.java)
@@ -147,6 +147,7 @@ class MapperTest {
         Mockito.verify(l).onMapperRegistered(mapper)
         Mockito.verify(l).onMapperUnregistered(mapper)
     }
+*/
 
     private fun assertMapped() {
         assertTrue(source.contentEquals(target))
@@ -167,7 +168,8 @@ class MapperTest {
         return result
     }
 
-    private open class TestMapper internal constructor(source: Any) : Mapper<Any, Any>(source, Any()) {
+    internal open class TestMapper internal constructor(source: Any) : Mapper<Any, Any>(source, Any()) {
+        @JsName("childrenSet")   // `parent` clashes with HasParent.parent
         private val children: ObservableSet<Mapper<*, *>> = createChildSet()
         private var child: TestMapper? = null
 
