@@ -3,7 +3,7 @@ package jetbrains.datalore.mapper.core
 import jetbrains.datalore.base.observable.transform.Transformers
 import mapper.core.Item
 
-internal class ItemMapper(item: Item) : Mapper<Item, Item>(item, Item()) {
+internal open class ItemMapper(item: Item) : Mapper<Item, Item>(item, Item()) {
     private lateinit var mySimpleRole: SimpleRoleSynchronizer<Item, Item>
 
     override fun registerSynchronizers(conf: Mapper.SynchronizersConfiguration) {
@@ -28,7 +28,7 @@ internal class ItemMapper(item: Item) : Mapper<Item, Item>(item, Item()) {
         mySimpleRole.refresh()
     }
 
-    protected fun createMapperFactory(): MapperFactory<Item, Item> {
+    protected open fun createMapperFactory(): MapperFactory<Item, Item> {
         return object : MapperFactory<Item, Item> {
             override fun createMapper(source: Item): Mapper<out Item, out Item> {
                 return ItemMapper(source)

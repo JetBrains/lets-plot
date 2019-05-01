@@ -4,6 +4,7 @@ import jetbrains.datalore.base.observable.collections.list.ObservableList
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.*
 import jetbrains.datalore.base.observable.transform.Transformer
+import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import mu.KotlinLogging
 
@@ -184,29 +185,29 @@ object Synchronizers {
 //            }
 //        }
 //    }
-//
-//    fun forDisposable(disposable: Disposable): Synchronizer {
-//        return object : Synchronizer {
-//            override fun attach(ctx: SynchronizerContext) {}
-//
-//            override fun detach() {
-//                disposable.dispose()
-//            }
-//        }
-//    }
-//
-//    fun forDisposables(vararg disposables: Disposable): Synchronizer {
-//        return object : Synchronizer {
-//            override fun attach(ctx: SynchronizerContext) {}
-//
-//            override fun detach() {
-//                for (disposable in disposables) {
-//                    disposable.dispose()
-//                }
-//            }
-//        }
-//    }
-//
+
+    fun forDisposable(disposable: Disposable): Synchronizer {
+        return object : Synchronizer {
+            override fun attach(ctx: SynchronizerContext) {}
+
+            override fun detach() {
+                disposable.dispose()
+            }
+        }
+    }
+
+    fun forDisposables(vararg disposables: Disposable): Synchronizer {
+        return object : Synchronizer {
+            override fun attach(ctx: SynchronizerContext) {}
+
+            override fun detach() {
+                for (disposable in disposables) {
+                    disposable.dispose()
+                }
+            }
+        }
+    }
+
 //    /**
 //     * Compose a list of synchronizer into one. Synchronizers are attached
 //     * in the order in which they are passed and detached in the reverse order
