@@ -2,9 +2,7 @@ package jetbrains.datalore.mapper.core
 
 import jetbrains.datalore.base.observable.collections.list.ObservableList
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.PropertyChangeEvent
-import jetbrains.datalore.base.observable.property.ReadableProperty
-import jetbrains.datalore.base.observable.property.WritableProperty
+import jetbrains.datalore.base.observable.property.*
 import jetbrains.datalore.base.observable.transform.Transformer
 import jetbrains.datalore.base.registration.Registration
 import mu.KotlinLogging
@@ -13,7 +11,6 @@ import mu.KotlinLogging
  * Utility class for synchronizer creation
  */
 object Synchronizers {
-    //    private val LOG = Logger.getLogger(Synchronizers::class.java!!.getName())
     private val LOG = KotlinLogging.logger {}
 
     private val EMPTY: Synchronizer = object : Synchronizer {
@@ -22,13 +19,13 @@ object Synchronizers {
         override fun detach() {}
     }
 
-//    fun <SourceT, TargetT> forSimpleRole(
-//            mapper: Mapper<*, *>,
-//            source: List<SourceT>,
-//            target: List<TargetT>,
-//            factory: MapperFactory<SourceT, TargetT>): SimpleRoleSynchronizer<SourceT, TargetT> {
-//        return SimpleRoleSynchronizer(mapper, source, target, factory)
-//    }
+    fun <SourceT, TargetT> forSimpleRole(
+            mapper: Mapper<*, *>,
+            source: List<SourceT>,
+            target: MutableList<TargetT>,
+            factory: MapperFactory<SourceT, TargetT>): SimpleRoleSynchronizer<SourceT, TargetT> {
+        return SimpleRoleSynchronizer(mapper, source, target, factory)
+    }
 
     fun <SourceT, MappedT, TargetItemT, TargetT : TargetItemT> forObservableRole(
             mapper: Mapper<*, *>,
@@ -82,13 +79,14 @@ object Synchronizers {
 //        return SingleChildRoleSynchronizer(mapper, Properties.constant(source), target, factory)
 //    }
 
-//    fun <SourceT, TargetT> forSingleRole(
-//            mapper: Mapper<*, *>,
-//            source: ReadableProperty<SourceT>,
-//            target: WritableProperty<TargetT>,
-//            factory: MapperFactory<SourceT, TargetT>): RoleSynchronizer<SourceT, TargetT> {
-//        return SingleChildRoleSynchronizer(mapper, source, target, factory)
-//    }
+    fun <SourceT, TargetT> forSingleRole(
+            mapper: Mapper<*, *>,
+            source: ReadableProperty<out SourceT?>,
+            target: WritableProperty<in TargetT?>,
+            factory: MapperFactory<SourceT, TargetT>): RoleSynchronizer<SourceT, TargetT> {
+
+        return SingleChildRoleSynchronizer(mapper, source, target, factory)
+    }
 
     fun <ValueT> forPropsOneWay(source: ReadableProperty<out ValueT>, target: WritableProperty<in ValueT?>): Synchronizer {
         return object : RegistrationSynchronizer() {
@@ -103,26 +101,23 @@ object Synchronizers {
         }
     }
 
-//    fun <ValueT> forPropsTwoWay(source: Property<ValueT>?, target: Property<ValueT>?): Synchronizer {
-//        if (source == null || target == null) {
-//            throw NullPointerException()
-//        }
-//
-//        return object : Synchronizer {
-//            private var myOldValue: ValueT? = null
-//            private var myRegistration: Registration? = null
-//
-//            override fun attach(ctx: SynchronizerContext) {
-//                myOldValue = source.get()
-//                myRegistration = PropertyBinding.bindTwoWay(source, target)
-//            }
-//
-//            override fun detach() {
-//                myRegistration!!.remove()
-//                target.set(myOldValue)
-//            }
-//        }
-//    }
+    fun <ValueT> forPropsTwoWay(source: Property<ValueT>, target: Property<ValueT>): Synchronizer {
+        return object : Synchronizer {
+            private var myOldValue: ValueT? = null
+            private var myRegistration: Registration? = null
+
+            override fun attach(ctx: SynchronizerContext) {
+                myOldValue = source.get()
+                myRegistration = PropertyBinding.bindTwoWay(source, target)
+            }
+
+            override fun detach() {
+                myRegistration!!.remove()
+                @Suppress("UNCHECKED_CAST")
+                target.set(myOldValue as ValueT)
+            }
+        }
+    }
 
     /**
      * Creates a synchronizer which invokes the specified runnable on changes to the property

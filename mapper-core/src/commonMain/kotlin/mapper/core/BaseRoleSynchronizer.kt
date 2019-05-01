@@ -1,6 +1,6 @@
 package jetbrains.datalore.mapper.core
 
-internal abstract class BaseRoleSynchronizer<SourceT, TargetT> : RoleSynchronizer<SourceT, TargetT> {
+abstract class BaseRoleSynchronizer<SourceT, TargetT> : RoleSynchronizer<SourceT, TargetT> {
 
     private var myMapperFactories: Array<MapperFactory<SourceT, TargetT>>? = null
     private var myErrorMapperFactories: Array<MapperFactory<SourceT, TargetT>>? = null

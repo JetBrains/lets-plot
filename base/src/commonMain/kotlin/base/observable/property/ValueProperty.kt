@@ -4,14 +4,11 @@ import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.ListenerCaller
 import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.registration.Registration
-import kotlin.jvm.JvmOverloads
 
 /**
  * A simple implementation of Read/Write property which stores the value in a field
  */
-open class ValueProperty<ValueT>
-@JvmOverloads
-constructor(private var myValue: ValueT) :
+open class ValueProperty<ValueT>(private var myValue: ValueT) :
         BaseReadableProperty<ValueT>(),
         Property<ValueT> {
 

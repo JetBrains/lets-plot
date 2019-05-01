@@ -67,7 +67,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
     /**
      * @return Whether this mapper should be findable in [MappingContext]
      */
-    val isFindable: Boolean
+    open val isFindable: Boolean
         get() = true
 
     val isAttached: Boolean

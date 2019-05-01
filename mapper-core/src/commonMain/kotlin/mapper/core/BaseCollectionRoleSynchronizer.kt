@@ -1,6 +1,6 @@
 package jetbrains.datalore.mapper.core
 
-internal abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT>(mapper: Mapper<*, *>) : BaseRoleSynchronizer<SourceT, TargetT>() {
+abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT>(mapper: Mapper<*, *>) : BaseRoleSynchronizer<SourceT, TargetT>() {
 
     val modifiableMappers: MutableList<Mapper<out SourceT, out TargetT>>
 
@@ -37,7 +37,7 @@ internal abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT>(mapper:
 
     protected open fun onDetach() {}
 
-    protected inner class MapperUpdater {
+    protected open inner class MapperUpdater {
         fun update(sourceList: List<SourceT>) {
             val targetContent = ArrayList<SourceT>()
             val mappers = modifiableMappers
@@ -60,8 +60,8 @@ internal abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT>(mapper:
             }
         }
 
-        protected fun mapperAdded(index: Int, mapper: Mapper<out SourceT, out TargetT>) {}
+        protected open fun mapperAdded(index: Int, mapper: Mapper<out SourceT, out TargetT>) {}
 
-        protected fun mapperRemoved(index: Int, mapper: Mapper<out SourceT, out TargetT>) {}
+        protected open fun mapperRemoved(index: Int, mapper: Mapper<out SourceT, out TargetT>) {}
     }
 }

@@ -16,5 +16,5 @@ abstract class TerminalTransformation<ItemT> : Disposable {
         doDispose()
     }
 
-    protected fun doDispose() {}
+    protected open fun doDispose() {}
 }
