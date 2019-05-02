@@ -8,6 +8,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.GuideOptions
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
+import jetbrains.datalore.visualization.plot.gog.plot.scale.ScaleProvider
 
 object PlotConfigUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -103,14 +104,14 @@ object PlotConfigUtil {
     }
 
     internal fun createScaleProviders(scaleConfigs: List<ScaleConfig<Any>>): TypedScaleProviderMap {
-        val scaleProviderByAes = TypedScaleProviderMap()
+        val scaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
         for (scaleConfig in scaleConfigs) {
-            addScaleProvider<Any>(scaleConfig, scaleProviderByAes)
+            addScaleProvider(scaleConfig, scaleProviderByAes)
         }
-        return scaleProviderByAes
+        return TypedScaleProviderMap(scaleProviderByAes)
     }
 
-    private fun <T> addScaleProvider(scaleConfig: ScaleConfig<T>, map: TypedScaleProviderMap) {
+    private fun <T> addScaleProvider(scaleConfig: ScaleConfig<T>, map: MutableMap<Aes<*>, ScaleProvider<*>>) {
         val scaleProvider = scaleConfig.createScaleProvider()
         map.put(scaleConfig.aes, scaleProvider)
     }

@@ -73,7 +73,7 @@ internal class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
         if (aes == Aes.SHAPE) {
             val solid = get(SHAPE_SOLID)
             // False - show only hollow shapes, otherwise - all (default)
-            if (java.lang.Boolean.FALSE == solid) {
+            if (solid is Boolean && solid == false) {
                 mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE)
             }
         } else if (aes == Aes.ALPHA && has(RANGE)) {

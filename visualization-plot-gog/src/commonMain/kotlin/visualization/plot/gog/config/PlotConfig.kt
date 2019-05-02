@@ -3,6 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.gog.config.Option.Meta
 import jetbrains.datalore.visualization.plot.gog.config.Option.Meta.Kind
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.COORD
@@ -18,8 +19,6 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
-import java.util.Collections.singletonMap
 
 abstract class PlotConfig protected constructor(opts: Map<String, Any>) : OptionsAccessor(opts, DEF_OPTIONS) {
 
@@ -117,11 +116,8 @@ abstract class PlotConfig protected constructor(opts: Map<String, Any>) : Option
 
         fun failure(e: Exception): Map<String, Any> {
             val message = e.message
-            return singletonMap<String, Any>(PlotConfig.ERROR_MESSAGE,
-                    if (Strings.isNullOrEmpty(message))
-                        e::class.simpleName
-                    else
-                        "Error: $message")
+            val errorMessage = if (Strings.isNullOrEmpty(message)) e::class.simpleName!! else "Error: $message"
+            return mapOf(PlotConfig.ERROR_MESSAGE to errorMessage)
         }
 
         fun assertPlotSpecOrErrorMessage(opts: Map<String, Any>) {

@@ -1,21 +1,14 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
+import jetbrains.datalore.base.observable.collections.Collections
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.scale.ScaleProvider
-import java.util.Collections
-import kotlin.collections.HashMap
-import kotlin.collections.MutableMap
-import kotlin.collections.Set
 
-class TypedScaleProviderMap {
-    private var myMap: MutableMap<Aes<*>, ScaleProvider<*>> = HashMap()
+class TypedScaleProviderMap(map: Map<Aes<*>, ScaleProvider<*>>) {
+    private var myMap: Map<Aes<*>, ScaleProvider<*>> = map
 
     operator fun <T> get(aes: Aes<T>): ScaleProvider<T> {
         return myMap[aes] as ScaleProvider<T>
-    }
-
-    fun <T> put(aes: Aes<T>, value: ScaleProvider<T>): ScaleProvider<T>? {
-        return myMap.put(aes, value) as ScaleProvider<T>?
     }
 
     fun containsKey(aes: Aes<*>): Boolean {
@@ -23,9 +16,7 @@ class TypedScaleProviderMap {
     }
 
     fun unmodifiableCopy(): TypedScaleProviderMap {
-        val copy = TypedScaleProviderMap()
-        copy.myMap = Collections.unmodifiableMap(HashMap(myMap))
-        return copy
+        return TypedScaleProviderMap(Collections.unmodifiableMap(myMap))
     }
 
     fun keySet(): Set<Aes<*>> {

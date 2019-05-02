@@ -2,13 +2,13 @@ package jetbrains.datalore.visualization.plot.gog.plot.assemble.geom
 
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableSet
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableSet
 
 internal class PointDataAccess(private val myData: DataFrame, private val myBindings: Map<Aes<*>, VarBinding>) : MappedDataAccess {
     private val myMappedAes: Set<Aes<*>>

@@ -2,6 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.core.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.gog.FeatureSwitch
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
@@ -19,7 +20,6 @@ import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendComponent
 import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendComponentSpec
 import jetbrains.datalore.visualization.plot.gog.plot.layout.LegendBoxInfo
 import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 internal class LegendAssembler(private val myLegendTitle: String, private val myGuideOptionsMap: Map<Aes<*>, GuideOptions>, private val myTheme: LegendTheme) {
 

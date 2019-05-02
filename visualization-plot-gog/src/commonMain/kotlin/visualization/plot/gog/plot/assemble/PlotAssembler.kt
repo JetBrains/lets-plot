@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
@@ -9,7 +10,6 @@ import jetbrains.datalore.visualization.plot.gog.plot.*
 import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.gog.plot.layout.*
 import jetbrains.datalore.visualization.plot.gog.plot.theme.Theme
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class PlotAssembler private constructor(layersByTile: List<List<GeomLayer>>, private val myCoordProvider: CoordProvider, private val myTheme: Theme) {
 

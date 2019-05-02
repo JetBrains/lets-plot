@@ -3,12 +3,12 @@ package jetbrains.datalore.visualization.plot.gog.plot
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.gog.plot.layout.LegendBoxInfo
 import jetbrains.datalore.visualization.plot.gog.plot.layout.PlotLayout
 import jetbrains.datalore.visualization.plot.gog.plot.theme.Theme
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class PlotBuilder(private val myTheme: Theme) {
     private val myLayersByTile = ArrayList<List<GeomLayer>>()

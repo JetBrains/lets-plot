@@ -12,7 +12,7 @@ object ScaleProviderHelper {
             realAes = Aes.Y
         }
         return if (providers.containsKey(realAes)) {
-            providers.get(realAes)
+            providers[realAes]
         } else createDefault(realAes)
     }
 

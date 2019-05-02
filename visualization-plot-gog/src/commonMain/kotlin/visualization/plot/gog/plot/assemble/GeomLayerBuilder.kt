@@ -31,7 +31,7 @@ class GeomLayerBuilder {
     private var myPosProvider: PosProvider? = null
     private var myGeomProvider: GeomProvider? = null
     private var myGroupingVarName: String? = null
-    private val myScaleProviderByAes = TypedScaleProviderMap()
+    private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
 
     private var myDataPreprocessor: ((DataFrame) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec? = null
@@ -75,7 +75,7 @@ class GeomLayerBuilder {
     }
 
     fun <T> addScaleProvider(aes: Aes<T>, scaleProvider: ScaleProvider<T>): GeomLayerBuilder {
-        myScaleProviderByAes.put(aes, scaleProvider)
+        myScaleProviderByAes[aes] = scaleProvider
         return this
     }
 
@@ -105,7 +105,7 @@ class GeomLayerBuilder {
 
         // create missing bindings for 'stat' variables
         // and other adjustments in bindings.
-        val replacementBindings = GeomLayerBuilderUtil.rewireBindingsAfterStat(data, myStat!!, myBindings, myScaleProviderByAes)
+        val replacementBindings = GeomLayerBuilderUtil.rewireBindingsAfterStat(data, myStat!!, myBindings, TypedScaleProviderMap(myScaleProviderByAes))
 
         // add 'transform' variable for each 'stat' variable
         val bindingsToPut = ArrayList<VarBinding>()
