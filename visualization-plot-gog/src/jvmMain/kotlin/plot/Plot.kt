@@ -32,8 +32,6 @@ import jetbrains.datalore.visualization.plot.gog.plot.guide.Orientation
 import jetbrains.datalore.visualization.plot.gog.plot.layout.*
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 import jetbrains.datalore.visualization.plot.gog.plot.theme.Theme
-import java.util.logging.Level
-import java.util.logging.Logger
 
 abstract class Plot protected constructor(private val myTheme: Theme) : SvgComponent() {
     private val myPreferredSize = ValueProperty(DEF_PLOT_SIZE)
@@ -87,7 +85,6 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
         try {
             buildPlot()
         } catch (e: RuntimeException) {
-            LOG.log(Level.SEVERE, "buildPlot", e)
             ThrowableHandlers.instance.handle(e)
 
             val rootCause = Throwables.getRootCause(e)
@@ -368,8 +365,6 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
     }
 
     companion object {
-        private val LOG = Logger.getLogger(Plot::class.java.name)
-
         private val DEF_PLOT_SIZE = DoubleVector(600.0, 400.0)
         private val DEBUG_DRAWING = FeatureSwitch.PLOT_DEBUG_DRAWING
     }
