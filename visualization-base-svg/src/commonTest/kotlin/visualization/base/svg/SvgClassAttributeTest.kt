@@ -7,8 +7,8 @@ import kotlin.test.*
 class SvgClassAttributeTest {
 
     companion object {
-        private val cl = "class"
-        private val altCl = "alt-class"
+        private const val cl = "class"
+        private const val altCl = "alt-class"
     }
 
     private val illegalCl = "$cl $altCl"
