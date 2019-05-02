@@ -7,15 +7,14 @@ import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.plot.gog.core.event3.MouseEventSource
-import java.util.EnumMap
-import kotlin.collections.ArrayList
+import jetbrains.datalore.visualization.plot.gog.core.event3.MouseEventSource.MouseEventSpec
 
 class MouseEventPeer : MouseEventSource {
-    private val myEventHandlers = EnumMap<MouseEventSource.MouseEventSpec, Listeners<EventHandler<MouseEvent>>>(MouseEventSource.MouseEventSpec::class.java)
+    private val myEventHandlers = HashMap<MouseEventSpec, Listeners<EventHandler<MouseEvent>>>()
     private val myEventSources = ArrayList<MouseEventSource>()
-    private val mySourceRegistrations = EnumMap<MouseEventSource.MouseEventSpec, CompositeRegistration>(MouseEventSource.MouseEventSpec::class.java)
+    private val mySourceRegistrations = HashMap<MouseEventSpec, CompositeRegistration>()
 
-    override fun addEventHandler(eventSpec: MouseEventSource.MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
+    override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
         if (!myEventHandlers.containsKey(eventSpec)) {
             myEventHandlers[eventSpec] = Listeners()
             onAddSpec(eventSpec)
@@ -32,7 +31,7 @@ class MouseEventPeer : MouseEventSource {
         }
     }
 
-    fun dispatch(eventSpec: MouseEventSource.MouseEventSpec, mouseEvent: MouseEvent) {
+    fun dispatch(eventSpec: MouseEventSpec, mouseEvent: MouseEvent) {
         if (myEventHandlers.containsKey(eventSpec)) {
             myEventHandlers[eventSpec]?.fire(object : ListenerCaller<EventHandler<MouseEvent>> {
                 override fun call(l: EventHandler<MouseEvent>) {
@@ -47,11 +46,11 @@ class MouseEventPeer : MouseEventSource {
         myEventSources.add(eventSource)
     }
 
-    private fun onAddSpec(eventSpec: MouseEventSource.MouseEventSpec) {
+    private fun onAddSpec(eventSpec: MouseEventSpec) {
         myEventSources.forEach { eventSource -> startHandleSpecInSource(eventSource, eventSpec) }
     }
 
-    private fun startHandleSpecInSource(eventSource: MouseEventSource, eventSpec: MouseEventSource.MouseEventSpec) {
+    private fun startHandleSpecInSource(eventSource: MouseEventSource, eventSpec: MouseEventSpec) {
         val registration = eventSource.addEventHandler(eventSpec, object : EventHandler<MouseEvent> {
             override fun onEvent(event: MouseEvent) {
                 dispatch(eventSpec, event)
@@ -64,7 +63,7 @@ class MouseEventPeer : MouseEventSource {
         mySourceRegistrations[eventSpec]?.add(registration)
     }
 
-    private fun onRemoveSpec(eventSpec: MouseEventSource.MouseEventSpec) {
+    private fun onRemoveSpec(eventSpec: MouseEventSpec) {
         if (mySourceRegistrations.containsKey(eventSpec)) {
             mySourceRegistrations.remove(eventSpec)?.dispose()
         }
