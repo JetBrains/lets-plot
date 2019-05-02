@@ -14,21 +14,21 @@ class CssFontParser private constructor(private val myMatchResult: MatchResult) 
     val lineHeight: Double?
         get() = getDouble(LINE_HEIGHT)
 
-    private fun getString(index: Int): String? {
+    private fun getString(index: Int): String {
         return myMatchResult.groupValues[index]
     }
 
     private fun getDouble(index: Int): Double? {
         val v = getString(index)
-        return v?.toDouble()
+        return if (v.isEmpty()) null else v.toDouble()
     }
 
     companion object {
         private val FONT_SCALABLE_VALUES = Regex("((\\d+\\.?\\d*)px(?:/(\\d+\\.?\\d*)px)?) ?([a-zA-Z -]+)?")
-        private val SIZE_STRING = 1
-        private val FONT_SIZE = 2
-        private val LINE_HEIGHT = 3
-        private val FONT_FAMILY = 4
+        private const val SIZE_STRING = 1
+        private const val FONT_SIZE = 2
+        private const val LINE_HEIGHT = 3
+        private const val FONT_FAMILY = 4
 
         fun create(font: String): CssFontParser? {
             val matchResult = FONT_SCALABLE_VALUES.find(font)

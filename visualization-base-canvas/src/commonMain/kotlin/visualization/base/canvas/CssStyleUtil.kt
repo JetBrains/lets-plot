@@ -1,35 +1,28 @@
 package jetbrains.datalore.visualization.base.canvas
 
-//import com.google.gwt.regexp.shared.MatchResult
-//import com.google.gwt.regexp.shared.RegExp
 
 object CssStyleUtil {
-    // ToDo!!!
-//    private val FONT_ATTRIBUTE = RegExp.compile("font:(.+);")
-    private val FONT = 1
+    private val FONT_ATTRIBUTE = Regex("font:(.+);")
+    private const val FONT = 1
 
     fun extractStyleFont(style: String): String? {
-// ToDo!!!
-//        val matchResult = FONT_ATTRIBUTE.exec(style)
-//        return if (matchResult == null) null else matchResult!!.getGroup(FONT).trim()
-        return null
+        val matchResult = FONT_ATTRIBUTE.find(style)
+        return matchResult?.groupValues?.get(FONT)?.trim()
     }
 
     internal fun scaleFont(font: String, scale: Double): String {
-// ToDo!!!
-//        val parser = CssFontParser.create(font) ?: return font
-//
-//        val beforeScaling = parser.getSizeString() ?: return font
-//
-//        var afterScaling = scaleFontValue(parser.getFontSize(), scale)
-//        val scaledHeight = scaleFontValue(parser.getLineHeight(), scale)
-//
-//        if (!scaledHeight.isEmpty()) {
-//            afterScaling = "$afterScaling/$scaledHeight"
-//        }
-//
-//        return font.replaceFirst(beforeScaling.toRegex(), afterScaling)
-        return font
+        val parser = CssFontParser.create(font) ?: return font
+        val beforeScaling = parser.sizeString ?: return font
+
+        var afterScaling = scaleFontValue(parser.fontSize, scale)
+        val value = parser.lineHeight
+        val scaledHeight = scaleFontValue(value, scale)
+
+        if (scaledHeight.isNotEmpty()) {
+            afterScaling = "$afterScaling/$scaledHeight"
+        }
+
+        return font.replaceFirst(beforeScaling.toRegex(), afterScaling)
     }
 
     private fun scaleFontValue(value: Double?, scale: Double): String {
