@@ -29,7 +29,7 @@ internal object ParsingUtil {
     private const val FIRST_PARAM_INDEX = 2
 
 
-    fun parseTransform(input: String): List<Result> {
+    fun parseTransform(input: String?): List<Result> {
         return parse(input, TRANSFORM_EXP)
     }
 
@@ -49,7 +49,9 @@ internal object ParsingUtil {
         return matcher.groupValues.size - FIRST_PARAM_INDEX
     }
 
-    private fun parse(input: String, regExp: Regex): List<Result> {
+    private fun parse(input: String?, regExp: Regex): List<Result> {
+        if (input == null) return listOf()
+
         val results = ArrayList<Result>()
         var matcher: MatchResult? = regExp.find(input)
         while (matcher != null) {
