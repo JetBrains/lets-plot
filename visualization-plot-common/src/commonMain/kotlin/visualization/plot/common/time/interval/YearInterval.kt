@@ -6,8 +6,7 @@ import jetbrains.datalore.visualization.plot.gog.common.text.Formatter
 
 class YearInterval internal constructor(count: Int) : MeasuredInDays(count) {
 
-    override val tickFormatPattern: String
-        get() = TICK_FORMAT
+    override val tickFormatPattern = TICK_FORMAT
 
     override fun getFirstDayContaining(instant: DateTime): Date {
         return Date.firstDayOf(instant.year)

@@ -9,7 +9,7 @@ abstract class TimeInterval protected constructor(val count: Int) {
 
     abstract val tickFormatPattern: String
 
-    open val tickFormatter: Function<Any, String>
+    open val tickFormatter: Function<in Any, String>
         get() = Formatter.time(tickFormatPattern)
 
     /**

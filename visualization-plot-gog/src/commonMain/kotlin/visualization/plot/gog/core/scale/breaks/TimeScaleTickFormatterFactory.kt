@@ -11,7 +11,7 @@ internal class TimeScaleTickFormatterFactory(
         private val myMinInterval: TimeInterval?) :
         QuantitativeTickFormatterFactory() {
 
-    override fun getFormatter(range: ClosedRange<Double>, step: Double): Function<Any, String> {
+    override fun getFormatter(range: ClosedRange<Double>, step: Double): Function<in Any, String> {
         return Formatter.time(formatPattern(step))
     }
 

@@ -7,9 +7,10 @@ import kotlin.math.ceil
 import kotlin.math.log10
 
 class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Boolean) : Function<Any, String> {
-    private var myFormatter: Function<Any, String>
+    private var myFormatter: Function<in Any, String>
 
     init {
+        @Suppress("NAME_SHADOWING")
         var step = step
         if (value == 0.0) {
             // do not proceed because log10(0) = - Infinity
@@ -69,7 +70,7 @@ class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Bool
         }
     }
 
-    override fun apply(o: Any): String {
-        return myFormatter.apply(o)
+    override fun apply(value: Any): String {
+        return myFormatter.apply(value)
     }
 }

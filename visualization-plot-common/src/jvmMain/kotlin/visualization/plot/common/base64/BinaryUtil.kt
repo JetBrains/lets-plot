@@ -4,7 +4,7 @@ import java.util.Base64
 import kotlin.collections.ArrayList
 
 actual object BinaryUtil {
-    fun encodeList(l: List<Double>): String {
+    fun encodeList(l: List<Double?>): String {
         val bytes = toBytes(l)
         //return BaseEncoding.base64().encode(bytes);
         return Base64.getEncoder().encodeToString(bytes)
@@ -17,7 +17,7 @@ actual object BinaryUtil {
         return fromBytes(bytes)
     }
 
-    private fun toBytes(l: List<Double>): ByteArray {
+    private fun toBytes(l: List<Double?>): ByteArray {
         val data = ByteArray(l.size * 8)
         var pos = 0
         for (d in l) {

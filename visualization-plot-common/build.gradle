@@ -13,8 +13,12 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':base')
-//                implementation project(':visualization-base-svg')
-//                implementation project(':visualization-base-canvas')
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
             }
         }
         jvmMain {
@@ -25,12 +29,23 @@ kotlin {
             }
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-//                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+                implementation "org.assertj:assertj-core:$assertj_version"
             }
         }
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation kotlin('test-js')
             }
         }
     }

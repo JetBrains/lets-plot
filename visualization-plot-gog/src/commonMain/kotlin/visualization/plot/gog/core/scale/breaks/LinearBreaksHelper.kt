@@ -6,7 +6,7 @@ import kotlin.math.*
 
 class LinearBreaksHelper(rangeStart: Double, rangeEnd: Double, count: Int) : BreaksHelperBase(rangeStart, rangeEnd, count) {
     val breaks: List<Double>
-    val labelFormatter: Function<Any, String>
+    val labelFormatter: Function<in Any, String>
 
     init {
 

@@ -15,7 +15,7 @@ class DateTimeBreaksHelper internal constructor(
         BreaksHelperBase(rangeStart, rangeEnd, count) {
 
     var breaks: List<Double>
-    var labelFormatter: Function<Any, String>
+    var labelFormatter: Function<in Any, String>
 
     constructor(rangeStart: Double, rangeEnd: Double, count: Int) : this(rangeStart, rangeEnd, count, null) {}
 

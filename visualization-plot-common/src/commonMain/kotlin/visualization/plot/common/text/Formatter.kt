@@ -16,20 +16,20 @@ object Formatter {
 
     private val SCI_NOTATION_EXP_REGEX = Regex("(.+)([eE][0-9]+)(.*)")
 
-    private val DEF_NUMBER_FORMATTER: Function<Any, String> = function { input ->
+    private val DEF_NUMBER_FORMATTER: Function<in Any, String> = function { input ->
         val number = input as Number
         NumberFormatUtil.formatNumber(number, "#,###.##")
     }
 
-    fun time(pattern: String): Function<Any, String> {
+    fun time(pattern: String): Function<in Any, String> {
         return function { input -> DateTimeFormatUtil.formatDateUTC(input as Number, pattern) }
     }
 
     @JvmOverloads
-    fun number(pattern: String, useMetricPrefix: Boolean = false): Function<Any, String> = function { input ->
+    fun number(pattern: String, useMetricPrefix: Boolean = false): Function<in Any, String> = function { input ->
         var result = "NaN"
         if (input is Number) {
-            var s = NumberFormatUtil.formatNumber(input as Number, pattern)
+            var s = NumberFormatUtil.formatNumber(input, pattern)
             if (useMetricPrefix) {
                 s = replaceExponentWithMetricPrefix(s)
             }
@@ -63,15 +63,15 @@ object Formatter {
         return result.groupValues[1] + metricPrefix + result.groupValues[3]
     }
 
-    fun legend(dataType: DataType): Function<Any?, String> {
+    fun legend(dataType: DataType): Function<in Any?, String> {
         return tooltip(dataType)
     }
 
-    fun tooltip(dataType: DataType): Function<Any?, String> {
+    fun tooltip(dataType: DataType): Function<in Any?, String> {
         return nullable(tooltipImpl(dataType), "null")
     }
 
-    private fun tooltipImpl(dataType: DataType): Function<Any, String> {
+    private fun tooltipImpl(dataType: DataType): Function<in Any, String> {
         return when (dataType) {
             DataType.NUMBER -> DEF_NUMBER_FORMATTER
             DataType.STRING -> function { it.toString() } // no formatting really (toSting)
@@ -83,7 +83,7 @@ object Formatter {
         }
     }
 
-    fun tableCell(dataType: DataType): Function<Any?, String> {
+    fun tableCell(dataType: DataType): Function<in Any?, String> {
         return tableCell(dataType, "null")
     }
 
@@ -91,7 +91,7 @@ object Formatter {
         return nullable(tableCellImpl(dataType), nullString)
     }
 
-    private fun tableCellImpl(dataType: DataType): Function<Any, String> {
+    private fun tableCellImpl(dataType: DataType): Function<in Any, String> {
         when (dataType) {
             DataType.NUMBER -> return DEF_NUMBER_FORMATTER
             DataType.STRING -> return function { it.toString() } // no formatting really (toSting)
@@ -105,7 +105,7 @@ object Formatter {
         throw IllegalArgumentException("Can't create formatter for data type $dataType")
     }
 
-    private fun nullable(f: Function<Any, String>, nullString: String): Function<Any?, String> = function { input ->
+    private fun nullable(f: Function<in Any, String>, nullString: String): Function<Any?, String> = function { input ->
         if (input == null) nullString else f.apply(input)
     }
 

@@ -7,6 +7,7 @@ import kotlin.math.round
 actual object DateTimeFormatUtil {
 
     actual fun formatDateUTC(instant: Number, pattern: String): String {
+//              instant.toLong()
         val date = Date(round(instant.toDouble()).toLong())
         return formatDateUTC(date, pattern)
     }

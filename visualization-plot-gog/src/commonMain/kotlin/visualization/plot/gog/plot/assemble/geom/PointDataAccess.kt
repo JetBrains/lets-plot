@@ -11,16 +11,12 @@ import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.QuantitativeT
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 
 internal class PointDataAccess(private val myData: DataFrame, private val myBindings: Map<Aes<*>, VarBinding>) : MappedDataAccess {
-    private val myMappedAes: Set<Aes<*>>
+    private val myMappedAes: Set<Aes<*>> = unmodifiableSet(myBindings.keys)
 
-    private val myFormatters = HashMap<Aes<*>, Function<Any, String>>()
+    private val myFormatters = HashMap<Aes<*>, Function<in Any, String>>()
 
     override val mappedAes: Set<Aes<*>>
         get() = myMappedAes
-
-    init {
-        myMappedAes = unmodifiableSet(myBindings.keys)
-    }
 
     override fun isMapped(aes: Aes<*>): Boolean {
         return myBindings.containsKey(aes)
@@ -55,14 +51,14 @@ internal class PointDataAccess(private val myData: DataFrame, private val myBind
         return myData.getNumeric(`var`)[index]
     }
 
-    private fun formatter(aes: Aes<*>): Function<Any, String> {
+    private fun formatter(aes: Aes<*>): Function<in Any, String> {
         if (!myFormatters.containsKey(aes)) {
             myFormatters[aes] = createFormatter(aes)
         }
         return myFormatters[aes]!!
     }
 
-    private fun createFormatter(aes: Aes<*>): Function<Any, String> {
+    private fun createFormatter(aes: Aes<*>): Function<in Any, String> {
         val varBinding = myBindings[aes]
         // only 'stat' or 'transform' vars here
         val `var` = varBinding!!.`var`

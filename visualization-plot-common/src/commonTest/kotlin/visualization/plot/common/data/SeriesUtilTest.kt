@@ -1,0 +1,26 @@
+package jetbrains.datalore.visualization.plot.common.data
+
+import jetbrains.datalore.base.assertion.assertArrayEquals
+import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import kotlin.test.Test
+
+class SeriesUtilTest {
+
+    @Test
+    fun pickAtIndices() {
+        val indices = listOf(1, 3, 77)
+        val result = SeriesUtil.pickAtIndices(l, indices)
+        assertArrayEquals(arrayOf("1", "3"), result.toTypedArray())
+    }
+
+    @Test
+    fun skipAtIndices() {
+        val indices = setOf(1, 3, 77)
+        val result = SeriesUtil.skipAtIndices(l, indices)
+        assertArrayEquals(arrayOf("0", "2"), result.toTypedArray())
+    }
+
+    companion object {
+        private val l = listOf("0", "1", "2", "3")
+    }
+}

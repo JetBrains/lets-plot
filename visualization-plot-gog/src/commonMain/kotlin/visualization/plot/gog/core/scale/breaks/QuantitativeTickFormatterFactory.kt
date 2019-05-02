@@ -7,11 +7,11 @@ import kotlin.jvm.JvmOverloads
 
 abstract class QuantitativeTickFormatterFactory {
 
-    fun getFormatter(step: Double): Function<Any, String> {
+    fun getFormatter(step: Double): Function<in Any, String> {
         return getFormatter(ClosedRange.closed(0.0, 0.0), step)
     }
 
-    abstract fun getFormatter(range: ClosedRange<Double>, step: Double): Function<Any, String>
+    abstract fun getFormatter(range: ClosedRange<Double>, step: Double): Function<in Any, String>
 
     companion object {
 
