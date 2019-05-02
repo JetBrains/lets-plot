@@ -99,12 +99,10 @@ class Color @JvmOverloads constructor(
 
             var thirdComma = -1
 
-            if (prefix == RGBA) {
-                thirdComma = findNext(text, ",", secondComma + 1)
-            } else if (prefix == COLOR) {
-                thirdComma = text.indexOf(",", secondComma + 1)
-            } else if (prefix != RGB) {
-                throw IllegalArgumentException()
+            when {
+                prefix == RGBA -> thirdComma = findNext(text, ",", secondComma + 1)
+                prefix == COLOR -> thirdComma = text.indexOf(",", secondComma + 1)
+                prefix != RGB -> throw IllegalArgumentException(text)
             }
 
             val lastParen = findNext(text, ")", thirdComma + 1)

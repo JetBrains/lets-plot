@@ -13,9 +13,8 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':base')
-                implementation project(':visualization-base-svg')
-                implementation project(':visualization-base-canvas')
-                implementation project(':visualization-plot-common')
+//                implementation project(':visualization-base-svg')
+//                implementation project(':visualization-base-canvas')
             }
         }
         jvmMain {

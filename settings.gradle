@@ -14,6 +14,7 @@ include 'base',
         'visualization-base-svg-mapper',
         'visualization-base-canvas',
         'visualization-base-demo',
+        'visualization-plot-common',
         'visualization-plot-gog',
         'visualization-plot-demo',
         'demo-hello'
