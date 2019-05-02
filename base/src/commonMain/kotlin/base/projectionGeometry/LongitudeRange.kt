@@ -8,16 +8,11 @@ import jetbrains.datalore.base.projectionGeometry.GeoUtils.MIN_LONGITUDE
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.limitLon
 
 internal class LongitudeRange(lower: Double, upper: Double) {
-    private val myLower: Double
-    private val myUpper: Double
+    private val myLower: Double = limitLon(lower)
+    private val myUpper: Double = limitLon(upper)
 
     val isEmpty: Boolean
         get() = myUpper == myLower
-
-    init {
-        this.myLower = limitLon(lower)
-        this.myUpper = limitLon(upper)
-    }
 
     fun lower(): Double {
         return myLower
@@ -53,16 +48,16 @@ internal class LongitudeRange(lower: Double, upper: Double) {
         return result
     }
 
-//    override fun equals(other: Any?): Boolean {
-//        if (this === other) return true
-//        if (other == null || this::class != other::class) return false
-//        val that = other as LongitudeRange
-//        return that.myLower.equals(myLower) && that.myUpper.equals(myUpper)
-//    }
-//
-//    override fun hashCode(): Int {
-//        return Objects.hash(myLower, myUpper)
-//    }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        val that = other as LongitudeRange
+        return that.myLower.equals(myLower) && that.myUpper.equals(myUpper)
+    }
+
+    override fun hashCode(): Int {
+        return listOf(myLower, myUpper).hashCode()
+    }
 
     companion object {
         fun splitRange(lower: Double, upper: Double, min: Double, max: Double, result: MutableCollection<ClosedRange<Double>>) {

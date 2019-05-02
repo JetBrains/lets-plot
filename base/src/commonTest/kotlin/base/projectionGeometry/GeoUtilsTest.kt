@@ -7,7 +7,6 @@ import jetbrains.datalore.base.projectionGeometry.GeoUtils.EARTH_RECT
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.calculateQuadKeys
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.getQuadKeyRect
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.tileXYToTileID
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -21,7 +20,6 @@ class GeoUtilsTest {
     }
 
     @Test
-    @Ignore
     fun calculateTexasQuadKey() {
         val bbox = DoubleRectangle(-107.0, 25.0, 14.0, 12.0)
         val tileIDs = calculateQuadKeys(bbox, 5)

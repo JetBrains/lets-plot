@@ -56,14 +56,14 @@ class GeoRectangle(minLongitude: Double, minLatitude: Double, maxLongitude: Doub
         return rects
     }
 
-//    override fun equals(other: Any?): Boolean {
-//        if (this === other) return true
-//        if (other == null || this::class != other::class) return false
-//        val that = other as GeoRectangle?
-//        return myLongitudeRange == that!!.myLongitudeRange && myLatitudeRange == that.myLatitudeRange
-//    }
-//
-//    override fun hashCode(): Int {
-//        return Objects.hash(myLongitudeRange, myLatitudeRange)
-//    }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        val that = other as GeoRectangle?
+        return myLongitudeRange == that!!.myLongitudeRange && myLatitudeRange == that.myLatitudeRange
+    }
+
+    override fun hashCode(): Int {
+        return listOf(myLongitudeRange, myLatitudeRange).hashCode()
+    }
 }
