@@ -24,7 +24,7 @@ class SvgEllipseElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
     override val elementName = "ellipse"
 
     override val bBox: DoubleRectangle
-        get() = container().getPeer().getBBox(this)
+        get() = container().getPeer()!!.getBBox(this)
 
     constructor(cx: Double, cy: Double, rx: Double, ry: Double) : this() {
 
@@ -83,10 +83,10 @@ class SvgEllipseElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
     }
 
     override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
-        return container().getPeer().invertTransform(this, point)
+        return container().getPeer()!!.invertTransform(this, point)
     }
 
     override fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
-        return container().getPeer().applyTransform(this, point)
+        return container().getPeer()!!.applyTransform(this, point)
     }
 }

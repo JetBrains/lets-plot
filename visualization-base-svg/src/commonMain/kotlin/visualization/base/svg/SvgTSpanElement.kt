@@ -19,7 +19,7 @@ class SvgTSpanElement() : SvgElement(), SvgTextContent {
     override val elementName = "tspan"
 
     override val computedTextLength: Double
-        get() = container().getPeer().getComputedTextLength(this)
+        get() = container().getPeer()!!.getComputedTextLength(this)
 
     constructor(text: String) : this() {
 

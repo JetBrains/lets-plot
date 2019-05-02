@@ -24,7 +24,7 @@ class SvgLineElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
     override val elementName = "line"
 
     override val bBox: DoubleRectangle
-        get() = container().getPeer().getBBox(this)
+        get() = container().getPeer()!!.getBBox(this)
 
     constructor(x1: Double, y1: Double, x2: Double, y2: Double) : this() {
 
@@ -83,10 +83,10 @@ class SvgLineElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
     }
 
     override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
-        return container().getPeer().invertTransform(this, point)
+        return container().getPeer()!!.invertTransform(this, point)
     }
 
     override fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
-        return container().getPeer().applyTransform(this, point)
+        return container().getPeer()!!.applyTransform(this, point)
     }
 }

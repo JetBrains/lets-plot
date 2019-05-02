@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.base.svg
 
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 class SvgPlatformPeerTest {
     private var container: SvgNodeContainer? = null
@@ -16,9 +16,6 @@ class SvgPlatformPeerTest {
     @Test
     fun containerInit() {
         val c = container as SvgNodeContainer
-//        assertNull(c.getPeer())
-        assertFailsWith(NullPointerException::class) {
-            c.getPeer()
-        }
+        assertNull(c.getPeer())
     }
 }

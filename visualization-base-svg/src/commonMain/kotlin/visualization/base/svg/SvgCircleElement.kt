@@ -23,7 +23,7 @@ class SvgCircleElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
     override val elementName: String = "circle"
 
     override val bBox: DoubleRectangle
-        get() = container().getPeer().getBBox(this)
+        get() = container().getPeer()!!.getBBox(this)
 
     constructor(cx: Double, cy: Double, r: Double) : this() {
         setAttribute(CX, cx)
@@ -31,7 +31,7 @@ class SvgCircleElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
         setAttribute(R, r)
     }
 
-    constructor(p: DoubleVector, r: Double) : this(p.x, p.y, r) {}
+    constructor(p: DoubleVector, r: Double) : this(p.x, p.y, r)
 
     fun cx(): Property<Double?> {
         return getAttribute(CX)
@@ -78,10 +78,10 @@ class SvgCircleElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
     }
 
     override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
-        return container().getPeer().invertTransform(this, point)
+        return container().getPeer()!!.invertTransform(this, point)
     }
 
     override fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
-        return container().getPeer().applyTransform(this, point)
+        return container().getPeer()!!.applyTransform(this, point)
     }
 }

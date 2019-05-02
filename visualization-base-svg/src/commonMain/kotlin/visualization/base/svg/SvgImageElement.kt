@@ -25,7 +25,7 @@ open class SvgImageElement() : SvgGraphicsElement(), SvgTransformable {
     override val elementName = "image"
 
     override val bBox: DoubleRectangle
-        get() = container().getPeer().getBBox(this)
+        get() = container().getPeer()!!.getBBox(this)
 
     init {
         setAttribute(PRESERVE_ASPECT_RATIO, "none")
@@ -69,10 +69,10 @@ open class SvgImageElement() : SvgGraphicsElement(), SvgTransformable {
     }
 
     override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
-        return container().getPeer().invertTransform(this, point)
+        return container().getPeer()!!.invertTransform(this, point)
     }
 
     override fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
-        return container().getPeer().applyTransform(this, point)
+        return container().getPeer()!!.applyTransform(this, point)
     }
 }

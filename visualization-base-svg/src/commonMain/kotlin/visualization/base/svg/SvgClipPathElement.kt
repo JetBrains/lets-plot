@@ -15,7 +15,7 @@ class SvgClipPathElement : SvgGraphicsElement(), SvgTransformable {
         get() = "clipPath"
 
     override val bBox: DoubleRectangle
-        get() = container().getPeer().getBBox(this)
+        get() = container().getPeer()!!.getBBox(this)
 
     fun clipPathUnits(): Property<ClipPathUnits?> {
         return getAttribute(CLIP_PATH_UNITS)
@@ -26,11 +26,11 @@ class SvgClipPathElement : SvgGraphicsElement(), SvgTransformable {
     }
 
     override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
-        return container().getPeer().invertTransform(this, point)
+        return container().getPeer()!!.invertTransform(this, point)
     }
 
     override fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
-        return container().getPeer().applyTransform(this, point)
+        return container().getPeer()!!.applyTransform(this, point)
     }
 
     enum class ClipPathUnits private constructor(private val myAttributeString: String) {
