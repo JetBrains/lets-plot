@@ -181,15 +181,12 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun <T> constantAes(aes: Aes<T>, v: T): AestheticsBuilder {
         myConstantAes.add(aes)
-        return __aes(aes, constant(v))
+        myIndexFunctionMap[aes] = constant(v)
+        return this
     }
 
     fun <T> aes(aes: Aes<T>, v: (Int) -> T): AestheticsBuilder {
         myConstantAes.remove(aes)
-        return __aes(aes, v)
-    }
-
-    private fun <T> __aes(aes: Aes<T>, v: (Int) -> T): AestheticsBuilder {
         myIndexFunctionMap[aes] = v
         return this
     }
@@ -238,17 +235,20 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
         override fun range(aes: Aes<Double>): ClosedRange<Double> {
             if (!myRangeByNumericAes.containsKey(aes)) {
-                val r: ClosedRange<Double>?
-                if (myDataPointCount <= 0) {
-                    r = ClosedRange.closed(0.0, 0.0)
-                } else if (myConstantAes.contains(aes)) {
-                    val v = numericValues(aes).iterator().next()
-                    r = ClosedRange.closed(v, v)
-                } else {
-                    val values = numericValues(aes)
-                    r = SeriesUtil.range(values)
+                val r: ClosedRange<Double>
+                r = when {
+                    myDataPointCount <= 0 ->
+                        ClosedRange.closed(0.0, 0.0)
+                    myConstantAes.contains(aes) -> {
+                        val v = numericValues(aes).iterator().next()
+                        ClosedRange.closed(v, v)
+                    }
+                    else -> {
+                        val values = numericValues(aes)
+                        SeriesUtil.range(values)!!
+                    }
                 }
-                myRangeByNumericAes[aes] = r!!
+                myRangeByNumericAes[aes] = r
             }
 
             return myRangeByNumericAes[aes]!!
@@ -263,13 +263,14 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
         override fun resolution(aes: Aes<Double>, naValue: Double): Double {
             if (!myResolutionByAes.containsKey(aes)) {
-                val resolution: Double
-                if (myConstantAes.contains(aes)) {
-                    resolution = 0.0
-                } else {
-                    val values = numericValues(aes)
-                    resolution = SeriesUtil.resolution(values, naValue)
-                }
+                val resolution: Double =
+                        when {
+                            myConstantAes.contains(aes) -> 0.0
+                            else -> {
+                                val values = numericValues(aes)
+                                SeriesUtil.resolution(values, naValue)
+                            }
+                        }
                 myResolutionByAes[aes] = resolution
             }
 

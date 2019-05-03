@@ -75,12 +75,10 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
         // add white frame
         guideBarGroup.children().add(createBorder(barBounds, spec.theme.backgroundFill(), 1.0))
 
-        if (debug.get()) {
-            run {
-                // frame bar and labels
-                val graphBounds = DoubleRectangle(DoubleVector.ZERO, l.graphSize)
-                guideBarGroup.children().add(createBorder(graphBounds, Color.DARK_BLUE, 1.0))
-            }
+        if (debug) {
+            // frame bar and labels
+            val graphBounds = DoubleRectangle(DoubleVector.ZERO, l.graphSize)
+            guideBarGroup.children().add(createBorder(graphBounds, Color.DARK_BLUE, 1.0))
         }
 
         contentRoot.children().add(guideBarGroup)

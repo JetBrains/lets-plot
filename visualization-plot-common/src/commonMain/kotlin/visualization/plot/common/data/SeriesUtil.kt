@@ -53,16 +53,14 @@ object SeriesUtil {
         var max = 0.0
         var inited = false
         for (v in values) {
-            if (v != null) {
-                if (isFinite(v)) {
-                    if (inited) {
-                        min = min(min, v)
-                        max = max(max, v)
-                    } else {
-                        max = v
-                        min = max
-                        inited = true
-                    }
+            if (isFinite(v)) {
+                if (inited) {
+                    min = min(min, v)
+                    max = max(max, v)
+                } else {
+                    max = v
+                    min = max
+                    inited = true
                 }
             }
         }

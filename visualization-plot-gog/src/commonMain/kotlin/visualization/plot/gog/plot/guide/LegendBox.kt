@@ -2,8 +2,6 @@ package jetbrains.datalore.visualization.plot.gog.plot.guide
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
@@ -15,7 +13,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 
 abstract class LegendBox internal constructor(protected open val spec: LegendBoxSpec) : SvgComponent() {
 
-    internal val debug: Property<Boolean> = ValueProperty(false)
+    var debug: Boolean = false
 
     private val title: String
         get() = spec.title
@@ -51,7 +49,7 @@ abstract class LegendBox internal constructor(protected open val spec: LegendBox
         appendGuideContent(graphGroup)
         innerGroup.children().add(graphGroup)
 
-        if (debug.get()) {
+        if (debug) {
             run {
                 // outer bounds
                 addBorder(outerBounds, Color.CYAN, 1.0)

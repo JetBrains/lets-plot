@@ -50,7 +50,7 @@ class ColorBarAssembler(private val myLegendTitle: String, private val myDomain:
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
                 val c = ColorBarComponent(spec)
-                c.debug.set(DEBUG_DRAWING)
+                c.debug = DEBUG_DRAWING
                 return c
             }
         }

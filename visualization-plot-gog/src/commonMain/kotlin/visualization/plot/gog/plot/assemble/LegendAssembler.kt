@@ -75,7 +75,7 @@ internal class LegendAssembler(private val myLegendTitle: String, private val my
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
                 val c = LegendComponent(spec)
-                c.debug.set(DEBUG_DRAWING)
+                c.debug = DEBUG_DRAWING
                 return c
             }
         }
