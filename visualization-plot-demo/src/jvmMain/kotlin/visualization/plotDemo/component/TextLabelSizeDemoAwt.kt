@@ -1,7 +1,7 @@
-package jetbrains.datalore.jetbrains.datalore.visualization.plotDemo.component
+package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.gogProjectionalDemo.model.component.TextLabelSizeDemo
-import visualization.plotDemo.SwingDemoUtil
+import jetbrains.datalore.visualization.plotDemo.SwingDemoUtil
+import jetbrains.datalore.visualization.plotDemo.model.component.TextLabelSizeDemo
 
 class TextLabelSizeDemoAwt : TextLabelSizeDemo() {
 

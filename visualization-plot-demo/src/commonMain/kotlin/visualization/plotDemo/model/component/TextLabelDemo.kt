@@ -9,6 +9,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel.Horiz
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel.HorizontalAnchor.*
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel.VerticalAnchor
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel.VerticalAnchor.*
+import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 

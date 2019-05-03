@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plotDemo.model.component
+package jetbrains.datalore.visualization.plotDemo.model
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector

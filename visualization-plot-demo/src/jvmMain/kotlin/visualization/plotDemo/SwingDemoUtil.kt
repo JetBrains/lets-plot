@@ -1,4 +1,4 @@
-package visualization.plotDemo
+package jetbrains.datalore.visualization.plotDemo
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement

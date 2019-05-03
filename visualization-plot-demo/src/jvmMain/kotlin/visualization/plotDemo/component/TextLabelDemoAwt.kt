@@ -1,7 +1,7 @@
-package jetbrains.datalore.jetbrains.datalore.visualization.plotDemo.component
+package jetbrains.datalore.visualization.plotDemo.component
 
+import jetbrains.datalore.visualization.plotDemo.SwingDemoUtil
 import jetbrains.datalore.visualization.plotDemo.model.component.TextLabelDemo
-import visualization.plotDemo.SwingDemoUtil
 
 class TextLabelDemoAwt : TextLabelDemo() {
 
