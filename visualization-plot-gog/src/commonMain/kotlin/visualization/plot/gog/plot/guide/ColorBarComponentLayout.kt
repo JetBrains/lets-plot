@@ -9,11 +9,16 @@ import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideBreak
 import kotlin.math.max
 
 internal abstract class ColorBarComponentLayout(
-        title: String, private val myDomain: ClosedRange<Double>, protected val breaks: List<GuideBreak<Double>>, protected val guideBarSize: DoubleVector, legendDirection: LegendDirection) : LegendBoxLayout(title, legendDirection) {
+        title: String,
+        private val myDomain: ClosedRange<Double>,
+        protected val breaks: List<GuideBreak<Double>>,
+        protected val guideBarSize: DoubleVector,
+        legendDirection: LegendDirection) :
+        LegendBoxLayout(title, legendDirection) {
 
     private var myContentSize: DoubleVector? = null
     private val myBreakInfos = ArrayList<BreakInfo>()
-    private var myBarBounds: DoubleRectangle? = null
+    private lateinit var myBarBounds: DoubleRectangle
 
     public override val graphSize: DoubleVector
         get() {
@@ -27,7 +32,7 @@ internal abstract class ColorBarComponentLayout(
             return myBreakInfos
         }
 
-    val barBounds: DoubleRectangle?
+    val barBounds: DoubleRectangle
         get() {
             ensureInited()
             return myBarBounds

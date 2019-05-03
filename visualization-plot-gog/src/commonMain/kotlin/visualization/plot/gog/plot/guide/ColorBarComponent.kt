@@ -36,9 +36,9 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
 
         // Ticks and labels
         val barThickness = if (l.isHorizontal)
-            barBounds!!.height
+            barBounds.height
         else
-            barBounds!!.width
+            barBounds.width
         val tickLength = barThickness / 5
 
         val breakInfos = l.breakInfos.iterator()
@@ -49,17 +49,17 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
 
             val tickMarkPoints = ArrayList<DoubleVector>()
             if (l.isHorizontal) {
-                val tickX = tickLocation + barBounds!!.left
-                tickMarkPoints.add(DoubleVector(tickX, barBounds!!.top))
-                tickMarkPoints.add(DoubleVector(tickX, barBounds!!.top + tickLength))
-                tickMarkPoints.add(DoubleVector(tickX, barBounds!!.bottom - tickLength))
-                tickMarkPoints.add(DoubleVector(tickX, barBounds!!.bottom))
+                val tickX = tickLocation + barBounds.left
+                tickMarkPoints.add(DoubleVector(tickX, barBounds.top))
+                tickMarkPoints.add(DoubleVector(tickX, barBounds.top + tickLength))
+                tickMarkPoints.add(DoubleVector(tickX, barBounds.bottom - tickLength))
+                tickMarkPoints.add(DoubleVector(tickX, barBounds.bottom))
             } else {
-                val tickY = tickLocation + barBounds!!.top
-                tickMarkPoints.add(DoubleVector(barBounds!!.left, tickY))
-                tickMarkPoints.add(DoubleVector(barBounds!!.left + tickLength, tickY))
-                tickMarkPoints.add(DoubleVector(barBounds!!.right - tickLength, tickY))
-                tickMarkPoints.add(DoubleVector(barBounds!!.right, tickY))
+                val tickY = tickLocation + barBounds.top
+                tickMarkPoints.add(DoubleVector(barBounds.left, tickY))
+                tickMarkPoints.add(DoubleVector(barBounds.left + tickLength, tickY))
+                tickMarkPoints.add(DoubleVector(barBounds.right - tickLength, tickY))
+                tickMarkPoints.add(DoubleVector(barBounds.right, tickY))
             }
 
             addTickMark(guideBarGroup, tickMarkPoints[0], tickMarkPoints[1])
@@ -68,7 +68,7 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
             val label = TextLabel(br.label)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setVerticalAnchor(brInfo.labelVerticalAnchor)
-            label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds!!.top)
+            label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top)
             guideBarGroup.children().add(label.rootGroup)
         }
 
@@ -86,7 +86,14 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
     }
 
     private fun addColorBar(
-            g: SvgGElement, domain: ClosedRange<Double>, scale: Scale2<Color>, numBins: Int, barBounds: DoubleRectangle?, barLengthExpand: Double, horizontal: Boolean) {
+            g: SvgGElement,
+            domain: ClosedRange<Double>,
+            scale: Scale2<Color>,
+            numBins: Int,
+            barBounds: DoubleRectangle,
+            barLengthExpand: Double,
+            horizontal: Boolean) {
+
         val domainSpan = SeriesUtil.span(domain)
         val stepCount = max(2, numBins)
         val step = domainSpan / stepCount
@@ -99,9 +106,9 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
         val colors = ScaleUtil.map(domainValues, scale)
 
         val barLength = if (horizontal)
-            barBounds!!.width
+            barBounds.width
         else
-            barBounds!!.height
+            barBounds.height
         val effectiveBarLength = barLength - barLengthExpand * 2
         val segmentStep = effectiveBarLength / stepCount
 
@@ -144,7 +151,12 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
 
     companion object {
         fun create(
-                title: String, domain: ClosedRange<Double>, breaks: List<GuideBreak<Double>>, scale: Scale2<Color>, theme: LegendTheme): ColorBarComponent {
+                title: String,
+                domain: ClosedRange<Double>,
+                breaks: List<GuideBreak<Double>>,
+                scale: Scale2<Color>,
+                theme: LegendTheme):
+                ColorBarComponent {
             return ColorBarComponent(ColorBarComponentSpec(title, domain, breaks, scale, theme))
         }
     }
