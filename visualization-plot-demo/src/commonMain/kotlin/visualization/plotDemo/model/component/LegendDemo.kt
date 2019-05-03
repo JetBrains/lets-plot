@@ -77,7 +77,7 @@ open class LegendDemo : SimpleDemoBase() {
     }
 
     companion object {
-        private val DEBUG_DRAWING = true
+        private const val DEBUG_DRAWING = true
     }
 
 }
