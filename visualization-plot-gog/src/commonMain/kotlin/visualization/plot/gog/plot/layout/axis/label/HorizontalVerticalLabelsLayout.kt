@@ -25,7 +25,7 @@ internal class HorizontalVerticalLabelsLayout(orientation: Orientation,
     val labelVerticalAnchor: TextLabel.VerticalAnchor
         get() = TextLabel.VerticalAnchor.CENTER
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle): AxisLabelsLayoutInfo {
+    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
         val height = labelSpec.height()
 
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)

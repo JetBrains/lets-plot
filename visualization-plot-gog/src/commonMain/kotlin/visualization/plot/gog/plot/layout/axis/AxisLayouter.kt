@@ -10,7 +10,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.theme.AxisTheme
 
 abstract class AxisLayouter protected constructor(val orientation: Orientation, val domainRange: ClosedRange<Double>, val labelsLayout: AxisLabelsLayout) {
 
-    fun doLayout(axisLength: Double, maxTickLabelsBounds: DoubleRectangle): AxisLayoutInfo {
+    fun doLayout(axisLength: Double, maxTickLabelsBounds: DoubleRectangle?): AxisLayoutInfo {
         val labelsInfo = labelsLayout.doLayout(axisLength, toAxisMapper(axisLength), maxTickLabelsBounds)
         val labelsBounds = labelsInfo.bounds
 

@@ -17,7 +17,7 @@ internal class HorizontalFlexBreaksLabelsLayout(orientation: Orientation, axisDo
         checkArgument(!myBreaksProvider.isFixedBreaks, "fixed breaks")
     }
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle): AxisLabelsLayoutInfo {
+    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
         var targetBreakCount = HorizontalSimpleLabelsLayout.estimateBreakCountInitial(axisLength)
         var breaks = getBreaks(targetBreakCount, axisLength)
         var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper, maxLabelsBounds)
@@ -38,7 +38,7 @@ internal class HorizontalFlexBreaksLabelsLayout(orientation: Orientation, axisDo
     }
 
     private fun doLayoutLabels(breaks: GuideBreaks, axisLength: Double, axisMapper: (Double) -> Double,
-                               maxLabelsBounds: DoubleRectangle): AxisLabelsLayoutInfo {
+                               maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
 
         val layout = HorizontalSimpleLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme)
         return layout.doLayout(axisLength, axisMapper, maxLabelsBounds)

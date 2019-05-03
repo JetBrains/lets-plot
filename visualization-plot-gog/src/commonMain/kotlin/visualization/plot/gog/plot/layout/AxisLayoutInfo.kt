@@ -98,7 +98,7 @@ class AxisLayoutInfo private constructor(b: Builder) {
             return this
         }
 
-        fun tickLabelsBoundsMax(r: DoubleRectangle): Builder {
+        fun tickLabelsBoundsMax(r: DoubleRectangle?): Builder {
             myMaxTickLabelsBounds = r
             return this
         }

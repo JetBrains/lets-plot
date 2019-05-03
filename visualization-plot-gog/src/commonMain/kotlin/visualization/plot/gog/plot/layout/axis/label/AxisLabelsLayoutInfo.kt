@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.gog.plot.layout.axis.label
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.GuideBreaks
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class AxisLabelsLayoutInfo private constructor(b: Builder) {
     val breaks: GuideBreaks?
@@ -61,7 +61,7 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
             return this
         }
 
-        fun labelAdditionalOffsets(l: List<DoubleVector>): Builder {
+        fun labelAdditionalOffsets(l: List<DoubleVector>?): Builder {
             myLabelAdditionalOffsets = l
             return this
         }

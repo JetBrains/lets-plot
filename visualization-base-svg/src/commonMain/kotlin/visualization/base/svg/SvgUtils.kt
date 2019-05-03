@@ -38,31 +38,6 @@ object SvgUtils {
         return (alpha shl 24) + rgb
     }
 
-/*
-
-ToDo: move to JVM target
-
-    @GwtIncompatible
-    @Throws(IOException::class)
-    fun buildDataUrl(bufferedImage: BufferedImage): String {
-        var bytes: ByteArray
-        ByteArrayOutputStream().use({ baos ->
-            ImageIO.write(bufferedImage, "png", baos)
-            bytes = baos.toByteArray()
-        })
-        val base64String = Base64.getEncoder().encodeToString(bytes)
-        return pngDataURI(base64String)
-    }
-*/
-
-/*
-    fun pngDataURI(base64EncodedPngImage: String): String {
-        return StringBuilder("data:image/png;base64,")
-                .append(base64EncodedPngImage)
-                .toString()
-    }
-*/
-
     internal fun colorAttributeTransform(color: Property<SvgColor?>, opacity: Property<Double?>): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
             override fun set(value: Color?) {

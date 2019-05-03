@@ -2,11 +2,11 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.gog.config.Option.GGBunch
 import jetbrains.datalore.visualization.plot.gog.config.Option.GGBunch.Item
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
-class BunchConfig(opts: MutableMap<*, *>) : OptionsAccessor(opts) {
+class BunchConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
     private val myItems = ArrayList<BunchItem>()
 
     val bunchItems: List<BunchItem>

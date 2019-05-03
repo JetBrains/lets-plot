@@ -4,7 +4,7 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.StatContext
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 
-class Density2dStatShell : BaseStat(DEF_MAPPING) {
+open class Density2dStatShell : BaseStat(DEF_MAPPING) {
 
     var adjust = DEF_ADJUST
         set

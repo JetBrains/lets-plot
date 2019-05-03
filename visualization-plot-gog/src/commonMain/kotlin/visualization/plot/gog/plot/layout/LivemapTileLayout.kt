@@ -13,7 +13,7 @@ internal class LivemapTileLayout : TileLayoutBase() {
                 geomWithAxisBounds,
                 geomBounds,
                 clipBounds(geomBounds),
-                null!!, null!!
+                null, null
         )
     }
 }

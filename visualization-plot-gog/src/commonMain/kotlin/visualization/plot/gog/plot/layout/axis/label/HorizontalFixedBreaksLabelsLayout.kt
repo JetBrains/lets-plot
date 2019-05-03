@@ -20,7 +20,7 @@ internal class HorizontalFixedBreaksLabelsLayout(orientation: Orientation,
         checkArgument(orientation.isHorizontal, orientation.toString())
     }
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle): AxisLabelsLayoutInfo {
+    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
         if (!theme.showTickLabels()) {
             return noLabelsLayoutInfo(axisLength, orientation)
         }

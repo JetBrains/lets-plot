@@ -22,7 +22,6 @@ import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProvide
 
 abstract class PlotConfig protected constructor(opts: Map<String, Any>) : OptionsAccessor(opts, DEF_OPTIONS) {
 
-
     val layerConfigs: List<LayerConfig>
     val facets: PlotFacets
     val scaleProvidersMap: TypedScaleProviderMap
@@ -30,8 +29,8 @@ abstract class PlotConfig protected constructor(opts: Map<String, Any>) : Option
     protected var sharedData: DataFrame? = null
         private set
 
-    internal val title: String
-        get() = getMap(TITLE)[TITLE_TEXT] as String
+    internal val title: String?
+        get() = getMap(TITLE)[TITLE_TEXT] as String?
 
     protected open val isClientSide: Boolean
         get() = false

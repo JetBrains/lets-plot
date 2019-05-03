@@ -78,7 +78,7 @@ object PlotConfigUtil {
         accessor.update(PLOT_COMPUTATION_MESSAGES, computation_messages)
     }
 
-    fun findComputationMessages(spec: MutableMap<*, *>): List<String> {
+    fun findComputationMessages(spec: Map<*, *>): List<String> {
         val result: List<String>
         if (PlotConfig.isPlotSpec(spec)) {
             result = getComputationMessages(spec)

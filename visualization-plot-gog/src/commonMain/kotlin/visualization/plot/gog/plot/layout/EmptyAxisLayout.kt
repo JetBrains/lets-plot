@@ -18,7 +18,7 @@ class EmptyAxisLayout private constructor(xDomain: ClosedRange<Double>, yDomain:
         return 0.0
     }
 
-    override fun doLayout(displaySize: DoubleVector, maxTickLabelsBoundsStretched: DoubleRectangle): AxisLayoutInfo {
+    override fun doLayout(displaySize: DoubleVector, maxTickLabelsBoundsStretched: DoubleRectangle?): AxisLayoutInfo {
         val axisLength = if (myOrientation.isHorizontal) displaySize.x else displaySize.y
         val tickLabelsBounds = if (myOrientation.isHorizontal   // relative to axis component
         )

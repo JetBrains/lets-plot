@@ -59,7 +59,7 @@ internal abstract class AbstractFixedBreaksLabelsLayout(orientation: Orientation
                     .bounds(bounds)
                     .smallFont(false)
                     .overlap(false)
-                    .labelAdditionalOffsets(null!!)
+                    .labelAdditionalOffsets(null)
                     .labelHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
                     .labelVerticalAnchor(TextLabel.VerticalAnchor.TOP)
                     .build()

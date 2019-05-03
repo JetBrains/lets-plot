@@ -53,7 +53,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
     }
 
     companion object {
-        fun processTransform(plotSpec: MutableMap<String, Any>): Map<String, Any> {
+        fun processTransform(plotSpec: Map<String, Any>): Map<String, Any> {
             var plotSpec = plotSpec
             val isGGBunch = isGGBunchSpec(plotSpec)
 

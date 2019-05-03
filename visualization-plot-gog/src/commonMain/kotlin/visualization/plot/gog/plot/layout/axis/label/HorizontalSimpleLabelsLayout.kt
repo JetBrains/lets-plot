@@ -15,7 +15,7 @@ import kotlin.math.max
 internal class HorizontalSimpleLabelsLayout(orientation: Orientation, axisDomain: ClosedRange<Double>,
                                             labelSpec: PlotLabelSpec, breaks: GuideBreaks, theme: AxisTheme) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle): AxisLabelsLayoutInfo {
+    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
         if (breaks.isEmpty) {
             return noLabelsLayoutInfo(axisLength, orientation)
         }
@@ -40,7 +40,7 @@ internal class HorizontalSimpleLabelsLayout(orientation: Orientation, axisDomain
                 .bounds(applyLabelsOffset(bounds!!))
                 .smallFont(false)
                 .overlap(overlap)
-                .labelAdditionalOffsets(null!!)
+                .labelAdditionalOffsets(null)
                 .labelHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
                 .labelVerticalAnchor(TextLabel.VerticalAnchor.TOP)
                 .build()

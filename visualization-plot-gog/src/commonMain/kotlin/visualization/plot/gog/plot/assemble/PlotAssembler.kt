@@ -38,7 +38,7 @@ class PlotAssembler private constructor(layersByTile: List<List<GeomLayer>>, pri
         myAxisEnabled = !myContainsLivemap  // no axis on livemap
     }
 
-    fun setTitle(title: String) {
+    fun setTitle(title: String?) {
         myTitle = title
     }
 

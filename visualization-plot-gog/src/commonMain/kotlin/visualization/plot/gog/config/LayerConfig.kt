@@ -194,7 +194,7 @@ class LayerConfig(opts: Map<*, *>,
                 defaults.putAll(GeomProto.defaultOptions(name))
             }
 
-            var statName: String? = layerOptions[STAT] as String
+            var statName: String? = layerOptions[STAT] as String?
             if (statName == null) {
                 statName = defaults[STAT] as String
             }

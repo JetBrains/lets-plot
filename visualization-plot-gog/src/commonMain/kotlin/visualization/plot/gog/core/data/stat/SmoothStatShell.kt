@@ -46,7 +46,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes
  * ymax - upper pointwise confidence interval around the mean
  * se   - standard error
  */
-class SmoothStatShell : BaseStat(DEF_MAPPING) {
+open class SmoothStatShell : BaseStat(DEF_MAPPING) {
     var smootherPointCount = DEF_EVAL_POINT_COUNT
         set
     // checkArgument(smoothingMethod == Method.LM, "Only linear model is supported, use: method='lm'");

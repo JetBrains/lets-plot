@@ -21,7 +21,7 @@ internal class VerticalFlexBreaksLabelsLayout(orientation: Orientation, axisDoma
         checkArgument(!myBreaksProvider.isFixedBreaks, "fixed breaks")
     }
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle): AxisLabelsLayoutInfo {
+    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
         checkArgument(axisLength > 0, "axis length: $axisLength")
         val maxTickCount = maxTickCount(axisLength)
         val breaks = getBreaks(maxTickCount, axisLength)

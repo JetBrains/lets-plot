@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.gog.config.transform
 
 class SpecFinder {
-    private val myKeys: List<String>
+    private var myKeys: List<String>
 
-    constructor(keys: Array<out String>) {
+    constructor(vararg keys: String) {
         myKeys = listOf(*keys)
     }
 

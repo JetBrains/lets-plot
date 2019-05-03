@@ -25,7 +25,7 @@ class PlotAxisLayout private constructor(private val myScale: Scale2<Double>, pr
         return 0.0
     }
 
-    override fun doLayout(displaySize: DoubleVector, maxTickLabelsBoundsStretched: DoubleRectangle): AxisLayoutInfo {
+    override fun doLayout(displaySize: DoubleVector, maxTickLabelsBoundsStretched: DoubleRectangle?): AxisLayoutInfo {
         val layouter = createLayouter(displaySize)
         return layouter.doLayout(axisLength(displaySize, myOrientation), maxTickLabelsBoundsStretched)
     }

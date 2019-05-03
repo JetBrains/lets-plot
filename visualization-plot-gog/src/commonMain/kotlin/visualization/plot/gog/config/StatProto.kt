@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.plot.gog.core.data.stat.*
 import jetbrains.datalore.visualization.plot.gog.core.data.stat.BoxplotStat.Companion.P_COEF
 import jetbrains.datalore.visualization.plot.gog.core.data.stat.BoxplotStat.Companion.P_VARWIDTH
 
-class StatProto {
+open class StatProto {
 
     internal fun defaultOptions(statName: String): Map<String, Any> {
         checkArgument(DEFAULTS.containsKey(statName), "Unknown stat name: '$statName'")
@@ -201,15 +201,15 @@ class StatProto {
         return stat
     }
 
-    protected fun createSmoothStat(): SmoothStatShell {
+    protected open fun createSmoothStat(): SmoothStatShell {
         return Stats.smooth()
     }
 
-    protected fun createDensity2dStat(): Density2dStatShell {
+    protected open fun createDensity2dStat(): Density2dStatShell {
         return Stats.density2d()
     }
 
-    protected fun createDensity2dfStat(): Density2dStatShell {
+    protected open fun createDensity2dfStat(): Density2dStatShell {
         return Stats.density2df()
     }
 

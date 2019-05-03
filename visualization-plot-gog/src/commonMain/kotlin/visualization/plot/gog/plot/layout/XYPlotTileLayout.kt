@@ -35,7 +35,7 @@ internal class XYPlotTileLayout(private val myXAxisLayout: AxisLayout, private v
             }
 
             if (doY || yAxisInfo == null) {
-                yAxisInfo = myYAxisLayout.doLayout(geomBounds.dimension, null!!)
+                yAxisInfo = myYAxisLayout.doLayout(geomBounds.dimension, null)
                 val axisThicknessNew = yAxisInfo.axisBounds().dimension.x
                 if (axisThicknessNew > yAxisThickness) {
                     doX = true // do X again if Y got wider

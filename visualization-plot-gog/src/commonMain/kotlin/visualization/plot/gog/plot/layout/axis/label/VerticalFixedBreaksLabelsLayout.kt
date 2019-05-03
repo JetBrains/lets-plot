@@ -15,7 +15,7 @@ internal class VerticalFixedBreaksLabelsLayout(orientation: Orientation,
         throw IllegalStateException("Not implemented here")
     }
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle): AxisLabelsLayoutInfo {
+    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
         return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
                 orientation, breaks,
                 axisDomain,

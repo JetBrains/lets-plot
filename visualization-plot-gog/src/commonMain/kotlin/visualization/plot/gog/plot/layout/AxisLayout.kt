@@ -6,5 +6,5 @@ import jetbrains.datalore.base.geometry.DoubleVector
 interface AxisLayout {
     fun initialThickness(): Double
 
-    fun doLayout(displaySize: DoubleVector, maxTickLabelsBoundsStretched: DoubleRectangle): AxisLayoutInfo
+    fun doLayout(displaySize: DoubleVector, maxTickLabelsBoundsStretched: DoubleRectangle?): AxisLayoutInfo
 }

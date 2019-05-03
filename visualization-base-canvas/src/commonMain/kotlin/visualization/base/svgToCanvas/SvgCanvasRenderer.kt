@@ -99,7 +99,8 @@ object SvgCanvasRenderer {
                     oneIfNull(el.strokeOpacity()),
                     zeroIfNull(el.strokeWidth())
             )
-            else -> throw IllegalArgumentException("Unknown element with name: " + el.elementName)
+            else -> println("Unknown element with name: " + el.elementName)
+//            else -> throw IllegalArgumentException("Unknown element with name: " + el.elementName)
         }
     }
 

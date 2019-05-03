@@ -20,23 +20,17 @@ private constructor(// tile origin relative to plot (plot area doesn't include t
         val xAxisInfo: AxisLayoutInfo?, val yAxisInfo: AxisLayoutInfo?,
         xAxisShown: Boolean, yAxisShown: Boolean,
         val facetXLabel: String?, val facetYLabel: String?) {
-    val xAxisShown: Boolean
-    val yAxisShown: Boolean
+    val xAxisShown: Boolean = xAxisInfo != null && xAxisShown
+    val yAxisShown: Boolean = yAxisInfo != null && yAxisShown
 
     constructor(
-            bounds: DoubleRectangle, geomBounds: DoubleRectangle, clipBounds: DoubleRectangle, xAxisInfo: AxisLayoutInfo, yAxisInfo: AxisLayoutInfo) : this(DoubleVector.ZERO, bounds, geomBounds, clipBounds, xAxisInfo, yAxisInfo, true, true, null, null) {
+            bounds: DoubleRectangle, geomBounds: DoubleRectangle, clipBounds: DoubleRectangle, xAxisInfo: AxisLayoutInfo?, yAxisInfo: AxisLayoutInfo?) : this(DoubleVector.ZERO, bounds, geomBounds, clipBounds, xAxisInfo, yAxisInfo, true, true, null, null) {
     }
 
     constructor(
-            bounds: DoubleRectangle, geomBounds: DoubleRectangle, clipBounds: DoubleRectangle, xAxisInfo: AxisLayoutInfo,
-            yAxisInfo: AxisLayoutInfo, xAxisShown: Boolean, yAxisShown: Boolean
+            bounds: DoubleRectangle, geomBounds: DoubleRectangle, clipBounds: DoubleRectangle, xAxisInfo: AxisLayoutInfo?,
+            yAxisInfo: AxisLayoutInfo?, xAxisShown: Boolean, yAxisShown: Boolean
     ) : this(DoubleVector.ZERO, bounds, geomBounds, clipBounds, xAxisInfo, yAxisInfo, xAxisShown, yAxisShown, null, null) {
-    }
-
-    init {
-
-        this.xAxisShown = xAxisInfo != null && xAxisShown
-        this.yAxisShown = yAxisInfo != null && yAxisShown
     }
 
     fun withOffset(offset: DoubleVector): TileLayoutInfo {

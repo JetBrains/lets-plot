@@ -15,28 +15,27 @@ class PlotSpecTransform private constructor(builder: Builder) {
 
     init {
         myMakeCleanCopy = builder.myMakeCleanCopy
-        mySpecChanges = HashMap<SpecSelector, List<SpecChange>>()
+        mySpecChanges = HashMap()
         for ((key, list) in builder.mySpecChanges) {
-            checkState(!list.isEmpty())
+            checkState(list.isNotEmpty())
             mySpecChanges[key] = list
         }
     }
 
-    fun apply(spec: MutableMap<*, *>): MutableMap<String, Any> {
+    fun apply(spec: Map<*, *>): Map<String, Any> {
         val result: MutableMap<String, Any>
-        if (myMakeCleanCopy) {
-            result = PlotSpecCleaner.apply(spec)
+        result = if (myMakeCleanCopy) {
+            PlotSpecCleaner.apply(spec)
         } else {
             val properSpec = spec as MutableMap<String, Any> // must have been cleaned already
-            result = properSpec
+            properSpec
         }
 
         val ctx = object : SpecChangeContext {
             override fun getSpecsAbsolute(vararg keys: String): List<Map<String, Any>> {
-                val finder = SpecFinder(keys)
+                val finder = SpecFinder(keys.toList())
                 val list = finder.findSpecs(result)
-                val specList = list as List<Map<String, Any>>
-                return specList
+                return list as List<Map<String, Any>>
             }
         }
         val rootSel = SpecSelector.root()
@@ -123,7 +122,7 @@ class PlotSpecTransform private constructor(builder: Builder) {
             return result
         }
 
-        return emptyList<SpecChange>()
+        return emptyList()
     }
 
 
@@ -133,7 +132,7 @@ class PlotSpecTransform private constructor(builder: Builder) {
 
         fun change(sel: SpecSelector, handler: SpecChange): Builder {
             if (!mySpecChanges.containsKey(sel)) {
-                mySpecChanges[sel] = ArrayList<SpecChange>()
+                mySpecChanges[sel] = ArrayList()
             }
             mySpecChanges[sel]!!.add(handler)
             return this

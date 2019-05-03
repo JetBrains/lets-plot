@@ -52,7 +52,7 @@ class DensityStat : BaseStat(DEF_MAPPING) {
         }
 
         val valuesX = data.getNumeric(TransformVar.X)
-        val statX = DensityStatUtil.createStepValues(statCtx.overallXRange(), myN)
+        val statX = DensityStatUtil.createStepValues(statCtx.overallXRange()!!, myN)
         val statDensity = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statScaled = ArrayList<Double>()

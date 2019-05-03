@@ -24,7 +24,7 @@ internal class HorizontalMultilineLabelsLayout(orientation: Orientation, axisDom
             return result
         }
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle): AxisLabelsLayoutInfo {
+    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
         val boundsByShelfIndex = HashMap<Int, DoubleRectangle>()
 
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)

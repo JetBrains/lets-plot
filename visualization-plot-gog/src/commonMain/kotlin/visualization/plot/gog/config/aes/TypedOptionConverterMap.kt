@@ -90,9 +90,9 @@ internal class TypedOptionConverterMap {
         return myMap[aes] as (Any) -> T
     }
 
-    private fun <T> put(aes: Aes<T>, value: (Any?) -> T?): (Any?) -> T? {
+    private fun <T> put(aes: Aes<T>, value: (Any?) -> T?): ((Any?) -> T?)? {
         // Used responsibly, private access
-        return myMap.put(aes, value) as (Any?) -> T?
+        return myMap.put(aes, value) as ((Any?) -> T?)?
     }
 
     fun containsKey(aes: Aes<*>): Boolean {

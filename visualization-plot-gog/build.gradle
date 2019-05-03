@@ -32,6 +32,8 @@ kotlin {
             }
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                implementation 'org.apache.commons:commons-math3:3.0'
+                implementation 'com.google.code.gson:gson:2.7'
 //                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
