@@ -7,6 +7,7 @@ import jetbrains.datalore.visualization.base.svg.SvgCssResource
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.GroupComponent
+import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 
 abstract class SimpleDemoBase(private val demoInnerSize: DoubleVector) {
 
@@ -20,6 +21,8 @@ abstract class SimpleDemoBase(private val demoInnerSize: DoubleVector) {
 
     protected val demoComponentSize: DoubleVector
         get() = toComponentSize(demoInnerSize)
+
+    protected open val cssStyle: String = Style.css
 
     protected fun createSvgRoots(demoGroups: List<GroupComponent>): List<SvgSvgElement> {
         return demoGroups.map {
@@ -36,11 +39,7 @@ abstract class SimpleDemoBase(private val demoInnerSize: DoubleVector) {
         svg.height().set(demoComponentSize.y)
 
         svg.setStyle(object : SvgCssResource {
-            override fun css(): String {
-                return "text {" +
-                        "font-size: 18px;" +
-                        "}"
-            }
+            override fun css(): String = cssStyle
         })
 
         val viewport = DoubleRectangle(PADDING, demoInnerSize)

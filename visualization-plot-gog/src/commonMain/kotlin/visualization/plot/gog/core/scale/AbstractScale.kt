@@ -1,23 +1,19 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
-import jetbrains.datalore.base.observable.collections.Collections
 
 internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
 
-    override val name: String
+    final override val name: String
+    final override val mapper: ((Double) -> T)?
+    final override var multiplicativeExpand = 0.0
+        protected set
+    final override var additiveExpand = 0.0
+        protected set
+
     private val myTransform: Transform?
-    override val mapper: ((Double) -> T)?
     private var myBreaks: List<DomainT>? = null
     private var myLabels: List<String>? = null
-    override var multiplicativeExpand = 0.0
-        protected set(value: Double) {
-            multiplicativeExpand = value
-        }
-    override var additiveExpand = 0.0
-        protected set(value: Double) {
-            additiveExpand = value
-        }
 
     override val isContinuous: Boolean
         get() = false
@@ -28,7 +24,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
     override var breaks: List<DomainT>
         get() {
             Preconditions.checkState(hasBreaks(), "No breaks defined for scale $name")
-            return Collections.unmodifiableList(myBreaks!!)
+            return myBreaks!!
         }
         protected set(breaks) {
             myBreaks = breaks
@@ -37,13 +33,11 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
     override val labels: List<String>
         get() {
             Preconditions.checkState(labelsDefined(), "No labels defined for scale $name")
-            return Collections.unmodifiableList(myLabels!!)
+            return myLabels!!
         }
 
     override val transform: Transform
-        get() = if (myTransform != null) {
-            myTransform
-        } else defaultTransform
+        get() = myTransform ?: defaultTransform
 
     protected abstract val defaultTransform: Transform
 
@@ -72,12 +66,12 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
         return labelsDefined()
     }
 
-    protected fun labelsDefined(): Boolean {
+    private fun labelsDefined(): Boolean {
         return myLabels != null
     }
 
-    protected abstract class AbstractBuilder<DomainT, T> protected constructor(scale: AbstractScale<DomainT, T>) : Scale2.Builder<T> {
-        internal val myName: String
+    protected abstract class AbstractBuilder<DomainT, T>(scale: AbstractScale<DomainT, T>) : Scale2.Builder<T> {
+        internal val myName: String = scale.name
         internal var myTransform: Transform?
 
         internal var myBreaks: List<DomainT>?
@@ -88,7 +82,6 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
         internal var myAdditiveExpand: Double = 0.toDouble()
 
         init {
-            myName = scale.name
             myTransform = scale.myTransform
             myBreaks = scale.myBreaks
             myLabels = scale.myLabels

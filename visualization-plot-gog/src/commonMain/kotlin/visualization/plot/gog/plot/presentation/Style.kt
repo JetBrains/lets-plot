@@ -1,28 +1,22 @@
 package jetbrains.datalore.visualization.plot.gog.plot.presentation
 
-/**
- * We have to define styles in plane text instead of
- * using GWT resource support (ResourceBundle)
- * because we need styles to work in both - web browser and AWT (via Batik).
- * Unfortunately, GWT ResourceBundle won't work in AWT.
- */
 object Style {
-    val PLOT_CONTAINER = "plt-container"
-    val PLOT = "plt-plot"
-    val PLOT_TITLE = "plt-plot-title"
+    const val PLOT_CONTAINER = "plt-container"
+    const val PLOT = "plt-plot"
+    const val PLOT_TITLE = "plt-plot-title"
 
-    val AXIS = "plt-axis"
+    const val AXIS = "plt-axis"
 
-    val AXIS_TITLE = "plt-axis-title"
-    val TICK = "tick"
-    val SMALL_TICK_FONT = "small-tick-font"
+    const val AXIS_TITLE = "plt-axis-title"
+    const val TICK = "tick"
+    const val SMALL_TICK_FONT = "small-tick-font"
 
-    val BACK = "back"
+    const val BACK = "back"
 
-    val LEGEND = "plt_legend"
-    val LEGEND_TITLE = "legend-title"
+    const val LEGEND = "plt_legend"
+    const val LEGEND_TITLE = "legend-title"
 
-    val PLOT_GLASS_PANE = "plt-glass-pane"
+    const val PLOT_GLASS_PANE = "plt-glass-pane"
 
     private val CSS = "                                              " +
             " .plt-container {" +

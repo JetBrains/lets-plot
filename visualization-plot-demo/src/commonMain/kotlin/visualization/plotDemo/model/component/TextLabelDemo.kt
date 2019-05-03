@@ -13,6 +13,57 @@ import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
+    override val cssStyle: String
+        get() = "text {" +
+                "font-size: 18px;" +
+                "}"
+
+    protected fun createModel(): GroupComponent {
+        val specs = ArrayList<LabelSpec>()
+        specs.add(LabelSpec(LEFT, BOTTOM, 0.0))
+        specs.add(LabelSpec(MIDDLE, BOTTOM, 0.0))
+        specs.add(LabelSpec(RIGHT, BOTTOM, 0.0))
+        specs.add(LabelSpec(LEFT, CENTER, 0.0))
+        specs.add(LabelSpec(MIDDLE, CENTER, 0.0))
+        specs.add(LabelSpec(RIGHT, CENTER, 0.0))
+        specs.add(LabelSpec(LEFT, TOP, 0.0))
+        specs.add(LabelSpec(MIDDLE, TOP, 0.0))
+        specs.add(LabelSpec(RIGHT, TOP, 0.0))
+
+        specs.add(LabelSpec(LEFT, BOTTOM, 30.0))
+        specs.add(LabelSpec(MIDDLE, BOTTOM, 30.0))
+        specs.add(LabelSpec(RIGHT, BOTTOM, 30.0))
+        specs.add(LabelSpec(LEFT, CENTER, 30.0))
+        specs.add(LabelSpec(MIDDLE, CENTER, 30.0))
+        specs.add(LabelSpec(RIGHT, CENTER, 30.0))
+        specs.add(LabelSpec(LEFT, TOP, 30.0))
+        specs.add(LabelSpec(MIDDLE, TOP, 30.0))
+        specs.add(LabelSpec(RIGHT, TOP, 30.0))
+
+        val groupComponent = GroupComponent()
+
+        var exampleDim = DoubleVector(200.0, 50.0)
+        var i = 0
+        var y = 50
+        for (spec in specs) {
+            if (i++ == 9) {
+                exampleDim = exampleDim.add(DoubleVector(0.0, 50.0))
+            }
+            val labelExample = createLabelExample(exampleDim, spec.hAnchor, spec.vAnchor, spec.angle)
+            SvgUtils.transformTranslate(labelExample, 300.0, y.toDouble())
+            groupComponent.add(labelExample)
+            y += exampleDim.y.toInt()
+        }
+
+        return groupComponent
+    }
+
+    private class LabelSpec(
+            val hAnchor: HorizontalAnchor,
+            val vAnchor: VerticalAnchor,
+            val angle: Double)
+
+
     companion object {
         private val DEMO_BOX_SIZE = DoubleVector(800.0, 1500.0)
 
@@ -65,49 +116,4 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             return label
         }
     }
-
-    protected fun createModel(): GroupComponent {
-        val specs = ArrayList<LabelSpec>()
-        specs.add(LabelSpec(LEFT, BOTTOM, 0.0))
-        specs.add(LabelSpec(MIDDLE, BOTTOM, 0.0))
-        specs.add(LabelSpec(RIGHT, BOTTOM, 0.0))
-        specs.add(LabelSpec(LEFT, CENTER, 0.0))
-        specs.add(LabelSpec(MIDDLE, CENTER, 0.0))
-        specs.add(LabelSpec(RIGHT, CENTER, 0.0))
-        specs.add(LabelSpec(LEFT, TOP, 0.0))
-        specs.add(LabelSpec(MIDDLE, TOP, 0.0))
-        specs.add(LabelSpec(RIGHT, TOP, 0.0))
-
-        specs.add(LabelSpec(LEFT, BOTTOM, 30.0))
-        specs.add(LabelSpec(MIDDLE, BOTTOM, 30.0))
-        specs.add(LabelSpec(RIGHT, BOTTOM, 30.0))
-        specs.add(LabelSpec(LEFT, CENTER, 30.0))
-        specs.add(LabelSpec(MIDDLE, CENTER, 30.0))
-        specs.add(LabelSpec(RIGHT, CENTER, 30.0))
-        specs.add(LabelSpec(LEFT, TOP, 30.0))
-        specs.add(LabelSpec(MIDDLE, TOP, 30.0))
-        specs.add(LabelSpec(RIGHT, TOP, 30.0))
-
-        val groupComponent = GroupComponent()
-
-        var exampleDim = DoubleVector(200.0, 50.0)
-        var i = 0
-        var y = 50
-        for (spec in specs) {
-            if (i++ == 9) {
-                exampleDim = exampleDim.add(DoubleVector(0.0, 50.0))
-            }
-            val labelExample = createLabelExample(exampleDim, spec.hAnchor, spec.vAnchor, spec.angle)
-            SvgUtils.transformTranslate(labelExample, 300.0, y.toDouble())
-            groupComponent.add(labelExample)
-            y += exampleDim.y.toInt()
-        }
-
-        return groupComponent
-    }
-
-    private class LabelSpec(
-            val hAnchor: HorizontalAnchor,
-            val vAnchor: VerticalAnchor,
-            val angle: Double)
 }
