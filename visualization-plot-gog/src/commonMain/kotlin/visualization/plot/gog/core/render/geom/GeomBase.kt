@@ -10,7 +10,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.*
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GenericLegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.LinePath
 
-internal abstract class GeomBase : Geom {
+abstract class GeomBase : Geom {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = GenericLegendKeyElementFactory()

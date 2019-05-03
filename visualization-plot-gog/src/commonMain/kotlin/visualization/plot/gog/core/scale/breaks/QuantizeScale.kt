@@ -8,6 +8,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
+// ToDo: seem like `WithFiniteOrderedOutput` never used
 class QuantizeScale<T> : WithFiniteOrderedOutput<T> {
     private var myHasDomain: Boolean = false
     private var myDomainStart: Double = 0.toDouble()

@@ -12,7 +12,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.HintColor
 import jetbrains.datalore.visualization.plot.gog.core.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShapes
 
-internal open class PointGeom : GeomBase() {
+open class PointGeom : GeomBase() {
 
     var animation: Any? = null
 

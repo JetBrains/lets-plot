@@ -12,7 +12,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     override val defaultTransform: Transform
         get() = Transforms.IDENTITY
 
-    constructor(name: String, mapper: ((Double) -> T)?, continuousOutput: Boolean) : super(name, mapper) {
+    constructor(name: String, mapper: ((Double) -> T), continuousOutput: Boolean) : super(name, mapper) {
         isContinuous = continuousOutput
         domainLimits = ClosedRange.closed(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
 

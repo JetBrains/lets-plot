@@ -4,11 +4,11 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 
 object Scales {
     fun <T> continuousDomain(name: String, aes: Aes<T>): Scale2<T> {
-        return ContinuousScale(name, null, aes.isNumeric)
+        return ContinuousScale(name, Mappers.undefined(), aes.isNumeric)
     }
 
     fun continuousDomainNumericRange(name: String): Scale2<Double> {
-        return ContinuousScale(name, null, true)
+        return ContinuousScale(name, Mappers.undefined(), true)
     }
 
     fun <T> continuousDomain(name: String, mapper: (Double) -> T, continuousRange: Boolean): Scale2<T> {
@@ -22,10 +22,10 @@ object Scales {
   */
 
     fun <T> discreteDomain(name: String, domainValues: Collection<Any>): Scale2<T> {
-        return discreteDomain(name, domainValues, null)
+        return discreteDomain(name, domainValues, Mappers.undefined())
     }
 
-    fun <T> discreteDomain(name: String, domainValues: Collection<Any>, mapper: ((Double) -> T)?): Scale2<T> {
+    fun <T> discreteDomain(name: String, domainValues: Collection<Any>, mapper: ((Double) -> T)): Scale2<T> {
         return DiscreteScale(name, domainValues, mapper)
     }
 

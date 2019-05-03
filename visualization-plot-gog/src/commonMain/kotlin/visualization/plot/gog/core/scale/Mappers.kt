@@ -9,6 +9,8 @@ import kotlin.math.round
 object Mappers {
     val IDENTITY = { v: Double -> v }
 
+    fun <T> undefined(): (Double) -> T = { throw IllegalStateException("Undefined mapper") }
+
     fun <T> nullable(f: (Double) -> T, ifNull: T): (Double?) -> T {
         return { n ->
             if (n == null) {
