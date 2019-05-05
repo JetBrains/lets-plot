@@ -16,6 +16,7 @@ kotlin {
                 implementation project(':visualization-base-svg')
                 implementation project(':visualization-base-canvas')
                 implementation project(':visualization-plot-common')
+                implementation 'io.github.microutils:kotlin-logging-common:1.6.24'
             }
         }
         commonTest {
@@ -34,6 +35,8 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 implementation 'org.apache.commons:commons-math3:3.0'
                 implementation 'com.google.code.gson:gson:2.7'
+                implementation 'org.slf4j:slf4j-simple:1.6.1'
+                implementation 'io.github.microutils:kotlin-logging:1.6.24'
 //                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
@@ -51,6 +54,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
+                implementation 'io.github.microutils:kotlin-logging-js:1.6.24'
             }
         }
         jsTest {
