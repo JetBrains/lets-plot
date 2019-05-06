@@ -81,7 +81,7 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
 
     protected abstract fun plotLayout(): PlotLayout
 
-    protected override fun buildComponent() {
+    override fun buildComponent() {
         try {
             buildPlot()
         } catch (e: RuntimeException) {
@@ -160,11 +160,9 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
 
     private fun createAxisTitle(text: String, orientation: Orientation, plotBounds: DoubleRectangle, geomBounds: DoubleRectangle) {
         val horizontalAnchor = HorizontalAnchor.MIDDLE
-        val verticalAnchor: TextLabel.VerticalAnchor
-        when (orientation) {
-            Orientation.LEFT, Orientation.RIGHT, Orientation.TOP -> verticalAnchor = VerticalAnchor.TOP
-            Orientation.BOTTOM -> verticalAnchor = VerticalAnchor.BOTTOM
-            else -> throw RuntimeException("Unexpected orientation:$orientation")
+        val verticalAnchor: VerticalAnchor = when (orientation) {
+            Orientation.LEFT, Orientation.RIGHT, Orientation.TOP -> VerticalAnchor.TOP
+            Orientation.BOTTOM -> VerticalAnchor.BOTTOM
         }
 
         val titleLocation: DoubleVector
@@ -180,7 +178,6 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
             }
             Orientation.TOP -> titleLocation = DoubleVector(geomBounds.center.x, plotBounds.top + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN)
             Orientation.BOTTOM -> titleLocation = DoubleVector(geomBounds.center.x, plotBounds.bottom - PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN)
-            else -> throw RuntimeException("Unexpected orientation:$orientation")
         }
 
         val titleLabel = TextLabel(text)
@@ -301,7 +298,7 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
 
         val tilesOrigin = geomAndAxis.origin
         for (i in 0 until plotInfo.tiles.size) {
-            val tileInfo = plotInfo.tiles.get(i)
+            val tileInfo = plotInfo.tiles[i]
 
             //GWT.log("plot offset: " + tileInfo.plotOffset);
             //GWT.log("     bounds: " + tileInfo.bounds);
@@ -352,7 +349,7 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
 
         // add legends
         if (boxesLayoutResult != null) {
-            for (boxWithLocation in boxesLayoutResult!!.boxWithLocationList) {
+            for (boxWithLocation in boxesLayoutResult.boxWithLocationList) {
                 val legendBox = boxWithLocation.legendBox.createLegendBox()
                 legendBox.moveTo(boxWithLocation.location)
                 add(legendBox)
@@ -366,6 +363,6 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
 
     companion object {
         private val DEF_PLOT_SIZE = DoubleVector(600.0, 400.0)
-        private val DEBUG_DRAWING = FeatureSwitch.PLOT_DEBUG_DRAWING
+        private const val DEBUG_DRAWING = FeatureSwitch.PLOT_DEBUG_DRAWING
     }
 }
