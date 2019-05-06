@@ -36,7 +36,7 @@ internal class ColorHueMapperProvider(hueRange: List<Double>?, chroma: Double?, 
         return createDiscreteMapper(domainValues, myLowHSV, highHSV)
     }
 
-    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform): GuideMapper<Color> {
+    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
         val domain = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
         val highHSV = adjustHighHue(myLowHSV, myHighHSV, 12)
         return createContinuousMapper(domain, myLowHSV, highHSV)

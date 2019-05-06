@@ -26,7 +26,7 @@ internal class ColorGradient2MapperProvider(low: Color?, mid: Color?, high: Colo
         myMidpoint = midpoint ?: 0.0
     }
 
-    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform): GuideMapper<Color> {
+    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
         val domain = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
 
         val lowDomain = ClosedRange.closed(domain.lowerEndpoint(), max(myMidpoint!!, domain.lowerEndpoint()))

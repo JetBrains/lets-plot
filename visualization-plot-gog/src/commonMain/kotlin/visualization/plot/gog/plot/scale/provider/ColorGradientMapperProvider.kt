@@ -28,7 +28,7 @@ internal class ColorGradientMapperProvider(low: Color?, high: Color?, naValue: C
         return GuideMappers.adapt(gradient)
     }
 
-    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform): GuideMapper<Color> {
+    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
         val domain = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
         val gradient = ColorMapper.gradient(domain, myLow, myHigh, naValue)
         return GuideMappers.adaptContinuous(gradient)

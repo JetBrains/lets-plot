@@ -13,7 +13,7 @@ internal class IdentityMapperProvider<T>(private val myDiscreteMapperProvider: I
         return myDiscreteMapperProvider.createDiscreteMapper(data, variable)
     }
 
-    override fun createContinuousMapper(data: DataFrame, variable: Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform): GuideMapper<T> {
+    override fun createContinuousMapper(data: DataFrame, variable: Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<T> {
         return GuideMappers.adaptContinuous(myContinuousMapper)
     }
 }

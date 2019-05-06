@@ -25,7 +25,7 @@ internal class ColorLuminanceMapperProvider(start: Double?, end: Double?, naValu
         return createDiscreteMapper(domainValues, myLowHSV, myHighHSV)
     }
 
-    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform): GuideMapper<Color> {
+    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
         val domain = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
         return createContinuousMapper(domain, myLowHSV, myHighHSV)
     }

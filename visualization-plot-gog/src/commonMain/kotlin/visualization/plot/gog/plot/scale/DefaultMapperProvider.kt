@@ -137,7 +137,7 @@ object DefaultMapperProvider {
                 }
 
                 override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                                                    trans: Transform): GuideMapper<Double> {
+                                                    trans: Transform?): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
             }

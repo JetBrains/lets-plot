@@ -8,7 +8,7 @@ open class MapperProviderAdapter<T> : MapperProvider<T> {
         throw IllegalStateException("Can't create mapper for discrete domain ($variable)")
     }
 
-    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform): GuideMapper<T> {
+    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<T> {
         throw IllegalStateException("Can't create mapper for continuous domain ($variable)")
     }
 }

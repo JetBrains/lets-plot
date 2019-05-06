@@ -10,7 +10,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     private var myDomainLimits: Set<Any?> = emptySet()
     private var myDomainValueByNumber: TreeMap<Double, Any>? = null
 
-    override var breaks: List<Any> = super.breaks
+    override var breaks: List<Any>
         get() {
             val breaks = super.breaks
             if (!hasDomainLimits()) {
@@ -18,6 +18,9 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             }
             val indices = SeriesUtil.matchingIndices(breaks, myDomainLimits)
             return SeriesUtil.pickAtIndices(breaks, indices)
+        }
+        set(breaks) {
+            super.breaks = breaks
         }
 
     override val labels: List<String>

@@ -107,7 +107,7 @@ internal class ColorBrewerMapperProvider
         return GuideMappers.discreteToDiscrete(data, variable, colors, naValue)
     }
 
-    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform): GuideMapper<Color> {
+    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
         val colors = getColors(data, variable)
         return GuideMappers.continuousToDiscrete(
                 MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans), colors, naValue)

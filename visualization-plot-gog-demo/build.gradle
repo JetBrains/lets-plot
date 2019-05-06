@@ -1,0 +1,36 @@
+plugins {
+    id 'kotlin-multiplatform' version '1.3.30'
+}
+
+kotlin {
+    jvm()
+    js()
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation project(':base')
+                implementation project(':visualization-base-svg')
+                implementation project(':visualization-base-canvas')
+                implementation project(':visualization-plot-common')
+                implementation project(':visualization-plot-gog')
+                implementation 'io.github.microutils:kotlin-logging-common:1.6.24'
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation 'com.google.code.gson:gson:2.7'
+                implementation 'org.slf4j:slf4j-simple:1.6.1'
+                implementation 'io.github.microutils:kotlin-logging:1.6.24'
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+                implementation 'io.github.microutils:kotlin-logging-js:1.6.24'
+            }
+        }
+    }
+}

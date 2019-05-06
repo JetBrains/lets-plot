@@ -28,7 +28,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
 
 
     init {
-        myMapperProvider = DefaultMapperProvider.get(myAes)
+        myMapperProvider = DefaultMapperProvider[myAes]
     }
 
     fun mapperProvider(mapperProvider: MapperProvider<T>): ScaleProviderBuilder<T> {
@@ -102,42 +102,17 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
     }
 
     private class MyScaleProvider<T> internal constructor(b: ScaleProviderBuilder<T>) : ScaleProvider<T> {
-        private val myName: String?
-        private val myBreaks: List<*>?
-        private val myLabels: List<String>?
-        private val myMultiplicativeExpand: Double?
-        private val myAdditiveExpand: Double?
-        private val myLimits: List<*>?
-        private val myDiscreteDomain: Boolean
-        private val myContinuousTransform: Transform?
+        private val myName: String? = b.myName
+        private val myBreaks: List<*>? = if (b.myBreaks == null) null else ArrayList(b.myBreaks!!)
+        private val myLabels: List<String>? = if (b.myLabels == null) null else ArrayList(b.myLabels!!)
+        private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
+        private val myAdditiveExpand: Double? = b.myAdditiveExpand
+        private val myLimits: List<*>? = if (b.myLimits == null) null else ArrayList(b.myLimits!!)
+        private val myDiscreteDomain: Boolean = b.myDiscreteDomain
+        private val myContinuousTransform: Transform? = b.myTransform
 
-        private val myAes: Aes<T>
-        private val myMapperProvider: MapperProvider<T>?
-
-        init {
-            myName = b.myName
-            myBreaks = if (b.myBreaks == null)
-                null
-            else
-                ArrayList(b.myBreaks!!)
-            myLabels = if (b.myLabels == null)
-                null
-            else
-                ArrayList(b.myLabels!!)
-
-            myMultiplicativeExpand = b.myMultiplicativeExpand
-            myAdditiveExpand = b.myAdditiveExpand
-            myLimits = if (b.myLimits == null)
-                null
-            else
-                ArrayList(b.myLimits!!)
-
-            myDiscreteDomain = b.myDiscreteDomain
-            myMapperProvider = b.myMapperProvider
-            myAes = b.myAes
-
-            myContinuousTransform = b.myTransform
-        }
+        private val myAes: Aes<T> = b.myAes
+        private val myMapperProvider: MapperProvider<T>? = b.myMapperProvider
 
         protected fun scaleName(variable: DataFrame.Variable): String {
             return myName ?: variable.label
@@ -188,7 +163,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
                 if (data.isEmpty(variable)) {
                     scale = Scales.continuousDomain(name, absentMapper(variable), false)
                 } else {
-                    val mapper = myMapperProvider!!.createContinuousMapper(data, variable, lowerLimit, upperLimit, myContinuousTransform!!)
+                    val mapper = myMapperProvider!!.createContinuousMapper(data, variable, lowerLimit, upperLimit, myContinuousTransform)
                     val continuousRange = mapper.isContinuous || myAes.isNumeric
                     /*
           scale = mapper.isContinuous()

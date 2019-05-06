@@ -16,5 +16,6 @@ include 'base',
         'visualization-base-demo',
         'visualization-plot-common',
         'visualization-plot-gog',
+        'visualization-plot-gog-demo',
         'visualization-plot-demo',
         'demo-hello'
