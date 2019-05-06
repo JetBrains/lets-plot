@@ -171,7 +171,7 @@ internal class BoxplotGeom : GeomBase() {
         val outlierAesMapper = OutlierAestheticsMapper(
                 myOutlierColor, myOutlierFill, myOutlierShape, myOutlierSize)
 
-        return MappedAesthetics(aesthetics, outlierAesMapper)
+        return MappedAesthetics(aesthetics) { outlierAesMapper.apply(it) }
     }
 
     private class OutlierAestheticsMapper(color: Color?, fill: Color?, shape: PointShape?, size: Double?) : Function<DataPointAesthetics, DataPointAesthetics> {

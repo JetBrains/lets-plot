@@ -1,7 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.common.time.interval
 
-import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.function.Functions.function
 import jetbrains.datalore.visualization.plot.gog.common.text.DateTimeFormatUtil
 
 internal class SemesterInterval(count: Int) : TimeInterval(count) {
@@ -9,7 +7,7 @@ internal class SemesterInterval(count: Int) : TimeInterval(count) {
     override val tickFormatPattern: String
         get() = throw UnsupportedOperationException()
 
-    override val tickFormatter: Function<Any, String>
+    override val tickFormatter: (Any) -> String
         get() = TIME_FORMAT_FUNCTION
 
     override fun range(start: Double, end: Double): List<Double> {
@@ -18,7 +16,7 @@ internal class SemesterInterval(count: Int) : TimeInterval(count) {
 
     companion object {
 
-        private val TIME_FORMAT_FUNCTION: Function<Any, String> = function { input ->
+        private val TIME_FORMAT_FUNCTION: (Any) -> String = { input ->
             var result = DateTimeFormatUtil.formatDateUTC(input as Number, "Q")
             if (result.length == 2 && result.startsWith("Q")) {
                 try {

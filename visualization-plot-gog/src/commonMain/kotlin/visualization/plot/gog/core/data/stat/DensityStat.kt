@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.StatContext
@@ -17,7 +16,7 @@ class DensityStat : BaseStat(DEF_MAPPING) {
     private var myN = DEF_N
     private var myBandWidthMethod = NRD0
     private var myBandWidth: Double? = null
-    private var myKernel: Function<Double, Double> = DensityStatUtil.kernel(Kernel.GAUSSIAN)
+    private var myKernel: (Double) -> Double = DensityStatUtil.kernel(Kernel.GAUSSIAN)
 
     init {
     }
@@ -62,13 +61,13 @@ class DensityStat : BaseStat(DEF_MAPPING) {
         val weight = StatUtil.weightVector(valuesX.size, data)
 
         val bandWidth: Double
-        val densityFunction: Function<Double, Double>
+        val densityFunction: (Double) -> Double
         //bandWidth = myBandWidthMethod.equals(BandWidthMethod.DOUBLE) ? myBandWidth : DensityStatUtil.bandWidth(myBandWidthMethod, groupX);
         bandWidth = myBandWidth ?: DensityStatUtil.bandWidth(myBandWidthMethod, valuesX)
         densityFunction = DensityStatUtil.densityFunction(valuesX, myKernel, bandWidth, myAdjust, weight)
 
         for (x in statX) {
-            val d = densityFunction.apply(x)
+            val d = densityFunction(x)
             statCount.add(d)
             statDensity.add(d / SeriesUtil.sum(weight)!!)
         }
@@ -107,15 +106,15 @@ class DensityStat : BaseStat(DEF_MAPPING) {
 
     companion object {
 
-        val DEF_KERNEL = "gaussian"
-        val DEF_ADJUST = 1.0
-        val DEF_N = 512
-        val DEF_BW = "nrd0"
+        const val DEF_KERNEL = "gaussian"
+        const val DEF_ADJUST = 1.0
+        const val DEF_N = 512
+        const val DEF_BW = "nrd0"
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
                 Aes.X to Stats.X,
                 Aes.Y to Stats.DENSITY
         )
-        private val MAX_N = 9999
+        private const val MAX_N = 9999
     }
 
     /*

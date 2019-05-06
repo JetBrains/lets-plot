@@ -7,7 +7,7 @@ import kotlin.math.ceil
 import kotlin.math.log10
 
 class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Boolean) : Function<Any, String> {
-    private var myFormatter: Function<in Any, String>
+    private var myFormatter: (Any) -> String
 
     init {
         @Suppress("NAME_SHADOWING")
@@ -71,6 +71,6 @@ class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Bool
     }
 
     override fun apply(value: Any): String {
-        return myFormatter.apply(value)
+        return myFormatter(value)
     }
 }

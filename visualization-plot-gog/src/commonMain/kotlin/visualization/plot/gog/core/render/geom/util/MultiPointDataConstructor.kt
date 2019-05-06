@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.geom.util
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
@@ -23,8 +22,8 @@ object MultiPointDataConstructor {
     }
 
     fun multiPointAppender(
-            toPath: Function<DataPointAesthetics, List<DoubleVector>>): (DataPointAesthetics, (DoubleVector) -> Unit) -> Unit {
-        return { aes, coordinateConsumer -> toPath.apply(aes).forEach(coordinateConsumer) }
+            toPath: (DataPointAesthetics) -> List<DoubleVector>): (DataPointAesthetics, (DoubleVector) -> Unit) -> Unit {
+        return { aes, coordinateConsumer -> toPath(aes).forEach(coordinateConsumer) }
     }
 
     fun createMultiPointDataByGroup(

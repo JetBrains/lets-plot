@@ -23,7 +23,7 @@ object ScaleBreaksUtil {
         val breaks = breaksHelper.breaks
         val labels = ArrayList<String>()
         for (br in breaks) {
-            labels.add(breaksHelper.labelFormatter.apply(br))
+            labels.add(breaksHelper.labelFormatter(br))
         }
 
         return scale.with()

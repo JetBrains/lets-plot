@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.common.text.Formatter
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.NiceTimeInterval
@@ -11,7 +10,7 @@ internal class TimeScaleTickFormatterFactory(
         private val myMinInterval: TimeInterval?) :
         QuantitativeTickFormatterFactory() {
 
-    override fun getFormatter(range: ClosedRange<Double>, step: Double): Function<in Any, String> {
+    override fun getFormatter(range: ClosedRange<Double>, step: Double): (Any) -> String {
         return Formatter.time(formatPattern(step))
     }
 

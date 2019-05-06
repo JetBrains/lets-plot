@@ -132,7 +132,7 @@ object ScaleUtil {
 //        }
 //        throw IllegalStateException("Scale transform is not defined (" + scale.name + ")")
 
-        return scale.transform.apply(l)
+        return scale.transform.apply(l)!!
     }
 
     fun inverseTransformToContinuousDomain(l: List<Double>, scale: Scale2<*>): List<Double> {

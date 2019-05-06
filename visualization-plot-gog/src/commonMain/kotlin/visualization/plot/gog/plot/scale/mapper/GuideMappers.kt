@@ -81,7 +81,7 @@ object GuideMappers {
             for (i in 0 until breakCount) {
                 val `val` = domain.lowerEndpoint() + step / 2 + i * step
                 breakValues.add(`val`)
-                breakLabels.add(formatter.apply(`val`))
+                breakLabels.add(formatter(`val`))
             }
         }
 

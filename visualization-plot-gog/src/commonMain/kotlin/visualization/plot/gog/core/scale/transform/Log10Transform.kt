@@ -1,7 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.transform
 
-import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.function.Functions.function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleBreaks
 import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.NumericBreakFormatter
@@ -15,7 +13,7 @@ internal class Log10Transform : FunTransform(F, F_INVERSE) {
         val transformValues = transformedBreaks.domainValues
         val newDomainValues = ArrayList<Double>()
         for (transformValue in transformValues) {
-            val domainValue = F_INVERSE.apply(transformValue)
+            val domainValue = F_INVERSE(transformValue)
             newDomainValues.add(domainValue)
         }
 
@@ -40,7 +38,7 @@ internal class Log10Transform : FunTransform(F, F_INVERSE) {
     }
 
     companion object {
-        private val F: Function<Double, Double> = function { v ->
+        private val F: (Double) -> Double = { v ->
             // nullable or not?
 //            if (v != null)
 //                log10(v)
@@ -49,7 +47,7 @@ internal class Log10Transform : FunTransform(F, F_INVERSE) {
             log10(v)
 
         }
-        private val F_INVERSE: Function<Double, Double> = function { v ->
+        private val F_INVERSE: (Double) -> Double = { v ->
             // nullable or not?
 //            if (v != null)
 //                10.0.pow(v)

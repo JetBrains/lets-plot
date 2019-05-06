@@ -16,10 +16,10 @@ object Scales {
     }
 
     /*
-  public static <T> Scale2<T> pureContinuous(String name, Function<Double, T> mapper) {
-    return new ContinuousScale<>(name, mapper, true);
-  }
-  */
+    fun <T> pureContinuous(name: String, mapper: (Double) -> T): Scale2<T> {
+        return ContinuousScale(name, mapper, true)
+    }
+    */
 
     fun <T> discreteDomain(name: String, domainValues: Collection<Any>): Scale2<T> {
         return discreteDomain(name, domainValues, Mappers.undefined())

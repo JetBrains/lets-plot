@@ -1,18 +1,17 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.geom.util
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
 
-class MappedAesthetics(private val myAesthetics: Aesthetics, private val myPointAestheticsMapper: Function<DataPointAesthetics, DataPointAesthetics>) : Aesthetics {
+class MappedAesthetics(private val myAesthetics: Aesthetics, private val myPointAestheticsMapper: (DataPointAesthetics) -> DataPointAesthetics) : Aesthetics {
 
     override val isEmpty: Boolean
         get() = myAesthetics.isEmpty
 
     override fun dataPointAt(index: Int): DataPointAesthetics {
-        return myPointAestheticsMapper.apply(myAesthetics.dataPointAt(index))
+        return myPointAestheticsMapper(myAesthetics.dataPointAt(index))
     }
 
     override fun dataPointCount(): Int {
@@ -21,7 +20,7 @@ class MappedAesthetics(private val myAesthetics: Aesthetics, private val myPoint
 
     override fun dataPoints(): Iterable<DataPointAesthetics> {
         val source = myAesthetics.dataPoints()
-        return source.map { myPointAestheticsMapper.apply(it) }
+        return source.map { myPointAestheticsMapper(it) }
     }
 
     override fun range(aes: Aes<Double>): ClosedRange<Double> {

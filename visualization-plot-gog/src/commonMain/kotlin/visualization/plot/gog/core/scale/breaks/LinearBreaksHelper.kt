@@ -1,12 +1,11 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import kotlin.math.*
 
 class LinearBreaksHelper(rangeStart: Double, rangeEnd: Double, count: Int) : BreaksHelperBase(rangeStart, rangeEnd, count) {
     val breaks: List<Double>
-    val labelFormatter: Function<in Any, String>
+    val labelFormatter: (Any) -> String
 
     init {
 

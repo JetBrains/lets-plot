@@ -1,7 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
-import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.function.Functions.function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import kotlin.math.*
 
@@ -50,30 +48,28 @@ object DensityStatUtil {
         return 1.0
     }
 
-    fun kernel(ker: DensityStat.Kernel): Function<Double, Double> {
-        val myKernel: Function<Double, Double>
-        when (ker) {
-            DensityStat.Kernel.GAUSSIAN -> myKernel = function { value -> 1 / sqrt(2 * PI) * exp(-0.5 * value.pow(2.0)) }
-            DensityStat.Kernel.RECTANGULAR -> myKernel = function { value -> if (abs(value) <= 1) 0.5 else 0.0 }
-            DensityStat.Kernel.TRIANGULAR -> myKernel = function { value -> if (abs(value) <= 1) 1 - abs(value) else 0.0 }
-            DensityStat.Kernel.BIWEIGHT -> myKernel = function { value -> if (abs(value) <= 1) .9375 * (1 - value * value).pow(2.0) else 0.0 }
-            DensityStat.Kernel.EPANECHNIKOV -> myKernel = function { value -> if (abs(value) <= 1) .75 * (1 - value * value) else 0.0 }
-            DensityStat.Kernel.OPTCOSINE -> myKernel = function { value -> if (abs(value) <= 1) PI / 4 * cos(PI / 2 * value) else 0.0 }
+    fun kernel(ker: DensityStat.Kernel): (Double) -> Double {
+        return when (ker) {
+            DensityStat.Kernel.GAUSSIAN -> { value -> 1 / sqrt(2 * PI) * exp(-0.5 * value.pow(2.0)) }
+            DensityStat.Kernel.RECTANGULAR -> { value -> if (abs(value) <= 1) 0.5 else 0.0 }
+            DensityStat.Kernel.TRIANGULAR -> { value -> if (abs(value) <= 1) 1 - abs(value) else 0.0 }
+            DensityStat.Kernel.BIWEIGHT -> { value -> if (abs(value) <= 1) .9375 * (1 - value * value).pow(2.0) else 0.0 }
+            DensityStat.Kernel.EPANECHNIKOV -> { value -> if (abs(value) <= 1) .75 * (1 - value * value) else 0.0 }
+            DensityStat.Kernel.OPTCOSINE -> { value -> if (abs(value) <= 1) PI / 4 * cos(PI / 2 * value) else 0.0 }
             else //case COSINE
-            -> myKernel = function { value -> if (abs(value) <= 1) (cos(PI * value) + 1) / 2 else 0.0 }
+            -> { value -> if (abs(value) <= 1) (cos(PI * value) + 1) / 2 else 0.0 }
         }
-        return myKernel
     }
 
     internal fun densityFunction(
-            valuesX: List<Double>, ker: Function<Double, Double>, bw: Double, ad: Double, weightX: List<Double>): Function<Double, Double> {
+            valuesX: List<Double>, ker: (Double) -> Double, bw: Double, ad: Double, weightX: List<Double>): (Double) -> Double {
         val a = bw * ad
-        return function { d ->
+        return { d ->
             var sum = 0.0
             var value: Double
             for (i in valuesX.indices) {
                 value = valuesX[i]
-                sum += ker.apply((d - value) / a) * weightX[i]
+                sum += ker((d - value) / a) * weightX[i]
             }
             sum / a
         }
@@ -97,32 +93,28 @@ object DensityStatUtil {
     }
 
     fun toKernel(method: String): DensityStat.Kernel {
-        val ker: DensityStat.Kernel
-        when (method) {
-            "gaussian" -> ker = DensityStat.Kernel.GAUSSIAN
-            "rectangular", "uniform" -> ker = DensityStat.Kernel.RECTANGULAR
-            "triangular" -> ker = DensityStat.Kernel.TRIANGULAR
-            "biweight", "quartic" -> ker = DensityStat.Kernel.BIWEIGHT
-            "epanechikov", "parabolic" -> ker = DensityStat.Kernel.EPANECHNIKOV
-            "optcosine" -> ker = DensityStat.Kernel.OPTCOSINE
-            "cosine" -> ker = DensityStat.Kernel.COSINE
+        return when (method) {
+            "gaussian" -> DensityStat.Kernel.GAUSSIAN
+            "rectangular", "uniform" -> DensityStat.Kernel.RECTANGULAR
+            "triangular" -> DensityStat.Kernel.TRIANGULAR
+            "biweight", "quartic" -> DensityStat.Kernel.BIWEIGHT
+            "epanechikov", "parabolic" -> DensityStat.Kernel.EPANECHNIKOV
+            "optcosine" -> DensityStat.Kernel.OPTCOSINE
+            "cosine" -> DensityStat.Kernel.COSINE
             else -> throw IllegalArgumentException("Unsupported kernel method: $method")
         }
-        return ker
     }
 
     fun toBandWidthMethod(bw: String): DensityStat.BandWidthMethod {
-        val bandWidth: DensityStat.BandWidthMethod
-        when (bw) {
-            "nrd0" -> bandWidth = DensityStat.BandWidthMethod.NRD0
-            "nrd" -> bandWidth = DensityStat.BandWidthMethod.NRD
+        return when (bw) {
+            "nrd0" -> DensityStat.BandWidthMethod.NRD0
+            "nrd" -> DensityStat.BandWidthMethod.NRD
             else -> throw IllegalArgumentException("Unsupported bandwidth method: $bw")
         }
-        return bandWidth
     }
 
     fun createRawMatrix(
-            values: List<Double>, list: List<Double>, ker: Function<Double, Double>, bw: Double, ad: Double, weight: List<Double>): Array<DoubleArray> {
+            values: List<Double>, list: List<Double>, ker: (Double) -> Double, bw: Double, ad: Double, weight: List<Double>): Array<DoubleArray> {
         val a = bw * ad
         val n = values.size
         val x = list.size
@@ -130,7 +122,7 @@ object DensityStatUtil {
 
         for (row in 0 until x) {
             for (col in 0 until n) {
-                result[row][col] = ker.apply((list[row] - values[col]) / a) * sqrt(weight[col]) / a
+                result[row][col] = ker((list[row] - values[col]) / a) * sqrt(weight[col]) / a
             }
         }
         return result

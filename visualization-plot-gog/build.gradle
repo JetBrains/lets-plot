@@ -18,6 +18,12 @@ kotlin {
                 implementation project(':visualization-plot-common')
             }
         }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
         jvmMain {
             tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 kotlinOptions {
@@ -26,12 +32,28 @@ kotlin {
             }
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                implementation "org.mockito:mockito-core:$mockito_version"
+                implementation "org.assertj:assertj-core:$assertj_version"
 //                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+                implementation "org.hamcrest:hamcrest-core:$hamcrest_version"
+                implementation "org.hamcrest:hamcrest-library:$hamcrest_version"
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }
         }
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation kotlin('test-js')
             }
         }
     }

@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.StatContext
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
@@ -35,7 +34,7 @@ class Density2dStatShell : BaseStat(DEF_MAPPING) {
 
     protected var bandWidths: DoubleArray? = null
         private set
-    protected var kernel: Function<Double, Double>? = null
+    protected var kernel: ((Double) -> Double)? = null
         private set
 
     protected val binOptions: StatUtil.BinOptions
@@ -77,16 +76,16 @@ class Density2dStatShell : BaseStat(DEF_MAPPING) {
     }
 
     companion object {
-        val DEF_KERNEL = "gaussian"
-        val DEF_ADJUST = 1.0
-        val DEF_N = 100
-        val DEF_BW = "nrd"
-        val DEF_CONTOUR = true
-        val DEF_BIN_COUNT = 10
+        const val DEF_KERNEL = "gaussian"
+        const val DEF_ADJUST = 1.0
+        const val DEF_N = 100
+        const val DEF_BW = "nrd"
+        const val DEF_CONTOUR = true
+        const val DEF_BIN_COUNT = 10
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
                 Aes.X to Stats.X,
                 Aes.Y to Stats.Y
         )
-        private val MAX_N = 999
+        private const val MAX_N = 999
     }
 }

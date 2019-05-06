@@ -1,15 +1,15 @@
 package jetbrains.datalore.visualization.plot.gog.config.aes
 
 import jetbrains.datalore.base.function.Function
+import jetbrains.datalore.base.observable.collections.Collections
 import jetbrains.datalore.visualization.plot.gog.core.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShapes
-import jetbrains.datalore.base.observable.collections.Collections
 
 internal class ShapeOptionConverter : Function<Any?, PointShape?> {
 
-    override fun apply(option: Any?): PointShape {
-        return convert(option)
+    override fun apply(value: Any?): PointShape {
+        return convert(value)
     }
 
     companion object {

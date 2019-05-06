@@ -1,7 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.common.text
 
-import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.function.Functions.function
 import jetbrains.datalore.base.numberFormat.NumberFormatUtil
 import jetbrains.datalore.visualization.plot.gog.common.data.DataType
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.TimeInterval
@@ -16,17 +14,17 @@ object Formatter {
 
     private val SCI_NOTATION_EXP_REGEX = Regex("(.+)([eE][0-9]+)(.*)")
 
-    private val DEF_NUMBER_FORMATTER: Function<in Any, String> = function { input ->
+    private val DEF_NUMBER_FORMATTER: (Any) -> String = { input ->
         val number = input as Number
         NumberFormatUtil.formatNumber(number, "#,###.##")
     }
 
-    fun time(pattern: String): Function<in Any, String> {
-        return function { input -> DateTimeFormatUtil.formatDateUTC(input as Number, pattern) }
+    fun time(pattern: String): (Any) -> String {
+        return { input -> DateTimeFormatUtil.formatDateUTC(input as Number, pattern) }
     }
 
     @JvmOverloads
-    fun number(pattern: String, useMetricPrefix: Boolean = false): Function<in Any, String> = function { input ->
+    fun number(pattern: String, useMetricPrefix: Boolean = false): (Any) -> String = { input ->
         var result = "NaN"
         if (input is Number) {
             var s = NumberFormatUtil.formatNumber(input, pattern)
@@ -63,18 +61,18 @@ object Formatter {
         return result.groupValues[1] + metricPrefix + result.groupValues[3]
     }
 
-    fun legend(dataType: DataType): Function<in Any?, String> {
+    fun legend(dataType: DataType): (Any?) -> String {
         return tooltip(dataType)
     }
 
-    fun tooltip(dataType: DataType): Function<in Any?, String> {
+    fun tooltip(dataType: DataType): (Any?) -> String {
         return nullable(tooltipImpl(dataType), "null")
     }
 
-    private fun tooltipImpl(dataType: DataType): Function<in Any, String> {
+    private fun tooltipImpl(dataType: DataType): (Any) -> String {
         return when (dataType) {
             DataType.NUMBER -> DEF_NUMBER_FORMATTER
-            DataType.STRING -> function { it.toString() } // no formatting really (toSting)
+            DataType.STRING -> { it -> it.toString() } // no formatting really (toSting)
             DataType.INSTANT -> time(DATE_MEDIUM_TIME_SHORT)
             DataType.INSTANT_OF_DAY -> time(DATE_MEDIUM)
             DataType.INSTANT_OF_MONTH -> time(YEAR_MONTH)
@@ -83,18 +81,18 @@ object Formatter {
         }
     }
 
-    fun tableCell(dataType: DataType): Function<in Any?, String> {
+    fun tableCell(dataType: DataType): (Any?) -> String {
         return tableCell(dataType, "null")
     }
 
-    private fun tableCell(dataType: DataType, nullString: String): Function<Any?, String> {
+    private fun tableCell(dataType: DataType, nullString: String): (Any?) -> String {
         return nullable(tableCellImpl(dataType), nullString)
     }
 
-    private fun tableCellImpl(dataType: DataType): Function<in Any, String> {
+    private fun tableCellImpl(dataType: DataType): (Any) -> String {
         when (dataType) {
             DataType.NUMBER -> return DEF_NUMBER_FORMATTER
-            DataType.STRING -> return function { it.toString() } // no formatting really (toSting)
+            DataType.STRING -> return { it.toString() } // no formatting really (toSting)
             DataType.INSTANT -> return time("EEE, MMM d, ''yy")
             else -> if (dataType.isTimeInterval) {
                 val timeInterval = TimeInterval.fromIntervalDataType(dataType)
@@ -105,11 +103,11 @@ object Formatter {
         throw IllegalArgumentException("Can't create formatter for data type $dataType")
     }
 
-    private fun nullable(f: Function<in Any, String>, nullString: String): Function<Any?, String> = function { input ->
-        if (input == null) nullString else f.apply(input)
+    private fun nullable(f: (Any) -> String, nullString: String): (Any?) -> String = { input ->
+        if (input == null) nullString else f(input)
     }
 
-    fun ordinalSeries(dataType: DataType): Function<Any?, String> {
+    fun ordinalSeries(dataType: DataType): (Any?) -> String {
         return tableCell(dataType)
     }
 }

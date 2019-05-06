@@ -1,17 +1,16 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.TimeInterval
 import kotlin.jvm.JvmOverloads
 
 abstract class QuantitativeTickFormatterFactory {
 
-    fun getFormatter(step: Double): Function<in Any, String> {
+    fun getFormatter(step: Double): (Any) -> String {
         return getFormatter(ClosedRange.closed(0.0, 0.0), step)
     }
 
-    abstract fun getFormatter(range: ClosedRange<Double>, step: Double): Function<in Any, String>
+    abstract fun getFormatter(range: ClosedRange<Double>, step: Double): (Any) -> String
 
     companion object {
 

@@ -16,13 +16,13 @@ interface GeomTargetLocator {
         HOVER, NEAREST, NONE
     }
 
-    class LocatedTargets(
+    open class LocatedTargets(
             val geomTargets: List<GeomTarget>,
             private val myDistance: Double,
-            val geomKind: GeomKind,
+            open val geomKind: GeomKind,
             val contextualMapping: ContextualMapping) {
 
-        val distance: Double
+        open val distance: Double
             get() {
                 checkArgument(!isEmpty)
                 return myDistance

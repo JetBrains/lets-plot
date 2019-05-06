@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.visualization.plot.gog.common.time.TimeUtil
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.NiceTimeInterval
 import jetbrains.datalore.visualization.plot.gog.common.time.interval.TimeInterval
@@ -15,7 +14,7 @@ class DateTimeBreaksHelper internal constructor(
         BreaksHelperBase(rangeStart, rangeEnd, count) {
 
     var breaks: List<Double>
-    var labelFormatter: Function<in Any, String>
+    var labelFormatter: (Any) -> String
 
     constructor(rangeStart: Double, rangeEnd: Double, count: Int) : this(rangeStart, rangeEnd, count, null) {}
 

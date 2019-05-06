@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import kotlin.jvm.JvmStatic
 import kotlin.math.abs
@@ -11,16 +10,16 @@ import kotlin.math.max
 /**
  * @param useMetricPrefix see: https://en.wikipedia.org/wiki/Metric_prefix
  */
-(private val myUseMetricPrefix: Boolean) : QuantitativeTickFormatterFactory() {
+(private val useMetricPrefix: Boolean) : QuantitativeTickFormatterFactory() {
 
-    override fun getFormatter(range: ClosedRange<Double>, step: Double): Function<Any, String> {
+    override fun getFormatter(range: ClosedRange<Double>, step: Double): (Any) -> String {
         // avoid 0 values because log10(0) = - Infinity
         var referenceValue = max(abs(range.lowerEndpoint()), range.upperEndpoint())
         if (referenceValue == 0.0) {
             referenceValue = 1.0
         }
 
-        return NumericBreakFormatter(referenceValue, step, myUseMetricPrefix)
+        return { it -> NumericBreakFormatter(referenceValue, step, useMetricPrefix).apply(it) }
     }
 
     companion object {

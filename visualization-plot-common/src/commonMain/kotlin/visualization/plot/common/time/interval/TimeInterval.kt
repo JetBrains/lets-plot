@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.common.time.interval
 
 import jetbrains.datalore.base.datetime.Duration
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.visualization.plot.gog.common.data.DataType
 import jetbrains.datalore.visualization.plot.gog.common.text.Formatter
 
@@ -9,7 +8,7 @@ abstract class TimeInterval protected constructor(val count: Int) {
 
     abstract val tickFormatPattern: String
 
-    open val tickFormatter: Function<in Any, String>
+    open val tickFormatter: (Any) -> String
         get() = Formatter.time(tickFormatPattern)
 
     /**
@@ -61,12 +60,12 @@ abstract class TimeInterval protected constructor(val count: Int) {
         }
 
         fun fromIntervalDataType(dataType: DataType): TimeInterval {
-            when (dataType) {
-                DataType.INSTANT_OF_DAY -> return days(1)
-                DataType.INSTANT_OF_MONTH -> return months(1)
-                DataType.INSTANT_OF_QUARTER -> return quarter(1)
-                DataType.INSTANT_OF_HALF_YEAR -> return semester(1)
-                DataType.INSTANT_OF_YEAR -> return years(1)
+            return when (dataType) {
+                DataType.INSTANT_OF_DAY -> days(1)
+                DataType.INSTANT_OF_MONTH -> months(1)
+                DataType.INSTANT_OF_QUARTER -> quarter(1)
+                DataType.INSTANT_OF_HALF_YEAR -> semester(1)
+                DataType.INSTANT_OF_YEAR -> years(1)
                 else -> throw IllegalArgumentException("Can't create interval from data type: $dataType")
             }
         }

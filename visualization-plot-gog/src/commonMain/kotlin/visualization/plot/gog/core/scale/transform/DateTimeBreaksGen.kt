@@ -12,7 +12,7 @@ class DateTimeBreaksGen : BreaksGenerator {
         val labelFormatter = helper.labelFormatter
         val labels = ArrayList<String>()
         for (tick in ticks) {
-            labels.add(labelFormatter.apply(tick))
+            labels.add(labelFormatter(tick))
         }
         return ScaleBreaks(ticks, ticks, labels)
     }
