@@ -13,7 +13,7 @@ import java.util.*
 import java.util.stream.Stream
 
 class TargetsSolverTest {
-    private var firstLocatedTargetConfig: LocatedTargetsConfig? = null
+    private lateinit var firstLocatedTargetConfig: LocatedTargetsConfig
     private var secondLocatedTargetConfig: LocatedTargetsConfig? = null
 
     @Before
@@ -24,97 +24,97 @@ class TargetsSolverTest {
 
     @Test
     fun closestTargetShouldBeSelected() {
-        firstLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.7)
+        firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 0.7)
         secondLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.5)
 
-        assertTargetFrom(secondLocatedTargetConfig!!)
+        assertTargetFrom(secondLocatedTargetConfig)
     }
 
     @Test
     fun closestTargetShouldBeSelected2() {
-        firstLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.1)
+        firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 0.1)
         secondLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.9)
 
-        assertTargetFrom(firstLocatedTargetConfig!!)
+        assertTargetFrom(firstLocatedTargetConfig)
     }
 
     @Test
     fun whenOutOfRangeNothingShouldBeSelected() {
-        firstLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 1.2)
+        firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 1.2)
         secondLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 1.3)
 
-        assertTargetFrom(none()!!)
+        assertTargetFrom(none())
     }
 
     @Test
     fun whenZeroDistanceShouldBeExtendedWithExtraDistance() {
-        firstLocatedTargetConfig!!.distanceToTarget(0.0)
+        firstLocatedTargetConfig.distanceToTarget(0.0)
         secondLocatedTargetConfig!!.distanceToTarget(FAKE_DISTANCE * 0.7)
 
-        assertTargetFrom(secondLocatedTargetConfig!!)
+        assertTargetFrom(secondLocatedTargetConfig)
     }
 
     @Test
     fun whenBothTargetsHaveZeroDistance_ShouldSelectFirst() {
-        firstLocatedTargetConfig!!.distanceToTarget(0.0)
+        firstLocatedTargetConfig.distanceToTarget(0.0)
         secondLocatedTargetConfig!!.distanceToTarget(0.0)
 
-        assertTargetFrom(firstLocatedTargetConfig!!)
+        assertTargetFrom(firstLocatedTargetConfig)
     }
 
     @Test
     fun whenBothTargetsHaveZeroDistance_AndHaveSameGeomKind_ShouldSelectBoth() {
-        firstLocatedTargetConfig!!.distanceToTarget(0.0).geomKind(GeomKind.HISTOGRAM)
+        firstLocatedTargetConfig.distanceToTarget(0.0).geomKind(GeomKind.HISTOGRAM)
         secondLocatedTargetConfig!!.distanceToTarget(0.0).geomKind(GeomKind.HISTOGRAM)
 
-        assertTargetFrom(firstLocatedTargetConfig!!, secondLocatedTargetConfig!!)
+        assertTargetFrom(firstLocatedTargetConfig, secondLocatedTargetConfig)
     }
 
     @Test
     fun whenBothTargetsHaveZeroDistance_AndHaveSameGeomKind_ButWithTwoVars_ShouldSelectFirst() {
-        firstLocatedTargetConfig!!.distanceToTarget(0.0).geomKind(GeomKind.POINT)
+        firstLocatedTargetConfig.distanceToTarget(0.0).geomKind(GeomKind.POINT)
         secondLocatedTargetConfig!!.distanceToTarget(0.0).geomKind(GeomKind.POINT)
 
-        assertTargetFrom(firstLocatedTargetConfig!!)
+        assertTargetFrom(firstLocatedTargetConfig)
     }
 
     @Test
     fun whenSecondLayerHaveNoTargets_ShouldSelectFirst() {
-        firstLocatedTargetConfig!!.distanceToTarget(0.0)
+        firstLocatedTargetConfig.distanceToTarget(0.0)
         secondLocatedTargetConfig!!.withoutTarget()
 
-        assertTargetFrom(firstLocatedTargetConfig!!)
+        assertTargetFrom(firstLocatedTargetConfig)
     }
 
     @Test
     fun whenBothLayersHaveNoTargets_ShouldSelectNothing() {
-        firstLocatedTargetConfig!!.withoutTarget()
+        firstLocatedTargetConfig.withoutTarget()
         secondLocatedTargetConfig!!.withoutTarget()
 
-        assertTargetFrom(none()!!)
+        assertTargetFrom(none())
     }
 
     @Test
     fun withOneLayer_WhenOutOfDistance_ShouldSelectNone() {
-        firstLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 1.5)
+        firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 1.5)
         secondLocatedTargetConfig = null
 
-        assertTargetFrom(none()!!)
+        assertTargetFrom(none())
     }
 
     @Test
     fun withOneLayer_WithinMaxDistance_ShouldSelectFirst() {
-        firstLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.5)
+        firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 0.5)
         secondLocatedTargetConfig = null
 
-        assertTargetFrom(firstLocatedTargetConfig!!)
+        assertTargetFrom(firstLocatedTargetConfig)
     }
 
     private fun none(): LocatedTargetsConfig? {
         return null
     }
 
-    private fun assertTargetFrom(vararg expected: LocatedTargetsConfig) {
+    private fun assertTargetFrom(vararg expected: LocatedTargetsConfig?) {
 
         val targetsSolver = TargetsSolver()
         Stream
@@ -125,10 +125,14 @@ class TargetsSolverTest {
         val locatedTargets = targetsSolver.solve()
 
         if (expected.isEmpty() || Arrays.stream(expected).allMatch { layerConfig -> layerConfig === none() }) {
-            assertThat<LocatedTargets>(locatedTargets).isEmpty()
+            try {
+                assertThat<LocatedTargets>(locatedTargets).isEmpty()
+            } catch (e: Exception) {
+                println("got it")
+            }
         } else {
             assertThat<LocatedTargets>(locatedTargets).hasSameSizeAs(expected)
-            locatedTargets.zip(expected).forEach { pair -> assertThat(pair.first).isEqualTo(pair.second.myLocatedTargets) }
+            locatedTargets.zip(expected).forEach { pair -> assertThat(pair.first).isEqualTo(pair.second!!.myLocatedTargets) }
         }
     }
 
