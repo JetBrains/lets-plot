@@ -37,12 +37,14 @@ class CompositesWithBounds(private val myThreshold: Int) {
 
     fun <ViewT> upperFocusables(v: ViewT): Iterable<ViewT>
             where ViewT : NavComposite<ViewT>, ViewT : HasFocusability, ViewT : HasVisibility, ViewT : HasBounds {
-        return Composites.iterate(v, NextUpperFocusable(v))
+        val nextUpperFocusable = NextUpperFocusable(v)
+        return Composites.iterate(v, { nextUpperFocusable.apply(it) })
     }
 
     fun <ViewT> lowerFocusables(v: ViewT): Iterable<ViewT>
             where ViewT : NavComposite<ViewT>, ViewT : HasFocusability, ViewT : HasVisibility, ViewT : HasBounds {
-        return Composites.iterate(v, NextLowerFocusable(v))
+        val nextLowerFocusable = NextLowerFocusable(v)
+        return Composites.iterate(v, { nextLowerFocusable.apply(it) })
     }
 
     fun <ViewT> upperFocusable(v: ViewT, xOffset: Int): ViewT?

@@ -1,10 +1,8 @@
 package jetbrains.datalore.mapper.core
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
 import jetbrains.datalore.base.observable.collections.list.ObservableList
 import jetbrains.datalore.base.observable.property.Properties
-import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.transform.Transformers
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -57,12 +55,7 @@ class TransformingSynchronizerTest {
 
             conf.add(TransformingObservableCollectionRoleSynchronizer(this,
                     source,
-                    Transformers.sortBy(
-                            object : Function<String, ReadableProperty<out String>> {
-                                override fun apply(value: String): ReadableProperty<out String> {
-                                    return Properties.constant(value)
-                                }
-                            }),
+                    Transformers.sortBy { value: String -> Properties.constant(value) },
                     target,
                     object : MapperFactory<String, String> {
                         override fun createMapper(source: String): Mapper<out String, out String> {

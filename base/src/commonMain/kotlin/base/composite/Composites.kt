@@ -1,8 +1,6 @@
 package jetbrains.datalore.base.composite
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Functions
-import jetbrains.datalore.base.function.Functions.function
 import jetbrains.datalore.base.function.Predicate
 import kotlin.math.min
 
@@ -107,7 +105,7 @@ object Composites {
      * @return Iterable containing the current node and all ancestors.
      */
     fun <HasParentT : HasParent<HasParentT>> ancestorsFrom(current: HasParentT): Iterable<HasParentT> {
-        return iterateFrom(current, function<HasParentT, HasParentT?> {
+        return iterateFrom(current, {
             it.parent
         })
     }
@@ -116,31 +114,31 @@ object Composites {
      * @return Iterable containing all ancestors, but not the current node.
      */
     fun <HasParentT : HasParent<HasParentT>> ancestors(current: HasParentT): Iterable<HasParentT> {
-        return iterate(current, function<HasParentT, HasParentT?> {
+        return iterate(current, {
             it.parent
         })
     }
 
     fun <CompositeT : NavComposite<CompositeT>> nextLeaves(current: CompositeT): Iterable<CompositeT> {
-        return iterate(current, function<CompositeT, CompositeT?> {
+        return iterate(current, {
             nextLeaf(it)
         })
     }
 
     fun <CompositeT : NavComposite<CompositeT>> prevLeaves(current: CompositeT): Iterable<CompositeT> {
-        return iterate(current, function<CompositeT, CompositeT?> {
+        return iterate(current, {
             prevLeaf(it)
         })
     }
 
     fun <CompositeT : NavComposite<CompositeT>> nextNavOrder(current: CompositeT): Iterable<CompositeT> {
-        return iterate(current, function<CompositeT, CompositeT?> {
+        return iterate(current, {
             nextNavOrder(current, it)
         })
     }
 
     fun <CompositeT : NavComposite<CompositeT>> prevNavOrder(current: CompositeT): Iterable<CompositeT> {
-        return iterate(current, function<CompositeT, CompositeT?> {
+        return iterate(current, {
             prevNavOrder(current, it)
         })
     }
@@ -409,11 +407,11 @@ object Composites {
         return null
     }
 
-    internal fun <ValueT> iterate(initial: ValueT, trans: Function<ValueT, ValueT?>): Iterable<ValueT> {
-        return iterateFrom(trans.apply(initial), trans)
+    internal fun <ValueT> iterate(initial: ValueT, trans: (ValueT) -> ValueT?): Iterable<ValueT> {
+        return iterateFrom(trans(initial), trans)
     }
 
-    private fun <ValueT> iterateFrom(initial: ValueT?, trans: Function<ValueT, ValueT?>): Iterable<ValueT> {
+    private fun <ValueT> iterateFrom(initial: ValueT?, trans: (ValueT) -> ValueT?): Iterable<ValueT> {
         return object : Iterable<ValueT> {
             override fun iterator(): Iterator<ValueT> {
                 return object : Iterator<ValueT> {
@@ -428,7 +426,7 @@ object Composites {
                             throw NoSuchElementException()
                         }
                         val result = myCurrent
-                        myCurrent = trans.apply(result!!)
+                        myCurrent = trans(result!!)
                         return result
                     }
                 }

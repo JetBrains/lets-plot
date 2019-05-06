@@ -30,14 +30,6 @@ object Functions {
         }
     }
 
-    fun <V, R> function(func: (V) -> R): Function<V, R> {
-        return object : Function<V, R> {
-            override fun apply(value: V): R {
-                return func.invoke(value)
-            }
-        }
-    }
-
     fun <ItemT> memorize(supplier: Supplier<ItemT>): Supplier<ItemT> {
         return Memo(supplier)
     }

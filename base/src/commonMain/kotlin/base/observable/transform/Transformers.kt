@@ -1,6 +1,5 @@
 package jetbrains.datalore.base.observable.transform
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.observable.collections.CollectionAdapter
 import jetbrains.datalore.base.observable.collections.CollectionItemEvent
 import jetbrains.datalore.base.observable.collections.CollectionListener
@@ -175,12 +174,12 @@ object Transformers {
 //    }
 
     fun <SpecItemT, ItemT : SpecItemT, ValueT : Comparable<ValueT>, CollectionT : ObservableCollection<ItemT>> sortBy(
-            propSpec: Function<in SpecItemT, out ReadableProperty<out ValueT>>): Transformer<CollectionT, ObservableList<ItemT>> {
+            propSpec: (SpecItemT) -> ReadableProperty<out ValueT>): Transformer<CollectionT, ObservableList<ItemT>> {
         return sortBy(propSpec, Order.ASCENDING)
     }
 
     fun <SpecItemT, ItemT : SpecItemT, ValueT : Comparable<ValueT>, CollectionT : ObservableCollection<ItemT>> sortBy(
-            propSpec: Function<SpecItemT, out ReadableProperty<out ValueT>>, order: Order): Transformer<CollectionT, ObservableList<ItemT>> {
+            propSpec: (SpecItemT) -> ReadableProperty<out ValueT>, order: Order): Transformer<CollectionT, ObservableList<ItemT>> {
         return sortBy(propSpec, object : Comparator<ValueT> {
             override fun compare(a: ValueT, b: ValueT): Int {
                 return if (order === Order.DESCENDING) {
@@ -191,11 +190,11 @@ object Transformers {
     }
 
     fun <SpecItemT, ItemT : SpecItemT, ValueT, CollectionT : ObservableCollection<ItemT>> sortBy(
-            propSpec: Function<SpecItemT, out ReadableProperty<out ValueT>>, cmp: Comparator<ValueT>): Transformer<CollectionT, ObservableList<ItemT>> {
+            propSpec: (SpecItemT) -> ReadableProperty<out ValueT>, cmp: Comparator<ValueT>): Transformer<CollectionT, ObservableList<ItemT>> {
         val comparator = object : Comparator<ItemT> {
             override fun compare(a: ItemT, b: ItemT): Int {
-                val p1 = propSpec.apply(a)
-                val p2 = propSpec.apply(b)
+                val p1 = propSpec(a)
+                val p2 = propSpec(b)
 
                 val v1 = p1.get()
                 val v2 = p2.get()
@@ -274,7 +273,7 @@ object Transformers {
                     }
 
                     private fun watch(item: ItemT?, to: ObservableList<ItemT>) {
-                        val property = propSpec.apply(item!!)
+                        val property = propSpec(item!!)
                         myListeners[item] = property.addHandler(object : EventHandler<PropertyChangeEvent<out ValueT>> {
                             override fun onEvent(event: PropertyChangeEvent<out ValueT>) {
                                 var needMove = false
