@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.observable.collections.Collections
 import kotlin.math.max
 import kotlin.math.min
 
@@ -11,12 +10,12 @@ import kotlin.math.min
 // ToDo: seem like `WithFiniteOrderedOutput` never used
 class QuantizeScale<T> : WithFiniteOrderedOutput<T> {
     private var myHasDomain: Boolean = false
-    private var myDomainStart: Double = 0.toDouble()
-    private var myDomainEnd: Double = 0.toDouble()
-    private var myOutputValues: List<T>? = null
+    private var myDomainStart: Double = 0.0
+    private var myDomainEnd: Double = 0.0
+    private lateinit var myOutputValues: List<T>
 
     override val outputValues: List<T>
-        get() = Collections.unmodifiableList(myOutputValues!!)
+        get() = myOutputValues
 
     //return Arrays.asList(ClosedRange.closedOpen(myDomainStart, myDomainEnd));
     //    double error = bucketSize / 10;   // prevent creating of 1 extra bucket
@@ -38,7 +37,7 @@ class QuantizeScale<T> : WithFiniteOrderedOutput<T> {
             }
 
             val list = ArrayList<ClosedRange<Double>>()
-            val numBuckets = myOutputValues!!.size
+            val numBuckets = myOutputValues.size
             val bucketSize = bucketSize()
             for (i in 0 until numBuckets - 1) {
                 val bucket = ClosedRange.closed(myDomainStart + bucketSize * i, myDomainStart + bucketSize * (i + 1))
@@ -69,15 +68,15 @@ class QuantizeScale<T> : WithFiniteOrderedOutput<T> {
     }
 
     fun quantize(v: Double): T {
-        return myOutputValues!![outputIndex(v)]
+        return myOutputValues[outputIndex(v)]
     }
 
     private fun outputIndex(v: Double): Int {
         checkState(myHasDomain, "Domain not defined.")
-        checkState(myOutputValues != null && !myOutputValues!!.isEmpty(), "Output values are not defined.")
+        checkState(myOutputValues.isNotEmpty(), "Output values are not defined.")
         val bucketSize = bucketSize()
         val index = ((v - myDomainStart) / bucketSize).toInt()
-        val maxIndex = myOutputValues!!.size - 1
+        val maxIndex = myOutputValues.size - 1
         return max(0, min(maxIndex, index))
     }
 
@@ -94,6 +93,6 @@ class QuantizeScale<T> : WithFiniteOrderedOutput<T> {
     }
 
     private fun bucketSize(): Double {
-        return (myDomainEnd - myDomainStart) / myOutputValues!!.size
+        return (myDomainEnd - myDomainStart) / myOutputValues.size
     }
 }

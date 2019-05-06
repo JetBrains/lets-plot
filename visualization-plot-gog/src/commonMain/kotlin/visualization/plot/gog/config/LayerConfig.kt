@@ -2,8 +2,6 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableMap
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.DATA
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.GEOM
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.MAPPING
@@ -23,7 +21,10 @@ class LayerConfig(opts: Map<*, *>,
                   sharedData: DataFrame,
                   plotMapping: Map<*, *>,
                   statProto: StatProto,
-                  scaleProviderByAes: TypedScaleProviderMap, private val myClientSide: Boolean) : OptionsAccessor(opts, initDefaultOptions(opts, statProto)) {
+                  scaleProviderByAes: TypedScaleProviderMap,
+                  private val myClientSide: Boolean) :
+        OptionsAccessor(opts, initDefaultOptions(opts, statProto)) {
+    
     val geomProvider: GeomProvider
     val stat: Stat
     val explicitGroupingVarName: String?
@@ -120,16 +121,16 @@ class LayerConfig(opts: Map<*, *>,
         statKind = StatKind.safeValueOf(getString(STAT)!!)
         stat = statProto.createStat(statKind, mergedOptions)
         posProvider = LayerConfigUtil.initPositionAdjustments(this, geomProvider.preferredPos)
-        constantsMap = unmodifiableMap(constants)
+        constantsMap = constants
 
         val consumedAesSet = HashSet(geomProvider.renders())
         if (!myClientSide) {
             consumedAesSet.addAll(stat.requires())
         }
 
-        val varBindings = LayerConfigUtil.createBindings(combinedData, aesMapping, scaleProviderByAes.unmodifiableCopy(), consumedAesSet)
+        val varBindings = LayerConfigUtil.createBindings(combinedData, aesMapping, scaleProviderByAes, consumedAesSet)
 
-        this.varBindings = unmodifiableList(varBindings)
+        this.varBindings = varBindings
         checkState(layerData != null)
         ownData = layerData
         myCombinedData = combinedData

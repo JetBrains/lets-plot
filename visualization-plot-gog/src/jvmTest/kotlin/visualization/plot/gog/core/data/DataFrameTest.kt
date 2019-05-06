@@ -9,9 +9,9 @@ import org.junit.Test
 
 class DataFrameTest {
 
-    private var myData: DataFrame? = null
-    private var mySelectIndices: List<Int>? = null
-    private var myAllIndices: Set<Int>? = null
+    private lateinit var myData: DataFrame
+    private lateinit var mySelectIndices: List<Int>
+    private lateinit var myAllIndices: Set<Int>
 
     @Before
     fun setUp() {
@@ -23,26 +23,26 @@ class DataFrameTest {
 
     @Test
     fun noop() {
-        assertSame(myData, myData!!.dropIndices(emptySet()))
+        assertSame(myData, myData.dropIndices(emptySet()))
     }
 
     @Test
     fun selectIndices() {
-        assertThat(myData!!.selectIndices(HashSet(mySelectIndices!!)))
+        assertThat(myData.selectIndices(HashSet(mySelectIndices)))
                 .hasRowCount(3)
-                .hasSerie("x", toSerie("x", mySelectIndices!!))
-                .hasSerie("y", toSerie("y", mySelectIndices!!))
-                .hasSerie("c", toSerie("c", mySelectIndices!!))
+                .hasSerie("x", toSerie("x", mySelectIndices))
+                .hasSerie("y", toSerie("y", mySelectIndices))
+                .hasSerie("c", toSerie("c", mySelectIndices))
     }
 
     @Test
     fun dropIndices() {
-        val dropIndices = Sets.difference(myAllIndices!!, HashSet(mySelectIndices!!))
-        assertThat(myData!!.dropIndices(dropIndices))
+        val dropIndices = Sets.difference(myAllIndices, HashSet(mySelectIndices))
+        assertThat(myData.dropIndices(dropIndices))
                 .hasRowCount(3)
-                .hasSerie("x", toSerie("x", mySelectIndices!!))
-                .hasSerie("y", toSerie("y", mySelectIndices!!))
-                .hasSerie("c", toSerie("c", mySelectIndices!!))
+                .hasSerie("x", toSerie("x", mySelectIndices))
+                .hasSerie("y", toSerie("y", mySelectIndices))
+                .hasSerie("c", toSerie("c", mySelectIndices))
     }
 
     @Test
@@ -52,7 +52,7 @@ class DataFrameTest {
     }
 
     companion object {
-        private val N = 10
+        private const val N = 10
 
         private fun assertThat(data: DataFrame): DataFrameAssert {
             return DataFrameAssert(data)

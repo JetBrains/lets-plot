@@ -4,7 +4,6 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable.Source.TRANSFORM
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.AesVisitor
-import jetbrains.datalore.base.observable.collections.Collections
 
 object TransformVar {
     val X = DataFrame.Variable("transform.X", TRANSFORM)
@@ -53,7 +52,7 @@ object TransformVar {
             varByName[`var`.name] = `var`
         }
 
-        VARS = Collections.unmodifiableMap<String, DataFrame.Variable>(varByName)
+        VARS = varByName
     }
 
     fun isTransformVar(varName: String): Boolean {

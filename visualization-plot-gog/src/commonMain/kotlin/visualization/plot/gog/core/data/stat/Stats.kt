@@ -6,7 +6,6 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable.So
 import jetbrains.datalore.visualization.plot.gog.core.data.Stat
 import jetbrains.datalore.visualization.plot.gog.core.data.StatContext
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.base.observable.collections.Collections
 
 object Stats {
     // stat variables can be referenced by name ..name.. (p 54)
@@ -27,8 +26,10 @@ object Stats {
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
     val GROUP = DataFrame.Variable("..group..", STAT, "group")
+
     val IDENTITY: Stat = IdentityStat()
-    private val VARS = Collections.unmodifiableMap(({
+
+    private val VARS: Map<String, DataFrame.Variable> = run {
         val variableList = listOf(
                 X, Y, COUNT, DENSITY, Y_MIN, Y_MAX, SE, LEVEL, LOWER, MIDDLE, UPPER, WIDTH, SCALED, GROUP
         )
@@ -38,7 +39,7 @@ object Stats {
             result[variable.name] = variable
         }
         result
-    })())
+    }
 
     fun isStatVar(varName: String): Boolean {
         return VARS.containsKey(varName)

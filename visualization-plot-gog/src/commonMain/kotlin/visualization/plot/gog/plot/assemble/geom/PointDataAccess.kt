@@ -1,21 +1,21 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble.geom
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableSet
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 
-internal class PointDataAccess(private val myData: DataFrame, private val myBindings: Map<Aes<*>, VarBinding>) : MappedDataAccess {
-    private val myMappedAes: Set<Aes<*>> = unmodifiableSet(myBindings.keys)
+internal class PointDataAccess(private val myData: DataFrame, private val bindings: Map<Aes<*>, VarBinding>) : MappedDataAccess {
+    private val myBindings: Map<Aes<*>, VarBinding> = bindings.toMap()
 
     private val myFormatters = HashMap<Aes<*>, (Any) -> String>()
 
     override val mappedAes: Set<Aes<*>>
-        get() = myMappedAes
+        get() = myBindings.keys
 
     override fun isMapped(aes: Aes<*>): Boolean {
         return myBindings.containsKey(aes)
@@ -25,9 +25,10 @@ internal class PointDataAccess(private val myData: DataFrame, private val myBind
         checkArgument(isMapped(aes), "Not mapped: $aes")
 
         val value = value(aes, index)!!
-        val scale = myBindings[aes]!!.scale
+        @Suppress("UNCHECKED_CAST")
+        val scale = myBindings[aes]!!.scale as Scale2<T>
 
-        val original = scale!!.transform.applyInverse(value)
+        val original = scale.transform.applyInverse(value)
         val s: String
         s = if (original is Number) {
             formatter(aes)(original)
@@ -35,7 +36,7 @@ internal class PointDataAccess(private val myData: DataFrame, private val myBind
             original.toString()
         }
 
-        val aesValue = scale.mapper!!(value) as T
+        val aesValue = (scale.mapper)(value)
         val continuous = scale.isContinuous
 
         return MappedDataAccess.MappedData(label(aes), s, aesValue, continuous)

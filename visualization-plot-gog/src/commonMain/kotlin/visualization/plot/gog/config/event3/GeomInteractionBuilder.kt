@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.plot.gog.config.event3
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 
 class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     var locatorLookupSpace: LookupSpace? = null
@@ -81,7 +80,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     }
 
     fun axisAes(axisAes: List<Aes<*>>): GeomInteractionBuilder {
-        myAxisAesFromConfig = unmodifiableList(ArrayList(axisAes))
+        myAxisAesFromConfig = ArrayList(axisAes)
         return this
     }
 

@@ -106,13 +106,9 @@ object PlotConfigUtil {
     internal fun createScaleProviders(scaleConfigs: List<ScaleConfig<Any>>): TypedScaleProviderMap {
         val scaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
         for (scaleConfig in scaleConfigs) {
-            addScaleProvider(scaleConfig, scaleProviderByAes)
+            val scaleProvider = scaleConfig.createScaleProvider()
+            scaleProviderByAes[scaleConfig.aes] = scaleProvider
         }
         return TypedScaleProviderMap(scaleProviderByAes)
-    }
-
-    private fun <T> addScaleProvider(scaleConfig: ScaleConfig<T>, map: MutableMap<Aes<*>, ScaleProvider<*>>) {
-        val scaleProvider = scaleConfig.createScaleProvider()
-        map.put(scaleConfig.aes, scaleProvider)
     }
 }

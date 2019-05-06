@@ -10,7 +10,10 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
 import java.util.*
 
-internal class ConfiguredStatContext(private val myDataFrames: List<DataFrame>, private val myScaleProviderMap: TypedScaleProviderMap) : StatContext {
+internal class ConfiguredStatContext(
+        private val myDataFrames: List<DataFrame>,
+        private val myScaleProviderMap: TypedScaleProviderMap) : StatContext {
+
     private fun overallRange(variable: DataFrame.Variable, dataFrames: List<DataFrame>): ClosedRange<Double>? {
         var range: ClosedRange<Double>? = null
         for (dataFrame in dataFrames) {

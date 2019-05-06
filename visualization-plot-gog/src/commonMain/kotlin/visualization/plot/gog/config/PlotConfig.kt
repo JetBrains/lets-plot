@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.gog.config.Option.Meta
 import jetbrains.datalore.visualization.plot.gog.config.Option.Meta.Kind
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.COORD
@@ -41,8 +40,8 @@ abstract class PlotConfig protected constructor(opts: Map<String, Any>) : Option
         checkState(sharedData != null)
 
         val scaleConfigs = createScaleConfigs()
-        scaleProvidersMap = PlotConfigUtil.createScaleProviders(scaleConfigs).unmodifiableCopy()
-        layerConfigs = unmodifiableList(createLayerConfigs(sharedData, scaleProvidersMap))
+        scaleProvidersMap = PlotConfigUtil.createScaleProviders(scaleConfigs)
+        layerConfigs = createLayerConfigs(sharedData, scaleProvidersMap)
 
         if (has(FACET)) {
             val facetOptions = getMap(FACET)
@@ -107,11 +106,11 @@ abstract class PlotConfig protected constructor(opts: Map<String, Any>) : Option
     }
 
     companion object {
-        private val ERROR_MESSAGE = "__error_message"
+        private const val ERROR_MESSAGE = "__error_message"
         private val DEF_OPTIONS = mapOf(
                 COORD to CoordProto.CARTESIAN
         )
-        internal val PLOT_COMPUTATION_MESSAGES = "computation_messages"
+        internal const val PLOT_COMPUTATION_MESSAGES = "computation_messages"
 
         fun failure(e: Exception): Map<String, Any> {
             val message = e.message

@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config.aes
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.observable.collections.Collections
 import jetbrains.datalore.visualization.plot.gog.core.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShapes
@@ -21,7 +20,7 @@ internal class ShapeOptionConverter : Function<Any?, PointShape?> {
                 map[shape.code] = shape
             }
             map[46] = PointShapes.dot()
-            SHAPE_BY_CODE = Collections.unmodifiableMap(map)
+            SHAPE_BY_CODE = map
         }
 
         /**

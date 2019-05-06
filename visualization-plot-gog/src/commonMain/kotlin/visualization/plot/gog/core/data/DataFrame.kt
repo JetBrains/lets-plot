@@ -2,7 +2,6 @@ package jetbrains.datalore.visualization.plot.gog.core.data
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
-import jetbrains.datalore.base.observable.collections.Collections
 import kotlin.jvm.JvmOverloads
 
 class DataFrame private constructor(builder: Builder) {
@@ -75,11 +74,12 @@ class DataFrame private constructor(builder: Builder) {
         }
 
         assertNumeric(variable)
+        @Suppress("UNCHECKED_CAST")
         return list as List<Double>
     }
 
     fun variables(): Set<Variable> {
-        return Collections.unmodifiableSet(myVectorByVar.keys)
+        return myVectorByVar.keys
     }
 
     fun isNumeric(variable: Variable): Boolean {
@@ -194,7 +194,7 @@ class DataFrame private constructor(builder: Builder) {
         }
 
         fun putIntern(variable: Variable, v: List<*>) {
-            myVectorByVar[variable] = Collections.unmodifiableList(ArrayList(v))
+            myVectorByVar[variable] = ArrayList(v)
         }
 
         fun remove(variable: Variable): Builder {

@@ -3,200 +3,199 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.core.GeomKind
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.base.observable.collections.Collections
 
 object Option {
 
     object Meta {
-        val KIND = "kind"
-        val DATA_META = "data_meta"
-        val MAP_DATA_META = "map_data_meta"
+        const val KIND = "kind"
+        const val DATA_META = "data_meta"
+        const val MAP_DATA_META = "map_data_meta"
 
         object Kind {
-            val PLOT = "plot"
-            val GG_BUNCH = "ggbunch"
+            const val PLOT = "plot"
+            const val GG_BUNCH = "ggbunch"
         }
 
         object PubSub {
-            val TAG = "pubsub"
-            val CHANNEL_ID = "channel_id"
-            val COL_NAMES = "col_names"
+            const val TAG = "pubsub"
+            const val CHANNEL_ID = "channel_id"
+            const val COL_NAMES = "col_names"
         }
 
         object GeoDataFrame {
-            val TAG = "geodataframe"
-            val GEOMETRY = "base/geometry"
+            const val TAG = "geodataframe"
+            const val GEOMETRY = "base/geometry"
         }
 
         object GeoReference {
-            val TAG = "georeference"
+            const val TAG = "georeference"
         }
     }
 
     object GGBunch {
-        val ITEMS = "items"
+        const val ITEMS = "items"
 
         object Item {
-            val X = "x"
-            val Y = "y"
-            val WIDTH = "width"
-            val HEIGHT = "height"
-            val FEATURE_SPEC = "feature_spec"
+            const val X = "x"
+            const val Y = "y"
+            const val WIDTH = "width"
+            const val HEIGHT = "height"
+            const val FEATURE_SPEC = "feature_spec"
         }
     }
 
     object Plot {
-        val DATA = "data"
+        const val DATA = "data"
         // ToDo: merge 'data' options
-        val MAPPING = "mapping"
-        val LAYERS = "layers"
-        val SCALES = "scales"
-        val TITLE = "ggtitle"
-        val TITLE_TEXT = "text"
-        val COORD = "coord"
-        val FACET = "facet"
-        val THEME = "theme"
-        val SIZE = "ggsize"
+        const val MAPPING = "mapping"
+        const val LAYERS = "layers"
+        const val SCALES = "scales"
+        const val TITLE = "ggtitle"
+        const val TITLE_TEXT = "text"
+        const val COORD = "coord"
+        const val FACET = "facet"
+        const val THEME = "theme"
+        const val SIZE = "ggsize"
     }
 
     object Layer {
-        val GEOM = "geom"
-        val STAT = "stat"
-        val DATA = "data"
-        val MAPPING = "mapping"
-        val POS = "position"
-        val SAMPLING = "sampling"
-        val SHOW_LEGEND = "show_legend"
+        const val GEOM = "geom"
+        const val STAT = "stat"
+        const val DATA = "data"
+        const val MAPPING = "mapping"
+        const val POS = "position"
+        const val SAMPLING = "sampling"
+        const val SHOW_LEGEND = "show_legend"
     }
 
     object Geom {
 
         object Choropleth {
-            val GEO_POSITIONS = "map"
+            const val GEO_POSITIONS = "map"
         }
 
         object BoxplotOutlier {
-            val COLOR = "outlier_color"
-            val FILL = "outlier_fill"
-            val SHAPE = "outlier_shape"
-            val SIZE = "outlier_size"
+            const val COLOR = "outlier_color"
+            const val FILL = "outlier_fill"
+            const val SHAPE = "outlier_shape"
+            const val SIZE = "outlier_size"
         }
 
         object Jitter {
-            val WIDTH = "width"
-            val HEIGHT = "height"
+            const val WIDTH = "width"
+            const val HEIGHT = "height"
         }
 
         object Step {
-            val DIRECTION = "direction"
+            const val DIRECTION = "direction"
         }
 
         object Segment {
-            val ARROW = "arrow"
-            val ANIMATION = "animation"
+            const val ARROW = "arrow"
+            const val ANIMATION = "animation"
         }
 
         object Path {
-            val ANIMATION = "animation"
+            const val ANIMATION = "animation"
         }
 
         object Point {
-            val ANIMATION = "animation"
+            const val ANIMATION = "animation"
         }
 
         object Image {
-            val HREF = "href"
-            val SPEC = "image_spec"
+            const val HREF = "href"
+            const val SPEC = "image_spec"
 
             object Spec {
-                val WIDTH = "width"
-                val HEIGHT = "height"
-                val TYPE = "type"
-                val BYTES = "bytes"
+                const val WIDTH = "width"
+                const val HEIGHT = "height"
+                const val TYPE = "type"
+                const val BYTES = "bytes"
             }
 
             object Type {
-                val GRAY = "gray"
-                val RGB = "rgb"
-                val RGBA = "rgba"
+                const val GRAY = "gray"
+                const val RGB = "rgb"
+                const val RGBA = "rgba"
             }
         }
 
         object Livemap {
-            val PARENT = "within"
-            val DISPLAY_MODE = "display_mode"
-            val FEATURE_LEVEL = "level"
-            val INTERACTIVE = "interactive"
-            val MAGNIFIER = "magnifier"
-            val LOCATION = "location"
-            val ZOOM = "zoom"
-            val STROKE = "stroke"
-            val SCALED = "scaled"
-            val CLUSTERING = "clustering"
-            val LABELS = "labels"
-            val THEME = "theme"
-            val PROJECTION = "projection"
-            val GEODESIC = "geodesic"
-            val DEV_PARAMS = "dev_params"
+            const val PARENT = "within"
+            const val DISPLAY_MODE = "display_mode"
+            const val FEATURE_LEVEL = "level"
+            const val INTERACTIVE = "interactive"
+            const val MAGNIFIER = "magnifier"
+            const val LOCATION = "location"
+            const val ZOOM = "zoom"
+            const val STROKE = "stroke"
+            const val SCALED = "scaled"
+            const val CLUSTERING = "clustering"
+            const val LABELS = "labels"
+            const val THEME = "theme"
+            const val PROJECTION = "projection"
+            const val GEODESIC = "geodesic"
+            const val DEV_PARAMS = "dev_params"
         }
     }
 
     object Scale {
-        val NAME = "name"
-        val AES = "aesthetic"
-        val BREAKS = "breaks"
-        val LABELS = "labels"
-        val EXPAND = "expand"
-        val LIMITS = "limits"
-        val DISCRETE_DOMAIN = "discrete"
-        val DATE_TIME = "base/datetime"
-        val NA_VALUE = "na_value"
-        val GUIDE = "guide"
+        const val NAME = "name"
+        const val AES = "aesthetic"
+        const val BREAKS = "breaks"
+        const val LABELS = "labels"
+        const val EXPAND = "expand"
+        const val LIMITS = "limits"
+        const val DISCRETE_DOMAIN = "discrete"
+        const val DATE_TIME = "base/datetime"
+        const val NA_VALUE = "na_value"
+        const val GUIDE = "guide"
 
         // continuous scale
-        val CONTINUOUS_TRANSFORM = "trans"
+        const val CONTINUOUS_TRANSFORM = "trans"
 
         // discrete scale output values
-        val OUTPUT_VALUES = "base/values"
+        const val OUTPUT_VALUES = "base/values"
         // shape scale
-        val SHAPE_SOLID = "solid"
+        const val SHAPE_SOLID = "solid"
         // gradient scale
-        val LOW = "low"
-        val MID = "mid"
-        val HIGH = "high"
-        val MIDPOINT = "midpoint"
+        const val LOW = "low"
+        const val MID = "mid"
+        const val HIGH = "high"
+        const val MIDPOINT = "midpoint"
         // hue scale
-        val HUE_RANGE = "h"
-        val CHROMA = "c"
-        val LUMINANCE = "l"
-        val START_HUE = "h_start"
-        val DIRECTION = "direction"
+        const val HUE_RANGE = "h"
+        const val CHROMA = "c"
+        const val LUMINANCE = "l"
+        const val START_HUE = "h_start"
+        const val DIRECTION = "direction"
         // grey scale
-        val START = "start"
-        val END = "end"
+        const val START = "start"
+        const val END = "end"
         // color brewer
-        val PALETTE_TYPE = "type"
-        val PALETTE = "palette"
+        const val PALETTE_TYPE = "type"
+        const val PALETTE = "palette"
 
         // range
-        val RANGE = "range"
+        const val RANGE = "range"
         // max_size for scale_size_area
-        val MAX_SIZE = "max_size"
+        const val MAX_SIZE = "max_size"
 
-        val SCALE_MAPPER_KIND = "scale_mapper_kind"
+        const val SCALE_MAPPER_KIND = "scale_mapper_kind"
     }
 
     object Facet {
-        val NAME = "name"
-        val X = "x"
-        val Y = "y"
+        const val NAME = "name"
+        const val X = "x"
+        const val Y = "y"
     }
 
     object Mapping {
-        val GROUP = "group"
+        const val GROUP = "group"
         val MAP_ID = toOption(Aes.MAP_ID)    // map_id is 'aes' but also used as option in geom_map()
         private val AES_BY_OPTION = HashMap<String, Aes<*>>()
-        val REAL_AES_OPTION_NAMES: Iterable<String> = Collections.unmodifiableCollection(AES_BY_OPTION.keys)
+        val REAL_AES_OPTION_NAMES: Iterable<String> = AES_BY_OPTION.keys
 
         init {
             for (aes in Aes.values()) {
@@ -218,82 +217,82 @@ object Option {
     }
 
     object Guide {
-        val NONE = "none"
-        val LEGEND = "legend"
-        val COLOR_BAR = "colorbar"
-        val COLOR_BAR_GB = "colourbar"
+        const val NONE = "none"
+        const val LEGEND = "legend"
+        const val COLOR_BAR = "colorbar"
+        const val COLOR_BAR_GB = "colourbar"
 
-        val REVERSE = "reverse"
+        const val REVERSE = "reverse"
 
         object Legend {
-            val ROW_COUNT = "nrow"
-            val COL_COUNT = "ncol"
-            val BY_ROW = "byrow"
+            const val ROW_COUNT = "nrow"
+            const val COL_COUNT = "ncol"
+            const val BY_ROW = "byrow"
         }
 
         object ColorBar {
-            val WIDTH = "barwidth"
-            val HEIGHT = "barheight"
-            val BIN_COUNT = "nbin"
+            const val WIDTH = "barwidth"
+            const val HEIGHT = "barheight"
+            const val BIN_COUNT = "nbin"
         }
     }
 
     object Arrow {
-        val ANGLE = "angle"
-        val LENGTH = "length"
-        val ENDS = "ends"
-        val TYPE = "type"
+        const val ANGLE = "angle"
+        const val LENGTH = "length"
+        const val ENDS = "ends"
+        const val TYPE = "type"
     }
 
     internal object Sampling {
-        val NONE = "none"
-        val N = "n"
-        val SEED = "seed"
-        val MIN_SUB_SAMPLE = "min_subsample"
+        const val NONE = "none"
+        const val N = "n"
+        const val SEED = "seed"
+        const val MIN_SUB_SAMPLE = "min_subsample"
     }
 
     object Theme {
-        val AXIS_LINE = "axis_line"
-        val AXIS_TICKS = "axis_ticks"
-        val AXIS_TEXT = "axis_text"
+        const val AXIS_LINE = "axis_line"
+        const val AXIS_TICKS = "axis_ticks"
+        const val AXIS_TEXT = "axis_text"
         // tick labels
-        val AXIS_TITLE = "axis_title"
-        val LEGEND_POSITION = "legend_position"
-        val LEGEND_JUSTIFICATION = "legend_justification"
-        val LEGEND_DIRECTION = "legend_direction"
+        const val AXIS_TITLE = "axis_title"
+        const val LEGEND_POSITION = "legend_position"
+        const val LEGEND_JUSTIFICATION = "legend_justification"
+        const val LEGEND_DIRECTION = "legend_direction"
     }
 
     object GeomName {
-        val PATH = "path"
-        val LINE = "line"
-        val SMOOTH = "smooth"
-        val BAR = "bar"
-        val HISTOGRAM = "histogram"
-        val TILE = "tile"
-        val MAP = "map"
-        val ERROR_BAR = "errorbar"
-        val POLYGON = "polygon"
-        val AB_LINE = "abline"
-        val H_LINE = "hline"
-        val V_LINE = "vline"
-        val BOX_PLOT = "boxplot"
-        val LIVE_MAP = "livemap"
-        val POINT = "point"
-        val RIBBON = "ribbon"
-        val AREA = "area"
-        val DENSITY = "density"
-        val CONTOUR = "contour"
-        val CONTOURF = "contourf"
-        val DENSITY2D = "density2d"
-        val DENSITY2DF = "density2df"
-        val JITTER = "jitter"
-        val FREQPOLY = "freqpoly"
-        val STEP = "step"
-        val RECT = "rect"
-        val SEGMENT = "segment"
-        val TEXT = "text"
-        val RASTER = "raster"
-        val IMAGE = "image"
+        const val PATH = "path"
+        const val LINE = "line"
+        const val SMOOTH = "smooth"
+        const val BAR = "bar"
+        const val HISTOGRAM = "histogram"
+        const val TILE = "tile"
+        const val MAP = "map"
+        const val ERROR_BAR = "errorbar"
+        const val POLYGON = "polygon"
+        const val AB_LINE = "abline"
+        const val H_LINE = "hline"
+        const val V_LINE = "vline"
+        const val BOX_PLOT = "boxplot"
+        const val LIVE_MAP = "livemap"
+        const val POINT = "point"
+        const val RIBBON = "ribbon"
+        const val AREA = "area"
+        const val DENSITY = "density"
+        const val CONTOUR = "contour"
+        const val CONTOURF = "contourf"
+        const val DENSITY2D = "density2d"
+        const val DENSITY2DF = "density2df"
+        const val JITTER = "jitter"
+        const val FREQPOLY = "freqpoly"
+        const val STEP = "step"
+        const val RECT = "rect"
+        const val SEGMENT = "segment"
+        const val TEXT = "text"
+        const val RASTER = "raster"
+        const val IMAGE = "image"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
 
@@ -329,7 +328,7 @@ object Option {
             map[TEXT] = GeomKind.TEXT
             map[RASTER] = GeomKind.RASTER
             map[IMAGE] = GeomKind.IMAGE
-            GEOM_KIND_MAP = Collections.unmodifiableMap(map)
+            GEOM_KIND_MAP = map
         }
 
         fun toGeomKind(geomName: String): GeomKind {

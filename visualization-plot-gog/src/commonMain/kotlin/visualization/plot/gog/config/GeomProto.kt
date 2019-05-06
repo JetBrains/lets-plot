@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableMap
 import jetbrains.datalore.visualization.plot.core.GeomKind
 import jetbrains.datalore.visualization.plot.core.GeomKind.*
 import jetbrains.datalore.visualization.plot.gog.config.Option.Geom.Image
@@ -88,8 +87,7 @@ internal object GeomProto {
     }
 
     fun geomProvider(geomName: String, opts: OptionsAccessor): GeomProvider {
-        val geomKind = GeomName.toGeomKind(geomName)
-        when (geomKind) {
+        when (val geomKind = GeomName.toGeomKind(geomName)) {
             BOX_PLOT -> return GeomProvider.boxplot {
                 val geom = BoxplotGeom()
                 if (opts.hasOwn(Option.Geom.BoxplotOutlier.COLOR)) {
@@ -152,11 +150,11 @@ internal object GeomProto {
                 geom
             }
 
-            TEXT -> return GeomProvider.text({
+            TEXT -> return GeomProvider.text {
                 val geom = TextGeom()
                 // ToDo: geom_text options here
                 geom
-            })
+            }
 
             IMAGE -> return GeomProvider.image {
                 checkArgument(opts.hasOwn(Image.HREF), "Image reference URL (href) is not specified")
@@ -177,39 +175,39 @@ internal object GeomProto {
     private fun createCommonDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "identity"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
     private fun createSmoothDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "smooth"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
     private fun createBarDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "count"
         defaults["position"] = "stack"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
     private fun createHistogramDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "bin"
         defaults["position"] = "stack"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
     private fun createContourDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "contour"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
     private fun createContourfDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "contourf"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
 
@@ -217,37 +215,37 @@ internal object GeomProto {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "boxplot"
         defaults["position"] = "dodge"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
     private fun createAreaDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "identity"
         defaults["position"] = "stack"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
     private fun createDensityDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "density"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
     private fun createDensity2dDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "density2d"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
     private fun createDensity2dfDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "density2df"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 
     private fun createFreqpolyDefaults(): Map<String, Any> {
         val defaults = HashMap<String, Any>()
         defaults["stat"] = "bin"
-        return unmodifiableMap(defaults)
+        return defaults
     }
 }

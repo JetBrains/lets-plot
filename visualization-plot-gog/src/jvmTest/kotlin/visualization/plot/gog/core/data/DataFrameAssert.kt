@@ -13,7 +13,9 @@ class DataFrameAssert internal constructor(private val myData: DataFrame) {
     internal fun hasSerie(varName: String, serie: List<*>): DataFrameAssert {
         assertTrue("Var '$varName'", DataFrameUtil.hasVariable(myData, varName))
         val `var` = DataFrameUtil.findVariableOrFail(myData, varName)
-        assertEquals(myData[`var`], serie)
+        val list = myData[`var`]
+        val serie1 = serie
+        assertEquals(list, serie1)
         return this
     }
 

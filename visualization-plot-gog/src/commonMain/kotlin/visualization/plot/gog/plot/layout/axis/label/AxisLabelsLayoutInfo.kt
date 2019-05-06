@@ -2,7 +2,6 @@ package jetbrains.datalore.visualization.plot.gog.plot.layout.axis.label
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.GuideBreaks
 
@@ -25,7 +24,7 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
         this.labelAdditionalOffsets = if (b.myLabelAdditionalOffsets == null)
             null
         else
-            unmodifiableList(ArrayList(b.myLabelAdditionalOffsets!!))
+            ArrayList(b.myLabelAdditionalOffsets!!)
         this.labelHorizontalAnchor = b.myLabelHorizontalAnchor
         this.labelVerticalAnchor = b.myLabelVerticalAnchor
         this.labelRotationAngle = b.myLabelRotationAngle

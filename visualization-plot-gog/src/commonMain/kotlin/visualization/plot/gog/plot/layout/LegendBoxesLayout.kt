@@ -5,7 +5,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendArrangement
 import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendPosition
 import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import kotlin.math.max
 
 class LegendBoxesLayout(private val myPlotBounds: DoubleRectangle, private val myTheme: LegendTheme) {
@@ -65,16 +64,12 @@ class LegendBoxesLayout(private val myPlotBounds: DoubleRectangle, private val m
             legendOrigin = LegendBoxesLayoutUtil.overlayLegendOrigin(plotInnerBoundsWithoutLegendBoxes, boxesSize, legendPosition, legendJustification)
         }
 
-        val resultBoxWithLocationList = ArrayList(LegendBoxesLayoutUtil.moveAll(legendOrigin, boxWithLocationList))
+        val resultBoxWithLocationList = LegendBoxesLayoutUtil.moveAll(legendOrigin, boxWithLocationList)
         return Result(plotInnerBoundsWithoutLegendBoxes, resultBoxWithLocationList)
     }
 
     class Result(val plotInnerBoundsWithoutLegendBoxes: DoubleRectangle, locations: List<BoxWithLocation>) {
-        val boxWithLocationList: List<BoxWithLocation>
-
-        init {
-            boxWithLocationList = unmodifiableList(locations)
-        }
+        val boxWithLocationList: List<BoxWithLocation> = ArrayList(locations)
     }
 
     class BoxWithLocation internal constructor(val legendBox: LegendBoxInfo, val location: DoubleVector) {
