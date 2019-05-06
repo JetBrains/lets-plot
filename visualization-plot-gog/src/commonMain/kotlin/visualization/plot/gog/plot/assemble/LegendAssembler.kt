@@ -2,7 +2,6 @@ package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.core.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.gog.FeatureSwitch
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
@@ -131,11 +130,11 @@ internal class LegendAssembler(private val myLegendTitle: String, private val my
 
             // build 'key' aesthetics
             keyAesthetics = mapToAesthetics(aesValuesByLabel.values, myConstantByAes, myAestheticsDefaults)
-            keyLabels = unmodifiableList(ArrayList(aesValuesByLabel.keys))
+            keyLabels = ArrayList(aesValuesByLabel.keys)
         }
     }
 
     companion object {
-        private val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
+        private const val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
     }
 }

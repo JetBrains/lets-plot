@@ -1,8 +1,5 @@
 package jetbrains.datalore.base.enums
 
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableMap
-
 class EnumInfoImpl<EnumT : Enum<EnumT>>(enumConstants: Array<EnumT>) : EnumInfo<EnumT> {
 
     private val myNormalizedValueMap: Map<String, EnumT>
@@ -28,8 +25,8 @@ class EnumInfoImpl<EnumT : Enum<EnumT>>(enumConstants: Array<EnumT>) : EnumInfo<
                 throw IllegalArgumentException("duplicate values: '$value', '$oldValue'")
             }
         }
-        myOriginalNames = unmodifiableList(originalNames)
-        myNormalizedValueMap = unmodifiableMap(valueMap)
+        myOriginalNames = originalNames
+        myNormalizedValueMap = valueMap
     }
 
     override fun safeValueOf(name: String?, defaultValue: EnumT): EnumT {
@@ -54,5 +51,4 @@ class EnumInfoImpl<EnumT : Enum<EnumT>>(enumConstants: Array<EnumT>) : EnumInfo<
     override fun unsafeValueOf(name: String): EnumT {
         return safeValueOf(name) ?: throw IllegalArgumentException("name not found: '$name'")
     }
-
 }

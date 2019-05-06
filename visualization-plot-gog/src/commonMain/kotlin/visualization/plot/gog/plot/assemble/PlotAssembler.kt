@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
@@ -32,7 +31,7 @@ class PlotAssembler private constructor(layersByTile: List<List<GeomLayer>>, pri
 
     init {
         for (plotLayers in layersByTile) {
-            myLayersByTile.add(unmodifiableList(ArrayList(plotLayers)))
+            myLayersByTile.add(ArrayList(plotLayers))
         }
         myContainsLivemap = GeomLayerListUtil.containsLivemapLayer(myLayersByTile)
         myAxisEnabled = !myContainsLivemap  // no axis on livemap

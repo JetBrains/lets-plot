@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.plot.gog.plot
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings
-import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.gog.plot.layout.LegendBoxInfo
@@ -42,7 +41,7 @@ class PlotBuilder(private val myTheme: Theme) {
     }
 
     fun addTileLayers(tileLayers: List<GeomLayer>): PlotBuilder {
-        myLayersByTile.add(tileLayers)
+        myLayersByTile.add(ArrayList(tileLayers))
         return this
     }
 
@@ -139,9 +138,9 @@ class PlotBuilder(private val myTheme: Theme) {
             myAxisXTitleEnabled = b.myTheme.axisX().showTitle()
             myAxisYTitleEnabled = b.myTheme.axisY().showTitle()
             coordProvider = b.myCoordProvider!!
-            myLayersByTile = unmodifiableList(b.myLayersByTile)
+            myLayersByTile = ArrayList(b.myLayersByTile)
             myLayout = b.myLayout
-            myLegendBoxInfos = unmodifiableList(b.myLegendBoxInfos)
+            myLegendBoxInfos = ArrayList(b.myLegendBoxInfos)
 
             isAxisEnabled = b.myAxisEnabled
             isInteractionsEnabled = b.myInteractionsEnabled
