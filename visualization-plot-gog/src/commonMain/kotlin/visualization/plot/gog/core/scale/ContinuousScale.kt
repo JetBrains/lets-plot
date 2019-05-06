@@ -47,13 +47,12 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
     }
 
 
-    private class MyBuilder<T> internal constructor(scale: ContinuousScale<T>) : AbstractBuilder<Double, T>(scale) {
-        internal val myContinuousOutput: Boolean
-        internal var myLowerLimit: Double = 0.toDouble()
-        internal var myUpperLimit: Double = 0.toDouble()
+    private class MyBuilder<T>(scale: ContinuousScale<T>) : AbstractBuilder<Double, T>(scale) {
+        internal val myContinuousOutput: Boolean = scale.isContinuous
+        internal var myLowerLimit: Double = 0.0
+        internal var myUpperLimit: Double = 0.0
 
         init {
-            myContinuousOutput = scale.isContinuous
             myLowerLimit = scale.domainLimits.lowerEndpoint()
             myUpperLimit = scale.domainLimits.upperEndpoint()
         }

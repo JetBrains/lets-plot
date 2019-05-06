@@ -30,8 +30,8 @@ open class ScatterDemo : SimpleDemoBase() {
 
     protected fun createModels(): List<GroupComponent> {
         return listOf(
-                gauss(),
-                gaussWithContinuousColor(),
+//                gauss(),
+//                gaussWithContinuousColor(),
                 gaussWithDomainX()
         )
     }
@@ -348,7 +348,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 .mapper(mapperX)
                 .breaks(listOf(-100.0, 0.0, 100.0))
                 .labels(listOf("-100", "0", "100"))
-                .lowerLimit(-100.0)
+//                .lowerLimit(-100.0)
                 .upperLimit(100.0)
                 .build()
 

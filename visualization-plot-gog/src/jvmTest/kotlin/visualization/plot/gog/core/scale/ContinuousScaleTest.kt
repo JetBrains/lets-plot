@@ -37,8 +37,8 @@ class ContinuousScaleTest {
         val scale = createScale()
 
         val t = object : Transform {
-            override fun apply(rawData: List<*>): List<Double>? {
-                return null
+            override fun apply(rawData: List<*>): List<Double> {
+                return emptyList()
             }
 
             override fun applyInverse(v: Double): Double? {

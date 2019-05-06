@@ -3,17 +3,44 @@ package jetbrains.datalore.visualization.plotDemo.model.util
 import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.GeomContextBuilder
-
+import kotlin.math.ln
+import kotlin.math.sqrt
 import kotlin.random.Random
+
+private class RandomGaussian(val random: Random) {
+    private var nextNextGaussian: Double = 0.0
+    private var haveNextNextGaussian = false
+
+    // From JDK Random (but not as good)
+    fun nextGaussian(): Double {
+        // See Knuth, ACP, Section 3.4.1 Algorithm C.
+        if (haveNextNextGaussian) {
+            haveNextNextGaussian = false
+            return nextNextGaussian
+        } else {
+            var v1: Double
+            var v2: Double
+            var s: Double
+            do {
+                v1 = 2 * random.nextDouble() - 1 // between -1 and 1
+                v2 = 2 * random.nextDouble() - 1 // between -1 and 1
+                s = v1 * v1 + v2 * v2
+            } while (s >= 1 || s == 0.0)
+            val multiplier = sqrt(-2 * ln(s) / s)
+            nextNextGaussian = v2 * multiplier
+            haveNextNextGaussian = true
+            return v1 * multiplier
+        }
+    }
+}
+
 
 object DemoUtil {
     fun gauss(count: Int, seed: Long, mean: Double, stdDeviance: Double): List<Double> {
-        val r = Random(seed)
+        val r = RandomGaussian(Random(seed))
         val list = ArrayList<Double>()
         for (i in 0 until count) {
-            // ToDo: not available in common kotiln (watching KMATH library)
-//            val next = r.nextGaussian() * stdDeviance + mean
-            val next = r.nextDouble() * stdDeviance + mean
+            val next = r.nextGaussian() * stdDeviance + mean
             list.add(next)
         }
         return list

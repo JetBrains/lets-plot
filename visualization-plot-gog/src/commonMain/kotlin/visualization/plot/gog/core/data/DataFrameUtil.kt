@@ -19,29 +19,29 @@ object DataFrameUtil {
         return applyTransform(data, `var`, transformVar, scale)
     }
 
-    private fun applyTransform(data: DataFrame, `var`: DataFrame.Variable, transformVar: DataFrame.Variable, scale: Scale2<*>): DataFrame {
-        val transformSource = getTransformSource(data, `var`, scale)
+    private fun applyTransform(data: DataFrame, variable: DataFrame.Variable, transformVar: DataFrame.Variable, scale: Scale2<*>): DataFrame {
+        val transformSource = getTransformSource(data, variable, scale)
         val transformResult = ScaleUtil.transform(transformSource, scale)
         return data.builder()
                 .putNumeric(transformVar, transformResult)
                 .build()
     }
 
-    private fun getTransformSource(data: DataFrame, `var`: DataFrame.Variable, scale: Scale2<*>): List<*> {
+    private fun getTransformSource(data: DataFrame, variable: DataFrame.Variable, scale: Scale2<*>): List<*> {
         if (!scale.hasDomainLimits()) {
-            return data[`var`]
+            return data[variable]
         }
 
         if (scale.isContinuousDomain) {
             val limits = scale.domainLimits
-            return filterTransformSource(data.getNumeric(`var`)) { input: Double? ->
+            return filterTransformSource(data.getNumeric(variable)) { input: Double? ->
                 // keep null(s)
                 input == null || limits.contains(input)   // faster then 'scale.isInDomainLimits(Object v)'
             }
         }
 
         // discrete domain
-        return filterTransformSource(data[`var`]) { input: Any? ->
+        return filterTransformSource(data[variable]) { input: Any? ->
             // keep null(s)
             input == null || scale.isInDomainLimits(input)
         }
