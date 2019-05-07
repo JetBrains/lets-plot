@@ -12,10 +12,19 @@ import jetbrains.datalore.visualization.plot.gog.plot.presentation.PlotLabelSpec
 import jetbrains.datalore.visualization.plot.gog.plot.theme.AxisTheme
 import kotlin.math.max
 
-internal class HorizontalSimpleLabelsLayout(orientation: Orientation, axisDomain: ClosedRange<Double>,
-                                            labelSpec: PlotLabelSpec, breaks: GuideBreaks, theme: AxisTheme) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
+internal class HorizontalSimpleLabelsLayout(
+        orientation: Orientation,
+        axisDomain: ClosedRange<Double>,
+        labelSpec: PlotLabelSpec,
+        breaks: GuideBreaks,
+        theme: AxisTheme) :
+        AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+    override fun doLayout(
+            axisLength: Double,
+            axisMapper: (Double?) -> Double?,
+            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+
         if (breaks.isEmpty) {
             return noLabelsLayoutInfo(axisLength, orientation)
         }

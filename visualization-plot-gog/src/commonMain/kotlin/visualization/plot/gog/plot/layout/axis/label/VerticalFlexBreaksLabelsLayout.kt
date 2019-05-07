@@ -10,8 +10,14 @@ import jetbrains.datalore.visualization.plot.gog.plot.presentation.PlotLabelSpec
 import jetbrains.datalore.visualization.plot.gog.plot.theme.AxisTheme
 import kotlin.math.ceil
 
-internal class VerticalFlexBreaksLabelsLayout(orientation: Orientation, axisDomain: ClosedRange<Double>,
-                                              labelSpec: PlotLabelSpec, private val myBreaksProvider: AxisBreaksProvider, theme: AxisTheme) : AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
+internal class VerticalFlexBreaksLabelsLayout(
+        orientation: Orientation,
+        axisDomain: ClosedRange<Double>,
+        labelSpec: PlotLabelSpec,
+        private val myBreaksProvider: AxisBreaksProvider,
+        theme: AxisTheme) :
+        AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
+
     private fun maxTickCount(axisLength: Double): Int {
         return ceil(axisLength / (AxisLabelsLayout.TICK_LABEL_SPEC.height() + MIN_TICK_LABEL_DISTANCE)).toInt()
     }
@@ -21,7 +27,11 @@ internal class VerticalFlexBreaksLabelsLayout(orientation: Orientation, axisDoma
         checkArgument(!myBreaksProvider.isFixedBreaks, "fixed breaks")
     }
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+    override fun doLayout(
+            axisLength: Double,
+            axisMapper: (Double?) -> Double?,
+            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+
         checkArgument(axisLength > 0, "axis length: $axisLength")
         val maxTickCount = maxTickCount(axisLength)
         val breaks = getBreaks(maxTickCount, axisLength)

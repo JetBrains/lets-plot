@@ -15,24 +15,35 @@ object GuideMappers {
 
 
     fun <TargetT> discreteToDiscrete(
-            data: DataFrame, `var`: DataFrame.Variable, outputValues: List<TargetT>, naValue: TargetT): GuideMapper<TargetT> {
-        val domainValues = DataFrameUtil.distinctValues(data, `var`)
+            data: DataFrame,
+            variable: DataFrame.Variable,
+            outputValues: List<TargetT>,
+            naValue: TargetT): GuideMapper<TargetT> {
+
+        val domainValues = DataFrameUtil.distinctValues(data, variable)
         return discreteToDiscrete(domainValues, outputValues, naValue)
     }
 
-    fun <TargetT> discreteToDiscrete(domainValues: Collection<*>, outputValues: List<TargetT>, naValue: TargetT): GuideMapper<TargetT> {
-        val f = Mappers.discrete(outputValues, naValue)
+    fun <TargetT> discreteToDiscrete(
+            domainValues: Collection<*>,
+            outputValues: List<TargetT>,
+            naValue: TargetT): GuideMapper<TargetT> {
 
+        val mapper = Mappers.discrete(outputValues, naValue)
         val breaks = ArrayList<GuideBreak<*>>()
         for (domainValue in domainValues) {
             // ToDo: label formatter?
-            breaks.add(GuideBreak<Any>(domainValue!!, domainValue.toString()))
+            breaks.add(GuideBreak(domainValue!!, domainValue.toString()))
         }
 
-        return GuideMapperWithGuideBreaks(f, breaks)
+        return GuideMapperWithGuideBreaks(mapper, breaks)
     }
 
-    fun <TargetT> discreteToDiscrete2(domainValues: List<*>, outputValues: List<TargetT>, naValue: TargetT): GuideMapper<TargetT> {
+    fun <TargetT> discreteToDiscrete2(
+            domainValues: List<*>,
+            outputValues: List<TargetT>,
+            naValue: TargetT): GuideMapper<TargetT> {
+
         //Function<Double, TargetT> f = Mappers.discrete(outputValues, naValue);
         // ToDo: this works better with identity scales for 'numeric' input (when indices-based discrete mapper doesn't work)
         // but doesn't map values 'between indices' as does mapper in the method above.
@@ -46,13 +57,11 @@ object GuideMappers {
             val domainValue = domainValues[i]
             mapperMap[domainValuesAsNumbers[domainValue]] = outputValues[i]
         }
-        val f = { num: Double? ->
-            if (num == null) {
-                naValue
-            } else if (mapperMap.containsKey(num)) {
-                mapperMap[num]!!
-            } else {
-                throw IllegalArgumentException("Failed to map discrete value $num")
+        val mapper = { num: Double? ->
+            when {
+                num == null -> naValue
+                mapperMap.containsKey(num) -> mapperMap[num]!!
+                else -> throw IllegalArgumentException("Failed to map discrete value $num")
             }
         }
 
@@ -63,7 +72,7 @@ object GuideMappers {
             breaks.add(GuideBreak(domainValue!!, domainValue.toString()))
         }
 
-        return GuideMapperWithGuideBreaks(f, breaks)
+        return GuideMapperWithGuideBreaks(mapper, breaks)
     }
 
     fun <TargetT> continuousToDiscrete(domain: ClosedRange<Double>?, outputValues: List<TargetT>, naValue: TargetT): GuideMapper<TargetT> {
@@ -94,16 +103,19 @@ object GuideMappers {
         return GuideMapperWithGuideBreaks(f, breaks)
     }
 
-    fun discreteToContinuous(domainValues: Collection<*>, outputRange: ClosedRange<Double>, naValue: Double?): GuideMapper<Double> {
-        val f = Mappers.discreteToContinuous(domainValues, outputRange, naValue)
+    fun discreteToContinuous(
+            domainValues: Collection<*>,
+            outputRange: ClosedRange<Double>,
+            naValue: Double): GuideMapper<Double> {
 
+        val mapper = Mappers.discreteToContinuous(domainValues, outputRange, naValue)
         val breaks = ArrayList<GuideBreak<*>>()
         for (domainValue in domainValues) {
             // ToDo: label formatter?
-            breaks.add(GuideBreak<Any>(domainValue!!, domainValue.toString()))
+            breaks.add(GuideBreak(domainValue!!, domainValue.toString()))
         }
 
-        return GuideMapperWithGuideBreaks(f, breaks)
+        return GuideMapperWithGuideBreaks(mapper, breaks)
     }
 
     fun continuousToContinuous(domain: ClosedRange<Double>, range: ClosedRange<Double>, naValue: Double?): GuideMapper<Double> {

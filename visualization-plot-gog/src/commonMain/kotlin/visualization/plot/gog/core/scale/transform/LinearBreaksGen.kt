@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleBreaks
 import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.LinearBreaksHelper
 
 class LinearBreaksGen : BreaksGenerator {
-    override fun generate(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+    override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
         val helper = LinearBreaksHelper(domainAfterTransform.lowerEndpoint(), domainAfterTransform.upperEndpoint(), targetCount)
         val ticks = helper.breaks
         val labelFormatter = helper.labelFormatter

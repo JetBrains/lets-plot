@@ -63,11 +63,7 @@ object PlotUtil {
         for (aes in aesList) {
             val range = aesthetics.range(aes)
             if (isFinite(range)) {
-                if (result == null) {
-                    result = range
-                } else {
-                    result = result.span(range)
-                }
+                result = result?.span(range) ?: range
             }
         }
         return result
@@ -78,7 +74,7 @@ object PlotUtil {
         val posAesX = Iterables.toList(Aes.affectingScaleX(layer.renderedAes()))
         val posAesY = Iterables.toList(Aes.affectingScaleY(layer.renderedAes()))
 
-        val pos = PlotUtil.createLayerPos(layer, aes)
+        val pos = createLayerPos(layer, aes)
         if (pos.isIdentity) {
             // simplified ranges
             val rangeX = combineRanges(posAesX, aes)
@@ -200,10 +196,11 @@ object PlotUtil {
     }
 
     fun createLayerDryRunAesthetics(layer: GeomLayer): Aesthetics {
-        val dryRunMapperByAes = HashMap<Aes<Double>, (Double) -> Double>()
+        val dryRunMapperByAes = HashMap<Aes<Double>, (Double?) -> Double?>()
         for (aes in layer.renderedAes()) {
             if (aes.isNumeric) {
                 // safe cast: 'numeric' aes is always <Double>
+                @Suppress("UNCHECKED_CAST")
                 dryRunMapperByAes[aes as Aes<Double>] = Mappers.IDENTITY
             }
         }
@@ -213,10 +210,12 @@ object PlotUtil {
     }
 
     internal fun prepareLayerAestheticMappers(
-            layer: GeomLayer, sharedNumericMappers: Map<Aes<Double>, (Double) -> Double>): Map<Aes<*>, (Double) -> Any?> {
-        val mappers = HashMap<Aes<*>, (Double) -> Any?>(sharedNumericMappers)
+            layer: GeomLayer,
+            sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>): Map<Aes<*>, (Double?) -> Any?> {
+
+        val mappers = HashMap<Aes<*>, (Double?) -> Any?>(sharedNumericMappers)
         for (aes in layer.renderedAes()) {
-            var mapper: ((Double) -> Any?)? = sharedNumericMappers[aes]
+            var mapper: ((Double?) -> Any?)? = sharedNumericMappers[aes]
             if (mapper == null) {
                 // positional aes share their mappers
                 if (Aes.isPositionalX(aes)) {
@@ -237,15 +236,13 @@ object PlotUtil {
     }
 
     internal fun createLayerAesthetics(layer: GeomLayer,
-                                       sharedMappers: Map<Aes<*>, (Double) -> Any?>,
+                                       sharedMappers: Map<Aes<*>, (Double?) -> Any?>,
                                        overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>): Aesthetics {
 
         val aesBuilder = AestheticsBuilder()
         aesBuilder.group(layer.group)
         for ((aes, domain) in overallNumericDomains) {
-            if (sharedMappers.containsKey(aes)) {
-                // map: domain (data range) --> client space (aes range)
-                val mapper = sharedMappers[aes]!!
+            sharedMappers[aes]?.let { mapper ->
                 val range = ClosedRange.closed(mapper(domain.lowerEndpoint()) as Double, mapper(domain.upperEndpoint()) as Double)
                 aesBuilder.overallRange(aes, range)
             }
@@ -262,18 +259,17 @@ object PlotUtil {
         val data = layer.dataFrame
         var dataPointCount: Int? = null
         for (aes in layer.renderedAes()) {
+            @Suppress("UNCHECKED_CAST", "NAME_SHADOWING")
+            val aes = aes as Aes<Any>
+
             val mapperOption = sharedMappers[aes]
             if (layer.hasConstant(aes)) {
                 // Constant overrides binding
-                val v = layer.getConstant(aes)!!
-                // ?Type
-                val aes1 = aes as Aes<Any>
-                val mapperOption1 = mapperOption as ((Double) -> Any)?
-                aesBuilder.constantAes(aes1, asAesValue(aes1, v, mapperOption1))
+                val v = layer.getConstant(aes)
+                aesBuilder.constantAes(aes, asAesValue(aes, v, mapperOption))
             } else {
                 // No constant - look-up aes mapping
                 if (layer.hasBinding(aes)) {
-                    //VarBinding binding = layer.getBinding(aes);
                     checkState(mapperOption != null, "No scale mapper defined for aesthetic $aes")
 
                     // variable at this point must be either STAT or TRANSFORM (but not ORIGIN)
@@ -292,23 +288,15 @@ object PlotUtil {
 
                     if (dataPointCount == 0 && hasPositionalConstants) {
                         // put constant instead of empty list
-                        // ?Type
-                        val aes1 = aes as Aes<Any>
-                        aesBuilder.constantAes(aes1, layer.aestheticsDefaults.defaultValue(aes1))
+                        aesBuilder.constantAes(aes, layer.aestheticsDefaults.defaultValue(aes))
                     } else {
-                        // ?Type
-                        val integerFunction = listMapper(numericValues, mapperOption as (Double?) -> Any)
-                        val aes1 = aes as Aes<Any>
-                        aesBuilder.aes(aes1, integerFunction)
+                        val integerFunction = listMapper(numericValues, mapperOption as (Double?) -> Any?)
+                        aesBuilder.aes(aes, integerFunction)
                     }
                 } else {
                     // apply default
-                    // ?Type
-                    val aes1 = aes as Aes<Any>
                     val v = layer.getDefault(aes)
-                    val mapperOption1 = mapperOption as ((Double) -> Any)?
-                    aesBuilder.constantAes(aes1, asAesValue(aes1, v, mapperOption1))
-
+                    aesBuilder.constantAes(aes, asAesValue(aes, v, mapperOption))
                 }
             }
         }
@@ -323,9 +311,10 @@ object PlotUtil {
         return aesBuilder.build()
     }
 
-    private fun <T> asAesValue(aes: Aes<T>, dataValue: T, mapperOption: ((Double) -> T)?): T {
+    private fun <T> asAesValue(aes: Aes<*>, dataValue: T, mapperOption: ((Double?) -> T?)?): T {
         return if (aes.isNumeric && mapperOption != null) {
-            mapperOption(dataValue as Double)
+            mapperOption(dataValue as? Double)
+                    ?: throw IllegalArgumentException("Can't map $dataValue to aesthetic $aes")
         } else dataValue
     }
 

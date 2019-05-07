@@ -9,15 +9,24 @@ import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.GuideBreaks
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.PlotLabelSpec
 import jetbrains.datalore.visualization.plot.gog.plot.theme.AxisTheme
 
-internal class HorizontalFlexBreaksLabelsLayout(orientation: Orientation, axisDomain: ClosedRange<Double>,
-                                                labelSpec: PlotLabelSpec, private val myBreaksProvider: AxisBreaksProvider, theme: AxisTheme) : AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
+internal class HorizontalFlexBreaksLabelsLayout(
+        orientation: Orientation,
+        axisDomain: ClosedRange<Double>,
+        labelSpec: PlotLabelSpec,
+        private val myBreaksProvider: AxisBreaksProvider,
+        theme: AxisTheme) :
+        AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
 
     init {
         checkArgument(orientation.isHorizontal, orientation.toString())
         checkArgument(!myBreaksProvider.isFixedBreaks, "fixed breaks")
     }
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+    override fun doLayout(
+            axisLength: Double,
+            axisMapper: (Double?) -> Double?,
+            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+
         var targetBreakCount = HorizontalSimpleLabelsLayout.estimateBreakCountInitial(axisLength)
         var breaks = getBreaks(targetBreakCount, axisLength)
         var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper, maxLabelsBounds)
@@ -37,14 +46,17 @@ internal class HorizontalFlexBreaksLabelsLayout(orientation: Orientation, axisDo
         return labelsInfo
     }
 
-    private fun doLayoutLabels(breaks: GuideBreaks, axisLength: Double, axisMapper: (Double) -> Double,
-                               maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+    private fun doLayoutLabels(
+            breaks: GuideBreaks,
+            axisLength: Double,
+            axisMapper: (Double?) -> Double?,
+            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
 
         val layout = HorizontalSimpleLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme)
         return layout.doLayout(axisLength, axisMapper, maxLabelsBounds)
     }
 
-    protected fun getBreaks(maxCount: Int, axisLength: Double): GuideBreaks {
+    private fun getBreaks(maxCount: Int, axisLength: Double): GuideBreaks {
         return BreakLabelsLayoutUtil.getFlexBreaks(myBreaksProvider, maxCount, axisLength)
     }
 }

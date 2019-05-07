@@ -43,44 +43,49 @@ internal object BreakLabelsLayoutUtil {
         return DoubleRectangle(-labelSize.x / 2.0, 0.0, labelSize.x, labelSize.y)
     }
 
-    fun doLayoutVerticalAxisLabels(orientation: Orientation,
-                                   breaks: GuideBreaks, axisDomain: ClosedRange<Double>, axisMapper: (Double) -> Double, theme: AxisTheme): AxisLabelsLayoutInfo {
+    fun doLayoutVerticalAxisLabels(
+            orientation: Orientation,
+            breaks: GuideBreaks,
+            axisDomain: ClosedRange<Double>,
+            axisMapper: (Double?) -> Double?,
+            theme: AxisTheme): AxisLabelsLayoutInfo {
 
-        val axisBounds: DoubleRectangle
-        if (theme.showTickLabels()) {
-            val labelsBounds = verticalAxisLabelsBounds(breaks, axisDomain, axisMapper)
-            axisBounds = applyLabelsOffset(labelsBounds, theme.tickLabelDistance(), orientation)
-        } else if (theme.showTickMarks()) {
-            val labelsBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
-            axisBounds = applyLabelsOffset(labelsBounds, theme.tickLabelDistance(), orientation)
-        } else {
-            axisBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+        val axisBounds = when {
+            theme.showTickLabels() -> {
+                val labelsBounds = verticalAxisLabelsBounds(breaks, axisDomain, axisMapper)
+                applyLabelsOffset(labelsBounds, theme.tickLabelDistance(), orientation)
+            }
+            theme.showTickMarks() -> {
+                val labelsBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+                applyLabelsOffset(labelsBounds, theme.tickLabelDistance(), orientation)
+            }
+            else -> DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
         }
 
         return AxisLabelsLayoutInfo.Builder()
                 .breaks(breaks)
-                .bounds(axisBounds)     // actualy labels bounds
+                .bounds(axisBounds)     // labels bounds actually
                 .build()
     }
 
-    fun mapToAxis(breaks: List<Double>, axisDomain: ClosedRange<Double>, axisMapper: (Double) -> Double): List<Double> {
+    fun mapToAxis(breaks: List<Double>, axisDomain: ClosedRange<Double>, axisMapper: (Double?) -> Double?): List<Double> {
         val axisMin = axisDomain.lowerEndpoint()
         val axisBreaks = ArrayList<Double>()
         for (v in breaks) {
-            axisBreaks.add(axisMapper(v - axisMin))
+            val mapped = axisMapper(v - axisMin)
+            axisBreaks.add(mapped!!)
         }
         return axisBreaks
     }
 
     fun applyLabelsOffset(labelsBounds: DoubleRectangle, offset: Double, orientation: Orientation): DoubleRectangle {
+        @Suppress("NAME_SHADOWING")
         var labelsBounds = labelsBounds
-        val offsetVector: DoubleVector
-        when (orientation) {
-            LEFT -> offsetVector = DoubleVector(-offset, 0.0)
-            RIGHT -> offsetVector = DoubleVector(offset, 0.0)
-            TOP -> offsetVector = DoubleVector(0.0, -offset)
-            BOTTOM -> offsetVector = DoubleVector(0.0, offset)
-            else -> throw RuntimeException("Unexpected orientation:$orientation")
+        val offsetVector = when (orientation) {
+            LEFT -> DoubleVector(-offset, 0.0)
+            RIGHT -> DoubleVector(offset, 0.0)
+            TOP -> DoubleVector(0.0, -offset)
+            BOTTOM -> DoubleVector(0.0, offset)
         }
 
         if (orientation === RIGHT || orientation === BOTTOM) {
@@ -93,7 +98,7 @@ internal object BreakLabelsLayoutUtil {
     }
 
 
-    private fun verticalAxisLabelsBounds(breaks: GuideBreaks, axisDomain: ClosedRange<Double>, axisMapper: (Double) -> Double): DoubleRectangle {
+    private fun verticalAxisLabelsBounds(breaks: GuideBreaks, axisDomain: ClosedRange<Double>, axisMapper: (Double?) -> Double?): DoubleRectangle {
         val maxLength = maxLength(breaks.labels)
         val maxLabelWidth = AxisLabelsLayout.TICK_LABEL_SPEC.width(maxLength)
         var y1 = 0.0

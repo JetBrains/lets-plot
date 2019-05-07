@@ -31,9 +31,9 @@ abstract class AxisLayouter protected constructor(val orientation: Orientation, 
         return builder.build()
     }
 
-    protected abstract fun toAxisMapper(axisLength: Double): (Double) -> Double
+    protected abstract fun toAxisMapper(axisLength: Double): (Double?) -> Double?
 
-    protected fun toScaleMapper(axisLength: Double): (Double) -> Double {
+    protected fun toScaleMapper(axisLength: Double): (Double?) -> Double? {
         return Mappers.mul(domainRange, axisLength)
     }
 

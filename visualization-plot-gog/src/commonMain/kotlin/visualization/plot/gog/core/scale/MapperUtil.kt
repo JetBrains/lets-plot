@@ -6,9 +6,9 @@ import kotlin.math.max
 import kotlin.math.min
 
 object MapperUtil {
-    fun map(r: ClosedRange<Double>, mapper: (Double) -> Double): ClosedRange<Double> {
-        val a = mapper(r.lowerEndpoint())
-        val b = mapper(r.upperEndpoint())
+    fun map(r: ClosedRange<Double>, mapper: (Double?) -> Double?): ClosedRange<Double> {
+        val a = mapper(r.lowerEndpoint())!!
+        val b = mapper(r.upperEndpoint())!!
         return ClosedRange.closed(min(a, b), max(a, b))
     }
 

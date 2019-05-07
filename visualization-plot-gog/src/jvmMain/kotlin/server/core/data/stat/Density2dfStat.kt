@@ -43,7 +43,6 @@ class Density2dfStat internal constructor() : Density2dStatShell() {
         val stepsY = DensityStatUtil.createStepValues(yRange!!, ny)
 
         // weight aesthetics
-        //Function<Integer, Double> weightAtIndex = StatUtil.weightAtIndex(data);
         val groupWeight = StatUtil.weightVector(xVector.size, data)
 
         val matrixX = BlockRealMatrix(DensityStatUtil.createRawMatrix(xVector, stepsX, kernel!!, bandWidth[0], adjust, groupWeight))
@@ -55,8 +54,7 @@ class Density2dfStat internal constructor() : Density2dStatShell() {
             for (col in 0 until nx) {
                 statX.add(stepsX[col])
                 statY.add(stepsY[row])
-                statDensity.add(matrixFinal.getEntry(row, col) / SeriesUtil.sum(groupWeight)!!)
-                //newGroups.add((double) (int) group);
+                statDensity.add(matrixFinal.getEntry(row, col) / SeriesUtil.sum(groupWeight))
             }
         }
 

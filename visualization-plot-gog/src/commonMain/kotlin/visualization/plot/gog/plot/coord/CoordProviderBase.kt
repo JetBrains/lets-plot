@@ -25,7 +25,7 @@ internal abstract class CoordProviderBase : CoordProvider {
     }
 
     companion object {
-        fun axisMapper(domain: ClosedRange<Double>, axisLength: Double): (Double?) -> Double {
+        fun axisMapper(domain: ClosedRange<Double>, axisLength: Double): (Double?) -> Double? {
             return Mappers.mul(domain, axisLength)
         }
 
@@ -33,7 +33,7 @@ internal abstract class CoordProviderBase : CoordProvider {
             return buildAxisScaleDefault(scaleProto, axisMapper(domain, axisLength), breaks)
         }
 
-        fun buildAxisScaleDefault(scaleProto: Scale2<Double>, axisMapper: (Double?) -> Double, breaks: GuideBreaks): Scale2<Double> {
+        fun buildAxisScaleDefault(scaleProto: Scale2<Double>, axisMapper: (Double?) -> Double?, breaks: GuideBreaks): Scale2<Double> {
             return scaleProto.with()
                     .breaks(breaks.domainValues)
                     .labels(breaks.labels)

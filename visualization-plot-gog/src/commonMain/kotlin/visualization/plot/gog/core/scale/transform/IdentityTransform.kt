@@ -22,7 +22,7 @@ internal class IdentityTransform @JvmOverloads constructor(
         return v
     }
 
-    override fun generate(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        return myBreaksGenerator.generate(domainAfterTransform, targetCount)
+    override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+        return myBreaksGenerator.generateBreaks(domainAfterTransform, targetCount)
     }
 }

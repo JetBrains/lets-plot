@@ -36,7 +36,7 @@ internal class PointDataAccess(private val myData: DataFrame, private val bindin
             original.toString()
         }
 
-        val aesValue = (scale.mapper)(value)
+        val aesValue = scale.mapper(value)
         val continuous = scale.isContinuous
 
         return MappedDataAccess.MappedData(label(aes), s, aesValue, continuous)
@@ -46,9 +46,9 @@ internal class PointDataAccess(private val myData: DataFrame, private val bindin
         return myBindings[aes]!!.scale!!.name
     }
 
-    protected fun value(aes: Aes<*>, index: Int): Double? {
-        val `var` = myBindings[aes]!!.`var`
-        return myData.getNumeric(`var`)[index]
+    private fun value(aes: Aes<*>, index: Int): Double? {
+        val variable = myBindings[aes]!!.`var`
+        return myData.getNumeric(variable)[index]
     }
 
     private fun formatter(aes: Aes<*>): (Any) -> String {

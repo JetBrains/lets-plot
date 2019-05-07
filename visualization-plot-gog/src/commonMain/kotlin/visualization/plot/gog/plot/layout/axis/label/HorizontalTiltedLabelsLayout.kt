@@ -14,8 +14,13 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
-internal class HorizontalTiltedLabelsLayout(orientation: Orientation,
-                                            axisDomain: ClosedRange<Double>, labelSpec: PlotLabelSpec, breaks: GuideBreaks, theme: AxisTheme) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
+internal class HorizontalTiltedLabelsLayout(
+        orientation: Orientation,
+        axisDomain: ClosedRange<Double>,
+        labelSpec: PlotLabelSpec,
+        breaks: GuideBreaks,
+        theme: AxisTheme) :
+        AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     private val labelHorizontalAnchor: TextLabel.HorizontalAnchor
         get() {
@@ -28,9 +33,12 @@ internal class HorizontalTiltedLabelsLayout(orientation: Orientation,
     private val labelVerticalAnchor: TextLabel.VerticalAnchor
         get() = TextLabel.VerticalAnchor.TOP
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
-        val height = labelSpec.height()
+    override fun doLayout(
+            axisLength: Double,
+            axisMapper: (Double?) -> Double?,
+            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
 
+        val height = labelSpec.height()
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         var overlap = false
         if (breaks.size() >= 2) {
@@ -39,7 +47,7 @@ internal class HorizontalTiltedLabelsLayout(orientation: Orientation,
             overlap = tickDistance < minTickDistance
         }
 
-        val bounds = labelsBounds(ticks, breaks.labels, AbstractFixedBreaksLabelsLayout.HORIZONTAL_TICK_LOCATION)
+        val bounds = labelsBounds(ticks, breaks.labels, HORIZONTAL_TICK_LOCATION)
         return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap)
                 .labelHorizontalAnchor(labelHorizontalAnchor)
                 .labelVerticalAnchor(labelVerticalAnchor)
@@ -47,7 +55,7 @@ internal class HorizontalTiltedLabelsLayout(orientation: Orientation,
                 .build()
     }
 
-    override fun labelBounds(labelDim: DoubleVector): DoubleRectangle {
+    override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
         // only works for RIGHT-TOP anchor ang angle 0..-90
         if (!(ROTATION_DEGREE >= -90 && ROTATION_DEGREE <= 0
                         && labelHorizontalAnchor === TextLabel.HorizontalAnchor.RIGHT
@@ -56,17 +64,17 @@ internal class HorizontalTiltedLabelsLayout(orientation: Orientation,
         }
 
 
-        val w = abs(labelDim.x * COS) + 2 * abs(labelDim.y * SIN)
-        val h = abs(labelDim.x * SIN) + abs(labelDim.y * COS)
-        val x = -(abs(labelDim.x * COS) + abs(labelDim.y * SIN))
+        val w = abs(labelNormalSize.x * COS) + 2 * abs(labelNormalSize.y * SIN)
+        val h = abs(labelNormalSize.x * SIN) + abs(labelNormalSize.y * COS)
+        val x = -(abs(labelNormalSize.x * COS) + abs(labelNormalSize.y * SIN))
         val y = 0.0
 
         return DoubleRectangle(x, y, w, h)
     }
 
     companion object {
-        private val MIN_DISTANCE = 5.0
-        private val ROTATION_DEGREE = -30.0
+        private const val MIN_DISTANCE = 5.0
+        private const val ROTATION_DEGREE = -30.0
 
         private val SIN = sin(toRadians(ROTATION_DEGREE))
         private val COS = cos(toRadians(ROTATION_DEGREE))

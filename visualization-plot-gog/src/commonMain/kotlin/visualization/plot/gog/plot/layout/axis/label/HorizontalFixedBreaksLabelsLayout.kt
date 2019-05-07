@@ -9,18 +9,22 @@ import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.GuideBreaks
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.PlotLabelSpec
 import jetbrains.datalore.visualization.plot.gog.plot.theme.AxisTheme
 
-internal class HorizontalFixedBreaksLabelsLayout(orientation: Orientation,
-                                                 axisDomain: ClosedRange<Double>, labelSpec: PlotLabelSpec, breaks: GuideBreaks, theme: AxisTheme) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
-    private fun overlap(labelsInfo: AxisLabelsLayoutInfo, maxTickLabelsBounds: DoubleRectangle?): Boolean {
-        return labelsInfo.isOverlap || maxTickLabelsBounds != null && !(maxTickLabelsBounds.xRange().encloses(labelsInfo.bounds!!.xRange()) && maxTickLabelsBounds.yRange().encloses(labelsInfo.bounds.yRange()))
-    }
-
+internal class HorizontalFixedBreaksLabelsLayout(
+        orientation: Orientation,
+        axisDomain: ClosedRange<Double>,
+        labelSpec: PlotLabelSpec,
+        breaks: GuideBreaks, theme: AxisTheme) :
+        AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     init {
         checkArgument(orientation.isHorizontal, orientation.toString())
     }
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
+    private fun overlap(labelsInfo: AxisLabelsLayoutInfo, maxTickLabelsBounds: DoubleRectangle?): Boolean {
+        return labelsInfo.isOverlap || maxTickLabelsBounds != null && !(maxTickLabelsBounds.xRange().encloses(labelsInfo.bounds!!.xRange()) && maxTickLabelsBounds.yRange().encloses(labelsInfo.bounds.yRange()))
+    }
+
+    override fun doLayout(axisLength: Double, axisMapper: (Double?) -> Double?, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
         if (!theme.showTickLabels()) {
             return noLabelsLayoutInfo(axisLength, orientation)
         }

@@ -70,9 +70,9 @@ object ScaleUtil {
         val axisBreaks = ArrayList<Double>()
         for (br in scaleBreaks) {
             val mappedBrPoint = if (horizontal)
-                DoubleVector(br, 0.0)
+                DoubleVector(br!!, 0.0)
             else
-                DoubleVector(0.0, br)
+                DoubleVector(0.0, br!!)
 
             val axisBrPoint = coord.toClient(mappedBrPoint)
             val axisBr = if (horizontal)
@@ -92,46 +92,32 @@ object ScaleUtil {
         return axisBreaks
     }
 
-    fun <T> breaksAesthetics(scale: Scale2<T>): List<T> {
+    fun <T> breaksAesthetics(scale: Scale2<T>): List<T?> {
         return transformAndMap(scale.breaks, scale)
     }
 
     fun map(range: ClosedRange<Double>, scale: Scale2<Double>): ClosedRange<Double> {
-        return MapperUtil.map(range, mapper(scale))
+        return MapperUtil.map(range, scale.mapper)
     }
 
-    fun <T> map(d: Double?, scale: Scale2<T>): T {
-        return mapper(scale)(d)
+    fun <T> map(d: Double?, scale: Scale2<T>): T? {
+        return scale.mapper(d)
     }
 
-    fun <T> map(d: List<Double?>, scale: Scale2<T>): List<T> {
-        val result = ArrayList<T>()
+    fun <T> map(d: List<Double?>, scale: Scale2<T>): List<T?> {
+        val result = ArrayList<T?>()
         for (t in d) {
             result.add(map(t, scale))
         }
         return result
     }
 
-    private fun <T> transformAndMap(l: List<*>, scale: Scale2<T>): List<T> {
+    private fun <T> transformAndMap(l: List<*>, scale: Scale2<T>): List<T?> {
         val tl = transform(l, scale)
         return map(tl, scale)
     }
 
-    fun <T> mapper(scale: Scale2<T>): (Double?) -> T {
-        val mapper = scale.mapper
-        if (mapper != null) {
-            return mapper
-        }
-        throw IllegalStateException("Scale mapper is not defined (" + scale.name + ")")
-    }
-
     fun transform(l: List<*>, scale: Scale2<*>): List<Double?> {
-//        val transform = scale.transform
-//        if (transform != null) {
-//            return transform.apply(l)
-//        }
-//        throw IllegalStateException("Scale transform is not defined (" + scale.name + ")")
-
         return scale.transform.apply(l)
     }
 
@@ -142,14 +128,11 @@ object ScaleUtil {
 
     fun inverseTransform(l: List<Double?>, scale: Scale2<*>): List<*> {
         val transform = scale.transform
-        if (transform != null) {
-            val result = ArrayList<Any?>(l.size)
-            for (v in l) {
-                result.add(transform.applyInverse(v))
-            }
-            return result
+        val result = ArrayList<Any?>(l.size)
+        for (v in l) {
+            result.add(transform.applyInverse(v))
         }
-        throw IllegalStateException("Scale transform is not defined (" + scale.name + ")")
+        return result
     }
 
     fun transformedDefinedLimits(scale: Scale2<*>): List<Double> {

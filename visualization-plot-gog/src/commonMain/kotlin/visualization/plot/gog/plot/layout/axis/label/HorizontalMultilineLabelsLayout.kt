@@ -9,8 +9,14 @@ import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.GuideBreaks
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.PlotLabelSpec
 import jetbrains.datalore.visualization.plot.gog.plot.theme.AxisTheme
 
-internal class HorizontalMultilineLabelsLayout(orientation: Orientation, axisDomain: ClosedRange<Double>,
-                                               labelSpec: PlotLabelSpec, breaks: GuideBreaks, theme: AxisTheme, private val myMaxLines: Int) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
+internal class HorizontalMultilineLabelsLayout(
+        orientation: Orientation,
+        axisDomain: ClosedRange<Double>,
+        labelSpec: PlotLabelSpec,
+        breaks: GuideBreaks,
+        theme: AxisTheme,
+        private val myMaxLines: Int) :
+        AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     private val myShelfIndexForTickIndex = ArrayList<Int>()
 
@@ -24,11 +30,14 @@ internal class HorizontalMultilineLabelsLayout(orientation: Orientation, axisDom
             return result
         }
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
-        val boundsByShelfIndex = HashMap<Int, DoubleRectangle>()
+    override fun doLayout(
+            axisLength: Double,
+            axisMapper: (Double?) -> Double?,
+            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
 
+        val boundsByShelfIndex = HashMap<Int, DoubleRectangle>()
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
-        val boundsList = labelBoundsList(ticks, breaks.labels, AbstractFixedBreaksLabelsLayout.HORIZONTAL_TICK_LOCATION)
+        val boundsList = labelBoundsList(ticks, breaks.labels, HORIZONTAL_TICK_LOCATION)
 
         for (labelBounds in boundsList) {
             // find shelf with no overlap
@@ -80,7 +89,7 @@ internal class HorizontalMultilineLabelsLayout(orientation: Orientation, axisDom
     }
 
     companion object {
-        private val LINE_HEIGHT = 1.2
-        private val MIN_DISTANCE = 60
+        private const val LINE_HEIGHT = 1.2
+        private const val MIN_DISTANCE = 60
     }
 }

@@ -5,7 +5,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions
 internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
 
     final override val name: String
-    final override var mapper: ((Double?) -> T)
+    final override var mapper: ((Double?) -> T?)
         private set
     final override var multiplicativeExpand = 0.0
         protected set
@@ -42,7 +42,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
 
     protected abstract val defaultTransform: Transform
 
-    protected constructor(name: String, mapper: ((Double?) -> T)) {
+    protected constructor(name: String, mapper: ((Double?) -> T?)) {
         this.name = name
         this.mapper = mapper
         myTransform = null
@@ -77,7 +77,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
 
         internal var myBreaks: List<DomainT>?
         internal var myLabels: List<String>?
-        internal var myMapper: ((Double?) -> T)
+        internal var myMapper: (Double?) -> T?
 
         internal var myMultiplicativeExpand: Double = 0.toDouble()
         internal var myAdditiveExpand: Double = 0.toDouble()
@@ -93,7 +93,13 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
         }
 
         override fun breaks(l: List<*>): Scale2.Builder<T> {
-            myBreaks = l as List<DomainT>
+            myBreaks = ArrayList<DomainT>().let {
+                for (any in l) {
+                    @Suppress("UNCHECKED_CAST")
+                    it.add(any as DomainT)
+                }
+                it
+            }
             return this
         }
 
@@ -102,7 +108,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
             return this
         }
 
-        override fun mapper(m: (Double?) -> T): Scale2.Builder<T> {
+        override fun mapper(m: (Double?) -> T?): Scale2.Builder<T> {
             myMapper = m
             return this
         }

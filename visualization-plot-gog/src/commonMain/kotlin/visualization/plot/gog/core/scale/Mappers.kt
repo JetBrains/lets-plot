@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
 import kotlin.math.round
 
 object Mappers {
-    val IDENTITY = { v: Double? -> v!! }
+    val IDENTITY = { v: Double? -> v }
 
     fun <T> undefined(): (Double?) -> T = { throw IllegalStateException("Undefined mapper") }
 
@@ -23,14 +23,18 @@ object Mappers {
 
     fun constant(v: Double): (Double?) -> Double = { v }
 
-    fun mul(domain: ClosedRange<Double>, rangeSpan: Double): (Double?) -> Double {
+    fun mul(domain: ClosedRange<Double>, rangeSpan: Double): (Double?) -> Double? {
         val factor = rangeSpan / (domain.upperEndpoint() - domain.lowerEndpoint())
         checkState(!(factor.isInfinite() || factor.isNaN()), "Can't create mapper with ratio: $factor")
-        return { MulFunction(factor).apply(it!!) }
+        return mul(factor)
     }
 
-    fun mul(factor: Double): (Double) -> Double {
-        return { v -> MulFunction(factor).apply(v) }
+    fun mul(factor: Double): (Double?) -> Double? {
+        return { v ->
+            if (v != null) {
+                factor * v
+            } else null
+        }
     }
 
     fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>): (Double?) -> Double {
@@ -57,10 +61,10 @@ object Mappers {
         }
     }
 
-    fun discreteToContinuous(domainValues: Collection<*>, range: ClosedRange<Double>, naValue: Double?): (Double?) -> Double {
+    fun discreteToContinuous(domainValues: Collection<*>, range: ClosedRange<Double>, naValue: Double): (Double?) -> Double? {
         val numberByDomainValue = MapperUtil.mapDiscreteDomainValuesToNumbers(domainValues)
         val dataRange = SeriesUtil.range(numberByDomainValue.values) ?: return IDENTITY
-        return linear(dataRange, range, naValue!!)
+        return linear(dataRange, range, naValue)
     }
 
     fun <T> discrete(outputValues: List<T>, defaultOutputValue: T): (Double?) -> T {

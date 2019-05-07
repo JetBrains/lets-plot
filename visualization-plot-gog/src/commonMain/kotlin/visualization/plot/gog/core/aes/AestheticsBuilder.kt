@@ -50,16 +50,13 @@ import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
 import kotlin.jvm.JvmOverloads
 
 class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: Int = 0) {
+
     private val myIndexFunctionMap: MutableMap<Aes<*>, (Int) -> Any?>
-
     private var group = constant(0)
-
     private val myConstantAes = Sets.newHashSet(Aes.values())  // initially contains all Aes;
-
     private val myOverallRangeByNumericAes = HashMap<Aes<Double>, ClosedRange<Double>>()
 
     init {
-
         myIndexFunctionMap = HashMap()
         for (aes in Aes.values()) {
             // Safe cast because AesInitValue.get(aes) is guaranteed to return correct type.
@@ -78,59 +75,59 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return this
     }
 
-    fun x(v: (Int) -> Double): AestheticsBuilder {
+    fun x(v: (Int) -> Double?): AestheticsBuilder {
         return aes(X, v)
     }
 
-    fun y(v: (Int) -> Double): AestheticsBuilder {
+    fun y(v: (Int) -> Double?): AestheticsBuilder {
         return aes(Y, v)
     }
 
-    fun color(v: (Int) -> Color): AestheticsBuilder {
+    fun color(v: (Int) -> Color?): AestheticsBuilder {
         return aes(COLOR, v)
     }
 
-    fun fill(v: (Int) -> Color): AestheticsBuilder {
+    fun fill(v: (Int) -> Color?): AestheticsBuilder {
         return aes(FILL, v)
     }
 
-    fun alpha(v: (Int) -> Double): AestheticsBuilder {
+    fun alpha(v: (Int) -> Double?): AestheticsBuilder {
         return aes(ALPHA, v)
     }
 
-    fun shape(v: (Int) -> PointShape): AestheticsBuilder {
+    fun shape(v: (Int) -> PointShape?): AestheticsBuilder {
         return aes(SHAPE, v)
     }
 
-    fun lineType(v: (Int) -> LineType): AestheticsBuilder {
+    fun lineType(v: (Int) -> LineType?): AestheticsBuilder {
         return aes(LINETYPE, v)
     }
 
-    fun size(v: (Int) -> Double): AestheticsBuilder {
+    fun size(v: (Int) -> Double?): AestheticsBuilder {
         return aes(SIZE, v)
     }
 
-    fun width(v: (Int) -> Double): AestheticsBuilder {
+    fun width(v: (Int) -> Double?): AestheticsBuilder {
         return aes(WIDTH, v)
     }
 
-    fun weight(v: (Int) -> Double): AestheticsBuilder {
+    fun weight(v: (Int) -> Double?): AestheticsBuilder {
         return aes(WEIGHT, v)
     }
 
-    fun mapId(v: (Int) -> Any): AestheticsBuilder {
+    fun mapId(v: (Int) -> Any?): AestheticsBuilder {
         return aes(MAP_ID, v)
     }
 
-    fun frame(v: (Int) -> String): AestheticsBuilder {
+    fun frame(v: (Int) -> String?): AestheticsBuilder {
         return aes(FRAME, v)
     }
 
-    fun speed(v: (Int) -> Double): AestheticsBuilder {
+    fun speed(v: (Int) -> Double?): AestheticsBuilder {
         return aes(SPEED, v)
     }
 
-    fun flow(v: (Int) -> Double): AestheticsBuilder {
+    fun flow(v: (Int) -> Double?): AestheticsBuilder {
         return aes(FLOW, v)
     }
 
@@ -139,43 +136,43 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return this
     }
 
-    fun label(v: (Int) -> String): AestheticsBuilder {
+    fun label(v: (Int) -> String?): AestheticsBuilder {
         return aes(LABEL, v)
     }
 
-    fun family(v: (Int) -> String): AestheticsBuilder {
+    fun family(v: (Int) -> String?): AestheticsBuilder {
         return aes(FAMILY, v)
     }
 
-    fun fontface(v: (Int) -> String): AestheticsBuilder {
+    fun fontface(v: (Int) -> String?): AestheticsBuilder {
         return aes(FONTFACE, v)
     }
 
-    fun hjust(v: (Int) -> Any): AestheticsBuilder {
+    fun hjust(v: (Int) -> Any?): AestheticsBuilder {
         return aes(HJUST, v)
     }
 
-    fun vjust(v: (Int) -> Any): AestheticsBuilder {
+    fun vjust(v: (Int) -> Any?): AestheticsBuilder {
         return aes(VJUST, v)
     }
 
-    fun angle(v: (Int) -> Double): AestheticsBuilder {
+    fun angle(v: (Int) -> Double?): AestheticsBuilder {
         return aes(ANGLE, v)
     }
 
-    fun xmin(v: (Int) -> Double): AestheticsBuilder {
+    fun xmin(v: (Int) -> Double?): AestheticsBuilder {
         return aes(XMIN, v)
     }
 
-    fun xmax(v: (Int) -> Double): AestheticsBuilder {
+    fun xmax(v: (Int) -> Double?): AestheticsBuilder {
         return aes(XMAX, v)
     }
 
-    fun ymin(v: (Int) -> Double): AestheticsBuilder {
+    fun ymin(v: (Int) -> Double?): AestheticsBuilder {
         return aes(YMIN, v)
     }
 
-    fun ymax(v: (Int) -> Double): AestheticsBuilder {
+    fun ymax(v: (Int) -> Double?): AestheticsBuilder {
         return aes(YMAX, v)
     }
 
@@ -185,7 +182,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return this
     }
 
-    fun <T> aes(aes: Aes<T>, v: (Int) -> T): AestheticsBuilder {
+    fun <T> aes(aes: Aes<T>, v: (Int) -> T?): AestheticsBuilder {
         myConstantAes.remove(aes)
         myIndexFunctionMap[aes] = v
         return this
@@ -255,10 +252,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         }
 
         override fun overallRange(aes: Aes<Double>): ClosedRange<Double> {
-            if (myOverallRangeByNumericAes.containsKey(aes)) {
-                return myOverallRangeByNumericAes[aes]!!
-            }
-            throw IllegalStateException("Overall range is unknown for $aes")
+            return myOverallRangeByNumericAes[aes] ?: error("Overall range is unknown for $aes")
         }
 
         override fun resolution(aes: Aes<Double>, naValue: Double): Double {
@@ -509,7 +503,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return { value -> Iterables[v, value] }
         }
 
-        fun <T> listMapper(v: List<Double?>, f: (Double?) -> T): (Int) -> T {
+        fun <T> listMapper(v: List<Double?>, f: (Double?) -> T?): (Int) -> T? {
             return { value -> f(v[value]) }
         }
     }

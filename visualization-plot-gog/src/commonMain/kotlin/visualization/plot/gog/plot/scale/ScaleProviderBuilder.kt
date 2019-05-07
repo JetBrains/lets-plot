@@ -123,10 +123,12 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
             var scale: Scale2<T>
             if (myDiscreteDomain || !data.isNumeric(variable)) {
                 // discrete domain
-                val mapper = if (data.isEmpty(variable))
+                val mapper = if (data.isEmpty(variable)) {
                     absentMapper(variable)
-                else
+                } else {
                     { v -> myMapperProvider!!.createDiscreteMapper(data, variable).apply(v) }
+                }
+
                 scale = Scales.discreteDomain(
                         name,
                         DataFrameUtil.distinctValues(data, variable),
@@ -165,12 +167,8 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
                 } else {
                     val mapper = myMapperProvider!!.createContinuousMapper(data, variable, lowerLimit, upperLimit, myContinuousTransform)
                     val continuousRange = mapper.isContinuous || myAes.isNumeric
-                    /*
-          scale = mapper.isContinuous()
-              ? Scales.pureContinuous(name, mapper)
-              : Scales.continuousDomain(name, mapper);
-          */
-                    scale = Scales.continuousDomain(name, { v -> mapper.apply(v!!) }, continuousRange)
+
+                    scale = Scales.continuousDomain(name, { v -> mapper.apply(v) }, continuousRange)
 
                     if (mapper is WithGuideBreaks) {
                         val guideBreaks = (mapper as WithGuideBreaks).guideBreaks

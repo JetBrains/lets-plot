@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
 object ScaleBreaksUtil {
     fun <TargetT> withBreaks(scale: Scale2<TargetT>, scaleDomain: ClosedRange<Double>, breakCount: Int): Scale2<TargetT> {
         if (scale.hasBreaksGenerator()) {
-            val breaksHelper = scale.breaksGenerator.generate(scaleDomain, breakCount)
+            val breaksHelper = scale.breaksGenerator.generateBreaks(scaleDomain, breakCount)
             val breaks = breaksHelper.domainValues
             val labels = breaksHelper.labels
             return scale.with()

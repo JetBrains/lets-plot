@@ -11,8 +11,13 @@ import jetbrains.datalore.visualization.plot.gog.plot.presentation.PlotLabelSpec
 import jetbrains.datalore.visualization.plot.gog.plot.theme.AxisTheme
 import kotlin.math.abs
 
-internal class HorizontalVerticalLabelsLayout(orientation: Orientation,
-                                              axisDomain: ClosedRange<Double>, labelSpec: PlotLabelSpec, breaks: GuideBreaks, theme: AxisTheme) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
+internal class HorizontalVerticalLabelsLayout(
+        orientation: Orientation,
+        axisDomain: ClosedRange<Double>,
+        labelSpec: PlotLabelSpec,
+        breaks: GuideBreaks,
+        theme: AxisTheme) :
+        AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     val labelHorizontalAnchor: TextLabel.HorizontalAnchor
         get() {
@@ -25,9 +30,12 @@ internal class HorizontalVerticalLabelsLayout(orientation: Orientation,
     val labelVerticalAnchor: TextLabel.VerticalAnchor
         get() = TextLabel.VerticalAnchor.CENTER
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
-        val height = labelSpec.height()
+    override fun doLayout(
+            axisLength: Double,
+            axisMapper: (Double?) -> Double?,
+            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo {
 
+        val height = labelSpec.height()
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         var overlap = false
         if (breaks.size() >= 2) {
@@ -36,7 +44,7 @@ internal class HorizontalVerticalLabelsLayout(orientation: Orientation,
             overlap = tickDistance < minTickDistance
         }
 
-        val bounds = labelsBounds(ticks, breaks.labels, AbstractFixedBreaksLabelsLayout.HORIZONTAL_TICK_LOCATION)
+        val bounds = labelsBounds(ticks, breaks.labels, HORIZONTAL_TICK_LOCATION)
         return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap)
                 .labelHorizontalAnchor(labelHorizontalAnchor)
                 .labelVerticalAnchor(labelVerticalAnchor)
@@ -58,7 +66,7 @@ internal class HorizontalVerticalLabelsLayout(orientation: Orientation,
     }
 
     companion object {
-        private val MIN_DISTANCE = 5.0
-        private val ROTATION_DEGREE = 90.0
+        private const val MIN_DISTANCE = 5.0
+        private const val ROTATION_DEGREE = 90.0
     }
 }

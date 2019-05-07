@@ -32,7 +32,7 @@ internal class BogusScale : Scale2<Double> {
     override val transform: Transform
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
-    override val mapper: (Double?) -> Double
+    override val mapper: (Double?) -> Double?
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
     override fun hasBreaks(): Boolean {

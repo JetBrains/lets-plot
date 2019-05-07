@@ -36,7 +36,7 @@ interface Scale2<T> {
 
     val transform: Transform
 
-    val mapper: ((Double?) -> T)
+    val mapper: ((Double?) -> T?)
 
     val breaksGenerator: BreaksGenerator
         get() {
@@ -84,7 +84,7 @@ interface Scale2<T> {
 
         fun labels(l: List<String>): Builder<T>
 
-        fun mapper(m: (Double?) -> T): Builder<T>
+        fun mapper(m: (Double?) -> T?): Builder<T>
 
         fun multiplicativeExpand(v: Double): Builder<T>
 

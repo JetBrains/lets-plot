@@ -8,13 +8,13 @@ import kotlin.math.pow
 
 internal class Log10Transform : FunTransform(F, F_INVERSE) {
 
-    override fun generate(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        val transformedBreaks = LinearBreaksGen().generate(domainAfterTransform, targetCount)
+    override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+        val transformedBreaks = LinearBreaksGen().generateBreaks(domainAfterTransform, targetCount)
         val transformValues = transformedBreaks.domainValues
         val newDomainValues = ArrayList<Double>()
         for (transformValue in transformValues) {
             val domainValue = F_INVERSE(transformValue)
-            newDomainValues.add(domainValue)
+            newDomainValues.add(domainValue!!)
         }
 
         // format each tick with its own formatter
@@ -38,22 +38,17 @@ internal class Log10Transform : FunTransform(F, F_INVERSE) {
     }
 
     companion object {
-        private val F: (Double) -> Double = { v ->
-            // nullable or not?
-//            if (v != null)
-//                log10(v)
-//            else
-//                null
-            log10(v)
-
+        private val F: (Double?) -> Double? = { v ->
+            if (v != null)
+                log10(v)
+            else
+                null
         }
-        private val F_INVERSE: (Double) -> Double = { v ->
-            // nullable or not?
-//            if (v != null)
-//                10.0.pow(v)
-//            else
-//                null
-            10.0.pow(v)
+        private val F_INVERSE: (Double?) -> Double? = { v ->
+            if (v != null)
+                10.0.pow(v)
+            else
+                null
         }
     }
 }

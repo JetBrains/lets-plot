@@ -7,9 +7,12 @@ import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.label.AxisLabe
 
 class VerticalAxisLayouter(orientation: Orientation, domainRange: ClosedRange<Double>, labelsLayout: AxisLabelsLayout) : AxisLayouter(orientation, domainRange, labelsLayout) {
 
-    override fun toAxisMapper(axisLength: Double): (Double) -> Double {
+    override fun toAxisMapper(axisLength: Double): (Double?) -> Double? {
         val scaleMapper = toScaleMapper(axisLength)
         val cartesianY = Coords.toClientOffsetY(ClosedRange.closed(0.0, axisLength))
-        return { v -> cartesianY(scaleMapper(v)) }
+        return { v ->
+            val mapped = scaleMapper(v)
+            if (mapped != null) cartesianY(mapped) else null
+        }
     }
 }

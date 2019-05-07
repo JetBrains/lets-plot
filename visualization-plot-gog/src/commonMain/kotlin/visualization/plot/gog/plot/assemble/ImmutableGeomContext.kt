@@ -12,7 +12,7 @@ interface ImmutableGeomContext : GeomContext {
     interface Builder {
         fun aesthetics(aesthetics: Aesthetics?): Builder
 
-        fun <T> aestheticMappers(aestheticMappers: Map<Aes<T>, (Double) -> T>?): Builder
+        fun aestheticMappers(aestheticMappers: Map<Aes<*>, (Double?) -> Any?>?): Builder
 
         fun geomTargetCollector(geomTargetCollector: GeomTargetCollector): Builder
 

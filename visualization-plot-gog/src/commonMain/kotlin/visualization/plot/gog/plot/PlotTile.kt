@@ -124,17 +124,17 @@ internal class PlotTile(layers: List<GeomLayer>,
 
         } else {
             // normal plot tile
-            val sharedNumericMappers = HashMap<Aes<Double>, (Double) -> Double>()
+            val sharedNumericMappers = HashMap<Aes<Double>, (Double?) -> Double?>()
             val overallNumericDomains = HashMap<Aes<Double>, ClosedRange<Double>>()
 
             val xAxisInfo = myLayoutInfo.xAxisInfo
             val yAxisInfo = myLayoutInfo.yAxisInfo
-            val mapperX = myScaleX.mapper!!
-            val mapperY = myScaleY.mapper!!
+            val mapperX = myScaleX.mapper
+            val mapperY = myScaleY.mapper
 
             sharedNumericMappers[Aes.X] = mapperX
             sharedNumericMappers[Aes.Y] = mapperY
-            sharedNumericMappers[Aes.SLOPE] = Mappers.mul(mapperY(1.0) / mapperX(1.0))
+            sharedNumericMappers[Aes.SLOPE] = Mappers.mul(mapperY(1.0)!! / mapperX(1.0)!!)
 
             overallNumericDomains[Aes.X] = xAxisInfo!!.axisDomain!!
             overallNumericDomains[Aes.Y] = yAxisInfo!!.axisDomain!!
@@ -221,9 +221,10 @@ internal class PlotTile(layers: List<GeomLayer>,
     }
 
     private fun buildGeoms(
-            sharedNumericMappers: Map<Aes<Double>, (Double) -> Double>,
+            sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
             overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>,
             coord: CoordinateSystem): List<GeomLayerRenderer> {
+
         val layerRenderers = ArrayList<GeomLayerRenderer>()
         for (layer in myLayers) {
             val rendererData = LayerRendererUtil.createLayerRendererData(layer, sharedNumericMappers, overallNumericDomains)
@@ -240,8 +241,7 @@ internal class PlotTile(layers: List<GeomLayer>,
 
             val ctx = GeomContextBuilder()
                     .aesthetics(aesthetics)
-                    // ?Type: ToDo: TypedKeyContainer
-                    .aestheticMappers(aestheticMappers as Map<Aes<Any>, (Double) -> Any>)
+                    .aestheticMappers(aestheticMappers)
                     .geomTargetCollector(targetController)
                     .build()
 

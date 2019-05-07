@@ -16,7 +16,7 @@ class EmptyGeomContext : GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
-    override fun withTargetCollector(newCollector: GeomTargetCollector): GeomContext {
+    override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 }

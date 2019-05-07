@@ -14,9 +14,15 @@ abstract class AxisLabelsLayout protected constructor(val orientation: Orientati
     protected val isHorizontal: Boolean
         get() = orientation.isHorizontal
 
-    abstract fun doLayout(axisLength: Double, axisMapper: (Double) -> Double, maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo
+    abstract fun doLayout(
+            axisLength: Double,
+            axisMapper: (Double?) -> Double?,
+            maxLabelsBounds: DoubleRectangle?): AxisLabelsLayoutInfo
 
-    internal fun mapToAxis(breaks: List<Double>, axisMapper: (Double) -> Double): List<Double> {
+    internal fun mapToAxis(
+            breaks: List<Double>,
+            axisMapper: (Double?) -> Double?): List<Double> {
+
         return BreakLabelsLayoutUtil.mapToAxis(breaks, axisDomain, axisMapper)
     }
 
