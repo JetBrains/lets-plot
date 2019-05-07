@@ -32,6 +32,13 @@ object SeriesUtil {
         return v != null && v.isFinite()
     }
 
+    fun asFinite(v: Double?, defaultValue: Double): Double {
+        return if (v != null && v.isFinite())
+            v
+        else
+            defaultValue
+    }
+
     fun isFinite(v: Double): Boolean {
         return v.isFinite()
     }
@@ -48,17 +55,17 @@ object SeriesUtil {
         return allFinite(v0, v1, v2) && isFinite(v3)
     }
 
-    fun range(values: Iterable<Double>): ClosedRange<Double>? {
+    fun range(values: Iterable<Double?>): ClosedRange<Double>? {
         var min = 0.0
         var max = 0.0
         var inited = false
         for (v in values) {
             if (isFinite(v)) {
                 if (inited) {
-                    min = min(min, v)
+                    min = min(min, v!!)
                     max = max(max, v)
                 } else {
-                    max = v
+                    max = v!!
                     min = max
                     inited = true
                 }
@@ -210,7 +217,7 @@ object SeriesUtil {
         return defaultValue
     }
 
-    fun mean(values: List<Double>, defaultValue: Double?): Double? {
+    fun mean(values: List<Double?>, defaultValue: Double?): Double? {
         var result = 0.0
         var i = -1.0
         for (value in values) {
@@ -222,7 +229,7 @@ object SeriesUtil {
         return if (i >= 0) result else defaultValue
     }
 
-    fun sum(values: List<Double>): Double? {
+    fun sum(values: List<Double?>): Double {
         var result = 0.0
         for (value in values) {
             if (value != null && value.isFinite()) {
@@ -232,7 +239,7 @@ object SeriesUtil {
         return result
     }
 
-    fun toDoubleList(l: List<*>?): List<Double>? {
+    fun toDoubleList(l: List<*>?): List<Double?>? {
         return if (l == null)
             null
         else
@@ -241,8 +248,8 @@ object SeriesUtil {
 
     class CheckedDoubleList(list: List<*>) : CheckedDoubleIterable(list) {
 
-        override fun cast(): List<Double> {
-            return super.cast() as List<Double>
+        override fun cast(): List<Double?> {
+            return super.cast() as List<Double?>
         }
     }
 
@@ -266,10 +273,11 @@ object SeriesUtil {
             return myCanBeCast
         }
 
-        open fun cast(): Iterable<Double> {
+        open fun cast(): Iterable<Double?> {
             checkState(myCanBeCast, "Can't cast to collection of numbers")
             // Safe cast: all values were checked
-            return myIterable as Iterable<Double>
+            @Suppress("UNCHECKED_CAST")
+            return myIterable as Iterable<Double?>
         }
     }
 }

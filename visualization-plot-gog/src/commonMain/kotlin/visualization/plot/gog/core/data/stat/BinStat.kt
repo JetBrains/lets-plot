@@ -70,7 +70,7 @@ internal class BinStat(binCount: Int, binWidth: Double?, private val myXPosKind:
                 .build()
     }
 
-    private fun computeStatSeries(data: DataFrame, rangeX: ClosedRange<Double>, valuesX: List<Double>): StatUtil.BinsData {
+    private fun computeStatSeries(data: DataFrame, rangeX: ClosedRange<Double>, valuesX: List<Double?>): StatUtil.BinsData {
         var startX: Double? = rangeX.lowerEndpoint()
         var spanX = rangeX.upperEndpoint() - startX!!
 

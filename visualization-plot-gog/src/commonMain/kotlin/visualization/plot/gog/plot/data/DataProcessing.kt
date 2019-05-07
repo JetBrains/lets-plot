@@ -83,7 +83,7 @@ object DataProcessing {
                         if (offset != 0) {
                             val newG = ArrayList<Double>()
                             for (g in sd.getNumeric(Stats.GROUP)) {
-                                newG.add(g + offset)
+                                newG.add(g!! + offset)
                             }
                             sd = sd.builder().putNumeric(Stats.GROUP, newG).build()
                         }
@@ -234,7 +234,7 @@ object DataProcessing {
         return b.build()
     }
 
-    private fun inverseTransformContinuousStatData(statData: DataFrame, stat: Stat, bindings: List<VarBinding>): Map<Variable, List<Double>> {
+    private fun inverseTransformContinuousStatData(statData: DataFrame, stat: Stat, bindings: List<VarBinding>): Map<Variable, List<Double?>> {
         // inverse transform stat data with continuous domain.
         val scaleByAes = HashMap<Aes<*>, Scale2<*>>()
         val aesByMappedStatVar = HashMap<Variable, Aes<*>>()
@@ -269,7 +269,7 @@ object DataProcessing {
         }
 
 
-        val inverseTransformedStatSeries = HashMap<Variable, List<Double>>()
+        val inverseTransformedStatSeries = HashMap<Variable, List<Double?>>()
         for (statVar in statData.variables()) {
             if (aesByMappedStatVar.containsKey(statVar)) {
                 val aes = aesByMappedStatVar[statVar]!!

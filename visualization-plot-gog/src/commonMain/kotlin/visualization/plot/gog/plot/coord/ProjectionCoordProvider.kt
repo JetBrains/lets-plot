@@ -66,7 +66,7 @@ internal class ProjectionCoordProvider private constructor(private val myProject
 
         private fun twistScaleMapper(
                 projection: Projection, projectionInverse: (Double) -> Double,
-                scaleMapper: (Double) -> Double): (Double) -> Double {
+                scaleMapper: (Double) -> Double): (Double?) -> Double {
             return { v ->
                 val projected = projection.apply(v)
                 val unProjected = projectionInverse(projected!!)

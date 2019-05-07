@@ -22,7 +22,7 @@ class SmoothStat internal constructor() : SmoothStatShell() {
             return withEmptyStatValues()
         }
 
-        val valuesX: List<Double>
+        val valuesX: List<Double?>
         if (data.has(TransformVar.X)) {
             valuesX = data.getNumeric(TransformVar.X)
         } else {
@@ -71,7 +71,7 @@ class SmoothStat internal constructor() : SmoothStatShell() {
    * Generalized Additive Model: Unknown
    * */
 
-    private fun applySmoothing(valuesX: List<Double>, valuesY: List<Double>): Map<DataFrame.Variable, List<Double>> {
+    private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
         val regression: RegressionEvaluator
         when (smoothingMethod) {
             Method.LM -> regression = LinearRegression(valuesX, valuesY, confidenceLevel)

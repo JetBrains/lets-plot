@@ -17,7 +17,7 @@ object ContourStatUtil {
      * @param xs - series defining x-coordinates of data-points
      * @return Pair(col, row) or fail if not a regular grid
      */
-    internal fun estimateRegularGridShape(xs: List<Double>): Pair<Int, Int> {
+    internal fun estimateRegularGridShape(xs: List<Double?>): Pair<Int, Int> {
         // num of columns
         // regular X/Y grid is expected
         var colCount = 0
@@ -73,18 +73,24 @@ object ContourStatUtil {
         val xVector = data.getNumeric(TransformVar.X)
         val zVector = data.getNumeric(TransformVar.Z)
 
-        val shape = ContourStatUtil.estimateRegularGridShape(xVector)
+        val shape = estimateRegularGridShape(xVector)
         val colCount = shape.first
         val rowCount = shape.second
 
         val xRange = data.range(TransformVar.X)
         val yRange = data.range(TransformVar.Y)
 
-        return computeContours(xRange, yRange, colCount!!, rowCount!!, zVector, levels)
+        return computeContours(xRange, yRange, colCount, rowCount, zVector, levels)
     }
 
     fun computeContours(
-            xRange: ClosedRange<Double>, yRange: ClosedRange<Double>, colCount: Int, rowCount: Int, data: List<Double>, levels: List<Double>): Map<Double, List<List<DoubleVector>>> {
+            xRange: ClosedRange<Double>,
+            yRange: ClosedRange<Double>,
+            colCount: Int,
+            rowCount: Int,
+            data: List<Double?>,
+            levels: List<Double>): Map<Double, List<List<DoubleVector>>> {
+
         val xStep = SeriesUtil.span(xRange) / (colCount - 1)
         val yStep = SeriesUtil.span(yRange) / (rowCount - 1)
         val origin = DoubleVector(xRange.lowerEndpoint(), yRange.lowerEndpoint())
@@ -275,7 +281,8 @@ object ContourStatUtil {
         }
     }
 
-    private fun computeSegments(colCount: Int, rowCount: Int, data: List<Double>, level: Double): List<Pair<Edge, Edge>> {
+    private fun computeSegments(colCount: Int, rowCount: Int, data: List<Double?>, level: Double): List<Pair<Edge, Edge>> {
+
         val segments = ArrayList<Pair<Edge, Edge>>()
         for (row in 0 until rowCount - 1) {
             for (col in 0 until colCount - 1) {
@@ -285,10 +292,10 @@ object ContourStatUtil {
                 val i3 = (row + 1) * colCount + col // next up
 
                 val v = DoubleArray(5)
-                v[0] = data[i0]
-                v[1] = data[i1]
-                v[2] = data[i2]
-                v[3] = data[i3]
+                v[0] = data[i0]!!
+                v[1] = data[i1]!!
+                v[2] = data[i2]!!
+                v[3] = data[i3]!!
 
                 var min = v[0]
                 var max = v[0]

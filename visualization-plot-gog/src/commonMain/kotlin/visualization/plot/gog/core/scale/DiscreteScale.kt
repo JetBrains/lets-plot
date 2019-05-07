@@ -43,15 +43,15 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
 
     override val defaultTransform: Transform
         get() = object : Transform {
-            override fun apply(rawData: List<*>): List<Double> {
-                val l = ArrayList<Double>()
+            override fun apply(rawData: List<*>): List<Double?> {
+                val l = ArrayList<Double?>()
                 for (o in rawData) {
-                    l.add(asNumber(o)!!)
+                    l.add(asNumber(o))
                 }
                 return l
             }
 
-            override fun applyInverse(v: Double): Any? {
+            override fun applyInverse(v: Double?): Any? {
                 return fromNumber(v)
             }
         }
@@ -59,7 +59,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     override val domainLimits: ClosedRange<Double>
         get() = throw IllegalStateException("Not applicable to scale with discrete domain '$name'")
 
-    constructor(name: String, domainValues: Collection<Any>, mapper: ((Double) -> T)) : super(name, mapper) {
+    constructor(name: String, domainValues: Collection<Any>, mapper: ((Double?) -> T)) : super(name, mapper) {
         updateDomain(domainValues, emptySet<Any>())
 
         // see: http://docs.ggplot2.org/current/scale_continuous.html

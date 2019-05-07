@@ -12,13 +12,13 @@ internal class IdentityTransform @JvmOverloads constructor(
         private val myBreaksGenerator: BreaksGenerator = LinearBreaksGen()) :
         Transform, BreaksGenerator {
 
-    override fun apply(rawData: List<*>): List<Double> {
+    override fun apply(rawData: List<*>): List<Double?> {
         val checkedDoubles = SeriesUtil.checkedDoubles(rawData)
         checkArgument(checkedDoubles.canBeCast(), "Not a collections of numbers")
         return checkedDoubles.cast()
     }
 
-    override fun applyInverse(v: Double): Any? {
+    override fun applyInverse(v: Double?): Any? {
         return v
     }
 

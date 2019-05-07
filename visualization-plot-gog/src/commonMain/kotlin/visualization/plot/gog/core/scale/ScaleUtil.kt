@@ -62,7 +62,7 @@ object ScaleUtil {
     }
 
     fun breaksTransformed(scale: Scale2<*>): List<Double> {
-        return transform(scale.breaks, scale)
+        return transform(scale.breaks, scale).map { it!! }
     }
 
     fun axisBreaks(scale: Scale2<Double>, coord: CoordinateSystem, horizontal: Boolean): List<Double> {
@@ -100,11 +100,11 @@ object ScaleUtil {
         return MapperUtil.map(range, mapper(scale))
     }
 
-    fun <T> map(d: Double, scale: Scale2<T>): T {
+    fun <T> map(d: Double?, scale: Scale2<T>): T {
         return mapper(scale)(d)
     }
 
-    fun <T> map(d: List<Double>, scale: Scale2<T>): List<T> {
+    fun <T> map(d: List<Double?>, scale: Scale2<T>): List<T> {
         val result = ArrayList<T>()
         for (t in d) {
             result.add(map(t, scale))
@@ -112,12 +112,12 @@ object ScaleUtil {
         return result
     }
 
-    fun <T> transformAndMap(l: List<*>, scale: Scale2<T>): List<T> {
+    private fun <T> transformAndMap(l: List<*>, scale: Scale2<T>): List<T> {
         val tl = transform(l, scale)
         return map(tl, scale)
     }
 
-    fun <T> mapper(scale: Scale2<T>): (Double) -> T {
+    fun <T> mapper(scale: Scale2<T>): (Double?) -> T {
         val mapper = scale.mapper
         if (mapper != null) {
             return mapper
@@ -125,27 +125,27 @@ object ScaleUtil {
         throw IllegalStateException("Scale mapper is not defined (" + scale.name + ")")
     }
 
-    fun transform(l: List<*>, scale: Scale2<*>): List<Double> {
+    fun transform(l: List<*>, scale: Scale2<*>): List<Double?> {
 //        val transform = scale.transform
 //        if (transform != null) {
 //            return transform.apply(l)
 //        }
 //        throw IllegalStateException("Scale transform is not defined (" + scale.name + ")")
 
-        return scale.transform.apply(l)!!
+        return scale.transform.apply(l)
     }
 
-    fun inverseTransformToContinuousDomain(l: List<Double>, scale: Scale2<*>): List<Double> {
+    fun inverseTransformToContinuousDomain(l: List<Double?>, scale: Scale2<*>): List<Double?> {
         checkState(scale.isContinuousDomain, "Not continuous numeric domain: $scale")
-        return inverseTransform(l, scale) as List<Double>
+        return inverseTransform(l, scale) as List<Double?>
     }
 
-    fun inverseTransform(l: List<Double>, scale: Scale2<*>): List<*> {
+    fun inverseTransform(l: List<Double?>, scale: Scale2<*>): List<*> {
         val transform = scale.transform
         if (transform != null) {
-            val result = ArrayList<Any>(l.size)
+            val result = ArrayList<Any?>(l.size)
             for (v in l) {
-                result.add(transform.applyInverse(v)!!)
+                result.add(transform.applyInverse(v))
             }
             return result
         }
@@ -156,7 +156,7 @@ object ScaleUtil {
         val result = ArrayList<Double>()
         val domainLimits = transform(definedLimits(scale), scale)
         for (x in domainLimits) {
-            if (x.isFinite()) {
+            if (x!!.isFinite()) {
                 result.add(x)
             }
         }

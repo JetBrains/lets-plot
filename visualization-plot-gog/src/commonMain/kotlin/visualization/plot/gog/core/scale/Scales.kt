@@ -11,7 +11,7 @@ object Scales {
         return ContinuousScale(name, Mappers.undefined(), true)
     }
 
-    fun <T> continuousDomain(name: String, mapper: (Double) -> T, continuousRange: Boolean): Scale2<T> {
+    fun <T> continuousDomain(name: String, mapper: (Double?) -> T, continuousRange: Boolean): Scale2<T> {
         return ContinuousScale(name, mapper, continuousRange)
     }
 
@@ -25,7 +25,7 @@ object Scales {
         return discreteDomain(name, domainValues, Mappers.undefined())
     }
 
-    fun <T> discreteDomain(name: String, domainValues: Collection<Any>, mapper: ((Double) -> T)): Scale2<T> {
+    fun <T> discreteDomain(name: String, domainValues: Collection<Any>, mapper: ((Double?) -> T)): Scale2<T> {
         return DiscreteScale(name, domainValues, mapper)
     }
 

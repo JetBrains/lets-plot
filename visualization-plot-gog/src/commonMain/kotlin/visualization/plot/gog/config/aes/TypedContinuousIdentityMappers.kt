@@ -7,8 +7,8 @@ import jetbrains.datalore.visualization.plot.gog.core.scale.Mappers
 import kotlin.math.abs
 
 object TypedContinuousIdentityMappers {
-    val COLOR = { n: Double ->
-        val `val` = abs(n.toInt())
+    val COLOR = { n: Double? ->
+        val `val` = abs(n!!.toInt())
         Color(
                 `val` shr 16 and 0xff,
                 `val` shr 8 and 0xff,
@@ -31,10 +31,10 @@ object TypedContinuousIdentityMappers {
         return MAP.containsKey(aes)
     }
 
-    operator fun <T> get(aes: Aes<T>): (Double) -> T {
+    operator fun <T> get(aes: Aes<T>): (Double?) -> T {
         checkArgument(contain(aes), "No continuous identity mapper for aes " + aes.name())
         val f = MAP[aes]!!
         // Safe cast because this MAP has been filled cleanly, without 'Unchecked cast'-s
-        return f as ((Double) -> T)
+        return f as ((Double?) -> T)
     }
 }

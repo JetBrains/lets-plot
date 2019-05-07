@@ -55,7 +55,7 @@ object PlotUtil {
             rangeY = rangeY.span(rangesAfterSizeExpand.second!!)
         }
 
-        return Pair(rangeX, rangeY)
+        return Pair(rangeX!!, rangeY!!)
     }
 
     private fun combineRanges(aesList: List<Aes<Double>>, aesthetics: Aesthetics): ClosedRange<Double>? {
@@ -74,7 +74,7 @@ object PlotUtil {
     }
 
     private fun computeLayerDryRunXYRangesAfterPosAdjustment(
-            layer: GeomLayer, aes: Aesthetics, geomCtx: GeomContext): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+            layer: GeomLayer, aes: Aesthetics, geomCtx: GeomContext): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val posAesX = Iterables.toList(Aes.affectingScaleX(layer.renderedAes()))
         val posAesY = Iterables.toList(Aes.affectingScaleY(layer.renderedAes()))
 
@@ -147,7 +147,9 @@ object PlotUtil {
     }
 
     private fun computeLayerDryRunXYRangesAfterSizeExpand(
-            layer: GeomLayer, aesthetics: Aesthetics, geomCtx: GeomContext): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+            layer: GeomLayer,
+            aesthetics: Aesthetics,
+            geomCtx: GeomContext): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val renderedAes = layer.renderedAes()
         val computeExpandX = renderedAes.contains(Aes.WIDTH)
         val computeExpandY = renderedAes.contains(Aes.HEIGHT)
@@ -295,7 +297,7 @@ object PlotUtil {
                         aesBuilder.constantAes(aes1, layer.aestheticsDefaults.defaultValue(aes1))
                     } else {
                         // ?Type
-                        val integerFunction = listMapper(numericValues, mapperOption as (Double) -> Any)
+                        val integerFunction = listMapper(numericValues, mapperOption as (Double?) -> Any)
                         val aes1 = aes as Aes<Any>
                         aesBuilder.aes(aes1, integerFunction)
                     }

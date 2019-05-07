@@ -170,7 +170,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
               ? Scales.pureContinuous(name, mapper)
               : Scales.continuousDomain(name, mapper);
           */
-                    scale = Scales.continuousDomain(name, { v -> mapper.apply(v) }, continuousRange)
+                    scale = Scales.continuousDomain(name, { v -> mapper.apply(v!!) }, continuousRange)
 
                     if (mapper is WithGuideBreaks) {
                         val guideBreaks = (mapper as WithGuideBreaks).guideBreaks
@@ -226,7 +226,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
             return with.build()
         }
 
-        private fun absentMapper(`var`: DataFrame.Variable): (Double) -> T {
+        private fun absentMapper(`var`: DataFrame.Variable): (Double?) -> T {
             // mapper for empty data is a special case - should never be used
             return { v -> throw IllegalStateException("Mapper for empty data series '" + `var`.name + "' was invoked with arg " + v) }
         }

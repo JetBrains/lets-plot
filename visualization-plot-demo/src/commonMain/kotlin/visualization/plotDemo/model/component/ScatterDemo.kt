@@ -203,19 +203,19 @@ open class ScatterDemo : SimpleDemoBase() {
         var scaleColor = Scales.continuousDomain("C", Aes.COLOR)
         run {
             val rawC = data.getNumeric(varC)
-            val minC = Ordering.natural<Double>().min(rawC)
-            val maxC = Ordering.natural<Double>().max(rawC)
+            val minC = Ordering.natural<Double>().min(rawC as List<Double>)
+            val maxC = Ordering.natural<Double>().max(rawC as List<Double>)
 
             val colorScheme = ColorPalette.Diverging.RdYlBu
             val colorScale = quantizedColorScale(colorScheme, 3, minC, maxC)
             val colors = colorScale.outputValues
             val mappedValuesQuantized = colorScale.domainQuantized
-            val mapperColor = { input: Double ->
+            val mapperColor = { input: Double? ->
                 // todo: null color
                 var color: Color? = null
                 var index = 0
                 for (range in mappedValuesQuantized) {
-                    if (range.contains(input)) {
+                    if (range.contains(input!!)) {
                         color = colors.get(index)
                     }
                     index++

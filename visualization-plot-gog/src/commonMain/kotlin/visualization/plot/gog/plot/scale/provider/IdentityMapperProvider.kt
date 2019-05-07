@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideMapper
 import jetbrains.datalore.visualization.plot.gog.plot.scale.MapperProvider
 import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.GuideMappers
 
-internal class IdentityMapperProvider<T>(private val myDiscreteMapperProvider: IdentityDiscreteMapperProvider<T>, private val myContinuousMapper: (Double) -> T) : MapperProvider<T> {
+internal class IdentityMapperProvider<T>(private val myDiscreteMapperProvider: IdentityDiscreteMapperProvider<T>, private val myContinuousMapper: (Double?) -> T) : MapperProvider<T> {
 
     override fun createDiscreteMapper(data: DataFrame, variable: Variable): GuideMapper<T> {
         return myDiscreteMapperProvider.createDiscreteMapper(data, variable)

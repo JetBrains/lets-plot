@@ -9,7 +9,7 @@ internal object BoxplotStatUtil {
     /**
      * @return max num of observations in this group for all X
      */
-    fun buildStat(xs: List<Double>, ys: List<Double>, whiskerIQRRatio: Double, group: Int, collector: MutableMap<DataFrame.Variable, MutableList<Double>>): Int {
+    fun buildStat(xs: List<Double?>, ys: List<Double?>, whiskerIQRRatio: Double, group: Int, collector: MutableMap<DataFrame.Variable, MutableList<Double>>): Int {
         if (collector.isEmpty()) {
             collector[Stats.X] = ArrayList()
             collector[Stats.Y] = ArrayList()
@@ -28,9 +28,9 @@ internal object BoxplotStatUtil {
             val y = ys_.next()
             if (SeriesUtil.isFinite(x) && SeriesUtil.isFinite(y)) {
                 if (!binnedData.containsKey(x)) {
-                    binnedData[x] = ArrayList()
+                    binnedData[x!!] = ArrayList()
                 }
-                binnedData[x]!!.add(y)
+                binnedData[x]!!.add(y!!)
             }
         }
 

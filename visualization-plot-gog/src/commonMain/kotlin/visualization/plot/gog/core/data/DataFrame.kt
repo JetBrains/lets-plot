@@ -66,7 +66,7 @@ class DataFrame private constructor(builder: Builder) {
         return myVectorByVar[variable]!!
     }
 
-    fun getNumeric(variable: Variable): List<Double> {
+    fun getNumeric(variable: Variable): List<Double?> {
         assertDefined(variable)
         val list = myVectorByVar[variable]
         if (list!!.isEmpty()) {
@@ -75,7 +75,7 @@ class DataFrame private constructor(builder: Builder) {
 
         assertNumeric(variable)
         @Suppress("UNCHECKED_CAST")
-        return list as List<Double>
+        return list as List<Double?>
     }
 
     fun variables(): Set<Variable> {
@@ -138,7 +138,10 @@ class DataFrame private constructor(builder: Builder) {
         return builder.build()
     }
 
-    class Variable @JvmOverloads constructor(val name: String, val source: Source = Source.ORIGIN, val label: String = name) {
+    class Variable @JvmOverloads constructor(
+            val name: String,
+            private val source: Source = Source.ORIGIN,
+            val label: String = name) {
 
         val isOrigin: Boolean
             get() = source == Source.ORIGIN
@@ -170,10 +173,10 @@ class DataFrame private constructor(builder: Builder) {
 
     class Builder {
 
-        val myVectorByVar = HashMap<Variable, List<*>>()
-        val myIsNumeric = HashMap<Variable, Boolean>()
+        internal val myVectorByVar = HashMap<Variable, List<*>>()
+        internal val myIsNumeric = HashMap<Variable, Boolean>()
 
-        constructor() {}
+        constructor()
 
         constructor(data: DataFrame) {
             myVectorByVar.putAll(data.myVectorByVar)
@@ -187,7 +190,7 @@ class DataFrame private constructor(builder: Builder) {
             return this
         }
 
-        fun putNumeric(variable: Variable, v: List<Double>): Builder {
+        fun putNumeric(variable: Variable, v: List<Double?>): Builder {
             putIntern(variable, v)
             myIsNumeric[variable] = true
             return this

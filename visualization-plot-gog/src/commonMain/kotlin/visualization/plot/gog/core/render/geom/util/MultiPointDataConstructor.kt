@@ -99,7 +99,7 @@ object MultiPointDataConstructor {
         private val myReducedIndexes = ArrayList<Int>()
         private var myLastAdded: DoubleVector? = null
         private var myLastPostponed: Pair<DoubleVector, Int>? = null
-        private var myRegionStart: Pair<DoubleVector, Int>? = null
+        private var myRegionStart: Pair<DoubleVector?, Int?>? = null
 
         override// Add last postponed to avoid disconnected contours
         val points: Pair<List<DoubleVector>, List<Int>>

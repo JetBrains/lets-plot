@@ -11,7 +11,7 @@ class LinearRegression
  * @param ys              - observations
  * @param confidenceLevel - 0.01..0.99, def: 0.95 (= 95% confidence)
  */
-(xs: List<Double>, ys: List<Double>, confidenceLevel: Double) : RegressionEvaluator(xs, ys, confidenceLevel) {
+(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double) : RegressionEvaluator(xs, ys, confidenceLevel) {
     private val myRegression: SimpleRegression = SimpleRegression()
 
     private val myXBar: Double
@@ -28,7 +28,7 @@ class LinearRegression
             val x = x_.next()
             val y = y_.next()
             if (SeriesUtil.isFinite(x) && SeriesUtil.isFinite(y)) {
-                myRegression.addData(x, y)
+                myRegression.addData(x!!, y!!)
                 meanX.increment(x)
             }
         }

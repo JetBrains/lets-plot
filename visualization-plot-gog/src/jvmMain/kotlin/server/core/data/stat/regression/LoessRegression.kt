@@ -5,7 +5,7 @@ import jetbrains.datalore.visualization.plot.gog.core.data.stat.DensityStatUtil
 import org.apache.commons.math3.analysis.interpolation.LoessInterpolator
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
 
-class LoessRegression(xs: List<Double>, ys: List<Double>, confidenceLevel: Double) : RegressionEvaluator(xs, ys, confidenceLevel) {
+class LoessRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double) : RegressionEvaluator(xs, ys, confidenceLevel) {
 
     private val myPolynomial: PolynomialSplineFunction
     private val mySamplePolynomials: Array<PolynomialSplineFunction?>
@@ -14,7 +14,7 @@ class LoessRegression(xs: List<Double>, ys: List<Double>, confidenceLevel: Doubl
     init {
         val points = ArrayList<DoubleVector>()
         for (i in xs.indices) {
-            points.add(DoubleVector(xs[i], ys[i]))
+            points.add(DoubleVector(xs[i]!!, ys[i]!!))
         }
 
         myPolynomial = getPoly(points)

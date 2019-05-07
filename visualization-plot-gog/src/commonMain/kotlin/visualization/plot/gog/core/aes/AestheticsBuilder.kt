@@ -509,7 +509,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return { value -> Iterables[v, value] }
         }
 
-        fun <T> listMapper(v: List<Double>, f: (Double) -> T): (Int) -> T {
+        fun <T> listMapper(v: List<Double?>, f: (Double?) -> T): (Int) -> T {
             return { value -> f(v[value]) }
         }
     }

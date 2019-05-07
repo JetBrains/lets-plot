@@ -110,11 +110,11 @@ object GuideMappers {
         return adaptContinuous(Mappers.linear(domain, range, naValue!!))
     }
 
-    fun <T> adapt(mapperFun: (Double) -> T): GuideMapper<T> {
+    fun <T> adapt(mapperFun: (Double?) -> T): GuideMapper<T> {
         return GuideMapperAdapter(mapperFun)
     }
 
-    fun <T> adaptContinuous(mapperFun: (Double) -> T): GuideMapper<T> {
+    fun <T> adaptContinuous(mapperFun: (Double?) -> T): GuideMapper<T> {
         return GuideMapperAdapter(mapperFun, true)
     }
 }

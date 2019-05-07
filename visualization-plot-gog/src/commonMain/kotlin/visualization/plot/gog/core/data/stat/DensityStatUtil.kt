@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
 import kotlin.math.*
 
 object DensityStatUtil {
@@ -21,11 +22,13 @@ object DensityStatUtil {
         return sqrt(counter / data.size)
     }
 
-    fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double>): Double {
+    fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double?>): Double {
         val mySize = valuesX.size
-        val dataSummary = FiveNumberSummary(valuesX)
+        @Suppress("UNCHECKED_CAST")
+        val valuesXFinite = valuesX.filter { SeriesUtil.isFinite(it) } as List<Double>
+        val dataSummary = FiveNumberSummary(valuesXFinite)
         val myIQR = dataSummary.thirdQuartile - dataSummary.firstQuartile
-        val myStdD = stdDev(valuesX)
+        val myStdD = stdDev(valuesXFinite)
 
         when (bw) {
             DensityStat.BandWidthMethod.NRD0 -> {
@@ -62,14 +65,18 @@ object DensityStatUtil {
     }
 
     internal fun densityFunction(
-            valuesX: List<Double>, ker: (Double) -> Double, bw: Double, ad: Double, weightX: List<Double>): (Double) -> Double {
+            valuesX: List<Double?>,
+            ker: (Double) -> Double,
+            bw: Double,
+            ad: Double,
+            weightX: List<Double?>): (Double) -> Double {
         val a = bw * ad
         return { d ->
             var sum = 0.0
             var value: Double
             for (i in valuesX.indices) {
-                value = valuesX[i]
-                sum += ker((d - value) / a) * weightX[i]
+                value = valuesX[i]!!
+                sum += ker((d - value) / a) * weightX[i]!!
             }
             sum / a
         }
@@ -114,7 +121,7 @@ object DensityStatUtil {
     }
 
     fun createRawMatrix(
-            values: List<Double>, list: List<Double>, ker: (Double) -> Double, bw: Double, ad: Double, weight: List<Double>): Array<DoubleArray> {
+            values: List<Double?>, list: List<Double>, ker: (Double) -> Double, bw: Double, ad: Double, weight: List<Double?>): Array<DoubleArray> {
         val a = bw * ad
         val n = values.size
         val x = list.size
@@ -122,7 +129,7 @@ object DensityStatUtil {
 
         for (row in 0 until x) {
             for (col in 0 until n) {
-                result[row][col] = ker((list[row] - values[col]) / a) * sqrt(weight[col]) / a
+                result[row][col] = ker((list[row] - values[col]!!) / a) * sqrt(weight[col]!!) / a
             }
         }
         return result

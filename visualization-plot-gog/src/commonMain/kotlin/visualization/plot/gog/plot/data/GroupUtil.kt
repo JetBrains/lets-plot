@@ -3,10 +3,10 @@ package jetbrains.datalore.visualization.plot.gog.plot.data
 object GroupUtil {
     internal val SINGLE_GROUP = { index: Int -> 0 }
 
-    fun wrap(l: List<Number>): (Int) -> Int {
+    fun wrap(l: List<Number?>): (Int) -> Int {
         return { index ->
             if (index > 0 && index < l.size)
-                l[index!!].toInt()
+                l[index]!!.toInt()
             else
                 0
         }

@@ -19,8 +19,8 @@ open class FunTransform(
         return result
     }
 
-    override fun applyInverse(v: Double): Any? {
-        return myInverse(v)
+    override fun applyInverse(v: Double?): Any? {
+        return myInverse(v!!)
     }
 
     override fun generate(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {

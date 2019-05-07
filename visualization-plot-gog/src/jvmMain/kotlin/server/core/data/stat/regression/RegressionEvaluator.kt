@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regressi
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
 
-abstract class RegressionEvaluator protected constructor(xs: List<Double>, ys: List<Double>, confidenceLevel: Double) {
+abstract class RegressionEvaluator protected constructor(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double) {
     init {
         Preconditions.checkArgument(
                 confidenceLevel in 0.01..0.99,

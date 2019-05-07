@@ -46,15 +46,15 @@ internal class CountStat : BaseStat(DEF_MAPPING) {
                 Aes.Y to Stats.COUNT
         )
 
-        private fun countByX(valuesX: List<Double>, weight: List<Double>): Map<Double, MutableDouble> {
+        private fun countByX(valuesX: List<Double?>, weight: List<Double?>): Map<Double, MutableDouble> {
             val result = LinkedHashMap<Double, MutableDouble>()
             for (i in valuesX.indices) {
                 val x = valuesX[i]
                 if (SeriesUtil.isFinite(x)) {
-                    if (!result.containsKey(x)) {
+                    if (!result.containsKey(x!!)) {
                         result[x] = MutableDouble(0.0)
                     }
-                    result[x]!!.getAndAdd(weight[i])
+                    result[x]!!.getAndAdd(SeriesUtil.asFinite(weight[i], 0.0))
                 }
             }
             return result
