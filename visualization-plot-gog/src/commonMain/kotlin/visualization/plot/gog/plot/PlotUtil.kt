@@ -35,7 +35,7 @@ object PlotUtil {
         })
     }
 
-    fun computeLayerDryRunXYRanges(layer: GeomLayer, aes: Aesthetics): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+    fun computeLayerDryRunXYRanges(layer: GeomLayer, aes: Aesthetics): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val geomCtx = GeomContextBuilder().aesthetics(aes).build()
 
         val rangesAfterPosAdjustment = computeLayerDryRunXYRangesAfterPosAdjustment(layer, aes, geomCtx)
@@ -55,7 +55,7 @@ object PlotUtil {
             rangeY = rangeY.span(rangesAfterSizeExpand.second!!)
         }
 
-        return Pair(rangeX!!, rangeY!!)
+        return Pair(rangeX, rangeY)
     }
 
     private fun combineRanges(aesList: List<Aes<Double>>, aesthetics: Aesthetics): ClosedRange<Double>? {

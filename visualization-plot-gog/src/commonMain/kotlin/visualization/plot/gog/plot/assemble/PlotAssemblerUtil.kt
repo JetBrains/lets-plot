@@ -58,7 +58,7 @@ internal object PlotAssemblerUtil {
 
         // stitch together layers from all panels
         var planeCount = 0
-        if (!layersByPanel.isEmpty()) {
+        if (layersByPanel.isNotEmpty()) {
             planeCount = layersByPanel[0].size
         }
 
@@ -78,7 +78,7 @@ internal object PlotAssemblerUtil {
         for (stitchedPlotLayers in stitchedLayersList) {
             val layerDataRangeByAes = guideDataRangeByAes(stitchedPlotLayers, guideOptionsMap)
             for (aes in layerDataRangeByAes.keys) {
-                val range = layerDataRangeByAes.get(aes)
+                val range = layerDataRangeByAes[aes]
                 updateAesRangeMap(aes, range, dataRangeByAes)
             }
         }
@@ -116,7 +116,7 @@ internal object PlotAssemblerUtil {
                         colorBar = true
                         val colorScale = scale as Scale2<Color>
                         colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(scaleName, binding.aes,
-                                dataRangeByAes, colorScale, guideOptions as ColorBarOptions, theme)
+                                dataRangeByAes, colorScale, guideOptions, theme)
                     }
                 } else if (fitsColorBar(binding)) {
                     colorBar = true
@@ -220,11 +220,11 @@ internal object PlotAssemblerUtil {
                     if (layer.hasBinding(aes)) {
                         val scale = layer.getBinding(aes).scale
                         if (scale!!.isContinuousDomain) {
-                            layerAesRange = PlotAssemblerUtil.updateRange(ScaleUtil.transformedDefinedLimits(scale), layerAesRange)
+                            layerAesRange = updateRange(ScaleUtil.transformedDefinedLimits(scale), layerAesRange)
                         }
 
                         if (scale.hasBreaks()) {
-                            layerAesRange = PlotAssemblerUtil.updateRange(ScaleUtil.breaksTransformed(scale), layerAesRange)
+                            layerAesRange = updateRange(ScaleUtil.breaksTransformed(scale), layerAesRange)
                         }
                     }
 
@@ -237,7 +237,7 @@ internal object PlotAssemblerUtil {
                         isXCalculated = true
                         realAes = Aes.X
                         val xRange = xyRanges.first
-                        layerAesRange = PlotAssemblerUtil.updateRange(xRange, layerAesRange)
+                        layerAesRange = updateRange(xRange, layerAesRange)
                         layerAesRange = PlotUtil.rangeWithExpand(layer, aes, layerAesRange)
                     } else if (Aes.isAffectingScaleY(aes)) {
                         if (isYCalculated) {
@@ -246,20 +246,20 @@ internal object PlotAssemblerUtil {
                         isYCalculated = true
                         realAes = Aes.Y
                         val yRange = xyRanges.second
-                        layerAesRange = PlotAssemblerUtil.updateRange(yRange, layerAesRange)
+                        layerAesRange = updateRange(yRange, layerAesRange)
                         layerAesRange = PlotUtil.rangeWithExpand(layer, aes, layerAesRange)
                     } else {
                         realAes = aes
-                        layerAesRange = PlotAssemblerUtil.updateRange(aesthetics.range(aes), layerAesRange)
+                        layerAesRange = updateRange(aesthetics.range(aes), layerAesRange)
                     }
 
                     // include zero if necessary
                     if (layer.rangeIncludesZero(aes)) {
-                        layerAesRange = PlotAssemblerUtil.updateRange(ClosedRange.singleton(0.0), layerAesRange)
+                        layerAesRange = updateRange(ClosedRange.singleton(0.0), layerAesRange)
                     }
 
                     // update range map
-                    PlotAssemblerUtil.updateAesRangeMap(realAes, layerAesRange, rangeByAes)
+                    updateAesRangeMap(realAes, layerAesRange, rangeByAes)
                 }
             }
         }
