@@ -48,6 +48,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
+                implementation project(':visualization-base-svg')
             }
         }
     }
