@@ -11,6 +11,7 @@ import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
 import jetbrains.datalore.visualization.plot.gog.core.util.MutableDouble
 import jetbrains.datalore.visualization.plot.gog.core.util.MutableInteger
 import kotlin.math.min
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 internal object SamplingUtil {
@@ -112,7 +113,7 @@ internal object SamplingUtil {
                 .map { Pair(it, calculateArea(rings[it])) }
                 .sortedWith(compareBy<Pair<*, Double>> { getRingArea(it) }.reversed())
                 .map { p ->
-                    var limit = min((p.second!! / (totalArea - areaProceed.get()) * (totalPointsLimit - pointsProceed.get())).toInt(),
+                    var limit = min((p.second!! / (totalArea - areaProceed.get()) * (totalPointsLimit - pointsProceed.get())).roundToInt(),
                             rings[getRingIndex(p)].size
                     )
 
