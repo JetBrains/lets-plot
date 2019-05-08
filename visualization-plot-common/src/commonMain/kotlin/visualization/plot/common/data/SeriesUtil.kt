@@ -157,7 +157,7 @@ object SeriesUtil {
                 isFinite(range.lowerEndpoint()) && isFinite(range.upperEndpoint())
     }
 
-    fun matchingIndices(list: List<*>, matchedValue: Any): MutableList<Int> {
+    fun matchingIndices(list: List<*>, matchedValue: Any?): MutableList<Int> {
         val result = ArrayList<Int>()
         for (i in list.indices) {
             if (matchedValue == list[i]) {

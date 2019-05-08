@@ -45,9 +45,9 @@ internal class ColorHueMapperProvider(hueRange: List<Double>?, chroma: Double?, 
     companion object {
         val DEFAULT = ColorHueMapperProvider(null, null, null, null, null, Color.GRAY)
 
-        private val DEF_SATURATION = 50.0
-        private val DEF_VALUE = 90.0
-        private val DEF_START_HUE = 0.0
+        private const val DEF_SATURATION = 50.0
+        private const val DEF_VALUE = 90.0
+        private const val DEF_START_HUE = 0.0
 
         private fun normalizeHueRange(hueRange: List<Double>?): DoubleArray {
             val result = doubleArrayOf(0.0, 360.0)

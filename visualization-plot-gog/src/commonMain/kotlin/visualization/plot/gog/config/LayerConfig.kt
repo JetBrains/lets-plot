@@ -160,7 +160,7 @@ class LayerConfig(opts: Map<*, *>,
 
     fun hasVarBinding(varName: String): Boolean {
         for (binding in varBindings) {
-            if (binding.`var`.name == varName) {
+            if (binding.variable.name == varName) {
                 return true
             }
         }

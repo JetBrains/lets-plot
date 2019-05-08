@@ -40,14 +40,11 @@ import jetbrains.datalore.visualization.plot.gog.plot.scale.provider.*
 
 /**
  * @param <T> - target aesthetic type of the configured scale
-</T> */
+ */
 internal class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
 
-    val aes: Aes<T>
+    val aes: Aes<T> = aesOrFail(options) as Aes<T>
 
-    init {
-        aes = aesOrFail(options) as Aes<T>
-    }
 
     fun createScaleProvider(): ScaleProvider<T> {
         return createScaleProviderBuilder().build()
@@ -56,11 +53,9 @@ internal class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
     private fun createScaleProviderBuilder(): ScaleProviderBuilder<T> {
         var mapperProvider: MapperProvider<*>? = null
 
-        val naValue: T
-        if (has(NA_VALUE)) {
-            naValue = getValue(aes, NA_VALUE)!!
-        } else {
-            naValue = DefaultNaValue[aes]
+        val naValue: T = when {
+            has(NA_VALUE) -> getValue(aes, NA_VALUE)!!
+            else -> DefaultNaValue[aes]
         }
 
         // all 'manual' scales
@@ -77,30 +72,45 @@ internal class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
                 mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE)
             }
         } else if (aes == Aes.ALPHA && has(RANGE)) {
-            mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double)!!)
+            mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double))
         } else if (aes == Aes.SIZE && has(RANGE)) {
-            mapperProvider = SizeMapperProvider(getRange(RANGE), (naValue as Double)!!)
+            mapperProvider = SizeMapperProvider(getRange(RANGE), (naValue as Double))
         }
 
         if (has(SCALE_MAPPER_KIND)) {
-            val mapperKind = getString(SCALE_MAPPER_KIND)
-            when (mapperKind) {
-                IDENTITY -> mapperProvider = createIdentityMapperProvider<T>(aes, naValue)
-                COLOR_GRADIENT -> mapperProvider = ColorGradientMapperProvider(getColor(LOW), getColor(HIGH), (naValue as Color)!!)
-                COLOR_GRADIENT2 -> mapperProvider = ColorGradient2MapperProvider(getColor(LOW), getColor(MID), getColor(HIGH), getDouble(MIDPOINT), naValue as Color)
-                COLOR_HUE -> mapperProvider = ColorHueMapperProvider(
-                        getList(HUE_RANGE) as List<Double>, getDouble(CHROMA), getDouble(LUMINANCE), getDouble(START_HUE), getDouble(DIRECTION), naValue as Color
-                )
-                COLOR_GREY -> mapperProvider = ColorLuminanceMapperProvider(getDouble(START), getDouble(END), naValue as Color)
-                COLOR_BREWER -> mapperProvider = ColorBrewerMapperProvider(getString(PALETTE_TYPE), get(PALETTE), getDouble(DIRECTION), naValue as Color)
-                SIZE_AREA -> mapperProvider = SizeAreaMapperProvider(getDouble(MAX_SIZE), naValue as Double)
-                else -> throw IllegalArgumentException("Aes '" + aes.name + "' - unexpected scale mapper kind: '" + mapperKind + "'")
+            when (val mapperKind = getString(SCALE_MAPPER_KIND)) {
+                IDENTITY ->
+                    mapperProvider = createIdentityMapperProvider(aes, naValue)
+                COLOR_GRADIENT ->
+                    mapperProvider = ColorGradientMapperProvider(getColor(LOW), getColor(HIGH), (naValue as Color))
+                COLOR_GRADIENT2 ->
+                    mapperProvider = ColorGradient2MapperProvider(
+                            getColor(LOW),
+                            getColor(MID),
+                            getColor(HIGH),
+                            getDouble(MIDPOINT), naValue as Color)
+                COLOR_HUE ->
+                    mapperProvider = ColorHueMapperProvider(
+                            getDoubleList(HUE_RANGE),
+                            getDouble(CHROMA),
+                            getDouble(LUMINANCE),
+                            getDouble(START_HUE),
+                            getDouble(DIRECTION), naValue as Color
+                    )
+                COLOR_GREY ->
+                    mapperProvider = ColorLuminanceMapperProvider(getDouble(START), getDouble(END), naValue as Color)
+                COLOR_BREWER ->
+                    mapperProvider = ColorBrewerMapperProvider(getString(PALETTE_TYPE), get(PALETTE), getDouble(DIRECTION), naValue as Color)
+                SIZE_AREA ->
+                    mapperProvider = SizeAreaMapperProvider(getDouble(MAX_SIZE), naValue as Double)
+                else ->
+                    throw IllegalArgumentException("Aes '" + aes.name + "' - unexpected scale mapper kind: '" + mapperKind + "'")
             }
         }
 
         val b = ScaleProviderBuilder(aes)
         if (mapperProvider != null) {
-            b.mapperProvider((mapperProvider as MapperProvider<T>?)!!)
+            b.mapperProvider(mapperProvider as MapperProvider<T>)
         }
 
         // used in scale_x_discrete, scale_y_discrete
@@ -126,11 +136,11 @@ internal class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
             b.breaks(getList(BREAKS))
         }
         if (has(LABELS)) {
-            b.labels(getList(LABELS) as List<String>)
+            b.labels(getStringList(LABELS))
         }
         if (has(EXPAND)) {
             val list = getList(EXPAND)
-            if (!list.isEmpty()) {
+            if (list.isNotEmpty()) {
                 val multiplicativeExpand = list[0] as Number
                 b.multiplicativeExpand(multiplicativeExpand.toDouble())
                 if (list.size > 1) {
@@ -155,13 +165,13 @@ internal class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
     }
 
     companion object {
-        private val IDENTITY = "identity"
-        private val COLOR_GRADIENT = "color_gradient"
-        private val COLOR_GRADIENT2 = "color_gradient2"
-        private val COLOR_HUE = "color_hue"
-        private val COLOR_GREY = "color_grey"
-        private val COLOR_BREWER = "color_brewer"
-        private val SIZE_AREA = "size_area"
+        private const val IDENTITY = "identity"
+        private const val COLOR_GRADIENT = "color_gradient"
+        private const val COLOR_GRADIENT2 = "color_gradient2"
+        private const val COLOR_HUE = "color_hue"
+        private const val COLOR_GREY = "color_grey"
+        private const val COLOR_BREWER = "color_brewer"
+        private const val SIZE_AREA = "size_area"
 
         fun aesOrFail(options: Map<*, *>): Aes<*> {
             val accessor = OptionsAccessor(options)

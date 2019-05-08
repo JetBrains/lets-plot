@@ -101,7 +101,8 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         return MyScaleProvider(this)
     }
 
-    private class MyScaleProvider<T> internal constructor(b: ScaleProviderBuilder<T>) : ScaleProvider<T> {
+    private class MyScaleProvider<T>(b: ScaleProviderBuilder<T>) : ScaleProvider<T> {
+
         private val myName: String? = b.myName
         private val myBreaks: List<*>? = if (b.myBreaks == null) null else ArrayList(b.myBreaks!!)
         private val myLabels: List<String>? = if (b.myLabels == null) null else ArrayList(b.myLabels!!)
@@ -114,7 +115,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         private val myAes: Aes<T> = b.myAes
         private val myMapperProvider: MapperProvider<T>? = b.myMapperProvider
 
-        protected fun scaleName(variable: DataFrame.Variable): String {
+        private fun scaleName(variable: DataFrame.Variable): String {
             return myName ?: variable.label
         }
 
@@ -129,9 +130,11 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
                     { v -> myMapperProvider!!.createDiscreteMapper(data, variable).apply(v) }
                 }
 
+                @Suppress("UNCHECKED_CAST")
+                val domainValues = DataFrameUtil.distinctValues(data, variable).filter { it != null } as List<Any>
                 scale = Scales.discreteDomain(
                         name,
-                        DataFrameUtil.distinctValues(data, variable),
+                        domainValues,
                         mapper
                 )
 

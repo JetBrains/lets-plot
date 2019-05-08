@@ -140,9 +140,6 @@ class Color @JvmOverloads constructor(
             if (hexColor.length != 6) {
                 throw IllegalArgumentException()
             }
-//            val r = Integer.valueOf(hexColor.substring(0, 2), 16)
-//            val g = Integer.valueOf(hexColor.substring(2, 4), 16)
-//            val b = Integer.valueOf(hexColor.substring(4, 6), 16)
             val r = hexColor.substring(0, 2).toInt(16)
             val g = hexColor.substring(2, 4).toInt(16)
             val b = hexColor.substring(4, 6).toInt(16)
@@ -154,7 +151,6 @@ class Color @JvmOverloads constructor(
                 throw IllegalArgumentException()
             }
 
-//            val result = Integer.toHexString(value)
             val result = value.toString(16)
             return if (result.length == 1) {
                 "0$result"

@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShapes
 
 internal class ShapeOptionConverter : Function<Any?, PointShape?> {
 
-    override fun apply(value: Any?): PointShape {
+    override fun apply(value: Any?): PointShape? {
         return convert(value)
     }
 
@@ -28,9 +28,9 @@ internal class ShapeOptionConverter : Function<Any?, PointShape?> {
          * - '.' or code 46 : smallest rectangle (1px)
          * - A single character (or char code) : use this char as plotting symbol
          */
-        private fun convert(value: Any?): PointShape {
+        private fun convert(value: Any?): PointShape? {
             if (value == null) {
-                return PointShapes.dot()
+                return null
             }
 
             if (value is PointShape) {
@@ -42,7 +42,7 @@ internal class ShapeOptionConverter : Function<Any?, PointShape?> {
         }
 
         private fun charShape(s: String): PointShape {
-            if (!s.isEmpty()) {
+            if (s.isNotEmpty()) {
                 val ch = s[0]
                 return if (ch == '.') {
                     PointShapes.dot()

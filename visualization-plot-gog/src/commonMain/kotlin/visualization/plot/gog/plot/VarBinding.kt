@@ -5,8 +5,8 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.plot.scale.ScaleProvider
 
-open class VarBinding// ToDo: ?Type VarBinding can be generified
-(val `var`: DataFrame.Variable, val aes: Aes<*>, open val scale: Scale2<*>?) {
+// ToDo: ?Type VarBinding can be generified
+open class VarBinding(val variable: DataFrame.Variable, val aes: Aes<*>, open val scale: Scale2<*>?) {
 
     open val isDeferred: Boolean
         get() = false
@@ -17,9 +17,9 @@ open class VarBinding// ToDo: ?Type VarBinding can be generified
 
     override fun toString(): String {
         return "VarBinding{" +
-                "myVar=" + `var` +
-                ", myAes=" + aes +
-                ", myScale=" + scale +
+                "variable=" + variable +
+                ", aes=" + aes +
+                ", scale=" + scale +
                 ", deferred=" + isDeferred +
                 '}'.toString()
     }

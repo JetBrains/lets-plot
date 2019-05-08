@@ -57,8 +57,8 @@ internal object PlotGuidesAssemblerUtil {
         val aesSet = mappedRenderedAesToCreateGuides(stitchedLayers, guideOptionsMap)
         for (aes in aesSet) {
             val binding = stitchedLayers.getBinding(aes)
-            if (stitchedLayers.isNumericData(binding.`var`)) {
-                val dataRange = stitchedLayers.getDataRange(binding.`var`)!!
+            if (stitchedLayers.isNumericData(binding.variable)) {
+                val dataRange = stitchedLayers.getDataRange(binding.variable)!!
                 m[aes] = dataRange
             }
         }

@@ -85,14 +85,14 @@ internal class TypedOptionConverterMap {
         this.put(ANGLE, DOUBLE_CVT)
     }
 
-    operator fun <T> get(aes: Aes<T>): (Any) -> T {
-        // Safe cast if 'put' is used responsibly.
-        return myMap[aes] as (Any) -> T
+    private fun <T> put(aes: Aes<T>, value: (Any?) -> T?) {
+        myMap[aes] = value
     }
 
-    private fun <T> put(aes: Aes<T>, value: (Any?) -> T?): ((Any?) -> T?)? {
-        // Used responsibly, private access
-        return myMap.put(aes, value) as ((Any?) -> T?)?
+    operator fun <T> get(aes: Aes<T>): (Any?) -> T? {
+        // Safe cast because 'put' is private
+        @Suppress("UNCHECKED_CAST")
+        return myMap[aes] as (Any?) -> T?
     }
 
     fun containsKey(aes: Aes<*>): Boolean {
@@ -101,7 +101,7 @@ internal class TypedOptionConverterMap {
 
     companion object {
         private val IDENTITY_O_CVT = { o: Any? -> o }
-        private val IDENTITY_S_CVT = { o: Any? -> if (o == null) null else o.toString() }
+        private val IDENTITY_S_CVT = { o: Any? -> o?.toString() }
         private val DOUBLE_CVT = { o: Any? -> NumericOptionConverter().apply(o) }
         private val COLOR_CVT = { o: Any? -> ColorOptionConverter().apply(o) }
         private val SHAPE_CVT = { o: Any? -> ShapeOptionConverter().apply(o) }

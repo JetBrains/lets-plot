@@ -143,7 +143,7 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
                 if (stat.hasDefaultMapping(aes)) {
                     varsToKeep.remove(stat.getDefaultMapping(aes))
                 }
-                val `var` = binding.`var`
+                val `var` = binding.variable
                 varsToKeep.add(`var`)
             }
 
@@ -155,9 +155,9 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
             for (binding in bindings) {
                 val aes = binding.aes
                 if (renderedAes.contains(aes)) {
-                    renderedVars.add(binding.`var`)
+                    renderedVars.add(binding.variable)
                 } else {
-                    notRenderedVars.add(binding.`var`)
+                    notRenderedVars.add(binding.variable)
                 }
             }
             varsToKeep.removeAll(notRenderedVars)

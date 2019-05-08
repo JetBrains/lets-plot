@@ -36,25 +36,25 @@ internal class FacetConfig(options: Map<*, *>) : OptionsAccessor(options, mapOf(
 
     fun createFacets(dataList: List<DataFrame>): PlotFacets {
         var nameX: String? = null
-        val levelsX = LinkedHashSet<Any>()
+        val levelsX = LinkedHashSet<Any?>()
         if (hasX()) {
             nameX = x
             for (data in dataList) {
                 if (DataFrameUtil.hasVariable(data, nameX!!)) {
-                    val `var` = DataFrameUtil.findVariableOrFail(data, nameX)
-                    levelsX.addAll(DataFrameUtil.distinctValues(data, `var`))
+                    val variable = DataFrameUtil.findVariableOrFail(data, nameX)
+                    levelsX.addAll(DataFrameUtil.distinctValues(data, variable))
                 }
             }
         }
 
         var nameY: String? = null
-        val levelsY = LinkedHashSet<Any>()
+        val levelsY = LinkedHashSet<Any?>()
         if (hasY()) {
             nameY = y
             for (data in dataList) {
                 if (DataFrameUtil.hasVariable(data, nameY!!)) {
-                    val `var` = DataFrameUtil.findVariableOrFail(data, nameY)
-                    levelsY.addAll(DataFrameUtil.distinctValues(data, `var`))
+                    val variable = DataFrameUtil.findVariableOrFail(data, nameY)
+                    levelsY.addAll(DataFrameUtil.distinctValues(data, variable))
                 }
             }
         }

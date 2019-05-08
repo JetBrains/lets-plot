@@ -5,18 +5,23 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.scale.Mappers
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 object TypedContinuousIdentityMappers {
     val COLOR = { n: Double? ->
-        val `val` = abs(n!!.toInt())
-        Color(
-                `val` shr 16 and 0xff,
-                `val` shr 8 and 0xff,
-                `val` and 0xff
-        )
+        if (n == null) {
+            null
+        } else {
+            val value = abs(n.roundToInt())
+            Color(
+                    value shr 16 and 0xff,
+                    value shr 8 and 0xff,
+                    value and 0xff
+            )
+        }
     }
 
-    private val MAP = HashMap<Aes<*>, (Double) -> Any?>()
+    private val MAP = HashMap<Aes<*>, (Double?) -> Any?>()
 
     init {
         for (aes in Aes.numeric(Aes.values())) {
@@ -31,10 +36,11 @@ object TypedContinuousIdentityMappers {
         return MAP.containsKey(aes)
     }
 
-    operator fun <T> get(aes: Aes<T>): (Double?) -> T {
-        checkArgument(contain(aes), "No continuous identity mapper for aes " + aes.name)
-        val f = MAP[aes]!!
-        // Safe cast because this MAP has been filled cleanly, without 'Unchecked cast'-s
-        return f as ((Double?) -> T)
+    operator fun <T> get(aes: Aes<T>): (Double?) -> T? {
+        checkArgument(contain(aes), "No continuous identity mapper found for aes " + aes.name)
+        val mapper = MAP[aes]!!
+        // Safe cast because MAP was initiated in type-safe manner
+        @Suppress("UNCHECKED_CAST")
+        return mapper as ((Double?) -> T?)
     }
 }

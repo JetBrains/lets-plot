@@ -22,13 +22,14 @@ import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.GeomProvider
 object DataProcessing {
 
     fun transformOriginals(data: DataFrame, bindings: List<VarBinding>): DataFrame {
+        @Suppress("NAME_SHADOWING")
         var data = data
         for (binding in bindings) {
-            val `var` = binding.`var`
-            if (`var`.isOrigin) {
-                checkState(data.has(`var`), "Undefined variable $`var`")
+            val variable = binding.variable
+            if (variable.isOrigin) {
+                checkState(data.has(variable), "Undefined variable $variable")
                 data = DataFrameUtil.applyTransform(data,
-                        `var`,
+                        variable,
                         binding.aes,
                         binding.scale!!)
             }
@@ -191,7 +192,7 @@ object DataProcessing {
 
         val newInputSeries = HashMap<Variable, List<*>>()
         for (binding in bindings) {
-            val variable = binding.`var`
+            val variable = binding.variable
             if (variable.isStat || facetVars.contains(variable)) {
                 continue
             }
@@ -247,7 +248,7 @@ object DataProcessing {
 
         for (binding in bindings) {
             val aes = binding.aes
-            val `var` = binding.`var`
+            val `var` = binding.variable
             if (`var`.isStat) {
                 aesByMappedStatVar[`var`] = aes
             } else if (stat.hasDefaultMapping(aes)) {
@@ -361,7 +362,7 @@ object DataProcessing {
         // all 'origin' discrete vars + explicitGroupingVar
         val result = LinkedHashSet<Variable>()
         for (binding in bindings) {
-            val `var` = binding.`var`
+            val `var` = binding.variable
             if (!result.contains(`var`)) {
                 if (`var`.isOrigin) {
                     if (!data.isNumeric(`var`) || `var` == explicitGroupingVar) {

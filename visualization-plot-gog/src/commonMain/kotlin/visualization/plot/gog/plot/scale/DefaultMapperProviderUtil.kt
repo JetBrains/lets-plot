@@ -44,17 +44,17 @@ object DefaultMapperProviderUtil {
     }
 
     internal fun createObjectIdentityDiscrete(aes: Aes<Any>): MapperProvider<Any> {
-        val converter = { it: Any -> it }
+        val converter = { it: Any? -> it }
         return createIdentityMapperProvider(aes, converter, null)
     }
 
     internal fun createStringIdentity(aes: Aes<String>): MapperProvider<String> {
-        val converter = { it: Any -> it.toString() }
-        val continuousMapper = { it: Double? -> it!!.toString() }
+        val converter = { it: Any? -> it?.toString() }
+        val continuousMapper = { it: Double? -> it?.toString() }
         return createIdentityMapperProvider(aes, converter, continuousMapper)
     }
 
-    private fun <T> createIdentityMapperProvider(aes: Aes<T>, converter: (Any) -> T, continuousMapper: ((Double?) -> T)?): MapperProvider<T> {
+    private fun <T> createIdentityMapperProvider(aes: Aes<T>, converter: (Any?) -> T?, continuousMapper: ((Double?) -> T?)?): MapperProvider<T> {
         return object : IdentityDiscreteMapperProvider<T>(converter, DefaultNaValue[aes]) {
             override fun createContinuousMapper(data: DataFrame, variable: Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<T> {
                 if (continuousMapper != null) {

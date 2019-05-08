@@ -47,7 +47,7 @@ internal class PointDataAccess(private val myData: DataFrame, private val bindin
     }
 
     private fun value(aes: Aes<*>, index: Int): Double? {
-        val variable = myBindings[aes]!!.`var`
+        val variable = myBindings[aes]!!.variable
         return myData.getNumeric(variable)[index]
     }
 
@@ -61,7 +61,7 @@ internal class PointDataAccess(private val myData: DataFrame, private val bindin
     private fun createFormatter(aes: Aes<*>): (Any) -> String {
         val varBinding = myBindings[aes]
         // only 'stat' or 'transform' vars here
-        val `var` = varBinding!!.`var`
+        val `var` = varBinding!!.variable
         var domain = myData.range(`var`)
         domain = SeriesUtil.ensureNotZeroRange(domain)
         return QuantitativeTickFormatterFactory.forLinearScale().getFormatter(domain, SeriesUtil.span(domain) / 100.0)

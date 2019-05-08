@@ -27,7 +27,7 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     }
 
     fun update(key: String, value: Any) {
-        (myOptions as MutableMap<Any, Any>).put(key, value)
+        (myOptions as MutableMap<Any, Any>)[key] = value
     }
 
     protected fun update(otherOptions: Map<Any, Any>) {
@@ -62,14 +62,35 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
         throw IllegalArgumentException("Not a List: " + option + ": " + v::class.simpleName)
     }
 
+    fun getDoubleList(option: String): List<Double> {
+        val list = getList(option)
+        val predicate: (Any?) -> Boolean = { v -> v != null && v is Double }
+        if (list.all(predicate)) {
+            @Suppress("UNCHECKED_CAST")
+            return list as List<Double>
+        }
+
+        throw IllegalArgumentException("Expected numeric value but was : ${list.find(predicate)}")
+    }
+
+    fun getStringList(option: String): List<String> {
+        val list = getList(option)
+        val predicate: (Any?) -> Boolean = { v -> v != null && v is String }
+        if (list.all(predicate)) {
+            @Suppress("UNCHECKED_CAST")
+            return list as List<String>
+        }
+
+        throw IllegalArgumentException("Expected string value but was : ${list.find(predicate)}")
+    }
+
     internal fun getRange(option: String): ClosedRange<Double> {
         val v = get(option)
-        if (v is List<*> && !v.isEmpty()) {
-            val list = v as List<*>
-            val lower = asDouble(list[0]!!)
+        if (v is List<*> && v.isNotEmpty()) {
+            val lower = asDouble(v[0]!!)
             var upper = lower
-            if (list.size > 1) {
-                upper = asDouble(list[1]!!)
+            if (v.size > 1) {
+                upper = asDouble(v[1]!!)
             }
             return ClosedRange.closed(lower, upper)
         }
@@ -94,15 +115,15 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     }
 
     fun getDouble(option: String): Double? {
-        return getValueOrNull(option, { it: Any -> asDouble(it) })
+        return getValueOrNull(option) { asDouble(it) }
     }
 
     internal fun getInteger(option: String): Int? {
-        return getValueOrNull<Int>(option, { v: Any -> (v as Number).toInt() })
+        return getValueOrNull(option) { v -> (v as Number).toInt() }
     }
 
     internal fun getLong(option: String): Long? {
-        return getValueOrNull<Long>(option, { v: Any -> (v as Number).toLong() })
+        return getValueOrNull(option) { v -> (v as Number).toLong() }
     }
 
     private fun <T> getValueOrNull(option: String, mapper: (Any) -> T): T? {

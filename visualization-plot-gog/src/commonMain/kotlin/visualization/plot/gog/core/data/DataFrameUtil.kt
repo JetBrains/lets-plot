@@ -85,8 +85,8 @@ object DataFrameUtil {
     /**
      * ToDo: Cache in DataFrame (similar to 'factor')
      */
-    fun distinctValues(data: DataFrame, variable: DataFrame.Variable): Collection<Any> {
-        return LinkedHashSet(data[variable] as List<Any>)
+    fun distinctValues(data: DataFrame, variable: DataFrame.Variable): Collection<Any?> {
+        return LinkedHashSet(data[variable])
     }
 
     fun hasValues(data: DataFrame, `var`: DataFrame.Variable): Boolean {

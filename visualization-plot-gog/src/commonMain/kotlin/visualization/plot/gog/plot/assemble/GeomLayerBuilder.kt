@@ -110,7 +110,7 @@ class GeomLayerBuilder {
         // add 'transform' variable for each 'stat' variable
         val bindingsToPut = ArrayList<VarBinding>()
         for (binding in replacementBindings.values) {
-            val `var` = binding.`var`
+            val `var` = binding.variable
             if (`var`.isStat) {
                 val aes = binding.aes
                 val scale = binding.scale

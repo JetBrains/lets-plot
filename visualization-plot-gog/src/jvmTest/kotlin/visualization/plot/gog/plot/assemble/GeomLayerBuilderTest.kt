@@ -14,13 +14,13 @@ import kotlin.test.assertTrue
 
 class GeomLayerBuilderTest {
     private fun checkBoundDataSize(data: DataFrame, binding: VarBinding, size: Int) {
-        assertTrue(data.has(binding.`var`), "has " + binding.`var`)
-        assertEquals(size.toLong(), data[binding.`var`].size.toLong(), "size " + binding.`var`)
+        assertTrue(data.has(binding.variable), "has " + binding.variable)
+        assertEquals(size.toLong(), data[binding.variable].size.toLong(), "size " + binding.variable)
     }
 
     private fun checkNotOriginalVar(data: DataFrame, binding: VarBinding) {
-        assertTrue(data.has(binding.`var`), "has " + binding.`var`)
-        assertFalse(binding.`var`.isOrigin, "not original " + binding.`var`)
+        assertTrue(data.has(binding.variable), "has " + binding.variable)
+        assertFalse(binding.variable.isOrigin, "not original " + binding.variable)
     }
 
 
@@ -33,10 +33,10 @@ class GeomLayerBuilderTest {
         ggplot(data) + geom_histogram(aes(x='x',fill='cat'))
         */
         val X = DataFrame.Variable("x")
-        val CAT = DataFrame.Variable("cat")
+        val cat = DataFrame.Variable("cat")
         val data = DataFrame.Builder()
                 .put(X, listOf(0.0, 1.0, 0.0, 1.0))
-                .put(CAT, listOf("a", "a", "b", "b"))
+                .put(cat, listOf("a", "a", "b", "b"))
                 .build()
 
         val geomProvider = GeomProvider.histogram()
@@ -45,7 +45,7 @@ class GeomLayerBuilderTest {
 
         val bindings = ArrayList<VarBinding>()
         bindings.add(VarBinding(X, Aes.X, Scales.continuousDomain("x", Aes.X)))
-        bindings.add(VarBinding(CAT, Aes.FILL, ScaleProviderHelper.createDefault(Aes.FILL).createScale(data, CAT)))
+        bindings.add(VarBinding(cat, Aes.FILL, ScaleProviderHelper.createDefault(Aes.FILL).createScale(data, cat)))
 
         val histogramLayer = GeomLayerBuilder.demoAndTest()
                 .stat(stat)

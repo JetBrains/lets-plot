@@ -126,7 +126,7 @@ object GuideMappers {
         return GuideMapperAdapter(mapperFun)
     }
 
-    fun <T> adaptContinuous(mapperFun: (Double?) -> T): GuideMapper<T> {
-        return GuideMapperAdapter(mapperFun, true)
+    fun <T> adaptContinuous(mapper: (Double?) -> T?): GuideMapper<T> {
+        return GuideMapperAdapter(mapper, true)
     }
 }

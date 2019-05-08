@@ -44,7 +44,7 @@ object GeomLayerBuilderUtil {
 
         // no 'origin' variables beyond this point
         for (binding in bindings) {
-            if (binding.`var`.isOrigin) {
+            if (binding.variable.isOrigin) {
                 val aes = binding.aes
                 val transformVar = transformVarFor(aes)
                 bindingsByAes[aes] = VarBinding(transformVar, aes, binding.scale)
