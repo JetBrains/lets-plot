@@ -92,7 +92,7 @@ internal class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
                         getList(HUE_RANGE) as List<Double>, getDouble(CHROMA), getDouble(LUMINANCE), getDouble(START_HUE), getDouble(DIRECTION), naValue as Color
                 )
                 COLOR_GREY -> mapperProvider = ColorLuminanceMapperProvider(getDouble(START), getDouble(END), naValue as Color)
-                COLOR_BREWER -> mapperProvider = ColorBrewerMapperProvider(getString(PALETTE_TYPE)!!, get(PALETTE)!!, getDouble(DIRECTION)!!, (naValue as Color)!!)
+                COLOR_BREWER -> mapperProvider = ColorBrewerMapperProvider(getString(PALETTE_TYPE), get(PALETTE), getDouble(DIRECTION), naValue as Color)
                 SIZE_AREA -> mapperProvider = SizeAreaMapperProvider(getDouble(MAX_SIZE), naValue as Double)
                 else -> throw IllegalArgumentException("Aes '" + aes.name() + "' - unexpected scale mapper kind: '" + mapperKind + "'")
             }

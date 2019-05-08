@@ -23,7 +23,7 @@ internal class ColorBrewerMapperProvider
  * If -1, the order of colors is reversed
  * @param naValue
  */
-(type: String, palette: Any, direction: Double?, naValue: Color) : MapperProviderBase<Color>(naValue), WithGuideBreaks {
+(type: String?, palette: Any?, direction: Double?, naValue: Color) : MapperProviderBase<Color>(naValue), WithGuideBreaks {
 
     private val myColorScheme: ColorScheme
     private val myReversedColors: Boolean

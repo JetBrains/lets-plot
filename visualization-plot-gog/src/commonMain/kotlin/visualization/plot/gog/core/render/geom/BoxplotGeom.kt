@@ -36,7 +36,7 @@ internal class BoxplotGeom : GeomBase() {
         myOutlierFill = outlierFill
     }
 
-    fun setOutlierShape(outlierShape: PointShape) {
+    fun setOutlierShape(outlierShape: PointShape?) {
         myOutlierShape = outlierShape
     }
 

@@ -96,7 +96,7 @@ internal object GeomProto {
                 if (opts.hasOwn(Option.Geom.BoxplotOutlier.FILL)) {
                     geom.setOutlierFill(opts.getColor(Option.Geom.BoxplotOutlier.FILL)!!)
                 }
-                geom.setOutlierShape(opts.getShape(Option.Geom.BoxplotOutlier.SHAPE)!!)
+                geom.setOutlierShape(opts.getShape(Option.Geom.BoxplotOutlier.SHAPE))
                 geom.setOutlierSize(opts.getDouble(Option.Geom.BoxplotOutlier.SIZE))
                 geom
             }
