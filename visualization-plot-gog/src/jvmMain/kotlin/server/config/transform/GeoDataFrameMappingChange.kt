@@ -35,7 +35,7 @@ class GeoDataFrameMappingChange : SpecChange {
         spec.computeIfAbsent(MAPPING) { HashMap<Any, Any>() }
 
         val mapping = spec[MAPPING] as MutableMap<String, Any>
-        mapping[MAP_ID.name()] = DATA_COLUMN_JOIN_KEY
+        mapping[MAP_ID.name] = DATA_COLUMN_JOIN_KEY
     }
 
     override fun isApplicable(spec: Map<String, Any>): Boolean {

@@ -100,7 +100,7 @@ object GeoPositionsDataUtil {
 
     private fun findMapping(aes: Aes<*>, names: List<String>, dataFrame: DataFrame): Map<Aes<*>, Variable> {
         val variable = findFirstVariable(dataFrame, names)
-                ?: throw IllegalArgumentException(geoPositionsColumnNotFoundError(aes.name() + "-column", names))
+                ?: throw IllegalArgumentException(geoPositionsColumnNotFoundError(aes.name + "-column", names))
         return mapOf(aes to variable)
     }
 

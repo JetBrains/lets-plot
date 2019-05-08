@@ -8,7 +8,7 @@ class AesInitValueTest {
     @Test
     fun everyAesHasInitValue() {
         for (aes in Aes.values()) {
-            assertTrue(AesInitValue.has(aes), "Aes " + aes.name() + " has init value")
+            assertTrue(AesInitValue.has(aes), "Aes " + aes.name + " has init value")
         }
     }
 }

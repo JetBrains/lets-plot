@@ -6,27 +6,22 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.gog.core.render.linetype.LineType
 import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
 
-class Aes<T> private constructor(private val myName: String, val isNumeric: Boolean = true) : TypedKey<T> {
+class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true) : TypedKey<T> {
 
     val isColor: Boolean
         get() = isColor(this)
 
     init {
-        if (ourValues == null) {
-            ourValues = ArrayList()
-        }
-        ourValues!!.add(this)
-    }
-
-    fun name(): String {
-        return myName
+        values.add(this)
     }
 
     override fun toString(): String {
-        return "aes '$myName'"
+        return "aes '$name'"
     }
 
     companion object {
+        private val values = ArrayList<Aes<*>>()
+
         val X: Aes<Double> = Aes("x")
         val Y: Aes<Double> = Aes("y")
         val Z: Aes<Double> = Aes("z")
@@ -74,10 +69,10 @@ class Aes<T> private constructor(private val myName: String, val isNumeric: Bool
 
         val ANGLE: Aes<Double> = Aes("angle")
 
-        private var ourValues: MutableList<Aes<*>>? = null
 
         fun numeric(unfiltered: Iterable<Aes<*>>): Iterable<Aes<Double>> {
             // safe to cast all 'numeric' aesthetics are 'Double'
+            @Suppress("UNCHECKED_CAST")
             return filter(unfiltered) { aes -> aes.isNumeric } as Iterable<Aes<Double>>
         }
 
@@ -109,11 +104,11 @@ class Aes<T> private constructor(private val myName: String, val isNumeric: Bool
         }
 
         fun isColor(aes: Aes<*>): Boolean {
-            return aes == Aes.COLOR || aes == Aes.FILL
+            return aes == COLOR || aes == FILL
         }
 
         fun isAffectingScaleX(aes: Aes<*>): Boolean {
-            return isPositionalX(aes) && aes != Aes.XINTERCEPT
+            return isPositionalX(aes) && aes != XINTERCEPT
         }
 
         fun isAffectingScaleY(aes: Aes<*>): Boolean {
@@ -149,8 +144,8 @@ class Aes<T> private constructor(private val myName: String, val isNumeric: Bool
                     isPositional(aes)
         }
 
-        fun values(): Iterable<Aes<*>> {
-            return ourValues!!
+        fun values(): List<Aes<*>> {
+            return values
         }
     }
 }

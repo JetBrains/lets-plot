@@ -32,7 +32,7 @@ object TypedContinuousIdentityMappers {
     }
 
     operator fun <T> get(aes: Aes<T>): (Double?) -> T {
-        checkArgument(contain(aes), "No continuous identity mapper for aes " + aes.name())
+        checkArgument(contain(aes), "No continuous identity mapper for aes " + aes.name)
         val f = MAP[aes]!!
         // Safe cast because this MAP has been filled cleanly, without 'Unchecked cast'-s
         return f as ((Double?) -> T)

@@ -8,7 +8,7 @@ class DefaultNaValueTest {
     @Test
     fun everyAesHasNaValue() {
         for (aes in Aes.values()) {
-            assertTrue(DefaultNaValue.has(aes), "Aes " + aes.name() + " has n/a value")
+            assertTrue(DefaultNaValue.has(aes), "Aes " + aes.name + " has n/a value")
         }
     }
 }

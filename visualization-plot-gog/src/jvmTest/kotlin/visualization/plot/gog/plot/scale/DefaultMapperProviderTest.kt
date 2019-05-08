@@ -25,7 +25,7 @@ class DefaultMapperProviderTest {
     @Test
     fun everyAesHasMapperProvider() {
         for (aes in Aes.values()) {
-            assertTrue(DefaultMapperProvider.hasDefault(aes), "Aes " + aes.name() + " has MapperProvider")
+            assertTrue(DefaultMapperProvider.hasDefault(aes), "Aes " + aes.name + " has MapperProvider")
         }
     }
 }

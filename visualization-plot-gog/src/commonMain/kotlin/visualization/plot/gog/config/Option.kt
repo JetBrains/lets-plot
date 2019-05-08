@@ -212,7 +212,7 @@ object Option {
         }
 
         fun toOption(aes: Aes<*>): String {
-            return aes.name().toLowerCase()
+            return aes.name.toLowerCase()
         }
     }
 
