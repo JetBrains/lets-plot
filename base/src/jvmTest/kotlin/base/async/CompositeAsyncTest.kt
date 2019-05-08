@@ -5,11 +5,11 @@ import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.failure
 import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.unfinished
 import org.hamcrest.CustomTypeSafeMatcher
 import org.hamcrest.Matcher
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.sameInstance
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThat
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class CompositeAsyncTest {
 

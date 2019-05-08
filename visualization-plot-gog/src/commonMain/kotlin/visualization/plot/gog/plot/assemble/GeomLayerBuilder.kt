@@ -122,7 +122,7 @@ class GeomLayerBuilder {
 
         // replace 'stat' vars with 'transform' vars in bindings
         for (binding in bindingsToPut) {
-            replacementBindings.put(binding.aes, binding)
+            replacementBindings[binding.aes] = binding
         }
 
         val dataAccess = myGeomProvider!!.createDataAccess(data, replacementBindings)
@@ -136,7 +136,7 @@ class GeomLayerBuilder {
                 replacementBindings.values,
                 myConstantByAes,
                 dataAccess,
-                myLocatorLookupSpec!!,
+                myLocatorLookupSpec,
                 if (myTooltipAesSpecProvider != null) myTooltipAesSpecProvider!!.createTooltipAesSpec(dataAccess) else null,
                 myIsLegendDisabled)
     }
@@ -160,11 +160,11 @@ class GeomLayerBuilder {
             // ToDo: use TypedKeyContainer ?
                                                    constantByAes: TypedKeyHashMap,
                                                    override val dataAccess: MappedDataAccess,
-                                                   override val locatorLookupSpec: LookupSpec,
+                                                   override val locatorLookupSpec: LookupSpec?,
                                                    override val tooltipAesSpec: TooltipAesSpec?,
                                                    override val isLegendDisabled: Boolean) : GeomLayer {
-        override val geom: Geom
-        override val geomKind: GeomKind
+        override val geom: Geom = geomProvider.createGeom()
+        override val geomKind: GeomKind = geomProvider.geomKind
         override val aestheticsDefaults: AestheticsDefaults
         private val myHandledAes: List<Aes<*>>
         private val myRenderedAes: List<Aes<*>>
@@ -179,11 +179,8 @@ class GeomLayerBuilder {
             get() = geom is LivemapGeom
 
         init {
-            geom = geomProvider.createGeom()
-            geomKind = geomProvider.geomKind
             myHandledAes = ArrayList(handledAes)
             myRenderedAes = ArrayList(renderedAes)
-
 
             // constant value by aes (default + specified)
             aestheticsDefaults = geomProvider.aestheticsDefaults()
@@ -245,7 +242,6 @@ class GeomLayerBuilder {
     }
 
     companion object {
-
 
         fun demoAndTest(): GeomLayerBuilder {
             val builder = GeomLayerBuilder()

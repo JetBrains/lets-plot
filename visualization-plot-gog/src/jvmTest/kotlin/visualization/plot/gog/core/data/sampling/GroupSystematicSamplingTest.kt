@@ -2,15 +2,12 @@ package jetbrains.datalore.visualization.plot.gog.core.data.sampling
 
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.GroupAwareSampling
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
 import java.util.stream.Collectors.toList
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 
 internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {
 
-    @Before
+    @BeforeTest
     fun setUp() {
         setUp(N_POINTS, N_GROUPS)
     }
@@ -106,19 +103,19 @@ internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {
 
         internal fun hasGroupCount(expected: Int): SamplingAssert {
             val groupCount = mySample!![GroupSamplingTestBase.GROUP_SERIE_VAR].stream().distinct().count()
-            assertEquals("Group count", expected.toLong(), groupCount)
+            assertEquals(expected.toLong(), groupCount, "Group count")
             return this
         }
 
         internal fun hasGroup(distinctGroupIndex: Int): SamplingAssert {
             val b = checkGroup(distinctGroupIndex)
-            assertTrue("Group [$distinctGroupIndex]", b)
+            assertTrue(b, "Group [$distinctGroupIndex]")
             return this
         }
 
         internal fun hasNoGroup(distinctGroupIndex: Int): SamplingAssert {
             val b = checkGroup(distinctGroupIndex)
-            assertFalse("Group [$distinctGroupIndex]", b)
+            assertFalse(b, "Group [$distinctGroupIndex]")
             return this
         }
 

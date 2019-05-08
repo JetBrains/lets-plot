@@ -5,18 +5,16 @@ import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.L
 import jetbrains.datalore.visualization.plot.gog.plot.TargetsSolver.Companion.CUTOFF_DISTANCE
 import jetbrains.datalore.visualization.plot.gog.plot.TargetsSolver.Companion.FAKE_DISTANCE
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
-import java.util.*
-import java.util.stream.Stream
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class TargetsSolverTest {
     private lateinit var firstLocatedTargetConfig: LocatedTargetsConfig
     private var secondLocatedTargetConfig: LocatedTargetsConfig? = null
 
-    @Before
+    @BeforeTest
     fun setUp() {
         firstLocatedTargetConfig = LocatedTargetsConfig().geomKind(GeomKind.HISTOGRAM)
         secondLocatedTargetConfig = LocatedTargetsConfig().geomKind(GeomKind.BAR)
@@ -117,14 +115,13 @@ class TargetsSolverTest {
     private fun assertTargetFrom(vararg expected: LocatedTargetsConfig?) {
 
         val targetsSolver = TargetsSolver()
-        Stream
-                .of<LocatedTargets>(locatedTargets(firstLocatedTargetConfig), locatedTargets(secondLocatedTargetConfig))
-                .filter { Objects.nonNull(it) }
+        listOf(locatedTargets(firstLocatedTargetConfig), locatedTargets(secondLocatedTargetConfig))
+                .filter { it != null }
                 .forEach { targetsSolver.addLocatedTargets(it) }
 
         val locatedTargets = targetsSolver.solve()
 
-        if (expected.isEmpty() || Arrays.stream(expected).allMatch { layerConfig -> layerConfig === none() }) {
+        if (expected.isEmpty() || expected.all { layerConfig -> layerConfig === none() }) {
             try {
                 assertThat<LocatedTargets>(locatedTargets).isEmpty()
             } catch (e: Exception) {

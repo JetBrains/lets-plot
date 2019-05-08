@@ -5,7 +5,7 @@ import jetbrains.datalore.visualization.plot.common.geometry.TestUtil.MEDIUM_DAT
 import jetbrains.datalore.visualization.plot.common.geometry.TestUtil.SIMPLE_DATA
 import jetbrains.datalore.visualization.plot.gog.common.geometry.PolylineSimplifier
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import kotlin.test.Test
 
 class VisvalingamWhyattSimplificationTest {
 

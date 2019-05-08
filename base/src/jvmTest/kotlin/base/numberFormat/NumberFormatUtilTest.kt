@@ -1,7 +1,7 @@
 package jetbrains.datalore.base.numberFormat
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class NumberFormatUtilTest {
     @Test

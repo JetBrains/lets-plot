@@ -36,7 +36,7 @@ interface Scale2<T> {
 
     val transform: Transform
 
-    val mapper: ((Double?) -> T?)
+    val mapper: (Double?) -> T?
 
     val breaksGenerator: BreaksGenerator
         get() {

@@ -1,9 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.sampling
 
 import jetbrains.datalore.visualization.plot.gog.core.data.TestUtil
-import org.junit.Assert.*
-import org.junit.Test
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 
 class RandomSamplingTest {
 
@@ -33,7 +31,7 @@ class RandomSamplingTest {
 
     private fun assertRowCount(sampleSize: Int) {
         val sampleData = RandomSampling(sampleSize, null).apply(myData)
-        assertEquals("Row count", sampleSize.toLong(), sampleData.rowCount().toLong())
+        assertEquals(sampleSize.toLong(), sampleData.rowCount().toLong(), "Row count")
     }
 
     companion object {

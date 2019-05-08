@@ -2,10 +2,8 @@ package jetbrains.datalore.visualization.plot.gog.core.data.sampling
 
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.TestUtil
-import org.junit.Assert.*
-import org.junit.Test
 import java.util.Arrays.asList
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 
 class SystematicSamplingTest {
 
@@ -91,7 +89,7 @@ class SystematicSamplingTest {
         }
 
         internal fun hasRowCount(expected: Int): SamplingAssert {
-            assertEquals("Group count", expected.toLong(), mySample!!.rowCount().toLong())
+            assertEquals(expected.toLong(), mySample!!.rowCount().toLong(), "Group count")
             return this
         }
     }

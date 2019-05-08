@@ -1,11 +1,10 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale
 
+import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleTestUtil.assertValuesInLimits
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleTestUtil.assertValuesNotInLimits
 import jetbrains.datalore.visualization.plot.gog.core.scale.transform.Transforms
-import org.junit.Assert.*
-import org.junit.Test
-import java.util.stream.Collectors
+import kotlin.test.*
 
 class DiscreteScaleTest {
     @Test
@@ -34,7 +33,7 @@ class DiscreteScaleTest {
         val t = Transforms.IDENTITY
 
         val scale1 = scale.with().continuousTransform(t).build()
-        assertNotSame("'continuous transform' should be ignored", scale1.transform, t)
+        assertNotSame(scale1.transform, t, "'continuous transform' should be ignored")
     }
 
     @Test
@@ -120,7 +119,7 @@ class DiscreteScaleTest {
         assertEquals(listOf(0.0, 0.0, 1.0, 2.0), transformedValues)
 
         val mapper = scale.mapper
-        val domainValues2 = transformedValues!!.stream().map(mapper).collect(Collectors.toList())
+        val domainValues2 = transformedValues.map(mapper)
         assertEquals(domainValues, domainValues2)
     }
 }

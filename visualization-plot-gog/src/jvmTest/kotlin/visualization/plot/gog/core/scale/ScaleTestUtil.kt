@@ -1,6 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale
 
-import org.junit.Assert.*
+import jetbrains.datalore.base.assertion.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal object ScaleTestUtil {
     fun assertExpandValuesPreservedInCopy(scale: Scale2<*>) {
@@ -17,13 +19,13 @@ internal object ScaleTestUtil {
 
     fun assertValuesInLimits(scale: Scale2<*>, vararg domainValues: Any) {
         for (v in domainValues) {
-            assertTrue("Not in limits: $v", scale.isInDomainLimits(v))
+            assertTrue(scale.isInDomainLimits(v), "Not in limits: $v")
         }
     }
 
     fun assertValuesNotInLimits(scale: Scale2<*>, vararg values: Any) {
         for (v in values) {
-            assertFalse("In limits: $v", scale.isInDomainLimits(v))
+            assertFalse(scale.isInDomainLimits(v), "In limits: $v")
         }
     }
 }

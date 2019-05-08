@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 class FiveNumberSummaryTest {

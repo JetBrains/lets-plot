@@ -1,16 +1,16 @@
 package jetbrains.datalore.base.observable.property
 
 import jetbrains.datalore.base.observable.event.EventHandler
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
 import org.mockito.Mockito
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class UpdatablePropertyTest {
     private var value: String? = null
     private var property: UpdatableProperty<String?>? = null
 
-    @Before
+    @BeforeTest
     fun init() {
         property = object : UpdatableProperty<String?>() {
             override fun doGet(): String? {

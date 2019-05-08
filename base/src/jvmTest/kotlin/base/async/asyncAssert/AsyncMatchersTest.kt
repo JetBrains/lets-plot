@@ -8,10 +8,10 @@ import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.failed
 import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.failureIs
 import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.result
 import org.hamcrest.Matcher
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Assert.fail
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.fail
 
 class AsyncMatchersTest {
 

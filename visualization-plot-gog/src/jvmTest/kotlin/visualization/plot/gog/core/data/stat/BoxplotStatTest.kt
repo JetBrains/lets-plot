@@ -5,9 +5,9 @@ import jetbrains.datalore.visualization.plot.gog.core.data.SimpleStatContext
 import jetbrains.datalore.visualization.plot.gog.core.data.StatContext
 import jetbrains.datalore.visualization.plot.gog.core.data.TransformVar
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class BoxplotStatTest {
 
@@ -18,7 +18,7 @@ class BoxplotStatTest {
     private fun df(m: Map<DataFrame.Variable, List<Double>>): DataFrame {
         val b = DataFrame.Builder()
         for (key in m.keys) {
-            b.putNumeric(key, m[key]!!)
+            b.putNumeric(key, m.getValue(key))
         }
         return b.build()
     }
@@ -31,9 +31,9 @@ class BoxplotStatTest {
 
         for (aes in Aes.values()) {
             if (stat.hasDefaultMapping(aes)) {
-                val `var` = stat.getDefaultMapping(aes)
-                assertTrue("Has var " + `var`.name, statDf.has(`var`))
-                assertEquals("Get var " + `var`.name, 0, statDf[`var`].size.toLong())
+                val variable = stat.getDefaultMapping(aes)
+                assertTrue(statDf.has(variable), "Has var " + variable.name)
+                assertEquals(0, statDf[variable].size.toLong(), "Get var " + variable.name)
             }
         }
     }
@@ -51,9 +51,9 @@ class BoxplotStatTest {
         assertTrue(!statDf.has(Stats.WIDTH))
 
         val checkVar: (DataFrame.Variable, Double) -> Unit = { variable: DataFrame.Variable, expected: Double ->
-            assertTrue("Has var " + variable.name, statDf.has(variable))
-            assertEquals("Size var " + variable.name, 1, statDf[variable].size.toLong())
-            assertEquals("Get var " + variable.name, expected, statDf[variable][0])
+            assertTrue(statDf.has(variable), "Has var " + variable.name)
+            assertEquals(1, statDf[variable].size.toLong(), "Size var " + variable.name)
+            assertEquals(expected, statDf[variable][0], "Get var " + variable.name)
         }
 
         checkVar(Stats.X, 3.3)

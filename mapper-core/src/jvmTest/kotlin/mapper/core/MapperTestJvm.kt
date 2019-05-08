@@ -5,7 +5,7 @@ import io.mockk.verify
 import jetbrains.datalore.mapper.core.MapperTest
 import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.mapper.core.MappingContextListener
-import org.junit.Test
+import kotlin.test.Test
 
 
 // Mockk for JS is not yet available: https://github.com/mockk/mockk/issues/100

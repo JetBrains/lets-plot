@@ -9,11 +9,11 @@ import jetbrains.datalore.base.observable.collections.set.ObservableHashSet
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.*
 import jetbrains.datalore.base.registration.Registration
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Test
 import org.mockito.Mockito.*
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class SelectTest {
 
@@ -256,7 +256,7 @@ class SelectTest {
 
     private fun listenersCountingProperty(counter: AtomicInteger): Property<Boolean> {
         return object : ValueProperty<Boolean>(false) {
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out Boolean>>): Registration {
+            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out Boolean>>): Registration {
                 val r = super.addHandler(handler)
                 counter.incrementAndGet()
                 return object : Registration() {

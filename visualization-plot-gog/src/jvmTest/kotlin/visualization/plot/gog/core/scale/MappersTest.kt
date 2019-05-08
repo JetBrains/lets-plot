@@ -1,17 +1,19 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale
 
+import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class MappersTest {
     private fun checkWithZeroDomain(rangeLow: Double, rangeHigh: Double) {
         val zeroDomain = ClosedRange.closed(10.0, 10.0)
         val mapper = Mappers.linear(zeroDomain, rangeLow, rangeHigh, Double.NaN)
         // The range's midpoint in expected
-        Assert.assertEquals(1.5, mapper(10.0), 0.0)
-        Assert.assertEquals(1.5, mapper(9.0), 0.0)
-        Assert.assertEquals(1.5, mapper(11.0), 0.0)
+        assertEquals(1.5, mapper(10.0), 0.0)
+        assertEquals(1.5, mapper(9.0), 0.0)
+        assertEquals(1.5, mapper(11.0), 0.0)
     }
 
     @Test
@@ -29,9 +31,9 @@ class MappersTest {
         val naValue = 888.0
         val mapper = Mappers.linear(ClosedRange.closed(0.0, 1.0), 0.0, 1.0, naValue)
 //        Assert.assertEquals(naValue, mapper(null), 0.0)
-        Assert.assertEquals(naValue, mapper(Double.NaN), 0.0)
-        Assert.assertEquals(naValue, mapper(Double.NEGATIVE_INFINITY), 0.0)
-        Assert.assertEquals(naValue, mapper(Double.POSITIVE_INFINITY), 0.0)
+        assertEquals(naValue, mapper(Double.NaN), 0.0)
+        assertEquals(naValue, mapper(Double.NEGATIVE_INFINITY), 0.0)
+        assertEquals(naValue, mapper(Double.POSITIVE_INFINITY), 0.0)
     }
 
     @Test
@@ -39,7 +41,7 @@ class MappersTest {
         val expected = Any()
         val notNullable = { n: Double? ->
             if (n == null) {
-                Assert.fail("null argument not expected")
+                fail("null argument not expected")
             }
             n
         }
@@ -47,6 +49,6 @@ class MappersTest {
         val result = Mappers.nullable(
                 notNullable,
                 expected)(null)
-        Assert.assertEquals(expected, result)
+        assertEquals(expected, result)
     }
 }

@@ -1,14 +1,14 @@
 package jetbrains.datalore.visualization.plot.gog.core.aes
 
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class AesInitValueTest {
     @Test
     fun everyAesHasInitValue() {
         for (aes in Aes.values()) {
-            Assert.assertTrue("Aes " + aes.name() + " has init value", AesInitValue.has(aes))
+            assertTrue(AesInitValue.has(aes), "Aes " + aes.name() + " has init value")
         }
     }
 }

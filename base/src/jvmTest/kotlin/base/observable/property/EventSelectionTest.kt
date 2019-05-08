@@ -3,9 +3,9 @@ package jetbrains.datalore.base.observable.property
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.SimpleEventSource
 import jetbrains.datalore.base.registration.Registration
-import org.junit.Before
-import org.junit.Test
 import org.mockito.Mockito
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class EventSelectionTest {
     private val es1 = SimpleEventSource<Any?>()
@@ -17,7 +17,7 @@ class EventSelectionTest {
     private val handler: EventHandler<Any?> = Mockito.mock(EventHandler::class.java) as EventHandler<Any?>
     private var reg: Registration? = null
 
-    @Before
+    @BeforeTest
     fun before() {
         reg = result.addHandler(handler)
     }

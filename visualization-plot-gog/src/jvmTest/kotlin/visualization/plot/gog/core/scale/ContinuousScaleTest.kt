@@ -1,10 +1,13 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale
 
+import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleTestUtil.assertValuesInLimits
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleTestUtil.assertValuesNotInLimits
-import org.junit.Assert.*
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class ContinuousScaleTest {
     private fun createScale(): Scale2<*> {
@@ -47,11 +50,11 @@ class ContinuousScaleTest {
         }
 
         val scale1 = scale.with().continuousTransform(t).build()
-        assertSame("Scale must be created with 'transform' object", t, scale1.transform)
+        assertSame(t, scale1.transform, "Scale must be created with 'transform' object")
 
         // scale
         val scale2 = scale1.with().additiveExpand(10.0).build()
-        assertSame("Scale must retain its 'transform' object", t, scale2.transform)
+        assertSame(t, scale2.transform, "Scale must retain its 'transform' object")
     }
 
     @Test

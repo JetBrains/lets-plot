@@ -12,17 +12,14 @@ import jetbrains.datalore.base.observable.collections.DataloreIndexOutOfBoundsEx
 import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
 import jetbrains.datalore.base.observable.collections.list.ObservableList
 import org.hamcrest.Matcher
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
-import org.junit.Assert.*
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ExpectedException
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 
 class ListItemPropertyTest {
-
-    @JvmField
-    @Rule
-    val exception = ExpectedException.none()
 
     private val list = createList(5)
     private val p1 = ListItemProperty(list, 1)
@@ -40,22 +37,25 @@ class ListItemPropertyTest {
     @Test
     fun rejectsNegativeIndex() {
         val list = createList(5)
-        exception.expect(DataloreIndexOutOfBoundsException::class.java)
-        ListItemProperty(list, -1)
+        assertFailsWith(DataloreIndexOutOfBoundsException::class) {
+            ListItemProperty(list, -1)
+        }
     }
 
     @Test
     fun rejectsTooSmallIndex() {
         val list = ObservableArrayList<Int?>()
-        exception.expect(DataloreIndexOutOfBoundsException::class.java)
-        ListItemProperty(list, 0)
+        assertFailsWith(DataloreIndexOutOfBoundsException::class) {
+            ListItemProperty(list, 0)
+        }
     }
 
     @Test
     fun rejectsTooLargeIndex() {
         val list = createList(5)
-        exception.expect(DataloreIndexOutOfBoundsException::class.java)
-        ListItemProperty(list, 5)
+        assertFailsWith(DataloreIndexOutOfBoundsException::class) {
+            ListItemProperty(list, 5)
+        }
     }
 
     @Test
@@ -111,8 +111,9 @@ class ListItemPropertyTest {
         p3.set(13)
         assertEquals("[0, 11, 13, 4]", "" + list)
 
-        exception.expect(IllegalStateException::class.java)
-        p2.set(12)
+        assertFailsWith(IllegalStateException::class) {
+            p2.set(12)
+        }
     }
 
     @Test
@@ -185,8 +186,9 @@ class ListItemPropertyTest {
     @Test
     fun disposeImmediately() {
         p1.dispose()
-        exception.expect(IllegalStateException::class.java)
-        p1.dispose()
+        assertFailsWith(IllegalStateException::class) {
+            p1.dispose()
+        }
     }
 
     @Test
@@ -195,8 +197,9 @@ class ListItemPropertyTest {
 
         assertFalse(p1.isValid)
         p1.dispose()
-        exception.expect(IllegalStateException::class.java)
-        p1.dispose()
+        assertFailsWith(IllegalStateException::class) {
+            p1.dispose()
+        }
     }
 
     @Test

@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.base.svgToAwt
 
 import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 

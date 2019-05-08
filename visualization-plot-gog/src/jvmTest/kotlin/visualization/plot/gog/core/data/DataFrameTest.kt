@@ -3,9 +3,9 @@ package jetbrains.datalore.visualization.plot.gog.core.data
 import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.visualization.plot.gog.core.data.TestUtil.indices
 import jetbrains.datalore.visualization.plot.gog.core.data.TestUtil.toSerie
-import org.junit.Assert.assertSame
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertSame
 
 class DataFrameTest {
 
@@ -13,7 +13,7 @@ class DataFrameTest {
     private lateinit var mySelectIndices: List<Int>
     private lateinit var myAllIndices: Set<Int>
 
-    @Before
+    @BeforeTest
     fun setUp() {
         myData = TestUtil.generateData(N, listOf("x", "y", "c"))
         mySelectIndices = listOf(2, 5, 8)

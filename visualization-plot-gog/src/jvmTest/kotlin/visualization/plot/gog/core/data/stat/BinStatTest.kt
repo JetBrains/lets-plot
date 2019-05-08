@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
 import jetbrains.datalore.visualization.plot.gog.core.data.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
-import org.junit.Assert.assertThat
-import org.junit.Test
+import kotlin.test.Test
 
 class BinStatTest {
 

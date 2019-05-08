@@ -10,12 +10,12 @@ import jetbrains.datalore.base.edt.RunnableWithAsync.Companion.fromRunnable
 import jetbrains.datalore.base.edt.RunnableWithAsync.Companion.fromSupplier
 import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.function.Supplier
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.junit.After
-import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class RunnableWithAsyncTest {
 
@@ -36,12 +36,12 @@ class RunnableWithAsyncTest {
             }
         }
 
-    @Before
+    @BeforeTest
     fun setup() {
         invoked = false
     }
 
-    @After
+    @AfterTest
     fun after() {
         assertTrue(invoked)
     }
@@ -116,6 +116,6 @@ class RunnableWithAsyncTest {
 
     companion object {
 
-        private val VALUE = 42
+        private const val VALUE = 42
     }
 }

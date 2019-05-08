@@ -3,9 +3,9 @@ package jetbrains.datalore.base.observable.property
 import jetbrains.datalore.base.function.Supplier
 import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
 import jetbrains.datalore.base.observable.event.EventHandler
-import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import kotlin.test.Test
 
 class PropertyTest {
     @Test

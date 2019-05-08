@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class MultiOrderingTest {
     @Test

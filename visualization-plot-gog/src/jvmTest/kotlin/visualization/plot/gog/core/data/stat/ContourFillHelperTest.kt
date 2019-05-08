@@ -2,8 +2,8 @@ package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ContourFillHelperTest {
 
