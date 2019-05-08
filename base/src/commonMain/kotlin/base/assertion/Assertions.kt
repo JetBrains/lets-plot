@@ -1,19 +1,28 @@
 package jetbrains.datalore.base.assertion
 
 import kotlin.math.abs
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-fun assertEquals(expected: Double?, actual: Double?, precision: Double, message: String? = null): Unit {
-    var equal: Boolean = actual == expected
-    if (!equal && expected != null) {
-        equal = abs(expected - actual!!) <= precision
-    }
-
-    assertTrue(equal, messagePrefix(message) + "Expected <$expected>, actual <$actual>.")
+fun assertEquals(expected: Double?, actual: Double?, precision: Double, message: String? = null) {
+    assertTrue(doubleEquals(expected, actual, precision), messagePrefix(message) + "Expected <$expected>, actual <$actual>.")
 }
 
-fun assertArrayEquals(expecteds: Array<Any>, actuals: Array<Any>, message: String? = null) {
+fun <T> assertArrayEquals(expecteds: Array<T>, actuals: Array<T>, message: String? = null) {
     assertTrue(actuals contentEquals expecteds, message)
+}
+
+fun assertArrayEquals(expecteds: Array<Double>, actuals: Array<Double>, precision: Double, message: String? = null) {
+    assertEquals(expecteds.size, actuals.size, message)
+    assertTrue((0 until expecteds.size).all { i -> doubleEquals(expecteds[i], actuals[i], precision) }, message)
+}
+
+private fun doubleEquals(lft: Double?, rgt: Double?, precision: Double): Boolean {
+    var equal: Boolean = lft == rgt
+    if (!equal && lft != null) {
+        equal = rgt != null && abs(lft - rgt) <= precision
+    }
+    return equal
 }
 
 private fun messagePrefix(message: String?): String {

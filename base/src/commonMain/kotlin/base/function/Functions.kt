@@ -18,10 +18,6 @@ object Functions {
         it != null
     }
 
-    private val IDENTITY_FUNCTION = fun(value: Any?): Any? {
-        return value
-    }
-
     fun <ItemT> constantSupplier(value: ItemT): Supplier<ItemT> {
         return object : Supplier<ItemT> {
             override fun get(): ItemT {
@@ -56,8 +52,8 @@ object Functions {
         return NOT_NULL_PREDICATE
     }
 
-    fun <ValueT> identity(): (Any?) -> Any? {
-        return IDENTITY_FUNCTION
+    fun <ValueT> identity(): (ValueT) -> ValueT {
+        return { it }
     }
 
     fun <ValueT> same(value: Any?): Predicate<ValueT> {

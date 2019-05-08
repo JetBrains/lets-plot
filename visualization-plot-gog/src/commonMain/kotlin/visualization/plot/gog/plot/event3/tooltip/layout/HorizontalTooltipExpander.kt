@@ -15,7 +15,7 @@ internal class HorizontalTooltipExpander(private val mySpace: MathUtil.DoubleRan
             return 0
         }
 
-        val stemCompare = t1.stemCoord.y.compareTo(t2.stemCoord.y)
+        val stemCompare = t1.stemCoord!!.y.compareTo(t2.stemCoord!!.y)
         return if (stemCompare != 0) {
             stemCompare
         } else t1.tooltipCoord.y.compareTo(t2.tooltipCoord.y)

@@ -4,6 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MathUtil
+import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.layout.LayoutManager.Companion.NORMAL_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.layout.LayoutManager.PositionedTooltip
 import kotlin.math.PI
 import kotlin.math.cos
@@ -23,7 +24,7 @@ internal class VerticalTooltipRotatingExpander(private val myVerticalSpace: Math
             if (intersectsAny(tooltip.rect(), restrictions)) {
 
                 val restrictionsWithStems = ArrayList(restrictions)
-                restrictionsWithStems.add(DoubleRectangle(tooltip.stemCoord, POINT_RESTRICTION_SIZE))
+                restrictionsWithStems.add(DoubleRectangle(tooltip.stemCoord!!, POINT_RESTRICTION_SIZE))
 
                 val newPlacement = findValidCandidate(getCandidates(tooltip), restrictionsWithStems)
                 if (newPlacement == null) {
@@ -109,13 +110,10 @@ internal class VerticalTooltipRotatingExpander(private val myVerticalSpace: Math
         private val myAttachToTooltipsBottomOffset: DoubleVector
         private val myAttachToTooltipsLeftOffset: DoubleVector
         private val myAttachToTooltipsRightOffset: DoubleVector
-        private val myTooltipSize: DoubleVector
-        private val myTargetCoord: DoubleVector
+        private val myTooltipSize: DoubleVector = arrangeData.tooltipSize
+        private val myTargetCoord: DoubleVector = arrangeData.stemCoord!!
 
         init {
-            myTargetCoord = arrangeData.stemCoord
-            myTooltipSize = arrangeData.tooltipSize
-
             val middleX = myTooltipSize.x / 2
             val middleY = myTooltipSize.y / 2
 
@@ -126,20 +124,15 @@ internal class VerticalTooltipRotatingExpander(private val myVerticalSpace: Math
         }
 
         fun rotate(alpha: Double): DoubleRectangle {
-            val r = LayoutManager.NORMAL_STEM_LENGTH
+            val r = NORMAL_STEM_LENGTH
             val newAttachmentCoord = DoubleVector(r * cos(alpha), r * sin(alpha)).add(myTargetCoord)
 
-            val newTooltipCoord: DoubleVector
-            if (STEM_TO_BOTTOM_SIDE_ANGLE_RANGE.contains(alpha)) {
-                newTooltipCoord = newAttachmentCoord.add(myAttachToTooltipsBottomOffset)
-            } else if (STEM_TO_TOP_SIDE_ANGLE_RANGE.contains(alpha)) {
-                newTooltipCoord = newAttachmentCoord.add(myAttachToTooltipsTopOffset)
-            } else if (STEM_TO_LEFT_SIDE_ANGLE_RANGE.contains(alpha)) {
-                newTooltipCoord = newAttachmentCoord.add(myAttachToTooltipsLeftOffset)
-            } else if (STEM_TO_RIGHT_SIDE_ANGLE_RANGE.contains(alpha)) {
-                newTooltipCoord = newAttachmentCoord.add(myAttachToTooltipsRightOffset)
-            } else {
-                throw IllegalStateException()
+            val newTooltipCoord = when {
+                STEM_TO_BOTTOM_SIDE_ANGLE_RANGE.contains(alpha) -> newAttachmentCoord.add(myAttachToTooltipsBottomOffset)
+                STEM_TO_TOP_SIDE_ANGLE_RANGE.contains(alpha) -> newAttachmentCoord.add(myAttachToTooltipsTopOffset)
+                STEM_TO_LEFT_SIDE_ANGLE_RANGE.contains(alpha) -> newAttachmentCoord.add(myAttachToTooltipsLeftOffset)
+                STEM_TO_RIGHT_SIDE_ANGLE_RANGE.contains(alpha) -> newAttachmentCoord.add(myAttachToTooltipsRightOffset)
+                else -> throw IllegalStateException()
             }
 
             return DoubleRectangle(newTooltipCoord, myTooltipSize)
@@ -152,8 +145,8 @@ internal class VerticalTooltipRotatingExpander(private val myVerticalSpace: Math
         private val STEM_TO_BOTTOM_SIDE_ANGLE_RANGE = MathUtil.DoubleRange.withStartAndEnd(1.0 / 4.0 * PI, 3.0 / 4.0 * PI)
         private val STEM_TO_RIGHT_SIDE_ANGLE_RANGE = MathUtil.DoubleRange.withStartAndEnd(3.0 / 4.0 * PI, 5.0 / 4.0 * PI)
         private val STEM_TO_TOP_SIDE_ANGLE_RANGE = MathUtil.DoubleRange.withStartAndEnd(5.0 / 4.0 * PI, 7.0 / 4.0 * PI)
-        private val SECTOR_COUNT = 36
-        private val SECTOR_ANGLE = PI * 2 / SECTOR_COUNT
+        private const val SECTOR_COUNT = 36
+        private const val SECTOR_ANGLE = PI * 2 / SECTOR_COUNT
         private val POINT_RESTRICTION_SIZE = DoubleVector(1.0, 1.0)
     }
 }

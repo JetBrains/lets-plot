@@ -12,14 +12,10 @@ import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.layout.Layo
 import kotlin.math.min
 
 class LayoutManager(private val myViewport: DoubleRectangle, private val myPreferredHorizontalAlignment: HorizontalAlignment) {
-    private val myHorizontalSpace: DoubleRange
+    private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)
     private var myCursorCoord: DoubleVector = DoubleVector.ZERO
     private var myVerticalAlignmentResolver: VerticalAlignmentResolver? = null
-
-    init {
-        myHorizontalSpace = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
-    }
 
     fun arrange(tooltips: List<MeasuredTooltip>, cursorCoord: DoubleVector): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
@@ -43,7 +39,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
                 myVerticalSpace = DoubleRange.withStartAndEnd(
                         myViewport.top,
                         min(
-                                positionedTooltip.stemCoord.y,
+                                positionedTooltip.stemCoord!!.y,
                                 positionedTooltip.top
                         )
                 )
@@ -207,20 +203,17 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
     private fun calculateCursorTooltipPosition(measuredTooltip: MeasuredTooltip): PositionedTooltip {
         val tooltipX = centerInsideRange(myCursorCoord.x, measuredTooltip.size.x, myHorizontalSpace)
 
-        val tooltipY: Double
-        run {
-            val targetCoordY = myCursorCoord.y
-            val tooltipHeight = measuredTooltip.size.y
-            val verticalMargin = NORMAL_STEM_LENGTH
+        val targetCoordY = myCursorCoord.y
+        val tooltipHeight = measuredTooltip.size.y
+        val verticalMargin = NORMAL_STEM_LENGTH
 
-            val topTooltipPlacement = leftAligned(targetCoordY, tooltipHeight, verticalMargin)
-            val bottomTooltipPlacement = rightAligned(targetCoordY, tooltipHeight, verticalMargin)
+        val topTooltipPlacement = leftAligned(targetCoordY, tooltipHeight, verticalMargin)
+        val bottomTooltipPlacement = rightAligned(targetCoordY, tooltipHeight, verticalMargin)
 
-            if (topTooltipPlacement.inside(myVerticalSpace)) {
-                tooltipY = topTooltipPlacement.start()
-            } else {
-                tooltipY = bottomTooltipPlacement.start()
-            }
+        val tooltipY = if (topTooltipPlacement.inside(myVerticalSpace)) {
+            topTooltipPlacement.start()
+        } else {
+            bottomTooltipPlacement.start()
         }
 
         val tooltipCoord = DoubleVector(tooltipX, tooltipY)
@@ -249,7 +242,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
         val tooltipSpec: TooltipSpec
         val tooltipCoord: DoubleVector
         internal val tooltipSize: DoubleVector
-        val stemCoord: DoubleVector
+        val stemCoord: DoubleVector?
 
         internal val left: Double
             get() = tooltipCoord.x
@@ -272,7 +265,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
         internal val hintKind: Kind
             get() = tooltipSpec.layoutHint.kind
 
-        internal constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector) {
+        internal constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector?) {
             tooltipSpec = measuredTooltip.tooltipSpec
             tooltipSize = measuredTooltip.size
             this.tooltipCoord = tooltipCoord
@@ -298,7 +291,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
     class MeasuredTooltip(internal val tooltipSpec: TooltipSpec, internal val size: DoubleVector) {
 
         internal val hintCoord: DoubleVector
-            get() = tooltipSpec.layoutHint.coord
+            get() = tooltipSpec.layoutHint.coord!!
 
         internal val hintKind: Kind
             get() = tooltipSpec.layoutHint.kind
@@ -308,9 +301,9 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
     }
 
     companion object {
-        internal val NORMAL_STEM_LENGTH = 12.0
-        internal val SHORT_STEM_LENGTH = 5.0
-        internal val MARGIN_BETWEEN_TOOLTIPS = 5
+        const val NORMAL_STEM_LENGTH = 12.0
+        const val SHORT_STEM_LENGTH = 5.0
+        const val MARGIN_BETWEEN_TOOLTIPS = 5
         private val CURSOR_DIMENSION = DoubleVector(10.0, 10.0)
         private val EMPTY_DOUBLE_RANGE = DoubleRange.withStartAndLength(0.0, 0.0)
 

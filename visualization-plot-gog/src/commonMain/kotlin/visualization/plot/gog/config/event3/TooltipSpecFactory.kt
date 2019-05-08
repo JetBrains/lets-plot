@@ -144,11 +144,11 @@ class TooltipSpecFactory(contextualMapping: ContextualMapping, private val myAxi
 
         private fun createHintForAxis(aes: Aes<*>): TipLayoutHint {
             if (aes === Aes.X) {
-                return TipLayoutHint.xAxisTooltip(DoubleVector(tipLayoutHint().coord.x, myAxisOrigin.y), GeomTargetInteraction.AXIS_TOOLTIP_COLOR)
+                return TipLayoutHint.xAxisTooltip(DoubleVector(tipLayoutHint().coord!!.x, myAxisOrigin.y), GeomTargetInteraction.AXIS_TOOLTIP_COLOR)
             }
 
             if (aes === Aes.Y) {
-                return TipLayoutHint.yAxisTooltip(DoubleVector(myAxisOrigin.x, tipLayoutHint().coord.y), GeomTargetInteraction.AXIS_TOOLTIP_COLOR)
+                return TipLayoutHint.yAxisTooltip(DoubleVector(myAxisOrigin.x, tipLayoutHint().coord!!.y), GeomTargetInteraction.AXIS_TOOLTIP_COLOR)
             }
 
             throw IllegalArgumentException("Not an axis aes: $aes")

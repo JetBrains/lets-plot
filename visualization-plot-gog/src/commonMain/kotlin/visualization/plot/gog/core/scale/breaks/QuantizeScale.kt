@@ -68,12 +68,13 @@ class QuantizeScale<T> : WithFiniteOrderedOutput<T> {
     }
 
     fun quantize(v: Double): T {
-        return myOutputValues[outputIndex(v)]
+        val i = outputIndex(v)
+        return myOutputValues[i]
     }
 
     private fun outputIndex(v: Double): Int {
         checkState(myHasDomain, "Domain not defined.")
-        checkState(myOutputValues.isNotEmpty(), "Output values are not defined.")
+        checkState(::myOutputValues.isInitialized && myOutputValues.isNotEmpty(), "Output values are not defined.")
         val bucketSize = bucketSize()
         val index = ((v - myDomainStart) / bucketSize).toInt()
         val maxIndex = myOutputValues.size - 1

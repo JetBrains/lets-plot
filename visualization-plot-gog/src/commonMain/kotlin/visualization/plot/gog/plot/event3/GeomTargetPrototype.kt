@@ -20,20 +20,17 @@ class GeomTargetPrototype(internal val hitShape: HitShape, internal val indexMap
 
     companion object {
         internal fun createTipLayoutHint(hitCoord: DoubleVector, hitShape: HitShape, fill: Color): TipLayoutHint {
-            when (hitShape.kind) {
-
+            return when (hitShape.kind) {
                 RECT -> {
                     val radius = hitShape.rect.width / 2
-                    return TipLayoutHint.horizontalTooltip(hitCoord, radius, fill)
+                    TipLayoutHint.horizontalTooltip(hitCoord, radius, fill)
                 }
 
-                POINT -> return TipLayoutHint.verticalTooltip(hitCoord, hitShape.point.radius, fill)
+                POINT -> TipLayoutHint.verticalTooltip(hitCoord, hitShape.point.radius, fill)
 
-                PATH -> return TipLayoutHint.horizontalTooltip(hitCoord, 0.0, fill)
+                PATH -> TipLayoutHint.horizontalTooltip(hitCoord, 0.0, fill)
 
-                POLYGON -> return TipLayoutHint.cursorTooltip(hitCoord, fill)
-
-                else -> throw IllegalStateException()
+                POLYGON -> TipLayoutHint.cursorTooltip(hitCoord, fill)
             }
         }
     }

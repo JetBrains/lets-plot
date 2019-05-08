@@ -90,7 +90,7 @@ class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
                         TooltipEntry(
                                 content,
                                 positionedTooltip.tooltipCoord,
-                                positionedTooltip.stemCoord,
+                                positionedTooltip.stemCoord!!,
                                 getOrientation(tooltipSpec.layoutHint.kind)
                         )
                 )
