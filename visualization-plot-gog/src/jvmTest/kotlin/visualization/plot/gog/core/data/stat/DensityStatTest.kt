@@ -1,12 +1,14 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
+import jetbrains.datalore.base.assertion.assertEquals
+import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.*
 import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.StatsServerSide
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
-import java.util.*
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class DensityStatTest {
 
@@ -16,7 +18,7 @@ class DensityStatTest {
 
     private fun generateNormalDatapointsWithFixedEnds(n: Int, mu: Double, stddev: Double, halfRange: Double): List<Double> {
         val gaussian = ArrayList<Double>()
-        val random = Random()
+        val random = RandomGaussian(Random)
         //random.setSeed(43);
         for (i in 0 until n - 2) {
             gaussian.add(random.nextGaussian() * stddev + mu)
@@ -59,7 +61,7 @@ class DensityStatTest {
 
             assertEquals(1.0, SeriesUtil.sum(statDf.getNumeric(Stats.DENSITY)) * binWidth, .01) //integral is one
             assertEquals(length.toDouble(), SeriesUtil.sum(statDf.getNumeric(Stats.COUNT)) * binWidth, length / 100.0) //integral is the number of data points
-            assertEquals(1.0, Collections.max<Double>(statDf.getNumeric(Stats.SCALED)), 0.0) //maximum is one
+            assertEquals(1.0, statDf.getNumeric(Stats.SCALED).maxBy { v -> v!! }, 0.0) //maximum is one
         }
     }
 
