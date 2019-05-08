@@ -152,6 +152,6 @@ class VertexSamplingTest {
 
         assertThat(simplifiedRings).hasSize(2)
         assertThatRing(simplifiedRings[0]).isClosed.hasSize(19)
-        assertThatRing(simplifiedRings[1]).isClosed.hasSize(10)
+        assertThatRing(simplifiedRings[1]).isClosed.hasSize(11)
     }
 }
