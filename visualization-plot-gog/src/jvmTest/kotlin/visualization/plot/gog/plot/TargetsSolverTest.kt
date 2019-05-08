@@ -122,11 +122,7 @@ class TargetsSolverTest {
         val locatedTargets = targetsSolver.solve()
 
         if (expected.isEmpty() || expected.all { layerConfig -> layerConfig === none() }) {
-            try {
-                assertThat<LocatedTargets>(locatedTargets).isEmpty()
-            } catch (e: Exception) {
-                println("got it")
-            }
+            assertThat<LocatedTargets>(locatedTargets).isEmpty()
         } else {
             assertThat<LocatedTargets>(locatedTargets).hasSameSizeAs(expected)
             locatedTargets.zip(expected).forEach { pair -> assertThat(pair.first).isEqualTo(pair.second!!.myLocatedTargets) }
