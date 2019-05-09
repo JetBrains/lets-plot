@@ -47,8 +47,8 @@ object ServerSideTestUtil {
         return PlotConfigServerSide.createLayerConfigsWithoutEncoding(plotSpec)
     }
 
-    internal fun createLayerConfigsByLayerSpec(layerSpec: Map<String, Any>): List<LayerConfig> {
-        return ServerSideTestUtil.createLayerConfigsWithoutEncoding(
+    internal fun createLayerConfigsByLayerSpec(layerSpec: Map<String, Any?>): List<LayerConfig> {
+        return createLayerConfigsWithoutEncoding(
                 mutableMapOf(
                         KIND to PLOT,
                         SCALES to emptyList,
