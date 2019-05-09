@@ -8,14 +8,14 @@ class BarAndLineMain : BarAndLine() {
 
     private fun show() {
         val plotSpecList = Arrays.asList(
-                BarAndLine.defaultBarDiscreteX(),
-                BarAndLine.barDiscreteXFill(),
-                BarAndLine.barDiscreteXFillMappedInGeom(),
-                BarAndLine.barDiscreteXFillAndBlackOutline(),
-                BarAndLine.barDiscreteXTitleAxisLabelsNarrowWidth()
+                defaultBarDiscreteX(),
+                barDiscreteXFill(),
+                barDiscreteXFillMappedInGeom(),
+                barDiscreteXFillAndBlackOutline(),
+                barDiscreteXTitleAxisLabelsNarrowWidth()
         )
 
-        SwingDemoUtil.show(viewSize, plotSpecList)
+        SwingDemoUtil.show(viewSize, plotSpecList as List<MutableMap<String, Any>>)
     }
 
     companion object {

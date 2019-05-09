@@ -8,15 +8,15 @@ class BoxPlotMain : BoxPlot() {
 
     private fun show() {
         val plotSpecList = Arrays.asList(
-                BoxPlot.basic(),
-                BoxPlot.withVarWidth(),
-                BoxPlot.withCondColored(),
-                BoxPlot.withOutlierOverride(),
-                BoxPlot.withGrouping(),
-                BoxPlot.withGroupingAndVarWidth()
+                basic(),
+                withVarWidth(),
+                withCondColored(),
+                withOutlierOverride(),
+                withGrouping(),
+                withGroupingAndVarWidth()
         )
 
-        SwingDemoUtil.show(viewSize, plotSpecList)
+        SwingDemoUtil.show(viewSize, plotSpecList as List<MutableMap<String, Any>>)
     }
 
     companion object {

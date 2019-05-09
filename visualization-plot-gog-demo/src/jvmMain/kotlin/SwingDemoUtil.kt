@@ -15,7 +15,7 @@ import java.awt.Dimension
 import javax.swing.*
 
 object SwingDemoUtil {
-    fun show(viewSize: DoubleVector, plotSpecList: List<Map<String, Any>>) {
+    fun show(viewSize: DoubleVector, plotSpecList: List<MutableMap<String, Any>>) {
         SwingUtilities.invokeLater {
             val frame = JFrame()
 
@@ -46,7 +46,7 @@ object SwingDemoUtil {
         }
     }
 
-    private fun createComponent(viewSize: DoubleVector, plotSpec: Map<String, Any>): JComponent {
+    private fun createComponent(viewSize: DoubleVector, plotSpec: MutableMap<String, Any>): JComponent {
         val plot = DemoAndTest.createPlot(plotSpec, false)
         val plotContainer = PlotContainer(plot, ValueProperty(viewSize))
 

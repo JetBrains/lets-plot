@@ -9,10 +9,10 @@ class PolygonsMain : Polygons() {
 
     private fun show() {
         val plotSpecList = Arrays.asList(
-                Polygons.basic()
+                basic()
         )
 
-        SwingDemoUtil.show(viewSize, plotSpecList)
+        SwingDemoUtil.show(viewSize, plotSpecList as List<MutableMap<String, Any>>)
     }
 
     companion object {

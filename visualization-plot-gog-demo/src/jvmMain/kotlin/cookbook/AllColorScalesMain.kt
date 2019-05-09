@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.gogDemo.model.cookbook.AllColorScales
 class AllColorScalesMain : AllColorScales() {
 
     private fun show() {
-        SwingDemoUtil.show(viewSize, AllColorScales.bundle())
+        SwingDemoUtil.show(viewSize, bundle() as List<MutableMap<String, Any>>)
     }
 
     companion object {

@@ -18,7 +18,7 @@ object DemoAndTest {
     }
 
     @JvmOverloads
-    fun createPlot(plotSpec: Map<String, Any>, andBuildComponent: Boolean = true): Plot {
+    fun createPlot(plotSpec: MutableMap<String, Any>, andBuildComponent: Boolean = true): Plot {
         val plot = Monolithic.createPlot(plotSpec, null)
         if (andBuildComponent) {
             val rootGroup = plot.rootGroup
@@ -72,7 +72,8 @@ object DemoAndTest {
     }
 
     fun getMap(opts: Map<String, Any>, key: String): Map<String, Any> {
-        val map = opts[key] as Map<String, Any>
+        @Suppress("UNCHECKED_CAST")
+        val map = opts[key] as? Map<String, Any>
         return map ?: emptyMap()
     }
 }

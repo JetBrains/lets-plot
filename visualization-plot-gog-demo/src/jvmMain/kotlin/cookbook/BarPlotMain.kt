@@ -8,11 +8,11 @@ class BarPlotMain : BarPlot() {
 
     private fun show() {
         val plotSpecList = Arrays.asList(
-                BarPlot.basic(),
-                BarPlot.fancy()
+                basic(),
+                fancy()
         )
 
-        SwingDemoUtil.show(viewSize, plotSpecList)
+        SwingDemoUtil.show(viewSize, plotSpecList as List<MutableMap<String, Any>>)
     }
 
     companion object {

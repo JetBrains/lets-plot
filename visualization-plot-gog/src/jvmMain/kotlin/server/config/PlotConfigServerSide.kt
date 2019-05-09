@@ -274,15 +274,15 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
         /**
          * For tests
          */
-        internal fun processTransformWithoutEncoding(plotSpec: MutableMap<String, Any>): Map<String, Any> {
+        internal fun processTransformWithoutEncoding(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
             return processTransform(plotSpec, false)
         }
 
-        fun processTransform(opts: Map<String, Any>): Map<String, Any> {
+        fun processTransform(opts: MutableMap<String, Any>): MutableMap<String, Any> {
             return processTransform(opts, true)
         }
 
-        private fun processTransform(plotSpecRaw: Map<String, Any>, encodeOnExit: Boolean): Map<String, Any> {
+        private fun processTransform(plotSpecRaw: MutableMap<String, Any>, encodeOnExit: Boolean): MutableMap<String, Any> {
             var plotSpec = migrationTransform().apply(plotSpecRaw)
             plotSpec = entryTransform().apply(plotSpec)
             PlotConfigServerSide(plotSpec).updatePlotSpec()

@@ -53,13 +53,14 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
     }
 
     companion object {
-        fun processTransform(plotSpec: Map<String, Any>): Map<String, Any> {
+        fun processTransform(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
+            @Suppress("NAME_SHADOWING")
             var plotSpec = plotSpec
             val isGGBunch = isGGBunchSpec(plotSpec)
 
-            // migration to new schema of plot spces
+            // migration to new schema of plot specs
             // needed to support 'saved output' in old format
-            // remove after reasonable priod of time (24 Sep, 2018)
+            // remove after reasonable period of time (24 Sep, 2018)
             val migrations = PlotSpecTransform.builderForRawSpec()
                     .change(MoveGeomPropertiesToLayerMigration.specSelector(isGGBunch), MoveGeomPropertiesToLayerMigration())
                     .build()

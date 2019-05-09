@@ -13,7 +13,7 @@ class HistogramMain : Histogram() {
                 withConstantWeight()
         )
 
-        SwingDemoUtil.show(viewSize, plotSpecList)
+        SwingDemoUtil.show(viewSize, plotSpecList as List<MutableMap<String, Any>>)
     }
 
     companion object {

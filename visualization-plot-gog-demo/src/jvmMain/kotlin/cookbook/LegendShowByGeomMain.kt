@@ -8,12 +8,12 @@ class LegendShowByGeomMain : LegendShowByGeom() {
 
     private fun show() {
         val plotSpecList = Arrays.asList(
-                LegendShowByGeom.defaultLegend(),
-                LegendShowByGeom.noLinesLegend(),
-                LegendShowByGeom.noBothLegends()
+                defaultLegend(),
+                noLinesLegend(),
+                noBothLegends()
         )
 
-        SwingDemoUtil.show(viewSize, plotSpecList)
+        SwingDemoUtil.show(viewSize, plotSpecList as List<MutableMap<String, Any>>)
     }
 
     companion object {

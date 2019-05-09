@@ -20,7 +20,7 @@ class AxisOptionsMain : AxisOptions() {
                 AxisOptions.noLinesOrTitles()
         )
 
-        SwingDemoUtil.show(viewSize, plotSpecList)
+        SwingDemoUtil.show(viewSize, plotSpecList as List<MutableMap<String, Any>>)
     }
 
     companion object {

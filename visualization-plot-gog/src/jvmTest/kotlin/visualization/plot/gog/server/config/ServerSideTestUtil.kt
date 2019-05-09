@@ -37,7 +37,7 @@ object ServerSideTestUtil {
         return PlotConfigServerSide.processTransformWithoutEncoding(plotSpec)
     }
 
-    fun serverTransformOnlyEncoding(plotSpec: Map<String, Any>): Map<String, Any> {
+    fun serverTransformOnlyEncoding(plotSpec: MutableMap<String, Any>): Map<String, Any> {
         return DataSpecEncodeTransforms.serverSideEncode(true).apply(plotSpec)
     }
 

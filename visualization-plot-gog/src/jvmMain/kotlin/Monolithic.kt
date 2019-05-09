@@ -8,7 +8,8 @@ import jetbrains.datalore.visualization.plot.gog.server.config.PlotConfigServerS
 import java.util.function.Consumer
 
 object Monolithic {
-    fun createPlot(plotSpec: Map<String, Any>, computationMessagesHandler: Consumer<List<String>>?): Plot {
+    fun createPlot(plotSpec: MutableMap<String, Any>, computationMessagesHandler: Consumer<List<String>>?): Plot {
+        @Suppress("NAME_SHADOWING")
         var plotSpec = plotSpec
         plotSpec = transformPlotSpec(plotSpec)
         if (computationMessagesHandler != null) {
@@ -22,7 +23,7 @@ object Monolithic {
         return assembler.createPlot()
     }
 
-    fun transformPlotSpec(plotSpec: Map<String, Any>): Map<String, Any> {
+    fun transformPlotSpec(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
         @Suppress("NAME_SHADOWING")
         var plotSpec = plotSpec
         plotSpec = PlotConfigServerSide.processTransform(plotSpec)
