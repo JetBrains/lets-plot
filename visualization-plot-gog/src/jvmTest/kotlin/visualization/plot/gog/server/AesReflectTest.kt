@@ -1,4 +1,4 @@
-package visualization.plot.gog.server
+package jetbrains.datalore.visualization.plot.gog.server
 
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import kotlin.reflect.KProperty1

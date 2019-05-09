@@ -6,20 +6,9 @@ import jetbrains.datalore.visualization.plot.gog.config.transform.PlotSpecTransf
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChange
 
 object DataSpecEncodeTransforms {
-    /*
-  private static final List<SpecSelector> DATA_SPEC_SELECTORS = Arrays.asList(
-      SpecSelector.of(Plot.DATA),
-      SpecSelector.of(Plot.LAYERS, Layer.DATA),
-      SpecSelector.of(Plot.LAYERS, Layer.GEOM, Layer.DATA),
-      SpecSelector.of(Plot.LAYERS, Layer.STAT, Layer.DATA)
-      //SpecSelector.of(Plot.LAYERS, Layer.GEOM, Geom.Choropleth.GEO_POSITIONS)
-  );
-  */
-
     internal fun addDataChanges(builder: PlotSpecTransform.Builder, change: SpecChange, isGGBunch: Boolean): PlotSpecTransform.Builder {
-        val specSelectors = PlotSpecTransformUtil.getPlotAndLayersSpecSelectors(isGGBunch, Plot.DATA)
 
-        //for (SpecSelector specSelector : DATA_SPEC_SELECTORS) {
+        val specSelectors = PlotSpecTransformUtil.getPlotAndLayersSpecSelectors(isGGBunch, Plot.DATA)
         for (specSelector in specSelectors) {
             builder.change(specSelector, change)
         }
