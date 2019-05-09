@@ -2,13 +2,12 @@ package jetbrains.datalore.visualization.plot.gog.common.text
 
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.round
+import kotlin.math.roundToLong
 
 actual object DateTimeFormatUtil {
 
     actual fun formatDateUTC(instant: Number, pattern: String): String {
-//              instant.toLong()
-        val date = Date(round(instant.toDouble()).toLong())
+        val date = Date(instant.toDouble().roundToLong())
         return formatDateUTC(date, pattern)
     }
 

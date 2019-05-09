@@ -139,7 +139,7 @@ object TestUtil {
 
         val located = getGeomTargets(locator.findTargets(coord))
 
-        assertEquals(key.size.toLong(), located.size.toLong())
+        assertEquals(key.size, located.size)
 
         var i = 0
         val n = key.size

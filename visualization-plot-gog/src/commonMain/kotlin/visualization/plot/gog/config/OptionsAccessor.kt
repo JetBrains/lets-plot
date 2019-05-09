@@ -85,12 +85,13 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     }
 
     internal fun getRange(option: String): ClosedRange<Double> {
+        val error = { v: Any? -> throw IllegalArgumentException("'range' value is expected in form: [min, max] but was: $v") }
         val v = get(option)
         if (v is List<*> && v.isNotEmpty()) {
-            val lower = asDouble(v[0]!!)
+            val lower = asDouble(v[0]) ?: error(v)
             var upper = lower
             if (v.size > 1) {
-                upper = asDouble(v[1]!!)
+                upper = asDouble(v[1]) ?: error(v)
             }
             return ClosedRange.closed(lower, upper)
         }
@@ -109,9 +110,7 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     @JvmOverloads
     fun getBoolean(option: String, def: Boolean = false): Boolean {
         val v = get(option)
-        return if (v is Boolean) {
-            (v as Boolean?)!!
-        } else def
+        return v as? Boolean ?: def
     }
 
     fun getDouble(option: String): Double? {
@@ -119,14 +118,14 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     }
 
     internal fun getInteger(option: String): Int? {
-        return getValueOrNull(option) { v -> (v as Number).toInt() }
+        return getValueOrNull(option) { v -> (v as? Number)?.toInt() }
     }
 
     internal fun getLong(option: String): Long? {
-        return getValueOrNull(option) { v -> (v as Number).toLong() }
+        return getValueOrNull(option) { v -> (v as? Number)?.toLong() }
     }
 
-    private fun <T> getValueOrNull(option: String, mapper: (Any) -> T): T? {
+    private fun <T> getValueOrNull(option: String, mapper: (Any?) -> T?): T? {
         val v = get(option) ?: return null
         return mapper(v)
     }
@@ -149,8 +148,8 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
             return OptionsAccessor(map, emptyMap<Any, Any>())
         }
 
-        private fun asDouble(value: Any): Double {
-            return (value as Number).toDouble()
+        private fun asDouble(value: Any?): Double? {
+            return (value as? Number)?.toDouble()
         }
     }
 }

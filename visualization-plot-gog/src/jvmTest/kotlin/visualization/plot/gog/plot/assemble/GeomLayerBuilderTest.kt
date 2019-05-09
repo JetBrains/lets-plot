@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 class GeomLayerBuilderTest {
     private fun checkBoundDataSize(data: DataFrame, binding: VarBinding, size: Int) {
         assertTrue(data.has(binding.variable), "has " + binding.variable)
-        assertEquals(size.toLong(), data[binding.variable].size.toLong(), "size " + binding.variable)
+        assertEquals(size, data[binding.variable].size, "size " + binding.variable)
     }
 
     private fun checkNotOriginalVar(data: DataFrame, binding: VarBinding) {

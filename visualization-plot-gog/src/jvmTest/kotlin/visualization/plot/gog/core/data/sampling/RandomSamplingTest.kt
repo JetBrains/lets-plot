@@ -31,7 +31,7 @@ class RandomSamplingTest {
 
     private fun assertRowCount(sampleSize: Int) {
         val sampleData = RandomSampling(sampleSize, null).apply(myData)
-        assertEquals(sampleSize.toLong(), sampleData.rowCount().toLong(), "Row count")
+        assertEquals(sampleSize, sampleData.rowCount(), "Row count")
     }
 
     companion object {

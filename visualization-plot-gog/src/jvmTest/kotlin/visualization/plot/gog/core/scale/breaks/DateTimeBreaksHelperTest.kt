@@ -167,32 +167,32 @@ class DateTimeBreaksHelperTest {
         private val MONTHS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).month!!.ordinal() }
         private val YEARS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).year }
 
-        private fun assertMilliseconds(expected: IntArray, msCount: Int, targetBreakCount: Int) {
-            val instant2 = BASE_INSTANT.add(Duration.MS.mul(msCount.toLong()))
+        private fun assertMilliseconds(expected: IntArray, msCount: Long, targetBreakCount: Int) {
+            val instant2 = BASE_INSTANT.add(Duration.MS.mul(msCount))
             val breaks = computeBreaks(BASE_INSTANT.timeSinceEpoch, instant2.timeSinceEpoch, targetBreakCount)
             assertTimePartEquals(expected, breaks, MILLISECONDS)
         }
 
-        private fun assertSeconds(expected: IntArray, sCount: Int, targetBreakCount: Int) {
-            val instant2 = BASE_INSTANT.add(Duration.SECOND.mul(sCount.toLong()))
+        private fun assertSeconds(expected: IntArray, sCount: Long, targetBreakCount: Int) {
+            val instant2 = BASE_INSTANT.add(Duration.SECOND.mul(sCount))
             val breaks = computeBreaks(BASE_INSTANT.timeSinceEpoch, instant2.timeSinceEpoch, targetBreakCount)
             assertTimePartEquals(expected, breaks, SECONDS)
         }
 
-        private fun assertMinutes(expected: IntArray, mCount: Int, targetBreakCount: Int) {
-            val instant2 = BASE_INSTANT.add(Duration.MINUTE.mul(mCount.toLong()))
+        private fun assertMinutes(expected: IntArray, mCount: Long, targetBreakCount: Int) {
+            val instant2 = BASE_INSTANT.add(Duration.MINUTE.mul(mCount))
             val breaks = computeBreaks(BASE_INSTANT.timeSinceEpoch, instant2.timeSinceEpoch, targetBreakCount)
             assertTimePartEquals(expected, breaks, MINUTES)
         }
 
-        private fun assertHours(expected: IntArray, mCount: Int, targetBreakCount: Int) {
-            val instant2 = BASE_INSTANT.add(Duration.HOUR.mul(mCount.toLong()))
+        private fun assertHours(expected: IntArray, mCount: Long, targetBreakCount: Int) {
+            val instant2 = BASE_INSTANT.add(Duration.HOUR.mul(mCount))
             val breaks = computeBreaks(BASE_INSTANT.timeSinceEpoch, instant2.timeSinceEpoch, targetBreakCount)
             assertTimePartEquals(expected, breaks, HOURS)
         }
 
-        private fun assertDays(expected: IntArray, dCount: Int, targetBreakCount: Int, minInterval: TimeInterval? = null) {
-            val instant2 = BASE_INSTANT.add(Duration.DAY.mul(dCount.toLong()))
+        private fun assertDays(expected: IntArray, dCount: Long, targetBreakCount: Int, minInterval: TimeInterval? = null) {
+            val instant2 = BASE_INSTANT.add(Duration.DAY.mul(dCount))
             val breaks = computeBreaks(
                     BASE_INSTANT.timeSinceEpoch, instant2.timeSinceEpoch,
                     targetBreakCount, minInterval)
@@ -200,8 +200,8 @@ class DateTimeBreaksHelperTest {
             assertTimesEqual(breaks, Time.DAY_START)
         }
 
-        private fun assertWeeks(expected: IntArray, wCount: Int, targetBreakCount: Int) {
-            val instant2 = BASE_INSTANT.add(Duration.WEEK.mul(wCount.toLong()))
+        private fun assertWeeks(expected: IntArray, wCount: Long, targetBreakCount: Int) {
+            val instant2 = BASE_INSTANT.add(Duration.WEEK.mul(wCount))
             val breaks = computeBreaks(BASE_INSTANT.timeSinceEpoch, instant2.timeSinceEpoch, targetBreakCount)
             assertTimePartEquals(expected, breaks, WEEKDAYS)
             assertTimesEqual(breaks, Time.DAY_START)
@@ -213,7 +213,7 @@ class DateTimeBreaksHelperTest {
             val month2 = (month1 + mCount) % 12
             val addYear = (month1 + mCount) / 12
             val dateTime1 = DateTime(date, BASE_TIME)
-            val month = Month.values()[month2]
+            val month = Month.values()[month2.toInt()]
             val dateTime2 = DateTime(Date(1, month, date.year + addYear), BASE_TIME)
 
             val instant1 = TimeUtil.asInstantUTC(dateTime1)
@@ -258,7 +258,7 @@ class DateTimeBreaksHelperTest {
             for ((i, dt) in dateTimeArr.withIndex()) {
                 val dateTime = TimeUtil.asDateTimeUTC(dt)
                 val daysFromYearStart = dateTime.date.daysFrom(Date.firstDayOf(dateTime.year))
-                assertEquals(dayOfTheYear.toLong(), daysFromYearStart.toLong(), "Index $i")
+                assertEquals(dayOfTheYear, daysFromYearStart, "Index $i")
             }
         }
 

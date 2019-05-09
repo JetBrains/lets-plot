@@ -62,10 +62,10 @@ object Mappers {
         }
     }
 
-    fun discreteToContinuous(domainValues: Collection<*>, range: ClosedRange<Double>, naValue: Double): (Double?) -> Double? {
+    fun discreteToContinuous(domainValues: Collection<*>, outputRange: ClosedRange<Double>, naValue: Double): (Double?) -> Double? {
         val numberByDomainValue = MapperUtil.mapDiscreteDomainValuesToNumbers(domainValues)
         val dataRange = SeriesUtil.range(numberByDomainValue.values) ?: return IDENTITY
-        return linear(dataRange, range, naValue)
+        return linear(dataRange, outputRange, naValue)
     }
 
     fun <T> discrete(outputValues: List<T>, defaultOutputValue: T): (Double?) -> T {

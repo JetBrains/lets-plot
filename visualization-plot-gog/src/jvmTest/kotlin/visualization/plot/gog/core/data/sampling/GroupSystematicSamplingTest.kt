@@ -102,7 +102,7 @@ internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {
         }
 
         internal fun hasGroupCount(expected: Int): SamplingAssert {
-            val groupCount = mySample!![GroupSamplingTestBase.GROUP_SERIE_VAR].stream().distinct().count()
+            val groupCount = mySample!![GROUP_SERIE_VAR].stream().distinct().count()
             assertEquals(expected.toLong(), groupCount, "Group count")
             return this
         }
@@ -120,10 +120,10 @@ internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {
         }
 
         private fun checkGroup(distinctGroupIndex: Int): Boolean {
-            val originalDistinctGroups = data!![GroupSamplingTestBase.GROUP_SERIE_VAR].stream().distinct().collect(toList())
+            val originalDistinctGroups = data!![GROUP_SERIE_VAR].stream().distinct().collect(toList())
             val v = originalDistinctGroups[distinctGroupIndex]
 
-            return mySample!![GroupSamplingTestBase.GROUP_SERIE_VAR].stream().anyMatch { v == it }
+            return mySample!![GROUP_SERIE_VAR].stream().anyMatch { v == it }
         }
     }
 

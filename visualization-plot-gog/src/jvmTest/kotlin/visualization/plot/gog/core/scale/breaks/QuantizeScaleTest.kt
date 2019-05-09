@@ -44,15 +44,15 @@ class QuantizeScaleTest {
                 .range(listOf(0, 1))
                 .domain(0.0, 1.0)
 
-        assertEquals(0, (scale.quantize(-1.0)).toLong())
-        assertEquals(0, (scale.quantize(0.0)).toLong())
-        assertEquals(0, (scale.quantize(0.1)).toLong())
-        assertEquals(0, (scale.quantize(0.49)).toLong())
-        assertEquals(1, (scale.quantize(0.5)).toLong())
-        assertEquals(1, (scale.quantize(0.51)).toLong())
-        assertEquals(1, (scale.quantize(0.99)).toLong())
-        assertEquals(1, (scale.quantize(1.0)).toLong())
-        assertEquals(1, scale.quantize(10.0).toLong())
+        assertEquals(0, (scale.quantize(-1.0)))
+        assertEquals(0, (scale.quantize(0.0)))
+        assertEquals(0, (scale.quantize(0.1)))
+        assertEquals(0, (scale.quantize(0.49)))
+        assertEquals(1, (scale.quantize(0.5)))
+        assertEquals(1, (scale.quantize(0.51)))
+        assertEquals(1, (scale.quantize(0.99)))
+        assertEquals(1, (scale.quantize(1.0)))
+        assertEquals(1, scale.quantize(10.0))
     }
 
     @Test

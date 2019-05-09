@@ -54,10 +54,10 @@ class DensityStatTest {
             assertTrue(statDf.has(Stats.COUNT))
             assertTrue(statDf.has(Stats.SCALED))
 
-            assertEquals(n.toLong(), statDf[Stats.X].size.toLong())
-            assertEquals(n.toLong(), statDf[Stats.DENSITY].size.toLong())
-            assertEquals(n.toLong(), statDf[Stats.COUNT].size.toLong())
-            assertEquals(n.toLong(), statDf[Stats.SCALED].size.toLong())
+            assertEquals(n, statDf[Stats.X].size)
+            assertEquals(n, statDf[Stats.DENSITY].size)
+            assertEquals(n, statDf[Stats.COUNT].size)
+            assertEquals(n, statDf[Stats.SCALED].size)
 
             assertEquals(1.0, SeriesUtil.sum(statDf.getNumeric(Stats.DENSITY)) * binWidth, .01) //integral is one
             assertEquals(length.toDouble(), SeriesUtil.sum(statDf.getNumeric(Stats.COUNT)) * binWidth, length / 100.0) //integral is the number of data points
@@ -93,9 +93,9 @@ class DensityStatTest {
         assertTrue(statDf.has(Stats.Y))
         assertTrue(statDf.has(Stats.DENSITY))
 
-        assertEquals((n1 * n2).toLong(), statDf[Stats.X].size.toLong())
-        assertEquals((n1 * n2).toLong(), statDf[Stats.Y].size.toLong())
-        assertEquals((n1 * n2).toLong(), statDf[Stats.DENSITY].size.toLong())
+        assertEquals((n1 * n2), statDf[Stats.X].size)
+        assertEquals((n1 * n2), statDf[Stats.Y].size)
+        assertEquals((n1 * n2), statDf[Stats.DENSITY].size)
 
         assertEquals(1.0, SeriesUtil.sum(statDf.getNumeric(Stats.DENSITY)) * binArea, .01) //integral is one
     }

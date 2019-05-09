@@ -6,7 +6,7 @@ import kotlin.test.assertTrue
 class DataFrameAssert internal constructor(private val myData: DataFrame) {
 
     internal fun hasRowCount(expected: Int): DataFrameAssert {
-        assertEquals(expected.toLong(), myData.rowCount().toLong(), "Row count")
+        assertEquals(expected, myData.rowCount(), "Row count")
         return this
     }
 
@@ -26,7 +26,7 @@ class DataFrameAssert internal constructor(private val myData: DataFrame) {
             for (`var` in vars) {
                 assertTrue(df.has(`var`), "Has var '" + `var`.name + "'")
                 if (dataSize >= 0) {
-                    assertEquals(dataSize.toLong(), df[`var`].size.toLong(), "Data siaze '" + `var`.name + "'")
+                    assertEquals(dataSize, df[`var`].size, "Data siaze '" + `var`.name + "'")
                 }
             }
         }

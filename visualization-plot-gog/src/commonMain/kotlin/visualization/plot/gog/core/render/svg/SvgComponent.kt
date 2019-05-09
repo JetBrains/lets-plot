@@ -17,7 +17,7 @@ abstract class SvgComponent {
             var id: String
             var l: Long = 0
             do {
-                l += RANDOM.nextInt(10000).toLong()
+                l += RANDOM.nextInt(10000)
                 id = prefix + l
             } while (USED_IDS.contains(id))
             USED_IDS.add(id)

@@ -21,7 +21,7 @@ internal abstract class GroupSamplingTestBase {
 
         // add groups
         val random = Random(9999)
-        val groups = range(0, pointCount).mapToObj { i -> random.nextInt(groupCount) }.collect(toList())
+        val groups = range(0, pointCount).mapToObj { random.nextInt(groupCount) }.collect(toList())
         checkState(groups.stream().distinct().count() == groupCount.toLong())
 
         groupMapper = { groups[it] }

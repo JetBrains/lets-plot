@@ -2,7 +2,11 @@ package jetbrains.datalore.base.datetime
 
 import kotlin.jvm.JvmOverloads
 
-class Time @JvmOverloads constructor(val hours: Int, val minutes: Int, val seconds: Int = 0, val milliseconds: Int = 0) : Comparable<Time> {
+class Time @JvmOverloads constructor(
+        val hours: Int,
+        val minutes: Int,
+        val seconds: Int = 0,
+        val milliseconds: Int = 0) : Comparable<Time> {
 
     init {
         if (hours < 0 || hours > 24) {

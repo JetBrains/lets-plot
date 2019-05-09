@@ -109,7 +109,7 @@ class PolygonEdgeCasesTest {
 
         val rings = GeomUtil.createRingsFromPoints(list)
 
-        assertEquals(3, rings.size.toLong())
+        assertEquals(3, rings.size)
         assertEquals(ring1, rings[0])
         assertEquals(ring2, rings[1])
         assertEquals(ring3, rings[2])
@@ -128,7 +128,7 @@ class PolygonEdgeCasesTest {
         val expectedRing = ArrayList(openRing)
         expectedRing.add(openRing[0])
 
-        assertEquals(1, rings.size.toLong())
+        assertEquals(1, rings.size)
         assertEquals(expectedRing, rings[0])
     }
 
@@ -173,7 +173,7 @@ class PolygonEdgeCasesTest {
         )
         val rings = GeomUtil.createRingsFromPoints(multiPointDataList[0].points)
 
-        assertEquals(3, rings.size.toLong())
+        assertEquals(3, rings.size)
         assertRing(rings[0], startRing1)
         assertRing(rings[1], startRing2)
         assertRing(rings[2], startRing3)
@@ -203,10 +203,10 @@ class PolygonEdgeCasesTest {
                 collector()
         )
 
-        assertEquals(2, multiPointDataList.size.toLong())
+        assertEquals(2, multiPointDataList.size)
 
         val rings = GeomUtil.createRingsFromPoints(multiPointDataList[0].points)
-        assertEquals(2, rings.size.toLong())
+        assertEquals(2, rings.size)
         assertEquals(polygonFromRect(leftFromAntiMeridian), rings[0])
         assertEquals(polygonFromRect(rightFromAntiMeridian), rings[1])
     }
@@ -236,9 +236,9 @@ class PolygonEdgeCasesTest {
 
         val multipolygon = GeomUtil.createMultipolygon(lonLatPoints)
 
-        assertEquals(2, multipolygon.size.toLong())
-        assertEquals(1, multipolygon[0].size.toLong())
-        assertEquals(2, multipolygon[1].size.toLong())
+        assertEquals(2, multipolygon.size)
+        assertEquals(1, multipolygon[0].size)
+        assertEquals(2, multipolygon[1].size)
     }
 
     private fun assertRing(ring: List<DoubleVector>, startPoint: DoubleVector) {

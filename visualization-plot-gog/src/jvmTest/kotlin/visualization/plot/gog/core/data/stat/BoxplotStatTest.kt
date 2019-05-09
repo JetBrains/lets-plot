@@ -33,7 +33,7 @@ class BoxplotStatTest {
             if (stat.hasDefaultMapping(aes)) {
                 val variable = stat.getDefaultMapping(aes)
                 assertTrue(statDf.has(variable), "Has var " + variable.name)
-                assertEquals(0, statDf[variable].size.toLong(), "Get var " + variable.name)
+                assertEquals(0, statDf[variable].size, "Get var " + variable.name)
             }
         }
     }
@@ -52,7 +52,7 @@ class BoxplotStatTest {
 
         val checkVar: (DataFrame.Variable, Double) -> Unit = { variable: DataFrame.Variable, expected: Double ->
             assertTrue(statDf.has(variable), "Has var " + variable.name)
-            assertEquals(1, statDf[variable].size.toLong(), "Size var " + variable.name)
+            assertEquals(1, statDf[variable].size, "Size var " + variable.name)
             assertEquals(expected, statDf[variable][0], "Get var " + variable.name)
         }
 
@@ -77,7 +77,7 @@ class BoxplotStatTest {
 
         // no 'width'
         assertTrue(statDf.has(Stats.WIDTH))
-        assertEquals(1, statDf[Stats.WIDTH].size.toLong())
+        assertEquals(1, statDf[Stats.WIDTH].size)
         assertEquals(1.0, statDf[Stats.WIDTH][0])
     }
 }

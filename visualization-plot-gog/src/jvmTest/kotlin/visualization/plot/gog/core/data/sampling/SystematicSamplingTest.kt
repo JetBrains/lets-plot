@@ -89,7 +89,7 @@ class SystematicSamplingTest {
         }
 
         internal fun hasRowCount(expected: Int): SamplingAssert {
-            assertEquals(expected.toLong(), mySample!!.rowCount().toLong(), "Group count")
+            assertEquals(expected, mySample!!.rowCount(), "Group count")
             return this
         }
     }

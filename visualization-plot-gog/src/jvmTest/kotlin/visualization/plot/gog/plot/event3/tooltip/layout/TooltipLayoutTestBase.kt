@@ -116,7 +116,7 @@ internal open class TooltipLayoutTestBase {
     }
 
     fun assertAllTooltips(vararg expectations: ExpectedTooltip) {
-        assertEquals(expectations.size.toLong(), myArrangedTooltips!!.size.toLong())
+        assertEquals(expectations.size, myArrangedTooltips!!.size)
 
         var i = 0
         val n = expectations.size

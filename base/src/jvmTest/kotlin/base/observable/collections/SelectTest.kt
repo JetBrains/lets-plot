@@ -105,7 +105,7 @@ class SelectTest {
         val res = testCollection(Properties.TRUE, newTestList())
 
         res.addListener(CollectionAdapter())
-        assertEquals(TEST_LIST_SIZE.toLong(), res.size.toLong())
+        assertEquals(TEST_LIST_SIZE, res.size)
     }
 
     @Test
@@ -113,20 +113,20 @@ class SelectTest {
         val res = testList(Properties.TRUE, newTestList())
 
         res.addListener(CollectionAdapter())
-        assertEquals(TEST_LIST_SIZE.toLong(), res.size.toLong())
+        assertEquals(TEST_LIST_SIZE, res.size)
     }
 
     @Test
     fun listNonEmptyIterator() {
         val res = testList(Properties.TRUE, newTestList())
 
-        assertEquals(TEST_LIST_SIZE.toLong(), res.size.toLong())
+        assertEquals(TEST_LIST_SIZE, res.size)
         for (s in res) {
             assertNotNull(s)
         }
 
         res.addListener(CollectionAdapter())
-        assertEquals(TEST_LIST_SIZE.toLong(), res.size.toLong())
+        assertEquals(TEST_LIST_SIZE, res.size)
         for (s in res) {
             assertNotNull(s)
         }
@@ -136,13 +136,13 @@ class SelectTest {
     fun collectionNonEmptyIterator() {
         val res = testCollection(Properties.TRUE, newTestList())
 
-        assertEquals(TEST_LIST_SIZE.toLong(), res.size.toLong())
+        assertEquals(TEST_LIST_SIZE, res.size)
         for (s in res) {
             assertNotNull(s)
         }
 
         res.addListener(CollectionAdapter())
-        assertEquals(TEST_LIST_SIZE.toLong(), res.size.toLong())
+        assertEquals(TEST_LIST_SIZE, res.size)
         for (s in res) {
             assertNotNull(s)
         }
@@ -158,19 +158,19 @@ class SelectTest {
 
     private fun testNonListened(src: Property<Boolean>,
                                 selected: ObservableCollection<String>, res: ObservableCollection<String>) {
-        assertEquals(0, res.size.toLong())
+        assertEquals(0, res.size)
 
         selected.add("1")
-        assertEquals(0, res.size.toLong())
+        assertEquals(0, res.size)
 
         src.set(true)
-        assertEquals(selected.size.toLong(), res.size.toLong())
+        assertEquals(selected.size, res.size)
 
         selected.add("2")
-        assertEquals(selected.size.toLong(), res.size.toLong())
+        assertEquals(selected.size, res.size)
 
         src.set(false)
-        assertEquals(0, res.size.toLong())
+        assertEquals(0, res.size)
     }
 
     private fun testListened(src: Property<Boolean>,
@@ -181,20 +181,20 @@ class SelectTest {
 
         selected.add("1")
         verifyZeroInteractions(mock)
-        assertEquals(0, res.size.toLong())
+        assertEquals(0, res.size)
 
         src.set(true)
         verify<CollectionListener<in String>>(mock).onItemAdded(CollectionItemEvent(null, "1", 0, ADD))
-        assertEquals(selected.size.toLong(), res.size.toLong())
+        assertEquals(selected.size, res.size)
 
         selected.add("2")
         verify<CollectionListener<in String>>(mock).onItemAdded(CollectionItemEvent(null, "2", 1, ADD))
-        assertEquals(selected.size.toLong(), res.size.toLong())
+        assertEquals(selected.size, res.size)
 
         src.set(false)
         verify<CollectionListener<in String>>(mock).onItemRemoved(CollectionItemEvent("1", null, 0, REMOVE))
         verify<CollectionListener<in String>>(mock).onItemRemoved(CollectionItemEvent("2", null, 0, REMOVE))
-        assertEquals(0, res.size.toLong())
+        assertEquals(0, res.size)
     }
 
     private fun testRegistrations(src: Property<Boolean>, res: ObservableCollection<String>,
@@ -202,8 +202,8 @@ class SelectTest {
 
         class ListenerChecker {
             fun check(prop: Int, collection: Int) {
-                assertEquals(prop.toLong(), propertyListeners.get().toLong())
-                assertEquals(collection.toLong(), collectionListeners.get().toLong())
+                assertEquals(prop, propertyListeners.get())
+                assertEquals(collection, collectionListeners.get())
             }
         }
 

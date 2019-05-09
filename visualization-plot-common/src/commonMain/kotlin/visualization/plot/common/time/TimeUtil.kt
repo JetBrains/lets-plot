@@ -4,12 +4,12 @@ import jetbrains.datalore.base.datetime.Date
 import jetbrains.datalore.base.datetime.DateTime
 import jetbrains.datalore.base.datetime.Instant
 import jetbrains.datalore.base.datetime.tz.TimeZone
-import kotlin.math.round
+import kotlin.math.roundToLong
 
 object TimeUtil {
     fun asDateTimeUTC(instant: Double): DateTime {
         try {
-            return TimeZone.UTC.toDateTime(Instant(round(instant).toLong()))
+            return TimeZone.UTC.toDateTime(Instant(instant.roundToLong()))
         } catch (ignored: RuntimeException) {
             throw IllegalArgumentException("Can't create DateTime from instant $instant")
         }
