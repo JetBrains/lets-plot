@@ -99,13 +99,13 @@ class PlotSpecTransform private constructor(builder: Builder) {
         }
     }
 
-    private fun applyChangesToValue(sel: SpecSelector, v: Any, ctx: SpecChangeContext) {
+    private fun applyChangesToValue(sel: SpecSelector, v: Any?, ctx: SpecChangeContext) {
         if (v is Map<*, *>) {
             val spec = v as MutableMap<String, Any>
             applyChangesToSpec(sel, spec, ctx)
         } else if (v is List<*>) {
             for (o in v) {
-                applyChangesToValue(sel, o!!, ctx)
+                applyChangesToValue(sel, o, ctx)
             }
         }
     }
