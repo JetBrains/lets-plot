@@ -58,16 +58,16 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
                     }
                 } else {
                     for (variable in variables) {
-                        layerSerieByVarName[variable.name]!!.second!!.addAll(tileLayerDataAfterStat[variable])
+                        layerSerieByVarName[variable.name]!!.second.addAll(tileLayerDataAfterStat[variable])
                     }
                 }
             }
 
             val builder = DataFrame.Builder()
             for (varName in layerSerieByVarName.keys) {
-                val `var` = layerSerieByVarName[varName]!!.first
+                val variable = layerSerieByVarName[varName]!!.first
                 val serie = layerSerieByVarName[varName]!!.second
-                builder.put(`var`!!, serie!!)
+                builder.put(variable, serie)
             }
             val layerDataAfterStat = builder.build()
             dataByLayerAfterStat.add(layerDataAfterStat)
@@ -76,7 +76,7 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
         run {
             // replace layer data with data after stat
             for ((layerIndex, layerConfig) in layerConfigs.withIndex()) {
-                // optimization: only replace layer' data if 'combined' data was changed (because of stat or sampling occured)
+                // optimization: only replace layer' data if 'combined' data was changed (because of stat or sampling occurred)
                 //if (layerConfig.getStat() != Stats.IDENTITY || samplingInfoByLayerIndex.containsKey(layerIndex)) {
                 if (layerConfig.stat !== Stats.IDENTITY || layerIndexWhereSamplingOccurred.contains(layerIndex)) {
                     val layerStatData = dataByLayerAfterStat[layerIndex]
