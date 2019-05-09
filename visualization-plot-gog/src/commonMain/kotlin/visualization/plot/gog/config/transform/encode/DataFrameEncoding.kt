@@ -6,8 +6,8 @@ import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 
 object DataFrameEncoding {
-    internal val DATA_FRAME_KEY = "__data_frame_encoded" // depricated
-    internal val DATA_SPEC_KEY = "__data_spec_encoded"
+    internal const val DATA_FRAME_KEY = "__data_frame_encoded" // depricated
+    internal const val DATA_SPEC_KEY = "__data_spec_encoded"
 
     // deprecated
     fun isEncodedDataFrame(map: Map<*, *>): Boolean {
@@ -48,32 +48,23 @@ object DataFrameEncoding {
     }
 
     fun decode1(map: Map<String, *>): Map<String, List<*>> {
-        //checkArgument(isDataFrame(map), "Not a data frame");
         checkArgument(isEncodedDataSpec(map), "Not an encoded data spec")
 
         val encodedData = map[DATA_SPEC_KEY] as List<*>
 
         val varNames = encodedData[0] as List<*>
-        //List<?> varLabels = (List<?>) encodedData.get(1);
         val isNumeric = encodedData[1] as List<*>
         val seriesStart = 2
 
-        //DataFrame.Builder b = new DataFrame.Builder();
         val decoded = HashMap<String, List<*>>()
         for (i in varNames.indices) {
             val name = varNames[i] as String
-            //String label = (String) varLabels.get(i);
             val numeric = isNumeric[i] as Boolean
 
-            //DataFrame.Variable variable = DataFrameUtil.createVariable(name, label);
             val o = encodedData[seriesStart + i]
-            val v: List<*>
-            if (numeric) {
-                v = BinaryUtil.decodeList(o as String)
-                //b.putNumeric(variable, v);
-            } else {
-                //b.put(variable, (List<?>) o);
-                v = o as List<*>
+            val v = when {
+                numeric -> BinaryUtil.decodeList(o as String)
+                else -> o as List<*>
             }
             decoded[name] = v
         }
