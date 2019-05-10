@@ -140,7 +140,7 @@ class DataFrame private constructor(builder: Builder) {
 
     class Variable @JvmOverloads constructor(
             val name: String,
-            private val source: Source = Source.ORIGIN,
+            val source: Source = Source.ORIGIN,
             val label: String = name) {
 
         val isOrigin: Boolean
