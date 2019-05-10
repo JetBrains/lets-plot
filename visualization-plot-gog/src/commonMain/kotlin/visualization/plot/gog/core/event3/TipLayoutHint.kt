@@ -3,7 +3,12 @@ package jetbrains.datalore.visualization.plot.gog.core.event3
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 
-class TipLayoutHint internal constructor(val kind: Kind, val coord: DoubleVector?, val objectRadius: Double, val color: Color) {
+// `open` - for Mockito tests
+open class TipLayoutHint internal constructor(
+        open val kind: Kind,
+        open val coord: DoubleVector?,
+        open val objectRadius: Double,
+        open val color: Color) {
 
     enum class Kind {
         VERTICAL_TOOLTIP,

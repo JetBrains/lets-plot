@@ -3,8 +3,8 @@ package jetbrains.datalore.visualization.plot.gog.plot.event3
 import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess.MappedData
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.gog.mockito.eq
 import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 
@@ -29,7 +29,7 @@ class MappedDataAccessMock {
             `when`(mappedDataAccess.getMappedData(eq(aes), anyInt()))
                     .thenReturn(mapping.createMappedData())
         } else {
-            `when`(mappedDataAccess.getMappedData(eq(aes), eq<Int>(index)))
+            `when`(mappedDataAccess.getMappedData(eq(aes), eq(index)))
                     .thenReturn(mapping.createMappedData())
         }
 
@@ -99,7 +99,7 @@ class MappedDataAccessMock {
 
     companion object {
 
-        fun `var`(): Variable {
+        fun variable(): Variable {
             return Variable()
         }
     }

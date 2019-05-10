@@ -22,15 +22,15 @@ object GeoPositionsDataUtil {
     const val MAP_COLUMN_OSM_ID = "__geoid__"
     const val MAP_COLUMN_GEOJSON = "__geometry__"
 
-    // additional fixed colums in 'boundaries' of 'centroids' dataframes
-    val POINT_X = "lon"
-    val POINT_Y = "lat"
+    // additional fixed columns in 'boundaries' of 'centroids' data frames
+    const val POINT_X = "lon"
+    const val POINT_Y = "lat"
 
-    // additional fixed colums in 'limits'
-    val RECT_XMIN = "lonmin"
-    val RECT_XMAX = "lonmax"
-    val RECT_YMIN = "latmin"
-    val RECT_YMAX = "latmax"
+    // additional fixed columns in 'limits'
+    const val RECT_XMIN = "lonmin"
+    const val RECT_XMAX = "lonmax"
+    const val RECT_YMIN = "latmin"
+    const val RECT_YMAX = "latmax"
 
     // Columns can be used as request
     val GEO_POSITIONS_KEYS = listOf(MAP_COLUMN_REGION, MAP_COLUMN_JOIN_KEY)
@@ -62,22 +62,23 @@ object GeoPositionsDataUtil {
 
     internal fun initDataAndMappingForGeoPositions(
             geomKind: GeomKind, layerData: DataFrame, geoPositions: DataFrame, mappingOptions: Map<*, *>): Pair<DataFrame, Map<Aes<*>, Variable>> {
+        @Suppress("NAME_SHADOWING")
         var layerData = layerData
 
         val leftMapId = mappingOptions[Option.Mapping.MAP_ID]
         checkState(leftMapId != null || mappingOptions.isEmpty(), "'map_id' aesthetic is required to show data on map")
 
-        if (leftMapId != null) {
-            val rightMapId = getGeoPositionsIdVar(geoPositions).name
-            layerData = ConfigUtil.rightJoin(layerData, leftMapId.toString(), geoPositions, rightMapId)
+        return when {
+            leftMapId != null -> {
+                val rightMapId = getGeoPositionsIdVar(geoPositions).name
+                layerData = ConfigUtil.rightJoin(layerData, leftMapId.toString(), geoPositions, rightMapId)
 
-            val aesMapping = HashMap(ConfigUtil.createAesMapping(layerData, mappingOptions))
-            aesMapping.putAll(generateMappings(geomKind, layerData))
-            return Pair(layerData, aesMapping)
-
-        } else {
-            // just show a blank map
-            return Pair(geoPositions, generateMappings(geomKind, geoPositions))
+                val aesMapping = HashMap(ConfigUtil.createAesMapping(layerData, mappingOptions))
+                aesMapping.putAll(generateMappings(geomKind, layerData))
+                Pair(layerData, aesMapping)
+            }
+            else -> // just show a blank map
+                Pair(geoPositions, generateMappings(geomKind, geoPositions))
         }
     }
 
@@ -90,9 +91,9 @@ object GeoPositionsDataUtil {
     }
 
     private fun getGeoPositionsIdVar(regionBoundaries: DataFrame): Variable {
-        val `var` = findFirstVariable(regionBoundaries, GEO_POSITIONS_KEYS)
-        if (`var` != null) {
-            return `var`
+        val variable = findFirstVariable(regionBoundaries, GEO_POSITIONS_KEYS)
+        if (variable != null) {
+            return variable
         }
 
         throw IllegalArgumentException(geoPositionsColumnNotFoundError("region id", GEO_POSITIONS_KEYS))
@@ -133,15 +134,15 @@ object GeoPositionsDataUtil {
 
         companion object {
             fun boundary(): GeoDataSupport {
-                return GeoDataSupport(GeoDataKind.BOUNDARY, { createPointMapping(it) })
+                return GeoDataSupport(GeoDataKind.BOUNDARY) { createPointMapping(it) }
             }
 
             fun centroid(): GeoDataSupport {
-                return GeoDataSupport(GeoDataKind.CENTROID, { createPointMapping(it) })
+                return GeoDataSupport(GeoDataKind.CENTROID) { createPointMapping(it) }
             }
 
             fun limit(): GeoDataSupport {
-                return GeoDataSupport(GeoDataKind.LIMIT, { createRectMapping(it) })
+                return GeoDataSupport(GeoDataKind.LIMIT) { createRectMapping(it) }
             }
 
             private fun createRectMapping(dataFrame: DataFrame): Map<Aes<*>, Variable> {
