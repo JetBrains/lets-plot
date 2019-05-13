@@ -45,9 +45,9 @@ object MapperUtil {
     }
 
     fun rangeWithLimitsAfterTransform(
-            data: DataFrame, `var`: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): ClosedRange<Double> {
-        val lower = lowerLimit ?: data.range(`var`).lowerEndpoint()
-        val upper = upperLimit ?: data.range(`var`).upperEndpoint()
+            data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): ClosedRange<Double> {
+        val lower = lowerLimit ?: data.range(variable)!!.lowerEndpoint()
+        val upper = upperLimit ?: data.range(variable)!!.upperEndpoint()
         val limits = ArrayList<Double>()
         limits.add(lower)
         limits.add(upper)

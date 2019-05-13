@@ -1,16 +1,11 @@
 package jetbrains.datalore.visualization.plot.gog.config.transform
 
 import jetbrains.datalore.visualization.plot.gog.DemoAndTest
-import org.junit.Rule
-import org.junit.Test.None
-import org.junit.rules.ExpectedException
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class PlotSpecTransformToMutableTest {
-    @get:Rule
-    var exception = ExpectedException.none()!!
-
     @Test
     fun toMutable() {
         val im = mutableMapOf(
@@ -27,28 +22,28 @@ class PlotSpecTransformToMutableTest {
 
         assertEquals(0, mm["a"])
 
-        DemoAndTest.assertExceptionNotHappened(Runnable { mm["a"] = 1 })
+        DemoAndTest.assertExceptionNotHappened { mm["a"] = 1 }
 
         assertEquals(2, (mm["b"] as List<*>).size)
 
         run {
             val list = mm["b"] as MutableList<Any>
             // maps become mutable but lists do not!
-            exception.expect(UnsupportedOperationException::class.java)
-            list.add(1)
-            exception.expect(None::class.java)
+            assertFailsWith(UnsupportedOperationException::class) {
+                list.add(1)
+            }
         }
 
         assertEquals(0, (mm["c"] as Map<*, *>)["c_"])
-        DemoAndTest.assertExceptionNotHappened(Runnable {
+        DemoAndTest.assertExceptionNotHappened {
             val map = mm["c"] as MutableMap<Any, Any>
             map["c_"] = 1
-        })
+        }
 
         assertEquals(0, ((mm["d"] as List<*>)[0] as Map<*, *>)["d0_"])
-        DemoAndTest.assertExceptionNotHappened(Runnable {
+        DemoAndTest.assertExceptionNotHappened {
             val map = (mm["d"] as List<*>)[0] as MutableMap<Any, Any>
             map["do_"] = 1
-        })
+        }
     }
 }

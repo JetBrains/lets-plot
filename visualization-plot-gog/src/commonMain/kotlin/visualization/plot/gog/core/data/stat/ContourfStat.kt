@@ -66,9 +66,9 @@ internal class ContourfStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAP
 
         val pathListByLevel = ContourStatUtil.computeContours(data, levels)
 
-        val xRange = data.range(TransformVar.X)
-        val yRange = data.range(TransformVar.Y)
-        val zRange = data.range(TransformVar.Z)
+        val xRange = data.range(TransformVar.X)!!
+        val yRange = data.range(TransformVar.Y)!!
+        val zRange = data.range(TransformVar.Z)!!
         val helper = ContourFillHelper(xRange, yRange)
         val fillLevels = ContourFillHelper.computeFillLevels(zRange, levels)
         val polygonListByFillLevel = helper.createPolygons(pathListByLevel, levels, fillLevels)

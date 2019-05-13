@@ -77,8 +77,8 @@ object ContourStatUtil {
         val colCount = shape.first
         val rowCount = shape.second
 
-        val xRange = data.range(TransformVar.X)
-        val yRange = data.range(TransformVar.Y)
+        val xRange = data.range(TransformVar.X)!!
+        val yRange = data.range(TransformVar.Y)!!
 
         return computeContours(xRange, yRange, colCount, rowCount, zVector, levels)
     }

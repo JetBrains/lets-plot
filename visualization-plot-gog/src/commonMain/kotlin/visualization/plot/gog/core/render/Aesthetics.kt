@@ -16,7 +16,7 @@ interface Aesthetics {
      *
      * @return The range of mapped data
      */
-    fun range(aes: Aes<Double>): ClosedRange<Double>
+    fun range(aes: Aes<Double>): ClosedRange<Double>?
 
     /**
      * Numeric aes only (x,y)

@@ -201,7 +201,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         private val myOverallRangeByNumericAes: Map<Aes<Double>, ClosedRange<Double>>
 
         private val myResolutionByAes = HashMap<Aes<*>, Double>()
-        private val myRangeByNumericAes = HashMap<Aes<Double>, ClosedRange<Double>>()
+        private val myRangeByNumericAes = HashMap<Aes<Double>, ClosedRange<Double>?>()
 
         override val isEmpty: Boolean
             get() = myDataPointCount == 0
@@ -230,10 +230,9 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             }
         }
 
-        override fun range(aes: Aes<Double>): ClosedRange<Double> {
+        override fun range(aes: Aes<Double>): ClosedRange<Double>? {
             if (!myRangeByNumericAes.containsKey(aes)) {
-                val r: ClosedRange<Double>
-                r = when {
+                val r = when {
                     myDataPointCount <= 0 ->
                         ClosedRange.closed(0.0, 0.0)
                     myConstantAes.contains(aes) -> {
@@ -242,13 +241,13 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
                     }
                     else -> {
                         val values = numericValues(aes)
-                        SeriesUtil.range(values)!!
+                        SeriesUtil.range(values)
                     }
                 }
                 myRangeByNumericAes[aes] = r
             }
 
-            return myRangeByNumericAes[aes]!!
+            return myRangeByNumericAes[aes]
         }
 
         override fun overallRange(aes: Aes<Double>): ClosedRange<Double> {

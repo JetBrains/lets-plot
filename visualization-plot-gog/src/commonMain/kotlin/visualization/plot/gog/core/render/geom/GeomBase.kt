@@ -41,8 +41,8 @@ abstract class GeomBase : Geom {
 
         fun aesBoundingBox(aesthetics: Aesthetics): DoubleRectangle {
             return rect(
-                    aesthetics.range(Aes.X),
-                    aesthetics.range(Aes.Y))
+                    aesthetics.range(Aes.X)!!,
+                    aesthetics.range(Aes.Y)!!)
         }
 
         private fun rect(rangeX: ClosedRange<Double>, rangeY: ClosedRange<Double>): DoubleRectangle {

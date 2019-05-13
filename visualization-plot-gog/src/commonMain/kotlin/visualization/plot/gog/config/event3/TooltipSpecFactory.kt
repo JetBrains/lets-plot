@@ -62,7 +62,7 @@ class TooltipSpecFactory(contextualMapping: ContextualMapping, private val myAxi
                 if (isAxisTooltipAllowed(aes)) {
                     val layoutHint = createHintForAxis(aes)
                     val text = makeText(listOf(aes))
-                    myTooltipSpecs.add(TooltipSpec(layoutHint, text, layoutHint.color))
+                    myTooltipSpecs.add(TooltipSpec(layoutHint, text, layoutHint.color!!))
                 }
             }
         }
@@ -161,7 +161,7 @@ class TooltipSpecFactory(contextualMapping: ContextualMapping, private val myAxi
             }
 
             val text = makeText(aes)
-            val fill = layoutHint.color ?: tipLayoutHint().color
+            val fill = layoutHint.color ?: tipLayoutHint().color!!
             myTooltipSpecs.add(
                     TooltipSpec(layoutHint, text, fill)
             )

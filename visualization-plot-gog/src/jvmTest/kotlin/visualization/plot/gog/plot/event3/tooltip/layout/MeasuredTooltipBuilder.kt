@@ -46,15 +46,15 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
 
     private fun createHint(): TipLayoutHint {
         return when (myLayoutHint) {
-            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(myCoord!!, myObjectRadius!!, myFill!!)
+            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(myCoord, myObjectRadius!!, myFill)
 
-            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(myCoord!!, myObjectRadius!!, myFill!!)
+            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(myCoord, myObjectRadius!!, myFill)
 
-            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord, myFill!!)
+            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord, myFill)
 
-            Kind.X_AXIS_TOOLTIP -> TipLayoutHint.xAxisTooltip(myCoord!!, myFill!!)
+            Kind.X_AXIS_TOOLTIP -> TipLayoutHint.xAxisTooltip(myCoord, myFill)
 
-            Kind.Y_AXIS_TOOLTIP -> TipLayoutHint.yAxisTooltip(myCoord!!, myFill!!)
+            Kind.Y_AXIS_TOOLTIP -> TipLayoutHint.yAxisTooltip(myCoord, myFill)
 
             else -> throw IllegalStateException("Unknown layout hint")
         }

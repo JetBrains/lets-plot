@@ -58,13 +58,13 @@ object DemoAndTest {
         return map
     }
 
-    fun assertExceptionNotHappened(r: Runnable) {
+    fun assertExceptionNotHappened(r: () -> Unit) {
         assertExceptionNotHappened("", r)
     }
 
-    fun assertExceptionNotHappened(message: String, r: Runnable) {
+    fun assertExceptionNotHappened(message: String, r: () -> Unit) {
         try {
-            r.run()
+            r()
         } catch (e: RuntimeException) {
             throw AssertionError(message, e)
         }

@@ -57,7 +57,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         // X scale
         var scaleX = continuousScale("A")
-        val domainX = data.range(varA)
+        val domainX = data.range(varA)!!
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
@@ -68,7 +68,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         // Y scale
         var scaleY = continuousScale("B")
-        val domainY = data.range(varB)
+        val domainY = data.range(varB)!!
         val rangeY = plotSize.y
         val mapperY = Mappers.mul(domainY, rangeY)
         scaleY = scaleY.with()
@@ -155,7 +155,7 @@ open class ScatterDemo : SimpleDemoBase() {
         val b = DemoUtil.gauss(count, 64, 0.0, 50.0)   // Y
         val c = ArrayList<Double>()
         for (i in 0 until count) {
-            c.add(a.get(i) * b.get(i))
+            c.add(a[i] * b[i])
         }
 
         val varA = DataFrame.Variable("A")
@@ -177,7 +177,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         // X scale
         var scaleX = continuousScale("A")
-        val domainX = data.range(varA)
+        val domainX = data.range(varA)!!
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
@@ -188,7 +188,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         // Y scale
         var scaleY = continuousScale("B")
-        val domainY = data.range(varB)
+        val domainY = data.range(varB)!!
         val rangeY = plotSize.y
         val mapperY = Mappers.mul(domainY, rangeY)
         scaleY = scaleY.with()
@@ -202,9 +202,9 @@ open class ScatterDemo : SimpleDemoBase() {
         // see 'OutputColors'
         var scaleColor = Scales.continuousDomain("C", Aes.COLOR)
         run {
-            val rawC = data.getNumeric(varC)
-            val minC = Ordering.natural<Double>().min(rawC as List<Double>)
-            val maxC = Ordering.natural<Double>().max(rawC as List<Double>)
+            val rawC = data.getNumeric(varC) as List<Double>
+            val minC = Ordering.natural<Double>().min(rawC)
+            val maxC = Ordering.natural<Double>().max(rawC)
 
             val colorScheme = ColorPalette.Diverging.RdYlBu
             val colorScale = quantizedColorScale(colorScheme, 3, minC, maxC)
@@ -213,12 +213,10 @@ open class ScatterDemo : SimpleDemoBase() {
             val mapperColor = { input: Double? ->
                 // todo: null color
                 var color: Color? = null
-                var index = 0
-                for (range in mappedValuesQuantized) {
+                for ((index, range) in mappedValuesQuantized.withIndex()) {
                     if (range.contains(input!!)) {
-                        color = colors.get(index)
+                        color = colors[index]
                     }
-                    index++
                 }
                 color ?: throw IllegalArgumentException("Value is outside scale domain (val=$input, scale=C)")
             }
@@ -341,7 +339,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         // X scale
         var scaleX = continuousScale("A")
-        val domainX = data.range(varA)
+        val domainX = data.range(varA)!!
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
@@ -354,7 +352,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
         // Y scale
         var scaleY = continuousScale("B")
-        val domainY = data.range(varA)
+        val domainY = data.range(varA)!!
         val rangeY = plotSize.y
         val mapperY = Mappers.mul(domainY, rangeY)
 

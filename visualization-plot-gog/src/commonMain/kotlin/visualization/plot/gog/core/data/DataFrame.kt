@@ -9,7 +9,7 @@ class DataFrame private constructor(builder: Builder) {
     private val myIsNumeric: MutableMap<Variable, Boolean>
 
     // volatile variables (yet)
-    private val myRanges = HashMap<Variable, ClosedRange<Double>>()
+    private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
 
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()
@@ -91,13 +91,13 @@ class DataFrame private constructor(builder: Builder) {
         return myIsNumeric[variable]!!
     }
 
-    fun range(variable: Variable): ClosedRange<Double> {
+    fun range(variable: Variable): ClosedRange<Double>? {
         if (!myRanges.containsKey(variable)) {
             val v = getNumeric(variable)
             val r = SeriesUtil.range(v)
-            myRanges[variable] = r!!
+            myRanges[variable] = r
         }
-        return myRanges[variable]!!
+        return myRanges[variable]
     }
 
     fun builder(): Builder {

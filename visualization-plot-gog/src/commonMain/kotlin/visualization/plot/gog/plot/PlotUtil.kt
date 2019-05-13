@@ -63,7 +63,7 @@ object PlotUtil {
         for (aes in aesList) {
             val range = aesthetics.range(aes)
             if (isFinite(range)) {
-                result = result?.span(range) ?: range
+                result = result?.span(range!!) ?: range
             }
         }
         return result
