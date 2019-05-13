@@ -29,6 +29,7 @@ kotlin {
             }
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                implementation 'com.google.code.gson:gson:2.7'
 //                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
                 compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
