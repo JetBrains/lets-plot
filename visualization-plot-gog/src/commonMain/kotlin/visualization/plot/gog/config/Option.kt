@@ -24,7 +24,7 @@ object Option {
 
         object GeoDataFrame {
             const val TAG = "geodataframe"
-            const val GEOMETRY = "base/geometry"
+            const val GEOMETRY = "geometry"
         }
 
         object GeoReference {
@@ -148,7 +148,7 @@ object Option {
         const val EXPAND = "expand"
         const val LIMITS = "limits"
         const val DISCRETE_DOMAIN = "discrete"
-        const val DATE_TIME = "base/datetime"
+        const val DATE_TIME = "datetime"
         const val NA_VALUE = "na_value"
         const val GUIDE = "guide"
 
@@ -156,7 +156,7 @@ object Option {
         const val CONTINUOUS_TRANSFORM = "trans"
 
         // discrete scale output values
-        const val OUTPUT_VALUES = "base/values"
+        const val OUTPUT_VALUES = "values"
         // shape scale
         const val SHAPE_SOLID = "solid"
         // gradient scale
