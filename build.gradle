@@ -6,4 +6,14 @@ allprojects {
         mavenCentral()
         jcenter()
     }
+
+    tasks.all {
+        if (name in ['compileKotlinJvm', 'compileTestKotlinJvm']) {
+            kotlinOptions.jvmTarget = "1.8"
+
+//            doFirst {
+//                println "doFirst : $name in $project.name jvmTarget=$kotlinOptions.jvmTarget"
+//            }
+        }
+    }
 }
