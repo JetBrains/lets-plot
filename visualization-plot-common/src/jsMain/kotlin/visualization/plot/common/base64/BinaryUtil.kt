@@ -4,6 +4,10 @@ import org.khronos.webgl.*
 import kotlin.browser.window
 
 actual object BinaryUtil {
+    actual fun encodeList(l: List<Double?>): String {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     actual fun decodeList(s: String): List<Double> {
 //        byte[] bytes = BaseEncoding.base64().decode(s);
 //        byte[] bytes = Base64Coder.decodeBytes(s);

@@ -5,14 +5,14 @@ import jetbrains.datalore.visualization.plot.gog.core.data.stat.SmoothStatShell
 
 actual object StatsServerSide {
     actual fun smooth(): SmoothStatShell {
-        return SmoothStat()
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     actual fun density2d(): Density2dStatShell {
-        return Density2dStat()
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     actual fun density2df(): Density2dStatShell {
-        return Density2dfStat()
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

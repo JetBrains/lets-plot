@@ -20,7 +20,7 @@ import java.io.IOException
 import java.lang.Byte.toUnsignedInt
 import java.util.*
 
-internal class ImageTranscodeSpecChange : SpecChange {
+internal actual class ImageTranscodeSpecChange : SpecChange {
 
     override fun isApplicable(spec: Map<String, Any>): Boolean {
         return GeomName.IMAGE == spec[GEOM] && spec.containsKey(SPEC)

@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config.transform
 
-import jetbrains.datalore.visualization.plot.gog.DemoAndTest
+import jetbrains.datalore.base.json.JsonSupport
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -8,12 +8,12 @@ import kotlin.test.assertSame
 class PlotSpecTransformTest {
 
     private fun assertTransformed(expected: String, input: String, transform: PlotSpecTransform) {
-        val inputSpec = DemoAndTest.parseJson(input)
+        val inputSpec = JsonSupport.parseJson(input)
         assertTransformed(expected, inputSpec, transform)
     }
 
     private fun assertTransformed(expected: String, input: MutableMap<*, *>, transform: PlotSpecTransform) {
-        val expectedSpec = DemoAndTest.parseJson(expected)
+        val expectedSpec = JsonSupport.parseJson(expected)
         assertTransformed(expectedSpec, input, transform)
     }
 
@@ -38,7 +38,7 @@ class PlotSpecTransformTest {
                 "}"
 
         // add Integer
-        val inputSpec = DemoAndTest.parseJson(input)
+        val inputSpec = JsonSupport.parseJson(input)
         //inputSpec.put("key_1_2", 0);
 
         // add none-string key
@@ -86,7 +86,7 @@ class PlotSpecTransformTest {
             }
         }
 
-        val inputSpec = DemoAndTest.parseJson(input)
+        val inputSpec = JsonSupport.parseJson(input)
         val transform = PlotSpecTransform.builderForRawSpec()
                 .change(SpecSelector.of("key_1_0"), handler)
                 .change(SpecSelector.of("key_1_1"), handler)

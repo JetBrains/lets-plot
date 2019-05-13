@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.plot.gog.config.transform.PlotSpecTransf
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChange
 
 object DataSpecEncodeTransforms {
-    internal fun addDataChanges(builder: PlotSpecTransform.Builder, change: SpecChange, isGGBunch: Boolean): PlotSpecTransform.Builder {
+    private fun addDataChanges(builder: PlotSpecTransform.Builder, change: SpecChange, isGGBunch: Boolean): PlotSpecTransform.Builder {
 
         val specSelectors = PlotSpecTransformUtil.getPlotAndLayersSpecSelectors(isGGBunch, Plot.DATA)
         for (specSelector in specSelectors) {
@@ -20,5 +20,16 @@ object DataSpecEncodeTransforms {
         addDataChanges(builder, ClientSideDecodeChange(), isGGBunch)
         addDataChanges(builder, ClientSideDecodeOldStyleChange(), isGGBunch)
         return builder.build()
+    }
+
+    fun serverSideEncode(forRawSpec: Boolean): PlotSpecTransform {
+        val builder: PlotSpecTransform.Builder
+        if (forRawSpec) {
+            builder = PlotSpecTransform.builderForRawSpec()
+        } else {
+            builder = PlotSpecTransform.builderForCleanSpec()
+        }
+
+        return addDataChanges(builder, ServerSideEncodeChange(), false).build()
     }
 }

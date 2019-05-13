@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
-import jetbrains.datalore.visualization.plot.gog.DemoAndTest
+import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plot.gog.config.Option.Scale.CONTINUOUS_TRANSFORM
 import jetbrains.datalore.visualization.plot.gog.config.Option.Scale.NAME
 import kotlin.test.Test
@@ -23,7 +23,7 @@ class PlotConfigTest {
                 "           ]" +
                 "}"
 
-        val opts = DemoAndTest.parseJson(spec)
+        val opts = JsonSupport.parseJson(spec)
         val plotConfig = PlotConfigClientSide.create(opts)
 
         val scaleConfigs = plotConfig.createScaleConfigs()

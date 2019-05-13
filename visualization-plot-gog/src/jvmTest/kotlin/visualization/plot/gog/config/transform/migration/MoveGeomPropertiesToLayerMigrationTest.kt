@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config.transform.migration
 
-import jetbrains.datalore.visualization.plot.gog.DemoAndTest
+import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plot.gog.config.PlotConfigClientSide
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -41,8 +41,8 @@ class MoveGeomPropertiesToLayerMigrationTest {
                 "             ]" +
                 "}"
 
-        val inputSpec = DemoAndTest.parseJson(input)
-        val expectedSpec = DemoAndTest.parseJson(expected)
+        val inputSpec = JsonSupport.parseJson(input)
+        val expectedSpec = JsonSupport.parseJson(expected)
 
         val transformed = PlotConfigClientSide.processTransform(inputSpec)
         assertEquals(expectedSpec, transformed)

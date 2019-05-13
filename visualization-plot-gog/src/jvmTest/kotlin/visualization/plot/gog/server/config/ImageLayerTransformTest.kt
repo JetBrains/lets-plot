@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
-import jetbrains.datalore.visualization.plot.gog.DemoAndTest
+import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plot.gog.config.Option.Geom.Image
 import jetbrains.datalore.visualization.plot.gog.config.Option.Geom.Image.Type
 import java.util.*
@@ -37,7 +37,7 @@ class ImageLayerTransformTest {
                 "            ]" +
                 "}"
 
-        val inputSpec = DemoAndTest.parseJson(input)
+        val inputSpec = JsonSupport.parseJson(input)
         val transformedSpec = PlotConfigServerSide.processTransform(inputSpec)
 
         val geomSpec = (transformedSpec["layers"] as List<*>)[0] as Map<*, *>

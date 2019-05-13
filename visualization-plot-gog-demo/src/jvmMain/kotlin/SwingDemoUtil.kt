@@ -2,13 +2,9 @@ package jetbrains.datalore.visualization.gogDemo
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxGraphicsCanvasControlFactory
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
-import jetbrains.datalore.visualization.plot.gog.DemoAndTest
-import jetbrains.datalore.visualization.plot.gog.plot.PlotContainer
+import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil.drawPlotOnCanvas
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -47,22 +43,11 @@ object SwingDemoUtil {
     }
 
     private fun createComponent(viewSize: DoubleVector, plotSpec: MutableMap<String, Any>): JComponent {
-        val plot = DemoAndTest.createPlot(plotSpec, false)
-        val plotContainer = PlotContainer(plot, ValueProperty(viewSize))
-
-        plotContainer.ensureContentBuilt()
-
-        val svgRoot = plotContainer.svg
-
         val canvasControl = AwtCanvasControl(
                 JavafxGraphicsCanvasControlFactory(2.0),
                 Vector(viewSize.x.toInt(), viewSize.y.toInt())
         )
-
-        val svgGElement = SvgGElement()
-        svgGElement.children().add(svgRoot)
-        SvgCanvasRenderer.draw(svgGElement, canvasControl)
-
+        drawPlotOnCanvas(canvasControl, viewSize, plotSpec)
         return canvasControl.component
     }
 }

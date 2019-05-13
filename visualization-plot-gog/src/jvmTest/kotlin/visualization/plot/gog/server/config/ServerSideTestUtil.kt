@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
-import jetbrains.datalore.visualization.plot.gog.DemoAndTest
+import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plot.gog.config.LayerConfig
 import jetbrains.datalore.visualization.plot.gog.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.visualization.plot.gog.config.Option.GeomName
@@ -17,7 +17,6 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Plot
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.LAYERS
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.SCALES
 import jetbrains.datalore.visualization.plot.gog.config.transform.encode.DataSpecEncodeTransforms
-import jetbrains.datalore.visualization.plot.gog.config.transform.encode.serverSideEncode
 
 
 object ServerSideTestUtil {
@@ -26,7 +25,7 @@ object ServerSideTestUtil {
 
     @JvmOverloads
     internal fun parseOptionsServerSide(spec: String, dataOption: Map<String, List<*>>? = null): Map<String, Any> {
-        val opts = DemoAndTest.parseJson(spec)
+        val opts = JsonSupport.parseJson(spec)
         if (dataOption != null) {
             opts[Plot.DATA] = dataOption
         }

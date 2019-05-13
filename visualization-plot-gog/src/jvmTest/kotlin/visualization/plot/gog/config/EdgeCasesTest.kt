@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
+import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plot.gog.DemoAndTest
 import jetbrains.datalore.visualization.plot.gog.config.Option.GeomName
 import kotlin.test.Test
@@ -29,7 +30,7 @@ class EdgeCasesTest {
                 "           ]" +
                 "}"
 
-        val opts = DemoAndTest.parseJson(spec)
+        val opts = JsonSupport.parseJson(spec)
         DemoAndTest.assertExceptionNotHappened { DemoAndTest.createPlot(opts) }
     }
 
@@ -57,7 +58,7 @@ class EdgeCasesTest {
                 "           ]" +
                 "}"
 
-        val opts = DemoAndTest.parseJson(spec)
+        val opts = JsonSupport.parseJson(spec)
         DemoAndTest.assertExceptionNotHappened { DemoAndTest.createPlot(opts) }
     }
 
@@ -89,7 +90,7 @@ class EdgeCasesTest {
                 "           ]" +
                 "}"
 
-        val plotSpec = DemoAndTest.parseJson(spec)
+        val plotSpec = JsonSupport.parseJson(spec)
 
         val data = mapOf(
                 "x" to listOf(0.0, Double.NaN, 1.0, 2.0),

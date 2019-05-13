@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
+import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.DemoAndTest
 import jetbrains.datalore.visualization.plot.gog.config.TestUtil.assertClientWontFail
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
@@ -44,7 +44,7 @@ class DiscreteScaleForContinuousVarTest {
                 "           ]" +
                 "}"
 
-        val opts = DemoAndTest.parseJson(spec)
+        val opts = JsonSupport.parseJson(spec)
         val opts1 = serverTransformWithoutEncoding(opts)
 
         val plotConfigClientSide = assertClientWontFail(opts1)
