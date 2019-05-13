@@ -10,7 +10,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-//                compileOnly "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
                 compileOnly kotlin('test-common')    // for Assertions.kt
 
             }
