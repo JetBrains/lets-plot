@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.gogDemo.model.cookbook
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.gogDemo.model.DemoBase
 import jetbrains.datalore.visualization.plot.gog.DemoAndTest
-import java.util.*
 
 open class AxisOptions : DemoBase() {
 
@@ -19,8 +18,8 @@ open class AxisOptions : DemoBase() {
 
         private fun data(): Map<String, List<*>> {
             val map = HashMap<String, List<*>>()
-            map["x"] = Arrays.asList(0.0)
-            map["y"] = Arrays.asList(0.0)
+            map["x"] = listOf(0.0)
+            map["y"] = listOf(0.0)
             return map
         }
 

@@ -4,7 +4,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.gogDemo.model.DemoBase
 import jetbrains.datalore.visualization.gogDemo.shared.SharedPieces
 import jetbrains.datalore.visualization.plot.gog.DemoAndTest
-import java.util.*
 
 open class Polygons : DemoBase() {
 

@@ -2,12 +2,11 @@ package jetbrains.datalore.visualization.gogDemo.cookbook
 
 import jetbrains.datalore.visualization.gogDemo.SwingDemoUtil
 import jetbrains.datalore.visualization.gogDemo.model.cookbook.BoxPlot
-import java.util.*
 
 class BoxPlotMain : BoxPlot() {
 
     private fun show() {
-        val plotSpecList = Arrays.asList(
+        val plotSpecList = listOf(
                 basic(),
                 withVarWidth(),
                 withCondColored(),

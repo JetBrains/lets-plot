@@ -9,7 +9,6 @@ import org.apache.batik.dom.svg.*
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.Text
-import java.util.*
 
 internal object Utils {
     private const val W3C_BUTTON_LEFT = 0
@@ -17,7 +16,7 @@ internal object Utils {
     private const val W3C_BUTTON_RIGHT = 2
 
     fun elementChildren(e: Node): MutableList<Node> {
-        return object : AbstractList<Node>() {
+        return object : AbstractMutableList<Node>() {
             override val size: Int
                 get() = e.childNodes.length
 
@@ -25,8 +24,8 @@ internal object Utils {
                 return e.childNodes.item(index)
             }
 
-            override fun set(index: Int, element: Node?): Node {
-                if (element!!.parentNode != null) {
+            override fun set(index: Int, element: Node): Node {
+                if (element.parentNode != null) {
                     throw IllegalStateException()
                 }
 
@@ -35,8 +34,8 @@ internal object Utils {
                 return child
             }
 
-            override fun add(index: Int, element: Node?) {
-                if (element!!.parentNode != null) {
+            override fun add(index: Int, element: Node) {
+                if (element.parentNode != null) {
                     throw IllegalStateException()
                 }
 

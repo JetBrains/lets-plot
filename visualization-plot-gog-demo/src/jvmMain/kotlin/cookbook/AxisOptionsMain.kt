@@ -2,22 +2,21 @@ package jetbrains.datalore.visualization.gogDemo.cookbook
 
 import jetbrains.datalore.visualization.gogDemo.SwingDemoUtil
 import jetbrains.datalore.visualization.gogDemo.model.cookbook.AxisOptions
-import java.util.*
 
 class AxisOptionsMain : AxisOptions() {
 
     private fun show() {
-        val plotSpecList = Arrays.asList(
-                AxisOptions.defaultAxis(),
-                AxisOptions.noXTitle(),
-                AxisOptions.noYTitle(),
-                AxisOptions.noXTickLabels(),
-                AxisOptions.noYTickLabels(),
-                AxisOptions.noTickMarks(),
-                AxisOptions.noTickMarksOrLabels(),
-                AxisOptions.noTitlesOrLabels(),
-                AxisOptions.onlyLines(),
-                AxisOptions.noLinesOrTitles()
+        val plotSpecList = listOf(
+                defaultAxis(),
+                noXTitle(),
+                noYTitle(),
+                noXTickLabels(),
+                noYTickLabels(),
+                noTickMarks(),
+                noTickMarksOrLabels(),
+                noTitlesOrLabels(),
+                onlyLines(),
+                noLinesOrTitles()
         )
 
         SwingDemoUtil.show(viewSize, plotSpecList as List<MutableMap<String, Any>>)

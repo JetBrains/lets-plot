@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.gogDemo.model.cookbook
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.gogDemo.model.DemoBase
 import jetbrains.datalore.visualization.plot.gog.DemoAndTest
-import java.util.*
 
 /**
  * see: http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/
@@ -17,7 +16,7 @@ open class AllColorScales : DemoBase() {
         private val DEMO_BOX_SIZE = DoubleVector(600.0, 100.0)
 
         fun bundle(): List<Map<String, Any>> {
-            return Arrays.asList(
+            return listOf(
                     color_gradient(),
                     color_gradient_blue_red(),
 
@@ -255,7 +254,7 @@ open class AllColorScales : DemoBase() {
 
         fun color_manual(): Map<String, Any> {
             val params = mapOf(
-                    "values" to Arrays.asList("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+                    "values" to listOf("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
             )
             val spec = specWithColorScale(-8, 8, params)
 

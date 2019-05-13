@@ -2,29 +2,28 @@ package jetbrains.datalore.visualization.plot.gog.server.config
 
 import jetbrains.datalore.visualization.plot.gog.config.TestUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.TransformVar
-import org.junit.Assert.*
-import org.junit.Test
-import java.util.*
-import java.util.Arrays.asList
-import java.util.Collections.emptyList
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class DropUnusedDataTest {
 
     private fun assertVarPresent(varName: String, dataSize: Int, data: Map<String, Any>) {
-        assertTrue("Not found '$varName'", data.containsKey(varName))
-        assertTrue("Not a list '$varName'", data[varName] is List<*>)
+        assertTrue(data.containsKey(varName), "Not found '$varName'")
+        assertTrue(data[varName] is List<*>, "Not a list '$varName'")
         if (dataSize > 0) {
-            assertEquals("Size '$varName'", dataSize, (data[varName] as List<*>).size)
+            assertEquals(dataSize, (data[varName] as List<*>).size, "Size '$varName'")
         }
     }
 
     private fun assertVarNotPresent(varName: String, data: Map<String, Any>) {
-        assertTrue("Present '$varName'", !data.containsKey(varName))
+        assertTrue(!data.containsKey(varName), "Present '$varName'")
     }
 
     private fun assertNoTransformVars(data: Map<String, Any>) {
         for (name in data.keys) {
-            assertFalse("Transform variable '$name'", TransformVar.isTransformVar(name))
+            assertFalse(TransformVar.isTransformVar(name), "Transform variable '$name'")
         }
     }
 
@@ -70,9 +69,9 @@ class DropUnusedDataTest {
     }
 
     init {
-        val x = asList(0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0)
-        val group = asList("0", "0", "1", "0", "0", "1", "1", "0", "1", "1")
-        val facetX = asList("a", "a", "b", "a", "a", "b", "b", "a", "b", "b")
+        val x = listOf(0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0)
+        val group = listOf("0", "0", "1", "0", "0", "1", "1", "0", "1", "1")
+        val facetX = listOf("a", "a", "b", "a", "a", "b", "b", "a", "b", "b")
 
         val data = HashMap<String, List<*>>()
         data["group"] = group
@@ -108,7 +107,7 @@ class DropUnusedDataTest {
         assertEmptyPlotData(opts)
 
         val statSize = bins * 2 // two groups
-        val droppedVars = asList("..x..", "..density..", "..group..")
+        val droppedVars = listOf("..x..", "..density..", "..group..")
         checkSingleLayerData(opts, 4,
                 mapOf(
                         "x" to statSize,
@@ -204,7 +203,7 @@ class DropUnusedDataTest {
         assertEmptyPlotData(opts)
 
         val statSize = 2
-        val droppedVars = asList("..group..")
+        val droppedVars = listOf("..group..")
         checkSingleLayerData(opts, 2,
                 mapOf(
                         "x" to statSize,
@@ -244,7 +243,7 @@ class DropUnusedDataTest {
         assertEmptyPlotData(opts)
 
         val statSize = 2
-        val droppedVars = asList("c", "..x..", "..group..")
+        val droppedVars = listOf("c", "..x..", "..group..")
         checkSingleLayerData(opts, 2,
                 mapOf(
                         "x" to statSize,
@@ -286,7 +285,7 @@ class DropUnusedDataTest {
         assertEmptyPlotData(opts)
 
         val statSize = 4
-        val droppedVars = asList("..x..", "..group..")
+        val droppedVars = listOf("..x..", "..group..")
         checkSingleLayerData(opts, 3,
                 mapOf(
                         "x" to statSize,
@@ -366,7 +365,7 @@ class DropUnusedDataTest {
         assertEmptyPlotData(opts)
 
         val unknownSize = -1
-        val droppedVars = asList("z", "..level..")
+        val droppedVars = listOf("z", "..level..")
         checkSingleLayerData(opts, 3,
                 mapOf(
                         "x" to unknownSize,
@@ -407,7 +406,7 @@ class DropUnusedDataTest {
         assertEmptyPlotData(opts)
 
         val unknownSize = -1
-        val droppedVars = asList("z")
+        val droppedVars = listOf("z")
         checkSingleLayerData(opts, 4,
                 mapOf(
                         "x" to unknownSize,
@@ -451,7 +450,7 @@ class DropUnusedDataTest {
         assertNoTransformVars(layerData)
 
         val statSize = 2
-        val droppedVars = asList("..x..", "..group..")
+        val droppedVars = listOf("..x..", "..group..")
         checkData(layerData, 2,
                 mapOf(
                         "time" to statSize,
@@ -460,13 +459,13 @@ class DropUnusedDataTest {
                 droppedVars
         )
 
-        assertEquals(asList("Lunch", "Dinner"), layerData["time"])
+        assertEquals(listOf("Lunch", "Dinner"), layerData["time"])
     }
 
     @Test
     fun plot_clear_layer_addDensity_histogram() {
-        val x = asList(0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0)
-        val group = asList("0", "0", "1", "0", "0", "1", "1", "0", "1", "1")
+        val x = listOf(0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0)
+        val group = listOf("0", "0", "1", "0", "0", "1", "1", "0", "1", "1")
 
         val data = HashMap<String, List<*>>()
         data["group"] = group
@@ -498,7 +497,7 @@ class DropUnusedDataTest {
         assertEmptyPlotData(opts)
 
         val statSize = bins * 2 // two groups
-        val droppedVars = asList("..x..", "..count..", "..group..")
+        val droppedVars = listOf("..x..", "..count..", "..group..")
         checkSingleLayerData(opts, 3,
                 mapOf(
                         "x" to statSize,
@@ -562,7 +561,7 @@ class DropUnusedDataTest {
         // contour data
         val contourData = TestUtil.getLayerData(opts, 1)
         val contourSizeUnknown = -1
-        val contourDroppedVars = asList("z", "..level..")
+        val contourDroppedVars = listOf("z", "..level..")
         checkData(contourData, 3,
                 mapOf(
                         "x" to contourSizeUnknown,
@@ -594,7 +593,7 @@ class DropUnusedDataTest {
 
         val opts = ServerSideTestUtil.parseOptionsServerSide(spec,
                 mapOf(
-                        "name" to asList("New York"))
+                        "name" to listOf("New York"))
         )
 
         TestUtil.checkOptionsClientSide(opts, 1)

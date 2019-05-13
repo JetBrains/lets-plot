@@ -1,8 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.visualization.plot.gog.DemoAndTest
-import org.junit.Assert.assertEquals
-import java.util.*
+import kotlin.test.assertEquals
 
 object TestUtil {
     fun contourData(): Map<String, List<*>> {
@@ -10,7 +9,7 @@ object TestUtil {
     }
 
 
-    private fun assertClientWontFail(opts: Map<String, Any>): PlotConfigClientSide {
+    fun assertClientWontFail(opts: Map<String, Any>): PlotConfigClientSide {
         return PlotConfigClientSide.create(opts)
     }
 

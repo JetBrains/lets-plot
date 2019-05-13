@@ -2,12 +2,11 @@ package jetbrains.datalore.visualization.gogDemo.cookbook
 
 import jetbrains.datalore.visualization.gogDemo.SwingDemoUtil
 import jetbrains.datalore.visualization.gogDemo.model.cookbook.BarAndLine
-import java.util.*
 
 class BarAndLineMain : BarAndLine() {
 
     private fun show() {
-        val plotSpecList = Arrays.asList(
+        val plotSpecList = listOf(
                 defaultBarDiscreteX(),
                 barDiscreteXFill(),
                 barDiscreteXFillMappedInGeom(),

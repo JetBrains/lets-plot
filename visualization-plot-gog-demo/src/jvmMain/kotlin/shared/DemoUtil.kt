@@ -1,13 +1,14 @@
 package jetbrains.datalore.visualization.gogDemo.shared
 
+import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.GeomContextBuilder
-import java.util.*
+import kotlin.random.Random
 
 object DemoUtil {
     fun gauss(count: Int, seed: Long, mean: Double, stdDeviance: Double): List<Double> {
-        val r = Random(seed)
+        val r = RandomGaussian(Random(seed))
         val list = ArrayList<Double>()
         for (i in 0 until count) {
             val next = r.nextGaussian() * stdDeviance + mean

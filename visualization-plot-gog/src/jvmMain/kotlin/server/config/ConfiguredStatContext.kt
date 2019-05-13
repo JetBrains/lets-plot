@@ -8,7 +8,6 @@ import jetbrains.datalore.visualization.plot.gog.core.data.StatContext
 import jetbrains.datalore.visualization.plot.gog.core.data.TransformVar
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
-import java.util.*
 
 internal class ConfiguredStatContext(
         private val myDataFrames: List<DataFrame>,

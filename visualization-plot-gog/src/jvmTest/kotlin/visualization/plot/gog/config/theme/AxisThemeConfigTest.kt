@@ -2,7 +2,6 @@ package jetbrains.datalore.visualization.plot.gog.config.theme
 
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -5,7 +5,6 @@ import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMoc
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Mapping
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TargetTooltipSpec
 
-import java.util.Arrays.asList
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -26,7 +25,7 @@ object TestUtil {
     }
 
     internal fun assertText(targetTooltipSpec: TargetTooltipSpec, vararg expectedTooltipText: String) {
-        assertText(targetTooltipSpec, asList(*expectedTooltipText))
+        assertText(targetTooltipSpec, listOf(*expectedTooltipText))
     }
 
     @SafeVarargs

@@ -8,8 +8,6 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.MAPPING
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.LAYERS
 import jetbrains.datalore.visualization.plot.gog.config.transform.encode.DataFrameEncoding
-import java.util.*
-import java.util.Arrays.asList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -19,8 +17,8 @@ class PlotConfigServerSideTest {
 
     @Test
     fun testProcessTransform() {
-        val plotValues = asList(1.0, 2.0)
-        val layerValues = asList(3.0, 4.0)
+        val plotValues = listOf(1.0, 2.0)
+        val layerValues = listOf(3.0, 4.0)
 
 
         // ====================
@@ -63,7 +61,7 @@ class PlotConfigServerSideTest {
         run {
             // top level
             val plotSpec = HashMap<String, Any>()
-            plotSpec[Plot.DATA] = asList(0.0, 1.0, 2.0, 3.0, 4.0)
+            plotSpec[Plot.DATA] = listOf(0.0, 1.0, 2.0, 3.0, 4.0)
 
             // histogram layer
             val layerSpec = HashMap<String, Any>()

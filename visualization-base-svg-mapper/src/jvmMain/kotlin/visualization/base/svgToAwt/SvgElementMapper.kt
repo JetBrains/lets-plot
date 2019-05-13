@@ -90,7 +90,7 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGOMElement>(so
         val listener = EventListener { evt ->
             evt.stopPropagation()
             val e = evt as DOMMouseEvent
-            source.dispatch(spec, MouseEvent(e.getClientX(), e.getClientY(), Utils.getButton(e), Utils.getModifiers(e)))
+            source.dispatch(spec, MouseEvent(e.clientX, e.clientY, Utils.getButton(e), Utils.getModifiers(e)))
         }
 
         target.addEventListener(eventType, listener, false)

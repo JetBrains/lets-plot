@@ -6,7 +6,6 @@ import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil.fill
 import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil.gauss
 import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil.zip
 import jetbrains.datalore.visualization.plot.gog.DemoAndTest
-import java.util.*
 
 /**
  * See 'Plotting distributions'

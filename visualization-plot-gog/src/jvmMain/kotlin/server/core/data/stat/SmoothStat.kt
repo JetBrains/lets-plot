@@ -9,7 +9,6 @@ import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
 import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regression.LinearRegression
 import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regression.LoessRegression
 import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regression.RegressionEvaluator
-import java.util.*
 
 class SmoothStat internal constructor() : SmoothStatShell() {
 

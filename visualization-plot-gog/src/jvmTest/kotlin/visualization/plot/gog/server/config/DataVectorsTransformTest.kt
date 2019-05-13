@@ -2,11 +2,11 @@ package jetbrains.datalore.visualization.plot.gog.server.config
 
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
-import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 @RunWith(Parameterized::class)
 class DataVectorsTransformTest(

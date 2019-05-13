@@ -18,7 +18,6 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.server.config.ServerSideTestUtil.createLayerConfigsByLayerSpec
 import jetbrains.datalore.visualization.plot.gog.server.config.ServerSideTestUtil.geoPositionsDict
 import jetbrains.datalore.visualization.plot.gog.server.config.SingleLayerAssert.Companion.assertThat
-import java.util.*
 import kotlin.test.Test
 
 class GeoDataFrameMappingChangeTest {
@@ -36,7 +35,7 @@ class GeoDataFrameMappingChangeTest {
                 POS to null)
         )
 
-        val expectedIdList = Arrays.asList("0", "1", "2", "3", "4")
+        val expectedIdList = listOf("0", "1", "2", "3", "4")
 
         assertThat(cfg)
                 .haveBinding(Aes.MAP_ID, DATA_COLUMN_JOIN_KEY)

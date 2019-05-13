@@ -6,7 +6,6 @@ import jetbrains.datalore.visualization.plot.gog.core.data.StatContext
 import jetbrains.datalore.visualization.plot.gog.core.data.TransformVar
 import jetbrains.datalore.visualization.plot.gog.core.data.stat.*
 import org.apache.commons.math3.linear.BlockRealMatrix
-import java.util.*
 
 class Density2dStat internal constructor() : Density2dStatShell() {
 

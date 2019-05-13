@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Meta.GeoReference
 import jetbrains.datalore.visualization.plot.gog.server.config.ServerSideTestUtil.createLayerConfigsByLayerSpec
 import jetbrains.datalore.visualization.plot.gog.server.config.ServerSideTestUtil.geoPositionsDict
 import jetbrains.datalore.visualization.plot.gog.server.config.SingleLayerAssert.Companion.assertThat
-import org.junit.Test
+import kotlin.test.Test
 
 class GeoReferenceMappingChangeTest {
 

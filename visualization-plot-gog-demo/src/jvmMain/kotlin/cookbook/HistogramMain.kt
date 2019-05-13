@@ -2,12 +2,11 @@ package jetbrains.datalore.visualization.gogDemo.cookbook
 
 import jetbrains.datalore.visualization.gogDemo.SwingDemoUtil
 import jetbrains.datalore.visualization.gogDemo.model.cookbook.Histogram
-import java.util.*
 
 class HistogramMain : Histogram() {
 
     private fun show() {
-        val plotSpecList = Arrays.asList(
+        val plotSpecList = listOf(
                 basic(),
                 withWeights(),
                 withConstantWeight()

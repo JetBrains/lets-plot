@@ -5,13 +5,12 @@ import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint
 import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint.Kind.X_AXIS_TOOLTIP
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Companion.variable
-import org.junit.Before
-import org.junit.Test
-import java.util.Arrays.asList
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
 
-    @Before
+    @BeforeTest
     fun setUp() {
         init()
         setAxisTooltipEnabled(true)
@@ -68,7 +67,7 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
 
     @Test
     fun mapVarsShouldNotBeAddedToAxisTooltip() {
-        val namesToIgnore = asList("lon", "longitude", "lat", "latitude")
+        val namesToIgnore = listOf("lon", "longitude", "lat", "latitude")
 
         for (name in namesToIgnore) {
             val var1 = variable().name(name).value("0").isContinuous(true)

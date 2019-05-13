@@ -14,7 +14,6 @@ import jetbrains.datalore.visualization.plot.gog.server.config.transform.LonLatS
 import jetbrains.datalore.visualization.plot.gog.server.config.transform.LonLatSpecInMappingSpecChange.Companion.LONLAT_SPEC_KEY
 import jetbrains.datalore.visualization.plot.gog.server.config.transform.LonLatSpecInMappingSpecChange.Companion.LONLAT_SPEC_VALUE
 import jetbrains.datalore.visualization.plot.gog.server.config.transform.LonLatSpecInMappingSpecChange.Companion.LON_KEY
-import java.util.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

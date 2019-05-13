@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.gogDemo.model.cookbook
 import jetbrains.datalore.visualization.gogDemo.model.DemoBase
 import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil
 import jetbrains.datalore.visualization.plot.gog.DemoAndTest
-import java.util.*
 
 /**
  * See 'Plotting distributions'

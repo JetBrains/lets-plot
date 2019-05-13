@@ -2,12 +2,11 @@ package jetbrains.datalore.visualization.plot.gog.core.data.sampling
 
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.TestUtil
-import java.util.Arrays.asList
 import kotlin.test.*
 
 class SystematicSamplingTest {
 
-    private val myData = TestUtil.generateData(N, asList("x", "y", "c"))
+    private val myData = TestUtil.generateData(N, listOf("x", "y", "c"))
 
     private fun assertThat(sampleSize: Int): SamplingAssert {
         return SamplingAssert(sampleSize)
