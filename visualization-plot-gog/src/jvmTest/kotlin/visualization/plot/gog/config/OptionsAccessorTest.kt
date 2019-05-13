@@ -52,7 +52,7 @@ class OptionsAccessorTest {
         for (i in keys.indices) {
             val option = keys[i]
             assertEquals(Integer.valueOf(i), OptionsAccessor.over(options).getInteger(option))
-            assertEquals(java.lang.Long.valueOf(i.toLong()), OptionsAccessor.over(options).getLong(option))
+            assertEquals(i.toLong(), OptionsAccessor.over(options).getLong(option))
             assertDoubleEquals(i.toDouble(), OptionsAccessor.over(options).getDouble(option), 0.0)
         }
     }

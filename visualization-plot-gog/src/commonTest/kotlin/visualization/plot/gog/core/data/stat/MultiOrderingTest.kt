@@ -42,8 +42,8 @@ class MultiOrderingTest {
 
     @Test
     fun naKeys() {
-        val keys = listOf(4.0, java.lang.Double.NaN, java.lang.Double.NaN, 2.0, 1.0)
+        val keys = listOf(4.0, Double.NaN, Double.NaN, 2.0, 1.0)
         val ordering = MultiOrdering(keys)
-        assertEquals(listOf(1.0, 2.0, 4.0, java.lang.Double.NaN, java.lang.Double.NaN), ordering.sortedCopyOfKeys())
+        assertEquals(listOf(1.0, 2.0, 4.0, Double.NaN, Double.NaN), ordering.sortedCopyOfKeys())
     }
 }

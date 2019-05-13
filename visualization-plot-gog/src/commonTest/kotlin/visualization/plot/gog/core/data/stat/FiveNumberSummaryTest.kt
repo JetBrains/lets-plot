@@ -17,7 +17,7 @@ class FiveNumberSummaryTest {
     fun emptyData() {
         val summary = FiveNumberSummary(emptyList())
 
-        assertEquals(FiveNumberSummary(java.lang.Double.NaN, java.lang.Double.NaN, java.lang.Double.NaN, java.lang.Double.NaN, java.lang.Double.NaN), summary)
+        assertEquals(FiveNumberSummary(Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN), summary)
     }
 
     @Test

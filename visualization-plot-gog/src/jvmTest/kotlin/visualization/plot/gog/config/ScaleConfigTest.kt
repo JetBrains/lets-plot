@@ -39,7 +39,7 @@ class ScaleConfigTest {
     }
 
     private fun checkIdentityMappingNumeric(aes: Aes<Double>, input: List<Double>) {
-        val mapperProvider = ScaleConfig.createIdentityMapperProvider(aes, java.lang.Double.NaN)
+        val mapperProvider = ScaleConfig.createIdentityMapperProvider(aes, Double.NaN)
         checkMappingDiscrete(input, input, mapperProvider)
         checkIdentityMappingContinuous(input, mapperProvider)
     }
@@ -51,7 +51,7 @@ class ScaleConfigTest {
         val data = DataFrameUtil.fromMap(map)
 
         val mapper = mapperProvider.createContinuousMapper(data, DataFrameUtil.findVariableOrFail(data, "var"),
-                java.lang.Double.NaN, java.lang.Double.NaN, Transforms.IDENTITY)
+                Double.NaN, Double.NaN, Transforms.IDENTITY)
         for (v in input) {
             assertEquals(v, mapper.apply(v))
         }
@@ -96,7 +96,7 @@ class ScaleConfigTest {
 
     @Test
     fun numericIdentityMapper() {
-        val input = listOf(2.0, 3.0, 5.0, 7.0, java.lang.Double.NaN)
+        val input = listOf(2.0, 3.0, 5.0, 7.0, Double.NaN)
         for (aes in Aes.values()) {
             if (aes.isNumeric) {
                 checkIdentityMappingNumeric(aes as Aes<Double>, input)

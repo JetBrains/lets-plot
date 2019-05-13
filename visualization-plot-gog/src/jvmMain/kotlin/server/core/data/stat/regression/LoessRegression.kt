@@ -46,7 +46,7 @@ class LoessRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Dou
         private const val DEF_SAMPLE_NUMBER = 50
 
         private fun getPoly(points: ArrayList<DoubleVector>): PolynomialSplineFunction {
-            points.sortWith(Comparator { o1: DoubleVector, o2: DoubleVector -> java.lang.Double.compare(o1.x, o2.x) })
+            points.sortWith(Comparator { o1: DoubleVector, o2: DoubleVector -> o1.x.compareTo(o2.x) })
 
             val listX = DoubleArray(points.size)
             val listY = DoubleArray(points.size)

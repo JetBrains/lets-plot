@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
 import jetbrains.datalore.base.assertion.assertArrayEquals
+import kotlin.math.sign
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -34,7 +35,7 @@ class LinearBreaksHelperTest {
     fun negativeZero1() {
         val breaks = computeBreaks(0.0, 10.0, 10)
         print(breaks)
-        assertTrue(Math.copySign(1.0, breaks[0]) > 0)
+        assertTrue(sign(breaks[0]) >= 0)
     }
 
     //TODO
@@ -44,7 +45,7 @@ class LinearBreaksHelperTest {
     fun fixMe() {
         val breaks = computeBreaks(1667.9, 1667.8999999999996, 5)
         print(breaks)
-        assertTrue(Math.copySign(1.0, breaks[0]) > 0)
+        assertTrue(sign(breaks[0]) >= 0)
     }
 
     companion object {

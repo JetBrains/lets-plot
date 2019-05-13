@@ -123,7 +123,7 @@ internal class LonLatSpecInMappingSpecChange : SpecChange {
 
             if (v is String) {
                 try {
-                    return java.lang.Double.parseDouble(v)
+                    return v.toDouble()
                 } catch (e: NumberFormatException) {
                     throw IllegalArgumentException(errorMessage, e)
                 }

@@ -78,9 +78,9 @@ class FormatterTest {
                 19_999.55,
                 19_999.56,
                 null,
-                java.lang.Double.NaN,
-                java.lang.Double.NEGATIVE_INFINITY,
-                java.lang.Double.POSITIVE_INFINITY
+                Double.NaN,
+                Double.NEGATIVE_INFINITY,
+                Double.POSITIVE_INFINITY
         )
 
         assertNumbersFormattedByTooltipFormatter(expected, values)

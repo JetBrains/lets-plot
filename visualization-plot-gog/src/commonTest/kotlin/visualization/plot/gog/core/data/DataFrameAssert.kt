@@ -20,8 +20,6 @@ class DataFrameAssert internal constructor(private val myData: DataFrame) {
     }
 
     companion object {
-
-        @JvmOverloads
         fun assertHasVars(df: DataFrame, vars: Iterable<DataFrame.Variable>, dataSize: Int = -1) {
             for (`var` in vars) {
                 assertTrue(df.has(`var`), "Has var '" + `var`.name + "'")
@@ -29,10 +27,6 @@ class DataFrameAssert internal constructor(private val myData: DataFrame) {
                     assertEquals(dataSize, df[`var`].size, "Data siaze '" + `var`.name + "'")
                 }
             }
-        }
-
-        fun assertNumericVectorEquals(df: DataFrame, vars: Iterable<DataFrame.Variable>, dataSize: Int) {
-
         }
     }
 }

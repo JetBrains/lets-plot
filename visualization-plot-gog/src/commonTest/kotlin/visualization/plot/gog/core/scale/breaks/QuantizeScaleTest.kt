@@ -2,28 +2,36 @@ package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class QuantizeScaleTest {
-    @Test(expected = IllegalStateException::class)
+
+    @Test
     fun undefinedDomain() {
-        val scale = QuantizeScale<String>()
-                .range(listOf("A", "B"))
-        scale.quantize(1.0)
+        assertFailsWith(IllegalStateException::class) {
+            val scale = QuantizeScale<String>()
+                    .range(listOf("A", "B"))
+            scale.quantize(1.0)
+        }
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun invalidDomain() {
-        val scale = QuantizeScale<String>()
-                .domain(10.0, 9.0)
-                .range(listOf("A", "B"))
-        scale.quantize(1.0)
+        assertFailsWith(IllegalArgumentException::class) {
+            val scale = QuantizeScale<String>()
+                    .domain(10.0, 9.0)
+                    .range(listOf("A", "B"))
+            scale.quantize(1.0)
+        }
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun undefinedRange() {
-        val scale = QuantizeScale<String>()
-                .domain(10.0, 100.0)
-        scale.quantize(1.0)
+        assertFailsWith(IllegalStateException::class) {
+            val scale = QuantizeScale<String>()
+                    .domain(10.0, 100.0)
+            scale.quantize(1.0)
+        }
     }
 
     @Test
