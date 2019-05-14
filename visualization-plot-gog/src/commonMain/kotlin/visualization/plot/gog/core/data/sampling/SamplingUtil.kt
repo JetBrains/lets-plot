@@ -113,7 +113,7 @@ internal object SamplingUtil {
                 .map { Pair(it, calculateArea(rings[it])) }
                 .sortedWith(compareBy<Pair<*, Double>> { getRingArea(it) }.reversed())
                 .map { p ->
-                    var limit = min((p.second!! / (totalArea - areaProceed.get()) * (totalPointsLimit - pointsProceed.get())).roundToInt(),
+                    var limit = min((p.second / (totalArea - areaProceed.get()) * (totalPointsLimit - pointsProceed.get())).roundToInt(),
                             rings[getRingIndex(p)].size
                     )
 
@@ -131,14 +131,14 @@ internal object SamplingUtil {
     }
 
     fun getRingIndex(pair: Pair<Int, *>): Int {
-        return pair.first!!
+        return pair.first
     }
 
     private fun getRingArea(pair: Pair<*, Double>): Double {
-        return pair.second!!
+        return pair.second
     }
 
     fun getRingLimit(pair: Pair<*, Int>): Int {
-        return pair.second!!
+        return pair.second
     }
 }

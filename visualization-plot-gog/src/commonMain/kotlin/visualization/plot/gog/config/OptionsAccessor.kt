@@ -20,7 +20,7 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     val isEmpty: Boolean
         get() = myOptions.isEmpty() && myDefaultOptions.isEmpty()
 
-    constructor(options: Map<*, *>) : this(options, emptyMap<Any, Any>()) {}
+    constructor(options: Map<*, *>) : this(options, emptyMap<Any, Any>())
 
     init {
         myDefaultOptions = HashMap(defaultOptions)

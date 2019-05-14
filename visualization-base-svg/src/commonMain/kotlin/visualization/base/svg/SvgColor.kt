@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.base.svg
 
 import jetbrains.datalore.base.values.Color
 
-interface SvgColor {}
+interface SvgColor
 
 object SvgColors : SvgColor {
     val ALICE_BLUE = SvgColorKeyword("aliceblue")

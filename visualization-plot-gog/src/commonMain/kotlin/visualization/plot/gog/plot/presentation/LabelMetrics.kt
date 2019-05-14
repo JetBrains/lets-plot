@@ -4,8 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import kotlin.jvm.JvmOverloads
 
 //ToDo:
-interface Serializable {
-}
+interface Serializable
 
 class LabelMetrics : LabelSpec, Serializable {
 
@@ -17,7 +16,7 @@ class LabelMetrics : LabelSpec, Serializable {
      * for Serializable
      */
     constructor() {
-        this.fontSize = 0.0;
+        this.fontSize = 0.0
         isBold = false
         isMonospaced = false
     }

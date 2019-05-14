@@ -31,11 +31,11 @@ object Functions {
     }
 
     fun <ArgT> alwaysTrue(): Predicate<ArgT> {
-        return TRUE_PREDICATE as Predicate<ArgT>
+        return TRUE_PREDICATE
     }
 
     fun <ArgT> alwaysFalse(): Predicate<ArgT> {
-        return FALSE_PREDICATE as Predicate<ArgT>
+        return FALSE_PREDICATE
     }
 
     fun <ArgT, ResultT> constant(result: ResultT): (ArgT) -> ResultT {

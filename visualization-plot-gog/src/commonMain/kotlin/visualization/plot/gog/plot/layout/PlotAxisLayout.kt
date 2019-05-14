@@ -69,9 +69,9 @@ class PlotAxisLayout private constructor(private val myScale: Scale2<Double>, pr
 
         private fun axisDomain(xyDomains: Pair<ClosedRange<Double>, ClosedRange<Double>>, orientation: Orientation): ClosedRange<Double> {
             return if (orientation.isHorizontal)
-                xyDomains.first!!
+                xyDomains.first
             else
-                xyDomains.second!!
+                xyDomains.second
         }
     }
 }

@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.linetype
 
-enum class NamedLineType private constructor(val code: Int, private val myDashArray: List<Double>?) : LineType {
+enum class NamedLineType(val code: Int, private val myDashArray: List<Double>?) : LineType {
     // 0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
     BLANK(0, null) {
         override val isBlank: Boolean

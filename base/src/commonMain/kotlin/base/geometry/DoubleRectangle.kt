@@ -35,7 +35,7 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
             return result
         }
 
-    constructor(x: Double, y: Double, w: Double, h: Double) : this(DoubleVector(x, y), DoubleVector(w, h)) {}
+    constructor(x: Double, y: Double, w: Double, h: Double) : this(DoubleVector(x, y), DoubleVector(w, h))
 
     fun xRange(): ClosedRange<Double> {
         return ClosedRange.closed(origin.x, origin.x + dimension.x)

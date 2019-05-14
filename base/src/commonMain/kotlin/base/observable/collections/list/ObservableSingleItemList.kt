@@ -16,7 +16,7 @@ class ObservableSingleItemList<ItemT> : AbstractObservableList<ItemT> {
             }
         }
 
-    constructor() {}
+    constructor()
 
     constructor(item: ItemT) {
         myItem = item

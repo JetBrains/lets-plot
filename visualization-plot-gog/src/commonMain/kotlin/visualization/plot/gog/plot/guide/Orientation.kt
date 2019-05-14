@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.plot.guide
 
-enum class Orientation private constructor(private val myValue: String) {
+enum class Orientation(private val myValue: String) {
     LEFT("LEFT"),
     RIGHT("RIGHT"),
     TOP("TOP"),

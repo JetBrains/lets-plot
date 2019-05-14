@@ -59,7 +59,7 @@ abstract class SvgAwtHelper protected constructor() {
     protected fun clear() {
         if (mySvgRoot != null) {
             mySvgRoot = null
-            myUserAgent.getEventDispatcher().setRootNode(null)
+            myUserAgent.eventDispatcher.rootNode = null
 
             if (myMapper!!.isAttached) {
                 myMapper!!.detachRoot()
@@ -77,7 +77,7 @@ abstract class SvgAwtHelper protected constructor() {
         if (mySvgRoot == null) return
 
         myBridgeContext = BridgeContext(myUserAgent)
-        myBridgeContext!!.setDynamic(true)
+        myBridgeContext!!.isDynamic = true
 
         myMapper = SvgRootDocumentMapper(mySvgRoot!!)
         myMapper!!.attachRoot()
@@ -85,7 +85,7 @@ abstract class SvgAwtHelper protected constructor() {
         val builder = GVTBuilder()
         myGraphicsNode = builder.build(myBridgeContext, myMapper!!.target)
 
-        myUserAgent.getEventDispatcher().setRootNode(myGraphicsNode)
+        myUserAgent.eventDispatcher.rootNode = myGraphicsNode
     }
 
     fun paint(g: Graphics2D) {
@@ -95,7 +95,7 @@ abstract class SvgAwtHelper protected constructor() {
     }
 
     fun handleMouseEvent(e: MouseEvent) {
-        myUserAgent.getEventDispatcher().dispatchEvent(e)
+        myUserAgent.eventDispatcher.dispatchEvent(e)
     }
 
     interface MessageCallback {

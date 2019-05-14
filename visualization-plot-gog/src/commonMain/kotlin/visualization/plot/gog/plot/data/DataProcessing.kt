@@ -93,8 +93,8 @@ object DataProcessing {
                     val groupingVar = groupingContext.optionalGroupingVar
                     if (groupingVar != null) {
                         val size = sd[sd.variables().iterator().next()].size
-                        val v = d[groupingVar!!][0]
-                        sd = sd.builder().put(groupingVar!!, List(size) { v }).build()
+                        val v = d[groupingVar][0]
+                        sd = sd.builder().put(groupingVar, List(size) { v }).build()
                     }
                 }
 

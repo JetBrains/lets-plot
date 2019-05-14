@@ -40,8 +40,8 @@ internal class VerticalTooltipRotatingExpander(private val myVerticalSpace: Math
 
         val separatedTooltips = ArrayList<PositionedTooltip>()
         for (expandedPosition in expandedPositions) {
-            val positionedTooltip = tooltips[expandedPosition.first!!]
-            separatedTooltips.add(positionedTooltip.moveTo(expandedPosition.second!!))
+            val positionedTooltip = tooltips[expandedPosition.first]
+            separatedTooltips.add(positionedTooltip.moveTo(expandedPosition.second))
         }
 
         return separatedTooltips

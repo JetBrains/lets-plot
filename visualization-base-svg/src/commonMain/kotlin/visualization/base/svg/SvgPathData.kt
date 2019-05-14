@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.base.svg
 
 class SvgPathData internal constructor(private val myPathData: String) {
 
-    enum class Action private constructor(private val myChar: Char) {
+    enum class Action(private val myChar: Char) {
         MOVE_TO('m'),
         LINE_TO('l'),
         HORIZONTAL_LINE_TO('h'),

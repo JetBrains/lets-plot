@@ -26,7 +26,7 @@ class CompositeRegistration(vararg regs: Registration) : Registration() {
         return this
     }
 
-    protected override fun doRemove() {
+    override fun doRemove() {
         for (i in myRegistrations.size - 1 downTo -1 + 1) {
             myRegistrations[i].remove()
         }

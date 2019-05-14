@@ -134,7 +134,7 @@ object ContourStatUtil {
                 val longPath: MutableList<Edge>
                 if (path0 === path1) {
                     //a cycle is formed
-                    path0!!.add(segment.second!!)
+                    path0!!.add(segment.second)
                     pathList.add(path0)
                     continue
                 } else if (path0 != null && path1 != null) {
@@ -142,20 +142,20 @@ object ContourStatUtil {
                     longPath.addAll(path1)
                 } else if (path0 == null) { //path1!=null
                     longPath = path1!!
-                    longPath.add(0, segment.first!!)
+                    longPath.add(0, segment.first)
                 } else { // path0!=null
                     longPath = path0
-                    longPath.add(segment.second!!)
+                    longPath.add(segment.second)
                 }
 
                 pathByEndPoint[longPath[0]] = longPath
                 pathByEndPoint[longPath[longPath.size - 1]] = longPath
             } else {
                 val path = ArrayList<Edge>()
-                path.add(segment.first!!)
-                path.add(segment.second!!)
-                pathByEndPoint[segment.first!!] = path
-                pathByEndPoint[segment.second!!] = path
+                path.add(segment.first)
+                path.add(segment.second)
+                pathByEndPoint[segment.first] = path
+                pathByEndPoint[segment.second] = path
             }
         }
 
@@ -472,8 +472,8 @@ object ContourStatUtil {
         }
 
         fun intersect(level: Double): DoubleVector {
-            val z0 = myA.z!!
-            val z1 = myB.z!!
+            val z0 = myA.z
+            val z1 = myB.z
 
             if (level == z0) {
                 return myA.coord

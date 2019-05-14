@@ -13,7 +13,7 @@ class Rectangle(val origin: Vector, val dimension: Vector) {
     private val boundPoints: Array<Vector>
         get() = arrayOf(origin, origin.add(Vector(dimension.x, 0)), origin.add(dimension), origin.add(Vector(0, dimension.y)))
 
-    constructor(x: Int, y: Int, width: Int, height: Int) : this(Vector(x, y), Vector(width, height)) {}
+    constructor(x: Int, y: Int, width: Int, height: Int) : this(Vector(x, y), Vector(width, height))
 
     fun add(v: Vector): Rectangle {
         return Rectangle(origin.add(v), dimension)

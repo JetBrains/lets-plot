@@ -45,7 +45,7 @@ internal class HorizontalTooltipExpander(private val mySpace: MathUtil.DoubleRan
         myGroups.clear()
 
         for (pair in tooltipHeights) {
-            addGroup(pair.first!!, pair.second)
+            addGroup(pair.first, pair.second)
 
             var limit = 50
             while (getOverlappedGroups(myGroups) != null && limit-- > 0) {
@@ -55,12 +55,12 @@ internal class HorizontalTooltipExpander(private val mySpace: MathUtil.DoubleRan
 
         val separatedTooltips = ArrayList<PositionedTooltip>()
         for (expandedPlacementInfo in groupsToRange(myGroups)) {
-            val positionedTooltip = tooltips[expandedPlacementInfo.first!!]
+            val positionedTooltip = tooltips[expandedPlacementInfo.first]
             separatedTooltips.add(
                     positionedTooltip.moveTo(
                             DoubleVector(
                                     positionedTooltip.tooltipCoord.x,
-                                    expandedPlacementInfo.second!!.start()
+                                    expandedPlacementInfo.second.start()
                             )
                     )
             )
@@ -141,8 +141,8 @@ internal class HorizontalTooltipExpander(private val mySpace: MathUtil.DoubleRan
 
             var start = myRange.start()
             for (pair in myLengths) {
-                result.add(MathUtil.DoubleRange.withStartAndLength(start, pair.second!!))
-                start += pair.second!! + MARGIN_BETWEEN_TOOLTIPS
+                result.add(MathUtil.DoubleRange.withStartAndLength(start, pair.second))
+                start += pair.second + MARGIN_BETWEEN_TOOLTIPS
             }
 
             return result
@@ -165,7 +165,7 @@ internal class HorizontalTooltipExpander(private val mySpace: MathUtil.DoubleRan
         private fun update(newMiddle: Double) {
             var desiredLength = 0.0
             for (pair in myLengths) {
-                desiredLength += pair.second!!
+                desiredLength += pair.second
             }
             desiredLength += ((myLengths.size - 1) * MARGIN_BETWEEN_TOOLTIPS).toDouble()
 

@@ -18,7 +18,7 @@ object ColorPalette {
         return colorSet[colorSet.size - 1].size
     }
 
-    enum class Type private constructor(private val myPresentation: String) {
+    enum class Type(private val myPresentation: String) {
         SEQUENTIAL("sequential"),
         DIVERGING("diverging"),
         QUALITATIVE("qualitative");
@@ -63,7 +63,7 @@ object ColorPalette {
         }
     }
 
-    enum class Diverging private constructor(private val myPresentation: String, override val colorSet: Array<Array<String>>) : ColorScheme {
+    enum class Diverging(private val myPresentation: String, override val colorSet: Array<Array<String>>) : ColorScheme {
         BrBG("brown-blue/green", ColorSets.BR_BG),
         PiYG("pink-yellow/green", ColorSets.PI_YG),
         PRGn("purple/red-green", ColorSets.PR_GN),
@@ -89,7 +89,7 @@ object ColorPalette {
         }
     }
 
-    enum class Qualitative private constructor(private val myPresentation: String, override val colorSet: Array<Array<String>>) : ColorScheme {
+    enum class Qualitative(private val myPresentation: String, override val colorSet: Array<Array<String>>) : ColorScheme {
         Accent("accent", ColorSets.ACCENT),
         Dark2("dark 2", ColorSets.DARK_2),
         Paired("paired", ColorSets.PAIRED),

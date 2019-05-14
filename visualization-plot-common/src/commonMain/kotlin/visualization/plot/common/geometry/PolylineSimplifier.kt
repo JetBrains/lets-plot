@@ -51,11 +51,11 @@ class PolylineSimplifier private constructor(private val myPoints: List<DoubleVe
     }
 
     private fun getWeight(p: Pair<Int, Double>): Double {
-        return p.second!!
+        return p.second
     }
 
     private fun getIndex(p: Pair<Int, Double>): Int {
-        return p.first!!
+        return p.first
     }
 
     interface RankingStrategy {

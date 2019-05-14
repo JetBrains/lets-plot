@@ -76,7 +76,7 @@ object MultiPointDataConstructor {
 
         internal fun create(group: Int): MultiPointData {
             val points = myPointCollector.points
-            return MultiPointData(myFirstAes!!, points.first!!, { points.second!![it] }, group)
+            return MultiPointData(myFirstAes!!, points.first, { points.second[it] }, group)
         }
     }
 
@@ -105,7 +105,7 @@ object MultiPointDataConstructor {
         val points: Pair<List<DoubleVector>, List<Int>>
             get() {
                 if (myLastPostponed != null) {
-                    addPoint(myLastPostponed!!.first!!, myLastPostponed!!.second!!)
+                    addPoint(myLastPostponed!!.first, myLastPostponed!!.second)
                     myLastPostponed = null
                 }
 
@@ -131,7 +131,7 @@ object MultiPointDataConstructor {
             } else {
                 // add all
                 if (myLastPostponed != null) {
-                    addPoint(myLastPostponed!!.first!!, myLastPostponed!!.second!!)
+                    addPoint(myLastPostponed!!.first, myLastPostponed!!.second)
                     myLastPostponed = null
                 }
                 storePoint(coord, index)

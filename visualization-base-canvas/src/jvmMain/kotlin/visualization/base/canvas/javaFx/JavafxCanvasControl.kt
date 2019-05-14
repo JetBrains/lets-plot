@@ -22,7 +22,7 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
 
     override fun createAnimationTimer(eventHandler: CanvasControl.AnimationEventHandler): CanvasControl.AnimationTimer {
         return object : JavafxAnimationTimer() {
-            internal override fun handle(millisTime: Long) {
+            override fun handle(millisTime: Long) {
                 eventHandler.onEvent(millisTime)
             }
         }

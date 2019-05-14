@@ -9,21 +9,21 @@ import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
 
 class LegendComponent(legendSpec: LegendComponentSpec) : LegendBox(legendSpec) {
 
-    protected override val spec: LegendComponentSpec
+    override val spec: LegendComponentSpec
         get() = super.spec as LegendComponentSpec
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
         val l = spec.layout
 
-        val keyLabelBoxes = l!!.keyLabelBoxes.iterator()
-        val labelBoxes = l!!.labelBoxes.iterator()
+        val keyLabelBoxes = l.keyLabelBoxes.iterator()
+        val labelBoxes = l.labelBoxes.iterator()
         for (br in spec.breaks) {
             val keyLabelBox = keyLabelBoxes.next()
             val labelBox = labelBoxes.next()
-            val breakElement = createBreakElement(br, l!!.keySize, keyLabelBox, labelBox)
+            val breakElement = createBreakElement(br, l.keySize, keyLabelBox, labelBox)
             contentRoot.children().add(breakElement)
         }
-        return l!!.size
+        return l.size
     }
 
     private fun createBreakElement(br: LegendBreak, keySize: DoubleVector, keyLabelBox: DoubleRectangle, labelBox: DoubleRectangle): SvgElement {

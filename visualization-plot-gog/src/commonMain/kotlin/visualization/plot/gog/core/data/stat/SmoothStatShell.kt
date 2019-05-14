@@ -48,14 +48,10 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes
  */
 open class SmoothStatShell : BaseStat(DEF_MAPPING) {
     var smootherPointCount = DEF_EVAL_POINT_COUNT
-        set
     // checkArgument(smoothingMethod == Method.LM, "Only linear model is supported, use: method='lm'");
     var smoothingMethod = DEF_SMOOTHING_METHOD
-        set
     var confidenceLevel = DEF_CONFIDENCE_LEVEL
-        set
     var isDisplayConfidenceInterval = DEF_DISPLAY_CONFIDENCE_INTERVAL
-        set
 
     override fun requires(): List<Aes<*>> {
         return listOf<Aes<*>>(Aes.Y)

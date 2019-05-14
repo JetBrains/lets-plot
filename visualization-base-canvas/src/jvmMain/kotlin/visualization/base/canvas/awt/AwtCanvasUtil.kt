@@ -15,8 +15,8 @@ internal object AwtCanvasUtil {
             EventSpec.MOUSE_LEFT to eventOptions(AwtEventSpec.MOUSE_EXITED),
             EventSpec.MOUSE_MOVED to eventOptions(AwtEventSpec.MOUSE_MOVED),
             EventSpec.MOUSE_DRAGGED to eventOptions(AwtEventSpec.MOUSE_DRAGGED),
-            EventSpec.MOUSE_CLICKED to eventOptions(AwtEventSpec.MOUSE_CLICKED, Predicate { e -> e.getClickCount() % 2 == 1 }),
-            EventSpec.MOUSE_DOUBLE_CLICKED to eventOptions(AwtEventSpec.MOUSE_CLICKED, Predicate { e -> e.getClickCount() % 2 == 0 }),
+            EventSpec.MOUSE_CLICKED to eventOptions(AwtEventSpec.MOUSE_CLICKED, Predicate { e -> e.clickCount % 2 == 1 }),
+            EventSpec.MOUSE_DOUBLE_CLICKED to eventOptions(AwtEventSpec.MOUSE_CLICKED, Predicate { e -> e.clickCount % 2 == 0 }),
             EventSpec.MOUSE_PRESSED to eventOptions(AwtEventSpec.MOUSE_PRESSED),
             EventSpec.MOUSE_RELEASED to eventOptions(AwtEventSpec.MOUSE_RELEASED)
     )

@@ -35,7 +35,7 @@ class SimpleDerivedProperty<ValueT>(
         myDependencies = arrayOf(*deps)
     }
 
-    protected override fun doAddListeners() {
+    override fun doAddListeners() {
         myRegistrations = Array(myDependencies.size) { i ->
             register(myDependencies[i])
         }

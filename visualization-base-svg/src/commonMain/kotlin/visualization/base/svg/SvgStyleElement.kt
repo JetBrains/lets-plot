@@ -4,14 +4,14 @@ class SvgStyleElement : SvgElement {
 
     override val elementName = "style"
 
-    constructor() {}
+    constructor()
 
     constructor(content: String) : this() {
 
         setContent(content)
     }
 
-    constructor(resource: SvgCssResource) : this(resource.css()) {}
+    constructor(resource: SvgCssResource) : this(resource.css())
 
     fun setContent(content: String) {
         val children = children()

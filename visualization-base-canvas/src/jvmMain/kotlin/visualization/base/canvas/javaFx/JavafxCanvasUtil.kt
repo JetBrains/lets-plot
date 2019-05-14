@@ -23,8 +23,8 @@ internal object JavafxCanvasUtil {
             EventSpec.MOUSE_LEFT to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_EXITED),
             EventSpec.MOUSE_MOVED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_MOVED),
             EventSpec.MOUSE_DRAGGED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_DRAGGED),
-            EventSpec.MOUSE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED, Predicate { e -> e.getClickCount() % 2 == 1 }),
-            EventSpec.MOUSE_DOUBLE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED, Predicate { e -> e.getClickCount() % 2 == 0 }),
+            EventSpec.MOUSE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED, Predicate { e -> e.clickCount % 2 == 1 }),
+            EventSpec.MOUSE_DOUBLE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED, Predicate { e -> e.clickCount % 2 == 0 }),
             EventSpec.MOUSE_PRESSED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_PRESSED),
             EventSpec.MOUSE_RELEASED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_RELEASED))
 

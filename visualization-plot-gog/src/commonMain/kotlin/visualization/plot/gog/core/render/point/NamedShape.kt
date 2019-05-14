@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.point.symbol.Glyph
 import jetbrains.datalore.visualization.plot.gog.core.render.point.symbol.Glyphs
 
-enum class NamedShape private constructor(override val code: Int, val isSolid: Boolean = false, val isFilled: Boolean = false, val isSmall: Boolean = false) : PointShape {
+enum class NamedShape(override val code: Int, val isSolid: Boolean = false, val isFilled: Boolean = false, val isSmall: Boolean = false) : PointShape {
     STICK_SQUARE(0),
     STICK_CIRCLE(1),
     STICK_TRIANGLE_UP(2),

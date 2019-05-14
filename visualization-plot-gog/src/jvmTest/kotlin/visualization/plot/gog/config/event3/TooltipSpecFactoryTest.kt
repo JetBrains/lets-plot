@@ -16,7 +16,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
 
     @Test
     fun whenAesFromTooltipListIsNotMapped_ShouldNotThrowException() {
-        createTooltipSpecs(geomTargetBuilder!!.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
+        createTooltipSpecs(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
     }
 
     @Test
@@ -24,7 +24,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
         val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
         val colorMapping = addMappedData(variable().name("cyl").value("4").mapping(Aes.COLOR))
 
-        createTooltipSpecs(geomTargetBuilder!!.withPathHitShape()
+        createTooltipSpecs(geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(AES_WIDTH, TipLayoutHint.verticalTooltip(TARGET_HIT_COORD, OBJECT_RADIUS, FILL_COLOR))
                 .build())
 
@@ -46,7 +46,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
     fun whenFillColorProvided_ShouldUseItForTooltip() {
         addMappedData(variable().value("sedan").mapping(AES_WIDTH))
 
-        createTooltipSpecs(geomTargetBuilder!!.withPathHitShape()
+        createTooltipSpecs(geomTargetBuilder.withPathHitShape()
                 .withFill(Color.RED)
                 .build())
 
@@ -58,7 +58,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
         val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
 
         val hintFill = Color.DARK_GREEN
-        createTooltipSpecs(geomTargetBuilder!!.withPathHitShape()
+        createTooltipSpecs(geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(AES_WIDTH, TipLayoutHint.verticalTooltip(TARGET_HIT_COORD, OBJECT_RADIUS, hintFill))
                 .withFill(Color.RED)
                 .build())

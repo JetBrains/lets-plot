@@ -89,7 +89,7 @@ object MathUtil {
         var coord: DoubleVector? = null
             private set
 
-        constructor(x: Double, y: Double) : this(DoubleVector(x, y)) {}
+        constructor(x: Double, y: Double) : this(DoubleVector(x, y))
 
         fun check(coord: DoubleVector): Boolean {
             return compare(coord) == COMPARE_RESULT.NEW_CLOSER

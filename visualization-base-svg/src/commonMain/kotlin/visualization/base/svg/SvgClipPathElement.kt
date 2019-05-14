@@ -33,7 +33,7 @@ class SvgClipPathElement : SvgGraphicsElement(), SvgTransformable {
         return container().getPeer()!!.applyTransform(this, point)
     }
 
-    enum class ClipPathUnits private constructor(private val myAttributeString: String) {
+    enum class ClipPathUnits(private val myAttributeString: String) {
         USER_SPACE_ON_USE("userSpaceOnUse"),
         OBJECT_BOUNDING_BOX("objectBoundingBox");
 

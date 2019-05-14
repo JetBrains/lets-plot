@@ -40,7 +40,7 @@ object ShapeMapper {
 
         val shapes = ArrayList(bestThreeHollow)
         for (shape in theRest) {
-            if ((shape as NamedShape).isHollow) {
+            if (shape.isHollow) {
                 shapes.add(shape)
             }
         }

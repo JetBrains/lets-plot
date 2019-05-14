@@ -7,7 +7,6 @@ import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 open class Density2dStatShell : BaseStat(DEF_MAPPING) {
 
     var adjust = DEF_ADJUST
-        set
     var nx = DEF_N
         set(n) {
             if (n > MAX_N) {
@@ -23,7 +22,6 @@ open class Density2dStatShell : BaseStat(DEF_MAPPING) {
             field = n
         }
     var isContour = DEF_CONTOUR
-        set
     var bandWidthMethod: DensityStat.BandWidthMethod = DensityStat.BandWidthMethod.NRD
         set(bw) {
             field = bw

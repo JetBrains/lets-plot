@@ -58,7 +58,7 @@ object PositionAdjustments {
         return JitterDodgePos(aesthetics, groupCount, width, jitterWidth, jitterHeight)
     }
 
-    enum class Meta private constructor(private val myHandlesGroups: Boolean) {
+    enum class Meta(private val myHandlesGroups: Boolean) {
         IDENTITY(false),
         DODGE(true),
         STACK(true),

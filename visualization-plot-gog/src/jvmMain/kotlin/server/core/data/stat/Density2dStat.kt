@@ -54,7 +54,7 @@ class Density2dStat internal constructor() : Density2dStatShell() {
             for (col in 0 until nx) {
                 statX.add(stepsX[col])
                 statY.add(stepsY[row])
-                statDensity.add(matrixFinal.getEntry(row, col) / SeriesUtil.sum(groupWeight)!!)
+                statDensity.add(matrixFinal.getEntry(row, col) / SeriesUtil.sum(groupWeight))
                 //newGroups.add((double) (int) group);
             }
         }

@@ -88,10 +88,10 @@ class PlotAssembler private constructor(layersByTile: List<List<GeomLayer>>, pri
         val yDomain = rangeByAes.get(Aes.Y)
         checkState(xDomain != null, "X domain not defined")
         checkState(yDomain != null, "Y domain not defined")
-        checkState(SeriesUtil.isFinite(xDomain!!.lowerEndpoint()), "X domain lower end: " + xDomain!!.lowerEndpoint())
-        checkState(SeriesUtil.isFinite(xDomain!!.upperEndpoint()), "X domain upper end: " + xDomain!!.upperEndpoint())
-        checkState(SeriesUtil.isFinite(yDomain!!.lowerEndpoint()), "Y domain lower end: " + yDomain!!.lowerEndpoint())
-        checkState(SeriesUtil.isFinite(yDomain!!.upperEndpoint()), "Y domain upper end: " + yDomain!!.upperEndpoint())
+        checkState(SeriesUtil.isFinite(xDomain!!.lowerEndpoint()), "X domain lower end: " + xDomain.lowerEndpoint())
+        checkState(SeriesUtil.isFinite(xDomain.upperEndpoint()), "X domain upper end: " + xDomain.upperEndpoint())
+        checkState(SeriesUtil.isFinite(yDomain!!.lowerEndpoint()), "Y domain lower end: " + yDomain.lowerEndpoint())
+        checkState(SeriesUtil.isFinite(yDomain.upperEndpoint()), "Y domain upper end: " + yDomain.upperEndpoint())
 
         val xAxisLayout: AxisLayout
         val yAxisLayout: AxisLayout

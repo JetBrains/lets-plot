@@ -338,8 +338,8 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
                 throw IllegalArgumentException("Points list for interpolation must not contain nulls")
             }
 
-            xs.add(point!!.x)
-            ys.add(point!!.y)
+            xs.add(point.x)
+            ys.add(point.y)
         }
 
         return interpolatePoints(xs, ys, interpolation)

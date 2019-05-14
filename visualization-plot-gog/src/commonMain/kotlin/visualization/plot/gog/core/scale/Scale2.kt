@@ -42,7 +42,7 @@ interface Scale2<T> {
         get() {
             val transform = transform
             if (transform is BreaksGenerator) {
-                return transform as BreaksGenerator
+                return transform
             }
             throw IllegalStateException("No breaks generator for '$name'")
         }

@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.base.svg.slim.SvgSlimShape
 
 internal class SquareGlyph(location: DoubleVector, size: Double) : SingletonGlyph(location, size) {
 
-    protected override fun createShape(location: DoubleVector, width: Double): SvgSlimShape {
+    override fun createShape(location: DoubleVector, width: Double): SvgSlimShape {
         return SvgSlimElements.rect(
                 location.x - width / 2,
                 location.y - width / 2,

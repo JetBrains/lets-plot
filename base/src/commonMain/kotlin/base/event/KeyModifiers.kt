@@ -2,7 +2,7 @@ package jetbrains.datalore.base.event
 
 class KeyModifiers(val isCtrl: Boolean, val isAlt: Boolean, val isShift: Boolean, val isMeta: Boolean) {
 
-    private constructor() : this(false, false, false, false) {}
+    private constructor() : this(false, false, false, false)
 
     companion object {
 

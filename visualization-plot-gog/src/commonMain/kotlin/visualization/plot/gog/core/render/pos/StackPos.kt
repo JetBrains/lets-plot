@@ -45,9 +45,9 @@ internal abstract class StackPos(aes: Aesthetics) : PositionAdjustment {
                         val pair = negPosBaseByBin[x]!!
                         val offset: Double
                         if (y!! >= 0) {
-                            offset = pair.second!!.getAndAdd(y)
+                            offset = pair.second.getAndAdd(y)
                         } else {
-                            offset = pair.first!!.getAndAdd(y)
+                            offset = pair.first.getAndAdd(y)
                         }
                         offsetByIndex[i] = offset
                     }

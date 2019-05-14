@@ -18,8 +18,8 @@ internal class DouglasPeuckerSimplification : RankingStrategy {
         stack.push(Pair(0, points.size - 1))
 
         while (!stack.empty()) {
-            val startIndex = stack.peek()!!.first!!
-            val endIndex = stack.peek()!!.second!!
+            val startIndex = stack.peek()!!.first
+            val endIndex = stack.peek()!!.second
             stack.pop()
 
             var dMax = 0.0

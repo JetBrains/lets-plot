@@ -111,13 +111,13 @@ object SeriesUtil {
         var prev = it.next()
         while (it.hasNext()) {
             val curr = it.next()
-            val dist = curr!! - prev
+            val dist = curr - prev
             if (dist > 0 && (dist < resolution || allZero)) {
                 allZero = false
                 resolution = dist
             }
 
-            prev = curr!!
+            prev = curr
         }
 
         return resolution

@@ -24,14 +24,12 @@ private constructor(// tile origin relative to plot (plot area doesn't include t
     val yAxisShown: Boolean = yAxisInfo != null && yAxisShown
 
     constructor(
-            bounds: DoubleRectangle, geomBounds: DoubleRectangle, clipBounds: DoubleRectangle, xAxisInfo: AxisLayoutInfo?, yAxisInfo: AxisLayoutInfo?) : this(DoubleVector.ZERO, bounds, geomBounds, clipBounds, xAxisInfo, yAxisInfo, true, true, null, null) {
-    }
+            bounds: DoubleRectangle, geomBounds: DoubleRectangle, clipBounds: DoubleRectangle, xAxisInfo: AxisLayoutInfo?, yAxisInfo: AxisLayoutInfo?) : this(DoubleVector.ZERO, bounds, geomBounds, clipBounds, xAxisInfo, yAxisInfo, true, true, null, null)
 
     constructor(
             bounds: DoubleRectangle, geomBounds: DoubleRectangle, clipBounds: DoubleRectangle, xAxisInfo: AxisLayoutInfo?,
             yAxisInfo: AxisLayoutInfo?, xAxisShown: Boolean, yAxisShown: Boolean
-    ) : this(DoubleVector.ZERO, bounds, geomBounds, clipBounds, xAxisInfo, yAxisInfo, xAxisShown, yAxisShown, null, null) {
-    }
+    ) : this(DoubleVector.ZERO, bounds, geomBounds, clipBounds, xAxisInfo, yAxisInfo, xAxisShown, yAxisShown, null, null)
 
     fun withOffset(offset: DoubleVector): TileLayoutInfo {
         return TileLayoutInfo(offset,

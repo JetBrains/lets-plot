@@ -16,7 +16,7 @@ class DateTimeBreaksHelper internal constructor(
     var breaks: List<Double>
     var labelFormatter: (Any) -> String
 
-    constructor(rangeStart: Double, rangeEnd: Double, count: Int) : this(rangeStart, rangeEnd, count, null) {}
+    constructor(rangeStart: Double, rangeEnd: Double, count: Int) : this(rangeStart, rangeEnd, count, null)
 
     init {
 
@@ -52,7 +52,7 @@ class DateTimeBreaksHelper internal constructor(
                 val endYear = TimeUtil.asDateTimeUTC(end).year
                 val helper = LinearBreaksHelper(startYear.toDouble(), endYear.toDouble(), count)
                 for (tickYear in helper.breaks) {
-                    val tickDate = TimeUtil.yearStart(round(tickYear!!).toInt())
+                    val tickDate = TimeUtil.yearStart(round(tickYear).toInt())
                     ticks.add(TimeUtil.asInstantUTC(tickDate).toDouble())
                 }
             } else {

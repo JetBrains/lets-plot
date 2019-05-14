@@ -21,7 +21,7 @@ internal class AwtGraphicsCanvasControl(
 
     override fun createAnimationTimer(eventHandler: CanvasControl.AnimationEventHandler): CanvasControl.AnimationTimer {
         return object : AwtAnimationTimer() {
-            internal override fun handle(millisTime: Long) {
+            override fun handle(millisTime: Long) {
                 if (eventHandler.onEvent(millisTime)) {
                     myRepaint.run()
                 }

@@ -67,9 +67,9 @@ class LayerConfig(opts: Map<*, *>,
 
         val layerData = ConfigUtil.createDataFrame(get(DATA))
         var combinedData: DataFrame
-        if (!(sharedData.isEmpty || layerData!!.isEmpty) && sharedData.rowCount() == layerData!!.rowCount()) {
-            combinedData = DataFrameUtil.appendReplace(sharedData, layerData!!)
-        } else if (!layerData!!.isEmpty) {
+        if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
+            combinedData = DataFrameUtil.appendReplace(sharedData, layerData)
+        } else if (!layerData.isEmpty) {
             combinedData = layerData
         } else {
             combinedData = sharedData
@@ -84,14 +84,14 @@ class LayerConfig(opts: Map<*, *>,
                     GeoPositionsDataUtil.getGeoPositionsData(this),
                     mappingOptions
             )
-            combinedData = dataAndMapping.first!!
+            combinedData = dataAndMapping.first
             aesMapping = dataAndMapping.second
         } else {
             aesMapping = ConfigUtil.createAesMapping(combinedData, mappingOptions)
         }
 
         // auto-map variables if necessary
-        if (aesMapping!!.isEmpty()) {
+        if (aesMapping.isEmpty()) {
             aesMapping = geomProvider.createAesAutoMapper().createMapping(combinedData)
             if (!myClientSide) {
                 // store used mapping options to pass to client.

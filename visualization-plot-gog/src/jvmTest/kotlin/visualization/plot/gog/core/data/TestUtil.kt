@@ -24,7 +24,7 @@ object TestUtil {
     }
 
     internal fun toSerie(prefix: String, ints: Collection<Int>): List<*> {
-        return ints.map { v -> prefix + v!! }
+        return ints.map { v -> prefix + v }
     }
 
     internal fun createCircle(pointsCount: Int, r: Double): List<DoubleVector> {

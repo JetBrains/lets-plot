@@ -7,7 +7,7 @@ object CssStyleUtil {
 
     fun extractStyleFont(style: String?): String? {
         if (style == null) {
-            return null;
+            return null
         }
         val matchResult = FONT_ATTRIBUTE.find(style)
         return matchResult?.groupValues?.get(FONT)?.trim()

@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GeomUtil
 
 internal open class LineGeom : PathGeom() {
 
-    protected override fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
+    override fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
         return GeomUtil.ordered_X(super.dataPoints(aesthetics))
     }
 

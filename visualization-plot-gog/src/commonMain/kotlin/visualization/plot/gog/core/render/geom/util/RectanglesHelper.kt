@@ -42,7 +42,7 @@ class RectanglesHelper(private val myAesthetics: Aesthetics, pos: PositionAdjust
             val p = myAesthetics.dataPointAt(index)
             val clientRect = toClientRect(p, rectangleByDataPoint) ?: continue
 
-            val slimShape = SvgSlimElements.rect(clientRect!!.left, clientRect!!.top, clientRect!!.width, clientRect!!.height)
+            val slimShape = SvgSlimElements.rect(clientRect.left, clientRect.top, clientRect.width, clientRect.height)
             decorateSlimShape(slimShape, p)
             slimShape.appendTo(group)
         }

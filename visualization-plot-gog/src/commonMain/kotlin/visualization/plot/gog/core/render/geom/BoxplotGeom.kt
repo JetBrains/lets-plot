@@ -301,8 +301,8 @@ internal class BoxplotGeom : GeomBase() {
                     val upper = p.upper()!!
                     val width = GeomUtil.widthPx(p, ctx, 2.0)
 
-                    val origin = DoubleVector(x!! - width / 2, lower!!)
-                    val dimensions = DoubleVector(width, upper!! - lower!!)
+                    val origin = DoubleVector(x - width / 2, lower)
+                    val dimensions = DoubleVector(width, upper - lower)
                     DoubleRectangle(origin, dimensions)
                 } else {
                     null

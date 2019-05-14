@@ -10,15 +10,14 @@ import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
 class ColorBarComponentSpec(title: String, internal val domain: ClosedRange<Double>, internal val breaks: List<GuideBreak<Double>>, internal val scale: Scale2<Color>, private val myTheme: LegendTheme) : LegendBoxSpec(title, myTheme) {
 
     internal var binCount = DEF_NUM_BIN
-        set
     private var myBarWidth = Double.NaN
     private var myRodHeight = Double.NaN
     private var myLayout: ColorBarComponentLayout? = null
 
     override val contentSize: DoubleVector
-        get() = layout!!.size
+        get() = layout.size
 
-    internal override val layout: ColorBarComponentLayout
+    override val layout: ColorBarComponentLayout
         get() {
             ensureInited()
             return myLayout!!

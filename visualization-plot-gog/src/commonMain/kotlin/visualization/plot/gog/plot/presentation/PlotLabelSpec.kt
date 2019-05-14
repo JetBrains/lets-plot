@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.plot.presentation
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.Defaults.Plot
 
-enum class PlotLabelSpec private constructor(fontSize: Double, bold: Boolean = false, monospaced: Boolean = false) : LabelSpec {
+enum class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean = false) : LabelSpec {
     PLOT_TITLE(Defaults.Common.Title.FONT_SIZE.toDouble(), true),
 
     AXIS_TICK(Plot.Axis.TICK_FONT_SIZE.toDouble()),

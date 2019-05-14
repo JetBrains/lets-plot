@@ -29,7 +29,7 @@ abstract class SvgGraphicsElement : SvgStylableElement() {
         return getAttribute(CLIP_PATH)
     }
 
-    enum class PointerEvents private constructor(private val myAttributeString: String) {
+    enum class PointerEvents(private val myAttributeString: String) {
         VISIBLE_PAINTED("visiblePainted"),
         VISIBLE_FILL("visibleFill"),
         VISIBLE_STROKE("visibleStroke"),
@@ -46,7 +46,7 @@ abstract class SvgGraphicsElement : SvgStylableElement() {
         }
     }
 
-    enum class Visibility private constructor(private val myAttrString: String) {
+    enum class Visibility(private val myAttrString: String) {
         VISIBLE("visible"),
         HIDDEN("hidden"),
         COLLAPSE("collapse"),

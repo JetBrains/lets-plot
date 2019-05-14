@@ -19,7 +19,7 @@ internal class VerticalAlignmentResolver(private val myVerticalSpace: DoubleRang
                 .preferredAlignment(preferredPlacement)
 
         for (matcher in PLACEMENT_MATCHERS) {
-            if (matcher.first!!.match(currentState)) {
+            if (matcher.first.match(currentState)) {
                 return matcher.second
             }
         }

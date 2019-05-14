@@ -22,7 +22,7 @@ object TestUtil {
     }
 
     private fun layerDataList(plotSpec: Map<String, Any>): List<Map<String, Any>> {
-        val layers = plotSpec[Option.Plot.LAYERS] as List<Map<String, Any>> ?: return emptyList()
+        val layers = plotSpec[Option.Plot.LAYERS] as List<Map<String, Any>>
 
         val result = ArrayList<Map<String, Any>>()
         for (layer in layers) {
