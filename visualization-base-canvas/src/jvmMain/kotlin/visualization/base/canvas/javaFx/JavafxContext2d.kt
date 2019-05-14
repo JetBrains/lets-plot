@@ -2,13 +2,12 @@ package jetbrains.datalore.visualization.base.canvas.javaFx
 
 import javafx.geometry.VPos
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.shape.FillRule
-import javafx.scene.shape.StrokeLineCap
-import javafx.scene.shape.StrokeLineJoin
+import javafx.scene.shape.*
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.scene.text.TextAlignment
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import jetbrains.datalore.visualization.base.canvas.Context2d
@@ -191,11 +190,16 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.setLineDashes(*lineDash)
     }
 
-    override fun measureText(s: String): Double {
-        val text = Text(s)
-        val font = myContext2d.font
-        text.font = font
-        return text.layoutBounds.width
+    override fun measureText(str: String, font: String): DoubleVector {
+        val text = Text(str)
+        text.font = convertCssFont(font)
+        val tb = text.boundsInLocal
+        val stencil = Rectangle(tb.minX, tb.minY, tb.width, tb.height)
+
+        val intersection = Shape.intersect(text, stencil)
+
+        val ib = intersection.boundsInLocal
+        return DoubleVector(ib.width, ib.height)
     }
 
     override fun clearRect(rect: DoubleRectangle) {

@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.base.canvas
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 
 interface Context2d {
@@ -37,7 +38,7 @@ interface Context2d {
     fun setTextAlign(align: TextAlign)
     fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
     fun setLineDash(lineDash: DoubleArray)
-    fun measureText(s: String): Double
+    fun measureText(str: String, font: String): DoubleVector
 
     enum class LineJoin {
         BEVEL, MITER, ROUND

@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.base.canvas
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import kotlin.math.ceil
 
@@ -14,8 +15,8 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         return myScale * value
     }
 
-    private fun descaled(value: Double): Double {
-        return value / myScale
+    private fun descaled(value: DoubleVector): DoubleVector {
+        return value.mul(1.0 / myScale)
     }
 
     private fun scaled(values: DoubleArray): DoubleArray {
@@ -161,8 +162,8 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.setLineDash(scaled(lineDash))
     }
 
-    override fun measureText(s: String): Double {
-        return descaled(myContext2d.measureText(s))
+    override fun measureText(str: String, font: String): DoubleVector {
+        return descaled(myContext2d.measureText(str, scaled(font)))
     }
 
     override fun clearRect(rect: DoubleRectangle) {

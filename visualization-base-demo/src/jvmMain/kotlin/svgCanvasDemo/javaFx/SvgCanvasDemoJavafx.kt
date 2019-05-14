@@ -24,7 +24,7 @@ class SvgCanvasDemoJavafx private constructor() {
     private fun show() {
         val canvasControl = AwtCanvasControl(JavafxGraphicsCanvasControlFactory(DEVICE_PIXEL_RATIO), SIZE)
 
-        SvgCanvasRenderer.draw(DemoModel.createModel(), canvasControl)
+        SvgCanvasRenderer(DemoModel.createModel(), canvasControl)
 
         AwtCanvasDemoUtil.showAwtCanvasControl("SvgCanvas JavaFX Demo", canvasControl)
     }

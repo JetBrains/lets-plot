@@ -1,16 +1,15 @@
 package jetbrains.datalore.visualization.base.canvas
 
-import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.AnimationEventHandler
 
 object CanvasControlUtil {
-    fun drawLater(canvasControl: CanvasControl, renderer: Runnable) {
+    fun drawLater(canvasControl: CanvasControl, renderer: () -> Unit) {
         val reg = arrayOf<Registration?>(null)
         reg[0] = setAnimationHandler(canvasControl, object : AnimationEventHandler {
             override fun onEvent(millisTime: Long): Boolean {
-                renderer.run()
+                renderer()
                 reg[0]!!.dispose()
                 return true
             }

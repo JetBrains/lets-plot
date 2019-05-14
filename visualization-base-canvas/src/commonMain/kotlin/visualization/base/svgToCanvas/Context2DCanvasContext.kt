@@ -126,7 +126,7 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
 
         drawNextElement(null, transform, fillColor, strokeColor, strokeWidth)
         myContext.setTextBaseline(ALPHABETIC)
-        myContext.setFont(extractStyleFont(style) ?: DEFAULT_FONT)
+        myContext.setFont(extractFont(style))
         if (strokeColor != NONE && strokeWidth > 0) {
             myContext.setGlobalAlpha(strokeOpacity)
             myContext.strokeText(text, x, y)
@@ -213,6 +213,10 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
                 Colors.isColorName(colorString) -> Colors.forName(colorString)
                 else -> Color.parseColor(colorString)
             }
+        }
+
+        internal fun extractFont(style: String?): String {
+            return extractStyleFont(style) ?: DEFAULT_FONT
         }
     }
 }

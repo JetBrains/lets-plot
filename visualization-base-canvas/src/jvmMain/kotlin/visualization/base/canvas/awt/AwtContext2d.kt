@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.base.canvas.awt
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvas.AwtSnapshot
@@ -161,7 +162,10 @@ internal class AwtContext2d(graphics2D: Graphics2D) : Context2d {
         throw IllegalStateException("Not implemented")
     }
 
-    override fun measureText(s: String): Double {
-        return current().font.getStringBounds(s, current().fontRenderContext).width
+    override fun measureText(str: String, font: String): DoubleVector {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+//        val rect = current().font.getStringBounds(str, current().fontRenderContext)
+//        return DoubleVector(rect.width, rect.height)
     }
 }

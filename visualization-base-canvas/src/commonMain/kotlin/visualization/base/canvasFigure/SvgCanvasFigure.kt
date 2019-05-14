@@ -22,7 +22,6 @@ class SvgCanvasFigure : CanvasFigure {
     }
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        SvgCanvasRenderer.draw(svgGElement, canvasControl)
-        return Registration.EMPTY
+        return Registration.from(SvgCanvasRenderer(svgGElement, canvasControl))
     }
 }
