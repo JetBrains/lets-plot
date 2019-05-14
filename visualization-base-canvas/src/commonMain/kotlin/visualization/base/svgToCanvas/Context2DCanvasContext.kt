@@ -92,7 +92,8 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
     }
 
     override fun drawText(x: Double, y: Double, text: String, style: String?, transform: String?,
-                          fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
+                          fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double,
+                          textAnchor: String?, textDy: String?) {
         drawNextElement(null, transform, fillColor, strokeColor, strokeWidth)
         myContext.setTextBaseline(ALPHABETIC)
         myContext.setFont(extractStyleFont(style) ?: DEFAULT_FONT)
@@ -101,8 +102,28 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
             myContext.strokeText(text, x, y)
         }
         myContext.setGlobalAlpha(fillOpacity)
+        myContext.setTextAlign(toTextAlign(textAnchor))
+        myContext.setTextBaseline(toTextBaseline(textDy))
         myContext.fillText(text, x, y)
         restore()
+    }
+
+    private fun toTextAlign(textAnchor: String?): Context2d.TextAlign {
+        return when (textAnchor) {
+            null -> Context2d.TextAlign.START
+            "middle" -> Context2d.TextAlign.CENTER
+            "end" -> Context2d.TextAlign.END
+            else -> Context2d.TextAlign.START
+        }
+    }
+
+    private fun toTextBaseline(textDy: String?): Context2d.TextBaseline {
+        return when (textDy) {
+            "0.7em" -> Context2d.TextBaseline.TOP
+            "0.35em" -> Context2d.TextBaseline.MIDDLE
+            null -> Context2d.TextBaseline.BOTTOM
+            else -> Context2d.TextBaseline.BOTTOM
+        }
     }
 
     private fun applyTransform(transforms: List<Result>) {

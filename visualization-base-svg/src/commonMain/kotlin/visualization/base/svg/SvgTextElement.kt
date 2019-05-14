@@ -10,6 +10,8 @@ import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.FILL_O
 import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.STROKE
 import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.STROKE_OPACITY
 import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.STROKE_WIDTH
+import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.TEXT_ANCHOR
+import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.TEXT_DY
 import jetbrains.datalore.visualization.base.svg.SvgTransformable.Companion.TRANSFORM
 
 class SvgTextElement() : SvgGraphicsElement(), SvgTransformable, SvgTextContent {
@@ -105,6 +107,14 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable, SvgTextContent 
 
     override fun strokeWidth(): Property<Double?> {
         return getAttribute(STROKE_WIDTH)
+    }
+
+    override fun textAnchor(): Property<String?> {
+        return getAttribute(TEXT_ANCHOR)
+    }
+
+    override fun textDy(): Property<String?> {
+        return getAttribute(TEXT_DY)
     }
 
     override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {

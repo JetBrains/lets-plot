@@ -18,5 +18,6 @@ interface CanvasContext {
                  fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double)
 
     fun drawText(x: Double, y: Double, text: String, style: String?, transform: String?,
-                 fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double)
+                 fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double,
+                 textAnchor: String?, textDy: String?)
 }

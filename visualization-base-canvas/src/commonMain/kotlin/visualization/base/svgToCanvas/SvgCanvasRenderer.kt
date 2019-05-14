@@ -110,7 +110,9 @@ object SvgCanvasRenderer {
                     oneIfNull(el.fillOpacity()),
                     stringOrNull(el.stroke()),
                     oneIfNull(el.strokeOpacity()),
-                    zeroIfNull(el.strokeWidth())
+                    zeroIfNull(el.strokeWidth()),
+                    stringOrNull(el.textAnchor()),
+                    stringOrNull(el.textDy())
             )
             else -> println("Unknown svg-element with name: " + el.elementName)
 //            else -> throw IllegalArgumentException("Unknown element with name: " + el.elementName)

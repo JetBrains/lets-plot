@@ -8,6 +8,8 @@ import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.FILL_O
 import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.STROKE
 import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.STROKE_OPACITY
 import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.STROKE_WIDTH
+import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.TEXT_ANCHOR
+import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.TEXT_DY
 
 class SvgTSpanElement() : SvgElement(), SvgTextContent {
 
@@ -76,5 +78,13 @@ class SvgTSpanElement() : SvgElement(), SvgTextContent {
 
     override fun strokeWidth(): Property<Double?> {
         return getAttribute(STROKE_WIDTH)
+    }
+
+    override fun textAnchor(): Property<String?> {
+        return getAttribute(TEXT_ANCHOR)
+    }
+
+    override fun textDy(): Property<String?> {
+        return getAttribute(TEXT_DY)
     }
 }

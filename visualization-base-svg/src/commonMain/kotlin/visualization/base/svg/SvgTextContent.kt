@@ -12,6 +12,8 @@ interface SvgTextContent {
         val STROKE: SvgAttributeSpec<SvgColor> = SvgAttributeSpec.createSpec("stroke")
         val STROKE_OPACITY: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("stroke-opacity")
         val STROKE_WIDTH: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("stroke-width")
+        val TEXT_ANCHOR: SvgAttributeSpec<String> = SvgAttributeSpec.createSpec(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE)
+        val TEXT_DY: SvgAttributeSpec<String> = SvgAttributeSpec.createSpec(SvgConstants.SVG_TEXT_DY_ATTRIBUTE)
     }
 
     val computedTextLength: Double
@@ -29,4 +31,8 @@ interface SvgTextContent {
     fun strokeOpacity(): Property<Double?>
 
     fun strokeWidth(): Property<Double?>
+
+    fun textAnchor(): Property<String?>
+
+    fun textDy(): Property<String?>
 }
