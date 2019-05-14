@@ -138,16 +138,17 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
             null -> Context2d.TextAlign.START
             "middle" -> Context2d.TextAlign.CENTER
             "end" -> Context2d.TextAlign.END
-            else -> Context2d.TextAlign.START
+            else -> throw IllegalArgumentException("Unsupported 'text-anchor' value $textAnchor")
         }
     }
 
     private fun toTextBaseline(textDy: String?): Context2d.TextBaseline {
         return when (textDy) {
+            "1.4em" -> Context2d.TextBaseline.TOP
             "0.7em" -> Context2d.TextBaseline.TOP
             "0.35em" -> Context2d.TextBaseline.MIDDLE
             null -> Context2d.TextBaseline.BOTTOM
-            else -> Context2d.TextBaseline.BOTTOM
+            else -> throw IllegalArgumentException("Unsupported 'dy' value $textDy")
         }
     }
 

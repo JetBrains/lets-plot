@@ -44,7 +44,7 @@ object SvgCanvasRenderer {
     }
 
     private fun drawNode(node: SvgNode, context: CanvasContext) {
-        println("Unknown svg-node with class: " + node::class)
+//        println("Unknown svg-node with class: " + node::class)
     }
 
     private fun drawElement(el: SvgElement, context: CanvasContext) {
@@ -85,7 +85,7 @@ object SvgCanvasRenderer {
                     getDashArray(el),
                     stringOrNull(el.transform()),
                     stringOrNull(el.fill()),
-                    firstNotNull(1.0, el.fillOpacity(), el.opacity()),
+                    oneIfNull(el.fillOpacity()),
                     stringOrNull(el.stroke()),
                     oneIfNull(el.strokeOpacity()),
                     zeroIfNull(el.strokeWidth())

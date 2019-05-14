@@ -50,7 +50,7 @@ internal class TooltipFrame : SvgComponent() {
             val tspan = SvgTSpanElement()
             tspan.setText(line)
             tspan.x().set(H_PADDING)
-            tspan.setAttribute("dy", Tooltip.LINE_HEIGHT_CSS)
+            tspan.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, Tooltip.LINE_HEIGHT_CSS)
             tspan.setAttribute("font-size", fontSize.toString())
             tspan.fillColor().set(textColor)
 
