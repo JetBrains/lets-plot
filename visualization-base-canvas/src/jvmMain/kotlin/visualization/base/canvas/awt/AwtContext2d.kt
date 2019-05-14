@@ -1,13 +1,13 @@
 package jetbrains.datalore.visualization.base.canvas.awt
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvas.AwtSnapshot
-
-import java.awt.Color
 import java.awt.Graphics2D
-import java.util.Stack
+import java.util.*
+import java.awt.Color as AwtColor
 
 internal class AwtContext2d(graphics2D: Graphics2D) : Context2d {
     private val myStack = Stack<Graphics2D>()
@@ -22,7 +22,7 @@ internal class AwtContext2d(graphics2D: Graphics2D) : Context2d {
 
     override fun clearRect(rect: DoubleRectangle) {
         save()
-        current().background = Color(128, 10, 250, 0)
+        current().background = AwtColor(128, 10, 250, 0)
         current().clearRect(rect.origin.x.toInt(), rect.origin.y.toInt(), rect.dimension.x.toInt(), rect.dimension.y.toInt())
         restore()
     }
@@ -81,12 +81,12 @@ internal class AwtContext2d(graphics2D: Graphics2D) : Context2d {
         myStack.pop()
     }
 
-    override fun setFillStyle(fillStyleColor: String) {
-        current().color = Color.decode(fillStyleColor)
+    override fun setFillColor(color: Color?) {
+        current().color = if (color != null) AwtColor.decode(color.toHexColor()) else null
     }
 
-    override fun setStrokeStyle(strokeStyleColor: String?) {
-        current().color = Color.decode(strokeStyleColor)
+    override fun setStrokeColor(color: Color?) {
+        current().color = if (color != null) AwtColor.decode(color.toHexColor()) else null
     }
 
     override fun setGlobalAlpha(alpha: Double) {

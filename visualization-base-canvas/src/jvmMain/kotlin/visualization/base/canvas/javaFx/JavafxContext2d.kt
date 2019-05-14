@@ -2,7 +2,6 @@ package jetbrains.datalore.visualization.base.canvas.javaFx
 
 import javafx.geometry.VPos
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.paint.Color
 import javafx.scene.shape.FillRule
 import javafx.scene.shape.StrokeLineCap
 import javafx.scene.shape.StrokeLineJoin
@@ -11,9 +10,11 @@ import javafx.scene.text.Text
 import javafx.scene.text.TextAlignment
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.CssFontParser
+import javafx.scene.paint.Color as JavafxColor
 
 internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Context2d {
     private fun convertLineJoin(lineJoin: Context2d.LineJoin): StrokeLineJoin {
@@ -59,10 +60,6 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         }
 
         throw IllegalStateException("Unknown TextAlign value: $align")
-    }
-
-    private fun convertCssColor(colorString: String?): Color? {
-        return if (colorString == null || "none" == colorString) null else Color.valueOf(colorString)
     }
 
     private fun convertCssFont(fontString: String): Font {
@@ -123,12 +120,12 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.restore()
     }
 
-    override fun setFillStyle(fillStyleColor: String) {
-        myContext2d.fill = convertCssColor(fillStyleColor)
+    override fun setFillColor(color: Color?) {
+        myContext2d.fill = if (color != null) JavafxColor.valueOf(color.toHexColor()) else null
     }
 
-    override fun setStrokeStyle(strokeStyleColor: String?) {
-        myContext2d.stroke = convertCssColor(strokeStyleColor)
+    override fun setStrokeColor(color: Color?) {
+        myContext2d.stroke = if (color != null) JavafxColor.valueOf(color.toHexColor()) else null
     }
 
     override fun setGlobalAlpha(alpha: Double) {

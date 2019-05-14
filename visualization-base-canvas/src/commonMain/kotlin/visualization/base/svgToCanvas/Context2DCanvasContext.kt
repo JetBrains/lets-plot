@@ -1,5 +1,7 @@
 package jetbrains.datalore.visualization.base.svgToCanvas
 
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.Context2d.LineJoin.BEVEL
 import jetbrains.datalore.visualization.base.canvas.Context2d.TextBaseline.ALPHABETIC
@@ -31,11 +33,23 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
         }
     }
 
-    private fun drawNextElement(lineDash: DoubleArray?, transform: String?, fillColor: String?,
-                                strokeColor: String?, strokeWidth: Double) {
+    private fun parseColorString(colorString: String?): Color? {
+        return if (colorString == null || "none" == colorString)
+            null
+        else if (colorString.startsWith('#')) {
+            Color.parseHex(colorString)
+        } else if (Colors.isColorName(colorString)) {
+            Colors.forName(colorString)
+        } else {
+            Color.parseColor(colorString)
+        }
+    }
+
+    private fun drawNextElement(lineDash: DoubleArray?, transform: String?, fillColor: Color?,
+                                strokeColor: Color?, strokeWidth: Double) {
         myContext.save()
-        if (fillColor != null) myContext.setFillStyle(fillColor)
-        myContext.setStrokeStyle(strokeColor)
+        myContext.setFillColor(fillColor)
+        myContext.setStrokeColor(strokeColor)
         myContext.setLineWidth(strokeWidth)
         if (lineDash != null) {
             myContext.setLineDash(lineDash)
@@ -47,6 +61,8 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
 
     override fun drawCircle(cx: Double, cy: Double, r: Double, lineDash: DoubleArray?, transform: String?,
                             fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
+        val fillColor = parseColorString(fillColor)
+        val strokeColor = parseColorString(strokeColor)
         drawNextElement(lineDash, transform, fillColor, strokeColor, strokeWidth)
         myContext.beginPath()
         myContext.arc(cx, cy, r, 0.0, 2 * PI)
@@ -58,6 +74,7 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
 
     override fun drawLine(x1: Double, y1: Double, x2: Double, y2: Double, lineDash: DoubleArray?, transform: String?,
                           strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
+        val strokeColor = parseColorString(strokeColor)
         drawNextElement(lineDash, transform, null, strokeColor, strokeWidth)
         myContext.setGlobalAlpha(strokeOpacity)
         myContext.beginPath()
@@ -69,9 +86,13 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
 
     override fun drawRect(x: Double, y: Double, width: Double, height: Double, lineDash: DoubleArray?, transform: String?,
                           fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
+        val fillColor = parseColorString(fillColor)
+        val strokeColor = parseColorString(strokeColor)
         drawNextElement(lineDash, transform, fillColor, strokeColor, strokeWidth)
-        myContext.setGlobalAlpha(fillOpacity)
-        myContext.fillRect(x, y, width, height)
+        if (fillColor != null) {
+            myContext.setGlobalAlpha(fillOpacity)
+            myContext.fillRect(x, y, width, height)
+        }
         if (strokeColor != null) {
             myContext.setGlobalAlpha(strokeOpacity)
             myContext.strokeRect(x, y, width, height)
@@ -81,6 +102,8 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
 
     override fun drawPath(d: String?, lineDash: DoubleArray?, transform: String?,
                           fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
+        val fillColor = parseColorString(fillColor)
+        val strokeColor = parseColorString(strokeColor)
         drawNextElement(lineDash, transform, fillColor, strokeColor, strokeWidth)
         myContext.setLineJoin(BEVEL)
         myContext.beginPath()
@@ -94,6 +117,8 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
     override fun drawText(x: Double, y: Double, text: String, style: String?, transform: String?,
                           fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double,
                           textAnchor: String?, textDy: String?) {
+        val fillColor = parseColorString(fillColor)
+        val strokeColor = parseColorString(strokeColor)
         drawNextElement(null, transform, fillColor, strokeColor, strokeWidth)
         myContext.setTextBaseline(ALPHABETIC)
         myContext.setFont(extractStyleFont(style) ?: DEFAULT_FONT)
