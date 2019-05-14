@@ -125,7 +125,7 @@ class Color @JvmOverloads constructor(
         private fun findNext(s: String, what: String, from: Int): Int {
             val result = s.indexOf(what, from)
             if (result == -1) {
-                throw IllegalArgumentException()
+                throw IllegalArgumentException("text=$s what=$what from=$from")
             }
             return result
         }

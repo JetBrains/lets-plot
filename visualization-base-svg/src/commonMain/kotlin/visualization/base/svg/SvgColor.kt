@@ -167,16 +167,16 @@ object SvgColors : SvgColor {
         } else SvgColorRgb(color.red, color.green, color.blue)
     }
 
-    private class SvgColorRgb internal constructor(private val myR: Int, private val myG: Int, private val myB: Int) : SvgColor {
+    private class SvgColorRgb(private val myR: Int, private val myG: Int, private val myB: Int) : SvgColor {
 
         override fun toString(): String {
             return "rgb($myR,$myG,$myB)"
         }
     }
 
-    class SvgColorKeyword internal constructor(private val myLiteral: String) : SvgColor {
+    class SvgColorKeyword internal constructor(private val literal: String) : SvgColor {
         override fun toString(): String {
-            return myLiteral
+            return literal
         }
     }
 }

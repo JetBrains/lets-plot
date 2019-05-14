@@ -33,18 +33,6 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
         }
     }
 
-    private fun parseColorString(colorString: String?): Color? {
-        return if (colorString == null || "none" == colorString)
-            null
-        else if (colorString.startsWith('#')) {
-            Color.parseHex(colorString)
-        } else if (Colors.isColorName(colorString)) {
-            Colors.forName(colorString)
-        } else {
-            Color.parseColor(colorString)
-        }
-    }
-
     private fun drawNextElement(lineDash: DoubleArray?, transform: String?, fillColor: Color?,
                                 strokeColor: Color?, strokeWidth: Double) {
         myContext.save()
@@ -117,8 +105,11 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
     override fun drawText(x: Double, y: Double, text: String, style: String?, transform: String?,
                           fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double,
                           textAnchor: String?, textDy: String?) {
+        @Suppress("NAME_SHADOWING")
         val fillColor = parseColorString(fillColor)
+        @Suppress("NAME_SHADOWING")
         val strokeColor = parseColorString(strokeColor)
+
         drawNextElement(null, transform, fillColor, strokeColor, strokeWidth)
         myContext.setTextBaseline(ALPHABETIC)
         myContext.setFont(extractStyleFont(style) ?: DEFAULT_FONT)
@@ -192,5 +183,17 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
         private const val MATRIX_22 = 3
         private const val MATRIX_DX = 4
         private const val MATRIX_DY = 5
+
+        internal fun parseColorString(colorString: String?): Color? {
+            return if (colorString == null || "none" == colorString)
+                null
+            else if (colorString.startsWith('#')) {
+                Color.parseHex(colorString)
+            } else if (Colors.isColorName(colorString)) {
+                Colors.forName(colorString)
+            } else {
+                Color.parseColor(colorString)
+            }
+        }
     }
 }
