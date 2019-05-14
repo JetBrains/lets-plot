@@ -1,4 +1,4 @@
-package visualization.base.svgToCanvas
+package jetbrains.datalore.visualization.base.svgToCanvas
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgColors.CORAL
