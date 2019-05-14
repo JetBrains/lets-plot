@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.plotDemo.SwingDemoUtil
+import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.component.TextLabelSizeDemo
 
 class TextLabelSizeDemoAwt : TextLabelSizeDemo() {
@@ -15,6 +15,6 @@ class TextLabelSizeDemoAwt : TextLabelSizeDemo() {
     private fun show() {
         val demoModels = listOf(createModel())
         val svgRoots = createSvgRoots(demoModels)
-        SwingDemoUtil.show(demoComponentSize, svgRoots)
+        SwingDemoFrame.showSvg(svgRoots, demoComponentSize, "Text label size and style")
     }
 }

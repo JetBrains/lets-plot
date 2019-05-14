@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.plotDemo.SwingDemoUtil
+import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.component.ScatterDemo
 
 class ScatterDemoAwt : ScatterDemo() {
@@ -8,7 +8,7 @@ class ScatterDemoAwt : ScatterDemo() {
     private fun show() {
         val demoModels = createModels()
         val svgRoots = createSvgRoots(demoModels)
-        SwingDemoUtil.show(demoComponentSize, svgRoots)
+        SwingDemoFrame.showSvg(svgRoots, demoComponentSize, "Point geom with scale breaks and limits")
     }
 
     companion object {
