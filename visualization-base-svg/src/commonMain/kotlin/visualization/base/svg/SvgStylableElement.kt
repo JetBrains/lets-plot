@@ -68,12 +68,12 @@ abstract class SvgStylableElement : SvgElement() {
     }
 
     fun toggleClass(cl: String): Boolean {
-        if (hasClass(cl)) {
+        return if (hasClass(cl)) {
             removeClass(cl)
-            return false
+            false
         } else {
             addClass(cl)
-            return true
+            true
         }
     }
 
@@ -92,7 +92,7 @@ abstract class SvgStylableElement : SvgElement() {
     private fun buildClassString(classes: List<String>): String {
         val builder = StringBuilder()
         for (className in classes) {
-            if (builder.length > 0) {
+            if (builder.isNotEmpty()) {
                 builder.append(' ')
             }
             builder.append(className)

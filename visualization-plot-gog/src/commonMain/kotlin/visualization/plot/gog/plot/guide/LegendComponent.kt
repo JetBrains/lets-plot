@@ -4,7 +4,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.*
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
 
@@ -61,7 +60,7 @@ class LegendComponent(legendSpec: LegendComponentSpec) : LegendBox(legendSpec) {
 
         // key
         val keyElement = legendBreak.createKeyElement(innerSize)
-        val keyElementTransform = SvgComponent.buildTransform(DoubleVector(1.0, 1.0), 0.0)
+        val keyElementTransform = buildTransform(DoubleVector(1.0, 1.0), 0.0)
         keyElement.transform().set(keyElementTransform)
 
         g.children().add(keyElement)

@@ -17,6 +17,6 @@ interface CanvasContext {
     fun drawPath(d: String?, lineDash: DoubleArray?, transform: String?,
                  fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double)
 
-    fun drawText(x: Double, y: Double, text: String, style: String, transform: String?,
-                 fillColor: String, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double)
+    fun drawText(x: Double, y: Double, text: String, style: String?, transform: String?,
+                 fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double)
 }

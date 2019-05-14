@@ -1,14 +1,13 @@
 package jetbrains.datalore.visualization.base.svgToCanvas
 
 import jetbrains.datalore.visualization.base.canvas.Context2d
-import jetbrains.datalore.visualization.base.svg.slim.CanvasContext
-import jetbrains.datalore.visualization.base.svgToCanvas.ParsingUtil.Result
-
 import jetbrains.datalore.visualization.base.canvas.Context2d.LineJoin.BEVEL
 import jetbrains.datalore.visualization.base.canvas.Context2d.TextBaseline.ALPHABETIC
 import jetbrains.datalore.visualization.base.canvas.CssStyleUtil.extractStyleFont
 import jetbrains.datalore.visualization.base.canvas.svgToCanvas.toRadians
 import jetbrains.datalore.visualization.base.svg.SvgTransform
+import jetbrains.datalore.visualization.base.svg.slim.CanvasContext
+import jetbrains.datalore.visualization.base.svgToCanvas.ParsingUtil.Result
 import kotlin.math.PI
 import kotlin.math.tan
 
@@ -85,19 +84,18 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
         drawNextElement(lineDash, transform, fillColor, strokeColor, strokeWidth)
         myContext.setLineJoin(BEVEL)
         myContext.beginPath()
-        PathProcessor.apply(d!!, myContext)
+        PathProcessor.apply(d, myContext)
         myContext.setGlobalAlpha(fillOpacity)
         myContext.fillEvenOdd()
         stroke(strokeColor != null, strokeOpacity)
         restore()
     }
 
-    override fun drawText(x: Double, y: Double, text: String, style: String, transform: String?,
-                          fillColor: String, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
+    override fun drawText(x: Double, y: Double, text: String, style: String?, transform: String?,
+                          fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
         drawNextElement(null, transform, fillColor, strokeColor, strokeWidth)
         myContext.setTextBaseline(ALPHABETIC)
-        val font = extractStyleFont(style)
-        myContext.setFont(if (font != null) font else DEFAULT_FONT)
+        myContext.setFont(extractStyleFont(style) ?: DEFAULT_FONT)
         if (strokeColor != null && strokeWidth > 0) {
             myContext.setGlobalAlpha(strokeOpacity)
             myContext.strokeText(text, x, y)

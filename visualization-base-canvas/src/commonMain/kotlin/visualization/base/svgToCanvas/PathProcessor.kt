@@ -170,7 +170,7 @@ internal class PathProcessor private constructor(private val myContext: Context2
     private const val ELLIPTICAL_ARC_SWEEP = 4
     private const val ELLIPTICAL_ARC_P = 5
 
-    fun apply(path: String, ctx: Context2d) {
+      fun apply(path: String?, ctx: Context2d) {
       val processor = PathProcessor(ctx)
       processor.applyPath(ParsingUtil.parsePath(path))
     }

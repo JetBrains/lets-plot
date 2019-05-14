@@ -5,7 +5,10 @@ object CssStyleUtil {
     private val FONT_ATTRIBUTE = Regex("font:(.+);")
     private const val FONT = 1
 
-    fun extractStyleFont(style: String): String? {
+    fun extractStyleFont(style: String?): String? {
+        if (style == null) {
+            return null;
+        }
         val matchResult = FONT_ATTRIBUTE.find(style)
         return matchResult?.groupValues?.get(FONT)?.trim()
     }

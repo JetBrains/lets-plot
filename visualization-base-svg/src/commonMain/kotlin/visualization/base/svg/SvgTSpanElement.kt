@@ -3,11 +3,11 @@ package jetbrains.datalore.visualization.base.svg
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.SvgShape.Companion.FILL
-import jetbrains.datalore.visualization.base.svg.SvgShape.Companion.FILL_OPACITY
-import jetbrains.datalore.visualization.base.svg.SvgShape.Companion.STROKE
-import jetbrains.datalore.visualization.base.svg.SvgShape.Companion.STROKE_OPACITY
-import jetbrains.datalore.visualization.base.svg.SvgShape.Companion.STROKE_WIDTH
+import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.FILL
+import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.FILL_OPACITY
+import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.STROKE
+import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.STROKE_OPACITY
+import jetbrains.datalore.visualization.base.svg.SvgTextContent.Companion.STROKE_WIDTH
 
 class SvgTSpanElement() : SvgElement(), SvgTextContent {
 

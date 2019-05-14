@@ -3,9 +3,7 @@ package jetbrains.datalore.visualization.gogDemo.shared
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.random.RandomGaussian
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
 import jetbrains.datalore.visualization.plot.gog.DemoAndTest
 import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext
@@ -14,7 +12,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.assemble.GeomContextBuilde
 import kotlin.random.Random
 
 object DemoUtil {
-    fun drawPlotOnCanvas(canvasControl: CanvasControl, viewSize: DoubleVector, plotSpec: MutableMap<String, Any>) {
+    fun createPlotSvg(viewSize: DoubleVector, plotSpec: MutableMap<String, Any>): SvgGElement {
         val plot = DemoAndTest.createPlot(plotSpec, false)
         val plotContainer = PlotContainer(plot, ValueProperty(viewSize))
 
@@ -24,7 +22,7 @@ object DemoUtil {
 
         val svgGElement = SvgGElement()
         svgGElement.children().add(svgRoot)
-        SvgCanvasRenderer.draw(svgGElement, canvasControl)
+        return svgGElement
     }
 
     fun gauss(count: Int, seed: Long, mean: Double, stdDeviance: Double): List<Double> {

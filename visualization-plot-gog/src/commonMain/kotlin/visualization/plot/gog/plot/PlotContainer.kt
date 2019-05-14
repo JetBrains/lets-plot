@@ -26,7 +26,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 import kotlin.math.max
 
 class PlotContainer(private val myPlot: Plot, private val myPreferredSize: ReadableProperty<DoubleVector>) {
-    val svg: SvgSvgElement
+    val svg: SvgSvgElement = SvgSvgElement()
     private val myLaidOutSize: Property<DoubleVector>
     private val myDecorationsPanel = SvgGElement()
     private val myMouseMoveRect = SvgRectElement()
@@ -41,9 +41,7 @@ class PlotContainer(private val myPlot: Plot, private val myPreferredSize: Reada
         get() = myPlot.mouseEventPeer
 
     init {
-        val svg = SvgSvgElement()
         svg.addClass(Style.PLOT_CONTAINER)
-        this.svg = svg
 
         //this rect blocks mouse_left events while cursor moves above svg tree elements (in GWT only)
         myMouseMoveRect.addClass(Style.PLOT_GLASS_PANE)
@@ -68,10 +66,9 @@ class PlotContainer(private val myPlot: Plot, private val myPreferredSize: Reada
         checkState(!myContentBuilt)
         myContentBuilt = true
 
-        val svg = svg
         svg.setStyle(object : SvgCssResource {
             override fun css(): String {
-                return Style.css;
+                return Style.css
             }
         })
 

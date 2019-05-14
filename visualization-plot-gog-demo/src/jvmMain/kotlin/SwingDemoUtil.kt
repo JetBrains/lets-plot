@@ -4,7 +4,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxGraphicsCanvasControlFactory
-import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil.drawPlotOnCanvas
+import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
+import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -47,7 +48,8 @@ object SwingDemoUtil {
                 JavafxGraphicsCanvasControlFactory(2.0),
                 Vector(viewSize.x.toInt(), viewSize.y.toInt())
         )
-        drawPlotOnCanvas(canvasControl, viewSize, plotSpec)
+
+        SvgCanvasRenderer.draw(DemoUtil.createPlotSvg(viewSize, plotSpec), canvasControl)
         return canvasControl.component
     }
 }

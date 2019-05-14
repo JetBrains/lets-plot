@@ -33,7 +33,7 @@ internal object ParsingUtil {
         return parse(input, TRANSFORM_EXP)
     }
 
-    fun parsePath(input: String): List<Result> {
+    fun parsePath(input: String?): List<Result> {
         return parse(input, PATH_EXP)
     }
 

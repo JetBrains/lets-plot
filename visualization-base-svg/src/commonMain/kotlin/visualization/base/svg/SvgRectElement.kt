@@ -36,7 +36,7 @@ class SvgRectElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
 
 //    constructor(rect: Rectangle) : this(rect.origin.x, rect.origin.y, rect.dimension.x, rect.dimension.y) {}
 
-    constructor(rect: DoubleRectangle) : this(rect.origin.x, rect.origin.y, rect.dimension.x, rect.dimension.y) {}
+    constructor(rect: DoubleRectangle) : this(rect.origin.x, rect.origin.y, rect.dimension.x, rect.dimension.y)
 
     fun x(): Property<Double?> {
         return getAttribute(X)

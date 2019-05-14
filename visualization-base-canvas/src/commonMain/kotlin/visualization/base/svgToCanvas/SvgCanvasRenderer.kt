@@ -27,20 +27,33 @@ object SvgCanvasRenderer {
         }
     }
 
-    private fun draw(g: SvgGElement, context: CanvasContext) {
-        context.push(g.transform().get())
-        for (node in g.children()) {
-            when (node) {
-                is CanvasAware -> node.draw(context)
-                is SvgGElement -> draw(node, context)
-                is SvgElement -> draw(node, context)
-            }
+    private fun draw(root: SvgNode, context: CanvasContext) {
+        when (root) {
+            is CanvasAware -> root.draw(context)
+            is SvgElement -> drawElement(root, context)
+            else -> drawNode(root, context)
         }
-        context.restore()
+
+        for (node in root.children()) {
+            draw(node, context)
+        }
+
+        if (root is SvgGElement) {
+            context.restore()
+        }
     }
 
-    private fun draw(el: SvgElement, context: CanvasContext) {
+    private fun drawNode(node: SvgNode, context: CanvasContext) {
+        println("Unknown svg-node with class: " + node::class)
+    }
+
+    private fun drawElement(el: SvgElement, context: CanvasContext) {
         when (el) {
+            is SvgSvgElement -> Unit //TODO:
+            is SvgStyleElement -> Unit //TODO:
+            is SvgGElement -> context.push(
+                    el.transform().get()
+            )
             is SvgCircleElement -> context.drawCircle(
                     zeroIfNull(el.cx()),
                     zeroIfNull(el.cy()),
@@ -71,17 +84,17 @@ object SvgCanvasRenderer {
                     zeroIfNull(el.height()),
                     getDashArray(el),
                     stringOrNull(el.transform()),
-                    stringOrNull(el.fill())!!,
-                    oneIfNull(el.fillOpacity()),
+                    stringOrNull(el.fill()),
+                    firstNotNull(1.0, el.fillOpacity(), el.opacity()),
                     stringOrNull(el.stroke()),
                     oneIfNull(el.strokeOpacity()),
                     zeroIfNull(el.strokeWidth())
             )
             is SvgPathElement -> context.drawPath(
-                    stringOrNull(el.d())!!,
+                    stringOrNull(el.d()),
                     getDashArray(el),
                     stringOrNull(el.transform()),
-                    stringOrNull(el.fill())!!,
+                    stringOrNull(el.fill()),
                     oneIfNull(el.fillOpacity()),
                     stringOrNull(el.stroke()),
                     oneIfNull(el.strokeOpacity()),
@@ -91,15 +104,15 @@ object SvgCanvasRenderer {
                     zeroIfNull(el.x()),
                     zeroIfNull(el.y()),
                     getText(el),
-                    getStyle(el)!!,
+                    getStyle(el),
                     stringOrNull(el.transform()),
-                    stringOrNull(el.fill())!!,
+                    stringOrNull(el.fill()),
                     oneIfNull(el.fillOpacity()),
                     stringOrNull(el.stroke()),
                     oneIfNull(el.strokeOpacity()),
                     zeroIfNull(el.strokeWidth())
             )
-            else -> println("Unknown element with name: " + el.elementName)
+            else -> println("Unknown svg-element with name: " + el.elementName)
 //            else -> throw IllegalArgumentException("Unknown element with name: " + el.elementName)
         }
     }
@@ -121,7 +134,7 @@ object SvgCanvasRenderer {
 
     private fun getDashArray(element: SvgElement): DoubleArray? {
         val attr = element.getAttribute(SVG_STROKE_DASHARRAY_ATTRIBUTE).get() ?: return null
-        val arr = attr.toString().split(",".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
+        val arr = attr.toString().split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val dashes = DoubleArray(arr.size)
         for (i in arr.indices) {
             dashes[i] = arr[i].toDouble()
@@ -139,5 +152,15 @@ object SvgCanvasRenderer {
 
     private fun stringOrNull(p: Property<*>): String? {
         return if (p.get() == null) null else p.get().toString()
+    }
+
+    private fun <T> firstNotNull(defaultValue: T, vararg values: Property<T?>): T {
+        for (value in values) {
+            val v = value.get()
+            if (v != null) {
+                return v
+            }
+        }
+        return defaultValue
     }
 }

@@ -69,7 +69,7 @@ abstract class SvgElement : SvgNode() {
                 get() = "$this.$spec"
 
             override fun get(): ValueT? {
-                return myAttributes.get(spec)
+                return myAttributes[spec]
             }
 
             override fun set(value: ValueT?) {
@@ -157,7 +157,7 @@ abstract class SvgElement : SvgNode() {
 
         operator fun <ValueT> get(spec: SvgAttributeSpec<ValueT>): ValueT? {
             return if (myAttrs != null && myAttrs!!.containsKey(spec)) {
-                myAttrs!!.get(spec) as ValueT
+                myAttrs!![spec] as ValueT
             } else null
         }
 
@@ -166,13 +166,12 @@ abstract class SvgElement : SvgNode() {
                 myAttrs = ListMap()
             }
 
-            val oldValue: ValueT
-            if (value == null) {
+            val oldValue = if (value == null) {
                 val v = myAttrs!!.remove(spec) as ValueT
-                oldValue = v
+                v
             } else {
                 val v = myAttrs!!.put(spec, value) as ValueT
-                oldValue = v
+                v
             }
 
             if (value != oldValue) {

@@ -45,7 +45,7 @@ class TextLabel(text: String) : SvgComponent() {
     fun setVerticalAnchor(anchor: VerticalAnchor) {
         // replace "dominant-baseline" with "dy" because "dominant-baseline" is not supported by Batik
         //    myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
-        myText.setAttribute("dy", toDY(anchor))
+        myText.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
     }
 
     fun setFontSize(px: Double) {

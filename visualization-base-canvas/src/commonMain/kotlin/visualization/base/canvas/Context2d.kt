@@ -47,7 +47,6 @@ interface Context2d {
         BUTT, ROUND, SQUARE
     }
 
-
     enum class TextBaseline {
         ALPHABETIC, BOTTOM, HANGING, IDEOGRAPHIC, MIDDLE, TOP
     }
