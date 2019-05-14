@@ -132,11 +132,11 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
                 SvgTransform.SCALE -> myContext.scale(t.getParam(SCALE_X)!!, if (t.containsParam(SCALE_Y)) t.getParam(SCALE_Y)!! else t.getParam(SCALE_X)!!)
                 SvgTransform.SKEW_X -> myContext.transform(1.0, 0.0, tan(toRadians(t.getParam(SKEW_X_ANGLE)!!)), 1.0, 0.0, 0.0)
                 SvgTransform.SKEW_Y -> myContext.transform(1.0, tan(toRadians(t.getParam(SKEW_Y_ANGLE)!!)), 0.0, 1.0, 0.0, 0.0)
-                SvgTransform.ROTATE -> if (t.paramCount == 3) {
-                    myContext.translate(t.getParam(ROTATE_X)!!, t.getParam(ROTATE_Y)!!)
+                SvgTransform.ROTATE -> {
+                    if (t.paramCount == 3) {
+                        myContext.translate(t.getParam(ROTATE_X)!!, t.getParam(ROTATE_Y)!!)
+                    }
                     myContext.rotate(toRadians(t.getParam(ROTATE_ANGLE)!!))
-                } else {
-                    myContext.rotate(t.getParam(ROTATE_ANGLE)!!)
                 }
                 SvgTransform.TRANSLATE -> myContext.translate(t.getParam(TRANSLATE_X)!!, if (t.containsParam(TRANSLATE_Y)) t.getParam(TRANSLATE_Y)!! else 0.0)
                 SvgTransform.MATRIX -> myContext.transform(

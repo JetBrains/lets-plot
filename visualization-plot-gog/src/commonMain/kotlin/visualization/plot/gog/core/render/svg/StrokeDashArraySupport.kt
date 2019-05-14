@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.svg
 
+import jetbrains.datalore.visualization.base.svg.SvgConstants
 import jetbrains.datalore.visualization.base.svg.SvgElement
 
 /**
@@ -17,6 +18,6 @@ object StrokeDashArraySupport {
             }
             sb.append(length.toString())
         }
-        element.getAttribute("stroke-dasharray").set(sb.toString())
+        element.getAttribute(SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE).set(sb.toString())
     }
 }
