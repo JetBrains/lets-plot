@@ -10,7 +10,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 object SeriesUtil {
-    val TINY = 1e-50
+    const val TINY = 1e-50
 
     val REAL_NUMBER = { it: Double -> isFinite(it) }
 

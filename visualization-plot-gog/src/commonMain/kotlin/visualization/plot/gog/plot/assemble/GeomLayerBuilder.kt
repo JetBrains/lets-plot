@@ -27,15 +27,15 @@ import jetbrains.datalore.visualization.plot.gog.plot.scale.ScaleProvider
 class GeomLayerBuilder {
     private val myBindings = ArrayList<VarBinding>()
     private val myConstantByAes = TypedKeyHashMap()
-    private var myStat: Stat? = null
-    private var myPosProvider: PosProvider? = null
-    private var myGeomProvider: GeomProvider? = null
+    private lateinit var myStat: Stat
+    private lateinit var myPosProvider: PosProvider
+    private lateinit var myGeomProvider: GeomProvider
     private var myGroupingVarName: String? = null
     private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
 
     private var myDataPreprocessor: ((DataFrame) -> DataFrame)? = null
-    private var myLocatorLookupSpec: LookupSpec? = null
-    private var myTooltipAesSpecProvider: TooltipAesSpecProvider? = null
+    private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
+    private var myTooltipAesSpecProvider: TooltipAesSpecProvider = TooltipAesSpecProvider.NONE
 
     private var myIsLegendDisabled: Boolean = false
 
@@ -59,8 +59,8 @@ class GeomLayerBuilder {
         return this
     }
 
-    fun groupingVar(v: DataFrame.Variable?): GeomLayerBuilder {
-        myGroupingVarName = v?.name
+    fun groupingVar(v: DataFrame.Variable): GeomLayerBuilder {
+        myGroupingVarName = v.name
         return this
     }
 
@@ -95,6 +95,7 @@ class GeomLayerBuilder {
     }
 
     fun build(data: DataFrame): GeomLayer {
+        @Suppress("NAME_SHADOWING")
         var data = data
         if (myDataPreprocessor != null) {
             data = myDataPreprocessor!!(data)
@@ -105,7 +106,7 @@ class GeomLayerBuilder {
 
         // create missing bindings for 'stat' variables
         // and other adjustments in bindings.
-        val replacementBindings = GeomLayerBuilderUtil.rewireBindingsAfterStat(data, myStat!!, myBindings, TypedScaleProviderMap(myScaleProviderByAes))
+        val replacementBindings = GeomLayerBuilderUtil.rewireBindingsAfterStat(data, myStat, myBindings, TypedScaleProviderMap(myScaleProviderByAes))
 
         // add 'transform' variable for each 'stat' variable
         val bindingsToPut = ArrayList<VarBinding>()
@@ -125,50 +126,49 @@ class GeomLayerBuilder {
             replacementBindings[binding.aes] = binding
         }
 
-        val dataAccess = myGeomProvider!!.createDataAccess(data, replacementBindings)
+        val dataAccess = myGeomProvider.createDataAccess(data, replacementBindings)
         return MyGeomLayer(data,
-                myGeomProvider!!,
-                myPosProvider!!,
-                handledAes(), // layer handles
-                myGeomProvider!!.renders(), // layer renders
-                //groups,
+                myGeomProvider,
+                myPosProvider,
+                handledAes(),
+                myGeomProvider.renders(),
                 GroupingContext(data, myBindings, myGroupingVarName, handlesGroups()).groupMapper,
                 replacementBindings.values,
                 myConstantByAes,
                 dataAccess,
                 myLocatorLookupSpec,
-                if (myTooltipAesSpecProvider != null) myTooltipAesSpecProvider!!.createTooltipAesSpec(dataAccess) else null,
+                myTooltipAesSpecProvider.createTooltipAesSpec(dataAccess),
                 myIsLegendDisabled)
     }
 
     private fun handlesGroups(): Boolean {
-        return DataProcessing.groupsHandled(myGeomProvider!!, myPosProvider!!)
+        return DataProcessing.groupsHandled(myGeomProvider, myPosProvider)
     }
 
     private fun handledAes(): List<Aes<*>> {
-        return GeomLayerBuilderUtil.handledAes(myGeomProvider!!, myStat!!)
+        return GeomLayerBuilderUtil.handledAes(myGeomProvider, myStat)
     }
 
 
-    private class MyGeomLayer internal constructor(override val dataFrame: DataFrame,
-                                                   geomProvider: GeomProvider,
-                                                   private val myPosProvider: PosProvider,
-                                                   handledAes: List<Aes<*>>,
-                                                   renderedAes: List<Aes<*>>,
-                                                   override val group: (Int) -> Int,
-                                                   varBindings: Collection<VarBinding>,
-            // ToDo: use TypedKeyContainer ?
-                                                   constantByAes: TypedKeyHashMap,
-                                                   override val dataAccess: MappedDataAccess,
-                                                   override val locatorLookupSpec: LookupSpec?,
-                                                   override val tooltipAesSpec: TooltipAesSpec?,
-                                                   override val isLegendDisabled: Boolean) : GeomLayer {
+    private class MyGeomLayer(override val dataFrame: DataFrame,
+                              geomProvider: GeomProvider,
+                              private val myPosProvider: PosProvider,
+                              handledAes: List<Aes<*>>,
+                              renderedAes: List<Aes<*>>,
+                              override val group: (Int) -> Int,
+                              varBindings: Collection<VarBinding>,
+                              constantByAes: TypedKeyHashMap,
+                              override val dataAccess: MappedDataAccess,
+                              override val locatorLookupSpec: LookupSpec,
+                              override val tooltipAesSpec: TooltipAesSpec,
+                              override val isLegendDisabled: Boolean) : GeomLayer {
+
         override val geom: Geom = geomProvider.createGeom()
         override val geomKind: GeomKind = geomProvider.geomKind
         override val aestheticsDefaults: AestheticsDefaults
+
         private val myHandledAes: List<Aes<*>>
         private val myRenderedAes: List<Aes<*>>
-        // ToDo: use TypedKeyContainer ?
         private val myConstantByAes: TypedKeyHashMap
         private val myVarBindingsByAes = HashMap<Aes<*>, VarBinding>()
 
@@ -246,18 +246,23 @@ class GeomLayerBuilder {
         fun demoAndTest(): GeomLayerBuilder {
             val builder = GeomLayerBuilder()
             builder.myDataPreprocessor = { data ->
-                val _data = DataProcessing.transformOriginals(data, builder.myBindings)
-                if (builder.myStat === Stats.IDENTITY) {
-                    _data
-                } else {
-                    val statCtx = SimpleStatContext(_data)
-                    val groupingContext = GroupingContext(_data, builder.myBindings, builder.myGroupingVarName, true)
+                val transformedData = DataProcessing.transformOriginals(data, builder.myBindings)
+                when (val stat = builder.myStat) {
+                    Stats.IDENTITY -> transformedData
+                    else -> {
+                        val statCtx = SimpleStatContext(transformedData)
+                        val groupingContext = GroupingContext(transformedData, builder.myBindings, builder.myGroupingVarName, true)
+                        val dataAndGroupingContext = DataProcessing.buildStatData(
+                                transformedData,
+                                stat,
+                                builder.myBindings,
+                                groupingContext, null, null, statCtx)
 
-                    val dataAndGroupingContext = DataProcessing.buildStatData(_data,
-                            builder.myStat!!, builder.myBindings, groupingContext, null, null, statCtx)
-                    dataAndGroupingContext.data
+                        dataAndGroupingContext.data
+                    }
                 }
             }
+
             return builder
         }
     }

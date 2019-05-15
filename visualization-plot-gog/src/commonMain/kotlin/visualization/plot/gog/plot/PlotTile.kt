@@ -234,8 +234,8 @@ internal class PlotTile(layers: List<GeomLayer>,
 
             val targetController = GeomTargetController(
                     layer.geomKind,
-                    layer.locatorLookupSpec!!,
-                    layer.tooltipAesSpec!!
+                    layer.locatorLookupSpec,
+                    layer.tooltipAesSpec
             )
             myTargetLocators.add(targetController)
 

@@ -31,9 +31,9 @@ interface GeomLayer {
 
     val isLegendDisabled: Boolean
 
-    val locatorLookupSpec: LookupSpec?
+    val locatorLookupSpec: LookupSpec
 
-    val tooltipAesSpec: TooltipAesSpec?
+    val tooltipAesSpec: TooltipAesSpec
 
     fun handledAes(): List<Aes<*>>
 

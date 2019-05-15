@@ -9,22 +9,14 @@ import jetbrains.datalore.visualization.plot.gog.plot.event3.TooltipAesSpecProvi
 
 class GeomTargetInteraction internal constructor(builder: GeomInteractionBuilder) : TooltipAesSpecProvider {
 
-    private val myLocatorLookupSpace: LookupSpace
-    private val myLocatorLookupStrategy: LookupStrategy
-    private val myDisplayableAes: List<Aes<*>>
-    private val myAxisTooltipEnabled: Boolean
-    private val myAxisAes: List<Aes<*>>
+    private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace!!
+    private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy!!
+    private val myDisplayableAes: List<Aes<*>> = builder.displayableAes
+    private val myAxisTooltipEnabled: Boolean = builder.isAxisTooltipEnabled
+    private val myAxisAes: List<Aes<*>> = builder.axisAes!!
 
     val tooltipAesSpecProvider: TooltipAesSpecProvider
         get() = this
-
-    init {
-        myLocatorLookupSpace = builder.locatorLookupSpace!!
-        myLocatorLookupStrategy = builder.locatorLookupStrategy!!
-        myDisplayableAes = builder.displayableAes
-        myAxisTooltipEnabled = builder.isAxisTooltipEnabled
-        myAxisAes = builder.axisAes!!
-    }
 
     fun createLocatorLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
@@ -34,7 +26,13 @@ class GeomTargetInteraction internal constructor(builder: GeomInteractionBuilder
         return TooltipAesSpec.create(myDisplayableAes, if (myAxisTooltipEnabled) myAxisAes else emptyList(), dataAccess)
     }
 
-    open class TooltipAesSpec private constructor(override val tooltipAes: List<Aes<*>>, override val axisAes: List<Aes<*>>, override val dataAccess: MappedDataAccess) : ContextualMapping {
+    // `open` for Mockito tests
+    // ToDo: private implementation
+    open class TooltipAesSpec private constructor(
+            override val tooltipAes: List<Aes<*>>,
+            override val axisAes: List<Aes<*>>,
+            override val dataAccess: MappedDataAccess) : ContextualMapping {
+
         companion object {
             fun create(displayableAes: List<Aes<*>>, axisAes: List<Aes<*>>, dataAccess: MappedDataAccess): TooltipAesSpec {
                 val showInTip = ArrayList<Aes<*>>()
@@ -46,11 +44,15 @@ class GeomTargetInteraction internal constructor(builder: GeomInteractionBuilder
 
                 return TooltipAesSpec(showInTip, axisAes, dataAccess)
             }
+
+            // ToDo: TMP
+            fun empty(dataAccess: MappedDataAccess): TooltipAesSpec {
+                return TooltipAesSpec(emptyList(), emptyList(), dataAccess)
+            }
         }
     }
 
     companion object {
-
         internal val AXIS_TOOLTIP_COLOR = Color.GRAY
     }
 }

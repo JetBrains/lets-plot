@@ -16,6 +16,13 @@ interface GeomTargetLocator {
         HOVER, NEAREST, NONE
     }
 
+    class LookupSpec(val lookupSpace: LookupSpace, val lookupStrategy: LookupStrategy) {
+        companion object {
+            val NONE = LookupSpec(LookupSpace.NONE, LookupStrategy.NONE)
+        }
+    }
+
+    // `open` for Mockito test
     open class LocatedTargets(
             val geomTargets: List<GeomTarget>,
             private val myDistance: Double,
@@ -31,6 +38,4 @@ interface GeomTargetLocator {
         val isEmpty: Boolean
             get() = geomTargets.isEmpty()
     }
-
-    class LookupSpec(val lookupSpace: LookupSpace, val lookupStrategy: LookupStrategy)
 }

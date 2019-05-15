@@ -63,7 +63,7 @@ class BarPlotXAxisDemo private constructor(
 
         fun continuousX(): BarPlotXAxisDemo {
             return BarPlotXAxisDemo(
-                    SinCosLineData({ v -> v }, 6),
+                    SinCosLineData({ v -> v.toDouble() }, 6),
                     Scales.continuousDomain(" ", Aes.X))
         }
 
