@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.base.svgToCanvas
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.SvgColors
+import jetbrains.datalore.visualization.base.svg.SvgColors.SvgColorKeyword
 import jetbrains.datalore.visualization.base.svgToCanvas.Context2DCanvasContext.Companion.parseColorString
 import jetbrains.datalore.visualization.base.svgToCanvas.Context2DCanvasContext.Companion.parseSvgColorString
 import kotlin.test.Test
@@ -27,8 +27,8 @@ class Context2DCanvasContextTest {
         assertEquals(Color.GRAY.toCssColor(), parseSvgColorString(Color.GRAY.toHexColor()).toString())
         assertEquals(Color.GRAY.toCssColor(), parseSvgColorString(Color.GRAY.toCssColor()).toString())
 
-        assertEquals(SvgColors.CORAL, parseSvgColorString(SvgColors.CORAL.toString()))
-        assertEquals(SvgColors.NONE, parseSvgColorString(SvgColors.NONE.toString()))
-        assertEquals(SvgColors.NONE, parseSvgColorString(null))
+        assertEquals(SvgColorKeyword.CORAL, parseSvgColorString(SvgColorKeyword.CORAL.toString()))
+        assertEquals(SvgColorKeyword.NONE, parseSvgColorString(SvgColorKeyword.NONE.toString()))
+        assertEquals(SvgColorKeyword.NONE, parseSvgColorString(null))
     }
 }

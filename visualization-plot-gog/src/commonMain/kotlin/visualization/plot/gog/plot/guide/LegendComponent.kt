@@ -2,7 +2,11 @@ package jetbrains.datalore.visualization.plot.gog.plot.guide
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.svg.*
+import jetbrains.datalore.visualization.base.svg.SvgColors.SvgColorKeyword
+import jetbrains.datalore.visualization.base.svg.SvgElement
+import jetbrains.datalore.visualization.base.svg.SvgGElement
+import jetbrains.datalore.visualization.base.svg.SvgNode
+import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
@@ -69,7 +73,7 @@ class LegendComponent(legendSpec: LegendComponentSpec) : LegendBox(legendSpec) {
         val frame = SvgRectElement(0.0, 0.0, size.x, size.y)
         frame.strokeWidth().set(1.0)
         frame.strokeColor().set(backgroundFill)
-        frame.fill().set(SvgColors.NONE)
+        frame.fill().set(SvgColorKeyword.NONE)
 
         g.children().add(frame)
         return g

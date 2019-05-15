@@ -3,6 +3,7 @@ package jetbrains.datalore.visualization.plotDemo.model.component
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.*
+import jetbrains.datalore.visualization.base.svg.SvgColors.SvgColorKeyword
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel.HorizontalAnchor
@@ -80,11 +81,11 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
         private fun createAxis(dim: DoubleVector): SvgElement {
             val hAxis = SvgLineElement(0.0, dim.y / 2, dim.x, dim.y / 2)
-            hAxis.stroke().set(SvgColors.RED)
+            hAxis.stroke().set(SvgColorKeyword.RED)
             val vAxis = SvgLineElement(dim.x / 2, 0.0, dim.x / 2, dim.y)
-            vAxis.stroke().set(SvgColors.RED)
+            vAxis.stroke().set(SvgColorKeyword.RED)
             val c = SvgCircleElement(dim.x / 2, dim.y / 2, 2.0)
-            c.stroke().set(SvgColors.RED)
+            c.stroke().set(SvgColorKeyword.RED)
 
             val g = SvgGElement()
             g.children().add(hAxis)
