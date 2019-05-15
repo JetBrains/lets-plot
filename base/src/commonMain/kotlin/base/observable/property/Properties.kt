@@ -267,7 +267,7 @@ object Properties {
     fun <EventT, ValueT> selectEvent(
             prop: ReadableProperty<out ValueT>, selector: (ValueT) -> EventSource<EventT>): EventSource<EventT> {
         return object : EventSource<EventT> {
-            override fun addHandler(handler: EventHandler<in EventT>): Registration {
+            override fun addHandler(handler: EventHandler<EventT>): Registration {
                 val esReg = Value(Registration.EMPTY)
 
                 val update = object : Runnable {
@@ -353,7 +353,7 @@ object Properties {
                 return sToT(prop.get())
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out TargetT>>): Registration {
+            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out TargetT>>): Registration {
                 return prop.addHandler(object : EventHandler<PropertyChangeEvent<out SourceT>> {
                     override fun onEvent(event: PropertyChangeEvent<out SourceT>) {
                         val oldValue = sToT(event.oldValue)
@@ -648,7 +648,7 @@ object Properties {
                 return read.get()
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out ValueT>>): Registration {
+            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out ValueT>>): Registration {
                 return read.addHandler(handler)
             }
 
@@ -694,7 +694,7 @@ object Properties {
                 }
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out ItemT?>>): Registration {
+            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out ItemT?>>): Registration {
                 return coll.addListener(object : CollectionAdapter<ItemT>() {
                     override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                         if (coll.size != 1) {

@@ -6,14 +6,12 @@ import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.registration.Registration
 
 /**
- * Base class for creation of derived properties, i.e. properties whose values are calculated based on other values
+ * Base class for creation of derived properties,
+ * i.e. properties whose values are calculated based on other values
  */
-abstract class BaseDerivedProperty<ValueT>
-protected constructor(
-        private var myValue: ValueT) :
-        BaseReadableProperty<ValueT>() {
+abstract class BaseDerivedProperty<ValueT>(private var myValue: ValueT) : BaseReadableProperty<ValueT>() {
 
-    private var myHandlers: Listeners<EventHandler<in PropertyChangeEvent<out ValueT>>>? = null
+    private var myHandlers: Listeners<EventHandler<PropertyChangeEvent<out ValueT>>>? = null
 
     /**
      * Start listening to the objects which our value depend on
@@ -46,17 +44,17 @@ protected constructor(
         myValue = newValue
 
         if (myHandlers != null) {
-            myHandlers!!.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<out ValueT>>> {
-                override fun call(l: EventHandler<in PropertyChangeEvent<out ValueT>>) {
+            myHandlers!!.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<out ValueT>>> {
+                override fun call(l: EventHandler<PropertyChangeEvent<out ValueT>>) {
                     l.onEvent(event)
                 }
             })
         }
     }
 
-    override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out ValueT>>): Registration {
+    override fun addHandler(handler: EventHandler<PropertyChangeEvent<out ValueT>>): Registration {
         if (myHandlers == null) {
-            myHandlers = object : Listeners<EventHandler<in PropertyChangeEvent<out ValueT>>>() {
+            myHandlers = object : Listeners<EventHandler<PropertyChangeEvent<out ValueT>>>() {
                 override fun beforeFirstAdded() {
                     myValue = doGet()
                     doAddListeners()

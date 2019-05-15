@@ -6,10 +6,10 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 internal class SinCosLineData(xMapper: (Int) -> Any, size: Int) {
-    private val dataFrame: DataFrame
-    private val varX = DataFrame.Variable("X")
-    private val varY = DataFrame.Variable("Y")
-    private val varCat = DataFrame.Variable("cat")
+    val dataFrame: DataFrame
+    val varX = DataFrame.Variable("X")
+    val varY = DataFrame.Variable("Y")
+    val varCat = DataFrame.Variable("cat")
 
     init {
         val sinValues = ArrayList<Double>()

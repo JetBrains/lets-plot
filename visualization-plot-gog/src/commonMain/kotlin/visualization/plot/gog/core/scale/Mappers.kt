@@ -68,7 +68,7 @@ object Mappers {
         return linear(dataRange, outputRange, naValue)
     }
 
-    fun <T> discrete(outputValues: List<T>, defaultOutputValue: T): (Double?) -> T {
+    fun <T> discrete(outputValues: List<T?>, defaultOutputValue: T): (Double?) -> T? {
         return { DiscreteFun(outputValues, defaultOutputValue).apply(it) }
     }
 
@@ -85,8 +85,11 @@ object Mappers {
         return { QuantizedFun(quantizer, defaultOutputValue).apply(it) }
     }
 
-    private class DiscreteFun<T> internal constructor(private val myOutputValues: List<T>, private val myDefaultOutputValue: T) : Function<Double?, T> {
-        override fun apply(value: Double?): T {
+    private class DiscreteFun<T> (
+            private val myOutputValues: List<T?>,
+            private val myDefaultOutputValue: T) : Function<Double?, T?> {
+
+        override fun apply(value: Double?): T? {
             if (!SeriesUtil.isFinite(value)) {
                 return myDefaultOutputValue
             }

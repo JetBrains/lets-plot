@@ -13,7 +13,7 @@ object EventSources {
      */
     fun <EventT> of(vararg events: EventT): EventSource<EventT> {
         return object : EventSource<EventT> {
-            override fun addHandler(handler: EventHandler<in EventT>): Registration {
+            override fun addHandler(handler: EventHandler<EventT>): Registration {
                 for (e in events) {
                     handler.onEvent(e)
                 }
@@ -37,7 +37,7 @@ object EventSources {
 
     fun <EventT> filter(source: EventSource<EventT>, pred: Predicate<in EventT>): EventSource<EventT> {
         return object : EventSource<EventT> {
-            override fun addHandler(handler: EventHandler<in EventT>): Registration {
+            override fun addHandler(handler: EventHandler<EventT>): Registration {
                 return source.addHandler(object : EventHandler<EventT> {
                     override fun onEvent(event: EventT) {
                         if (pred(event)) {
@@ -56,7 +56,7 @@ object EventSources {
     fun <EventT, ItemT> selectList(
             list: ObservableList<ItemT>, selector: (ItemT?) -> EventSource<EventT>): EventSource<EventT> {
         return object : EventSource<EventT> {
-            override fun addHandler(handler: EventHandler<in EventT>): Registration {
+            override fun addHandler(handler: EventHandler<EventT>): Registration {
                 val itemRegs = ArrayList<Registration>()
                 for (item in list) {
                     itemRegs.add(selector(item).addHandler(handler))

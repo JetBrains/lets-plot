@@ -26,6 +26,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 import kotlin.math.max
 
 class PlotContainer(private val myPlot: Plot, private val myPreferredSize: ReadableProperty<DoubleVector>) {
+
     val svg: SvgSvgElement = SvgSvgElement()
     private val myLaidOutSize: Property<DoubleVector>
     private val myDecorationsPanel = SvgGElement()
@@ -93,7 +94,7 @@ class PlotContainer(private val myPlot: Plot, private val myPreferredSize: Reada
         myRegistrations.remove()
         myRegistrations = CompositeRegistration()
 
-        myContentBuilt = true
+        myContentBuilt = false
     }
 
     private fun reg(registration: Registration) {

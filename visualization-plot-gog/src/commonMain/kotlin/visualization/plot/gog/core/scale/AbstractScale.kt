@@ -13,7 +13,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
         protected set
 
     private val myTransform: Transform?
-    private var myBreaks: List<DomainT>? = null
+    private var myBreaks: List<DomainT?>? = null
     private var myLabels: List<String>? = null
 
     override val isContinuous: Boolean
@@ -22,7 +22,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
     override val isContinuousDomain: Boolean
         get() = false
 
-    override var breaks: List<DomainT>
+    override var breaks: List<DomainT?>
         get() {
             Preconditions.checkState(hasBreaks(), "No breaks defined for scale $name")
             return myBreaks!!
@@ -75,7 +75,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
         internal val myName: String = scale.name
         internal var myTransform: Transform?
 
-        internal var myBreaks: List<DomainT>?
+        internal var myBreaks: List<DomainT?>?
         internal var myLabels: List<String>?
         internal var myMapper: (Double?) -> T?
 

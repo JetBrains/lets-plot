@@ -12,11 +12,11 @@ import javax.swing.SwingUtilities
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-class WidthControl(initialWidth: Int) : JPanel() {
+class WidthControl(initialWidth: Double) : JPanel() {
 
-    private val value: Property<Int> = ValueProperty(initialWidth)
+    private val value: Property<Double> = ValueProperty(initialWidth)
 
-    val width: ReadableProperty<Int>
+    val width: ReadableProperty<Double>
         get() = value
 
     init {
@@ -27,10 +27,10 @@ class WidthControl(initialWidth: Int) : JPanel() {
         val textField = JTextField(initialWidth.toString(), 5)
 
         fastBackButton.addActionListener {
-            value.set(Math.max(0, value.get() - FAST_STEP))
+            value.set(Math.max(0.0, value.get() - FAST_STEP))
         }
         backButton.addActionListener {
-            value.set(Math.max(0, value.get() - STEP))
+            value.set(Math.max(0.0, value.get() - STEP))
         }
         fwdButton.addActionListener {
             value.set(value.get() + STEP)
@@ -46,7 +46,7 @@ class WidthControl(initialWidth: Int) : JPanel() {
                 SwingUtilities.invokeLater {
                     if (textField.text != lastText) {
                         lastText = textField.text
-                        value.set(lastText.toInt())
+                        value.set(lastText.toDouble())
                     }
                 }
             }
@@ -67,8 +67,8 @@ class WidthControl(initialWidth: Int) : JPanel() {
         add(fwdButton)
         add(fastFwdButton)
 
-        value.addHandler(object : EventHandler<PropertyChangeEvent<out Int>> {
-            override fun onEvent(event: PropertyChangeEvent<out Int>) {
+        value.addHandler(object : EventHandler<PropertyChangeEvent<out Double>> {
+            override fun onEvent(event: PropertyChangeEvent<out Double>) {
                 textField.text = event.newValue.toString()
             }
         })

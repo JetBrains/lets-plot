@@ -13,7 +13,7 @@ constructor(
         BaseReadableProperty<ValueT?>(),
         Property<ValueT?> {
 
-    private var myHandlers: Listeners<EventHandler<in PropertyChangeEvent<out ValueT?>>>? = null
+    private var myHandlers: Listeners<EventHandler<PropertyChangeEvent<out ValueT?>>>? = null
     private var myPendingEvent: PropertyChangeEvent<out ValueT?>? = null
 
     override val propExpr: String
@@ -36,8 +36,8 @@ constructor(
 
     fun flush() {
         if (myHandlers != null) {
-            myHandlers!!.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<out ValueT?>>> {
-                override fun call(l: EventHandler<in PropertyChangeEvent<out ValueT?>>) {
+            myHandlers!!.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<out ValueT?>>> {
+                override fun call(l: EventHandler<PropertyChangeEvent<out ValueT?>>) {
                     l.onEvent(myPendingEvent!!)
                 }
             })
@@ -45,9 +45,9 @@ constructor(
         myPendingEvent = null
     }
 
-    override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out ValueT?>>): Registration {
+    override fun addHandler(handler: EventHandler<PropertyChangeEvent<out ValueT?>>): Registration {
         if (myHandlers == null) {
-            myHandlers = object : Listeners<EventHandler<in PropertyChangeEvent<out ValueT?>>>() {
+            myHandlers = object : Listeners<EventHandler<PropertyChangeEvent<out ValueT?>>>() {
                 override fun afterLastRemoved() {
                     myHandlers = null
                 }

@@ -50,14 +50,14 @@ class SwingDemoFrame(
                     component.maximumSize = Dimension(size.x.toInt(), size.y.toInt())
                     component.alignmentX = Component.LEFT_ALIGNMENT
 
-                    add(Box.createRigidArea(Dimension(0, SPACE_V)))
+                    addVSpace(this)
                     add(component)
                 }
             }
 
         }
 
-        private fun createComponent(svgRoot: SvgSvgElement): JComponent {
+        fun createComponent(svgRoot: SvgSvgElement): JComponent {
             return object : SvgAwtComponent(svgRoot) {
                 override fun createMessageCallback(): SvgAwtHelper.MessageCallback {
                     return createDefaultMessageCallback()
@@ -65,5 +65,8 @@ class SwingDemoFrame(
             }
         }
 
+        fun addVSpace(container: JPanel) {
+            container.add(Box.createRigidArea(Dimension(0, SwingDemoFrame.SPACE_V)))
+        }
     }
 }

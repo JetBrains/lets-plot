@@ -12,7 +12,7 @@ open class ValueProperty<ValueT>(private var myValue: ValueT) :
         BaseReadableProperty<ValueT>(),
         Property<ValueT> {
 
-    private var myHandlers: Listeners<EventHandler<in PropertyChangeEvent<out ValueT>>>? = null
+    private var myHandlers: Listeners<EventHandler<PropertyChangeEvent<out ValueT>>>? = null
 
     override val propExpr: String
         get() = "valueProperty()"
@@ -32,17 +32,17 @@ open class ValueProperty<ValueT>(private var myValue: ValueT) :
     private fun fireEvents(oldValue: ValueT, newValue: ValueT) {
         if (myHandlers != null) {
             val event = PropertyChangeEvent(oldValue, newValue)
-            myHandlers!!.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<out ValueT>>> {
-                override fun call(l: EventHandler<in PropertyChangeEvent<out ValueT>>) {
+            myHandlers!!.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<out ValueT>>> {
+                override fun call(l: EventHandler<PropertyChangeEvent<out ValueT>>) {
                     l.onEvent(event)
                 }
             })
         }
     }
 
-    override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out ValueT>>): Registration {
+    override fun addHandler(handler: EventHandler<PropertyChangeEvent<out ValueT>>): Registration {
         if (myHandlers == null) {
-            myHandlers = object : Listeners<EventHandler<in PropertyChangeEvent<out ValueT>>>() {
+            myHandlers = object : Listeners<EventHandler<PropertyChangeEvent<out ValueT>>>() {
                 override fun afterLastRemoved() {
                     myHandlers = null
                 }

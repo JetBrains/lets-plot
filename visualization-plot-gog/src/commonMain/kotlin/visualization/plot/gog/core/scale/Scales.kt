@@ -21,15 +21,15 @@ object Scales {
     }
     */
 
-    fun <T> discreteDomain(name: String, domainValues: Collection<Any>): Scale2<T> {
+    fun <T> discreteDomain(name: String, domainValues: Collection<Any?>): Scale2<T> {
         return discreteDomain(name, domainValues, Mappers.undefined())
     }
 
-    fun <T> discreteDomain(name: String, domainValues: Collection<Any>, mapper: ((Double?) -> T?)): Scale2<T> {
+    fun <T> discreteDomain(name: String, domainValues: Collection<Any?>, mapper: ((Double?) -> T?)): Scale2<T> {
         return DiscreteScale(name, domainValues, mapper)
     }
 
-    fun <T> pureDiscrete(name: String, domainValues: List<Any>, outputValues: List<T>, defaultOutputValue: T): Scale2<T> {
+    fun <T> pureDiscrete(name: String, domainValues: List<Any?>, outputValues: List<T>, defaultOutputValue: T): Scale2<T> {
         return Scales.discreteDomain<T>(name, domainValues)
                 .with()
                 .mapper(Mappers.discrete(outputValues, defaultOutputValue))

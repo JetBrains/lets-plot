@@ -3,7 +3,7 @@ package jetbrains.datalore.base.observable.event
 import jetbrains.datalore.base.registration.Registration
 
 internal class CompositeEventSource<EventT> : EventSource<EventT> {
-    private var myHandlers: Listeners<EventHandler<in EventT>>? = null
+    private var myHandlers: Listeners<EventHandler<EventT>>? = null
     private val myEventSources = ArrayList<EventSource<EventT>>()
     private val myRegistrations = ArrayList<Registration>()
 
@@ -27,9 +27,9 @@ internal class CompositeEventSource<EventT> : EventSource<EventT> {
         myEventSources.remove(source)
     }
 
-    override fun addHandler(handler: EventHandler<in EventT>): Registration {
+    override fun addHandler(handler: EventHandler<EventT>): Registration {
         if (myHandlers == null) {
-            myHandlers = object : Listeners<EventHandler<in EventT>>() {
+            myHandlers = object : Listeners<EventHandler<EventT>>() {
                 override fun beforeFirstAdded() {
                     for (src in myEventSources) {
                         addHandlerTo(src)
@@ -51,9 +51,9 @@ internal class CompositeEventSource<EventT> : EventSource<EventT> {
     private fun <PartEventT : EventT> addHandlerTo(src: EventSource<PartEventT>) {
         myRegistrations.add(src.addHandler(object : EventHandler<PartEventT> {
             override fun onEvent(event: PartEventT) {
-                myHandlers!!.fire(object : ListenerCaller<EventHandler<in EventT>> {
-                    override fun call(item: EventHandler<in EventT>) {
-                        item.onEvent(event)
+                myHandlers!!.fire(object : ListenerCaller<EventHandler<EventT>> {
+                    override fun call(l: EventHandler<EventT>) {
+                        l.onEvent(event)
                     }
                 })
             }

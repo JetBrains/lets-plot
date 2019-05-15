@@ -10,7 +10,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     private var myDomainLimits: Set<Any?> = emptySet()
     private var myDomainValueByNumber: TreeMap<Double, Any>? = null
 
-    override var breaks: List<Any>
+    override var breaks: List<Any?>
         get() {
             val breaks = super.breaks
             if (!hasDomainLimits()) {
@@ -59,7 +59,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     override val domainLimits: ClosedRange<Double>
         get() = throw IllegalStateException("Not applicable to scale with discrete domain '$name'")
 
-    constructor(name: String, domainValues: Collection<Any>, mapper: ((Double?) -> T?)) : super(name, mapper) {
+    constructor(name: String, domainValues: Collection<Any?>, mapper: ((Double?) -> T?)) : super(name, mapper) {
         updateDomain(domainValues, emptySet<Any>())
 
         // see: http://docs.ggplot2.org/current/scale_continuous.html
@@ -72,8 +72,8 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         updateDomain(b.myIndexByValue.keys, b.myDomainLimits)
     }
 
-    private fun updateDomain(domainValues: Collection<Any>, domainLimits: Set<Any?>) {
-        val effectiveDomain: MutableList<Any>
+    private fun updateDomain(domainValues: Collection<Any?>, domainLimits: Set<Any?>) {
+        val effectiveDomain: MutableList<Any?>
         if (domainLimits.isEmpty()) {
             effectiveDomain = ArrayList(domainValues)
         } else {
@@ -136,14 +136,14 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         val floorKey = myDomainValueByNumber!!.floorKey(v)
         var keyNumber: Double? = null
         if (ceilingKey != null || floorKey != null) {
-            if (ceilingKey == null) {
-                keyNumber = floorKey
-            } else if (floorKey == null) {
-                keyNumber = ceilingKey
-            } else {
-                val ceilingDist = abs(ceilingKey - v)
-                val floorDist = abs(floorKey - v)
-                keyNumber = if (ceilingDist < floorDist) ceilingKey else floorKey
+            keyNumber = when {
+                ceilingKey == null -> floorKey
+                floorKey == null -> ceilingKey
+                else -> {
+                    val ceilingDist = abs(ceilingKey - v)
+                    val floorDist = abs(floorKey - v)
+                    if (ceilingDist < floorDist) ceilingKey else floorKey
+                }
             }
         }
         return if (keyNumber != null) myDomainValueByNumber!![keyNumber] else null
@@ -155,7 +155,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
 
     private class MyBuilder<T> internal constructor(scale: DiscreteScale<T>) : AbstractScale.AbstractBuilder<Any, T>(scale) {
         internal val myIndexByValue: Map<Any, Double>
-        private var myNewBreaks: List<Any>? = null
+        private var myNewBreaks: List<Any?>? = null
         internal var myDomainLimits: Set<Any?> = emptySet()
 
         init {
@@ -177,7 +177,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         }
 
         override fun breaks(l: List<*>): Scale2.Builder<T> {
-            myNewBreaks = l as List<Any>
+            myNewBreaks = l
             // don't call super!
             return this
         }

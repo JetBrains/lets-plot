@@ -7,8 +7,6 @@ import jetbrains.datalore.base.observable.collections.set.ObservableSet
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.*
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.base.observable.collections.Collections
-import jetbrains.datalore.base.observable.collections.UnmodifiableObservableCollection
 
 object ObservableCollections {
     fun <ItemT> toObservable(l: List<ItemT>): ObservableList<ItemT> {
@@ -50,7 +48,7 @@ object ObservableCollections {
                 }
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out List<ItemT?>?>>): Registration {
+            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out List<ItemT?>?>>): Registration {
                 return list.addHandler(object : EventHandler<CollectionItemEvent<out ItemT?>> {
                     private var myLastValue: List<ItemT?> = ArrayList(list)
 

@@ -1,9 +1,9 @@
 package jetbrains.datalore.base.observable.property
 
+import jetbrains.datalore.base.observable.collections.Collections
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.EventSource
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.base.observable.collections.Collections
 
 /**
  * Simplified version of [BaseDerivedProperty] which can depend on generic observable objects.
@@ -13,8 +13,6 @@ abstract class DerivedProperty<ValueT>(initialValue: ValueT, vararg deps: EventS
 
     private val myDeps: Array<EventSource<*>> = Collections.arrayCopy(deps)
     private var myRegistrations: Array<Registration>? = null
-
-//    protected constructor(vararg deps: EventSource<*>) : this(null, *deps) {}
 
     override fun doAddListeners() {
         myRegistrations = Array(myDeps.size) { i -> register(myDeps[i]) }

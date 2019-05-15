@@ -140,7 +140,7 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), Obs
         return myListeners!!.add(l)
     }
 
-    override fun addHandler(handler: EventHandler<in CollectionItemEvent<out ItemT>>): Registration {
+    override fun addHandler(handler: EventHandler<CollectionItemEvent<out ItemT>>): Registration {
         val listener = object : CollectionListener<ItemT> {
             override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                 handler.onEvent(event)
