@@ -146,18 +146,18 @@ class PlotBuilder(private val myTheme: Theme) {
             isInteractionsEnabled = b.myInteractionsEnabled
             isCanvasEnabled = b.myCanvasEnabled
 
-            if (isInteractionsEnabled) {
-                for (layers in myLayersByTile) {
-                    for (layer in layers) {
-                        if (layer.locatorLookupSpec == null) {
-                            throw IllegalStateException("Plot interactions enabled but layer's lookup spec is not defined")
-                        }
-                        if (layer.tooltipAesSpec == null) {
-                            throw IllegalStateException("Plot interactions enabled but layer's tooltip aesthetics spec is not defined")
-                        }
-                    }
-                }
-            }
+//            if (isInteractionsEnabled) {
+//                for (layers in myLayersByTile) {
+//                    for (layer in layers) {
+//                        if (layer.locatorLookupSpec == null) {
+//                            throw IllegalStateException("Plot interactions enabled but layer's lookup spec is not defined")
+//                        }
+//                        if (layer.tooltipAesSpec == null) {
+//                            throw IllegalStateException("Plot interactions enabled but layer's tooltip aesthetics spec is not defined")
+//                        }
+//                    }
+//                }
+//            }
         }
 
         override fun hasTitle(): Boolean {

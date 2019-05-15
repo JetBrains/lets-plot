@@ -3,12 +3,16 @@ package jetbrains.datalore.visualization.plot.gog.plot.event3
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomTargetInteraction.TooltipAesSpec
+import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetCollector
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.gog.core.event3.HitShape
 
-class GeomTargetController(private val myGeomKind: GeomKind, private val myLookupSpec: GeomTargetLocator.LookupSpec, private val myTooltipAesSpec: TooltipAesSpec) : GeomTargetCollector, GeomTargetLocator {
+class GeomTargetController(
+        private val myGeomKind: GeomKind,
+        private val myLookupSpec: GeomTargetLocator.LookupSpec,
+        private val myTooltipAesSpec: ContextualMapping) : GeomTargetCollector, GeomTargetLocator {
+
     private val myTargets = ArrayList<GeomTargetPrototype>()
     private var myGeomTargetLocator: GeomTargetLocator? = null
 

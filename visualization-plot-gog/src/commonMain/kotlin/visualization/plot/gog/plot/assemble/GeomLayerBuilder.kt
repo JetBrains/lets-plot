@@ -4,10 +4,10 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.visualization.plot.core.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomTargetInteraction.TooltipAesSpec
 import jetbrains.datalore.visualization.plot.gog.core.data.*
 import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
 import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.Geom
@@ -160,7 +160,7 @@ class GeomLayerBuilder {
                               constantByAes: TypedKeyHashMap,
                               override val dataAccess: MappedDataAccess,
                               override val locatorLookupSpec: LookupSpec,
-                              override val tooltipAesSpec: TooltipAesSpec,
+                              override val tooltipAesSpec: ContextualMapping,
                               override val isLegendDisabled: Boolean) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()

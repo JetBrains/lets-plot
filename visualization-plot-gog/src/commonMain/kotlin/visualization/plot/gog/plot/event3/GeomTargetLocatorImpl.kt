@@ -4,7 +4,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomTargetInteraction.TooltipAesSpec
+import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTarget
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.gog.core.event3.HitShape.Kind.*
@@ -12,10 +12,14 @@ import jetbrains.datalore.visualization.plot.gog.plot.event3.MathUtil.ClosestPoi
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TargetProjector.*
 import kotlin.math.max
 
-internal class GeomTargetLocatorImpl(private val myGeomKind: GeomKind, lookupSpec: GeomTargetLocator.LookupSpec, private val myTooltipAesSpec: TooltipAesSpec, targetPrototypes: List<GeomTargetPrototype>) : GeomTargetLocator {
+internal class GeomTargetLocatorImpl(
+        private val myGeomKind: GeomKind,
+        lookupSpec: GeomTargetLocator.LookupSpec,
+        private val myTooltipAesSpec: ContextualMapping,
+        targetPrototypes: List<GeomTargetPrototype>) : GeomTargetLocator {
 
-    private val myLocatorLookupSpace: GeomTargetLocator.LookupSpace
-    private val myLocatorLookupStrategy: GeomTargetLocator.LookupStrategy
+    private val myLocatorLookupSpace: GeomTargetLocator.LookupSpace = lookupSpec.lookupSpace
+    private val myLocatorLookupStrategy: GeomTargetLocator.LookupStrategy = lookupSpec.lookupStrategy
     private val myTargetDetector: TargetDetector
     private val myTargets = ArrayList<Target>()
 
@@ -36,8 +40,6 @@ internal class GeomTargetLocatorImpl(private val myGeomKind: GeomKind, lookupSpe
         }
 
     init {
-        myLocatorLookupSpace = lookupSpec.lookupSpace
-        myLocatorLookupStrategy = lookupSpec.lookupStrategy
         myTargetDetector = TargetDetector(myLocatorLookupSpace, myLocatorLookupStrategy)
 
         val targetProjector = TargetProjector(myLocatorLookupSpace)
@@ -197,11 +199,7 @@ internal class GeomTargetLocatorImpl(private val myGeomKind: GeomKind, lookupSpe
 
     internal class Collector<T>(cursor: DoubleVector, private val myStrategy: CollectingStrategy) {
         private val result = ArrayList<T>()
-        val closestPointChecker: ClosestPointChecker
-
-        init {
-            closestPointChecker = ClosestPointChecker(cursor)
-        }
+        val closestPointChecker: ClosestPointChecker = ClosestPointChecker(cursor)
 
         fun collect(data: T) {
             when (myStrategy) {

@@ -22,13 +22,12 @@ class GeomTargetInteraction internal constructor(builder: GeomInteractionBuilder
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
     }
 
-    override fun createTooltipAesSpec(dataAccess: MappedDataAccess): TooltipAesSpec {
+    override fun createTooltipAesSpec(dataAccess: MappedDataAccess): ContextualMapping {
         return TooltipAesSpec.create(myDisplayableAes, if (myAxisTooltipEnabled) myAxisAes else emptyList(), dataAccess)
     }
 
     // `open` for Mockito tests
-    // ToDo: private implementation
-    open class TooltipAesSpec private constructor(
+    internal open class TooltipAesSpec private constructor(
             override val tooltipAes: List<Aes<*>>,
             override val axisAes: List<Aes<*>>,
             override val dataAccess: MappedDataAccess) : ContextualMapping {
@@ -43,11 +42,6 @@ class GeomTargetInteraction internal constructor(builder: GeomInteractionBuilder
                 }
 
                 return TooltipAesSpec(showInTip, axisAes, dataAccess)
-            }
-
-            // ToDo: TMP
-            fun empty(dataAccess: MappedDataAccess): TooltipAesSpec {
-                return TooltipAesSpec(emptyList(), emptyList(), dataAccess)
             }
         }
     }

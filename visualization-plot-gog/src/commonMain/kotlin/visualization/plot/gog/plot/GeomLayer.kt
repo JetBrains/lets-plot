@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.gog.plot
 
 import jetbrains.datalore.visualization.plot.core.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomTargetInteraction.TooltipAesSpec
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.Geom
@@ -33,7 +33,7 @@ interface GeomLayer {
 
     val locatorLookupSpec: LookupSpec
 
-    val tooltipAesSpec: TooltipAesSpec
+    val tooltipAesSpec: ContextualMapping
 
     fun handledAes(): List<Aes<*>>
 
