@@ -1,22 +1,34 @@
 package jetbrains.datalore.visualization.base.svgToCanvas
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.SvgColors.CORAL
+import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svgToCanvas.Context2DCanvasContext.Companion.parseColorString
-import kotlin.test.Ignore
+import jetbrains.datalore.visualization.base.svgToCanvas.Context2DCanvasContext.Companion.parseSvgColorString
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class Context2DCanvasContextTest {
-    @Ignore
+
     @Test
-    fun parseColorString() {
+    fun parseColorStrings() {
         assertEquals(Color.GRAY, parseColorString("rgb(128, 128,128 )"))
         assertEquals(Color.TRANSPARENT, parseColorString("rgba( 0,0, 0, 0)"))
         assertEquals(Color.GRAY, parseColorString("#808080"))
         assertEquals(Color.GRAY, parseColorString("gray"))
+        assertEquals(Color.GRAY, parseColorString("color( 128 ,128, 128)"))
+        assertEquals(Color.TRANSPARENT, parseColorString("color(0, 0 ,0,0 )"))
+        assertNull(parseColorString(null))
+    }
 
-        val coral: Color = Color(255, 127, 80)
-        assertEquals(coral, parseColorString(CORAL.toString()))
+    @Test
+    fun parseSvgColorStrings() {
+        assertEquals(Color.GRAY.toCssColor(), parseSvgColorString(Color.GRAY.toString()).toString())
+        assertEquals(Color.GRAY.toCssColor(), parseSvgColorString(Color.GRAY.toHexColor()).toString())
+        assertEquals(Color.GRAY.toCssColor(), parseSvgColorString(Color.GRAY.toCssColor()).toString())
+
+        assertEquals(SvgColors.CORAL, parseSvgColorString(SvgColors.CORAL.toString()))
+        assertEquals(SvgColors.NONE, parseSvgColorString(SvgColors.NONE.toString()))
+        assertEquals(SvgColors.NONE, parseSvgColorString(null))
     }
 }

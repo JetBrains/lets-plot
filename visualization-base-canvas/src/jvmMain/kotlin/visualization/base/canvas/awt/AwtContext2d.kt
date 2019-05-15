@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.base.canvas.awt
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvas.AwtSnapshot
@@ -81,12 +80,12 @@ internal class AwtContext2d(graphics2D: Graphics2D) : Context2d {
         myStack.pop()
     }
 
-    override fun setFillColor(color: Color?) {
-        current().color = if (color != null) AwtColor.decode(color.toHexColor()) else null
+    override fun setFillColor(color: String?) {
+        current().color = if (color != null) AwtColor.decode(color) else null
     }
 
-    override fun setStrokeColor(color: Color?) {
-        current().color = if (color != null) AwtColor.decode(color.toHexColor()) else null
+    override fun setStrokeColor(color: String?) {
+        current().color = if (color != null) AwtColor.decode(color) else null
     }
 
     override fun setGlobalAlpha(alpha: Double) {

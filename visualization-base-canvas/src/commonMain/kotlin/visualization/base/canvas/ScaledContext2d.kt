@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.base.canvas
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import kotlin.math.ceil
 
@@ -78,11 +77,11 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.restore()
     }
 
-    override fun setFillColor(color: Color?) {
+    override fun setFillColor(color: String?) {
         myContext2d.setFillColor(color)
     }
 
-    override fun setStrokeColor(color: Color?) {
+    override fun setStrokeColor(color: String?) {
         myContext2d.setStrokeColor(color)
     }
 

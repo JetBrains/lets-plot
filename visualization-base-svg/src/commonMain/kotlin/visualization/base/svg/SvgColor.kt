@@ -4,179 +4,193 @@ import jetbrains.datalore.base.values.Color
 
 interface SvgColor
 
-object SvgColors : SvgColor {
-    val ALICE_BLUE = SvgColorKeyword("aliceblue")
-    val ANTIQUE_WHITE = SvgColorKeyword("antiquewhite")
-    val AQUA = SvgColorKeyword("aqua")
-    val AQUAMARINE = SvgColorKeyword("aquamarine")
-    val AZURE = SvgColorKeyword("azure")
-    val BEIGE = SvgColorKeyword("beige")
-    val BISQUE = SvgColorKeyword("bisque")
-    val BLACK = SvgColorKeyword("black")
-    val BLANCHED_ALMOND = SvgColorKeyword("blanchedalmond")
-    val BLUE = SvgColorKeyword("blue")
-    val BLUE_VIOLET = SvgColorKeyword("blueviolet")
-    val BROWN = SvgColorKeyword("brown")
-    val BURLY_WOOD = SvgColorKeyword("burlywood")
-    val CADET_BLUE = SvgColorKeyword("cadetblue")
-    val CHARTREUSE = SvgColorKeyword("chartreuse")
-    val CHOCOLATE = SvgColorKeyword("chocolate")
-    val CORAL = SvgColorKeyword("coral")
-    val CORNFLOWER_BLUE = SvgColorKeyword("cornflowerblue")
-    val CORNSILK = SvgColorKeyword("cornsilk")
-    val CRIMSON = SvgColorKeyword("crimson")
-    val CYAN = SvgColorKeyword("cyan")
-    val DARK_BLUE = SvgColorKeyword("darkblue")
-    val DARK_CYAN = SvgColorKeyword("darkcyan")
-    val DARK_GOLDEN_ROD = SvgColorKeyword("darkgoldenrod")
-    val DARK_GRAY = SvgColorKeyword("darkgray")
-    val DARK_GREEN = SvgColorKeyword("darkgreen")
-    val DARK_GREY = SvgColorKeyword("darkgrey")
-    val DARK_KHAKI = SvgColorKeyword("darkkhaki")
-    val DARK_MAGENTA = SvgColorKeyword("darkmagenta")
-    val DARK_OLIVE_GREEN = SvgColorKeyword("darkolivegreen")
-    val DARK_ORANGE = SvgColorKeyword("darkorange")
-    val DARK_ORCHID = SvgColorKeyword("darkorchid")
-    val DARK_RED = SvgColorKeyword("darkred")
-    val DARK_SALMON = SvgColorKeyword("darksalmon")
-    val DARK_SEA_GREEN = SvgColorKeyword("darkseagreen")
-    val DARK_SLATE_BLUE = SvgColorKeyword("darkslateblue")
-    val DARK_SLATE_GRAY = SvgColorKeyword("darkslategray")
-    val DARK_SLATE_GREY = SvgColorKeyword("darkslategrey")
-    val DARK_TURQUOISE = SvgColorKeyword("darkturquoise")
-    val DARK_VIOLET = SvgColorKeyword("darkviolet")
-    val DEEP_PINK = SvgColorKeyword("deeppink")
-    val DEEP_SKY_BLUE = SvgColorKeyword("deepskyblue")
-    val DIM_GRAY = SvgColorKeyword("dimgray")
-    val DIM_GREY = SvgColorKeyword("dimgrey")
-    val DODGER_BLUE = SvgColorKeyword("dodgerblue")
-    val FIRE_BRICK = SvgColorKeyword("firebrick")
-    val FLORAL_WHITE = SvgColorKeyword("floralwhite")
-    val FOREST_GREEN = SvgColorKeyword("forestgreen")
-    val FUCHSIA = SvgColorKeyword("fuchsia")
-    val GAINSBORO = SvgColorKeyword("gainsboro")
-    val GHOST_WHITE = SvgColorKeyword("ghostwhite")
-    val GOLD = SvgColorKeyword("gold")
-    val GOLDEN_ROD = SvgColorKeyword("goldenrod")
-    val GRAY = SvgColorKeyword("gray")
-    val GREY = SvgColorKeyword("grey")
-    val GREEN = SvgColorKeyword("green")
-    val GREEN_YELLOW = SvgColorKeyword("greenyellow")
-    val HONEY_DEW = SvgColorKeyword("honeydew")
-    val HOT_PINK = SvgColorKeyword("hotpink")
-    val INDIAN_RED = SvgColorKeyword("indianred")
-    val INDIGO = SvgColorKeyword("indigo")
-    val IVORY = SvgColorKeyword("ivory")
-    val KHAKI = SvgColorKeyword("khaki")
-    val LAVENDER = SvgColorKeyword("lavender")
-    val LAVENDER_BLUSH = SvgColorKeyword("lavenderblush")
-    val LAWN_GREEN = SvgColorKeyword("lawngreen")
-    val LEMON_CHIFFON = SvgColorKeyword("lemonchiffon")
-    val LIGHT_BLUE = SvgColorKeyword("lightblue")
-    val LIGHT_CORAL = SvgColorKeyword("lightcoral")
-    val LIGHT_CYAN = SvgColorKeyword("lightcyan")
-    val LIGHT_GOLDEN_ROD_YELLOW = SvgColorKeyword("lightgoldenrodyellow")
-    val LIGHT_GRAY = SvgColorKeyword("lightgray")
-    val LIGHT_GREEN = SvgColorKeyword("lightgreen")
-    val LIGHT_GREY = SvgColorKeyword("lightgrey")
-    val LIGHT_PINK = SvgColorKeyword("lightpink")
-    val LIGHT_SALMON = SvgColorKeyword("lightsalmon")
-    val LIGHT_SEA_GREEN = SvgColorKeyword("lightseagreen")
-    val LIGHT_SKY_BLUE = SvgColorKeyword("lightskyblue")
-    val LIGHT_SLATE_GRAY = SvgColorKeyword("lightslategray")
-    val LIGHT_SLATE_GREY = SvgColorKeyword("lightslategrey")
-    val LIGHT_STEEL_BLUE = SvgColorKeyword("lightsteelblue")
-    val LIGHT_YELLOW = SvgColorKeyword("lightyellow")
-    val LIME = SvgColorKeyword("lime")
-    val LIME_GREEN = SvgColorKeyword("limegreen")
-    val LINEN = SvgColorKeyword("linen")
-    val MAGENTA = SvgColorKeyword("magenta")
-    val MAROON = SvgColorKeyword("maroon")
-    val MEDIUM_AQUA_MARINE = SvgColorKeyword("mediumaquamarine")
-    val MEDIUM_BLUE = SvgColorKeyword("mediumblue")
-    val MEDIUM_ORCHID = SvgColorKeyword("mediumorchid")
-    val MEDIUM_PURPLE = SvgColorKeyword("mediumpurple")
-    val MEDIUM_SEAGREEN = SvgColorKeyword("mediumseagreen")
-    val MEDIUM_SLATE_BLUE = SvgColorKeyword("mediumslateblue")
-    val MEDIUM_SPRING_GREEN = SvgColorKeyword("mediumspringgreen")
-    val MEDIUM_TURQUOISE = SvgColorKeyword("mediumturquoise")
-    val MEDIUM_VIOLET_RED = SvgColorKeyword("mediumvioletred")
-    val MIDNIGHT_BLUE = SvgColorKeyword("midnightblue")
-    val MINT_CREAM = SvgColorKeyword("mintcream")
-    val MISTY_ROSE = SvgColorKeyword("mistyrose")
-    val MOCCASIN = SvgColorKeyword("moccasin")
-    val NAVAJO_WHITE = SvgColorKeyword("navajowhite")
-    val NAVY = SvgColorKeyword("navy")
-    val OLD_LACE = SvgColorKeyword("oldlace")
-    val OLIVE = SvgColorKeyword("olive")
-    val OLIVE_DRAB = SvgColorKeyword("olivedrab")
-    val ORANGE = SvgColorKeyword("orange")
-    val ORANGE_RED = SvgColorKeyword("orangered")
-    val ORCHID = SvgColorKeyword("orchid")
-    val PALE_GOLDEN_ROD = SvgColorKeyword("palegoldenrod")
-    val PALE_GREEN = SvgColorKeyword("palegreen")
-    val PALE_TURQUOISE = SvgColorKeyword("paleturquoise")
-    val PALE_VIOLET_RED = SvgColorKeyword("palevioletred")
-    val PAPAYA_WHIP = SvgColorKeyword("papayawhip")
-    val PEACH_PUFF = SvgColorKeyword("peachpuff")
-    val PERU = SvgColorKeyword("peru")
-    val PINK = SvgColorKeyword("pink")
-    val PLUM = SvgColorKeyword("plum")
-    val POWDER_BLUE = SvgColorKeyword("powderblue")
-    val PURPLE = SvgColorKeyword("purple")
-    val RED = SvgColorKeyword("red")
-    val ROSY_BROWN = SvgColorKeyword("rosybrown")
-    val ROYAL_BLUE = SvgColorKeyword("royalblue")
-    val SADDLE_BROWN = SvgColorKeyword("saddlebrown")
-    val SALMON = SvgColorKeyword("salmon")
-    val SANDY_BROWN = SvgColorKeyword("sandybrown")
-    val SEA_GREEN = SvgColorKeyword("seagreen")
-    val SEASHELL = SvgColorKeyword("seashell")
-    val SIENNA = SvgColorKeyword("sienna")
-    val SILVER = SvgColorKeyword("silver")
-    val SKY_BLUE = SvgColorKeyword("skyblue")
-    val SLATE_BLUE = SvgColorKeyword("slateblue")
-    val SLATE_GRAY = SvgColorKeyword("slategray")
-    val SLATE_GREY = SvgColorKeyword("slategrey")
-    val SNOW = SvgColorKeyword("snow")
-    val SPRING_GREEN = SvgColorKeyword("springgreen")
-    val STEEL_BLUE = SvgColorKeyword("steelblue")
-    val TAN = SvgColorKeyword("tan")
-    val TEAL = SvgColorKeyword("teal")
-    val THISTLE = SvgColorKeyword("thistle")
-    val TOMATO = SvgColorKeyword("tomato")
-    val TURQUOISE = SvgColorKeyword("turquoise")
-    val VIOLET = SvgColorKeyword("violet")
-    val WHEAT = SvgColorKeyword("wheat")
-    val WHITE = SvgColorKeyword("white")
-    val WHITE_SMOKE = SvgColorKeyword("whitesmoke")
-    val YELLOW = SvgColorKeyword("yellow")
-    val YELLOW_GREEN = SvgColorKeyword("yellowgreen")
+enum class SvgColors(private val literal: String) : SvgColor {
+    ALICE_BLUE("aliceblue"),
+    ANTIQUE_WHITE("antiquewhite"),
+    AQUA("aqua"),
+    AQUAMARINE("aquamarine"),
+    AZURE("azure"),
+    BEIGE("beige"),
+    BISQUE("bisque"),
+    BLACK("black"),
+    BLANCHED_ALMOND("blanchedalmond"),
+    BLUE("blue"),
+    BLUE_VIOLET("blueviolet"),
+    BROWN("brown"),
+    BURLY_WOOD("burlywood"),
+    CADET_BLUE("cadetblue"),
+    CHARTREUSE("chartreuse"),
+    CHOCOLATE("chocolate"),
+    CORAL("coral"),
+    CORNFLOWER_BLUE("cornflowerblue"),
+    CORNSILK("cornsilk"),
+    CRIMSON("crimson"),
+    CYAN("cyan"),
+    DARK_BLUE("darkblue"),
+    DARK_CYAN("darkcyan"),
+    DARK_GOLDEN_ROD("darkgoldenrod"),
+    DARK_GRAY("darkgray"),
+    DARK_GREEN("darkgreen"),
+    DARK_GREY("darkgrey"),
+    DARK_KHAKI("darkkhaki"),
+    DARK_MAGENTA("darkmagenta"),
+    DARK_OLIVE_GREEN("darkolivegreen"),
+    DARK_ORANGE("darkorange"),
+    DARK_ORCHID("darkorchid"),
+    DARK_RED("darkred"),
+    DARK_SALMON("darksalmon"),
+    DARK_SEA_GREEN("darkseagreen"),
+    DARK_SLATE_BLUE("darkslateblue"),
+    DARK_SLATE_GRAY("darkslategray"),
+    DARK_SLATE_GREY("darkslategrey"),
+    DARK_TURQUOISE("darkturquoise"),
+    DARK_VIOLET("darkviolet"),
+    DEEP_PINK("deeppink"),
+    DEEP_SKY_BLUE("deepskyblue"),
+    DIM_GRAY("dimgray"),
+    DIM_GREY("dimgrey"),
+    DODGER_BLUE("dodgerblue"),
+    FIRE_BRICK("firebrick"),
+    FLORAL_WHITE("floralwhite"),
+    FOREST_GREEN("forestgreen"),
+    FUCHSIA("fuchsia"),
+    GAINSBORO("gainsboro"),
+    GHOST_WHITE("ghostwhite"),
+    GOLD("gold"),
+    GOLDEN_ROD("goldenrod"),
+    GRAY("gray"),
+    GREY("grey"),
+    GREEN("green"),
+    GREEN_YELLOW("greenyellow"),
+    HONEY_DEW("honeydew"),
+    HOT_PINK("hotpink"),
+    INDIAN_RED("indianred"),
+    INDIGO("indigo"),
+    IVORY("ivory"),
+    KHAKI("khaki"),
+    LAVENDER("lavender"),
+    LAVENDER_BLUSH("lavenderblush"),
+    LAWN_GREEN("lawngreen"),
+    LEMON_CHIFFON("lemonchiffon"),
+    LIGHT_BLUE("lightblue"),
+    LIGHT_CORAL("lightcoral"),
+    LIGHT_CYAN("lightcyan"),
+    LIGHT_GOLDEN_ROD_YELLOW("lightgoldenrodyellow"),
+    LIGHT_GRAY("lightgray"),
+    LIGHT_GREEN("lightgreen"),
+    LIGHT_GREY("lightgrey"),
+    LIGHT_PINK("lightpink"),
+    LIGHT_SALMON("lightsalmon"),
+    LIGHT_SEA_GREEN("lightseagreen"),
+    LIGHT_SKY_BLUE("lightskyblue"),
+    LIGHT_SLATE_GRAY("lightslategray"),
+    LIGHT_SLATE_GREY("lightslategrey"),
+    LIGHT_STEEL_BLUE("lightsteelblue"),
+    LIGHT_YELLOW("lightyellow"),
+    LIME("lime"),
+    LIME_GREEN("limegreen"),
+    LINEN("linen"),
+    MAGENTA("magenta"),
+    MAROON("maroon"),
+    MEDIUM_AQUA_MARINE("mediumaquamarine"),
+    MEDIUM_BLUE("mediumblue"),
+    MEDIUM_ORCHID("mediumorchid"),
+    MEDIUM_PURPLE("mediumpurple"),
+    MEDIUM_SEAGREEN("mediumseagreen"),
+    MEDIUM_SLATE_BLUE("mediumslateblue"),
+    MEDIUM_SPRING_GREEN("mediumspringgreen"),
+    MEDIUM_TURQUOISE("mediumturquoise"),
+    MEDIUM_VIOLET_RED("mediumvioletred"),
+    MIDNIGHT_BLUE("midnightblue"),
+    MINT_CREAM("mintcream"),
+    MISTY_ROSE("mistyrose"),
+    MOCCASIN("moccasin"),
+    NAVAJO_WHITE("navajowhite"),
+    NAVY("navy"),
+    OLD_LACE("oldlace"),
+    OLIVE("olive"),
+    OLIVE_DRAB("olivedrab"),
+    ORANGE("orange"),
+    ORANGE_RED("orangered"),
+    ORCHID("orchid"),
+    PALE_GOLDEN_ROD("palegoldenrod"),
+    PALE_GREEN("palegreen"),
+    PALE_TURQUOISE("paleturquoise"),
+    PALE_VIOLET_RED("palevioletred"),
+    PAPAYA_WHIP("papayawhip"),
+    PEACH_PUFF("peachpuff"),
+    PERU("peru"),
+    PINK("pink"),
+    PLUM("plum"),
+    POWDER_BLUE("powderblue"),
+    PURPLE("purple"),
+    RED("red"),
+    ROSY_BROWN("rosybrown"),
+    ROYAL_BLUE("royalblue"),
+    SADDLE_BROWN("saddlebrown"),
+    SALMON("salmon"),
+    SANDY_BROWN("sandybrown"),
+    SEA_GREEN("seagreen"),
+    SEASHELL("seashell"),
+    SIENNA("sienna"),
+    SILVER("silver"),
+    SKY_BLUE("skyblue"),
+    SLATE_BLUE("slateblue"),
+    SLATE_GRAY("slategray"),
+    SLATE_GREY("slategrey"),
+    SNOW("snow"),
+    SPRING_GREEN("springgreen"),
+    STEEL_BLUE("steelblue"),
+    TAN("tan"),
+    TEAL("teal"),
+    THISTLE("thistle"),
+    TOMATO("tomato"),
+    TURQUOISE("turquoise"),
+    VIOLET("violet"),
+    WHEAT("wheat"),
+    WHITE("white"),
+    WHITE_SMOKE("whitesmoke"),
+    YELLOW("yellow"),
+    YELLOW_GREEN("yellowgreen"),
 
-    val NONE = SvgColorKeyword("none")
-    val CURRENT_COLOR = SvgColorKeyword("currentColor")
+    NONE("none"),
+    CURRENT_COLOR("currentColor");
 
-
-    fun create(r: Int, g: Int, b: Int): SvgColor {
-        return SvgColorRgb(r, g, b)
+    override fun toString(): String {
+        return literal
     }
 
-    fun create(color: Color?): SvgColor {
-        return if (color == null) {
-            NONE
-        } else SvgColorRgb(color.red, color.green, color.blue)
-    }
+    companion object {
+        private val svgColorList = createSvgColorList()
 
-    private class SvgColorRgb(private val myR: Int, private val myG: Int, private val myB: Int) : SvgColor {
-
-        override fun toString(): String {
-            return "rgb($myR,$myG,$myB)"
+        private fun createSvgColorList(): Map<String, SvgColor> {
+            val colorList = HashMap<String, SvgColor>()
+            values().forEach { colorList[it.toString().toLowerCase()] = it }
+            return colorList
         }
-    }
 
-    class SvgColorKeyword internal constructor(private val literal: String) : SvgColor {
-        override fun toString(): String {
-            return literal
+        fun isColorName(colorName: String): Boolean {
+            return svgColorList.containsKey(colorName.toLowerCase())
+        }
+
+        fun forName(colorName: String): SvgColor {
+            return svgColorList[colorName.toLowerCase()] ?: throw IllegalArgumentException()
+        }
+
+        fun create(r: Int, g: Int, b: Int): SvgColor {
+            return SvgColorRgb(r, g, b)
+        }
+
+        fun create(color: Color?): SvgColor {
+            return if (color == null) {
+                NONE
+            } else SvgColorRgb(color.red, color.green, color.blue)
+        }
+
+        private class SvgColorRgb(private val myR: Int, private val myG: Int, private val myB: Int) : SvgColor {
+            override fun toString(): String {
+                return "rgb($myR,$myG,$myB)"
+            }
         }
     }
 }

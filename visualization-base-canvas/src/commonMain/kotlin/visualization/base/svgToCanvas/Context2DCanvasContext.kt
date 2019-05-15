@@ -7,6 +7,9 @@ import jetbrains.datalore.visualization.base.canvas.Context2d.LineJoin.BEVEL
 import jetbrains.datalore.visualization.base.canvas.Context2d.TextBaseline.ALPHABETIC
 import jetbrains.datalore.visualization.base.canvas.CssStyleUtil.extractStyleFont
 import jetbrains.datalore.visualization.base.canvas.svgToCanvas.toRadians
+import jetbrains.datalore.visualization.base.svg.SvgColor
+import jetbrains.datalore.visualization.base.svg.SvgColors
+import jetbrains.datalore.visualization.base.svg.SvgColors.NONE
 import jetbrains.datalore.visualization.base.svg.SvgTransform
 import jetbrains.datalore.visualization.base.svg.slim.CanvasContext
 import jetbrains.datalore.visualization.base.svgToCanvas.ParsingUtil.Result
@@ -33,11 +36,15 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
         }
     }
 
-    private fun drawNextElement(lineDash: DoubleArray?, transform: String?, fillColor: Color?,
-                                strokeColor: Color?, strokeWidth: Double) {
+    private fun svgColorToString(color: SvgColor): String? {
+        return if (color != NONE) color.toString() else null
+    }
+
+    private fun drawNextElement(lineDash: DoubleArray?, transform: String?, fillColor: SvgColor,
+                                strokeColor: SvgColor, strokeWidth: Double) {
         myContext.save()
-        myContext.setFillColor(fillColor)
-        myContext.setStrokeColor(strokeColor)
+        myContext.setFillColor(svgColorToString(fillColor))
+        myContext.setStrokeColor(svgColorToString(strokeColor))
         myContext.setLineWidth(strokeWidth)
         if (lineDash != null) {
             myContext.setLineDash(lineDash)
@@ -49,21 +56,24 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
 
     override fun drawCircle(cx: Double, cy: Double, r: Double, lineDash: DoubleArray?, transform: String?,
                             fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
-        val fillColor = parseColorString(fillColor)
-        val strokeColor = parseColorString(strokeColor)
+        @Suppress("NAME_SHADOWING")
+        val fillColor = parseSvgColorString(fillColor)
+        @Suppress("NAME_SHADOWING")
+        val strokeColor = parseSvgColorString(strokeColor)
         drawNextElement(lineDash, transform, fillColor, strokeColor, strokeWidth)
         myContext.beginPath()
         myContext.arc(cx, cy, r, 0.0, 2 * PI)
         myContext.setGlobalAlpha(fillOpacity)
         myContext.fill()
-        stroke(strokeColor != null, strokeOpacity)
+        stroke(strokeColor != NONE, strokeOpacity)
         restore()
     }
 
     override fun drawLine(x1: Double, y1: Double, x2: Double, y2: Double, lineDash: DoubleArray?, transform: String?,
                           strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
-        val strokeColor = parseColorString(strokeColor)
-        drawNextElement(lineDash, transform, null, strokeColor, strokeWidth)
+        @Suppress("NAME_SHADOWING")
+        val strokeColor = parseSvgColorString(strokeColor)
+        drawNextElement(lineDash, transform, NONE, strokeColor, strokeWidth)
         myContext.setGlobalAlpha(strokeOpacity)
         myContext.beginPath()
         myContext.moveTo(x1, y1)
@@ -74,14 +84,16 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
 
     override fun drawRect(x: Double, y: Double, width: Double, height: Double, lineDash: DoubleArray?, transform: String?,
                           fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
-        val fillColor = parseColorString(fillColor)
-        val strokeColor = parseColorString(strokeColor)
+        @Suppress("NAME_SHADOWING")
+        val fillColor = parseSvgColorString(fillColor)
+        @Suppress("NAME_SHADOWING")
+        val strokeColor = parseSvgColorString(strokeColor)
         drawNextElement(lineDash, transform, fillColor, strokeColor, strokeWidth)
-        if (fillColor != null) {
+        if (fillColor != NONE) {
             myContext.setGlobalAlpha(fillOpacity)
             myContext.fillRect(x, y, width, height)
         }
-        if (strokeColor != null) {
+        if (strokeColor != NONE) {
             myContext.setGlobalAlpha(strokeOpacity)
             myContext.strokeRect(x, y, width, height)
         }
@@ -90,15 +102,17 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
 
     override fun drawPath(d: String?, lineDash: DoubleArray?, transform: String?,
                           fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double) {
-        val fillColor = parseColorString(fillColor)
-        val strokeColor = parseColorString(strokeColor)
+        @Suppress("NAME_SHADOWING")
+        val fillColor = parseSvgColorString(fillColor)
+        @Suppress("NAME_SHADOWING")
+        val strokeColor = parseSvgColorString(strokeColor)
         drawNextElement(lineDash, transform, fillColor, strokeColor, strokeWidth)
         myContext.setLineJoin(BEVEL)
         myContext.beginPath()
         PathProcessor.apply(d, myContext)
         myContext.setGlobalAlpha(fillOpacity)
         myContext.fillEvenOdd()
-        stroke(strokeColor != null, strokeOpacity)
+        stroke(strokeColor != NONE, strokeOpacity)
         restore()
     }
 
@@ -106,14 +120,14 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
                           fillColor: String?, fillOpacity: Double, strokeColor: String?, strokeOpacity: Double, strokeWidth: Double,
                           textAnchor: String?, textDy: String?) {
         @Suppress("NAME_SHADOWING")
-        val fillColor = parseColorString(fillColor)
+        val fillColor = parseSvgColorString(fillColor)
         @Suppress("NAME_SHADOWING")
-        val strokeColor = parseColorString(strokeColor)
+        val strokeColor = parseSvgColorString(strokeColor)
 
         drawNextElement(null, transform, fillColor, strokeColor, strokeWidth)
         myContext.setTextBaseline(ALPHABETIC)
         myContext.setFont(extractStyleFont(style) ?: DEFAULT_FONT)
-        if (strokeColor != null && strokeWidth > 0) {
+        if (strokeColor != NONE && strokeWidth > 0) {
             myContext.setGlobalAlpha(strokeOpacity)
             myContext.strokeText(text, x, y)
         }
@@ -184,15 +198,20 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
         private const val MATRIX_DX = 4
         private const val MATRIX_DY = 5
 
+        internal fun parseSvgColorString(colorString: String?): SvgColor {
+            return when {
+                colorString == null -> NONE
+                SvgColors.isColorName(colorString) -> SvgColors.forName(colorString)
+                else -> SvgColors.create(parseColorString(colorString))
+            }
+        }
+
         internal fun parseColorString(colorString: String?): Color? {
-            return if (colorString == null || "none" == colorString)
-                null
-            else if (colorString.startsWith('#')) {
-                Color.parseHex(colorString)
-            } else if (Colors.isColorName(colorString)) {
-                Colors.forName(colorString)
-            } else {
-                Color.parseColor(colorString)
+            return when {
+                colorString == null -> null
+                colorString.startsWith('#') -> Color.parseHex(colorString)
+                Colors.isColorName(colorString) -> Colors.forName(colorString)
+                else -> Color.parseColor(colorString)
             }
         }
     }

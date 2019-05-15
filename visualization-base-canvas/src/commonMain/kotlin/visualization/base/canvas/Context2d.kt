@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.base.canvas
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 
 interface Context2d {
@@ -18,8 +17,8 @@ interface Context2d {
     fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double)
     fun save()
     fun restore()
-    fun setFillColor(color: Color?)
-    fun setStrokeColor(color: Color?)
+    fun setFillColor(color: String?)
+    fun setStrokeColor(color: String?)
     fun setGlobalAlpha(alpha: Double)
     fun setFont(f: String)
     fun setLineWidth(lineWidth: Double)
