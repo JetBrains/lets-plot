@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.config.event3
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Mapping
-import jetbrains.datalore.visualization.plot.gog.plot.event3.TargetTooltipSpec
+import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipSpec
 
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -24,17 +24,17 @@ object TestUtil {
         return variable().name(VARIABLE_NAME).value(VARIABLE_VALUE).isContinuous(isContinuous).mapping(aes)
     }
 
-    internal fun assertText(targetTooltipSpec: TargetTooltipSpec, vararg expectedTooltipText: String) {
-        assertText(targetTooltipSpec, listOf(*expectedTooltipText))
+    internal fun assertText(tooltipSpecs: List<TooltipSpec>, vararg expectedTooltipText: String) {
+        assertText(tooltipSpecs, listOf(*expectedTooltipText))
     }
 
     @SafeVarargs
-    internal fun assertText(targetTooltipSpec: TargetTooltipSpec, vararg expectedTooltips: List<String>) {
-        assertEquals(expectedTooltips.size.toLong(), targetTooltipSpec.tooltipSpecs.size.toLong())
+    internal fun assertText(tooltipSpecs: List<TooltipSpec>, vararg expectedTooltips: List<String>) {
+        assertEquals(expectedTooltips.size.toLong(), tooltipSpecs.size.toLong())
         var i = 0
-        val n = targetTooltipSpec.tooltipSpecs.size
+        val n = tooltipSpecs.size
         while (i < n) {
-            val tooltipText = targetTooltipSpec.tooltipSpecs[i].lines
+            val tooltipText = tooltipSpecs[i].lines
             assertListsEqual(expectedTooltips[i], tooltipText)
             ++i
         }
@@ -50,7 +50,7 @@ object TestUtil {
         }
     }
 
-    internal fun assertNoTooltips(targetTooltipSpec: TargetTooltipSpec) {
-        assertTrue(targetTooltipSpec.tooltipSpecs.isEmpty())
+    internal fun assertNoTooltips(tooltipSpecs: List<TooltipSpec>) {
+        assertTrue(tooltipSpecs.isEmpty())
     }
 }

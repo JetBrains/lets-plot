@@ -6,16 +6,15 @@ import jetbrains.datalore.visualization.plot.gog.config.event3.TooltipSpecFactor
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LocatedTargets
 import jetbrains.datalore.visualization.plot.gog.core.event3.TransformedTargetLocator
-import jetbrains.datalore.visualization.plot.gog.plot.event3.TargetTooltipSpec
 import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipSpec
 
 internal class TargetsHelper {
     private val myTileInfoList = ArrayList<TileInfo>()
 
-    fun getTargetTooltipSpec(plotCoord: DoubleVector): TargetTooltipSpec {
-        val tileInfo = findTileInfo(plotCoord) ?: return TargetTooltipSpec.EMPTY
+    fun getTargetTooltipSpec(plotCoord: DoubleVector): List<TooltipSpec> {
+        val tileInfo = findTileInfo(plotCoord) ?: return emptyList()
 
-        return createTargetTooltipSpec(tileInfo.findTargets(plotCoord), tileInfo.axisOrigin)
+        return createTargetTooltipSpecs(tileInfo.findTargets(plotCoord), tileInfo.axisOrigin)
     }
 
     private fun findTileInfo(plotCoord: DoubleVector): TileInfo? {
@@ -28,7 +27,7 @@ internal class TargetsHelper {
         return null
     }
 
-    private fun createTargetTooltipSpec(locatedTargetsList: List<LocatedTargets>, axisOrigin: DoubleVector): TargetTooltipSpec {
+    private fun createTargetTooltipSpecs(locatedTargetsList: List<LocatedTargets>, axisOrigin: DoubleVector): List<TooltipSpec> {
         val tooltipSpecs = ArrayList<TooltipSpec>()
 
         locatedTargetsList.forEach { locatedTarget ->
@@ -36,7 +35,7 @@ internal class TargetsHelper {
             locatedTarget.geomTargets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
         }
 
-        return TargetTooltipSpec(tooltipSpecs)
+        return tooltipSpecs
     }
 
     fun addTileTargetLocators(tileRect: DoubleRectangle, targetLocators: List<GeomTargetLocator>) {

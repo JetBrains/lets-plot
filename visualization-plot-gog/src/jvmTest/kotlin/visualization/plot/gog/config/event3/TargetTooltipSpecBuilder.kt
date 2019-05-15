@@ -12,7 +12,7 @@ import jetbrains.datalore.visualization.plot.gog.mockito.ReturnsNotNullValuesAns
 import jetbrains.datalore.visualization.plot.gog.plot.event3.ContextualMappingProvider
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Mapping
-import jetbrains.datalore.visualization.plot.gog.plot.event3.TargetTooltipSpec
+import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipSpec
 import org.mockito.Mockito.*
 
 
@@ -23,7 +23,7 @@ internal class TargetTooltipSpecBuilder private constructor(
     private val mockSettings = withSettings()
             .defaultAnswer(ReturnsNotNullValuesAnswer())
 
-    fun build(): TargetTooltipSpec {
+    fun build(): List<TooltipSpec> {
         val mappedDataAccess = buildMappedDataAccess()
 
         val contextualMapping = contextualMappingProvider.createContextualMapping(mappedDataAccess)
@@ -37,7 +37,7 @@ internal class TargetTooltipSpecBuilder private constructor(
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
         `when`(geomTarget.tipLayoutHint).thenReturn(tipLayoutHint)
 
-        return TargetTooltipSpec(factory.create(geomTarget))
+        return factory.create(geomTarget)
     }
 
     private fun buildMappedDataAccess(): MappedDataAccess {

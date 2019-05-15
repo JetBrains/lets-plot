@@ -42,7 +42,7 @@ class TooltipSpecFactory(contextualMapping: ContextualMapping, private val myAxi
 
             addAxisTooltipSpec()
 
-            return myTooltipSpecs
+            return ArrayList(myTooltipSpecs)
         }
 
         private fun hitIndex(): Int {

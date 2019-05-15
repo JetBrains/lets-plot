@@ -27,7 +27,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel.Verti
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MouseEventPeer
-import jetbrains.datalore.visualization.plot.gog.plot.event3.TargetTooltipSpec
+import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipSpec
 import jetbrains.datalore.visualization.plot.gog.plot.guide.Orientation
 import jetbrains.datalore.visualization.plot.gog.plot.layout.*
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
@@ -359,7 +359,7 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
         }
     }
 
-    internal fun getTargetTooltipSpec(plotCoord: DoubleVector): TargetTooltipSpec {
+    internal fun getTargetTooltipSpec(plotCoord: DoubleVector): List<TooltipSpec> {
         return myTargetsHelper.getTargetTooltipSpec(plotCoord)
     }
 

@@ -5,7 +5,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint.Kind
-import jetbrains.datalore.visualization.plot.gog.plot.event3.TargetTooltipSpec
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TooltipManager
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TooltipManager.TooltipContent
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TooltipManager.TooltipEntry
@@ -38,10 +37,10 @@ class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
         myTooltipManager.endUpdate()
     }
 
-    private fun measuredTooltips(targetTooltipSpec: TargetTooltipSpec): List<MeasuredTooltip> {
+    private fun measuredTooltips(tooltipSpecs: List<TooltipSpec>): List<MeasuredTooltip> {
         val measuredTooltips = ArrayList<MeasuredTooltip>()
 
-        for (tooltipSpec in targetTooltipSpec.tooltipSpecs) {
+        for (tooltipSpec in tooltipSpecs) {
             if (tooltipSpec.lines.isEmpty()) {
                 continue
             }
@@ -60,10 +59,10 @@ class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
         return measuredTooltips
     }
 
-    fun showTooltip(cursor: DoubleVector, targetTooltipSpec: TargetTooltipSpec) {
+    fun showTooltip(cursor: DoubleVector, tooltipSpecs: List<TooltipSpec>) {
         drawTooltips(
                 myLayoutManager.arrange(
-                        measuredTooltips(targetTooltipSpec),
+                        measuredTooltips(tooltipSpecs),
                         cursor
                 )
         )
