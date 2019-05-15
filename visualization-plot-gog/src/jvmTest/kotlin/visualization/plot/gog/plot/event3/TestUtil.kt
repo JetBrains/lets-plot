@@ -4,7 +4,7 @@ import jetbrains.datalore.base.function.Functions.identity
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomTargetInteraction.TooltipAesSpec
+import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTarget
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator
@@ -16,8 +16,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 object TestUtil {
-    private val OUTSIDE_DELTA = 10.0
-    private val PATH_POINTS_COUNT_PER_KEY = 100
+    private const val OUTSIDE_DELTA = 10.0
+    private const val PATH_POINTS_COUNT_PER_KEY = 100
 
     internal fun createLocator(lookupStrategy: LookupStrategy, lookupSpace: LookupSpace,
                                vararg list: GeomTargetPrototype): GeomTargetLocator {
@@ -26,7 +26,7 @@ object TestUtil {
 
         val geomKind = GeomKind.POINT
         val lookupSpec = LookupSpec(lookupSpace, lookupStrategy)
-        val tooltipAesSpec = mock(TooltipAesSpec::class.java)
+        val tooltipAesSpec = mock(ContextualMapping::class.java)
 
         return GeomTargetLocatorImpl(geomKind, lookupSpec, tooltipAesSpec, targetsList)
     }

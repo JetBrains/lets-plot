@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.plot.gog.config.event3
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomTargetInteraction.TooltipAesSpec
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTarget
 import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
@@ -76,7 +75,7 @@ open class TooltipSpecTestHelper {
         }
 
         myTooltipSpecs = TooltipSpecFactory(
-                TooltipAesSpec.create(
+                GeomTargetInteraction.createContextualMapping(
                         tipAes,
                         if (axisTooltipEnabled) axisAes else emptyList(),
                         mappedDataAccessMock.mappedDataAccess

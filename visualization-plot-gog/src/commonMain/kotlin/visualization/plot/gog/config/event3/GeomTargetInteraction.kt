@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.*
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TooltipAesSpecProvider
 
-class GeomTargetInteraction internal constructor(builder: GeomInteractionBuilder) : TooltipAesSpecProvider {
+class GeomTargetInteraction(builder: GeomInteractionBuilder) : TooltipAesSpecProvider {
 
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace!!
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy!!
@@ -23,30 +23,21 @@ class GeomTargetInteraction internal constructor(builder: GeomInteractionBuilder
     }
 
     override fun createTooltipAesSpec(dataAccess: MappedDataAccess): ContextualMapping {
-        return TooltipAesSpec.create(myDisplayableAes, if (myAxisTooltipEnabled) myAxisAes else emptyList(), dataAccess)
-    }
-
-    // `open` for Mockito tests
-    internal open class TooltipAesSpec private constructor(
-            override val tooltipAes: List<Aes<*>>,
-            override val axisAes: List<Aes<*>>,
-            override val dataAccess: MappedDataAccess) : ContextualMapping {
-
-        companion object {
-            fun create(displayableAes: List<Aes<*>>, axisAes: List<Aes<*>>, dataAccess: MappedDataAccess): TooltipAesSpec {
-                val showInTip = ArrayList<Aes<*>>()
-                for (aes in displayableAes) {
-                    if (dataAccess.isMapped(aes)) {
-                        showInTip.add(aes)
-                    }
-                }
-
-                return TooltipAesSpec(showInTip, axisAes, dataAccess)
-            }
-        }
+        return createContextualMapping(myDisplayableAes, if (myAxisTooltipEnabled) myAxisAes else emptyList(), dataAccess)
     }
 
     companion object {
         internal val AXIS_TOOLTIP_COLOR = Color.GRAY
+
+        fun createContextualMapping(displayableAes: List<Aes<*>>, axisAes: List<Aes<*>>, dataAccess: MappedDataAccess): ContextualMapping {
+            val showInTip = ArrayList<Aes<*>>()
+            for (aes in displayableAes) {
+                if (dataAccess.isMapped(aes)) {
+                    showInTip.add(aes)
+                }
+            }
+
+            return ContextualMapping(showInTip, axisAes, dataAccess)
+        }
     }
 }
