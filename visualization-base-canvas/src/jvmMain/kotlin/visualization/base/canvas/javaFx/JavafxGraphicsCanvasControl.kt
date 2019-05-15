@@ -17,16 +17,12 @@ internal class JavafxGraphicsCanvasControl(
         pixelRatio: Double) :
         GraphicsCanvasControl {
 
-    private val myJavafxCanvasControl: JavafxCanvasControl
+    private val myJavafxCanvasControl: JavafxCanvasControl = JavafxCanvasControl(size, pixelRatio)
 
     override var image: BufferedImage? = null
 
     override val size: Vector
         get() = myJavafxCanvasControl.size
-
-    init {
-        myJavafxCanvasControl = JavafxCanvasControl(size, pixelRatio)
-    }
 
     override fun createAnimationTimer(eventHandler: CanvasControl.AnimationEventHandler): CanvasControl.AnimationTimer {
         return myJavafxCanvasControl.createAnimationTimer(object : CanvasControl.AnimationEventHandler {

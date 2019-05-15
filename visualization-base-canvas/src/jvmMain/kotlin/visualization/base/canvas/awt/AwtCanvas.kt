@@ -19,7 +19,7 @@ internal class AwtCanvas private constructor(val image: BufferedImage, size: Vec
 
     internal inner class AwtSnapshot : Canvas.Snapshot {
         val image: BufferedImage
-            get() = image
+            get() = this@AwtCanvas.image
 
         val size: Vector
             get() = this@AwtCanvas.size

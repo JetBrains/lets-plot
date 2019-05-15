@@ -12,10 +12,10 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.SimpleAsync
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.KeyModifiers
+import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec
-import java.util.function.Predicate
 
 internal object JavafxCanvasUtil {
     private val EVENT_SPEC_MAP = mapOf(
@@ -23,8 +23,8 @@ internal object JavafxCanvasUtil {
             EventSpec.MOUSE_LEFT to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_EXITED),
             EventSpec.MOUSE_MOVED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_MOVED),
             EventSpec.MOUSE_DRAGGED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_DRAGGED),
-            EventSpec.MOUSE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED, Predicate { e -> e.clickCount % 2 == 1 }),
-            EventSpec.MOUSE_DOUBLE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED, Predicate { e -> e.clickCount % 2 == 0 }),
+            EventSpec.MOUSE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED) { e -> e.clickCount % 2 == 1 },
+            EventSpec.MOUSE_DOUBLE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED) { e -> e.clickCount % 2 == 0 },
             EventSpec.MOUSE_PRESSED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_PRESSED),
             EventSpec.MOUSE_RELEASED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_RELEASED))
 
@@ -74,11 +74,11 @@ internal object JavafxCanvasUtil {
             eventSpec: EventSpec,
             eventHandler: EventHandler<jetbrains.datalore.base.event.MouseEvent>
     ): Registration {
-        val eventOptions = EVENT_SPEC_MAP.get(eventSpec)
+        val eventOptions = EVENT_SPEC_MAP[eventSpec]
         return eventPeer.addEventHandler(eventOptions!!.spec,
                 object : EventHandler<MouseEvent> {
                     override fun onEvent(event: MouseEvent) {
-                        if (eventOptions.predicate.test(event)) {
+                        if (eventOptions.predicate(event)) {
                             eventHandler.onEvent(createMouseEvent(event))
                         }
                     }
@@ -89,7 +89,7 @@ internal object JavafxCanvasUtil {
         return jetbrains.datalore.base.event.MouseEvent(
                 round(e.x),
                 round(e.y),
-                MOUSE_BUTTON_MAP.get(e.button),
+                MOUSE_BUTTON_MAP[e.button],
                 createKeyModifiers(e)
         )
     }
@@ -110,7 +110,7 @@ internal object JavafxCanvasUtil {
 
     private fun eventOptions(
             eventSpec: JavafxEventPeer.JavafxEventSpec): JavafxEventOptions {
-        return JavafxEventOptions(eventSpec, Predicate { t -> true })
+        return JavafxEventOptions(eventSpec) { true }
     }
 
     private class JavafxEventOptions

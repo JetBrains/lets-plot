@@ -17,48 +17,40 @@ import javafx.scene.paint.Color as JavafxColor
 
 internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Context2d {
     private fun convertLineJoin(lineJoin: Context2d.LineJoin): StrokeLineJoin {
-        when (lineJoin) {
-            Context2d.LineJoin.BEVEL -> return StrokeLineJoin.BEVEL
-            Context2d.LineJoin.MITER -> return StrokeLineJoin.MITER
-            Context2d.LineJoin.ROUND -> return StrokeLineJoin.ROUND
+        return when (lineJoin) {
+            Context2d.LineJoin.BEVEL -> StrokeLineJoin.BEVEL
+            Context2d.LineJoin.MITER -> StrokeLineJoin.MITER
+            Context2d.LineJoin.ROUND -> StrokeLineJoin.ROUND
         }
-
-        throw IllegalStateException("Unknown LineJoin value: $lineJoin")
     }
 
     private fun convertLineCap(lineCap: Context2d.LineCap): StrokeLineCap {
-        when (lineCap) {
-            Context2d.LineCap.BUTT -> return StrokeLineCap.BUTT
-            Context2d.LineCap.ROUND -> return StrokeLineCap.ROUND
-            Context2d.LineCap.SQUARE -> return StrokeLineCap.SQUARE
+        return when (lineCap) {
+            Context2d.LineCap.BUTT -> StrokeLineCap.BUTT
+            Context2d.LineCap.ROUND -> StrokeLineCap.ROUND
+            Context2d.LineCap.SQUARE -> StrokeLineCap.SQUARE
         }
-
-        throw IllegalStateException("Unknown LineCap value: $lineCap")
     }
 
     private fun convertTextBaseline(baseline: Context2d.TextBaseline): VPos {
-        when (baseline) {
-            Context2d.TextBaseline.ALPHABETIC -> return VPos.BOTTOM
-            Context2d.TextBaseline.BOTTOM -> return VPos.BOTTOM
-            Context2d.TextBaseline.HANGING -> return VPos.TOP
-            Context2d.TextBaseline.IDEOGRAPHIC -> return VPos.BOTTOM
-            Context2d.TextBaseline.MIDDLE -> return VPos.CENTER
-            Context2d.TextBaseline.TOP -> return VPos.TOP
+        return when (baseline) {
+            Context2d.TextBaseline.ALPHABETIC -> VPos.BOTTOM
+            Context2d.TextBaseline.BOTTOM -> VPos.BOTTOM
+            Context2d.TextBaseline.HANGING -> VPos.TOP
+            Context2d.TextBaseline.IDEOGRAPHIC -> VPos.BOTTOM
+            Context2d.TextBaseline.MIDDLE -> VPos.CENTER
+            Context2d.TextBaseline.TOP -> VPos.TOP
         }
-
-        throw IllegalStateException("Unknown TextBaseline value: $baseline")
     }
 
     private fun convertTextAlign(align: Context2d.TextAlign): TextAlignment {
-        when (align) {
-            Context2d.TextAlign.CENTER -> return TextAlignment.CENTER
-            Context2d.TextAlign.END -> return TextAlignment.RIGHT
-            Context2d.TextAlign.LEFT -> return TextAlignment.LEFT
-            Context2d.TextAlign.RIGHT -> return TextAlignment.RIGHT
-            Context2d.TextAlign.START -> return TextAlignment.LEFT
+        return when (align) {
+            Context2d.TextAlign.CENTER -> TextAlignment.CENTER
+            Context2d.TextAlign.END -> TextAlignment.RIGHT
+            Context2d.TextAlign.LEFT -> TextAlignment.LEFT
+            Context2d.TextAlign.RIGHT -> TextAlignment.RIGHT
+            Context2d.TextAlign.START -> TextAlignment.LEFT
         }
-
-        throw IllegalStateException("Unknown TextAlign value: $align")
     }
 
     private fun convertCssFont(fontString: String): Font {
