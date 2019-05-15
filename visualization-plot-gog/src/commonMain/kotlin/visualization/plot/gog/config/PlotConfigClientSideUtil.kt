@@ -89,7 +89,7 @@ object PlotConfigClientSideUtil {
 
         layerBuilder
                 .locatorLookupSpec(targetInteraction.createLocatorLookupSpec())
-                .tooltipAesSpecProvider(targetInteraction.tooltipAesSpecProvider)
+                .contextualMappingProvider(targetInteraction)
     }
 
     private fun createLayerBuilder(layerConfig: LayerConfig, scaleProvidersMap: TypedScaleProviderMap): GeomLayerBuilder {

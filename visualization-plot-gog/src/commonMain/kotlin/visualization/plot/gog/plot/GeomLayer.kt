@@ -33,7 +33,7 @@ interface GeomLayer {
 
     val locatorLookupSpec: LookupSpec
 
-    val tooltipAesSpec: ContextualMapping
+    val contextualMapping: ContextualMapping
 
     fun handledAes(): List<Aes<*>>
 

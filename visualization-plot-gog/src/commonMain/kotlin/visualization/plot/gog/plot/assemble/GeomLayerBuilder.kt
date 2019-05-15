@@ -21,7 +21,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.GeomProvider
 import jetbrains.datalore.visualization.plot.gog.plot.data.DataProcessing
 import jetbrains.datalore.visualization.plot.gog.plot.data.GroupingContext
-import jetbrains.datalore.visualization.plot.gog.plot.event3.TooltipAesSpecProvider
+import jetbrains.datalore.visualization.plot.gog.plot.event3.ContextualMappingProvider
 import jetbrains.datalore.visualization.plot.gog.plot.scale.ScaleProvider
 
 class GeomLayerBuilder {
@@ -35,7 +35,7 @@ class GeomLayerBuilder {
 
     private var myDataPreprocessor: ((DataFrame) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
-    private var myTooltipAesSpecProvider: TooltipAesSpecProvider = TooltipAesSpecProvider.NONE
+    private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
     private var myIsLegendDisabled: Boolean = false
 
@@ -84,8 +84,8 @@ class GeomLayerBuilder {
         return this
     }
 
-    fun tooltipAesSpecProvider(v: TooltipAesSpecProvider): GeomLayerBuilder {
-        myTooltipAesSpecProvider = v
+    fun contextualMappingProvider(v: ContextualMappingProvider): GeomLayerBuilder {
+        myContextualMappingProvider = v
         return this
     }
 
@@ -137,7 +137,7 @@ class GeomLayerBuilder {
                 myConstantByAes,
                 dataAccess,
                 myLocatorLookupSpec,
-                myTooltipAesSpecProvider.createTooltipAesSpec(dataAccess),
+                myContextualMappingProvider.createContextualMapping(dataAccess),
                 myIsLegendDisabled)
     }
 
@@ -160,7 +160,7 @@ class GeomLayerBuilder {
                               constantByAes: TypedKeyHashMap,
                               override val dataAccess: MappedDataAccess,
                               override val locatorLookupSpec: LookupSpec,
-                              override val tooltipAesSpec: ContextualMapping,
+                              override val contextualMapping: ContextualMapping,
                               override val isLegendDisabled: Boolean) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()

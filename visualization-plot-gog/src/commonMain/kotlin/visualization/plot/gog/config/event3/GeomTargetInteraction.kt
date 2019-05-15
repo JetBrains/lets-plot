@@ -5,9 +5,9 @@ import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.*
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.plot.event3.TooltipAesSpecProvider
+import jetbrains.datalore.visualization.plot.gog.plot.event3.ContextualMappingProvider
 
-class GeomTargetInteraction(builder: GeomInteractionBuilder) : TooltipAesSpecProvider {
+class GeomTargetInteraction(builder: GeomInteractionBuilder) : ContextualMappingProvider {
 
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace!!
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy!!
@@ -15,15 +15,15 @@ class GeomTargetInteraction(builder: GeomInteractionBuilder) : TooltipAesSpecPro
     private val myAxisTooltipEnabled: Boolean = builder.isAxisTooltipEnabled
     private val myAxisAes: List<Aes<*>> = builder.axisAes!!
 
-    val tooltipAesSpecProvider: TooltipAesSpecProvider
-        get() = this
-
     fun createLocatorLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
     }
 
-    override fun createTooltipAesSpec(dataAccess: MappedDataAccess): ContextualMapping {
-        return createContextualMapping(myDisplayableAes, if (myAxisTooltipEnabled) myAxisAes else emptyList(), dataAccess)
+    override fun createContextualMapping(dataAccess: MappedDataAccess): ContextualMapping {
+        return createContextualMapping(
+                myDisplayableAes,
+                if (myAxisTooltipEnabled) myAxisAes else emptyList(),
+                dataAccess)
     }
 
     companion object {

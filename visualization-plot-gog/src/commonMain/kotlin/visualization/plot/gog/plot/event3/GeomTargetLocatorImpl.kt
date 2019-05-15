@@ -15,7 +15,7 @@ import kotlin.math.max
 internal class GeomTargetLocatorImpl(
         private val myGeomKind: GeomKind,
         lookupSpec: GeomTargetLocator.LookupSpec,
-        private val myTooltipAesSpec: ContextualMapping,
+        private val myContextualMapping: ContextualMapping,
         targetPrototypes: List<GeomTargetPrototype>) : GeomTargetLocator {
 
     private val myLocatorLookupSpace: GeomTargetLocator.LookupSpace = lookupSpec.lookupSpace
@@ -65,7 +65,7 @@ internal class GeomTargetLocatorImpl(
                         // In this case use 0.0 as a distance - we have a direct hit.
                         max(0.0, collector.closestPointChecker.distance),
                         myGeomKind,
-                        myTooltipAesSpec
+                        myContextualMapping
                 )
         )
     }

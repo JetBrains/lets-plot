@@ -9,13 +9,16 @@ import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint
 import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.mockito.ReturnsNotNullValuesAnswer
+import jetbrains.datalore.visualization.plot.gog.plot.event3.ContextualMappingProvider
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Mapping
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TargetTooltipSpec
 import org.mockito.Mockito.*
 
 
-internal class TargetTooltipSpecBuilder private constructor(private val myGeomTargetInteraction: GeomTargetInteraction) {
+internal class TargetTooltipSpecBuilder private constructor(
+        private val contextualMappingProvider: ContextualMappingProvider) {
+
     private val mappedDataAccessMock = MappedDataAccessMock()
     private val mockSettings = withSettings()
             .defaultAnswer(ReturnsNotNullValuesAnswer())
@@ -23,8 +26,8 @@ internal class TargetTooltipSpecBuilder private constructor(private val myGeomTa
     fun build(): TargetTooltipSpec {
         val mappedDataAccess = buildMappedDataAccess()
 
-        val tooltipAesSpec = myGeomTargetInteraction.createTooltipAesSpec(mappedDataAccess)
-        val factory = TooltipSpecFactory(tooltipAesSpec, DoubleVector.ZERO)
+        val contextualMapping = contextualMappingProvider.createContextualMapping(mappedDataAccess)
+        val factory = TooltipSpecFactory(contextualMapping, DoubleVector.ZERO)
 
         val tipLayoutHint = mock(TipLayoutHint::class.java, mockSettings)
         `when`(tipLayoutHint.kind).thenReturn(VERTICAL_TOOLTIP)

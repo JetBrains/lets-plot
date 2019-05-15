@@ -26,9 +26,9 @@ object TestUtil {
 
         val geomKind = GeomKind.POINT
         val lookupSpec = LookupSpec(lookupSpace, lookupStrategy)
-        val tooltipAesSpec = mock(ContextualMapping::class.java)
+        val contextualMapping = mock(ContextualMapping::class.java)
 
-        return GeomTargetLocatorImpl(geomKind, lookupSpec, tooltipAesSpec, targetsList)
+        return GeomTargetLocatorImpl(geomKind, lookupSpec, contextualMapping, targetsList)
     }
 
     fun coord(x: Double, y: Double): DoubleVector {

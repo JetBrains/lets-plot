@@ -11,7 +11,7 @@ import jetbrains.datalore.visualization.plot.gog.core.event3.HitShape
 class GeomTargetController(
         private val myGeomKind: GeomKind,
         private val myLookupSpec: GeomTargetLocator.LookupSpec,
-        private val myTooltipAesSpec: ContextualMapping) : GeomTargetCollector, GeomTargetLocator {
+        private val myContextualMapping: ContextualMapping) : GeomTargetCollector, GeomTargetLocator {
 
     private val myTargets = ArrayList<GeomTargetPrototype>()
     private var myGeomTargetLocator: GeomTargetLocator? = null
@@ -42,7 +42,7 @@ class GeomTargetController(
 
     override fun findTargets(coord: DoubleVector): GeomTargetLocator.LocatedTargets? {
         if (myGeomTargetLocator == null) {
-            myGeomTargetLocator = GeomTargetLocatorImpl(myGeomKind, myLookupSpec, myTooltipAesSpec, myTargets)
+            myGeomTargetLocator = GeomTargetLocatorImpl(myGeomKind, myLookupSpec, myContextualMapping, myTargets)
         }
         return myGeomTargetLocator!!.findTargets(coord)
     }
