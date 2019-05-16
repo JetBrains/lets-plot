@@ -4,7 +4,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.*
-import jetbrains.datalore.visualization.base.svg.SvgColors.SvgColorKeyword
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.Defaults.Common.Tooltip
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
@@ -97,7 +96,7 @@ internal class TooltipFrame : SvgComponent() {
         const val STROKE_WIDTH = 1.0
 
         private val FILL_COLOR_RGB = Color.GRAY
-        private val STROKE_COLOR = SvgColorKeyword.WHITE
+        private val STROKE_COLOR = SvgColors.WHITE
         private const val H_PADDING = 4.0
         private const val V_PADDING = 4.0
         private const val FILL_COLOR_LUMINANCE_THRESHOLD = 129.0

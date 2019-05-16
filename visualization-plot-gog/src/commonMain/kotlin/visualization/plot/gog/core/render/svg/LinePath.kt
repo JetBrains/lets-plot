@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.core.render.svg
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.SvgColors.SvgColorKeyword
+import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
 import jetbrains.datalore.visualization.base.svg.SvgPathElement
 
@@ -17,7 +17,7 @@ class LinePath(builder: SvgPathDataBuilder) : SvgComponent() {
 
     init {
         myPath = SvgPathElement(builder.build())
-        myPath.fill().set(SvgColorKeyword.NONE)
+        myPath.fill().set(SvgColors.NONE)
         val lineWidth = 1.0
         myPath.strokeWidth().set(lineWidth)
 

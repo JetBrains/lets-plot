@@ -30,8 +30,8 @@ object CellDemoUtil {
 
             val viewportRect = SvgRectElement(DoubleRectangle(DoubleVector.ZERO, plotSizeProperty.get()))
 
-            viewportRect.stroke().set(SvgColors.SvgColorKeyword.LIGHT_BLUE)
-            viewportRect.fill().set(SvgColors.SvgColorKeyword.NONE)
+            viewportRect.stroke().set(SvgColors.LIGHT_BLUE)
+            viewportRect.fill().set(SvgColors.NONE)
             svg.children().add(viewportRect)
 
 

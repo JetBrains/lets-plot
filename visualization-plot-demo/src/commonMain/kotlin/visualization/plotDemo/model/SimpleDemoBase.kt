@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plotDemo.model
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.svg.SvgColors.SvgColorKeyword
+import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgCssResource
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
@@ -39,8 +39,8 @@ abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAUL
 
         val viewport = DoubleRectangle(PADDING, demoInnerSize)
         val viewportRect = SvgRectElement(viewport)
-        viewportRect.stroke().set(SvgColorKeyword.LIGHT_BLUE)
-        viewportRect.fill().set(SvgColorKeyword.NONE)
+        viewportRect.stroke().set(SvgColors.LIGHT_BLUE)
+        viewportRect.fill().set(SvgColors.NONE)
         svg.children().add(viewportRect)
 
         return svg

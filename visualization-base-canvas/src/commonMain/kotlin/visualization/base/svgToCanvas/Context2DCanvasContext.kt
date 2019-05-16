@@ -9,7 +9,7 @@ import jetbrains.datalore.visualization.base.canvas.CssStyleUtil.extractStyleFon
 import jetbrains.datalore.visualization.base.canvas.svgToCanvas.toRadians
 import jetbrains.datalore.visualization.base.svg.SvgColor
 import jetbrains.datalore.visualization.base.svg.SvgColors
-import jetbrains.datalore.visualization.base.svg.SvgColors.SvgColorKeyword.NONE
+import jetbrains.datalore.visualization.base.svg.SvgColors.NONE
 import jetbrains.datalore.visualization.base.svg.SvgTransform
 import jetbrains.datalore.visualization.base.svg.slim.CanvasContext
 import jetbrains.datalore.visualization.base.svgToCanvas.ParsingUtil.Result
