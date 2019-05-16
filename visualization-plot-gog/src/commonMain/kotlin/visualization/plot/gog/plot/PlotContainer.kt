@@ -13,8 +13,6 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
-import jetbrains.datalore.visualization.base.canvasFigure.SvgCanvasFigure
 import jetbrains.datalore.visualization.base.svg.SvgCssResource
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
@@ -25,21 +23,22 @@ import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipInte
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 import kotlin.math.max
 
-class PlotContainer(private val myPlot: Plot, private val myPreferredSize: ReadableProperty<DoubleVector>) {
+class PlotContainer(private val plot: Plot, private val preferredSize: ReadableProperty<DoubleVector>) {
 
     val svg: SvgSvgElement = SvgSvgElement()
-    private val myLaidOutSize: Property<DoubleVector>
+    private val myLaidOutSize: Property<DoubleVector> = ValueProperty(preferredSize.get())
     private val myDecorationsPanel = SvgGElement()
     private val myMouseMoveRect = SvgRectElement()
 
     private var myContentBuilt: Boolean = false
     private var myRegistrations = CompositeRegistration()
 
-    val tileCanvasFigures: List<CanvasFigure>
-        get() = myPlot.tileCanvasFigures
+// unused?
+//    val tileCanvasFigures: List<CanvasFigure>
+//        get() = plot.tileCanvasFigures
 
     val mouseEventPeer: MouseEventPeer
-        get() = myPlot.mouseEventPeer
+        get() = plot.mouseEventPeer
 
     init {
         svg.addClass(Style.PLOT_CONTAINER)
@@ -47,9 +46,8 @@ class PlotContainer(private val myPlot: Plot, private val myPreferredSize: Reada
         //this rect blocks mouse_left events while cursor moves above svg tree elements (in GWT only)
         myMouseMoveRect.addClass(Style.PLOT_GLASS_PANE)
         myMouseMoveRect.opacity().set(0.0)
-        updateSize(myPreferredSize.get())
+        updateSize(preferredSize.get())
 
-        myLaidOutSize = ValueProperty(myPreferredSize.get())
         myLaidOutSize.addHandler(object : EventHandler<PropertyChangeEvent<out DoubleVector>> {
             override fun onEvent(event: PropertyChangeEvent<out DoubleVector>) {
                 updateSize(myLaidOutSize.get())
@@ -73,13 +71,13 @@ class PlotContainer(private val myPlot: Plot, private val myPreferredSize: Reada
             }
         })
 
-        reg(bindOneWay(myPreferredSize, myPlot.preferredSize()))
-        reg(bindOneWay(map(myPlot.laidOutSize()) { input ->
-            DoubleVector(max(myPreferredSize.get().x, input.x), max(myPreferredSize.get().y, input.y))
+        reg(bindOneWay(preferredSize, plot.preferredSize()))
+        reg(bindOneWay(map(plot.laidOutSize()) { input ->
+            DoubleVector(max(preferredSize.get().x, input.x), max(preferredSize.get().y, input.y))
         }, myLaidOutSize))
 
-        svg.children().add(myPlot.rootGroup)
-        if (myPlot.isInteractionsEnabled) {
+        svg.children().add(plot.rootGroup)
+        if (plot.isInteractionsEnabled) {
             svg.children().add(myDecorationsPanel)
             svg.children().add(myMouseMoveRect)
         }
@@ -87,10 +85,11 @@ class PlotContainer(private val myPlot: Plot, private val myPreferredSize: Reada
         hookupInteractions()
     }
 
+    @Suppress("unused")
     fun clearContent() {
         svg.children().clear()
         myDecorationsPanel.children().clear()
-        myPlot.clear()
+        plot.clear()
         myRegistrations.remove()
         myRegistrations = CompositeRegistration()
 
@@ -110,27 +109,27 @@ class PlotContainer(private val myPlot: Plot, private val myPreferredSize: Reada
     }
 
     private fun hookupInteractions() {
-        if (myPlot.isInteractionsEnabled) {
+        if (plot.isInteractionsEnabled) {
             // ToDo: it seems that myActualSize may change
             val viewport = DoubleRectangle(DoubleVector.ZERO, myLaidOutSize.get())
             val interactions = TooltipInteractions(myDecorationsPanel, viewport)
 
             val onMouseMoved = { e: MouseEvent ->
                 val coord = DoubleVector(e.x.toDouble(), e.y.toDouble())
-                val targetTooltipSpec = myPlot.getTargetTooltipSpec(coord)
+                val targetTooltipSpec = plot.getTargetTooltipSpec(coord)
                 interactions.showTooltip(coord, targetTooltipSpec)
             }
-            reg(myPlot.mouseEventPeer.addEventHandler(MOUSE_MOVED, object : EventHandler<MouseEvent> {
+            reg(plot.mouseEventPeer.addEventHandler(MOUSE_MOVED, object : EventHandler<MouseEvent> {
                 override fun onEvent(event: MouseEvent) {
                     onMouseMoved(event)
                 }
             }))
-            reg(myPlot.mouseEventPeer.addEventHandler(MOUSE_DRAGGED, object : EventHandler<MouseEvent> {
+            reg(plot.mouseEventPeer.addEventHandler(MOUSE_DRAGGED, object : EventHandler<MouseEvent> {
                 override fun onEvent(event: MouseEvent) {
                     interactions.hideTooltip()
                 }
             }))
-            reg(myPlot.mouseEventPeer.addEventHandler(MOUSE_LEFT, object : EventHandler<MouseEvent> {
+            reg(plot.mouseEventPeer.addEventHandler(MOUSE_LEFT, object : EventHandler<MouseEvent> {
                 override fun onEvent(event: MouseEvent) {
                     interactions.hideTooltip()
                 }
@@ -138,10 +137,11 @@ class PlotContainer(private val myPlot: Plot, private val myPreferredSize: Reada
         }
     }
 
-    fun createCanvasFigure(): CanvasFigure {
-        val canvasFigure = SvgCanvasFigure()
-        canvasFigure.svgGElement.children().add(svg)
-        canvasFigure.setBounds(DoubleRectangle(DoubleVector.ZERO, myLaidOutSize.get()))
-        return canvasFigure
-    }
+// unused?
+//    fun createCanvasFigure(): CanvasFigure {
+//        val canvasFigure = SvgCanvasFigure()
+//        canvasFigure.svgGElement.children().add(svg)
+//        canvasFigure.setBounds(DoubleRectangle(DoubleVector.ZERO, myLaidOutSize.get()))
+//        return canvasFigure
+//    }
 }

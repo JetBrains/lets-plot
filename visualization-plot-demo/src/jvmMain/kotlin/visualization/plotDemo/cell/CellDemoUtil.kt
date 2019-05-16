@@ -28,11 +28,11 @@ object CellDemoUtil {
 
             val plotSizeProperty = demoModel.plotSize
 
-            val viewportRect = SvgRectElement(DoubleRectangle(DoubleVector.ZERO, plotSizeProperty.get()))
+            val frameRect = SvgRectElement(DoubleRectangle(DoubleVector.ZERO, plotSizeProperty.get()))
 
-            viewportRect.stroke().set(SvgColors.LIGHT_BLUE)
-            viewportRect.fill().set(SvgColors.NONE)
-            svg.children().add(viewportRect)
+            frameRect.stroke().set(SvgColors.LIGHT_BLUE)
+            frameRect.fill().set(SvgColors.NONE)
+            svg.children().add(frameRect)
 
 
             val component = createComponent(svg)
@@ -49,6 +49,8 @@ object CellDemoUtil {
                 override fun onEvent(event: PropertyChangeEvent<out Double>) {
                     val newWidth = event.newValue!!
                     val newSize = DoubleVector(newWidth, plotHeight)
+                    frameRect.width().set(newSize.x)
+                    frameRect.height().set(newSize.y)
                     plotSizeProperty.set(newSize)
                 }
             })

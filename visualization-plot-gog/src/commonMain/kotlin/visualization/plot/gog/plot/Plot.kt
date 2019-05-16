@@ -34,7 +34,8 @@ import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 import jetbrains.datalore.visualization.plot.gog.plot.theme.Theme
 import mu.KotlinLogging
 
-abstract class Plot protected constructor(private val myTheme: Theme) : SvgComponent() {
+abstract class Plot(private val theme: Theme) : SvgComponent() {
+
     private val myPreferredSize = ValueProperty(DEF_PLOT_SIZE)
     private val myLaidOutSize = ValueProperty(DoubleVector.ZERO)
     private val myTargetsHelper = TargetsHelper()
@@ -129,8 +130,8 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
     private fun createTile(
             tilesOrigin: DoubleVector,
             tileInfo: TileLayoutInfo,
-            tileLayers: List<GeomLayer>
-    ): PlotTile {
+            tileLayers: List<GeomLayer>): PlotTile {
+
         val xScale: Scale2<Double>
         val yScale: Scale2<Double>
         val coord: CoordinateSystem
@@ -152,7 +153,7 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
             coord = BogusCoordinateSystem()
         }
 
-        val tile = PlotTile(tileLayers, xScale, yScale, tilesOrigin, tileInfo, coord, myTheme, mouseEventPeer)
+        val tile = PlotTile(tileLayers, xScale, yScale, tilesOrigin, tileInfo, coord, theme, mouseEventPeer)
         tile.setShowAxis(isAxisEnabled)
         tile.debugDrawing().set(DEBUG_DRAWING)
         tile.setUseCanvas(isCanvasEnabled)
@@ -242,7 +243,7 @@ abstract class Plot protected constructor(private val myTheme: Theme) : SvgCompo
 
         // adjust for legend boxes
         var boxesLayoutResult: LegendBoxesLayout.Result? = null
-        val legendTheme = myTheme.legend()
+        val legendTheme = theme.legend()
         var withoutTitleAndLegends = withoutTitle
         if (legendTheme.position().isFixed) {
             val legendBoxesLayout = LegendBoxesLayout(withoutTitle, legendTheme)
