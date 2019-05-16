@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.gogProjectionalDemo.model.cell
+package jetbrains.datalore.visualization.plotDemo.plotContainer
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ReadableProperty

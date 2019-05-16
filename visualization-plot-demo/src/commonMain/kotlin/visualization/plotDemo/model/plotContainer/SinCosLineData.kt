@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.gogProjectionalDemo.model.cell
+package jetbrains.datalore.visualization.plotDemo.plotContainer
 
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil

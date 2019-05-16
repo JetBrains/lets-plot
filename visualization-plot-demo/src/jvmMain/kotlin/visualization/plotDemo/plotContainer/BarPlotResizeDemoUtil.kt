@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plotDemo.cell
+package jetbrains.datalore.visualization.plotDemo.plotContainer
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -8,7 +8,6 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.gogProjectionalDemo.model.cell.BarPlotResizeDemo
 import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame
 import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame.Companion.createSvgComponent
 import java.awt.Color

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plotDemo.cell
+package jetbrains.datalore.visualization.plotDemo.plotContainer
 
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.Property
