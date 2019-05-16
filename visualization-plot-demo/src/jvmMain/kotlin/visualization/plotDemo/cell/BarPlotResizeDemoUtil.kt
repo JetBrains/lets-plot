@@ -8,7 +8,7 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.gogProjectionalDemo.model.cell.BarPlotXAxisDemo
+import jetbrains.datalore.visualization.gogProjectionalDemo.model.cell.BarPlotResizeDemo
 import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame
 import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame.Companion.createSvgComponent
 import java.awt.Color
@@ -21,11 +21,7 @@ import javax.swing.JComponent
 import javax.swing.SwingUtilities
 import javax.swing.border.LineBorder
 
-object CellDemoUtil {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        show(BarPlotXAxisDemo.continuousX())
-    }
+object BarPlotResizeDemoUtil {
 
     private const val PADDING = 20
 
@@ -40,7 +36,7 @@ object CellDemoUtil {
             containerSize.width.toDouble() - 2 * PADDING,
             containerSize.height.toDouble() - 2 * PADDING)
 
-    private fun show(demoModel: BarPlotXAxisDemo) {
+    fun show(demoModel: BarPlotResizeDemo) {
         SwingDemoFrame("Fit in frame (try to resize)").show(false) {
 
             //            this.background = Color.BLUE
@@ -73,8 +69,8 @@ object CellDemoUtil {
         }
     }
 
-    private fun createPlot(demoModel: BarPlotXAxisDemo, plotSizeProp: ReadableProperty<DoubleVector>, container: JComponent) {
-        val plot = demoModel.createPlot(plotSizeProp)
+    private fun createPlot(demo: BarPlotResizeDemo, plotSizeProp: ReadableProperty<DoubleVector>, container: JComponent) {
+        val plot = demo.createPlot(plotSizeProp)
         plot.ensureContentBuilt()
         val svg = plot.svg
 

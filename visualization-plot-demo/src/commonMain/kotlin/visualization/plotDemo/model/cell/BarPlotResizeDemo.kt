@@ -17,7 +17,7 @@ import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.GeomProvider
 import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProviders
 import jetbrains.datalore.visualization.plot.gog.plot.theme.DefaultTheme
 
-class BarPlotXAxisDemo private constructor(
+class BarPlotResizeDemo private constructor(
         private val sclData: SinCosLineData,
         private val xScale: Scale2<*>) {
 
@@ -59,15 +59,15 @@ class BarPlotXAxisDemo private constructor(
 
     companion object {
 
-        fun continuousX(): BarPlotXAxisDemo {
-            return BarPlotXAxisDemo(
+        fun continuousX(): BarPlotResizeDemo {
+            return BarPlotResizeDemo(
                     SinCosLineData({ v -> v.toDouble() }, 6),
                     Scales.continuousDomain(" ", Aes.X))
         }
 
-        fun discreteX(): BarPlotXAxisDemo {
+        fun discreteX(): BarPlotResizeDemo {
             val sclData = SinCosLineData({ v -> "Group label " + (v + 1) }, 6)
-            return BarPlotXAxisDemo(
+            return BarPlotResizeDemo(
                     sclData,
                     Scales.discreteDomain<String>("", sclData.distinctXValues()))
         }
