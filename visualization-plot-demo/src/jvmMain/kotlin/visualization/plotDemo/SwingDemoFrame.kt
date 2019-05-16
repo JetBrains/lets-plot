@@ -13,7 +13,7 @@ class SwingDemoFrame(
         private val title: String,
         private val size: Dimension = FRAME_SIZE) {
 
-    fun show(initContent: JPanel.() -> Unit) {
+    fun show(scroll: Boolean = true, initContent: JPanel.() -> Unit) {
         SwingUtilities.invokeLater {
             val frame = JFrame(title)
 
@@ -26,7 +26,11 @@ class SwingDemoFrame(
 
             panel.initContent()
 
-            frame.add(JScrollPane(panel))
+            if (scroll) {
+                frame.add(JScrollPane(panel))
+            } else {
+                frame.add(panel)
+            }
 
             frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
             frame.size = size
@@ -42,7 +46,7 @@ class SwingDemoFrame(
         fun showSvg(svgRoots: List<SvgSvgElement>, size: DoubleVector, title: String = "") {
             SwingDemoFrame(title).show {
                 for (svgRoot in svgRoots) {
-                    val component = createComponent(svgRoot)
+                    val component = createSvgComponent(svgRoot)
 
                     component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
 
@@ -57,7 +61,7 @@ class SwingDemoFrame(
 
         }
 
-        fun createComponent(svgRoot: SvgSvgElement): JComponent {
+        fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
             return object : SvgAwtComponent(svgRoot) {
                 override fun createMessageCallback(): SvgAwtHelper.MessageCallback {
                     return createDefaultMessageCallback()
@@ -65,7 +69,7 @@ class SwingDemoFrame(
             }
         }
 
-        fun addVSpace(container: JPanel) {
+        private fun addVSpace(container: JPanel) {
             container.add(Box.createRigidArea(Dimension(0, SwingDemoFrame.SPACE_V)))
         }
     }

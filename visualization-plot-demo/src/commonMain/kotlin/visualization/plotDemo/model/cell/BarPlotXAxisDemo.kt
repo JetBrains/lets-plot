@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.gogProjectionalDemo.model.cell
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ValueProperty
+import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
@@ -21,9 +21,7 @@ class BarPlotXAxisDemo private constructor(
         private val sclData: SinCosLineData,
         private val xScale: Scale2<*>) {
 
-    val plotSize = ValueProperty(DoubleVector(600.0, 400.0))
-
-    fun createPlot(): PlotContainer {
+    fun createPlot(plotSize: ReadableProperty<DoubleVector>): PlotContainer {
         val varX = sclData.varX
         val varY = sclData.varY
         val varCat = sclData.varCat
