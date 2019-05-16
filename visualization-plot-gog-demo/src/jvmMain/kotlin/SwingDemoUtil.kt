@@ -50,7 +50,9 @@ object SwingDemoUtil {
                 Vector(viewSize.x.toInt(), viewSize.y.toInt())
         )
 
-        PlotCanvasMapper(plot, canvasControl) { consumer -> { JavafxThreadConsumer(consumer).accept(it) } }
+        PlotCanvasMapper(plot, canvasControl) { consumer ->
+            { JavafxThreadConsumer(consumer).accept(it) }
+        }
 
         val component = canvasControl.component
         component.background = Color.WHITE
