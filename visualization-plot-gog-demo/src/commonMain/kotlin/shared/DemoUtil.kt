@@ -1,25 +1,12 @@
 package jetbrains.datalore.visualization.gogDemo.shared
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.random.RandomGaussian
-import jetbrains.datalore.visualization.plot.gog.DemoAndTest
 import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext
-import jetbrains.datalore.visualization.plot.gog.plot.PlotContainer
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.GeomContextBuilder
 import kotlin.random.Random
 
 object DemoUtil {
-    fun createPlotContainer(viewSize: DoubleVector, plotSpec: MutableMap<String, Any>): PlotContainer {
-        val plot = DemoAndTest.createPlot(plotSpec, false)
-        val plotContainer = PlotContainer(plot, ValueProperty(viewSize))
-
-        plotContainer.ensureContentBuilt()
-
-        return plotContainer
-    }
-
     fun gauss(count: Int, seed: Long, mean: Double, stdDeviance: Double): List<Double> {
         val r = RandomGaussian(Random(seed))
         val list = ArrayList<Double>()
