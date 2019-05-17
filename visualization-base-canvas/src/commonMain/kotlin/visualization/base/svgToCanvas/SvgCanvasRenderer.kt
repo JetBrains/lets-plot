@@ -22,7 +22,7 @@ class SvgCanvasRenderer(private val svgRoot: SvgElement, private val canvasContr
     private var needRedraw: Boolean = true
 
     init {
-        canvasControl.addChildren(mainCanvas)
+        canvasControl.addChild(mainCanvas)
         initNodeContainer()
         animationTimer.start()
     }

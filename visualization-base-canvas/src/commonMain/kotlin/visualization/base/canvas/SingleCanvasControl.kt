@@ -13,7 +13,7 @@ class SingleCanvasControl(private val myCanvasControl: CanvasControl) {
 
     init {
         canvas = myCanvasControl.createCanvas(myCanvasControl.size)
-        myCanvasControl.addChildren(canvas)
+        myCanvasControl.addChild(canvas)
     }
 
     fun createCanvas(): Canvas {

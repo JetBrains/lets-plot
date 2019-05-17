@@ -50,8 +50,8 @@ internal class JavafxGraphicsCanvasControl(
         return myJavafxCanvasControl.createCanvas(size)
     }
 
-    override fun addChildren(canvas: Canvas) {
-        myJavafxCanvasControl.addChildren(canvas)
+    override fun addChild(canvas: Canvas) {
+        myJavafxCanvasControl.addChild(canvas)
     }
 
     override fun removeChild(canvas: Canvas) {

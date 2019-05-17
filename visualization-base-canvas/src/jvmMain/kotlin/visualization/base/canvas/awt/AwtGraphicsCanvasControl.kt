@@ -37,7 +37,7 @@ internal class AwtGraphicsCanvasControl(
         return AwtCanvas.create(size, myPixelRatio)
     }
 
-    override fun addChildren(canvas: Canvas) {
+    override fun addChild(canvas: Canvas) {
         throw IllegalStateException()
     }
 

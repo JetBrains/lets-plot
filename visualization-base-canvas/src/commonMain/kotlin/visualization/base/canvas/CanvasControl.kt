@@ -15,7 +15,7 @@ interface CanvasControl {
 
     fun createCanvas(size: Vector): Canvas
 
-    fun addChildren(canvas: Canvas)
+    fun addChild(canvas: Canvas)
 
     fun removeChild(canvas: Canvas)
 
