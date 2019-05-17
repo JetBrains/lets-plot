@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent
 import java.awt.event.MouseMotionListener
 import javax.swing.JComponent
 
-abstract class SvgAwtComponent protected constructor(svgRoot: SvgSvgElement) : JComponent() {
+abstract class SvgAwtComponent(svgRoot: SvgSvgElement) : JComponent() {
     private val myHelper: SvgAwtComponentHelper
 
     init {

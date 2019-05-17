@@ -14,18 +14,18 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 
 class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactory, size: Vector) : CanvasControl {
-    private var myGraphicsCanvasControl: GraphicsCanvasControl? = null
+    private lateinit var myGraphicsCanvasControl: GraphicsCanvasControl
     private val myEventPeer: AwtEventPeer
     val component: JComponent
 
     override val size: Vector
-        get() = myGraphicsCanvasControl!!.size
+        get() = myGraphicsCanvasControl.size
 
     init {
         component = object : JPanel() {
             override fun paint(g: Graphics?) {
                 super.paint(g)
-                drawGraphicsCanvasControl(myGraphicsCanvasControl!!, g!!)
+                drawGraphicsCanvasControl(myGraphicsCanvasControl, g!!)
             }
         }
         myGraphicsCanvasControl = graphicsCanvasControlFactory.create(size, Runnable { component.repaint() })
@@ -33,7 +33,7 @@ class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactor
     }
 
     override fun createAnimationTimer(eventHandler: CanvasControl.AnimationEventHandler): CanvasControl.AnimationTimer {
-        return myGraphicsCanvasControl!!.createAnimationTimer(eventHandler)
+        return myGraphicsCanvasControl.createAnimationTimer(eventHandler)
     }
 
     override fun addMouseEventHandler(eventSpec: CanvasControl.EventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
@@ -41,14 +41,14 @@ class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactor
     }
 
     override fun createCanvas(size: Vector): Canvas {
-        return myGraphicsCanvasControl!!.createCanvas(size)
+        return myGraphicsCanvasControl.createCanvas(size)
     }
 
     override fun addChildren(canvas: Canvas) {
-        myGraphicsCanvasControl!!.addChildren(canvas)
+        myGraphicsCanvasControl.addChildren(canvas)
     }
 
     override fun removeChild(canvas: Canvas) {
-        myGraphicsCanvasControl!!.addChildren(canvas)
+        myGraphicsCanvasControl.addChildren(canvas)
     }
 }
