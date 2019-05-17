@@ -27,12 +27,12 @@ internal class AwtContext2d(graphics2D: Graphics2D) : Context2d {
         restore()
     }
 
-    override fun drawImage(snapshot: Snapshot, x: Int, y: Int) {
+    override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
         val awtSnapshot = snapshot as AwtSnapshot
 
         current().drawImage(
                 awtSnapshot.image,
-                x, y,
+                x.toInt(), y.toInt(),
                 awtSnapshot.size.x, awtSnapshot.size.y
         ) { img, infoflags, x1, y1, width, height -> false }
     }

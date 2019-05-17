@@ -69,7 +69,7 @@ class SvgCanvasRenderer(private val svgRoot: SvgElement, private val canvasContr
         virtualCanvas.takeSnapshot().onSuccess { value ->
             drawLater(canvasControl) {
                 clearCanvas(mainCanvas)
-                mainCanvas.context2d.drawImage(value, 0, 0)
+                mainCanvas.context2d.drawImage(value, 0.0, 0.0)
             }
         }
     }

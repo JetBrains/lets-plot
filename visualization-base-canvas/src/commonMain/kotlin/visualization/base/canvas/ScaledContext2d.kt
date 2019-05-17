@@ -3,13 +3,8 @@ package jetbrains.datalore.visualization.base.canvas
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
-import kotlin.math.ceil
 
 internal class ScaledContext2d(private val myContext2d: Context2d, private val myScale: Double) : Context2d {
-
-    private fun scaled(value: Int): Int {
-        return ceil(myScale * value).toInt()
-    }
 
     private fun scaled(value: Double): Double {
         return myScale * value
@@ -34,7 +29,7 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         return CssStyleUtil.scaleFont(font, myScale)
     }
 
-    override fun drawImage(snapshot: Snapshot, x: Int, y: Int) {
+    override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
         myContext2d.drawImage(snapshot, scaled(x), scaled(y))
     }
 

@@ -1,69 +1,59 @@
-package jetbrains.datalore.visualization.base.canvas.javaFx
+package jetbrains.datalore.visualization.base.canvasGwt
 
-import javafx.geometry.VPos
-import javafx.scene.canvas.GraphicsContext
-import javafx.scene.shape.*
-import javafx.scene.text.Font
-import javafx.scene.text.Text
-import javafx.scene.text.TextAlignment
+import jetbrains.datalore.base.domCore.css.enumerables.CssLineCap
+import jetbrains.datalore.base.domCore.css.enumerables.CssLineJoin
+import jetbrains.datalore.base.domCore.css.enumerables.CssTextAlign
+import jetbrains.datalore.base.domCore.css.enumerables.CssTextBaseLine
+import jetbrains.datalore.base.domCore.dom.DomContext2d
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.CssFontParser
-import javafx.scene.paint.Color as JavafxColor
+import jetbrains.datalore.visualization.base.canvasGwt.GwtCanvas.GwtSnapshot
+import org.w3c.dom.*
 
-internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Context2d {
-    private fun convertLineJoin(lineJoin: Context2d.LineJoin): StrokeLineJoin {
+internal class GwtContext2d(private val myContext2d: DomContext2d) : Context2d {
+    private fun convertLineJoin(lineJoin: Context2d.LineJoin): CssLineJoin {
         return when (lineJoin) {
-            Context2d.LineJoin.BEVEL -> StrokeLineJoin.BEVEL
-            Context2d.LineJoin.MITER -> StrokeLineJoin.MITER
-            Context2d.LineJoin.ROUND -> StrokeLineJoin.ROUND
+            Context2d.LineJoin.BEVEL -> CssLineJoin.BEVEL
+            Context2d.LineJoin.MITER -> CssLineJoin.MITER
+            Context2d.LineJoin.ROUND -> CssLineJoin.ROUND
         }
     }
 
-    private fun convertLineCap(lineCap: Context2d.LineCap): StrokeLineCap {
+    private fun convertLineCap(lineCap: Context2d.LineCap): CssLineCap {
         return when (lineCap) {
-            Context2d.LineCap.BUTT -> StrokeLineCap.BUTT
-            Context2d.LineCap.ROUND -> StrokeLineCap.ROUND
-            Context2d.LineCap.SQUARE -> StrokeLineCap.SQUARE
+            Context2d.LineCap.BUTT -> CssLineCap.BUTT
+            Context2d.LineCap.ROUND -> CssLineCap.ROUND
+            Context2d.LineCap.SQUARE -> CssLineCap.SQUARE
         }
     }
 
-    private fun convertTextBaseline(baseline: Context2d.TextBaseline): VPos {
+    private fun convertTextBaseline(baseline: Context2d.TextBaseline): CssTextBaseLine {
         return when (baseline) {
-            Context2d.TextBaseline.ALPHABETIC -> VPos.BOTTOM
-            Context2d.TextBaseline.BOTTOM -> VPos.BOTTOM
-            Context2d.TextBaseline.HANGING -> VPos.TOP
-            Context2d.TextBaseline.IDEOGRAPHIC -> VPos.BOTTOM
-            Context2d.TextBaseline.MIDDLE -> VPos.CENTER
-            Context2d.TextBaseline.TOP -> VPos.TOP
+            Context2d.TextBaseline.ALPHABETIC -> CssTextBaseLine.ALPHABETIC
+            Context2d.TextBaseline.BOTTOM -> CssTextBaseLine.BOTTOM
+            Context2d.TextBaseline.HANGING -> CssTextBaseLine.HANGING
+            Context2d.TextBaseline.IDEOGRAPHIC -> CssTextBaseLine.IDEOGRAPHIC
+            Context2d.TextBaseline.MIDDLE -> CssTextBaseLine.MIDDLE
+            Context2d.TextBaseline.TOP -> CssTextBaseLine.TOP
         }
     }
 
-    private fun convertTextAlign(align: Context2d.TextAlign): TextAlignment {
+    private fun convertTextAlign(align: Context2d.TextAlign): CssTextAlign {
         return when (align) {
-            Context2d.TextAlign.CENTER -> TextAlignment.CENTER
-            Context2d.TextAlign.END -> TextAlignment.RIGHT
-            Context2d.TextAlign.LEFT -> TextAlignment.LEFT
-            Context2d.TextAlign.RIGHT -> TextAlignment.RIGHT
-            Context2d.TextAlign.START -> TextAlignment.LEFT
+            Context2d.TextAlign.CENTER -> CssTextAlign.CENTER
+            Context2d.TextAlign.END -> CssTextAlign.END
+            Context2d.TextAlign.LEFT -> CssTextAlign.LEFT
+            Context2d.TextAlign.RIGHT -> CssTextAlign.RIGHT
+            Context2d.TextAlign.START -> CssTextAlign.START
         }
-    }
-
-    private fun convertCssFont(fontString: String): Font {
-        val parser = CssFontParser.create(fontString)
-                ?: throw IllegalStateException("Could not parse css font string: $fontString")
-
-        val family = parser.fontFamily
-        val size = parser.fontSize
-        return if (size == null) Font.font(family) else Font.font(family, size)
     }
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
-        val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
-        myContext2d.drawImage(javafxSnapshot.image, x.toDouble(), y.toDouble())
+        val gwtSnapshot = snapshot as GwtSnapshot
+        myContext2d.drawImage(gwtSnapshot.canvasElement, x, y)
     }
 
     override fun beginPath() {
@@ -79,11 +69,11 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun fill() {
-        fill(FillRule.NON_ZERO)
+        myContext2d.fill(CanvasFillRule.NONZERO)
     }
 
     override fun fillEvenOdd() {
-        fill(FillRule.EVEN_ODD)
+        myContext2d.fill(CanvasFillRule.EVENODD)
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
@@ -99,7 +89,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double) {
-        myContext2d.arc(x, y, radius, radius, -toDegrees(startAngle), toDegrees(startAngle) - toDegrees(endAngle))
+        myContext2d.arc(x, y, radius, startAngle, endAngle)
     }
 
     override fun save() {
@@ -111,11 +101,11 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun setFillColor(color: String?) {
-        myContext2d.fill = if (color != null) JavafxColor.valueOf(color) else null
+        myContext2d.fillStyle = color
     }
 
     override fun setStrokeColor(color: String?) {
-        myContext2d.stroke = if (color != null) JavafxColor.valueOf(color) else null
+        myContext2d.strokeStyle = color
     }
 
     override fun setGlobalAlpha(alpha: Double) {
@@ -123,7 +113,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun setFont(f: String) {
-        myContext2d.font = convertCssFont(f)
+        myContext2d.font = f
     }
 
     override fun setLineWidth(lineWidth: Double) {
@@ -147,7 +137,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun rotate(angle: Double) {
-        myContext2d.rotate(toDegrees(angle))
+        myContext2d.rotate(angle)
     }
 
     override fun translate(x: Double, y: Double) {
@@ -187,27 +177,17 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
-        myContext2d.setLineDashes(*lineDash)
+        myContext2d.setLineDash(lineDash.toTypedArray())
     }
 
     override fun measureText(str: String, font: String): DoubleVector {
-        val text = Text(str)
-        text.font = convertCssFont(font)
-        val tb = text.boundsInLocal
-        val stencil = Rectangle(tb.minX, tb.minY, tb.width, tb.height)
-
-        val intersection = Shape.intersect(text, stencil)
-
-        val ib = intersection.boundsInLocal
-        return DoubleVector(ib.width, ib.height)
+        val parser = CssFontParser.create(font) ?: throw IllegalStateException("Could not parse css font string: $font")
+        val height = parser.fontSize ?: 10.0
+        val width = myContext2d.measureText(str).width
+        return DoubleVector(myContext2d.measureText(str).width, height)
     }
 
     override fun clearRect(rect: DoubleRectangle) {
         myContext2d.clearRect(rect.left, rect.top, rect.width, rect.height)
-    }
-
-    private fun fill(fillRule: FillRule) {
-        myContext2d.fillRule = fillRule
-        myContext2d.fill()
     }
 }
