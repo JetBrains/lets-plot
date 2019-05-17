@@ -48,26 +48,34 @@ object DemoUtil {
         return l
     }
 
-    fun add(l1: List<Double>, l2: List<Double>): List<Double> {
-        val result = ArrayList<Double>()
+    fun add(l1: List<Double?>, l2: List<Double?>): List<Double?> {
+        val result = ArrayList<Double?>()
         val l1_ = l1.iterator()
         val l2_ = l2.iterator()
         while (l1_.hasNext()) {
             val v1 = l1_.next()
             val v2 = l2_.next()
-            result.add(v1 + v2)
+            if (v1 == null || v2 == null) {
+                result.add(null)
+            } else {
+                result.add(v1 + v2)
+            }
         }
         return result
     }
 
-    fun sub(l1: List<Double>, l2: List<Double>): List<Double> {
-        val result = ArrayList<Double>()
+    fun sub(l1: List<Double?>, l2: List<Double?>): List<Double?> {
+        val result = ArrayList<Double?>()
         val l1_ = l1.iterator()
         val l2_ = l2.iterator()
         while (l1_.hasNext()) {
             val v1 = l1_.next()
             val v2 = l2_.next()
-            result.add(v1 - v2)
+            if (v1 == null || v2 == null) {
+                result.add(null)
+            } else {
+                result.add(v1 - v2)
+            }
         }
         return result
     }

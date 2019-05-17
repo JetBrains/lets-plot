@@ -29,6 +29,8 @@ kotlin {
 
                 compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
 
+                implementation "org.apache.commons:commons-math3:$math3_version"
+
                 implementation "org.apache.xmlgraphics:batik-anim:$batik_version"
                 implementation "org.apache.xmlgraphics:batik-awt-util:$batik_version"
                 implementation "org.apache.xmlgraphics:batik-bridge:$batik_version"
