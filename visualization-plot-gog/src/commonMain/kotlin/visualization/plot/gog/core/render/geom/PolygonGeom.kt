@@ -5,7 +5,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.LinePathConstructor
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.LinesHelper
 
-internal open class PolygonGeom : GeomBase() {
+open class PolygonGeom : GeomBase() {
 
     protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
         return GeomUtil.with_X_Y(aesthetics.dataPoints())

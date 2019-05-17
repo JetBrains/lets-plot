@@ -494,9 +494,13 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
     companion object {
         fun <T> constant(v: T): (Int) -> T = { v }
 
-        fun <T> array(vararg v: T): (Int) -> T {
+        fun <T> array(v: Array<T>): (Int) -> T {
             return { value -> v[value] }
         }
+
+//        fun <T> array(vararg v: T): (Int) -> T {
+//            return { value -> v[value] }
+//        }
 
         fun <T> collection(v: Collection<T>): (Int) -> T {
             return { value -> Iterables[v, value] }

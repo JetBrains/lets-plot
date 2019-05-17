@@ -11,7 +11,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.Rectangle
 /**
  * TODO: position adjustment (identity, dodge, stack, fill)
  */
-internal open class BarGeom : GeomBase() {
+open class BarGeom : GeomBase() {
 
     override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx)

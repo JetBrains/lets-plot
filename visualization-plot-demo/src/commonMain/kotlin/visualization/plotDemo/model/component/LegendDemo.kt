@@ -30,7 +30,7 @@ open class LegendDemo : SimpleDemoBase() {
 
         // layer
         val aes = AestheticsBuilder(count)
-                .fill(array(*colors))
+                .fill(array(colors))
                 //      .width(constant(0.75))
                 .build()
 

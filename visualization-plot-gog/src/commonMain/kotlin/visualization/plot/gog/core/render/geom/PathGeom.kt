@@ -5,7 +5,7 @@ import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.LinePathConstructor
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.LinesHelper
 
-internal open class PathGeom : GeomBase() {
+open class PathGeom : GeomBase() {
 
     var animation: Any? = null
 
@@ -39,7 +39,7 @@ internal open class PathGeom : GeomBase() {
                 Aes.FLOW
         )
 
-        val HANDLES_GROUPS = true
+        const val HANDLES_GROUPS = true
         val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory = PathLegendKeyElementFactory()
     }
 
