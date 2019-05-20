@@ -36,7 +36,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         return domCanvas
     }
 
-    override fun addChildren(canvas: Canvas) {
+    override fun addChild(canvas: Canvas) {
         rootElement.appendChild((canvas as DomCanvas).domHTMLCanvasElement)
     }
 
