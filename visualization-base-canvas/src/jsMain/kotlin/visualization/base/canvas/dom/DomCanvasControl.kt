@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.base.canvasDom
 
-import jetbrains.datalore.base.domCore.css.enumerables.CssPosition
-import jetbrains.datalore.base.domCore.css.setPosition
-import jetbrains.datalore.base.domCore.dom.DomApi
-import jetbrains.datalore.base.domCore.dom.DomHTMLElement
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.js.css.enumerables.CssPosition
+import jetbrains.datalore.base.js.css.setPosition
+import jetbrains.datalore.base.js.dom.DomApi
+import jetbrains.datalore.base.js.dom.DomHTMLElement
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.Canvas

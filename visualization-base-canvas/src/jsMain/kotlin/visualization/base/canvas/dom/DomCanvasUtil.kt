@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.base.canvasDom
 
-import jetbrains.datalore.base.domCore.dom.*
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.dom.DomEventUtil.getButton
 import jetbrains.datalore.base.event.dom.DomEventUtil.getModifiers
+import jetbrains.datalore.base.js.dom.*
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec

@@ -2,13 +2,13 @@ package jetbrains.datalore.visualization.base.canvasDom
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
-import jetbrains.datalore.base.domCore.css.setHeight
-import jetbrains.datalore.base.domCore.css.setWidth
-import jetbrains.datalore.base.domCore.dom.DomApi
-import jetbrains.datalore.base.domCore.dom.DomHTMLCanvasElement
-import jetbrains.datalore.base.domCore.dom.DomWindow
-import jetbrains.datalore.base.domCore.dom.context2d
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.js.css.setHeight
+import jetbrains.datalore.base.js.css.setWidth
+import jetbrains.datalore.base.js.dom.DomApi
+import jetbrains.datalore.base.js.dom.DomHTMLCanvasElement
+import jetbrains.datalore.base.js.dom.DomWindow
+import jetbrains.datalore.base.js.dom.context2d
 import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.base.canvas.ScaledCanvas
 import kotlin.math.ceil

@@ -1,6 +1,5 @@
 package jetbrains.datalore.base.event.dom
 
-import jetbrains.datalore.base.domCore.event.KeyCodes
 import jetbrains.datalore.base.event.Key
 
 internal object DomKeyCodeMapper {

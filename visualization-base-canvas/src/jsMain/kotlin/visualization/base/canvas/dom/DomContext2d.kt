@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.base.canvasDom
 
-import jetbrains.datalore.base.domCore.css.enumerables.CssLineCap
-import jetbrains.datalore.base.domCore.css.enumerables.CssLineJoin
-import jetbrains.datalore.base.domCore.css.enumerables.CssTextAlign
-import jetbrains.datalore.base.domCore.css.enumerables.CssTextBaseLine
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.js.css.enumerables.CssLineCap
+import jetbrains.datalore.base.js.css.enumerables.CssLineJoin
+import jetbrains.datalore.base.js.css.enumerables.CssTextAlign
+import jetbrains.datalore.base.js.css.enumerables.CssTextBaseLine
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.CssFontParser

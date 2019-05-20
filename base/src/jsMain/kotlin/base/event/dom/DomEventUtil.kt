@@ -1,9 +1,9 @@
 package jetbrains.datalore.base.event.dom
 
-import jetbrains.datalore.base.domCore.dom.DomKeyEvent
-import jetbrains.datalore.base.domCore.dom.DomMouseButtons
-import jetbrains.datalore.base.domCore.dom.DomMouseEvent
 import jetbrains.datalore.base.event.*
+import jetbrains.datalore.base.js.dom.DomKeyEvent
+import jetbrains.datalore.base.js.dom.DomMouseButtons
+import jetbrains.datalore.base.js.dom.DomMouseEvent
 
 object DomEventUtil {
     private fun toKeyEvent(e: DomKeyEvent): KeyEvent {
