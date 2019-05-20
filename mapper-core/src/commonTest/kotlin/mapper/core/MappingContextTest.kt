@@ -1,7 +1,6 @@
 package jetbrains.datalore.mapper.core
 
 import jetbrains.datalore.base.function.Value
-import mapper.core.Item
 import kotlin.test.*
 
 class MappingContextTest {

@@ -1,7 +1,6 @@
 package jetbrains.datalore.mapper.core
 
 import jetbrains.datalore.base.observable.collections.set.ObservableSet
-import mapper.core.Item
 import kotlin.js.JsName
 import kotlin.test.*
 

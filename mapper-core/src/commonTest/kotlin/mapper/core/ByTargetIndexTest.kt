@@ -1,6 +1,5 @@
 package jetbrains.datalore.mapper.core
 
-import mapper.core.Item
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,4 +1,4 @@
-package mapper.core
+package jetbrains.datalore.mapper.core
 
 import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
 import jetbrains.datalore.base.observable.collections.list.ObservableList

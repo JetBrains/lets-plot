@@ -1,10 +1,7 @@
-package mapper.core
+package jetbrains.datalore.mapper.core
 
 import io.mockk.mockk
 import io.mockk.verify
-import jetbrains.datalore.mapper.core.MapperTest
-import jetbrains.datalore.mapper.core.MappingContext
-import jetbrains.datalore.mapper.core.MappingContextListener
 import kotlin.test.Test
 
 
