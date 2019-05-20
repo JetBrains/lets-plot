@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.plot.assemble
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2

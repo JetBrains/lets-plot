@@ -7,8 +7,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.Multipolygon
 import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.datalore.base.projectionGeometry.Ring
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.common.geometry.Utils.isClosed
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.geometry.Utils.isClosed
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext

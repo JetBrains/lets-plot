@@ -3,8 +3,8 @@ package jetbrains.datalore.visualization.plot.gog.plot.event3
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles.boundingBox
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.gog.common.geometry.PolylineSimplifier
-import jetbrains.datalore.visualization.plot.gog.common.geometry.Utils.calculateArea
+import jetbrains.datalore.visualization.plot.common.geometry.PolylineSimplifier
+import jetbrains.datalore.visualization.plot.common.geometry.Utils.calculateArea
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LookupSpace.*
 import jetbrains.datalore.visualization.plot.gog.core.event3.HitShape.Kind.*

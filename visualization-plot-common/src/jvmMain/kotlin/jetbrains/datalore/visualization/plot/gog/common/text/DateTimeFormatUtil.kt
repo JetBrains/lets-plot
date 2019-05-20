@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.text
+package jetbrains.datalore.visualization.plot.common.text
 
 import java.text.SimpleDateFormat
 import java.util.*

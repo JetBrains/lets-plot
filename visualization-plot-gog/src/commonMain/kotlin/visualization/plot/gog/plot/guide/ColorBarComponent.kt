@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleUtil

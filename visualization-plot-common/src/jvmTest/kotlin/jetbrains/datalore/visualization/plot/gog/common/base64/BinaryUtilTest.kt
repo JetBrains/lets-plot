@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.common.base64
 
 import jetbrains.datalore.base.assertion.assertArrayEquals
-import jetbrains.datalore.visualization.plot.gog.common.base64.BinaryUtil
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

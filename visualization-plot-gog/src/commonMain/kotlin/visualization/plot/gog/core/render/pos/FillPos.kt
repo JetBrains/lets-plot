@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.render.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.*
 
 internal class FillPos(aes: Aesthetics) : PositionAdjustment {

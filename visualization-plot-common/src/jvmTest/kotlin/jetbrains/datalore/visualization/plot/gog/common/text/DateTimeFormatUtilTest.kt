@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.common.text
 
-import jetbrains.datalore.visualization.plot.gog.common.text.DateTimeFormatUtil
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals

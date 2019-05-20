@@ -6,7 +6,7 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil.isFinite
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil.isFinite
 import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil

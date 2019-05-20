@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.scale.breaks
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.visualization.plot.gog.common.text.Formatter
+import jetbrains.datalore.visualization.plot.common.text.Formatter
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10

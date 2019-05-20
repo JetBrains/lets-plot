@@ -3,9 +3,9 @@ package jetbrains.datalore.visualization.plotDemo.model.component
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.common.color.ColorPalette
-import jetbrains.datalore.visualization.plot.gog.common.color.ColorScheme
-import jetbrains.datalore.visualization.plot.gog.common.color.PaletteUtil.schemeColors
+import jetbrains.datalore.visualization.plot.common.color.ColorPalette
+import jetbrains.datalore.visualization.plot.common.color.ColorScheme
+import jetbrains.datalore.visualization.plot.common.color.PaletteUtil.schemeColors
 import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.visualization.plot.gog.core.coord.Coords

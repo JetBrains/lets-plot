@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.color
+package jetbrains.datalore.visualization.plot.common.color
 
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Iterables.concat

@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.common.data
 
 import jetbrains.datalore.base.assertion.assertEquals
-import jetbrains.datalore.visualization.plot.gog.common.data.RegularMeshDetector
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertFalse

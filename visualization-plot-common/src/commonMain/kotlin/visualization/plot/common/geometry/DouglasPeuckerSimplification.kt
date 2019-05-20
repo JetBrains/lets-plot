@@ -1,10 +1,10 @@
-package jetbrains.datalore.visualization.plot.gog.common.geometry
+package jetbrains.datalore.visualization.plot.common.geometry
 
 import jetbrains.datalore.base.gcommon.collect.Stack
 import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.gog.common.geometry.PolylineSimplifier.RankingStrategy
+import jetbrains.datalore.visualization.plot.common.geometry.PolylineSimplifier.RankingStrategy
 
 internal class DouglasPeuckerSimplification : RankingStrategy {
     private val myEpsilon = Double.MIN_VALUE

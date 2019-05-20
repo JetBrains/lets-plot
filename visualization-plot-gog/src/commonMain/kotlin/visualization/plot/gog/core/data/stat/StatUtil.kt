@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.TransformVar
 import jetbrains.datalore.visualization.plot.gog.core.util.MutableDouble

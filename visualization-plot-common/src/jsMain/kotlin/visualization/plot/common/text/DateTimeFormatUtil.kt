@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.text
+package jetbrains.datalore.visualization.plot.common.text
 
 actual object DateTimeFormatUtil {
     actual fun formatDateUTC(instant: Number, pattern: String): String {

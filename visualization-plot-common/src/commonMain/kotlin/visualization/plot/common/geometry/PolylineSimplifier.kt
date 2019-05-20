@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.geometry
+package jetbrains.datalore.visualization.plot.common.geometry
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair

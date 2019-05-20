@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.data
+package jetbrains.datalore.visualization.plot.common.data
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange

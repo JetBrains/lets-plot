@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.data
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.gog.common.geometry.Utils
+import jetbrains.datalore.visualization.plot.common.geometry.Utils
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Builder
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable
 import org.assertj.core.api.AbstractAssert

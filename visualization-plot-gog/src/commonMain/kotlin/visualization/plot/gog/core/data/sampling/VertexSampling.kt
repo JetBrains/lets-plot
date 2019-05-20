@@ -3,9 +3,9 @@ package jetbrains.datalore.visualization.plot.gog.core.data.sampling
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.common.geometry.PolylineSimplifier
-import jetbrains.datalore.visualization.plot.gog.common.geometry.Utils.isClosed
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.geometry.PolylineSimplifier
+import jetbrains.datalore.visualization.plot.common.geometry.Utils.isClosed
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.PointSampling
 import jetbrains.datalore.visualization.plot.gog.core.data.sampling.SamplingUtil.calculateRingLimits

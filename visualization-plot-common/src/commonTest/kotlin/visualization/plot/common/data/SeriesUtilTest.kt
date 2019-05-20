@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.common.data
 
 import jetbrains.datalore.base.assertion.assertArrayEquals
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
 import kotlin.test.Test
 
 class SeriesUtilTest {

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.color
+package jetbrains.datalore.visualization.plot.common.color
 
 import kotlin.math.max
 import kotlin.math.min

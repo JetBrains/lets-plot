@@ -1,8 +1,8 @@
-package jetbrains.datalore.visualization.plot.gog.common.time.interval
+package jetbrains.datalore.visualization.plot.common.time.interval
 
 import jetbrains.datalore.base.datetime.Date
 import jetbrains.datalore.base.datetime.DateTime
-import jetbrains.datalore.visualization.plot.gog.common.time.TimeUtil
+import jetbrains.datalore.visualization.plot.common.time.TimeUtil
 
 abstract class MeasuredInDays protected constructor(count: Int) : TimeInterval(count) {
 

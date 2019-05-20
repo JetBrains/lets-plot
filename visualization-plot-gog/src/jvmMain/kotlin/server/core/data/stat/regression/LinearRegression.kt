@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regression
 
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import org.apache.commons.math3.distribution.TDistribution
 import org.apache.commons.math3.stat.descriptive.moment.Mean
 import org.apache.commons.math3.stat.regression.SimpleRegression

@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.core.scale.transform
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.scale.BreaksGenerator
 import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleBreaks
 import jetbrains.datalore.visualization.plot.gog.core.scale.Transform

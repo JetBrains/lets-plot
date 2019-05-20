@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.data
+package jetbrains.datalore.visualization.plot.common.data
 
 enum class DataType {
     NUMBER,

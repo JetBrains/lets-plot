@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.plot.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.coord.Projection
 import jetbrains.datalore.visualization.plot.gog.core.scale.Mappers
 import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2

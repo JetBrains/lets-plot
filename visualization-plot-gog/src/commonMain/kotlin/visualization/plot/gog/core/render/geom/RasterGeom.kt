@@ -6,7 +6,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx.Bitmap
 import jetbrains.datalore.visualization.base.svg.SvgUtils
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.*
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GeomUtil.with_X_Y

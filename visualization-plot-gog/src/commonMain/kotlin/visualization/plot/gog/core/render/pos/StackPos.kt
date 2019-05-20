@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.core.render.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext

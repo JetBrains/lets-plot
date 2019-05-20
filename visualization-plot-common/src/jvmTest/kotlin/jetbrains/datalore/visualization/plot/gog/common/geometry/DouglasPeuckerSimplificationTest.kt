@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.common.geometry
 
-import jetbrains.datalore.visualization.plot.gog.common.geometry.PolylineSimplifier
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 

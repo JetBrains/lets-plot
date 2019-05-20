@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.core.render.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.render.*
 import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GeomHelper
 

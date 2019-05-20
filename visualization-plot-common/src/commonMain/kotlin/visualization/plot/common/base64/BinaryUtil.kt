@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.base64
+package jetbrains.datalore.visualization.plot.common.base64
 
 expect object BinaryUtil {
     fun encodeList(l: List<Double?>): String

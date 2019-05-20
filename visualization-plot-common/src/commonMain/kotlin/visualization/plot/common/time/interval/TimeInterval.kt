@@ -1,8 +1,8 @@
-package jetbrains.datalore.visualization.plot.gog.common.time.interval
+package jetbrains.datalore.visualization.plot.common.time.interval
 
 import jetbrains.datalore.base.datetime.Duration
-import jetbrains.datalore.visualization.plot.gog.common.data.DataType
-import jetbrains.datalore.visualization.plot.gog.common.text.Formatter
+import jetbrains.datalore.visualization.plot.common.data.DataType
+import jetbrains.datalore.visualization.plot.common.text.Formatter
 
 abstract class TimeInterval protected constructor(val count: Int) {
 

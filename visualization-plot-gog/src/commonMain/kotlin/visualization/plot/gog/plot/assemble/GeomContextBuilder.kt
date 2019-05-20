@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetCollector
 import jetbrains.datalore.visualization.plot.gog.core.event3.NullGeomTargetCollector
 import jetbrains.datalore.visualization.plot.gog.core.render.Aes

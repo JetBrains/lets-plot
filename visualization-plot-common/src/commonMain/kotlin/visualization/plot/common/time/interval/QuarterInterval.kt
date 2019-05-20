@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.time.interval
+package jetbrains.datalore.visualization.plot.common.time.interval
 
 internal class QuarterInterval(count: Int) : TimeInterval(count) {
 

@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.sampling
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.PointSampling
 import jetbrains.datalore.visualization.plot.gog.core.data.sampling.SamplingUtil.xVar

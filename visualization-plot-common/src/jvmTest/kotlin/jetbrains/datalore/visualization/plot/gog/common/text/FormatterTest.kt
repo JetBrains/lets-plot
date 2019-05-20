@@ -5,8 +5,7 @@ import jetbrains.datalore.base.datetime.DateTime
 import jetbrains.datalore.base.datetime.Month
 import jetbrains.datalore.base.datetime.Time
 import jetbrains.datalore.base.datetime.tz.TimeZone
-import jetbrains.datalore.visualization.plot.gog.common.data.DataType
-import jetbrains.datalore.visualization.plot.gog.common.text.Formatter
+import jetbrains.datalore.visualization.plot.common.data.DataType
 import java.util.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test

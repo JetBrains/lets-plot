@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.plot.common.geometry
 import jetbrains.datalore.visualization.plot.common.geometry.TestUtil.COMPLEX_DATA
 import jetbrains.datalore.visualization.plot.common.geometry.TestUtil.MEDIUM_DATA
 import jetbrains.datalore.visualization.plot.common.geometry.TestUtil.SIMPLE_DATA
-import jetbrains.datalore.visualization.plot.gog.common.geometry.PolylineSimplifier
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 

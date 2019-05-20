@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.random.RandomGaussian
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.*
 import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.StatsServerSide
 import kotlin.random.Random

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.time.interval
+package jetbrains.datalore.visualization.plot.common.time.interval
 
 import jetbrains.datalore.base.datetime.Date
 import jetbrains.datalore.base.datetime.DateTime

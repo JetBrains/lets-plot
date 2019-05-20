@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.core.data.sampling
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.gog.common.geometry.Utils.calculateArea
+import jetbrains.datalore.visualization.plot.common.geometry.Utils.calculateArea
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.gog.core.data.TransformVar

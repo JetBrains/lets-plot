@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.plot.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import jetbrains.datalore.visualization.plot.gog.core.scale.MapperUtil
 import jetbrains.datalore.visualization.plot.gog.core.scale.Transform

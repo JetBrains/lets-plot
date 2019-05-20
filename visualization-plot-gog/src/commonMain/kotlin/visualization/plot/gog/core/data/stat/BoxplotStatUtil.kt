@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.core.data.stat
 
 import jetbrains.datalore.base.gcommon.collect.Iterables.filter
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
 import kotlin.math.max
 

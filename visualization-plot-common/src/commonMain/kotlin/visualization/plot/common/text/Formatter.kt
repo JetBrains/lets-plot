@@ -1,8 +1,8 @@
-package jetbrains.datalore.visualization.plot.gog.common.text
+package jetbrains.datalore.visualization.plot.common.text
 
 import jetbrains.datalore.base.numberFormat.NumberFormatUtil
-import jetbrains.datalore.visualization.plot.gog.common.data.DataType
-import jetbrains.datalore.visualization.plot.gog.common.time.interval.TimeInterval
+import jetbrains.datalore.visualization.plot.common.data.DataType
+import jetbrains.datalore.visualization.plot.common.time.interval.TimeInterval
 import kotlin.jvm.JvmOverloads
 
 object Formatter {

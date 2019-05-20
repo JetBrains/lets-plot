@@ -1,6 +1,6 @@
-package jetbrains.datalore.visualization.plot.gog.common.time.interval
+package jetbrains.datalore.visualization.plot.common.time.interval
 
-import jetbrains.datalore.visualization.plot.gog.common.text.DateTimeFormatUtil
+import jetbrains.datalore.visualization.plot.common.text.DateTimeFormatUtil
 
 internal class SemesterInterval(count: Int) : TimeInterval(count) {
 

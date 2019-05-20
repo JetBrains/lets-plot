@@ -1,8 +1,8 @@
-package jetbrains.datalore.visualization.plot.gog.common.time.interval
+package jetbrains.datalore.visualization.plot.common.time.interval
 
 import jetbrains.datalore.base.datetime.Date
 import jetbrains.datalore.base.datetime.DateTime
-import jetbrains.datalore.visualization.plot.gog.common.text.Formatter
+import jetbrains.datalore.visualization.plot.common.text.Formatter
 
 class YearInterval internal constructor(count: Int) : MeasuredInDays(count) {
 

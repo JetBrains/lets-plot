@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plotDemo.model.geom
 
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.common.data.SeriesUtil
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder.Companion.array
 import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder.Companion.collection

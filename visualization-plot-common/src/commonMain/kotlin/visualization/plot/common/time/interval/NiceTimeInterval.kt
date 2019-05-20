@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.common.time.interval
+package jetbrains.datalore.visualization.plot.common.time.interval
 
 object NiceTimeInterval {
     private val AUTO_STEPS_MS = doubleArrayOf(1000.0, 5000.0, 15000.0, 30000.0, // 1-, 5-, 15- and 30-second.

@@ -1,7 +1,7 @@
-package jetbrains.datalore.visualization.plot.gog.common.geometry
+package jetbrains.datalore.visualization.plot.common.geometry
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.gog.common.geometry.PolylineSimplifier.RankingStrategy
+import jetbrains.datalore.visualization.plot.common.geometry.PolylineSimplifier.RankingStrategy
 import kotlin.math.abs
 
 
