@@ -4,7 +4,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
+import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.gog.plot.guide.Orientation
 import jetbrains.datalore.visualization.plot.gog.plot.guide.Orientation.BOTTOM
 import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.GuideBreaks

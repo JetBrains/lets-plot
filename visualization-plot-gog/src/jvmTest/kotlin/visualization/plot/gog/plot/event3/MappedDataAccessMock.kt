@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.plot.event3
 
-import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
-import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess.MappedData
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess.MappedData
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.mockito.eq
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito.`when`

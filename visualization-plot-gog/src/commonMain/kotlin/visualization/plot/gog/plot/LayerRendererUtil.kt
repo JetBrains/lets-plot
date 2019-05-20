@@ -1,13 +1,13 @@
 package jetbrains.datalore.visualization.plot.gog.plot
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
-import jetbrains.datalore.visualization.plot.gog.core.render.Geom
-import jetbrains.datalore.visualization.plot.gog.core.render.PositionAdjustment
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.LivemapGeom
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.Aesthetics
+import jetbrains.datalore.visualization.plot.base.render.Geom
+import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
+import jetbrains.datalore.visualization.plot.base.render.geom.LivemapGeom
 
 internal object LayerRendererUtil {
     fun createLivemapLayerRenderer(

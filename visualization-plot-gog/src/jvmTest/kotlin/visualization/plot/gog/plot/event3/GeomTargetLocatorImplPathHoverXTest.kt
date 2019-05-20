@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.plot.event3
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTarget
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TestUtil.HitIndex
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TestUtil.PathPoint
 import org.assertj.core.api.Assertions.assertThat

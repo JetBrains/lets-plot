@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.gog.plot.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.base.coord.Projection
+import jetbrains.datalore.visualization.plot.base.scale.Mappers
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.core.coord.Projection
-import jetbrains.datalore.visualization.plot.gog.core.scale.Mappers
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.GuideBreaks
 
 internal class ProjectionCoordProvider private constructor(private val myProjectionX: Projection?, private val myProjectionY: Projection?)// square grid

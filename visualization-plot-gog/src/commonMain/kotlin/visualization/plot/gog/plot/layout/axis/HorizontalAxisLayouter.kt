@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.plot.layout.axis
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.gog.core.coord.Coords
+import jetbrains.datalore.visualization.plot.base.coord.Coords
 import jetbrains.datalore.visualization.plot.gog.plot.guide.Orientation
 import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.label.AxisLabelsLayout
 

@@ -4,8 +4,8 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scales
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.GuideBreaks
 import kotlin.test.assertEquals
 

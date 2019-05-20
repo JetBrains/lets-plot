@@ -1,12 +1,12 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.data.StatContext
+import jetbrains.datalore.visualization.plot.base.data.TransformVar
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.gog.core.data.StatContext
-import jetbrains.datalore.visualization.plot.gog.core.data.TransformVar
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
 
 internal class ConfiguredStatContext(

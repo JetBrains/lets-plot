@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble.geom
 
-import jetbrains.datalore.visualization.plot.gog.core.data.sampling.Samplings.pick
-import jetbrains.datalore.visualization.plot.gog.core.data.sampling.Samplings.random
-import jetbrains.datalore.visualization.plot.gog.core.data.sampling.Samplings.systematic
-import jetbrains.datalore.visualization.plot.gog.core.data.sampling.Samplings.systematicGroup
-import jetbrains.datalore.visualization.plot.gog.core.data.sampling.Samplings.vertexDp
+import jetbrains.datalore.visualization.plot.base.data.sampling.Samplings.pick
+import jetbrains.datalore.visualization.plot.base.data.sampling.Samplings.random
+import jetbrains.datalore.visualization.plot.base.data.sampling.Samplings.systematic
+import jetbrains.datalore.visualization.plot.base.data.sampling.Samplings.systematicGroup
+import jetbrains.datalore.visualization.plot.base.data.sampling.Samplings.vertexDp
 
 object DefaultSampling {
     val SAFETY_SAMPLING = random(200000, 1L)

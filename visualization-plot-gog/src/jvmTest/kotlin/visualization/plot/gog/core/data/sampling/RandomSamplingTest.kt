@@ -1,11 +1,11 @@
-package jetbrains.datalore.visualization.plot.gog.core.data.sampling
+package jetbrains.datalore.visualization.plot.base.data.sampling
 
-import jetbrains.datalore.visualization.plot.gog.core.data.TestUtil
+import jetbrains.datalore.visualization.plot.base.data.generateData
 import kotlin.test.*
 
 class RandomSamplingTest {
 
-    private val myData = TestUtil.generateData(N, listOf("x", "y", "c"))
+    private val myData = generateData(N, listOf("x", "y", "c"))
 
     @Test
     fun noop() {

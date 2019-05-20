@@ -3,11 +3,11 @@ package jetbrains.datalore.visualization.plot.gog.plot.event3
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTarget
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.gog.core.event3.HitShape.Kind.*
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
+import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.event3.HitShape.Kind.*
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MathUtil.ClosestPointChecker
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TargetProjector.*
 import kotlin.math.max

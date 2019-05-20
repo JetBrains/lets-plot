@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.config.event3
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Companion.variable
 import kotlin.test.BeforeTest
 import kotlin.test.Test

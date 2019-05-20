@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.gog.plot.scale
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.scale.MapperUtil
-import jetbrains.datalore.visualization.plot.gog.core.scale.Transform
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
+import jetbrains.datalore.visualization.plot.base.scale.Transform
 import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.GuideMappers
 import jetbrains.datalore.visualization.plot.gog.plot.scale.provider.ColorBrewerMapperProvider
 import jetbrains.datalore.visualization.plot.gog.plot.scale.provider.ColorGradientMapperProvider

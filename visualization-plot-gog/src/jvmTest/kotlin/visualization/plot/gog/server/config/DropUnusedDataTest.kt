@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
+import jetbrains.datalore.visualization.plot.base.data.TransformVar
 import jetbrains.datalore.visualization.plot.gog.config.TestUtil
-import jetbrains.datalore.visualization.plot.gog.core.data.TransformVar
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

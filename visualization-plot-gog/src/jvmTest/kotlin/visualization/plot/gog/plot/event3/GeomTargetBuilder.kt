@@ -3,10 +3,10 @@ package jetbrains.datalore.visualization.plot.gog.plot.event3
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTarget
-import jetbrains.datalore.visualization.plot.gog.core.event3.HitShape
-import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
+import jetbrains.datalore.visualization.plot.base.event3.HitShape
+import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
+import jetbrains.datalore.visualization.plot.base.render.Aes
 
 import jetbrains.datalore.visualization.plot.gog.plot.event3.GeomTargetPrototype.Companion.createTipLayoutHint
 

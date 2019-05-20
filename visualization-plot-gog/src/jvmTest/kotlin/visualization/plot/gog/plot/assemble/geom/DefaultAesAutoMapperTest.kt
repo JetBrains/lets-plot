@@ -1,14 +1,14 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble.geom
 
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.POINT_X
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.POINT_Y
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.RECT_XMAX
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.RECT_XMIN
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.RECT_YMAX
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.RECT_YMIN
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

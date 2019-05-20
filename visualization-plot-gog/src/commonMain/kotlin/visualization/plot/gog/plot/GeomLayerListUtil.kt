@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.plot
 
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
 
 object GeomLayerListUtil {
     fun containsLivemapLayer(layersByTile: List<List<GeomLayer>>): Boolean {

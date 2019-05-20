@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.gog.plot.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.gog.core.coord.Coords
-import jetbrains.datalore.visualization.plot.gog.core.render.CoordinateSystem
-import jetbrains.datalore.visualization.plot.gog.core.scale.MapperUtil
-import jetbrains.datalore.visualization.plot.gog.core.scale.Mappers
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.coord.Coords
+import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
+import jetbrains.datalore.visualization.plot.base.scale.Mappers
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.plot.layout.axis.GuideBreaks
 
 internal abstract class CoordProviderBase : CoordProvider {

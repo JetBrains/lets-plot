@@ -4,7 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.*
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.SvgComponent
+import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.Defaults.Common.Tooltip
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 

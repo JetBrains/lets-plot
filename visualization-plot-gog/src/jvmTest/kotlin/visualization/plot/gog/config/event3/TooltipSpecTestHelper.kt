@@ -3,9 +3,9 @@ package jetbrains.datalore.visualization.plot.gog.config.event3
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTarget
-import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint.Kind
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
+import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.event3.GeomTargetBuilder
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Mapping

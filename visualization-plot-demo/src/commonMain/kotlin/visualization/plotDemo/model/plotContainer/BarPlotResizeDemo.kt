@@ -3,11 +3,11 @@ package jetbrains.datalore.visualization.plotDemo.plotContainer
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scales
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.data.stat.Stats
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.gog.plot.PlotContainer
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.GeomLayerBuilder

@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.Lists
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.PlotConfig.Companion.PLOT_COMPUTATION_MESSAGES
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.GuideOptions
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap

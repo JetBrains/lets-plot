@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.render.Aes
 
 object Option {
 

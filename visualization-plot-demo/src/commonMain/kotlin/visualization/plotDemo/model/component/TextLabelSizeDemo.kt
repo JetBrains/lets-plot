@@ -3,8 +3,8 @@ package jetbrains.datalore.visualization.plotDemo.model.component
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgUtils
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
+import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class TextLabelSizeDemo : SimpleDemoBase(DEMO_BOX_SIZE) {

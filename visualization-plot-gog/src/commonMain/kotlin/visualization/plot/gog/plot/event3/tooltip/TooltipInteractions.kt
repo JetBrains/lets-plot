@@ -4,7 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
-import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint.Kind
+import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TooltipManager
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TooltipManager.TooltipContent
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TooltipManager.TooltipEntry

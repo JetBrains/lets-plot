@@ -3,8 +3,8 @@ package jetbrains.datalore.visualization.plot.gog.plot.guide
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.*
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
+import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
 
 class LegendComponent(legendSpec: LegendComponentSpec) : LegendBox(legendSpec) {

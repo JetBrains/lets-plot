@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.core.GeomKind.*
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.GeomKind.*
+import jetbrains.datalore.visualization.plot.base.render.geom.*
 import jetbrains.datalore.visualization.plot.gog.config.Option.Geom.Image
 import jetbrains.datalore.visualization.plot.gog.config.Option.GeomName
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.*
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PosProvider
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.GeomProvider
 

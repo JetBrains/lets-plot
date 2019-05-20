@@ -3,6 +3,9 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.Option.Meta
 import jetbrains.datalore.visualization.plot.gog.config.Option.Meta.Kind
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.COORD
@@ -13,9 +16,6 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.MAPPING
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.SCALES
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.TITLE
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.TITLE_TEXT
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
 

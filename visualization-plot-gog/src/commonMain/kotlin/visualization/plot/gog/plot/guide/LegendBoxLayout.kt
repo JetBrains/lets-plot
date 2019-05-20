@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.plot.guide
 import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
+import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.PlotLabelSpec
 
 abstract class LegendBoxLayout protected constructor(private val myTitle: String, private val myLegendDirection: LegendDirection) {

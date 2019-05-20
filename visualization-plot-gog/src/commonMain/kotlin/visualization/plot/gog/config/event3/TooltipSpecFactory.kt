@@ -2,13 +2,13 @@ package jetbrains.datalore.visualization.plot.gog.config.event3
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess.MappedData
+import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
+import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
+import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.DATA_COLUMN_JOIN_KEY
-import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
-import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess.MappedData
-import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTarget
-import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipSpec
 
 class TooltipSpecFactory(contextualMapping: ContextualMapping, private val myAxisOrigin: DoubleVector) {

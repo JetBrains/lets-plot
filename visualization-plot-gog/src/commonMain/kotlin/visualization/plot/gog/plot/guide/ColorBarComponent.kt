@@ -8,10 +8,10 @@ import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
-import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideBreak
 import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
 import kotlin.math.max

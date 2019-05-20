@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.plot.layout.axis
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.gog.core.scale.BreaksGenerator
+import jetbrains.datalore.visualization.plot.base.scale.BreaksGenerator
 
 class AdaptableAxisBreaksProvider internal constructor(private val myDomainAfterTransform: ClosedRange<Double>, private val myBreaksGenerator: BreaksGenerator) : AxisBreaksProvider {
 

@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.plot
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
-import jetbrains.datalore.visualization.plot.gog.core.scale.Transform
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.scale.Transform
 
 internal class BogusScale : Scale2<Double> {
     override val name: String

@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.point.PointShape
 import jetbrains.datalore.visualization.plot.gog.config.aes.AesOptionConversion
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
 import kotlin.jvm.JvmOverloads
 
 open class OptionsAccessor protected constructor(private val myOptions: Map<*, *>, defaultOptions: Map<*, *>) {

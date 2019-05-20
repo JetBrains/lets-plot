@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.plot
 
-import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LocatedTargets
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LocatedTargets
 
 internal class TargetsSolver {
 

@@ -1,12 +1,12 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.MAP_COLUMN_GEOJSON
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.MAP_COLUMN_JOIN_KEY
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.MAP_COLUMN_OSM_ID
 import jetbrains.datalore.visualization.plot.gog.config.LayerConfig
 import jetbrains.datalore.visualization.plot.gog.config.Option.Geom.Choropleth.GEO_POSITIONS
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
 import kotlin.test.assertEquals

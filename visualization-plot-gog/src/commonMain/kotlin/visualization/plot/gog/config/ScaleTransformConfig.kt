@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
-import jetbrains.datalore.visualization.plot.gog.core.scale.Transform
-import jetbrains.datalore.visualization.plot.gog.core.scale.transform.Transforms
+import jetbrains.datalore.visualization.plot.base.scale.Transform
+import jetbrains.datalore.visualization.plot.base.scale.transform.Transforms
 
 internal class ScaleTransformConfig private constructor(val transform: Transform, opts: Map<String, Any>) : OptionsAccessor(opts, emptyMap<Any, Any>()) {
     companion object {

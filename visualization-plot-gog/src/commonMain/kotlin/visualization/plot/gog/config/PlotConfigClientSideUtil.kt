@@ -2,14 +2,14 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.core.GeomKind
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot
 import jetbrains.datalore.visualization.plot.gog.config.event3.GeomInteractionBuilder
 import jetbrains.datalore.visualization.plot.gog.config.event3.GeomInteractionBuilder.Companion.AREA_GEOM
 import jetbrains.datalore.visualization.plot.gog.config.event3.GeomInteractionBuilder.Companion.NON_AREA_GEOM
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LookupStrategy
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.GeomLayer
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.GeomLayerBuilder
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotAssembler

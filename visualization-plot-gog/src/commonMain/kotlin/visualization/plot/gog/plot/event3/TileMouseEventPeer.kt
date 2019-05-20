@@ -4,7 +4,7 @@ import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.plot.gog.core.event3.MouseEventSource
+import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
 
 class TileMouseEventPeer(eventSource: MouseEventSource, private val myRect: Rectangle) : MouseEventSource {
 

@@ -1,16 +1,16 @@
-package jetbrains.datalore.visualization.plot.gog.core.data.sampling
+package jetbrains.datalore.visualization.plot.base.data.sampling
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Builder
-import jetbrains.datalore.visualization.plot.gog.core.data.TestUtil.RingAssertion.Companion.assertThatRing
-import jetbrains.datalore.visualization.plot.gog.core.data.TestUtil.createCircle
-import jetbrains.datalore.visualization.plot.gog.core.data.TestUtil.getPointsCount
-import jetbrains.datalore.visualization.plot.gog.core.data.TransformVar
-import jetbrains.datalore.visualization.plot.gog.core.data.sampling.SamplingUtil.splitRings
-import jetbrains.datalore.visualization.plot.gog.core.data.sampling.VertexSampling.VertexDpSampling
-import jetbrains.datalore.visualization.plot.gog.core.data.sampling.VertexSampling.VertexVwSampling
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GeomUtil.rectToGeometry
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrame.Builder
+import jetbrains.datalore.visualization.plot.base.data.TestUtil.RingAssertion.Companion.assertThatRing
+import jetbrains.datalore.visualization.plot.base.data.TestUtil.createCircle
+import jetbrains.datalore.visualization.plot.base.data.TestUtil.getPointsCount
+import jetbrains.datalore.visualization.plot.base.data.TransformVar
+import jetbrains.datalore.visualization.plot.base.data.sampling.SamplingUtil.splitRings
+import jetbrains.datalore.visualization.plot.base.data.sampling.VertexSampling.VertexDpSampling
+import jetbrains.datalore.visualization.plot.base.data.sampling.VertexSampling.VertexVwSampling
+import jetbrains.datalore.visualization.plot.base.render.geom.util.GeomUtil.rectToGeometry
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 

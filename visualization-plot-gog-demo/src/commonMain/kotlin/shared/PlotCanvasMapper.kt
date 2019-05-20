@@ -9,9 +9,9 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
-import jetbrains.datalore.visualization.plot.gog.core.event3.MouseEventSource
-import jetbrains.datalore.visualization.plot.gog.core.event3.MouseEventSource.MouseEventSpec.MOUSE_LEFT
-import jetbrains.datalore.visualization.plot.gog.core.event3.MouseEventSource.MouseEventSpec.MOUSE_MOVED
+import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
+import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource.MouseEventSpec.MOUSE_LEFT
+import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource.MouseEventSpec.MOUSE_MOVED
 import jetbrains.datalore.visualization.plot.gog.plot.Plot
 import jetbrains.datalore.visualization.plot.gog.plot.PlotContainer
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_LEFT as CANVAS_MOUSE_LEFT

@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.plot.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes.Companion.SIZE
-import jetbrains.datalore.visualization.plot.gog.core.render.AestheticsUtil
+import jetbrains.datalore.visualization.plot.base.render.Aes.Companion.SIZE
+import jetbrains.datalore.visualization.plot.base.render.AestheticsUtil
 import jetbrains.datalore.visualization.plot.gog.plot.scale.DefaultNaValue
 
 internal class SizeMapperProvider(range: ClosedRange<Double>, naValue: Double) : LinearNormalizingMapperProvider(range, naValue) {

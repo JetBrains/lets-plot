@@ -1,15 +1,15 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble.geom
 
-import jetbrains.datalore.visualization.plot.core.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.Sampling
-import jetbrains.datalore.visualization.plot.gog.core.data.sampling.Samplings
-import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.render.Geom
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.*
-import jetbrains.datalore.visualization.plot.gog.core.render.pos.PositionAdjustments
+import jetbrains.datalore.visualization.plot.base.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.Sampling
+import jetbrains.datalore.visualization.plot.base.data.sampling.Samplings
+import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.Geom
+import jetbrains.datalore.visualization.plot.base.render.geom.*
+import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.AesAutoMapper
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PosProvider
@@ -164,7 +164,7 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
     companion object {
 
         fun point(): GeomProvider {
-            return GeomProvider.point { PointGeom() }
+            return point { PointGeom() }
         }
 
         fun point(supplier: () -> Geom): GeomProvider {
@@ -179,7 +179,7 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
         }
 
         fun path(): GeomProvider {
-            return GeomProvider.path { PathGeom() }
+            return path { PathGeom() }
         }
 
         fun path(supplier: () -> Geom): GeomProvider {

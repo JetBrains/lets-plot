@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plotDemo.model
 
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetCollector
-import jetbrains.datalore.visualization.plot.gog.core.event3.NullGeomTargetCollector
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
+import jetbrains.datalore.visualization.plot.base.event3.NullGeomTargetCollector
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.GeomContext
 
 class EmptyGeomContext : GeomContext {
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()

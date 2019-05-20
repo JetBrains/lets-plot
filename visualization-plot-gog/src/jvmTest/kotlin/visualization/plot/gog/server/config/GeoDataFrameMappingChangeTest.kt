@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.DATA_COLUMN_JOIN_KEY
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.MAP_COLUMN_JOIN_KEY
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.MAP_COLUMN_REGION
@@ -14,7 +15,6 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.STAT
 import jetbrains.datalore.visualization.plot.gog.config.Option.Meta.DATA_META
 import jetbrains.datalore.visualization.plot.gog.config.Option.Meta.GeoDataFrame
 import jetbrains.datalore.visualization.plot.gog.config.Option.Meta.MAP_DATA_META
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.server.config.ServerSideTestUtil.createLayerConfigsByLayerSpec
 import jetbrains.datalore.visualization.plot.gog.server.config.ServerSideTestUtil.geoPositionsDict
 import jetbrains.datalore.visualization.plot.gog.server.config.SingleLayerAssert.Companion.assertThat

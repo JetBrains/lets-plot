@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.gog.config.event3
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
-import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.*
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.*
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.event3.ContextualMappingProvider
 
 class GeomTargetInteraction(builder: GeomInteractionBuilder) : ContextualMappingProvider {

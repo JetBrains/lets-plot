@@ -1,13 +1,12 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.Option.GeomName
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.GEOM
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.DATA
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.LAYERS
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.MAPPING
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-
 import kotlin.test.Test
 
 class DataVectorsInAesMappingTest {

@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.base.svg.SvgGraphicsElement.Visibility
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
 import jetbrains.datalore.visualization.base.svg.SvgPathElement
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.SvgComponent
+import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 
 class TooltipWithStem : SvgComponent() {
     private val myTooltipFrame: TooltipFrame = TooltipFrame()

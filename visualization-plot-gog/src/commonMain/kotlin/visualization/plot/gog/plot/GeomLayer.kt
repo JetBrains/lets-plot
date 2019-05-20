@@ -1,16 +1,16 @@
 package jetbrains.datalore.visualization.plot.gog.plot
 
-import jetbrains.datalore.visualization.plot.core.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
-import jetbrains.datalore.visualization.plot.gog.core.event3.ContextualMapping
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LookupSpec
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.render.Geom
-import jetbrains.datalore.visualization.plot.gog.core.render.LegendKeyElementFactory
-import jetbrains.datalore.visualization.plot.gog.core.render.PositionAdjustment
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.LivemapProvider
+import jetbrains.datalore.visualization.plot.base.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpec
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.Geom
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
+import jetbrains.datalore.visualization.plot.base.render.geom.LivemapProvider
 
 interface GeomLayer {
     val dataFrame: DataFrame

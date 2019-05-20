@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.config.aes
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.visualization.plot.gog.core.render.linetype.LineType
-import jetbrains.datalore.visualization.plot.gog.core.render.linetype.NamedLineType
+import jetbrains.datalore.visualization.plot.base.render.linetype.LineType
+import jetbrains.datalore.visualization.plot.base.render.linetype.NamedLineType
 
 internal class LineTypeOptionConverter : Function<Any?, LineType?> {
 

@@ -1,0 +1,11 @@
+package jetbrains.datalore.visualization.plot.base.render.geom
+
+import jetbrains.datalore.visualization.plot.base.render.Aes
+
+class FreqpolyGeom : LineGeom() {
+    companion object {
+        val RENDERS: List<Aes<*>> = LineGeom.RENDERS
+
+        val HANDLES_GROUPS = LineGeom.HANDLES_GROUPS
+    }
+}

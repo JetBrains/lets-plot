@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.plot.scale.mapper
 
-import jetbrains.datalore.visualization.plot.gog.core.render.point.NamedShape
-import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
-import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShapes
+import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
+import jetbrains.datalore.visualization.plot.base.render.point.PointShape
+import jetbrains.datalore.visualization.plot.base.render.point.PointShapes
 
 object ShapeMapper {
     val NA_VALUE = PointShapes.dot()

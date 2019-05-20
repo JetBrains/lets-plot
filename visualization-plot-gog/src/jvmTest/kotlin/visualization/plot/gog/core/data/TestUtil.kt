@@ -1,40 +1,23 @@
-package jetbrains.datalore.visualization.plot.gog.core.data
+package jetbrains.datalore.visualization.plot.base.data
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.common.geometry.Utils
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Builder
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 object TestUtil {
-    internal fun generateData(rowCount: Int, varNames: Collection<String>): DataFrame {
-        val variables = varNames.map { Variable(it) }
-
-        val builder = Builder()
-        for (variable in variables) {
-            builder.put(variable, toSerie(variable.name, indices(rowCount)))
-        }
-
-        return builder.build()
-    }
-
-    internal fun indices(count: Int): List<Int> {
-        return (0 until count).toList()
-    }
-
-    internal fun toSerie(prefix: String, ints: Collection<Int>): List<*> {
-        return ints.map { v -> prefix + v }
-    }
 
     internal fun createCircle(pointsCount: Int, r: Double): List<DoubleVector> {
         @Suppress("NAME_SHADOWING")
         var pointsCount = pointsCount
         val circle = ArrayList<DoubleVector>()
-        val step = 2 * Math.PI / pointsCount++
+        val step = 2 * PI / pointsCount++
         var angle = 0.0
         while (pointsCount-- > 0) {
-            circle.add(DoubleVector(r * Math.cos(angle), r * Math.sin(angle)))
+            circle.add(DoubleVector(r * cos(angle), r * sin(angle)))
             angle += step
         }
 
@@ -44,10 +27,10 @@ object TestUtil {
     }
 
     internal fun getPointsCount(rings: List<List<DoubleVector>>): Int {
-        return rings.stream().mapToInt { it.size }.sum()
+        return rings.map { it.size }.sum()
     }
 
-    internal class RingAssertion internal constructor(ring: List<DoubleVector>) : AbstractAssert<RingAssertion, List<DoubleVector>>(ring, RingAssertion::class.java) {
+    internal class RingAssertion internal constructor(ring: List<DoubleVector>) : AbstractAssert<RingAssertion, List<DoubleVector>>(ring, TestUtil.RingAssertion::class.java) {
 
         val isClosed: RingAssertion
             get() {

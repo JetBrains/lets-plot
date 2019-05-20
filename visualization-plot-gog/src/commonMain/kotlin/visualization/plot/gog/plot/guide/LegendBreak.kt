@@ -2,8 +2,8 @@ package jetbrains.datalore.visualization.plot.gog.plot.guide
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.plot.gog.core.render.DataPointAesthetics
-import jetbrains.datalore.visualization.plot.gog.core.render.LegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 
 class LegendBreak(val label: String) {
     private val myLayers = ArrayList<MyLayer>()

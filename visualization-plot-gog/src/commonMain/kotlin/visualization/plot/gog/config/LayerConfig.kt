@@ -2,16 +2,16 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.data.Sampling
+import jetbrains.datalore.visualization.plot.base.data.Stat
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.DATA
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.GEOM
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.MAPPING
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.STAT
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.gog.core.data.Sampling
-import jetbrains.datalore.visualization.plot.gog.core.data.Stat
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.PosProvider
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap

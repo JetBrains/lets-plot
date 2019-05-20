@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.gog.config.aes
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.visualization.plot.gog.core.render.point.NamedShape
-import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShape
-import jetbrains.datalore.visualization.plot.gog.core.render.point.PointShapes
+import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
+import jetbrains.datalore.visualization.plot.base.render.point.PointShape
+import jetbrains.datalore.visualization.plot.base.render.point.PointShapes
 
 internal class ShapeOptionConverter : Function<Any?, PointShape?> {
 

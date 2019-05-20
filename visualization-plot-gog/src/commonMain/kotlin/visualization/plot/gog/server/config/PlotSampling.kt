@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.GroupAwareSampling
-import jetbrains.datalore.visualization.plot.gog.core.data.PointSampling
-import jetbrains.datalore.visualization.plot.gog.core.data.Sampling
-import jetbrains.datalore.visualization.plot.gog.core.data.sampling.Samplings
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.GroupAwareSampling
+import jetbrains.datalore.visualization.plot.base.data.PointSampling
+import jetbrains.datalore.visualization.plot.base.data.Sampling
+import jetbrains.datalore.visualization.plot.base.data.sampling.Samplings
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.DefaultSampling.SAFETY_SAMPLING
 
 internal object PlotSampling {

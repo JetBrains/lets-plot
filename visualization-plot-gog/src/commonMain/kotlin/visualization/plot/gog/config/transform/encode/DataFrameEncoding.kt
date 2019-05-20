@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.gog.config.transform.encode
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.common.base64.BinaryUtil
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 
 object DataFrameEncoding {
     internal const val DATA_FRAME_KEY = "__data_frame_encoded" // depricated

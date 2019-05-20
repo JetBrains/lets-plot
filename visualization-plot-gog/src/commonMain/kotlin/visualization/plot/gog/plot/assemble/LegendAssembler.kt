@@ -2,13 +2,13 @@ package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.core.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.base.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.Aesthetics
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
+import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.visualization.plot.gog.FeatureSwitch
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
-import jetbrains.datalore.visualization.plot.gog.core.render.LegendKeyElementFactory
-import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleUtil
-import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.visualization.plot.gog.plot.GuideOptions
 import jetbrains.datalore.visualization.plot.gog.plot.LegendOptions
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding

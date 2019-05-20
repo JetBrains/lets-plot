@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config.event3
 
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Mapping
 import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipSpec

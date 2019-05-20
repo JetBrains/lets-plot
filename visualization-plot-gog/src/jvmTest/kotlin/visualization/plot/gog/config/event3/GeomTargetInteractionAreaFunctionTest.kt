@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.gog.config.event3
 
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.event3.TestUtil.assertNoTooltips
 import jetbrains.datalore.visualization.plot.gog.config.event3.TestUtil.continuous
 import jetbrains.datalore.visualization.plot.gog.config.event3.TestUtil.discrete
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import kotlin.test.Test
 
 class GeomTargetInteractionAreaFunctionTest {

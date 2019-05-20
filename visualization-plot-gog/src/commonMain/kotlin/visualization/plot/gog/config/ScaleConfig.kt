@@ -2,6 +2,10 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.scale.Mappers.nullable
+import jetbrains.datalore.visualization.plot.base.scale.transform.DateTimeBreaksGen
+import jetbrains.datalore.visualization.plot.base.scale.transform.Transforms
 import jetbrains.datalore.visualization.plot.gog.config.Option.Scale.AES
 import jetbrains.datalore.visualization.plot.gog.config.Option.Scale.BREAKS
 import jetbrains.datalore.visualization.plot.gog.config.Option.Scale.CHROMA
@@ -30,10 +34,6 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Scale.START
 import jetbrains.datalore.visualization.plot.gog.config.Option.Scale.START_HUE
 import jetbrains.datalore.visualization.plot.gog.config.aes.AesOptionConversion
 import jetbrains.datalore.visualization.plot.gog.config.aes.TypedContinuousIdentityMappers
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.scale.Mappers.nullable
-import jetbrains.datalore.visualization.plot.gog.core.scale.transform.DateTimeBreaksGen
-import jetbrains.datalore.visualization.plot.gog.core.scale.transform.Transforms
 import jetbrains.datalore.visualization.plot.gog.plot.scale.*
 import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.ShapeMapper
 import jetbrains.datalore.visualization.plot.gog.plot.scale.provider.*

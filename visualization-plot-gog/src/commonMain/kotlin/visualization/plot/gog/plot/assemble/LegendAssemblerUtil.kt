@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
-import jetbrains.datalore.visualization.plot.core.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
+import jetbrains.datalore.visualization.plot.base.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.Aesthetics
 
 internal object LegendAssemblerUtil {
     fun <T> mapToAesthetics(

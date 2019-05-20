@@ -2,15 +2,15 @@ package jetbrains.datalore.visualization.plot.gog.plot.assemble.geom
 
 import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.gcommon.collect.Iterables
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.POINT_X
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.POINT_Y
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.RECT_XMAX
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.RECT_XMIN
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.RECT_YMAX
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.RECT_YMIN
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.AesAutoMapper
 
 internal class DefaultAesAutoMapper(private val myAutoMappedAes: List<Aes<*>>, private val myPreferDiscreteValues: Predicate<Aes<*>>) : AesAutoMapper {

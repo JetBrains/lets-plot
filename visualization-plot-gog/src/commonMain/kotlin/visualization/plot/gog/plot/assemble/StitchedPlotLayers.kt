@@ -2,11 +2,11 @@ package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.base.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.core.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.gog.plot.GeomLayer
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 

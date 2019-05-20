@@ -4,8 +4,8 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.plot.ColorBarOptions
 import jetbrains.datalore.visualization.plot.gog.plot.GuideOptions
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding

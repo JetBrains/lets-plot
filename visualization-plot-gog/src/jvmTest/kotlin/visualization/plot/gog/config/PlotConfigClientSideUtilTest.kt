@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.core.GeomKind.*
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.GeomKind.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

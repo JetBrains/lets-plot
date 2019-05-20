@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.plot.data
 
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
+import jetbrains.datalore.visualization.plot.base.data.stat.Stats
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 import jetbrains.datalore.visualization.plot.gog.plot.data.DataProcessing.findOptionalVariable
 

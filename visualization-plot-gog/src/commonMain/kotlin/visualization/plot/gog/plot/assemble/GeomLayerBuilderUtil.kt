@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil.transformVarFor
-import jetbrains.datalore.visualization.plot.gog.core.data.Stat
-import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil.transformVarFor
+import jetbrains.datalore.visualization.plot.base.data.Stat
+import jetbrains.datalore.visualization.plot.base.data.stat.Stats
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.GeomProvider
 import jetbrains.datalore.visualization.plot.gog.plot.scale.ScaleProviderHelper

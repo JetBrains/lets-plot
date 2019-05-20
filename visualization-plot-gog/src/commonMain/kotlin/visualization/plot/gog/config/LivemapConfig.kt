@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
+import jetbrains.datalore.visualization.plot.base.render.geom.LivemapGeom
+import jetbrains.datalore.visualization.plot.base.render.geom.LivemapGeom.*
 import jetbrains.datalore.visualization.plot.gog.config.Option.Geom.Livemap
 import jetbrains.datalore.visualization.plot.gog.config.Option.GeomName
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.GEOM
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.LAYERS
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.LivemapGeom
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.LivemapGeom.*
 
 class LivemapConfig private constructor(options: Map<*, *>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
 

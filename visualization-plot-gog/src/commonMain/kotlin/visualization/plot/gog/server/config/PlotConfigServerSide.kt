@@ -1,18 +1,17 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.data.stat.Stats
 import jetbrains.datalore.visualization.plot.gog.config.LayerConfig
 import jetbrains.datalore.visualization.plot.gog.config.PlotConfig
 import jetbrains.datalore.visualization.plot.gog.config.PlotConfigUtil
 import jetbrains.datalore.visualization.plot.gog.config.transform.encode.DataSpecEncodeTransforms
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.gog.core.data.stat.Stats
 import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
 import jetbrains.datalore.visualization.plot.gog.plot.data.DataProcessing
 import jetbrains.datalore.visualization.plot.gog.plot.data.GroupingContext
-
 import jetbrains.datalore.visualization.plot.gog.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.visualization.plot.gog.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
 

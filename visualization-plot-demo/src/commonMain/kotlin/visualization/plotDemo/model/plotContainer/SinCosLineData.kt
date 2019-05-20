@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotContainer
 
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import kotlin.math.cos
 import kotlin.math.sin
 

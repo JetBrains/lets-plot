@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.server.config.transform
 
+import jetbrains.datalore.visualization.plot.base.render.Aes.Companion.MAP_ID
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.DATA_COLUMN_JOIN_KEY
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.MAP_COLUMN_GEOJSON
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.MAP_COLUMN_JOIN_KEY
@@ -12,7 +13,6 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Plot
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChange
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChangeContext
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecSelector
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes.Companion.MAP_ID
 
 class GeoDataFrameMappingChange : SpecChange {
 

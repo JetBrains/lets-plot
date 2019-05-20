@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.plot.guide
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideBreak
 import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
 

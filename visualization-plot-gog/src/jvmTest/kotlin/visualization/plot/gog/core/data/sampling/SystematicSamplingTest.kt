@@ -1,12 +1,13 @@
-package jetbrains.datalore.visualization.plot.gog.core.data.sampling
+package jetbrains.datalore.visualization.plot.base.data.sampling
 
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.TestUtil
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.generateData
+import kotlin.math.floor
 import kotlin.test.*
 
 class SystematicSamplingTest {
 
-    private val myData = TestUtil.generateData(N, listOf("x", "y", "c"))
+    private val myData = generateData(N, listOf("x", "y", "c"))
 
     private fun assertThat(sampleSize: Int): SamplingAssert {
         return SamplingAssert(sampleSize)
@@ -101,7 +102,7 @@ class SystematicSamplingTest {
         }
 
         internal fun sampleSize(step: Double, popSize: Int): Int {
-            return Math.floor((popSize - 1) / step).toInt() + 1
+            return floor((popSize - 1) / step).toInt() + 1
         }
     }
 }

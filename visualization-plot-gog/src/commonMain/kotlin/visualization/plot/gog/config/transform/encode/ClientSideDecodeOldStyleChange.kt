@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.config.transform.encode
 
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChange
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChangeContext
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
 
 /**
  * Feb 16, 2018

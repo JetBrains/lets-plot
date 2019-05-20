@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config.aes
 
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

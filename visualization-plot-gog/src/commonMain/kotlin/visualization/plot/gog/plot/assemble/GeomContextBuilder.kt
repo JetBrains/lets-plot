@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
+import jetbrains.datalore.visualization.plot.base.event3.NullGeomTargetCollector
+import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.Aesthetics
+import jetbrains.datalore.visualization.plot.base.render.GeomContext
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetCollector
-import jetbrains.datalore.visualization.plot.gog.core.event3.NullGeomTargetCollector
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
-import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
-import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var myAesthetics: Aesthetics? = null

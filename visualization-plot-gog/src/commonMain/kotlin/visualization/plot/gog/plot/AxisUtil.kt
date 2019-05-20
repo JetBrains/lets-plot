@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.plot
 
-import jetbrains.datalore.visualization.plot.gog.core.render.CoordinateSystem
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
-import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleUtil
+import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.gog.plot.guide.AxisComponent
 import jetbrains.datalore.visualization.plot.gog.plot.layout.AxisLayoutInfo
 import jetbrains.datalore.visualization.plot.gog.plot.theme.AxisTheme

@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.config.event3
 
-import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint
-import jetbrains.datalore.visualization.plot.gog.core.event3.TipLayoutHint.Kind.*
+import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
+import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.*
 import jetbrains.datalore.visualization.plot.gog.plot.event3.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TestUtil.rect
 import jetbrains.datalore.visualization.plot.gog.plot.event3.TestUtil.size

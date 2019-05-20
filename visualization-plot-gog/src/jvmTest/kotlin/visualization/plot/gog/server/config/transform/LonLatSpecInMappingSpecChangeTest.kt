@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.server.config.transform
 
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.config.Option.GeomName
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.DATA
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.GEOM
@@ -8,7 +9,6 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Plot
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.LAYERS
 import jetbrains.datalore.visualization.plot.gog.config.transform.PlotSpecTransform
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecFinder
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
 import jetbrains.datalore.visualization.plot.gog.server.config.transform.LonLatSpecInMappingSpecChange.Companion.GENERATED_LONLAT_COLUMN_NAME
 import jetbrains.datalore.visualization.plot.gog.server.config.transform.LonLatSpecInMappingSpecChange.Companion.LAT_KEY
 import jetbrains.datalore.visualization.plot.gog.server.config.transform.LonLatSpecInMappingSpecChange.Companion.LONLAT_SPEC_KEY

@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
-import jetbrains.datalore.visualization.plot.gog.core.render.Aes
+import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.gog.plot.scale.ScaleProvider
 
 class TypedScaleProviderMap constructor(map: Map<Aes<*>, ScaleProvider<*>>) {

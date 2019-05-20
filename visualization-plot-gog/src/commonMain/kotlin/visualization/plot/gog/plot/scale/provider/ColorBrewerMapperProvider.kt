@@ -2,13 +2,13 @@ package jetbrains.datalore.visualization.plot.gog.plot.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
+import jetbrains.datalore.visualization.plot.base.scale.Transform
 import jetbrains.datalore.visualization.plot.common.color.ColorPalette
 import jetbrains.datalore.visualization.plot.common.color.ColorScheme
 import jetbrains.datalore.visualization.plot.common.color.PaletteUtil
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.gog.core.scale.MapperUtil
-import jetbrains.datalore.visualization.plot.gog.core.scale.Transform
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideBreak
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideMapper
 import jetbrains.datalore.visualization.plot.gog.plot.scale.WithGuideBreaks

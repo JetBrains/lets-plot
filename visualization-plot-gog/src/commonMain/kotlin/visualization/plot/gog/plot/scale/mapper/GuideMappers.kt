@@ -1,12 +1,12 @@
 package jetbrains.datalore.visualization.plot.gog.plot.scale.mapper
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
+import jetbrains.datalore.visualization.plot.base.scale.Mappers
+import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.gog.core.scale.MapperUtil
-import jetbrains.datalore.visualization.plot.gog.core.scale.Mappers
-import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideBreak
 import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideMapper
 

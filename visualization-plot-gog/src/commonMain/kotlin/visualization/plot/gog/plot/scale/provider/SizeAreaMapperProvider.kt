@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.plot.scale.provider
 
-import jetbrains.datalore.visualization.plot.gog.core.render.AestheticsUtil
+import jetbrains.datalore.visualization.plot.base.render.AestheticsUtil
 
 internal class SizeAreaMapperProvider(max: Double?, naValue: Double) : DirectlyProportionalMapperProvider(max
         ?: DEF_MAX, naValue) {

@@ -2,16 +2,16 @@ package jetbrains.datalore.visualization.plotDemo.model.geom
 
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.array
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.collection
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.constant
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.listMapper
+import jetbrains.datalore.visualization.plot.base.render.geom.PolygonGeom
+import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
+import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder
-import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder.Companion.array
-import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder.Companion.collection
-import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder.Companion.constant
-import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder.Companion.listMapper
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.PolygonGeom
-import jetbrains.datalore.visualization.plot.gog.core.render.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.gog.core.scale.Mappers
 import jetbrains.datalore.visualization.plot.gog.plot.SvgLayerRenderer
 import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProviders
 import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.ColorMapper

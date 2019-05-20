@@ -2,10 +2,10 @@ package jetbrains.datalore.visualization.plot.gog.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LocatedTargets
+import jetbrains.datalore.visualization.plot.base.event3.TransformedTargetLocator
 import jetbrains.datalore.visualization.plot.gog.config.event3.TooltipSpecFactory
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.gog.core.event3.GeomTargetLocator.LocatedTargets
-import jetbrains.datalore.visualization.plot.gog.core.event3.TransformedTargetLocator
 import jetbrains.datalore.visualization.plot.gog.plot.event3.tooltip.TooltipSpec
 
 internal class TargetsHelper {

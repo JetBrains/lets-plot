@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog
 
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrame
-import jetbrains.datalore.visualization.plot.gog.core.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 
 object FeatureSwitch {
     const val PLOT_DEBUG_DRAWING = false

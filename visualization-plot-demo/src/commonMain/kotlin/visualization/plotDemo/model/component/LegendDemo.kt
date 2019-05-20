@@ -2,11 +2,11 @@ package jetbrains.datalore.visualization.plotDemo.model.component
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder
-import jetbrains.datalore.visualization.plot.gog.core.aes.AestheticsBuilder.Companion.array
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.util.GenericLegendKeyElementFactory
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scales
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.array
+import jetbrains.datalore.visualization.plot.base.render.geom.util.GenericLegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.gog.plot.guide.ColorBarComponent
 import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendBreak
 import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendComponent

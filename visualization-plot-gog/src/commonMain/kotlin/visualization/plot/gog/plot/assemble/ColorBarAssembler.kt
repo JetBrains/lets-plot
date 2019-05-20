@@ -2,10 +2,10 @@ package jetbrains.datalore.visualization.plot.gog.plot.assemble
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
+import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.visualization.plot.gog.FeatureSwitch
-import jetbrains.datalore.visualization.plot.gog.core.scale.Scale2
-import jetbrains.datalore.visualization.plot.gog.core.scale.ScaleUtil
-import jetbrains.datalore.visualization.plot.gog.core.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.visualization.plot.gog.plot.ColorBarOptions
 import jetbrains.datalore.visualization.plot.gog.plot.guide.ColorBarComponent
 import jetbrains.datalore.visualization.plot.gog.plot.guide.ColorBarComponentSpec

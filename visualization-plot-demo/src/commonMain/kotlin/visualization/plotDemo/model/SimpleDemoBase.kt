@@ -7,8 +7,8 @@ import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgCssResource
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.plot.gog.core.render.GeomContext
-import jetbrains.datalore.visualization.plot.gog.core.render.svg.GroupComponent
+import jetbrains.datalore.visualization.plot.base.render.GeomContext
+import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.gog.plot.Plot
 import jetbrains.datalore.visualization.plot.gog.plot.PlotContainer
 import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style

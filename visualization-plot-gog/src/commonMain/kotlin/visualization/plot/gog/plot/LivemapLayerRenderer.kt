@@ -1,14 +1,14 @@
 package jetbrains.datalore.visualization.plot.gog.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.visualization.plot.core.GeomKind
-import jetbrains.datalore.visualization.plot.gog.core.event.MappedDataAccess
-import jetbrains.datalore.visualization.plot.gog.core.event3.MouseEventSource
-import jetbrains.datalore.visualization.plot.gog.core.render.Aesthetics
-import jetbrains.datalore.visualization.plot.gog.core.render.Geom
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.LivemapGeom
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.LivemapLayerData
-import jetbrains.datalore.visualization.plot.gog.core.render.geom.LivemapProvider.LivemapData
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
+import jetbrains.datalore.visualization.plot.base.render.Aesthetics
+import jetbrains.datalore.visualization.plot.base.render.Geom
+import jetbrains.datalore.visualization.plot.base.render.geom.LivemapGeom
+import jetbrains.datalore.visualization.plot.base.render.geom.LivemapLayerData
+import jetbrains.datalore.visualization.plot.base.render.geom.LivemapProvider.LivemapData
 
 internal class LivemapLayerRenderer(private val myAesthetics: Aesthetics, private val myGeom: LivemapGeom, private val myDataAccess: MappedDataAccess) : GeomLayerRenderer {
     private val myLayers = ArrayList<LivemapLayerData>()
