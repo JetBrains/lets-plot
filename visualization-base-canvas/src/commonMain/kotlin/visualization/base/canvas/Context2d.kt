@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 
 interface Context2d {
     fun clearRect(rect: DoubleRectangle)
-    fun drawImage(snapshot: Snapshot, x: Int, y: Int)
+    fun drawImage(snapshot: Snapshot, x: Double, y: Double)
     fun beginPath()
     fun closePath()
     fun stroke()
