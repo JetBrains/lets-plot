@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.canvasGwt
+package jetbrains.datalore.visualization.base.canvasDom
 
 import jetbrains.datalore.base.domCore.dom.*
 import jetbrains.datalore.base.event.MouseEvent
@@ -8,7 +8,7 @@ import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec
 
-internal object GwtCanvasUtil {
+internal object DomCanvasUtil {
     private val EVENT_SPEC_MAP = mapOf(
             EventSpec.MOUSE_ENTERED to DomEventType.MOUSE_ENTER,
             EventSpec.MOUSE_LEFT to DomEventType.MOUSE_LEAVE,

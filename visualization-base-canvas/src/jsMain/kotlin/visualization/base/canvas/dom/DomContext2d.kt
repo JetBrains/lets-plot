@@ -1,19 +1,18 @@
-package jetbrains.datalore.visualization.base.canvasGwt
+package jetbrains.datalore.visualization.base.canvasDom
 
 import jetbrains.datalore.base.domCore.css.enumerables.CssLineCap
 import jetbrains.datalore.base.domCore.css.enumerables.CssLineJoin
 import jetbrains.datalore.base.domCore.css.enumerables.CssTextAlign
 import jetbrains.datalore.base.domCore.css.enumerables.CssTextBaseLine
-import jetbrains.datalore.base.domCore.dom.DomContext2d
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.CssFontParser
-import jetbrains.datalore.visualization.base.canvasGwt.GwtCanvas.GwtSnapshot
+import jetbrains.datalore.visualization.base.canvasDom.DomCanvas.DomSnapshot
 import org.w3c.dom.*
 
-internal class GwtContext2d(private val myContext2d: DomContext2d) : Context2d {
+internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) : Context2d {
     private fun convertLineJoin(lineJoin: Context2d.LineJoin): CssLineJoin {
         return when (lineJoin) {
             Context2d.LineJoin.BEVEL -> CssLineJoin.BEVEL
@@ -52,8 +51,8 @@ internal class GwtContext2d(private val myContext2d: DomContext2d) : Context2d {
     }
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
-        val gwtSnapshot = snapshot as GwtSnapshot
-        myContext2d.drawImage(gwtSnapshot.canvasElement, x, y)
+        val domSnapshot = snapshot as DomSnapshot
+        myContext2d.drawImage(domSnapshot.canvasElement, x, y)
     }
 
     override fun beginPath() {

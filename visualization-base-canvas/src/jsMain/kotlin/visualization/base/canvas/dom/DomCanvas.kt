@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.canvasGwt
+package jetbrains.datalore.visualization.base.canvasDom
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
@@ -13,8 +13,8 @@ import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.base.canvas.ScaledCanvas
 import kotlin.math.ceil
 
-internal class GwtCanvas private constructor(val domHTMLCanvasElement: DomHTMLCanvasElement, size: Vector, pixelRatio: Double)
-    : ScaledCanvas(GwtContext2d(domHTMLCanvasElement.context2d), size, pixelRatio) {
+internal class DomCanvas private constructor(val domHTMLCanvasElement: DomHTMLCanvasElement, size: Vector, pixelRatio: Double)
+    : ScaledCanvas(DomContext2d(domHTMLCanvasElement.context2d), size, pixelRatio) {
 
     init {
         domHTMLCanvasElement.style.setWidth(size.x)
@@ -24,10 +24,10 @@ internal class GwtCanvas private constructor(val domHTMLCanvasElement: DomHTMLCa
     }
 
     override fun takeSnapshot(): Async<Canvas.Snapshot> {
-        return Asyncs.constant(GwtSnapshot())
+        return Asyncs.constant(DomSnapshot())
     }
 
-    internal inner class GwtSnapshot : Canvas.Snapshot {
+    internal inner class DomSnapshot : Canvas.Snapshot {
         val canvasElement: DomHTMLCanvasElement
             get() = domHTMLCanvasElement
     }
@@ -35,8 +35,8 @@ internal class GwtCanvas private constructor(val domHTMLCanvasElement: DomHTMLCa
     companion object {
         private val DEVICE_PIXEL_RATIO = DomWindow.getWindow().devicePixelRatio
 
-        fun create(size: Vector): GwtCanvas {
-            return GwtCanvas(DomApi.createCanvas(), size, DEVICE_PIXEL_RATIO)
+        fun create(size: Vector): DomCanvas {
+            return DomCanvas(DomApi.createCanvas(), size, DEVICE_PIXEL_RATIO)
         }
     }
 }
