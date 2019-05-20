@@ -3,10 +3,9 @@ package jetbrains.datalore.visualization.plot.base.data.sampling
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Builder
-import jetbrains.datalore.visualization.plot.base.data.TestUtil.RingAssertion.Companion.assertThatRing
-import jetbrains.datalore.visualization.plot.base.data.TestUtil.createCircle
-import jetbrains.datalore.visualization.plot.base.data.TestUtil.getPointsCount
+import jetbrains.datalore.visualization.plot.base.data.RingAssertion.Companion.assertThatRing
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
+import jetbrains.datalore.visualization.plot.base.data.createCircle
 import jetbrains.datalore.visualization.plot.base.data.sampling.SamplingUtil.splitRings
 import jetbrains.datalore.visualization.plot.base.data.sampling.VertexSampling.VertexDpSampling
 import jetbrains.datalore.visualization.plot.base.data.sampling.VertexSampling.VertexVwSampling
@@ -153,5 +152,11 @@ class VertexSamplingTest {
         assertThat(simplifiedRings).hasSize(2)
         assertThatRing(simplifiedRings[0]).isClosed.hasSize(19)
         assertThatRing(simplifiedRings[1]).isClosed.hasSize(11)
+    }
+
+    companion object {
+        fun getPointsCount(rings: List<List<DoubleVector>>): Int {
+            return rings.map { it.size }.sum()
+        }
     }
 }
