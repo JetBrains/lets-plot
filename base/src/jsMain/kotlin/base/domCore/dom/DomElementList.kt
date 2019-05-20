@@ -1,16 +1,15 @@
 package jetbrains.datalore.base.domCore.dom
 
-import org.w3c.dom.Element
 import org.w3c.dom.HTMLCollection
 
 typealias DomElementList = HTMLCollection
 
-val DomElementList.iterator: Iterator<Element>
+val DomElementList.iterator: Iterator<DomElement>
     get() = DomCollectionIterator(this)
 
-fun DomElementList.toIterable(): Iterable<Element> {
-    return object : Iterable<Element> {
-        override fun iterator(): Iterator<Element> {
+fun DomElementList.toIterable(): Iterable<DomElement> {
+    return object : Iterable<DomElement> {
+        override fun iterator(): Iterator<DomElement> {
             return iterator
         }
     }

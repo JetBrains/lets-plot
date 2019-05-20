@@ -3,13 +3,13 @@ package jetbrains.datalore.base.domCore.dom
 object DomApi {
 
     val body: DomHTMLElement?
-        get() = DomHTMLElement.create(document.body)
+        get() = document.body
 
     val document: DomDocument
         get() = DomWindow.getDocument()
 
     val active: DomElement?
-        get() = DomElement.create(document.activeElement)
+        get() = document.activeElement
 
     fun createDiv(): DomElement {
         return createElement("div")
@@ -70,7 +70,7 @@ object DomApi {
     }
 
     fun createElement(tag: String): DomElement {
-        return DomElement.create(DomWindow.getDocument().createElement(tag))!!
+        return DomWindow.getDocument().createElement(tag)
     }
 
     fun createInputText(): InputDomElement {

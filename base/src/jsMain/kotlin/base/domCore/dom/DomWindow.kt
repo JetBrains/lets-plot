@@ -28,7 +28,7 @@ class DomWindow(private val myWindow: Window) : DomEventTarget() {
         get() = myWindow.devicePixelRatio
 
     fun getComputedStyle(element: DomElement): StyleMap {
-        return StyleMap(myWindow.getComputedStyle(element.element))
+        return myWindow.getComputedStyle(element)
     }
 
     fun setImmediate(runnable: () -> Unit) {

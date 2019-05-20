@@ -2,180 +2,66 @@ package jetbrains.datalore.base.domCore.dom
 
 import org.w3c.dom.Element
 
-open class DomElement protected constructor(element: Element) : DomNode(element) {
+typealias DomElement = Element
 
-    private var myValidationError: String? = null
+fun DomElement.hasClassName(className: String): Boolean {
+    return classList.contains(className)
+}
 
-    val element: Element
-        get() = node as Element
+fun DomElement.removeClassName(className: String) {
+    classList.remove(className)
+}
 
-    val classList: DomTokenList
-        get() = element.classList
+fun DomElement.addClassName(className: String) {
+    classList.add(className)
+}
 
-    fun hasClassName(className: String): Boolean {
-        return classList.contains(className)
+fun DomElement.addClassNames(vararg classNames: String) {
+    classList.add(*classNames)
+}
+
+fun DomElement.replaceClassName(oldClassName: String, newClassName: String) {
+    classList.remove(oldClassName)
+    classList.add(newClassName)
+}
+
+val DomElement.childElements: DomElementList
+    get() = this.children
+
+val DomElement.childElementsList: List<DomElement>
+    get() = DomList(this)
+
+val DomElement.firstChildElement: DomElement?
+    get() = this.firstElementChild
+
+fun DomElement.setDisabled(state: Boolean) {
+    if (state) {
+        setAttribute("disabled", "disabled")
+    } else {
+        removeAttribute("disabled")
     }
+}
 
-    fun removeClassName(className: String) {
-        classList.remove(className)
-    }
+fun DomElement.setTabIndex(index: Int) {
+    setAttribute("tabindex", index.toString())
+}
 
-    fun addClassName(className: String) {
-        classList.add(className)
-    }
+fun DomElement.clearTabIndex() {
+    removeAttribute("tabindex")
+}
 
-    fun addClassNames(vararg classNames: String) {
-        classList.add(*classNames)
-    }
+fun DomElement.getAbsoluteLeft(): Double {
+    return getBoundingClientRect().left
+}
 
-    fun replaceClassName(oldClassName: String, newClassName: String) {
-        classList.remove(oldClassName)
-        classList.add(newClassName)
-    }
+fun DomElement.getAbsoluteRight(): Double {
+    return getBoundingClientRect().right
+}
 
-    val tagName: String
-        get() = element.tagName
+fun DomElement.getAbsoluteTop(): Double {
+    return getBoundingClientRect().top
+}
 
-    var innerHTML: String
-        get() = element.innerHTML
-        set(value) {
-            element.innerHTML = value
-        }
-
-    var outerHTML: String
-        get() = element.outerHTML
-        set(value) {
-            element.outerHTML = value
-        }
-
-    var scrollLeft: Double
-        get() = element.scrollLeft
-        set(value) {
-            element.scrollLeft = value
-        }
-
-    var scrollTop: Double
-        get() = element.scrollTop
-        set(value) {
-            element.scrollTop = value
-        }
-
-    val scrollWidth: Int
-        get() = element.scrollWidth
-
-    val scrollHeight: Int
-        get() = element.scrollHeight
-
-    val clientWidth: Int
-        get() = element.clientWidth
-
-    val clientHeight: Int
-        get() = element.clientHeight
-
-    val childElements: DomElementList
-        get() = element.children
-
-    val childElementsList: List<DomElement>
-        get() = DomList(this)
-
-    val firstChildElement: DomElement?
-        get() = create(element.firstElementChild)
-
-    fun scrollIntoView() {
-        element.scrollIntoView()
-    }
-
-    fun getAttribute(key: String): String? {
-        return element.getAttribute(key)
-    }
-
-    fun hasAttribute(key: String): Boolean {
-        return element.hasAttribute(key)
-    }
-
-    fun setAttribute(key: String, value: String) {
-        return element.setAttribute(key, value)
-    }
-
-    fun removeAttribute(key: String) {
-        return element.removeAttribute(key)
-    }
-
-    fun setAttributeNS(namespace: String?, name: String, value: String) {
-        return element.setAttributeNS(namespace, name, value)
-    }
-
-    var id: String
-        get() = element.id
-        set(value) {
-            element.id = value
-        }
-
-    fun setDisabled(state: Boolean) {
-        if (state) {
-            setAttribute("disabled", "disabled")
-        } else {
-            removeAttribute("disabled")
-        }
-    }
-
-    fun setTabIndex(index: Int) {
-        setAttribute("tabindex", index.toString())
-    }
-
-    fun clearTabIndex() {
-        removeAttribute("tabindex")
-    }
-
-    fun getBoundingClientRect(): DomRect {
-        return element.getBoundingClientRect()
-    }
-
-    fun getAbsoluteLeft(): Double {
-        return getBoundingClientRect().left
-    }
-
-    fun getAbsoluteRight(): Double {
-        return getBoundingClientRect().right
-    }
-
-    fun getAbsoluteTop(): Double {
-        return getBoundingClientRect().top
-    }
-
-    fun getAbsoluteBottom(): Double {
-        return getBoundingClientRect().bottom
-    }
-
-    fun querySelector(selector: String): DomElement? {
-        return create(element.querySelector(selector))
-    }
-
-    fun querySelectorAll(selectors: String): DomNodeList {
-        return element.querySelectorAll(selectors)
-    }
-
-    fun closest(selector: String): DomElement? {
-        return create(element.closest(selector))
-    }
-
-    fun getValidationMessage(): String? {
-        return myValidationError
-    }
-
-    fun setCustomValidity(message: String?) {
-        myValidationError = message
-        if (message != null && "" != message) {
-            addClassName("error")
-        } else {
-            removeClassName("error")
-        }
-    }
-
-    companion object {
-        fun create(element: Element?): DomElement? {
-            //TODO don't create
-            return if (element != null) DomElement(element) else null
-        }
-    }
+fun DomElement.getAbsoluteBottom(): Double {
+    return getBoundingClientRect().bottom
 }

@@ -2,9 +2,12 @@ package jetbrains.datalore.visualization.base.canvasGwt
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
+import jetbrains.datalore.base.domCore.css.setHeight
+import jetbrains.datalore.base.domCore.css.setWidth
 import jetbrains.datalore.base.domCore.dom.DomApi
 import jetbrains.datalore.base.domCore.dom.DomHTMLCanvasElement
 import jetbrains.datalore.base.domCore.dom.DomWindow
+import jetbrains.datalore.base.domCore.dom.context2d
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.base.canvas.ScaledCanvas

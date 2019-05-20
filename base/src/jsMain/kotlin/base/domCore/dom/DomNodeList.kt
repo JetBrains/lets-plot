@@ -1,16 +1,15 @@
 package jetbrains.datalore.base.domCore.dom
 
-import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 
 typealias DomNodeList = NodeList
 
-val DomNodeList.iterator: Iterator<Node>
+val DomNodeList.iterator: Iterator<DomNode>
     get() = DomCollectionIterator(this)
 
-fun DomNodeList.toIterable(): Iterable<Node> {
-    return object : Iterable<Node> {
-        override fun iterator(): Iterator<Node> {
+fun DomNodeList.toIterable(): Iterable<DomNode> {
+    return object : Iterable<DomNode> {
+        override fun iterator(): Iterator<DomNode> {
             return iterator
         }
     }
