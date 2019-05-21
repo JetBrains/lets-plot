@@ -25,32 +25,31 @@ class TooltipSpecFactory(
     private val myDataAccess: MappedDataAccess = contextualMapping.dataAccess
 
     fun create(geomTarget: GeomTarget): List<TooltipSpec> {
-        return TargetTooltipSpecBuilder(geomTarget).createTooltipSpecs()
+        return ArrayList(Helper(geomTarget).tooltipSpecs)
     }
 
-    private inner class TargetTooltipSpecBuilder(private val myGeomTarget: GeomTarget) {
-        private val myTooltipSpecs = ArrayList<TooltipSpec>()
+    private inner class Helper(private val myGeomTarget: GeomTarget) {
+        internal val tooltipSpecs = ArrayList<TooltipSpec>()
         private val myShortLabels = ArrayList<String>()
         private val myAesWithoutHint = ArrayList(myTooltipAes)
 
         init {
-
             listOf(Aes.X, Aes.Y)
                     .forEach { aes ->
                         if (isMapped(aes)) {
                             myShortLabels.add(getMappedData(aes).label)
                         }
                     }
+
+            initTooltipSpecs()
         }
 
-        internal fun createTooltipSpecs(): List<TooltipSpec> {
-            aesTipLayoutHints().forEach { (aes, hint) -> addHintTooltipSpec(listOf(aes), hint) }
+        private fun initTooltipSpecs() {
+            aesTipLayoutHints().forEach { (aes, hint) -> applyTipLayoutHint(listOf(aes), hint) }
 
             addAesTooltipSpec()
 
             addAxisTooltipSpec()
-
-            return ArrayList(myTooltipSpecs)
         }
 
         private fun hitIndex(): Int {
@@ -70,7 +69,7 @@ class TooltipSpecFactory(
                 if (isAxisTooltipAllowed(aes)) {
                     val layoutHint = createHintForAxis(aes)
                     val text = makeText(listOf(aes))
-                    myTooltipSpecs.add(TooltipSpec(layoutHint, text, layoutHint.color!!))
+                    tooltipSpecs.add(TooltipSpec(layoutHint, text, layoutHint.color!!))
                 }
             }
         }
@@ -95,7 +94,7 @@ class TooltipSpecFactory(
             removeMapIdMapping(aesListForTooltip)
             removeDiscreteDuplicatedMappings(aesListForTooltip)
 
-            addHintTooltipSpec(aesListForTooltip, tipLayoutHint())
+            applyTipLayoutHint(aesListForTooltip, tipLayoutHint())
         }
 
         private fun removeAxisMapping(aesListForTooltip: MutableList<Aes<*>>) {
@@ -163,16 +162,14 @@ class TooltipSpecFactory(
             throw IllegalArgumentException("Not an axis aes: $aes")
         }
 
-        private fun addHintTooltipSpec(aes: List<Aes<*>>, layoutHint: TipLayoutHint) {
+        private fun applyTipLayoutHint(aes: List<Aes<*>>, layoutHint: TipLayoutHint) {
             if (aes.isEmpty()) {
                 return
             }
 
             val text = makeText(aes)
             val fill = layoutHint.color ?: tipLayoutHint().color!!
-            myTooltipSpecs.add(
-                    TooltipSpec(layoutHint, text, fill)
-            )
+            tooltipSpecs.add(TooltipSpec(layoutHint, text, fill))
             myAesWithoutHint.removeAll(aes)
         }
 

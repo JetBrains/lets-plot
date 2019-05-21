@@ -76,8 +76,8 @@ class GeomTargetInteractionUnivariateFunctionTest {
         assertText(targetTooltipSpec, mapping.longTooltipText())
     }
 
-    private fun createUnivariateFunctionBuilder(): TargetTooltipSpecBuilder {
-        return TargetTooltipSpecBuilder.univariateFunctionBuilder()
+    private fun createUnivariateFunctionBuilder(): TestingTooltipSpecsBuilder {
+        return TestingTooltipSpecsBuilder.univariateFunctionBuilder()
     }
 
 }

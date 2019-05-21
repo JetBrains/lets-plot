@@ -13,7 +13,7 @@ import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipSpec
 import org.mockito.Mockito.*
 
 
-internal class TargetTooltipSpecBuilder private constructor(
+internal class TestingTooltipSpecsBuilder private constructor(
         private val contextualMappingProvider: ContextualMappingProvider) {
 
     private val mappedDataAccessMock = MappedDataAccessMock()
@@ -41,7 +41,7 @@ internal class TargetTooltipSpecBuilder private constructor(
         return mappedDataAccessMock.mappedDataAccess
     }
 
-    fun <T> variable(mappedData: MappedDataAccessMock.Mapping<T>): TargetTooltipSpecBuilder {
+    fun <T> variable(mappedData: MappedDataAccessMock.Mapping<T>): TestingTooltipSpecsBuilder {
         mappedDataAccessMock.add(mappedData)
         return this
     }
@@ -49,24 +49,24 @@ internal class TargetTooltipSpecBuilder private constructor(
     companion object {
         private val DISPLAYABLE_AES_LIST = toList(Aes.values())
 
-        fun univariateFunctionBuilder(): TargetTooltipSpecBuilder {
-            return TargetTooltipSpecBuilder(
+        fun univariateFunctionBuilder(): TestingTooltipSpecsBuilder {
+            return TestingTooltipSpecsBuilder(
                     GeomInteractionBuilder(DISPLAYABLE_AES_LIST)
                             .univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
                             .build()
             )
         }
 
-        fun bivariateFunctionBuilder(): TargetTooltipSpecBuilder {
-            return TargetTooltipSpecBuilder(
+        fun bivariateFunctionBuilder(): TestingTooltipSpecsBuilder {
+            return TestingTooltipSpecsBuilder(
                     GeomInteractionBuilder(DISPLAYABLE_AES_LIST)
                             .bivariateFunction(false)
                             .build()
             )
         }
 
-        fun areaFunctionBuilder(): TargetTooltipSpecBuilder {
-            return TargetTooltipSpecBuilder(
+        fun areaFunctionBuilder(): TestingTooltipSpecsBuilder {
+            return TestingTooltipSpecsBuilder(
                     GeomInteractionBuilder(DISPLAYABLE_AES_LIST)
                             .bivariateFunction(true)
                             .build()

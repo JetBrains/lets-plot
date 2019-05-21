@@ -26,7 +26,7 @@ class GeomTargetInteractionAreaFunctionTest {
         assertNoTooltips(targetTooltipSpec)
     }
 
-    private fun createBuilder(): TargetTooltipSpecBuilder {
-        return TargetTooltipSpecBuilder.areaFunctionBuilder()
+    private fun createBuilder(): TestingTooltipSpecsBuilder {
+        return TestingTooltipSpecsBuilder.areaFunctionBuilder()
     }
 }

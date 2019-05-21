@@ -75,7 +75,7 @@ class GeomTargetInteractionBivariateFunctionTest {
         assertText(targetTooltipSpec, mapping.longTooltipText())
     }
 
-    private fun createBuilder(): TargetTooltipSpecBuilder {
-        return TargetTooltipSpecBuilder.bivariateFunctionBuilder()
+    private fun createBuilder(): TestingTooltipSpecsBuilder {
+        return TestingTooltipSpecsBuilder.bivariateFunctionBuilder()
     }
 }
