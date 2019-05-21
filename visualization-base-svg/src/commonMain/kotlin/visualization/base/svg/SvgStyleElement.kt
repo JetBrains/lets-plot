@@ -1,17 +1,12 @@
 package jetbrains.datalore.visualization.base.svg
 
-class SvgStyleElement : SvgElement {
+class SvgStyleElement(val resource: SvgCssResource) : SvgElement() {
 
     override val elementName = "style"
 
-    constructor()
-
-    constructor(content: String) : this() {
-
-        setContent(content)
+    init {
+        setContent(resource.css())
     }
-
-    constructor(resource: SvgCssResource) : this(resource.css())
 
     fun setContent(content: String) {
         val children = children()

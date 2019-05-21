@@ -1,5 +1,10 @@
 package jetbrains.datalore.visualization.plot.builder.presentation
 
+import visualization.plot.gog.plot.presentation.CssResource
+import visualization.plot.gog.plot.presentation.StyleType
+import visualization.plot.gog.plot.presentation.Selector
+import kotlin.jvm.JvmStatic
+
 object Style {
     const val PLOT_CONTAINER = "plt-container"
     const val PLOT = "plt-plot"
@@ -17,6 +22,18 @@ object Style {
     const val LEGEND_TITLE = "legend-title"
 
     const val PLOT_GLASS_PANE = "plt-glass-pane"
+    const val PLOT_TOOLTIP = "plt-tooltip"
+
+    private val CSS_CLASS = CssResource().
+            addSelector(Selector(".$PLOT_CONTAINER").addStyle(StyleType.FONT_FAMILY, Defaults.FONT_FAMILY_NORMAL)).
+            addSelector(Selector("text").addStyle(StyleType.FONT_SIZE, Defaults.FONT_MEDIUM, "px").addStyle(StyleType.FILL, Defaults.TEXT_COLOR)).
+            addSelector(Selector(".$PLOT_GLASS_PANE").addStyle(StyleType.CURSOR, "crosshair")).
+            addSelector(Selector(".$PLOT_TOOLTIP").addStyle(StyleType.POINTER_EVENTS, "none").addStyle(StyleType.OPACITY, 0)).
+            addSelector(Selector(".$PLOT_TOOLTIP.shown").addStyle(StyleType.OPACITY, 1)).
+            addSelector(Selector(listOf(".$PLOT_TOOLTIP.shown", ".back")).addStyle(StyleType.OPACITY, 0.8)).
+            addSelector(Selector(listOf(".$PLOT_TOOLTIP", "text")).addStyle(StyleType.FONT_SIZE, Defaults.Common.Tooltip.FONT_SIZE, "px")).
+            addSelector(Selector(listOf(".$AXIS", "line")).addStyle(StyleType.SHAPE_RENDERING, "crispedges")).
+            addSelector(Selector(".highlight").addStyle(StyleType.FILL_OPACITY, 0.75))
 
     private val CSS = "                                              " +
             " .plt-container {" +
@@ -56,6 +73,16 @@ object Style {
             "                                              " +
             ""
 
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val pattern = "\\s+".toRegex()
+        val a = pattern.replace(CSS, " ").trimStart()
+        val b = pattern.replace(CSS_CLASS.toString(), " ").trimStart()
+
+        if (a != b) {
+            throw Exception("String not equal")
+        }
+    }
 
     val css: String
         get() {
