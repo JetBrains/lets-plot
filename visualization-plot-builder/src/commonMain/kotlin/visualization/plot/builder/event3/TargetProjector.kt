@@ -16,7 +16,7 @@ import kotlin.math.min
 
 internal class TargetProjector(private val myLookupSpace: LookupSpace) {
 
-    fun project(targetPrototype: GeomTargetPrototype): TargetProjection? {
+    fun project(targetPrototype: GeomTargetPrototype): TargetProjection {
         return when (targetPrototype.hitShape.kind) {
             POINT -> PointTargetProjection.create(targetPrototype.hitShape.point.center, myLookupSpace)
 
@@ -41,11 +41,11 @@ internal class TargetProjector(private val myLookupSpace: LookupSpace) {
         }
 
         companion object {
-            fun create(p: DoubleVector, lookupSpace: LookupSpace): PointTargetProjection? {
+            fun create(p: DoubleVector, lookupSpace: LookupSpace): PointTargetProjection {
                 return when (lookupSpace) {
                     X -> PointTargetProjection(p.x)
                     XY -> PointTargetProjection(p)
-                    NONE -> null
+                    NONE -> undefinedLookupSpaceError()
                 }
             }
         }
@@ -62,11 +62,11 @@ internal class TargetProjector(private val myLookupSpace: LookupSpace) {
         }
 
         companion object {
-            fun create(rect: DoubleRectangle, lookupSpace: LookupSpace): RectTargetProjection? {
+            fun create(rect: DoubleRectangle, lookupSpace: LookupSpace): RectTargetProjection {
                 return when (lookupSpace) {
                     X -> RectTargetProjection(DoubleRange.withStartAndEnd(rect.left, rect.right))
                     XY -> RectTargetProjection(rect)
-                    NONE -> null
+                    NONE -> undefinedLookupSpaceError()
                 }
             }
         }
@@ -83,18 +83,18 @@ internal class TargetProjector(private val myLookupSpace: LookupSpace) {
         }
 
         companion object {
-            private val AREA_LIMIT_TO_REMOVE_POLYGON = 25.0
-            private val POINTS_COUNT_TO_SKIP_SIMPLIFICATION = 20.0
-            private val AREA_TOLERANCE_RATIO = 0.1
-            private val MAX_TOLERANCE = 40.0
+            private const val AREA_LIMIT_TO_REMOVE_POLYGON = 25.0
+            private const val POINTS_COUNT_TO_SKIP_SIMPLIFICATION = 20.0
+            private const val AREA_TOLERANCE_RATIO = 0.1
+            private const val MAX_TOLERANCE = 40.0
 
-            fun create(points: List<DoubleVector>, lookupSpace: LookupSpace): PolygonTargetProjection? {
+            fun create(points: List<DoubleVector>, lookupSpace: LookupSpace): PolygonTargetProjection {
                 val rings = GeomUtil.createRingsFromPoints(points)
 
                 return when (lookupSpace) {
                     X -> PolygonTargetProjection(mapToX(rings))
                     XY -> PolygonTargetProjection(mapToXY(rings))
-                    NONE -> null
+                    NONE -> undefinedLookupSpaceError()
                 }
             }
 
@@ -179,18 +179,21 @@ internal class TargetProjector(private val myLookupSpace: LookupSpace) {
         val points: List<PathPoint>
             get() = data as List<PathPoint>
 
-        internal class PathPoint private constructor(private val myPointTargetProjection: PointTargetProjection, val originalCoord: DoubleVector, val index: Int) {
+        internal class PathPoint private constructor(
+                private val myPointTargetProjection: PointTargetProjection,
+                val originalCoord: DoubleVector,
+                val index: Int) {
 
             fun projection(): PointTargetProjection {
                 return myPointTargetProjection
             }
 
             companion object {
-                fun create(p: DoubleVector, index: Int, lookupSpace: LookupSpace): PathPoint? {
+                fun create(p: DoubleVector, index: Int, lookupSpace: LookupSpace): PathPoint {
                     return when (lookupSpace) {
-                        X -> PathPoint(PointTargetProjection.create(p, lookupSpace)!!, p, index)
-                        XY -> PathPoint(PointTargetProjection.create(p, lookupSpace)!!, p, index)
-                        NONE -> null
+                        X -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
+                        XY -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
+                        NONE -> undefinedLookupSpaceError()
                     }
                 }
             }
@@ -199,13 +202,18 @@ internal class TargetProjector(private val myLookupSpace: LookupSpace) {
         companion object {
             fun create(points: List<DoubleVector>, indexMapper: (Int) -> Int, lookupSpace: LookupSpace): PathTargetProjection {
                 val pointsLocation = ArrayList<PathPoint>()
-                var i = 0
-                for (point in points) {
-                    pointsLocation.add(PathPoint.create(point, indexMapper(i++), lookupSpace)!!)
+                for ((i, point) in points.withIndex()) {
+                    pointsLocation.add(PathPoint.create(point, indexMapper(i), lookupSpace))
                 }
 
                 return PathTargetProjection(pointsLocation)
             }
+        }
+    }
+
+    companion object {
+        fun undefinedLookupSpaceError(): Nothing {
+            throw IllegalStateException("Undefined geom lookup space")
         }
     }
 }

@@ -33,7 +33,8 @@ internal class GeomTargetLocatorImpl(
                 return Collector.CollectingStrategy.APPEND
             }
 
-            return if (myLocatorLookupStrategy === GeomTargetLocator.LookupStrategy.NONE || myLocatorLookupSpace === GeomTargetLocator.LookupSpace.NONE) {
+            return if (myLocatorLookupStrategy === GeomTargetLocator.LookupStrategy.NONE ||
+                    myLocatorLookupSpace === GeomTargetLocator.LookupSpace.NONE) {
                 Collector.CollectingStrategy.IGNORE
             } else Collector.CollectingStrategy.REPLACE
 
@@ -182,7 +183,7 @@ internal class GeomTargetLocatorImpl(
 
     internal class RingXY(val edges: List<DoubleVector>, val bbox: DoubleRectangle)
 
-    internal class Target(private val myTargetProjection: TargetProjection?, val prototype: GeomTargetPrototype) {
+    internal class Target(private val myTargetProjection: TargetProjection, val prototype: GeomTargetPrototype) {
 
         val pointProjection: PointTargetProjection
             get() = myTargetProjection as PointTargetProjection

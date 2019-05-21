@@ -19,7 +19,7 @@ import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomContextBuilder
-import jetbrains.datalore.visualization.plot.builder.event3.GeomTargetController
+import jetbrains.datalore.visualization.plot.builder.event3.GeomTargetCollectorWithLocator
 import jetbrains.datalore.visualization.plot.builder.event3.TileMouseEventPeer
 import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent
 import jetbrains.datalore.visualization.plot.builder.layout.AxisLayoutInfo
@@ -232,17 +232,17 @@ internal class PlotTile(layers: List<GeomLayer>,
             val aestheticMappers = rendererData.aestheticMappers
             val aesthetics = rendererData.aesthetics
 
-            val targetController = GeomTargetController(
+            val targetCollector = GeomTargetCollectorWithLocator(
                     layer.geomKind,
                     layer.locatorLookupSpec,
                     layer.contextualMapping
             )
-            myTargetLocators.add(targetController)
+            myTargetLocators.add(targetCollector)
 
             val ctx = GeomContextBuilder()
                     .aesthetics(aesthetics)
                     .aestheticMappers(aestheticMappers)
-                    .geomTargetCollector(targetController)
+                    .geomTargetCollector(targetCollector)
                     .build()
 
             val pos = rendererData.pos

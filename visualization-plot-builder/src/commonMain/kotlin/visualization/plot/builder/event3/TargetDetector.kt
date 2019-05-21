@@ -9,7 +9,9 @@ import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.DoubleRange
 import jetbrains.datalore.visualization.plot.builder.event3.TargetProjector.*
 import jetbrains.datalore.visualization.plot.builder.event3.TargetProjector.PathTargetProjection.PathPoint
 
-internal class TargetDetector(private val myLocatorLookupSpace: LookupSpace, private val myLocatorLookupStrategy: LookupStrategy) {
+internal class TargetDetector(
+        private val myLocatorLookupSpace: LookupSpace,
+        private val myLocatorLookupStrategy: LookupStrategy) {
 
     fun checkPath(cursorCoord: DoubleVector, pathProjection: PathTargetProjection, closestPointChecker: ClosestPointChecker): PathPoint? {
 
