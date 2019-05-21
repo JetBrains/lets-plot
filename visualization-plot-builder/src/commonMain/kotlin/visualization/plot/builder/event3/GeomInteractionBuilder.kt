@@ -5,20 +5,21 @@ import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.Looku
 import jetbrains.datalore.visualization.plot.base.render.Aes
 
 class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
-    var locatorLookupSpace: LookupSpace? = null
+    lateinit var locatorLookupSpace: LookupSpace
         private set
-    var locatorLookupStrategy: LookupStrategy? = null
+    lateinit var locatorLookupStrategy: LookupStrategy
         private set
     private var myAxisTooltipVisibilityFromFunctionKind: Boolean = false
     private var myAxisTooltipVisibilityFromConfig: Boolean? = null
     private var myAxisAesFromFunctionKind: List<Aes<*>>? = null
     private var myAxisAesFromConfig: List<Aes<*>>? = null
 
-    val axisAes: List<Aes<*>>?
-        get() = if (myAxisAesFromConfig == null)
-            myAxisAesFromFunctionKind
-        else
-            myAxisAesFromConfig
+    val axisAes: List<Aes<*>>
+        //        get() = if (myAxisAesFromConfig == null)
+//            myAxisAesFromFunctionKind
+//        else
+//            myAxisAesFromConfig
+        get() = myAxisAesFromConfig ?: myAxisAesFromFunctionKind ?: ArrayList()
 
     val displayableAes: List<Aes<*>>
         get() = if (myAxisAesFromFunctionKind != null) {
@@ -75,8 +76,8 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         return this
     }
 
-    fun build(): GeomTargetInteraction {
-        return GeomTargetInteraction(this)
+    fun build(): GeomInteraction {
+        return GeomInteraction(this)
     }
 
     fun axisAes(axisAes: List<Aes<*>>): GeomInteractionBuilder {

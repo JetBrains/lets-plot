@@ -80,7 +80,7 @@ object PlotConfigClientSideUtil {
     private fun configGeomTargets(layerBuilder: GeomLayerBuilder, layerConfig: LayerConfig, multilayer: Boolean) {
         val geomProvider = layerConfig.geomProvider
 
-        val targetInteraction = createTargetInteractionBuilder(
+        val geomInteraction = createGeomInteractionBuilder(
                 geomProvider.renders(),
                 geomProvider.geomKind,
                 layerConfig.statKind,
@@ -88,8 +88,8 @@ object PlotConfigClientSideUtil {
         ).build()
 
         layerBuilder
-                .locatorLookupSpec(targetInteraction.createLocatorLookupSpec())
-                .contextualMappingProvider(targetInteraction)
+                .locatorLookupSpec(geomInteraction.createLookupSpec())
+                .contextualMappingProvider(geomInteraction)
     }
 
     private fun createLayerBuilder(layerConfig: LayerConfig, scaleProvidersMap: TypedScaleProviderMap): GeomLayerBuilder {
@@ -127,10 +127,10 @@ object PlotConfigClientSideUtil {
         return layerBuilder
     }
 
-    internal fun createTargetInteractionBuilder(renders: List<Aes<*>>,
-                                                geomKind: GeomKind,
-                                                statKind: StatKind,
-                                                multilayer: Boolean): GeomInteractionBuilder {
+    internal fun createGeomInteractionBuilder(renders: List<Aes<*>>,
+                                              geomKind: GeomKind,
+                                              statKind: StatKind,
+                                              multilayer: Boolean): GeomInteractionBuilder {
 
         val builder = initGeomInteractionBuilder(renders, geomKind, statKind)
 

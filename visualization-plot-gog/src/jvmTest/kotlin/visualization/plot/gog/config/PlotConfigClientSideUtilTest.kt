@@ -37,7 +37,7 @@ class PlotConfigClientSideUtilTest {
             val geomKind = settings.first
             val statKind = settings.second
 
-            val builder = PlotConfigClientSideUtil.createTargetInteractionBuilder(emptyList(), geomKind, statKind, false)
+            val builder = PlotConfigClientSideUtil.createGeomInteractionBuilder(emptyList(), geomKind, statKind, false)
             assertEquals(isAxisTooltipEnabled, builder.isAxisTooltipEnabled, "$geomKind, $statKind")
         }
     }

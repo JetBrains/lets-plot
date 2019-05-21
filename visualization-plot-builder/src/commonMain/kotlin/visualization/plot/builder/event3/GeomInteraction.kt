@@ -5,15 +5,15 @@ import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.*
 import jetbrains.datalore.visualization.plot.base.render.Aes
 
-class GeomTargetInteraction(builder: GeomInteractionBuilder) : ContextualMappingProvider {
+class GeomInteraction(builder: GeomInteractionBuilder) : ContextualMappingProvider {
 
-    private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace!!
-    private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy!!
+    private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
+    private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
     private val myDisplayableAes: List<Aes<*>> = builder.displayableAes
     private val myAxisTooltipEnabled: Boolean = builder.isAxisTooltipEnabled
-    private val myAxisAes: List<Aes<*>> = builder.axisAes!!
+    private val myAxisAes: List<Aes<*>> = builder.axisAes
 
-    fun createLocatorLookupSpec(): LookupSpec {
+    fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
     }
 
@@ -26,8 +26,8 @@ class GeomTargetInteraction(builder: GeomInteractionBuilder) : ContextualMapping
 
     companion object {
         fun createContextualMapping(displayableAes: List<Aes<*>>,
-                                            axisAes: List<Aes<*>>,
-                                            dataAccess: MappedDataAccess): ContextualMapping {
+                                    axisAes: List<Aes<*>>,
+                                    dataAccess: MappedDataAccess): ContextualMapping {
 
             val showInTip = ArrayList<Aes<*>>()
             for (aes in displayableAes) {

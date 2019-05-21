@@ -40,7 +40,7 @@ open class TooltipSpecTestHelper {
     }
 
     internal fun assertFill(expected: Color) {
-        assertEquals(expected, getTooltipSpec(0).fill)
+        assertEquals(expected, myTooltipSpecs[0].fill)
     }
 
     private fun assertHint(index: Int, expectedHintKind: Kind, expectedHintCoord: DoubleVector, expectedObjectRadius: Double) {
@@ -73,7 +73,7 @@ open class TooltipSpecTestHelper {
         }
 
         myTooltipSpecs = TooltipSpecFactory(
-                GeomTargetInteraction.createContextualMapping(
+                GeomInteraction.createContextualMapping(
                         tipAes,
                         if (axisTooltipEnabled) axisAes else emptyList(),
                         mappedDataAccessMock.mappedDataAccess
@@ -88,10 +88,6 @@ open class TooltipSpecTestHelper {
 
     internal fun setAxisTooltipEnabled(axisTooltipEnabled: Boolean) {
         this.axisTooltipEnabled = axisTooltipEnabled
-    }
-
-    private fun getTooltipSpec(index: Int): TooltipSpec {
-        return myTooltipSpecs[index]
     }
 
     companion object {
