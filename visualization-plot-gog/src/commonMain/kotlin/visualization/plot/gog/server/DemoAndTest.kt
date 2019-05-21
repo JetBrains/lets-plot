@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.gog.plot.Plot
+import jetbrains.datalore.visualization.plot.builder.Plot
 
 import kotlin.jvm.JvmOverloads
 

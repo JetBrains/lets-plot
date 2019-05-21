@@ -1,0 +1,77 @@
+package jetbrains.datalore.visualization.plot.builder.data.sampling
+
+import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.builder.data.GroupAwareSampling
+import kotlin.test.*
+
+internal class GroupRandomSamplingTest : GroupSamplingTestBase() {
+
+    @BeforeTest
+    fun setUp() {
+        setUp(N, N_GROUPS)
+    }
+
+    private fun assertThat(sampleSize: Int): SamplingAssert {
+        return SamplingAssert(sampleSize)
+    }
+
+    @Test
+    fun noop() {
+        assertThat(2).isApplicable
+        val napSampling = assertThat(3)
+                .isNotApplicable
+                .sampling
+
+        assertFailsWith(RuntimeException::class) {
+            napSampling.apply(data!!, groupMapper!!)
+        }
+    }
+
+    @Test
+    fun sample() {
+        for (i in 1 until N_GROUPS) {
+            assertThat(i)
+                    .isApplicable
+                    .hasGroupCount(i)
+        }
+    }
+
+
+    private inner class SamplingAssert internal constructor(sampleSize: Int) {
+        internal val sampling: GroupAwareSampling
+        private val mySample: DataFrame?
+
+        internal val isApplicable: SamplingAssert
+            get() {
+                assertTrue(sampling.isApplicable(data!!, groupMapper!!))
+                return this
+            }
+
+        internal val isNotApplicable: SamplingAssert
+            get() {
+                assertFalse(sampling.isApplicable(data!!, groupMapper!!))
+                return this
+            }
+
+        init {
+            sampling = GroupRandomSampling(sampleSize, 1_111L)
+            if (sampling.isApplicable(data!!, groupMapper!!)) {
+                mySample = sampling.apply(data!!, groupMapper!!)
+            } else {
+                mySample = null
+            }
+        }
+
+        internal fun hasGroupCount(expected: Int): SamplingAssert {
+            val groupCount = mySample!![GROUP_SERIE_VAR].distinct().count()
+            assertEquals(expected, groupCount, "Group count")
+            return this
+        }
+    }
+
+    companion object {
+        private const val N = 100
+        private const val N_GROUPS = 3
+    }
+
+}

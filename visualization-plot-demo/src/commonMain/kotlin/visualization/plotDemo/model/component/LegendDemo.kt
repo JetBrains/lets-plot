@@ -7,11 +7,11 @@ import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companio
 import jetbrains.datalore.visualization.plot.base.render.geom.util.GenericLegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.scale.Scales
-import jetbrains.datalore.visualization.plot.gog.plot.guide.ColorBarComponent
-import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendBreak
-import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendComponent
-import jetbrains.datalore.visualization.plot.gog.plot.scale.GuideBreak
-import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.ColorMapper
+import jetbrains.datalore.visualization.plot.builder.guide.ColorBarComponent
+import jetbrains.datalore.visualization.plot.builder.guide.LegendBreak
+import jetbrains.datalore.visualization.plot.builder.guide.LegendComponent
+import jetbrains.datalore.visualization.plot.builder.scale.GuideBreak
+import jetbrains.datalore.visualization.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class LegendDemo : SimpleDemoBase() {

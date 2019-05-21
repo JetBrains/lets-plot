@@ -7,15 +7,15 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.Sampling
 import jetbrains.datalore.visualization.plot.base.data.Stat
 import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.builder.VarBinding
+import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
+import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.DATA
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.GEOM
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.MAPPING
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.STAT
-import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.PosProvider
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.GeomProvider
 
 class LayerConfig(opts: Map<*, *>,
                   sharedData: DataFrame,

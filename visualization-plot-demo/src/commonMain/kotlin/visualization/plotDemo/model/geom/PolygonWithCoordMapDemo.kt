@@ -11,10 +11,10 @@ import jetbrains.datalore.visualization.plot.base.render.geom.PolygonGeom
 import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
+import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
+import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
+import jetbrains.datalore.visualization.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.plot.SvgLayerRenderer
-import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProviders
-import jetbrains.datalore.visualization.plot.gog.plot.scale.mapper.ColorMapper
 import jetbrains.datalore.visualization.plotDemo.model.KansasPolygon.KANSAS_X
 import jetbrains.datalore.visualization.plotDemo.model.KansasPolygon.KANSAS_Y
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase

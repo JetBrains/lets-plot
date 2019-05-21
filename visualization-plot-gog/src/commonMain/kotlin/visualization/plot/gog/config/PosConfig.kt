@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.PosProvider
+import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
 
 internal class PosConfig private constructor(name: String, options: Map<String, Any>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
 

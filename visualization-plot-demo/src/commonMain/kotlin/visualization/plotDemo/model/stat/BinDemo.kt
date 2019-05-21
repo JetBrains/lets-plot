@@ -18,7 +18,7 @@ import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.base.scale.Scales
-import jetbrains.datalore.visualization.plot.gog.plot.SvgLayerRenderer
+import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 

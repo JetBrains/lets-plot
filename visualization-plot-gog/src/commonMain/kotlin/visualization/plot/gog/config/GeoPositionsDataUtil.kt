@@ -7,13 +7,14 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField
 
 object GeoPositionsDataUtil {
     // Fixed columns in dataframe supplied by 'geo-coding'
     const val OBJECT_OSM_ID = "id"
 
     // Key used for join from MAP
-    const val DATA_COLUMN_JOIN_KEY = "__key__"
+    const val DATA_COLUMN_JOIN_KEY = GeoPositionField.DATA_COLUMN_JOIN_KEY
     // Key used for join into DATA
     const val MAP_COLUMN_JOIN_KEY = "key"
 
@@ -23,14 +24,14 @@ object GeoPositionsDataUtil {
     const val MAP_COLUMN_GEOJSON = "__geometry__"
 
     // additional fixed columns in 'boundaries' of 'centroids' data frames
-    const val POINT_X = "lon"
-    const val POINT_Y = "lat"
+    const val POINT_X = GeoPositionField.POINT_X
+    const val POINT_Y = GeoPositionField.POINT_Y
 
     // additional fixed columns in 'limits'
-    const val RECT_XMIN = "lonmin"
-    const val RECT_XMAX = "lonmax"
-    const val RECT_YMIN = "latmin"
-    const val RECT_YMAX = "latmax"
+    const val RECT_XMIN = GeoPositionField.RECT_XMIN
+    const val RECT_XMAX = GeoPositionField.RECT_XMAX
+    const val RECT_YMIN = GeoPositionField.RECT_YMIN
+    const val RECT_YMAX = GeoPositionField.RECT_YMAX
 
     // Columns can be used as request
     val GEO_POSITIONS_KEYS = listOf(MAP_COLUMN_REGION, MAP_COLUMN_JOIN_KEY)
@@ -156,7 +157,7 @@ object GeoPositionsDataUtil {
 
             private fun createPointMapping(dataFrame: DataFrame): Map<Aes<*>, Variable> {
                 val mapping = HashMap<Aes<*>, Variable>()
-                mapping.putAll(findMapping(Aes.X, listOf(POINT_X, "x", "long"), dataFrame))
+                mapping.putAll(findMapping(Aes.X, listOf(POINT_X, "x", GeoPositionField.POINT_X2), dataFrame))
                 mapping.putAll(findMapping(Aes.Y, listOf(POINT_Y, "y"), dataFrame))
 
                 return mapping

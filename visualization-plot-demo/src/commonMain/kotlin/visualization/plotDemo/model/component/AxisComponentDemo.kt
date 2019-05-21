@@ -11,10 +11,10 @@ import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
-import jetbrains.datalore.visualization.plot.gog.plot.AxisUtil
-import jetbrains.datalore.visualization.plot.gog.plot.guide.AxisComponent
-import jetbrains.datalore.visualization.plot.gog.plot.guide.Orientation
-import jetbrains.datalore.visualization.plot.gog.plot.presentation.Defaults.Plot
+import jetbrains.datalore.visualization.plot.builder.AxisUtil
+import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent
+import jetbrains.datalore.visualization.plot.builder.guide.Orientation
+import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Plot
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {

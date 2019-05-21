@@ -12,8 +12,8 @@ import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
 import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
 import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource.MouseEventSpec.MOUSE_LEFT
 import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource.MouseEventSpec.MOUSE_MOVED
-import jetbrains.datalore.visualization.plot.gog.plot.Plot
-import jetbrains.datalore.visualization.plot.gog.plot.PlotContainer
+import jetbrains.datalore.visualization.plot.builder.Plot
+import jetbrains.datalore.visualization.plot.builder.PlotContainer
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_LEFT as CANVAS_MOUSE_LEFT
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_MOVED as CANVAS_MOUSE_MOVED
 

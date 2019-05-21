@@ -2,6 +2,10 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.builder.GuideOptions
+import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
+import jetbrains.datalore.visualization.plot.builder.theme.Theme
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.COORD
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot.THEME
 import jetbrains.datalore.visualization.plot.gog.config.PlotConfigUtil.createGuideOptionsMap
@@ -9,10 +13,6 @@ import jetbrains.datalore.visualization.plot.gog.config.theme.ThemeConfig
 import jetbrains.datalore.visualization.plot.gog.config.transform.PlotSpecTransform
 import jetbrains.datalore.visualization.plot.gog.config.transform.encode.DataSpecEncodeTransforms
 import jetbrains.datalore.visualization.plot.gog.config.transform.migration.MoveGeomPropertiesToLayerMigration
-import jetbrains.datalore.visualization.plot.gog.plot.GuideOptions
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
-import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProvider
-import jetbrains.datalore.visualization.plot.gog.plot.theme.Theme
 
 class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotConfig(opts) {
 

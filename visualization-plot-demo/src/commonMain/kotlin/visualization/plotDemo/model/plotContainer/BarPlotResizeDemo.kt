@@ -8,14 +8,14 @@ import jetbrains.datalore.visualization.plot.base.data.stat.Stats
 import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.Scales
-import jetbrains.datalore.visualization.plot.gog.plot.PlotContainer
-import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.GeomLayerBuilder
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotAssembler
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.PosProvider
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.GeomProvider
-import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProviders
-import jetbrains.datalore.visualization.plot.gog.plot.theme.DefaultTheme
+import jetbrains.datalore.visualization.plot.builder.PlotContainer
+import jetbrains.datalore.visualization.plot.builder.VarBinding
+import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder
+import jetbrains.datalore.visualization.plot.builder.assemble.PlotAssembler
+import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
+import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
+import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
 
 class BarPlotResizeDemo private constructor(
         private val sclData: SinCosLineData,

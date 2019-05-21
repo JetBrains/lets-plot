@@ -9,11 +9,11 @@ import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.plot.base.render.GeomContext
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.gog.plot.Plot
-import jetbrains.datalore.visualization.plot.gog.plot.PlotContainer
-import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
-import jetbrains.datalore.visualization.plot.gog.plot.theme.DefaultTheme
-import jetbrains.datalore.visualization.plot.gog.plot.theme.Theme
+import jetbrains.datalore.visualization.plot.builder.Plot
+import jetbrains.datalore.visualization.plot.builder.PlotContainer
+import jetbrains.datalore.visualization.plot.builder.presentation.Style
+import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
+import jetbrains.datalore.visualization.plot.builder.theme.Theme
 
 abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAULT_INNER_SIZE) {
 

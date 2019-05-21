@@ -2,17 +2,19 @@ package jetbrains.datalore.visualization.plot.gog.server.config
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.GroupAwareSampling
-import jetbrains.datalore.visualization.plot.base.data.PointSampling
 import jetbrains.datalore.visualization.plot.base.data.Sampling
-import jetbrains.datalore.visualization.plot.base.data.sampling.Samplings
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.geom.DefaultSampling.SAFETY_SAMPLING
+import jetbrains.datalore.visualization.plot.builder.assemble.geom.DefaultSampling.SAFETY_SAMPLING
+import jetbrains.datalore.visualization.plot.builder.data.GroupAwareSampling
+import jetbrains.datalore.visualization.plot.builder.data.PointSampling
+import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings
 
 internal object PlotSampling {
 
     fun apply(data: DataFrame, samplings: List<Sampling>,
               groupMapper: (Int) -> Int,
               samplingExpressionConsumer: Consumer<String>): DataFrame {
+
+        @Suppress("NAME_SHADOWING")
         var data = data
 
         val applied = ArrayList<Sampling>()

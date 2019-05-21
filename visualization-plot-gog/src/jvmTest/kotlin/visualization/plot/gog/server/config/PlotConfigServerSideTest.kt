@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
-import jetbrains.datalore.visualization.plot.gog.FeatureSwitch
+import jetbrains.datalore.visualization.plot.builder.FeatureSwitch
 import jetbrains.datalore.visualization.plot.gog.config.Option.GeomName
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.GEOM
@@ -39,19 +39,20 @@ class PlotConfigServerSideTest {
             ServerSideTestUtil.serverTransformOnlyEncoding(plotSpec)
         }
 
+        @Suppress("ConstantConditionIf")
         if (!FeatureSwitch.USE_DATA_FRAME_ENCODING) {
             return
         }
 
         // ====================
         // top level
-        assertDataEncoded(plotValues, plotSpecTransformed[Plot.DATA]!!, PLOT_VAR)
+        assertDataEncoded(plotValues, plotSpecTransformed[Plot.DATA], PLOT_VAR)
 
         // layers
         val layers = plotSpecTransformed[LAYERS] as List<*>
         for (layerSpecObject in layers) {
             val layerSpec = layerSpecObject as Map<*, *>
-            assertDataEncoded(layerValues, layerSpec[Layer.DATA]!!, LAYER_VAR)
+            assertDataEncoded(layerValues, layerSpec[Layer.DATA], LAYER_VAR)
         }
     }
 
@@ -100,8 +101,8 @@ class PlotConfigServerSideTest {
             return map
         }
 
-        private fun assertDataEncoded(expectedValues: List<Double?>, transformedData: Any, varName: String) {
-            assertTrue(transformedData is Map<*, *>)
+        private fun assertDataEncoded(expectedValues: List<Double?>, transformedData: Any?, varName: String) {
+//            assertTrue(transformedData is Map<*, *>)
 
             @Suppress("UNCHECKED_CAST")
             val map = transformedData as Map<String, *>

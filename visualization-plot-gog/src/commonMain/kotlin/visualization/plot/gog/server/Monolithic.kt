@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.gog
 
+import jetbrains.datalore.visualization.plot.builder.Plot
 import jetbrains.datalore.visualization.plot.gog.config.PlotConfigClientSide
 import jetbrains.datalore.visualization.plot.gog.config.PlotConfigClientSideUtil
 import jetbrains.datalore.visualization.plot.gog.config.PlotConfigUtil
-import jetbrains.datalore.visualization.plot.gog.plot.Plot
 import jetbrains.datalore.visualization.plot.gog.server.config.PlotConfigServerSide
 
 object Monolithic {

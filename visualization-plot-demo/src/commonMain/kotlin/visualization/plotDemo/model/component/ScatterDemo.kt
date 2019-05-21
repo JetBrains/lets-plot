@@ -17,12 +17,12 @@ import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.scale.*
 import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantizeScale
+import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
+import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent
+import jetbrains.datalore.visualization.plot.builder.guide.Orientation
 import jetbrains.datalore.visualization.plot.common.color.ColorPalette
 import jetbrains.datalore.visualization.plot.common.color.ColorScheme
 import jetbrains.datalore.visualization.plot.common.color.PaletteUtil.schemeColors
-import jetbrains.datalore.visualization.plot.gog.plot.SvgLayerRenderer
-import jetbrains.datalore.visualization.plot.gog.plot.guide.AxisComponent
-import jetbrains.datalore.visualization.plot.gog.plot.guide.Orientation
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 

@@ -15,6 +15,7 @@ kotlin {
                 implementation project(':visualization-base-canvas')
                 implementation project(':visualization-plot-base')
                 implementation project(':visualization-plot-common')
+                implementation project(':visualization-plot-builder')
                 implementation project(':visualization-plot-gog')
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
             }

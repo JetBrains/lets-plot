@@ -4,13 +4,13 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.data.Sampling
 import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.builder.VarBinding
+import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
+import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.visualization.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.POS
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.SAMPLING
 import jetbrains.datalore.visualization.plot.gog.config.aes.AesOptionConversion
-import jetbrains.datalore.visualization.plot.gog.plot.VarBinding
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.PosProvider
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
-import jetbrains.datalore.visualization.plot.gog.plot.scale.ScaleProviderHelper
 
 internal object LayerConfigUtil {
 
@@ -49,12 +49,10 @@ internal object LayerConfigUtil {
                 val variable = mapping[aes]!!
                 val scaleProvider = ScaleProviderHelper.getOrCreateDefault(aes, scaleProviders)
                 val binding: VarBinding
-                if (data.has(variable)) {
-                    binding = VarBinding(variable, aes, scaleProvider.createScale(data, variable))
-                } else if (variable.isStat) {
-                    binding = VarBinding.deferred(variable, aes, scaleProvider)
-                } else {
-                    throw IllegalArgumentException("Undefined variable: '" + variable.name + "'. Variables in data frame: " + data.variables())
+                binding = when {
+                    data.has(variable) -> VarBinding(variable, aes, scaleProvider.createScale(data, variable))
+                    variable.isStat -> VarBinding.deferred(variable, aes, scaleProvider)
+                    else -> throw IllegalArgumentException("Undefined variable: '" + variable.name + "'. Variables in data frame: " + data.variables())
                 }
                 result.add(binding)
             }

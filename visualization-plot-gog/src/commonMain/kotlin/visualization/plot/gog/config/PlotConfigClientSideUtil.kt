@@ -6,14 +6,14 @@ import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.builder.GeomLayer
+import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder
+import jetbrains.datalore.visualization.plot.builder.assemble.PlotAssembler
+import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.visualization.plot.builder.event3.GeomInteractionBuilder
+import jetbrains.datalore.visualization.plot.builder.event3.GeomInteractionBuilder.Companion.AREA_GEOM
+import jetbrains.datalore.visualization.plot.builder.event3.GeomInteractionBuilder.Companion.NON_AREA_GEOM
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomInteractionBuilder
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomInteractionBuilder.Companion.AREA_GEOM
-import jetbrains.datalore.visualization.plot.gog.config.event3.GeomInteractionBuilder.Companion.NON_AREA_GEOM
-import jetbrains.datalore.visualization.plot.gog.plot.GeomLayer
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.GeomLayerBuilder
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotAssembler
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
 
 object PlotConfigClientSideUtil {
 
@@ -127,7 +127,11 @@ object PlotConfigClientSideUtil {
         return layerBuilder
     }
 
-    internal fun createTargetInteractionBuilder(renders: List<Aes<*>>, geomKind: GeomKind, statKind: StatKind, multilayer: Boolean): GeomInteractionBuilder {
+    internal fun createTargetInteractionBuilder(renders: List<Aes<*>>,
+                                                geomKind: GeomKind,
+                                                statKind: StatKind,
+                                                multilayer: Boolean): GeomInteractionBuilder {
+
         val builder = initGeomInteractionBuilder(renders, geomKind, statKind)
 
         if (multilayer) {

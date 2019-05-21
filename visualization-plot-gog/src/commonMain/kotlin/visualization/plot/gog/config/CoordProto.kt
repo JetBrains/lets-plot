@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
-import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProvider
-import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProviders
+import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
+import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
 
 internal object CoordProto {
     // coordinate systems

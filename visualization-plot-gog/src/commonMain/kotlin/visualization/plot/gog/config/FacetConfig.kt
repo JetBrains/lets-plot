@@ -3,10 +3,10 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.gog.config.Option.Facet.NAME
 import jetbrains.datalore.visualization.plot.gog.config.Option.Facet.X
 import jetbrains.datalore.visualization.plot.gog.config.Option.Facet.Y
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.PlotFacets
 
 internal class FacetConfig(options: Map<*, *>) : OptionsAccessor(options, mapOf(NAME to "grid")) {
 

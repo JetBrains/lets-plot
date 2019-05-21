@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.gogDemo.shared
 import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.visualization.plot.base.render.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.GeomContext
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.GeomContextBuilder
+import jetbrains.datalore.visualization.plot.builder.assemble.GeomContextBuilder
 import kotlin.random.Random
 
 object DemoUtil {

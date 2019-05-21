@@ -1,15 +1,15 @@
 package jetbrains.datalore.visualization.plot.gog.config.theme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.builder.guide.LegendDirection
+import jetbrains.datalore.visualization.plot.builder.guide.LegendJustification
+import jetbrains.datalore.visualization.plot.builder.guide.LegendPosition
+import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
 import jetbrains.datalore.visualization.plot.gog.config.ConfigUtil
 import jetbrains.datalore.visualization.plot.gog.config.Option.Theme.LEGEND_DIRECTION
 import jetbrains.datalore.visualization.plot.gog.config.Option.Theme.LEGEND_JUSTIFICATION
 import jetbrains.datalore.visualization.plot.gog.config.Option.Theme.LEGEND_POSITION
 import jetbrains.datalore.visualization.plot.gog.config.OptionsAccessor
-import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendDirection
-import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendJustification
-import jetbrains.datalore.visualization.plot.gog.plot.guide.LegendPosition
-import jetbrains.datalore.visualization.plot.gog.plot.theme.LegendTheme
 
 internal class LegendThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : OptionsAccessor(options, defOptions), LegendTheme {
 

@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
-import jetbrains.datalore.visualization.plot.gog.plot.coord.CoordProvider
+import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
 
 internal class CoordConfig private constructor(name: String, options: Map<String, Any>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
 

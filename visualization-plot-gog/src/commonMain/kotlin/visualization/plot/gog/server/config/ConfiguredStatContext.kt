@@ -6,8 +6,8 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.StatContext
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
 import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
 
 internal class ConfiguredStatContext(
         private val myDataFrames: List<DataFrame>,

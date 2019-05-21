@@ -10,7 +10,7 @@ import jetbrains.datalore.visualization.plot.base.render.geom.PointGeom
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.gog.plot.SvgLayerRenderer
+import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class PointDemo : SimpleDemoBase() {

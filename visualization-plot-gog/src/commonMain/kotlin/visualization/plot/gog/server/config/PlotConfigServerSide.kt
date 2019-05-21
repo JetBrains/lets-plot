@@ -5,13 +5,13 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
+import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.visualization.plot.builder.data.DataProcessing
+import jetbrains.datalore.visualization.plot.builder.data.GroupingContext
 import jetbrains.datalore.visualization.plot.gog.config.LayerConfig
 import jetbrains.datalore.visualization.plot.gog.config.PlotConfig
 import jetbrains.datalore.visualization.plot.gog.config.PlotConfigUtil
 import jetbrains.datalore.visualization.plot.gog.config.transform.encode.DataSpecEncodeTransforms
-import jetbrains.datalore.visualization.plot.gog.plot.assemble.TypedScaleProviderMap
-import jetbrains.datalore.visualization.plot.gog.plot.data.DataProcessing
-import jetbrains.datalore.visualization.plot.gog.plot.data.GroupingContext
 import jetbrains.datalore.visualization.plot.gog.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.visualization.plot.gog.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
 
@@ -168,10 +168,10 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
             varNamesToKeep.add(Stats.GROUP.name)
             val facets = facets
             if (facets.xVar != null) {
-                varNamesToKeep.add(facets.xVar)
+                varNamesToKeep.add(facets.xVar!!)
             }
             if (facets.yVar != null) {
-                varNamesToKeep.add(facets.yVar)
+                varNamesToKeep.add(facets.yVar!!)
             }
 
             if (layerConfig.hasExplicitGrouping()) {
