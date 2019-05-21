@@ -1,6 +1,5 @@
-package jetbrains.datalore.visualization.plot.gog.server
+package jetbrains.datalore.visualization.plot.base.render
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.companionObject
@@ -9,7 +8,6 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
-
 
 class AesReflectTest {
     @Test
@@ -24,7 +22,7 @@ class AesReflectTest {
                 count++
                 @Suppress("UNCHECKED_CAST")
                 val p1 = p as KProperty1<Aes.Companion, Aes<*>>
-                val value = p1.get(Aes.Companion)
+                val value = p1.get(Aes)
 
                 // check that the name passed to constructor corresponds to the field name
                 assertEquals(p.name.toLowerCase(), value.name)
