@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip
 import jetbrains.datalore.visualization.plot.builder.presentation.Style
 
-internal class TooltipFrame : SvgComponent() {
+internal class TooltipBox : SvgComponent() {
 
     private val myFrame: SvgRectElement = SvgRectElement()
     private val myText: SvgTextElement

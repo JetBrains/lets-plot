@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.event3
+package jetbrains.datalore.visualization.plot.builder.event
 
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.geometry.Rectangle

@@ -19,8 +19,8 @@ import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomContextBuilder
+import jetbrains.datalore.visualization.plot.builder.event.TileMouseEventPeer
 import jetbrains.datalore.visualization.plot.builder.event3.GeomTargetCollectorWithLocator
-import jetbrains.datalore.visualization.plot.builder.event3.TileMouseEventPeer
 import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent
 import jetbrains.datalore.visualization.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.visualization.plot.builder.layout.GeometryUtil.round

@@ -26,7 +26,7 @@ import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.VerticalAnchor
 import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
-import jetbrains.datalore.visualization.plot.builder.event3.MouseEventPeer
+import jetbrains.datalore.visualization.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipSpec
 import jetbrains.datalore.visualization.plot.builder.guide.Orientation
 import jetbrains.datalore.visualization.plot.builder.layout.*
