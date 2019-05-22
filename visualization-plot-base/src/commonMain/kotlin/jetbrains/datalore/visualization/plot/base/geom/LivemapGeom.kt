@@ -2,8 +2,8 @@ package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
+import jetbrains.datalore.visualization.plot.base.event.MouseEventSource
+import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider.LivemapData
 import jetbrains.datalore.visualization.plot.base.geom.util.GenericLegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory

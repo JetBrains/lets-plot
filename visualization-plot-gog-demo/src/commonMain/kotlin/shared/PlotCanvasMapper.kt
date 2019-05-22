@@ -9,9 +9,9 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
-import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
-import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource.MouseEventSpec.MOUSE_LEFT
-import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource.MouseEventSpec.MOUSE_MOVED
+import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
+import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec.MOUSE_LEFT
+import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec.MOUSE_MOVED
 import jetbrains.datalore.visualization.plot.builder.Plot
 import jetbrains.datalore.visualization.plot.builder.PlotContainer
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_LEFT as CANVAS_MOUSE_LEFT
@@ -41,7 +41,7 @@ class PlotCanvasMapper(plot: Plot, private val canvasControl: CanvasControl,
         registration.add(reg)
     }
 
-    private fun createEventMapper(canvasEventSpec: CanvasControl.EventSpec, plotEventSpec: MouseEventSource.MouseEventSpec): Registration {
+    private fun createEventMapper(canvasEventSpec: CanvasControl.EventSpec, plotEventSpec: MouseEventSpec): Registration {
         return canvasControl.addMouseEventHandler(canvasEventSpec, object : EventHandler<MouseEvent> {
             val consumer = consumerTransform {
                 plotContainer.mouseEventPeer.dispatch(plotEventSpec, it)

@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
 
 internal object LayerRendererUtil {

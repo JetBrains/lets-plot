@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.base.event
+package jetbrains.datalore.visualization.plot.base.event3
 
 import jetbrains.datalore.visualization.plot.base.Aes
 

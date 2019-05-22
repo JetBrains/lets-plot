@@ -17,7 +17,7 @@ import jetbrains.datalore.visualization.base.svg.SvgCssResource
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource.MouseEventSpec.*
+import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec.*
 import jetbrains.datalore.visualization.plot.builder.event3.MouseEventPeer
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipInteractions
 import jetbrains.datalore.visualization.plot.builder.presentation.Style

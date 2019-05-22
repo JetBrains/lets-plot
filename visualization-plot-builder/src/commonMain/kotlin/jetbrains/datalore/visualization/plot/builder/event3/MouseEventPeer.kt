@@ -6,8 +6,8 @@ import jetbrains.datalore.base.observable.event.ListenerCaller
 import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
-import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource.MouseEventSpec
+import jetbrains.datalore.visualization.plot.base.event.MouseEventSource
+import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
 
 class MouseEventPeer : MouseEventSource {
     private val myEventHandlers = HashMap<MouseEventSpec, Listeners<EventHandler<MouseEvent>>>()

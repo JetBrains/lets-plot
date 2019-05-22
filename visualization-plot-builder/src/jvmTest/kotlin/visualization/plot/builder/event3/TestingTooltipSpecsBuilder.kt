@@ -3,9 +3,9 @@ package jetbrains.datalore.visualization.plot.builder.event3
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 import jetbrains.datalore.visualization.plot.builder.event3.mockito.ReturnsNotNullValuesAnswer
