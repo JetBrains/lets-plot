@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
 import jetbrains.datalore.visualization.plot.base.util.MutableDouble
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil

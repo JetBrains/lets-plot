@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.Sampling
 import jetbrains.datalore.visualization.plot.builder.assemble.geom.DefaultSampling.SAFETY_SAMPLING
 import jetbrains.datalore.visualization.plot.builder.data.GroupAwareSampling

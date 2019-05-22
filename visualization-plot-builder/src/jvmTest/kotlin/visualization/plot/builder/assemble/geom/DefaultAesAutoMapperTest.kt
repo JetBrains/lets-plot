@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.assemble.geom
 
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
+import jetbrains.datalore.visualization.plot.base.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.POINT_Y
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.RECT_XMAX

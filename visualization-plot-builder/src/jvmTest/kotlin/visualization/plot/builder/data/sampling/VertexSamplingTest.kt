@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.data.sampling
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.DataFrame.Builder
+import jetbrains.datalore.visualization.plot.base.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame.Builder
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil.rectToGeometry
 import jetbrains.datalore.visualization.plot.builder.data.RingAssertion.Companion.assertThatRing

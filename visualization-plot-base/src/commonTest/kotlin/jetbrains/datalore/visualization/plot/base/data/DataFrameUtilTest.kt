@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.data
 
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

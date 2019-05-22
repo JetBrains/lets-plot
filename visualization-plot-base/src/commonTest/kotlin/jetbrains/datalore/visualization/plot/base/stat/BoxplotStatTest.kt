@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
 import kotlin.test.Test
 import kotlin.test.assertEquals

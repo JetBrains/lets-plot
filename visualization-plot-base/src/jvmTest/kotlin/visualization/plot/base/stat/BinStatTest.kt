@@ -1,6 +1,9 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
-import jetbrains.datalore.visualization.plot.base.data.*
+import jetbrains.datalore.visualization.plot.base.DataFrame
+import jetbrains.datalore.visualization.plot.base.data.DataFrameAssert
+import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.visualization.plot.base.data.TransformVar
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import kotlin.test.Test

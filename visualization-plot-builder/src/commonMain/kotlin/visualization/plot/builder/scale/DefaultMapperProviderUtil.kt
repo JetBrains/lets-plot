@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.builder.scale
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.Transform
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
 import jetbrains.datalore.visualization.plot.builder.scale.mapper.GuideMappers
 import jetbrains.datalore.visualization.plot.builder.scale.provider.ColorBrewerMapperProvider

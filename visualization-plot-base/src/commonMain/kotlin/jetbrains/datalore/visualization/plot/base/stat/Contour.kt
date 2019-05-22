@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame
 
 internal class Contour private constructor() {
 

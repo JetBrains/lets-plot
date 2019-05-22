@@ -2,8 +2,8 @@ package jetbrains.datalore.visualization.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.Transform
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
 import jetbrains.datalore.visualization.plot.builder.scale.GuideBreak

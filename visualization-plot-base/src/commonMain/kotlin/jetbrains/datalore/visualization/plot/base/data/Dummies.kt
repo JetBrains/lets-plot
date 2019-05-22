@@ -2,6 +2,7 @@ package jetbrains.datalore.visualization.plot.base.data
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.visualization.plot.base.DataFrame
 
 object Dummies {
 

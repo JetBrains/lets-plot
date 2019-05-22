@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.gog.config.Option.Facet.NAME

@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.scale
 
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.Transform
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
 
 interface MapperProvider<T> {
     /**

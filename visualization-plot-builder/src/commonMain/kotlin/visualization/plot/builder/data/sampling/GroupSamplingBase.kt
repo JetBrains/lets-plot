@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder.data.sampling
 
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.builder.data.GroupAwareSampling
 import jetbrains.datalore.visualization.plot.builder.data.GroupUtil
 

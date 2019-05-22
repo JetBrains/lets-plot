@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
+import jetbrains.datalore.visualization.plot.base.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.data.Sampling
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider

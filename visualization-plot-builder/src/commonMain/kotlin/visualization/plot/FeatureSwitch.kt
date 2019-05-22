@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder
 
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 
 object FeatureSwitch {

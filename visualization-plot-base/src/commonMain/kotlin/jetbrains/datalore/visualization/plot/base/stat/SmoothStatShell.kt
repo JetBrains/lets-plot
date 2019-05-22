@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
 
 /**
  * See doc for stat_smooth / geom_smooth

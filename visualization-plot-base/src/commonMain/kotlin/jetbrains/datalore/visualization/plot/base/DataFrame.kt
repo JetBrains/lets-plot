@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.base.data
+package jetbrains.datalore.visualization.plot.base
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil

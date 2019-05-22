@@ -4,6 +4,7 @@ import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.base.stat.Stats
@@ -113,7 +114,7 @@ object DataFrameUtil {
     }
 
     fun appendReplace(df0: DataFrame, df1: DataFrame): DataFrame {
-        val df0Vars = DataFrameUtil.variables(df0)
+        val df0Vars = variables(df0)
 
         val builder = df0.builder()
         for (df1Var in df1.variables()) {
@@ -149,17 +150,14 @@ object DataFrameUtil {
 
     @JvmOverloads
     fun createVariable(name: String, label: String = name): DataFrame.Variable {
-        val `var`: DataFrame.Variable
-        if (TransformVar.isTransformVar(name)) {
-            `var` = TransformVar.get(name)
-        } else if (Stats.isStatVar(name)) {
-            `var` = Stats.statVar(name)
-        } else if (Dummies.isDummyVar(name)) {
-            return Dummies.newDummy(name)
-        } else {
-            `var` = DataFrame.Variable(name, DataFrame.Variable.Source.ORIGIN, label)
+        val variable: DataFrame.Variable
+        when {
+            TransformVar.isTransformVar(name) -> variable = TransformVar[name]
+            Stats.isStatVar(name) -> variable = Stats.statVar(name)
+            Dummies.isDummyVar(name) -> return Dummies.newDummy(name)
+            else -> variable = DataFrame.Variable(name, DataFrame.Variable.Source.ORIGIN, label)
         }
-        return `var`
+        return variable
     }
 
     fun getSummaryText(df: DataFrame): String {

@@ -1,6 +1,10 @@
-package jetbrains.datalore.visualization.plot.base.data
+package jetbrains.datalore.visualization.plot.base
 
 import jetbrains.datalore.base.gcommon.collect.Sets
+import jetbrains.datalore.visualization.plot.base.data.DataFrameAssert
+import jetbrains.datalore.visualization.plot.base.data.generateData
+import jetbrains.datalore.visualization.plot.base.data.indices
+import jetbrains.datalore.visualization.plot.base.data.toSerie
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertSame

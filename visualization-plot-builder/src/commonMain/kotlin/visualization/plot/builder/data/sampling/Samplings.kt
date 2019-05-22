@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder.data.sampling
 
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.Sampling
 import jetbrains.datalore.visualization.plot.builder.data.PointSampling
 import jetbrains.datalore.visualization.plot.builder.data.sampling.VertexSampling.VertexDpSampling

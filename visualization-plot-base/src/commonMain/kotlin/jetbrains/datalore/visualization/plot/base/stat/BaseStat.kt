@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.Stat
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
 
 abstract class BaseStat(private val defaultMappings: Map<Aes<*>, DataFrame.Variable>) : Stat {
 

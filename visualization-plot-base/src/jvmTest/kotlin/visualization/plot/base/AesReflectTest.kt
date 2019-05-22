@@ -1,6 +1,5 @@
-package jetbrains.datalore.visualization.plot.base.render
+package jetbrains.datalore.visualization.plot.base
 
-import jetbrains.datalore.visualization.plot.base.Aes
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.companionObject

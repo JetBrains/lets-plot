@@ -2,8 +2,9 @@ package jetbrains.datalore.visualization.plot.base.data
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame.Variable.Source.TRANSFORM
 import jetbrains.datalore.visualization.plot.base.aes.AesVisitor
-import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable.Source.TRANSFORM
 
 object TransformVar {
     val X = DataFrame.Variable("transform.X", TRANSFORM)

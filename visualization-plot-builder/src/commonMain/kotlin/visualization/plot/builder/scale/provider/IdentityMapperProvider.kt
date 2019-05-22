@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.scale.provider
 
+import jetbrains.datalore.visualization.plot.base.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.Transform
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.builder.scale.GuideMapper
 import jetbrains.datalore.visualization.plot.builder.scale.MapperProvider
 import jetbrains.datalore.visualization.plot.builder.scale.mapper.GuideMappers

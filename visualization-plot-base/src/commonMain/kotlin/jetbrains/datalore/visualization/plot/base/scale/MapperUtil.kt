@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.Transform
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import kotlin.math.max
 import kotlin.math.min
 

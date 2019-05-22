@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.data.sampling
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
-import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
+import jetbrains.datalore.visualization.plot.base.DataFrame
+import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.builder.data.generateData
 import kotlin.random.Random
 
