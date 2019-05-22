@@ -13,11 +13,6 @@ class MappedDataAccessMock {
     private val mappedAes = HashSet<Aes<*>>()
     val mappedDataAccess: MappedDataAccess = mock(MappedDataAccess::class.java)
 
-    init {
-        `when`(mappedDataAccess.mappedAes)
-                .thenReturn(getMappedAes())
-    }
-
     fun <T> add(mapping: Mapping<T>): MappedDataAccessMock {
         return add(mapping, null)
     }

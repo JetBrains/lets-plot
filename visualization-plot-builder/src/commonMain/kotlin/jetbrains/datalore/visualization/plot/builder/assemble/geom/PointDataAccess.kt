@@ -9,13 +9,12 @@ import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantitativeTickF
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
-internal class PointDataAccess(private val myData: DataFrame, private val bindings: Map<Aes<*>, VarBinding>) : MappedDataAccess {
+internal class PointDataAccess(private val myData: DataFrame,
+                               bindings: Map<Aes<*>, VarBinding>) : MappedDataAccess {
+
     private val myBindings: Map<Aes<*>, VarBinding> = bindings.toMap()
 
     private val myFormatters = HashMap<Aes<*>, (Any) -> String>()
-
-    override val mappedAes: Set<Aes<*>>
-        get() = myBindings.keys
 
     override fun isMapped(aes: Aes<*>): Boolean {
         return myBindings.containsKey(aes)
