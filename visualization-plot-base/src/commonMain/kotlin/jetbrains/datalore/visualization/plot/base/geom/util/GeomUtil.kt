@@ -8,8 +8,8 @@ import jetbrains.datalore.base.projectionGeometry.Multipolygon
 import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.datalore.base.projectionGeometry.Ring
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
-import jetbrains.datalore.visualization.plot.base.render.GeomContext
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.GeomContext
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.common.geometry.Utils.isClosed
 import kotlin.math.max

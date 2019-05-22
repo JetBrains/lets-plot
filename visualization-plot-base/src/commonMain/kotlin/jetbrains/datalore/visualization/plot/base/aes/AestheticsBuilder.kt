@@ -43,7 +43,7 @@ import jetbrains.datalore.visualization.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.visualization.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.visualization.plot.base.Aes.Companion.Z
 import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.linetype.LineType
 import jetbrains.datalore.visualization.plot.base.render.point.PointShape
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil

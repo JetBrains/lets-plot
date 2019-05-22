@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
@@ -11,7 +10,8 @@ import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil.with_X_Y
 import jetbrains.datalore.visualization.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.visualization.plot.base.geom.util.HintsCollection.HintConfigFactory
 import jetbrains.datalore.visualization.plot.base.geom.util.LinesHelper
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 
 class SmoothGeom : GeomBase() {
 

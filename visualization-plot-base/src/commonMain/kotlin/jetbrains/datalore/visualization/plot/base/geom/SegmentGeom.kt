@@ -1,12 +1,12 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper.Companion.decorate
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import kotlin.math.PI
 import kotlin.math.atan2

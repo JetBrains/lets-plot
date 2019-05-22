@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.base.geom.util
 
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.svg.LinePath
 
 class LinePathConstructor(

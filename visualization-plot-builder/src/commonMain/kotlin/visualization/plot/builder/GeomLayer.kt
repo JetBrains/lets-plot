@@ -1,16 +1,16 @@
 package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Geom
 import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider
-import jetbrains.datalore.visualization.plot.base.render.Geom
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
 
 interface GeomLayer {
     val dataFrame: DataFrame

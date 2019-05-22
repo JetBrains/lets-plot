@@ -3,14 +3,14 @@ package jetbrains.datalore.visualization.plot.base.geom.util
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors.withOpacity
+import jetbrains.datalore.visualization.plot.base.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.GeomContext
+import jetbrains.datalore.visualization.plot.base.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.base.geom.StepGeom
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
-import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
-import jetbrains.datalore.visualization.plot.base.render.GeomContext
-import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.render.svg.LinePath
 
 open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) : GeomHelper(pos, coord, ctx) {

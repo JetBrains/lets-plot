@@ -6,11 +6,11 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx.Bitmap
 import jetbrains.datalore.visualization.base.svg.SvgUtils
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil.with_X_Y
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.VerticalAnchor

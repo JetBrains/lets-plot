@@ -1,6 +1,7 @@
-package jetbrains.datalore.visualization.plot.base.render
+package jetbrains.datalore.visualization.plot.base
 
-import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 
 interface Geom {
     val legendKeyElementFactory: LegendKeyElementFactory

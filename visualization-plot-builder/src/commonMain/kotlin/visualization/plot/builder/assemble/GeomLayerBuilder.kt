@@ -3,7 +3,9 @@ package jetbrains.datalore.visualization.plot.builder.assemble
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Geom
 import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.data.*
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
@@ -12,9 +14,7 @@ import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
 import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider
-import jetbrains.datalore.visualization.plot.base.render.Geom
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
 import jetbrains.datalore.visualization.plot.builder.GeomLayer
 import jetbrains.datalore.visualization.plot.builder.PosProviderContext
 import jetbrains.datalore.visualization.plot.builder.VarBinding

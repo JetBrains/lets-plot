@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder
 
-import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent

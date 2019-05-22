@@ -2,10 +2,10 @@ package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 class HLineGeom : GeomBase() {
@@ -14,6 +14,7 @@ class HLineGeom : GeomBase() {
         get() = PathGeom.LEGEND_KEY_ELEMENT_FACTORY
 
     override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+
         val helper = GeomHelper(pos, coord, ctx)
                 .createSvgElementHelper()
 

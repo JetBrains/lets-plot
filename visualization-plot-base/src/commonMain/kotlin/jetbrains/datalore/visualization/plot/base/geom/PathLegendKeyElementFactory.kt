@@ -3,9 +3,9 @@ package jetbrains.datalore.visualization.plot.base.geom
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 
 internal class PathLegendKeyElementFactory : LegendKeyElementFactory {

@@ -18,7 +18,7 @@ import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.event.SvgEventHandler
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
-import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.HorizontalAnchor

@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 import jetbrains.datalore.visualization.plot.base.coord.Coords
-import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
 import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.base.scale.Scale2

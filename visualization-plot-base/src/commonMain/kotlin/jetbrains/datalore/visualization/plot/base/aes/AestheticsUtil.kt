@@ -4,7 +4,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors.solid
 import jetbrains.datalore.visualization.base.svg.SvgShape
 import jetbrains.datalore.visualization.base.svg.SvgUtils
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.point.UpdatableShape
 
 object AestheticsUtil {

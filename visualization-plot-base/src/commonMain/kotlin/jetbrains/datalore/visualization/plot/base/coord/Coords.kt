@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.base.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 
 object Coords {
     fun create(xRange: ClosedRange<Double>, yRange: ClosedRange<Double>): CoordinateSystem {

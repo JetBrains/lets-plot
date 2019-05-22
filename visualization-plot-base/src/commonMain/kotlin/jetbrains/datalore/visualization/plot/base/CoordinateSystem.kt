@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.base.render
+package jetbrains.datalore.visualization.plot.base
 
 import jetbrains.datalore.base.geometry.DoubleVector
 

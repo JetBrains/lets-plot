@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder
 
-import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.*
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 
 class SvgLayerRenderer(

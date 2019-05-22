@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.base.geom.util
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
 import jetbrains.datalore.visualization.base.svg.SvgPathElement
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.linetype.LineType
 import jetbrains.datalore.visualization.plot.base.render.linetype.NamedLineType
 import kotlin.math.cos

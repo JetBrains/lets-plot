@@ -2,12 +2,11 @@ package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.RectTargetCollectorHelper
 import jetbrains.datalore.visualization.plot.base.geom.util.RectanglesHelper
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 
 /**
  * geom_tile uses the center of the tile and its size (x, y, width, height).

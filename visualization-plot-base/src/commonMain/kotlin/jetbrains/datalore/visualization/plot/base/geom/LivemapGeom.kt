@@ -1,13 +1,13 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
 import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider.LivemapData
 import jetbrains.datalore.visualization.plot.base.geom.util.GenericLegendKeyElementFactory
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 
 
 class LivemapGeom(private val myDisplayMode: DisplayMode) : Geom {
@@ -22,8 +22,7 @@ class LivemapGeom(private val myDisplayMode: DisplayMode) : Geom {
             }
         }
 
-    override fun build(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem,
-                       ctx: GeomContext) {
+    override fun build(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         throw IllegalStateException("Not applicable to live map")
     }
 

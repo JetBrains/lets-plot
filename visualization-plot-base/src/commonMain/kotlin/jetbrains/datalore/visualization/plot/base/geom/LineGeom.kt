@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 
 open class LineGeom : PathGeom() {
 
@@ -13,6 +13,6 @@ open class LineGeom : PathGeom() {
     companion object {
         val RENDERS = PathGeom.RENDERS
 
-        val HANDLES_GROUPS = PathGeom.HANDLES_GROUPS
+        const val HANDLES_GROUPS = PathGeom.HANDLES_GROUPS
     }
 }

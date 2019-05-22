@@ -3,9 +3,9 @@ package jetbrains.datalore.visualization.plot.base.pos
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
-import jetbrains.datalore.visualization.plot.base.render.GeomContext
-import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.GeomContext
+import jetbrains.datalore.visualization.plot.base.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.util.MutableDouble
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 

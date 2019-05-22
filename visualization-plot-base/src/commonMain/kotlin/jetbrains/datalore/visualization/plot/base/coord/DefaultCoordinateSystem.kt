@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.coord
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 
 internal class DefaultCoordinateSystem(private val myToClientOffsetX: (Double) -> Double, private val myToClientOffsetY: (Double) -> Double,
                                        private val myFromClientOffsetX: (Double) -> Double, private val myFromClientOffsetY: (Double) -> Double) : CoordinateSystem {

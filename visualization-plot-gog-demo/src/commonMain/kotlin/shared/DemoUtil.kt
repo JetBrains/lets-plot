@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.gogDemo.shared
 
 import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.render.GeomContext
+import jetbrains.datalore.visualization.plot.base.GeomContext
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomContextBuilder
 import kotlin.random.Random
 

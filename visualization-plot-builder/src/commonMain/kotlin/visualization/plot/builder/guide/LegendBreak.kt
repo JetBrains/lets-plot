@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.builder.guide
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 
 class LegendBreak(val label: String) {

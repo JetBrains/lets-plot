@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.base.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
-import jetbrains.datalore.visualization.plot.base.render.GeomContext
-import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.GeomContext
+import jetbrains.datalore.visualization.plot.base.PositionAdjustment
 import kotlin.random.Random
 
 internal class JitterPos(width: Double?, height: Double?) : PositionAdjustment {

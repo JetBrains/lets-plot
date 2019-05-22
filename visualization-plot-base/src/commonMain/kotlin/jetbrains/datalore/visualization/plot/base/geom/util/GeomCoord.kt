@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 import kotlin.math.max
 import kotlin.math.min
 

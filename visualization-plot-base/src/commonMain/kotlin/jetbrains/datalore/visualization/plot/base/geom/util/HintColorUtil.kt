@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.base.geom.util
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors.solid
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 
 object HintColorUtil {
     fun fromColor(p: DataPointAesthetics): Color {

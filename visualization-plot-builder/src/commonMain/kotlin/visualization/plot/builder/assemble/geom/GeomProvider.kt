@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.assemble.geom
 
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Geom
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
@@ -8,7 +9,6 @@ import jetbrains.datalore.visualization.plot.base.data.Sampling
 import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.geom.*
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.base.render.Geom
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.AesAutoMapper
 import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider

@@ -4,8 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
@@ -15,7 +14,8 @@ import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil.fromCo
 import jetbrains.datalore.visualization.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.visualization.plot.base.geom.util.HintsCollection.HintConfigFactory
 import jetbrains.datalore.visualization.plot.base.geom.util.LinesHelper
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 class ErrorBarGeom : GeomBase() {

@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.base.render.point
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimObject
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 
 interface PointShape {
     val code: Int

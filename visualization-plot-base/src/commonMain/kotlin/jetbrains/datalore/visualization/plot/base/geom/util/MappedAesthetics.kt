@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.base.geom.util
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 
 class MappedAesthetics(
         private val myAesthetics: Aesthetics,

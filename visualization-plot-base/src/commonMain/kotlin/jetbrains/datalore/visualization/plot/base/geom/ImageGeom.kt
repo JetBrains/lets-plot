@@ -3,12 +3,8 @@ package jetbrains.datalore.visualization.plot.base.geom
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgImageElement
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
-import jetbrains.datalore.visualization.plot.base.render.GeomContext
-import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 
 /**

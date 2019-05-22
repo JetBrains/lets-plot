@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.assemble
 
+import jetbrains.datalore.visualization.plot.base.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
 import jetbrains.datalore.visualization.plot.builder.PosProviderContext
 import kotlin.jvm.JvmOverloads
 

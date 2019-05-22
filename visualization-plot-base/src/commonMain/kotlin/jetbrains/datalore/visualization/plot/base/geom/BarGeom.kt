@@ -1,13 +1,12 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.RectTargetCollectorHelper
 import jetbrains.datalore.visualization.plot.base.geom.util.RectanglesHelper
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 /**
@@ -36,7 +35,7 @@ open class BarGeom : GeomBase() {
                 Aes.SIZE
         )
 
-        val HANDLES_GROUPS = false
+        const val HANDLES_GROUPS = false
 
         private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->

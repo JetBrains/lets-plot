@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.base
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 
 interface Aesthetics {
     val isEmpty: Boolean

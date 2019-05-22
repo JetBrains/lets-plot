@@ -2,10 +2,10 @@ package jetbrains.datalore.visualization.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
-import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 
 class RectTargetCollectorHelper(private val myRectanglesHelper: RectanglesHelper,
                                 private val myRectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?,
