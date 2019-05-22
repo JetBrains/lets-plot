@@ -13,8 +13,8 @@ import jetbrains.datalore.visualization.plot.base.data.SimpleStatContext
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
 import jetbrains.datalore.visualization.plot.base.geom.BarGeom
 import jetbrains.datalore.visualization.plot.base.geom.PointGeom
+import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
-import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.base.scale.Scales

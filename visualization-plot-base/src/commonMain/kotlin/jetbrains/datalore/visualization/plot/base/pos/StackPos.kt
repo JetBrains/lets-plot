@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.base.render.pos
+package jetbrains.datalore.visualization.plot.base.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair

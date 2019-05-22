@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companio
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.visualization.plot.base.geom.PolygonGeom
-import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
+import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer

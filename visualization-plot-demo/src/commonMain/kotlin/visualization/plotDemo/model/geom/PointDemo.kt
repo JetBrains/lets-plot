@@ -7,8 +7,8 @@ import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companio
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.visualization.plot.base.coord.Coords
 import jetbrains.datalore.visualization.plot.base.geom.PointGeom
+import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
-import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
