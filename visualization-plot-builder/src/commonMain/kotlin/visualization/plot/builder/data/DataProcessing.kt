@@ -12,8 +12,8 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.Stat
 import jetbrains.datalore.visualization.plot.base.data.StatContext
-import jetbrains.datalore.visualization.plot.base.data.stat.Stats
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
+import jetbrains.datalore.visualization.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
 import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider

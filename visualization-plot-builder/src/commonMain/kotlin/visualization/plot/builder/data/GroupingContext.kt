@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.builder.data
 
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.base.data.stat.Stats
+import jetbrains.datalore.visualization.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.data.DataProcessing.findOptionalVariable
 

@@ -10,7 +10,6 @@ import jetbrains.datalore.visualization.plot.base.coord.Coords
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.SimpleStatContext
-import jetbrains.datalore.visualization.plot.base.data.stat.Stats
 import jetbrains.datalore.visualization.plot.base.geom.BarGeom
 import jetbrains.datalore.visualization.plot.base.geom.PointGeom
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
@@ -18,6 +17,7 @@ import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.base.scale.Scales
+import jetbrains.datalore.visualization.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil

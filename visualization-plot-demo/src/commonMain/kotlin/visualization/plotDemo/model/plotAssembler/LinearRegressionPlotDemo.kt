@@ -5,11 +5,11 @@ import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.stat.Stats
-import jetbrains.datalore.visualization.plot.base.data.stat.StatsServerSide
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.visualization.plot.base.scale.Scales
+import jetbrains.datalore.visualization.plot.base.stat.Stats
+import jetbrains.datalore.visualization.plot.base.stat.StatsServerSide
 import jetbrains.datalore.visualization.plot.builder.Plot
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder

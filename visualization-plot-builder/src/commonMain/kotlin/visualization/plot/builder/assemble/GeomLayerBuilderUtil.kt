@@ -4,7 +4,7 @@ import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil.transformVarFor
 import jetbrains.datalore.visualization.plot.base.data.Stat
-import jetbrains.datalore.visualization.plot.base.data.stat.Stats
+import jetbrains.datalore.visualization.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.visualization.plot.builder.scale.ScaleProviderHelper

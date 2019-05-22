@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
-import jetbrains.datalore.visualization.plot.base.data.stat.Density2dStatShell
-import jetbrains.datalore.visualization.plot.base.data.stat.SmoothStatShell
-import jetbrains.datalore.visualization.plot.base.data.stat.StatsServerSide
+import jetbrains.datalore.visualization.plot.base.stat.Density2dStatShell
+import jetbrains.datalore.visualization.plot.base.stat.SmoothStatShell
+import jetbrains.datalore.visualization.plot.base.stat.StatsServerSide
 import jetbrains.datalore.visualization.plot.gog.config.StatProto
 
 internal class StatProtoServerSide : StatProto() {

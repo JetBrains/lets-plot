@@ -6,8 +6,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.data.stat.Stats
 import jetbrains.datalore.visualization.plot.base.scale.Scales
+import jetbrains.datalore.visualization.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plot.builder.PlotContainer
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder

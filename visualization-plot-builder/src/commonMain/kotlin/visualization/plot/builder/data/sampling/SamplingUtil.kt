@@ -5,7 +5,7 @@ import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.data.stat.Stats
+import jetbrains.datalore.visualization.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plot.base.util.MutableDouble
 import jetbrains.datalore.visualization.plot.base.util.MutableInteger
 import jetbrains.datalore.visualization.plot.builder.data.sampling.VertexSampling.DoubleVectorComponentsList

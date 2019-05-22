@@ -4,7 +4,7 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.data.stat.Stats
+import jetbrains.datalore.visualization.plot.base.stat.Stats
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
