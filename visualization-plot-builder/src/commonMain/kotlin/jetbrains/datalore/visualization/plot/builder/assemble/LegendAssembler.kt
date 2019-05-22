@@ -2,13 +2,13 @@ package jetbrains.datalore.visualization.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.FeatureSwitch
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
-import jetbrains.datalore.visualization.plot.builder.FeatureSwitch
 import jetbrains.datalore.visualization.plot.builder.GuideOptions
 import jetbrains.datalore.visualization.plot.builder.LegendOptions
 import jetbrains.datalore.visualization.plot.builder.VarBinding

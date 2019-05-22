@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config.transform.encode
 
-import jetbrains.datalore.visualization.plot.builder.FeatureSwitch
+import jetbrains.datalore.visualization.plot.FeatureSwitch
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChange
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChangeContext
 

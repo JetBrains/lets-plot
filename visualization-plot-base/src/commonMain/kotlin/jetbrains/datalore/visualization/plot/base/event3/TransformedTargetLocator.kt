@@ -4,7 +4,7 @@ import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.Aes
 
-abstract class TransformedTargetLocator protected constructor(private val myTargetLocator: GeomTargetLocator) : GeomTargetLocator {
+abstract class TransformedTargetLocator(private val myTargetLocator: GeomTargetLocator) : GeomTargetLocator {
 
     override fun findTargets(coord: DoubleVector): GeomTargetLocator.LocatedTargets? {
         val targetCoord = convertToTargetCoord(coord)

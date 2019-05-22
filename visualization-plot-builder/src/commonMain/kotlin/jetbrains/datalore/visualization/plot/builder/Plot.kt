@@ -18,6 +18,7 @@ import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.event.SvgEventHandler
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
+import jetbrains.datalore.visualization.plot.FeatureSwitch
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent

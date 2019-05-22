@@ -2,11 +2,11 @@ package jetbrains.datalore.visualization.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.FeatureSwitch
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.visualization.plot.builder.ColorBarOptions
-import jetbrains.datalore.visualization.plot.builder.FeatureSwitch
 import jetbrains.datalore.visualization.plot.builder.guide.ColorBarComponent
 import jetbrains.datalore.visualization.plot.builder.guide.ColorBarComponentSpec
 import jetbrains.datalore.visualization.plot.builder.guide.LegendBox

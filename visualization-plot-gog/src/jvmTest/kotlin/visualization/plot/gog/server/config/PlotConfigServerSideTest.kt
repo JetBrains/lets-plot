@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.server.config
 
-import jetbrains.datalore.visualization.plot.builder.FeatureSwitch
+import jetbrains.datalore.visualization.plot.FeatureSwitch
 import jetbrains.datalore.visualization.plot.gog.config.Option.GeomName
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.GEOM
