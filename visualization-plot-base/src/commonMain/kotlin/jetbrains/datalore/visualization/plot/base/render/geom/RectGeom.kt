@@ -2,6 +2,8 @@ package jetbrains.datalore.visualization.plot.base.render.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.*
 import jetbrains.datalore.visualization.plot.base.render.geom.util.RectanglesHelper
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
@@ -28,7 +30,7 @@ class RectGeom : GeomBase() {
                 Aes.MAP_ID
         )
         //rectangle groups are used in geom_livemap
-        val HANDLES_GROUPS = true
+        const val HANDLES_GROUPS = true
 
         private fun rectangleByDataPoint(p: DataPointAesthetics): DoubleRectangle? {
             val xmin = p.xmin()

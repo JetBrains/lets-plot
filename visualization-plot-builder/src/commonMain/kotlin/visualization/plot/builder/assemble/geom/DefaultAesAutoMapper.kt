@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.builder.assemble.geom
 
 import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.gcommon.collect.Iterables
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.builder.assemble.AesAutoMapper
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.POINT_Y

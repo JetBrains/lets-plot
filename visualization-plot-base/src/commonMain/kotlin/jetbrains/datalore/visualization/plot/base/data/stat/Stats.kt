@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.base.data.stat
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable.Source.STAT
 import jetbrains.datalore.visualization.plot.base.data.Stat
 import jetbrains.datalore.visualization.plot.base.data.StatContext
-import jetbrains.datalore.visualization.plot.base.render.Aes
 
 object Stats {
     // stat variables can be referenced by name ..name.. (p 54)

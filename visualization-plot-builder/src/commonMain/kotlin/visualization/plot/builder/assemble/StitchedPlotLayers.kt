@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.base.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.builder.GeomLayer
 import jetbrains.datalore.visualization.plot.builder.VarBinding

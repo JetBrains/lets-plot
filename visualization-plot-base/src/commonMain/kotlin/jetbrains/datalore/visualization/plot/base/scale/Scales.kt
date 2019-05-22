@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.scale
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 
 object Scales {
     fun <T> continuousDomain(name: String, aes: Aes<T>): Scale2<T> {

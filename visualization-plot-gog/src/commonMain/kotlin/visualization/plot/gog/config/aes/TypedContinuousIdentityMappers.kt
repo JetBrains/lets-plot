@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.config.aes
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import kotlin.math.abs
 import kotlin.math.roundToInt

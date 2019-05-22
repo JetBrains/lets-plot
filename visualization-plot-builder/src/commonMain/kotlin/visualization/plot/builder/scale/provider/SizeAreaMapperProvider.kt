@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder.scale.provider
 
-import jetbrains.datalore.visualization.plot.base.render.AestheticsUtil
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 
 class SizeAreaMapperProvider(max: Double?,
                              naValue: Double) : DirectlyProportionalMapperProvider(max ?: DEF_MAX, naValue) {

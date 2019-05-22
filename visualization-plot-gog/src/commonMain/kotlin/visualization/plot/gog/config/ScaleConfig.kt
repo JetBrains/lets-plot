@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.scale.Mappers.nullable
 import jetbrains.datalore.visualization.plot.base.scale.transform.DateTimeBreaksGen
 import jetbrains.datalore.visualization.plot.base.scale.transform.Transforms

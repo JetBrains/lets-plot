@@ -3,16 +3,18 @@ package jetbrains.datalore.visualization.plot.base.render.geom
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgImageElement
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.render.GeomContext
+import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.base.render.geom.util.GeomHelper
 
-class ImageGeom
 /**
  * Creates SvgImageElement and assign 'imageUrl' value to 'href' attribute.
- *
- * @param imageUrl
  */
-(private val myImageUrl: String) : GeomBase() {
+class ImageGeom(private val imageUrl: String) : GeomBase() {
 
     override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         if (aesthetics.isEmpty) return
@@ -28,7 +30,7 @@ class ImageGeom
         val svgImageElement = SvgImageElement(
                 boundsClient.origin.x, boundsClient.origin.y,
                 boundsClient.dimension.x, boundsClient.dimension.y)
-        svgImageElement.href().set(myImageUrl)
+        svgImageElement.href().set(imageUrl)
         root.add(svgImageElement)
     }
 
@@ -40,7 +42,7 @@ class ImageGeom
                 Aes.YMAX
         )
 
-        val HANDLES_GROUPS = false
+        const val HANDLES_GROUPS = false
     }
 }
 

@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.render.geom.util
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.base.render.Aes
-import jetbrains.datalore.visualization.plot.base.render.Aesthetics
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 
 class MappedAesthetics(

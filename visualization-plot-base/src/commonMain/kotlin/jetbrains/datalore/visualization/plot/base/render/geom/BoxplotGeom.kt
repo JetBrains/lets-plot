@@ -8,7 +8,10 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.plot.base.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.event3.NullGeomTargetCollector
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP

@@ -8,7 +8,11 @@ import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgShape
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimShape
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
+import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.render.GeomContext
+import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.render.svg.StrokeDashArraySupport
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 
@@ -104,7 +108,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
     }
 
     companion object {
-        val HJUST_MAP: Map<Any, TextLabel.HorizontalAnchor> = mapOf(
+        private val HJUST_MAP: Map<Any, TextLabel.HorizontalAnchor> = mapOf(
                 "right" to TextLabel.HorizontalAnchor.RIGHT,
                 "middle" to TextLabel.HorizontalAnchor.MIDDLE,
                 "left" to TextLabel.HorizontalAnchor.LEFT,
@@ -112,7 +116,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
                 0.5 to TextLabel.HorizontalAnchor.MIDDLE,
                 1.0 to TextLabel.HorizontalAnchor.LEFT
         )
-        val VJUST_MAP: Map<Any, TextLabel.VerticalAnchor> = mapOf(
+        private val VJUST_MAP: Map<Any, TextLabel.VerticalAnchor> = mapOf(
                 "bottom" to TextLabel.VerticalAnchor.BOTTOM,
                 "center" to TextLabel.VerticalAnchor.CENTER,
                 "top" to TextLabel.VerticalAnchor.TOP,

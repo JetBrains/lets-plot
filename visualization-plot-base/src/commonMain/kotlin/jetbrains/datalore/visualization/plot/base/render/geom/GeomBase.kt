@@ -4,6 +4,8 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimGroup
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
 import jetbrains.datalore.visualization.plot.base.render.*
 import jetbrains.datalore.visualization.plot.base.render.geom.util.GenericLegendKeyElementFactory

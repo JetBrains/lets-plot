@@ -5,7 +5,11 @@ import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimGroup
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.render.GeomContext
+import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
 
 class RectanglesHelper(private val myAesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) : GeomHelper(pos, coord, ctx) {
 

@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.event3
 
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.X_AXIS_TOOLTIP
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.builder.event3.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipSpecFactory.Companion.AXIS_TOOLTIP_COLOR
 import kotlin.test.BeforeTest

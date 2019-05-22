@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.builder.assemble.geom
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.visualization.plot.builder.VarBinding

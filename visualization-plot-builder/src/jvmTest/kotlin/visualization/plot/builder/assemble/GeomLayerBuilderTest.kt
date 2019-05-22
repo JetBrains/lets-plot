@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.assemble
 
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider

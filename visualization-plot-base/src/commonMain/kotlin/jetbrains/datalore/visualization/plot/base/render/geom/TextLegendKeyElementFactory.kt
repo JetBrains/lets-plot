@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.base.render.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.plot.base.render.AestheticsUtil
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.geom.util.GeomHelper

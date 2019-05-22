@@ -3,8 +3,8 @@ package jetbrains.datalore.visualization.plot.builder.assemble
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.render.Aes
-import jetbrains.datalore.visualization.plot.base.render.Aesthetics
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.builder.*

@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.server.config.transform
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.gog.config.Option.GeomName
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.GEOM

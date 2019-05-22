@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.builder.*

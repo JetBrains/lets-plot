@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.render.point.PointShape
 import jetbrains.datalore.visualization.plot.gog.config.aes.AesOptionConversion
 import kotlin.jvm.JvmOverloads

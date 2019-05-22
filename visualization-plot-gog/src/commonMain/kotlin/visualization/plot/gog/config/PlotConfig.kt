@@ -3,9 +3,9 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.visualization.plot.gog.config.Option.Meta

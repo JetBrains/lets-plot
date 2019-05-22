@@ -1,13 +1,17 @@
 package jetbrains.datalore.visualization.plot.base.render.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.render.GeomContext
+import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 internal class FillPos(aes: Aesthetics) : PositionAdjustment {
 
-    private val myStackPosHelper: PositionAdjustment
-    private val myScalerByIndex: Map<Int, Double>
+    private val myStackPosHelper: PositionAdjustment = StackPos.splitPositiveNegative(aes)
+    private val myScalerByIndex: Map<Int, Double> = mapIndexToScaler(aes)
 
     private fun mapIndexToScaler(aes: Aesthetics): Map<Int, Double> {
         val posMaxByBin = HashMap<Double, Double>()
@@ -50,11 +54,6 @@ internal class FillPos(aes: Aesthetics) : PositionAdjustment {
             }
         }
         return scalerByIndex
-    }
-
-    init {
-        myStackPosHelper = StackPos.splitPositiveNegative(aes)
-        myScalerByIndex = mapIndexToScaler(aes)
     }
 
     override fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector {

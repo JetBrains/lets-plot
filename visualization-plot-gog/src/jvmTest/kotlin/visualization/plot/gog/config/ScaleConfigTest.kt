@@ -4,8 +4,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Color.Companion.BLUE
 import jetbrains.datalore.base.values.Color.Companion.GREEN
 import jetbrains.datalore.base.values.Color.Companion.RED
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.render.linetype.NamedLineType.*
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape.STICK_SQUARE_TRIANGLE_UP
 import jetbrains.datalore.visualization.plot.base.scale.MapperUtil

@@ -2,8 +2,8 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.Lists
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.builder.GuideOptions
 import jetbrains.datalore.visualization.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap

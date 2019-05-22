@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.event
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 
 interface MappedDataAccess {
 

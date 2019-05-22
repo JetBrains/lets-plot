@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.builder.assemble
 
-import jetbrains.datalore.visualization.plot.base.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.visualization.plot.base.render.Aes
-import jetbrains.datalore.visualization.plot.base.render.Aesthetics
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 
 internal object LegendAssemblerUtil {
     fun <T> mapToAesthetics(

@@ -6,11 +6,11 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.render.Aes
-import jetbrains.datalore.visualization.plot.base.render.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.GeomContext
 import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.scale.Mappers

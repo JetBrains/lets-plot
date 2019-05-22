@@ -4,6 +4,8 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.*
 import jetbrains.datalore.visualization.plot.base.render.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil

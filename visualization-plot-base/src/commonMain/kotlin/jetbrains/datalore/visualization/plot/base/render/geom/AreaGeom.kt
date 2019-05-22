@@ -2,6 +2,8 @@ package jetbrains.datalore.visualization.plot.base.render.geom
 
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.render.*
@@ -79,7 +81,7 @@ open class AreaGeom : GeomBase() {
                 Aes.ALPHA
         )
 
-        val HANDLES_GROUPS = true
+        const val HANDLES_GROUPS = true
     }
 
 

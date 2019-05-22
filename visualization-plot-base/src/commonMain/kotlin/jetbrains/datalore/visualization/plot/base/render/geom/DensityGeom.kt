@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.render.geom
 
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.geom.util.HintColorUtil.fromColor
 

@@ -1,6 +1,10 @@
 package jetbrains.datalore.visualization.plot.base.render.geom
 
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.render.GeomContext
+import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
+import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.base.render.geom.util.LinesHelper
 
 class StepGeom : LineGeom() {
@@ -26,9 +30,9 @@ class StepGeom : LineGeom() {
         companion object {
 
             fun toDirection(str: String): Direction {
-                when (str) {
-                    "hv", "HV" -> return HV
-                    "vh", "VH" -> return VH
+                return when (str) {
+                    "hv", "HV" -> HV
+                    "vh", "VH" -> VH
                     else -> throw IllegalArgumentException("Direction $str is not allowed, only accept 'hv' or 'vh'")
                 }
             }

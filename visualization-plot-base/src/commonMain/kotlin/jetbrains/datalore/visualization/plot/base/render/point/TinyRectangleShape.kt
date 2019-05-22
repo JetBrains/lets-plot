@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.base.render.point
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimObject
-import jetbrains.datalore.visualization.plot.base.render.AestheticsUtil
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 
 internal class TinyRectangleShape private constructor() : PointShape {

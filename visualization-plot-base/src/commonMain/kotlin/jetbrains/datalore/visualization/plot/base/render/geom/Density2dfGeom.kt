@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.render.geom
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 
 class Density2dfGeom : ContourfGeom() {
     companion object {

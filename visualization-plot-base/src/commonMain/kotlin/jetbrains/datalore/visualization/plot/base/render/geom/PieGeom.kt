@@ -4,6 +4,8 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Iterables.get
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.*
 import jetbrains.datalore.visualization.plot.base.render.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.base.render.geom.util.LinesHelper
@@ -72,7 +74,7 @@ internal class PieGeom(private val myCenter: DoubleVector, private val myRadius:
                 Aes.SIZE
         )
 
-        val HANDLES_GROUPS = false
+        const val HANDLES_GROUPS = false
 
         private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
             val withX = GeomUtil.with_X_Y(aesthetics.dataPoints())

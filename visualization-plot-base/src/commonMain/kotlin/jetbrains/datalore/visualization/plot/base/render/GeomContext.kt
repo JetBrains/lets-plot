@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.render
 
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
 
 interface GeomContext {

@@ -1,5 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.render.geom
 
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.*
 import jetbrains.datalore.visualization.plot.base.render.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.base.render.geom.util.LinePathConstructor

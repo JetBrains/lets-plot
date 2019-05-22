@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.render.geom
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 
 class HistogramGeom : BarGeom() {
     companion object {
@@ -15,6 +15,6 @@ class HistogramGeom : BarGeom() {
                 Aes.SIZE
         )
 
-        val HANDLES_GROUPS = false
+        const val HANDLES_GROUPS = false
     }
 }

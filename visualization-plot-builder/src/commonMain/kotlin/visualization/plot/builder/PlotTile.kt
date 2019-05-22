@@ -10,9 +10,9 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
 import jetbrains.datalore.visualization.base.canvasFigure.SvgCanvasFigure
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.render.CoordinateSystem
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel

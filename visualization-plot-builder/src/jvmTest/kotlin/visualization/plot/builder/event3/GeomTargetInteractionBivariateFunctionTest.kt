@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder.event3
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.assertNoTooltips
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.assertText
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.continuous

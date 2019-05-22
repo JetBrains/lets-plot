@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.render
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.render.linetype.LineType
 import jetbrains.datalore.visualization.plot.base.render.point.PointShape
 

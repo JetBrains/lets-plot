@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.aes
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 
 internal class TypedIndexFunctionMap(indexFunctionMap: Map<Aes<*>, (Int) -> Any?>) {
     private var myMap: Map<Aes<*>, (Int) -> Any?> = indexFunctionMap

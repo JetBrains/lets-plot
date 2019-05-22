@@ -1,5 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.render.geom
 
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.visualization.plot.base.render.*
@@ -74,9 +76,9 @@ class SmoothGeom : GeomBase() {
                 Aes.ALPHA
         )
 
-        val HANDLES_GROUPS = true
+        const val HANDLES_GROUPS = true
 
         private val PROPORTION = { v: Double? -> if (v == null) null else v / 10 }
-        private val ZERO = { v: Double? -> 0.0 }
+        private val ZERO = { _: Double? -> 0.0 }
     }
 }

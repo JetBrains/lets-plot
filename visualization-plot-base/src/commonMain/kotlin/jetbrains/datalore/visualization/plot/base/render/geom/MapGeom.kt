@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.render.geom
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 
 class MapGeom : PolygonGeom() {
     companion object {
@@ -19,6 +19,6 @@ class MapGeom : PolygonGeom() {
                 Aes.MAP_ID
         )
 
-        val HANDLES_GROUPS = true
+        const val HANDLES_GROUPS = true
     }
 }

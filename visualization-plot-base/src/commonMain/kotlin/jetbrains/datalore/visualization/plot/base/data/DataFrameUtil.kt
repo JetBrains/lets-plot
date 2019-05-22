@@ -3,8 +3,8 @@ package jetbrains.datalore.visualization.plot.base.data
 import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.Ordering
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import kotlin.jvm.JvmOverloads

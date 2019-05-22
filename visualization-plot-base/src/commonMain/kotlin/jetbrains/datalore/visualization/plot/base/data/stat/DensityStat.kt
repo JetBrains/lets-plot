@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.base.data.stat
 
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.StatContext
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
 import jetbrains.datalore.visualization.plot.base.data.stat.DensityStat.BandWidthMethod.NRD0
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 /**

@@ -1,14 +1,15 @@
-package jetbrains.datalore.visualization.plot.base.render
+package jetbrains.datalore.visualization.plot.base.aes
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors.solid
 import jetbrains.datalore.visualization.base.svg.SvgShape
 import jetbrains.datalore.visualization.base.svg.SvgUtils
+import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.point.UpdatableShape
 
 object AestheticsUtil {
     //affects bar, smooth, area and ribbon
-    const val ALPHA_CONTROLS_BOTH = false
+    internal const val ALPHA_CONTROLS_BOTH = false
 
     fun fill(filled: Boolean, solid: Boolean, p: DataPointAesthetics): Color {
         if (filled) {

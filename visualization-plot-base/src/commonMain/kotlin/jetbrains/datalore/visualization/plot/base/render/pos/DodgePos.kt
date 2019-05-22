@@ -1,16 +1,22 @@
 package jetbrains.datalore.visualization.plot.base.render.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.render.*
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
+import jetbrains.datalore.visualization.plot.base.render.GeomContext
+import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
-internal class DodgePos
 /**
  * @param aesthetics
  * @param groupCount
  * @param width      if NULL then element width is used.
  */
-(aesthetics: Aesthetics, private val myGroupCount: Int, private val myWidth: Double?) : PositionAdjustment {
+internal class DodgePos(aesthetics: Aesthetics,
+                        private val myGroupCount: Int,
+                        private val myWidth: Double?) : PositionAdjustment {
+
     private val myDodgingNeeded: Boolean
     private fun isDodgingNeeded(aesthetics: Aesthetics): Boolean {
         // if for some X there are more then just 1 group, then dodging is needed

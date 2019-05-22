@@ -6,6 +6,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx.Bitmap
 import jetbrains.datalore.visualization.base.svg.SvgUtils
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.*
 import jetbrains.datalore.visualization.plot.base.render.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.render.geom.util.GeomUtil.with_X_Y
@@ -36,8 +38,8 @@ class RasterGeom : GeomBase() {
         val stepY = ctx.getResolution(Aes.Y)
         checkArgument(stepX > SeriesUtil.TINY, "x-step is too small: $stepX")
         checkArgument(stepY > SeriesUtil.TINY, "y-step is too small: $stepY")
-        val width = (round(boundsXY.dimension.x / stepX) + 1).toDouble()
-        val height = (round(boundsXY.dimension.y / stepY) + 1).toDouble()
+        val width = (round(boundsXY.dimension.x / stepX) + 1)
+        val height = (round(boundsXY.dimension.y / stepY) + 1)
 
         if (width * height > 5000000) {
             val center = boundsXY.center
@@ -116,7 +118,7 @@ class RasterGeom : GeomBase() {
                 Aes.ALPHA
         )
 
-        val HANDLES_GROUPS = false
+        const val HANDLES_GROUPS = false
     }
 }// ToDo: hjust, vjust [0..1] def .5
 

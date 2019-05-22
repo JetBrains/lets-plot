@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.base.data.stat
 
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.StatContext
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.render.Aes
 
 internal class ContourfStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPPING) {
 

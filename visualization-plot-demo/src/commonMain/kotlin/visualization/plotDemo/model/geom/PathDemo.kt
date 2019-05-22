@@ -2,12 +2,12 @@ package jetbrains.datalore.visualization.plotDemo.model.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.array
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.collection
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.visualization.plot.base.coord.Coords
-import jetbrains.datalore.visualization.plot.base.render.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.geom.PathGeom
 import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent

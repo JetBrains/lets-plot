@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.render.geom
 
-import jetbrains.datalore.visualization.plot.base.render.Aesthetics
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.geom.util.GeomUtil
 

@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.data
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 
 interface Stat {
     fun apply(data: DataFrame, statCtx: StatContext): DataFrame

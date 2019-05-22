@@ -3,6 +3,7 @@ package jetbrains.datalore.visualization.plot.builder.event3
 import jetbrains.datalore.base.function.Functions.identity
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
@@ -10,7 +11,6 @@ import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.Too
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.*
 import jetbrains.datalore.visualization.plot.base.event3.HitShape
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.builder.event3.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.visualization.plot.builder.event3.MappedDataAccessMock.Mapping
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipSpec

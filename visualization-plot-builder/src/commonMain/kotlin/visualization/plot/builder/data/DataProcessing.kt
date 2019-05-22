@@ -4,6 +4,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Builder
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
@@ -11,7 +12,6 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.Stat
 import jetbrains.datalore.visualization.plot.base.data.StatContext
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.builder.VarBinding

@@ -1,6 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.render.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
 import jetbrains.datalore.visualization.plot.base.render.*
@@ -13,10 +15,10 @@ class LivemapGeom(private val myDisplayMode: DisplayMode) : Geom {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() {
-            when (myDisplayMode) {
-                DisplayMode.POINT -> return PointLegendKeyElementFactory()
-                DisplayMode.PIE -> return FilledCircleLegendKeyElementFactory()
-                else -> return GenericLegendKeyElementFactory()
+            return when (myDisplayMode) {
+                DisplayMode.POINT -> PointLegendKeyElementFactory()
+                DisplayMode.PIE -> FilledCircleLegendKeyElementFactory()
+                else -> GenericLegendKeyElementFactory()
             }
         }
 
@@ -74,6 +76,6 @@ class LivemapGeom(private val myDisplayMode: DisplayMode) : Geom {
                 Aes.X,
                 Aes.Y
         )
-        val HANDLES_GROUPS = false
+        const val HANDLES_GROUPS = false
     }
 }

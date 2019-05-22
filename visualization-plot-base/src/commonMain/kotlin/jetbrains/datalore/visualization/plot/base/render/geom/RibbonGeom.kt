@@ -2,6 +2,8 @@ package jetbrains.datalore.visualization.plot.base.render.geom
 
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.render.*
@@ -12,7 +14,7 @@ import jetbrains.datalore.visualization.plot.base.render.geom.util.LinesHelper
 
 class RibbonGeom : GeomBase() {
 
-    protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
+    private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
         val data = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX)
         return GeomUtil.ordered_X(data)
     }
@@ -62,6 +64,6 @@ class RibbonGeom : GeomBase() {
                 Aes.ALPHA
         )
 
-        val HANDLES_GROUPS = true
+        const val HANDLES_GROUPS = true
     }
 }

@@ -2,6 +2,8 @@ package jetbrains.datalore.visualization.plot.base.render.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.*
 import jetbrains.datalore.visualization.plot.base.render.geom.util.HintColorUtil
 import jetbrains.datalore.visualization.plot.base.render.geom.util.RectTargetCollectorHelper
@@ -34,7 +36,7 @@ class TileGeom : GeomBase() {
                 Aes.SIZE
         )
 
-        val HANDLES_GROUPS = false
+        const val HANDLES_GROUPS = false
 
         private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle {
             return { p ->

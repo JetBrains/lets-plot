@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.base.render.Aes.Companion.SIZE
-import jetbrains.datalore.visualization.plot.base.render.AestheticsUtil
+import jetbrains.datalore.visualization.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.builder.scale.DefaultNaValue
 
 class SizeMapperProvider(range: ClosedRange<Double>,

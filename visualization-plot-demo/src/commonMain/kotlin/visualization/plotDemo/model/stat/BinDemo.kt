@@ -2,6 +2,7 @@ package jetbrains.datalore.visualization.plotDemo.model.stat
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.collection
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.constant
@@ -10,7 +11,6 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.SimpleStatContext
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
-import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.render.geom.BarGeom
 import jetbrains.datalore.visualization.plot.base.render.geom.PointGeom
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape

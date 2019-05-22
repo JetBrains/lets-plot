@@ -3,6 +3,9 @@ package jetbrains.datalore.visualization.plot.base.render.geom
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.render.*
@@ -67,7 +70,7 @@ open class PointGeom : GeomBase() {
                 // strokeWidth
         )
 
-        val HANDLES_GROUPS = false
+        const val HANDLES_GROUPS = false
     }
 }
 

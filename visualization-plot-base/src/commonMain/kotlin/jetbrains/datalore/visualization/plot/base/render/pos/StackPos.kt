@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.base.render.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.base.render.Aesthetics
+import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.GeomContext
 import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment

@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.server.config.transform
 
-import jetbrains.datalore.visualization.plot.base.render.Aes.Companion.MAP_ID
+import jetbrains.datalore.visualization.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.DATA_COLUMN_JOIN_KEY
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.MAP_COLUMN_GEOJSON
 import jetbrains.datalore.visualization.plot.gog.config.GeoPositionsDataUtil.MAP_COLUMN_JOIN_KEY

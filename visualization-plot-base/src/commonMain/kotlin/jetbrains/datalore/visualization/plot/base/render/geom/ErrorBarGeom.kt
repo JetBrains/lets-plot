@@ -4,6 +4,9 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
+import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.visualization.plot.base.render.*
@@ -18,9 +21,9 @@ import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 class ErrorBarGeom : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = ErrorBarGeom.MyLegendKeyElementFactory()
+        get() = MyLegendKeyElementFactory()
 
-    protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
+    private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
         return GeomUtil.with_X_Y(aesthetics.dataPoints())
     }
 
@@ -95,7 +98,7 @@ class ErrorBarGeom : GeomBase() {
                 Aes.ALPHA
         )
 
-        val HANDLES_GROUPS = false
+        const val HANDLES_GROUPS = false
 
         private fun errorBarShape(r: DoubleRectangle, p: DataPointAesthetics): SvgGElement {
             val left = r.left

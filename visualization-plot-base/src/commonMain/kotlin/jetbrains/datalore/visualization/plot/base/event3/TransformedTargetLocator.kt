@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.base.event3
 
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 
 abstract class TransformedTargetLocator protected constructor(private val myTargetLocator: GeomTargetLocator) : GeomTargetLocator {
 

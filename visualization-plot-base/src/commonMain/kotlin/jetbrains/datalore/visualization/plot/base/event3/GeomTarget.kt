@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.event3
 
-import jetbrains.datalore.visualization.plot.base.render.Aes
+import jetbrains.datalore.visualization.plot.base.Aes
 
 // `open` - for Mockito tests
 open class GeomTarget(
