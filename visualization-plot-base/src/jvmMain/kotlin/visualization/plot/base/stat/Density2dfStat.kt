@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.server.core.data.stat
 
+import jetbrains.datalore.visualization.plot.base.StatContext
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.StatContext
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
 import jetbrains.datalore.visualization.plot.base.stat.*
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil

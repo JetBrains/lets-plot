@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
-import jetbrains.datalore.visualization.plot.base.data.Stat
+import jetbrains.datalore.visualization.plot.base.Stat
 
 class ContourStatBuilder {
 
