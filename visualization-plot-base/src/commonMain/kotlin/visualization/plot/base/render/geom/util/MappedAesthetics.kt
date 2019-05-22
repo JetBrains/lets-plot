@@ -5,7 +5,9 @@ import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.render.Aesthetics
 import jetbrains.datalore.visualization.plot.base.render.DataPointAesthetics
 
-class MappedAesthetics(private val myAesthetics: Aesthetics, private val myPointAestheticsMapper: (DataPointAesthetics) -> DataPointAesthetics) : Aesthetics {
+class MappedAesthetics(
+        private val myAesthetics: Aesthetics,
+        private val myPointAestheticsMapper: (DataPointAesthetics) -> DataPointAesthetics) : Aesthetics {
 
     override val isEmpty: Boolean
         get() = myAesthetics.isEmpty

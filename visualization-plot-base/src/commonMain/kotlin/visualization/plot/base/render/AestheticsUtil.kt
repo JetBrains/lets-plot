@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.plot.base.render.point.UpdatableShape
 
 object AestheticsUtil {
     //affects bar, smooth, area and ribbon
-    val ALPHA_CONTROLS_BOTH = false
+    const val ALPHA_CONTROLS_BOTH = false
 
     fun fill(filled: Boolean, solid: Boolean, p: DataPointAesthetics): Color {
         if (filled) {

@@ -40,6 +40,7 @@ abstract class AesVisitor<T> {
     fun visit(aes: Aes<*>): T {
         return if (aes.isNumeric) {
             // Safe cast because all 'numeric' aesthetics are <Double>
+            @Suppress("UNCHECKED_CAST")
             visitNumeric(aes as Aes<Double>)
         } else visitIntern(aes)
     }
@@ -49,6 +50,7 @@ abstract class AesVisitor<T> {
      *
      * @param aes
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     protected fun visitNumeric(aes: Aes<Double>): T {
         return visitIntern(aes)
     }

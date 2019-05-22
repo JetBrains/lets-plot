@@ -10,13 +10,13 @@ import jetbrains.datalore.visualization.plot.base.render.geom.LivemapGeom
 open class AestheticsDefaults protected constructor() {
 
     private val myDefaults: TypedKeyContainer
-    // ?TypedKeyContainer
     private val myDefaultsInLegend = TypedKeyHashMap()
 
     init {
         myDefaults = TypedKeyHashMap()
         for (aes in Aes.values()) {
             // Safe cast because AesInitValue.get(aes) is guaranteed to return correct type.
+            @Suppress("UNCHECKED_CAST")
             myDefaults.put(aes as Aes<Any>, AesInitValue[aes])
         }
     }
@@ -85,7 +85,7 @@ open class AestheticsDefaults protected constructor() {
                     return aes == Aes.Y || super.rangeIncludesZero(aes)
                 }
             }
-                    .update<Double>(Aes.WIDTH, 0.9)
+                    .update(Aes.WIDTH, 0.9)
                     .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
@@ -95,7 +95,7 @@ open class AestheticsDefaults protected constructor() {
                     return aes == Aes.Y || super.rangeIncludesZero(aes)
                 }
             }
-                    .update<Color>(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
+                    .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
         fun tile(): AestheticsDefaults {
@@ -127,19 +127,18 @@ open class AestheticsDefaults protected constructor() {
         }
 
         fun livemap(displayMode: LivemapGeom.DisplayMode, scaled: Boolean): AestheticsDefaults {
-            when (displayMode) {
-                LivemapGeom.DisplayMode.POLYGON -> return polygon()
-                LivemapGeom.DisplayMode.POINT -> return point()
+            return when (displayMode) {
+                LivemapGeom.DisplayMode.POLYGON -> polygon()
+                LivemapGeom.DisplayMode.POINT -> point()
                         .updateInLegend(Aes.SIZE, 5.0)
-                LivemapGeom.DisplayMode.BAR -> return base()
+                LivemapGeom.DisplayMode.BAR -> base()
                         .update(Aes.SIZE, 40.0)
                         .update(Aes.COLOR, Color.TRANSPARENT)
-                LivemapGeom.DisplayMode.PIE -> return base()
+                LivemapGeom.DisplayMode.PIE -> base()
                         .update(Aes.SIZE, 20.0)
                         .update(Aes.COLOR, Color.TRANSPARENT)
                         .updateInLegend(Aes.SIZE, 5.0)
-                LivemapGeom.DisplayMode.HEATMAP -> return base().update(Aes.SIZE, if (scaled) 0.01 else 10.0)
-                else -> throw IllegalArgumentException("Defaults are not available for display mode with name: " + displayMode.name)
+                LivemapGeom.DisplayMode.HEATMAP -> base().update(Aes.SIZE, if (scaled) 0.01 else 10.0)
             }
         }
 

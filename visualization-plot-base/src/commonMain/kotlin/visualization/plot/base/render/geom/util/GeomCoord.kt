@@ -17,17 +17,18 @@ class GeomCoord(private val myCoord: CoordinateSystem) {
     }
 
     fun toClient(r: DoubleRectangle): DoubleRectangle {
+        @Suppress("NAME_SHADOWING")
         var r = r
         val xy1 = r.origin
         val xy2 = DoubleVector(r.right, r.bottom)
 
-        val xy1_ = myCoord.toClient(xy1)
-        val xy2_ = myCoord.toClient(xy2)
-        if (xy1 != xy1_ || xy2 != xy2_) {
-            val xMin = min(xy1_.x, xy2_.x)
-            val yMin = min(xy1_.y, xy2_.y)
-            val xMax = max(xy1_.x, xy2_.x)
-            val yMax = max(xy1_.y, xy2_.y)
+        val xy1cl = myCoord.toClient(xy1)
+        val xy2cl = myCoord.toClient(xy2)
+        if (xy1 != xy1cl || xy2 != xy2cl) {
+            val xMin = min(xy1cl.x, xy2cl.x)
+            val yMin = min(xy1cl.y, xy2cl.y)
+            val xMax = max(xy1cl.x, xy2cl.x)
+            val yMax = max(xy1cl.y, xy2cl.y)
 
             r = DoubleRectangle(xMin, yMin, xMax - xMin, yMax - yMin)
         }
