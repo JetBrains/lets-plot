@@ -1,7 +1,8 @@
-package jetbrains.datalore.visualization.plot.gog.server.core.data.stat
+package jetbrains.datalore.visualization.plot.base.data.stat
 
-import jetbrains.datalore.visualization.plot.base.data.stat.Density2dStatShell
-import jetbrains.datalore.visualization.plot.base.data.stat.SmoothStatShell
+import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.Density2dStat
+import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.Density2dfStat
+import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.SmoothStat
 
 actual object StatsServerSide {
     actual fun smooth(): SmoothStatShell {

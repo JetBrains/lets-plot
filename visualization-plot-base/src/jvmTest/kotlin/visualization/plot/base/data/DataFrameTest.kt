@@ -1,9 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.data
 
 import jetbrains.datalore.base.gcommon.collect.Sets
-import visualization.plot.base.data.generateData
-import visualization.plot.base.data.indices
-import visualization.plot.base.data.toSerie
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertSame

@@ -3,9 +3,7 @@ package jetbrains.datalore.visualization.plot.base.data.stat
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.visualization.plot.base.data.*
-import jetbrains.datalore.visualization.plot.base.data.stat.DensityStat
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.StatsServerSide
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals

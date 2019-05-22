@@ -5,6 +5,7 @@ import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
+import jetbrains.datalore.visualization.plot.base.data.stat.StatsServerSide
 import jetbrains.datalore.visualization.plot.base.render.Aes
 import jetbrains.datalore.visualization.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
@@ -18,7 +19,6 @@ import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
 import jetbrains.datalore.visualization.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
-import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.StatsServerSide
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import kotlin.random.Random
 
