@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
-import jetbrains.datalore.visualization.plot.base.render.geom.util.ArrowSpec
+import jetbrains.datalore.visualization.plot.base.geom.util.ArrowSpec
 
 internal class ArrowSpecConfig private constructor(options: Map<*, *>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
 

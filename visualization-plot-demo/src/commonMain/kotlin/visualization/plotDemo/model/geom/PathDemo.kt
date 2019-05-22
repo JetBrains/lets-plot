@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companio
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.collection
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.visualization.plot.base.coord.Coords
-import jetbrains.datalore.visualization.plot.base.render.geom.PathGeom
+import jetbrains.datalore.visualization.plot.base.geom.PathGeom
 import jetbrains.datalore.visualization.plot.base.render.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer

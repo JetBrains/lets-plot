@@ -4,7 +4,7 @@ import jetbrains.datalore.base.typedKey.TypedKeyContainer
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.render.geom.LivemapGeom
+import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
 
 open class AestheticsDefaults {
 

@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.GeomKind.*
-import jetbrains.datalore.visualization.plot.base.render.geom.*
+import jetbrains.datalore.visualization.plot.base.geom.*
 import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
 import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.visualization.plot.gog.config.Option.Geom.Image

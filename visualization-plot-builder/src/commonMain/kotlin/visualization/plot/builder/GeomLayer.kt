@@ -7,10 +7,10 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpec
+import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider
 import jetbrains.datalore.visualization.plot.base.render.Geom
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
-import jetbrains.datalore.visualization.plot.base.render.geom.LivemapProvider
 
 interface GeomLayer {
     val dataFrame: DataFrame

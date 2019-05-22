@@ -5,10 +5,10 @@ import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
+import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
+import jetbrains.datalore.visualization.plot.base.geom.LivemapLayerData
+import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider.LivemapData
 import jetbrains.datalore.visualization.plot.base.render.Geom
-import jetbrains.datalore.visualization.plot.base.render.geom.LivemapGeom
-import jetbrains.datalore.visualization.plot.base.render.geom.LivemapLayerData
-import jetbrains.datalore.visualization.plot.base.render.geom.LivemapProvider.LivemapData
 
 internal class LivemapLayerRenderer(private val myAesthetics: Aesthetics, private val myGeom: LivemapGeom, private val myDataAccess: MappedDataAccess) : GeomLayerRenderer {
     private val myLayers = ArrayList<LivemapLayerData>()

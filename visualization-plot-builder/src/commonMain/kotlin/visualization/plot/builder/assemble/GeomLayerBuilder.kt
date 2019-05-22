@@ -10,11 +10,11 @@ import jetbrains.datalore.visualization.plot.base.data.stat.Stats
 import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpec
+import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
+import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider
 import jetbrains.datalore.visualization.plot.base.render.Geom
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.PositionAdjustment
-import jetbrains.datalore.visualization.plot.base.render.geom.LivemapGeom
-import jetbrains.datalore.visualization.plot.base.render.geom.LivemapProvider
 import jetbrains.datalore.visualization.plot.builder.GeomLayer
 import jetbrains.datalore.visualization.plot.builder.PosProviderContext
 import jetbrains.datalore.visualization.plot.builder.VarBinding

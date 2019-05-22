@@ -6,7 +6,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpace.*
 import jetbrains.datalore.visualization.plot.base.event3.HitShape.Kind.*
-import jetbrains.datalore.visualization.plot.base.render.geom.util.GeomUtil
+import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.builder.event3.GeomTargetLocatorImpl.RingXY
 import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.DoubleRange
 import jetbrains.datalore.visualization.plot.common.geometry.PolylineSimplifier

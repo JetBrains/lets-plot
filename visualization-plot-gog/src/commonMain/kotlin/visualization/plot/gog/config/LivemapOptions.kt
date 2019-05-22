@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
-import jetbrains.datalore.visualization.plot.base.render.geom.LivemapGeom.*
+import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom.*
 
 class LivemapOptions internal constructor(
         val zoom: Int?,
