@@ -8,8 +8,8 @@ import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.builder.scale.GuideBreak
 import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
@@ -88,7 +88,7 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
     private fun addColorBar(
             g: SvgGElement,
             domain: ClosedRange<Double>,
-            scale: Scale2<Color>,
+            scale: Scale<Color>,
             numBins: Int,
             barBounds: DoubleRectangle,
             barLengthExpand: Double,
@@ -154,7 +154,7 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
                 title: String,
                 domain: ClosedRange<Double>,
                 breaks: List<GuideBreak<Double>>,
-                scale: Scale2<Color>,
+                scale: Scale<Color>,
                 theme: LegendTheme):
                 ColorBarComponent {
             return ColorBarComponent(ColorBarComponentSpec(title, domain, breaks, scale, theme))

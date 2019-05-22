@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.visualization.plot.builder.ColorBarOptions
@@ -14,7 +14,7 @@ import jetbrains.datalore.visualization.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.visualization.plot.builder.scale.GuideBreak
 import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
 
-class ColorBarAssembler(private val myLegendTitle: String, private val myDomain: ClosedRange<Double>, private val myScale: Scale2<Color>, private val myTheme: LegendTheme) {
+class ColorBarAssembler(private val myLegendTitle: String, private val myDomain: ClosedRange<Double>, private val myScale: Scale<Color>, private val myTheme: LegendTheme) {
     private var myOptions: ColorBarOptions? = null
 
     fun createColorBar(): LegendBoxInfo {

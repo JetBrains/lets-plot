@@ -4,8 +4,8 @@ import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import kotlin.jvm.JvmOverloads
 
@@ -14,12 +14,12 @@ object DataFrameUtil {
         return TransformVar.forAes(aes)
     }
 
-    fun applyTransform(data: DataFrame, `var`: DataFrame.Variable, aes: Aes<*>, scale: Scale2<*>): DataFrame {
+    fun applyTransform(data: DataFrame, `var`: DataFrame.Variable, aes: Aes<*>, scale: Scale<*>): DataFrame {
         val transformVar = transformVarFor(aes)
         return applyTransform(data, `var`, transformVar, scale)
     }
 
-    private fun applyTransform(data: DataFrame, variable: DataFrame.Variable, transformVar: DataFrame.Variable, scale: Scale2<*>): DataFrame {
+    private fun applyTransform(data: DataFrame, variable: DataFrame.Variable, transformVar: DataFrame.Variable, scale: Scale<*>): DataFrame {
         val transformSource = getTransformSource(data, variable, scale)
         val transformResult = ScaleUtil.transform(transformSource, scale)
         return data.builder()
@@ -27,7 +27,7 @@ object DataFrameUtil {
                 .build()
     }
 
-    private fun getTransformSource(data: DataFrame, variable: DataFrame.Variable, scale: Scale2<*>): List<*> {
+    private fun getTransformSource(data: DataFrame, variable: DataFrame.Variable, scale: Scale<*>): List<*> {
         if (!scale.hasDomainLimits()) {
             return data[variable]
         }

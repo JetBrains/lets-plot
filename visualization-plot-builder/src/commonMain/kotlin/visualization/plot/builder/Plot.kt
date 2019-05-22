@@ -19,11 +19,11 @@ import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.event.SvgEventHandler
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.VerticalAnchor
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.builder.event3.MouseEventPeer
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipSpec
@@ -41,9 +41,9 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     private val myCanvasFigures = ArrayList<CanvasFigure>()
     internal val mouseEventPeer = MouseEventPeer()
 
-    protected abstract val scaleXProto: Scale2<Double>?
+    protected abstract val scaleXProto: Scale<Double>?
 
-    protected abstract val scaleYProto: Scale2<Double>?
+    protected abstract val scaleYProto: Scale<Double>?
 
     protected abstract val title: String
 
@@ -131,8 +131,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             tileInfo: TileLayoutInfo,
             tileLayers: List<GeomLayer>): PlotTile {
 
-        val xScale: Scale2<Double>
-        val yScale: Scale2<Double>
+        val xScale: Scale<Double>
+        val yScale: Scale<Double>
         val coord: CoordinateSystem
         if (tileInfo.xAxisInfo != null && tileInfo.yAxisInfo != null) {
             val xDomain = tileInfo.xAxisInfo.axisDomain!!

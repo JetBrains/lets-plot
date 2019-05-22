@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.builder.*
 import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
@@ -63,11 +63,11 @@ class PlotAssembler private constructor(layersByTile: List<List<GeomLayer>>, pri
             emptyList<LegendBoxInfo>()
 
         // share first X/Y scale among all layers
-        var xScaleProto = GeomLayerListUtil.anyBoundXScale(myLayersByTile) as Scale2<Double>?
+        var xScaleProto = GeomLayerListUtil.anyBoundXScale(myLayersByTile) as Scale<Double>?
         if (xScaleProto == null) {
             xScaleProto = Scales.continuousDomain("x", Aes.X)
         }
-        var yScaleProto = GeomLayerListUtil.anyBoundYScale(myLayersByTile) as Scale2<Double>?
+        var yScaleProto = GeomLayerListUtil.anyBoundYScale(myLayersByTile) as Scale<Double>?
         if (yScaleProto == null) {
             yScaleProto = Scales.continuousDomain("y", Aes.Y)
         }
@@ -115,7 +115,7 @@ class PlotAssembler private constructor(layersByTile: List<List<GeomLayer>>, pri
 
 
     private fun createXYPlot(
-            xScaleProto: Scale2<Double>, yScaleProto: Scale2<Double>,
+            xScaleProto: Scale<Double>, yScaleProto: Scale<Double>,
             plotLayout: PlotLayout, legendBoxInfos: List<LegendBoxInfo>): Plot {
 
         val plotBuilder = PlotBuilder(myTheme)

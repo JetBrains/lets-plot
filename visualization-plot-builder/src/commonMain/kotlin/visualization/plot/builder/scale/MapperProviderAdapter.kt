@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.scale
 
+import jetbrains.datalore.visualization.plot.base.Transform
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.scale.Transform
 
 open class MapperProviderAdapter<T> : MapperProvider<T> {
     override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<T> {

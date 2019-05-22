@@ -12,12 +12,12 @@ import jetbrains.datalore.visualization.base.canvasFigure.SvgCanvasFigure
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.event3.MouseEventSource
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.visualization.plot.builder.event3.GeomTargetCollectorWithLocator
 import jetbrains.datalore.visualization.plot.builder.event3.TileMouseEventPeer
@@ -30,7 +30,7 @@ import jetbrains.datalore.visualization.plot.builder.theme.AxisTheme
 import jetbrains.datalore.visualization.plot.builder.theme.Theme
 
 internal class PlotTile(layers: List<GeomLayer>,
-                        private val myScaleX: Scale2<Double>, private val myScaleY: Scale2<Double>,
+                        private val myScaleX: Scale<Double>, private val myScaleY: Scale<Double>,
                         private val myTilesOrigin: DoubleVector, private val myLayoutInfo: TileLayoutInfo, private val myCoord: CoordinateSystem, private val myTheme: Theme,
                         private val myMouseEventSource: MouseEventSource) : SvgComponent() {
 
@@ -203,7 +203,7 @@ internal class PlotTile(layers: List<GeomLayer>,
         }
     }
 
-    private fun buildAxis(scale: Scale2<Double>, info: AxisLayoutInfo, coord: CoordinateSystem, theme: AxisTheme): AxisComponent {
+    private fun buildAxis(scale: Scale<Double>, info: AxisLayoutInfo, coord: CoordinateSystem, theme: AxisTheme): AxisComponent {
         val axis = AxisComponent(info.axisLength, info.orientation!!)
         AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
         AxisUtil.applyLayoutInfo(axis, info)

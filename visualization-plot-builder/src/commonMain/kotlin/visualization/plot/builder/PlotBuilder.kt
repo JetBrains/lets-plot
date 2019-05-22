@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.builder
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.visualization.plot.builder.layout.PlotLayout
@@ -17,8 +17,8 @@ class PlotBuilder(private val myTheme: Theme) {
     private var myAxisTitleLeft: String? = null
     private var myAxisTitleBottom: String? = null
     private val myLegendBoxInfos = ArrayList<LegendBoxInfo>()
-    private var myScaleXProto: Scale2<Double>? = null
-    private var myScaleYProto: Scale2<Double>? = null
+    private var myScaleXProto: Scale<Double>? = null
+    private var myScaleYProto: Scale<Double>? = null
     private var myAxisEnabled = true
     private var myInteractionsEnabled = true
     private var myCanvasEnabled = false
@@ -55,12 +55,12 @@ class PlotBuilder(private val myTheme: Theme) {
         return this
     }
 
-    fun scaleXProto(scaleXProto: Scale2<Double>): PlotBuilder {
+    fun scaleXProto(scaleXProto: Scale<Double>): PlotBuilder {
         myScaleXProto = scaleXProto
         return this
     }
 
-    fun scaleYProto(scaleYProto: Scale2<Double>): PlotBuilder {
+    fun scaleYProto(scaleYProto: Scale<Double>): PlotBuilder {
         myScaleYProto = scaleYProto
         return this
     }
@@ -86,8 +86,8 @@ class PlotBuilder(private val myTheme: Theme) {
 
 
     private class MyPlot internal constructor(b: PlotBuilder) : Plot(b.myTheme) {
-        override val scaleXProto: Scale2<Double>?
-        override val scaleYProto: Scale2<Double>?
+        override val scaleXProto: Scale<Double>?
+        override val scaleYProto: Scale<Double>?
 
         private val myTitle: String?
         private val myAxisTitleLeft: String?

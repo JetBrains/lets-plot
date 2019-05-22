@@ -1,22 +1,22 @@
 package jetbrains.datalore.visualization.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.coord.Projection
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 internal class ProjectionCoordProvider private constructor(private val myProjectionX: Projection?, private val myProjectionY: Projection?)// square grid
     : FixedRatioCoordProvider(1.0) {
 
-    override fun buildAxisScaleX(scaleProto: Scale2<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale2<Double> {
+    override fun buildAxisScaleX(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
         return if (myProjectionX != null) {
             buildAxisScaleWithProjection(myProjectionX, scaleProto, domain, axisLength, breaks)
         } else super.buildAxisScaleX(scaleProto, domain, axisLength, breaks)
     }
 
-    override fun buildAxisScaleY(scaleProto: Scale2<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale2<Double> {
+    override fun buildAxisScaleY(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
         return if (myProjectionY != null) {
             buildAxisScaleWithProjection(myProjectionY, scaleProto, domain, axisLength, breaks)
         } else super.buildAxisScaleY(scaleProto, domain, axisLength, breaks)
@@ -27,8 +27,8 @@ internal class ProjectionCoordProvider private constructor(private val myProject
             return ProjectionCoordProvider(null, projectionY)
         }
 
-        private fun buildAxisScaleWithProjection(projection: Projection, scaleProto: Scale2<Double>,
-                                                 domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale2<Double> {
+        private fun buildAxisScaleWithProjection(projection: Projection, scaleProto: Scale<Double>,
+                                                 domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
 
             val validDomain = projection.toValidDomain(domain)
             val validDomainProjected = ClosedRange.closed(

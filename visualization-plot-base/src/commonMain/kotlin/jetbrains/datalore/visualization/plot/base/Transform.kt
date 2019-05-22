@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.base.scale
+package jetbrains.datalore.visualization.plot.base
 
 interface Transform {
     fun apply(rawData: List<*>): List<Double?>

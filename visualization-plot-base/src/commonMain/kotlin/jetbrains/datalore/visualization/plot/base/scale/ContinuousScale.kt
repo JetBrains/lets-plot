@@ -1,6 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.base.Scale
+import jetbrains.datalore.visualization.plot.base.Transform
 import jetbrains.datalore.visualization.plot.base.scale.transform.Transforms
 
 internal class ContinuousScale<T> : AbstractScale<Double, T> {
@@ -42,7 +44,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
         throw IllegalArgumentException("Double is expected but was " + input::class.simpleName + " : " + input.toString())
     }
 
-    override fun with(): Scale2.Builder<T> {
+    override fun with(): Scale.Builder<T> {
         return MyBuilder(this)
     }
 
@@ -57,25 +59,25 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
             myUpperLimit = scale.domainLimits.upperEndpoint()
         }
 
-        override fun lowerLimit(v: Double): Scale2.Builder<T> {
+        override fun lowerLimit(v: Double): Scale.Builder<T> {
             myLowerLimit = v
             return this
         }
 
-        override fun upperLimit(v: Double): Scale2.Builder<T> {
+        override fun upperLimit(v: Double): Scale.Builder<T> {
             myUpperLimit = v
             return this
         }
 
-        override fun limits(domainValues: Set<*>): Scale2.Builder<T> {
+        override fun limits(domainValues: Set<*>): Scale.Builder<T> {
             throw IllegalArgumentException("Can't apply discrete limits to scale with continuous domain")
         }
 
-        override fun continuousTransform(v: Transform): Scale2.Builder<T> {
+        override fun continuousTransform(v: Transform): Scale.Builder<T> {
             return transform(v)
         }
 
-        override fun build(): Scale2<T> {
+        override fun build(): Scale<T> {
             return ContinuousScale(this)
         }
     }

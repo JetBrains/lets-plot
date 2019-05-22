@@ -5,6 +5,7 @@ import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Builder
 import jetbrains.datalore.visualization.plot.base.data.DataFrame.Variable
@@ -12,7 +13,6 @@ import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.Stat
 import jetbrains.datalore.visualization.plot.base.data.StatContext
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
@@ -237,7 +237,7 @@ object DataProcessing {
 
     private fun inverseTransformContinuousStatData(statData: DataFrame, stat: Stat, bindings: List<VarBinding>): Map<Variable, List<Double?>> {
         // inverse transform stat data with continuous domain.
-        val scaleByAes = HashMap<Aes<*>, Scale2<*>>()
+        val scaleByAes = HashMap<Aes<*>, Scale<*>>()
         val aesByMappedStatVar = HashMap<Variable, Aes<*>>()
         for (aes in Aes.values()) {
             if (stat.hasDefaultMapping(aes)) {
@@ -274,7 +274,7 @@ object DataProcessing {
         for (statVar in statData.variables()) {
             if (aesByMappedStatVar.containsKey(statVar)) {
                 val aes = aesByMappedStatVar[statVar]!!
-                var scale: Scale2<*>? = scaleByAes[aes]
+                var scale: Scale<*>? = scaleByAes[aes]
                 if (scale == null) {
                     if (Aes.isPositionalX(aes)) {
                         scale = scaleByAes[Aes.X]

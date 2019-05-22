@@ -1,8 +1,10 @@
 package jetbrains.datalore.visualization.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
+import jetbrains.datalore.visualization.plot.base.Scale
+import jetbrains.datalore.visualization.plot.base.Transform
 
-internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
+internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
     final override val name: String
     final override var mapper: ((Double?) -> T?)
@@ -71,7 +73,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
         return myLabels != null
     }
 
-    protected abstract class AbstractBuilder<DomainT, T>(scale: AbstractScale<DomainT, T>) : Scale2.Builder<T> {
+    protected abstract class AbstractBuilder<DomainT, T>(scale: AbstractScale<DomainT, T>) : Scale.Builder<T> {
         internal val myName: String = scale.name
         internal var myTransform: Transform?
 
@@ -92,7 +94,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
             myAdditiveExpand = scale.additiveExpand
         }
 
-        override fun breaks(l: List<*>): Scale2.Builder<T> {
+        override fun breaks(l: List<*>): Scale.Builder<T> {
             myBreaks = ArrayList<DomainT>().let {
                 for (any in l) {
                     @Suppress("UNCHECKED_CAST")
@@ -103,27 +105,27 @@ internal abstract class AbstractScale<DomainT, T> : Scale2<T> {
             return this
         }
 
-        override fun labels(l: List<String>): Scale2.Builder<T> {
+        override fun labels(l: List<String>): Scale.Builder<T> {
             myLabels = l
             return this
         }
 
-        override fun mapper(m: (Double?) -> T?): Scale2.Builder<T> {
+        override fun mapper(m: (Double?) -> T?): Scale.Builder<T> {
             myMapper = m
             return this
         }
 
-        override fun multiplicativeExpand(v: Double): Scale2.Builder<T> {
+        override fun multiplicativeExpand(v: Double): Scale.Builder<T> {
             myMultiplicativeExpand = v
             return this
         }
 
-        override fun additiveExpand(v: Double): Scale2.Builder<T> {
+        override fun additiveExpand(v: Double): Scale.Builder<T> {
             myAdditiveExpand = v
             return this
         }
 
-        protected fun transform(v: Transform): Scale2.Builder<T> {
+        protected fun transform(v: Transform): Scale.Builder<T> {
             myTransform = v
             return this
         }

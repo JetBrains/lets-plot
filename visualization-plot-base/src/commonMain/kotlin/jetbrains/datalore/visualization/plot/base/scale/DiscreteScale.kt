@@ -2,6 +2,8 @@ package jetbrains.datalore.visualization.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.TreeMap
+import jetbrains.datalore.visualization.plot.base.Scale
+import jetbrains.datalore.visualization.plot.base.Transform
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import kotlin.math.abs
 
@@ -149,7 +151,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         return if (keyNumber != null) myDomainValueByNumber!![keyNumber] else null
     }
 
-    override fun with(): Scale2.Builder<T> {
+    override fun with(): Scale.Builder<T> {
         return MyBuilder(this)
     }
 
@@ -163,31 +165,31 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             myDomainLimits = scale.myDomainLimits
         }
 
-        override fun lowerLimit(v: Double): Scale2.Builder<T> {
+        override fun lowerLimit(v: Double): Scale.Builder<T> {
             throw IllegalArgumentException("Not applicable to scale with discrete domain")
         }
 
-        override fun upperLimit(v: Double): Scale2.Builder<T> {
+        override fun upperLimit(v: Double): Scale.Builder<T> {
             throw IllegalArgumentException("Not applicable to scale with discrete domain")
         }
 
-        override fun limits(domainValues: Set<*>): Scale2.Builder<T> {
+        override fun limits(domainValues: Set<*>): Scale.Builder<T> {
             myDomainLimits = domainValues
             return this
         }
 
-        override fun breaks(l: List<*>): Scale2.Builder<T> {
+        override fun breaks(l: List<*>): Scale.Builder<T> {
             myNewBreaks = l
             // don't call super!
             return this
         }
 
-        override fun continuousTransform(v: Transform): Scale2.Builder<T> {
+        override fun continuousTransform(v: Transform): Scale.Builder<T> {
             // ignore
             return this
         }
 
-        override fun build(): Scale2<T> {
+        override fun build(): Scale<T> {
             val scale = DiscreteScale(this)
             if (myNewBreaks == null) {
                 return scale

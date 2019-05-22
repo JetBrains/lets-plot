@@ -36,8 +36,8 @@ import jetbrains.datalore.visualization.plot.base.Aes.Companion.YINTERCEPT
 import jetbrains.datalore.visualization.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.visualization.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.visualization.plot.base.Aes.Companion.Z
+import jetbrains.datalore.visualization.plot.base.Transform
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.scale.Transform
 import jetbrains.datalore.visualization.plot.builder.scale.DefaultMapperProviderUtil.createColor
 import jetbrains.datalore.visualization.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
 import jetbrains.datalore.visualization.plot.builder.scale.DefaultMapperProviderUtil.createStringIdentity

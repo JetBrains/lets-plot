@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.base.scale.transform
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.base.Transform
 import jetbrains.datalore.visualization.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
 import jetbrains.datalore.visualization.plot.base.scale.ScaleBreaks
-import jetbrains.datalore.visualization.plot.base.scale.Transform
 
 open class FunTransform(
         private val myFun: (Double?) -> Double?,

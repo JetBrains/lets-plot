@@ -4,7 +4,7 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.builder.layout.axis.GuideBreaks
 import kotlin.test.assertEquals
@@ -72,7 +72,7 @@ internal open class CoordTestBase {
             )
         }
 
-        fun scaleX(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale2<Double> {
+        fun scaleX(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
             return provider.buildAxisScaleX(
                     Scales.continuousDomainNumericRange("Test scale X"),
                     domain,
@@ -81,7 +81,7 @@ internal open class CoordTestBase {
             )
         }
 
-        fun scaleY(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale2<Double> {
+        fun scaleY(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
             return provider.buildAxisScaleY(
                     Scales.continuousDomainNumericRange("Test scale Y"),
                     domain,
@@ -90,7 +90,7 @@ internal open class CoordTestBase {
             )
         }
 
-        fun applyScales(p: DoubleVector, scaleX: Scale2<Double>, scaleY: Scale2<Double>): DoubleVector {
+        fun applyScales(p: DoubleVector, scaleX: Scale<Double>, scaleY: Scale<Double>): DoubleVector {
             return DoubleVector(
                     scaleX.mapper(p.x)!!,
                     scaleY.mapper(p.y)!!)

@@ -2,11 +2,11 @@ package jetbrains.datalore.visualization.plot.builder.scale
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Scale
+import jetbrains.datalore.visualization.plot.base.Transform
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.Scales
-import jetbrains.datalore.visualization.plot.base.scale.Transform
 
 /**
  * see ggplot2: discrete_scale(...) / continuous_scale(...)
@@ -119,9 +119,9 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
             return myName ?: variable.label
         }
 
-        override fun createScale(data: DataFrame, variable: DataFrame.Variable): Scale2<T> {
+        override fun createScale(data: DataFrame, variable: DataFrame.Variable): Scale<T> {
             val name = scaleName(variable)
-            var scale: Scale2<T>
+            var scale: Scale<T>
             if (myDiscreteDomain || !data.isNumeric(variable)) {
                 // discrete domain
                 val mapper = if (data.isEmpty(variable)) {
@@ -209,7 +209,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
             return completeScale(scale)
         }
 
-        private fun completeScale(scale: Scale2<T>): Scale2<T> {
+        private fun completeScale(scale: Scale<T>): Scale<T> {
             val with = scale.with()
             if (myBreaks != null) {
                 with.breaks(myBreaks)

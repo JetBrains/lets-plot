@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.gog.config.TestUtil.assertClientWontFail
 import jetbrains.datalore.visualization.plot.gog.server.config.ServerSideTestUtil.serverTransformWithoutEncoding
@@ -59,7 +59,7 @@ class DiscreteScaleForContinuousVarTest {
                 break
             }
         }
-        val scale = fillBinding!!.scale as Scale2<Color>?
+        val scale = fillBinding!!.scale as Scale<Color>?
         // this is discrete scale so input value for mapper is index
         // ..count.. [0] = 2   (two lunched)
         // ..count.. [1] = 3   (three dinners)

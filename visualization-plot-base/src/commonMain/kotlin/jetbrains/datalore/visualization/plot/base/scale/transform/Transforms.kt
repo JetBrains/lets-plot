@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.scale.transform
 
+import jetbrains.datalore.visualization.plot.base.Transform
 import jetbrains.datalore.visualization.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.visualization.plot.base.scale.Transform
 
 object Transforms {
     val IDENTITY: Transform = IdentityTransform()

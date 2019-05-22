@@ -1,17 +1,18 @@
 package jetbrains.datalore.visualization.plot.base.scale
 
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Scale
 
 object Scales {
-    fun <T> continuousDomain(name: String, aes: Aes<T>): Scale2<T> {
+    fun <T> continuousDomain(name: String, aes: Aes<T>): Scale<T> {
         return ContinuousScale(name, Mappers.undefined(), aes.isNumeric)
     }
 
-    fun continuousDomainNumericRange(name: String): Scale2<Double> {
+    fun continuousDomainNumericRange(name: String): Scale<Double> {
         return ContinuousScale(name, Mappers.undefined(), true)
     }
 
-    fun <T> continuousDomain(name: String, mapper: (Double?) -> T?, continuousRange: Boolean): Scale2<T> {
+    fun <T> continuousDomain(name: String, mapper: (Double?) -> T?, continuousRange: Boolean): Scale<T> {
         return ContinuousScale(name, mapper, continuousRange)
     }
 
@@ -21,15 +22,15 @@ object Scales {
     }
     */
 
-    fun <T> discreteDomain(name: String, domainValues: Collection<Any?>): Scale2<T> {
+    fun <T> discreteDomain(name: String, domainValues: Collection<Any?>): Scale<T> {
         return discreteDomain(name, domainValues, Mappers.undefined())
     }
 
-    fun <T> discreteDomain(name: String, domainValues: Collection<Any?>, mapper: ((Double?) -> T?)): Scale2<T> {
+    fun <T> discreteDomain(name: String, domainValues: Collection<Any?>, mapper: ((Double?) -> T?)): Scale<T> {
         return DiscreteScale(name, domainValues, mapper)
     }
 
-    fun <T> pureDiscrete(name: String, domainValues: List<Any?>, outputValues: List<T>, defaultOutputValue: T): Scale2<T> {
+    fun <T> pureDiscrete(name: String, domainValues: List<Any?>, outputValues: List<T>, defaultOutputValue: T): Scale<T> {
         return Scales.discreteDomain<T>(name, domainValues)
                 .with()
                 .mapper(Mappers.discrete(outputValues, defaultOutputValue))

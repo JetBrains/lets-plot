@@ -1,12 +1,12 @@
 package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.builder.scale.ScaleProvider
 
 // ToDo: ?Type VarBinding can be generified
-open class VarBinding(val variable: DataFrame.Variable, val aes: Aes<*>, open val scale: Scale2<*>?) {
+open class VarBinding(val variable: DataFrame.Variable, val aes: Aes<*>, open val scale: Scale<*>?) {
 
     open val isDeferred: Boolean
         get() = false
@@ -27,7 +27,7 @@ open class VarBinding(val variable: DataFrame.Variable, val aes: Aes<*>, open va
     companion object {
         fun deferred(variable: DataFrame.Variable, aes: Aes<*>, scaleProvider: ScaleProvider<*>): VarBinding {
             return object : VarBinding(variable, aes, null) {
-                override val scale: Scale2<*>
+                override val scale: Scale<*>
                     get() = throw IllegalStateException("Scale not defined for deferred var binding")
 
                 override val isDeferred: Boolean

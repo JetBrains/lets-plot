@@ -2,6 +2,8 @@ package jetbrains.datalore.visualization.plot.base.scale
 
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Scale
+import jetbrains.datalore.visualization.plot.base.Transform
 import jetbrains.datalore.visualization.plot.base.scale.ScaleTestUtil.assertValuesInLimits
 import jetbrains.datalore.visualization.plot.base.scale.ScaleTestUtil.assertValuesNotInLimits
 import kotlin.test.Test
@@ -10,7 +12,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ContinuousScaleTest {
-    private fun createScale(): Scale2<*> {
+    private fun createScale(): Scale<*> {
         return Scales.continuousDomain("Test scale", Aes.X)
     }
 

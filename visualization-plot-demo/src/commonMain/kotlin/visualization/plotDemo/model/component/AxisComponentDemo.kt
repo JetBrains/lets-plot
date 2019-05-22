@@ -5,10 +5,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.coord.Coords
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.visualization.plot.builder.AxisUtil
@@ -72,7 +72,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 CENTER_SQUARE_SIZE.x + LEFT_MARGIN.toDouble() + RIGHT_MARGIN.toDouble(),
                 CENTER_SQUARE_SIZE.y + TOP_MARGIN.toDouble() + BOTTOM_MARGIN.toDouble())
 
-        private fun createAxis(axisLength: Double, scale: Scale2<Double>, coord: CoordinateSystem, orientation: Orientation): AxisComponent {
+        private fun createAxis(axisLength: Double, scale: Scale<Double>, coord: CoordinateSystem, orientation: Orientation): AxisComponent {
             val axis = AxisComponent(axisLength, orientation)
             AxisUtil.setBreaks(axis, scale, coord, orientation.isHorizontal)
             axis.gridLineColor.set(Color.RED)

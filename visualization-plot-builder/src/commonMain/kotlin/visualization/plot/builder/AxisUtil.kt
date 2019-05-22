@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent
 import jetbrains.datalore.visualization.plot.builder.layout.AxisLayoutInfo
@@ -31,7 +31,7 @@ object AxisUtil {
         axis.tickMarkWidth.set(theme.tickMarkWidth())
     }
 
-    fun setBreaks(axis: AxisComponent, scale: Scale2<Double>, coord: CoordinateSystem, isHorizontal: Boolean) {
+    fun setBreaks(axis: AxisComponent, scale: Scale<Double>, coord: CoordinateSystem, isHorizontal: Boolean) {
         axis.breaks.set(ScaleUtil.axisBreaks(scale, coord, isHorizontal))
         axis.labels.set(ScaleUtil.labels(scale))
     }

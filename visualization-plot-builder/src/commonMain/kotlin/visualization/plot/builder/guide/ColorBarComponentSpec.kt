@@ -3,11 +3,11 @@ package jetbrains.datalore.visualization.plot.builder.guide
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.builder.scale.GuideBreak
 import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
 
-class ColorBarComponentSpec(title: String, internal val domain: ClosedRange<Double>, internal val breaks: List<GuideBreak<Double>>, internal val scale: Scale2<Color>, private val myTheme: LegendTheme) : LegendBoxSpec(title, myTheme) {
+class ColorBarComponentSpec(title: String, internal val domain: ClosedRange<Double>, internal val breaks: List<GuideBreak<Double>>, internal val scale: Scale<Color>, private val myTheme: LegendTheme) : LegendBoxSpec(title, myTheme) {
 
     internal var binCount = DEF_NUM_BIN
     private var myBarWidth = Double.NaN

@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.builder.assemble.geom
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.event.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
@@ -26,7 +26,7 @@ internal class PointDataAccess(private val myData: DataFrame, private val bindin
 
         val value = value(aes, index)!!
         @Suppress("UNCHECKED_CAST")
-        val scale = myBindings[aes]!!.scale as Scale2<T>
+        val scale = myBindings[aes]!!.scale as Scale<T>
 
         val original = scale.transform.applyInverse(value)
         val s: String

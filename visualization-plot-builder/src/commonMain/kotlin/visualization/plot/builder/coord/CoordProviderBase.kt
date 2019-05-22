@@ -2,19 +2,19 @@ package jetbrains.datalore.visualization.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.coord.Coords
 import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.builder.layout.axis.GuideBreaks
 
 internal abstract class CoordProviderBase : CoordProvider {
 
-    override fun buildAxisScaleX(scaleProto: Scale2<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale2<Double> {
+    override fun buildAxisScaleX(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
         return buildAxisScaleDefault(scaleProto, domain, axisLength, breaks)
     }
 
-    override fun buildAxisScaleY(scaleProto: Scale2<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale2<Double> {
+    override fun buildAxisScaleY(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
         return buildAxisScaleDefault(scaleProto, domain, axisLength, breaks)
     }
 
@@ -29,11 +29,11 @@ internal abstract class CoordProviderBase : CoordProvider {
             return Mappers.mul(domain, axisLength)
         }
 
-        private fun buildAxisScaleDefault(scaleProto: Scale2<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale2<Double> {
+        private fun buildAxisScaleDefault(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
             return buildAxisScaleDefault(scaleProto, axisMapper(domain, axisLength), breaks)
         }
 
-        fun buildAxisScaleDefault(scaleProto: Scale2<Double>, axisMapper: (Double?) -> Double?, breaks: GuideBreaks): Scale2<Double> {
+        fun buildAxisScaleDefault(scaleProto: Scale<Double>, axisMapper: (Double?) -> Double?, breaks: GuideBreaks): Scale<Double> {
             return scaleProto.with()
                     .breaks(breaks.domainValues)
                     .labels(breaks.labels)

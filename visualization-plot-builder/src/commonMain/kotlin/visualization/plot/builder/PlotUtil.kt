@@ -6,15 +6,11 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.GeomContext
-import jetbrains.datalore.visualization.plot.base.PositionAdjustment
+import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil.isFinite
 import kotlin.math.max
@@ -357,7 +353,7 @@ object PlotUtil {
         return scale?.additiveExpand ?: 0.0
     }
 
-    private fun findBoundScale(layer: GeomLayer, aes: Aes<*>): Scale2<*>? {
+    private fun findBoundScale(layer: GeomLayer, aes: Aes<*>): Scale<*>? {
         if (layer.hasBinding(aes)) {
             return layer.getBinding(aes).scale
         }

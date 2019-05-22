@@ -5,7 +5,7 @@ import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.builder.ColorBarOptions
 import jetbrains.datalore.visualization.plot.builder.GuideOptions
 import jetbrains.datalore.visualization.plot.builder.VarBinding
@@ -68,7 +68,7 @@ internal object PlotGuidesAssemblerUtil {
 
     fun createColorBarAssembler(scaleName: String,
                                 aes: Aes<*>, dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
-                                scale: Scale2<Color>,
+                                scale: Scale<Color>,
                                 options: ColorBarOptions?,
                                 theme: LegendTheme): ColorBarAssembler {
 

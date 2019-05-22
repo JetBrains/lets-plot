@@ -1,6 +1,7 @@
-package jetbrains.datalore.visualization.plot.base.scale
+package jetbrains.datalore.visualization.plot.base
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.visualization.plot.base.scale.BreaksGenerator
 
 /**
  * Translates input to aesthetics by
@@ -13,8 +14,9 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
  * labels - tick labels
  *
  * @param <T> - type of target aesthetic
-</T> */
-interface Scale2<T> {
+ *
+ */
+interface Scale<T> {
     val name: String
 
     val breaks: List<*>
@@ -92,6 +94,6 @@ interface Scale2<T> {
 
         fun continuousTransform(v: Transform): Builder<T>
 
-        fun build(): Scale2<T>
+        fun build(): Scale<T>
     }
 }

@@ -3,10 +3,10 @@ package jetbrains.datalore.visualization.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.data.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.builder.Plot
 import jetbrains.datalore.visualization.plot.builder.VarBinding
@@ -143,7 +143,7 @@ open class BarPlotDemo : SimpleDemoBase() {
             return values
         }
 
-        private fun colorScale(name: String, domain: List<*>, colors: List<Color>): Scale2<Color> {
+        private fun colorScale(name: String, domain: List<*>, colors: List<Color>): Scale<Color> {
             return Scales.pureDiscrete(name, domain, colors, Color.GRAY)
         }
     }

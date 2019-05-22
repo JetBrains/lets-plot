@@ -4,9 +4,9 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.stat.Stats
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.builder.PlotContainer
 import jetbrains.datalore.visualization.plot.builder.VarBinding
@@ -19,7 +19,7 @@ import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
 
 class BarPlotResizeDemo private constructor(
         private val sclData: SinCosLineData,
-        private val xScale: Scale2<*>) {
+        private val xScale: Scale<*>) {
 
     fun createPlot(plotSize: ReadableProperty<DoubleVector>): PlotContainer {
         val varX = sclData.varX

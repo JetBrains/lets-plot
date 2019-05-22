@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.base.scale.breaks
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 
 
 object ScaleBreaksUtil {
-    fun <TargetT> withBreaks(scale: Scale2<TargetT>, scaleDomain: ClosedRange<Double>, breakCount: Int): Scale2<TargetT> {
+    fun <TargetT> withBreaks(scale: Scale<TargetT>, scaleDomain: ClosedRange<Double>, breakCount: Int): Scale<TargetT> {
         if (scale.hasBreaksGenerator()) {
             val breaksHelper = scale.breaksGenerator.generateBreaks(scaleDomain, breakCount)
             val breaks = breaksHelper.domainValues
@@ -18,7 +18,7 @@ object ScaleBreaksUtil {
         return withLinearBreaks(scale, scaleDomain, breakCount)
     }
 
-    private fun <TargetT> withLinearBreaks(scale: Scale2<TargetT>, scaleDomain: ClosedRange<Double>, breakCount: Int): Scale2<TargetT> {
+    private fun <TargetT> withLinearBreaks(scale: Scale<TargetT>, scaleDomain: ClosedRange<Double>, breakCount: Int): Scale<TargetT> {
         val breaksHelper = LinearBreaksHelper(scaleDomain.lowerEndpoint(), scaleDomain.upperEndpoint(), breakCount)
         val breaks = breaksHelper.breaks
         val labels = ArrayList<String>()

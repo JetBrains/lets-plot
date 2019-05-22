@@ -1,14 +1,14 @@
 package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 
 object GeomLayerListUtil {
     fun containsLivemapLayer(layersByTile: List<List<GeomLayer>>): Boolean {
         return !layersByTile.isEmpty() && containsLivemapLayer2(layersByTile[0])
     }
 
-    fun anyBoundXScale(layersByTile: List<List<GeomLayer>>): Scale2<*>? {
+    fun anyBoundXScale(layersByTile: List<List<GeomLayer>>): Scale<*>? {
         for (layer in layersByTile[0]) {
             if (layer.hasBinding(Aes.X)) {
                 return layer.getBinding(Aes.X).scale
@@ -24,7 +24,7 @@ object GeomLayerListUtil {
         return null
     }
 
-    fun anyBoundYScale(layersByTile: List<List<GeomLayer>>): Scale2<*>? {
+    fun anyBoundYScale(layersByTile: List<List<GeomLayer>>): Scale<*>? {
         for (layer in layersByTile[0]) {
             if (layer.hasBinding(Aes.Y)) {
                 return layer.getBinding(Aes.Y).scale

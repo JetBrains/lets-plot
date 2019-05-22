@@ -4,6 +4,7 @@ import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.visualization.plot.base.coord.Coords
@@ -15,7 +16,10 @@ import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.base.scale.*
+import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
+import jetbrains.datalore.visualization.plot.base.scale.Mappers
+import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
+import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantizeScale
 import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent
@@ -439,7 +443,7 @@ open class ScatterDemo : SimpleDemoBase() {
     }
 
     private companion object {
-        fun continuousScale(name: String): Scale2<Double> {
+        fun continuousScale(name: String): Scale<Double> {
             return Scales.continuousDomainNumericRange(name)
         }
 

@@ -5,7 +5,7 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
+import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.builder.*
 import jetbrains.datalore.visualization.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
@@ -114,13 +114,13 @@ internal object PlotAssemblerUtil {
                     if (guideOptions is ColorBarOptions) {
                         checkFitsColorBar(binding)
                         colorBar = true
-                        val colorScale = scale as Scale2<Color>
+                        val colorScale = scale as Scale<Color>
                         colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(scaleName, binding.aes,
                                 dataRangeByAes, colorScale, guideOptions, theme)
                     }
                 } else if (fitsColorBar(binding)) {
                     colorBar = true
-                    val colorScale = scale as Scale2<Color>
+                    val colorScale = scale as Scale<Color>
                     colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(scaleName, binding.aes,
                             dataRangeByAes, colorScale, null, theme)
                 }

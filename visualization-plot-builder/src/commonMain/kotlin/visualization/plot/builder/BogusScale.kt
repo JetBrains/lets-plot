@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.base.scale.Scale2
-import jetbrains.datalore.visualization.plot.base.scale.Transform
+import jetbrains.datalore.visualization.plot.base.Scale
+import jetbrains.datalore.visualization.plot.base.Transform
 
-internal class BogusScale : Scale2<Double> {
+internal class BogusScale : Scale<Double> {
     override val name: String
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
@@ -55,7 +55,7 @@ internal class BogusScale : Scale2<Double> {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 
-    override fun with(): Scale2.Builder<Double> {
+    override fun with(): Scale.Builder<Double> {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 }

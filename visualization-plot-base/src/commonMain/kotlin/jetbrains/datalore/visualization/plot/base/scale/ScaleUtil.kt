@@ -5,10 +5,11 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.Scale
 
 object ScaleUtil {
 
-    fun labels(scale: Scale2<*>): List<String> {
+    fun labels(scale: Scale<*>): List<String> {
         if (!scale.hasBreaks()) {
             return emptyList()
         }
@@ -40,7 +41,7 @@ object ScaleUtil {
         return result
     }
 
-    fun labelByBreak(scale: Scale2<*>): Map<Any, String> {
+    fun labelByBreak(scale: Scale<*>): Map<Any, String> {
         val result = HashMap<Any, String>()
         if (scale.hasBreaks()) {
             val breaks = scale.breaks.iterator()
@@ -52,7 +53,7 @@ object ScaleUtil {
         return result
     }
 
-    fun breaksAsNumbers(scale: Scale2<*>): List<Double> {
+    fun breaksAsNumbers(scale: Scale<*>): List<Double> {
         val breaks = scale.breaks
         val numbers = ArrayList<Double>()
         for (o in breaks) {
@@ -61,11 +62,11 @@ object ScaleUtil {
         return numbers
     }
 
-    fun breaksTransformed(scale: Scale2<*>): List<Double> {
+    fun breaksTransformed(scale: Scale<*>): List<Double> {
         return transform(scale.breaks, scale).map { it!! }
     }
 
-    fun axisBreaks(scale: Scale2<Double>, coord: CoordinateSystem, horizontal: Boolean): List<Double> {
+    fun axisBreaks(scale: Scale<Double>, coord: CoordinateSystem, horizontal: Boolean): List<Double> {
         val scaleBreaks = transformAndMap(scale.breaks, scale)
         val axisBreaks = ArrayList<Double>()
         for (br in scaleBreaks) {
@@ -92,19 +93,19 @@ object ScaleUtil {
         return axisBreaks
     }
 
-    fun <T> breaksAesthetics(scale: Scale2<T>): List<T?> {
+    fun <T> breaksAesthetics(scale: Scale<T>): List<T?> {
         return transformAndMap(scale.breaks, scale)
     }
 
-    fun map(range: ClosedRange<Double>, scale: Scale2<Double>): ClosedRange<Double> {
+    fun map(range: ClosedRange<Double>, scale: Scale<Double>): ClosedRange<Double> {
         return MapperUtil.map(range, scale.mapper)
     }
 
-    fun <T> map(d: Double?, scale: Scale2<T>): T? {
+    fun <T> map(d: Double?, scale: Scale<T>): T? {
         return scale.mapper(d)
     }
 
-    fun <T> map(d: List<Double?>, scale: Scale2<T>): List<T?> {
+    fun <T> map(d: List<Double?>, scale: Scale<T>): List<T?> {
         val result = ArrayList<T?>()
         for (t in d) {
             result.add(map(t, scale))
@@ -112,21 +113,21 @@ object ScaleUtil {
         return result
     }
 
-    private fun <T> transformAndMap(l: List<*>, scale: Scale2<T>): List<T?> {
+    private fun <T> transformAndMap(l: List<*>, scale: Scale<T>): List<T?> {
         val tl = transform(l, scale)
         return map(tl, scale)
     }
 
-    fun transform(l: List<*>, scale: Scale2<*>): List<Double?> {
+    fun transform(l: List<*>, scale: Scale<*>): List<Double?> {
         return scale.transform.apply(l)
     }
 
-    fun inverseTransformToContinuousDomain(l: List<Double?>, scale: Scale2<*>): List<Double?> {
+    fun inverseTransformToContinuousDomain(l: List<Double?>, scale: Scale<*>): List<Double?> {
         checkState(scale.isContinuousDomain, "Not continuous numeric domain: $scale")
         return inverseTransform(l, scale) as List<Double?>
     }
 
-    fun inverseTransform(l: List<Double?>, scale: Scale2<*>): List<*> {
+    fun inverseTransform(l: List<Double?>, scale: Scale<*>): List<*> {
         val transform = scale.transform
         val result = ArrayList<Any?>(l.size)
         for (v in l) {
@@ -135,7 +136,7 @@ object ScaleUtil {
         return result
     }
 
-    fun transformedDefinedLimits(scale: Scale2<*>): List<Double> {
+    fun transformedDefinedLimits(scale: Scale<*>): List<Double> {
         val result = ArrayList<Double>()
         val domainLimits = transform(definedLimits(scale), scale)
         for (x in domainLimits) {
@@ -146,7 +147,7 @@ object ScaleUtil {
         return result
     }
 
-    private fun definedLimits(scale: Scale2<*>): List<Double> {
+    private fun definedLimits(scale: Scale<*>): List<Double> {
         checkArgument(scale.isContinuousDomain, "Continuous scale is expected (" + scale.name + ")")
         val result = ArrayList<Double>()
         val domainLimits = scale.domainLimits
