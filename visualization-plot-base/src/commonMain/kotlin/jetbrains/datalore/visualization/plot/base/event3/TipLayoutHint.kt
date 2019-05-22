@@ -4,7 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 
 // `open` - for Mockito tests
-open class TipLayoutHint internal constructor(
+open class TipLayoutHint(
         open val kind: Kind,
         open val coord: DoubleVector?,
         open val objectRadius: Double,

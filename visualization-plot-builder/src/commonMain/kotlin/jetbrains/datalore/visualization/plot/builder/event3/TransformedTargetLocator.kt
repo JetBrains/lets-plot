@@ -1,14 +1,17 @@
-package jetbrains.datalore.visualization.plot.base.event3
+package jetbrains.datalore.visualization.plot.builder.event3
 
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
+import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
 
-abstract class TransformedTargetLocator(private val myTargetLocator: GeomTargetLocator) : GeomTargetLocator {
+abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLocator) : GeomTargetLocator {
 
     override fun findTargets(coord: DoubleVector): GeomTargetLocator.LocatedTargets? {
         val targetCoord = convertToTargetCoord(coord)
-        val locatedTargets = myTargetLocator.findTargets(targetCoord) ?: return null
+        val locatedTargets = targetLocator.findTargets(targetCoord) ?: return null
         return convertLocatedTargets(locatedTargets)
     }
 
