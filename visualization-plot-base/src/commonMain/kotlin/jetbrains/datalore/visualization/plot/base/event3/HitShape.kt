@@ -3,13 +3,13 @@ package jetbrains.datalore.visualization.plot.base.event3
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
-open class HitShape private constructor(val kind: Kind, private val myShape: Any) {
+open class HitShape private constructor(val kind: Kind, private val shape: Any) {
 
     val point: DoubleCircle
-        get() = myShape as DoubleCircle
+        get() = shape as DoubleCircle
 
     val rect: DoubleRectangle
-        get() = myShape as DoubleRectangle
+        get() = shape as DoubleRectangle
 
     open val points: List<DoubleVector>
         get() = throw IllegalStateException("Not applicable to $kind")

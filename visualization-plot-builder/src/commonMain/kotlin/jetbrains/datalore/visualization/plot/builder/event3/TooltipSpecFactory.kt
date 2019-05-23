@@ -9,7 +9,6 @@ import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
 import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess.MappedData
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipSpec
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.DATA_COLUMN_JOIN_KEY
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.POINT_X1

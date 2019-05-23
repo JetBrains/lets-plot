@@ -6,7 +6,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.*
 import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.DoubleRange
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipSpec
+import jetbrains.datalore.visualization.plot.builder.event3.TooltipSpec
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.VerticalAlignment.TOP
 import kotlin.math.min

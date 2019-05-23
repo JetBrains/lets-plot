@@ -4,9 +4,9 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.size
+import jetbrains.datalore.visualization.plot.builder.event3.TooltipInteractions.Companion.convertToTooltipEntry
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipManager.TooltipContent
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipManager.TooltipEntry
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipInteractions.Companion.convertToTooltipEntry
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.*
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.Companion.NORMAL_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.Companion.SHORT_STEM_LENGTH

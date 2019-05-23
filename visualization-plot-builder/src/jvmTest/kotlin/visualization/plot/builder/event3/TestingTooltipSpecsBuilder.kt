@@ -9,7 +9,6 @@ import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 import jetbrains.datalore.visualization.plot.builder.event3.mockito.ReturnsNotNullValuesAnswer
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipSpec
 import org.mockito.Mockito.*
 
 

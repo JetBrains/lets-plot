@@ -8,7 +8,6 @@ import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.builder.event3.MappedDataAccessMock.Mapping
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.coord
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipSpec
 import kotlin.test.assertEquals
 
 open class TooltipSpecTestHelper {

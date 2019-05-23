@@ -66,8 +66,8 @@ kotlin {
 idea {
     module {
         settings {
-            packagePrefix["src/commonMain/kotlin"] = "jetbrains.datalore"
-            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
+//            packagePrefix["src/commonMain/kotlin"] = "jetbrains.datalore"
+//            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }

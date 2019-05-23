@@ -1,14 +1,13 @@
-package jetbrains.datalore.visualization.plot.builder.event3.tooltip
+package jetbrains.datalore.visualization.plot.builder.event3
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind
-import jetbrains.datalore.visualization.plot.builder.event3.TooltipManager
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipManager.TooltipContent
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipManager.TooltipEntry
-import jetbrains.datalore.visualization.plot.builder.event3.TooltipManagerImpl
+import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipOrientation
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.PositionedTooltip

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.event3.tooltip
+package jetbrains.datalore.visualization.plot.builder.event3
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint

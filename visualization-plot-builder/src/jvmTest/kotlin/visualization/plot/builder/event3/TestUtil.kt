@@ -13,7 +13,6 @@ import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.*
 import jetbrains.datalore.visualization.plot.base.event3.HitShape
 import jetbrains.datalore.visualization.plot.builder.event3.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.visualization.plot.builder.event3.MappedDataAccessMock.Mapping
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipSpec
 import org.assertj.core.api.Condition
 import org.mockito.Mockito.mock
 import kotlin.test.assertEquals
