@@ -13,9 +13,9 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-internal open class TargetProjection(val data: Any)
+internal open class TargetProjection
 
-internal class PointTargetProjection private constructor(data: Any) : TargetProjection(data) {
+internal class PointTargetProjection private constructor(val data: Any) : TargetProjection() {
 
     fun x(): Double {
         return data as Double
@@ -36,7 +36,7 @@ internal class PointTargetProjection private constructor(data: Any) : TargetProj
     }
 }
 
-internal class RectTargetProjection private constructor(data: Any) : TargetProjection(data) {
+internal class RectTargetProjection private constructor(val data: Any) : TargetProjection() {
 
     fun x(): DoubleRange {
         return data as DoubleRange
@@ -57,13 +57,14 @@ internal class RectTargetProjection private constructor(data: Any) : TargetProje
     }
 }
 
-internal class PolygonTargetProjection private constructor(data: Any) : TargetProjection(data) {
+internal class PolygonTargetProjection private constructor(val data: Any) : TargetProjection() {
 
     fun x(): DoubleRange {
         return data as DoubleRange
     }
 
     fun xy(): List<RingXY> {
+        @Suppress("UNCHECKED_CAST")
         return data as List<RingXY>
     }
 
@@ -108,8 +109,9 @@ internal class PolygonTargetProjection private constructor(data: Any) : TargetPr
                 val area = calculateArea(ring)
 
                 if (area < AREA_LIMIT_TO_REMOVE_POLYGON) {
+                    @Suppress("ConstantConditionIf")
                     if (isLogEnabled) {
-                        log("Rmve: size=" + ring.size +
+                        log("Rem.: size=" + ring.size +
                                 ", bbox=" + bbox +
                                 ", area=" + area
                         )
@@ -123,6 +125,7 @@ internal class PolygonTargetProjection private constructor(data: Any) : TargetPr
                     val tolerance = min(area * AREA_TOLERANCE_RATIO, MAX_TOLERANCE)
                     simplifiedRing = PolylineSimplifier.visvalingamWhyatt(ring).setWeightLimit(tolerance).points
 
+                    @Suppress("ConstantConditionIf")
                     if (isLogEnabled) {
                         log("Simp: " + ring.size + " -> " + simplifiedRing.size +
                                 ", tolerance=" + tolerance +
@@ -131,6 +134,7 @@ internal class PolygonTargetProjection private constructor(data: Any) : TargetPr
                         )
                     }
                 } else {
+                    @Suppress("ConstantConditionIf")
                     if (isLogEnabled) {
                         log("Keep: size: " + ring.size +
                                 ", bbox=" + bbox +
@@ -154,17 +158,15 @@ internal class PolygonTargetProjection private constructor(data: Any) : TargetPr
             println(str)
         }
 
-        private val isLogEnabled: Boolean
-            get() = false
+        private const val isLogEnabled = false
     }
 
     internal class RingXY(val edges: List<DoubleVector>, val bbox: DoubleRectangle)
 }
 
-internal class PathTargetProjection(data: List<PathPoint>) : TargetProjection(data) {
+internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjection() {
 
-    val points: List<PathPoint>
-        get() = data as List<PathPoint>
+    val points: List<PathPoint> = data
 
     internal class PathPoint private constructor(
             private val myPointTargetProjection: PointTargetProjection,
