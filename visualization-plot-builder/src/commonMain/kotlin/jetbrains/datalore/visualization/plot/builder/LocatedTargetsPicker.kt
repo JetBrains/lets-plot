@@ -5,30 +5,25 @@ import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.Loc
 
 internal class LocatedTargetsPicker {
 
-    private val myLocatedTargetsList = ArrayList<LocatedTargets>()
+    private val myPicked = ArrayList<LocatedTargets>()
     private var myMinDistance = 0.0
 
-    fun addLocatedTargets(locatedTargets: LocatedTargets?) {
-        if (locatedTargets == null) {
-            return
-        }
+    val picked: List<LocatedTargets>
+        get() = myPicked
 
+    fun addLocatedTargets(locatedTargets: LocatedTargets) {
         val distance = distance(locatedTargets)
         if (distance > CUTOFF_DISTANCE) {
             return
         }
 
-        if (myLocatedTargetsList.isEmpty() || myMinDistance > distance) {
-            myLocatedTargetsList.clear()
-            myLocatedTargetsList.add(locatedTargets)
+        if (myPicked.isEmpty() || myMinDistance > distance) {
+            myPicked.clear()
+            myPicked.add(locatedTargets)
             myMinDistance = distance
-        } else if (myMinDistance == distance && sameGeomKind(myLocatedTargetsList[0], locatedTargets)) {
-            myLocatedTargetsList.add(locatedTargets)
+        } else if (myMinDistance == distance && sameGeomKind(myPicked[0], locatedTargets)) {
+            myPicked.add(locatedTargets)
         }
-    }
-
-    fun solve(): List<LocatedTargets> {
-        return myLocatedTargetsList
     }
 
     companion object {

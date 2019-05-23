@@ -110,12 +110,11 @@ class LocatedTargetsPickerTest {
 
     private fun assertTargetFrom(vararg expected: LocatedTargetsConfig?) {
 
-        val targetsSolver = LocatedTargetsPicker()
-        listOf(locatedTargets(firstLocatedTargetConfig), locatedTargets(secondLocatedTargetConfig))
-                .filter { it != null }
-                .forEach { targetsSolver.addLocatedTargets(it) }
+        val targetsPicker = LocatedTargetsPicker()
+        listOfNotNull(locatedTargets(firstLocatedTargetConfig), locatedTargets(secondLocatedTargetConfig))
+                .forEach { targetsPicker.addLocatedTargets(it) }
 
-        val locatedTargets = targetsSolver.solve()
+        val locatedTargets = targetsPicker.picked
 
         if (expected.isEmpty() || expected.all { layerConfig -> layerConfig == null }) {
             assertThat<LocatedTargets>(locatedTargets).isEmpty()
