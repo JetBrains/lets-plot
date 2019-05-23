@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.server.core.data.stat
+package jetbrains.datalore.visualization.plot.base.stat
 
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext

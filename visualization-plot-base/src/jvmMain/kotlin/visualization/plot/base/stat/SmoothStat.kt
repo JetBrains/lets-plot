@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.server.core.data.stat
+package jetbrains.datalore.visualization.plot.base.stat
 
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
@@ -6,9 +6,9 @@ import jetbrains.datalore.visualization.plot.base.data.TransformVar
 import jetbrains.datalore.visualization.plot.base.stat.SmoothStatShell
 import jetbrains.datalore.visualization.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regression.LinearRegression
-import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regression.LoessRegression
-import jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regression.RegressionEvaluator
+import jetbrains.datalore.visualization.plot.base.stat.regression.LinearRegression
+import jetbrains.datalore.visualization.plot.base.stat.regression.LoessRegression
+import jetbrains.datalore.visualization.plot.base.stat.regression.RegressionEvaluator
 
 class SmoothStat internal constructor() : SmoothStatShell() {
 

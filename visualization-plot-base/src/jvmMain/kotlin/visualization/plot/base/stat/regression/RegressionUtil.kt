@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regression
+package jetbrains.datalore.visualization.plot.base.stat.regression
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile
 

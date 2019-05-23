@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regression
+package jetbrains.datalore.visualization.plot.base.stat.regression
 
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import org.apache.commons.math3.distribution.TDistribution

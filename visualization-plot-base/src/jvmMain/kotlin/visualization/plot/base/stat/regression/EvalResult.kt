@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.server.core.data.stat.regression
+package jetbrains.datalore.visualization.plot.base.stat.regression
 
 class EvalResult(val y: Double,    // predicted value
                  val ymin: Double, // lower pointwise confidence interval around the mean
