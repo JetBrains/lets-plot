@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.builder.event3
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipOrientation
+import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipOrientation
 
 interface TooltipManager {
 

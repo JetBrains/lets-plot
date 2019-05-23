@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout
+package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.gcommon.collect.Iterables.find
 import jetbrains.datalore.base.geometry.DoubleRectangle
@@ -7,8 +7,8 @@ import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.DoubleRange
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipSpec
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.VerticalAlignment.TOP
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
 import kotlin.math.min
 
 class LayoutManager(private val myViewport: DoubleRectangle, private val myPreferredHorizontalAlignment: HorizontalAlignment) {

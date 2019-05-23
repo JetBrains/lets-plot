@@ -1,8 +1,8 @@
-package jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout
+package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.coord
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.size
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
 import kotlin.test.Test
 
 internal class UnderCursorTooltipLayoutTest : TooltipLayoutTestBase() {

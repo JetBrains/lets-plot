@@ -1,14 +1,14 @@
-package jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout
+package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.coord
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.point
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.size
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.Companion.SHORT_STEM_LENGTH
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.VerticalAlignment.TOP
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.SHORT_STEM_LENGTH
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 

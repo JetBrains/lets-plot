@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.event3.tooltip
+package jetbrains.datalore.visualization.plot.builder.tooltip
 
 enum class TooltipOrientation {
     VERTICAL,

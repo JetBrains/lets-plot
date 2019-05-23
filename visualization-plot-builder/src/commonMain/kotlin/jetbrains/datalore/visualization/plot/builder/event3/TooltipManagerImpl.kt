@@ -4,8 +4,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgGraphicsElement
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipOrientation
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipWithStem
+import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipOrientation
+import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipWithStem
 
 class TooltipManagerImpl(private val myTooltipLayer: SvgGElement) : TooltipManager {
     private val myUpdatingTooltips = HashSet<TooltipManager.TooltipEntry>()

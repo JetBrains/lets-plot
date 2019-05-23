@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout
+package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleSegment
@@ -9,14 +9,14 @@ import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.DoubleRange
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.coord
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.rect
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.size
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.MeasuredTooltip
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.PositionedTooltip
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.VerticalTooltipShiftingExpanderTest.Intersection.Companion.center
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.VerticalTooltipShiftingExpanderTest.Intersection.OffsetDirection
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.VerticalTooltipShiftingExpanderTest.Intersection.Position.CENTER_SIDE
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.VerticalTooltipShiftingExpanderTest.Intersection.Position.OFFSET
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.VerticalTooltipShiftingExpanderTest.Intersection.Side
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.VerticalTooltipShiftingExpanderTest.Intersection.Companion.center
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.VerticalTooltipShiftingExpanderTest.Intersection.OffsetDirection
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.VerticalTooltipShiftingExpanderTest.Intersection.Position.CENTER_SIDE
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.VerticalTooltipShiftingExpanderTest.Intersection.Position.OFFSET
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.VerticalTooltipShiftingExpanderTest.Intersection.Side
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

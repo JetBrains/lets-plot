@@ -7,11 +7,11 @@ import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipManager.TooltipContent
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipManager.TooltipEntry
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.TooltipOrientation
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.MeasuredTooltip
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.PositionedTooltip
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip
+import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipOrientation
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 
 class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
 

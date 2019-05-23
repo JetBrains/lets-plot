@@ -1,13 +1,13 @@
-package jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout
+package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipSpec
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.MeasuredTooltip
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.TooltipLayoutTestBase.Companion.makeText
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.TooltipLayoutTestBase.Companion.makeText
 
 internal class MeasuredTooltipBuilder private constructor(private val myLayoutHint: Kind, private val myCoord: DoubleVector?) {
     private var mySize: DoubleVector? = null

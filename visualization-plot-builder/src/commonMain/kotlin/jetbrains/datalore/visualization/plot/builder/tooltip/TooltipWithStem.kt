@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.event3.tooltip
+package jetbrains.datalore.visualization.plot.builder.tooltip
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector

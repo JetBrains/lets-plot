@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout
+package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleSegment
@@ -9,7 +9,7 @@ import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.bottomEdgeO
 import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.leftEdgeOf
 import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.rightEdgeOf
 import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.topEdgeOf
-import jetbrains.datalore.visualization.plot.builder.event3.tooltip.layout.LayoutManager.PositionedTooltip
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 import kotlin.math.max
 
 internal class VerticalTooltipShiftingExpander(space: MathUtil.DoubleRange) {
