@@ -6,7 +6,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipContent
 import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipEntry
-import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipInteractions
+import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipLayer
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.*
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.NORMAL_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.SHORT_STEM_LENGTH
@@ -208,7 +208,7 @@ internal open class TooltipLayoutTestBase {
 
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
-                override fun arrange(): List<TooltipEntry> = TooltipInteractions.toTooltipEntries(
+                override fun arrange(): List<TooltipEntry> = TooltipLayer.toTooltipEntries(
                         LayoutManager(myViewport, myHorizontalAlignment).arrange(myTooltipData, myCursor)
                 )
             }

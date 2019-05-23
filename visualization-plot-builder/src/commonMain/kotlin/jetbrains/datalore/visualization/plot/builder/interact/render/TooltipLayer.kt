@@ -12,17 +12,18 @@ import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManage
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 
-internal class TooltipInteractions(tooltipLayer: SvgNode, viewport: DoubleRectangle) {
+internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle) {
 
+    private val myTooltipMeter: TooltipMeter
     private val myTooltipUpdater: TooltipUpdater
     private val myLayoutManager: LayoutManager
-    private val myTooltipMeter: TooltipMeter = TooltipMeter(tooltipLayer)
 
     init {
-        val interactionsRoot = SvgGElement()
-        tooltipLayer.children().add(interactionsRoot)
+        val tooltipLayer = SvgGElement()
+        decorationLayer.children().add(tooltipLayer)
 
-        myTooltipUpdater = TooltipUpdater(interactionsRoot)
+        myTooltipMeter = TooltipMeter(tooltipLayer)
+        myTooltipUpdater = TooltipUpdater(tooltipLayer)
         myLayoutManager = LayoutManager(viewport, LayoutManager.HorizontalAlignment.LEFT)
     }
 
