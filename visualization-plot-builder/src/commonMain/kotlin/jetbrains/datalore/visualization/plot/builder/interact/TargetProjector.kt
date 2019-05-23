@@ -7,24 +7,24 @@ import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace.*
 import jetbrains.datalore.visualization.plot.base.interact.HitShape.Kind.*
-import jetbrains.datalore.visualization.plot.builder.interact.GeomTargetLocatorImpl.RingXY
+import jetbrains.datalore.visualization.plot.builder.interact.LayerGeomTargetLocator.RingXY
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.visualization.plot.common.geometry.PolylineSimplifier
 import jetbrains.datalore.visualization.plot.common.geometry.Utils.calculateArea
 import kotlin.math.max
 import kotlin.math.min
 
-internal class TargetProjector(private val myLookupSpace: LookupSpace) {
+internal class TargetProjector(private val lookupSpace: LookupSpace) {
 
     fun project(targetPrototype: GeomTargetPrototype): TargetProjection {
         return when (targetPrototype.hitShape.kind) {
-            POINT -> PointTargetProjection.create(targetPrototype.hitShape.point.center, myLookupSpace)
+            POINT -> PointTargetProjection.create(targetPrototype.hitShape.point.center, lookupSpace)
 
-            RECT -> RectTargetProjection.create(targetPrototype.hitShape.rect, myLookupSpace)
+            RECT -> RectTargetProjection.create(targetPrototype.hitShape.rect, lookupSpace)
 
-            POLYGON -> PolygonTargetProjection.create(targetPrototype.hitShape.points, myLookupSpace)
+            POLYGON -> PolygonTargetProjection.create(targetPrototype.hitShape.points, lookupSpace)
 
-            PATH -> PathTargetProjection.create(targetPrototype.hitShape.points, targetPrototype.indexMapper, myLookupSpace)
+            PATH -> PathTargetProjection.create(targetPrototype.hitShape.points, targetPrototype.indexMapper, lookupSpace)
         }
     }
 

@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.builder
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LocatedTargets
 
-internal class TargetsSolver {
+internal class LocatedTargetsPicker {
 
     private val myLocatedTargetsList = ArrayList<LocatedTargets>()
     private var myMinDistance = 0.0
@@ -32,8 +32,8 @@ internal class TargetsSolver {
     }
 
     companion object {
-        const val CUTOFF_DISTANCE = 30.0
-        const val FAKE_DISTANCE = 15.0
+        internal const val CUTOFF_DISTANCE = 30.0
+        internal const val FAKE_DISTANCE = 15.0
         private val UNIVARIATE_GEOMS = listOf(
                 GeomKind.DENSITY,
                 GeomKind.FREQPOLY,

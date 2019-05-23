@@ -53,8 +53,11 @@ internal class PlotTooltipHelper {
             get() = DoubleVector(geomBounds.left, geomBounds.bottom)
 
         internal fun findTargets(plotCoord: DoubleVector): List<LocatedTargets> {
-            val targetsSolver = TargetsSolver()
-            myTargetLocators.forEach { locator -> targetsSolver.addLocatedTargets(locator.findTargets(plotCoord)) }
+            val targetsSolver = LocatedTargetsPicker().apply {
+                for (locator in myTargetLocators) {
+                    addLocatedTargets(locator.findTargets(plotCoord))
+                }
+            }
             return targetsSolver.solve()
         }
 
@@ -77,4 +80,6 @@ internal class PlotTooltipHelper {
             }
         }
     }
+
+
 }

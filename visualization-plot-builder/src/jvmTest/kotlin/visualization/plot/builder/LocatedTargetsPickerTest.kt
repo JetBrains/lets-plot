@@ -2,15 +2,15 @@ package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LocatedTargets
-import jetbrains.datalore.visualization.plot.builder.TargetsSolver.Companion.CUTOFF_DISTANCE
-import jetbrains.datalore.visualization.plot.builder.TargetsSolver.Companion.FAKE_DISTANCE
+import jetbrains.datalore.visualization.plot.builder.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
+import jetbrains.datalore.visualization.plot.builder.LocatedTargetsPicker.Companion.FAKE_DISTANCE
 import org.assertj.core.api.Assertions.assertThat
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class TargetsSolverTest {
+class LocatedTargetsPickerTest {
     private lateinit var firstLocatedTargetConfig: LocatedTargetsConfig
     private var secondLocatedTargetConfig: LocatedTargetsConfig? = null
 
@@ -25,7 +25,7 @@ class TargetsSolverTest {
         firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 0.7)
         secondLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.5)
 
-        assertTargetFrom(secondLocatedTargetConfig)
+        assertTargetFrom(secondLocatedTargetConfig!!)
     }
 
     @Test
@@ -41,7 +41,7 @@ class TargetsSolverTest {
         firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 1.2)
         secondLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 1.3)
 
-        assertTargetFrom(none())
+        assertTargetFrom(null)
     }
 
     @Test
@@ -49,7 +49,7 @@ class TargetsSolverTest {
         firstLocatedTargetConfig.distanceToTarget(0.0)
         secondLocatedTargetConfig!!.distanceToTarget(FAKE_DISTANCE * 0.7)
 
-        assertTargetFrom(secondLocatedTargetConfig)
+        assertTargetFrom(secondLocatedTargetConfig!!)
     }
 
     @Test
@@ -65,7 +65,7 @@ class TargetsSolverTest {
         firstLocatedTargetConfig.distanceToTarget(0.0).geomKind(GeomKind.HISTOGRAM)
         secondLocatedTargetConfig!!.distanceToTarget(0.0).geomKind(GeomKind.HISTOGRAM)
 
-        assertTargetFrom(firstLocatedTargetConfig, secondLocatedTargetConfig)
+        assertTargetFrom(firstLocatedTargetConfig, secondLocatedTargetConfig!!)
     }
 
     @Test
@@ -89,7 +89,7 @@ class TargetsSolverTest {
         firstLocatedTargetConfig.withoutTarget()
         secondLocatedTargetConfig!!.withoutTarget()
 
-        assertTargetFrom(none())
+        assertTargetFrom(null)
     }
 
     @Test
@@ -97,7 +97,7 @@ class TargetsSolverTest {
         firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 1.5)
         secondLocatedTargetConfig = null
 
-        assertTargetFrom(none())
+        assertTargetFrom(null)
     }
 
     @Test
@@ -108,32 +108,27 @@ class TargetsSolverTest {
         assertTargetFrom(firstLocatedTargetConfig)
     }
 
-    private fun none(): LocatedTargetsConfig? {
-        return null
-    }
-
     private fun assertTargetFrom(vararg expected: LocatedTargetsConfig?) {
 
-        val targetsSolver = TargetsSolver()
+        val targetsSolver = LocatedTargetsPicker()
         listOf(locatedTargets(firstLocatedTargetConfig), locatedTargets(secondLocatedTargetConfig))
                 .filter { it != null }
                 .forEach { targetsSolver.addLocatedTargets(it) }
 
         val locatedTargets = targetsSolver.solve()
 
-        if (expected.isEmpty() || expected.all { layerConfig -> layerConfig === none() }) {
+        if (expected.isEmpty() || expected.all { layerConfig -> layerConfig == null }) {
             assertThat<LocatedTargets>(locatedTargets).isEmpty()
         } else {
             assertThat<LocatedTargets>(locatedTargets).hasSameSizeAs(expected)
-            locatedTargets.zip(expected).forEach { pair -> assertThat(pair.first).isEqualTo(pair.second!!.myLocatedTargets) }
+            locatedTargets.zip(expected).forEach { pair ->
+                assertThat(pair.first).isEqualTo(pair.second!!.myLocatedTargets)
+            }
         }
     }
 
     private fun locatedTargets(locatedTargetsConfig: LocatedTargetsConfig?): LocatedTargets? {
-        return if (locatedTargetsConfig === none()) {
-            null
-        } else locatedTargetsConfig!!.build()
-
+        return locatedTargetsConfig?.build()
     }
 
     internal class LocatedTargetsConfig {

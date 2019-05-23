@@ -27,21 +27,19 @@ internal class TargetDetector(
                     return null
                 }
 
-                val resultIndex = binarySearch(
-                        cursorCoord.x,
-                        pathPoints.size,
-                        { index -> pathPoints[index].projection().x() }
-                )
+                val resultIndex = binarySearch(cursorCoord.x, pathPoints.size) {
+                    index -> pathPoints[index].projection().x()
+                }
                 val bestPoint = pathPoints[resultIndex]
 
-                when (myLocatorLookupStrategy) {
+                return when (myLocatorLookupStrategy) {
                     LookupStrategy.HOVER -> {
-                        return if (cursorCoord.x < pathPoints[0].projection().x() || cursorCoord.x > pathPoints[pathPoints.size - 1].projection().x()) {
+                        if (cursorCoord.x < pathPoints[0].projection().x() || cursorCoord.x > pathPoints[pathPoints.size - 1].projection().x()) {
                             null
                         } else bestPoint
                     }
 
-                    LookupStrategy.NEAREST -> return bestPoint
+                    LookupStrategy.NEAREST -> bestPoint
 
                     else -> throw IllegalStateException("Unknown lookup strategy: $myLocatorLookupStrategy")
                 }
@@ -106,13 +104,13 @@ internal class TargetDetector(
 
             LookupSpace.XY -> {
                 val targetPointCoord = pointProjection.xy()
-                when (myLocatorLookupStrategy) {
+                return when (myLocatorLookupStrategy) {
 
-                    LookupStrategy.HOVER -> return MathUtil.areEqual(targetPointCoord, cursorCoord, POINT_AREA_EPSILON)
+                    LookupStrategy.HOVER -> MathUtil.areEqual(targetPointCoord, cursorCoord, POINT_AREA_EPSILON)
 
-                    LookupStrategy.NEAREST -> return closestPointChecker.check(targetPointCoord)
+                    LookupStrategy.NEAREST -> closestPointChecker.check(targetPointCoord)
 
-                    LookupStrategy.NONE -> return false
+                    LookupStrategy.NONE -> false
 
                     else -> throw IllegalStateException()
                 }
@@ -219,9 +217,9 @@ internal class TargetDetector(
     }
 
     companion object {
-        private val POINT_AREA_EPSILON = 0.1
-        private val POINT_X_NEAREST_EPSILON = 2.0
-        private val RECT_X_NEAREST_EPSILON = 2.0
+        private const val POINT_AREA_EPSILON = 0.1
+        private const val POINT_X_NEAREST_EPSILON = 2.0
+        private const val RECT_X_NEAREST_EPSILON = 2.0
 
         private fun binarySearch(value: Double, length: Int, indexer: (Int) -> Double): Int {
 
@@ -239,12 +237,10 @@ internal class TargetDetector(
                 val mid = (hi + lo) / 2
                 val midValue = indexer(mid)
 
-                if (value < midValue) {
-                    hi = mid - 1
-                } else if (value > midValue) {
-                    lo = mid + 1
-                } else {
-                    return mid
+                when {
+                    value < midValue -> hi = mid - 1
+                    value > midValue -> lo = mid + 1
+                    else -> return mid
                 }
             }
 

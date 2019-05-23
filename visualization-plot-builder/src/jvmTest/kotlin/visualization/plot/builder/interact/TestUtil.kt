@@ -77,7 +77,7 @@ object TestUtil {
         val lookupSpec = LookupSpec(lookupSpace, lookupStrategy)
         val contextualMapping = mock(ContextualMapping::class.java)
 
-        return GeomTargetLocatorImpl(geomKind, lookupSpec, contextualMapping, targetsList)
+        return LayerGeomTargetLocator(geomKind, lookupSpec, contextualMapping, targetsList)
     }
 
     fun coord(x: Double, y: Double): DoubleVector {
@@ -215,7 +215,7 @@ object TestUtil {
 
     internal fun pointTarget(key: Any, p: DoubleVector): GeomTargetPrototype {
         val pointShape = HitShape.point(p, 0.0)
-        return GeomTargetPrototype(pointShape, { index -> key as Int }, params())
+        return GeomTargetPrototype(pointShape, { key as Int }, params())
     }
 
     internal fun pathTarget(key: Int, points: List<DoubleVector>): GeomTargetPrototype {
@@ -225,7 +225,7 @@ object TestUtil {
 
     internal fun pathTarget(points: List<DoubleVector>): GeomTargetPrototype {
         val pathShape = HitShape.path(points, false)
-        return GeomTargetPrototype(pathShape, identity<Int>(), params())
+        return GeomTargetPrototype(pathShape, identity(), params())
     }
 
     private fun encodeIndex(key: Int, integer: Int?): Int {

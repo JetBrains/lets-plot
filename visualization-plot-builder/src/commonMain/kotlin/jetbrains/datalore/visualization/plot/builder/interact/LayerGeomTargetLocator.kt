@@ -12,38 +12,29 @@ import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.ClosestPo
 import jetbrains.datalore.visualization.plot.builder.interact.TargetProjector.*
 import kotlin.math.max
 
-internal class GeomTargetLocatorImpl(
-        private val myGeomKind: GeomKind,
+internal class LayerGeomTargetLocator(
+        private val geomKind: GeomKind,
         lookupSpec: GeomTargetLocator.LookupSpec,
-        private val myContextualMapping: ContextualMapping,
+        private val contextualMapping: ContextualMapping,
         targetPrototypes: List<GeomTargetPrototype>) : GeomTargetLocator {
 
-    private val myLocatorLookupSpace: GeomTargetLocator.LookupSpace = lookupSpec.lookupSpace
-    private val myLocatorLookupStrategy: GeomTargetLocator.LookupStrategy = lookupSpec.lookupStrategy
-    private val myTargetDetector: TargetDetector
+    private val myTargetDetector: TargetDetector = TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
     private val myTargets = ArrayList<Target>()
 
-    private val collectingStrategy: Collector.CollectingStrategy
-        get() {
-            if (myLocatorLookupSpace === GeomTargetLocator.LookupSpace.X) {
-                return Collector.CollectingStrategy.APPEND
-            }
-
-            if (myLocatorLookupStrategy === GeomTargetLocator.LookupStrategy.HOVER) {
-                return Collector.CollectingStrategy.APPEND
-            }
-
-            return if (myLocatorLookupStrategy === GeomTargetLocator.LookupStrategy.NONE ||
-                    myLocatorLookupSpace === GeomTargetLocator.LookupSpace.NONE) {
+    private val collectingStrategy: Collector.CollectingStrategy =
+            if (lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.X) {
+                Collector.CollectingStrategy.APPEND
+            } else if (lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.HOVER) {
+                Collector.CollectingStrategy.APPEND
+            } else if (lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.NONE ||
+                    lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.NONE) {
                 Collector.CollectingStrategy.IGNORE
-            } else Collector.CollectingStrategy.REPLACE
-
-        }
+            } else {
+                Collector.CollectingStrategy.REPLACE
+            }
 
     init {
-        myTargetDetector = TargetDetector(myLocatorLookupSpace, myLocatorLookupStrategy)
-
-        val targetProjector = TargetProjector(myLocatorLookupSpace)
+        val targetProjector = TargetProjector(lookupSpec.lookupSpace)
         for (targetPrototype in targetPrototypes) {
             myTargets.add(
                     Target(
@@ -65,8 +56,8 @@ internal class GeomTargetLocatorImpl(
                         // Distance can be negative when lookup space is X
                         // In this case use 0.0 as a distance - we have a direct hit.
                         max(0.0, collector.closestPointChecker.distance),
-                        myGeomKind,
-                        myContextualMapping
+                        geomKind,
+                        contextualMapping
                 )
         )
     }

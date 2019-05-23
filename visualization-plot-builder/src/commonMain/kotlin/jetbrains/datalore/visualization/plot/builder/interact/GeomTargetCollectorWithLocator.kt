@@ -9,12 +9,12 @@ import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.interact.HitShape
 
 class GeomTargetCollectorWithLocator(
-        private val myGeomKind: GeomKind,
-        private val myLookupSpec: GeomTargetLocator.LookupSpec,
-        private val myContextualMapping: ContextualMapping) : GeomTargetCollector, GeomTargetLocator {
+        private val geomKind: GeomKind,
+        private val lookupSpec: GeomTargetLocator.LookupSpec,
+        private val contextualMapping: ContextualMapping) : GeomTargetCollector, GeomTargetLocator {
 
     private val myTargets = ArrayList<GeomTargetPrototype>()
-    private var myGeomTargetLocator: GeomTargetLocator? = null
+    private var myLocator: GeomTargetLocator? = null
 
     override fun addPoint(index: Int, point: DoubleVector, radius: Double, tooltipParams: GeomTargetCollector.TooltipParams) {
         addTarget(GeomTargetPrototype(HitShape.point(point, radius), { index }, tooltipParams))
@@ -29,14 +29,14 @@ class GeomTargetCollectorWithLocator(
     }
 
     override fun findTargets(coord: DoubleVector): GeomTargetLocator.LocatedTargets? {
-        if (myGeomTargetLocator == null) {
-            myGeomTargetLocator = GeomTargetLocatorImpl(myGeomKind, myLookupSpec, myContextualMapping, myTargets)
+        if (myLocator == null) {
+            myLocator = LayerGeomTargetLocator(geomKind, lookupSpec, contextualMapping, myTargets)
         }
-        return myGeomTargetLocator!!.findTargets(coord)
+        return myLocator!!.findTargets(coord)
     }
 
     private fun addTarget(targetPrototype: GeomTargetPrototype) {
         myTargets.add(targetPrototype)
-        myGeomTargetLocator = null
+        myLocator = null
     }
 }
