@@ -33,10 +33,10 @@ class LayerTargetCollectorWithLocator(
         myLocator = null
     }
 
-    override fun findTargets(coord: DoubleVector): GeomTargetLocator.LocatedTargets? {
+    override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
         if (myLocator == null) {
             myLocator = LayerTargetLocator(geomKind, lookupSpec, contextualMapping, myTargets)
         }
-        return myLocator!!.findTargets(coord)
+        return myLocator!!.search(coord)
     }
 }

@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.visualization.plot.base.GeomKind
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LocatedTargets
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.visualization.plot.builder.interact.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
 import jetbrains.datalore.visualization.plot.builder.interact.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
 import org.assertj.core.api.Assertions.assertThat
@@ -11,154 +11,154 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class LocatedTargetsPickerTest {
-    private lateinit var firstLocatedTargetConfig: LocatedTargetsConfig
-    private var secondLocatedTargetConfig: LocatedTargetsConfig? = null
+    private lateinit var firstLookupResultConfig: LookupResultConfig
+    private var secondLookupResultConfig: LookupResultConfig? = null
 
     @BeforeTest
     fun setUp() {
-        firstLocatedTargetConfig = LocatedTargetsConfig().geomKind(GeomKind.HISTOGRAM)
-        secondLocatedTargetConfig = LocatedTargetsConfig().geomKind(GeomKind.BAR)
+        firstLookupResultConfig = LookupResultConfig().geomKind(GeomKind.HISTOGRAM)
+        secondLookupResultConfig = LookupResultConfig().geomKind(GeomKind.BAR)
     }
 
     @Test
     fun closestTargetShouldBeSelected() {
-        firstLocatedTargetConfig.distanceToTarget(LocatedTargetsPicker.CUTOFF_DISTANCE * 0.7)
-        secondLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.5)
+        firstLookupResultConfig.distanceToTarget(CUTOFF_DISTANCE * 0.7)
+        secondLookupResultConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.5)
 
-        assertTargetFrom(secondLocatedTargetConfig!!)
+        assertTargetFrom(secondLookupResultConfig!!)
     }
 
     @Test
     fun closestTargetShouldBeSelected2() {
-        firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 0.1)
-        secondLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.9)
+        firstLookupResultConfig.distanceToTarget(CUTOFF_DISTANCE * 0.1)
+        secondLookupResultConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.9)
 
-        assertTargetFrom(firstLocatedTargetConfig)
+        assertTargetFrom(firstLookupResultConfig)
     }
 
     @Test
     fun whenOutOfRangeNothingShouldBeSelected() {
-        firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 1.2)
-        secondLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 1.3)
+        firstLookupResultConfig.distanceToTarget(CUTOFF_DISTANCE * 1.2)
+        secondLookupResultConfig!!.distanceToTarget(CUTOFF_DISTANCE * 1.3)
 
         assertTargetFrom(null)
     }
 
     @Test
     fun whenZeroDistanceShouldBeExtendedWithExtraDistance() {
-        firstLocatedTargetConfig.distanceToTarget(0.0)
-        secondLocatedTargetConfig!!.distanceToTarget(FAKE_DISTANCE * 0.7)
+        firstLookupResultConfig.distanceToTarget(0.0)
+        secondLookupResultConfig!!.distanceToTarget(FAKE_DISTANCE * 0.7)
 
-        assertTargetFrom(secondLocatedTargetConfig!!)
+        assertTargetFrom(secondLookupResultConfig!!)
     }
 
     @Test
     fun whenBothTargetsHaveZeroDistance_ShouldSelectFirst() {
-        firstLocatedTargetConfig.distanceToTarget(0.0)
-        secondLocatedTargetConfig!!.distanceToTarget(0.0)
+        firstLookupResultConfig.distanceToTarget(0.0)
+        secondLookupResultConfig!!.distanceToTarget(0.0)
 
-        assertTargetFrom(firstLocatedTargetConfig)
+        assertTargetFrom(firstLookupResultConfig)
     }
 
     @Test
     fun whenBothTargetsHaveZeroDistance_AndHaveSameGeomKind_ShouldSelectBoth() {
-        firstLocatedTargetConfig.distanceToTarget(0.0).geomKind(GeomKind.HISTOGRAM)
-        secondLocatedTargetConfig!!.distanceToTarget(0.0).geomKind(GeomKind.HISTOGRAM)
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.HISTOGRAM)
+        secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.HISTOGRAM)
 
-        assertTargetFrom(firstLocatedTargetConfig, secondLocatedTargetConfig!!)
+        assertTargetFrom(firstLookupResultConfig, secondLookupResultConfig!!)
     }
 
     @Test
     fun whenBothTargetsHaveZeroDistance_AndHaveSameGeomKind_ButWithTwoVars_ShouldSelectFirst() {
-        firstLocatedTargetConfig.distanceToTarget(0.0).geomKind(GeomKind.POINT)
-        secondLocatedTargetConfig!!.distanceToTarget(0.0).geomKind(GeomKind.POINT)
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.POINT)
+        secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.POINT)
 
-        assertTargetFrom(firstLocatedTargetConfig)
+        assertTargetFrom(firstLookupResultConfig)
     }
 
     @Test
     fun whenSecondLayerHaveNoTargets_ShouldSelectFirst() {
-        firstLocatedTargetConfig.distanceToTarget(0.0)
-        secondLocatedTargetConfig!!.withoutTarget()
+        firstLookupResultConfig.distanceToTarget(0.0)
+        secondLookupResultConfig!!.withoutTarget()
 
-        assertTargetFrom(firstLocatedTargetConfig)
+        assertTargetFrom(firstLookupResultConfig)
     }
 
     @Test
     fun whenBothLayersHaveNoTargets_ShouldSelectNothing() {
-        firstLocatedTargetConfig.withoutTarget()
-        secondLocatedTargetConfig!!.withoutTarget()
+        firstLookupResultConfig.withoutTarget()
+        secondLookupResultConfig!!.withoutTarget()
 
         assertTargetFrom(null)
     }
 
     @Test
     fun withOneLayer_WhenOutOfDistance_ShouldSelectNone() {
-        firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 1.5)
-        secondLocatedTargetConfig = null
+        firstLookupResultConfig.distanceToTarget(CUTOFF_DISTANCE * 1.5)
+        secondLookupResultConfig = null
 
         assertTargetFrom(null)
     }
 
     @Test
     fun withOneLayer_WithinMaxDistance_ShouldSelectFirst() {
-        firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 0.5)
-        secondLocatedTargetConfig = null
+        firstLookupResultConfig.distanceToTarget(CUTOFF_DISTANCE * 0.5)
+        secondLookupResultConfig = null
 
-        assertTargetFrom(firstLocatedTargetConfig)
+        assertTargetFrom(firstLookupResultConfig)
     }
 
-    private fun assertTargetFrom(vararg expected: LocatedTargetsConfig?) {
+    private fun assertTargetFrom(vararg expected: LookupResultConfig?) {
 
         val targetsPicker = LocatedTargetsPicker()
-        listOfNotNull(locatedTargets(firstLocatedTargetConfig), locatedTargets(secondLocatedTargetConfig))
-                .forEach { targetsPicker.addLocatedTargets(it) }
+        listOfNotNull(lookupResult(firstLookupResultConfig), lookupResult(secondLookupResultConfig))
+                .forEach { targetsPicker.addLookupResult(it) }
 
-        val locatedTargets = targetsPicker.picked
+        val lookupResults = targetsPicker.picked
 
         if (expected.isEmpty() || expected.all { layerConfig -> layerConfig == null }) {
-            assertThat<LocatedTargets>(locatedTargets).isEmpty()
+            assertThat<LookupResult>(lookupResults).isEmpty()
         } else {
-            assertThat<LocatedTargets>(locatedTargets).hasSameSizeAs(expected)
-            locatedTargets.zip(expected).forEach { pair ->
-                assertThat(pair.first).isEqualTo(pair.second!!.myLocatedTargets)
+            assertThat<LookupResult>(lookupResults).hasSameSizeAs(expected)
+            lookupResults.zip(expected).forEach { pair ->
+                assertThat(pair.first).isEqualTo(pair.second!!.myResult)
             }
         }
     }
 
-    private fun locatedTargets(locatedTargetsConfig: LocatedTargetsConfig?): LocatedTargets? {
-        return locatedTargetsConfig?.build()
+    private fun lookupResult(lookupResultConfig: LookupResultConfig?): LookupResult? {
+        return lookupResultConfig?.build()
     }
 
-    internal class LocatedTargetsConfig {
-        internal var myLocatedTargets: LocatedTargets? = mock(LocatedTargets::class.java)
+    internal class LookupResultConfig {
+        internal var myResult: LookupResult? = mock(LookupResult::class.java)
         private var myGeomKind: GeomKind? = null
         private var myDistance: Double = 0.toDouble()
 
-        fun distanceToTarget(v: Double): LocatedTargetsConfig {
+        fun distanceToTarget(v: Double): LookupResultConfig {
             myDistance = v
             return this
         }
 
-        fun geomKind(v: GeomKind): LocatedTargetsConfig {
+        fun geomKind(v: GeomKind): LookupResultConfig {
             myGeomKind = v
             return this
         }
 
-        fun withoutTarget(): LocatedTargetsConfig {
-            myLocatedTargets = null
+        fun withoutTarget(): LookupResultConfig {
+            myResult = null
             return this
         }
 
-        fun build(): LocatedTargets? {
-            if (myLocatedTargets != null) {
-                `when`<GeomKind>(myLocatedTargets!!.geomKind)
+        fun build(): LookupResult? {
+            if (myResult != null) {
+                `when`<GeomKind>(myResult!!.geomKind)
                         .thenReturn(myGeomKind)
-                `when`<Double>(myLocatedTargets!!.distance)
+                `when`<Double>(myResult!!.distance)
                         .thenReturn(myDistance)
             }
 
-            return myLocatedTargets
+            return myResult
         }
     }
 }

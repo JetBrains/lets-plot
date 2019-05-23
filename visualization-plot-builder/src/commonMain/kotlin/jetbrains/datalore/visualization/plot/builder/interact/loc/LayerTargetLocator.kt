@@ -49,13 +49,13 @@ internal class LayerTargetLocator(
         }
     }
 
-    private fun addFoundTarget(collector: Collector<GeomTarget>, targets: MutableList<GeomTargetLocator.LocatedTargets>) {
+    private fun addLookupResults(collector: Collector<GeomTarget>, targets: MutableList<GeomTargetLocator.LookupResult>) {
         if (collector.size() == 0) {
             return
         }
 
         targets.add(
-                GeomTargetLocator.LocatedTargets(
+                GeomTargetLocator.LookupResult(
                         collector.collection(),
                         // Distance can be negative when lookup space is X
                         // In this case use 0.0 as a distance - we have a direct hit.
@@ -66,7 +66,7 @@ internal class LayerTargetLocator(
         )
     }
 
-    override fun findTargets(coord: DoubleVector): GeomTargetLocator.LocatedTargets? {
+    override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
         if (myTargets.isEmpty()) {
             return null
         }
@@ -90,27 +90,27 @@ internal class LayerTargetLocator(
             }
         }
 
-        val locatedTargets = ArrayList<GeomTargetLocator.LocatedTargets>()
+        val lookupResults = ArrayList<GeomTargetLocator.LookupResult>()
 
-        addFoundTarget(pathCollector, locatedTargets)
-        addFoundTarget(rectCollector, locatedTargets)
-        addFoundTarget(pointCollector, locatedTargets)
-        addFoundTarget(polygonCollector, locatedTargets)
+        addLookupResults(pathCollector, lookupResults)
+        addLookupResults(rectCollector, lookupResults)
+        addLookupResults(pointCollector, lookupResults)
+        addLookupResults(polygonCollector, lookupResults)
 
-        return getClosestTarget(locatedTargets)
+        return getClosestTarget(lookupResults)
     }
 
-    private fun getClosestTarget(locatedTargetList: List<GeomTargetLocator.LocatedTargets>): GeomTargetLocator.LocatedTargets? {
-        if (locatedTargetList.isEmpty()) {
+    private fun getClosestTarget(lookupResults: List<GeomTargetLocator.LookupResult>): GeomTargetLocator.LookupResult? {
+        if (lookupResults.isEmpty()) {
             return null
         }
 
-        var closestTargets: GeomTargetLocator.LocatedTargets = locatedTargetList[0]
+        var closestTargets: GeomTargetLocator.LookupResult = lookupResults[0]
         checkArgument(closestTargets.distance >= 0)
 
-        for (locatedTargets in locatedTargetList) {
-            if (locatedTargets.distance < closestTargets.distance) {
-                closestTargets = locatedTargets
+        for (lookupResult in lookupResults) {
+            if (lookupResult.distance < closestTargets.distance) {
+                closestTargets = lookupResult
             }
         }
         return closestTargets

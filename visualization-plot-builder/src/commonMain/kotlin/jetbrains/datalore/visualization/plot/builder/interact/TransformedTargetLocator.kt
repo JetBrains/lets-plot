@@ -9,18 +9,18 @@ import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
 
 abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLocator) : GeomTargetLocator {
 
-    override fun findTargets(coord: DoubleVector): GeomTargetLocator.LocatedTargets? {
+    override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
         val targetCoord = convertToTargetCoord(coord)
-        val locatedTargets = targetLocator.findTargets(targetCoord) ?: return null
-        return convertLocatedTargets(locatedTargets)
+        val result = targetLocator.search(targetCoord) ?: return null
+        return convertLookupResult(result)
     }
 
-    private fun convertLocatedTargets(locatedTargets: GeomTargetLocator.LocatedTargets): GeomTargetLocator.LocatedTargets {
-        return GeomTargetLocator.LocatedTargets(
-                convertGeomTargets(locatedTargets.geomTargets),
-                convertToPlotDistance(locatedTargets.distance),
-                locatedTargets.geomKind,
-                locatedTargets.contextualMapping
+    private fun convertLookupResult(lookupResult: GeomTargetLocator.LookupResult): GeomTargetLocator.LookupResult {
+        return GeomTargetLocator.LookupResult(
+                convertGeomTargets(lookupResult.targets),
+                convertToPlotDistance(lookupResult.distance),
+                lookupResult.geomKind,
+                lookupResult.contextualMapping
         )
     }
 

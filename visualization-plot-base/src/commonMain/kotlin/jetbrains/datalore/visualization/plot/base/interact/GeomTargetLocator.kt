@@ -5,7 +5,7 @@ import jetbrains.datalore.visualization.plot.base.GeomKind
 
 interface GeomTargetLocator {
 
-    fun findTargets(coord: DoubleVector): LocatedTargets?
+    fun search(coord: DoubleVector): LookupResult?
 
     enum class LookupSpace {
         X, XY, NONE
@@ -22,8 +22,8 @@ interface GeomTargetLocator {
     }
 
     // `open` for Mockito test
-    open class LocatedTargets(
-            val geomTargets: List<GeomTarget>,
+    open class LookupResult(
+            val targets: List<GeomTarget>,
             open val distance: Double,
             open val geomKind: GeomKind,
             val contextualMapping: ContextualMapping)

@@ -42,7 +42,7 @@ class LayerTargetLocatorSinglePolygonTest {
     }
 
     private fun distanceFor(coord: DoubleVector): Double {
-        return locator.findTargets(coord)!!.distance
+        return locator.search(coord)!!.distance
     }
 
     companion object {

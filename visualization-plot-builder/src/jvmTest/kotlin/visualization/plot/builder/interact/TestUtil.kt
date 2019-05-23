@@ -176,7 +176,7 @@ object TestUtil {
     }
 
     internal fun findTargets(locator: GeomTargetLocator, p: DoubleVector): List<GeomTarget> {
-        return getGeomTargets(locator.findTargets(p))
+        return getGeomTargets(locator.search(p))
     }
 
     internal fun assertEncodedObjects(locator: GeomTargetLocator, coord: DoubleVector, vararg key: Any) {
@@ -190,7 +190,7 @@ object TestUtil {
     private fun assertObjects(encoded: Boolean, locator: GeomTargetLocator, coord: DoubleVector, vararg key: Any) {
         val decode = if (encoded) { it -> decodeKey(it) } else identity<Int>()
 
-        val located = getGeomTargets(locator.findTargets(coord))
+        val located = getGeomTargets(locator.search(coord))
 
         assertEquals(key.size, located.size)
 
@@ -203,12 +203,12 @@ object TestUtil {
         }
     }
 
-    private fun getGeomTargets(locatedTargets: LocatedTargets?): List<GeomTarget> {
-        return locatedTargets?.geomTargets ?: emptyList()
+    private fun getGeomTargets(result: LookupResult?): List<GeomTarget> {
+        return result?.targets ?: emptyList()
     }
 
     internal fun assertEmpty(locator: GeomTargetLocator, coord: DoubleVector) {
-        val located = getGeomTargets(locator.findTargets(coord))
+        val located = getGeomTargets(locator.search(coord))
         assertTrue(located.isEmpty())
     }
 

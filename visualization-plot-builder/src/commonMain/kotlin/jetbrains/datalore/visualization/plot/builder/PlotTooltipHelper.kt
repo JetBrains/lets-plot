@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.builder
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LocatedTargets
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpecFactory
 import jetbrains.datalore.visualization.plot.builder.interact.TransformedTargetLocator
@@ -20,8 +20,8 @@ internal class PlotTooltipHelper {
     fun createTooltipSpecs(plotCoord: DoubleVector): List<TooltipSpec> {
         val tileInfo = findTileInfo(plotCoord) ?: return emptyList()
 
-        val locatedTargetsList = tileInfo.findTargets(plotCoord)
-        return createTooltipSpecs(locatedTargetsList, tileInfo.axisOrigin)
+        val lookupResults = tileInfo.findTargets(plotCoord)
+        return createTooltipSpecs(lookupResults, tileInfo.axisOrigin)
     }
 
     private fun findTileInfo(plotCoord: DoubleVector): TileInfo? {
@@ -34,12 +34,12 @@ internal class PlotTooltipHelper {
         return null
     }
 
-    private fun createTooltipSpecs(locatedTargetsList: List<LocatedTargets>, axisOrigin: DoubleVector): List<TooltipSpec> {
+    private fun createTooltipSpecs(lookupResults: List<LookupResult>, axisOrigin: DoubleVector): List<TooltipSpec> {
         val tooltipSpecs = ArrayList<TooltipSpec>()
 
-        locatedTargetsList.forEach { locatedTarget ->
-            val factory = TooltipSpecFactory(locatedTarget.contextualMapping, axisOrigin)
-            locatedTarget.geomTargets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
+        lookupResults.forEach { result ->
+            val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin)
+            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
         }
 
         return tooltipSpecs
@@ -53,12 +53,12 @@ internal class PlotTooltipHelper {
         internal val axisOrigin: DoubleVector
             get() = DoubleVector(geomBounds.left, geomBounds.bottom)
 
-        internal fun findTargets(plotCoord: DoubleVector): List<LocatedTargets> {
+        internal fun findTargets(plotCoord: DoubleVector): List<LookupResult> {
             val targetsPicker = LocatedTargetsPicker().apply {
                 for (locator in myTargetLocators) {
-                    val locatedTargets = locator.findTargets(plotCoord)
-                    if (locatedTargets != null) {
-                        addLocatedTargets(locatedTargets)
+                    val result = locator.search(plotCoord)
+                    if (result != null) {
+                        addLookupResult(result)
                     }
                 }
             }
