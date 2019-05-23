@@ -3,10 +3,10 @@ package jetbrains.datalore.visualization.plot.builder.event3
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.GeomKind
-import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.event3.HitShape
+import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.interact.HitShape
 
 class GeomTargetCollectorWithLocator(
         private val myGeomKind: GeomKind,

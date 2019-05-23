@@ -5,10 +5,10 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil.fromColorValue
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.TooltipParams
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape

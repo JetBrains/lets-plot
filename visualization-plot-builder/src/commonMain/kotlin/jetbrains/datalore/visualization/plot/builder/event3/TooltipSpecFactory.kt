@@ -4,11 +4,11 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
-import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
-import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess.MappedData
-import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
+import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
+import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
+import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess.MappedData
+import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.DATA_COLUMN_JOIN_KEY
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.POINT_X1

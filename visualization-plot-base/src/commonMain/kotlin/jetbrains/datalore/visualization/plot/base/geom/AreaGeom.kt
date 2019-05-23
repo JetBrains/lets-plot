@@ -3,8 +3,6 @@ package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil.fromFill
@@ -12,6 +10,8 @@ import jetbrains.datalore.visualization.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.TooltipParams
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 
 open class AreaGeom : GeomBase() {

@@ -5,9 +5,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.collection
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil.rectToGeometry
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor
@@ -15,6 +12,9 @@ import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstr
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.multiPointAppender
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.assertEmpty
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.assertObjects
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.createLocator

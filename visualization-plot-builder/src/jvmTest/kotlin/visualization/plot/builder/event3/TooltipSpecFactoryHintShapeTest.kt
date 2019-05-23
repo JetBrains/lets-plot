@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.event3
 
-import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
-import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.*
+import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.visualization.plot.builder.event3.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.rect
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.size

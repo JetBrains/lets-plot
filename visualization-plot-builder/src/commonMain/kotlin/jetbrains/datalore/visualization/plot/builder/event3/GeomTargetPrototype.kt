@@ -2,11 +2,11 @@ package jetbrains.datalore.visualization.plot.builder.event3
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.visualization.plot.base.event3.HitShape
-import jetbrains.datalore.visualization.plot.base.event3.HitShape.Kind.*
-import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
+import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.TooltipParams
+import jetbrains.datalore.visualization.plot.base.interact.HitShape
+import jetbrains.datalore.visualization.plot.base.interact.HitShape.Kind.*
+import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
 
 class GeomTargetPrototype(
         internal val hitShape: HitShape,

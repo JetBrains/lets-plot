@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.builder.event3
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.assertEmpty
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.assertObjects
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.createLocator

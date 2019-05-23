@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.event3
 
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.assertEncodedObjects
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.createLocator
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.horizontalPathTarget

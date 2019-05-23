@@ -4,9 +4,9 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.event3.GeomTarget
-import jetbrains.datalore.visualization.plot.base.event3.HitShape
-import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint
+import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
+import jetbrains.datalore.visualization.plot.base.interact.HitShape
+import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.visualization.plot.builder.event3.GeomTargetPrototype.Companion.createTipLayoutHint
 
 class GeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {

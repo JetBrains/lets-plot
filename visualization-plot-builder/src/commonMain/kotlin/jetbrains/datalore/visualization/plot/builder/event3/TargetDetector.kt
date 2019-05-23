@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.event3
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.ClosestPointChecker
 import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.ClosestPointChecker.COMPARE_RESULT
 import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.DoubleRange

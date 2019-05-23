@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.builder.event3
 
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.*
-import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.*
+import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 
 class GeomInteraction(builder: GeomInteractionBuilder) : ContextualMappingProvider {
 

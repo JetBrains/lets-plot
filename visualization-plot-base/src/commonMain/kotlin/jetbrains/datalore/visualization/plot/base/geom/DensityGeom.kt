@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil.fromColor
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.TooltipParams
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 
 class DensityGeom : AreaGeom() {
 

@@ -3,8 +3,8 @@ package jetbrains.datalore.visualization.plot.builder.assemble
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.GeomContext
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
-import jetbrains.datalore.visualization.plot.base.event3.NullGeomTargetCollector
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.visualization.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {

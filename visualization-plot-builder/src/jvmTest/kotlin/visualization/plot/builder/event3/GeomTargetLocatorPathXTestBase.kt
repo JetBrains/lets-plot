@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.event3
 
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.PathPoint
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.PathPointsBuilder
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.createLocator

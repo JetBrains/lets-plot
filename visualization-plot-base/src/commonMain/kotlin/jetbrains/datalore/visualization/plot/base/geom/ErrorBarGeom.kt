@@ -6,14 +6,14 @@ import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector.TooltipParams.Companion.params
-import jetbrains.datalore.visualization.plot.base.event3.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil.fromColor
 import jetbrains.datalore.visualization.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.visualization.plot.base.geom.util.HintsCollection.HintConfigFactory
 import jetbrains.datalore.visualization.plot.base.geom.util.LinesHelper
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
+import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil

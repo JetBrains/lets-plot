@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder.event3
 
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.assertEmpty
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.assertObjects
 import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.createLocator

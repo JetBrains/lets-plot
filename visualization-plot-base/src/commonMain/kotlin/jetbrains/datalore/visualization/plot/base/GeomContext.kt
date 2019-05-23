@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base
 
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector
 
 interface GeomContext {
     val targetCollector: GeomTargetCollector

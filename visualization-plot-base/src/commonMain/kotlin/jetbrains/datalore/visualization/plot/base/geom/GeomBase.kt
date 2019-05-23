@@ -5,8 +5,8 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimGroup
 import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetCollector
 import jetbrains.datalore.visualization.plot.base.geom.util.GenericLegendKeyElementFactory
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.base.render.svg.LinePath

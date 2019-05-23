@@ -2,8 +2,8 @@ package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LocatedTargets
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LocatedTargets
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipSpec
 import jetbrains.datalore.visualization.plot.builder.event3.TooltipSpecFactory
 import jetbrains.datalore.visualization.plot.builder.event3.TransformedTargetLocator

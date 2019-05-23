@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.base.event3
+package jetbrains.datalore.visualization.plot.base.interact
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.GeomKind

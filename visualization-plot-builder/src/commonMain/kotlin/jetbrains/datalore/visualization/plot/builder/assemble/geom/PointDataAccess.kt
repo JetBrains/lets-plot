@@ -4,7 +4,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess
+import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil

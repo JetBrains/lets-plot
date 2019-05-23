@@ -6,11 +6,11 @@ import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.event3.ContextualMapping
-import jetbrains.datalore.visualization.plot.base.event3.GeomTargetLocator.LookupSpec
-import jetbrains.datalore.visualization.plot.base.event3.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
 import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider
+import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpec
+import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.visualization.plot.base.stat.Stats
