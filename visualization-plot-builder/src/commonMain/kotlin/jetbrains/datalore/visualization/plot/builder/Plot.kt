@@ -38,8 +38,9 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     private val myPreferredSize = ValueProperty(DEF_PLOT_SIZE)
     private val myLaidOutSize = ValueProperty(DoubleVector.ZERO)
-    private val myTargetsHelper = TargetsHelper()
+    private val myTooltipHelper = PlotTooltipHelper()
     private val myCanvasFigures = ArrayList<CanvasFigure>()
+
     internal val mouseEventPeer = MouseEventPeer()
 
     protected abstract val scaleXProto: Scale<Double>?
@@ -316,7 +317,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             myCanvasFigures.addAll(tile.canvasFigures)
 
             val realGeomBounds = tileInfo.geomBounds.add(tilesOrigin.add(tileInfo.plotOffset))
-            myTargetsHelper.addTileTargetLocators(realGeomBounds, tile.targetLocators)
+            myTooltipHelper.addTileInfo(realGeomBounds, tile.targetLocators)
         }
 
         /*
@@ -360,8 +361,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
     }
 
-    internal fun getTargetTooltipSpec(plotCoord: DoubleVector): List<TooltipSpec> {
-        return myTargetsHelper.getTargetTooltipSpec(plotCoord)
+    internal fun createTooltipSpecs(plotCoord: DoubleVector): List<TooltipSpec> {
+        return myTooltipHelper.createTooltipSpecs(plotCoord)
     }
 
     companion object {
