@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.coord
-import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.point
-import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.size
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.coord
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.point
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.SHORT_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM

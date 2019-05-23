@@ -4,9 +4,9 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LocatedTargets
-import jetbrains.datalore.visualization.plot.builder.event3.TooltipSpec
-import jetbrains.datalore.visualization.plot.builder.event3.TooltipSpecFactory
-import jetbrains.datalore.visualization.plot.builder.event3.TransformedTargetLocator
+import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpecFactory
+import jetbrains.datalore.visualization.plot.builder.interact.TransformedTargetLocator
 
 internal class TargetsHelper {
     private val myTileInfoList = ArrayList<TileInfo>()

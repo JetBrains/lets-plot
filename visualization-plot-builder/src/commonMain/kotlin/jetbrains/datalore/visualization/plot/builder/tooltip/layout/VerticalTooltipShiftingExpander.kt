@@ -4,11 +4,11 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.builder.event3.MathUtil
-import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.bottomEdgeOf
-import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.leftEdgeOf
-import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.rightEdgeOf
-import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.topEdgeOf
+import jetbrains.datalore.visualization.plot.builder.interact.MathUtil
+import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.bottomEdgeOf
+import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.leftEdgeOf
+import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.rightEdgeOf
+import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.topEdgeOf
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 import kotlin.math.max
 

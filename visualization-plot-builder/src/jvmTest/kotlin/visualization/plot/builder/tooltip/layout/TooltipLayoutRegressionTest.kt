@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
-import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.coord
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
 import kotlin.test.Test
 import kotlin.test.assertFalse

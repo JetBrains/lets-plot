@@ -4,11 +4,11 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.builder.event3.MathUtil
-import jetbrains.datalore.visualization.plot.builder.event3.MathUtil.DoubleRange
-import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.coord
-import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.rect
-import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.size
+import jetbrains.datalore.visualization.plot.builder.interact.MathUtil
+import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.DoubleRange
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.coord
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.rect
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory

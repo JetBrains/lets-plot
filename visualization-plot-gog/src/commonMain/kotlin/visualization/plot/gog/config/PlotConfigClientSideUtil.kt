@@ -10,9 +10,9 @@ import jetbrains.datalore.visualization.plot.builder.GeomLayer
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.visualization.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
-import jetbrains.datalore.visualization.plot.builder.event3.GeomInteractionBuilder
-import jetbrains.datalore.visualization.plot.builder.event3.GeomInteractionBuilder.Companion.AREA_GEOM
-import jetbrains.datalore.visualization.plot.builder.event3.GeomInteractionBuilder.Companion.NON_AREA_GEOM
+import jetbrains.datalore.visualization.plot.builder.interact.GeomInteractionBuilder
+import jetbrains.datalore.visualization.plot.builder.interact.GeomInteractionBuilder.Companion.AREA_GEOM
+import jetbrains.datalore.visualization.plot.builder.interact.GeomInteractionBuilder.Companion.NON_AREA_GEOM
 import jetbrains.datalore.visualization.plot.gog.config.Option.Plot
 
 object PlotConfigClientSideUtil {

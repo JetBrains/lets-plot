@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.builder.event3.MathUtil
+import jetbrains.datalore.visualization.plot.builder.interact.MathUtil
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.NORMAL_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 import kotlin.math.PI

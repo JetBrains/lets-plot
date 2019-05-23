@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
-import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.coord
-import jetbrains.datalore.visualization.plot.builder.event3.TestUtil.size
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.coord
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory

@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.visualization.plot.builder.event3.MathUtil
+import jetbrains.datalore.visualization.plot.builder.interact.MathUtil
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.MARGIN_BETWEEN_TOOLTIPS
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.moveIntoLimit
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip

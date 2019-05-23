@@ -20,7 +20,7 @@ import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.visualization.plot.builder.data.DataProcessing
 import jetbrains.datalore.visualization.plot.builder.data.GroupingContext
-import jetbrains.datalore.visualization.plot.builder.event3.ContextualMappingProvider
+import jetbrains.datalore.visualization.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.visualization.plot.builder.scale.ScaleProvider
 
 class GeomLayerBuilder {
