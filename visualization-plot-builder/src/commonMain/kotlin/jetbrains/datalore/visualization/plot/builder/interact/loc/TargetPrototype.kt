@@ -8,16 +8,16 @@ import jetbrains.datalore.visualization.plot.base.interact.HitShape
 import jetbrains.datalore.visualization.plot.base.interact.HitShape.Kind.*
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
 
-class GeomTargetPrototype(
+class TargetPrototype(
         internal val hitShape: HitShape,
         internal val indexMapper: (Int) -> Int,
-        private val myTooltipParams: TooltipParams) {
+        private val tooltipParams: TooltipParams) {
 
     internal fun crateGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
         return GeomTarget(
                 hitIndex,
-                createTipLayoutHint(hitCoord, hitShape, myTooltipParams.getColor()),
-                myTooltipParams.getTipLayoutHints()
+                createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor()),
+                tooltipParams.getTipLayoutHints()
         )
     }
 

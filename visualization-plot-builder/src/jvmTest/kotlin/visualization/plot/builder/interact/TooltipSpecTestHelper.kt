@@ -13,14 +13,14 @@ import kotlin.test.assertEquals
 open class TooltipSpecTestHelper {
     private lateinit var mappedDataAccessMock: MappedDataAccessMock
     private lateinit var myTooltipSpecs: List<TooltipSpec>
-    internal lateinit var geomTargetBuilder: GeomTargetBuilder
+    internal lateinit var geomTargetBuilder: TestingGeomTargetBuilder
         private set
     private var axisTooltipEnabled: Boolean = false
     private lateinit var nonTooltipAes: List<Aes<*>>
     private lateinit var axisAes: List<Aes<*>>
 
     internal fun init() {
-        geomTargetBuilder = GeomTargetBuilder(TARGET_HIT_COORD)
+        geomTargetBuilder = TestingGeomTargetBuilder(TARGET_HIT_COORD)
         mappedDataAccessMock = MappedDataAccessMock()
 
         setAxisTooltipEnabled(false)

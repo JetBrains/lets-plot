@@ -21,7 +21,7 @@ import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.visualization.plot.builder.event.TileMouseEventPeer
 import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent
-import jetbrains.datalore.visualization.plot.builder.interact.LayerTargetCollectorWithLocator
+import jetbrains.datalore.visualization.plot.builder.interact.loc.LayerTargetCollectorWithLocator
 import jetbrains.datalore.visualization.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.visualization.plot.builder.layout.GeometryUtil.round
 import jetbrains.datalore.visualization.plot.builder.layout.TileLayoutInfo

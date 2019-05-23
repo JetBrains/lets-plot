@@ -1,24 +1,24 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.builder.interact.MathUtil
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.ClosestPointChecker
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.DoubleRange
-import jetbrains.datalore.visualization.plot.builder.interact.loc.TargetProjector.*
-import jetbrains.datalore.visualization.plot.builder.interact.loc.TargetProjector.PathTargetProjection.PathPoint
+import jetbrains.datalore.visualization.plot.builder.interact.loc.PathTargetProjection.PathPoint
 
 internal class TargetDetector(
-        private val myLocatorLookupSpace: LookupSpace,
-        private val myLocatorLookupStrategy: LookupStrategy) {
+        private val locatorLookupSpace: LookupSpace,
+        private val locatorLookupStrategy: LookupStrategy) {
 
     fun checkPath(cursorCoord: DoubleVector, pathProjection: PathTargetProjection, closestPointChecker: ClosestPointChecker): PathPoint? {
 
-        when (myLocatorLookupSpace) {
+        when (locatorLookupSpace) {
 
             LookupSpace.X -> {
-                if (myLocatorLookupStrategy === LookupStrategy.NONE) {
+                if (locatorLookupStrategy === LookupStrategy.NONE) {
                     return null
                 }
 
@@ -32,7 +32,7 @@ internal class TargetDetector(
                 }
                 val bestPoint = pathPoints[resultIndex]
 
-                return when (myLocatorLookupStrategy) {
+                return when (locatorLookupStrategy) {
                     LookupStrategy.HOVER -> {
                         if (cursorCoord.x < pathPoints[0].projection().x() || cursorCoord.x > pathPoints[pathPoints.size - 1].projection().x()) {
                             null
@@ -41,12 +41,12 @@ internal class TargetDetector(
 
                     LookupStrategy.NEAREST -> bestPoint
 
-                    else -> throw IllegalStateException("Unknown lookup strategy: $myLocatorLookupStrategy")
+                    else -> throw IllegalStateException("Unknown lookup strategy: $locatorLookupStrategy")
                 }
             }
 
             LookupSpace.XY -> {
-                when (myLocatorLookupStrategy) {
+                when (locatorLookupStrategy) {
 
                     LookupStrategy.HOVER -> {
                         for (pathPoint in pathProjection.points) {
@@ -80,11 +80,11 @@ internal class TargetDetector(
     }
 
     fun checkPoint(cursorCoord: DoubleVector, pointProjection: PointTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
-        when (myLocatorLookupSpace) {
+        when (locatorLookupSpace) {
 
             LookupSpace.X -> {
                 val x = pointProjection.x()
-                when (myLocatorLookupStrategy) {
+                when (locatorLookupStrategy) {
 
                     LookupStrategy.HOVER -> return MathUtil.areEqual(x, cursorCoord.x, POINT_AREA_EPSILON)
 
@@ -104,7 +104,7 @@ internal class TargetDetector(
 
             LookupSpace.XY -> {
                 val targetPointCoord = pointProjection.xy()
-                return when (myLocatorLookupStrategy) {
+                return when (locatorLookupStrategy) {
 
                     LookupStrategy.HOVER -> MathUtil.areEqual(targetPointCoord, cursorCoord, POINT_AREA_EPSILON)
 
@@ -123,7 +123,7 @@ internal class TargetDetector(
     }
 
     fun checkRect(cursorCoord: DoubleVector, rectProjection: RectTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
-        when (myLocatorLookupSpace) {
+        when (locatorLookupSpace) {
 
             LookupSpace.X -> {
                 val range = rectProjection.x()
@@ -132,7 +132,7 @@ internal class TargetDetector(
 
             LookupSpace.XY -> {
                 val rect = rectProjection.xy()
-                when (myLocatorLookupStrategy) {
+                when (locatorLookupStrategy) {
 
                     LookupStrategy.HOVER -> return rect.contains(cursorCoord)
 
@@ -163,7 +163,7 @@ internal class TargetDetector(
     }
 
     fun checkPolygon(cursorCoord: DoubleVector, polygonProjection: PolygonTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
-        when (myLocatorLookupSpace) {
+        when (locatorLookupSpace) {
 
             LookupSpace.X -> {
                 val range = polygonProjection.x()
@@ -172,7 +172,7 @@ internal class TargetDetector(
 
             LookupSpace.XY -> {
                 val polygon = polygonProjection.xy()
-                when (myLocatorLookupStrategy) {
+                when (locatorLookupStrategy) {
 
                     LookupStrategy.HOVER, LookupStrategy.NEAREST -> {
                         // Doesn't support nearest strategy. Target can be found only by hovering a cursor above the polygon.
@@ -198,7 +198,7 @@ internal class TargetDetector(
     }
 
     private fun rangeBasedLookup(cursorCoord: DoubleVector, closestPointChecker: ClosestPointChecker, range: DoubleRange): Boolean {
-        when (myLocatorLookupStrategy) {
+        when (locatorLookupStrategy) {
 
             LookupStrategy.HOVER -> return range.contains(cursorCoord.x)
 

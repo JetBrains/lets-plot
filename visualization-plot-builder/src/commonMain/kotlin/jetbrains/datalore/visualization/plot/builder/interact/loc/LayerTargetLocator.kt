@@ -8,14 +8,13 @@ import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.interact.HitShape.Kind.*
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.ClosestPointChecker
-import jetbrains.datalore.visualization.plot.builder.interact.TargetDetector
 import kotlin.math.max
 
 internal class LayerTargetLocator(
         private val geomKind: GeomKind,
         lookupSpec: GeomTargetLocator.LookupSpec,
         private val contextualMapping: ContextualMapping,
-        targetPrototypes: List<GeomTargetPrototype>) : GeomTargetLocator {
+        targetPrototypes: List<TargetPrototype>) : GeomTargetLocator {
 
     private val myTargetDetector: TargetDetector = TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
     private val myTargets = ArrayList<Target>()
@@ -33,15 +32,24 @@ internal class LayerTargetLocator(
             }
 
     init {
-        val targetProjector = TargetProjector(lookupSpec.lookupSpace)
-        for (targetPrototype in targetPrototypes) {
-            myTargets.add(
-                    Target(
-                            targetProjector.project(targetPrototype),
-                            targetPrototype
-                    )
-            )
+//        val targetProjector = TargetProjector(lookupSpec.lookupSpace)
+
+        fun toProjection(prototype: TargetPrototype): TargetProjection {
+            return when (prototype.hitShape.kind) {
+                POINT -> PointTargetProjection.create(prototype.hitShape.point.center, lookupSpec.lookupSpace)
+
+                RECT -> RectTargetProjection.create(prototype.hitShape.rect, lookupSpec.lookupSpace)
+
+                POLYGON -> PolygonTargetProjection.create(prototype.hitShape.points, lookupSpec.lookupSpace)
+
+                PATH -> PathTargetProjection.create(prototype.hitShape.points, prototype.indexMapper, lookupSpec.lookupSpace)
+            }
         }
+
+        for (prototype in targetPrototypes) {
+            myTargets.add(Target(toProjection(prototype), prototype))
+        }
+
     }
 
     private fun addFoundTarget(collector: Collector<GeomTarget>, targets: MutableList<GeomTargetLocator.LocatedTargets>) {
@@ -167,23 +175,23 @@ internal class LayerTargetLocator(
         }
     }
 
-    private fun getKeyForSingleObjectGeometry(targetPrototype: GeomTargetPrototype): Int {
-        return targetPrototype.indexMapper(0)
+    private fun getKeyForSingleObjectGeometry(prototype: TargetPrototype): Int {
+        return prototype.indexMapper(0)
     }
 
-    internal class Target(private val myTargetProjection: TargetProjector.TargetProjection, val prototype: GeomTargetPrototype) {
+    internal class Target(private val targetProjection: TargetProjection, val prototype: TargetPrototype) {
 
-        val pointProjection: TargetProjector.PointTargetProjection
-            get() = myTargetProjection as TargetProjector.PointTargetProjection
+        val pointProjection: PointTargetProjection
+            get() = targetProjection as PointTargetProjection
 
-        val rectProjection: TargetProjector.RectTargetProjection
-            get() = myTargetProjection as TargetProjector.RectTargetProjection
+        val rectProjection: RectTargetProjection
+            get() = targetProjection as RectTargetProjection
 
-        val polygonProjection: TargetProjector.PolygonTargetProjection
-            get() = myTargetProjection as TargetProjector.PolygonTargetProjection
+        val polygonProjection: PolygonTargetProjection
+            get() = targetProjection as PolygonTargetProjection
 
-        val pathProjection: TargetProjector.PathTargetProjection
-            get() = myTargetProjection as TargetProjector.PathTargetProjection
+        val pathProjection: PathTargetProjection
+            get() = targetProjection as PathTargetProjection
     }
 
     internal class Collector<T>(cursor: DoubleVector, private val myStrategy: CollectingStrategy) {

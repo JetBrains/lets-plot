@@ -13,8 +13,8 @@ import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.visualization.plot.base.interact.HitShape
 import jetbrains.datalore.visualization.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.visualization.plot.builder.interact.MappedDataAccessMock.Mapping
-import jetbrains.datalore.visualization.plot.builder.interact.loc.GeomTargetPrototype
 import jetbrains.datalore.visualization.plot.builder.interact.loc.LayerTargetLocator
+import jetbrains.datalore.visualization.plot.builder.interact.loc.TargetPrototype
 import org.assertj.core.api.Condition
 import org.mockito.Mockito.mock
 import kotlin.test.assertEquals
@@ -70,9 +70,11 @@ object TestUtil {
     private const val OUTSIDE_DELTA = 10.0
     private const val PATH_POINTS_COUNT_PER_KEY = 100
 
-    internal fun createLocator(lookupStrategy: LookupStrategy, lookupSpace: LookupSpace,
-                               vararg list: GeomTargetPrototype): GeomTargetLocator {
-        val targetsList = ArrayList<GeomTargetPrototype>()
+    internal fun createLocator(lookupStrategy: LookupStrategy,
+                               lookupSpace: LookupSpace,
+                               vararg list: TargetPrototype): GeomTargetLocator {
+
+        val targetsList = ArrayList<TargetPrototype>()
         targetsList.addAll(list)
 
         val geomKind = GeomKind.POINT
@@ -210,24 +212,24 @@ object TestUtil {
         assertTrue(located.isEmpty())
     }
 
-    internal fun rectTarget(key: Any, rect: DoubleRectangle): GeomTargetPrototype {
+    internal fun rectTarget(key: Any, rect: DoubleRectangle): TargetPrototype {
         val rectShape = HitShape.rect(rect)
-        return GeomTargetPrototype(rectShape, { key as Int }, params())
+        return TargetPrototype(rectShape, { key as Int }, params())
     }
 
-    internal fun pointTarget(key: Any, p: DoubleVector): GeomTargetPrototype {
+    internal fun pointTarget(key: Any, p: DoubleVector): TargetPrototype {
         val pointShape = HitShape.point(p, 0.0)
-        return GeomTargetPrototype(pointShape, { key as Int }, params())
+        return TargetPrototype(pointShape, { key as Int }, params())
     }
 
-    internal fun pathTarget(key: Int, points: List<DoubleVector>): GeomTargetPrototype {
+    internal fun pathTarget(key: Int, points: List<DoubleVector>): TargetPrototype {
         val pathShape = HitShape.path(points, false)
-        return GeomTargetPrototype(pathShape, { hitIndex -> encodeIndex(key, hitIndex) }, params())
+        return TargetPrototype(pathShape, { hitIndex -> encodeIndex(key, hitIndex) }, params())
     }
 
-    internal fun pathTarget(points: List<DoubleVector>): GeomTargetPrototype {
+    internal fun pathTarget(points: List<DoubleVector>): TargetPrototype {
         val pathShape = HitShape.path(points, false)
-        return GeomTargetPrototype(pathShape, identity(), params())
+        return TargetPrototype(pathShape, identity(), params())
     }
 
     private fun encodeIndex(key: Int, integer: Int?): Int {
@@ -242,14 +244,14 @@ object TestUtil {
         return index!! % PATH_POINTS_COUNT_PER_KEY
     }
 
-    internal fun pathTarget(points: List<DoubleVector>, indexMapper: (Int) -> Int): GeomTargetPrototype {
+    internal fun pathTarget(points: List<DoubleVector>, indexMapper: (Int) -> Int): TargetPrototype {
         val pathShape = HitShape.path(points, false)
-        return GeomTargetPrototype(pathShape, indexMapper, params())
+        return TargetPrototype(pathShape, indexMapper, params())
     }
 
-    internal fun polygonTarget(key: Int, points: List<DoubleVector>): GeomTargetPrototype {
+    internal fun polygonTarget(key: Int, points: List<DoubleVector>): TargetPrototype {
         val polygonShape = HitShape.path(points, true)
-        return GeomTargetPrototype(polygonShape, { key }, params())
+        return TargetPrototype(polygonShape, { key }, params())
     }
 
     fun point(x: Double, y: Double): DoubleVector {
@@ -293,12 +295,12 @@ object TestUtil {
         return pathPoints
     }
 
-    internal fun horizontalPathTarget(key: Int, y: Double, xList: DoubleArray): GeomTargetPrototype {
+    internal fun horizontalPathTarget(key: Int, y: Double, xList: DoubleArray): TargetPrototype {
         val pathPoints = horizontalPath(y, *xList)
         return pathTarget(key, pathPoints)
     }
 
-    internal fun pathTarget(key: Int, vararg points: PathPoint): GeomTargetPrototype {
+    internal fun pathTarget(key: Int, vararg points: PathPoint): TargetPrototype {
         return pathTarget(key, points.map { it.coord })
     }
 
