@@ -337,12 +337,12 @@ class VerticalTooltipShiftingExpanderTest {
     }
 
     internal class TooltipsBuilder {
-        private var myTooltipCoord: DoubleVector? = null
+        private lateinit var myTooltipCoord: DoubleVector
         private var myStemCoord: DoubleVector? = null
-        private var myMeasuredTooltip: MeasuredTooltip? = null
+        private lateinit var myMeasuredTooltip: MeasuredTooltip
 
         fun build(): PositionedTooltip {
-            return PositionedTooltip(myMeasuredTooltip!!, myTooltipCoord!!, myStemCoord)
+            return PositionedTooltip(myMeasuredTooltip, myTooltipCoord, myStemCoord ?: myTooltipCoord)
         }
 
         fun tooltipCoord(v: DoubleVector): TooltipsBuilder {

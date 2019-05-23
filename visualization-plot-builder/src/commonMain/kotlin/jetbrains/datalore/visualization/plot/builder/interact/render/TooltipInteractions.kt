@@ -72,9 +72,9 @@ internal class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRec
 
     companion object {
 
-        fun convertToTooltipEntry(arrangeDataList: List<PositionedTooltip>): List<TooltipEntry> {
+        fun convertToTooltipEntry(positionedTooltips: List<PositionedTooltip>): List<TooltipEntry> {
             val layoutDataList = ArrayList<TooltipEntry>()
-            for (positionedTooltip in arrangeDataList) {
+            for (positionedTooltip in positionedTooltips) {
 
                 val tooltipSpec = positionedTooltip.tooltipSpec
                 val content = TooltipContent(
@@ -87,7 +87,7 @@ internal class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRec
                         TooltipEntry(
                                 content,
                                 positionedTooltip.tooltipCoord,
-                                positionedTooltip.stemCoord!!,
+                                positionedTooltip.stemCoord,
                                 getOrientation(tooltipSpec.layoutHint.kind)
                         )
                 )

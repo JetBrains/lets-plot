@@ -39,7 +39,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
                 myVerticalSpace = DoubleRange.withStartAndEnd(
                         myViewport.top,
                         min(
-                                positionedTooltip.stemCoord!!.y,
+                                positionedTooltip.stemCoord.y,
                                 positionedTooltip.top
                         )
                 )
@@ -108,7 +108,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
             restrictions.add(positionedTooltip.rect())
         }
 
-        // First add non-rearrangable tooltips
+        // First add tooltips with pre-arranged position
         select(tooltips, CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP)
                 .forEach(fixate)
 
@@ -242,7 +242,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
         val tooltipSpec: TooltipSpec
         val tooltipCoord: DoubleVector
         internal val tooltipSize: DoubleVector
-        val stemCoord: DoubleVector?
+        val stemCoord: DoubleVector
 
         internal val left: Double
             get() = tooltipCoord.x
@@ -265,7 +265,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
         internal val hintKind: Kind
             get() = tooltipSpec.layoutHint.kind
 
-        internal constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector?) {
+        internal constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector) {
             tooltipSpec = measuredTooltip.tooltipSpec
             tooltipSize = measuredTooltip.size
             this.tooltipCoord = tooltipCoord

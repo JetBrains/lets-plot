@@ -10,7 +10,8 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-internal class VerticalTooltipRotatingExpander(private val myVerticalSpace: MathUtil.DoubleRange, private val myHorizontalSpace: MathUtil.DoubleRange) {
+internal class VerticalTooltipRotatingExpander(private val verticalSpace: MathUtil.DoubleRange,
+                                               private val horizontalSpace: MathUtil.DoubleRange) {
 
     fun fixOverlapping(tooltips: List<PositionedTooltip>, restrictions: List<DoubleRectangle>): List<PositionedTooltip> {
         // <tooltip index, tooltip coord>
@@ -24,7 +25,7 @@ internal class VerticalTooltipRotatingExpander(private val myVerticalSpace: Math
             if (intersectsAny(tooltip.rect(), restrictions)) {
 
                 val restrictionsWithStems = ArrayList(restrictions)
-                restrictionsWithStems.add(DoubleRectangle(tooltip.stemCoord!!, POINT_RESTRICTION_SIZE))
+                restrictionsWithStems.add(DoubleRectangle(tooltip.stemCoord, POINT_RESTRICTION_SIZE))
 
                 val newPlacement = findValidCandidate(getCandidates(tooltip), restrictionsWithStems)
                 if (newPlacement == null) {
@@ -90,11 +91,11 @@ internal class VerticalTooltipRotatingExpander(private val myVerticalSpace: Math
                 continue
             }
 
-            if (!MathUtil.DoubleRange.withStartAndLength(candidate.origin.y, candidate.dimension.y).inside(myVerticalSpace)) {
+            if (!MathUtil.DoubleRange.withStartAndLength(candidate.origin.y, candidate.dimension.y).inside(verticalSpace)) {
                 continue
             }
 
-            if (!MathUtil.DoubleRange.withStartAndLength(candidate.origin.x, candidate.dimension.x).inside(myHorizontalSpace)) {
+            if (!MathUtil.DoubleRange.withStartAndLength(candidate.origin.x, candidate.dimension.x).inside(horizontalSpace)) {
                 continue
             }
 
@@ -104,14 +105,14 @@ internal class VerticalTooltipRotatingExpander(private val myVerticalSpace: Math
         return null
     }
 
-    internal class TooltipRotationHelper(arrangeData: PositionedTooltip) {
+    internal class TooltipRotationHelper(positionedTooltip: PositionedTooltip) {
 
         private val myAttachToTooltipsTopOffset: DoubleVector
         private val myAttachToTooltipsBottomOffset: DoubleVector
         private val myAttachToTooltipsLeftOffset: DoubleVector
         private val myAttachToTooltipsRightOffset: DoubleVector
-        private val myTooltipSize: DoubleVector = arrangeData.tooltipSize
-        private val myTargetCoord: DoubleVector = arrangeData.stemCoord!!
+        private val myTooltipSize: DoubleVector = positionedTooltip.tooltipSize
+        private val myTargetCoord: DoubleVector = positionedTooltip.stemCoord
 
         init {
             val middleX = myTooltipSize.x / 2
