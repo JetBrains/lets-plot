@@ -1,7 +1,6 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
@@ -9,10 +8,10 @@ import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.interact.HitShape.Kind.*
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.ClosestPointChecker
-import jetbrains.datalore.visualization.plot.builder.interact.TargetProjector.*
+import jetbrains.datalore.visualization.plot.builder.interact.TargetDetector
 import kotlin.math.max
 
-internal class LayerGeomTargetLocator(
+internal class LayerTargetLocator(
         private val geomKind: GeomKind,
         lookupSpec: GeomTargetLocator.LookupSpec,
         private val contextualMapping: ContextualMapping,
@@ -172,21 +171,19 @@ internal class LayerGeomTargetLocator(
         return targetPrototype.indexMapper(0)
     }
 
-    internal class RingXY(val edges: List<DoubleVector>, val bbox: DoubleRectangle)
+    internal class Target(private val myTargetProjection: TargetProjector.TargetProjection, val prototype: GeomTargetPrototype) {
 
-    internal class Target(private val myTargetProjection: TargetProjection, val prototype: GeomTargetPrototype) {
+        val pointProjection: TargetProjector.PointTargetProjection
+            get() = myTargetProjection as TargetProjector.PointTargetProjection
 
-        val pointProjection: PointTargetProjection
-            get() = myTargetProjection as PointTargetProjection
+        val rectProjection: TargetProjector.RectTargetProjection
+            get() = myTargetProjection as TargetProjector.RectTargetProjection
 
-        val rectProjection: RectTargetProjection
-            get() = myTargetProjection as RectTargetProjection
+        val polygonProjection: TargetProjector.PolygonTargetProjection
+            get() = myTargetProjection as TargetProjector.PolygonTargetProjection
 
-        val polygonProjection: PolygonTargetProjection
-            get() = myTargetProjection as PolygonTargetProjection
-
-        val pathProjection: PathTargetProjection
-            get() = myTargetProjection as PathTargetProjection
+        val pathProjection: TargetProjector.PathTargetProjection
+            get() = myTargetProjection as TargetProjector.PathTargetProjection
     }
 
     internal class Collector<T>(cursor: DoubleVector, private val myStrategy: CollectingStrategy) {

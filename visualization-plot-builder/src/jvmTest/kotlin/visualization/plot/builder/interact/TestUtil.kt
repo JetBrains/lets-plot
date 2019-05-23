@@ -13,6 +13,8 @@ import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.visualization.plot.base.interact.HitShape
 import jetbrains.datalore.visualization.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.visualization.plot.builder.interact.MappedDataAccessMock.Mapping
+import jetbrains.datalore.visualization.plot.builder.interact.loc.GeomTargetPrototype
+import jetbrains.datalore.visualization.plot.builder.interact.loc.LayerTargetLocator
 import org.assertj.core.api.Condition
 import org.mockito.Mockito.mock
 import kotlin.test.assertEquals
@@ -77,7 +79,7 @@ object TestUtil {
         val lookupSpec = LookupSpec(lookupSpace, lookupStrategy)
         val contextualMapping = mock(ContextualMapping::class.java)
 
-        return LayerGeomTargetLocator(geomKind, lookupSpec, contextualMapping, targetsList)
+        return LayerTargetLocator(geomKind, lookupSpec, contextualMapping, targetsList)
     }
 
     fun coord(x: Double, y: Double): DoubleVector {

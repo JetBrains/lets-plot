@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles.boundingBox
@@ -7,7 +7,6 @@ import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace.*
 import jetbrains.datalore.visualization.plot.base.interact.HitShape.Kind.*
-import jetbrains.datalore.visualization.plot.builder.interact.LayerGeomTargetLocator.RingXY
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.visualization.plot.common.geometry.PolylineSimplifier
 import jetbrains.datalore.visualization.plot.common.geometry.Utils.calculateArea
@@ -172,6 +171,8 @@ internal class TargetProjector(private val lookupSpace: LookupSpace) {
             private val isLogEnabled: Boolean
                 get() = false
         }
+
+        internal class RingXY(val edges: List<DoubleVector>, val bbox: DoubleRectangle)
     }
 
     internal class PathTargetProjection(data: List<PathPoint>) : TargetProjection(data) {

@@ -6,8 +6,8 @@ import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.Loo
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.ClosestPointChecker
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.DoubleRange
-import jetbrains.datalore.visualization.plot.builder.interact.TargetProjector.*
-import jetbrains.datalore.visualization.plot.builder.interact.TargetProjector.PathTargetProjection.PathPoint
+import jetbrains.datalore.visualization.plot.builder.interact.loc.TargetProjector.*
+import jetbrains.datalore.visualization.plot.builder.interact.loc.TargetProjector.PathTargetProjection.PathPoint
 
 internal class TargetDetector(
         private val myLocatorLookupSpace: LookupSpace,
@@ -27,8 +27,8 @@ internal class TargetDetector(
                     return null
                 }
 
-                val resultIndex = binarySearch(cursorCoord.x, pathPoints.size) {
-                    index -> pathPoints[index].projection().x()
+                val resultIndex = binarySearch(cursorCoord.x, pathPoints.size) { index ->
+                    pathPoints[index].projection().x()
                 }
                 val bestPoint = pathPoints[resultIndex]
 

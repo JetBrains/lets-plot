@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
 import jetbrains.datalore.visualization.plot.base.interact.HitShape
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.visualization.plot.builder.interact.GeomTargetPrototype.Companion.createTipLayoutHint
+import jetbrains.datalore.visualization.plot.builder.interact.loc.GeomTargetPrototype.Companion.createTipLayoutHint
 
 class GeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
 
