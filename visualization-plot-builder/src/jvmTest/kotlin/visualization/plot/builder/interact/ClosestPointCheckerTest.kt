@@ -81,11 +81,11 @@ class ClosestPointCheckerTest {
     }
 
     private fun check(coord: DoubleVector): Expectation<Boolean> {
-        return Expectation({ cp!!.check(coord) })
+        return Expectation { cp!!.check(coord) }
     }
 
     private fun compare(coord: DoubleVector): Expectation<COMPARE_RESULT> {
-        return Expectation({ cp!!.compare(coord) })
+        return Expectation { cp!!.compare(coord) }
     }
 
     private fun assertCall(vararg assertions: Runnable) {

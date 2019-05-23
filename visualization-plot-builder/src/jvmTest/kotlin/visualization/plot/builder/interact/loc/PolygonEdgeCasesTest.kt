@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector

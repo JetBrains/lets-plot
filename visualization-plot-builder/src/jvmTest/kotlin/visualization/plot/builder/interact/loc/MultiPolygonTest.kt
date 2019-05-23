@@ -1,8 +1,9 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.between
@@ -68,7 +69,7 @@ class MultiPolygonTest {
                 polygonFromRect(FIRST_POLYGON_RECT)
         )
 
-        private val FIRST_POLYGON_KEY = 1
+        private const val FIRST_POLYGON_KEY = 1
         private val FIRST_TARGET = polygonTarget(FIRST_POLYGON_KEY, FIRST_POLYGON)
 
         private fun polygonFromRect(rect: DoubleRectangle): MutableList<DoubleVector> {
