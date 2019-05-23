@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LocatedTargets

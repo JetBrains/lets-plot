@@ -7,6 +7,7 @@ import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.Loc
 import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpecFactory
 import jetbrains.datalore.visualization.plot.builder.interact.TransformedTargetLocator
+import jetbrains.datalore.visualization.plot.builder.interact.loc.LocatedTargetsPicker
 
 internal class PlotTooltipHelper {
     private val myTileInfos = ArrayList<TileInfo>()

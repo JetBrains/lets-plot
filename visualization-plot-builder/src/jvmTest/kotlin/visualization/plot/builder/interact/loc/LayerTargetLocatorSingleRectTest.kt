@@ -1,9 +1,10 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.inside
@@ -14,7 +15,7 @@ import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.rectTarge
 import kotlin.test.Test
 
 
-class GeomTargetLocatorImplSingleRectTest {
+class LayerTargetLocatorSingleRectTest {
 
     @Test
     fun hoverXy() {

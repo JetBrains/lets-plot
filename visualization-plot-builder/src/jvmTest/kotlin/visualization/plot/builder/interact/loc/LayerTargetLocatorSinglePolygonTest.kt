@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
@@ -13,7 +13,7 @@ import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.polygonTa
 import org.assertj.core.api.Java6Assertions.assertThat
 import kotlin.test.Test
 
-class GeomTargetLocatorImplSinglePolygonTest {
+class LayerTargetLocatorSinglePolygonTest {
     private lateinit var locator: GeomTargetLocator
 
     @Test

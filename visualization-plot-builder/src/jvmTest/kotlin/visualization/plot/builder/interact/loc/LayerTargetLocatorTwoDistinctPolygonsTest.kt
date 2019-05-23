@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
@@ -11,7 +11,7 @@ import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.polygonTa
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class GeomTargetLocatorImplTwoDistinctPolygonsTest {
+class LayerTargetLocatorTwoDistinctPolygonsTest {
     private lateinit var myLocator: GeomTargetLocator
 
     @BeforeTest

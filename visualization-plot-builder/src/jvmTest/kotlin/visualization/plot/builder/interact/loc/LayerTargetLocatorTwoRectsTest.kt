@@ -1,9 +1,10 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.inside
@@ -15,7 +16,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 
-class GeomTargetLocatorImplTwoRectsTest {
+class LayerTargetLocatorTwoRectsTest {
 
     @BeforeTest
     fun setUp() {

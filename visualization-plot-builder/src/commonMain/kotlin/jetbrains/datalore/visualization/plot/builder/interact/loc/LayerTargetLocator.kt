@@ -16,10 +16,10 @@ internal class LayerTargetLocator(
         private val contextualMapping: ContextualMapping,
         targetPrototypes: List<TargetPrototype>) : GeomTargetLocator {
 
-    private val myTargetDetector: TargetDetector = TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
     private val myTargets = ArrayList<Target>()
+    private val myTargetDetector: TargetDetector = TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
 
-    private val collectingStrategy: Collector.CollectingStrategy =
+    private val myCollectingStrategy: Collector.CollectingStrategy =
             if (lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.X) {
                 Collector.CollectingStrategy.APPEND
             } else if (lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.HOVER) {
@@ -32,8 +32,6 @@ internal class LayerTargetLocator(
             }
 
     init {
-//        val targetProjector = TargetProjector(lookupSpec.lookupSpace)
-
         fun toProjection(prototype: TargetPrototype): TargetProjection {
             return when (prototype.hitShape.kind) {
                 POINT -> PointTargetProjection.create(prototype.hitShape.point.center, lookupSpec.lookupSpace)
@@ -49,7 +47,6 @@ internal class LayerTargetLocator(
         for (prototype in targetPrototypes) {
             myTargets.add(Target(toProjection(prototype), prototype))
         }
-
     }
 
     private fun addFoundTarget(collector: Collector<GeomTarget>, targets: MutableList<GeomTargetLocator.LocatedTargets>) {
@@ -74,9 +71,9 @@ internal class LayerTargetLocator(
             return null
         }
 
-        val rectCollector = Collector<GeomTarget>(coord, collectingStrategy)
-        val pointCollector = Collector<GeomTarget>(coord, collectingStrategy)
-        val pathCollector = Collector<GeomTarget>(coord, collectingStrategy)
+        val rectCollector = Collector<GeomTarget>(coord, myCollectingStrategy)
+        val pointCollector = Collector<GeomTarget>(coord, myCollectingStrategy)
+        val pathCollector = Collector<GeomTarget>(coord, myCollectingStrategy)
 
         // Should always replace because of polygon with holes - only top should have tooltip.
         val polygonCollector = Collector<GeomTarget>(coord, Collector.CollectingStrategy.REPLACE)
@@ -159,7 +156,7 @@ internal class LayerTargetLocator(
     private fun processPath(coord: DoubleVector, target: Target, resultCollector: Collector<GeomTarget>) {
         // When searching single point from all targets (REPLACE) - should search nearest projection between every path target.
         // When searching points for every target (APPEND) - should reset nearest point between every path target.
-        val pointChecker = if (collectingStrategy == Collector.CollectingStrategy.APPEND)
+        val pointChecker = if (myCollectingStrategy == Collector.CollectingStrategy.APPEND)
             ClosestPointChecker(coord)
         else
             resultCollector.closestPointChecker

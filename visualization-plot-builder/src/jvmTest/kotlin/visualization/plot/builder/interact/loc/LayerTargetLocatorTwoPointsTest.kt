@@ -1,8 +1,9 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.offsetX
@@ -12,7 +13,7 @@ import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.pointTarget
 import kotlin.test.Test
 
-class GeomTargetLocatorImplTwoPointsTest {
+class LayerTargetLocatorTwoPointsTest {
 
     @Test
     fun hoverXy() {

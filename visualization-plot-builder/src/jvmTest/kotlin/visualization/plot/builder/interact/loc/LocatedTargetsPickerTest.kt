@@ -1,9 +1,9 @@
-package jetbrains.datalore.visualization.plot.builder
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LocatedTargets
-import jetbrains.datalore.visualization.plot.builder.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
-import jetbrains.datalore.visualization.plot.builder.LocatedTargetsPicker.Companion.FAKE_DISTANCE
+import jetbrains.datalore.visualization.plot.builder.interact.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
+import jetbrains.datalore.visualization.plot.builder.interact.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
 import org.assertj.core.api.Assertions.assertThat
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
@@ -22,7 +22,7 @@ class LocatedTargetsPickerTest {
 
     @Test
     fun closestTargetShouldBeSelected() {
-        firstLocatedTargetConfig.distanceToTarget(CUTOFF_DISTANCE * 0.7)
+        firstLocatedTargetConfig.distanceToTarget(LocatedTargetsPicker.CUTOFF_DISTANCE * 0.7)
         secondLocatedTargetConfig!!.distanceToTarget(CUTOFF_DISTANCE * 0.5)
 
         assertTargetFrom(secondLocatedTargetConfig!!)

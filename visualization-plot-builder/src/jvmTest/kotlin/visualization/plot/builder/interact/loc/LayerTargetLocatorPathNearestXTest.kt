@@ -1,20 +1,21 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.visualization.plot.builder.interact.TestUtil
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.HitIndex
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.PathPoint
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 
-class GeomTargetLocatorImplPathHoverXTest : GeomTargetLocatorPathXTestBase() {
+class LayerTargetLocatorPathNearestXTest : TargetLocatorPathXTestBase() {
 
     override val strategy: LookupStrategy
-        get() = LookupStrategy.HOVER
+        get() = LookupStrategy.NEAREST
 
     @Test
-    fun hoverX_WhenCloserToLeft() {
+    fun nearestX_WhenCloserToLeft() {
         assertThat(
                 findTargets(rightFrom(p1, THIS_POINT_DISTANCE))
         ).first().has(HitIndex.equalTo(p1.hitIndex))
@@ -22,14 +23,14 @@ class GeomTargetLocatorImplPathHoverXTest : GeomTargetLocatorPathXTestBase() {
 
 
     @Test
-    fun hoverX_WhenCloserToRight() {
+    fun nearestX_WhenCloserToRight() {
         assertThat(
                 findTargets(rightFrom(p1, NEXT_POINT_DISTANCE))
         ).first().has(HitIndex.equalTo(p2.hitIndex))
     }
 
     @Test
-    fun hoverX_WhenInTheMiddle_ShouldSelectSecondPoint() {
+    fun nearestX_WhenInTheMiddle_ShouldSelectSecondPoint() {
         assertThat(
                 findTargets(rightFrom(p1, MIDDLE_POINTS_DISTANCE))
         ).first().has(HitIndex.equalTo(p1.hitIndex))
@@ -37,7 +38,7 @@ class GeomTargetLocatorImplPathHoverXTest : GeomTargetLocatorPathXTestBase() {
 
 
     @Test
-    fun hoverX_WhenOutOfPath_ShouldFindNothing() {
+    fun nearestX_WhenOutOfPath_ShouldFindNothing() {
         assertThat(
                 findTargets(leftFrom(p0, NEXT_POINT_DISTANCE))
         ).isEmpty()
