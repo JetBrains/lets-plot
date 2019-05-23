@@ -19,7 +19,7 @@ import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec.*
 import jetbrains.datalore.visualization.plot.builder.event.MouseEventPeer
-import jetbrains.datalore.visualization.plot.builder.interact.TooltipInteractions
+import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipInteractions
 import jetbrains.datalore.visualization.plot.builder.presentation.Style
 import kotlin.math.max
 
@@ -61,7 +61,7 @@ class PlotContainer(private val plot: Plot, private val preferredSize: ReadableP
         }
     }
 
-    fun buildContent() {
+    private fun buildContent() {
         checkState(!myContentBuilt)
         myContentBuilt = true
 

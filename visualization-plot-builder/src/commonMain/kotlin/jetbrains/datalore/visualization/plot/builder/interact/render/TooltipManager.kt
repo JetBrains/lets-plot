@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.render
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
@@ -7,31 +7,31 @@ import jetbrains.datalore.visualization.base.svg.SvgGraphicsElement
 import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipOrientation
 import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipWithStem
 
-class TooltipManagerImpl(private val myTooltipLayer: SvgGElement) : TooltipManager {
-    private val myUpdatingTooltips = HashSet<TooltipManager.TooltipEntry>()
-    private val myAddedTooltips = HashMap<TooltipManager.TooltipEntry, TooltipWithStem>()
+internal class TooltipManager(private val tooltipLayer: SvgGElement) {
+
+    private val myUpdatingTooltips = HashSet<TooltipEntry>()
+    private val myAddedTooltips = HashMap<TooltipEntry, TooltipWithStem>()
     private val myMeasuringTooltip = TooltipWithStem()
 
     init {
-
         myMeasuringTooltip.rootGroup.visibility().set(SvgGraphicsElement.Visibility.HIDDEN)
-        myTooltipLayer.children().add(myMeasuringTooltip.rootGroup)
+        tooltipLayer.children().add(myMeasuringTooltip.rootGroup)
     }
 
-    override fun measure(text: List<String>, fontSize: Double): DoubleVector {
+    fun measure(text: List<String>, fontSize: Double): DoubleVector {
         myMeasuringTooltip.update(IGNORED_COLOR, text, fontSize)
         return myMeasuringTooltip.contentRect.dimension
     }
 
-    override fun add(tooltipEntry: TooltipManager.TooltipEntry) {
+    fun add(tooltipEntry: TooltipEntry) {
         myUpdatingTooltips.add(tooltipEntry)
     }
 
-    override fun beginUpdate() {
+    fun beginUpdate() {
         myUpdatingTooltips.clear()
     }
 
-    override fun endUpdate() {
+    fun endUpdate() {
         val freeTooltips = ArrayList(myAddedTooltips.values)
         myAddedTooltips.clear()
         balanceFreeTooltips(freeTooltips)
@@ -67,11 +67,11 @@ class TooltipManagerImpl(private val myTooltipLayer: SvgGElement) : TooltipManag
             while (tooltipsCountDiff++ < 0) {
                 val tooltipWithStem = TooltipWithStem()
                 freeTooltips.add(tooltipWithStem)
-                myTooltipLayer.children().add(tooltipWithStem.rootGroup)
+                tooltipLayer.children().add(tooltipWithStem.rootGroup)
             }
         } else if (tooltipsCountDiff > 0) {
             while (tooltipsCountDiff-- > 0) {
-                myTooltipLayer.children().remove(freeTooltips[0].rootGroup)
+                tooltipLayer.children().remove(freeTooltips[0].rootGroup)
                 freeTooltips.removeAt(0)
             }
         }

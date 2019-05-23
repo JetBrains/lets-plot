@@ -1,19 +1,18 @@
-package jetbrains.datalore.visualization.plot.builder.interact
+package jetbrains.datalore.visualization.plot.builder.interact.render
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind
-import jetbrains.datalore.visualization.plot.builder.interact.TooltipManager.TooltipContent
-import jetbrains.datalore.visualization.plot.builder.interact.TooltipManager.TooltipEntry
+import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip
 import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipOrientation
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 
-class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
+internal class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
 
     private val myTooltipManager: TooltipManager
     private val myLayoutManager: LayoutManager
@@ -22,8 +21,21 @@ class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
         val interactionsRoot = SvgGElement()
         decorationsRoot.children().add(interactionsRoot)
 
-        myTooltipManager = TooltipManagerImpl(interactionsRoot)
+        myTooltipManager = TooltipManager(interactionsRoot)
         myLayoutManager = LayoutManager(viewport, LayoutManager.HorizontalAlignment.LEFT)
+    }
+
+
+    fun showTooltip(cursor: DoubleVector, tooltipSpecs: List<TooltipSpec>) {
+        drawTooltips(
+                myLayoutManager.arrange(
+                        measuredTooltips(tooltipSpecs),
+                        cursor)
+        )
+    }
+
+    fun hideTooltip() {
+        drawTooltips(emptyList())
     }
 
     private fun drawTooltips(tooltips: List<PositionedTooltip>) {
@@ -56,19 +68,6 @@ class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
         }
 
         return measuredTooltips
-    }
-
-    fun showTooltip(cursor: DoubleVector, tooltipSpecs: List<TooltipSpec>) {
-        drawTooltips(
-                myLayoutManager.arrange(
-                        measuredTooltips(tooltipSpecs),
-                        cursor
-                )
-        )
-    }
-
-    fun hideTooltip() {
-        drawTooltips(emptyList())
     }
 
     companion object {

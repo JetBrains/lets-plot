@@ -17,7 +17,7 @@ import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField.POINT_
 
 class TooltipSpecFactory(
         contextualMapping: ContextualMapping,
-        private val myAxisOrigin: DoubleVector) {
+        private val axisOrigin: DoubleVector) {
 
     private val myTooltipAes: List<Aes<*>> = contextualMapping.tooltipAes
     private val myAxisAes: List<Aes<*>> = contextualMapping.axisAes
@@ -151,11 +151,11 @@ class TooltipSpecFactory(
 
         private fun createHintForAxis(aes: Aes<*>): TipLayoutHint {
             if (aes === Aes.X) {
-                return TipLayoutHint.xAxisTooltip(DoubleVector(tipLayoutHint().coord!!.x, myAxisOrigin.y), AXIS_TOOLTIP_COLOR)
+                return TipLayoutHint.xAxisTooltip(DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y), AXIS_TOOLTIP_COLOR)
             }
 
             if (aes === Aes.Y) {
-                return TipLayoutHint.yAxisTooltip(DoubleVector(myAxisOrigin.x, tipLayoutHint().coord!!.y), AXIS_TOOLTIP_COLOR)
+                return TipLayoutHint.yAxisTooltip(DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y), AXIS_TOOLTIP_COLOR)
             }
 
             throw IllegalArgumentException("Not an axis aes: $aes")

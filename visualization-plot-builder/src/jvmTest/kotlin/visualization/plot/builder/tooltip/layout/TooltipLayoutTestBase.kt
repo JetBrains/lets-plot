@@ -4,9 +4,9 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.visualization.plot.builder.interact.TooltipInteractions.Companion.convertToTooltipEntry
-import jetbrains.datalore.visualization.plot.builder.interact.TooltipManager.TooltipContent
-import jetbrains.datalore.visualization.plot.builder.interact.TooltipManager.TooltipEntry
+import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipContent
+import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipEntry
+import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipInteractions
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.*
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.NORMAL_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.SHORT_STEM_LENGTH
@@ -58,12 +58,13 @@ internal open class TooltipLayoutTestBase {
     private fun expectedHorizontalX(tooltipKey: String, alignment: HorizontalAlignment, stemLength: Double): Double {
         val tooltip = tooltip(tooltipKey)
 
-        return if (alignment === HorizontalAlignment.RIGHT) {
-            tooltip!!.cfgHintCoord().x + tooltip.cfgHintRadius() + stemLength
-        } else if (alignment === LEFT) {
-            tooltip!!.cfgHintCoord().x - tooltip.cfgHintRadius() - stemLength - tooltip.size().x
-        } else {
-            throw IllegalArgumentException("Center alignment is not supportd for this tooltip's kind")
+        return when {
+            alignment === HorizontalAlignment.RIGHT ->
+                tooltip!!.cfgHintCoord().x + tooltip.cfgHintRadius() + stemLength
+            alignment === LEFT ->
+                tooltip!!.cfgHintCoord().x - tooltip.cfgHintRadius() - stemLength - tooltip.size().x
+            else ->
+                throw IllegalArgumentException("Center alignment is not supported for this tooltip's kind")
         }
     }
 
@@ -76,11 +77,11 @@ internal open class TooltipLayoutTestBase {
     fun expectedAroundPointY(tooltipKey: String, verticalAlignment: VerticalAlignment): Double {
         val tooltip = tooltip(tooltipKey)
 
-        when (verticalAlignment) {
-
-            LayoutManager.VerticalAlignment.TOP -> return tooltip!!.cfgHintCoord().y - tooltip.size().y - NORMAL_STEM_LENGTH - tooltip.cfgHintRadius()
-
-            LayoutManager.VerticalAlignment.BOTTOM -> return tooltip!!.cfgHintCoord().y + NORMAL_STEM_LENGTH + tooltip.cfgHintRadius()
+        return when (verticalAlignment) {
+            VerticalAlignment.TOP ->
+                tooltip!!.cfgHintCoord().y - tooltip.size().y - NORMAL_STEM_LENGTH - tooltip.cfgHintRadius()
+            VerticalAlignment.BOTTOM ->
+                tooltip!!.cfgHintCoord().y + NORMAL_STEM_LENGTH + tooltip.cfgHintRadius()
 
             else -> throw IllegalArgumentException("Placement is not supported: $verticalAlignment")
         }
@@ -98,10 +99,12 @@ internal open class TooltipLayoutTestBase {
     fun expectedAxisTipY(tooltipKey: String, verticalAlignment: VerticalAlignment): Double {
         val tooltip = tooltip(tooltipKey)
 
-        when (verticalAlignment) {
+        return when (verticalAlignment) {
 
-            LayoutManager.VerticalAlignment.TOP -> return tooltip!!.cfgHintCoord().y - tooltip.size().y - SHORT_STEM_LENGTH
-            LayoutManager.VerticalAlignment.BOTTOM -> return tooltip!!.cfgHintCoord().y + SHORT_STEM_LENGTH
+            VerticalAlignment.TOP ->
+                tooltip!!.cfgHintCoord().y - tooltip.size().y - SHORT_STEM_LENGTH
+            VerticalAlignment.BOTTOM ->
+                tooltip!!.cfgHintCoord().y + SHORT_STEM_LENGTH
 
             else -> throw IllegalArgumentException("Placement is not supported: $verticalAlignment")
         }
@@ -205,7 +208,7 @@ internal open class TooltipLayoutTestBase {
 
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
-                override fun arrange(): List<TooltipEntry> = convertToTooltipEntry(
+                override fun arrange(): List<TooltipEntry> = TooltipInteractions.convertToTooltipEntry(
                         LayoutManager(myViewport, myHorizontalAlignment).arrange(myTooltipData, myCursor)
                 )
             }
@@ -314,8 +317,8 @@ internal open class TooltipLayoutTestBase {
         val VIEWPORT = DoubleRectangle(0.0, 0.0, 500.0, 500.0)
         val DEFAULT_TOOLTIP_SIZE = DoubleVector(80.0, 40.0)
 
-        val DEFAULT_OBJECT_RADIUS = 40.0
-        private val DOUBLE_COMPARE_EPSILON = 0.01
+        const val DEFAULT_OBJECT_RADIUS = 40.0
+        private const val DOUBLE_COMPARE_EPSILON = 0.01
 
         fun makeText(text: String): List<String> {
             val textList = ArrayList<String>()
