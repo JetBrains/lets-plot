@@ -12,14 +12,15 @@ import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManage
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 
-internal class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRectangle) {
+internal class TooltipInteractions(tooltipLayer: SvgNode, viewport: DoubleRectangle) {
 
     private val myTooltipManager: TooltipManager
     private val myLayoutManager: LayoutManager
+    private val myTooltipMeter: TooltipMeter = TooltipMeter(tooltipLayer)
 
     init {
         val interactionsRoot = SvgGElement()
-        decorationsRoot.children().add(interactionsRoot)
+        tooltipLayer.children().add(interactionsRoot)
 
         myTooltipManager = TooltipManager(interactionsRoot)
         myLayoutManager = LayoutManager(viewport, LayoutManager.HorizontalAlignment.LEFT)
@@ -29,7 +30,7 @@ internal class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRec
     fun showTooltip(cursor: DoubleVector, tooltipSpecs: List<TooltipSpec>) {
         drawTooltips(
                 myLayoutManager.arrange(
-                        measuredTooltips(tooltipSpecs),
+                        toMeasured(tooltipSpecs),
                         cursor)
         )
     }
@@ -48,7 +49,7 @@ internal class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRec
         myTooltipManager.endUpdate()
     }
 
-    private fun measuredTooltips(tooltipSpecs: List<TooltipSpec>): List<MeasuredTooltip> {
+    private fun toMeasured(tooltipSpecs: List<TooltipSpec>): List<MeasuredTooltip> {
         val measuredTooltips = ArrayList<MeasuredTooltip>()
 
         for (tooltipSpec in tooltipSpecs) {
@@ -59,7 +60,7 @@ internal class TooltipInteractions(decorationsRoot: SvgNode, viewport: DoubleRec
             measuredTooltips.add(
                     MeasuredTooltip(
                             tooltipSpec,
-                            myTooltipManager.measure(
+                            myTooltipMeter.measure(
                                     getSortedText(tooltipSpec),
                                     getFontSize(tooltipSpec)
                             )

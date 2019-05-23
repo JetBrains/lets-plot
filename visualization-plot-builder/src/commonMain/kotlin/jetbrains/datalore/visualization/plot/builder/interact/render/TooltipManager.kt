@@ -1,9 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.interact.render
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgGraphicsElement
 import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipOrientation
 import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipWithStem
 
@@ -11,17 +9,6 @@ internal class TooltipManager(private val tooltipLayer: SvgGElement) {
 
     private val myUpdatingTooltips = HashSet<TooltipEntry>()
     private val myAddedTooltips = HashMap<TooltipEntry, TooltipWithStem>()
-    private val myMeasuringTooltip = TooltipWithStem()
-
-    init {
-        myMeasuringTooltip.rootGroup.visibility().set(SvgGraphicsElement.Visibility.HIDDEN)
-        tooltipLayer.children().add(myMeasuringTooltip.rootGroup)
-    }
-
-    fun measure(text: List<String>, fontSize: Double): DoubleVector {
-        myMeasuringTooltip.update(IGNORED_COLOR, text, fontSize)
-        return myMeasuringTooltip.contentRect.dimension
-    }
 
     fun add(tooltipEntry: TooltipEntry) {
         myUpdatingTooltips.add(tooltipEntry)
