@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.base.event3
 
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.GeomKind
 
@@ -25,17 +24,7 @@ interface GeomTargetLocator {
     // `open` for Mockito test
     open class LocatedTargets(
             val geomTargets: List<GeomTarget>,
-            private val myDistance: Double,
+            open val distance: Double,
             open val geomKind: GeomKind,
-            val contextualMapping: ContextualMapping) {
-
-        open val distance: Double
-            get() {
-                checkArgument(!isEmpty)
-                return myDistance
-            }
-
-        val isEmpty: Boolean
-            get() = geomTargets.isEmpty()
-    }
+            val contextualMapping: ContextualMapping)
 }
