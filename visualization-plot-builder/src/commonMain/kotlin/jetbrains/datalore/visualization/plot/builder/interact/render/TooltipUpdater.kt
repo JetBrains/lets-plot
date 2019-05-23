@@ -5,29 +5,27 @@ import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipOrientation
 import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipWithStem
 
-internal class TooltipManager(private val tooltipLayer: SvgGElement) {
+internal class TooltipUpdater(private val tooltipLayer: SvgGElement) {
 
-    private val myUpdatingTooltips = HashSet<TooltipEntry>()
+    private val myTooltipEntries = HashSet<TooltipEntry>()
     private val myAddedTooltips = HashMap<TooltipEntry, TooltipWithStem>()
 
-    fun add(tooltipEntry: TooltipEntry) {
-        myUpdatingTooltips.add(tooltipEntry)
+    fun updateTooltips(tooltipEntries: Collection<TooltipEntry>) {
+        myTooltipEntries.clear()
+        myTooltipEntries.addAll(tooltipEntries)
+        doUpdateTooltips()
     }
 
-    fun beginUpdate() {
-        myUpdatingTooltips.clear()
-    }
-
-    fun endUpdate() {
+    private fun doUpdateTooltips() {
         val freeTooltips = ArrayList(myAddedTooltips.values)
         myAddedTooltips.clear()
         balanceFreeTooltips(freeTooltips)
 
-        if (freeTooltips.size != myUpdatingTooltips.size) {
+        if (freeTooltips.size != myTooltipEntries.size) {
             throw IllegalStateException("freeTooltips and updatingTooltips lists should be equal")
         }
 
-        for (entry in myUpdatingTooltips) {
+        for (entry in myTooltipEntries) {
             val orientation = if (entry.orientation === TooltipOrientation.HORIZONTAL)
                 TooltipWithStem.Orientation.HORIZONTAL
             else
@@ -49,7 +47,7 @@ internal class TooltipManager(private val tooltipLayer: SvgGElement) {
     }
 
     private fun balanceFreeTooltips(freeTooltips: MutableList<TooltipWithStem>) {
-        var tooltipsCountDiff = freeTooltips.size - myUpdatingTooltips.size
+        var tooltipsCountDiff = freeTooltips.size - myTooltipEntries.size
         if (tooltipsCountDiff < 0) {
             while (tooltipsCountDiff++ < 0) {
                 val tooltipWithStem = TooltipWithStem()

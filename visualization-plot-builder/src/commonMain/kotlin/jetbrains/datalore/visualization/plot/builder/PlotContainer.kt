@@ -117,7 +117,7 @@ class PlotContainer(private val plot: Plot, private val preferredSize: ReadableP
             val onMouseMoved = { e: MouseEvent ->
                 val coord = DoubleVector(e.x.toDouble(), e.y.toDouble())
                 val tooltipSpecs = plot.createTooltipSpecs(coord)
-                interactions.showTooltip(coord, tooltipSpecs)
+                interactions.showTooltips(coord, tooltipSpecs)
             }
             reg(plot.mouseEventPeer.addEventHandler(MOUSE_MOVED, object : EventHandler<MouseEvent> {
                 override fun onEvent(event: MouseEvent) {

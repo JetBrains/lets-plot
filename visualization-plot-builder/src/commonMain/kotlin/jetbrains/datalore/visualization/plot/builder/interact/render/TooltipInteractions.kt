@@ -14,7 +14,7 @@ import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManage
 
 internal class TooltipInteractions(tooltipLayer: SvgNode, viewport: DoubleRectangle) {
 
-    private val myTooltipManager: TooltipManager
+    private val myTooltipUpdater: TooltipUpdater
     private val myLayoutManager: LayoutManager
     private val myTooltipMeter: TooltipMeter = TooltipMeter(tooltipLayer)
 
@@ -22,13 +22,13 @@ internal class TooltipInteractions(tooltipLayer: SvgNode, viewport: DoubleRectan
         val interactionsRoot = SvgGElement()
         tooltipLayer.children().add(interactionsRoot)
 
-        myTooltipManager = TooltipManager(interactionsRoot)
+        myTooltipUpdater = TooltipUpdater(interactionsRoot)
         myLayoutManager = LayoutManager(viewport, LayoutManager.HorizontalAlignment.LEFT)
     }
 
 
-    fun showTooltip(cursor: DoubleVector, tooltipSpecs: List<TooltipSpec>) {
-        drawTooltips(
+    fun showTooltips(cursor: DoubleVector, tooltipSpecs: List<TooltipSpec>) {
+        updateTooltips(
                 myLayoutManager.arrange(
                         toMeasured(tooltipSpecs),
                         cursor)
@@ -36,17 +36,11 @@ internal class TooltipInteractions(tooltipLayer: SvgNode, viewport: DoubleRectan
     }
 
     fun hideTooltip() {
-        drawTooltips(emptyList())
+        updateTooltips(emptyList())
     }
 
-    private fun drawTooltips(tooltips: List<PositionedTooltip>) {
-        myTooltipManager.beginUpdate()
-
-        for (tooltipEntry in convertToTooltipEntry(tooltips)) {
-            myTooltipManager.add(tooltipEntry)
-        }
-
-        myTooltipManager.endUpdate()
+    private fun updateTooltips(tooltips: List<PositionedTooltip>) {
+        myTooltipUpdater.updateTooltips(toTooltipEntries(tooltips))
     }
 
     private fun toMeasured(tooltipSpecs: List<TooltipSpec>): List<MeasuredTooltip> {
@@ -73,8 +67,8 @@ internal class TooltipInteractions(tooltipLayer: SvgNode, viewport: DoubleRectan
 
     companion object {
 
-        fun convertToTooltipEntry(positionedTooltips: List<PositionedTooltip>): List<TooltipEntry> {
-            val layoutDataList = ArrayList<TooltipEntry>()
+        fun toTooltipEntries(positionedTooltips: List<PositionedTooltip>): List<TooltipEntry> {
+            val tooltipEntries = ArrayList<TooltipEntry>()
             for (positionedTooltip in positionedTooltips) {
 
                 val tooltipSpec = positionedTooltip.tooltipSpec
@@ -84,7 +78,7 @@ internal class TooltipInteractions(tooltipLayer: SvgNode, viewport: DoubleRectan
                         getFontSize(tooltipSpec)
                 )
 
-                layoutDataList.add(
+                tooltipEntries.add(
                         TooltipEntry(
                                 content,
                                 positionedTooltip.tooltipCoord,
@@ -93,7 +87,7 @@ internal class TooltipInteractions(tooltipLayer: SvgNode, viewport: DoubleRectan
                         )
                 )
             }
-            return layoutDataList
+            return tooltipEntries
         }
 
         private fun getOrientation(kind: Kind): TooltipOrientation {

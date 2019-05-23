@@ -208,7 +208,7 @@ internal open class TooltipLayoutTestBase {
 
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
-                override fun arrange(): List<TooltipEntry> = TooltipInteractions.convertToTooltipEntry(
+                override fun arrange(): List<TooltipEntry> = TooltipInteractions.toTooltipEntries(
                         LayoutManager(myViewport, myHorizontalAlignment).arrange(myTooltipData, myCursor)
                 )
             }
