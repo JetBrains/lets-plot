@@ -1,15 +1,15 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
-import jetbrains.datalore.visualization.plot.base.data.Sampling
-import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings
-import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings.PICK
-import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings.RANDOM
-import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings.RANDOM_GROUP
-import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings.RANDOM_STRATIFIED
-import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings.SYSTEMATIC
-import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings.SYSTEMATIC_GROUP
-import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings.VERTEX_DP
-import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings.VERTEX_VW
+import jetbrains.datalore.visualization.plot.builder.sampling.Sampling
+import jetbrains.datalore.visualization.plot.builder.sampling.Samplings
+import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.PICK
+import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.RANDOM
+import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.RANDOM_GROUP
+import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.RANDOM_STRATIFIED
+import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.SYSTEMATIC
+import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.SYSTEMATIC_GROUP
+import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.VERTEX_DP
+import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.VERTEX_VW
 import jetbrains.datalore.visualization.plot.gog.config.Option.Sampling.MIN_SUB_SAMPLE
 import jetbrains.datalore.visualization.plot.gog.config.Option.Sampling.N
 import jetbrains.datalore.visualization.plot.gog.config.Option.Sampling.SEED

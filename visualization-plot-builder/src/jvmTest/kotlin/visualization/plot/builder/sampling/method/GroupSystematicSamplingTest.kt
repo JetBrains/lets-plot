@@ -1,7 +1,7 @@
-package jetbrains.datalore.visualization.plot.builder.data.sampling
+package jetbrains.datalore.visualization.plot.builder.sampling.method
 
 import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.builder.data.GroupAwareSampling
+import jetbrains.datalore.visualization.plot.builder.sampling.GroupAwareSampling
 import kotlin.test.*
 
 internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {

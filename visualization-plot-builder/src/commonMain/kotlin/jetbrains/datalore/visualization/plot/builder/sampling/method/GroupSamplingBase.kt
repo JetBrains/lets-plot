@@ -1,8 +1,8 @@
-package jetbrains.datalore.visualization.plot.builder.data.sampling
+package jetbrains.datalore.visualization.plot.builder.sampling.method
 
 import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.builder.data.GroupAwareSampling
 import jetbrains.datalore.visualization.plot.builder.data.GroupUtil
+import jetbrains.datalore.visualization.plot.builder.sampling.GroupAwareSampling
 
 internal abstract class GroupSamplingBase(sampleSize: Int) : SamplingBase(sampleSize), GroupAwareSampling {
 

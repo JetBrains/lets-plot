@@ -3,10 +3,10 @@ package jetbrains.datalore.visualization.plot.gog.config
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.base.data.Sampling
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
 import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.visualization.plot.builder.sampling.Sampling
 import jetbrains.datalore.visualization.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.POS
 import jetbrains.datalore.visualization.plot.gog.config.Option.Layer.SAMPLING

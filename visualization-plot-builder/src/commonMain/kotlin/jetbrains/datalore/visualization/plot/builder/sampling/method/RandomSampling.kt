@@ -1,8 +1,8 @@
-package jetbrains.datalore.visualization.plot.builder.data.sampling
+package jetbrains.datalore.visualization.plot.builder.sampling.method
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.builder.data.PointSampling
+import jetbrains.datalore.visualization.plot.builder.sampling.PointSampling
 import kotlin.random.Random
 
 /**

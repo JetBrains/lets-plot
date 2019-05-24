@@ -1,8 +1,8 @@
-package jetbrains.datalore.visualization.plot.builder.data.sampling
+package jetbrains.datalore.visualization.plot.builder.sampling.method
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.Sampling
+import jetbrains.datalore.visualization.plot.builder.sampling.Sampling
 
 internal abstract class SamplingBase(val sampleSize: Int) : Sampling {
 

@@ -1,15 +1,15 @@
-package jetbrains.datalore.visualization.plot.builder.data.sampling
+package jetbrains.datalore.visualization.plot.builder.sampling.method
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.util.MutableInteger
-import jetbrains.datalore.visualization.plot.builder.data.PointSampling
-import jetbrains.datalore.visualization.plot.builder.data.sampling.SamplingUtil.calculateRingLimits
-import jetbrains.datalore.visualization.plot.builder.data.sampling.SamplingUtil.getRingIndex
-import jetbrains.datalore.visualization.plot.builder.data.sampling.SamplingUtil.getRingLimit
-import jetbrains.datalore.visualization.plot.builder.data.sampling.SamplingUtil.splitRings
+import jetbrains.datalore.visualization.plot.builder.sampling.PointSampling
+import jetbrains.datalore.visualization.plot.builder.sampling.method.SamplingUtil.calculateRingLimits
+import jetbrains.datalore.visualization.plot.builder.sampling.method.SamplingUtil.getRingIndex
+import jetbrains.datalore.visualization.plot.builder.sampling.method.SamplingUtil.getRingLimit
+import jetbrains.datalore.visualization.plot.builder.sampling.method.SamplingUtil.splitRings
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.common.geometry.PolylineSimplifier
 import jetbrains.datalore.visualization.plot.common.geometry.Utils.isClosed

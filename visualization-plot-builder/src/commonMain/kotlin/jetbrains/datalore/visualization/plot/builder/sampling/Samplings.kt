@@ -1,10 +1,9 @@
-package jetbrains.datalore.visualization.plot.builder.data.sampling
+package jetbrains.datalore.visualization.plot.builder.sampling
 
 import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.Sampling
-import jetbrains.datalore.visualization.plot.builder.data.PointSampling
-import jetbrains.datalore.visualization.plot.builder.data.sampling.VertexSampling.VertexDpSampling
-import jetbrains.datalore.visualization.plot.builder.data.sampling.VertexSampling.VertexVwSampling
+import jetbrains.datalore.visualization.plot.builder.sampling.method.*
+import jetbrains.datalore.visualization.plot.builder.sampling.method.VertexSampling.VertexDpSampling
+import jetbrains.datalore.visualization.plot.builder.sampling.method.VertexSampling.VertexVwSampling
 
 object Samplings {
     const val RANDOM = RandomSampling.ALIAS

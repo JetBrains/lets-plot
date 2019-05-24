@@ -1,7 +1,6 @@
-package jetbrains.datalore.visualization.plot.builder.data
+package jetbrains.datalore.visualization.plot.builder.sampling
 
 import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.Sampling
 
 interface GroupAwareSampling : Sampling {
     fun isApplicable(population: DataFrame, groupMapper: (Int) -> Int): Boolean

@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
-import jetbrains.datalore.visualization.plot.base.data.Sampling
-import jetbrains.datalore.visualization.plot.builder.data.sampling.Samplings
+import jetbrains.datalore.visualization.plot.builder.sampling.Sampling
+import jetbrains.datalore.visualization.plot.builder.sampling.Samplings
 import jetbrains.datalore.visualization.plot.gog.config.Option.Sampling.NONE
 
 internal object SamplingConfig {
