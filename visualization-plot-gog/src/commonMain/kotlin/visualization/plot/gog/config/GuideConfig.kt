@@ -63,7 +63,7 @@ internal abstract class GuideConfig private constructor(opts: Map<String, Any>) 
         }
     }
 
-    private class ColorBarConfig internal constructor(opts: Map<String, Any>) : GuideConfig(opts) {
+    private class ColorBarConfig(opts: Map<String, Any>) : GuideConfig(opts) {
 
         override fun createGuideOptionsIntern(): GuideOptions {
             val options = ColorBarOptions()

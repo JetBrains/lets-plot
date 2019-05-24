@@ -11,7 +11,8 @@ import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Legend.OUTLINE_COLOR
 import jetbrains.datalore.visualization.plot.builder.presentation.Style
 
-abstract class LegendBox internal constructor(protected open val spec: LegendBoxSpec) : SvgComponent() {
+abstract class LegendBox internal constructor(
+        protected open val spec: LegendBoxSpec) : SvgComponent() {
 
     var debug: Boolean = false
 

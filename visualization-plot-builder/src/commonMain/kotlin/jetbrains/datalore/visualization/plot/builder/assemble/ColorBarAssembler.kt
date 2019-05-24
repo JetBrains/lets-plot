@@ -63,14 +63,14 @@ class ColorBarAssembler(private val legendTitle: String,
 
             val legendDirection = LegendAssemblerUtil.legendDirection(theme)
 
+            val width = options?.width
+            val height = options?.height
             var barSize = ColorBarComponentSpec.barAbsoluteSize(legendDirection, theme)
-            if (options != null) {
-                if (options.hasWidth()) {
-                    barSize = DoubleVector(options.width!!, barSize.y)
-                }
-                if (options.hasHeight()) {
-                    barSize = DoubleVector(barSize.x, options.height!!)
-                }
+            if (width != null) {
+                barSize = DoubleVector(width, barSize.y)
+            }
+            if (height != null) {
+                barSize = DoubleVector(barSize.x, height)
             }
 
             val layout = when {
@@ -81,10 +81,9 @@ class ColorBarAssembler(private val legendTitle: String,
             }
 
             val spec = ColorBarComponentSpec(title, domain, breaks, scale, theme, layout)
-            if (options != null) {
-                if (options.hasBinCount()) {
-                    spec.binCount = options.binCount
-                }
+            val binCount = options?.binCount
+            if (binCount != null) {
+                spec.binCount = binCount
             }
 
             return spec

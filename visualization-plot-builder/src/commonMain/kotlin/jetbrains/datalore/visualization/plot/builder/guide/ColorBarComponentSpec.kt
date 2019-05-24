@@ -16,9 +16,6 @@ class ColorBarComponentSpec(title: String,
 
     internal var binCount = DEF_NUM_BIN
 
-    override val contentSize: DoubleVector
-        get() = layout.size
-
     companion object {
         private const val DEF_BAR_THICKNESS = 1.0  // in 'key-size' multiples
         private const val DEF_BAR_LENGTH = 5.0   // in 'key-size' multiples

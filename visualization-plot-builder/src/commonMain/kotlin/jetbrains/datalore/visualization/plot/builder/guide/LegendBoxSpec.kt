@@ -12,7 +12,11 @@ abstract class LegendBoxSpec(val title: String, val theme: LegendTheme) {
     private val myInnerOrigin: DoubleVector
     private val myInnerContentExtend: DoubleVector
 
-    protected abstract val contentSize: DoubleVector
+    internal abstract val layout: LegendBoxLayout
+
+    private val contentSize: DoubleVector
+        get() = layout.size
+
 
     val size: DoubleVector
         get() = contentSize.add(myFullContentExtend)
@@ -22,8 +26,6 @@ abstract class LegendBoxSpec(val title: String, val theme: LegendTheme) {
 
     val contentBounds: DoubleRectangle
         get() = DoubleRectangle(contentOrigin, contentSize)
-
-    internal abstract val layout: LegendBoxLayout
 
     init {
         val contentExpand = theme.margin() + theme.padding()
