@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder.guide
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.builder.LegendOptions
+import jetbrains.datalore.visualization.plot.builder.assemble.LegendOptions
 import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
 import kotlin.math.ceil
 import kotlin.math.floor

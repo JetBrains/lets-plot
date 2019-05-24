@@ -9,8 +9,6 @@ import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
-import jetbrains.datalore.visualization.plot.builder.GuideOptions
-import jetbrains.datalore.visualization.plot.builder.LegendOptions
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
 import jetbrains.datalore.visualization.plot.builder.guide.LegendBox

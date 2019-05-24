@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.builder.GuideOptions
+import jetbrains.datalore.visualization.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.builder.theme.Theme

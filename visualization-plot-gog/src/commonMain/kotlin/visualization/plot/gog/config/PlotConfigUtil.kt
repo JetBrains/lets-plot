@@ -4,7 +4,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.builder.GuideOptions
+import jetbrains.datalore.visualization.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.visualization.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.visualization.plot.builder.scale.ScaleProvider
@@ -73,9 +73,9 @@ object PlotConfigUtil {
 
     fun addComputationMessage(accessor: OptionsAccessor, message: String?) {
         checkArgument(message != null)
-        val computation_messages = ArrayList<String>(getComputationMessages(accessor))
-        computation_messages.add(message!!)
-        accessor.update(PLOT_COMPUTATION_MESSAGES, computation_messages)
+        val computationMessages = ArrayList(getComputationMessages(accessor))
+        computationMessages.add(message!!)
+        accessor.update(PLOT_COMPUTATION_MESSAGES, computationMessages)
     }
 
     fun findComputationMessages(spec: Map<*, *>): List<String> {

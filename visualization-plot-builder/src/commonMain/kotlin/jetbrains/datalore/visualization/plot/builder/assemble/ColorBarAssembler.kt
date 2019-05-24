@@ -6,7 +6,6 @@ import jetbrains.datalore.visualization.plot.FeatureSwitch
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
-import jetbrains.datalore.visualization.plot.builder.ColorBarOptions
 import jetbrains.datalore.visualization.plot.builder.guide.ColorBarComponent
 import jetbrains.datalore.visualization.plot.builder.guide.ColorBarComponentSpec
 import jetbrains.datalore.visualization.plot.builder.guide.LegendBox
@@ -61,6 +60,6 @@ class ColorBarAssembler(private val myLegendTitle: String, private val myDomain:
     }
 
     companion object {
-        private val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
+        private const val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
     }
 }

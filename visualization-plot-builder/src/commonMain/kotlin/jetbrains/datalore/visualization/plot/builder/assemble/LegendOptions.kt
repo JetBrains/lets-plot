@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.builder
+package jetbrains.datalore.visualization.plot.builder.assemble
 
 import kotlin.math.max
 

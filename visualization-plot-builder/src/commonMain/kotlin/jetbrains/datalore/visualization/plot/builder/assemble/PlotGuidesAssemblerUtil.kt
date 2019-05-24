@@ -6,8 +6,6 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.builder.ColorBarOptions
-import jetbrains.datalore.visualization.plot.builder.GuideOptions
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
 
@@ -85,7 +83,7 @@ internal object PlotGuidesAssemblerUtil {
 
     fun checkFitsColorBar(binding: VarBinding) {
         val aes = binding.aes
-        checkState(aes.isColor, "Colorbar is not applicable to $aes aesthetic")
-        checkState(binding.scale!!.isContinuous, "Colorbar is only applicable when both domain and color palette are continuous")
+        checkState(aes.isColor, "Color-bar is not applicable to $aes aesthetic")
+        checkState(binding.scale!!.isContinuous, "Color-bar is only applicable when both domain and color palette are continuous")
     }
 }

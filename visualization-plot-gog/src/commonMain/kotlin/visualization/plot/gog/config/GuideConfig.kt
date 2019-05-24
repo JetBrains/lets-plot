@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.gog.config
 
 import jetbrains.datalore.base.function.Runnable
-import jetbrains.datalore.visualization.plot.builder.ColorBarOptions
-import jetbrains.datalore.visualization.plot.builder.GuideOptions
-import jetbrains.datalore.visualization.plot.builder.LegendOptions
+import jetbrains.datalore.visualization.plot.builder.assemble.ColorBarOptions
+import jetbrains.datalore.visualization.plot.builder.assemble.GuideOptions
+import jetbrains.datalore.visualization.plot.builder.assemble.LegendOptions
 import jetbrains.datalore.visualization.plot.gog.config.Option.Guide.COLOR_BAR
 import jetbrains.datalore.visualization.plot.gog.config.Option.Guide.COLOR_BAR_GB
 import jetbrains.datalore.visualization.plot.gog.config.Option.Guide.ColorBar.BIN_COUNT
@@ -88,7 +88,7 @@ internal abstract class GuideConfig private constructor(opts: Map<String, Any>) 
 
     companion object {
         fun create(guide: Any): GuideConfig {
-            // guide - name (legend/colorbar)
+            // guide - name (legend/color-bar)
             //        or
             //        map with guide options
             if (guide is Map<*, *>) {
