@@ -4,6 +4,9 @@ import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.visualization.plot.builder.guide.LegendDirection
+import jetbrains.datalore.visualization.plot.builder.guide.LegendPosition
+import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
 
 internal object LegendAssemblerUtil {
     fun <T> mapToAesthetics(
@@ -50,5 +53,17 @@ internal object LegendAssemblerUtil {
             builder.aes(aes1) { index -> dataPoints[index][aes]!! }
         }
         return builder.build()
+    }
+
+    fun legendDirection(theme: LegendTheme): LegendDirection {
+        var legendDirection = theme.direction()
+        if (legendDirection === LegendDirection.AUTO) {
+            val legendPosition = theme.position()
+            legendDirection = if (legendPosition === LegendPosition.TOP || legendPosition === LegendPosition.BOTTOM)
+                LegendDirection.HORIZONTAL
+            else
+                LegendDirection.VERTICAL
+        }
+        return legendDirection
     }
 }

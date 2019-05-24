@@ -25,21 +25,7 @@ abstract class LegendBoxSpec(val title: String, val theme: LegendTheme) {
 
     internal abstract val layout: LegendBoxLayout
 
-    protected val legendDirection: LegendDirection
-        get() {
-            var legendDirection = theme.direction()
-            if (legendDirection === LegendDirection.AUTO) {
-                val legendPosition = theme.position()
-                legendDirection = if (legendPosition === LegendPosition.TOP || legendPosition === LegendPosition.BOTTOM)
-                    LegendDirection.HORIZONTAL
-                else
-                    LegendDirection.VERTICAL
-            }
-            return legendDirection
-        }
-
     init {
-
         val contentExpand = theme.margin() + theme.padding()
         contentOrigin = DoubleVector(contentExpand, contentExpand)
         myFullContentExtend = DoubleVector(contentExpand * 2, contentExpand * 2)

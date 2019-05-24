@@ -6,7 +6,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.builder.layout.GeometryUtil
 import kotlin.math.max
 
-internal abstract class LegendComponentLayout(title: String, protected val breaks: List<LegendBreak>, val keySize: DoubleVector, legendDirection: LegendDirection) : LegendBoxLayout(title, legendDirection) {
+abstract class LegendComponentLayout(title: String,
+                                     protected val breaks: List<LegendBreak>,
+                                     val keySize: DoubleVector,
+                                     legendDirection: LegendDirection) : LegendBoxLayout(title, legendDirection) {
 
     private var myContentSize: DoubleVector? = null
     private val myKeyLabelBoxes = ArrayList<DoubleRectangle>()

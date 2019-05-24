@@ -11,8 +11,6 @@ import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
-import jetbrains.datalore.visualization.plot.builder.scale.GuideBreak
-import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import kotlin.math.max
 
@@ -147,17 +145,5 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
         //line.strokeColor().set(getSpec().getTheme().backgroundFill());
         line.strokeColor().set(Color.BLACK)
         g.children().add(line)
-    }
-
-    companion object {
-        fun create(
-                title: String,
-                domain: ClosedRange<Double>,
-                breaks: List<GuideBreak<Double>>,
-                scale: Scale<Color>,
-                theme: LegendTheme):
-                ColorBarComponent {
-            return ColorBarComponent(ColorBarComponentSpec(title, domain, breaks, scale, theme))
-        }
     }
 }

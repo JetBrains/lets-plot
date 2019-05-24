@@ -1,25 +1,28 @@
 package jetbrains.datalore.visualization.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.FeatureSwitch
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
-import jetbrains.datalore.visualization.plot.builder.guide.ColorBarComponent
-import jetbrains.datalore.visualization.plot.builder.guide.ColorBarComponentSpec
-import jetbrains.datalore.visualization.plot.builder.guide.LegendBox
+import jetbrains.datalore.visualization.plot.builder.guide.*
 import jetbrains.datalore.visualization.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.visualization.plot.builder.scale.GuideBreak
 import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
 
-class ColorBarAssembler(private val myLegendTitle: String, private val myDomain: ClosedRange<Double>, private val myScale: Scale<Color>, private val myTheme: LegendTheme) {
+class ColorBarAssembler(private val legendTitle: String,
+                        private val domain: ClosedRange<Double>,
+                        private val scale: Scale<Color>,
+                        private val theme: LegendTheme) {
+
     private var myOptions: ColorBarOptions? = null
 
     fun createColorBar(): LegendBoxInfo {
-        var scale = myScale
+        var scale = scale
         if (!scale.hasBreaks()) {
-            scale = ScaleBreaksUtil.withBreaks(scale, myDomain, 5)
+            scale = ScaleBreaksUtil.withBreaks(scale, domain, 5)
         }
 
         val guideBreaks = ArrayList<GuideBreak<Double>>()
@@ -33,18 +36,7 @@ class ColorBarAssembler(private val myLegendTitle: String, private val myDomain:
             return LegendBoxInfo.EMPTY
         }
 
-        val spec = ColorBarComponentSpec(myLegendTitle, myDomain, guideBreaks, scale, myTheme)
-        if (myOptions != null) {
-            if (myOptions!!.hasBinCount()) {
-                spec.binCount = myOptions!!.binCount
-            }
-            if (myOptions!!.hasWidth()) {
-                spec.setBarWidth(myOptions!!.width!!)
-            }
-            if (myOptions!!.hasHeight()) {
-                spec.setRodHeight(myOptions!!.height!!)
-            }
-        }
+        val spec = createColorBarSpec(legendTitle, domain, guideBreaks, scale, theme, myOptions)
 
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
@@ -61,5 +53,41 @@ class ColorBarAssembler(private val myLegendTitle: String, private val myDomain:
 
     companion object {
         private const val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
+
+        fun createColorBarSpec(title: String,
+                               domain: ClosedRange<Double>,
+                               breaks: List<GuideBreak<Double>>,
+                               scale: Scale<Color>,
+                               theme: LegendTheme,
+                               options: ColorBarOptions? = null): ColorBarComponentSpec {
+
+            val legendDirection = LegendAssemblerUtil.legendDirection(theme)
+
+            var barSize = ColorBarComponentSpec.barAbsoluteSize(legendDirection, theme)
+            if (options != null) {
+                if (options.hasWidth()) {
+                    barSize = DoubleVector(options.width!!, barSize.y)
+                }
+                if (options.hasHeight()) {
+                    barSize = DoubleVector(barSize.x, options.height!!)
+                }
+            }
+
+            val layout = when {
+                legendDirection === LegendDirection.HORIZONTAL ->
+                    ColorBarComponentLayout.horizontal(title, domain, breaks, barSize)
+                else ->
+                    ColorBarComponentLayout.vertical(title, domain, breaks, barSize)
+            }
+
+            val spec = ColorBarComponentSpec(title, domain, breaks, scale, theme, layout)
+            if (options != null) {
+                if (options.hasBinCount()) {
+                    spec.binCount = options.binCount
+                }
+            }
+
+            return spec
+        }
     }
 }

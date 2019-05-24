@@ -7,6 +7,8 @@ import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companio
 import jetbrains.datalore.visualization.plot.base.geom.util.GenericLegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.scale.Scales
+import jetbrains.datalore.visualization.plot.builder.assemble.ColorBarAssembler
+import jetbrains.datalore.visualization.plot.builder.assemble.LegendAssembler
 import jetbrains.datalore.visualization.plot.builder.guide.ColorBarComponent
 import jetbrains.datalore.visualization.plot.builder.guide.LegendBreak
 import jetbrains.datalore.visualization.plot.builder.guide.LegendComponent
@@ -41,8 +43,8 @@ open class LegendDemo : SimpleDemoBase() {
             legendBreaks.add(LegendBreak.simple(labelsIterator.next(), aesthetics, keyElementFactory))
         }
 
-
-        val legendComponent = LegendComponent.create("Simple legend", legendBreaks, theme.legend())
+        val spec = LegendAssembler.createLegendSpec("Simple legend", legendBreaks, theme.legend())
+        val legendComponent = LegendComponent(spec)
         legendComponent.debug = DEBUG_DRAWING
 
         val groupComponent = GroupComponent()
@@ -68,7 +70,8 @@ open class LegendDemo : SimpleDemoBase() {
                 .upperLimit(domain.upperEndpoint())
                 .build()
 
-        val legendComponent = ColorBarComponent.create("Color Bar", domain, breaks, scale, theme.legend())
+        val spec = ColorBarAssembler.createColorBarSpec("Color Bar", domain, breaks, scale, theme.legend())
+        val legendComponent = ColorBarComponent(spec)
         legendComponent.debug = DEBUG_DRAWING
 
         val groupComponent = GroupComponent()

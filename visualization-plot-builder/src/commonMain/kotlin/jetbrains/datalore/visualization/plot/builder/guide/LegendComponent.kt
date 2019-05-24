@@ -5,7 +5,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.*
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
 
 class LegendComponent(legendSpec: LegendComponentSpec) : LegendBox(legendSpec) {
 
@@ -73,11 +72,5 @@ class LegendComponent(legendSpec: LegendComponentSpec) : LegendBox(legendSpec) {
 
         g.children().add(frame)
         return g
-    }
-
-    companion object {
-        fun create(title: String, breaks: List<LegendBreak>, theme: LegendTheme): LegendComponent {
-            return LegendComponent(LegendComponentSpec(title, breaks, theme))
-        }
     }
 }

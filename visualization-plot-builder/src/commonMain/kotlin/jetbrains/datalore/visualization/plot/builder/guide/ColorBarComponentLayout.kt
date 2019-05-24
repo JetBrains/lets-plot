@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.builder.scale.GuideBreak
 import kotlin.math.max
 
-internal abstract class ColorBarComponentLayout(
+abstract class ColorBarComponentLayout(
         title: String,
         private val myDomain: ClosedRange<Double>,
         protected val breaks: List<GuideBreak<Double>>,
@@ -26,7 +26,7 @@ internal abstract class ColorBarComponentLayout(
             return myContentSize!!
         }
 
-    val breakInfos: List<BreakInfo>
+    internal val breakInfos: List<BreakInfo>
         get() {
             ensureInited()
             return myBreakInfos
@@ -69,7 +69,7 @@ internal abstract class ColorBarComponentLayout(
         myBarBounds = DoubleRectangle(DoubleVector.ZERO, guideBarSize)
     }
 
-    protected abstract fun createBreakInfo(tickLocation: Double): BreakInfo
+    internal abstract fun createBreakInfo(tickLocation: Double): BreakInfo
 
     internal class BreakInfo(
             val tickLocation: Double, val labelLocation: DoubleVector,
@@ -77,7 +77,7 @@ internal abstract class ColorBarComponentLayout(
 
     private class MyHorizontal internal constructor(title: String, domain: ClosedRange<Double>, breaks: List<GuideBreak<Double>>, barSize: DoubleVector) : ColorBarComponentLayout(title, domain, breaks, barSize, LegendDirection.HORIZONTAL) {
 
-        protected val labelDistance: Double
+        private val labelDistance: Double
             get() = LegendBoxLayout.LABEL_SPEC.height() / 3
 
         override val guideBarLength: Double
@@ -99,7 +99,7 @@ internal abstract class ColorBarComponentLayout(
     private class MyVertical internal constructor(title: String, domain: ClosedRange<Double>, breaks: List<GuideBreak<Double>>, barSize: DoubleVector) : ColorBarComponentLayout(title, domain, breaks, barSize, LegendDirection.VERTICAL) {
         private var myMaxLabelWidth = 0.0
 
-        protected val labelDistance: Double
+        private val labelDistance: Double
             get() = LegendBoxLayout.LABEL_SPEC.width(1) / 2
 
         override val guideBarLength: Double

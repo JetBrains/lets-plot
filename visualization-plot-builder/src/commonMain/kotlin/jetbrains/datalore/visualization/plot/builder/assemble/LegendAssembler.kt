@@ -2,6 +2,7 @@ package jetbrains.datalore.visualization.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.FeatureSwitch
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Aesthetics
@@ -11,21 +12,25 @@ import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
-import jetbrains.datalore.visualization.plot.builder.guide.LegendBox
-import jetbrains.datalore.visualization.plot.builder.guide.LegendBreak
-import jetbrains.datalore.visualization.plot.builder.guide.LegendComponent
-import jetbrains.datalore.visualization.plot.builder.guide.LegendComponentSpec
+import jetbrains.datalore.visualization.plot.builder.guide.*
 import jetbrains.datalore.visualization.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.min
 
-internal class LegendAssembler(private val myLegendTitle: String, private val myGuideOptionsMap: Map<Aes<*>, GuideOptions>, private val myTheme: LegendTheme) {
+class LegendAssembler(private val legendTitle: String,
+                      private val guideOptionsMap: Map<Aes<*>, GuideOptions>,
+                      private val theme: LegendTheme) {
 
     private val myLegendLayers = ArrayList<LegendLayer>()
 
-    fun addLayer(
-            keyFactory: LegendKeyElementFactory, varBindings: List<VarBinding>, constantByAes: Map<Aes<*>, Any>,
-            aestheticsDefaults: AestheticsDefaults, dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
-    ) {
+    fun addLayer(keyFactory: LegendKeyElementFactory,
+                 varBindings: List<VarBinding>,
+                 constantByAes: Map<Aes<*>, Any>,
+                 aestheticsDefaults: AestheticsDefaults,
+                 dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>) {
+
         myLegendLayers.add(LegendLayer(keyFactory, varBindings, constantByAes, aestheticsDefaults, dataRangeByAes))
     }
 
@@ -60,14 +65,17 @@ internal class LegendAssembler(private val myLegendTitle: String, private val my
         for (legendLayer in myLegendLayers) {
             val aesList = legendLayer.aesList
             for (aes in aesList) {
-                if (myGuideOptionsMap[aes] is LegendOptions) {
-                    legendOptionsList.add(myGuideOptionsMap[aes] as LegendOptions)
+                if (guideOptionsMap[aes] is LegendOptions) {
+                    legendOptionsList.add(guideOptionsMap[aes] as LegendOptions)
                 }
             }
         }
 
-        val spec = LegendComponentSpec(myLegendTitle, legendBreaks, myTheme)
-        spec.setLegendOptions(LegendOptions.combine(legendOptionsList))
+//        val spec = LegendComponentSpec(legendTitle, legendBreaks, theme, layout)
+//        spec.setLegendOptions(LegendOptions.combine(legendOptionsList))
+
+        val spec = createLegendSpec(legendTitle, legendBreaks, theme,
+                LegendOptions.combine(legendOptionsList))
 
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
@@ -78,10 +86,13 @@ internal class LegendAssembler(private val myLegendTitle: String, private val my
         }
     }
 
-    private class LegendLayer internal constructor(
-            internal val keyElementFactory: LegendKeyElementFactory, private val myVarBindings: List<VarBinding>, private val myConstantByAes: Map<Aes<*>, Any>,
-            private val myAestheticsDefaults: AestheticsDefaults, dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
-    ) {
+
+    private class LegendLayer(
+            internal val keyElementFactory: LegendKeyElementFactory,
+            private val varBindings: List<VarBinding>,
+            private val constantByAes: Map<Aes<*>, Any>,
+            private val aestheticsDefaults: AestheticsDefaults,
+            dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>) {
 
         internal var keyAesthetics: Aesthetics? = null
         internal var keyLabels: List<String>? = null
@@ -89,7 +100,7 @@ internal class LegendAssembler(private val myLegendTitle: String, private val my
         internal val aesList: List<Aes<*>>
             get() {
                 val result = ArrayList<Aes<*>>()
-                for (binding in myVarBindings) {
+                for (binding in varBindings) {
                     result.add(binding.aes)
                 }
                 return result
@@ -101,7 +112,7 @@ internal class LegendAssembler(private val myLegendTitle: String, private val my
 
         private fun init(dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>) {
             val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
-            for (varBinding in myVarBindings) {
+            for (varBinding in varBindings) {
                 val aes = varBinding.aes
                 var scale = varBinding.scale
                 if (!scale!!.hasBreaks()) {
@@ -128,12 +139,76 @@ internal class LegendAssembler(private val myLegendTitle: String, private val my
             }
 
             // build 'key' aesthetics
-            keyAesthetics = mapToAesthetics(aesValuesByLabel.values, myConstantByAes, myAestheticsDefaults)
+            keyAesthetics = mapToAesthetics(aesValuesByLabel.values, constantByAes, aestheticsDefaults)
             keyLabels = ArrayList(aesValuesByLabel.keys)
         }
     }
 
     companion object {
         private const val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
+
+        fun createLegendSpec(title: String,
+                             breaks: List<LegendBreak>,
+                             theme: LegendTheme,
+                             options: LegendOptions = LegendOptions()): LegendComponentSpec {
+
+            val legendDirection = LegendAssemblerUtil.legendDirection(theme)
+
+            // key size
+            fun pretty(v: DoubleVector): DoubleVector {
+                val margin = 1.0
+                return DoubleVector(
+                        floor(v.x / 2) * 2 + 1.0 + margin,
+                        floor(v.y / 2) * 2 + 1.0 + margin
+                )
+            }
+
+            var keySize = DoubleVector(theme.keySize(), theme.keySize())
+            for (br in breaks) {
+                val minimumKeySize = br.minimumKeySize
+                keySize = keySize.max(pretty(minimumKeySize))
+            }
+
+            // row, col count
+            val breakCount = breaks.size
+            val colCount: Int
+            val rowCount: Int
+            if (options.isByRow) {
+                colCount = when {
+                    options.hasColCount() -> min(options.colCount, breakCount)
+                    options.hasRowCount() -> ceil(breakCount / options.rowCount.toDouble()).toInt()
+                    legendDirection === LegendDirection.HORIZONTAL -> breakCount
+                    else -> 1
+                }
+                rowCount = ceil(breakCount / colCount.toDouble()).toInt()
+            } else {
+                // by column
+                rowCount = when {
+                    options.hasRowCount() -> min(options.rowCount, breakCount)
+                    options.hasColCount() -> ceil(breakCount / options.colCount.toDouble()).toInt()
+                    legendDirection !== LegendDirection.HORIZONTAL -> breakCount
+                    else -> 1
+                }
+                colCount = ceil(breakCount / rowCount.toDouble()).toInt()
+            }
+
+            val layout: LegendComponentLayout
+            @Suppress("LiftReturnOrAssignment")
+            if (legendDirection === LegendDirection.HORIZONTAL) {
+                if (options.hasRowCount() || options.hasColCount() && options.colCount < breakCount) {
+                    layout = LegendComponentLayout.horizontalMultiRow(title, breaks, keySize)
+                } else {
+                    layout = LegendComponentLayout.horizontal(title, breaks, keySize)
+                }
+            } else {
+                layout = LegendComponentLayout.vertical(title, breaks, keySize)
+            }
+
+            layout.colCount = colCount
+            layout.rowCount = rowCount
+            layout.isFillByRow = options.isByRow
+
+            return LegendComponentSpec(title, breaks, theme, layout)
+        }
     }
 }
