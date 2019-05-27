@@ -1,7 +1,5 @@
 package jetbrains.datalore.visualization.plot.builder.presentation
 
-import visualization.plot.gog.plot.presentation.*
-
 object Style {
     const val PLOT_CONTAINER = "plt-container"
     const val PLOT = "plt-plot"

@@ -1,4 +1,4 @@
-package visualization.plot.gog.plot.presentation
+package jetbrains.datalore.visualization.plot.builder.presentation
 
 class CssResource(val selectorMap: Map<Selector, Map<StyleType, Any>>) {
     override fun toString(): String {

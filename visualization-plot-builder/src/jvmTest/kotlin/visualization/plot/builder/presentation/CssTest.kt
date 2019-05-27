@@ -1,7 +1,5 @@
-package visualization.plot.gog.plot.presentation
+package jetbrains.datalore.visualization.plot.builder.presentation
 
-import jetbrains.datalore.visualization.plot.gog.plot.presentation.Defaults
-import jetbrains.datalore.visualization.plot.gog.plot.presentation.Style
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -11,7 +9,7 @@ class CssTest {
     font-family: """ + Defaults.FONT_FAMILY_NORMAL + """;
 }
 text {
-    font-size: """ + Defaults.FONT_MEDIUM  +"""px;
+    font-size: """ + Defaults.FONT_MEDIUM + """px;
     fill: """ + Defaults.TEXT_COLOR + """;
 }
 .plt-glass-pane {

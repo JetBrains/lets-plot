@@ -1,4 +1,4 @@
-package visualization.plot.gog.plot.presentation
+package jetbrains.datalore.visualization.plot.builder.presentation
 
 class CssResourceBuilder {
     private val selectorsMap = mutableMapOf<Selector, MutableMap<StyleType, Any>>()
