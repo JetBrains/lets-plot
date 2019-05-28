@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.server.config.transform
+package jetbrains.datalore.visualization.plot.server.config.transform
 
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChange
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChangeContext

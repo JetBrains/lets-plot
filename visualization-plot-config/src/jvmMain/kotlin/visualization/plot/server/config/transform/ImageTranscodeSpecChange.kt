@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.gog.server.config.transform
+package jetbrains.datalore.visualization.plot.server.config.transform
 
 import jetbrains.datalore.visualization.base.svg.SvgUtils
 import jetbrains.datalore.visualization.base.svg.buildDataUrl

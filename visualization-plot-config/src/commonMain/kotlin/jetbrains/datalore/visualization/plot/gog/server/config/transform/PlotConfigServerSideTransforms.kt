@@ -5,6 +5,7 @@ import jetbrains.datalore.visualization.plot.gog.config.Option.Plot
 import jetbrains.datalore.visualization.plot.gog.config.transform.PlotSpecTransform
 import jetbrains.datalore.visualization.plot.gog.config.transform.SpecSelector
 import jetbrains.datalore.visualization.plot.gog.config.transform.migration.MoveGeomPropertiesToLayerMigration
+import jetbrains.datalore.visualization.plot.server.config.transform.ImageTranscodeSpecChange
 
 object PlotConfigServerSideTransforms {
     fun migrationTransform(): PlotSpecTransform {
