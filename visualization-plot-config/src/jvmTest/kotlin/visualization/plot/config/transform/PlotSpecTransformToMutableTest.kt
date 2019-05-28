@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.config.transform
 
-import jetbrains.datalore.visualization.plot.DemoAndTest
+import jetbrains.datalore.base.assertion.assertDoesNotFail
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -22,7 +22,7 @@ class PlotSpecTransformToMutableTest {
 
         assertEquals(0, mm["a"])
 
-        DemoAndTest.assertExceptionNotHappened { mm["a"] = 1 }
+        assertDoesNotFail { mm["a"] = 1 }
 
         assertEquals(2, (mm["b"] as List<*>).size)
 
@@ -35,13 +35,13 @@ class PlotSpecTransformToMutableTest {
         }
 
         assertEquals(0, (mm["c"] as Map<*, *>)["c_"])
-        DemoAndTest.assertExceptionNotHappened {
+        assertDoesNotFail {
             val map = mm["c"] as MutableMap<Any, Any>
             map["c_"] = 1
         }
 
         assertEquals(0, ((mm["d"] as List<*>)[0] as Map<*, *>)["d0_"])
-        DemoAndTest.assertExceptionNotHappened {
+        assertDoesNotFail {
             val map = (mm["d"] as List<*>)[0] as MutableMap<Any, Any>
             map["do_"] = 1
         }

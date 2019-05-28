@@ -47,19 +47,6 @@ object DemoAndTest {
         return map
     }
 
-    fun assertExceptionNotHappened(r: () -> Unit) {
-        assertExceptionNotHappened("", r)
-    }
-
-    fun assertExceptionNotHappened(message: String, r: () -> Unit) {
-        try {
-            r()
-        } catch (e: RuntimeException) {
-            throw Error(message, e)
-        }
-
-    }
-
     fun getMap(opts: Map<String, Any>, key: String): Map<String, Any> {
         @Suppress("UNCHECKED_CAST")
         val map = opts[key] as? Map<String, Any>

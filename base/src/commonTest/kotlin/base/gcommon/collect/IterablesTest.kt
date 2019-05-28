@@ -1,7 +1,7 @@
 package jetbrains.datalore.base.gcommon.collect
 
+import jetbrains.datalore.base.assertion.assertFails
 import jetbrains.datalore.base.function.Predicate
-import jetbrains.datalore.base.gcommon.collect.ExceptionAssert.assertExceptionHappened
 import kotlin.test.*
 
 class IterablesTest {
@@ -13,8 +13,8 @@ class IterablesTest {
         assertEquals("a", Iterables[iterable, 0])
         assertEquals("c", Iterables[iterable, 2])
 
-        assertExceptionHappened { Iterables[iterable, -1] }
-        assertExceptionHappened { Iterables[iterable, 3] }
+        assertFails { Iterables[iterable, -1] }
+        assertFails { Iterables[iterable, 3] }
     }
 
     @Test
@@ -26,7 +26,7 @@ class IterablesTest {
         assertEquals("c+", Iterables[iterable, 3, "c+"])
         assertNull(Iterables[iterable, 3, null])
 
-        assertExceptionHappened { Iterables[iterable, -1] }
+        assertFails { Iterables[iterable, -1] }
     }
 
     @Test
@@ -61,14 +61,14 @@ class IterablesTest {
         assertEquals("b", Iterables[result, 1])
         assertEquals("b", Iterables[result, 2])
         assertEquals("c", Iterables[result, 3])
-        assertExceptionHappened { Iterables[result, 4] }
+        assertFails { Iterables[result, 4] }
     }
 
     @Test
     fun getLast() {
         val iterable = iterable("a", "b", "c")
         assertEquals("c", Iterables.getLast(iterable))
-        assertExceptionHappened { Iterables.getLast(iterable()) }
+        assertFails { Iterables.getLast(iterable()) }
     }
 
     @Test

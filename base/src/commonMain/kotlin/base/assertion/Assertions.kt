@@ -28,3 +28,26 @@ private fun doubleEquals(lft: Double?, rgt: Double?, precision: Double): Boolean
 private fun messagePrefix(message: String?): String {
     return if (message == null) "" else "$message "
 }
+
+fun assertFails(block: () -> Unit) {
+    try {
+        block()
+        throw AssertionError("Exception was expected")
+    } catch (ignore: RuntimeException) {
+    }
+}
+
+fun assertDoesNotFail(r: () -> Unit) {
+    assertDoesNotFail("", r)
+}
+
+fun assertDoesNotFail(message: String, r: () -> Unit) {
+    try {
+        r()
+    } catch (e: RuntimeException) {
+        throw Error(message, e)
+    }
+
+}
+
+

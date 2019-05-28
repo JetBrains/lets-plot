@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.config
 
+import jetbrains.datalore.base.assertion.assertDoesNotFail
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plot.DemoAndTest
 import jetbrains.datalore.visualization.plot.config.Option.GeomName
@@ -31,7 +32,7 @@ class EdgeCasesTest {
                 "}"
 
         val opts = JsonSupport.parseJson(spec)
-        DemoAndTest.assertExceptionNotHappened { DemoAndTest.createPlot(opts) }
+        assertDoesNotFail { DemoAndTest.createPlot(opts) }
     }
 
     @Test
@@ -59,7 +60,7 @@ class EdgeCasesTest {
                 "}"
 
         val opts = JsonSupport.parseJson(spec)
-        DemoAndTest.assertExceptionNotHappened { DemoAndTest.createPlot(opts) }
+        assertDoesNotFail { DemoAndTest.createPlot(opts) }
     }
 
     @Test
@@ -98,6 +99,6 @@ class EdgeCasesTest {
         )
 
         plotSpec["data"] = data
-        DemoAndTest.assertExceptionNotHappened("geom $geom: ") { DemoAndTest.createPlot(plotSpec) }
+        assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(plotSpec) }
     }
 }
