@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.canvasDom
+package jetbrains.datalore.visualization.base.canvas.dom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -9,7 +9,7 @@ import jetbrains.datalore.base.js.css.enumerables.CssTextBaseLine
 import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.CssFontParser
-import jetbrains.datalore.visualization.base.canvasDom.DomCanvas.DomSnapshot
+import jetbrains.datalore.visualization.base.canvas.dom.DomCanvas.DomSnapshot
 import org.w3c.dom.*
 
 internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) : Context2d {

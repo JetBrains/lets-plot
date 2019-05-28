@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.canvasDom
+package jetbrains.datalore.visualization.base.canvas.dom
 
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.geometry.Vector
