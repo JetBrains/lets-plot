@@ -7,7 +7,7 @@ repositories {
 }
 
 kotlin {
-    jvm()
+    jvm("jvmBatik")
     js()
     sourceSets {
         commonMain {
@@ -18,20 +18,25 @@ kotlin {
                 implementation project(':base')
                 implementation project(':mapper-core')
                 implementation project(':visualization-base-svg')
-                implementation project(':visualization-base-svg-mapper')
+//                implementation project(':visualization-base-svg-mapper')
                 implementation project(':visualization-plot-base')
                 implementation project(':visualization-plot-common')
                 implementation project(':visualization-plot-builder')
                 implementation project(':visualization-plot-config')
             }
         }
-        jvmMain {
+
+        allJvm {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-
                 compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
-
                 implementation "org.apache.commons:commons-math3:$math3_version"
+            }
+        }
+        jvmBatikMain {
+            dependsOn allJvm
+            dependencies {
+                implementation project(':visualization-base-svg-mapper')   // Batik-based mapper
 
                 implementation "org.apache.xmlgraphics:batik-anim:$batik_version"
                 implementation "org.apache.xmlgraphics:batik-awt-util:$batik_version"
@@ -64,7 +69,9 @@ idea {
 //            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
 //            packagePrefix["src/jsMain/kotlin"] = "jetbrains.datalore"
 //            packagePrefix["src/jsTest/kotlin"] = "jetbrains.datalore"
+
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmBatikMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }
     }
