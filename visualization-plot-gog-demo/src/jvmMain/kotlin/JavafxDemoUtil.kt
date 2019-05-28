@@ -11,7 +11,7 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxCanvasControl
-import jetbrains.datalore.visualization.plot.DemoAndTest
+import jetbrains.datalore.visualization.plot.DemoAndTestJvm
 
 object JavafxDemoUtil {
     private var myViewSize = DoubleVector.ZERO
@@ -31,7 +31,7 @@ object JavafxDemoUtil {
             val flowPane = FlowPane(Orientation.HORIZONTAL)
 
             myPlotSpecList.forEach { plotSpec ->
-                val plot = DemoAndTest.createPlot(plotSpec, false)
+                val plot = DemoAndTestJvm.createPlot(plotSpec, false)
                 val canvasControl = JavafxCanvasControl(Vector(myViewSize.x.toInt(), myViewSize.y.toInt()), 1.0)
                 flowPane.children.add(canvasControl.javafxRoot)
 

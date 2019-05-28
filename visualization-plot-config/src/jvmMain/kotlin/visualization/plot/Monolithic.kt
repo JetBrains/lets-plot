@@ -6,6 +6,11 @@ import jetbrains.datalore.visualization.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.visualization.plot.config.PlotConfigUtil
 import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide
 
+//
+// in JVM because of math3 dependency in PlotConfigServerSide
+//
+
+
 object Monolithic {
     fun createPlot(plotSpec: MutableMap<String, Any>, computationMessagesHandler: ((List<String>) -> Unit)?): Plot {
         @Suppress("NAME_SHADOWING")

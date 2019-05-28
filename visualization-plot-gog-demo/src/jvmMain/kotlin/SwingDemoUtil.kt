@@ -4,7 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxGraphicsCanvasControlFactory
-import jetbrains.datalore.visualization.plot.DemoAndTest
+import jetbrains.datalore.visualization.plot.DemoAndTestJvm
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -44,7 +44,7 @@ object SwingDemoUtil {
 
     private fun createComponent(viewSize: DoubleVector, plotSpec: MutableMap<String, Any>): JComponent {
 
-        val plot = DemoAndTest.createPlot(plotSpec, false)
+        val plot = DemoAndTestJvm.createPlot(plotSpec, false)
         val canvasControl = AwtCanvasControl(
                 JavafxGraphicsCanvasControlFactory(2.0),
                 Vector(viewSize.x.toInt(), viewSize.y.toInt())
