@@ -4,7 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxGraphicsCanvasControlFactory
-import jetbrains.datalore.visualization.plot.gog.DemoAndTest
+import jetbrains.datalore.visualization.plot.DemoAndTest
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension

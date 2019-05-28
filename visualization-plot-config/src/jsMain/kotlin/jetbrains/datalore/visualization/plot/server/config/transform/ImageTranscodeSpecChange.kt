@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.server.config.transform
 
-import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChange
-import jetbrains.datalore.visualization.plot.gog.config.transform.SpecChangeContext
+import jetbrains.datalore.visualization.plot.config.transform.SpecChange
+import jetbrains.datalore.visualization.plot.config.transform.SpecChangeContext
 
 internal actual class ImageTranscodeSpecChange : SpecChange {
     override fun isApplicable(spec: Map<String, Any>): Boolean {

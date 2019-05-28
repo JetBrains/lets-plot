@@ -11,7 +11,7 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxCanvasControl
-import jetbrains.datalore.visualization.plot.gog.DemoAndTest
+import jetbrains.datalore.visualization.plot.DemoAndTest
 
 object JavafxDemoUtil {
     private var myViewSize = DoubleVector.ZERO
