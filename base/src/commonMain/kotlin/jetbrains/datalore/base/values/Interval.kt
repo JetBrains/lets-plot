@@ -1,6 +1,7 @@
 package jetbrains.datalore.base.values
 
-import kotlin.math.*
+import kotlin.math.max
+import kotlin.math.min
 
 class Interval(val lowerBound: Int, val upperBound: Int) {
 

@@ -6,7 +6,6 @@ import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.Context2d.LineJoin.BEVEL
 import jetbrains.datalore.visualization.base.canvas.Context2d.TextBaseline.ALPHABETIC
 import jetbrains.datalore.visualization.base.canvas.CssStyleUtil.extractStyleFont
-import jetbrains.datalore.visualization.base.canvas.svgToCanvas.toRadians
 import jetbrains.datalore.visualization.base.svg.SvgColor
 import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgColors.NONE

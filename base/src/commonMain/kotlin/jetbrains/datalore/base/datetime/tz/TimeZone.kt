@@ -1,7 +1,6 @@
 package jetbrains.datalore.base.datetime.tz
 
 import jetbrains.datalore.base.datetime.*
-import jetbrains.datalore.base.datetime.Date
 
 abstract class TimeZone protected constructor(val id: String?) {
 

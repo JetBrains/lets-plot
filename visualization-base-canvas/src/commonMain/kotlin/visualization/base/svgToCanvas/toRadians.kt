@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.canvas.svgToCanvas
+package jetbrains.datalore.visualization.base.svgToCanvas
 
 import kotlin.math.PI
 

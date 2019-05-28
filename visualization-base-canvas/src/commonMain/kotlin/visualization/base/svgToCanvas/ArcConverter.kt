@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.base.svgToCanvas
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.canvas.svgToCanvas.toRadians
 import kotlin.math.*
 
 internal class ArcConverter(private var myFrom: DoubleVector, to: DoubleVector, r: DoubleVector,
@@ -24,7 +23,7 @@ internal class ArcConverter(private var myFrom: DoubleVector, to: DoubleVector, 
     init {
 
         if (myFrom.x != to.x || myFrom.y != to.y) {
-            // Convert to center parameterization as shown in
+            // Convert to center parametrization as shown in
             // http://www.w3.org/TR/SVG/implnote.htmls
             myRx = abs(r.x)
             myRy = abs(r.y)
@@ -44,14 +43,16 @@ internal class ArcConverter(private var myFrom: DoubleVector, to: DoubleVector, 
             //  -> find factor s, such that numerator' with mRx'=s*mRx and mRy'=s*mRy becomes 0
             if (numerator < 0) {
                 val s = sqrt(1 - numerator / (myRx * myRx * myRy * myRy))
-                myRx = s * myRx
-                myRy = s * myRy
+                myRx *= s
+                myRy *= s
                 root = 0.0
             } else {
                 root = (if (largeArcFlag == sweepFlag) -1 else 1) * sqrt(numerator / (myRx * myRx * y1dash * y1dash + myRy * myRy * x1dash * x1dash))
             }
 
+            @Suppress("SpellCheckingInspection")
             val cxdash = root * myRx * y1dash / myRy
+            @Suppress("SpellCheckingInspection")
             val cydash = -root * myRy * x1dash / myRx
 
             myC = DoubleVector(
@@ -62,6 +63,7 @@ internal class ArcConverter(private var myFrom: DoubleVector, to: DoubleVector, 
                     1.0, 0.0,
                     (x1dash - cxdash) / myRx, (y1dash - cydash) / myRy)
 
+            @Suppress("SpellCheckingInspection")
             var dtheta = calcVectorAngle(
                     (x1dash - cxdash) / myRx, (y1dash - cydash) / myRy,
                     (-x1dash - cxdash) / myRx, (-y1dash - cydash) / myRy)
