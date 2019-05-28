@@ -17,7 +17,7 @@ include 'base',
         'visualization-plot-base',
         'visualization-plot-common',
         'visualization-plot-builder',
-        'visualization-plot-gog',
+        'visualization-plot-config',
         'visualization-plot-gog-demo',
         'visualization-plot-demo',
         'demo-hello'
