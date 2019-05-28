@@ -1,23 +1,11 @@
-package jetbrains.datalore.visualization.baseDemo.svgCanvasDemo.demoModel
+package jetbrains.datalore.visualization.baseDemo.svgCanvasDemo.model
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.SvgCircleElement
-import jetbrains.datalore.visualization.base.svg.SvgColors
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.base.svg.SvgNode
-import jetbrains.datalore.visualization.base.svg.SvgPathData
-import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
-import jetbrains.datalore.visualization.base.svg.SvgPathElement
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.base.svg.SvgTextElement
-import jetbrains.datalore.visualization.base.svg.SvgTransformBuilder
-import jetbrains.datalore.visualization.base.svg.SvgUtils
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
-
+import jetbrains.datalore.visualization.base.svg.*
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
+import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 
 object DemoModel {
 
