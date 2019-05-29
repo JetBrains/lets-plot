@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame
+import jetbrains.datalore.visualization.plotDemo.SwingDemoFrameBatik
 import jetbrains.datalore.visualization.plotDemo.model.component.LegendDemo
 
 class LegendDemoAwt : LegendDemo() {
@@ -15,6 +15,6 @@ class LegendDemoAwt : LegendDemo() {
     private fun show() {
         val demoModels = createModels()
         val svgRoots = createSvgRoots(demoModels)
-        SwingDemoFrame.showSvg(svgRoots, demoComponentSize, "Legend component")
+        SwingDemoFrameBatik.showSvg(svgRoots, demoComponentSize, "Legend component")
     }
 }

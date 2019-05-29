@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame
+import jetbrains.datalore.visualization.plotDemo.SwingDemoFrameBatik
 import jetbrains.datalore.visualization.plotDemo.model.component.TextLabelDemo
 
 class TextLabelDemoAwt : TextLabelDemo() {
@@ -15,6 +15,6 @@ class TextLabelDemoAwt : TextLabelDemo() {
     private fun show() {
         val demoModels = listOf(createModel())
         val svgRoots = createSvgRoots(demoModels)
-        SwingDemoFrame.showSvg(svgRoots, demoComponentSize, "Text label anchor and rotation")
+        SwingDemoFrameBatik.showSvg(svgRoots, demoComponentSize, "Text label anchor and rotation")
     }
 }

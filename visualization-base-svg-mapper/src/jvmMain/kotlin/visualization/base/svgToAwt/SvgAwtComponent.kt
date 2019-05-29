@@ -81,8 +81,6 @@ abstract class SvgAwtComponent(svgRoot: SvgSvgElement) : JComponent() {
     protected abstract fun createMessageCallback(): MessageCallback
 
     protected fun createDefaultMessageCallback(): MessageCallback {
-        return object : MessageCallback {
-
-        }
+        return object : MessageCallback {}
     }
 }

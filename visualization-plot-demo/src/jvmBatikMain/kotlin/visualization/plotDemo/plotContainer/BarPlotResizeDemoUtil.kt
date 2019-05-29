@@ -8,8 +8,8 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame
-import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame.Companion.createSvgComponent
+import jetbrains.datalore.visualization.plotDemo.SwingDemoFrameBatik
+import jetbrains.datalore.visualization.plotDemo.SwingDemoFrameBatik.Companion.createSvgComponent
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.FlowLayout
@@ -36,7 +36,7 @@ object BarPlotResizeDemoUtil {
             containerSize.height.toDouble() - 2 * PADDING)
 
     fun show(demoModel: BarPlotResizeDemo) {
-        SwingDemoFrame("Fit in frame (try to resize)").show(false) {
+        SwingDemoFrameBatik("Fit in frame (try to resize)").show(false) {
 
             //            this.background = Color.BLUE
             setupContainer(this)

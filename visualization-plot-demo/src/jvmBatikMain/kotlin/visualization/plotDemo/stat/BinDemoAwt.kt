@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.stat
 
-import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame
+import jetbrains.datalore.visualization.plotDemo.SwingDemoFrameBatik
 import jetbrains.datalore.visualization.plotDemo.model.stat.BinDemo
 
 class BinDemoAwt : BinDemo() {
@@ -8,7 +8,7 @@ class BinDemoAwt : BinDemo() {
     private fun show() {
         val demoModels = createModels()
         val svgRoots = createSvgRoots(demoModels)
-        SwingDemoFrame.showSvg(svgRoots, demoComponentSize, "Bin stat")
+        SwingDemoFrameBatik.showSvg(svgRoots, demoComponentSize, "Bin stat")
     }
 
     companion object {

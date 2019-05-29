@@ -7,6 +7,7 @@ repositories {
 }
 
 kotlin {
+    jvm()
     jvm("jvmBatik")
     js()
     sourceSets {
@@ -33,8 +34,12 @@ kotlin {
                 implementation "org.apache.commons:commons-math3:$math3_version"
             }
         }
+        jvmMain {
+            dependsOn allJvm
+        }
         jvmBatikMain {
             dependsOn allJvm
+            dependsOn jvmMain
             dependencies {
                 implementation project(':visualization-base-svg-mapper')   // Batik-based mapper
 
