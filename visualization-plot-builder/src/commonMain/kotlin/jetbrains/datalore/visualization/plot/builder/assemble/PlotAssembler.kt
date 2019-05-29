@@ -4,13 +4,19 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.scale.Scales
-import jetbrains.datalore.visualization.plot.builder.*
+import jetbrains.datalore.visualization.plot.builder.GeomLayer
+import jetbrains.datalore.visualization.plot.builder.GeomLayerListUtil
+import jetbrains.datalore.visualization.plot.builder.Plot
+import jetbrains.datalore.visualization.plot.builder.PlotBuilder
 import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.builder.layout.*
 import jetbrains.datalore.visualization.plot.builder.theme.Theme
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
-class PlotAssembler private constructor(layersByTile: List<List<GeomLayer>>, private val myCoordProvider: CoordProvider, private val myTheme: Theme) {
+class PlotAssembler private constructor(
+        layersByTile: List<List<GeomLayer>>,
+        private val myCoordProvider: CoordProvider,
+        private val myTheme: Theme) {
 
     private val myLayersByTile = ArrayList<List<GeomLayer>>()
     private val myContainsLivemap: Boolean

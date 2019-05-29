@@ -1,14 +1,11 @@
 package jetbrains.datalore.visualization.plot.builder.assemble.geom
 
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.Geom
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.geom.*
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.AesAutoMapper
 import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
 import jetbrains.datalore.visualization.plot.builder.assemble.geom.DefaultSampling.AB_LINE
@@ -76,9 +73,9 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
         return false
     }
 
-    fun createDataAccess(data: DataFrame, bindingByAes: Map<Aes<*>, VarBinding>): MappedDataAccess {
-        return PointDataAccess(data, bindingByAes)
-    }
+//    fun createDataAccess(data: DataFrame, bindingByAes: Map<Aes<*>, VarBinding>): MappedDataAccess {
+//        return PointDataAccess(data, bindingByAes)
+//    }
 
     private class GeomProviderBuilder internal constructor(
             private val myKind: GeomKind,

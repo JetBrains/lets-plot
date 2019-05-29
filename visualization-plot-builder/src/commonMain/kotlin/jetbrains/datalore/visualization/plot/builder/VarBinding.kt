@@ -5,8 +5,9 @@ import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.builder.scale.ScaleProvider
 
-// ToDo: ?Type VarBinding can be generified
-open class VarBinding(val variable: DataFrame.Variable, val aes: Aes<*>, open val scale: Scale<*>?) {
+open class VarBinding(val variable: DataFrame.Variable,
+                      val aes: Aes<*>,
+                      open val scale: Scale<*>?) {
 
     open val isDeferred: Boolean
         get() = false

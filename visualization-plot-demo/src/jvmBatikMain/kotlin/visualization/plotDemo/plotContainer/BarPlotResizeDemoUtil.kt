@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.plotContainer
 
+import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
@@ -8,13 +9,17 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
 import jetbrains.datalore.visualization.plotDemo.SwingDemoFrameBatik
 import jetbrains.datalore.visualization.plotDemo.SwingDemoFrameBatik.Companion.createSvgComponent
+import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.util.concurrent.atomic.AtomicInteger
 import javax.swing.JComponent
 import javax.swing.SwingUtilities
@@ -87,6 +92,20 @@ object BarPlotResizeDemoUtil {
             override fun onEvent(event: PropertyChangeEvent<out DoubleVector>) {
                 frameRect.width().set(event.newValue!!.x)
                 frameRect.height().set(event.newValue!!.y)
+            }
+        })
+
+        // Bind mouse events
+        component.addMouseListener(object : MouseAdapter() {
+            override fun mouseExited(e: MouseEvent) {
+                super.mouseExited(e)
+                plot.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
+            }
+        })
+        component.addMouseMotionListener(object : MouseAdapter() {
+            override fun mouseMoved(e: MouseEvent) {
+                super.mouseMoved(e)
+                plot.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
             }
         })
     }

@@ -50,9 +50,10 @@ class MappedDataAccessMock {
         return mappedAes
     }
 
-    class Mapping<T> internal constructor(internal val aes: Aes<T>, private val label: String, private val value: String, private val isContinuous: Boolean) {
-        private val aesValue: T? = null
-
+    class Mapping<T> internal constructor(internal val aes: Aes<T>,
+                                          private val label: String,
+                                          private val value: String,
+                                          private val isContinuous: Boolean) {
         fun longTooltipText(): String {
             return "$label: $value"
         }
@@ -62,7 +63,7 @@ class MappedDataAccessMock {
         }
 
         internal fun createMappedData(): MappedData<T> {
-            return MappedData(label, value, aesValue, isContinuous)
+            return MappedData(label, value, isContinuous)
         }
     }
 

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plotDemo.plotContainer
+package jetbrains.datalore.visualization.plotDemo.model.plotContainer
 
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil

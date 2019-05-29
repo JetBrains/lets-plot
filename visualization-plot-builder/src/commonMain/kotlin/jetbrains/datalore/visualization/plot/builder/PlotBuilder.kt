@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
@@ -12,13 +11,13 @@ import jetbrains.datalore.visualization.plot.builder.theme.Theme
 class PlotBuilder(private val myTheme: Theme) {
     private val myLayersByTile = ArrayList<List<GeomLayer>>()
     private var myTitle: String? = null
-    private var myCoordProvider: CoordProvider? = null
+    private lateinit var myCoordProvider: CoordProvider
     private var myLayout: PlotLayout? = null
     private var myAxisTitleLeft: String? = null
     private var myAxisTitleBottom: String? = null
     private val myLegendBoxInfos = ArrayList<LegendBoxInfo>()
-    private var myScaleXProto: Scale<Double>? = null
-    private var myScaleYProto: Scale<Double>? = null
+    private lateinit var myScaleXProto: Scale<Double>
+    private lateinit var myScaleYProto: Scale<Double>
     private var myAxisEnabled = true
     private var myInteractionsEnabled = true
     private var myCanvasEnabled = false
@@ -85,16 +84,17 @@ class PlotBuilder(private val myTheme: Theme) {
     }
 
 
-    private class MyPlot internal constructor(b: PlotBuilder) : Plot(b.myTheme) {
-        override val scaleXProto: Scale<Double>?
-        override val scaleYProto: Scale<Double>?
+    private class MyPlot(b: PlotBuilder) : Plot(b.myTheme) {
+        override val scaleXProto: Scale<Double> = b.myScaleXProto
+        override val scaleYProto: Scale<Double> = b.myScaleYProto
 
-        private val myTitle: String?
-        private val myAxisTitleLeft: String?
-        private val myAxisTitleBottom: String?
-        private val myAxisXTitleEnabled: Boolean
-        private val myAxisYTitleEnabled: Boolean
-        override val coordProvider: CoordProvider
+        private val myTitle: String? = b.myTitle
+        private val myAxisTitleLeft: String? = b.myAxisTitleLeft
+        private val myAxisTitleBottom: String? = b.myAxisTitleBottom
+        private val myAxisXTitleEnabled: Boolean = b.myTheme.axisX().showTitle()
+        private val myAxisYTitleEnabled: Boolean = b.myTheme.axisY().showTitle()
+
+        override val coordProvider: CoordProvider = b.myCoordProvider
 
         private val myLayersByTile: List<List<GeomLayer>>
         private val myLayout: PlotLayout?
@@ -126,18 +126,6 @@ class PlotBuilder(private val myTheme: Theme) {
             get() = myLegendBoxInfos
 
         init {
-            checkState(b.myScaleXProto != null)
-            checkState(b.myScaleYProto != null)
-
-            scaleXProto = b.myScaleXProto
-            scaleYProto = b.myScaleYProto
-
-            myTitle = b.myTitle
-            myAxisTitleLeft = b.myAxisTitleLeft
-            myAxisTitleBottom = b.myAxisTitleBottom
-            myAxisXTitleEnabled = b.myTheme.axisX().showTitle()
-            myAxisYTitleEnabled = b.myTheme.axisY().showTitle()
-            coordProvider = b.myCoordProvider!!
             myLayersByTile = ArrayList(b.myLayersByTile)
             myLayout = b.myLayout
             myLegendBoxInfos = ArrayList(b.myLegendBoxInfos)

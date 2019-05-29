@@ -43,9 +43,9 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     internal val mouseEventPeer = MouseEventPeer()
 
-    protected abstract val scaleXProto: Scale<Double>?
+    protected abstract val scaleXProto: Scale<Double>
 
-    protected abstract val scaleYProto: Scale<Double>?
+    protected abstract val scaleYProto: Scale<Double>
 
     protected abstract val title: String
 
@@ -144,8 +144,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             val yAxisLength = tileInfo.yAxisInfo.axisLength
 
             // set-up scales and coordinate system
-            xScale = coordProvider.buildAxisScaleX(scaleXProto!!, xDomain, xAxisLength, tileInfo.xAxisInfo.axisBreaks!!)
-            yScale = coordProvider.buildAxisScaleY(scaleYProto!!, yDomain, yAxisLength, tileInfo.yAxisInfo.axisBreaks!!)
+            xScale = coordProvider.buildAxisScaleX(scaleXProto, xDomain, xAxisLength, tileInfo.xAxisInfo.axisBreaks!!)
+            yScale = coordProvider.buildAxisScaleY(scaleYProto, yDomain, yAxisLength, tileInfo.yAxisInfo.axisBreaks!!)
             coord = coordProvider.createCoordinateSystem(xDomain, xAxisLength, yDomain, yAxisLength)
         } else {
             // bogus scales and coordinate system (live map doesn't need them)

@@ -11,6 +11,5 @@ interface MappedDataAccess {
     class MappedData<T>(
             val label: String,
             val value: String,
-            val aesValue: T?,
             val isContinuous: Boolean)
 }

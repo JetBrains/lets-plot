@@ -15,10 +15,6 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     private var myAxisAesFromConfig: List<Aes<*>>? = null
 
     val axisAes: List<Aes<*>>
-        //        get() = if (myAxisAesFromConfig == null)
-//            myAxisAesFromFunctionKind
-//        else
-//            myAxisAesFromConfig
         get() = myAxisAesFromConfig ?: myAxisAesFromFunctionKind ?: ArrayList()
 
     val displayableAes: List<Aes<*>>

@@ -18,6 +18,7 @@ import jetbrains.datalore.visualization.plot.builder.GeomLayer
 import jetbrains.datalore.visualization.plot.builder.PosProviderContext
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.visualization.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.visualization.plot.builder.data.DataProcessing
 import jetbrains.datalore.visualization.plot.builder.data.GroupingContext
 import jetbrains.datalore.visualization.plot.builder.interact.ContextualMappingProvider
@@ -125,7 +126,12 @@ class GeomLayerBuilder {
             replacementBindings[binding.aes] = binding
         }
 
-        val dataAccess = myGeomProvider.createDataAccess(data, replacementBindings)
+//        val dataAccess = myGeomProvider.createDataAccess(data, replacementBindings)
+        // (!) Positional aes scales have undefined `mapper` at this time because
+        // dimensions of plot are not yet known.
+        // Data Access shouldn't use aes mapper (!)
+        val dataAccess = PointDataAccess(data, replacementBindings)
+
         return MyGeomLayer(data,
                 myGeomProvider,
                 myPosProvider,

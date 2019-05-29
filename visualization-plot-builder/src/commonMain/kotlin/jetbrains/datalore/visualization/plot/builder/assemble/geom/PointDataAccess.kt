@@ -9,7 +9,7 @@ import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantitativeTickF
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
-internal class PointDataAccess(private val myData: DataFrame,
+internal class PointDataAccess(private val data: DataFrame,
                                bindings: Map<Aes<*>, VarBinding>) : MappedDataAccess {
 
     private val myBindings: Map<Aes<*>, VarBinding> = bindings.toMap()
@@ -23,7 +23,7 @@ internal class PointDataAccess(private val myData: DataFrame,
     override fun <T> getMappedData(aes: Aes<T>, index: Int): MappedDataAccess.MappedData<T> {
         checkArgument(isMapped(aes), "Not mapped: $aes")
 
-        val value = value(aes, index)!!
+        val value = valueAfterTransform(aes, index)!!
         @Suppress("UNCHECKED_CAST")
         val scale = myBindings[aes]!!.scale as Scale<T>
 
@@ -35,19 +35,18 @@ internal class PointDataAccess(private val myData: DataFrame,
             original.toString()
         }
 
-        val aesValue = scale.mapper(value)
         val continuous = scale.isContinuous
 
-        return MappedDataAccess.MappedData(label(aes), s, aesValue, continuous)
+        return MappedDataAccess.MappedData(label(aes), s, continuous)
     }
 
     private fun label(aes: Aes<*>): String {
         return myBindings[aes]!!.scale!!.name
     }
 
-    private fun value(aes: Aes<*>, index: Int): Double? {
+    private fun valueAfterTransform(aes: Aes<*>, index: Int): Double? {
         val variable = myBindings[aes]!!.variable
-        return myData.getNumeric(variable)[index]
+        return data.getNumeric(variable)[index]
     }
 
     private fun formatter(aes: Aes<*>): (Any) -> String {
@@ -61,7 +60,7 @@ internal class PointDataAccess(private val myData: DataFrame,
         val varBinding = myBindings[aes]
         // only 'stat' or 'transform' vars here
         val `var` = varBinding!!.variable
-        var domain = myData.range(`var`)
+        var domain = data.range(`var`)
         domain = SeriesUtil.ensureNotZeroRange(domain)
         return QuantitativeTickFormatterFactory.forLinearScale().getFormatter(domain, SeriesUtil.span(domain) / 100.0)
     }
