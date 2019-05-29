@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.plot.base.stat
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.stat.*
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import org.apache.commons.math3.linear.BlockRealMatrix
 
