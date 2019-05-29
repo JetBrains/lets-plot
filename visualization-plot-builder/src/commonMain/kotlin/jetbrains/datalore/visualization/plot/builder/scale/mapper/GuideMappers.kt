@@ -12,7 +12,7 @@ import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 object GuideMappers {
     val IDENTITY: GuideMapper<Double> = GuideMapperAdapter(Mappers.IDENTITY)
-
+    val UNDEFINED: GuideMapper<Double> = GuideMapperAdapter(Mappers.undefined())
 
     fun <TargetT> discreteToDiscrete(
             data: DataFrame,

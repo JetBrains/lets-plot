@@ -147,5 +147,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         fun values(): List<Aes<*>> {
             return values
         }
+
+        fun allPositional(): List<Aes<Double>> {
+            @Suppress("UNCHECKED_CAST")
+            return values.filter { isPositional(it) } as List<Aes<Double>>
+        }
     }
 }
