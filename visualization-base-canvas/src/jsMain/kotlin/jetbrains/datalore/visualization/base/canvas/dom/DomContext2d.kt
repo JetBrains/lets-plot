@@ -182,8 +182,13 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
     override fun measureText(str: String, font: String): DoubleVector {
         val parser = CssFontParser.create(font) ?: throw IllegalStateException("Could not parse css font string: $font")
         val height = parser.fontSize ?: 10.0
+
+        myContext2d.save()
+        myContext2d.font = font
         val width = myContext2d.measureText(str).width
-        return DoubleVector(myContext2d.measureText(str).width, height)
+        myContext2d.restore()
+
+        return DoubleVector(width, height)
     }
 
     override fun clearRect(rect: DoubleRectangle) {
