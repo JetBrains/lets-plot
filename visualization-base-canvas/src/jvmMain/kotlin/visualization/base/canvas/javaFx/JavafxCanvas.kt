@@ -22,6 +22,7 @@ private constructor(
     companion object {
         init {
             //initialize Toolkit
+            // ToDo: remove when switching to SwingJfxPanel
             JFXPanel()
         }
 

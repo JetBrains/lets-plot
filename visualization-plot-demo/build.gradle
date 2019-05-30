@@ -9,6 +9,7 @@ repositories {
 kotlin {
     jvm()
     jvm("jvmBatik")
+    jvm("jvmJfx")
     js()
     sourceSets {
         commonMain {
@@ -19,7 +20,6 @@ kotlin {
                 implementation project(':base')
                 implementation project(':mapper-core')
                 implementation project(':visualization-base-svg')
-//                implementation project(':visualization-base-svg-mapper')
                 implementation project(':visualization-plot-base')
                 implementation project(':visualization-plot-common')
                 implementation project(':visualization-plot-builder')
@@ -59,6 +59,15 @@ kotlin {
                 implementation "org.apache.xmlgraphics:batik-xml:$batik_version"
             }
         }
+        jvmJfxMain {
+            dependsOn allJvm
+            dependsOn jvmMain
+
+            dependencies {
+                implementation project(':visualization-base-canvas')
+            }
+        }
+
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
@@ -77,6 +86,7 @@ idea {
 
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmBatikMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmJfxMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }
     }

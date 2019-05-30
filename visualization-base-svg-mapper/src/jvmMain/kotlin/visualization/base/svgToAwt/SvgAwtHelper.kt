@@ -56,7 +56,7 @@ abstract class SvgAwtHelper protected constructor() {
         createGraphicsNode()
     }
 
-    protected fun clear() {
+    private fun clear() {
         if (mySvgRoot != null) {
             mySvgRoot = null
             myUserAgent.eventDispatcher.rootNode = null

@@ -10,8 +10,7 @@ import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
-import jetbrains.datalore.visualization.plotDemo.SwingDemoFrameBatik
-import jetbrains.datalore.visualization.plotDemo.SwingDemoFrameBatik.Companion.createSvgComponent
+import jetbrains.datalore.visualization.plotDemo.SwingDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 import java.awt.Color
 import java.awt.Dimension
@@ -25,7 +24,7 @@ import javax.swing.JComponent
 import javax.swing.SwingUtilities
 import javax.swing.border.LineBorder
 
-object BarPlotResizeDemoUtil {
+object PlotResizeDemoUtil {
 
     private const val PADDING = 20
 
@@ -40,10 +39,9 @@ object BarPlotResizeDemoUtil {
             containerSize.width.toDouble() - 2 * PADDING,
             containerSize.height.toDouble() - 2 * PADDING)
 
-    fun show(demoModel: BarPlotResizeDemo) {
-        SwingDemoFrameBatik("Fit in frame (try to resize)").show(false) {
+    fun show(demoModel: BarPlotResizeDemo, factory: SwingDemoFactory) {
+        factory.createDemoFrame("Fit in frame (try to resize)").show(false) {
 
-            //            this.background = Color.BLUE
             setupContainer(this)
             this.addComponentListener(object : ComponentAdapter() {
                 private val eventCount: AtomicInteger = AtomicInteger(0)
@@ -61,7 +59,7 @@ object BarPlotResizeDemoUtil {
                             plotSizeProp.set(newPlotSize)
                             if (!plotCreated) {
                                 plotCreated = true
-                                createPlot(demoModel, plotSizeProp, container)
+                                createPlot(demoModel, plotSizeProp, container, factory)
                             }
 
                             container.revalidate()
@@ -73,7 +71,11 @@ object BarPlotResizeDemoUtil {
         }
     }
 
-    private fun createPlot(demo: BarPlotResizeDemo, plotSizeProp: ReadableProperty<DoubleVector>, container: JComponent) {
+    private fun createPlot(demo: BarPlotResizeDemo,
+                           plotSizeProp: ReadableProperty<DoubleVector>,
+                           container: JComponent,
+                           factory: SwingDemoFactory) {
+
         val plot = demo.createPlot(plotSizeProp)
         plot.ensureContentBuilt()
         val svg = plot.svg
@@ -84,7 +86,7 @@ object BarPlotResizeDemoUtil {
         frameRect.fill().set(SvgColors.NONE)
         svg.children().add(frameRect)
 
-        val component = createSvgComponent(svg)
+        val component = factory.createSvgComponent(svg)
 //        component.border = BorderFactory.createLineBorder(Color.BLUE, 1)
         container.add(component)
 

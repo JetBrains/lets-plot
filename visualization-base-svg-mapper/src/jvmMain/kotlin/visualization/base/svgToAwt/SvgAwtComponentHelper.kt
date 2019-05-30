@@ -6,8 +6,7 @@ import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 
 class SvgAwtComponentHelper private constructor(
         val nodeContainer: SvgNodeContainer,
-        override val messageCallback: MessageCallback) :
-        SvgAwtHelper() {
+        override val messageCallback: MessageCallback) : SvgAwtHelper() {
 
     companion object {
         fun forUnattached(svgRoot: SvgSvgElement, messageCallback: MessageCallback): SvgAwtComponentHelper {
