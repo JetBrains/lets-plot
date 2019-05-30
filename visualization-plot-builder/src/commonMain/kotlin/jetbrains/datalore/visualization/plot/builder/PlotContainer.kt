@@ -23,7 +23,8 @@ import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipLaye
 import jetbrains.datalore.visualization.plot.builder.presentation.Style
 import kotlin.math.max
 
-class PlotContainer(private val plot: Plot, private val preferredSize: ReadableProperty<DoubleVector>) {
+class PlotContainer(private val plot: Plot,
+                    private val preferredSize: ReadableProperty<DoubleVector>) {
 
     val svg: SvgSvgElement = SvgSvgElement()
     private val myLaidOutSize: Property<DoubleVector> = ValueProperty(preferredSize.get())
@@ -46,11 +47,14 @@ class PlotContainer(private val plot: Plot, private val preferredSize: ReadableP
         //this rect blocks mouse_left events while cursor moves above svg tree elements (in GWT only)
         myMouseMoveRect.addClass(Style.PLOT_GLASS_PANE)
         myMouseMoveRect.opacity().set(0.0)
-        updateSize(preferredSize.get())
+        setSvgSize(preferredSize.get())
 
         myLaidOutSize.addHandler(object : EventHandler<PropertyChangeEvent<out DoubleVector>> {
             override fun onEvent(event: PropertyChangeEvent<out DoubleVector>) {
-                updateSize(myLaidOutSize.get())
+                val newSize = event.newValue
+                if (newSize != null) {
+                    setSvgSize(newSize)
+                }
             }
         })
     }
@@ -100,7 +104,7 @@ class PlotContainer(private val plot: Plot, private val preferredSize: ReadableP
         myRegistrations.add(registration)
     }
 
-    private fun updateSize(size: DoubleVector) {
+    private fun setSvgSize(size: DoubleVector) {
         svg.width().set(size.x)
         svg.height().set(size.y)
 

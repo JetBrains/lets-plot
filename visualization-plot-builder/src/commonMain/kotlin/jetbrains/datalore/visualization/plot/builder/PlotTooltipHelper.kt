@@ -12,6 +12,10 @@ import jetbrains.datalore.visualization.plot.builder.interact.loc.TransformedTar
 internal class PlotTooltipHelper {
     private val myTileInfos = ArrayList<TileInfo>()
 
+    fun removeAllTileInfos() {
+        myTileInfos.clear()
+    }
+
     fun addTileInfo(geomBounds: DoubleRectangle, targetLocators: List<GeomTargetLocator>) {
         val tileInfo = TileInfo(geomBounds, targetLocators)
         myTileInfos.add(tileInfo)
@@ -45,10 +49,11 @@ internal class PlotTooltipHelper {
         return tooltipSpecs
     }
 
-    private class TileInfo(private val geomBounds: DoubleRectangle, targetLocators: List<GeomTargetLocator>) {
-        private val myTargetLocators = targetLocators.map {
-            TileTargetLocator(it)
-        }
+
+    private class TileInfo(private val geomBounds: DoubleRectangle,
+                           targetLocators: List<GeomTargetLocator>) {
+
+        private val myTargetLocators = targetLocators.map { TileTargetLocator(it) }
 
         internal val axisOrigin: DoubleVector
             get() = DoubleVector(geomBounds.left, geomBounds.bottom)
@@ -84,6 +89,5 @@ internal class PlotTooltipHelper {
             }
         }
     }
-
 
 }

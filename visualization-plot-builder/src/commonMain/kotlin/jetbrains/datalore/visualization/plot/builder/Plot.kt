@@ -9,6 +9,7 @@ import jetbrains.datalore.base.observable.property.PropertyChangeEvent
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
+import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
@@ -120,6 +121,13 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
                 }
             }
         }))
+
+        reg(object : Registration() {
+            override fun doRemove() {
+                myTooltipHelper.removeAllTileInfos()
+                myCanvasFigures.clear()
+            }
+        })
     }
 
     private fun rebuildPlot() {
@@ -216,6 +224,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         // compute geom bounds
         val entirePlot = DoubleRectangle(DoubleVector.ZERO, preferredSize)
 
+        @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
             val rect = SvgRectElement(entirePlot)
             rect.strokeColor().set(Color.MAGENTA)
@@ -252,6 +261,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             withoutTitleAndLegends = boxesLayoutResult.plotInnerBoundsWithoutLegendBoxes
         }
 
+        @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
             val rect = SvgRectElement(withoutTitleAndLegends)
             rect.strokeColor().set(Color.BLUE)
@@ -332,6 +342,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     }
     */
 
+        @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
             val rect = SvgRectElement(geomAreaBounds)
             rect.strokeColor().set(Color.RED)

@@ -10,6 +10,11 @@ open class TipLayoutHint(
         open val objectRadius: Double,
         open val color: Color?) {
 
+    override fun toString(): String {
+        return "$kind"
+    }
+
+
     enum class Kind {
         VERTICAL_TOOLTIP,
         HORIZONTAL_TOOLTIP,
@@ -17,6 +22,7 @@ open class TipLayoutHint(
         X_AXIS_TOOLTIP,
         Y_AXIS_TOOLTIP
     }
+
 
     companion object {
 
