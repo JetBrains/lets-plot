@@ -19,7 +19,6 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle)
     private val myLayoutManager: LayoutManager
 
     init {
-        println("TooltipLayer $viewport")
         val tooltipLayer = SvgGElement()
         decorationLayer.children().add(tooltipLayer)
 

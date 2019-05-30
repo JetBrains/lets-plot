@@ -5,12 +5,8 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.Properties.map
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.base.observable.property.PropertyBinding.bindOneWay
 import jetbrains.datalore.base.observable.property.PropertyChangeEvent
 import jetbrains.datalore.base.observable.property.ReadableProperty
-import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.svg.SvgCssResource
@@ -27,7 +23,6 @@ class PlotContainer(private val plot: Plot,
                     private val preferredSize: ReadableProperty<DoubleVector>) {
 
     val svg: SvgSvgElement = SvgSvgElement()
-    private val myLaidOutSize: Property<DoubleVector> = ValueProperty(preferredSize.get())
     private val myDecorationLayer = SvgGElement()
     private val myMouseMoveRect = SvgRectElement()
 
@@ -44,23 +39,35 @@ class PlotContainer(private val plot: Plot,
     init {
         svg.addClass(Style.PLOT_CONTAINER)
 
-        //this rect blocks mouse_left events while cursor moves above svg tree elements (in GWT only)
+        // this rect blocks mouse_left events while cursor moves above svg tree elements (in GWT only)
         myMouseMoveRect.addClass(Style.PLOT_GLASS_PANE)
         myMouseMoveRect.opacity().set(0.0)
+
         setSvgSize(preferredSize.get())
 
-        myLaidOutSize.addHandler(object : EventHandler<PropertyChangeEvent<out DoubleVector>> {
-            override fun onEvent(event: PropertyChangeEvent<out DoubleVector>) {
-                val newSize = event.newValue
-                if (newSize != null) {
-                    setSvgSize(newSize)
-                }
+        plot.laidOutSize().addHandler(sizePropHandler { laidOutSize ->
+            val newSvgSize = DoubleVector(
+                    max(preferredSize.get().x, laidOutSize.x),
+                    max(preferredSize.get().y, laidOutSize.y))
+            setSvgSize(newSvgSize)
+        })
+
+        preferredSize.addHandler(sizePropHandler { newPreferredSize ->
+            if (newPreferredSize.x > 0 && newPreferredSize.y > 0) {
+                revalidateContent()
             }
         })
     }
 
     fun ensureContentBuilt() {
         if (!myContentBuilt) {
+            buildContent()
+        }
+    }
+
+    private fun revalidateContent() {
+        if (myContentBuilt) {
+            clearContent()
             buildContent()
         }
     }
@@ -75,11 +82,7 @@ class PlotContainer(private val plot: Plot,
             }
         })
 
-        reg(bindOneWay(preferredSize, plot.preferredSize()))
-        reg(bindOneWay(map(plot.laidOutSize()) { input ->
-            DoubleVector(max(preferredSize.get().x, input.x), max(preferredSize.get().y, input.y))
-        }, myLaidOutSize))
-
+        plot.preferredSize().set(preferredSize.get())
         svg.children().add(plot.rootGroup)
         if (plot.isInteractionsEnabled) {
             svg.children().add(myDecorationLayer)
@@ -89,15 +92,18 @@ class PlotContainer(private val plot: Plot,
         hookupInteractions()
     }
 
-    @Suppress("unused")
-    fun clearContent() {
-        svg.children().clear()
-        myDecorationLayer.children().clear()
-        plot.clear()
-        myRegistrations.remove()
-        myRegistrations = CompositeRegistration()
 
-        myContentBuilt = false
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun clearContent() {
+        if (myContentBuilt) {
+            myContentBuilt = false
+
+            svg.children().clear()
+            myDecorationLayer.children().clear()
+            plot.clear()
+            myRegistrations.remove()
+            myRegistrations = CompositeRegistration()
+        }
     }
 
     private fun reg(registration: Registration) {
@@ -114,8 +120,7 @@ class PlotContainer(private val plot: Plot,
 
     private fun hookupInteractions() {
         if (plot.isInteractionsEnabled) {
-            // ToDo: it seems that myActualSize may change
-            val viewport = DoubleRectangle(DoubleVector.ZERO, myLaidOutSize.get())
+            val viewport = DoubleRectangle(DoubleVector.ZERO, plot.laidOutSize().get())
             val tooltipLayer = TooltipLayer(myDecorationLayer, viewport)
 
             val onMouseMoved = { e: MouseEvent ->
@@ -148,4 +153,17 @@ class PlotContainer(private val plot: Plot,
 //        canvasFigure.setBounds(DoubleRectangle(DoubleVector.ZERO, myLaidOutSize.get()))
 //        return canvasFigure
 //    }
+
+    companion object {
+        private fun sizePropHandler(block: (newValue: DoubleVector) -> Unit): EventHandler<PropertyChangeEvent<out DoubleVector>> {
+            return object : EventHandler<PropertyChangeEvent<out DoubleVector>> {
+                override fun onEvent(event: PropertyChangeEvent<out DoubleVector>) {
+                    val newValue = event.newValue
+                    if (newValue != null) {
+                        block.invoke(newValue)
+                    }
+                }
+            }
+        }
+    }
 }
