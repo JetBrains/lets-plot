@@ -87,7 +87,6 @@ object PlotResizeDemoUtil {
         svg.children().add(frameRect)
 
         val component = factory.createSvgComponent(svg)
-//        component.border = BorderFactory.createLineBorder(Color.BLUE, 1)
         container.add(component)
 
         plotSizeProp.addHandler(object : EventHandler<PropertyChangeEvent<out DoubleVector>> {
@@ -98,16 +97,21 @@ object PlotResizeDemoUtil {
         })
 
         // Bind mouse events
+        val plotEdt = factory.plotEdtExecutor()
         component.addMouseListener(object : MouseAdapter() {
             override fun mouseExited(e: MouseEvent) {
                 super.mouseExited(e)
-                plot.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
+                plotEdt {
+                    plot.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
+                }
             }
         })
         component.addMouseMotionListener(object : MouseAdapter() {
             override fun mouseMoved(e: MouseEvent) {
                 super.mouseMoved(e)
-                plot.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
+                plotEdt {
+                    plot.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
+                }
             }
         })
     }

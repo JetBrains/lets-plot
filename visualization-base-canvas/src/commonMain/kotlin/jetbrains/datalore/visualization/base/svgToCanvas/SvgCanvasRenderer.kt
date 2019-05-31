@@ -3,7 +3,9 @@ package jetbrains.datalore.visualization.base.svgToCanvas
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
+import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
+import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.base.canvas.CanvasControlUtil.drawLater
@@ -20,6 +22,7 @@ class SvgCanvasRenderer(private val svgRoot: SvgElement, private val canvasContr
     private val virtualCanvas = canvasControl.createCanvas(canvasControl.size)
     private val animationTimer = canvasControl.createAnimationTimer(this)
     private var needRedraw: Boolean = true
+    private val registration = CompositeRegistration()
 
     init {
         canvasControl.addChild(mainCanvas)
@@ -33,18 +36,26 @@ class SvgCanvasRenderer(private val svgRoot: SvgElement, private val canvasContr
 
         val svgNodeContainer = SvgNodeContainer(svgSvgElement)
         svgNodeContainer.setPeer(svgPlatformPeer)
-        svgNodeContainer.addListener(object : SvgNodeContainerAdapter() {
-            override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {
-                svgPlatformPeer.invalidate(element)
-                needRedraw = true
-            }
+        registration.add(
+                svgNodeContainer.addListener(object : SvgNodeContainerAdapter() {
+                    override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {
+                        svgPlatformPeer.invalidate(element)
+                        needRedraw = true
+                    }
 
-            override fun onNodeAttached(node: SvgNode) {
-                needRedraw = true
-            }
+                    override fun onNodeAttached(node: SvgNode) {
+                        needRedraw = true
+                    }
 
-            override fun onNodeDetached(node: SvgNode) {
-                needRedraw = true
+                    override fun onNodeDetached(node: SvgNode) {
+                        needRedraw = true
+                    }
+                })
+        )
+        registration.add(object : Registration() {
+            override fun doRemove() {
+                svgNodeContainer.root().set(SvgSvgElement())  // detach current
+                svgRoot.removeFromParent()
             }
         })
     }
@@ -61,6 +72,7 @@ class SvgCanvasRenderer(private val svgRoot: SvgElement, private val canvasContr
 
     override fun dispose() {
         animationTimer.stop()
+        registration.dispose()
     }
 
     private fun redraw() {

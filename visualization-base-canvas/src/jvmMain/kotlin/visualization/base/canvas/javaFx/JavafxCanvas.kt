@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.base.canvas.javaFx
 
-import javafx.embed.swing.JFXPanel
 import javafx.scene.image.WritableImage
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.Vector
@@ -23,7 +22,7 @@ private constructor(
         init {
             //initialize Toolkit
             // ToDo: remove when switching to SwingJfxPanel
-            JFXPanel()
+//            JFXPanel()
         }
 
         fun create(size: Vector, pixelRatio: Double): JavafxCanvas {

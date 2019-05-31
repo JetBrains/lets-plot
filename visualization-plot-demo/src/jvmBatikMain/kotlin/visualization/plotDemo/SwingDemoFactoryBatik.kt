@@ -12,4 +12,11 @@ class SwingDemoFactoryBatik : SwingDemoFactory {
     override fun createSvgComponent(svg: SvgSvgElement): JComponent {
         return SwingDemoFrameBatik.createSvgComponent(svg)
     }
+
+    override fun plotEdtExecutor(): (() -> Unit) -> Unit {
+        // Just invoke in current thread
+        return { runnable ->
+            runnable.invoke()
+        }
+    }
 }

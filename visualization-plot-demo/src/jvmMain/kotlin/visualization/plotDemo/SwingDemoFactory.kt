@@ -9,5 +9,7 @@ interface SwingDemoFactory {
                         size: Dimension = SwingDemoFrame.FRAME_SIZE): SwingDemoFrame
 
     fun createSvgComponent(svg: SvgSvgElement): JComponent
+
+    fun plotEdtExecutor(): (() -> Unit) -> Unit
 }
 

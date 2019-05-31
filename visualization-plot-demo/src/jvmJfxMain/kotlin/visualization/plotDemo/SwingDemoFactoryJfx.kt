@@ -12,4 +12,10 @@ class SwingDemoFactoryJfx : SwingDemoFactory {
     override fun createSvgComponent(svg: SvgSvgElement): JComponent {
         return SwingDemoFrameJfx.createSvgComponent(svg)
     }
+
+    override fun plotEdtExecutor(): (() -> Unit) -> Unit {
+        return { runnable ->
+            SwingJfxPanel.runOnFxThread(runnable)
+        }
+    }
 }
