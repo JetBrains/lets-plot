@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.base.swing
 
-import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Parent
 import javafx.scene.Scene
@@ -38,22 +37,5 @@ abstract class AbstractJfxPanel : JFXPanel() {
     protected fun regFx(reg: Registration) {
         assertFxThread()
         myRegFx.add(reg)
-    }
-
-
-    companion object {
-        fun runOnFxThread(runnable: () -> Unit) {
-            if (Platform.isFxApplicationThread()) {
-                runnable.invoke()
-            } else {
-                Platform.runLater(runnable)
-            }
-        }
-
-        internal fun assertFxThread() {
-            if (!Platform.isFxApplicationThread()) {
-                throw IllegalStateException("Not JFX Application Thread ")
-            }
-        }
     }
 }

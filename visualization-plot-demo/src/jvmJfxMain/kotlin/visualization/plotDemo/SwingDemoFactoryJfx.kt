@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo
 
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.base.swing.AbstractJfxPanel
+import jetbrains.datalore.visualization.base.swing.runOnFxThread
 import java.awt.Dimension
 import javax.swing.JComponent
 
@@ -16,7 +16,7 @@ class SwingDemoFactoryJfx : SwingDemoFactory {
 
     override fun plotEdtExecutor(): (() -> Unit) -> Unit {
         return { runnable ->
-            AbstractJfxPanel.runOnFxThread(runnable)
+            runOnFxThread(runnable)
         }
     }
 }
