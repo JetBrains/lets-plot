@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plotDemo
+package jetbrains.datalore.visualization.base.swing
 
 import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
@@ -9,7 +9,7 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import javax.swing.SwingUtilities
 
-abstract class SwingJfxPanel : JFXPanel() {
+abstract class AbstractJfxPanel : JFXPanel() {
     private var myRegFx = CompositeRegistration()
 
     init {
@@ -42,7 +42,7 @@ abstract class SwingJfxPanel : JFXPanel() {
 
 
     companion object {
-        internal fun runOnFxThread(runnable: () -> Unit) {
+        fun runOnFxThread(runnable: () -> Unit) {
             if (Platform.isFxApplicationThread()) {
                 runnable.invoke()
             } else {

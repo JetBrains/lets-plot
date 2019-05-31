@@ -1,0 +1,49 @@
+plugins {
+    id 'kotlin-multiplatform' version '1.3.30'
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '0.5'
+}
+repositories {
+    mavenCentral()
+}
+
+kotlin {
+    jvm()
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+                implementation project(':base')
+                implementation project(':mapper-core')
+                implementation project(':visualization-base-svg')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                implementation project(':visualization-base-canvas')
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        settings {
+//            packagePrefix["src/commonMain/kotlin"] = "jetbrains.datalore"
+//            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
+//            packagePrefix["src/jsMain/kotlin"] = "jetbrains.datalore"
+//            packagePrefix["src/jsTest/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
+        }
+    }
+}

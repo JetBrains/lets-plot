@@ -2,6 +2,7 @@ package jetbrains.datalore.visualization.plotDemo
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.visualization.base.swing.SvgJfxCanvasPanel
 import java.awt.Dimension
 import javax.swing.JComponent
 
@@ -18,7 +19,7 @@ class SwingDemoFrameJfx(title: String,
         }
 
         fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
-            return SvgJfxPanel(svgRoot)
+            return SvgJfxCanvasPanel(svgRoot)
         }
     }
 }

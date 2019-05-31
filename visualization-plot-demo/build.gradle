@@ -65,6 +65,7 @@ kotlin {
 
             dependencies {
                 implementation project(':visualization-base-canvas')
+                implementation project(':visualization-base-svg-mapper-jfx')
             }
         }
 
