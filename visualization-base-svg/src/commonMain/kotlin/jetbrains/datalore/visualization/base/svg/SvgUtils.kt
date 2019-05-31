@@ -8,10 +8,9 @@ import kotlin.math.max
 import kotlin.math.min
 
 object SvgUtils {
-    private val OPACITY_TABLE: DoubleArray
+    private val OPACITY_TABLE: DoubleArray = DoubleArray(256)
 
     init {
-        OPACITY_TABLE = DoubleArray(256)
         for (alpha in 0..255) {
             OPACITY_TABLE[alpha] = alpha / 255.0
         }

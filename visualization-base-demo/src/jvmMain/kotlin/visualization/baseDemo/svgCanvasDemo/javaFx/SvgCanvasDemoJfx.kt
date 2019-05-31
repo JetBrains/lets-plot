@@ -9,7 +9,7 @@ import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
 import jetbrains.datalore.visualization.baseDemo.svgCanvasDemo.model.DemoModel
 import javax.swing.SwingUtilities
 
-class SvgCanvasDemoJavafx private constructor() {
+class SvgCanvasDemoJfx private constructor() {
 
     companion object {
         private val DEVICE_PIXEL_RATIO = CanvasUtil.readDevicePixelRatio(2.0)
@@ -17,7 +17,7 @@ class SvgCanvasDemoJavafx private constructor() {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            SwingUtilities.invokeLater { SvgCanvasDemoJavafx().show() }
+            SwingUtilities.invokeLater { SvgCanvasDemoJfx().show() }
         }
     }
 
