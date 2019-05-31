@@ -96,4 +96,10 @@ object SvgUtils {
             target.setAttribute(spec, source.getAttribute(attributeSpec).get())
         }
     }
+
+    fun pngDataURI(base64EncodedPngImage: String): String {
+        return StringBuilder("data:image/png;base64,")
+                .append(base64EncodedPngImage)
+                .toString()
+    }
 }

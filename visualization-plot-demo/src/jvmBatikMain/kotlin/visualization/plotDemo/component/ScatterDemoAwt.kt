@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.plotDemo.DemoFrameBatik
+import jetbrains.datalore.visualization.base.swing.DemoFrameBatik
 import jetbrains.datalore.visualization.plotDemo.model.component.ScatterDemo
 
 class ScatterDemoAwt : ScatterDemo() {

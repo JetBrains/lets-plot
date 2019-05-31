@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plotDemo
+package jetbrains.datalore.visualization.base.swing
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
@@ -11,7 +11,7 @@ class DemoFrameBatik(title: String,
                      size: Dimension = FRAME_SIZE) : SwingDemoFrame(title, size) {
 
     override fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
-        return DemoFrameBatik.createSvgComponent(svgRoot)
+        return Companion.createSvgComponent(svgRoot)
     }
 
     companion object {

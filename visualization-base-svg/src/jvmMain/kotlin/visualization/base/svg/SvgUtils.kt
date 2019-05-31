@@ -17,8 +17,3 @@ fun SvgUtils.buildDataUrl(bufferedImage: BufferedImage): String {
     return pngDataURI(base64String)
 }
 
-private fun SvgUtils.pngDataURI(base64EncodedPngImage: String): String {
-    return StringBuilder("data:image/png;base64,")
-            .append(base64EncodedPngImage)
-            .toString()
-}
