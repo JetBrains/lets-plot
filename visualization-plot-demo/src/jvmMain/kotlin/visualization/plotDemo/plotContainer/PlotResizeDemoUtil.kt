@@ -10,7 +10,6 @@ import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
-import jetbrains.datalore.visualization.plotDemo.SwingDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 import java.awt.Color
 import java.awt.Dimension
@@ -39,7 +38,7 @@ object PlotResizeDemoUtil {
             containerSize.width.toDouble() - 2 * PADDING,
             containerSize.height.toDouble() - 2 * PADDING)
 
-    fun show(demoModel: BarPlotResizeDemo, factory: SwingDemoFactory) {
+    fun show(demoModel: BarPlotResizeDemo, factory: DemoFactory) {
         factory.createDemoFrame("Fit in frame (try to resize)").show(false) {
 
             setupContainer(this)
@@ -74,7 +73,7 @@ object PlotResizeDemoUtil {
     private fun createPlot(demo: BarPlotResizeDemo,
                            plotSizeProp: ReadableProperty<DoubleVector>,
                            container: JComponent,
-                           factory: SwingDemoFactory) {
+                           factory: DemoFactory) {
 
         val plot = demo.createPlot(plotSizeProp)
         plot.ensureContentBuilt()
@@ -97,7 +96,7 @@ object PlotResizeDemoUtil {
         })
 
         // Bind mouse events
-        val plotEdt = factory.plotEdtExecutor()
+        val plotEdt = factory.createPlotEdtExecutor()
         component.addMouseListener(object : MouseAdapter() {
             override fun mouseExited(e: MouseEvent) {
                 super.mouseExited(e)

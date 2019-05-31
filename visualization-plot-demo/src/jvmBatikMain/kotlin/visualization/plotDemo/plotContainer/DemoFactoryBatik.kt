@@ -1,19 +1,21 @@
-package jetbrains.datalore.visualization.plotDemo
+package jetbrains.datalore.visualization.plotDemo.plotContainer
 
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.visualization.plotDemo.DemoFrameBatik
+import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class SwingDemoFactoryBatik : SwingDemoFactory {
+class DemoFactoryBatik : DemoFactory {
     override fun createDemoFrame(title: String, size: Dimension): SwingDemoFrame {
-        return SwingDemoFrameBatik(title, size)
+        return DemoFrameBatik(title, size)
     }
 
     override fun createSvgComponent(svg: SvgSvgElement): JComponent {
-        return SwingDemoFrameBatik.createSvgComponent(svg)
+        return DemoFrameBatik.createSvgComponent(svg)
     }
 
-    override fun plotEdtExecutor(): (() -> Unit) -> Unit {
+    override fun createPlotEdtExecutor(): (() -> Unit) -> Unit {
         // Just invoke in current thread
         return { runnable ->
             runnable.invoke()

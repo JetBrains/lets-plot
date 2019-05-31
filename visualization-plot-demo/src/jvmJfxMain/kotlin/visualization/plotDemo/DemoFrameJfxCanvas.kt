@@ -6,16 +6,16 @@ import jetbrains.datalore.visualization.base.swing.SvgJfxCanvasPanel
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class SwingDemoFrameJfx(title: String,
-                        size: Dimension = FRAME_SIZE) : SwingDemoFrame(title, size) {
+class DemoFrameJfxCanvas(title: String,
+                         size: Dimension = FRAME_SIZE) : SwingDemoFrame(title, size) {
 
     override fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
-        return SwingDemoFrameJfx.createSvgComponent(svgRoot)
+        return DemoFrameJfxCanvas.createSvgComponent(svgRoot)
     }
 
     companion object {
         fun showSvg(svgRoots: List<SvgSvgElement>, size: DoubleVector, title: String) {
-            SwingDemoFrameJfx(title).showSvg(svgRoots, size)
+            DemoFrameJfxCanvas(title).showSvg(svgRoots, size)
         }
 
         fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {

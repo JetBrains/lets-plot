@@ -1,11 +1,10 @@
 package jetbrains.datalore.visualization.plotDemo.plotContainer
 
-import jetbrains.datalore.visualization.plotDemo.SwingDemoFactoryBatik
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 
-object BarPlotResizeDiscreteXDemoAwt {
+object BarPlotResizeDiscreteXDemoBatik {
     @JvmStatic
     fun main(args: Array<String>) {
-        PlotResizeDemoUtil.show(BarPlotResizeDemo.discreteX(), SwingDemoFactoryBatik())
+        PlotResizeDemoUtil.show(BarPlotResizeDemo.discreteX(), DemoFactoryBatik())
     }
 }

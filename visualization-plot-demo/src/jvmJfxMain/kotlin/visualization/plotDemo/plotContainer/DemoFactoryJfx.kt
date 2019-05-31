@@ -1,20 +1,22 @@
-package jetbrains.datalore.visualization.plotDemo
+package jetbrains.datalore.visualization.plotDemo.plotContainer
 
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.base.swing.runOnFxThread
+import jetbrains.datalore.visualization.plotDemo.DemoFrameJfxCanvas
+import jetbrains.datalore.visualization.plotDemo.SwingDemoFrame
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class SwingDemoFactoryJfx : SwingDemoFactory {
+class DemoFactoryJfx : DemoFactory {
     override fun createDemoFrame(title: String, size: Dimension): SwingDemoFrame {
-        return SwingDemoFrameJfx(title, size)
+        return DemoFrameJfxCanvas(title, size)
     }
 
     override fun createSvgComponent(svg: SvgSvgElement): JComponent {
-        return SwingDemoFrameJfx.createSvgComponent(svg)
+        return DemoFrameJfxCanvas.createSvgComponent(svg)
     }
 
-    override fun plotEdtExecutor(): (() -> Unit) -> Unit {
+    override fun createPlotEdtExecutor(): (() -> Unit) -> Unit {
         return { runnable ->
             runOnFxThread(runnable)
         }
