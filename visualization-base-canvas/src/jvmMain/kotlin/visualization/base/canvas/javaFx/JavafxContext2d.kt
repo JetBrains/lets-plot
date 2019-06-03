@@ -2,7 +2,9 @@ package jetbrains.datalore.visualization.base.canvas.javaFx
 
 import javafx.geometry.VPos
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.shape.*
+import javafx.scene.shape.FillRule
+import javafx.scene.shape.StrokeLineCap
+import javafx.scene.shape.StrokeLineJoin
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.scene.text.TextAlignment
@@ -63,7 +65,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
         val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
-        myContext2d.drawImage(javafxSnapshot.image, x.toDouble(), y.toDouble())
+        myContext2d.drawImage(javafxSnapshot.image, x, y)
     }
 
     override fun beginPath() {
@@ -193,13 +195,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     override fun measureText(str: String, font: String): DoubleVector {
         val text = Text(str)
         text.font = convertCssFont(font)
-        val tb = text.boundsInLocal
-        val stencil = Rectangle(tb.minX, tb.minY, tb.width, tb.height)
-
-        val intersection = Shape.intersect(text, stencil)
-
-        val ib = intersection.boundsInLocal
-        return DoubleVector(ib.width, ib.height)
+        return DoubleVector(text.layoutBounds.width, text.layoutBounds.height)
     }
 
     override fun clearRect(rect: DoubleRectangle) {
