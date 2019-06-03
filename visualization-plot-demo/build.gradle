@@ -46,21 +46,6 @@ kotlin {
             dependsOn jvmMain
             dependencies {
                 implementation project(':visualization-base-svg-mapper')   // Batik-based mapper
-
-                implementation "org.apache.xmlgraphics:batik-anim:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-awt-util:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-bridge:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-codec:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-css:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-dom:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-ext:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-gvt:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-parser:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-script:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-svg-dom:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-swing:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-util:$batik_version"
-                implementation "org.apache.xmlgraphics:batik-xml:$batik_version"
             }
         }
         jvmJfxMain {
