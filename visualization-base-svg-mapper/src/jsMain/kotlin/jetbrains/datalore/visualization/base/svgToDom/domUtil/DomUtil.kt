@@ -8,12 +8,14 @@ import jetbrains.datalore.base.observable.event.ListenerCaller
 import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.observable.property.*
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.visualization.base.svg.*
+import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
+import jetbrains.datalore.visualization.base.svg.slim.SvgSlimNode
 import jetbrains.datalore.visualization.base.svgToDom.css.CssDisplay
 import jetbrains.datalore.visualization.base.svgToDom.domExtensions.*
-import org.w3c.dom.Element
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.Node
+import org.w3c.dom.*
+import org.w3c.dom.svg.SVGElement
+import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
@@ -217,4 +219,37 @@ object DomUtil {
             override fun doGet(): ValueT? = supplier.get()
         }
     }
+
+    fun generateElement(source: SvgElement): SVGElement =
+            when(source) {
+                is SvgEllipseElement -> createSVGElement("ellipse")
+                is SvgCircleElement -> createSVGElement("circle")
+                is SvgRectElement -> createSVGElement("rect")
+                is SvgTextElement -> createSVGElement("text")
+                is SvgPathElement -> createSVGElement("path")
+                is SvgLineElement -> createSVGElement("line")
+                is SvgSvgElement -> createSVGElement("svg")
+                is SvgGElement -> createSVGElement("g")
+                is SvgStyleElement -> createSVGElement("style")
+                is SvgTSpanElement -> createSVGElement("tspan")
+                is SvgDefsElement -> createSVGElement("defs")
+                is SvgClipPathElement -> createSVGElement("clipPath")
+                is SvgImageElement -> createSVGElement("image")
+                else -> throw IllegalStateException("Unsupported svg element ${source::class.simpleName}")
+            }
+
+    fun generateSlimNode(source: SvgSlimNode): Element =
+            when(source.elementName) {
+                SvgSlimElements.GROUP -> createSVGElement("g")
+                SvgSlimElements.LINE -> createSVGElement("line")
+                SvgSlimElements.CIRCLE -> createSVGElement("circle")
+                SvgSlimElements.RECT -> createSVGElement("rect")
+                SvgSlimElements.PATH -> createSVGElement("path")
+                else -> throw IllegalStateException("Unsupported SvgSlimNode ${source::class}")
+            }
+
+    fun generateTextElement(source: SvgTextNode): Text = document.createTextNode("")
+
+    private fun createSVGElement(name: String): SVGElement =
+            document.createElementNS("http://www.w3.org/2000/svg", name) as SVGElement
 }

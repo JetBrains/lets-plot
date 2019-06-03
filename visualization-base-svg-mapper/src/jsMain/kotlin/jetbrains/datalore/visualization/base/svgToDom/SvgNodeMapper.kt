@@ -17,7 +17,7 @@ open class SvgNodeMapper<SourceT : SvgNode, TargetT : Node>(source: SourceT, tar
             conf.add(Synchronizers.forObservableRole(this, source.children(), DomUtil.nodeChildren(target),
                     SvgNodeMapperFactory(myPeer)))
         } else {
-            conf.add(SvgNodeSubtreeBufferGeneratingSynchronizer(source, target))
+            conf.add(SvgNodeSubtreeGeneratingSynchronizer(source, target))
         }
     }
 
