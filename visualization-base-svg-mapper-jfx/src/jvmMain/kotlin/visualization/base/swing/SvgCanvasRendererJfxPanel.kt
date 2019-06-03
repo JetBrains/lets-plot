@@ -14,7 +14,7 @@ import javax.swing.BorderFactory
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_LEFT as CANVAS_MOUSE_LEFT
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_MOVED as CANVAS_MOUSE_MOVED
 
-class SvgJfxCanvasPanel(private val svg: SvgSvgElement) : AbstractJfxPanel() {
+class SvgCanvasRendererJfxPanel(private val svg: SvgSvgElement) : AbstractJfxPanel() {
 
     init {
         border = BorderFactory.createLineBorder(Color.BLUE, 3)
