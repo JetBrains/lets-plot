@@ -58,8 +58,7 @@ object Utils {
 //            is SvgDefsElement -> SVGOMDefsElement(null, myDoc)
 //            is SvgClipPathElement -> SVGOMClipPathElement(null, myDoc)
             is SvgImageElement -> ImageView()
-//            else -> throw IllegalStateException("Unsupported SvgElement $source")
-            else -> throw IllegalArgumentException("Unsupported svg element: ${source.javaClass.simpleName}")
+            else -> throw IllegalArgumentException("Unsupported source svg element: ${source.javaClass.simpleName}")
         }
     }
 
