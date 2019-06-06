@@ -27,9 +27,9 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
-                implementation project(':visualization-base-svg-mapper')
-                implementation project(':visualization-base-svg')
                 implementation project(':mapper-core')
+                implementation project(':visualization-base-svg')
+                implementation project(':visualization-base-svg-mapper')
             }
         }
     }

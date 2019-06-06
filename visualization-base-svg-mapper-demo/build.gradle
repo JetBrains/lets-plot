@@ -38,6 +38,7 @@ kotlin {
             dependsOn allJvm
             dependsOn jvmMain
             dependencies {
+                implementation project(":visualization-base-svg-mapper-batik")
             }
         }
         jvmJfxMain {

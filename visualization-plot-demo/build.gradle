@@ -37,15 +37,14 @@ kotlin {
         jvmMain {
             dependsOn allJvm
             dependencies {
-                // ToDo: TMP: depends on module with batik
-                implementation project(':visualization-base-svg-mapper')   // Batik-based mapper
+                implementation project(':visualization-base-svg-mapper')
             }
         }
         jvmBatikMain {
             dependsOn allJvm
             dependsOn jvmMain
             dependencies {
-                implementation project(':visualization-base-svg-mapper')   // Batik-based mapper
+                implementation project(':visualization-base-svg-mapper-batik')
             }
         }
         jvmJfxMain {

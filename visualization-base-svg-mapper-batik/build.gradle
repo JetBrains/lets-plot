@@ -8,11 +8,12 @@ repositories {
 
 kotlin {
     jvm()
-    js()
     sourceSets {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
                 implementation project(':base')
                 implementation project(':mapper-core')
                 implementation project(':visualization-base-svg')
@@ -21,19 +22,29 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                implementation project(':visualization-base-svg-mapper')  // SwingDemoFrame
+
+                api "org.apache.xmlgraphics:batik-anim:$batik_version"
+                api "org.apache.xmlgraphics:batik-awt-util:$batik_version"
+                api "org.apache.xmlgraphics:batik-bridge:$batik_version"
+                api "org.apache.xmlgraphics:batik-codec:$batik_version"
+                api "org.apache.xmlgraphics:batik-css:$batik_version"
+                api "org.apache.xmlgraphics:batik-dom:$batik_version"
+                api "org.apache.xmlgraphics:batik-ext:$batik_version"
+                api "org.apache.xmlgraphics:batik-gvt:$batik_version"
+                api "org.apache.xmlgraphics:batik-parser:$batik_version"
+                api "org.apache.xmlgraphics:batik-script:$batik_version"
+                api "org.apache.xmlgraphics:batik-svg-dom:$batik_version"
+                api "org.apache.xmlgraphics:batik-swing:$batik_version"
+                api "org.apache.xmlgraphics:batik-util:$batik_version"
+                api "org.apache.xmlgraphics:batik-xml:$batik_version"
             }
         }
         jvmTest {
             dependencies {
                 implementation kotlin('test')
                 implementation kotlin('test-junit')
-            }
-        }
-        jsMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-                implementation project(':visualization-base-svg')
             }
         }
     }

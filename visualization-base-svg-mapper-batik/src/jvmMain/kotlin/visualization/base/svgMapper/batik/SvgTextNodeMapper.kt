@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgToAwt
+package jetbrains.datalore.visualization.base.svgMapper.batik
 
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.mapper.core.Synchronizers

@@ -2,8 +2,8 @@ package jetbrains.datalore.visualization.base.swing
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.base.svgToAwt.SvgAwtComponent
-import jetbrains.datalore.visualization.base.svgToAwt.SvgAwtHelper
+import jetbrains.datalore.visualization.base.svgMapper.batik.SvgAwtComponent
+import jetbrains.datalore.visualization.base.svgMapper.batik.SvgAwtHelper
 import java.awt.Dimension
 import javax.swing.JComponent
 

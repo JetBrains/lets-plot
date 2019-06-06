@@ -1,8 +1,8 @@
-package jetbrains.datalore.visualization.base.svgToAwt
+package jetbrains.datalore.visualization.base.svgMapper.batik
 
 import jetbrains.datalore.visualization.base.svg.*
 import jetbrains.datalore.visualization.base.svg.event.SvgAttributeEvent
-import jetbrains.datalore.visualization.base.svgToAwt.SvgAwtHelper.MessageCallback
+import jetbrains.datalore.visualization.base.svgMapper.batik.SvgAwtHelper.MessageCallback
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D

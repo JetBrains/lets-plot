@@ -24,8 +24,7 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation project(':visualization-base-canvas')
-                // Tmp: because of 'SwingDemoFrame'
-                implementation project(':visualization-base-svg-mapper')
+                implementation project(':visualization-base-svg-mapper')    // SwingDemoFrame
             }
         }
         jvmTest {

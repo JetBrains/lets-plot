@@ -1,8 +1,7 @@
-package jetbrains.datalore.visualization.base.svgToAwt
+package jetbrains.datalore.visualization.base.svgMapper.batik
 
 import jetbrains.datalore.base.awt.toPngDataUri
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx.RGBEncoder
-import jetbrains.datalore.visualization.base.svg.SvgUtils
 
 import java.awt.image.BufferedImage
 import java.io.IOException
