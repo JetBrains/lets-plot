@@ -6,6 +6,7 @@ import javafx.scene.text.Text
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MapperFactory
 import jetbrains.datalore.visualization.base.svg.*
+import jetbrains.datalore.visualization.base.svgMapper.RGBEncoderAwt
 
 internal class SvgNodeMapperFactory(private val peer: SvgAwtPeer) : MapperFactory<SvgNode, Node> {
 

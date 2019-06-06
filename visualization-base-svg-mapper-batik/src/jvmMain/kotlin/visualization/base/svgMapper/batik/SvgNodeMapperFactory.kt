@@ -3,6 +3,7 @@ package jetbrains.datalore.visualization.base.svgMapper.batik
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MapperFactory
 import jetbrains.datalore.visualization.base.svg.*
+import jetbrains.datalore.visualization.base.svgMapper.RGBEncoderAwt
 import org.apache.batik.dom.AbstractDocument
 import org.apache.batik.dom.svg.SVGOMElement
 import org.w3c.dom.Node

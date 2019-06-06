@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgMapper.batik
+package jetbrains.datalore.visualization.base.svgMapper
 
 import jetbrains.datalore.base.awt.toPngDataUri
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx.RGBEncoder
@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.base.svg.SvgImageElementEx.RGBEncoder
 import java.awt.image.BufferedImage
 import java.io.IOException
 
-internal class RGBEncoderAwt : RGBEncoder {
+class RGBEncoderAwt : RGBEncoder {
 
     override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
         val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
