@@ -8,7 +8,7 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import javax.swing.SwingUtilities
 
-abstract class AbstractJfxPanel : JFXPanel() {
+abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPanel() {
     private var myRegFx = CompositeRegistration()
 
     init {
@@ -24,6 +24,8 @@ abstract class AbstractJfxPanel : JFXPanel() {
         myRegFx = CompositeRegistration()
 
         val scene = Scene(createSceneParent())
+        scene.stylesheets.addAll(stylesheets)
+
         setScene(scene)
     }
 

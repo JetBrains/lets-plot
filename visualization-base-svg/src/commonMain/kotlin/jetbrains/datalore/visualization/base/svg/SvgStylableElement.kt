@@ -5,7 +5,7 @@ import jetbrains.datalore.base.observable.property.Property
 abstract class SvgStylableElement : SvgElement() {
 
     companion object {
-        private val CLASS: SvgAttributeSpec<String> = SvgAttributeSpec.createSpec("class")
+        val CLASS: SvgAttributeSpec<String> = SvgAttributeSpec.createSpec("class")
     }
 
     fun classAttribute(): Property<String?> {

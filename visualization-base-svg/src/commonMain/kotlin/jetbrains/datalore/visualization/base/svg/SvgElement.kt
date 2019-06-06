@@ -76,7 +76,7 @@ abstract class SvgElement : SvgNode() {
                 myAttributes[spec] = value
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out ValueT?>>): Registration {
+            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out ValueT?>>): Registration {
                 return addListener(object : SvgElementListener {
                     override fun onAttrSet(event: SvgAttributeEvent<*>) {
                         if (spec !== event.attrSpec) {

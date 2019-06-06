@@ -13,8 +13,15 @@ object DemoModel {
         svgRoot.setStyle(CssRes())
 
         val ellipse = SvgEllipseElement(200.0, 80.0, 170.0, 50.0)
+
+        // style `stroke` is not working with JavaFX Scene mapper if stroke opacity
+        // is later defined via element's attribute
+        // because there is no separate `stroke-opacity` attribute.
+        // So the color will be just reset to black by SVG -> Scene mapper.
         ellipse.getAttribute("style").set("stroke:#006600;")
         ellipse.addClass("ellipse-yellow")
+
+        // This will reset stroke color to black with JavaFX Scene mapper.
         ellipse.strokeOpacity().set(0.6)
 
         val text = SvgTextElement(20.0, 20.0, "Example Text")
@@ -30,7 +37,7 @@ object DemoModel {
         path.stroke().set(SvgColors.create(0, 0, 255))
         path.getAttribute("stroke-width").set("5")
 
-        val ellipse2 = SvgEllipseElement(250.0, 85.0, 40.0, 85.0)
+        val ellipse2 = SvgEllipseElement(250.0, 65.0, 40.0, 85.0)
         ellipse2.fill().set(SvgColors.GREEN)
 
         val rect = SvgRectElement(180.0, 50.0, 80.0, 50.0)

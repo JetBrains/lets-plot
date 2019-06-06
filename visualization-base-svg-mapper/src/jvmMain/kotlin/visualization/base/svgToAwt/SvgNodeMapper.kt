@@ -7,17 +7,21 @@ import jetbrains.datalore.visualization.base.svg.SvgNode
 import org.apache.batik.dom.AbstractDocument
 import org.w3c.dom.Node
 
-internal open class SvgNodeMapper<SourceT : SvgNode, TargetT : Node>(source: SourceT, target: TargetT, private val myDoc: AbstractDocument, private val myPeer: SvgAwtPeer) : Mapper<SourceT, TargetT>(source, target) {
+internal open class SvgNodeMapper<SourceT : SvgNode, TargetT : Node>(
+        source: SourceT,
+        target: TargetT,
+        private val myDoc: AbstractDocument,
+        private val myPeer: SvgAwtPeer) : Mapper<SourceT, TargetT>(source, target) {
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         super.registerSynchronizers(conf)
 
         if (!source.isPrebuiltSubtree) {
-            val transformer = Utils.elementChildren(target)
+            val target = Utils.elementChildren(target)
             conf.add(Synchronizers.forObservableRole(
                     this,
                     source.children(),
-                    transformer,
+                    target,
                     SvgNodeMapperFactory(myDoc, myPeer)
             ))
         } else {

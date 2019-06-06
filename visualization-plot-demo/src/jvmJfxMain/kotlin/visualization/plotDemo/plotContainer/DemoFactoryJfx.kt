@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plotDemo.plotContainer
 
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.visualization.base.swing.DemoFrameJfxCanvas
 import jetbrains.datalore.visualization.base.swing.SwingDemoFrame
 import jetbrains.datalore.visualization.base.swing.runOnFxThread
-import jetbrains.datalore.visualization.plotDemo.DemoFrameJfxCanvas
 import java.awt.Dimension
 import javax.swing.JComponent
 

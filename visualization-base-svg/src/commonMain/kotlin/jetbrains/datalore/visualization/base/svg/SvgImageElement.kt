@@ -10,16 +10,16 @@ import jetbrains.datalore.visualization.base.svg.SvgTransformable.Companion.TRAN
 open class SvgImageElement() : SvgGraphicsElement(), SvgTransformable {
 
     companion object {
-        private val XLINK_NAMESPACE_URI = "http://www.w3.org/1999/xlink"
-        private val XLINK_PREFIX = "xlink"
+        private const val XLINK_NAMESPACE_URI = "http://www.w3.org/1999/xlink"
+        private const val XLINK_PREFIX = "xlink"
 
-        private val X: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x")
-        private val Y: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y")
-        private val WIDTH: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("width")
-        private val HEIGHT: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("height")
+        val X: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x")
+        val Y: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y")
+        val WIDTH: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec(SvgConstants.WIDTH)
+        val HEIGHT: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec(SvgConstants.HEIGHT)
 
         val HREF: SvgAttributeSpec<String> = SvgAttributeSpec.createSpecNS("href", XLINK_PREFIX, XLINK_NAMESPACE_URI)
-        private val PRESERVE_ASPECT_RATIO: SvgAttributeSpec<String> = SvgAttributeSpec.createSpec("preserveAspectRatio")
+        val PRESERVE_ASPECT_RATIO: SvgAttributeSpec<String> = SvgAttributeSpec.createSpec("preserveAspectRatio")
     }
 
     override val elementName = "image"

@@ -17,8 +17,8 @@ import jetbrains.datalore.visualization.base.svg.SvgTransformable.Companion.TRAN
 class SvgTextElement() : SvgGraphicsElement(), SvgTransformable, SvgTextContent {
 
     companion object {
-        private val X: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x")
-        private val Y: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y")
+        val X: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x")
+        val Y: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y")
     }
 
     override val elementName = "text"

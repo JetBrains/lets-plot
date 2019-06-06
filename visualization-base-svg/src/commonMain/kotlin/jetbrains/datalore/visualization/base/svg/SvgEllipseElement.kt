@@ -15,10 +15,10 @@ import jetbrains.datalore.visualization.base.svg.SvgTransformable.Companion.TRAN
 class SvgEllipseElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
 
     companion object {
-        private val CX: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("cx")
-        private val CY: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("cy")
-        private val RX: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("rx")
-        private val RY: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("ry")
+        val CX: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("cx")
+        val CY: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("cy")
+        val RX: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("rx")
+        val RY: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("ry")
     }
 
     override val elementName = "ellipse"

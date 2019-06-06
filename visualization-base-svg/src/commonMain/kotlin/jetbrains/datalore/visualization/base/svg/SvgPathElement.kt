@@ -15,7 +15,7 @@ import jetbrains.datalore.visualization.base.svg.SvgTransformable.Companion.TRAN
 class SvgPathElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
 
     companion object {
-        private val D: SvgAttributeSpec<SvgPathData> = SvgAttributeSpec.createSpec("d")
+        val D: SvgAttributeSpec<SvgPathData> = SvgAttributeSpec.createSpec("d")
     }
 
     override val elementName = "path"

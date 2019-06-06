@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.plotDemo.DemoFrameJfxCanvas
+import jetbrains.datalore.visualization.base.swing.DemoFrameJfxCanvas
 import jetbrains.datalore.visualization.plotDemo.model.component.AxisComponentDemo
 
 class AxisComponentDemoJfx : AxisComponentDemo() {

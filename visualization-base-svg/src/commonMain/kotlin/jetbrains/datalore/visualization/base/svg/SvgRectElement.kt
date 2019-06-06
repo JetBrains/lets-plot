@@ -15,10 +15,10 @@ import jetbrains.datalore.visualization.base.svg.SvgTransformable.Companion.TRAN
 class SvgRectElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
 
     companion object {
-        private val X: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x")
-        private val Y: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y")
-        private val WIDTH: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("width")
-        private val HEIGHT: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("height")
+        val X: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x")
+        val Y: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y")
+        val WIDTH: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec(SvgConstants.WIDTH)
+        val HEIGHT: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec(SvgConstants.HEIGHT)
     }
 
     override val elementName = "rect"
