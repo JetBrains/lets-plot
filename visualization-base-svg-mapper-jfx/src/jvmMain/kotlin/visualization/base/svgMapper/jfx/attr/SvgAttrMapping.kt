@@ -7,9 +7,7 @@ import jetbrains.datalore.visualization.base.svg.SvgStylableElement
 internal abstract class SvgAttrMapping<TargetT : Node>(val target: TargetT) {
     open fun setAttribute(name: String, value: Any?) {
         when (name) {
-            SvgConstants.SVG_STYLE_ATTRIBUTE -> {
-                println("style: ${value as String?}")
-                target.style = value as String}
+            SvgConstants.SVG_STYLE_ATTRIBUTE -> target.style = value as String
             SvgStylableElement.CLASS.name -> setStyleClass(value as String?, target)
             else -> throw IllegalArgumentException("Unsupported attribute `$name` in ${target.javaClass.simpleName}")
         }
