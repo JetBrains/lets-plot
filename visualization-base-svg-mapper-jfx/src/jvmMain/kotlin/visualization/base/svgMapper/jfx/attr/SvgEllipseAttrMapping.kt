@@ -5,7 +5,6 @@ import jetbrains.datalore.visualization.base.svg.SvgEllipseElement
 
 internal class SvgEllipseAttrMapping(target: Ellipse) : SvgShapeMapping<Ellipse>(target) {
     override fun setAttribute(name: String, value: Any?) {
-        target.stroke
         when (name) {
             SvgEllipseElement.CX.name -> target.centerX = value as Double
             SvgEllipseElement.CY.name -> target.centerY = value as Double

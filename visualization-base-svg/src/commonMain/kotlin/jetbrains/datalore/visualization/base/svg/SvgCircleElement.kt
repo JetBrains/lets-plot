@@ -15,9 +15,9 @@ import jetbrains.datalore.visualization.base.svg.SvgTransformable.Companion.TRAN
 class SvgCircleElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
 
     companion object {
-        private val CX: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("cx")
-        private val CY: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("cy")
-        private val R: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("r")
+        val CX: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("cx")
+        val CY: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("cy")
+        val R: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("r")
     }
 
     override val elementName: String = "circle"
