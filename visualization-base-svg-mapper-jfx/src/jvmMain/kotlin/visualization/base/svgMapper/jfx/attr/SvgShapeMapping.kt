@@ -4,6 +4,7 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Shape
 import jetbrains.datalore.visualization.base.svg.SvgColor
+import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgShape
 
 internal abstract class SvgShapeMapping<TargetT : Shape>(target: TargetT) : SvgAttrMapping<TargetT>(target) {
@@ -37,9 +38,15 @@ internal abstract class SvgShapeMapping<TargetT : Shape>(target: TargetT) : SvgA
 
         private fun setColor(value: SvgColor, get: () -> Color, set: (Color) -> Unit) {
             val svgColorString = value.toString()
-            val newColor = Paint.valueOf(svgColorString) as Color
-            val c = get()
-            set(Color.color(newColor.red, newColor.green, newColor.blue, c.opacity))
+            val newColor =
+                    if (svgColorString == SvgColors.NONE.toString()) {
+                        Color(0.0, 0.0, 0.0, 0.0)
+                    } else {
+                        val new = Paint.valueOf(svgColorString) as Color
+                        val curr = get()
+                        Color.color(new.red, new.green, new.blue, curr.opacity)
+                    }
+            set(newColor)
         }
 
         private fun setOpacity(value: Double, get: () -> Color, set: (Color) -> Unit) {
