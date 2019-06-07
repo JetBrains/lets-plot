@@ -15,6 +15,6 @@ class AxisComponentDemoCanvasRenderer : AxisComponentDemo() {
     private fun show() {
         val demoModels = listOf(createModel())
         val svgRoots = createSvgRoots(demoModels)
-        CanvasRendererDemoFrame.showSvg(svgRoots, demoComponentSize, "Axis component")
+        CanvasRendererDemoFrame.showSvg(svgRoots, demoComponentSize, "Axis component (canvas renderer)")
     }
 }

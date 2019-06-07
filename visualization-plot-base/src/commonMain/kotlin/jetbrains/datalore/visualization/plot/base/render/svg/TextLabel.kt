@@ -3,6 +3,10 @@ package jetbrains.datalore.visualization.plot.base.render.svg
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgConstants
+import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_ANCHOR_END
+import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
+import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_DY_CENTER
+import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_DY_TOP
 import jetbrains.datalore.visualization.base.svg.SvgTextElement
 
 class TextLabel(text: String) : SvgComponent() {
@@ -119,8 +123,8 @@ class TextLabel(text: String) : SvgComponent() {
     private fun toTextAnchor(anchor: HorizontalAnchor): String? {
         return when (anchor) {
             HorizontalAnchor.LEFT -> null // default - "start";
-            HorizontalAnchor.MIDDLE -> "middle"
-            HorizontalAnchor.RIGHT -> "end"
+            HorizontalAnchor.MIDDLE -> SVG_TEXT_ANCHOR_MIDDLE
+            HorizontalAnchor.RIGHT -> SVG_TEXT_ANCHOR_END
         }
     }
 
@@ -134,8 +138,8 @@ class TextLabel(text: String) : SvgComponent() {
 
     private fun toDY(anchor: VerticalAnchor): String? {
         return when (anchor) {
-            VerticalAnchor.TOP -> "0.7em"
-            VerticalAnchor.CENTER -> "0.35em"
+            VerticalAnchor.TOP -> SVG_TEXT_DY_TOP
+            VerticalAnchor.CENTER -> SVG_TEXT_DY_CENTER
             VerticalAnchor.BOTTOM -> null // default
         }
     }
