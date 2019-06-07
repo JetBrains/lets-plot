@@ -10,11 +10,11 @@ import jetbrains.datalore.visualization.base.svg.SvgContainer.Companion.OPACITY
 class SvgSvgElement() : SvgStylableElement(), SvgContainer, SvgLocatable {
 
     companion object {
-        private val X: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x")
-        private val Y: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y")
-        private val WIDTH: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec(SvgConstants.WIDTH)
-        private val HEIGHT: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec(SvgConstants.HEIGHT)
-        private val VIEW_BOX: SvgAttributeSpec<ViewBoxRectangle> = SvgAttributeSpec.createSpec("viewBox")
+        val X: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x")
+        val Y: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y")
+        val WIDTH: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec(SvgConstants.WIDTH)
+        val HEIGHT: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec(SvgConstants.HEIGHT)
+        val VIEW_BOX: SvgAttributeSpec<ViewBoxRectangle> = SvgAttributeSpec.createSpec("viewBox")
     }
 
     override val elementName = "svg"

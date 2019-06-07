@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plotDemo.plotContainer
 
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 
-object BarPlotResizeContinuousXDemoJfx {
+object BarPlotResizeContinuousXDemoCanvasRenderer {
     @JvmStatic
     fun main(args: Array<String>) {
-        PlotResizeDemoUtil.show(BarPlotResizeDemo.continuousX(), DemoFactoryJfx())
+        PlotResizeDemoUtil.show(BarPlotResizeDemo.continuousX(), DemoFactoryCanasRenderer())
     }
 }

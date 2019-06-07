@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.base.swing.runOnFxThread
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class DemoFactoryJfx : DemoFactory {
+class DemoFactoryCanasRenderer : DemoFactory {
     override fun createDemoFrame(title: String, size: Dimension): SwingDemoFrame {
         return CanvasRendererDemoFrame(title, size)
     }

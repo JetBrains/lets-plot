@@ -15,6 +15,7 @@ import jetbrains.datalore.visualization.base.svgMapper.jfx.attr.*
 internal fun <TargetT : Node> createSvgAttrMapping(source: SvgElement, target: TargetT): SvgAttrMapping<TargetT> {
     return when (source) {
         is SvgSvgElement -> SvgSvgAttrMapping(target as Group) as SvgAttrMapping<TargetT>
+        is SvgGElement -> SvgGAttrMapping(target as Group) as SvgAttrMapping<TargetT>
         is SvgRectElement -> SvgRectAttrMapping(target as Rectangle) as SvgAttrMapping<TargetT>
         is SvgEllipseElement -> SvgEllipseAttrMapping(target as Ellipse) as SvgAttrMapping<TargetT>
         is SvgCircleElement -> SvgCircleAttrMapping(target as Circle) as SvgAttrMapping<TargetT>
