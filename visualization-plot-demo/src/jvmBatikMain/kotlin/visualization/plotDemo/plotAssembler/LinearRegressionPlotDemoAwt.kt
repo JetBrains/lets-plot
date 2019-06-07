@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.plotAssembler
 
-import jetbrains.datalore.visualization.base.swing.DemoFrameBatik
+import jetbrains.datalore.visualization.base.swing.SvgMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.plotAssembler.LinearRegressionPlotDemo
 
 class LinearRegressionPlotDemoAwt : LinearRegressionPlotDemo() {
@@ -8,7 +8,7 @@ class LinearRegressionPlotDemoAwt : LinearRegressionPlotDemo() {
     private fun show() {
         val plots = createPlots()
         val svgRoots = createSvgRootsFromPlots(plots)
-        DemoFrameBatik.showSvg(svgRoots, demoComponentSize, "Linear regression plot")
+        SvgMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Linear regression plot")
     }
 
     companion object {

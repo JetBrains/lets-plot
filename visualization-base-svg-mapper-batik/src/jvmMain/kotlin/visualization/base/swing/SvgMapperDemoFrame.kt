@@ -7,8 +7,8 @@ import jetbrains.datalore.visualization.base.svgMapper.batik.SvgAwtHelper
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class DemoFrameBatik(title: String,
-                     size: Dimension = FRAME_SIZE) : SwingDemoFrame(title, size) {
+class SvgMapperDemoFrame(title: String,
+                         size: Dimension = FRAME_SIZE) : SwingDemoFrame(title, size) {
 
     override fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
         return Companion.createSvgComponent(svgRoot)
@@ -16,7 +16,7 @@ class DemoFrameBatik(title: String,
 
     companion object {
         fun showSvg(svgRoots: List<SvgSvgElement>, size: DoubleVector, title: String) {
-            DemoFrameBatik(title).showSvg(svgRoots, size)
+            SvgMapperDemoFrame(title).showSvg(svgRoots, size)
         }
 
         fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {

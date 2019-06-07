@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.geom
 
-import jetbrains.datalore.visualization.base.swing.DemoFrameBatik
+import jetbrains.datalore.visualization.base.swing.SvgMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.geom.PathDemo
 
 class PathDemoAwt : PathDemo() {
@@ -8,7 +8,7 @@ class PathDemoAwt : PathDemo() {
     private fun show() {
         val demoModels = createModels()
         val svgRoots = createSvgRoots(demoModels)
-        DemoFrameBatik.showSvg(svgRoots, demoComponentSize, "Path geom")
+        SvgMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Path geom")
     }
 
     companion object {

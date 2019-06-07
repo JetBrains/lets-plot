@@ -5,8 +5,8 @@ import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class DemoFrameJfxCanvas(title: String,
-                         size: Dimension = FRAME_SIZE) : SwingDemoFrame(title, size) {
+class CanvasRendererDemoFrame(title: String,
+                              size: Dimension = FRAME_SIZE) : SwingDemoFrame(title, size) {
 
     override fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
         return Companion.createSvgComponent(svgRoot)
@@ -14,11 +14,11 @@ class DemoFrameJfxCanvas(title: String,
 
     companion object {
         fun showSvg(svgRoots: List<SvgSvgElement>, size: DoubleVector, title: String) {
-            DemoFrameJfxCanvas(title).showSvg(svgRoots, size)
+            CanvasRendererDemoFrame(title).showSvg(svgRoots, size)
         }
 
         fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
-            return SvgCanvasRendererJfxPanel(svgRoot)
+            return CanvasRendererJfxPanel(svgRoot)
         }
     }
 }

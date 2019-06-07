@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.base.swing.DemoFrameJfxCanvas
+import jetbrains.datalore.visualization.base.swing.CanvasRendererDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.component.AxisComponentDemo
 
 class AxisComponentDemoJfx : AxisComponentDemo() {
@@ -15,6 +15,6 @@ class AxisComponentDemoJfx : AxisComponentDemo() {
     private fun show() {
         val demoModels = listOf(createModel())
         val svgRoots = createSvgRoots(demoModels)
-        DemoFrameJfxCanvas.showSvg(svgRoots, demoComponentSize, "Axis component")
+        CanvasRendererDemoFrame.showSvg(svgRoots, demoComponentSize, "Axis component")
     }
 }

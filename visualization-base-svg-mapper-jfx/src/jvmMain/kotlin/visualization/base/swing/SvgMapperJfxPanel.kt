@@ -1,23 +1,38 @@
 package jetbrains.datalore.visualization.base.swing
 
+import javafx.scene.Group
 import javafx.scene.Parent
+import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxCanvasControl
+import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.visualization.base.svg.SvgConstants
 import jetbrains.datalore.visualization.base.svg.SvgElementListener
+import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.base.svg.event.SvgAttributeEvent
-import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
+import jetbrains.datalore.visualization.base.svgMapper.jfx.SvgAwtPeer
+import jetbrains.datalore.visualization.base.svgMapper.jfx.SvgSvgElementMapper
 import java.awt.Color
 import java.awt.Dimension
 import javax.swing.BorderFactory
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_LEFT as CANVAS_MOUSE_LEFT
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_MOVED as CANVAS_MOUSE_MOVED
 
-class SvgCanvasRendererJfxPanel(private val svg: SvgSvgElement) : AbstractJfxPanel(emptyList()) {
+class SvgMapperJfxPanel(private val svg: SvgSvgElement,
+                        stylesheets: List<String>) : AbstractJfxPanel(stylesheets) {
+
+    private lateinit var mySceneRoot: Parent
 
     init {
         border = BorderFactory.createLineBorder(Color.BLUE, 3)
+
+        runOnFxThread {
+            Preconditions.checkArgument(!svg.isAttached(), "SvgSvgElement must be unattached")
+            SvgNodeContainer(svg)  // attach root
+            val rootMapper = SvgSvgElementMapper(svg, Group(), SvgAwtPeer())
+            rootMapper.attachRoot(MappingContext())
+            mySceneRoot = rootMapper.target
+        }
 
         svg.addListener(object : SvgElementListener {
             override fun onAttrSet(event: SvgAttributeEvent<*>) {
@@ -31,11 +46,12 @@ class SvgCanvasRendererJfxPanel(private val svg: SvgSvgElement) : AbstractJfxPan
     }
 
     override fun createSceneParent(): Parent {
-        val canvasSize = getSvgIntSize()
-        val canvasControl = JavafxCanvasControl(canvasSize, 1.0)
-
-        regFx(SvgCanvasRenderer(svg, canvasControl))
-        return canvasControl.javafxRoot
+//        val canvasSize = getSvgIntSize()
+//        val canvasControl = JavafxCanvasControl(canvasSize, 1.0)
+//
+//        regFx(SvgCanvasRenderer(svg, canvasControl))
+//        return canvasControl.javafxRoot
+        return mySceneRoot
     }
 
     override fun getPreferredSize(): Dimension {

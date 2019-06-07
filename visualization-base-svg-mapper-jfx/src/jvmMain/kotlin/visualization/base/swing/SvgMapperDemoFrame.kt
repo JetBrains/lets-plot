@@ -5,7 +5,7 @@ import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class DemoFrameJfxMapper(title: String,
+class SvgMapperDemoFrame(title: String,
                          private val stylesheets: List<String>,
                          size: Dimension = FRAME_SIZE) : SwingDemoFrame(title, size) {
 
@@ -15,11 +15,11 @@ class DemoFrameJfxMapper(title: String,
 
     companion object {
         fun showSvg(svgRoots: List<SvgSvgElement>, stylesheets: List<String>, size: DoubleVector, title: String) {
-            DemoFrameJfxMapper(title, stylesheets).showSvg(svgRoots, size)
+            SvgMapperDemoFrame(title, stylesheets).showSvg(svgRoots, size)
         }
 
         fun createSvgComponent(svgRoot: SvgSvgElement, stylesheets: List<String>): JComponent {
-            return SvgJfxMapperJfxPanel(svgRoot, stylesheets)
+            return SvgMapperJfxPanel(svgRoot, stylesheets)
         }
     }
 }

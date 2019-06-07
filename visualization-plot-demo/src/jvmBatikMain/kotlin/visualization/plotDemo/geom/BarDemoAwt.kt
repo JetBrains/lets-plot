@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.geom
 
-import jetbrains.datalore.visualization.base.swing.DemoFrameBatik
+import jetbrains.datalore.visualization.base.swing.SvgMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.geom.BarDemo
 
 class BarDemoAwt : BarDemo() {
@@ -8,7 +8,7 @@ class BarDemoAwt : BarDemo() {
     private fun show() {
         val demoModels = createModels()
         val svgRoots = createSvgRoots(demoModels)
-        DemoFrameBatik.showSvg(svgRoots, demoComponentSize, "Bar geom")
+        SvgMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Bar geom")
     }
 
     companion object {
