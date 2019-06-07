@@ -15,10 +15,10 @@ import jetbrains.datalore.visualization.base.svg.SvgTransformable.Companion.TRAN
 class SvgLineElement() : SvgGraphicsElement(), SvgTransformable, SvgShape {
 
     companion object {
-        private val X1: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x1")
-        private val Y1: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y1")
-        private val X2: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x2")
-        private val Y2: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y2")
+        val X1: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x1")
+        val Y1: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y1")
+        val X2: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("x2")
+        val Y2: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("y2")
     }
 
     override val elementName = "line"
