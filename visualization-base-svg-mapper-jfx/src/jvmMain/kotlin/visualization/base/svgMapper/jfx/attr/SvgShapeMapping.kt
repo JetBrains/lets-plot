@@ -10,6 +10,7 @@ import jetbrains.datalore.visualization.base.svg.SvgShape
 internal abstract class SvgShapeMapping<TargetT : Shape>(target: TargetT) : SvgAttrMapping<TargetT>(target) {
     init {
 //        target.smoothProperty().set(false)
+//        target.strokeType = StrokeType.CENTERED
     }
 
     override fun setAttribute(name: String, value: Any?) {

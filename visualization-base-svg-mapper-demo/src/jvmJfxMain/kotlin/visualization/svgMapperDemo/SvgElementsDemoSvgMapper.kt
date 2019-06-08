@@ -5,7 +5,7 @@ import jetbrains.datalore.visualization.base.swing.SvgMapperDemoFrame
 import jetbrains.datalore.visualization.svgMapperDemo.model.DemoModel
 import javax.swing.SwingUtilities
 
-class SvgElementsDemoJfxMapper {
+class SvgElementsDemoSvgMapper {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
@@ -17,7 +17,7 @@ class SvgElementsDemoJfxMapper {
             SvgMapperDemoFrame.showSvg(svgRoots,
                     listOf("/svgMapperDemo.css"),
                     DoubleVector(500.0, 300.0),
-                    "Svg Elements")
+                    "Svg Elements (JFX SVG mapper)")
         }
     }
 }

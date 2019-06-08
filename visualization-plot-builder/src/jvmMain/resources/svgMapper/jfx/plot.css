@@ -1,0 +1,69 @@
+.plt-container {
+  -fx-font-family: "Lucida Grande", sans-serif;
+}
+
+Text {
+  -fx-font-size: 12px;
+  -fx-fill: #3d3d3d;
+}
+
+.plt-glass-pane {
+  -fx-cursor: crosshair;
+}
+
+.plt-tooltip {
+  -fx-pointer-events: none;
+  -fx-opacity: 0.0;
+}
+
+.plt-tooltip.shown {
+  -fx-opacity: 1.0;
+}
+
+.plt-tooltip.shown .back {
+  -fx-opacity: 0.8;
+}
+
+.plt-tooltip Text {
+  -fx-font-size: 12px;
+}
+
+.plt-axis Line {
+  -fx-shape-rendering: crispedges;
+}
+
+.highlight {
+  -fx-fill-opacity: 0.75;
+}
+
+.plt-plot-title {
+
+  -fx-font-size: 16.0px;
+  -fx-font-weight: bold;
+}
+
+.plt-axis .tick Text {
+
+  -fx-font-size: 10.0px;
+}
+
+.plt-axis.small-tick-font .tick Text {
+
+  -fx-font-size: 8.0px;
+}
+
+.plt-axis-title Text {
+
+  -fx-font-size: 12.0px;
+}
+
+.plt_legend .legend-title Text {
+
+  -fx-font-size: 12.0px;
+  -fx-font-weight: bold;
+}
+
+.plt_legend Text {
+
+  -fx-font-size: 10.0px;
+}

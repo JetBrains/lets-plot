@@ -15,6 +15,6 @@ class AxisComponentDemoSvgMapper : AxisComponentDemo() {
     private fun show() {
         val demoModels = listOf(createModel())
         val svgRoots = createSvgRoots(demoModels)
-        SvgMapperDemoFrame.showSvg(svgRoots, emptyList(), demoComponentSize, "Axis component (JFX SVG mapper)")
+        SvgMapperDemoFrame.showSvg(svgRoots, listOf("/svgMapper/jfx/plot.css"), demoComponentSize, "Axis component (JFX SVG mapper)")
     }
 }
