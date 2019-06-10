@@ -48,12 +48,20 @@ internal class SvgSvgElementMapper(
 /*
             pane.scaleX = 0.5
             pane.scaleY = 0.5
+
+            The scale factor can be determined as
+            Toolkit.getDefaultToolkit().getScreenResolution() / 96.
+
+            1 -> standard resolution (no scaling)
+            2 -> retina
+            ...
+            see: https://josm.openstreetmap.de/ticket/9995
 */
 
 //            pane.style = "-fx-border-color: red; -fx-border-width: 0 5; -fx-background-color: #2f4f4f"
 //            pane.style = "-fx-border-width: 0"
 //            pane.snapToPixelProperty().set(true)
-
+//            pane.style = "-fx-padding: 0"
 
             return pane
         }
