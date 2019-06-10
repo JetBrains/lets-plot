@@ -10,7 +10,7 @@ import jetbrains.datalore.visualization.base.svgToScene.parseSvgTransform
 internal abstract class SvgAttrMapping<TargetT : Node>(val target: TargetT) {
     open fun setAttribute(name: String, value: Any?) {
         when (name) {
-            SvgConstants.SVG_STYLE_ATTRIBUTE -> target.style = value as String
+            SvgConstants.SVG_STYLE_ATTRIBUTE -> setStyle(value as? String ?: "", target)
             SvgStylableElement.CLASS.name -> setStyleClass(value as String?, target)
 
             SvgTransformable.TRANSFORM.name -> setTransform((value as SvgTransform).toString(), target)
@@ -20,6 +20,11 @@ internal abstract class SvgAttrMapping<TargetT : Node>(val target: TargetT) {
     }
 
     companion object {
+        private fun setStyle(value: String, target: Node) {
+            val valueFx = value.split(";").joinToString(";") { if (it.isNotEmpty()) "-fx-$it" else it }
+            target.style = valueFx
+        }
+
         private fun setStyleClass(value: String?, target: Node) {
             target.styleClass.clear()
             if (value != null) {

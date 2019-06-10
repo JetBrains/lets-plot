@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.base.svgMapper.jfx.attr
 
-import javafx.scene.Group
+import javafx.scene.layout.Pane
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 
-internal class SvgSvgAttrMapping(target: Group) : SvgAttrMapping<Group>(target) {
+internal class SvgSvgAttrMapping(target: Pane) : SvgAttrMapping<Pane>(target) {
 
     override fun setAttribute(name: String, value: Any?) {
         when (name) {

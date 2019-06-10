@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.base.swing
 
-import javafx.scene.Group
 import javafx.scene.Parent
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.Vector
@@ -29,7 +28,7 @@ class SvgMapperJfxPanel(private val svg: SvgSvgElement,
         runOnFxThread {
             Preconditions.checkArgument(!svg.isAttached(), "SvgSvgElement must be unattached")
             SvgNodeContainer(svg)  // attach root
-            val rootMapper = SvgSvgElementMapper(svg, Group(), SvgAwtPeer())
+            val rootMapper = SvgSvgElementMapper(svg, SvgAwtPeer())
             rootMapper.attachRoot(MappingContext())
             mySceneRoot = rootMapper.target
         }

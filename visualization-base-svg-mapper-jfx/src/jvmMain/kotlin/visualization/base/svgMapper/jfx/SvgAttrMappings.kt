@@ -3,6 +3,7 @@ package jetbrains.datalore.visualization.base.svgMapper.jfx
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.image.ImageView
+import javafx.scene.layout.Pane
 import javafx.scene.shape.*
 import javafx.scene.text.Text
 import jetbrains.datalore.visualization.base.svg.*
@@ -11,7 +12,7 @@ import jetbrains.datalore.visualization.base.svgMapper.jfx.attr.*
 @Suppress("UNCHECKED_CAST")
 internal fun <TargetT : Node> createSvgAttrMapping(source: SvgElement, target: TargetT): SvgAttrMapping<TargetT> {
     return when (source) {
-        is SvgSvgElement -> SvgSvgAttrMapping(target as Group) as SvgAttrMapping<TargetT>
+        is SvgSvgElement -> SvgSvgAttrMapping(target as Pane) as SvgAttrMapping<TargetT>
         is SvgGElement -> SvgGAttrMapping(target as Group) as SvgAttrMapping<TargetT>
         is SvgRectElement -> SvgRectAttrMapping(target as Rectangle) as SvgAttrMapping<TargetT>
         is SvgLineElement -> SvgLineAttrMapping(target as Line) as SvgAttrMapping<TargetT>

@@ -1,10 +1,13 @@
 package jetbrains.datalore.visualization.base.svgMapper.jfx
 
+import javafx.collections.ObservableList
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton.*
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.Pane
 import javafx.scene.shape.*
 import javafx.scene.text.Text
 import jetbrains.datalore.base.event.Button
@@ -13,32 +16,40 @@ import jetbrains.datalore.visualization.base.svg.*
 
 
 object Utils {
-    fun elementChildren(e: Group): MutableList<Node> {
+    fun elementChildren(e: Parent): MutableList<Node> {
         return object : AbstractMutableList<Node>() {
             override val size: Int
-                get() = e.children.size
+                get() = getChildren(e).size
 
             override fun get(index: Int): Node {
-                return e.children[index]
+                return getChildren(e)[index]
             }
 
             override fun set(index: Int, element: Node): Node {
                 if (element.parent != null) {
                     throw IllegalStateException()
                 }
-                return e.children.set(index, element)
+                return getChildren(e).set(index, element)
             }
 
             override fun add(index: Int, element: Node) {
                 if (element.parent != null) {
                     throw IllegalStateException()
                 }
-                e.children.add(index, element)
+                getChildren(e).add(index, element)
             }
 
             override fun removeAt(index: Int): Node {
-                return e.children.removeAt(index)
+                return getChildren(e).removeAt(index)
             }
+        }
+    }
+
+    fun getChildren(parent: Parent): ObservableList<Node> {
+        return when (parent) {
+            is Group -> parent.children
+            is Pane -> parent.children
+            else -> throw IllegalArgumentException("Unsupported parent typr: ${parent.javaClass.simpleName}")
         }
     }
 

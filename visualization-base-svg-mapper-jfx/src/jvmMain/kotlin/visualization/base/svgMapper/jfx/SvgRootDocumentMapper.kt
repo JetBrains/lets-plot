@@ -18,7 +18,7 @@ class SvgRootDocumentMapper(source: SvgSvgElement) : Mapper<SvgSvgElement, Group
         val peer = SvgAwtPeer()
         source.container().setPeer(peer)
 
-        myRootMapper = SvgSvgElementMapper(source, Group(), peer)
+        myRootMapper = SvgSvgElementMapper(source, peer)
 //        target.documentElement.setAttribute("shape-rendering", "geometricPrecision")
         myRootMapper!!.attachRoot()
     }

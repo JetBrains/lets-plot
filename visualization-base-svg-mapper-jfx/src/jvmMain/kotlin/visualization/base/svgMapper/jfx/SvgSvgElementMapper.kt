@@ -1,14 +1,14 @@
 package jetbrains.datalore.visualization.base.svgMapper.jfx
 
-import javafx.scene.Group
+import javafx.scene.Parent
+import javafx.scene.layout.Pane
 import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.mapper.core.Synchronizers
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 
 internal class SvgSvgElementMapper(
         source: SvgSvgElement,
-        target: Group,
-        peer: SvgAwtPeer) : SvgElementMapper<SvgSvgElement, Group>(source, target, peer) {
+        peer: SvgAwtPeer) : SvgElementMapper<SvgSvgElement, Parent>(source, createTargetContainer(), peer) {
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         super.registerSynchronizers(conf)
@@ -37,5 +37,25 @@ internal class SvgSvgElementMapper(
             source.container().setPeer(null)
         }
         super.onDetach()
+    }
+
+    companion object {
+        private fun createTargetContainer(): Parent {
+            val pane = Pane()
+
+            // this makes lines sharp
+            // but we have to un-scale all x,y,width,height etc accordingly.
+/*
+            pane.scaleX = 0.5
+            pane.scaleY = 0.5
+*/
+
+//            pane.style = "-fx-border-color: red; -fx-border-width: 0 5; -fx-background-color: #2f4f4f"
+//            pane.style = "-fx-border-width: 0"
+//            pane.snapToPixelProperty().set(true)
+
+
+            return pane
+        }
     }
 }
