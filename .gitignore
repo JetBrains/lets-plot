@@ -3,4 +3,4 @@
 .gradle
 .DS_Store
 **/build
-
+**/out-repo

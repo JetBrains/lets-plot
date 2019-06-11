@@ -56,3 +56,17 @@ idea {
         }
     }
 }
+
+
+// Tmp: publish jars to local maven repo
+apply plugin: 'maven-publish'
+group = project_group
+version = project_version
+
+publishing {
+    repositories {
+        maven {
+            url = uri("$rootDir/out-repo")
+        }
+    }
+}

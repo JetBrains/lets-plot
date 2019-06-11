@@ -24,3 +24,7 @@ include 'base',
         'visualization-plot-gog-demo',
         'visualization-plot-demo',
         'demo-hello'
+
+
+// publishing
+enableFeaturePreview('GRADLE_METADATA')

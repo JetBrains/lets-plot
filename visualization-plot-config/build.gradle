@@ -74,3 +74,25 @@ idea {
         }
     }
 }
+
+
+// Tmp: publish jars to local maven repo
+apply plugin: 'maven-publish'
+//apply plugin: 'java-library'
+group = project_group
+version = project_version
+
+publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            from components.java
+//            artifact sourcesJar
+//        }
+//    }
+    repositories {
+        maven {
+//            url = uri("$buildDir/repository")
+            url = uri("$rootDir/out-repo")
+        }
+    }
+}
