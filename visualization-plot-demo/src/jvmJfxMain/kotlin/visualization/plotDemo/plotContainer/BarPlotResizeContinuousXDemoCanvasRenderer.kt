@@ -5,6 +5,6 @@ import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResi
 object BarPlotResizeContinuousXDemoCanvasRenderer {
     @JvmStatic
     fun main(args: Array<String>) {
-        PlotResizeDemoUtil.show(BarPlotResizeDemo.continuousX(), DemoFactoryCanasRenderer())
+        PlotResizeDemoUtil.show(BarPlotResizeDemo.continuousX(), DemoFactoryCanvasRenderer())
     }
 }

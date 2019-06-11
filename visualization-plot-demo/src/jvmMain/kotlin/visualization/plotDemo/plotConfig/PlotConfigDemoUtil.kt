@@ -1,0 +1,76 @@
+package jetbrains.datalore.visualization.plotDemo.plotConfig
+
+import jetbrains.datalore.base.event.awt.AwtEventUtil
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.observable.property.ValueProperty
+import jetbrains.datalore.visualization.base.swing.SwingDemoFactory
+import jetbrains.datalore.visualization.plot.DemoAndTestJvm
+import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
+import jetbrains.datalore.visualization.plot.builder.PlotContainer
+import java.awt.Color
+import java.awt.Component
+import java.awt.Dimension
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import javax.swing.*
+
+object PlotConfigDemoUtil {
+    fun show(title: String, plotSpecList: List<MutableMap<String, Any>>, factory: SwingDemoFactory, plotSize: DoubleVector) {
+        factory.createDemoFrame(title).show {
+            val panel = this
+            panel.removeAll()
+            panel.background = Color.WHITE
+            panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+            panel.add(Box.createRigidArea(Dimension(50, 0)))
+
+            addPlots(panel, plotSpecList, factory, plotSize)
+
+            panel.add(Box.createRigidArea(Dimension(0, 5)))
+        }
+    }
+
+    private fun addPlots(panel: JPanel, plotSpecList: List<MutableMap<String, Any>>, factory: SwingDemoFactory, plotSize: DoubleVector) {
+        for (plotSpec in plotSpecList) {
+            val component = createPlotComponent(plotSpec, factory, plotSize)
+
+            component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
+
+            component.minimumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
+            component.maximumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
+            component.alignmentX = Component.LEFT_ALIGNMENT
+
+            panel.add(Box.createRigidArea(Dimension(0, 5)))
+            panel.add(component)
+        }
+    }
+
+    private fun createPlotComponent(plotSpec: MutableMap<String, Any>, factory: SwingDemoFactory, plotSize: DoubleVector): JComponent {
+        val plot = DemoAndTestJvm.createPlot(plotSpec, false)
+        val plotContainer = PlotContainer(plot, ValueProperty(plotSize))
+        plotContainer.ensureContentBuilt()
+
+        val component = factory.createSvgComponent(plotContainer.svg)
+
+        // Bind mouse events
+        val plotEdt = factory.createPlotEdtExecutor()
+        component.addMouseListener(object : MouseAdapter() {
+            override fun mouseExited(e: MouseEvent) {
+                super.mouseExited(e)
+                plotEdt {
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
+                }
+            }
+        })
+        component.addMouseMotionListener(object : MouseAdapter() {
+            override fun mouseMoved(e: MouseEvent) {
+                super.mouseMoved(e)
+                plotEdt {
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
+                }
+            }
+        })
+
+        return component;
+    }
+
+}

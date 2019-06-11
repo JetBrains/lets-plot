@@ -2,11 +2,12 @@ package jetbrains.datalore.visualization.plotDemo.plotContainer
 
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.base.swing.SvgMapperDemoFrame
+import jetbrains.datalore.visualization.base.swing.SwingDemoFactory
 import jetbrains.datalore.visualization.base.swing.SwingDemoFrame
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class DemoFactoryBatik : DemoFactory {
+class DemoFactoryBatik : SwingDemoFactory {
     override fun createDemoFrame(title: String, size: Dimension): SwingDemoFrame {
         return SvgMapperDemoFrame(title, size)
     }

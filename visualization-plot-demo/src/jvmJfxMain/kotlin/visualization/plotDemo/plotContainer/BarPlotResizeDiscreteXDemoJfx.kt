@@ -5,6 +5,6 @@ import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResi
 object BarPlotResizeDiscreteXDemoJfx {
     @JvmStatic
     fun main(args: Array<String>) {
-        PlotResizeDemoUtil.show(BarPlotResizeDemo.discreteX(), DemoFactoryCanasRenderer())
+        PlotResizeDemoUtil.show(BarPlotResizeDemo.discreteX(), DemoFactoryCanvasRenderer())
     }
 }

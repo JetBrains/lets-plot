@@ -1,11 +1,10 @@
-package jetbrains.datalore.visualization.plotDemo.plotContainer
+package jetbrains.datalore.visualization.base.swing
 
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.base.swing.SwingDemoFrame
 import java.awt.Dimension
 import javax.swing.JComponent
 
-interface DemoFactory {
+interface SwingDemoFactory {
     fun createDemoFrame(title: String,
                         size: Dimension = SwingDemoFrame.FRAME_SIZE): SwingDemoFrame
 
