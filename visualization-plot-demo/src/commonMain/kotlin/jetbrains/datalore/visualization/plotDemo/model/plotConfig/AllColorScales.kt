@@ -1,47 +1,41 @@
-package jetbrains.datalore.visualization.gogDemo.model.cookbook
+package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.visualization.gogDemo.model.DemoBase
+import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 import kotlin.math.round
 import kotlin.math.sign
 
-/**
- * see: http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/
- */
-open class AllColorScales : DemoBase() {
+open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
-    override val viewSize: DoubleVector
-        get() = toViewSize(DEMO_BOX_SIZE)
+    fun plotSpecList(): List<Map<String, Any>> {
+        return listOf(
+                color_gradient(),
+                color_gradient_blue_red(),
+
+                color_gradient2(),
+                color_gradient2_midpoint(),
+                color_gradient2_rainbow(),
+
+                color_hue(),
+                color_hue_chroma(),
+                color_hue_luminance(),
+
+                color_grey(),
+                color_grey_white2black(),
+
+                color_brewer(),
+                color_brewer_direction(),
+                color_brewer_diverging(),
+                color_brewer_qualitative(),
+                color_brewer_qualitative_paired(),
+
+                color_manual()
+        )
+    }
+
 
     companion object {
-        private val DEMO_BOX_SIZE = DoubleVector(600.0, 100.0)
-
-        fun bundle(): List<Map<String, Any>> {
-            return listOf(
-                    color_gradient(),
-                    color_gradient_blue_red(),
-
-                    color_gradient2(),
-                    color_gradient2_midpoint(),
-                    color_gradient2_rainbow(),
-
-                    color_hue(),
-                    color_hue_chroma(),
-                    color_hue_luminance(),
-
-                    color_grey(),
-                    color_grey_white2black(),
-
-                    color_brewer(),
-                    color_brewer_direction(),
-                    color_brewer_diverging(),
-                    color_brewer_qualitative(),
-                    color_brewer_qualitative_paired(),
-
-                    color_manual()
-            )
-        }
 
         private fun listOfInts(fromValue: Int, toValue: Int): List<Int> {
             val increment = round(sign((toValue - fromValue).toFloat())).toInt()
@@ -53,21 +47,6 @@ open class AllColorScales : DemoBase() {
             }
             return list
         }
-
-        /*
-  private static String integerSequenceAsJsonArray(int fromValue, int toValue) {
-    StringBuffer sb = new StringBuffer("[");
-    int increment = Math.round(Math.signum(toValue - fromValue));
-    for (int i = fromValue; i < toValue; i += increment) {
-      if (i != fromValue) {
-        sb.append(',');
-      }
-      sb.append(String.valueOf(i));
-    }
-    sb.append(']');
-    return sb.toString();
-  }
-*/
 
         private fun scaleParamsAsJsonPart(map: Map<String, Any>): String {
             val sb = StringBuilder()
@@ -130,12 +109,17 @@ open class AllColorScales : DemoBase() {
                     "}"
         }
 
-        fun color_gradient(): Map<String, Any> {
+
+//
+// =======================
+//
+
+        private fun color_gradient(): Map<String, Any> {
             val spec = specWithContinuousColors(0, 128, "color_gradient")
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_gradient_blue_red(): Map<String, Any> {
+        private fun color_gradient_blue_red(): Map<String, Any> {
             val params = mapOf(
                     "low" to "blue",
                     "high" to "red"
@@ -144,13 +128,13 @@ open class AllColorScales : DemoBase() {
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_gradient2(): Map<String, Any> {
+        private fun color_gradient2(): Map<String, Any> {
             val spec = specWithContinuousColors(-64, 64, "color_gradient2")
 
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_gradient2_midpoint(): Map<String, Any> {
+        private fun color_gradient2_midpoint(): Map<String, Any> {
             val params = mapOf(
                     "midpoint" to 10.0
             )
@@ -159,7 +143,7 @@ open class AllColorScales : DemoBase() {
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_gradient2_rainbow(): Map<String, Any> {
+        private fun color_gradient2_rainbow(): Map<String, Any> {
             val params = mapOf(
                     "low" to "green",
                     "mid" to "yellow",
@@ -170,13 +154,13 @@ open class AllColorScales : DemoBase() {
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_hue(): Map<String, Any> {
+        private fun color_hue(): Map<String, Any> {
             val spec = specWithContinuousColors(-64, 64, "color_hue")
 
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_hue_chroma(): Map<String, Any> {
+        private fun color_hue_chroma(): Map<String, Any> {
             val params = mapOf(
                     "c" to 20
             )
@@ -185,7 +169,7 @@ open class AllColorScales : DemoBase() {
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_hue_luminance(): Map<String, Any> {
+        private fun color_hue_luminance(): Map<String, Any> {
             val params = mapOf(
                     "l" to 40
             )
@@ -194,13 +178,13 @@ open class AllColorScales : DemoBase() {
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_grey(): Map<String, Any> {
+        private fun color_grey(): Map<String, Any> {
             val spec = specWithContinuousColors(-64, 64, "color_grey")
 
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_grey_white2black(): Map<String, Any> {
+        private fun color_grey_white2black(): Map<String, Any> {
             val params = mapOf(
                     "start" to 100,
                     "end" to 0
@@ -211,13 +195,13 @@ open class AllColorScales : DemoBase() {
         }
 
 
-        fun color_brewer(): Map<String, Any> {
+        private fun color_brewer(): Map<String, Any> {
             val spec = specWithContinuousColors(-64, 64, "color_brewer")
 
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_brewer_direction(): Map<String, Any> {
+        private fun color_brewer_direction(): Map<String, Any> {
             val params = mapOf(
                     "direction" to -1
             )
@@ -226,7 +210,7 @@ open class AllColorScales : DemoBase() {
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_brewer_diverging(): Map<String, Any> {
+        private fun color_brewer_diverging(): Map<String, Any> {
             val params = mapOf(
                     "type" to "div"
             )
@@ -235,7 +219,7 @@ open class AllColorScales : DemoBase() {
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_brewer_qualitative(): Map<String, Any> {
+        private fun color_brewer_qualitative(): Map<String, Any> {
             val params = mapOf(
                     "type" to "qual"
             )
@@ -244,7 +228,7 @@ open class AllColorScales : DemoBase() {
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_brewer_qualitative_paired(): Map<String, Any> {
+        private fun color_brewer_qualitative_paired(): Map<String, Any> {
             val params = mapOf(
                     "type" to "qual",
                     "palette" to "Paired"
@@ -254,7 +238,7 @@ open class AllColorScales : DemoBase() {
             return JsonSupport.parseJson(spec)
         }
 
-        fun color_manual(): Map<String, Any> {
+        private fun color_manual(): Map<String, Any> {
             val params = mapOf(
                     "values" to listOf("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
             )
@@ -262,5 +246,6 @@ open class AllColorScales : DemoBase() {
 
             return JsonSupport.parseJson(spec)
         }
+
     }
 }

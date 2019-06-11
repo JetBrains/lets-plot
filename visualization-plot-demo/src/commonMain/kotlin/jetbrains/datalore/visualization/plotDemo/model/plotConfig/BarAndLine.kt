@@ -1,28 +1,30 @@
-package jetbrains.datalore.visualization.gogDemo.model.cookbook
+package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.visualization.gogDemo.model.DemoBase
+import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
 /**
  * see: http://www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/
  */
-open class BarAndLine : DemoBase() {
-
-    override val viewSize: DoubleVector
-        get() = viewSize()
+open class BarAndLine : PlotConfigDemoBase() {
+    fun plotSpecList(): List<Map<String, Any>> {
+        return listOf(
+                defaultBarDiscreteX(),
+                barDiscreteXFill(),
+                barDiscreteXFillMappedInGeom(),
+                barDiscreteXFillAndBlackOutline(),
+                barDiscreteXTitleAxisLabelsNarrowWidth()
+        )
+    }
 
     companion object {
-        private val DEMO_BOX_SIZE = DoubleVector(400.0, 300.0)
-
-        fun viewSize(): DoubleVector {
-            return toViewSize(DEMO_BOX_SIZE)
-        }
-
-        private val OUR_DATA = "   {" +
+        private const val OUR_DATA = "   {" +
                 "      'time': ['Lunch', 'Dinner']," +
                 "      'total_bill': [14.89, 17.23]" +
                 "   }"
+
+
+        //===========================
 
         fun defaultBarDiscreteX(): Map<String, Any> {
             val spec = "{" +

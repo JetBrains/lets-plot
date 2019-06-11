@@ -1,33 +1,23 @@
-package jetbrains.datalore.visualization.gogDemo.model.cookbook
+package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
 import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.visualization.gogDemo.model.DemoBase
-import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil
+import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
+import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 import kotlin.math.abs
 
 /**
  * See 'Plotting distributions'
  * http://www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/
  */
-open class Histogram : DemoBase() {
-
-    protected fun basic(): Map<String, Any> {
-        val spec = "{" +
-                "   'mapping': {" +
-                "             'x': 'x'" +
-                "           }," +
-
-                "   'layers': [" +
-                "               {" +
-                "                  'geom': 'histogram'" +
-                "               }" +
-                "           ]" +
-                "}"
-
-        val plotSpec = HashMap(JsonSupport.parseJson(spec))
-        plotSpec["data"] = DATA
-        return plotSpec
+open class Histogram : PlotConfigDemoBase() {
+    fun plotSpecList(): List<Map<String, Any>> {
+        return listOf(
+                basic(),
+                withWeights(),
+                withConstantWeight()
+        )
     }
+
 
     companion object {
 
@@ -47,6 +37,28 @@ open class Histogram : DemoBase() {
             map["x"] = xs
             map["weight"] = weights
             return map
+        }
+
+
+        //===========================
+
+
+        fun basic(): Map<String, Any> {
+            val spec = "{" +
+                    "   'mapping': {" +
+                    "             'x': 'x'" +
+                    "           }," +
+
+                    "   'layers': [" +
+                    "               {" +
+                    "                  'geom': 'histogram'" +
+                    "               }" +
+                    "           ]" +
+                    "}"
+
+            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            plotSpec["data"] = DATA
+            return plotSpec
         }
 
         fun withConstantWeight(): Map<String, Any> {

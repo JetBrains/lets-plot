@@ -1,28 +1,26 @@
-package jetbrains.datalore.visualization.gogDemo.model.cookbook
+package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.visualization.gogDemo.model.DemoBase
+import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
-open class LegendShowByGeom : DemoBase() {
+open class LegendShowByGeom : PlotConfigDemoBase() {
+    fun plotSpecList(): List<Map<String, Any>> {
+        return listOf(
+                defaultLegend(),
+                noLinesLegend(),
+                noBothLegends()
+        )
+    }
 
-    override val viewSize: DoubleVector
-        get() = viewSize()
 
     companion object {
-        private val DEMO_BOX_SIZE = DoubleVector(400.0, 300.0)
-
-        fun viewSize(): DoubleVector {
-            return toViewSize(DEMO_BOX_SIZE)
-        }
-
-        private val LINES_DATA = "   {" +
+        private const val LINES_DATA = "   {" +
                 "      'c': ['Line A', 'Line A', 'Line A', 'Line B', 'Line B', 'Line B']," +
                 "      'x': [1, 2, 3, 1, 2, 3]," +
                 "      'y': [1, 2, 1.5, 1.5, 0.5, 2.5]" +
                 "   }"
 
-        private val POINTS_DATA = "   {" +
+        private const val POINTS_DATA = "   {" +
                 "      'c': ['Point X', 'Point Y', 'Point Z']," +
                 "      'x': [1.5, 2, 3]," +
                 "      'y': [2, 1.5, 1]" +
@@ -58,6 +56,10 @@ open class LegendShowByGeom : DemoBase() {
                     "  'size': 5" +
                     "}"
         }
+
+
+        //===========================
+
 
         fun defaultLegend(): Map<String, Any> {
             val spec = "{" +

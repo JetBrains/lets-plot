@@ -11,7 +11,6 @@ class BarPlotBatik : BarPlot() {
                 fancy().toMutableMap()
         )
 
-//        SwingDemoUtil.show(viewSize, plotSpecList as List<MutableMap<String, Any>>)
         PlotConfigDemoUtil.show("Bar plot", plotSpecList, DemoFactoryBatik(), this.demoComponentSize)
     }
 

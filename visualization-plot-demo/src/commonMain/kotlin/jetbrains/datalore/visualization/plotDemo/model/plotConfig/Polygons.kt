@@ -1,22 +1,17 @@
-package jetbrains.datalore.visualization.gogDemo.model.cookbook
+package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.visualization.gogDemo.model.DemoBase
-import jetbrains.datalore.visualization.gogDemo.shared.SharedPieces
+import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
+import jetbrains.datalore.visualization.plotDemo.model.SharedPieces
 
-open class Polygons : DemoBase() {
-
-    override val viewSize: DoubleVector
-        get() = viewSize()
+open class Polygons : PlotConfigDemoBase() {
+    fun plotSpecList(): List<Map<String, Any>> {
+        return listOf(
+                basic()
+        )
+    }
 
     companion object {
-        private val DEMO_BOX_SIZE = DoubleVector(400.0, 300.0)
-
-        fun viewSize(): DoubleVector {
-            return DemoBase.toViewSize(DEMO_BOX_SIZE)
-        }
-
         fun basic(): Map<String, Any> {
             val spec = "{" +
                     //        "   'data': " + ourData +

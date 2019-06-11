@@ -1,29 +1,30 @@
-package jetbrains.datalore.visualization.gogDemo.model.cookbook
+package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.visualization.gogDemo.model.DemoBase
-import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil.fill
-import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil.gauss
-import jetbrains.datalore.visualization.gogDemo.shared.DemoUtil.zip
+import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
+import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil.fill
+import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil.gauss
+import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil.zip
 
 /**
  * See 'Plotting distributions'
  * http://www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/
  */
-open class BoxPlot : DemoBase() {
+open class BoxPlot : PlotConfigDemoBase() {
+    fun plotSpecList(): List<Map<String, Any>> {
+        return listOf(
+                basic(),
+                withVarWidth(),
+                withCondColored(),
+                withOutlierOverride(),
+                withGrouping(),
+                withGroupingAndVarWidth()
+        )
+    }
 
-    override val viewSize: DoubleVector
-        get() = viewSize()
 
     companion object {
-        private val DEMO_BOX_SIZE = DoubleVector(400.0, 300.0)
-
         private val DATA = data()  // make it stable between calls
-
-        fun viewSize(): DoubleVector {
-            return toViewSize(DEMO_BOX_SIZE)
-        }
 
         private fun data(): Map<String, List<*>> {
             val count1 = 50
@@ -42,6 +43,10 @@ open class BoxPlot : DemoBase() {
             map["group"] = group
             return map
         }
+
+
+        //===========================
+
 
         fun basic(): Map<String, Any> {
             val spec = "{" +

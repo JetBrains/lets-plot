@@ -1,21 +1,26 @@
-package jetbrains.datalore.visualization.gogDemo.model.cookbook
+package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.visualization.gogDemo.model.DemoBase
+import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
-open class AxisOptions : DemoBase() {
-
-    override val viewSize: DoubleVector
-        get() = viewSize()
+open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
+    fun plotSpecList(): List<Map<String, Any>> {
+        return listOf(
+                defaultAxis(),
+                noXTitle(),
+                noYTitle(),
+                noXTickLabels(),
+                noYTickLabels(),
+                noTickMarks(),
+                noTickMarksOrLabels(),
+                noTitlesOrLabels(),
+                onlyLines(),
+                noLinesOrTitles()
+        )
+    }
 
     companion object {
-        private val DEMO_BOX_SIZE = DoubleVector(300.0, 200.0)
-
-        fun viewSize(): DoubleVector {
-            return toViewSize(DEMO_BOX_SIZE)
-        }
-
         private fun data(): Map<String, List<*>> {
             val map = HashMap<String, List<*>>()
             map["x"] = listOf(0.0)

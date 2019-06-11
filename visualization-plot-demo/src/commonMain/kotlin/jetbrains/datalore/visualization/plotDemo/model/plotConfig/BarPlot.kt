@@ -4,11 +4,19 @@ import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
 open class BarPlot : PlotConfigDemoBase() {
+    fun plotSpecList(): List<Map<String, Any>> {
+        return listOf(
+                basic(),
+                fancy()
+        )
+    }
+
 
     companion object {
         private const val OUR_DATA = "   {" +
                 "      'time': ['Lunch','Lunch', 'Dinner', 'Dinner', 'Dinner']" +
                 "   }"
+
 
         fun basic(): Map<String, Any> {
             val spec = "{" +
