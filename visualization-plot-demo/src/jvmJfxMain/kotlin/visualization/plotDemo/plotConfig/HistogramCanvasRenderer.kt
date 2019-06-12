@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotConfig
 
+import jetbrains.datalore.visualization.base.swing.CanvasRendererDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.Histogram
-import jetbrains.datalore.visualization.plotDemo.plotContainer.DemoFactoryCanvasRenderer
 
 class HistogramCanvasRenderer : Histogram() {
 
@@ -9,7 +9,7 @@ class HistogramCanvasRenderer : Histogram() {
         @Suppress("UNCHECKED_CAST")
         val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
 
-        PlotConfigDemoUtil.show("Histogram", plotSpecList, DemoFactoryCanvasRenderer(), this.demoComponentSize)
+        PlotConfigDemoUtil.show("Histogram", plotSpecList, CanvasRendererDemoFactory(), this.demoComponentSize)
     }
 
     companion object {

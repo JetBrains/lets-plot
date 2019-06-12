@@ -19,11 +19,6 @@ class BatikMapperDemoFrame(title: String,
         }
 
         fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
-//            return object : BatikMapperComponent(svgRoot) {
-//                override fun createMessageCallback(): BatikMessageCallback {
-//                    return createDefaultMessageCallback()
-//                }
-//            }
             return BatikMapperComponent(svgRoot, BatikMapperComponent.DEF_MESSAGE_CALLBACK)
         }
     }

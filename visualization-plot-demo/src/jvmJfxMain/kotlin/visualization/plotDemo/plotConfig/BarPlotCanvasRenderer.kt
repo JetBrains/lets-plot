@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotConfig
 
+import jetbrains.datalore.visualization.base.swing.CanvasRendererDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.BarPlot
-import jetbrains.datalore.visualization.plotDemo.plotContainer.DemoFactoryCanvasRenderer
 
 class BarPlotCanvasRenderer : BarPlot() {
 
@@ -9,7 +9,7 @@ class BarPlotCanvasRenderer : BarPlot() {
         @Suppress("UNCHECKED_CAST")
         val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
 
-        PlotConfigDemoUtil.show("Bar plot", plotSpecList, DemoFactoryCanvasRenderer(), this.demoComponentSize)
+        PlotConfigDemoUtil.show("Bar plot", plotSpecList, CanvasRendererDemoFactory(), this.demoComponentSize)
     }
 
     companion object {

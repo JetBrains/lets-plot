@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotConfig
 
+import jetbrains.datalore.visualization.base.swing.CanvasRendererDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.ABLine
-import jetbrains.datalore.visualization.plotDemo.plotContainer.DemoFactoryCanvasRenderer
 
 class ABLineCanvasRenderer : ABLine() {
 
@@ -9,7 +9,7 @@ class ABLineCanvasRenderer : ABLine() {
         @Suppress("UNCHECKED_CAST")
         val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
 
-        PlotConfigDemoUtil.show("ABLine plot", plotSpecList, DemoFactoryCanvasRenderer(), this.demoComponentSize)
+        PlotConfigDemoUtil.show("ABLine plot", plotSpecList, CanvasRendererDemoFactory(), this.demoComponentSize)
     }
 
     companion object {

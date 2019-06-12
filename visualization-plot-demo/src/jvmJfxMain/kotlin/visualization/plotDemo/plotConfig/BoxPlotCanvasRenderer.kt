@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotConfig
 
+import jetbrains.datalore.visualization.base.swing.CanvasRendererDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.BoxPlot
-import jetbrains.datalore.visualization.plotDemo.plotContainer.DemoFactoryCanvasRenderer
 
 class BoxPlotCanvasRenderer : BoxPlot() {
 
@@ -9,7 +9,7 @@ class BoxPlotCanvasRenderer : BoxPlot() {
         @Suppress("UNCHECKED_CAST")
         val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
 
-        PlotConfigDemoUtil.show("Box plot", plotSpecList, DemoFactoryCanvasRenderer(), this.demoComponentSize)
+        PlotConfigDemoUtil.show("Box plot", plotSpecList, CanvasRendererDemoFactory(), this.demoComponentSize)
     }
 
     companion object {
