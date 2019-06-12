@@ -1,6 +1,11 @@
 allprojects {
-    group 'jetbrains.datalore'
-    version = "0.0.1"
+//    println "--- project ---: $project.name $project.depth ${if(project.depth > 0) project.parent.rootDir else ''}"
+//    println "--- project ---: $project.name $project.rootDir"
+}
+
+subprojects {
+    group 'org.jetbrains.datalore-plot'
+    version = "1.0-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -16,9 +21,6 @@ allprojects {
 //            }
         }
     }
-
-//    println "--- project ---: $project.name $project.depth ${if(project.depth > 0) project.parent.rootDir else ''}"
-//    println "--- project ---: $project.name $project.rootDir"
 }
 
 

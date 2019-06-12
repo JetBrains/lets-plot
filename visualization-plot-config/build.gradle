@@ -76,12 +76,9 @@ idea {
 }
 
 
-// Tmp: publish jars to local maven repo
+// TMP: publish artifacts needed to build batik-based demo
 apply plugin: 'maven-publish'
 //apply plugin: 'java-library'
-group = project_group
-version = project_version
-
 publishing {
 //    publications {
 //        mavenJava(MavenPublication) {

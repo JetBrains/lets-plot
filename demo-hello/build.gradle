@@ -6,8 +6,6 @@ repositories {
     mavenCentral()
 }
 
-apply plugin: 'maven-publish'
-
 kotlin {
     jvm()
     js() {
