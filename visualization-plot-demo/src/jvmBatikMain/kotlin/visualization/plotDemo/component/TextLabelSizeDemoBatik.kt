@@ -1,20 +1,20 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.base.swing.SvgMapperDemoFrame
+import jetbrains.datalore.visualization.base.swing.BatikMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.component.TextLabelSizeDemo
 
-class TextLabelSizeDemoAwt : TextLabelSizeDemo() {
+class TextLabelSizeDemoBatik : TextLabelSizeDemo() {
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            TextLabelSizeDemoAwt().show()
+            TextLabelSizeDemoBatik().show()
         }
     }
 
     private fun show() {
         val demoModels = listOf(createModel())
         val svgRoots = createSvgRoots(demoModels)
-        SvgMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Text label size and style")
+        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Text label size and style")
     }
 }

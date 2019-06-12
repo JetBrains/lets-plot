@@ -1,20 +1,20 @@
 package jetbrains.datalore.visualization.plotDemo.plotAssembler
 
-import jetbrains.datalore.visualization.base.swing.SvgMapperDemoFrame
+import jetbrains.datalore.visualization.base.swing.BatikMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.plotAssembler.ScatterPlotDemo
 
-class ScatterPlotDemoAwt : ScatterPlotDemo() {
+class ScatterPlotDemoBatik : ScatterPlotDemo() {
 
     private fun show() {
         val plots = createPlots()
         val svgRoots = createSvgRootsFromPlots(plots)
-        SvgMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Scatter plot")
+        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Scatter plot")
     }
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            ScatterPlotDemoAwt().show()
+            ScatterPlotDemoBatik().show()
         }
     }
 }

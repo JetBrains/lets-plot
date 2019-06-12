@@ -17,8 +17,8 @@ import javax.swing.BorderFactory
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_LEFT as CANVAS_MOUSE_LEFT
 import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_MOVED as CANVAS_MOUSE_MOVED
 
-class SvgMapperJfxPanel(private val svg: SvgSvgElement,
-                        stylesheets: List<String>) : AbstractJfxPanel(stylesheets) {
+class SceneMapperJfxPanel(private val svg: SvgSvgElement,
+                          stylesheets: List<String>) : AbstractJfxPanel(stylesheets) {
 
     private lateinit var mySceneRoot: Parent
 

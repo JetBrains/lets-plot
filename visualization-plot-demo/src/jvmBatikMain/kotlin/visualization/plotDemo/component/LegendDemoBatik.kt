@@ -1,20 +1,20 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.base.swing.SvgMapperDemoFrame
+import jetbrains.datalore.visualization.base.swing.BatikMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.component.LegendDemo
 
-class LegendDemoAwt : LegendDemo() {
+class LegendDemoBatik : LegendDemo() {
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            LegendDemoAwt().show()
+            LegendDemoBatik().show()
         }
     }
 
     private fun show() {
         val demoModels = createModels()
         val svgRoots = createSvgRoots(demoModels)
-        SvgMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Legend component")
+        BatikMapperDemoFrame.showSvg(svgRoots, demoComponentSize, "Legend component")
     }
 }
