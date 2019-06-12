@@ -19,7 +19,6 @@ class BatikMapperComponent(
     init {
         isFocusable = true
 
-//        myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, createMessageCallback())
         myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
 
         myHelper.nodeContainer.addListener(object : SvgNodeContainerAdapter() {
@@ -80,12 +79,6 @@ class BatikMapperComponent(
     override fun getPreferredSize(): Dimension {
         return myHelper.preferredSize
     }
-
-//    protected abstract fun createMessageCallback(): BatikMessageCallback
-
-//    protected fun createDefaultMessageCallback(): BatikMessageCallback {
-//        return object : BatikMessageCallback {}
-//    }
 
     companion object {
         val DEF_MESSAGE_CALLBACK = object : BatikMessageCallback {
