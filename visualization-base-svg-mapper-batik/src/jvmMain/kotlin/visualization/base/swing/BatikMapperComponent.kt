@@ -1,8 +1,7 @@
-package jetbrains.datalore.visualization.base.svgMapper.batik
+package jetbrains.datalore.visualization.base.swing
 
 import jetbrains.datalore.visualization.base.svg.*
 import jetbrains.datalore.visualization.base.svg.event.SvgAttributeEvent
-import jetbrains.datalore.visualization.base.svgMapper.batik.SvgAwtHelper.MessageCallback
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -11,28 +10,32 @@ import java.awt.event.MouseEvent
 import java.awt.event.MouseMotionListener
 import javax.swing.JComponent
 
-abstract class SvgAwtComponent(svgRoot: SvgSvgElement) : JComponent() {
-    private val myHelper: SvgAwtComponentHelper
+class BatikMapperComponent(
+        svgRoot: SvgSvgElement,
+        messageCallback: BatikMessageCallback) : JComponent() {
+
+    private val myHelper: BatikMapperComponentHelper
 
     init {
         isFocusable = true
 
-        myHelper = SvgAwtComponentHelper.forUnattached(svgRoot, createMessageCallback())
+//        myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, createMessageCallback())
+        myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
 
         myHelper.nodeContainer.addListener(object : SvgNodeContainerAdapter() {
             override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {
                 if (element === svgRoot && (SvgConstants.HEIGHT.equals(event.attrSpec.name, ignoreCase = true) || SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true))) {
-                    this@SvgAwtComponent.invalidate()
+                    this@BatikMapperComponent.invalidate()
                 }
-                this@SvgAwtComponent.repaint()
+                this@BatikMapperComponent.repaint()
             }
 
             override fun onNodeAttached(node: SvgNode) {
-                this@SvgAwtComponent.repaint()
+                this@BatikMapperComponent.repaint()
             }
 
             override fun onNodeDetached(node: SvgNode) {
-                this@SvgAwtComponent.repaint()
+                this@BatikMapperComponent.repaint()
             }
         })
 
@@ -78,9 +81,24 @@ abstract class SvgAwtComponent(svgRoot: SvgSvgElement) : JComponent() {
         return myHelper.preferredSize
     }
 
-    protected abstract fun createMessageCallback(): MessageCallback
+//    protected abstract fun createMessageCallback(): BatikMessageCallback
 
-    protected fun createDefaultMessageCallback(): MessageCallback {
-        return object : MessageCallback {}
+//    protected fun createDefaultMessageCallback(): BatikMessageCallback {
+//        return object : BatikMessageCallback {}
+//    }
+
+    companion object {
+        val DEF_MESSAGE_CALLBACK = object : BatikMessageCallback {
+            override fun handleMessage(message: String) {
+                println(message)
+            }
+
+            override fun handleException(e: Exception) {
+                if (e is RuntimeException) {
+                    throw e
+                }
+                throw RuntimeException(e)
+            }
+        }
     }
 }

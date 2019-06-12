@@ -1,7 +1,9 @@
-package jetbrains.datalore.visualization.base.svgMapper.batik
+package jetbrains.datalore.visualization.base.swing
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
+import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.visualization.base.svgMapper.batik.SvgRootDocumentMapper
 import org.apache.batik.bridge.BridgeContext
 import org.apache.batik.bridge.GVTBuilder
 import org.apache.batik.bridge.UserAgent
@@ -9,20 +11,21 @@ import org.apache.batik.bridge.UserAgentAdapter
 import org.apache.batik.gvt.GraphicsNode
 import org.apache.batik.gvt.event.AWTEventDispatcher
 import org.apache.batik.gvt.event.EventDispatcher
-
 import java.awt.Dimension
 import java.awt.Graphics2D
 import java.awt.event.MouseEvent
 
 
-abstract class SvgAwtHelper protected constructor() {
+class BatikMapperComponentHelper private constructor(
+        val nodeContainer: SvgNodeContainer,
+        val messageCallback: BatikMessageCallback) {
+
     private var myGraphicsNode: GraphicsNode? = null
     private var myMapper: SvgRootDocumentMapper? = null
     private val myUserAgent: UserAgent
     private var myBridgeContext: BridgeContext? = null
     private var mySvgRoot: SvgSvgElement? = null
 
-    protected abstract val messageCallback: MessageCallback?
 
     val preferredSize: Dimension
         get() = Dimension(mySvgRoot!!.width().get()!!.toInt(), mySvgRoot!!.height().get()!!.toInt())
@@ -36,15 +39,11 @@ abstract class SvgAwtHelper protected constructor() {
             }
 
             override fun displayMessage(message: String) {
-                if (messageCallback != null) {
-                    messageCallback!!.handleMessage(message)
-                }
+                messageCallback.handleMessage(message)
             }
 
             override fun displayError(e: Exception) {
-                if (messageCallback != null) {
-                    messageCallback!!.handleException(e)
-                }
+                messageCallback.handleException(e)
             }
         }
     }
@@ -98,16 +97,15 @@ abstract class SvgAwtHelper protected constructor() {
         myUserAgent.eventDispatcher.dispatchEvent(e)
     }
 
-    interface MessageCallback {
-        fun handleMessage(message: String) {
-            println(message)
-        }
 
-        fun handleException(e: Exception) {
-            if (e is RuntimeException) {
-                throw e
-            }
-            throw RuntimeException(e)
+    companion object {
+        fun forUnattached(svgRoot: SvgSvgElement, messageCallback: BatikMessageCallback): BatikMapperComponentHelper {
+            checkArgument(!svgRoot.isAttached(), "SvgSvgElement must be unattached")
+            // element must be attached
+            val nodeContainer = SvgNodeContainer(svgRoot)
+            val helper = BatikMapperComponentHelper(nodeContainer, messageCallback)
+            helper.setSvg(svgRoot)
+            return helper
         }
     }
 }
