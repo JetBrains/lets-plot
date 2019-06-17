@@ -19,7 +19,7 @@ import jetbrains.datalore.visualization.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.visualization.plot.config.Option.Plot.TITLE
 import jetbrains.datalore.visualization.plot.config.Option.Plot.TITLE_TEXT
 
-abstract class PlotConfig protected constructor(opts: Map<String, Any>) : OptionsAccessor(opts, DEF_OPTIONS) {
+abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(opts, DEF_OPTIONS) {
 
     val layerConfigs: List<LayerConfig>
     val facets: PlotFacets
