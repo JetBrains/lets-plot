@@ -1,5 +1,5 @@
 plugins {
-    id 'kotlin-multiplatform' version '1.3.30'
+    id 'kotlin-multiplatform' version '1.3.40'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '0.5'
 }
 repositories {
@@ -11,6 +11,8 @@ kotlin {
     jvm("jvmBatik")
     jvm("jvmJfx")
     js()
+    macosX64("macos")
+
     sourceSets {
         commonMain {
             dependencies {
@@ -61,6 +63,9 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-js')
             }
+        }
+
+        macosMain {
         }
     }
 }

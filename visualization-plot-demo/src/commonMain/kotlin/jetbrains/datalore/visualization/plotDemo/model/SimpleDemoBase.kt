@@ -17,7 +17,7 @@ import jetbrains.datalore.visualization.plot.builder.theme.Theme
 
 abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAULT_INNER_SIZE) {
 
-    protected val demoComponentSize: DoubleVector
+    val demoComponentSize: DoubleVector
         get() = toComponentSize(demoInnerSize)
     protected open val padding: DoubleVector
         get() = DEFAULT_PADDING
