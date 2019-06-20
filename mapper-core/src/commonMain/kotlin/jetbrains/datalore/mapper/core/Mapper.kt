@@ -431,13 +431,18 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
     }
 
     private abstract inner class PartsIterator<ItemT> : Iterator<ItemT> {
-        internal var currIndex = toNext(0)
+        private var currIndexInitialized: Boolean = false
+        internal var currIndex: Int = -1
             private set
 
         protected abstract val nextItem: ItemT
         protected abstract fun toNext(index: Int): Int
 
         override fun hasNext(): Boolean {
+            if (!currIndexInitialized) {
+                currIndexInitialized = true
+                currIndex = toNext(0)
+            }
             return currIndex < myParts.size
         }
 

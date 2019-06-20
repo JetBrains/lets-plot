@@ -9,14 +9,11 @@ import jetbrains.datalore.base.observable.property.*
 import jetbrains.datalore.base.observable.transform.Transformer
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
-import mu.KotlinLogging
 
 /**
  * Utility class for synchronizer creation
  */
 object Synchronizers {
-    private val LOG = KotlinLogging.logger {}
-
     private val EMPTY: Synchronizer = object : Synchronizer {
         override fun attach(ctx: SynchronizerContext) {}
 
@@ -24,36 +21,40 @@ object Synchronizers {
     }
 
     fun <SourceT, TargetT> forSimpleRole(
-            mapper: Mapper<*, *>,
-            source: List<SourceT>,
-            target: MutableList<TargetT>,
-            factory: MapperFactory<SourceT, TargetT>): SimpleRoleSynchronizer<SourceT, TargetT> {
+        mapper: Mapper<*, *>,
+        source: List<SourceT>,
+        target: MutableList<TargetT>,
+        factory: MapperFactory<SourceT, TargetT>
+    ): SimpleRoleSynchronizer<SourceT, TargetT> {
         return SimpleRoleSynchronizer(mapper, source, target, factory)
     }
 
     fun <SourceT, MappedT, TargetItemT, TargetT : TargetItemT> forObservableRole(
-            mapper: Mapper<*, *>,
-            source: SourceT,
-            transformer: Transformer<SourceT, ObservableList<MappedT>>,
-            target: MutableList<TargetItemT>,
-            factory: MapperFactory<MappedT, TargetT>): RoleSynchronizer<MappedT, TargetT> {
+        mapper: Mapper<*, *>,
+        source: SourceT,
+        transformer: Transformer<SourceT, ObservableList<MappedT>>,
+        target: MutableList<TargetItemT>,
+        factory: MapperFactory<MappedT, TargetT>
+    ): RoleSynchronizer<MappedT, TargetT> {
         return TransformingObservableCollectionRoleSynchronizer(mapper, source, transformer, target, factory)
     }
 
     fun <SourceT, TargetItemT, TargetT : TargetItemT> forObservableRole(
-            mapper: Mapper<*, *>,
-            source: ObservableList<out SourceT>,
-            target: MutableList<TargetItemT>,
-            factory: MapperFactory<SourceT, TargetT>): RoleSynchronizer<SourceT, TargetT> {
+        mapper: Mapper<*, *>,
+        source: ObservableList<out SourceT>,
+        target: MutableList<TargetItemT>,
+        factory: MapperFactory<SourceT, TargetT>
+    ): RoleSynchronizer<SourceT, TargetT> {
         return forObservableRole(mapper, source, target, factory, null)
     }
 
     fun <SourceT, TargetItemT, TargetT : TargetItemT> forObservableRole(
-            mapper: Mapper<*, *>,
-            source: ObservableList<out SourceT>,
-            target: MutableList<TargetItemT>,
-            factory: MapperFactory<SourceT, TargetT>,
-            errorMapperFactory: MapperFactory<SourceT, TargetT>?): RoleSynchronizer<SourceT, TargetT> {
+        mapper: Mapper<*, *>,
+        source: ObservableList<out SourceT>,
+        target: MutableList<TargetItemT>,
+        factory: MapperFactory<SourceT, TargetT>,
+        errorMapperFactory: MapperFactory<SourceT, TargetT>?
+    ): RoleSynchronizer<SourceT, TargetT> {
         return ObservableCollectionRoleSynchronizer(mapper, source, target, factory, errorMapperFactory)
     }
 
@@ -84,15 +85,19 @@ object Synchronizers {
 //    }
 
     fun <SourceT, TargetT> forSingleRole(
-            mapper: Mapper<*, *>,
-            source: ReadableProperty<out SourceT?>,
-            target: WritableProperty<in TargetT?>,
-            factory: MapperFactory<SourceT, TargetT>): RoleSynchronizer<SourceT, TargetT> {
+        mapper: Mapper<*, *>,
+        source: ReadableProperty<out SourceT?>,
+        target: WritableProperty<in TargetT?>,
+        factory: MapperFactory<SourceT, TargetT>
+    ): RoleSynchronizer<SourceT, TargetT> {
 
         return SingleChildRoleSynchronizer(mapper, source, target, factory)
     }
 
-    fun <ValueT> forPropsOneWay(source: ReadableProperty<out ValueT>, target: WritableProperty<in ValueT?>): Synchronizer {
+    fun <ValueT> forPropsOneWay(
+        source: ReadableProperty<out ValueT>,
+        target: WritableProperty<in ValueT?>
+    ): Synchronizer {
         return object : RegistrationSynchronizer() {
             override fun doAttach(ctx: SynchronizerContext): Registration {
                 target.set(source.get())

@@ -6,12 +6,13 @@ plugins {
 kotlin {
     jvm()
     js()
+    
     sourceSets {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':base')
-                compileOnly "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
+                implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
             }
         }
         commonTest {

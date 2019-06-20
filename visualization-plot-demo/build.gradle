@@ -11,7 +11,6 @@ kotlin {
     jvm("jvmBatik")
     jvm("jvmJfx")
     js()
-    macosX64("macos")
 
     sourceSets {
         commonMain {
@@ -64,20 +63,12 @@ kotlin {
                 implementation kotlin('stdlib-js')
             }
         }
-
-        macosMain {
-        }
     }
 }
 
 idea {
     module {
         settings {
-//            packagePrefix["src/commonMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsTest/kotlin"] = "jetbrains.datalore"
-
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmBatikMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmJfxMain/kotlin"] = "jetbrains.datalore"

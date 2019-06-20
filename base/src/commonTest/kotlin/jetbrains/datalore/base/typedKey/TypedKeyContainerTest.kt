@@ -1,29 +1,25 @@
 package jetbrains.datalore.base.typedKey
 
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 
 
 class TypedKeyContainerTest {
-
     private fun <T> create(name: String): Key<T> {
         return BadKey(name)
     }
 
     @Test
     fun badKey() {
-        assertFailsWith<ClassCastException> {
-            val typedKeyContainer = TypedKeyHashMap()
-            val stringListTypedKey = create<List<String>>("stringList")
-            val integerListTypedKey = create<List<Int>>("integerList")
-            val stringList = listOf("a", "b")
-            typedKeyContainer.put(stringListTypedKey, stringList)
+        val typedKeyContainer = TypedKeyHashMap()
+        val stringListTypedKey = create<List<String>>("stringList")
+        val integerListTypedKey = create<List<Int>>("integerList")
+        val stringList = listOf("a", "b")
+        typedKeyContainer.put(stringListTypedKey, stringList)
 
-            val integerList = typedKeyContainer[integerListTypedKey]
-            @Suppress("UNUSED_VARIABLE")
-            val firstInteger = integerList[0]  // Class cast error: String -> Int
-//            assertFalse(firstInteger is Int)
-        }
+        val integerList = typedKeyContainer[integerListTypedKey]
+        val firstInteger: Any? = integerList[0]  // Class cast error if: String -> Int  (only when JVM)
+        assertFalse(firstInteger is Int)
     }
 
     private open class Key<T>(private val myName: String) : TypedKey<T> {

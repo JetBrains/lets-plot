@@ -1,18 +1,21 @@
 plugins {
     id 'kotlin-multiplatform' version '1.3.40'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '0.5'
+    id 'groovy'   // add 'test' task
 }
 
 kotlin {
     jvm()
     js()
+    
     sourceSets {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-                compileOnly kotlin('test-common')    // for Assertions.kt
+                implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
+                implementation kotlin('test-common')    // for Assertions.kt
             }
         }
         commonTest {
@@ -27,6 +30,8 @@ kotlin {
                 api "com.google.code.gson:gson:$gson_version"
                 compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
                 compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
+                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+
                 compileOnly kotlin('test')  // for Assertions.kt
             }
         }
@@ -43,6 +48,8 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
+                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+                
                 compileOnly kotlin('test-js')   // for Assertions.kt
             }
         }
@@ -57,10 +64,6 @@ kotlin {
 idea {
     module {
         settings {
-//            packagePrefix["src/commonMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsTest/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }
@@ -77,3 +80,26 @@ publishing {
         }
     }
 }
+
+// from here: https://mrhaki.blogspot.com/2014/10/gradle-goodness-show-standard-out-or.html
+// or here: https://stackoverflow.com/questions/43289503/where-does-the-output-of-system-out-println-go-in-gradle-test
+// but it doesn't seem to make any difference: println: jvmTest - OK, macosTest - nothing.
+//test {
+//    testLogging {
+//        // Make sure output from
+//        // standard out or error is shown
+//        // in Gradle output.
+////        showStandardStreams = true
+//
+//        // Or we use events method:
+//         events 'standard_out', 'standard_error'
+//
+//        // Or set property events:
+//        // events = ['standard_out', 'standard_error']
+//
+//        // Instead of string values we can
+//        // use enum values:
+//        // events org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT,
+//        //        org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
+//    }
+//}
