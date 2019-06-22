@@ -15,6 +15,7 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
+                // ToDo: get rid of this dependency
                 implementation kotlin('test-common')    // for Assertions.kt
             }
         }
@@ -32,6 +33,7 @@ kotlin {
                 compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
 
+                // ToDo: get rid of this dependency
                 compileOnly kotlin('test')  // for Assertions.kt
             }
         }
@@ -49,7 +51,8 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-js')
                 implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-                
+
+                // ToDo: get rid of this dependency
                 compileOnly kotlin('test-js')   // for Assertions.kt
             }
         }
