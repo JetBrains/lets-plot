@@ -39,7 +39,7 @@ abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAUL
         }
     }
 
-    protected fun createSvgRoots(demoGroups: List<GroupComponent>): List<SvgSvgElement> {
+    fun createSvgRoots(demoGroups: List<GroupComponent>): List<SvgSvgElement> {
         return demoGroups.map {
             it.moveTo(padding)
             val svgRoot = createSvgRoot()

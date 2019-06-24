@@ -4,6 +4,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.coord.Coords
@@ -19,10 +20,15 @@ import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
-    protected fun createModel(): GroupComponent {
+    fun createModel(): GroupComponent {
         val groupComponent = GroupComponent()
 
-        val background = SvgRectElement(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble(), CENTER_SQUARE_SIZE.x, CENTER_SQUARE_SIZE.y)
+        val background = SvgRectElement(
+            LEFT_MARGIN.toDouble(),
+            TOP_MARGIN.toDouble(),
+            CENTER_SQUARE_SIZE.x,
+            CENTER_SQUARE_SIZE.y
+        )
         background.fillColor().set(Color.LIGHT_GREEN)
         background.strokeWidth().set(0.0)
         groupComponent.add(background)
@@ -61,6 +67,11 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         return groupComponent
     }
 
+    fun createSvgRoots(): List<SvgSvgElement> {
+        val demoModels = listOf(createModel())
+        return createSvgRoots(demoModels)
+    }
+
     companion object {
         private val CENTER_SQUARE_SIZE = DoubleVector(500.0, 500.0)
         private const val LEFT_MARGIN = 100
@@ -69,10 +80,16 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         private const val BOTTOM_MARGIN = TOP_MARGIN
 
         private val DEMO_BOX_SIZE = DoubleVector(
-                CENTER_SQUARE_SIZE.x + LEFT_MARGIN.toDouble() + RIGHT_MARGIN.toDouble(),
-                CENTER_SQUARE_SIZE.y + TOP_MARGIN.toDouble() + BOTTOM_MARGIN.toDouble())
+            CENTER_SQUARE_SIZE.x + LEFT_MARGIN.toDouble() + RIGHT_MARGIN.toDouble(),
+            CENTER_SQUARE_SIZE.y + TOP_MARGIN.toDouble() + BOTTOM_MARGIN.toDouble()
+        )
 
-        private fun createAxis(axisLength: Double, scale: Scale<Double>, coord: CoordinateSystem, orientation: Orientation): AxisComponent {
+        private fun createAxis(
+            axisLength: Double,
+            scale: Scale<Double>,
+            coord: CoordinateSystem,
+            orientation: Orientation
+        ): AxisComponent {
             val axis = AxisComponent(axisLength, orientation)
             AxisUtil.setBreaks(axis, scale, coord, orientation.isHorizontal)
             axis.gridLineColor.set(Color.RED)
