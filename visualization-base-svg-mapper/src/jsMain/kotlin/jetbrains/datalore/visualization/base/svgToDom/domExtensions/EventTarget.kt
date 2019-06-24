@@ -1,4 +1,4 @@
-package visualization.base.svgToDom.domExtensions
+package jetbrains.datalore.visualization.base.svgToDom.domExtensions
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.function.Function

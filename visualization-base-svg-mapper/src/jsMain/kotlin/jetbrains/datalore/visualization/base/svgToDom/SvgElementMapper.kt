@@ -11,12 +11,12 @@ import jetbrains.datalore.visualization.base.svg.SvgElement
 import jetbrains.datalore.visualization.base.svg.SvgElementListener
 import jetbrains.datalore.visualization.base.svg.event.SvgAttributeEvent
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
+import jetbrains.datalore.visualization.base.svgToDom.domExtensions.on
 import jetbrains.datalore.visualization.base.svgToDom.domUtil.DomEventType
 import jetbrains.datalore.visualization.base.svgToDom.domUtil.DomEventUtil
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGElement
-import visualization.base.svgToDom.domExtensions.on
 
 internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGElement>(source: SourceT, target: TargetT, private val myPeer: SvgDomPeer) :
         SvgNodeMapper<SourceT, TargetT>(source, target, myPeer) {

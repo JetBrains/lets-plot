@@ -3,7 +3,9 @@ package jetbrains.datalore.visualization.base.svgToDom
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.mapper.core.Synchronizer
 import jetbrains.datalore.mapper.core.SynchronizerContext
-import jetbrains.datalore.visualization.base.svg.*
+import jetbrains.datalore.visualization.base.svg.SvgElement
+import jetbrains.datalore.visualization.base.svg.SvgNode
+import jetbrains.datalore.visualization.base.svg.SvgTextNode
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimNode
