@@ -1,10 +1,10 @@
-package jetbrains.datalore.visualization.base.svgToDom
+package jetbrains.datalore.visualization.base.svgMapper.dom
 
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.mapper.core.Synchronizers
 import jetbrains.datalore.visualization.base.svg.SvgNode
-import jetbrains.datalore.visualization.base.svgToDom.domUtil.DomUtil
+import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomUtil
 import org.w3c.dom.Node
 
 open class SvgNodeMapper<SourceT : SvgNode, TargetT : Node>(source: SourceT, target: TargetT, private val myPeer: SvgDomPeer)

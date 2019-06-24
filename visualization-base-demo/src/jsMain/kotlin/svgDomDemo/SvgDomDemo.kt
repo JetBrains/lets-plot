@@ -3,7 +3,7 @@ package svgDomDemo
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.base.svgToDom.SvgRootDocumentMapper
+import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
 import jetbrains.datalore.visualization.baseDemo.svgCanvasDemo.model.DemoModel
 import kotlin.browser.document
 

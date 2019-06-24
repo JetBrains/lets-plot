@@ -1,15 +1,11 @@
-package jetbrains.datalore.visualization.base.svgToDom
+package jetbrains.datalore.visualization.base.svgMapper.dom
 
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MapperFactory
 import jetbrains.datalore.visualization.base.svg.*
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimNode
-import jetbrains.datalore.visualization.base.svgToDom.domUtil.DomUtil
+import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomUtil
 import org.w3c.dom.Node
-import org.w3c.dom.Text
-import org.w3c.dom.svg.SVGElement
-import kotlin.browser.document
 
 class SvgNodeMapperFactory(private val myPeer: SvgDomPeer): MapperFactory<SvgNode, Node> {
 

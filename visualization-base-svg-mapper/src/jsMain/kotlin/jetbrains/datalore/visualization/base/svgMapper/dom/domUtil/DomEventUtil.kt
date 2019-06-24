@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgToDom.domUtil
+package jetbrains.datalore.visualization.base.svgMapper.dom.domUtil
 
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.KeyModifiers

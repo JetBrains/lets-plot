@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgToDom.domUtil
+package jetbrains.datalore.visualization.base.svgMapper.dom.domUtil
 
 import org.w3c.dom.DragEvent
 import org.w3c.dom.MessageEvent

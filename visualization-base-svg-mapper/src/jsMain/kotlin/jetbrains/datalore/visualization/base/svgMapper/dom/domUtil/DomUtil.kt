@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgToDom.domUtil
+package jetbrains.datalore.visualization.base.svgMapper.dom.domUtil
 
 import jetbrains.datalore.base.function.Supplier
 import jetbrains.datalore.base.function.Value
@@ -11,8 +11,8 @@ import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.svg.*
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimNode
-import jetbrains.datalore.visualization.base.svgToDom.css.CssDisplay
-import jetbrains.datalore.visualization.base.svgToDom.domExtensions.*
+import jetbrains.datalore.visualization.base.svgMapper.dom.css.CssDisplay
+import jetbrains.datalore.visualization.base.svgMapper.dom.domExtensions.*
 import org.w3c.dom.*
 import org.w3c.dom.svg.SVGElement
 import kotlin.browser.document

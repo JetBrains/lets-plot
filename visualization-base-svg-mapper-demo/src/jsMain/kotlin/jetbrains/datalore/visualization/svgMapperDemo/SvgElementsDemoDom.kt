@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.svgMapperDemo
 
 import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
-import jetbrains.datalore.visualization.base.svgToDom.SvgRootDocumentMapper
+import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
 import jetbrains.datalore.visualization.svgMapperDemo.model.DemoModel
 import kotlin.browser.document
 

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgToDom
+package jetbrains.datalore.visualization.base.svgMapper.dom
 
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.mapper.core.Synchronizers

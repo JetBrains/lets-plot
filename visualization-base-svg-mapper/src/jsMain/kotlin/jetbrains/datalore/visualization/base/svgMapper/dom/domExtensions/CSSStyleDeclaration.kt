@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgToDom.domExtensions
+package jetbrains.datalore.visualization.base.svgMapper.dom.domExtensions
 
 import org.w3c.dom.css.CSSStyleDeclaration
 

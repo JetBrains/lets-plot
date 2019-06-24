@@ -1,10 +1,10 @@
-package jetbrains.datalore.visualization.base.svgToDom
+package jetbrains.datalore.visualization.base.svgMapper.dom
 
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx
-import jetbrains.datalore.visualization.base.svgToDom.domExtensions.setAlphaAt
-import jetbrains.datalore.visualization.base.svgToDom.domExtensions.setBlueAt
-import jetbrains.datalore.visualization.base.svgToDom.domExtensions.setGreenAt
-import jetbrains.datalore.visualization.base.svgToDom.domExtensions.setRedAt
+import jetbrains.datalore.visualization.base.svgMapper.dom.domExtensions.setAlphaAt
+import jetbrains.datalore.visualization.base.svgMapper.dom.domExtensions.setBlueAt
+import jetbrains.datalore.visualization.base.svgMapper.dom.domExtensions.setGreenAt
+import jetbrains.datalore.visualization.base.svgMapper.dom.domExtensions.setRedAt
 import org.khronos.webgl.Uint8ClampedArray
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
@@ -15,6 +15,7 @@ class RGBEncoderDom: SvgImageElementEx.RGBEncoder {
 
     override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
         val canvas: HTMLCanvasElement? = document.createElement("canvas") as HTMLCanvasElement?
+        @Suppress("FoldInitializerAndIfToElvis")
         if (canvas == null) {
             throw IllegalStateException("Canvas is not supported.")
         }

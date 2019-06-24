@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgToDom.domUtil
+package jetbrains.datalore.visualization.base.svgMapper.dom.domUtil
 
 object DomMouseButtons {
     const val BUTTON_LEFT = 0

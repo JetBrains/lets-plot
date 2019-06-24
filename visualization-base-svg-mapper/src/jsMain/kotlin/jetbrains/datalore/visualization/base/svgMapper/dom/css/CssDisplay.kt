@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgToDom.css
+package jetbrains.datalore.visualization.base.svgMapper.dom.css
 
 
 object CssDisplay {

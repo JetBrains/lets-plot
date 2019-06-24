@@ -1,9 +1,9 @@
-package jetbrains.datalore.visualization.base.svgToDom.domExtensions
+package jetbrains.datalore.visualization.base.svgMapper.dom.domExtensions
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.svgToDom.domUtil.DomEventType
+import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomEventType
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import org.w3c.dom.events.EventTarget

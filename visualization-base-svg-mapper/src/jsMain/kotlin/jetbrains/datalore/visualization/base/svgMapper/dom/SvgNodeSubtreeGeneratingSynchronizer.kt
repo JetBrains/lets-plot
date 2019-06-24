@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgToDom
+package jetbrains.datalore.visualization.base.svgMapper.dom
 
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.mapper.core.Synchronizer
@@ -9,9 +9,9 @@ import jetbrains.datalore.visualization.base.svg.SvgTextNode
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimNode
-import jetbrains.datalore.visualization.base.svgToDom.domUtil.DomEventType
-import jetbrains.datalore.visualization.base.svgToDom.domUtil.DomEventUtil
-import jetbrains.datalore.visualization.base.svgToDom.domUtil.DomUtil
+import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomEventType
+import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomEventUtil
+import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomUtil
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.Text

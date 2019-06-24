@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.svgToDom
+package jetbrains.datalore.visualization.base.svgMapper.dom
 
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -11,9 +11,9 @@ import jetbrains.datalore.visualization.base.svg.SvgElement
 import jetbrains.datalore.visualization.base.svg.SvgElementListener
 import jetbrains.datalore.visualization.base.svg.event.SvgAttributeEvent
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
-import jetbrains.datalore.visualization.base.svgToDom.domExtensions.on
-import jetbrains.datalore.visualization.base.svgToDom.domUtil.DomEventType
-import jetbrains.datalore.visualization.base.svgToDom.domUtil.DomEventUtil
+import jetbrains.datalore.visualization.base.svgMapper.dom.domExtensions.on
+import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomEventType
+import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomEventUtil
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGElement
