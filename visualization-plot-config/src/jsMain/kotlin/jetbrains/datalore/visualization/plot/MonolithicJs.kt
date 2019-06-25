@@ -4,18 +4,17 @@ import jetbrains.datalore.visualization.plot.builder.Plot
 import jetbrains.datalore.visualization.plot.config.PlotConfigClientSide
 import jetbrains.datalore.visualization.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.visualization.plot.config.PlotConfigUtil
-import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide
 
 //
 // in JVM because of math3 dependency in PlotConfigServerSide
 //
 
 
-object Monolithic {
+object MonolithicJs {
     fun createPlot(plotSpec: MutableMap<String, Any>, computationMessagesHandler: ((List<String>) -> Unit)?): Plot {
         @Suppress("NAME_SHADOWING")
         var plotSpec = plotSpec
-        plotSpec = transformPlotSpec(plotSpec)
+        plotSpec = PlotConfigClientSide.processTransform(plotSpec)
         if (computationMessagesHandler != null) {
             val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
             if (!computationMessages.isEmpty()) {
@@ -25,12 +24,5 @@ object Monolithic {
 
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
         return assembler.createPlot()
-    }
-
-    private fun transformPlotSpec(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
-        @Suppress("NAME_SHADOWING")
-        var plotSpec = plotSpec
-        plotSpec = PlotConfigServerSide.processTransform(plotSpec)
-        return PlotConfigClientSide.processTransform(plotSpec)
     }
 }

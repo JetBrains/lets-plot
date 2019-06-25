@@ -10,6 +10,7 @@ kotlin {
     jvm()
     jvm("jvmBatik")
     jvm("jvmJfx")
+    jvm("jvmBrowser")
     js()
 
     sourceSets {
@@ -21,6 +22,7 @@ kotlin {
                 implementation project(':base')
                 implementation project(':mapper-core')
                 implementation project(':visualization-base-svg')
+                implementation project(':visualization-base-svg-mapper')
                 implementation project(':visualization-plot-base')
                 implementation project(':visualization-plot-common')
                 implementation project(':visualization-plot-builder')
@@ -32,29 +34,32 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
-                implementation "org.apache.commons:commons-math3:$math3_version"
             }
         }
         jvmMain {
             dependsOn allJvm
-            dependencies {
-                implementation project(':visualization-base-svg-mapper')
-            }
         }
         jvmBatikMain {
             dependsOn allJvm
             dependsOn jvmMain
             dependencies {
+                implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation project(':visualization-base-svg-mapper-batik')
             }
         }
         jvmJfxMain {
             dependsOn allJvm
             dependsOn jvmMain
-
             dependencies {
+                implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation project(':visualization-base-canvas')
                 implementation project(':visualization-base-svg-mapper-jfx')
+            }
+        }
+        jvmBrowserMain {
+            dependsOn allJvm
+            dependencies {
+                implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinx_html_version}"
             }
         }
 
@@ -72,7 +77,76 @@ idea {
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmBatikMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmJfxMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmBrowserMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }
     }
 }
+
+
+
+// ---------------------------------
+// Trick to copy kotlin.js etc. to `output`
+configurations {
+    libraryDependenciesJs
+    projectDependenciesJs
+}
+
+dependencies {
+    libraryDependenciesJs "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    libraryDependenciesJs "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+    // for Assertions.kt ToDo: get rid of kotlin-test here
+    libraryDependenciesJs "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+    projectDependenciesJs project(':base')
+    projectDependenciesJs project(':mapper-core')
+    projectDependenciesJs project(':visualization-base-svg')
+    projectDependenciesJs project(':visualization-base-svg-mapper')
+    projectDependenciesJs project(':visualization-base-canvas')
+
+    projectDependenciesJs project(':visualization-plot-common')
+    projectDependenciesJs project(':visualization-plot-base')
+    projectDependenciesJs project(':visualization-plot-builder')
+    projectDependenciesJs project(':visualization-plot-config')
+}
+
+// ---------------------------------
+def OUTPUT_DIR_JS = "${project.buildDir}/demoWeb"
+def OUTPUT_DIR_JS_LIB = "${OUTPUT_DIR_JS}/lib"
+
+task copyLibraryDependenciesJs(type: Copy) {
+    configurations.libraryDependenciesJs.each {
+        println "library dependency: ${it.absolutePath}"
+        from zipTree(it.absolutePath).matching { include '*.js' }
+    }
+    into OUTPUT_DIR_JS_LIB
+}
+
+task copyProjectDependenciesJs(type: Copy) {
+    configurations.projectDependenciesJs.each {
+        def jarJs = it.absolutePath.replace("-metadata-", "-js-")
+        println "project dependency: $jarJs"
+        from zipTree(jarJs).matching { include '*.js' }
+    }
+    into OUTPUT_DIR_JS_LIB
+}
+
+task copyMainJs(type: Copy) {
+    from "${project.buildDir}/classes/kotlin/js/main"
+    include "*.js"
+    into OUTPUT_DIR_JS
+}
+
+task copyResourcesJs(type: Copy) {
+    from "${project.buildDir}/processedResources/js/main"
+    into OUTPUT_DIR_JS
+}
+
+build.dependsOn += copyLibraryDependenciesJs
+build.dependsOn += copyProjectDependenciesJs
+build.dependsOn += copyMainJs
+build.dependsOn += copyResourcesJs
+
+//println "======================================="
+//build.dependsOn.forEach {
+//    println it
+//}
