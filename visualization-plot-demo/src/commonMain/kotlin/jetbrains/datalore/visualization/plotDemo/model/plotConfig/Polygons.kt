@@ -4,6 +4,7 @@ import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.SharedPieces
 
+@kotlinx.serialization.ImplicitReflectionSerializer
 open class Polygons : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(

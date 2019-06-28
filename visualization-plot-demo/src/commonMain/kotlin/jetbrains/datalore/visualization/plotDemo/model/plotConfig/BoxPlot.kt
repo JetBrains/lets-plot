@@ -10,6 +10,7 @@ import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil.zip
  * See 'Plotting distributions'
  * http://www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/
  */
+@kotlinx.serialization.ImplicitReflectionSerializer
 open class BoxPlot : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(

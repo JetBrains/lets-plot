@@ -2,7 +2,9 @@ package jetbrains.datalore.visualization.plotDemo.plotConfig
 
 import jetbrains.datalore.visualization.base.swing.CanvasRendererDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.LegendShowByGeom
+import kotlinx.serialization.ImplicitReflectionSerializer
 
+@ImplicitReflectionSerializer
 object LegendShowByGeomCanvasRenderer {
     @JvmStatic
     fun main(args: Array<String>) {

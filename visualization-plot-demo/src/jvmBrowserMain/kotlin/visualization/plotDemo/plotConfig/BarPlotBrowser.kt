@@ -15,6 +15,7 @@ private val LIBS_JS = listOf(
     "kotlin.js",
     "kotlin-logging.js",
     "kotlin-test.js",
+    "kotlinx-serialization-kotlinx-serialization-runtime.js",
 
     "base.js",
     "mapper-core.js",

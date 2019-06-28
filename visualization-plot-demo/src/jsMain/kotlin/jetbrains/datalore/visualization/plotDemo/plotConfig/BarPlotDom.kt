@@ -11,28 +11,20 @@ import org.w3c.dom.svg.SVGSVGElement
 import kotlin.browser.document
 
 
-//fun main() {
-//    val svgRoot = DemoModel.createModel()
-//    val mapper = SvgRootDocumentMapper(svgRoot)
-//    SvgNodeContainer(svgRoot)
-//    mapper.attachRoot()
-//    document.getElementById("root")!!.appendChild(mapper.target)
-//}
-
+/**
+ *  This is to become `visualization-plot-demo.js`
+ *  Run the demo using `BarPlotBrowser.main()`
+ */
+@kotlinx.serialization.ImplicitReflectionSerializer
 fun main() {
     with(BarPlot()) {
         @Suppress("UNCHECKED_CAST")
         val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-//        PlotConfigDemoUtil.show("Bar plot", plotSpecList, BatikMapperDemoFactory(), demoComponentSize)
 
         val svg = mapPlotToSvg(plotSpecList[0], demoComponentSize)
         document.getElementById("root")!!.appendChild(svg)
     }
 }
-
-//private fun createPlotElement(plotSpec: MutableMap<String, Any>, plotSize: DoubleVector) : HTMLDivElement {
-//
-//}
 
 private fun mapPlotToSvg(plotSpec: MutableMap<String, Any>, plotSize: DoubleVector): SVGSVGElement {
     val plot = MonolithicJs.createPlot(plotSpec, null)

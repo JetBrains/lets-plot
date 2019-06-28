@@ -2,7 +2,9 @@ package jetbrains.datalore.visualization.plotDemo.plotAssembler
 
 import jetbrains.datalore.visualization.base.swing.BatikMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.plotAssembler.RasterImagePlotDemo
+import kotlinx.serialization.ImplicitReflectionSerializer
 
+@ImplicitReflectionSerializer
 class RasterImagePlotDemoBatik : RasterImagePlotDemo() {
 
     private fun show() {

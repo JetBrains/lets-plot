@@ -2,7 +2,9 @@ package jetbrains.datalore.visualization.plotDemo.plotConfig
 
 import jetbrains.datalore.visualization.base.swing.CanvasRendererDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.ABLine
+import kotlinx.serialization.ImplicitReflectionSerializer
 
+@ImplicitReflectionSerializer
 object ABLineCanvasRenderer {
     @JvmStatic
     fun main(args: Array<String>) {
