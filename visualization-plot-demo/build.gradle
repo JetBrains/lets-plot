@@ -11,7 +11,21 @@ kotlin {
     jvm("jvmBatik")
     jvm("jvmJfx")
     jvm("jvmBrowser")
-    js()
+    js() {
+//        compileKotlinJs {
+//            kotlinOptions {
+////                    main = "call"
+////                    metaInfo = true
+////                moduleKind = "commonjs"
+//                moduleKind = "plain"
+////                moduleKind = "umd"
+////                moduleKind = "amd"
+//
+////                    sourceMap = true
+////                noStdlib = true
+//            }
+//        }
+    }
 
     sourceSets {
         commonMain {
