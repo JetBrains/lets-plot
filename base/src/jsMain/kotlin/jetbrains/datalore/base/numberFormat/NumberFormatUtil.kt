@@ -3,6 +3,8 @@ package jetbrains.datalore.base.numberFormat
 actual object NumberFormatUtil {
 
     actual fun formatNumber(num: Number, pattern: String): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // ToDo: pattern format
+        // ToDo: This code will not pass NumberFormat tests
+        return num.toString()
     }
 }

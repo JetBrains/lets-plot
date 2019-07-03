@@ -8,7 +8,12 @@ plugins {
 
 kotlin {
     jvm()
-    js()
+    js() {
+        compileKotlinJs {
+            kotlinOptions.sourceMap = true
+            kotlinOptions.sourceMapEmbedSources = "always"
+        }
+    }
 
     sourceSets {
         commonMain {

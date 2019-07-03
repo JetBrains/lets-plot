@@ -28,6 +28,21 @@ subprojects {
 //                println "doFirst : $name in $project.name jvmTarget=$kotlinOptions.jvmTarget"
 //            }
         }
+        if (name == 'compileKotlinJs') {
+//            doFirst {
+//                println "doFirst : $name in $project.name jvmTarget=$kotlinOptions.jvmTarget"
+//            }
+//            doFirst {
+//                println "doFirst : $name in $project.name"
+//                println "kotlinOptions.sourceMap: ${kotlinOptions.sourceMap}"
+//                println "kotlinOptions.sourceMapEmbedSources: ${kotlinOptions.sourceMapEmbedSources}"
+//            }
+//            doLast {
+//                println "doLast : $name in $project.name"
+//                println "kotlinOptions.sourceMap: ${kotlinOptions.sourceMap}"
+//                println "kotlinOptions.sourceMapEmbedSources: ${kotlinOptions.sourceMapEmbedSources}"
+//            }
+        }
     }
 }
 

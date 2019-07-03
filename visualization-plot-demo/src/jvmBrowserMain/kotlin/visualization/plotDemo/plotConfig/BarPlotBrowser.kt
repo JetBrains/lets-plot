@@ -1,7 +1,10 @@
 package jetbrains.datalore.visualization.plotDemo.plotConfig
 
+import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide.Companion.processTransformWithoutEncoding
+import jetbrains.datalore.visualization.plotDemo.model.plotConfig.BarPlot
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
+import kotlinx.serialization.ImplicitReflectionSerializer
 import java.awt.Desktop
 import java.io.File
 import java.io.FileWriter
@@ -30,6 +33,7 @@ private val LIBS_JS = listOf(
 )
 
 
+@ImplicitReflectionSerializer
 fun main() {
     val projectRoot = getProjectRoot()
     println("Project root: $projectRoot")
@@ -58,7 +62,22 @@ private fun getProjectRoot(): String {
     return projectRoot
 }
 
+@ImplicitReflectionSerializer
 private fun genIndexHtml(): String {
+    val plotSpecListJs = StringBuilder("[\n")
+    with(BarPlot()) {
+        @Suppress("UNCHECKED_CAST")
+        val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
+        var first = true
+        for (spec in plotSpecList) {
+            @Suppress("NAME_SHADOWING")
+            val spec = processTransformWithoutEncoding(spec)
+            if (!first) plotSpecListJs.append(',') else first = false
+            plotSpecListJs.append(toJsObjectInitializer(spec))
+        }
+    }
+    plotSpecListJs.append("\n]")
+
     val writer = StringWriter().appendHTML().html {
         lang = "en"
         head {
@@ -78,10 +97,66 @@ private fun genIndexHtml(): String {
                 type = "text/javascript"
                 src = MAIN_JS
             }
+
+            script {
+                type = "text/javascript"
+                unsafe {
+                    +"""
+                        |var plotSpecList=$plotSpecListJs;
+                        |plotSpecList.forEach(function (spec, index) {
+                        |   var parentElement = document.createElement('div');
+                        |   document.getElementById("root").appendChild(parentElement)
+                        |   window['visualization-plot-demo'].jetbrains.datalore.visualization.plotDemo.plotConfig.buildPlotSvg(spec, parentElement);
+                        |});
+                    """.trimMargin()
+
+                }
+            }
         }
     }
 
     return writer.toString()
+}
+
+private fun toJsObjectInitializer(spec: Map<String, Any>): String {
+    val buffer = StringBuilder()
+
+    var handleValue: (v: Any?) -> Unit = {}
+    val handleList = { list: List<*> ->
+        buffer.append('[')
+        var first = true
+        for (v in list) {
+            if (!first) buffer.append(',') else first = false
+            handleValue(v)
+        }
+        buffer.append(']')
+    }
+    val handleMap = { map: Map<*, *> ->
+        buffer.append('{')
+        var first = true
+        for ((k, v) in map) {
+            if (!first) buffer.append(',') else first = false
+            buffer.append('\n')
+            buffer.append('\'').append(k).append('\'').append(':')
+            handleValue(v)
+        }
+
+        buffer.append("\n}")
+    }
+    handleValue = { v: Any? ->
+        when (v) {
+            is String -> buffer.append('"').append(v).append('"')
+            is Boolean,
+            is Number -> buffer.append(v)
+            null -> buffer.append("null")
+            is List<*> -> handleList(v)
+            is Map<*, *> -> handleMap(v)
+            else -> throw IllegalArgumentException("Can't serialize object $v")
+        }
+    }
+
+    handleMap(spec)
+    return buffer.toString()
 }
 
 

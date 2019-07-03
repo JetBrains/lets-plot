@@ -5,11 +5,8 @@ import jetbrains.datalore.visualization.plot.config.PlotConfigClientSide
 import jetbrains.datalore.visualization.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.visualization.plot.config.PlotConfigUtil
 
-//
-// in JVM because of math3 dependency in PlotConfigServerSide
-//
 
-
+// ToDo: need better name
 object MonolithicJs {
     fun createPlot(plotSpec: MutableMap<String, Any>, computationMessagesHandler: ((List<String>) -> Unit)?): Plot {
         @Suppress("NAME_SHADOWING")

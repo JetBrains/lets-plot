@@ -271,8 +271,9 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
 
         /**
          * For tests
+         * Also used in setup where specs are not serialized, i.e. when js object with specs is generated and directly inserted into HTML
          */
-        internal fun processTransformWithoutEncoding(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
+        fun processTransformWithoutEncoding(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
             return processTransform(plotSpec, false)
         }
 

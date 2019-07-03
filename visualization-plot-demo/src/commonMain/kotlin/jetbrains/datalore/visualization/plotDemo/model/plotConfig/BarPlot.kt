@@ -7,8 +7,8 @@ import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 open class BarPlot : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-                basic()
-//                fancy()
+            basic(),
+            fancy()
         )
     }
 

@@ -12,19 +12,10 @@ kotlin {
     jvm("jvmJfx")
     jvm("jvmBrowser")
     js() {
-//        compileKotlinJs {
-//            kotlinOptions {
-////                    main = "call"
-////                    metaInfo = true
-////                moduleKind = "commonjs"
-//                moduleKind = "plain"
-////                moduleKind = "umd"
-////                moduleKind = "amd"
-//
-////                    sourceMap = true
-////                noStdlib = true
-//            }
-//        }
+        compileKotlinJs {
+            kotlinOptions.sourceMap = true
+            kotlinOptions.sourceMapEmbedSources = "always"
+        }
     }
 
     sourceSets {
