@@ -12,6 +12,7 @@ pluginManagement {
 }
 
 include 'base',
+        'gis',
         'mapper-core',
         'visualization-base-svg',
         'visualization-base-svg-mapper',
