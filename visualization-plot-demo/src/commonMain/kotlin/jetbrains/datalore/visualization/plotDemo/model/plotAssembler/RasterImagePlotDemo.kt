@@ -19,7 +19,6 @@ import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.visualization.plotDemo.model.SharedPieces
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
-@kotlinx.serialization.ImplicitReflectionSerializer
 open class RasterImagePlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO

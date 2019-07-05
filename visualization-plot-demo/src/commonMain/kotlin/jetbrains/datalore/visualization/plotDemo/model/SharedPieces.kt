@@ -2,7 +2,6 @@ package jetbrains.datalore.visualization.plotDemo.model
 
 import jetbrains.datalore.base.json.JsonSupport
 
-@kotlinx.serialization.ImplicitReflectionSerializer
 object SharedPieces {
 
     fun rasterDataSimple(): Map<String, List<*>> {

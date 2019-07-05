@@ -5,7 +5,6 @@ import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide.
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.BarPlot
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
-import kotlinx.serialization.ImplicitReflectionSerializer
 import java.awt.Desktop
 import java.io.File
 import java.io.FileWriter
@@ -19,7 +18,6 @@ private val LIBS_JS = listOf(
     "kotlin.js",
     "kotlin-logging.js",
     "kotlin-test.js",
-    "kotlinx-serialization-kotlinx-serialization-runtime.js",
 
     "base.js",
     "mapper-core.js",
@@ -34,7 +32,6 @@ private val LIBS_JS = listOf(
 )
 
 
-@ImplicitReflectionSerializer
 fun main() {
     val projectRoot = getProjectRoot()
     println("Project root: $projectRoot")
@@ -63,7 +60,6 @@ private fun getProjectRoot(): String {
     return projectRoot
 }
 
-@ImplicitReflectionSerializer
 private fun genIndexHtml(): String {
     val plotSpecListJs = StringBuilder("[\n")
     with(BarPlot()) {

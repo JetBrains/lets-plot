@@ -4,7 +4,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
-@kotlinx.serialization.ImplicitReflectionSerializer
 open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(

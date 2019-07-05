@@ -1,7 +1,5 @@
 plugins {
     id 'kotlin-multiplatform'
-    // This is not working: https://github.com/Kotlin/kotlinx.serialization/issues/499
-    id 'kotlinx-serialization'
     id 'org.jetbrains.gradle.plugin.idea-ext'
     id 'groovy'   // add 'test' task
 }
@@ -21,7 +19,6 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
-//                api "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerialization_version"
 
                 // ToDo: get rid of this dependency
                 implementation kotlin('test-common')    // for Assertions.kt
@@ -59,7 +56,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-js')
                 implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-                api "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerialization_version"
 
                 // ToDo: get rid of this dependency
                 compileOnly kotlin('test-js')   // for Assertions.kt

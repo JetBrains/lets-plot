@@ -9,7 +9,6 @@ import kotlin.math.abs
  * See 'Plotting distributions'
  * http://www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/
  */
-@kotlinx.serialization.ImplicitReflectionSerializer
 open class Histogram : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(

@@ -2,10 +2,8 @@ package jetbrains.datalore.visualization.plotDemo.plotConfig
 
 import jetbrains.datalore.visualization.base.swing.BatikMapperDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.BarPlot
-import kotlinx.serialization.ImplicitReflectionSerializer
 
 object BarPlotBatik {
-    @ImplicitReflectionSerializer
     @JvmStatic
     fun main(args: Array<String>) {
         with(BarPlot()) {

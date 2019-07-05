@@ -6,7 +6,6 @@ import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 import kotlin.math.round
 import kotlin.math.sign
 
-@kotlinx.serialization.ImplicitReflectionSerializer
 open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
     fun plotSpecList(): List<Map<String, Any>> {

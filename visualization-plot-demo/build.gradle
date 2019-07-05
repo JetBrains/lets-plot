@@ -23,7 +23,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-                compileOnly "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerialization_version"
 
                 implementation project(':base')
                 implementation project(':mapper-core')
@@ -40,7 +39,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
-                compileOnly "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerialization_version"
             }
         }
         jvmMain {
@@ -101,7 +99,6 @@ configurations {
 dependencies {
     libraryDependenciesJs "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
     libraryDependenciesJs "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-    libraryDependenciesJs "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerialization_version"
     // for Assertions.kt ToDo: get rid of kotlin-test here
     libraryDependenciesJs "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
     projectDependenciesJs project(':base')

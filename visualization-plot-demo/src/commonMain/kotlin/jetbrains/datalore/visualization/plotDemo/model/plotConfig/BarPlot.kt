@@ -3,7 +3,6 @@ package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
-@kotlinx.serialization.ImplicitReflectionSerializer
 open class BarPlot : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
