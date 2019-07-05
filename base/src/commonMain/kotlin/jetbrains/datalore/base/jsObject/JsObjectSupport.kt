@@ -35,6 +35,7 @@ fun mapToJsObjectInitializer(map: Map<String, *>): String {
             is Boolean,
             is Number -> buffer.append(v)
             null -> buffer.append("null")
+            is Array<*> -> handleList(v.asList())
             is List<*> -> handleList(v)
             is Map<*, *> -> handleMap(v)
             else -> throw IllegalArgumentException("Can't serialize object $v")
