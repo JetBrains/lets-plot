@@ -26,8 +26,6 @@ fun dynamicObjectToMap(o: dynamic): MutableMap<String, Any> {
             try {
                 map[key] = handleAnyNotNull(value)
             } catch (e: RuntimeException) {
-                // ToDo: logger
-                js("console.error(e, e.stack);")
                 LOG.error(e) {}
             }
         }
