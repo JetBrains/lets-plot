@@ -2,6 +2,7 @@ plugins {
     id 'kotlin-multiplatform'
     id 'org.jetbrains.gradle.plugin.idea-ext'
     id 'groovy'   // add 'test' task
+    id 'com.moowork.node' version '1.3.1' // executing node scripts (adds support for Yarn. Also - NPM, Grunt and Gulp)
 }
 
 kotlin {
@@ -111,3 +112,40 @@ publishing {
 //        //        org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
 //    }
 //}
+
+
+// JS tests config (https://medium.com/@gz_k/effective-tool-chain-for-kotlin-js-testing-b243449e8a16)
+
+
+//apply plugin: 'com.moowork.node'
+//apply plugin: 'com.moowork.node'  // gradle node plugin (yarn support): https://github.com/srs/gradle-node-plugin
+
+//task populateNodeModules(type: Copy, dependsOn: tasks.compileTestKotlin2Js) {
+/*
+task populateNodeModules(type: Copy, dependsOn: compileKotlinJs) {
+    from compileKotlinJs.destinationDir
+    configurations.testCompile.each {
+        from zipTree(it.absolutePath).matching { include '*.js' }
+    }
+
+    println ">>> populateNodeModules from ${compileKotlinJs.destinationDir}"
+    println ">>> populateNodeModules into ${buildDir}/node_modules"
+    into "${buildDir}/node_modules"
+}
+
+node {
+    download = true
+}
+
+task yarnInstall(type: YarnTask) {
+    args = ['install']
+}
+
+task runKarma(type: YarnTask, dependsOn: [populateNodeModules, yarnInstall]) {
+    args = ['test']
+}
+
+test.dependsOn runKarma
+*/
+
+
