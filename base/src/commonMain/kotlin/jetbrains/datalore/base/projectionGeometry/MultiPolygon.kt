@@ -3,7 +3,7 @@ package jetbrains.datalore.base.projectionGeometry
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.geometry.DoubleRectangle
 
-class Multipolygon(polygons: List<Polygon>) : AbstractGeometryList<Polygon>(polygons) {
+class MultiPolygon(polygons: List<Polygon>) : AbstractGeometryList<Polygon>(polygons) {
 
     private var myLimits: List<DoubleRectangle>? = null
 
@@ -20,8 +20,8 @@ class Multipolygon(polygons: List<Polygon>) : AbstractGeometryList<Polygon>(poly
             return Lists.transform(polygons) { polygon -> polygon.limit }
         }
 
-        fun create(vararg polygons: Polygon): Multipolygon {
-            return Multipolygon(arrayListOf(*polygons))
+        fun create(vararg polygons: Polygon): MultiPolygon {
+            return MultiPolygon(arrayListOf(*polygons))
         }
     }
 }
