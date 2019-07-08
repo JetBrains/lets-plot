@@ -12,7 +12,7 @@ import jetbrains.gis.geoprotocol.LevelOfDetails.Companion.fromResolution
 
 object GeoRequestBuilder {
 
-    private val PARENT_KIND_ID = true
+    private const val PARENT_KIND_ID = true
 
     abstract class ReverseGeocodingRequestBuilder : RequestBuilderBase<ReverseGeocodingRequestBuilder>() {
         abstract var myCoordinates: List<DoubleVector>
@@ -148,12 +148,11 @@ object GeoRequestBuilder {
     }
 
     abstract class RequestBuilderBase<T : RequestBuilderBase<*>> {
-        private var mySelf: T? = null
+        private lateinit var mySelf: T
 
         val features: MutableList<FeatureOption> = ArrayList<FeatureOption>()
-        private var myTiles: Map<String, List<QuadKey>>? = null
-        internal var levelOfDetails: LevelOfDetails? = null
-            private set
+        private var myTiles: MutableMap<String, List<QuadKey>>? = null
+        var levelOfDetails: LevelOfDetails? = null
 
         abstract val mode: GeocodingMode
 
@@ -164,7 +163,7 @@ object GeoRequestBuilder {
         abstract fun build(): GeoRequest
 
         fun setResolution(resolution: Int?): T? {
-            this.levelOfDetails = resolution.map(Function<Int, LevelOfDetails> { fromResolution() })
+            this.levelOfDetails = resolution?.let { fromResolution(it) }
             return mySelf
         }
 
@@ -173,12 +172,12 @@ object GeoRequestBuilder {
         }
 
         fun setTiles(keys: Map<String, List<QuadKey>>?): T? {
-            this.myTiles = keys
+            this.myTiles = keys?.let { HashMap(it) }
             return mySelf
         }
 
         fun addTiles(id: String, keys: List<QuadKey>): T? {
-            if (!myTiles.isPresent()) {
+            if (myTiles == null) {
                 myTiles = hashMapOf<String, List<QuadKey>>()
             }
             this.myTiles!!.set(id, keys)
@@ -199,14 +198,14 @@ object GeoRequestBuilder {
 
 
     internal open class MyGeoRequestBase(
-        val features: List<FeatureOption>,
-        val tiles: Optional<Map<String, List<QuadKey>>>,
-        val levelOfDetails: Optional<LevelOfDetails>
+        override val features: List<FeatureOption>,
+        override val tiles: Map<String, List<QuadKey>>?,
+        override val levelOfDetails: LevelOfDetails?
     ) : GeoRequest
 
     class MapRegionBuilder {
-        private var myValues: List<String>? = null
-        private var myKind: Boolean? = null
+        private var myValues: List<String> = emptyList()
+        private var myKind: Boolean = PARENT_KIND_ID
 
         fun setParentValues(values: List<String>): MapRegionBuilder {
             myValues = values
@@ -222,7 +221,7 @@ object GeoRequestBuilder {
             return if (myKind == PARENT_KIND_ID)
                 MapRegion.withIdList(myValues)
             else
-                MapRegion.withName(myValues!![0])
+                MapRegion.withName(myValues[0])
         }
     }
 
@@ -237,7 +236,7 @@ object GeoRequestBuilder {
         }
 
         fun setQueryNames(vararg names: String): RegionQueryBuilder {
-            return setQueryNames(asList<String>(*names))
+            return setQueryNames(listOf(*names))
         }
 
         fun setParent(parent: MapRegion?): RegionQueryBuilder {
