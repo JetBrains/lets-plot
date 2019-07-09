@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.plotConfig
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.jsObject.mapToJsObjectInitializer
 import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide.Companion.processTransformWithoutEncoding
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.BarPlot
@@ -13,6 +14,8 @@ import java.io.StringWriter
 private const val DEMO_PROJECT = "visualization-plot-demo"
 private const val OUT_DIR_JS = "$DEMO_PROJECT/build/demoWeb"
 
+private const val MODULE_NAME_JS = DEMO_PROJECT
+private const val PLOT_FUN_JS = "jetbrains.datalore.visualization.plotDemo.plotConfig.buildPlotSvg"
 private const val MAIN_JS = "$DEMO_PROJECT.js"
 private val LIBS_JS = listOf(
     "kotlin.js",
@@ -62,7 +65,9 @@ private fun getProjectRoot(): String {
 
 private fun genIndexHtml(): String {
     val plotSpecListJs = StringBuilder("[\n")
+    val plotSize: DoubleVector
     with(BarPlot()) {
+        plotSize = demoComponentSize
         @Suppress("UNCHECKED_CAST")
         val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
         var first = true
@@ -102,8 +107,8 @@ private fun genIndexHtml(): String {
                         |var plotSpecList=$plotSpecListJs;
                         |plotSpecList.forEach(function (spec, index) {
                         |   var parentElement = document.createElement('div');
-                        |   document.getElementById("root").appendChild(parentElement)
-                        |   window['visualization-plot-demo'].jetbrains.datalore.visualization.plotDemo.plotConfig.buildPlotSvg(spec, parentElement);
+                        |   document.getElementById("root").appendChild(parentElement);
+                        |   window['$MODULE_NAME_JS'].$PLOT_FUN_JS(spec, parentElement, ${plotSize.x}, ${plotSize.y});
                         |});
                     """.trimMargin()
 
