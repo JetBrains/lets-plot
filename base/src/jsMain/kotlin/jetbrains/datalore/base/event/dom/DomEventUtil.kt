@@ -44,7 +44,8 @@ object DomEventUtil {
 
         //disable shift+arrow selection
         if (event.`is`(KeyStrokeSpecs.SELECT_LEFT) || event.`is`(KeyStrokeSpecs.SELECT_UP)
-                || event.`is`(KeyStrokeSpecs.SELECT_RIGHT) || event.`is`(KeyStrokeSpecs.SELECT_DOWN)) {
+            || event.`is`(KeyStrokeSpecs.SELECT_RIGHT) || event.`is`(KeyStrokeSpecs.SELECT_DOWN)
+        ) {
             return false
         }
 
@@ -89,5 +90,13 @@ object DomEventUtil {
         val shiftKey = e.shiftKey
         val metaKey = e.metaKey
         return KeyModifiers(ctrlKey, altKey, shiftKey, metaKey)
+    }
+
+    fun translateInClientCoord(e: DomMouseEvent): MouseEvent {
+        return MouseEvent(e.clientX, e.clientY, getButton(e), getModifiers(e))
+    }
+
+    fun translateInTargetCoord(e: DomMouseEvent): MouseEvent {
+        return MouseEvent(e.offsetX.toInt(), e.offsetY.toInt(), getButton(e), getModifiers(e))
     }
 }

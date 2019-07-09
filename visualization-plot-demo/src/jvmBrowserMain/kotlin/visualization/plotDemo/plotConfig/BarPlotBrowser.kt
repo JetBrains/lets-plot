@@ -108,7 +108,7 @@ private fun genIndexHtml(): String {
                         |plotSpecList.forEach(function (spec, index) {
                         |   var parentElement = document.createElement('div');
                         |   document.getElementById("root").appendChild(parentElement);
-                        |   window['$MODULE_NAME_JS'].$PLOT_FUN_JS(spec, parentElement, ${plotSize.x}, ${plotSize.y});
+                        |   window['$MODULE_NAME_JS'].$PLOT_FUN_JS(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
                         |});
                     """.trimMargin()
 

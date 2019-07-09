@@ -1,8 +1,7 @@
 package jetbrains.datalore.visualization.base.canvas.dom
 
 import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.event.dom.DomEventUtil.getButton
-import jetbrains.datalore.base.event.dom.DomEventUtil.getModifiers
+import jetbrains.datalore.base.event.dom.DomEventUtil.translateInClientCoord
 import jetbrains.datalore.base.js.dom.*
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
@@ -30,12 +29,8 @@ internal object DomCanvasUtil {
 
     private fun <T : DomMouseEvent> convertEventHandler(handler: EventHandler<MouseEvent>, eventSpec: EventSpec): DomEventListener<T> {
         return DomEventListener {
-            handler.onEvent(createMouseEvent(it))
+            handler.onEvent(translateInClientCoord(it))
             false
         }
-    }
-
-    private fun createMouseEvent(e: DomMouseEvent): MouseEvent {
-        return MouseEvent(e.clientX, e.clientY, getButton(e), getModifiers(e))
     }
 }

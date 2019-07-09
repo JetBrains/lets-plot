@@ -1,6 +1,6 @@
 package jetbrains.datalore.base.js.dom
 
-class DomEventType<EventT : DomBaseEvent> private constructor(internal val name: String) {
+class DomEventType<EventT : DomBaseEvent> private constructor(val name: String) {
     companion object {
 
         val BLUR = DomEventType<DomBaseEvent>("blur")
