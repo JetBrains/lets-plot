@@ -1,3 +1,5 @@
 package jetbrains.datalore.base.function
 
-typealias Supplier<T> = () -> T
+interface Supplier<ValueT> {
+    fun get(): ValueT
+}

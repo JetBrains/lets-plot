@@ -1,5 +1,5 @@
 package jetbrains.datalore.base.function
 
-typealias Function <V, T> = (V) -> T
-
-
+interface Function<ValueT, ResultT> {
+    fun apply(value: ValueT): ResultT
+}
