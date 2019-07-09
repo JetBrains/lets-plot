@@ -5,7 +5,7 @@ import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
 import jetbrains.datalore.visualization.svgMapperDemo.model.DemoModel
 import kotlin.browser.document
 
-fun main() {
+fun svgElementsDemo() {
     val svgRoot = DemoModel.createModel()
     val mapper = SvgRootDocumentMapper(svgRoot)
     SvgNodeContainer(svgRoot)
