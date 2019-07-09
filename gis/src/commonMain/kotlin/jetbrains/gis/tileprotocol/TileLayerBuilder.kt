@@ -6,7 +6,7 @@ class TileLayerBuilder {
 
     private var myKinds = emptyList<Int>()
     private var mySubs = emptyList<Int>()
-    private var myLabels = emptyList<String>()
+    private var myLabels = emptyList<String?>()
     private var myShorts = emptyList<String>()
     private var myLayerSize = 0
 
@@ -34,7 +34,7 @@ class TileLayerBuilder {
         return this
     }
 
-    fun setLabels(v: List<String>): TileLayerBuilder {
+    fun setLabels(v: List<String?>): TileLayerBuilder {
         myLabels = v
         return this
     }
@@ -54,7 +54,7 @@ class TileLayerBuilder {
         override val geometryCollection: GeometryCollection = builder.myGeometryCollection
         override val kinds: List<Int> = builder.myKinds
         override val subs: List<Int> = builder.mySubs
-        override val labels: List<String> = builder.myLabels
+        override val labels: List<String?> = builder.myLabels
         override val shorts: List<String> = builder.myShorts
         override val size: Int = builder.myLayerSize
 

@@ -1,0 +1,590 @@
+package jetbrains.gis.common
+
+
+import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.gis.common.testUtils.HexParser.parseHex
+import jetbrains.gis.common.twkb.Twkb
+import jetbrains.gis.common.twkb.Twkb.GeometryConsumer
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class ParserTest {
+
+    private fun <T> optionalListOf (vararg elements: T): List<T>? {
+        return if (elements.isNotEmpty()) elements.asList() else emptyList()
+    }
+
+    @Test
+    fun pointTest() {
+        // SELECT encode(ST_AsTWKB('POINT(-71.064544 42.28787)'::geometry, 6), 'hex');
+        val data = parseHex("c100bfefe243fc8baa28")
+
+        val c = SimpleGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals(Point(-71.064544, 42.28787), c.point)
+    }
+
+    @Test
+    fun lineTest() {
+        // SELECT encode(ST_AsTWKB('LINESTRING(1 2, 3 4)', 6), 'hex');
+
+        val data = parseHex("c2000280897a8092f4018092f4018092f401")
+
+        val c = SimpleGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals(
+            optionalListOf(
+                Point(1.0, 2.0),
+                Point(3.0, 4.0)
+            ),
+            c.lineString
+        )
+    }
+
+    @Test
+    fun polygonTest() {
+        // SELECT encode(ST_AsTWKB('POLYGON(
+        //     (-71.1776585052917 42.3902909739571,
+        //      -71.1776820268866 42.3903701743239,
+        //      -71.1776063012595 42.3903825660754,
+        //      -71.1775826583081 42.3903033653531,
+        //      -71.1776585052917 42.3902909739571)
+        //  )'::geometry, 6), 'hex');
+        val data = parseHex("c3000105f5d6f043a6ccb6282d9e0198011a2e9f01970117")
+
+        val c = SimpleGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals(
+            optionalListOf( // rings
+                optionalListOf( // ring
+                    Point(-71.177659, 42.390291),
+                    Point(-71.177682, 42.39037),
+                    Point(-71.177606, 42.390383),
+                    Point(-71.177583, 42.390303),
+                    Point(-71.177659, 42.390291)
+                )
+            ),
+            c.polygon
+        )
+    }
+
+    @Test
+    fun multiPointTest() {
+        // SELECT encode(ST_AsTWKB('MULTIPOINT(1 2, 3 4)', 6), 'hex');
+        val data = parseHex("c4000280897a8092f4018092f4018092f401")
+
+        val c = SimpleGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals(
+            optionalListOf(
+                Point(1.0, 2.0),
+                Point(3.0, 4.0)
+            ),
+            c.multiPoint
+        )
+    }
+
+    @Test
+    fun multiLineStringTest() {
+        // SELECT encode(ST_AsTWKB('MULTILINESTRING((1 2, 3 4), (5 6, 7 8), (9 10, 11 12))', 6), 'hex');
+        val data =
+            parseHex("c500030280897a8092f4018092f4018092f401028092f4018092f4018092f4018092f401028092f4018092f4018092f4018092f401")
+
+        val c = SimpleGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals(
+            optionalListOf(
+                optionalListOf(
+                    Point(1.0, 2.0),
+                    Point(3.0, 4.0)
+                ),
+                optionalListOf(
+                    Point(5.0, 6.0),
+                    Point(7.0, 8.0)
+                ),
+                optionalListOf(
+                    Point(9.0, 10.0),
+                    Point(11.0, 12.0)
+                )
+            ),
+            c.multiLineString
+        )
+    }
+
+    @Test
+    fun multipolygonTest() {
+        // SELECT encode(ST_AsTWKB('MULTIPOLYGON(((
+        //						-71.103188 42.315277,
+        //						-71.103162 42.315296,
+        //            -71.102923 42.314915,
+        //						-71.102309 42.315196,
+        //            -71.101928 42.314738,
+        //						-71.102505 42.314472,
+        //            -71.102774 42.314165,
+        //						-71.103113 42.314273,
+        //            -71.103248 42.314024,
+        //						-71.103300 42.314039,
+        //            -71.103348 42.313949,
+        //						-71.103396 42.313863,
+        //            -71.104152 42.314115,
+        //						-71.104141 42.314154,
+        //            -71.104128 42.314211,
+        //						-71.104118 42.314269,
+        //            -71.104111 42.314327,
+        //						-71.104107 42.314385,
+        //            -71.104105 42.314443,
+        //						-71.104106 42.314500,
+        //            -71.104109 42.314558,
+        //						-71.104116 42.314616,
+        //            -71.104125 42.314674,
+        //						-71.104137 42.314731,
+        //            -71.104149 42.314771,
+        //						-71.104159 42.314808,
+        //            -71.104251 42.315128,
+        //						-71.104117 42.315073,
+        //            -71.104080 42.315134,
+        //						-71.104043 42.315119,
+        //            -71.104019 42.315183,
+        //						-71.103873 42.315114,
+        //            -71.103844 42.315100,
+        //						-71.103831 42.315094,
+        //            -71.103739 42.315054,
+        //						-71.103544 42.315260,
+        //            -71.103343 42.315164,
+        //						-71.103258 42.315226,
+        //            -71.103223 42.315251,
+        //						-71.103188 42.315277)),
+        //						((
+        //            -71.104363 42.315113,
+        //            -71.104358 42.315121,
+        //						-71.104344 42.315067,
+        //            -71.104385 42.315079,
+        //            -71.104363 42.315113
+        //            ))
+        //					   )'::geometry, 6), 'hex'
+        //			 );
+        val data = parseHex(
+            "c600020128a7cbe7439ab8ad283426de03f905cc09b204fa059307810993049904e504a505d8018d02f103671e5fb3015fab01e70bf803164e1a721" +
+                    "4740e7408740474017205740d74117417721750134ab70180058c026d4a7a4a1d308001a40289013a1b1a0bb8014f86039c039203bf01aa017c463246340105ad12c7020a1" +
+                    "01c6b51182c44"
+        )
+        val c = SimpleGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals<List<List<List<Point>?>?>?>(
+            optionalListOf( // polygons
+                optionalListOf( // polygon
+                    optionalListOf( // ring
+                        Point(-71.103188, 42.315277),
+                        Point(-71.103162, 42.315296),
+                        Point(-71.102923, 42.314915),
+                        Point(-71.102309, 42.315196),
+                        Point(-71.101928, 42.314738),
+                        Point(-71.102505, 42.314472),
+                        Point(-71.102774, 42.314165),
+                        Point(-71.103113, 42.314273),
+                        Point(-71.103248, 42.314024),
+                        Point(-71.1033, 42.314039),
+                        Point(-71.103348, 42.313949),
+                        Point(-71.103396, 42.313863),
+                        Point(-71.104152, 42.314115),
+                        Point(-71.104141, 42.314154),
+                        Point(-71.104128, 42.314211),
+                        Point(-71.104118, 42.314269),
+                        Point(-71.104111, 42.314327),
+                        Point(-71.104107, 42.314385),
+                        Point(-71.104105, 42.314443),
+                        Point(-71.104106, 42.3145),
+                        Point(-71.104109, 42.314558),
+                        Point(-71.104116, 42.314616),
+                        Point(-71.104125, 42.314674),
+                        Point(-71.104137, 42.314731),
+                        Point(-71.104149, 42.314771),
+                        Point(-71.104159, 42.314808),
+                        Point(-71.104251, 42.315128),
+                        Point(-71.104117, 42.315073),
+                        Point(-71.10408, 42.315134),
+                        Point(-71.104043, 42.315119),
+                        Point(-71.104019, 42.315183),
+                        Point(-71.103873, 42.315114),
+                        Point(-71.103844, 42.3151),
+                        Point(-71.103831, 42.315094),
+                        Point(-71.103739, 42.315054),
+                        Point(-71.103544, 42.31526),
+                        Point(-71.103343, 42.315164),
+                        Point(-71.103258, 42.315226),
+                        Point(-71.103223, 42.315251),
+                        Point(-71.103188, 42.315277)
+                    ) // ring
+                ), // polygon
+                optionalListOf( // polygon
+                    optionalListOf( // ring
+                        Point(-71.104363, 42.315113),
+                        Point(-71.104358, 42.315121),
+                        Point(-71.104344, 42.315067),
+                        Point(-71.104385, 42.315079),
+                        Point(-71.104363, 42.315113)
+                    ) // ring
+                ) // polygon
+            ), // polygons
+            c.multiPolygon
+        )
+    }
+
+    @Test
+    fun collectionOfOnePointTest() {
+        // SELECT encode(ST_AsTWKB(array[
+        //        ST_PointFromText('POINT(0.0001 0.0002)')
+        // ], array[1], 6), 'hex');
+
+        val data = parseHex("c4040102c8019003")
+        val c = CollectedGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals(
+            optionalListOf(
+                Point(0.0001, 0.0002)
+            ),
+            c.points
+        )
+    }
+
+    @Test
+    fun collectionPointTest() {
+        // SELECT encode(ST_AsTWKB(array[
+        //         ST_PointFromText('POINT(0.00001 0.00002)'),
+        //         ST_PointFromText('POINT(0.00003 0.00004)'),
+        //         ST_PointFromText('POINT(0.00005 0.00006)')
+        // ], array[1, 2, 3], 6), 'hex');
+
+        val data = parseHex("c40403020406142828282828")
+        val c = CollectedGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals(
+            optionalListOf(
+                Point(0.00001, 0.00002),
+                Point(0.00003, 0.00004),
+                Point(0.00005, 0.00006)
+            ),
+            c.points
+        )
+    }
+
+    @Test
+    fun collectionLineStringTest() {
+        // SELECT encode(ST_AsTWKB(array[
+        //         ST_LineFromText('LINESTRING(0.00001 0.00002, 0.00003 0.00004)'),
+        //         ST_LineFromText('LINESTRING(0.00005 0.00006, 0.00007 0.00008)'),
+        //         ST_LineFromText('LINESTRING(0.00009 0.00010, 0.00011 0.00012)')
+        // ], array[1, 2, 3], 6), 'hex');
+
+        val data = parseHex("c50403020406021428282802282828280228282828")
+        val c = CollectedGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals(
+            optionalListOf(
+                optionalListOf(
+                    Point(0.00001, 0.00002),
+                    Point(0.00003, 0.00004)
+                ),
+                optionalListOf(
+                    Point(0.00005, 0.00006),
+                    Point(0.00007, 0.00008)
+                ),
+                optionalListOf(
+                    Point(0.00009, 0.00010),
+                    Point(0.00011, 0.00012)
+                )
+            ),
+            c.lineStrings
+        )
+    }
+
+    @Test
+    fun collectionPolygonTest() {
+        // SELECT encode(ST_AsTWKB(array[
+        //        ST_PolygonFromText('POLYGON((0 0,4 0,4 4,0 4,0 0))'),
+        //        ST_PolygonFromText('POLYGON((0 0,4 0,4 4,0 4,0 0), (1 1,1 3,3 3,3 1,1 1))')
+        // ], array[1, 2], 6), 'hex');
+
+        val data =
+            parseHex(("c6040202040105000080a4e803000080a4e803ffa3e8030000ffa3e8030205000080a4e803000080a4e803ffa3e8030000ffa3e8030580897a80897" + "a008092f4018092f4010000ff91f401ff91f40100"))
+        val c = CollectedGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals<List<List<List<Point>?>?>?>(
+            optionalListOf( // polygons
+                optionalListOf( // 1 ring
+                    optionalListOf(
+                        Point(0.0, 0.0),
+                        Point(4.0, 0.0),
+                        Point(4.0, 4.0),
+                        Point(0.0, 4.0),
+                        Point(0.0, 0.0)
+                    )
+                ),
+                optionalListOf( // 2 rings
+                    optionalListOf(
+                        Point(0.0, 0.0),
+                        Point(4.0, 0.0),
+                        Point(4.0, 4.0),
+                        Point(0.0, 4.0),
+                        Point(0.0, 0.0)
+                    ),
+                    optionalListOf(
+                        Point(1.0, 1.0),
+                        Point(1.0, 3.0),
+                        Point(3.0, 3.0),
+                        Point(3.0, 1.0),
+                        Point(1.0, 1.0)
+                    )
+                )
+            ),
+            c.polygons
+        )
+    }
+
+    @Test
+    fun collectionMultiPointTest() {
+        // SELECT encode(ST_AsTWKB(array[
+        //     ST_MPointFromText('MULTIPOINT(0 1, 2 3)'),
+        //     ST_MPointFromText('MULTIPOINT(4 5, 6 7)')
+        // ], array[1, 2], 1), 'hex');
+
+        val data = parseHex("27040202042400020014282824000250642828")
+        val c = CollectedGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals(
+            optionalListOf(
+                optionalListOf( // multipoint
+                    Point(0.0, 1.0),
+                    Point(2.0, 3.0)
+                ),
+                optionalListOf( // multipoint
+                    Point(4.0, 5.0),
+                    Point(6.0, 7.0)
+                )
+            ),
+            c.multiPoints
+        )
+    }
+
+    @Test
+    fun collectionMultiLineStringTest() {
+        // SELECT encode(ST_AsTWKB(array[
+        //        ST_MLineFromText('MULTILINESTRING((1 2, 3 4), (4 5, 6 7))'),
+        //        ST_MLineFromText('MULTILINESTRING((8 7, 6 5), (4 3, 2 1))')
+        // ], array[1, 2], 6), 'hex');
+
+        val data =
+            parseHex(("c704020204c500020280897a8092f4018092f4018092f4010280897a80897a8092f4018092f401c500020280c8d00780bfd606ff91f401ff91f4010" + "2ff91f401ff91f401ff91f401ff91f401"))
+        val c = CollectedGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals<List<List<List<Point>?>?>?>(
+            optionalListOf( // multi lines
+                optionalListOf( // lines
+                    optionalListOf(
+                        Point(1.0, 2.0),
+                        Point(3.0, 4.0)
+                    ),
+                    optionalListOf(
+                        Point(4.0, 5.0),
+                        Point(6.0, 7.0)
+                    )
+                ),
+                optionalListOf(
+                    optionalListOf(
+                        Point(8.0, 7.0),
+                        Point(6.0, 5.0)
+                    ),
+                    optionalListOf(
+                        Point(4.0, 3.0),
+                        Point(2.0, 1.0)
+                    )
+                )
+            ),
+            c.multiLineStrings
+        )
+    }
+
+    @Test
+    fun collectionMultiPolygonTest() {
+        // SELECT encode(ST_AsTWKB(array[
+        //        ST_MPolyFromText('MULTIPOLYGON(((0 0, 1 0, 0 1, 0 0)), ((1 1, 0 1, 1 0, 1 1)))'),
+        //        ST_MPolyFromText('MULTIPOLYGON(((2 0, 3 0, 2 1, 2 0)))')
+        // ], array[1, 2], 6), 'hex');
+
+        val data =
+            parseHex(("c704020204c600020104000080897a00ff887a80897a00ff887a010480897a80897aff887a0080897aff887a0080897ac6000101048092f40100808" + "97a00ff887a80897a00ff887a"))
+        val c = CollectedGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals<List<List<List<List<Point>?>?>?>?>(
+            optionalListOf( //
+                optionalListOf( // multi1
+                    optionalListOf( // poly1
+                        optionalListOf( // ring
+                            Point(0.0, 0.0),
+                            Point(1.0, 0.0),
+                            Point(0.0, 1.0),
+                            Point(0.0, 0.0)
+                        )
+                    ),
+                    optionalListOf( // poly2
+                        optionalListOf( // ring
+                            Point(1.0, 1.0),
+                            Point(0.0, 1.0),
+                            Point(1.0, 0.0),
+                            Point(1.0, 1.0)
+                        )
+                    )
+                ),
+                optionalListOf( // multi2
+                    optionalListOf( // poly
+                        optionalListOf( // ring
+                            Point(2.0, 0.0),
+                            Point(3.0, 0.0),
+                            Point(2.0, 1.0),
+                            Point(2.0, 0.0)
+                        )
+                    )
+                )
+            ),
+            c.multiPolygons
+        )
+    }
+
+    @Test
+    fun collectionWithEmptyGeometry() {
+        // SELECT encode(ST_AsTWKB(array[
+        //        ST_PointFromText('POINT(0.00001 0.00002)'),
+        //        ST_GeomFromText('GEOMETRYCOLLECTION EMPTY'),
+        //        ST_PointFromText('POINT(0.00005 0.00006)')
+        // ], array[1, 2, 3], 6), 'hex');
+
+        val data = parseHex("c70403020406c1001428c710c1006478")
+
+        val c = CollectedGeometryConsumer()
+        Twkb.parse(data, c)
+
+        assertEquals(
+            optionalListOf(
+                Point(0.00001, 0.00002),
+                Point(0.00005, 0.00006)
+            ),
+            c.points
+        )
+    }
+
+
+    internal class CollectedGeometryConsumer : GeometryConsumer {
+        private val myPoints = ArrayList<Point>()
+        private val myLineStrings = ArrayList<LineString>()
+        private val myPolygons = ArrayList<Polygon>()
+        private val myMultiPoints = ArrayList<MultiPoint>()
+        private val myMultiLineStrings = ArrayList<MultiLineString>()
+        private val myMultiPolygons = ArrayList<MultiPolygon>()
+
+        val points: List<Point>
+            get() = myPoints
+
+        val lineStrings: List<LineString>
+            get() = myLineStrings
+
+        val polygons: List<Polygon>
+            get() = myPolygons
+
+        val multiPoints: List<MultiPoint>
+            get() = myMultiPoints
+
+        val multiLineStrings: List<MultiLineString>
+            get() = myMultiLineStrings
+
+        val multiPolygons: List<MultiPolygon>
+            get() = myMultiPolygons
+
+        override fun onPoint(point: Point) {
+            myPoints.add(point)
+        }
+
+        override fun onLineString(lineString: LineString) {
+            myLineStrings.add(lineString)
+        }
+
+        override fun onPolygon(polygon: Polygon) {
+            myPolygons.add(polygon)
+        }
+
+        override fun onMultiPoint(multiPoint: MultiPoint, idList: List<Int>) {
+            if (idList.isEmpty()) {
+                myMultiPoints.add(multiPoint)
+            } else {
+                myPoints.addAll(multiPoint)
+            }
+        }
+
+        override fun onMultiLineString(multiLineString: MultiLineString, idList: List<Int>) {
+            if (idList.isEmpty()) {
+                myMultiLineStrings.add(multiLineString)
+            } else {
+                myLineStrings.addAll(multiLineString)
+            }
+        }
+
+        override fun onMultiPolygon(multipolygon: MultiPolygon, idList: List<Int>) {
+            if (idList.isEmpty()) {
+                myMultiPolygons.add(multipolygon)
+            } else {
+                myPolygons.addAll(multipolygon)
+            }
+        }
+    }
+
+    internal class SimpleGeometryConsumer : GeometryConsumer {
+        var point: Point? = null
+            private set
+        var lineString: LineString? = null
+            private set
+        var polygon: Polygon? = null
+            private set
+        var multiPoint: MultiPoint? = null
+            private set
+        var multiLineString: MultiLineString? = null
+            private set
+        var multiPolygon: MultiPolygon? = null
+            private set
+
+        override fun onPoint(point: Point) {
+            this.point = point
+        }
+
+        override fun onLineString(lineString: LineString) {
+            this.lineString = lineString
+        }
+
+        override fun onPolygon(polygon: Polygon) {
+            this.polygon = polygon
+        }
+
+        override fun onMultiPoint(multiPoint: MultiPoint, idList: List<Int>) {
+            this.multiPoint = multiPoint
+        }
+
+        override fun onMultiLineString(multiLineString: MultiLineString, idList: List<Int>) {
+            this.multiLineString = multiLineString
+        }
+
+        override fun onMultiPolygon(multipolygon: MultiPolygon, idList: List<Int>) {
+            this.multiPolygon = multipolygon
+        }
+    }
+}

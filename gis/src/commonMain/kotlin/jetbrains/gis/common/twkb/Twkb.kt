@@ -1,12 +1,6 @@
 package jetbrains.gis.common.twkb
 
-import jetbrains.datalore.base.projectionGeometry.LineString
-import jetbrains.datalore.base.projectionGeometry.MultiLineString
-import jetbrains.datalore.base.projectionGeometry.MultiPoint
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.geometry.DoubleVector
-
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.gis.common.twkb.VarInt.decodeZigZag
 
 object Twkb {
@@ -59,14 +53,14 @@ object Twkb {
         }
     }
 
-    enum class GeometryType private constructor(internal val code: Int) {
-        POINT(1),
-        LINESTRING(2),
-        POLYGON(3),
-        MULTI_POINT(4),
-        MULTI_LINESTRING(5),
-        MULTI_POLYGON(6),
-        GEOMETRY_COLLECTION(7);
+    enum class GeometryType {
+        POINT,
+        LINESTRING,
+        POLYGON,
+        MULTI_POINT,
+        MULTI_LINESTRING,
+        MULTI_POLYGON,
+        GEOMETRY_COLLECTION;
 
 
         companion object {
@@ -94,11 +88,11 @@ object Twkb {
     }
 
     interface GeometryConsumer {
-        fun onPoint(p: DoubleVector)
+        fun onPoint(point: Point)
         fun onLineString(lineString: LineString)
         fun onPolygon(polygon: Polygon)
         fun onMultiPoint(multiPoint: MultiPoint, idList: List<Int>)
         fun onMultiLineString(multiLineString: MultiLineString, idList: List<Int>)
-        fun onMultipolygon(multipolygon: MultiPolygon, idList: List<Int>)
+        fun onMultiPolygon(multipolygon: MultiPolygon, idList: List<Int>)
     }
 }

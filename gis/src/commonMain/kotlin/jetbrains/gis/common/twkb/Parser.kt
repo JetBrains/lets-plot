@@ -105,7 +105,7 @@ class Parser internal constructor(data: ByteArray, private val myGeometryConsume
                 GeometryType.MULTI_POLYGON -> {
                     myGeometryObjectParser!!.pushMultiPolygon(
                         nGeometries,
-                        idList, myGeometryConsumer::onMultipolygon)
+                        idList, myGeometryConsumer::onMultiPolygon)
                     return true
                 }
 

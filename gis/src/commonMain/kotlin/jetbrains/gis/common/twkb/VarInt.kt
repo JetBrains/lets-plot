@@ -1,16 +1,14 @@
 package jetbrains.gis.common.twkb
 
-import jetbrains.datalore.base.function.Supplier
-
 object VarInt {
     private const val VARINT_EXPECT_NEXT_PART: Int = 7
 
-    internal fun readVarInt(readByte: Supplier<Int>): Int {
+    internal fun readVarInt(readByte: () -> Int): Int {
         val i = readVarUInt(readByte)
         return decodeZigZag(i)
     }
 
-    fun readVarUInt(readByte: Supplier<Int>): Int {
+    fun readVarUInt(readByte: () -> Int): Int {
         var i = 0
         var shift = 0
         val mask = 127

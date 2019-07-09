@@ -4,6 +4,7 @@ import jetbrains.datalore.base.function.BiConsumer
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Functions
+import jetbrains.datalore.base.function.Functions.funcOf
 import jetbrains.datalore.base.gcommon.collect.Stack
 import jetbrains.datalore.base.projectionGeometry.LineString
 import jetbrains.datalore.base.projectionGeometry.MultiLineString
@@ -34,7 +35,12 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
     }
 
     fun parseLineString(onParse: Consumer<LineString>) {
-        pushParser(PointsParser({ points -> onParse(LineString(points)) }, this))
+        pushParser(
+            PointsParser(
+                { points -> onParse(LineString(points)) },
+                this
+            )
+        )
     }
 
     fun parsePolygon(onParse: Consumer<Polygon>) {
@@ -42,15 +48,33 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
     }
 
     fun parseMultiPoint(n: Int, ids: List<Int>, onParse: BiConsumer<MultiPoint, List<Int>>) {
-        pushParser(MultiPointParser(n, { points -> onParse(MultiPoint(points), ids) }, this))
+        pushParser(
+            MultiPointParser(
+                n,
+                { points -> onParse(MultiPoint(points), ids) },
+                this
+            )
+        )
     }
 
     fun parseMultiLine(n: Int, ids: List<Int>, onParse: BiConsumer<MultiLineString, List<Int>>) {
-        pushParser(MultiLineStringParser(n, { points -> onParse(MultiLineString(points), ids) }, this))
+        pushParser(
+            MultiLineStringParser(
+                n,
+                { points -> onParse(MultiLineString(points), ids) },
+                this
+            )
+        )
     }
 
     fun pushMultiPolygon(n: Int, ids: List<Int>, onParse: BiConsumer<MultiPolygon, List<Int>>) {
-        pushParser(MultiPolygonParser(n, { points -> onParse(MultiPolygon(points), ids) }, this))
+        pushParser(
+            MultiPolygonParser(
+                n,
+                { points -> onParse(MultiPolygon(points), ids) },
+                this
+            )
+        )
     }
 
     private fun readCount(): Int {
@@ -94,7 +118,8 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         }
     }
 
-    internal class PointParser(private val myParsingResultConsumer: Consumer<DoubleVector>, ctx: GeometryObjectParser) : GeometryParser(ctx) {
+    internal class PointParser(private val myParsingResultConsumer: Consumer<DoubleVector>, ctx: GeometryObjectParser) :
+        GeometryParser(ctx) {
         private lateinit var myP: DoubleVector
 
         override fun parsePoint() {
@@ -157,11 +182,11 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
     ) : GeometryListParser<GeometryT>(count, parsingResultConsumer, ctx) {
 
         override fun parsePoint() {
-            pushParser(myNestedParserFactory(this::onNestedParsed))
+            pushParser(myNestedParserFactory.apply(this::onNestedParsed))
         }
 
         private fun onNestedParsed(nestedGeometries: NestedGeometriesT) {
-            addGeometry(myNestedToGeometry(nestedGeometries))
+            addGeometry(myNestedToGeometry.apply(nestedGeometries))
 
             if (allRead()) {
                 done()
@@ -169,10 +194,11 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         }
     }
 
-    internal class PolygonParser(parsingResultConsumer: Consumer<List<Ring>>, ctx: GeometryObjectParser) : NestedGeometryParser<List<DoubleVector>, Ring>(
+    internal class PolygonParser(parsingResultConsumer: Consumer<List<Ring>>, ctx: GeometryObjectParser) :
+        NestedGeometryParser<List<DoubleVector>, Ring>(
             ctx.readCount(),
-            { points -> PointsParser(points, ctx) },
-            ::Ring,
+            funcOf { points -> PointsParser(points, ctx) },
+            funcOf(::Ring),
             parsingResultConsumer,
             ctx
         )
@@ -183,8 +209,8 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         ctx: GeometryObjectParser
     ) : NestedGeometryParser<DoubleVector, DoubleVector>(
         nGeometries,
-        { point -> PointParser(point, ctx) },
-        Functions.identity(),
+        funcOf { point -> PointParser(point, ctx) },
+        funcOf(Functions.identity()),
         parsingResultConsumer,
         ctx
     )
@@ -195,8 +221,8 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         ctx: GeometryObjectParser
     ) : NestedGeometryParser<List<DoubleVector>, LineString>(
         nGeometries,
-        { points -> PointsParser(points, ctx) },
-        ::LineString,
+        funcOf { points -> PointsParser(points, ctx) },
+        funcOf(::LineString),
         parsingResultConsumer,
         ctx
     )
@@ -207,8 +233,8 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         ctx: GeometryObjectParser
     ) : NestedGeometryParser<List<Ring>, Polygon>(
         nGeometries,
-        { rings -> PolygonParser(rings, ctx) },
-        ::Polygon,
+        funcOf { ringsConsumer -> PolygonParser(ringsConsumer, ctx) },
+        funcOf(::Polygon),
         parsingResultConsumer,
         ctx
     )
