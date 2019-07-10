@@ -38,9 +38,9 @@ interface GeoRequest {
         val namesakeExampleLimit: Int
 
         class AmbiguityResolver private constructor(
-            val ignoringStrategy: IgnoringStrategy?,
-            val closestCoord: DoubleVector?,
-            val box: DoubleRectangle?
+            private val ignoringStrategy: IgnoringStrategy?,
+            private val closestCoord: DoubleVector?,
+            private val box: DoubleRectangle?
         ) {
 
             val isEmpty: Boolean
@@ -56,7 +56,7 @@ interface GeoRequest {
             companion object {
 
                 fun ignoring(strategy: IgnoringStrategy): AmbiguityResolver {
-                    return AmbiguityResolver(null, null, null)
+                    return AmbiguityResolver(strategy, null, null)
                 }
 
                 fun closestTo(closestCoord: DoubleVector): AmbiguityResolver {
