@@ -2,11 +2,10 @@ package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
-import jetbrains.datalore.base.function.Consumer
+import jetbrains.datalore.base.observable.collections.Collections.unmodifiableList
 import jetbrains.gis.geoprotocol.GeoRequest.*
 import jetbrains.gis.geoprotocol.GeoResponse.*
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse.AmbiguousFeature
-import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse.NamesakeParent
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 
 
@@ -14,52 +13,42 @@ class GeocodingService(private val myTransport: GeoTransport) {
 
     fun execute(request: GeoRequest): Async<List<GeocodedFeature>> {
         val requestedStrings: List<String>
-        if (request is ExplicitSearchRequest) {
-            requestedStrings = request.getIds()
-        } else if (request is GeocodingSearchRequest) {
-            requestedStrings = request
-                .getQueries().stream().flatMap(
-                    { regionQuery -> regionQuery.getNames().stream() }
-                )
-                .collect(Collectors.toList())
-        } else if (request is ReverseGeocodingSearchRequest) {
-            requestedStrings = emptyList()
-        } else {
-            return Asyncs.failure(IllegalStateException("Unkown request type: " + request.getClass().getName()))
+        requestedStrings = when (request) {
+            is ExplicitSearchRequest -> request.ids
+            is GeocodingSearchRequest -> request.queries.flatMap { regionQuery -> regionQuery.names }
+            is ReverseGeocodingSearchRequest -> emptyList()
+            else -> return Asyncs.failure(IllegalStateException("Unkown request type: " + request::class.qualifiedName))
         }
 
         val duplicateStorage = DuplicateStorage(requestedStrings)
+
         return myTransport
             .send(request)
-            .map(
-                { response ->
-                    if (response is SuccessGeoResponse) {
-                        return@myTransport
-                            .send(request)
-                            .map duplicateStorage . restoreDuplicateList (response as SuccessGeoResponse).getFeatures(), Function<T, String>({ GeocodedFeature.getRequest() }))
-                    } else if (response is AmbiguousGeoResponse) {
-                        throw RuntimeException(createAmbiguousMessage((response as AmbiguousGeoResponse).getFeatures()))
-                    } else if (response is ErrorGeoResponse) {
-                        throw RuntimeException("GIS error: " + (response as ErrorGeoResponse).getMessage())
-                    } else {
-                        throw IllegalStateException("Unknown response status: " + response.getClass().getSimpleName())
-                    }
+            .map { response ->
+                when (response) {
+                    is SuccessGeoResponse -> duplicateStorage.restoreDuplicateList(
+                        response.features,
+                        GeocodedFeature::request
+                    )
+                    is AmbiguousGeoResponse -> throw RuntimeException(createAmbiguousMessage(response.features))
+                    is ErrorGeoResponse -> throw RuntimeException("GIS error: " + response.message)
+                    else -> throw IllegalStateException("Unknown response status: " + response::class.qualifiedName)
                 }
-            )
+            }
     }
 
     internal class DuplicateStorage(objectKeys: List<String>) {
         private val myKeys: List<String>
-        val uniqueObjectKeys: Set<String> = LinkedHashSet()
+        private val uniqueObjectKeys: MutableSet<String> = LinkedHashSet()
 
         init {
-            objectKeys.forEach(Consumer<String> { uniqueObjectKeys.add(it) })
+            objectKeys.forEach { uniqueObjectKeys.add(it) }
             myKeys = unmodifiableList<String>(objectKeys)
         }
 
-        fun <T> restoreDuplicateList(uniqueObjectList: List<T>, getObjectKey: Function<T, String>): List<T> {
+        fun <T> restoreDuplicateList(uniqueObjectList: List<T>, getObjectKey: (T) -> String): List<T> {
             val uniqueObjectMap = HashMap<String, T>()
-            uniqueObjectList.forEach { t -> uniqueObjectMap[getObjectKey.apply(t)] = t }
+            uniqueObjectList.forEach { t -> uniqueObjectMap[getObjectKey(t)] = t }
 
             val duplicateObjectList = ArrayList<T>()
             if (myKeys.isEmpty()) {
@@ -67,7 +56,7 @@ class GeocodingService(private val myTransport: GeoTransport) {
             } else {
                 myKeys.forEach { key ->
                     if (uniqueObjectMap.containsKey(key)) {
-                        duplicateObjectList.add(uniqueObjectMap[key])
+                        uniqueObjectMap[key]?.let { duplicateObjectList.add(it) }
                     }
                 }
             }
@@ -79,32 +68,30 @@ class GeocodingService(private val myTransport: GeoTransport) {
         internal fun createAmbiguousMessage(ambiguousFeatures: List<AmbiguousFeature>): String {
             val message = StringBuilder().append("Geocoding errors:\n")
             ambiguousFeatures.forEach { ambiguousFeature ->
-                if (ambiguousFeature.getNamesakeCount() === 1) {
-                    return@ambiguousFeatures.forEach
-                }
-
-                if (ambiguousFeature.getNamesakeCount() > 1) {
-                    message
-                        .append("Multiple objects (" + ambiguousFeature.getNamesakeCount() + ") ")
-                        .append("were found for '" + ambiguousFeature.getRequest() + "'")
-
-                    val lines = ArrayList<String>()
-                    ambiguousFeature.getNamesakes().forEach { namesake ->
-                        val line = StringBuilder("- " + namesake.getName())
-                        if (!namesake.getParents().isEmpty()) {
-                            line.append(
-                                " (" + String.join(
-                                    ", ",
-                                    Lists.transform(namesake.getParents(), ??? { NamesakeParent.getName() }))+")")
-                        }
-                        lines.add(line.toString())
+                when {
+                    ambiguousFeature.namesakeCount == 1 -> {
                     }
+                    ambiguousFeature.namesakeCount > 1 -> {
+                        message
+                            .append("Multiple objects (" + ambiguousFeature.namesakeCount + ") ")
+                            .append("were found for '" + ambiguousFeature.request + "'")
 
-                    lines.sort(Comparator.naturalOrder<String>())
-                    message.append(if (lines.isEmpty()) "." else ":")
-                    lines.forEach { line -> message.append("\n" + line) }
-                } else {
-                    message.append("No objects were found for '" + ambiguousFeature.getRequest() + "'.")
+                        val lines = ArrayList<String>()
+                        ambiguousFeature.namesakes.forEach { namesake ->
+                            val line = StringBuilder("- " + namesake.name)
+                            if (namesake.parents.isNotEmpty()) {
+                                line.append(
+                                    " (" + namesake.parents.joinToString { "${it.name}" } + ")"
+                                )
+                            }
+                            lines.add(line.toString())
+                        }
+
+                        lines.sort()
+                        message.append(if (lines.isEmpty()) "." else ":")
+                        lines.forEach { line -> message.append("\n" + line) }
+                    }
+                    else -> message.append("No objects were found for '" + ambiguousFeature.request + "'.")
                 }
                 message.append("\n")
             }
