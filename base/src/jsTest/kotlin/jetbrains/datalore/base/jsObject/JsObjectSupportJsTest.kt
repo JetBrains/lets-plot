@@ -6,31 +6,60 @@ import kotlin.test.assertEquals
 class JsObjectSupportJsTest {
 
     @Test
-    fun runTests() {
+    fun runTestCases() {
         for ((index, datum) in testData.withIndex()) {
+            val actual = dynamicObjectToMap(datum.input)
             @Suppress("UNCHECKED_CAST")
-            oneTest(datum[0], datum[1] as Map<String, *>)
+            assertEquals(datum.expectedOutput, actual, "test case [$index]")
         }
-
     }
 
-    private fun oneTest(input: dynamic, expected: Map<String, *>) {
-        val actual = dynamicObjectToMap(input)
-        assertEquals(expected, actual)
-    }
+    class TestData(val input: dynamic, val expectedOutput: Map<String, Any?>)
 
     companion object {
         @Suppress("UnsafeCastFromDynamic")
-        val testData: List<Array<Any>> = listOf(
-            arrayOf(
+        val testData: List<TestData> = listOf(
+            TestData(
+                js("{}"),
+                emptyMap()
+            ),
+            TestData(
+                js("{a:null,b:null}"),  // null values are dropped
+                emptyMap()
+            ),
+            TestData(
+                js("{'array':[]}"),
+                mapOf(
+                    "array" to emptyList<Any?>()
+                )
+            ),
+            TestData(
                 js(
-                    """
-                {
-                    key:"val"
-                }"""
+                    """{
+                                'int':1,    
+                                'double':2.2,    
+                                'str':"hello",    
+                                'null':null,    
+                                'obj':{}    
+                            }
+                            """
                 ),
-                mapOf<String, Any?>(
-                    "key" to "val"
+                mapOf(
+                    "int" to 1,
+                    "double" to 2.2,
+                    "str" to "hello",
+//                    "none" to null,                  // null values are dropped
+                    "obj" to emptyMap<String, Any?>()
+                )
+            ),
+            TestData(
+                js("{level_1:{level_2:{list:[1,1,null,100.0]}}}"),
+                mapOf(
+                    "level_1" to mapOf<String, Any?>(
+                        "level_2" to mapOf<String, Any?>(
+                            "list" to listOf<Any?>(1, 1, null, 100.00)
+                        )
+                    )
                 )
             )
         )
