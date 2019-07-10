@@ -8,7 +8,7 @@ fun main() {
     val svgRoots = listOf(DemoModel.createModel())
     SceneMapperDemoFrame.showSvg(
         svgRoots,
-        listOf("/svgMapperDemo.css"),
+        listOf("/svg-mapper-demo.css"),
         DoubleVector(500.0, 300.0),
         "Svg Elements (JFX SVG mapper)"
     )

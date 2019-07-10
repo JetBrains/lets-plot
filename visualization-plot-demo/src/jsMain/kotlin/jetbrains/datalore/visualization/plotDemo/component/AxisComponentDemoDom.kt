@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
+import jetbrains.datalore.visualization.base.browser.DomMapperDemoUtil.mapToDom
 import jetbrains.datalore.visualization.plotDemo.model.component.AxisComponentDemo
-import jetbrains.datalore.visualization.plotDemo.showSvg
 
 /**
  * Called from generated HTML
@@ -10,7 +10,7 @@ import jetbrains.datalore.visualization.plotDemo.showSvg
 fun axisComponentDemo() {
     with(AxisComponentDemo()) {
         val svgRoots = createSvgRoots()
-        showSvg(svgRoots, demoComponentSize)
+        mapToDom(svgRoots, "root")
     }
 }
 
