@@ -15,12 +15,12 @@ object GeoRequestBuilder {
     private const val PARENT_KIND_ID = true
 
     abstract class ReverseGeocodingRequestBuilder : RequestBuilderBase<ReverseGeocodingRequestBuilder>() {
+        override val mode: GeocodingMode = GeocodingMode.REVERSE
+
         abstract var myCoordinates: List<DoubleVector>
         abstract var myLevel: FeatureLevel
         private var myParent: MapRegion? = null
 
-        override val mode: GeocodingMode
-            get() = GeocodingMode.REVERSE
 
         init {
             super.setSelf(this)
@@ -29,7 +29,7 @@ object GeoRequestBuilder {
         override fun build(): GeoRequest {
             return MyReverseGeocodingSearchRequest(
                 features,
-                getTiles(),
+                myTiles,
                 levelOfDetails,
                 myCoordinates,
                 myLevel,
@@ -63,12 +63,11 @@ object GeoRequestBuilder {
     }
 
     class GeocodingRequestBuilder : RequestBuilderBase<GeocodingRequestBuilder>() {
+        override val mode: GeocodingMode = GeocodingMode.BY_NAME
+
         private var myFeatureLevel: FeatureLevel? = null
         private var myNamesakeExampleLimit = DEFAULT_NAMESAKE_EXAMPLE_LIMIT
         private val myRegionQueries = ArrayList<RegionQuery>()
-
-        override val mode: GeocodingMode
-            get() = GeocodingMode.BY_NAME
 
         init {
             super.setSelf(this)
@@ -115,11 +114,10 @@ object GeoRequestBuilder {
     }
 
     abstract class ExplicitRequestBuilder : RequestBuilderBase<ExplicitRequestBuilder>() {
+        override val mode: GeocodingMode = GeocodingMode.BY_ID
+
         // explicit request
         abstract var ids: List<String>
-
-        override val mode: GeocodingMode
-            get() = GeocodingMode.BY_ID
 
         init {
             super.setSelf(this)
@@ -142,17 +140,19 @@ object GeoRequestBuilder {
         }
 
         internal class MyExplicitSearchRequest(
-            override val ids: List<String>, features: List<FeatureOption>, tiles: Map<String, List<QuadKey>>?,
+            override val ids: List<String>,
+            features: List<FeatureOption>,
+            tiles: Map<String, List<QuadKey>>?,
             levelOfDetails: LevelOfDetails?
         ) : MyGeoRequestBase(features, tiles, levelOfDetails), ExplicitSearchRequest
     }
 
-    abstract class RequestBuilderBase<T : RequestBuilderBase<*>> {
+    abstract class RequestBuilderBase<T : RequestBuilderBase<T>> {
         private lateinit var mySelf: T
 
-        val features: MutableList<FeatureOption> = ArrayList<FeatureOption>()
-        private var myTiles: MutableMap<String, List<QuadKey>>? = null
-        var levelOfDetails: LevelOfDetails? = null
+        protected val features: MutableList<FeatureOption> = ArrayList<FeatureOption>()
+        protected var myTiles: MutableMap<String, List<QuadKey>>? = null
+        protected var levelOfDetails: LevelOfDetails? = null
 
         abstract val mode: GeocodingMode
 
