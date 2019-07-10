@@ -70,6 +70,14 @@ object Functions {
         }
     }
 
+    fun runnableOf(lambda: () -> Unit): Runnable {
+        return object : Runnable {
+            override fun run() {
+                lambda()
+            }
+        }
+    }
+
     private class Memo<ItemT> internal constructor(private val mySupplier: Supplier<ItemT>) : Supplier<ItemT> {
         private var myCachedValue: ItemT? = null
         private var myCached = false

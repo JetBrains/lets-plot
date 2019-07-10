@@ -24,7 +24,7 @@ class TileFeature(
             return myKind ?: throw IllegalStateException("kind is empty")
         }
 
-        throw IllegalArgumentException("Unknown key kind: $key")
+        throw IllegalArgumentException("Unknown myKey kind: $key")
     }
 
     class TileGeometry private constructor(
