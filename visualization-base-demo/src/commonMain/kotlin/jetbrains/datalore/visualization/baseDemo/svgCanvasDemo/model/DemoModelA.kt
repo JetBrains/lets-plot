@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STROKE_DASHARR
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 
-object DemoModel {
+object DemoModelA {
 
     fun createModel(): SvgGElement {
         val svgRoot = SvgGElement()
@@ -61,8 +61,8 @@ object DemoModel {
     }
 
     private fun createSlimGroup(): SvgNode {
-        val slimGroup = SvgSlimElements.g(14,
-                SvgTransformBuilder().rotate(180.0, 400.0, 200.0).build())
+        val slimGroup = SvgSlimElements.g(14)
+//                SvgTransformBuilder().rotate(180.0, 400.0, 200.0).build())      // this breaks demos
 
         var i = 20.0
         while (i < 400) {
@@ -91,7 +91,12 @@ object DemoModel {
         rect.setStrokeWidth(1.0)
         rect.appendTo(slimGroup)
 
-        return slimGroup.asDummySvgNode()
+
+        // must be wrapped in `normal` SvgGroup
+        val g = SvgGElement()
+        g.isPrebuiltSubtree = true
+        g.children().add(slimGroup.asDummySvgNode())
+        return g
     }
 
     private fun createHLineGroup(): SvgNode {

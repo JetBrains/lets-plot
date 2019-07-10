@@ -19,10 +19,12 @@ object BrowserDemoUtil {
         "mapper-core.js",
         "visualization-base-svg.js",
         "visualization-base-svg-mapper.js",
-        "visualization-base-canvas.js"
+//        "visualization-base-canvas.js",
+        "visualization-base-demo.js"        // demo models
     )
 
     val PLOT_LIBS_JS = listOf(
+        "visualization-base-canvas.js",     // required by plot-builder (get rid?)
         "visualization-plot-common.js",
         "visualization-plot-base.js",
         "visualization-plot-builder.js",

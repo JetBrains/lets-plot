@@ -17,8 +17,9 @@ import java.awt.event.MouseEvent
 
 
 class BatikMapperComponentHelper private constructor(
-        val nodeContainer: SvgNodeContainer,
-        val messageCallback: BatikMessageCallback) {
+    val nodeContainer: SvgNodeContainer,
+    val messageCallback: BatikMessageCallback
+) {
 
     private var myGraphicsNode: GraphicsNode? = null
     private var myMapper: SvgRootDocumentMapper? = null
@@ -28,7 +29,11 @@ class BatikMapperComponentHelper private constructor(
 
 
     val preferredSize: Dimension
-        get() = Dimension(mySvgRoot!!.width().get()!!.toInt(), mySvgRoot!!.height().get()!!.toInt())
+        get() {
+            val w = mySvgRoot!!.width().get()?.toInt() ?: throw IllegalStateException("SVG width is not defined")
+            val h = mySvgRoot!!.height().get()?.toInt() ?: throw IllegalStateException("SVG height is not defined")
+            return Dimension(w, h)
+        }
 
     init {
         myUserAgent = object : UserAgentAdapter() {

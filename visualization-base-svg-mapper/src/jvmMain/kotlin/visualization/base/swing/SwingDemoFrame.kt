@@ -8,8 +8,9 @@ import java.awt.Dimension
 import javax.swing.*
 
 abstract class SwingDemoFrame(
-        private val title: String,
-        private val size: Dimension) {
+    private val title: String,
+    private val size: Dimension
+) {
 
     fun show(scroll: Boolean = true, initContent: JPanel.() -> Unit) {
         SwingUtilities.invokeLater {
@@ -43,8 +44,9 @@ abstract class SwingDemoFrame(
 
                 component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
 
-                component.minimumSize = Dimension(size.x.toInt(), size.y.toInt())
-                component.maximumSize = Dimension(size.x.toInt(), size.y.toInt())
+                val dimension = Dimension(size.x.toInt(), size.y.toInt())
+                component.minimumSize = dimension
+                component.maximumSize = dimension
                 component.alignmentX = Component.LEFT_ALIGNMENT
 
                 addVSpace(this)

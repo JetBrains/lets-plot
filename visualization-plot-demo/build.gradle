@@ -105,7 +105,8 @@ dependencies {
     projectDependenciesJs project(':mapper-core')
     projectDependenciesJs project(':visualization-base-svg')
     projectDependenciesJs project(':visualization-base-svg-mapper')
-    projectDependenciesJs project(':visualization-base-canvas')
+    
+    projectDependenciesJs project(':visualization-base-canvas')         // required by plot-builder (get rid?)
 
     projectDependenciesJs project(':visualization-plot-common')
     projectDependenciesJs project(':visualization-plot-base')

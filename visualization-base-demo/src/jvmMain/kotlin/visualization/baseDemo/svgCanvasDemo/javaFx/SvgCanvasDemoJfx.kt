@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvasDemoUtil
 import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxGraphicsCanvasControlFactory
 import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
-import jetbrains.datalore.visualization.baseDemo.svgCanvasDemo.model.DemoModel
+import jetbrains.datalore.visualization.baseDemo.svgCanvasDemo.model.DemoModelA
 import javax.swing.SwingUtilities
 
 class SvgCanvasDemoJfx private constructor() {
@@ -24,7 +24,7 @@ class SvgCanvasDemoJfx private constructor() {
     private fun show() {
         val canvasControl = AwtCanvasControl(JavafxGraphicsCanvasControlFactory(DEVICE_PIXEL_RATIO), SIZE)
 
-        SvgCanvasRenderer(DemoModel.createModel(), canvasControl)
+        SvgCanvasRenderer(DemoModelA.createModel(), canvasControl)
 
         AwtCanvasDemoUtil.showAwtCanvasControl("SvgCanvas JavaFX Demo", canvasControl)
     }

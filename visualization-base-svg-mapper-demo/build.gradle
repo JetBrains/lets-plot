@@ -99,6 +99,7 @@ dependencies {
     projectDependenciesJs project(':mapper-core')
     projectDependenciesJs project(':visualization-base-svg')
     projectDependenciesJs project(':visualization-base-svg-mapper')
+    projectDependenciesJs project(':visualization-base-demo')
 }
 
 // ---------------------------------
