@@ -9,8 +9,8 @@ import jetbrains.datalore.visualization.base.svg.SvgTextNode
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 import jetbrains.datalore.visualization.base.svg.slim.SvgSlimNode
-import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomEventType
-import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomEventUtil
+import jetbrains.datalore.base.js.dom.DomEventType
+import jetbrains.datalore.base.event.dom.DomEventUtil
 import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomUtil
 import org.w3c.dom.Element
 import org.w3c.dom.Node

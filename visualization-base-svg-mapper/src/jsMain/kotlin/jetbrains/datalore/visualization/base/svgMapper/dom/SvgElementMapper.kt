@@ -12,8 +12,8 @@ import jetbrains.datalore.visualization.base.svg.SvgElementListener
 import jetbrains.datalore.visualization.base.svg.event.SvgAttributeEvent
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
 import jetbrains.datalore.visualization.base.svgMapper.dom.domExtensions.on
-import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomEventType
-import jetbrains.datalore.visualization.base.svgMapper.dom.domUtil.DomEventUtil
+import jetbrains.datalore.base.js.dom.DomEventType
+import jetbrains.datalore.base.event.dom.DomEventUtil
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGElement
