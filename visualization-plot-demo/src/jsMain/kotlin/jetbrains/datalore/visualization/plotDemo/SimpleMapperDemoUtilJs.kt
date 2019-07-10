@@ -7,6 +7,7 @@ import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
 import org.w3c.dom.Node
 import kotlin.browser.document
 
+// ToDo: move to base SVG mapper module and re-use
 internal fun showSvg(svgRoots: List<SvgSvgElement>, size: DoubleVector) {
     val rootElement = document.getElementById("root")!!
 
