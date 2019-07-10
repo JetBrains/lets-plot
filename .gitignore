@@ -4,3 +4,6 @@
 .DS_Store
 **/build
 **/out-repo
+
+node_modules/
+package-lock.json

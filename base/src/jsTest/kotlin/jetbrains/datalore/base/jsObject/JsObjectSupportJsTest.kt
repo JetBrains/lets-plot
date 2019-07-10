@@ -30,7 +30,7 @@ class JsObjectSupportJsTest {
                 }"""
                 ),
                 mapOf<String, Any?>(
-                    "key" to "val1"
+                    "key" to "val"
                 )
             )
         )
