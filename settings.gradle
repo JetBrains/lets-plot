@@ -19,15 +19,15 @@ include 'base',
         'visualization-base-svg-mapper-batik',
         'visualization-base-svg-mapper-demo',
         'visualization-base-canvas',
-        'visualization-base-demo',
-        'visualization-demo-common',
-        'visualization-demo-common-jfx',
         'visualization-plot-base',
         'visualization-plot-common',
         'visualization-plot-builder',
         'visualization-plot-config',
         'visualization-plot-gog-demo',
         'visualization-plot-demo',
+        'visualization-demo-common',
+        'visualization-demo-common-jfx',
+        'visualization-demo-svg-canvas-renderer',
         'demo-hello'
 
 
