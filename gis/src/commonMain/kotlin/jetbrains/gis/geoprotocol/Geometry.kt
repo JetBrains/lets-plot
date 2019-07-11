@@ -1,15 +1,15 @@
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.projectionGeometry.Multipolygon
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 
 interface Geometry {
 
-    fun asMultipolygon(): Multipolygon
+    fun asMultipolygon(): MultiPolygon
 
     companion object {
-        fun create(points: Multipolygon): Geometry {
+        fun create(points: MultiPolygon): Geometry {
             return object : Geometry {
-                override fun asMultipolygon(): Multipolygon {
+                override fun asMultipolygon(): MultiPolygon {
                     return points
                 }
             }

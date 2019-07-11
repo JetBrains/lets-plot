@@ -150,11 +150,15 @@ object GeoRequestBuilder {
     abstract class RequestBuilderBase<T : RequestBuilderBase<T>> {
         private lateinit var mySelf: T
 
-        protected val features: MutableList<FeatureOption> = ArrayList<FeatureOption>()
-        protected var myTiles: MutableMap<String, List<QuadKey>>? = null
-        protected var levelOfDetails: LevelOfDetails? = null
-
         abstract val mode: GeocodingMode
+
+        val features: MutableList<FeatureOption> = ArrayList<FeatureOption>()
+        var myTiles: MutableMap<String, List<QuadKey>>? = null
+            private set
+
+        var levelOfDetails: LevelOfDetails? = null
+            private set
+
 
         internal fun setSelf(self: T) {
             mySelf = self
