@@ -9,7 +9,7 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.base.swing.SwingDemoFactory
+import jetbrains.datalore.visualization.demoUtils.swing.SwingDemoFactory
 import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 import java.awt.Color
@@ -36,8 +36,9 @@ object PlotResizeDemoUtil {
     }
 
     private fun toPlotSize(containerSize: Dimension) = DoubleVector(
-            containerSize.width.toDouble() - 2 * PADDING,
-            containerSize.height.toDouble() - 2 * PADDING)
+        containerSize.width.toDouble() - 2 * PADDING,
+        containerSize.height.toDouble() - 2 * PADDING
+    )
 
     fun show(demoModel: BarPlotResizeDemo, factory: SwingDemoFactory) {
         factory.createDemoFrame("Fit in frame (try to resize)").show(false) {
@@ -71,10 +72,12 @@ object PlotResizeDemoUtil {
         }
     }
 
-    private fun createPlot(demo: BarPlotResizeDemo,
-                           plotSizeProp: ReadableProperty<DoubleVector>,
-                           container: JComponent,
-                           factory: SwingDemoFactory) {
+    private fun createPlot(
+        demo: BarPlotResizeDemo,
+        plotSizeProp: ReadableProperty<DoubleVector>,
+        container: JComponent,
+        factory: SwingDemoFactory
+    ) {
 
         val plot = demo.createPlot(plotSizeProp)
         plot.ensureContentBuilt()

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.swing
+package jetbrains.datalore.visualization.demoUtils.swing
 
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import java.awt.Dimension
@@ -6,7 +6,8 @@ import javax.swing.JComponent
 
 interface SwingDemoFactory {
     fun createDemoFrame(title: String,
-                        size: Dimension = SwingDemoFrame.FRAME_SIZE): SwingDemoFrame
+                        size: Dimension = SwingDemoFrame.FRAME_SIZE
+    ): SwingDemoFrame
 
     fun createSvgComponent(svg: SvgSvgElement): JComponent
 

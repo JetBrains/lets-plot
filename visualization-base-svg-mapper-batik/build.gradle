@@ -23,7 +23,8 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
-                implementation project(':visualization-base-svg-mapper')  // SwingDemoFrame
+//                implementation project(':visualization-base-svg-mapper')  // SwingDemoFrame
+                implementation project(':visualization-demo-common')  // Tmp: SwingDemoFrame
 
                 api "org.apache.xmlgraphics:batik-anim:$batik_version"
                 api "org.apache.xmlgraphics:batik-awt-util:$batik_version"

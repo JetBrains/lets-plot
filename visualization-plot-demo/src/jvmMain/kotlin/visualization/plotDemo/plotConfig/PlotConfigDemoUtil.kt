@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plotDemo.plotConfig
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.visualization.base.swing.SwingDemoFactory
+import jetbrains.datalore.visualization.demoUtils.swing.SwingDemoFactory
 import jetbrains.datalore.visualization.plot.DemoAndTestJvm
 import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
 import jetbrains.datalore.visualization.plot.builder.PlotContainer
@@ -15,7 +15,12 @@ import java.awt.event.MouseEvent
 import javax.swing.*
 
 object PlotConfigDemoUtil {
-    fun show(title: String, plotSpecList: List<MutableMap<String, Any>>, factory: SwingDemoFactory, plotSize: DoubleVector) {
+    fun show(
+        title: String,
+        plotSpecList: List<MutableMap<String, Any>>,
+        factory: SwingDemoFactory,
+        plotSize: DoubleVector
+    ) {
         factory.createDemoFrame(title).show {
             val panel = this
             panel.removeAll()
@@ -29,7 +34,12 @@ object PlotConfigDemoUtil {
         }
     }
 
-    private fun addPlots(panel: JPanel, plotSpecList: List<MutableMap<String, Any>>, factory: SwingDemoFactory, plotSize: DoubleVector) {
+    private fun addPlots(
+        panel: JPanel,
+        plotSpecList: List<MutableMap<String, Any>>,
+        factory: SwingDemoFactory,
+        plotSize: DoubleVector
+    ) {
         for (plotSpec in plotSpecList) {
             val component = createPlotComponent(plotSpec, factory, plotSize)
 
@@ -44,7 +54,11 @@ object PlotConfigDemoUtil {
         }
     }
 
-    private fun createPlotComponent(plotSpec: MutableMap<String, Any>, factory: SwingDemoFactory, plotSize: DoubleVector): JComponent {
+    private fun createPlotComponent(
+        plotSpec: MutableMap<String, Any>,
+        factory: SwingDemoFactory,
+        plotSize: DoubleVector
+    ): JComponent {
         val plot = DemoAndTestJvm.createPlot(plotSpec, false)
         val plotContainer = PlotContainer(plot, ValueProperty(plotSize))
         plotContainer.ensureContentBuilt()

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.swing
+package jetbrains.datalore.visualization.demoUtils.swing
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
@@ -21,7 +21,9 @@ abstract class SwingDemoFrame(
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
             panel.add(Box.createRigidArea(Dimension(MARGIN_LEFT, 0)))
 
-            panel.add(Box.createRigidArea(Dimension(0, SPACE_V)))
+            panel.add(Box.createRigidArea(Dimension(0,
+                SPACE_V
+            )))
 
             panel.initContent()
 
@@ -64,7 +66,9 @@ abstract class SwingDemoFrame(
         const val SPACE_V = 5
 
         private fun addVSpace(container: JPanel) {
-            container.add(Box.createRigidArea(Dimension(0, SPACE_V)))
+            container.add(Box.createRigidArea(Dimension(0,
+                SPACE_V
+            )))
         }
     }
 }
