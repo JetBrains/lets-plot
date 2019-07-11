@@ -105,9 +105,9 @@ dependencies {
     projectDependenciesJs project(':mapper-core')
     projectDependenciesJs project(':visualization-base-svg')
     projectDependenciesJs project(':visualization-base-svg-mapper')
-    
+
     projectDependenciesJs project(':visualization-base-demo-common')
-    
+
     projectDependenciesJs project(':visualization-base-canvas')         // required by plot-builder (get rid?)
 
     projectDependenciesJs project(':visualization-plot-common')
@@ -143,15 +143,9 @@ task copyMainJs(type: Copy) {
     into OUTPUT_DIR_JS
 }
 
-task copyResourcesJs(type: Copy) {
-    from "${project.buildDir}/processedResources/js/main"
-    into OUTPUT_DIR_JS
-}
-
 build.dependsOn += copyLibraryDependenciesJs
 build.dependsOn += copyProjectDependenciesJs
 build.dependsOn += copyMainJs
-build.dependsOn += copyResourcesJs
 
 //println "======================================="
 //build.dependsOn.forEach {
