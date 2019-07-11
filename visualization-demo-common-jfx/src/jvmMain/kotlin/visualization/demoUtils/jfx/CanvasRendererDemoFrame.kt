@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.swing
+package jetbrains.datalore.visualization.demoUtils.jfx
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
@@ -12,7 +12,9 @@ class CanvasRendererDemoFrame(
 ) : SwingDemoFrame(title, size) {
 
     override fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
-        return Companion.createSvgComponent(svgRoot)
+        return Companion.createSvgComponent(
+            svgRoot
+        )
     }
 
     companion object {

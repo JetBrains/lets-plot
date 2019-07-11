@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.swing
+package jetbrains.datalore.visualization.demoUtils.jfx
 
 import javafx.application.Platform
 

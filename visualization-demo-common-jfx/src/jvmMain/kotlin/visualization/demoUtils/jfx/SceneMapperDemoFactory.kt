@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.swing
+package jetbrains.datalore.visualization.demoUtils.jfx
 
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.demoUtils.swing.SwingDemoFactory
@@ -12,7 +12,10 @@ class SceneMapperDemoFactory : SwingDemoFactory {
     }
 
     override fun createSvgComponent(svg: SvgSvgElement): JComponent {
-        return SceneMapperDemoFrame.createSvgComponent(svg, emptyList())
+        return SceneMapperDemoFrame.createSvgComponent(
+            svg,
+            emptyList()
+        )
     }
 
     override fun createPlotEdtExecutor(): (() -> Unit) -> Unit {

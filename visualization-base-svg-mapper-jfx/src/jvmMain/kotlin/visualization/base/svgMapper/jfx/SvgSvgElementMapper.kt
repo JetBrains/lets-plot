@@ -6,7 +6,7 @@ import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.mapper.core.Synchronizers
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 
-internal class SvgSvgElementMapper(
+class SvgSvgElementMapper(
         source: SvgSvgElement,
         peer: SvgAwtPeer) : SvgElementMapper<SvgSvgElement, Parent>(source, createTargetContainer(), peer) {
 

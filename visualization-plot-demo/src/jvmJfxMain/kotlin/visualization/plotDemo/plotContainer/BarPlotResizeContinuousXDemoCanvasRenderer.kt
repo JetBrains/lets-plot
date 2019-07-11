@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.plotContainer
 
-import jetbrains.datalore.visualization.base.swing.CanvasRendererDemoFactory
+import jetbrains.datalore.visualization.demoUtils.jfx.CanvasRendererDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 
 object BarPlotResizeContinuousXDemoCanvasRenderer {

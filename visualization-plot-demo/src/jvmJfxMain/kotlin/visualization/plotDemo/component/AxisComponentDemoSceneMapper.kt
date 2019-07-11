@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.base.swing.SceneMapperDemoFrame
+import jetbrains.datalore.visualization.demoUtils.jfx.SceneMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.component.AxisComponentDemo
 
 fun main() {

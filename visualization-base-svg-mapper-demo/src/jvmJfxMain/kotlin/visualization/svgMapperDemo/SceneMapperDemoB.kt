@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.svgMapperDemo
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.swing.SceneMapperDemoFrame
+import jetbrains.datalore.visualization.demoUtils.jfx.SceneMapperDemoFrame
 import jetbrains.datalore.visualization.svgDemoModel.b.DemoModelB
 
 fun main() {

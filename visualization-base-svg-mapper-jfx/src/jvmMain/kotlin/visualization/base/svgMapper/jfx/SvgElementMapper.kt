@@ -19,7 +19,7 @@ import java.util.*
 
 import javafx.scene.input.MouseEvent as MouseEventFx
 
-internal open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
+open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
         source: SourceT,
         target: TargetT,
         peer: SvgAwtPeer) : SvgNodeMapper<SourceT, TargetT>(source, target, peer) {

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.swing
+package jetbrains.datalore.visualization.demoUtils.jfx
 
 import javafx.scene.Parent
 import jetbrains.datalore.base.geometry.Vector
@@ -11,8 +11,6 @@ import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
 import java.awt.Color
 import java.awt.Dimension
 import javax.swing.BorderFactory
-import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_LEFT as CANVAS_MOUSE_LEFT
-import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec.MOUSE_MOVED as CANVAS_MOUSE_MOVED
 
 class CanvasRendererJfxPanel(private val svg: SvgSvgElement) : AbstractJfxPanel(emptyList()) {
 

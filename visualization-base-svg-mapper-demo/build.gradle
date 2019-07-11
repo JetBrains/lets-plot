@@ -22,7 +22,8 @@ kotlin {
                 implementation project(':mapper-core')
                 implementation project(':visualization-base-svg')
                 implementation project(':visualization-base-svg-mapper')
-                implementation project(':visualization-demo-common')
+                implementation project(':visualization-demo-common')  // ToDo: remove
+                implementation project(':visualization-demo-common-jfx')
             }
         }
 
@@ -42,7 +43,7 @@ kotlin {
         jvmJfxMain {
             dependsOn allJvm
             dependencies {
-                implementation project(":visualization-base-svg-mapper-jfx")
+//                implementation project(":visualization-base-svg-mapper-jfx")
                 implementation "org.apache.commons:commons-math3:$math3_version"
             }
         }

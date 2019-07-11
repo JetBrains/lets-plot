@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.plotContainer
 
-import jetbrains.datalore.visualization.base.swing.SceneMapperDemoFactory
+import jetbrains.datalore.visualization.demoUtils.jfx.SceneMapperDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 
 object BarPlotResizeContinuousXDemoSceneMapper {

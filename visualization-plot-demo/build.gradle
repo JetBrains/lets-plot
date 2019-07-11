@@ -60,6 +60,7 @@ kotlin {
                 implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation project(':visualization-base-canvas')
                 implementation project(':visualization-base-svg-mapper-jfx')
+                implementation project(':visualization-demo-common-jfx')
             }
         }
         jvmBrowserMain {

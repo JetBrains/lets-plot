@@ -9,7 +9,7 @@ import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgPlatformPeer
 import jetbrains.datalore.visualization.base.svg.SvgTextContent
 
-internal class SvgAwtPeer : SvgPlatformPeer {
+class SvgAwtPeer : SvgPlatformPeer {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()
 
 //    private fun ensureElementConsistency(source: SvgNode, target: Node) {

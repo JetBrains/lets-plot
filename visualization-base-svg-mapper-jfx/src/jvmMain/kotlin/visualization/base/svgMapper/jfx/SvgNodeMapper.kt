@@ -5,7 +5,7 @@ import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.visualization.base.svg.SvgNode
 
-internal open class SvgNodeMapper<SourceT : SvgNode, TargetT : Node>(
+open class SvgNodeMapper<SourceT : SvgNode, TargetT : Node>(
         source: SourceT,
         target: TargetT,
         protected val peer: SvgAwtPeer) : Mapper<SourceT, TargetT>(source, target) {

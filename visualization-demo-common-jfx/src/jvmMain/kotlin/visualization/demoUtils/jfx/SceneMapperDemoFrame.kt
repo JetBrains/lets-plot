@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.swing
+package jetbrains.datalore.visualization.demoUtils.jfx
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
@@ -11,12 +11,16 @@ class SceneMapperDemoFrame(title: String,
                            size: Dimension = FRAME_SIZE) : SwingDemoFrame(title, size) {
 
     override fun createSvgComponent(svgRoot: SvgSvgElement): JComponent {
-        return Companion.createSvgComponent(svgRoot, stylesheets)
+        return createSvgComponent(
+            svgRoot,
+            stylesheets
+        )
     }
 
     companion object {
         fun showSvg(svgRoots: List<SvgSvgElement>, stylesheets: List<String>, size: DoubleVector, title: String) {
-            SceneMapperDemoFrame(title, stylesheets).showSvg(svgRoots, size)
+            SceneMapperDemoFrame(title, stylesheets)
+                .showSvg(svgRoots, size)
         }
 
         fun createSvgComponent(svgRoot: SvgSvgElement, stylesheets: List<String>): JComponent {
