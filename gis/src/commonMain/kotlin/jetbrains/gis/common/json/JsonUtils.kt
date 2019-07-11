@@ -1,7 +1,7 @@
 package jetbrains.gis.common.json
 
 typealias JsonObject = HashMap<String, Any?>
-typealias JsonArray = ArrayList<Any?>
+typealias JsonArray = ArrayList<*>
 
 object JsonUtils {
 
@@ -61,7 +61,7 @@ object JsonUtils {
 //        return arr
 //    }
 //
-    fun streamOf(arr: JsonArray): List<Any?> {
+fun streamOf(arr: JsonArray): List<*> {
         return arr
     }
 
@@ -69,10 +69,10 @@ object JsonUtils {
         return streamOf(arr).map { v -> v as JsonObject }
     }
 
-//    fun stringStreamOf(arr: JsonArray): Stream<String> {
-//        return streamOf(arr).map({ v -> (v as JsonString).getStringValue() })
-//    }
-//
+    fun stringStreamOf(arr: JsonArray): Sequence<String?> {
+        return arr.asSequence().map { v -> v as String? }
+    }
+
 //    fun toMap(obj: JsonObject): Map<String, Any> {
 //        val res = HashMap<String, Any>()
 //
@@ -121,11 +121,11 @@ object JsonUtils {
 //        return isString(v) || v is JsonNull
 //    }
 //
-//    fun getAsString(e: Any): String? {
-//        return if (e is JsonNull) {
-//            null
-//        } else (e as JsonString).getStringValue()
-//    }
+fun getAsString(e: Any?): String? {
+    return if (e == null) {
+        null
+    } else (e as String)
+}
 //
 //    fun getAsDouble(v: Any): Double {
 //        return (v as JsonNumber).getDoubleValue()
@@ -205,13 +205,10 @@ object JsonUtils {
 //    }
 //
 //
-//    fun <T : Enum<T>> parseEnum(enumStringValue: String, values: Array<T>): T {
-//        return Arrays.stream(values)
-//            .filter({ mode -> mode.toString().equals(enumStringValue, ignoreCase = true) })
-//            .findFirst()
-//            .orElseThrow({ IllegalArgumentException("Unknown enum value: $enumStringValue") })
-//    }
-//
+fun <T : Enum<T>> parseEnum(enumStringValue: String, values: Array<T>): T {
+    return values.first { mode -> mode.toString().equals(enumStringValue, ignoreCase = true) }
+}
+
     fun <T : Enum<T>> formatEnum(enumValue: T): String {
         return enumValue.toString().toLowerCase()
     }

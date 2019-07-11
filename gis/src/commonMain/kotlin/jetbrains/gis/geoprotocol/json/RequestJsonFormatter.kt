@@ -1,149 +1,143 @@
-package jetbrains.gis.protocol.json
+package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.gis.common.json.FluentJsonArray
 import jetbrains.gis.common.json.FluentJsonObject
 import jetbrains.gis.common.json.FluentJsonValue
-import jetbrains.gis.common.json.JsonUtils
-import jetbrains.gis.common.json.JsonUtils.toJsonValue
-import jetbrains.gis.protocol.GeoRequest
-import jetbrains.gis.protocol.GeoRequest.ExplicitSearchRequest
-import jetbrains.gis.protocol.GeoRequest.GeocodingSearchRequest
-import jetbrains.gis.protocol.GeoRequest.ReverseGeocodingSearchRequest
-import jetbrains.gis.protocol.GeocodingMode
-import jetbrains.gis.protocol.GeocodingMode.*
-import jetbrains.gis.protocol.MapRegion
-import java.util.Collections
-import java.util.Optional
-import java.util.function.Function
-import java.util.stream.Collectors.toList
+import jetbrains.gis.common.json.JsonObject
+import jetbrains.gis.geoprotocol.GeoRequest
+import jetbrains.gis.geoprotocol.GeoRequest.*
+import jetbrains.gis.geoprotocol.GeocodingMode
+import jetbrains.gis.geoprotocol.GeocodingMode.*
+import jetbrains.gis.geoprotocol.MapRegion
+import jetbrains.gis.geoprotocol.json.RequestKeys.AMBIGUITY_BOX
+import jetbrains.gis.geoprotocol.json.RequestKeys.AMBIGUITY_CLOSEST_COORD
+import jetbrains.gis.geoprotocol.json.RequestKeys.AMBIGUITY_IGNORING_STRATEGY
+import jetbrains.gis.geoprotocol.json.RequestKeys.AMBIGUITY_RESOLVER
+import jetbrains.gis.geoprotocol.json.RequestKeys.FEATURE_OPTIONS
+import jetbrains.gis.geoprotocol.json.RequestKeys.IDS
+import jetbrains.gis.geoprotocol.json.RequestKeys.LAT_MAX
+import jetbrains.gis.geoprotocol.json.RequestKeys.LAT_MIN
+import jetbrains.gis.geoprotocol.json.RequestKeys.LEVEL
+import jetbrains.gis.geoprotocol.json.RequestKeys.LON_MAX
+import jetbrains.gis.geoprotocol.json.RequestKeys.LON_MIN
+import jetbrains.gis.geoprotocol.json.RequestKeys.MAP_REGION_KIND
+import jetbrains.gis.geoprotocol.json.RequestKeys.MAP_REGION_VALUES
+import jetbrains.gis.geoprotocol.json.RequestKeys.MODE
+import jetbrains.gis.geoprotocol.json.RequestKeys.NAMESAKE_EXAMPLE_LIMIT
+import jetbrains.gis.geoprotocol.json.RequestKeys.PROTOCOL_VERSION
+import jetbrains.gis.geoprotocol.json.RequestKeys.REGION_QUERIES
+import jetbrains.gis.geoprotocol.json.RequestKeys.REGION_QUERY_NAMES
+import jetbrains.gis.geoprotocol.json.RequestKeys.REGION_QUERY_PARENT
+import jetbrains.gis.geoprotocol.json.RequestKeys.RESOLUTION
+import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_COORDINATES
+import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_LEVEL
+import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_PARENT
+import jetbrains.gis.geoprotocol.json.RequestKeys.TILES
+import jetbrains.gis.geoprotocol.json.RequestKeys.VERSION
+import kotlin.math.max
+import kotlin.math.min
 
 object RequestJsonFormatter {
-    private val PARENT_KIND_ID = true
-    private val PARENT_KIND_NAME = false
+    private const val PARENT_KIND_ID = true
+    private const val PARENT_KIND_NAME = false
 
     fun format(request: GeoRequest): JsonObject {
-        if (request is GeocodingSearchRequest) {
-            return geocoding(request as GeocodingSearchRequest)
-        } else if (request is ExplicitSearchRequest) {
-            return explicit(request as ExplicitSearchRequest)
-        } else if (request is ReverseGeocodingSearchRequest) {
-            return reverse(request as ReverseGeocodingSearchRequest)
+        return when (request) {
+            is GeocodingSearchRequest -> geocoding(request)
+            is ExplicitSearchRequest -> explicit(request)
+            is ReverseGeocodingSearchRequest -> reverse(request)
+            else -> throw IllegalStateException("Unknown request: " + request::class.simpleName)
         }
 
-        throw IllegalStateException("Unknown request: " + request.getClass().getSimpleName())
     }
 
     private fun geocoding(request: GeocodingSearchRequest): JsonObject {
         return common(request, BY_NAME)
-            .put(LEVEL, request.getLevel())
-            .put(NAMESAKE_EXAMPLE_LIMIT, request.getNamesakeExampleLimit())
+            .put(LEVEL, request.level)
+            .put(NAMESAKE_EXAMPLE_LIMIT, request.namesakeExampleLimit)
             .put(REGION_QUERIES, FluentJsonArray()
-                .addAll(request.getQueries().stream().map(
-                    { regionQuery ->
-                        FluentJsonObject()
-                            .put(REGION_QUERY_NAMES, toJsonValue(regionQuery.getNames()))
-                            .put(REGION_QUERY_PARENT, formatMapRegion(regionQuery.getParent()))
-                            .put(
-                                AMBIGUITY_RESOLVER, FluentJsonObject()
-                                    .put(
-                                        AMBIGUITY_IGNORING_STRATEGY,
-                                        regionQuery.getAmbiguityResolver().getIgnoringStrategy()
-                                    )
-                                    .put(
-                                        AMBIGUITY_CLOSEST_COORD,
-                                        formatCoord(regionQuery.getAmbiguityResolver().getClosestCoord())
-                                    )
-                                    .put(AMBIGUITY_BOX, formatRect(regionQuery.getAmbiguityResolver().getBox()))
-                            )
-                    }
-                ).collect(toList<T>())
-                )
+                .addAll(request.queries.map { regionQuery ->
+                    FluentJsonObject()
+                        .put(REGION_QUERY_NAMES, regionQuery.names)
+                        .put(REGION_QUERY_PARENT, formatMapRegion(regionQuery.parent))
+                        .put(
+                            AMBIGUITY_RESOLVER, FluentJsonObject()
+                                .put(AMBIGUITY_IGNORING_STRATEGY, regionQuery.ambiguityResolver.ignoringStrategy)
+                                .put(AMBIGUITY_CLOSEST_COORD, formatCoord(regionQuery.ambiguityResolver.closestCoord))
+                                .put(AMBIGUITY_BOX, formatRect(regionQuery.ambiguityResolver.box))
+                        )
+                })
             )
             .get()
     }
 
     private fun explicit(request: ExplicitSearchRequest): JsonObject {
         return common(request, BY_ID)
-            .put(IDS, toJsonValue(request.getIds()))
+            .put(IDS, request.ids)
             .get()
     }
 
     private fun reverse(request: ReverseGeocodingSearchRequest): JsonObject {
         return common(request, REVERSE)
-            .put(REVERSE_PARENT, formatMapRegion(request.getParent()))
+            .put(REVERSE_PARENT, formatMapRegion(request.parent))
             .put(
                 REVERSE_COORDINATES, FluentJsonArray()
-                    .addAll(
-                        request.getCoordinates().stream()
-                            .map(??? { formatCoord() })
-        .collect(toList<T>())
-        )
-        )
-        .put(REVERSE_LEVEL, request.getLevel())
+                    .addAll(request.coordinates.map { formatCoord(it) })
+            )
+            .put(REVERSE_LEVEL, request.level)
             .get()
     }
 
-    private fun formatRect(rect: Optional<DoubleRectangle>): JsonValue {
-        return rect.map(Function<DoubleRectangle, JsonValue> { formatRect(it) }).orElse(JsonUtils.NULL)
+    private fun formatRect(rect: DoubleRectangle?): Any? {
+        return rect?.let { formatRect(it) }
     }
 
-    private fun formatRect(rect: DoubleRectangle): JsonValue {
+    private fun formatRect(rect: DoubleRectangle): Any? {
         return FluentJsonObject()
-            .put(LON_MIN, rect.getLeft())
-            .put(LAT_MIN, Math.min(rect.getTop(), rect.getBottom()))
-            .put(LON_MAX, rect.getRight())
-            .put(LAT_MAX, Math.max(rect.getTop(), rect.getBottom()))
+            .put(LON_MIN, rect.left)
+            .put(LAT_MIN, min(rect.top, rect.bottom))
+            .put(LON_MAX, rect.right)
+            .put(LAT_MAX, max(rect.top, rect.bottom))
             .get()
     }
 
-    private fun formatCoord(coord: Optional<DoubleVector>): JsonValue {
-        return coord.map({ v -> formatCoord(v).get() }).orElse(JsonUtils.NULL)
+    private fun formatCoord(coord: DoubleVector?): Any? {
+        return coord?.let { v -> formatCoord(v).get() }
     }
 
     private fun formatCoord(coord: DoubleVector): FluentJsonValue {
         return FluentJsonArray()
-            .add(JsonNumber(coord.x))
-            .add(JsonNumber(coord.y))
+            .add(coord.x)
+            .add(coord.y)
     }
 
     private fun common(request: GeoRequest, mode: GeocodingMode): FluentJsonObject {
         return FluentJsonObject()
             .put(VERSION, PROTOCOL_VERSION)
             .put(MODE, mode)
-            .put(
-                RESOLUTION,
-                request.getLevelOfDetails().map({ v -> JsonNumber(v.toResolution()) }).orElse(JsonUtils.NULL)
-            )
-            .putRemovable(TILES, request.getTiles().map(???({ JsonUtils.toJsonObject() })).orElse(JsonUtils.NULL))
-        .put(FEATURE_OPTIONS, toJsonValue(request.getFeatures()))
+            .put(RESOLUTION, request.levelOfDetails?.let { v -> v.toResolution() })
+            .putRemovable(TILES, request.tiles)
+            .put(FEATURE_OPTIONS, request.features)
     }
 
-    private fun <T> toJsonArray(objects: Iterable<T>, getObjectKey: Function<T, JsonValue>): JsonArray {
-        val jsonArray = JsonArray()
-        objects.forEach { `object` -> jsonArray.add(getObjectKey.apply(`object`)) }
-        return jsonArray
-    }
-
-    private fun formatMapRegion(v: Optional<MapRegion>): JsonValue {
-        return v
-            .map({ mapRegion ->
+    private fun formatMapRegion(v: MapRegion?): Any? {
+        return v?.let { mapRegion ->
                 val kind = if (mapRegion.containsId())
                     PARENT_KIND_ID
                 else
                     PARENT_KIND_NAME
 
                 val values = if (mapRegion.containsId())
-                    mapRegion.getIdList()
+                    mapRegion.idList
                 else
-                    listOf(mapRegion.getName())
+                    listOf(mapRegion.name)
 
                 FluentJsonObject()
                     .put(MAP_REGION_KIND, kind)
-                    .put(MAP_REGION_VALUES, toJsonArray(values, Function<String, JsonValue> { JsonString() }))
+                    .put(MAP_REGION_VALUES, values)
                     .get()
-            })
-            .orElse(JsonUtils.NULL)
+        }
     }
 }

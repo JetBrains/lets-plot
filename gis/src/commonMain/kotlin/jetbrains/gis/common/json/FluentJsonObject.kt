@@ -1,6 +1,7 @@
 package jetbrains.gis.common.json
 
 import jetbrains.gis.common.json.JsonUtils.formatEnum
+import jetbrains.gis.common.json.JsonUtils.parseEnum
 
 
 class FluentJsonObject : FluentJsonValue {
@@ -99,17 +100,16 @@ class FluentJsonObject : FluentJsonValue {
 //        return this
 //    }
 //
-//    fun getStrings(key: String): List<String> {
-//        return FluentJsonArray(myObj.getArray(key))
-//            .stream()
-//            .map(???({ JsonUtils.getAsString() }))
-//        .collect(Collectors.toList())
-//    }
-//
-//    fun getStrings(key: String, processor: Consumer<List<String>>): FluentJsonObject {
-//        processor.accept(getStrings(key))
-//        return this
-//    }
+private fun getStrings(key: String): List<String?> {
+    return FluentJsonArray(myObj.getArray(key))
+        .stream()
+        .map { JsonUtils.getAsString(it) }
+}
+
+    fun getStrings(key: String, processor: (List<String?>) -> Unit): FluentJsonObject {
+        processor(getStrings(key))
+        return this
+    }
 //
 //    fun getOptionalStrings(key: String, processor: Consumer<Optional<List<String>>>): FluentJsonObject {
 //        if (containsNotNull(key)) {
@@ -146,26 +146,26 @@ class FluentJsonObject : FluentJsonValue {
 //        return FluentJsonArray(myObj.getArray(key))
 //    }
 //
-//    fun getObject(key: String): FluentJsonObject {
-//        return FluentJsonObject(myObj.get(key))
-//    }
-//
+fun getObject(key: String): FluentJsonObject {
+    return FluentJsonObject(myObj[key] as JsonObject)
+}
+
 //    fun getObject(key: String, processor: Consumer<FluentJsonObject>): FluentJsonObject {
 //        processor.accept(getObject(key))
 //        return this
 //    }
 //
-//    fun getExistingObject(key: String, processor: Consumer<FluentJsonObject>): FluentJsonObject {
-//        if (containsNotNull(key)) {
-//            val `object` = getObject(key)
-//            if (!`object`.myObj.getKeys().isEmpty()) {
-//                processor.accept(`object`)
-//            }
-//        }
-//
-//        return this
-//    }
-//
+fun getExistingObject(key: String, processor: (FluentJsonObject) -> Unit): FluentJsonObject {
+    if (containsNotNull(key)) {
+        val obj = getObject(key)
+        if (obj.myObj.keys.isNotEmpty()) {
+            processor(obj)
+        }
+    }
+
+    return this
+}
+
 //    fun getExistingArray(key: String, processor: Consumer<FluentJsonArray>): FluentJsonObject {
 //        if (containsNotNull(key)) {
 //            processor.accept(getArray(key))
@@ -178,25 +178,25 @@ class FluentJsonObject : FluentJsonValue {
 //        FluentJsonArray(myObj.getArray(key)).fluentObjectStream().forEach(processor)
 //        return this
 //    }
-//
-//    fun getInt(key: String): Int {
-//        return myObj.getInt(key)
-//    }
-//
+
+    fun getInt(key: String): Int {
+        return myObj[key] as Int
+    }
+
 //    fun getInt(key: String, processor: Consumer<Int>): FluentJsonObject {
 //        processor.accept(getInt(key))
 //        return this
 //    }
-//
-//    fun getOptionalInt(key: String, processor: Consumer<Optional<Int>>): FluentJsonObject {
-//        if (containsNotNull(key)) {
-//            processor.accept(Optional.of(getInt(key)))
-//        } else {
-//            processor.accept(Optional.empty())
-//        }
-//        return this
-//    }
-//
+
+    fun getOptionalInt(key: String, processor: (Int?) -> Unit): FluentJsonObject {
+        if (containsNotNull(key)) {
+            processor(getInt(key))
+        } else {
+            processor(null)
+        }
+        return this
+    }
+
 //    fun getIntOrDefault(key: String, processor: Consumer<Int>, defaultValue: Int): FluentJsonObject {
 //        if (containsNotNull(key)) {
 //            processor.accept(getInt(key))
@@ -206,23 +206,23 @@ class FluentJsonObject : FluentJsonValue {
 //        return this
 //    }
 //
-//    fun <T : Enum<T>> getEnum(key: String, enumValues: Array<T>): T {
-//        return parseEnum(myObj.getString(key), enumValues)
-//    }
+fun <T : Enum<T>> getEnum(key: String, enumValues: Array<T>): T {
+    return parseEnum(myObj[key] as String, enumValues)
+}
 //
 //    fun <T : Enum<T>> getEnum(key: String, processor: Consumer<T>, enumValues: Array<T>): FluentJsonObject {
 //        processor.accept(getEnum(key, enumValues))
 //        return this
 //    }
 //
-//    fun <T : Enum<T>> forEnums(key: String, processor: Consumer<T>, enumValues: Array<T>): FluentJsonObject {
-//        FluentJsonArray(myObj.getArray(key))
-//            .stream()
-//            .map(???({ JsonUtils.getAsString() }))
-//        .forEach { enumValue -> processor.accept(parseEnum(enumValue, enumValues)) }
-//        return this
-//    }
-//
+fun <T : Enum<T>> forEnums(key: String, processor: (T) -> Unit, enumValues: Array<T>): FluentJsonObject {
+    FluentJsonArray(myObj.getArray(key))
+        .stream()
+        .map(JsonUtils::getAsString)
+        .forEach { enumValue -> processor(parseEnum(enumValue!!, enumValues)) }
+    return this
+}
+
 //    fun <T : Enum<T>> getOptionalEnum(
 //        key: String,
 //        processor: Consumer<Optional<T>>,
@@ -248,24 +248,21 @@ class FluentJsonObject : FluentJsonValue {
 //        return this
 //    }
 //
-//    fun forEntries(consumer: BiConsumer<String, JsonValue>): FluentJsonObject {
-//        myObj.getKeys().forEach { key -> consumer.accept(key, myObj.get(key)) }
-//        return this
-//    }
-//
-//    fun accept(consumer: Consumer<FluentJsonObject>): FluentJsonObject {
-//        consumer.accept(this)
-//        return this
-//    }
-//
-//    operator fun contains(key: String): Boolean {
-//        return myObj.getKeys().contains(key)
-//    }
-//
-//    private fun containsNotNull(key: String): Boolean {
-//        return contains(key) && myObj.get(key) !is JsonNull
-//    }
-//
+fun forEntries(consumer: (String, Any?) -> Unit): FluentJsonObject {
+    myObj.keys.forEach { key -> consumer(key, myObj.get(key)) }
+    return this
+}
+
+    fun accept(consumer: (FluentJsonObject) -> Unit) = apply { consumer(this) }
+
+    operator fun contains(key: String): Boolean {
+        return myObj.containsKey(key)
+    }
+
+    private fun containsNotNull(key: String): Boolean {
+        return contains(key) && myObj.get(key) != null
+    }
+
     override fun get(): JsonObject {
         return myObj
     }

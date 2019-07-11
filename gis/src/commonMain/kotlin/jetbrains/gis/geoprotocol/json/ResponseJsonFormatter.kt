@@ -4,9 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.gis.common.json.*
 import jetbrains.gis.geoprotocol.GeoResponse
-import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse
-import jetbrains.gis.geoprotocol.GeoResponse.ErrorGeoResponse
-import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse
+import jetbrains.gis.geoprotocol.GeoResponse.*
 import jetbrains.gis.geoprotocol.GeoTile
 import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.gis.geoprotocol.json.ResponseKeys.BOUNDARY
@@ -137,19 +135,21 @@ object ResponseJsonFormatter {
         return StringGeometries.getRawData(geometry)
     }
 
-    private fun formatTiles(tiles: List<GeoTile>): FluentJsonObject {
-        val obj = FluentJsonObject()
-        for (tile in tiles) {
-            val geometries = FluentJsonArray()
+    private fun formatTiles(tiles: List<GeoTile>?): FluentJsonObject? {
+        return tiles?.let {
+            val obj = FluentJsonObject()
+            for (tile in tiles) {
+                val geometries = FluentJsonArray()
 
-            for (boundary in tile.geometries) {
-                geometries.add(geometryToString(boundary))
+                for (boundary in tile.geometries) {
+                    geometries.add(geometryToString(boundary))
+                }
+
+                obj.put(tile.key.string, geometries)
             }
 
-            obj.put(tile.key.string, geometries)
+            return obj
         }
-
-        return obj
     }
 
 }

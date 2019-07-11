@@ -1,78 +1,93 @@
-package jetbrains.gis.protocol.json
+package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.json.JsonArray
-import jetbrains.datalore.base.json.JsonObject
 import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.gis.common.json.FluentJsonObject
+import jetbrains.gis.common.json.JsonArray
+import jetbrains.gis.common.json.JsonObject
 import jetbrains.gis.common.json.JsonUtils.stringStreamOf
-import jetbrains.gis.protocol.FeatureLevel
-import jetbrains.gis.protocol.GeoRequest
-import jetbrains.gis.protocol.GeoRequest.FeatureOption
-import jetbrains.gis.protocol.GeoRequest.GeocodingSearchRequest.AmbiguityResolver.IgnoringStrategy
-import jetbrains.gis.protocol.GeoRequestBuilder.*
-import jetbrains.gis.protocol.GeocodingMode
-import jetbrains.gis.protocol.MapRegion
-import java.util.Optional
-import java.util.stream.Collectors.toList
+import jetbrains.gis.geoprotocol.GeoRequest
+import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption
+import jetbrains.gis.geoprotocol.GeoRequestBuilder
+import jetbrains.gis.geoprotocol.GeocodingMode
+import jetbrains.gis.geoprotocol.MapRegion
+import jetbrains.gis.geoprotocol.json.RequestKeys.AMBIGUITY_BOX
+import jetbrains.gis.geoprotocol.json.RequestKeys.AMBIGUITY_CLOSEST_COORD
+import jetbrains.gis.geoprotocol.json.RequestKeys.AMBIGUITY_IGNORING_STRATEGY
+import jetbrains.gis.geoprotocol.json.RequestKeys.AMBIGUITY_RESOLVER
+import jetbrains.gis.geoprotocol.json.RequestKeys.COORDINATE_LAT
+import jetbrains.gis.geoprotocol.json.RequestKeys.COORDINATE_LON
+import jetbrains.gis.geoprotocol.json.RequestKeys.FEATURE_OPTIONS
+import jetbrains.gis.geoprotocol.json.RequestKeys.IDS
+import jetbrains.gis.geoprotocol.json.RequestKeys.LAT_MAX
+import jetbrains.gis.geoprotocol.json.RequestKeys.LAT_MIN
+import jetbrains.gis.geoprotocol.json.RequestKeys.LEVEL
+import jetbrains.gis.geoprotocol.json.RequestKeys.LON_MAX
+import jetbrains.gis.geoprotocol.json.RequestKeys.LON_MIN
+import jetbrains.gis.geoprotocol.json.RequestKeys.MAP_REGION_KIND
+import jetbrains.gis.geoprotocol.json.RequestKeys.MAP_REGION_VALUES
+import jetbrains.gis.geoprotocol.json.RequestKeys.MODE
+import jetbrains.gis.geoprotocol.json.RequestKeys.NAMESAKE_EXAMPLE_LIMIT
+import jetbrains.gis.geoprotocol.json.RequestKeys.REGION_QUERIES
+import jetbrains.gis.geoprotocol.json.RequestKeys.REGION_QUERY_NAMES
+import jetbrains.gis.geoprotocol.json.RequestKeys.REGION_QUERY_PARENT
+import jetbrains.gis.geoprotocol.json.RequestKeys.RESOLUTION
+import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_COORDINATES
+import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_LEVEL
+import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_PARENT
+import jetbrains.gis.geoprotocol.json.RequestKeys.TILES
 
 object RequestJsonParser {
 
     fun parse(requestJson: JsonObject): GeoRequest {
         val requestFluentJson = FluentJsonObject(requestJson)
 
-        when (requestFluentJson.getEnum(MODE, GeocodingMode.values())) {
-            BY_ID -> return parseExplicitRequest(requestFluentJson)
-
-            BY_NAME -> return parseGeocodingRequest(requestFluentJson)
-
-            REVERSE -> return parseReverseGeocodingRequest(requestFluentJson)
-
-            else -> throw IllegalStateException("Unknown geocoding mode")
+        return when (requestFluentJson.getEnum(MODE, GeocodingMode.values())) {
+            GeocodingMode.BY_ID -> parseExplicitRequest(requestFluentJson)
+            GeocodingMode.BY_NAME -> parseGeocodingRequest(requestFluentJson)
+            GeocodingMode.REVERSE -> parseReverseGeocodingRequest(requestFluentJson)
         }
     }
 
-    private fun <T : RequestBuilderBase<*>> parseCommon(requestFluentJson: FluentJsonObject, builder: T) {
+    private fun <T : GeoRequestBuilder.RequestBuilderBase<*>> parseCommon(
+        requestFluentJson: FluentJsonObject,
+        builder: T
+    ) {
         requestFluentJson
-            .getOptionalInt(RESOLUTION, ???({ builder.setResolution() }))
-        .getExistingObject(
-            TILES
-        ) { tiles ->
-            tiles
+            .getOptionalInt(RESOLUTION, builder::setResolution)
+            .getExistingObject(TILES) { tiles ->
+                tiles
                 .forEntries { id, quadKeys ->
-                    builder
-                        .addTiles(
-                            id,
-                            stringStreamOf(quadKeys as JsonArray)
-                                .map(???({ QuadKey() }))
-                    .collect(toList<T>())
+                    builder.addTiles(
+                        id,
+                        stringStreamOf(quadKeys as JsonArray).map { key -> QuadKey(key!!) }.toList()
                     )
                 }
-        }
-            .forEnums(FEATURE_OPTIONS, ???({ builder.addFeature() }), FeatureOption.values())
+            }
+            .forEnums(FEATURE_OPTIONS, builder::addFeature, FeatureOption.values())
     }
 
     private fun parseExplicitRequest(requestFluentJson: FluentJsonObject): GeoRequest {
-        val builder = ExplicitRequestBuilder()
+        val builder = GeoRequestBuilder.ExplicitRequestBuilder()
 
         requestFluentJson
-            .accept({ v -> parseCommon(v, builder) })
-            .getStrings(IDS, ???({ builder.setIds() }))
+            .accept { v -> parseCommon(v, builder) }
+            .getStrings(IDS, { list -> builder.setIds(list) })
 
         return builder.build()
     }
 
     private fun parseGeocodingRequest(requestFluentJson: FluentJsonObject): GeoRequest {
-        val builder = GeocodingRequestBuilder()
+        val builder = GeoRequestBuilder.GeocodingRequestBuilder()
 
         requestFluentJson
-            .accept({ v -> parseCommon(v, builder) })
+            .accept { v -> parseCommon(v, builder) }
             .getOptionalEnum(LEVEL, ???({ builder.setLevel() }), FeatureLevel.values())
         .getInt(NAMESAKE_EXAMPLE_LIMIT, ???({ builder.setNamesakeExampleLimit() }))
         .forObjects(REGION_QUERIES) { query ->
-            val regionQueryBuilder = RegionQueryBuilder()
+            val regionQueryBuilder = GeoRequestBuilder.RegionQueryBuilder()
 
             query
                 .getStrings(REGION_QUERY_NAMES, ???({ regionQueryBuilder.setQueryNames() }))
@@ -124,7 +139,7 @@ object RequestJsonParser {
     }
 
     private fun parseReverseGeocodingRequest(requestFluentJson: FluentJsonObject): GeoRequest {
-        val builder = ReverseGeocodingRequestBuilder()
+        val builder = GeoRequestBuilder.ReverseGeocodingRequestBuilder()
 
         requestFluentJson
             .accept({ v -> parseCommon(v, builder) })
@@ -144,16 +159,14 @@ object RequestJsonParser {
                         )
                     }
                     )
-                    .collect(toList<T>())
                 )
-            }
-            )
+            })
 
         return builder.build()
     }
 
     private fun parseMapRegion(json: FluentJsonObject, setter: Consumer<Optional<MapRegion>>) {
-        val mapRegion = MapRegionBuilder()
+        val mapRegion = GeoRequestBuilder.MapRegionBuilder()
         json
             .getStrings(MAP_REGION_VALUES, ???({ mapRegion.setParentValues() }))
         .getBoolean(MAP_REGION_KIND, ???({ mapRegion.setParentKind() }))
