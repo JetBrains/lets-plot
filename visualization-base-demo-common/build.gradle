@@ -8,20 +8,24 @@ repositories {
 
 kotlin {
     jvm()
+    js()
     sourceSets {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':base')
                 implementation project(':visualization-base-svg')
-                implementation project(':visualization-base-canvas')
-                implementation project(':visualization-base-demo-common')
             }
         }
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
             }
         }
     }
@@ -35,4 +39,17 @@ idea {
         }
     }
 }
+
+
+// Workaround for Idea/Gradle bug: https://youtrack.jetbrains.com/issue/KT-24463
+// MPP: Run does not add resource directory to classpath [Cannot get resource when using common module]
+// 
+// JavaFX Scene mapping requires stylesheet resource URI 
+task copyProcessedResources(type: Copy) {
+    from "${project.buildDir}/processedResources"
+    into "${project.buildDir}/classes/kotlin"
+}
+
+build.dependsOn += copyProcessedResources
+
 

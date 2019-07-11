@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.svgMapperDemo.model
+package jetbrains.datalore.visualization.svgDemoModel.b
 
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.values.Color
@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.base.svg.SvgImageElementEx.Bitmap
 import jetbrains.datalore.visualization.base.svg.event.SvgEventHandler
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
 
-object DemoModel {
+object DemoModelB {
     fun createModel(): SvgSvgElement {
         val svgRoot = SvgSvgElement(400.0, 200.0)
         svgRoot.setStyle(CssRes())

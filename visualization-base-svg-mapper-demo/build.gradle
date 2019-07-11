@@ -22,7 +22,7 @@ kotlin {
                 implementation project(':mapper-core')
                 implementation project(':visualization-base-svg')
                 implementation project(':visualization-base-svg-mapper')
-                implementation project(':visualization-base-demo')     // import another demo-model
+                implementation project(':visualization-base-demo-common')
             }
         }
 
@@ -73,16 +73,6 @@ idea {
 }
 
 
-// Workaround for Idea/Gradle bug: https://youtrack.jetbrains.com/issue/KT-24463
-// MPP: Run does not add resource directory to classpath [Cannot get resource when using common module]
-task copyProcessedResources(type: Copy) {
-    from "${project.buildDir}/processedResources"
-    into "${project.buildDir}/classes/kotlin"
-}
-
-build.dependsOn += copyProcessedResources
-
-
 // ---------------------------------
 // Trick to copy kotlin.js etc. to `output`
 configurations {
@@ -99,7 +89,7 @@ dependencies {
     projectDependenciesJs project(':mapper-core')
     projectDependenciesJs project(':visualization-base-svg')
     projectDependenciesJs project(':visualization-base-svg-mapper')
-    projectDependenciesJs project(':visualization-base-demo')
+    projectDependenciesJs project(':visualization-base-demo-common')
 }
 
 // ---------------------------------

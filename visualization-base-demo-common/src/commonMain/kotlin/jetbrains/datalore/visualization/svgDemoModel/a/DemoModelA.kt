@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.baseDemo.svgCanvasDemo.model
+package jetbrains.datalore.visualization.svgDemoModel.a
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color

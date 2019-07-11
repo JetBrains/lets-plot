@@ -3,9 +3,10 @@ package jetbrains.datalore.visualization.plotDemo.plotConfig
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.jsObject.mapToJsObjectInitializer
 import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil
-import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.BASE_MAPPER_LIBS_JS
-import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.KOTLIN_LIBS_JS
-import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.PLOT_LIBS_JS
+import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.BASE_MAPPER_LIBS
+import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.DEMO_COMMON_LIBS
+import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.KOTLIN_LIBS
+import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.PLOT_LIBS
 import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
@@ -13,7 +14,7 @@ import java.io.StringWriter
 
 private const val DEMO_PROJECT = "visualization-plot-demo"
 private const val CALL_FUN = "jetbrains.datalore.visualization.plotDemo.plotConfig.buildPlotSvg"
-private val LIBS = KOTLIN_LIBS_JS + BASE_MAPPER_LIBS_JS + PLOT_LIBS_JS
+private val LIBS = KOTLIN_LIBS + BASE_MAPPER_LIBS + PLOT_LIBS + DEMO_COMMON_LIBS
 
 internal object PlotConfigDemoUtil {
     fun show(title: String, plotSpecList: List<MutableMap<String, Any>>, plotSize: DoubleVector) {

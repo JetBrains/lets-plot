@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.plotDemo.model.component.AxisComponentDe
 fun main() {
     with(AxisComponentDemo()) {
         val svgRoots = createSvgRoots()
-        CanvasRendererDemoFrame.showSvg(svgRoots, demoComponentSize, "Axis component (Batik)")
+        CanvasRendererDemoFrame.showSvg(svgRoots, demoComponentSize, "Axis component (Canvas renderer)")
     }
 }
 

@@ -8,27 +8,30 @@ import java.io.FileWriter
 import java.io.StringWriter
 
 object BrowserDemoUtil {
-    val KOTLIN_LIBS_JS = listOf(
+    val KOTLIN_LIBS = listOf(
         "kotlin.js",
         "kotlin-logging.js",
         "kotlin-test.js"
     )
 
-    val BASE_MAPPER_LIBS_JS = listOf(
+    val BASE_MAPPER_LIBS = listOf(
         "base.js",
         "mapper-core.js",
         "visualization-base-svg.js",
-        "visualization-base-svg-mapper.js",
+        "visualization-base-svg-mapper.js"
 //        "visualization-base-canvas.js",
-        "visualization-base-demo.js"        // demo models
     )
 
-    val PLOT_LIBS_JS = listOf(
+    val PLOT_LIBS = listOf(
         "visualization-base-canvas.js",     // required by plot-builder (get rid?)
         "visualization-plot-common.js",
         "visualization-plot-base.js",
         "visualization-plot-builder.js",
         "visualization-plot-config.js"
+    )
+
+    val DEMO_COMMON_LIBS = listOf(
+        "visualization-base-demo-common.js"
     )
 
     private const val ROOT_PROJECT = "datalore-plot"

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.svgMapperDemo.model
+package jetbrains.datalore.visualization.svgDemoModel.b
 
 import jetbrains.datalore.visualization.base.svg.SvgCssResource
 

@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.svgMapperDemo.model
+package jetbrains.datalore.visualization.svgDemoModel.b
 
 import jetbrains.datalore.base.values.Color.Companion.BLACK
 import jetbrains.datalore.base.values.Color.Companion.BLUE
