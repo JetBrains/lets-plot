@@ -2,9 +2,7 @@ package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
-import jetbrains.gis.common.json.FluentJsonArray
-import jetbrains.gis.common.json.FluentJsonObject
-import jetbrains.gis.common.json.FluentJsonValue
+import jetbrains.gis.common.json.*
 import jetbrains.gis.geoprotocol.GeoResponse
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse
 import jetbrains.gis.geoprotocol.GeoResponse.ErrorGeoResponse
@@ -31,9 +29,6 @@ import jetbrains.gis.geoprotocol.json.ResponseKeys.POSITION
 import jetbrains.gis.geoprotocol.json.ResponseKeys.QUERY
 import jetbrains.gis.geoprotocol.json.ResponseKeys.STATUS
 import jetbrains.gis.geoprotocol.json.ResponseKeys.TILES
-
-typealias JsonObject = HashMap<String, Any?>
-typealias JsonArray = ArrayList<Any?>
 
 object ResponseJsonFormatter {
     fun format(response: GeoResponse): JsonObject {

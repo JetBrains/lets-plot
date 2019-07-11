@@ -2,8 +2,6 @@ package jetbrains.gis.common.json
 
 import jetbrains.gis.common.json.JsonUtils.objectsStreamOf
 import jetbrains.gis.common.json.JsonUtils.streamOf
-import jetbrains.gis.geoprotocol.json.JsonArray
-import jetbrains.gis.geoprotocol.json.JsonObject
 
 
 class FluentJsonArray: FluentJsonValue {

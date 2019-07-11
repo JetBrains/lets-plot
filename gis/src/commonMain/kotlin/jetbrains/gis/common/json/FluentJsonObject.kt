@@ -1,8 +1,6 @@
 package jetbrains.gis.common.json
 
-import jetbrains.gis.common.json.JsonUtils.NULL
 import jetbrains.gis.common.json.JsonUtils.formatEnum
-import jetbrains.gis.geoprotocol.json.JsonObject
 
 
 class FluentJsonObject : FluentJsonValue {
@@ -16,13 +14,13 @@ class FluentJsonObject : FluentJsonValue {
         myObj = JsonObject()
     }
 
-    fun put(key: String, v: String?) = apply { myObj[key] = v }
-
-    fun put(key: String, v: Double) = apply { myObj[key] = v }
-
-    fun put(key: String, v: Int) = apply { myObj[key] = v }
-
-    fun put(key: String, v: Boolean) = apply { myObj[key] = v }
+//    fun put(key: String, v: String?) = apply { myObj[key] = v }
+//
+//    fun put(key: String, v: Double) = apply { myObj[key] = v }
+//
+//    fun put(key: String, v: Int) = apply { myObj[key] = v }
+//
+//    fun put(key: String, v: Boolean) = apply { myObj[key] = v }
 
     fun <T : Enum<T>> put(key: String, v: T?) = apply {myObj[key] = v?.let { formatEnum(it) }}
 //
@@ -30,25 +28,11 @@ class FluentJsonObject : FluentJsonValue {
 //        return put<T>(key, v.orElse(null))
 //    }
 //
-    fun put(key: String, v: FluentJsonValue?): FluentJsonObject {
-        if (v == null) {
-            myObj.put(key, NULL)
-        } else {
-            myObj.put(key, v.get())
-        }
-        return this
-    }
+//    fun put(key: String, v: FluentJsonValue?) = apply { myObj[key] = v?.get() }
 //
-    fun put(key: String, v: Any?): FluentJsonObject {
-        if (v == null) {
-            myObj.put(key, NULL)
-        } else {
-            myObj.put(key, v)
-        }
-        return this
-    }
+    fun put(key: String, v: Any?) = apply { myObj[key] = v }
 //
-    fun putRemovable(key: String, v: FluentJsonValue?): FluentJsonObject {
+    fun putRemovable(key: String, v: FluentJsonValue?) = apply {
         if (v != null) {
             put(key, v)
         }

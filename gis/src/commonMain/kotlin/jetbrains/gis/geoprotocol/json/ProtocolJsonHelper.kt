@@ -1,15 +1,16 @@
 package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
+import jetbrains.gis.common.json.JsonObject
+import jetbrains.gis.common.json.getDouble
 
 internal object ProtocolJsonHelper {
-    val MIN_LON = "min_lon"
-    val MIN_LAT = "min_lat"
-    val MAX_LON = "max_lon"
-    val MAX_LAT = "max_lat"
+    private const val MIN_LON = "min_lon"
+    private const val MIN_LAT = "min_lat"
+    private const val MAX_LON = "max_lon"
+    private const val MAX_LAT = "max_lat"
 
-    fun parseGeoRectangle(data: Any): GeoRectangle {
-        val obj = data as JsonObject
+    fun parseGeoRectangle(obj: JsonObject): GeoRectangle {
         return GeoRectangle(
             obj.getDouble(MIN_LON),
             obj.getDouble(MIN_LAT),
@@ -27,3 +28,4 @@ internal object ProtocolJsonHelper {
         return obj
     }
 }
+
