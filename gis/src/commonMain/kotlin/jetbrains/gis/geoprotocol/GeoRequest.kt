@@ -38,9 +38,9 @@ interface GeoRequest {
         val namesakeExampleLimit: Int
 
         class AmbiguityResolver private constructor(
-            private val ignoringStrategy: IgnoringStrategy?,
-            private val closestCoord: DoubleVector?,
-            private val box: DoubleRectangle?
+            val ignoringStrategy: IgnoringStrategy?,
+            val closestCoord: DoubleVector?,
+            val box: DoubleRectangle?
         ) {
 
             val isEmpty: Boolean

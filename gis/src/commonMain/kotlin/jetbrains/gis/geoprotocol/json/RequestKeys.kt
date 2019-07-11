@@ -1,4 +1,4 @@
-package jetbrains.gis.protocol.json
+package jetbrains.gis.geoprotocol.json
 
 internal object RequestKeys {
     const val PROTOCOL_VERSION = 2

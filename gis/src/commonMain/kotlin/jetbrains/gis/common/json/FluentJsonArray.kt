@@ -5,14 +5,14 @@ import jetbrains.gis.common.json.JsonUtils.streamOf
 
 
 class FluentJsonArray: FluentJsonValue {
-    private val myArray: JsonArray
+    private val myArray: ArrayList<Any?>
 
     constructor() {
-        myArray = JsonArray()
+        myArray = ArrayList<Any?>()
     }
 
     constructor(array: JsonArray) {
-        myArray = array
+        myArray = ArrayList<Any?>(array)
     }
 
     fun add(v: Any?): FluentJsonArray {
