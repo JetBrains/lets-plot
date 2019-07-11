@@ -1,4 +1,4 @@
-package jetbrains.gis.protocol.json
+package jetbrains.gis.geoprotocol.json
 
 internal enum class ResponseStatus {
     SUCCESS,

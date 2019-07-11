@@ -1,4 +1,4 @@
-package jetbrains.gis.protocol.json
+package jetbrains.gis.geoprotocol.json
 
 import com.google.common.io.BaseEncoding
 import jetbrains.datalore.base.geometry.DoubleVector

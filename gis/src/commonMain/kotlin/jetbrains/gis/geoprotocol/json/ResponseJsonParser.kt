@@ -118,11 +118,4 @@ object ResponseJsonParser {
     private fun parseGeoRectangle(data: FluentJsonObject): GeoRectangle {
         return ProtocolJsonHelper.parseGeoRectangle(data.get())
     }
-
-    enum class ResponseStatus {
-        SUCCESS,
-        AMBIGUOUS,
-        ERROR
-    }
-
 }

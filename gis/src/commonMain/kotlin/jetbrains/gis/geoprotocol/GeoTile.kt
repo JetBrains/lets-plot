@@ -1,18 +1,14 @@
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.projectionGeometry.Multipolygon
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.datalore.base.projectionGeometry.QuadKey
 
 
-class GeoTile(val key: QuadKey, private val geometries: List<Geometry>?) {
-    private val multipolygon: Multipolygon
+class GeoTile(val key: QuadKey, val geometries: List<Geometry>) {
+    private val multipolygon: MultiPolygon
 
     init {
-        if (geometries == null) {
-            throw IllegalArgumentException("geometry is null")
-        }
-
         val xyMultipolygon = ArrayList<Polygon>()
         for (boundary in geometries) {
             val xyBoundary = boundary.asMultipolygon()
@@ -22,6 +18,6 @@ class GeoTile(val key: QuadKey, private val geometries: List<Geometry>?) {
                 }
             }
         }
-        multipolygon = Multipolygon(xyMultipolygon)
+        multipolygon = MultiPolygon(xyMultipolygon)
     }
 }
