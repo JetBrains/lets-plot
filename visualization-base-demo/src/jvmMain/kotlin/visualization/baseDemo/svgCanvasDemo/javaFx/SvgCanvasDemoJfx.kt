@@ -1,22 +1,18 @@
 package jetbrains.datalore.visualization.baseDemo.svgCanvasDemo.javaFx
 
-import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.canvas.CanvasUtil
-import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvasControl
-import jetbrains.datalore.visualization.base.canvas.awt.AwtCanvasDemoUtil
-import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxGraphicsCanvasControlFactory
-import jetbrains.datalore.visualization.base.svgToCanvas.SvgCanvasRenderer
+import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.visualization.demoUtils.jfx.CanvasRendererDemoFrame
 import jetbrains.datalore.visualization.svgDemoModel.a.DemoModelA
 import javax.swing.SwingUtilities
-
-//import jetbrains.datalore.visualization.base.swing.CanvasRendererDemoFrame
 
 
 class SvgCanvasDemoJfx {
 
     companion object {
         private val DEVICE_PIXEL_RATIO = CanvasUtil.readDevicePixelRatio(2.0)
-        private val SIZE = Vector(800, 600)
+        private val SIZE = DoubleVector(800.0, 600.0)
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -25,15 +21,12 @@ class SvgCanvasDemoJfx {
     }
 
     private fun show() {
-        val canvasControl = AwtCanvasControl(JavafxGraphicsCanvasControlFactory(DEVICE_PIXEL_RATIO), SIZE)
+        val svgGroup = DemoModelA.createModel()
 
-        SvgCanvasRenderer(DemoModelA.createModel(), canvasControl)
-
-        AwtCanvasDemoUtil.showAwtCanvasControl("SvgCanvas JavaFX Demo", canvasControl)
-
-
-
-//        CanvasRendererDemoFrame.showSvg(svgRoots, demoComponentSize, "SvgCanvas JavaFX Demo")
+        val svgRoot = SvgSvgElement(SIZE.x, SIZE.y)
+        svgRoot.children().add(svgGroup)
+        val svgRoots = listOf(svgRoot)
+        CanvasRendererDemoFrame.showSvg(svgRoots, SIZE, "SVG JavaFX canvas renderer")
 
     }
 }
