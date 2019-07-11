@@ -15,7 +15,7 @@ kotlin {
                 implementation project(':base')
                 implementation project(':visualization-base-svg')
                 implementation project(':visualization-base-canvas')
-                implementation project(':visualization-base-demo-common')
+                implementation project(':visualization-demo-common')
             }
         }
         jvmMain {

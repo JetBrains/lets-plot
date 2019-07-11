@@ -2,11 +2,11 @@ package jetbrains.datalore.visualization.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.jsObject.mapToJsObjectInitializer
-import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil
-import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.BASE_MAPPER_LIBS
-import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.DEMO_COMMON_LIBS
-import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.KOTLIN_LIBS
-import jetbrains.datalore.visualization.base.browser.BrowserDemoUtil.PLOT_LIBS
+import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil
+import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.BASE_MAPPER_LIBS
+import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.DEMO_COMMON_LIBS
+import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.KOTLIN_LIBS
+import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.PLOT_LIBS
 import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML

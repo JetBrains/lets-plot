@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.base.browser
+package jetbrains.datalore.visualization.demoUtils.browser
 
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
@@ -31,7 +31,7 @@ object BrowserDemoUtil {
     )
 
     val DEMO_COMMON_LIBS = listOf(
-        "visualization-base-demo-common.js"
+        "visualization-demo-common.js"
     )
 
     private const val ROOT_PROJECT = "datalore-plot"
