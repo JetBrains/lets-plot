@@ -14,12 +14,12 @@ interface GeoResponse {
             val request: String,
             val id: String,
             val name: String,
-            val highlights: List<String>,
-            val centroid: DoubleVector,
-            val position: GeoRectangle,
-            val limit: GeoRectangle,
-            val boundary: Geometry,
-            val tiles: List<GeoTile>
+            val highlights: List<String>?,
+            val centroid: DoubleVector?,
+            val position: GeoRectangle?,
+            val limit: GeoRectangle?,
+            val boundary: Geometry?,
+            val tiles: List<GeoTile>?
         )
     }
 
