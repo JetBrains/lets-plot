@@ -36,15 +36,15 @@ kotlin {
         jvmBatikMain {
             dependsOn allJvm
             dependencies {
-                implementation project(":visualization-base-svg-mapper-batik")
                 implementation "org.apache.commons:commons-math3:$math3_version"
+                implementation project(":visualization-base-svg-mapper-batik")
             }
         }
         jvmJfxMain {
             dependsOn allJvm
             dependencies {
-//                implementation project(":visualization-base-svg-mapper-jfx")
                 implementation "org.apache.commons:commons-math3:$math3_version"
+                implementation project(":visualization-base-svg-mapper-jfx")
             }
         }
         jvmBrowserMain {

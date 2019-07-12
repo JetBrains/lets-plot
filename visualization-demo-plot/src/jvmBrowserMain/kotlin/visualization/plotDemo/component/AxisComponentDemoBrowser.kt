@@ -7,7 +7,7 @@ import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.KOTLIN
 import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.PLOT_LIBS
 import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.mapperDemoHtml
 
-private const val DEMO_PROJECT = "visualization-plot-demo"
+private const val DEMO_PROJECT = "visualization-demo-plot"
 private const val CALL_FUN = "jetbrains.datalore.visualization.plotDemo.component.axisComponentDemo"
 private val LIBS = KOTLIN_LIBS + BASE_MAPPER_LIBS + PLOT_LIBS + DEMO_COMMON_LIBS
 

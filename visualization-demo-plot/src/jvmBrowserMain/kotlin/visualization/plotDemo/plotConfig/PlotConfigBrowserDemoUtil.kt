@@ -12,7 +12,7 @@ import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import java.io.StringWriter
 
-private const val DEMO_PROJECT = "visualization-plot-demo"
+private const val DEMO_PROJECT = "visualization-demo-plot"
 private const val CALL_FUN = "jetbrains.datalore.visualization.plotDemo.plotConfig.buildPlotSvg"
 private val LIBS = KOTLIN_LIBS + BASE_MAPPER_LIBS + PLOT_LIBS + DEMO_COMMON_LIBS
 

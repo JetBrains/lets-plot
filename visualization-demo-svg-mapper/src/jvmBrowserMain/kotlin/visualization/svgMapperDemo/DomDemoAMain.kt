@@ -5,8 +5,8 @@ import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.BASE_M
 import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.DEMO_COMMON_LIBS
 import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.KOTLIN_LIBS
 
-private const val DEMO_PROJECT = "visualization-base-svg-mapper-demo"
-private const val CALL_FUN = "jetbrains.datalore.visualization.svgMapperDemo.svgElementsDemo"
+private const val DEMO_PROJECT = "visualization-demo-svg-mapper"
+private const val CALL_FUN = "jetbrains.datalore.visualization.svgMapperDemo.svgElementsDemoA"
 private val LIBS = KOTLIN_LIBS + BASE_MAPPER_LIBS + DEMO_COMMON_LIBS
 
 fun main() {
