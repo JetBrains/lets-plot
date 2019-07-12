@@ -14,42 +14,79 @@ object GeoRequestBuilder {
 
     private const val PARENT_KIND_ID = true
 
-    abstract class ReverseGeocodingRequestBuilder : RequestBuilderBase<ReverseGeocodingRequestBuilder>() {
+    abstract class RequestBuilderBase<T : RequestBuilderBase<T>> {
+        private lateinit var mySelf: T
+
+        protected abstract val mode: GeocodingMode
+        protected val features: MutableList<FeatureOption> = ArrayList<FeatureOption>()
+
+        protected var tiles: MutableMap<String, List<QuadKey>>? = null
+            private set
+
+        protected var levelOfDetails: LevelOfDetails? = null
+            private set
+
+
+        internal fun setSelf(self: T) {
+            mySelf = self
+        }
+
+        abstract fun build(): GeoRequest
+
+        fun setResolution(resolution: Int?): T? {
+            this.levelOfDetails = resolution?.let { fromResolution(it) }
+            return mySelf
+        }
+
+        fun setTiles(keys: Map<String, List<QuadKey>>?): T? {
+            this.tiles = keys?.let { HashMap(it) }
+            return mySelf
+        }
+
+        fun addTiles(id: String, keys: List<QuadKey>): T? {
+            if (tiles == null) {
+                tiles = hashMapOf<String, List<QuadKey>>()
+            }
+            this.tiles!!.set(id, keys)
+            return mySelf
+        }
+
+        fun addFeature(featureOption: FeatureOption): T? {
+            features.add(featureOption)
+            return mySelf
+        }
+
+        fun setFeatures(featureOptions: List<FeatureOption>): T? {
+            features.clear()
+            features.addAll(featureOptions)
+            return mySelf
+        }
+    }
+
+    class ReverseGeocodingRequestBuilder : RequestBuilderBase<ReverseGeocodingRequestBuilder>() {
         override val mode: GeocodingMode = GeocodingMode.REVERSE
 
-        abstract var myCoordinates: List<DoubleVector>
-        abstract var myLevel: FeatureLevel
-        private var myParent: MapRegion? = null
-
+        private lateinit var coordinates: List<DoubleVector>
+        private lateinit var level: FeatureLevel
+        private var parent: MapRegion? = null
 
         init {
             super.setSelf(this)
         }
 
+        fun setCoordinates(v: List<DoubleVector>) = apply { coordinates = v }
+        fun setLevel(v: FeatureLevel) = apply { level = v }
+        fun setParent(v: MapRegion?) = apply { parent = v }
+
         override fun build(): GeoRequest {
             return MyReverseGeocodingSearchRequest(
                 features,
-                myTiles,
+                tiles,
                 levelOfDetails,
-                myCoordinates,
-                myLevel,
-                myParent
+                coordinates,
+                level,
+                parent
             )
-        }
-
-        fun setCoordinates(coordinates: List<DoubleVector>): ReverseGeocodingRequestBuilder {
-            myCoordinates = coordinates
-            return this
-        }
-
-        fun setLevel(level: FeatureLevel): ReverseGeocodingRequestBuilder {
-            myLevel = level
-            return this
-        }
-
-        fun setParent(parent: MapRegion?): ReverseGeocodingRequestBuilder {
-            myParent = parent
-            return this
         }
 
         internal class MyReverseGeocodingSearchRequest(
@@ -65,38 +102,31 @@ object GeoRequestBuilder {
     class GeocodingRequestBuilder : RequestBuilderBase<GeocodingRequestBuilder>() {
         override val mode: GeocodingMode = GeocodingMode.BY_NAME
 
-        private var myFeatureLevel: FeatureLevel? = null
-        private var myNamesakeExampleLimit = DEFAULT_NAMESAKE_EXAMPLE_LIMIT
-        private val myRegionQueries = ArrayList<RegionQuery>()
+        private var featureLevel: FeatureLevel? = null
+        private var namesakeExampleLimit = DEFAULT_NAMESAKE_EXAMPLE_LIMIT
+        private val regionQueries = ArrayList<RegionQuery>()
 
         init {
             super.setSelf(this)
         }
 
+        fun addQuery(query: RegionQuery): GeocodingRequestBuilder {
+            regionQueries.add(query)
+            return this
+        }
+
+        fun setLevel(v: FeatureLevel?) = apply { featureLevel = v }
+        fun setNamesakeExampleLimit(v: Int) = apply { namesakeExampleLimit = v }
+
         override fun build(): GeoRequest {
             return MyGeocodingSearchRequest(
-                myRegionQueries,
-                myFeatureLevel,
-                myNamesakeExampleLimit,
+                regionQueries,
+                featureLevel,
+                namesakeExampleLimit,
                 features,
-                getTiles(),
+                tiles,
                 levelOfDetails
             )
-        }
-
-        fun addQuery(query: RegionQuery): GeocodingRequestBuilder {
-            myRegionQueries.add(query)
-            return this
-        }
-
-        fun setLevel(featureLevel: FeatureLevel?): GeocodingRequestBuilder {
-            myFeatureLevel = featureLevel
-            return this
-        }
-
-        fun setNamesakeExampleLimit(limit: Int): GeocodingRequestBuilder {
-            myNamesakeExampleLimit = limit
-            return this
         }
 
         internal class MyGeocodingSearchRequest(
@@ -113,30 +143,27 @@ object GeoRequestBuilder {
         }
     }
 
-    abstract class ExplicitRequestBuilder : RequestBuilderBase<ExplicitRequestBuilder>() {
+    class ExplicitRequestBuilder : RequestBuilderBase<ExplicitRequestBuilder>() {
         override val mode: GeocodingMode = GeocodingMode.BY_ID
 
         // explicit request
-        abstract var ids: List<String>
+        private lateinit var ids: List<String>
 
         init {
             super.setSelf(this)
         }
 
         // explicit request
+        fun setIds(v: List<String>) = apply { ids = v }
+
+        // explicit request
         override fun build(): ExplicitSearchRequest {
             return MyExplicitSearchRequest(
                 ids,
                 features,
-                getTiles(),
+                tiles,
                 levelOfDetails
             )
-        }
-
-        // explicit request
-        fun setIds(ids: List<String>): ExplicitRequestBuilder {
-            this.ids = ids
-            return this
         }
 
         internal class MyExplicitSearchRequest(
@@ -147,59 +174,6 @@ object GeoRequestBuilder {
         ) : MyGeoRequestBase(features, tiles, levelOfDetails), ExplicitSearchRequest
     }
 
-    abstract class RequestBuilderBase<T : RequestBuilderBase<T>> {
-        private lateinit var mySelf: T
-
-        abstract val mode: GeocodingMode
-
-        val features: MutableList<FeatureOption> = ArrayList<FeatureOption>()
-        var myTiles: MutableMap<String, List<QuadKey>>? = null
-            private set
-
-        var levelOfDetails: LevelOfDetails? = null
-            private set
-
-
-        internal fun setSelf(self: T) {
-            mySelf = self
-        }
-
-        abstract fun build(): GeoRequest
-
-        fun setResolution(resolution: Int?): T? {
-            this.levelOfDetails = resolution?.let { fromResolution(it) }
-            return mySelf
-        }
-
-        fun getTiles(): Map<String, List<QuadKey>>? {
-            return myTiles
-        }
-
-        fun setTiles(keys: Map<String, List<QuadKey>>?): T? {
-            this.myTiles = keys?.let { HashMap(it) }
-            return mySelf
-        }
-
-        fun addTiles(id: String, keys: List<QuadKey>): T? {
-            if (myTiles == null) {
-                myTiles = hashMapOf<String, List<QuadKey>>()
-            }
-            this.myTiles!!.set(id, keys)
-            return mySelf
-        }
-
-        fun addFeature(featureOption: FeatureOption): T? {
-            features.add(featureOption)
-            return mySelf
-        }
-
-        fun setFeatures(featureOptions: List<FeatureOption>): T? {
-            features.clear()
-            features.addAll(featureOptions)
-            return mySelf
-        }
-    }
-
 
     internal open class MyGeoRequestBase(
         override val features: List<FeatureOption>,
@@ -208,69 +182,41 @@ object GeoRequestBuilder {
     ) : GeoRequest
 
     class MapRegionBuilder {
-        private var myValues: List<String> = emptyList()
-        private var myKind: Boolean = PARENT_KIND_ID
+        private lateinit var values: List<String>
+        private var kind: Boolean = PARENT_KIND_ID
 
-        fun setParentValues(values: List<String>): MapRegionBuilder {
-            myValues = values
-            return this
-        }
-
-        fun setParentKind(kind: Boolean): MapRegionBuilder {
-            myKind = kind
-            return this
-        }
+        fun setParentValues(v: List<String>) = apply { values = v }
+        fun setParentKind(v: Boolean) = apply { kind = v }
 
         fun build(): MapRegion {
-            return if (myKind == PARENT_KIND_ID)
-                MapRegion.withIdList(myValues)
+            return if (kind == PARENT_KIND_ID)
+                MapRegion.withIdList(values)
             else
-                MapRegion.withName(myValues[0])
+                MapRegion.withName(values[0])
         }
     }
 
     class RegionQueryBuilder {
-        private var myParent: MapRegion? = null
-        private var myNames: List<String> = ArrayList()
-        private var myAmbiguityResolver = AmbiguityResolver.empty()
+        private var parent: MapRegion? = null
+        private var names: List<String> = ArrayList()
+        private var ambiguityResolver = AmbiguityResolver.empty()
 
-        fun setQueryNames(names: List<String>): RegionQueryBuilder {
-            myNames = names
-            return this
-        }
+        fun setQueryNames(v: List<String>) = apply { names = v }
+        fun setQueryNames(vararg v: String) = apply { names = listOf(*v) }
+        fun setParent(v: MapRegion?) = apply { parent = v }
+        fun setIgnoringStrategy(v: IgnoringStrategy?) =
+            apply { v?.let { ambiguityResolver = AmbiguityResolver.ignoring(it) } }
 
-        fun setQueryNames(vararg names: String): RegionQueryBuilder {
-            return setQueryNames(listOf(*names))
-        }
+        fun setClosestObject(v: DoubleVector?) =
+            apply { v?.let { ambiguityResolver = AmbiguityResolver.closestTo(it) } }
 
-        fun setParent(parent: MapRegion?): RegionQueryBuilder {
-            myParent = parent
-            return this
-        }
-
-        fun setIgnoringStrategy(v: IgnoringStrategy?): RegionQueryBuilder {
-            v?.let { myAmbiguityResolver = AmbiguityResolver.ignoring(it) }
-            return this
-        }
-
-        fun setClosestObject(v: DoubleVector?): RegionQueryBuilder {
-            v?.let { myAmbiguityResolver = AmbiguityResolver.closestTo(it) }
-            return this
-        }
-
-        fun setBox(v: DoubleRectangle?): RegionQueryBuilder {
-            v?.let { myAmbiguityResolver = AmbiguityResolver.within(it) }
-            return this
-        }
+        fun setBox(v: DoubleRectangle?) = apply { v?.let { ambiguityResolver = AmbiguityResolver.within(it) } }
+        fun setAmbiguityResolver(v: AmbiguityResolver) = apply { ambiguityResolver = v }
 
         fun build(): RegionQuery {
-            return RegionQuery(myNames, myParent, myAmbiguityResolver)
+            return RegionQuery(names, parent, ambiguityResolver)
         }
 
-        fun setAmbiguityResolver(ambiguityResolver: AmbiguityResolver): RegionQueryBuilder {
-            myAmbiguityResolver = ambiguityResolver
-            return this
-        }
     }
 
 }
