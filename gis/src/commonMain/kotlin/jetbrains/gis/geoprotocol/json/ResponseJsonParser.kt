@@ -45,9 +45,8 @@ object ResponseJsonParser {
     private fun success(responseJson: FluentJsonObject): GeoResponse {
         val successResponse = GeoResponseBuilder.SuccessResponseBuilder()
         responseJson
-            .getObject(DATA) { data ->
-                data
-                    .getOptionalEnum(LEVEL, successResponse::setLevel, FeatureLevel.values())
+            .getObject(DATA) { data -> data
+                .getOptionalEnum(LEVEL, successResponse::setLevel, FeatureLevel.values())
                 .forObjects(FEATURES) { featureJson ->
                     val feature = GeoResponseBuilder.GeocodedFeatureBuilder()
                     featureJson
