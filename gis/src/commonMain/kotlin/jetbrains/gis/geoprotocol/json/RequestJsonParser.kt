@@ -68,8 +68,8 @@ object RequestJsonParser {
         val builder = GeoRequestBuilder.ExplicitRequestBuilder()
 
         requestFluentJson
-            .accept { v -> parseCommon(v, builder) }
-            .getStrings(IDS) { list -> builder.setIds(list.map { s -> s!! }) }
+            .accept { parseCommon(it, builder) }
+            .getStrings(IDS) { builder.setIds(it.map { s -> s!! }) }
 
         return builder.build()
     }
@@ -78,7 +78,7 @@ object RequestJsonParser {
         val builder = GeoRequestBuilder.GeocodingRequestBuilder()
 
         requestFluentJson
-            .accept { v -> parseCommon(v, builder) }
+            .accept { parseCommon(it, builder) }
             .getOptionalEnum(LEVEL, builder::setLevel, FeatureLevel.values())
             .getInt(NAMESAKE_EXAMPLE_LIMIT, builder::setNamesakeExampleLimit)
             .forObjects(REGION_QUERIES) { query ->
@@ -86,35 +86,14 @@ object RequestJsonParser {
 
                 query
                     .getStrings(REGION_QUERY_NAMES, regionQueryBuilder::setQueryNames)
-                    .getExistingObject(AMBIGUITY_RESOLVER) { resolver ->
-                        resolver
-                            .getExistingObject(AMBIGUITY_BOX) { jsonBox ->
-                                parseRect(
-                                    jsonBox,
-                                    regionQueryBuilder::setBox
-                                )
-                            }
-                            .getExistingArray(AMBIGUITY_CLOSEST_COORD) { jsonCoord ->
-                                regionQueryBuilder
-                                    .setClosestObject(
-                                        DoubleVector(
-                                            jsonCoord.getDouble(COORDINATE_LON),
-                                            jsonCoord.getDouble(COORDINATE_LAT)
-                                        )
-                                    )
-                            }
-                            .getOptionalEnum(
-                                AMBIGUITY_IGNORING_STRATEGY,
-                                regionQueryBuilder::setIgnoringStrategy,
-                                IgnoringStrategy.values()
-                            )
+                    .getExistingObject(AMBIGUITY_RESOLVER) { resolver -> resolver
+                        .getExistingObject(AMBIGUITY_BOX) { parseRect(it, regionQueryBuilder::setBox) }
+                        .getExistingArray(AMBIGUITY_CLOSEST_COORD) { regionQueryBuilder
+                            .setClosestObject( with (it) { DoubleVector(getDouble(COORDINATE_LON), getDouble(COORDINATE_LAT))})
+                        }
+                        .getOptionalEnum(AMBIGUITY_IGNORING_STRATEGY, regionQueryBuilder::setIgnoringStrategy, IgnoringStrategy.values())
                     }
-                    .getExistingObject(REGION_QUERY_PARENT) { parent ->
-                        parseMapRegion(
-                            parent,
-                            regionQueryBuilder::setParent
-                        )
-                    }
+                    .getExistingObject(REGION_QUERY_PARENT) { parseMapRegion(it, regionQueryBuilder::setParent)}
 
                 builder.addQuery(regionQueryBuilder.build())
             }
@@ -142,20 +121,15 @@ object RequestJsonParser {
         val builder = GeoRequestBuilder.ReverseGeocodingRequestBuilder()
 
         requestFluentJson
-            .accept { v -> parseCommon(v, builder) }
+            .accept { parseCommon(it, builder) }
             .getEnum(REVERSE_LEVEL, builder::setLevel, FeatureLevel.values())
-            .getExistingObject(REVERSE_PARENT) { obj -> parseMapRegion(obj, builder::setParent) }
-            .getArray(REVERSE_COORDINATES) { coordinates ->
-                builder
-                    .setCoordinates(coordinates.stream()
-                        .map { jsonValue -> jsonValue as JsonArray }
-                        .map { coord ->
-                        DoubleVector(
-                            coord.getDouble(COORDINATE_LON),
-                            coord.getDouble(COORDINATE_LAT)
-                        )
-                    }
-                    )
+            .getExistingObject(REVERSE_PARENT) { parseMapRegion(it, builder::setParent) }
+            .getArray(REVERSE_COORDINATES) { coordinates -> builder
+                .setCoordinates(coordinates.stream()
+                    .map { it as JsonArray }
+                    .map { with (it) { DoubleVector(getDouble(COORDINATE_LON), getDouble(COORDINATE_LAT)) } }
+                    .toList()
+                )
             }
 
         return builder.build()
@@ -164,7 +138,7 @@ object RequestJsonParser {
     private fun parseMapRegion(json: FluentJsonObject, setter: (MapRegion?) -> Unit) {
         val mapRegion = GeoRequestBuilder.MapRegionBuilder()
         json
-            .getStrings(MAP_REGION_VALUES) { list -> mapRegion.setParentValues(list.map { s -> s!! }) }
+            .getStrings(MAP_REGION_VALUES) { mapRegion.setParentValues(it.map { s -> s!! }) }
             .getBoolean(MAP_REGION_KIND, mapRegion::setParentKind)
 
         setter(mapRegion.build())

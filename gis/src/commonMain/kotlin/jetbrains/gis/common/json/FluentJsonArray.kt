@@ -39,15 +39,15 @@ class FluentJsonArray: FluentJsonValue {
         return addAll(listOf(*values))
     }
 
-    fun stream(): ArrayList<*> {
+    fun stream(): Sequence<*> {
         return streamOf(myArray)
     }
 
-    fun objectStream(): List<JsonObject> {
+    fun objectStream(): Sequence<JsonObject> {
         return objectsStreamOf(myArray)
     }
 
-    fun fluentObjectStream(): List<FluentJsonObject> {
+    fun fluentObjectStream(): Sequence<FluentJsonObject> {
         return objectsStreamOf(myArray).map(::FluentJsonObject)
     }
 

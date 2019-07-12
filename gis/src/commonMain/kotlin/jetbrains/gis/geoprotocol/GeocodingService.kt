@@ -26,10 +26,7 @@ class GeocodingService(private val myTransport: GeoTransport) {
             .send(request)
             .map { response ->
                 when (response) {
-                    is SuccessGeoResponse -> duplicateStorage.restoreDuplicateList(
-                        response.features,
-                        GeocodedFeature::request
-                    )
+                    is SuccessGeoResponse -> duplicateStorage.restoreDuplicateList(response.features, GeocodedFeature::request)
                     is AmbiguousGeoResponse -> throw RuntimeException(createAmbiguousMessage(response.features))
                     is ErrorGeoResponse -> throw RuntimeException("GIS error: " + response.message)
                     else -> throw IllegalStateException("Unknown response status: " + response::class.qualifiedName)
@@ -69,8 +66,7 @@ class GeocodingService(private val myTransport: GeoTransport) {
             val message = StringBuilder().append("Geocoding errors:\n")
             ambiguousFeatures.forEach { ambiguousFeature ->
                 when {
-                    ambiguousFeature.namesakeCount == 1 -> {
-                    }
+                    ambiguousFeature.namesakeCount == 1 -> {}
                     ambiguousFeature.namesakeCount > 1 -> {
                         message
                             .append("Multiple objects (" + ambiguousFeature.namesakeCount + ") ")
@@ -99,5 +95,4 @@ class GeocodingService(private val myTransport: GeoTransport) {
             return message.toString()
         }
     }
-
 }

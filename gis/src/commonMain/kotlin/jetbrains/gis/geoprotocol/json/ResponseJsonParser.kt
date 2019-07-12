@@ -59,17 +59,13 @@ object ResponseJsonParser {
                         .getExistingObject(CENTROID) { feature.setCentroid(parseCentroid(it)) }
                         .getExistingObject(LIMIT) { feature.setLimit(parseGeoRectangle(it)) }
                         .getExistingObject(POSITION) { feature.setPosition(parseGeoRectangle(it)) }
-                        .getExistingObject(TILES) { tiles ->
-                            tiles
-                                .forEntries { quadKey, geometry ->
-                                    feature
-                                        .addTile(
-                                            GeoTile(
-                                                QuadKey(quadKey),
-                                                stringStreamOf(geometry as JsonArray).map { s -> readTile(s!!) }.toList()
-                                            )
-                                        )
-                                }
+                        .getExistingObject(TILES) { tiles -> tiles
+                            .forEntries { quadKey, geometry -> feature
+                                .addTile(GeoTile(
+                                    QuadKey(quadKey),
+                                    stringStreamOf(geometry as JsonArray).map { readTile(it!!) }.toList()
+                                ))
+                            }
                         }
                     successResponse.addGeocodedFeature(feature.build())
                 }
@@ -80,9 +76,8 @@ object ResponseJsonParser {
     private fun ambiguous(responseJson: FluentJsonObject): GeoResponse {
         val ambiguousResponse = GeoResponseBuilder.AmbiguousResponseBuilder()
         responseJson
-            .getObject(DATA) { data ->
-                data
-                    .getOptionalEnum(LEVEL, ambiguousResponse::setLevel, FeatureLevel.values())
+            .getObject(DATA) { data -> data
+                .getOptionalEnum(LEVEL, ambiguousResponse::setLevel, FeatureLevel.values())
                 .forObjects(FEATURES) { featureJson ->
                     val feature = GeoResponseBuilder.AmbiguousFeatureBuilder()
                     featureJson
@@ -93,10 +88,9 @@ object ResponseJsonParser {
 
                             namesakeJson
                                 .getString(NAMESAKE_NAME, namesake::setName)
-                                .forObjects(NAMESAKE_PARENTS) { parentJson ->
-                                    parentJson
-                                        .getString(NAMESAKE_NAME, namesake::addParentName)
-                                        .getEnum(LEVEL, namesake::addParentLevel, FeatureLevel.values())
+                                .forObjects(NAMESAKE_PARENTS) { parentJson -> parentJson
+                                    .getString(NAMESAKE_NAME, namesake::addParentName)
+                                    .getEnum(LEVEL, namesake::addParentLevel, FeatureLevel.values())
                                 }
 
                             feature.addNamesakeExample(namesake.build())

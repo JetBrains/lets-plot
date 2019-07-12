@@ -48,24 +48,22 @@ object ResponseJsonFormatter {
         return FluentJsonObject()
             .put(STATUS, ResponseStatus.SUCCESS)
             .put(MESSAGE, "OK")
-            .put(
-                DATA,
+            .put(DATA,
                 FluentJsonObject()
                     .put(LEVEL, response.featureLevel)
-                    .put(
-                        FEATURES, FluentJsonArray()
-                            .addAll(response.features.map { feature ->
-                                FluentJsonObject()
-                                    .put(QUERY, feature.request)
-                                    .put(ID, feature.id)
-                                    .put(NAME, feature.name)
-                                    .putRemovable(HIGHLIGHTS, stringArray(feature.highlights))
-                                    .putRemovable(LIMIT, formatRect(feature.limit))
-                                    .putRemovable(POSITION, formatRect(feature.position))
-                                    .putRemovable(CENTROID, formatPoint(feature.centroid))
-                                    .putRemovable(BOUNDARY, formatGeometry(feature.boundary))
-                                    .putRemovable(TILES, formatTiles(feature.tiles))
-                            })
+                    .put(FEATURES, FluentJsonArray()
+                        .addAll(response.features.map { feature ->
+                            FluentJsonObject()
+                                .put(QUERY, feature.request)
+                                .put(ID, feature.id)
+                                .put(NAME, feature.name)
+                                .putRemovable(HIGHLIGHTS, stringArray(feature.highlights))
+                                .putRemovable(LIMIT, formatRect(feature.limit))
+                                .putRemovable(POSITION, formatRect(feature.position))
+                                .putRemovable(CENTROID, formatPoint(feature.centroid))
+                                .putRemovable(BOUNDARY, formatGeometry(feature.boundary))
+                                .putRemovable(TILES, formatTiles(feature.tiles))
+                        })
                     )
             )
             .get()

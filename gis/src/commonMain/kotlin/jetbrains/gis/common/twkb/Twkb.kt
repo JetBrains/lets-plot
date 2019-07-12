@@ -88,11 +88,11 @@ object Twkb {
     }
 
     interface GeometryConsumer {
-        fun onPoint(point: Point)
-        fun onLineString(lineString: LineString)
-        fun onPolygon(polygon: Polygon)
-        fun onMultiPoint(multiPoint: MultiPoint, idList: List<Int>)
-        fun onMultiLineString(multiLineString: MultiLineString, idList: List<Int>)
-        fun onMultiPolygon(multipolygon: MultiPolygon, idList: List<Int>)
+        fun onPoint(point: Point): Unit = throw IllegalArgumentException("Point isn't supported")
+        fun onLineString(lineString: LineString): Unit = throw IllegalArgumentException("LineString isn't supported")
+        fun onPolygon(polygon: Polygon): Unit = throw IllegalArgumentException("Polygon isn't supported")
+        fun onMultiPoint(multiPoint: MultiPoint, idList: List<Int>): Unit = throw IllegalArgumentException("MultiPoint isn't supported")
+        fun onMultiLineString(multiLineString: MultiLineString, idList: List<Int>): Unit = throw IllegalArgumentException("MultiLineString isn't supported")
+        fun onMultiPolygon(multipolygon: MultiPolygon, idList: List<Int>): Unit = throw IllegalArgumentException("MultiPolygon isn't supported")
     }
 }

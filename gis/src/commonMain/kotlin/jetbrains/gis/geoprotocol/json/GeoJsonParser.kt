@@ -1,62 +1,62 @@
-package jetbrains.gis.protocol.json
+package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.json.Json
-import jetbrains.datalore.base.json.JsonArray
-import jetbrains.datalore.base.json.JsonObject
-import jetbrains.datalore.base.projectionGeometry.Multipolygon
+import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.datalore.base.projectionGeometry.Ring
-import jetbrains.gis.common.json.JsonUtils.*
-import java.util.function.Function
+import jetbrains.gis.common.json.FluentJsonArray
+import jetbrains.gis.common.json.FluentJsonObject
+import jetbrains.gis.common.json.JsonArray
 
 internal class GeoJsonParser private constructor() {
 
-    private fun doParsing(data: String): Multipolygon {
-        val geometry = Json.parse(data) as JsonObject
-        val type = readString(geometry, GEOMETRY_TYPE)
-        val coordinates = getArray(geometry, GEOMETRY_COORDINATES)
+    private fun doParsing(data: String): MultiPolygon {
+        val obj = HashMap<String, Any?>(JsonSupport.parseJson(data))
+        val geometry = FluentJsonObject(obj);
+        val type = geometry.getString(GEOMETRY_TYPE)
+        val coordinates = geometry.getArray(GEOMETRY_COORDINATES)
 
         if (type == GEOMETRY_MULTIPOLYGON) {
             return parseMultiPolygon(coordinates)
         } else if (type == GEOMETRY_POLYGON) {
-            return Multipolygon.create(parsePolygon(coordinates))
+            return MultiPolygon.create(parsePolygon(coordinates))
         }
-        return Multipolygon.create()
+        return MultiPolygon.create()
     }
 
-    private fun parseMultiPolygon(jsonMultiPolygon: JsonArray): Multipolygon {
-        return Multipolygon(parseJsonArrayOfArray(jsonMultiPolygon, Function<JsonArray, T> { this.parsePolygon(it) }))
+    private fun parseMultiPolygon(jsonMultiPolygon: FluentJsonArray): MultiPolygon {
+        return MultiPolygon(parseJsonArrayOfArray(jsonMultiPolygon) { this.parsePolygon(FluentJsonArray(it)) })
     }
 
-    private fun parsePolygon(jsonPolygon: JsonArray): Polygon {
-        return Polygon(parseJsonArrayOfArray(jsonPolygon, Function<JsonArray, T> { this.parseRing(it) }))
+    private fun parsePolygon(jsonPolygon: FluentJsonArray): Polygon {
+        return Polygon(parseJsonArrayOfArray(jsonPolygon) {parseRing(FluentJsonArray(it))})
     }
 
-    private fun parseRing(jsonRing: JsonArray): Ring {
-        return Ring(parseJsonArrayOfArray(jsonRing, Function<JsonArray, T> { this.parsePoint(it) }))
+    private fun parseRing(jsonRing: FluentJsonArray): Ring {
+        return Ring(parseJsonArrayOfArray(jsonRing) { this.parsePoint(FluentJsonArray(it)) })
     }
 
-    private fun parsePoint(jsonPoint: JsonArray): DoubleVector {
+    private fun parsePoint(jsonPoint: FluentJsonArray): DoubleVector {
         return DoubleVector(
-            readDouble(jsonPoint, GEOMETRY_LON_INDEX),
-            readDouble(jsonPoint, GEOMETRY_LAT_INDEX)
+            jsonPoint.getDouble(GEOMETRY_LON_INDEX),
+            jsonPoint.getDouble(GEOMETRY_LAT_INDEX)
         )
     }
 
-    private fun <T> parseJsonArrayOfArray(jsonArray: JsonArray, converter: Function<JsonArray, T>): List<T> {
-        return parseJsonArray(jsonArray) { jsonValue -> converter.apply(jsonValue as JsonArray) }
+    private fun <T> parseJsonArrayOfArray(jsonArray: FluentJsonArray, converter: (JsonArray) -> T): List<T> {
+        return jsonArray.stream().map { jsonValue -> converter(jsonValue as JsonArray) }.toList()
     }
 
     companion object {
-        private val GEOMETRY_MULTIPOLYGON = "MultiPolygon"
-        private val GEOMETRY_POLYGON = "Polygon"
-        private val GEOMETRY_TYPE = "type"
-        private val GEOMETRY_COORDINATES = "coordinates"
-        private val GEOMETRY_LON_INDEX = 0
-        private val GEOMETRY_LAT_INDEX = 1
+        private const val GEOMETRY_MULTIPOLYGON = "MultiPolygon"
+        private const val GEOMETRY_POLYGON = "Polygon"
+        private const val GEOMETRY_TYPE = "type"
+        private const val GEOMETRY_COORDINATES = "coordinates"
+        private const val GEOMETRY_LON_INDEX = 0
+        private const val GEOMETRY_LAT_INDEX = 1
 
-        fun parse(data: String): Multipolygon {
+        fun parse(data: String): MultiPolygon {
             return GeoJsonParser().doParsing(data)
         }
     }

@@ -104,9 +104,9 @@ fun getBoolean(key: String): Boolean {
     }
 
     private fun getStrings(key: String): List<String?> {
-        return FluentJsonArray(myObj.getArray(key))
-            .stream()
+        return FluentJsonArray(myObj.getArray(key)).stream()
             .map { JsonUtils.getAsString(it) }
+            .toList()
     }
 
     fun getStrings(key: String, processor: (List<String?>) -> Unit): FluentJsonObject {
