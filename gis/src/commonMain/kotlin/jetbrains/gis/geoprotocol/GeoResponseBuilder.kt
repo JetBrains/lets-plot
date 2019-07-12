@@ -11,58 +11,55 @@ import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 object GeoResponseBuilder {
 
     class SuccessResponseBuilder {
-        private var geocodedFeatures: List<GeocodedFeature> = emptyList()
+        private var geocodedFeatures: ArrayList<GeocodedFeature> = ArrayList()
         private var featureLevel: FeatureLevel? = null
 
-        fun setGeocodedFeatures(v: List<GeocodedFeature>) = apply { geocodedFeatures = v }
+        fun addGeocodedFeature(v: GeocodedFeature) = apply { geocodedFeatures.add(v) }
         fun setLevel(v: FeatureLevel?) = apply { featureLevel = v }
         fun build() = SuccessGeoResponse(geocodedFeatures, featureLevel)
     }
 
     class AmbiguousResponseBuilder {
-        private var ambiguousFeatures: List<AmbiguousFeature> = emptyList()
+        private var ambiguousFeatures: ArrayList<AmbiguousFeature> = ArrayList()
         private var featureLevel: FeatureLevel? = null
 
-        fun setAmbiguousFeatures(v: List<AmbiguousFeature>) = apply { ambiguousFeatures = v }
+        fun addAmbiguousFeature(v: AmbiguousFeature) = apply { ambiguousFeatures.add(v) }
         fun setLevel(v: FeatureLevel?) = apply { featureLevel = v }
         fun build() = AmbiguousGeoResponse(ambiguousFeatures, featureLevel)
     }
 
-    class GeocodedFeatureBuilder(query: String, id: String, name: String) {
-        private val query: String
-        private val id: String
-        private val name: String
+    class GeocodedFeatureBuilder() {
+        private lateinit var query: String
+        private lateinit var id: String
+        private lateinit var name: String
         private var centroid: DoubleVector? = null
         private var limit: GeoRectangle? = null
         private var position: GeoRectangle? = null
-        private var highlights: List<String>? = null
         private var boundary: Geometry? = null
-        private var tileGeometries: List<GeoTile>? = null
+        private var highlights: MutableList<String> = ArrayList()
+        private var tileGeometries: ArrayList<GeoTile> = ArrayList()
 
-        init {
-            this.query = query
-            this.id = id
-            this.name = name
-        }
-
+        fun setQuery(v: String) = apply { query = v }
+        fun setId(v: String) = apply { id = v }
+        fun setName(v: String) = apply { name = v }
         fun setBoundary(v: Geometry) = apply { boundary = v }
-        fun setTiles(v: List<GeoTile>) = apply { tileGeometries = v }
         fun setCentroid(v: DoubleVector) = apply { centroid = v }
         fun setLimit(v: GeoRectangle) = apply { limit = v }
         fun setPosition(v: GeoRectangle) = apply { position = v }
-        fun addHighlight(v: List<String>) = apply { highlights = v }
+        fun addHighlight(v: String) = apply { highlights.add(v) }
+        fun addTile(v: GeoTile) = apply { tileGeometries.add(v) }
 
         fun build(): GeocodedFeature {
             return GeocodedFeature(
                 query,
                 id,
                 name,
-                highlights,
                 centroid,
                 position,
                 limit,
                 boundary,
-                tileGeometries
+                highlights.ifEmpty { null },
+                tileGeometries.ifEmpty { null }
             )
         }
     }
@@ -70,11 +67,11 @@ object GeoResponseBuilder {
     class AmbiguousFeatureBuilder {
         private lateinit var query: String
         private var totalNamesakeCount: Int = 0
-        private var namesakeExamples: List<Namesake> = emptyList()
+        private var namesakeExamples: ArrayList<Namesake> = ArrayList()
 
         fun setQuery(v: String) = apply { query = v }
+        fun addNamesakeExample(v: Namesake) = apply { namesakeExamples.add(v) }
         fun setTotalNamesakeCount(v: Int) = apply { totalNamesakeCount = v }
-        fun addNamesakeExamples(v: List<Namesake>) = apply { namesakeExamples = v }
         fun build() = AmbiguousFeature(query, totalNamesakeCount, namesakeExamples)
     }
 
