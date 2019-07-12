@@ -29,6 +29,9 @@ internal actual class ImageTranscodeSpecChange : SpecChange {
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         val imageSpec = spec[SPEC]
         if (imageSpec is Map<*, *>) {
+            @Suppress("UNCHECKED_CAST")
+            imageSpec as Map<String, Any>
+
             val width = (imageSpec[WIDTH] as Number).toInt()
             val height = (imageSpec[HEIGHT] as Number).toInt()
             val type = imageSpec[TYPE] as String
