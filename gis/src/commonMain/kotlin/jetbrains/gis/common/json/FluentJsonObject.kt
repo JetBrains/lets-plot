@@ -1,5 +1,6 @@
 package jetbrains.gis.common.json
 
+import jetbrains.datalore.base.function.Consumer
 import jetbrains.gis.common.json.JsonUtils.formatEnum
 import jetbrains.gis.common.json.JsonUtils.parseEnum
 
@@ -67,20 +68,20 @@ class FluentJsonObject : FluentJsonValue {
 //        return this
 //    }
 //
-fun getDouble(key: String): Double {
-    return myObj.getDouble(key)
-}
+    fun getDouble(key: String): Double {
+        return myObj.getDouble(key)
+    }
 
-//    fun getDouble(key: String, processor: Consumer<Double>): FluentJsonObject {
-//        processor.accept(getDouble(key))
-//        return this
-//    }
-//
-//    fun getExistingDouble(key: String, processor: Consumer<Double>): FluentJsonObject {
-//        return if (containsNotNull(key)) {
-//            getDouble(key, processor)
-//        } else this
-//    }
+    fun getDouble(key: String, processor: (Double) -> Unit): FluentJsonObject {
+        processor(getDouble(key))
+        return this
+    }
+
+    fun getExistingDouble(key: String, processor: Consumer<Double>): FluentJsonObject {
+        return if (containsNotNull(key)) {
+            getDouble(key, processor)
+        } else this
+    }
 //
 fun getBoolean(key: String): Boolean {
     return myObj[key] as Boolean
@@ -91,20 +92,20 @@ fun getBoolean(key: String): Boolean {
         return this
     }
 
-//    fun getString(key: String): String {
-//        return myObj.getString(key)
-//    }
-//
-//    fun getString(key: String, processor: Consumer<String>): FluentJsonObject {
-//        processor.accept(getString(key))
-//        return this
-//    }
-//
-private fun getStrings(key: String): List<String?> {
-    return FluentJsonArray(myObj.getArray(key))
-        .stream()
-        .map { JsonUtils.getAsString(it) }
-}
+    fun getString(key: String): String {
+        return myObj.getString(key)
+    }
+
+    fun getString(key: String, processor: Consumer<String>): FluentJsonObject {
+        processor(getString(key))
+        return this
+    }
+
+    private fun getStrings(key: String): List<String?> {
+        return FluentJsonArray(myObj.getArray(key))
+            .stream()
+            .map { JsonUtils.getAsString(it) }
+    }
 
     fun getStrings(key: String, processor: (List<String?>) -> Unit): FluentJsonObject {
         processor(getStrings(key))
@@ -120,11 +121,9 @@ private fun getStrings(key: String): List<String?> {
 //        return this
 //    }
 //
-//    fun getExistingString(key: String, processor: Consumer<String>): FluentJsonObject {
-//        return if (containsNotNull(key)) {
-//            getString(key, processor)
-//        } else this
-//    }
+    fun getExistingString(key: String, processor: (String) -> Unit): FluentJsonObject {
+        return if (containsNotNull(key)) getString(key, processor) else this
+    }
 //
 //    fun forStrings(key: String, processor: Consumer<String>): FluentJsonObject {
 //        FluentJsonArray(myObj.getArray(key)).stream().map(???({ JsonUtils.getAsString() })).forEach(processor)
@@ -146,25 +145,25 @@ fun getArray(key: String, processor: (FluentJsonArray) -> Unit): FluentJsonObjec
         return FluentJsonArray(myObj.getArray(key))
     }
 
-fun getObject(key: String): FluentJsonObject {
-    return FluentJsonObject(myObj[key] as JsonObject)
-}
-
-//    fun getObject(key: String, processor: Consumer<FluentJsonObject>): FluentJsonObject {
-//        processor.accept(getObject(key))
-//        return this
-//    }
-//
-fun getExistingObject(key: String, processor: (FluentJsonObject) -> Unit): FluentJsonObject {
-    if (containsNotNull(key)) {
-        val obj = getObject(key)
-        if (obj.myObj.keys.isNotEmpty()) {
-            processor(obj)
-        }
+    fun getObject(key: String): FluentJsonObject {
+        return FluentJsonObject(myObj[key] as JsonObject)
     }
 
-    return this
-}
+    fun getObject(key: String, processor: Consumer<FluentJsonObject>): FluentJsonObject {
+        processor(getObject(key))
+        return this
+    }
+
+    fun getExistingObject(key: String, processor: (FluentJsonObject) -> Unit): FluentJsonObject {
+        if (containsNotNull(key)) {
+            val obj = getObject(key)
+            if (obj.myObj.keys.isNotEmpty()) {
+                processor(obj)
+            }
+        }
+
+        return this
+    }
 
     fun getExistingArray(key: String, processor: (FluentJsonArray) -> Unit): FluentJsonObject {
         if (containsNotNull(key)) {
@@ -197,15 +196,15 @@ fun getExistingObject(key: String, processor: (FluentJsonObject) -> Unit): Fluen
         return this
     }
 
-//    fun getIntOrDefault(key: String, processor: Consumer<Int>, defaultValue: Int): FluentJsonObject {
-//        if (containsNotNull(key)) {
-//            processor.accept(getInt(key))
-//        } else {
-//            processor.accept(defaultValue)
-//        }
-//        return this
-//    }
-//
+    fun getIntOrDefault(key: String, processor: (Int) -> Unit, defaultValue: Int): FluentJsonObject {
+        if (containsNotNull(key)) {
+            processor(getInt(key))
+        } else {
+            processor(defaultValue)
+        }
+        return this
+    }
+
 fun <T : Enum<T>> getEnum(key: String, enumValues: Array<T>): T {
     return parseEnum(myObj[key] as String, enumValues)
 }
@@ -244,7 +243,7 @@ fun <T : Enum<T>> getEnum(key: String, enumValues: Array<T>): T {
 //    }
 //
 fun forEntries(consumer: (String, Any?) -> Unit): FluentJsonObject {
-    myObj.keys.forEach { key -> consumer(key, myObj.get(key)) }
+    myObj.keys.forEach { key -> consumer(key, myObj[key]) }
     return this
 }
 
@@ -255,7 +254,7 @@ fun forEntries(consumer: (String, Any?) -> Unit): FluentJsonObject {
     }
 
     private fun containsNotNull(key: String): Boolean {
-        return contains(key) && myObj.get(key) != null
+        return contains(key) && myObj[key] != null
     }
 
     override fun get(): JsonObject {

@@ -39,7 +39,7 @@ class FluentJsonArray: FluentJsonValue {
         return addAll(listOf(*values))
     }
 
-    fun stream(): List<Any?> {
+    fun stream(): ArrayList<*> {
         return streamOf(myArray)
     }
 

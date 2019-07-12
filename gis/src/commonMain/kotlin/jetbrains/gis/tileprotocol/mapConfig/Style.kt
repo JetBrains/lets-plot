@@ -1,0 +1,24 @@
+package jetbrains.gis.tileprotocol.mapConfig
+
+import jetbrains.datalore.base.values.Color
+
+class Style {
+    var type: String? = null
+    var fill: Color? = null
+    var stroke: Color? = null
+    var strokeWidth: Double? = null
+    var lineCap: String? = null
+    var lineJoin: String? = null
+    var lineDash: List<Double>? = null
+    var labelField: String? = null
+    var fontStyle: String? = null
+    var fontface: String? = null
+    var textTransform: String? = null
+    var size: Double? = null
+    var wrapWidth: Double? = null
+    var minimumPadding: Double? = null
+    var repeatDistance: Double? = null
+    var shieldCornerRadius: Double? = null
+    var shieldFillColor: Color? = null
+    var shieldStrokeColor: Color? = null
+}

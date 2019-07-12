@@ -61,7 +61,7 @@ object JsonUtils {
 //        return arr
 //    }
 //
-fun streamOf(arr: JsonArray): List<*> {
+fun streamOf(arr: JsonArray): ArrayList<*> {
         return arr
     }
 
@@ -135,9 +135,9 @@ fun getAsString(e: Any?): String? {
 //        return (v as JsonBoolean).getBooleanValue()
 //    }
 //
-//    fun getAsInt(v: Any): Int {
-//        return (v as JsonNumber).getIntValue()
-//    }
+    fun getAsInt(v: Any?): Int {
+        return (v as Number).toInt()
+    }
 //
 //    fun readString(obj: JsonObject, key: String): String {
 //        if (!containsString(obj, key)) {
@@ -217,6 +217,10 @@ fun <T : Enum<T>> parseEnum(enumStringValue: String, values: Array<T>): T {
 private fun <K, V> HashMap<K, V>.getNumber(key: K) = if (this[key] == null) 0.0 else this[key] as Number
 
 internal fun <K, V> HashMap<K, V?>.getDouble(key: K) = this.getNumber(key).toDouble()
+
+internal fun <K, V> HashMap<K, V>.getString(key: K): String {
+    return this[key] as String
+}
 
 internal fun <K, V> HashMap<K, V>.getObject(key: K): JsonObject {
     return this[key] as JsonObject
