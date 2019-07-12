@@ -18,7 +18,7 @@ fun ImageData.setRedAt(data: Uint8ClampedArray, red: Int, x: Int, y: Int) =
 fun ImageData.setColorAt(data: Uint8ClampedArray, color: Int, x: Int, y: Int, offset: Int) {
     val index = ImageDataConsts.NUM_COLORS * (x + y * this.width) + offset
 //    data[index] = color.toByte()
-    data.asDynamic()[index] = color;
+    data.asDynamic()[index] = color
 }
 
 object ImageDataConsts {
