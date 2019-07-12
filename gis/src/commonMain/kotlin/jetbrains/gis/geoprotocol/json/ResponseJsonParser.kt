@@ -46,14 +46,14 @@ object ResponseJsonParser {
         val successResponse = GeoResponseBuilder.SuccessResponseBuilder()
         responseJson
             .getObject(DATA) { data -> data
-                .getOptionalEnum(LEVEL, successResponse::setLevel, FeatureLevel.values())
+                .getOptionalEnum(LEVEL, { successResponse.setLevel(it) }, FeatureLevel.values())
                 .forObjects(FEATURES) { featureJson ->
                     val feature = GeoResponseBuilder.GeocodedFeatureBuilder()
                     featureJson
-                        .getString(QUERY, feature::setQuery)
-                        .getString(ID, feature::setId)
-                        .getString(NAME, feature::setName)
-                        .forExistingStrings(HIGHLIGHTS, feature::addHighlight)
+                        .getString(QUERY) { feature.setQuery(it) }
+                        .getString(ID) { feature.setId(it) }
+                        .getString(NAME) { feature.setName(it) }
+                        .forExistingStrings(HIGHLIGHTS) { feature.addHighlight(it) }
                         .getExistingString(BOUNDARY) { feature.setBoundary(readGeometry(it)) }
                         .getExistingObject(CENTROID) { feature.setCentroid(parseCentroid(it)) }
                         .getExistingObject(LIMIT) { feature.setLimit(parseGeoRectangle(it)) }
@@ -76,20 +76,20 @@ object ResponseJsonParser {
         val ambiguousResponse = GeoResponseBuilder.AmbiguousResponseBuilder()
         responseJson
             .getObject(DATA) { data -> data
-                .getOptionalEnum(LEVEL, ambiguousResponse::setLevel, FeatureLevel.values())
+                .getOptionalEnum(LEVEL, { ambiguousResponse.setLevel(it) }, FeatureLevel.values())
                 .forObjects(FEATURES) { featureJson ->
                     val feature = GeoResponseBuilder.AmbiguousFeatureBuilder()
                     featureJson
-                        .getString(QUERY, feature::setQuery)
-                        .getInt(NAMESAKE_COUNT, feature::setTotalNamesakeCount)
+                        .getString(QUERY) { feature.setQuery(it) }
+                        .getInt(NAMESAKE_COUNT) { feature.setTotalNamesakeCount(it) }
                         .forObjects(NAMESAKE_EXAMPLES) { namesakeJson ->
                             val namesake = GeoResponseBuilder.NamesakeBuilder()
 
                             namesakeJson
-                                .getString(NAMESAKE_NAME, namesake::setName)
+                                .getString(NAMESAKE_NAME) { namesake.setName(it) }
                                 .forObjects(NAMESAKE_PARENTS) { parentJson -> parentJson
-                                    .getString(NAMESAKE_NAME, namesake::addParentName)
-                                    .getEnum(LEVEL, namesake::addParentLevel, FeatureLevel.values())
+                                    .getString(NAMESAKE_NAME) { namesake.addParentName(it) }
+                                    .getEnum(LEVEL, { namesake.addParentLevel(it) }, FeatureLevel.values())
                                 }
 
                             feature.addNamesakeExample(namesake.build())

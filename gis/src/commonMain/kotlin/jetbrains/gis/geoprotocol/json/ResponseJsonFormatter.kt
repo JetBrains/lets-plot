@@ -107,7 +107,7 @@ object ResponseJsonFormatter {
 
 
     private fun stringArray(v: List<String>?): JsonArray? {
-        return if (v == null || v.isEmpty()) null else JsonArray(v)
+        return if (v == null || v.isEmpty()) null else ArrayList(v)
     }
 
     private fun formatRect(v: GeoRectangle?): JsonObject? {

@@ -54,8 +54,8 @@ object RequestJsonParser {
         builder: T
     ) {
         requestFluentJson
-            .getOptionalInt(RESOLUTION, builder::setResolution)
-            .forEnums(FEATURE_OPTIONS, builder::addFeature, FeatureOption.values())
+            .getOptionalInt(RESOLUTION) { builder.setResolution(it) }
+            .forEnums(FEATURE_OPTIONS, { builder.addFeature(it) }, FeatureOption.values())
             .getExistingObject(TILES) { tiles ->
                 tiles
                 .forEntries { id, quadKeys ->
@@ -79,29 +79,29 @@ object RequestJsonParser {
 
         requestFluentJson
             .accept { parseCommon(it, builder) }
-            .getOptionalEnum(LEVEL, builder::setLevel, FeatureLevel.values())
-            .getInt(NAMESAKE_EXAMPLE_LIMIT, builder::setNamesakeExampleLimit)
+            .getOptionalEnum(LEVEL, { builder.setLevel(it) }, FeatureLevel.values())
+            .getInt(NAMESAKE_EXAMPLE_LIMIT) { builder.setNamesakeExampleLimit(it) }
             .forObjects(REGION_QUERIES) { query ->
-                val regionQueryBuilder = GeoRequestBuilder.RegionQueryBuilder()
+                val queryBuilder = GeoRequestBuilder.RegionQueryBuilder()
 
                 query
-                    .getStrings(REGION_QUERY_NAMES, regionQueryBuilder::setQueryNames)
+                    .getStrings(REGION_QUERY_NAMES) { queryBuilder.setQueryNames( it.map { s -> s!! })}
                     .getExistingObject(AMBIGUITY_RESOLVER) { resolver -> resolver
-                        .getExistingObject(AMBIGUITY_BOX) { parseRect(it, regionQueryBuilder::setBox) }
-                        .getExistingArray(AMBIGUITY_CLOSEST_COORD) { regionQueryBuilder
+                        .getExistingObject(AMBIGUITY_BOX) { parseRect(it, queryBuilder::setBox) }
+                        .getExistingArray(AMBIGUITY_CLOSEST_COORD) { queryBuilder
                             .setClosestObject( with (it) { DoubleVector(getDouble(COORDINATE_LON), getDouble(COORDINATE_LAT))})
                         }
-                        .getOptionalEnum(AMBIGUITY_IGNORING_STRATEGY, regionQueryBuilder::setIgnoringStrategy, IgnoringStrategy.values())
+                        .getOptionalEnum(AMBIGUITY_IGNORING_STRATEGY, { queryBuilder.setIgnoringStrategy(it) }, IgnoringStrategy.values())
                     }
-                    .getExistingObject(REGION_QUERY_PARENT) { parseMapRegion(it, regionQueryBuilder::setParent)}
+                    .getExistingObject(REGION_QUERY_PARENT) { parseMapRegion(it, queryBuilder::setParent)}
 
-                builder.addQuery(regionQueryBuilder.build())
+                builder.addQuery(queryBuilder.build())
             }
 
         return builder.build()
     }
 
-    private fun parseRect(jsonBox: FluentJsonObject, setter: (DoubleRectangle?) -> Unit) {
+    private fun parseRect(jsonBox: FluentJsonObject, setter: (DoubleRectangle?) -> Any) {
         val lonMin = jsonBox.getDouble(LON_MIN)
         val latMin = jsonBox.getDouble(LAT_MIN)
         val lonMax = jsonBox.getDouble(LON_MAX)
@@ -122,7 +122,7 @@ object RequestJsonParser {
 
         requestFluentJson
             .accept { parseCommon(it, builder) }
-            .getEnum(REVERSE_LEVEL, builder::setLevel, FeatureLevel.values())
+            .getEnum(REVERSE_LEVEL, { builder.setLevel(it) }, FeatureLevel.values())
             .getExistingObject(REVERSE_PARENT) { parseMapRegion(it, builder::setParent) }
             .getArray(REVERSE_COORDINATES) { coordinates -> builder
                 .setCoordinates(coordinates.stream()
@@ -135,11 +135,11 @@ object RequestJsonParser {
         return builder.build()
     }
 
-    private fun parseMapRegion(json: FluentJsonObject, setter: (MapRegion?) -> Unit) {
+    private fun parseMapRegion(json: FluentJsonObject, setter: (MapRegion?) -> Any) {
         val mapRegion = GeoRequestBuilder.MapRegionBuilder()
         json
             .getStrings(MAP_REGION_VALUES) { mapRegion.setParentValues(it.map { s -> s!! }) }
-            .getBoolean(MAP_REGION_KIND, mapRegion::setParentKind)
+            .getBoolean(MAP_REGION_KIND) { mapRegion.setParentKind(it) }
 
         setter(mapRegion.build())
     }

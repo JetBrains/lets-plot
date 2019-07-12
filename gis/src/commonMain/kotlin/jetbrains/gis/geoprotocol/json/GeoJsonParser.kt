@@ -12,7 +12,9 @@ import jetbrains.gis.common.json.JsonArray
 internal class GeoJsonParser private constructor() {
 
     private fun doParsing(data: String): MultiPolygon {
-        val obj = HashMap<String, Any?>(JsonSupport.parseJson(data))
+
+        var original = JsonSupport.parseJson(data)
+        val obj = HashMap<String, Any?>(original)
         val geometry = FluentJsonObject(obj);
         val type = geometry.getString(GEOMETRY_TYPE)
         val coordinates = geometry.getArray(GEOMETRY_COORDINATES)

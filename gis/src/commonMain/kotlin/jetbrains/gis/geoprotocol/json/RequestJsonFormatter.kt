@@ -66,7 +66,7 @@ object RequestJsonFormatter {
                             AMBIGUITY_RESOLVER, FluentJsonObject()
                                 .put(AMBIGUITY_IGNORING_STRATEGY, regionQuery.ambiguityResolver.ignoringStrategy)
                                 .put(AMBIGUITY_CLOSEST_COORD, formatCoord(regionQuery.ambiguityResolver.closestCoord))
-                                .put(AMBIGUITY_BOX, formatRect(regionQuery.ambiguityResolver.box))
+                                .put(AMBIGUITY_BOX, regionQuery.ambiguityResolver.box?.let { formatRect(it) })
                         )
                 })
             )
@@ -88,10 +88,6 @@ object RequestJsonFormatter {
             )
             .put(REVERSE_LEVEL, request.level)
             .get()
-    }
-
-    private fun formatRect(rect: DoubleRectangle?): Any? {
-        return rect?.let { formatRect(it) }
     }
 
     private fun formatRect(rect: DoubleRectangle): Any? {
