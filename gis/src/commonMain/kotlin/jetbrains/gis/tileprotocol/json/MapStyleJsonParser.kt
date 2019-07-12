@@ -137,6 +137,7 @@ object MapStyleJsonParser {
                                 FluentJsonArray(value)
                                     .stream()
                                     .map { JsonUtils.getAsInt(it) }
+                                    .toList()
 
                             predicate = { filterValues.contains(it)  }
                         }

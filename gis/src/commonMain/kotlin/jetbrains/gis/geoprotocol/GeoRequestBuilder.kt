@@ -204,12 +204,8 @@ object GeoRequestBuilder {
         fun setQueryNames(v: List<String>) = apply { names = v }
         fun setQueryNames(vararg v: String) = apply { names = listOf(*v) }
         fun setParent(v: MapRegion?) = apply { parent = v }
-        fun setIgnoringStrategy(v: IgnoringStrategy?) =
-            apply { v?.let { ambiguityResolver = AmbiguityResolver.ignoring(it) } }
-
-        fun setClosestObject(v: DoubleVector?) =
-            apply { v?.let { ambiguityResolver = AmbiguityResolver.closestTo(it) } }
-
+        fun setIgnoringStrategy(v: IgnoringStrategy?) = apply { v?.let { ambiguityResolver = AmbiguityResolver.ignoring(it) } }
+        fun setClosestObject(v: DoubleVector?) = apply { v?.let { ambiguityResolver = AmbiguityResolver.closestTo(it) } }
         fun setBox(v: DoubleRectangle?) = apply { v?.let { ambiguityResolver = AmbiguityResolver.within(it) } }
         fun setAmbiguityResolver(v: AmbiguityResolver) = apply { ambiguityResolver = v }
 

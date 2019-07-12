@@ -44,7 +44,7 @@ interface GeoRequest {
         ) {
 
             val isEmpty: Boolean
-                get() = !closestCoord.isPresent() && !ignoringStrategy.isPresent() && !box.isPresent()
+                get() = closestCoord == null && ignoringStrategy == null && box == null
 
             enum class IgnoringStrategy {
                 SKIP_ALL,
@@ -85,9 +85,4 @@ interface GeoRequest {
         val level: FeatureLevel
         val parent: MapRegion?
     }
-
-}
-
-fun <T : Any?> T?.isPresent(): Boolean {
-    return this != null
 }

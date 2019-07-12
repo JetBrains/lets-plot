@@ -1,14 +1,10 @@
 package jetbrains.gis.geoprotocol.json
 
-import com.google.common.io.BaseEncoding
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.Multipolygon
+import jetbrains.datalore.base.encoding.Base64
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.gis.common.twkb.TWKB
-import jetbrains.gis.common.twkb.TWKB.GeometryConsumer
-import jetbrains.gis.protocol.Geometry
-import java.util.ArrayList
-import java.util.Objects
+import jetbrains.gis.common.twkb.Twkb
+import jetbrains.gis.geoprotocol.Geometry
 
 object StringGeometries {
     fun fromTwkb(geometry: String): Geometry {
@@ -32,71 +28,52 @@ object StringGeometries {
     // Only GeometryStorageClient(PostreSQL user) and JsonFormatters/JsonParsers(client/server communication)
     // should know about this optimization.
     private abstract class StringGeometry internal constructor(internal val rawData: String) : Geometry {
-        private var myMultipolygon: Multipolygon? = null
+        private val myMultipolygon: MultiPolygon by lazy { parse(rawData) }
 
-        fun asMultipolygon(): Multipolygon? {
-            if (myMultipolygon == null) {
-                myMultipolygon = parse(rawData)
-            }
+        override fun asMultipolygon(): MultiPolygon {
             return myMultipolygon
         }
 
-        internal abstract fun parse(geometry: String): Multipolygon
+        internal abstract fun parse(geometry: String): MultiPolygon
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
 
-        override fun equals(o: Any?): Boolean {
-            if (this === o) return true
-            if (o == null || javaClass != o.javaClass) return false
-            val that = o as StringGeometry?
-            return rawData == that!!.rawData
+            other as StringGeometry
+
+            if (rawData != other.rawData) return false
+
+            return true
         }
 
         override fun hashCode(): Int {
-            return Objects.hash(rawData)
+            return rawData.hashCode()
         }
     }
 
     private class TinyGeometry internal constructor(geometry: String) : StringGeometry(geometry) {
 
-        override fun parse(geometry: String): Multipolygon {
+        override fun parse(geometry: String): MultiPolygon {
             val polygons = ArrayList<Polygon>()
-            val data = BaseEncoding
-                .base64()
-                .withSeparator("\n", 76) // Fix for PostgreSQL: it puts \n every 76 chars
-                .decode(geometry)
 
-            TWKB.parse(data, object : GeometryConsumer() {
-                fun onPoint(p: DoubleVector) {
-                    throw IllegalArgumentException("Points are not supported")
-                }
-
-                fun onLineString(lineString: LineString) {
-                    throw IllegalArgumentException("LineString are not supported")
-                }
-
-                fun onPolygon(polygon: Polygon) {
+            //.withSeparator("\n", 76) // Fix for PostgreSQL: it puts \n every 76 chars
+            val data = Base64.decode(geometry);
+            Twkb.parse(data, object : Twkb.GeometryConsumer {
+                override fun onPolygon(polygon: Polygon) {
                     polygons.add(polygon)
                 }
-
-                fun onMultiPoint(multiPoint: MultiPoint, idList: List<Int>) {
-                    throw IllegalArgumentException("MultiPoint are not supported")
-                }
-
-                fun onMultiLineString(multiLineString: MultiLineString, idList: List<Int>) {
-                    throw IllegalArgumentException("MultiLineString are not supported")
-                }
-
-                fun onMultipolygon(multipolygon: Multipolygon, idList: List<Int>) {
+                override fun onMultiPolygon(multipolygon: MultiPolygon, idList: List<Int>) {
                     polygons.addAll(multipolygon)
                 }
             })
 
-            return Multipolygon(polygons)
+            return MultiPolygon(polygons)
         }
     }
 
     private class GeoJsonGeometry internal constructor(private val myGeometry: String) : StringGeometry(myGeometry) {
 
-        override fun parse(geometry: String): Multipolygon {
+        override fun parse(geometry: String): MultiPolygon {
             return GeoJsonParser.parse(myGeometry)
         }
     }

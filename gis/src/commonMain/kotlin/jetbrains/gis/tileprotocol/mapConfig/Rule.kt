@@ -23,10 +23,10 @@ class Rule(
     }
 
     class RuleBuilder {
-        var minZoom: Int? = null
-        var maxZoom: Int? = null
-        var filters: ArrayList<(TileFeature) -> Boolean> = ArrayList()
-        lateinit var style: Style
+        private var minZoom: Int? = null
+        private var maxZoom: Int? = null
+        private var filters: ArrayList<(TileFeature) -> Boolean> = ArrayList()
+        private lateinit var style: Style
 
         fun minZoom(minZoom: Int) { this.minZoom = minZoom }
         fun maxZoom(maxZoom: Int) { this.maxZoom = maxZoom }
