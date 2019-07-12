@@ -61,11 +61,11 @@ object JsonUtils {
 //        return arr
 //    }
 //
-fun streamOf(arr: JsonArray): ArrayList<*> {
-        return arr
+fun streamOf(arr: JsonArray): Sequence<*> {
+    return arr.asSequence()
     }
 
-    fun objectsStreamOf(arr: JsonArray): List<JsonObject> {
+    fun objectsStreamOf(arr: JsonArray): Sequence<JsonObject> {
         return streamOf(arr).map { v -> v as JsonObject }
     }
 
