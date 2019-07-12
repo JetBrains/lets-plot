@@ -28,9 +28,9 @@ object DemoModelB {
 
         val pathBuilder = SvgPathDataBuilder(false)
         pathBuilder.moveTo(150.0, 175.0, true)
-                .verticalLineTo(-100.0)
-                .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
-                .closePath()
+            .verticalLineTo(-100.0)
+            .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
+            .closePath()
 
         val path = SvgPathElement(pathBuilder.build())
         path.fill().set(SvgColors.RED)

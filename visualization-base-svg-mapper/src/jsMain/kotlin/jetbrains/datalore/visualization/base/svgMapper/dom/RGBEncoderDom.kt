@@ -11,7 +11,7 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.ImageData
 import kotlin.browser.document
 
-class RGBEncoderDom: SvgImageElementEx.RGBEncoder {
+class RGBEncoderDom : SvgImageElementEx.RGBEncoder {
 
     override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
         val canvas: HTMLCanvasElement? = document.createElement("canvas") as HTMLCanvasElement?
@@ -27,8 +27,8 @@ class RGBEncoderDom: SvgImageElementEx.RGBEncoder {
         val imageData = context.createImageData(width.toDouble(), height.toDouble())
         val dataArray = imageData.data
 
-        for (y in 0..height) {
-            for (x in 0..width) {
+        for (y in 0 until height) {
+            for (x in 0 until width) {
                 setRgb(x, y, argbValues[y * width + x], imageData, dataArray)
             }
         }
