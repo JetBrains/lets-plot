@@ -27,8 +27,7 @@ include 'base',
         'visualization-demo-common-jfx',
         'visualization-demo-svg-canvas-renderer',
         'visualization-demo-svg-mapper',
-        'visualization-demo-plot',
-        'demo-hello'
+        'visualization-demo-plot'
 
 
 // publishing
