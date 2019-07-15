@@ -8,6 +8,7 @@ plugins {
 kotlin {
     jvm()
     js() {
+        browser { }
         compileKotlinJs {
             kotlinOptions.sourceMap = true
             kotlinOptions.sourceMapEmbedSources = "always"
@@ -89,45 +90,6 @@ publishing {
         }
     }
 }
-
-
-// JS tests config
-def jsCompilations = kotlin.targets.js.compilations
-
-task populateNodeModules(dependsOn: [jsMainClasses, jsTestClasses]) {
-    doLast {
-        copy {
-            from jsCompilations.main.output
-            jsCompilations.test.runtimeDependencyFiles.each {
-                if (it.exists() && !it.isDirectory()) {
-                    from zipTree(it.absolutePath)
-                }
-            }
-            include "*.js"
-            into "build/node_modules"
-        }
-    }
-}
-
-repositories.whenObjectAdded {
-    if (it instanceof IvyArtifactRepository) {
-        metadataSources {
-            artifact()
-        }
-    }
-}
-
-node {
-    version = '10.16.0'
-    download = true
-    workDir = file("${project.buildDir}/nodejs")
-}
-
-task runJSTests(type: NpmTask, dependsOn: [populateNodeModules, npmInstall]) {
-    args = ['test']
-}
-
-test.dependsOn runJSTests
 
 // from here: https://mrhaki.blogspot.com/2014/10/gradle-goodness-show-standard-out-or.html
 // or here: https://stackoverflow.com/questions/43289503/where-does-the-output-of-system-out-println-go-in-gradle-test
