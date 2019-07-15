@@ -4,7 +4,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.Multipolygon
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.datalore.base.projectionGeometry.Ring
 import jetbrains.datalore.visualization.plot.base.Aes
@@ -129,9 +129,9 @@ object GeomUtil {
         return pointsByGroup
     }
 
-    fun createMultipolygon(points: List<DoubleVector>): Multipolygon {
+    fun createMultipolygon(points: List<DoubleVector>): MultiPolygon {
         if (points.isEmpty()) {
-            return Multipolygon.create()
+            return MultiPolygon.create()
         }
 
         val polygons = ArrayList<Polygon>()
@@ -149,7 +149,7 @@ object GeomUtil {
             polygons.add(Polygon(rings))
         }
 
-        return Multipolygon(polygons)
+        return MultiPolygon(polygons)
     }
 
     private fun isClockwise(ring: List<DoubleVector>): Boolean {

@@ -62,6 +62,22 @@ object Functions {
         }
     }
 
+    fun <ArgT, ResultT> funcOf(lambda: (ArgT) -> ResultT): Function<ArgT, ResultT> {
+        return object : Function<ArgT, ResultT> {
+            override fun apply(value: ArgT): ResultT {
+                return lambda(value)
+            }
+        }
+    }
+
+    fun runnableOf(lambda: () -> Unit): Runnable {
+        return object : Runnable {
+            override fun run() {
+                lambda()
+            }
+        }
+    }
+
     private class Memo<ItemT> internal constructor(private val mySupplier: Supplier<ItemT>) : Supplier<ItemT> {
         private var myCachedValue: ItemT? = null
         private var myCached = false
