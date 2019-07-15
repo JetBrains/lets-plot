@@ -6,7 +6,7 @@ internal class MappingEventSource<SourceEventT, TargetEventT>(
         private val mySourceEventSource: EventSource<SourceEventT>,
         private val myFunction: (SourceEventT) -> TargetEventT) : EventSource<TargetEventT> {
 
-    override fun addHandler(handler: EventHandler<in TargetEventT>): Registration {
+    override fun addHandler(handler: EventHandler<TargetEventT>): Registration {
         return mySourceEventSource.addHandler(object : EventHandler<SourceEventT> {
             override fun onEvent(event: SourceEventT) {
                 handler.onEvent(myFunction(event))

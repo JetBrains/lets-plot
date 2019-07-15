@@ -15,11 +15,11 @@ object BrowserDemoUtil {
     )
 
     val BASE_MAPPER_LIBS = listOf(
-        "base.js",
+//        "base.js",
+        "datalore-plot-base.js",
         "mapper-core.js",
         "visualization-base-svg.js",
         "visualization-base-svg-mapper.js"
-//        "visualization-base-canvas.js",
     )
 
     val PLOT_LIBS = listOf(

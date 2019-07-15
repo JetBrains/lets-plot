@@ -10,6 +10,6 @@ fun main() {
         svgRoots,
         listOf("/svg-demo-model-b.css"),
         DoubleVector(500.0, 300.0),
-        "Svg Elements (JFX SVG mapper)"
+        "Svg Elements (B)"
     )
 }
