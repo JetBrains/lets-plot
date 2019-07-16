@@ -2,17 +2,13 @@ package jetbrains.gis.geoprotocol.json
 
 import jetbrains.gis.common.json.*
 
-typealias JsonObject = Map<*, *>
-typealias JsonArray = List<*>
-typealias JsonValue = Any?
 
-
-internal object JsonComparer {
-    fun areEqual(left: JsonValue, right: JsonValue) {
+internal object Comparer {
+    fun areEqual(left: Any?, right: Any?) {
         areEqual(left, right, Context())
     }
 
-    private fun areEqual(left: JsonValue, right: JsonValue, ctx: Context) {
+    private fun areEqual(left: Any?, right: Any?, ctx: Context) {
         if (left == null || right == null) {
             areNull(left, right, ctx)
             return
@@ -32,7 +28,7 @@ internal object JsonComparer {
         tryCompareObject(lhs, rhs, ctx)
     }
 
-    private fun areNull(left: JsonValue, right: JsonValue, ctx: Context) {
+    private fun areNull(left: Any?, right: Any?, ctx: Context) {
         val leftValue = left.toString().replace("\"", String())
         val rightValue = right.toString().replace("\"", String())
 
@@ -67,8 +63,8 @@ internal object JsonComparer {
 
     private fun tryCompareObject(left: Any, right: Any, ctx: Context) {
         if (isObject(left) && isObject(right)) {
-            val leftObj = left as JsonObject
-            val rightObj = right as JsonObject
+            val leftObj = left as Obj
+            val rightObj = right as Obj
 
             if (leftObj.keys != rightObj.keys) {
                 ctx.fail("Keys are not equal.\nExpected keys: " + leftObj.keys + "\nActual keys: " + rightObj.keys)
@@ -83,8 +79,8 @@ internal object JsonComparer {
 
     private fun tryCompareArray(left: Any, right: Any, ctx: Context) {
         if (isArray(left) && isArray(right)) {
-            val leftArray = left as JsonArray
-            val rightArray = right as JsonArray
+            val leftArray = left as Arr
+            val rightArray = right as Arr
             if (leftArray.size != rightArray.size) {
                 ctx.fail("size not equal: ${leftArray.size} != ${rightArray.size}")
             }
@@ -106,25 +102,13 @@ internal object JsonComparer {
             names = listOf("/")
         }
 
-        internal fun push(key: String): Context {
-            val nextCtx = ArrayList(names)
-            nextCtx.add(key)
-            return Context(nextCtx)
-        }
+        internal fun push(key: String) = Context(names + key)
 
         internal fun fail(message: String) {
-
             throw IllegalStateException("\nPath: " + names.joinToString() + "\nReason: " + message)
         }
     }
 
-
-    private fun isObject(v: Any): Boolean {
-        return v is Map<*, *>
-    }
-
-    private fun isArray(v: Any): Boolean {
-        return v is Collection<*>
-    }
-
+    private fun isObject(v: Any) = v is Obj
+    private fun isArray(v: Any) = v is Arr
 }
