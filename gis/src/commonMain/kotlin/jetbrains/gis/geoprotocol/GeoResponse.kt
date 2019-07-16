@@ -5,12 +5,12 @@ import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 
 interface GeoResponse {
 
-    class SuccessGeoResponse internal constructor(
+    data class SuccessGeoResponse internal constructor(
         val features: List<GeocodedFeature>,
         val featureLevel: FeatureLevel?
     ) : GeoResponse {
 
-        class GeocodedFeature internal constructor(
+        data class GeocodedFeature internal constructor(
             val request: String,
             val id: String,
             val name: String,
@@ -23,21 +23,21 @@ interface GeoResponse {
         )
     }
 
-    class ErrorGeoResponse(val message: String) : GeoResponse
+    data class ErrorGeoResponse(val message: String) : GeoResponse
 
-    class AmbiguousGeoResponse internal constructor(
+    data class AmbiguousGeoResponse internal constructor(
         val features: List<AmbiguousFeature>,
         val featureLevel: FeatureLevel?
     ) : GeoResponse {
 
-        class AmbiguousFeature internal constructor(
+        data class AmbiguousFeature internal constructor(
             val request: String,
             val namesakeCount: Int,
             val namesakes: List<Namesake>
         )
 
-        class Namesake internal constructor(val name: String, val parents: List<NamesakeParent>)
+        data class Namesake internal constructor(val name: String, val parents: List<NamesakeParent>)
 
-        class NamesakeParent(val name: String, val level: FeatureLevel)
+        data class NamesakeParent(val name: String, val level: FeatureLevel)
     }
 }

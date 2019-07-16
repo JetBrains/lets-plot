@@ -1,6 +1,6 @@
 package jetbrains.gis.common.json
 
 
-abstract class FluentJsonValue {
+abstract class FluentValue {
     abstract fun get(): Any?
 }

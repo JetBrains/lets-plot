@@ -1,77 +1,97 @@
 package jetbrains.gis.common.json
 
-typealias JsonObject = HashMap<String, Any?>
-typealias JsonArray = ArrayList<*>
 
-object JsonUtils {
+typealias Arr = List<*>
+typealias Obj = Map<*, *>
 
+typealias JsonObjectType = Map<*, *>
 
-//    val NULL = object : Any() {
-//        override fun toString(): String {
-//            return "null"
-//        }
-//    }
-//
-//    fun toAny(v: Any): Any {
-//        return (v as? Map<*, *>)?.let { toJsonObject(it) } ?: if (v is List<*>) {
-//            toJsonArray(v)
-//        } else if (v is String) {
-//            JsonString(v)
-//        } else (v as? Double)?.let { JsonNumber(it) } ?: if (v is Boolean) {
-//            JsonBoolean(v)
-//        } else {
-//            JsonString(v.toString())
-//        }
-//    }
-//
-//    private fun toObject(v: Any): Optional<Any> {
-//        if (v is JsonNull) {
-//            return Optional.ofNullable(null)
-//        } else if (isString(v)) {
-//            return Optional.of(getAsString(v)!!)
-//        } else if (isNumber(v)) {
-//            return Optional.of(getAsDouble(v))
-//        } else if (isBoolean(v)) {
-//            return Optional.of(getAsBoolean(v))
-//        } else if (v is JsonObject) {
-//            return Optional.of(toMap(v))
-//        } else if (v is JsonArray) {
-//            return Optional.of(toArray(v as JsonArray))
-//        }
-//
-//        return Optional.empty()
-//    }
-//
-//    fun toJsonObject(map: Map<*, *>): JsonObject {
-//        val obj = JsonObject()
-//        for (key in map.keys) {
-//            val s = key as String
-//            obj.put(s, toAny(map[s]))
-//        }
-//
-//        return obj
-//    }
-//
-//    private fun toJsonArray(v: List<*>): JsonArray {
-//        val arr = JsonArray()
-//        for (o in v) {
-//            arr.add(toAny(o))
-//        }
-//
-//        return arr
-//    }
-//
-fun streamOf(arr: JsonArray): Sequence<*> {
-    return arr.asSequence()
+fun newObj(): HashMap<String, Any?> = HashMap()
+
+fun toObj(map: Map<*, *>): Obj {
+    val obj = HashMap<String, Any?>()
+    for (key in map.keys) {
+        val s = key as String
+        obj[s] = toVal(map[s])
     }
 
-    fun objectsStreamOf(arr: JsonArray): Sequence<JsonObject> {
-        return streamOf(arr).map { v -> v as JsonObject }
+    return obj
+}
+
+private fun toArr(v: List<*>): Arr {
+    val arr = ArrayList<Any?>()
+    for (o in v) {
+        arr.add(toVal(o))
     }
 
-    fun stringStreamOf(arr: JsonArray): Sequence<String?> {
-        return arr.asSequence().map { v -> v as String? }
+    return arr
+}
+
+private fun toVal(v: Any?): Any? {
+    return when (v) {
+        null -> null
+        is String,
+        is Number,
+        is Boolean -> v
+        is Map<*, *> -> toObj(v)
+        is List<*> -> toArr(v)
+        else -> throw IllegalArgumentException("Unknown type: ${v.toString()}")
     }
+}
+
+fun streamOf(arr: Arr): Sequence<*> = arr.asSequence()
+fun objectsStreamOf(arr: Arr): Sequence<Obj> = streamOf(arr).map { it as Obj }
+fun stringStreamOf(arr: Arr): Sequence<String?> = streamOf(arr).map { it as String? }
+
+fun isBoolean(e: Any) = e is Boolean
+fun isNumber(e: Any) = e is Number
+fun isString(e: Any) = e is String
+
+fun getAsDouble(v: Any) = (v as Number).toDouble()
+fun getAsInt(v: Any?) = (v as Number).toInt()
+fun getAsBoolean(v: Any) = v as Boolean
+
+fun containsString(obj: MutableMap<String, Any?>, key: String): Boolean =
+    when (val v = obj[key]) {
+        null, isString(v) -> true
+        else -> false
+    }
+
+fun getAsString(e: Any?): String? =
+    when (e) {
+        null -> null
+        else -> e as String
+    }
+
+fun <T : Enum<T>> parseEnum(enumStringValue: String, values: Array<T>): T =
+    values.first { mode -> mode.toString().equals(enumStringValue, ignoreCase = true) }
+
+fun <T : Enum<T>> formatEnum(enumValue: T): String =
+    enumValue.toString().toLowerCase()
+
+fun <T : Enum<T>> FluentObject.put(key: String, v: Collection<T>) = this.put(key, v.map { formatEnum(it) })
+fun FluentObject.put(key: String, v: List<String>) =
+    this.put(key, FluentArray().addStrings(v.map { it }))
+
+fun Map<*, *>.getNumber(key: String) = if (this[key] == null) 0.0 else this[key] as Number
+fun Map<*, *>.getDouble(key: String) = this.getNumber(key).toDouble()
+fun Map<*, *>.getString(key: String) = this[key] as String
+fun Map<*, *>.getObj(key: String) = this[key] as Obj
+fun Map<*, *>.getArr(key: String) = this[key] as Arr
+
+
+//    private fun toObject(v: Any?): Any? {
+//        return when (v) {
+//            null -> null
+//            is String -> v
+//            is Number -> v
+//            is Boolean -> v
+//            is Map<*, *> -> toMap(v)
+//            is List<*> -> toArray(v)
+//            else -> throw IllegalArgumentException("Unknown type: ${v.toString()}")
+//        }
+//    }
+
 
 //    fun toMap(obj: JsonObject): Map<String, Any> {
 //        val res = HashMap<String, Any>()
@@ -96,48 +116,6 @@ fun streamOf(arr: JsonArray): Sequence<*> {
 //        return res
 //    }
 //
-//    fun isBoolean(e: Any): Boolean {
-//        return e is JsonBoolean
-//    }
-//
-//    fun isNumber(e: Any): Boolean {
-//        return e is JsonNumber
-//    }
-//
-//    fun isString(e: Any): Boolean {
-//        return e is JsonString
-//    }
-//
-//    fun isObject(v: Any): Boolean {
-//        return v is JsonObject
-//    }
-//
-//    fun isArray(v: Any): Boolean {
-//        return v is JsonArray
-//    }
-//
-//    fun containsString(obj: JsonObject, key: String): Boolean {
-//        val v = obj[key]
-//        return isString(v) || v is JsonNull
-//    }
-//
-fun getAsString(e: Any?): String? {
-    return if (e == null) {
-        null
-    } else (e as String)
-}
-//
-//    fun getAsDouble(v: Any): Double {
-//        return (v as JsonNumber).getDoubleValue()
-//    }
-//
-//    fun getAsBoolean(v: Any): Boolean {
-//        return (v as JsonBoolean).getBooleanValue()
-//    }
-//
-    fun getAsInt(v: Any?): Int {
-        return (v as Number).toInt()
-    }
 //
 //    fun readString(obj: JsonObject, key: String): String {
 //        if (!containsString(obj, key)) {
@@ -163,7 +141,7 @@ fun getAsString(e: Any?): String? {
 //    }
 //
 //    // JsonNull -> empty array
-//    fun getArray(obj: JsonObject, key: String): JsonArray {
+//    fun getArr(obj: JsonObject, key: String): JsonArray {
 //        val arr = obj[key]
 //        if (arr is JsonNull) {
 //            return JsonArray()
@@ -195,7 +173,7 @@ fun getAsString(e: Any?): String? {
 //    }
 //
 //    fun readStringArray(obj: JsonObject, key: String): List<String> {
-//        return parseJsonArray(obj.getArray(key), { jsonValue -> (jsonValue as JsonString).getStringValue() })
+//        return parseJsonArray(obj.getArr(key), { jsonValue -> (jsonValue as JsonString).getStringValue() })
 //    }
 //
 //    fun <T> parseJsonArray(jsonArray: JsonArray, converter: Function<Any, T>): List<T> {
@@ -205,27 +183,4 @@ fun getAsString(e: Any?): String? {
 //    }
 //
 //
-fun <T : Enum<T>> parseEnum(enumStringValue: String, values: Array<T>): T {
-    return values.first { mode -> mode.toString().equals(enumStringValue, ignoreCase = true) }
-}
 
-    fun <T : Enum<T>> formatEnum(enumValue: T): String {
-        return enumValue.toString().toLowerCase()
-    }
-}
-
-private fun <K, V> HashMap<K, V>.getNumber(key: K) = if (this[key] == null) 0.0 else this[key] as Number
-
-internal fun <K, V> HashMap<K, V?>.getDouble(key: K) = this.getNumber(key).toDouble()
-
-internal fun <K, V> HashMap<K, V>.getString(key: K): String {
-    return this[key] as String
-}
-
-internal fun <K, V> HashMap<K, V>.getObject(key: K): JsonObject {
-    return this[key] as JsonObject
-}
-
-internal fun <K, V> HashMap<K, V>.getArray(key: K): JsonArray {
-    return this[key] as JsonArray
-}

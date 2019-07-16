@@ -8,7 +8,7 @@ import jetbrains.datalore.base.projectionGeometry.QuadKey
 
 interface GeoRequest {
 
-    val features: List<FeatureOption>
+    val features: Set<FeatureOption>
     val tiles: Map<String, List<QuadKey>>?
     val levelOfDetails: LevelOfDetails?
 
@@ -37,7 +37,7 @@ interface GeoRequest {
         val level: FeatureLevel?
         val namesakeExampleLimit: Int
 
-        class AmbiguityResolver private constructor(
+        data class AmbiguityResolver private constructor(
             val ignoringStrategy: IgnoringStrategy?,
             val closestCoord: DoubleVector?,
             val box: DoubleRectangle?
@@ -73,7 +73,7 @@ interface GeoRequest {
             }
         }
 
-        class RegionQuery internal constructor(
+        data class RegionQuery internal constructor(
             val names: List<String>,
             val parent: MapRegion?,
             val ambiguityResolver: AmbiguityResolver

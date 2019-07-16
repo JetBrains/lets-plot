@@ -3,10 +3,8 @@ package jetbrains.gis.geoprotocol.json
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.QuadKey
-import jetbrains.gis.common.json.FluentJsonObject
-import jetbrains.gis.common.json.JsonArray
-import jetbrains.gis.common.json.JsonObject
-import jetbrains.gis.common.json.JsonUtils.stringStreamOf
+import jetbrains.gis.common.json.FluentObject
+import jetbrains.gis.common.json.Obj
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.geoprotocol.GeoResponse.ErrorGeoResponse
 import jetbrains.gis.geoprotocol.json.ResponseKeys.BOUNDARY
@@ -31,8 +29,8 @@ import jetbrains.gis.geoprotocol.json.ResponseKeys.STATUS
 import jetbrains.gis.geoprotocol.json.ResponseKeys.TILES
 
 object ResponseJsonParser {
-    fun parse(json: JsonObject): GeoResponse {
-        val responseJson = FluentJsonObject(json)
+    fun parse(json: Obj): GeoResponse {
+        val responseJson = FluentObject(json)
 
         return when (val status = responseJson.getEnum(STATUS, ResponseStatus.values())) {
             ResponseStatus.SUCCESS -> success(responseJson)
@@ -42,7 +40,7 @@ object ResponseJsonParser {
         }
     }
 
-    private fun success(responseJson: FluentJsonObject): GeoResponse {
+    private fun success(responseJson: FluentObject): GeoResponse {
         val successResponse = GeoResponseBuilder.SuccessResponseBuilder()
         responseJson
             .getObject(DATA) { data -> data
@@ -59,10 +57,10 @@ object ResponseJsonParser {
                         .getExistingObject(LIMIT) { feature.setLimit(parseGeoRectangle(it)) }
                         .getExistingObject(POSITION) { feature.setPosition(parseGeoRectangle(it)) }
                         .getExistingObject(TILES) { tiles -> tiles
-                            .forEntries { quadKey, geometry -> feature
+                            .forArrEntries() { quadKey, geometry -> feature
                                 .addTile(GeoTile(
                                     QuadKey(quadKey),
-                                    stringStreamOf(geometry as JsonArray).map { readTile(it!!) }.toList()
+                                    geometry.map { readTile(it!! as String) }
                                 ))
                             }
                         }
@@ -72,7 +70,7 @@ object ResponseJsonParser {
         return successResponse.build()
     }
 
-    private fun ambiguous(responseJson: FluentJsonObject): GeoResponse {
+    private fun ambiguous(responseJson: FluentObject): GeoResponse {
         val ambiguousResponse = GeoResponseBuilder.AmbiguousResponseBuilder()
         responseJson
             .getObject(DATA) { data -> data
@@ -100,11 +98,11 @@ object ResponseJsonParser {
         return ambiguousResponse.build()
     }
 
-    private fun error(responseJson: FluentJsonObject): GeoResponse {
+    private fun error(responseJson: FluentObject): GeoResponse {
         return ErrorGeoResponse(responseJson.getString(MESSAGE))
     }
 
-    private fun parseCentroid(centroid: FluentJsonObject): DoubleVector {
+    private fun parseCentroid(centroid: FluentObject): DoubleVector {
         return DoubleVector(
             centroid.getDouble(LON),
             centroid.getDouble(LAT)
@@ -119,7 +117,7 @@ object ResponseJsonParser {
         return StringGeometries.fromTwkb(geometry)
     }
 
-    private fun parseGeoRectangle(data: FluentJsonObject): GeoRectangle {
+    private fun parseGeoRectangle(data: FluentObject): GeoRectangle {
         return ProtocolJsonHelper.parseGeoRectangle(data.get())
     }
 }

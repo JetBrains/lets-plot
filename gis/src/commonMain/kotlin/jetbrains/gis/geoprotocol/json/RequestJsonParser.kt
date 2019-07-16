@@ -3,10 +3,10 @@ package jetbrains.gis.geoprotocol.json
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.QuadKey
-import jetbrains.gis.common.json.FluentJsonObject
-import jetbrains.gis.common.json.JsonArray
-import jetbrains.gis.common.json.JsonObject
-import jetbrains.gis.common.json.JsonUtils.stringStreamOf
+import jetbrains.gis.common.json.Arr
+import jetbrains.gis.common.json.FluentObject
+import jetbrains.gis.common.json.Obj
+import jetbrains.gis.common.json.stringStreamOf
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption
 import jetbrains.gis.geoprotocol.GeoRequest.GeocodingSearchRequest.AmbiguityResolver.IgnoringStrategy
@@ -39,8 +39,8 @@ import kotlin.math.abs
 
 object RequestJsonParser {
 
-    fun parse(requestJson: JsonObject): GeoRequest {
-        val requestFluentJson = FluentJsonObject(requestJson)
+    fun parse(requestJson: Obj): GeoRequest {
+        val requestFluentJson = FluentObject(requestJson)
 
         return when (requestFluentJson.getEnum(MODE, GeocodingMode.values())) {
             GeocodingMode.BY_ID -> parseExplicitRequest(requestFluentJson)
@@ -50,21 +50,20 @@ object RequestJsonParser {
     }
 
     private fun <T : GeoRequestBuilder.RequestBuilderBase<*>> parseCommon(
-        requestFluentJson: FluentJsonObject,
+        requestFluentJson: FluentObject,
         builder: T
     ) {
         requestFluentJson
             .getOptionalInt(RESOLUTION) { builder.setResolution(it) }
             .forEnums(FEATURE_OPTIONS, { builder.addFeature(it) }, FeatureOption.values())
-            .getExistingObject(TILES) { tiles ->
-                tiles
+            .getExistingObject(TILES) { tiles -> tiles
                 .forEntries { id, quadKeys ->
-                    builder.addTiles(id, stringStreamOf(quadKeys as JsonArray).map { key -> QuadKey(key!!) }.toList())
+                    builder.addTiles(id, stringStreamOf(quadKeys as Arr).requireNoNulls().map(::QuadKey).toList())
                 }
             }
     }
 
-    private fun parseExplicitRequest(requestFluentJson: FluentJsonObject): GeoRequest {
+    private fun parseExplicitRequest(requestFluentJson: FluentObject): GeoRequest {
         val builder = GeoRequestBuilder.ExplicitRequestBuilder()
 
         requestFluentJson
@@ -74,7 +73,7 @@ object RequestJsonParser {
         return builder.build()
     }
 
-    private fun parseGeocodingRequest(requestFluentJson: FluentJsonObject): GeoRequest {
+    private fun parseGeocodingRequest(requestFluentJson: FluentObject): GeoRequest {
         val builder = GeoRequestBuilder.GeocodingRequestBuilder()
 
         requestFluentJson
@@ -101,7 +100,7 @@ object RequestJsonParser {
         return builder.build()
     }
 
-    private fun parseRect(jsonBox: FluentJsonObject, setter: (DoubleRectangle?) -> Any) {
+    private fun parseRect(jsonBox: FluentObject, setter: (DoubleRectangle?) -> Any) {
         val lonMin = jsonBox.getDouble(LON_MIN)
         val latMin = jsonBox.getDouble(LAT_MIN)
         val lonMax = jsonBox.getDouble(LON_MAX)
@@ -117,7 +116,7 @@ object RequestJsonParser {
         )
     }
 
-    private fun parseReverseGeocodingRequest(requestFluentJson: FluentJsonObject): GeoRequest {
+    private fun parseReverseGeocodingRequest(requestFluentJson: FluentObject): GeoRequest {
         val builder = GeoRequestBuilder.ReverseGeocodingRequestBuilder()
 
         requestFluentJson
@@ -126,7 +125,7 @@ object RequestJsonParser {
             .getExistingObject(REVERSE_PARENT) { parseMapRegion(it, builder::setParent) }
             .getArray(REVERSE_COORDINATES) { coordinates -> builder
                 .setCoordinates(coordinates.stream()
-                    .map { it as JsonArray }
+                    .map { it as Arr }
                     .map { with (it) { DoubleVector(getDouble(COORDINATE_LON), getDouble(COORDINATE_LAT)) } }
                     .toList()
                 )
@@ -135,7 +134,7 @@ object RequestJsonParser {
         return builder.build()
     }
 
-    private fun parseMapRegion(json: FluentJsonObject, setter: (MapRegion?) -> Any) {
+    private fun parseMapRegion(json: FluentObject, setter: (MapRegion?) -> Any) {
         val mapRegion = GeoRequestBuilder.MapRegionBuilder()
         json
             .getStrings(MAP_REGION_VALUES) { mapRegion.setParentValues(it.map { s -> s!! }) }
@@ -145,4 +144,4 @@ object RequestJsonParser {
     }
 }
 
-private fun <E> ArrayList<E>.getDouble(index: Int) = get(index) as Double
+private fun <E> List<E>.getDouble(index: Int) = get(index) as Double

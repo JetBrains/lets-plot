@@ -5,9 +5,9 @@ import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.datalore.base.projectionGeometry.Ring
-import jetbrains.gis.common.json.FluentJsonArray
-import jetbrains.gis.common.json.FluentJsonObject
-import jetbrains.gis.common.json.JsonArray
+import jetbrains.gis.common.json.Arr
+import jetbrains.gis.common.json.FluentArray
+import jetbrains.gis.common.json.FluentObject
 
 internal class GeoJsonParser private constructor() {
 
@@ -15,7 +15,7 @@ internal class GeoJsonParser private constructor() {
 
         var original = JsonSupport.parseJson(data)
         val obj = HashMap<String, Any?>(original)
-        val geometry = FluentJsonObject(obj);
+        val geometry = FluentObject(obj);
         val type = geometry.getString(GEOMETRY_TYPE)
         val coordinates = geometry.getArray(GEOMETRY_COORDINATES)
 
@@ -27,27 +27,27 @@ internal class GeoJsonParser private constructor() {
         return MultiPolygon.create()
     }
 
-    private fun parseMultiPolygon(jsonMultiPolygon: FluentJsonArray): MultiPolygon {
-        return MultiPolygon(parseJsonArrayOfArray(jsonMultiPolygon) { this.parsePolygon(FluentJsonArray(it)) })
+    private fun parseMultiPolygon(jsonMultiPolygon: FluentArray): MultiPolygon {
+        return MultiPolygon(parseJsonArrayOfArray(jsonMultiPolygon) { this.parsePolygon(FluentArray(it)) })
     }
 
-    private fun parsePolygon(jsonPolygon: FluentJsonArray): Polygon {
-        return Polygon(parseJsonArrayOfArray(jsonPolygon) {parseRing(FluentJsonArray(it))})
+    private fun parsePolygon(jsonPolygon: FluentArray): Polygon {
+        return Polygon(parseJsonArrayOfArray(jsonPolygon) {parseRing(FluentArray(it))})
     }
 
-    private fun parseRing(jsonRing: FluentJsonArray): Ring {
-        return Ring(parseJsonArrayOfArray(jsonRing) { this.parsePoint(FluentJsonArray(it)) })
+    private fun parseRing(jsonRing: FluentArray): Ring {
+        return Ring(parseJsonArrayOfArray(jsonRing) { this.parsePoint(FluentArray(it)) })
     }
 
-    private fun parsePoint(jsonPoint: FluentJsonArray): DoubleVector {
+    private fun parsePoint(jsonPoint: FluentArray): DoubleVector {
         return DoubleVector(
             jsonPoint.getDouble(GEOMETRY_LON_INDEX),
             jsonPoint.getDouble(GEOMETRY_LAT_INDEX)
         )
     }
 
-    private fun <T> parseJsonArrayOfArray(jsonArray: FluentJsonArray, converter: (JsonArray) -> T): List<T> {
-        return jsonArray.stream().map { jsonValue -> converter(jsonValue as JsonArray) }.toList()
+    private fun <T> parseJsonArrayOfArray(jsonArray: FluentArray, converter: (Arr) -> T): List<T> {
+        return jsonArray.stream().map { jsonValue -> converter(jsonValue as Arr) }.toList()
     }
 
     companion object {

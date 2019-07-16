@@ -17,8 +17,8 @@ object GeoRequestBuilder {
     abstract class RequestBuilderBase<T : RequestBuilderBase<T>> {
         private lateinit var mySelf: T
 
-        protected abstract val mode: GeocodingMode
-        protected val features: MutableList<FeatureOption> = ArrayList<FeatureOption>()
+        abstract val mode: GeocodingMode
+        protected val features: MutableSet<FeatureOption> = HashSet<FeatureOption>()
 
         protected var tiles: MutableMap<String, List<QuadKey>>? = null
             private set
@@ -33,17 +33,17 @@ object GeoRequestBuilder {
 
         abstract fun build(): GeoRequest
 
-        fun setResolution(resolution: Int?): T? {
+        fun setResolution(resolution: Int?): T {
             this.levelOfDetails = resolution?.let { fromResolution(it) }
             return mySelf
         }
 
-        fun setTiles(keys: Map<String, List<QuadKey>>?): T? {
+        fun setTiles(keys: Map<String, List<QuadKey>>?): T {
             this.tiles = keys?.let { HashMap(it) }
             return mySelf
         }
 
-        fun addTiles(id: String, keys: List<QuadKey>): T? {
+        fun addTiles(id: String, keys: List<QuadKey>): T {
             if (tiles == null) {
                 tiles = hashMapOf<String, List<QuadKey>>()
             }
@@ -51,12 +51,12 @@ object GeoRequestBuilder {
             return mySelf
         }
 
-        fun addFeature(featureOption: FeatureOption): T? {
+        fun addFeature(featureOption: FeatureOption): T {
             features.add(featureOption)
             return mySelf
         }
 
-        fun setFeatures(featureOptions: List<FeatureOption>): T? {
+        fun setFeatures(featureOptions: List<FeatureOption>): T {
             features.clear()
             features.addAll(featureOptions)
             return mySelf
@@ -90,7 +90,7 @@ object GeoRequestBuilder {
         }
 
         internal class MyReverseGeocodingSearchRequest(
-            features: List<FeatureOption>,
+            features: Set<FeatureOption>,
             tiles: Map<String, List<QuadKey>>?,
             levelOfDetails: LevelOfDetails?,
             override val coordinates: List<DoubleVector>,
@@ -133,7 +133,7 @@ object GeoRequestBuilder {
             override val queries: List<RegionQuery>,
             override val level: FeatureLevel?,
             override val namesakeExampleLimit: Int,
-            features: List<FeatureOption>,
+            features: Set<FeatureOption>,
             tiles: Map<String, List<QuadKey>>?,
             levelOfDetails: LevelOfDetails?
         ) : MyGeoRequestBase(features, tiles, levelOfDetails), GeocodingSearchRequest
@@ -168,7 +168,7 @@ object GeoRequestBuilder {
 
         internal class MyExplicitSearchRequest(
             override val ids: List<String>,
-            features: List<FeatureOption>,
+            features: Set<FeatureOption>,
             tiles: Map<String, List<QuadKey>>?,
             levelOfDetails: LevelOfDetails?
         ) : MyGeoRequestBase(features, tiles, levelOfDetails), ExplicitSearchRequest
@@ -176,7 +176,7 @@ object GeoRequestBuilder {
 
 
     internal open class MyGeoRequestBase(
-        override val features: List<FeatureOption>,
+        override val features: Set<FeatureOption>,
         override val tiles: Map<String, List<QuadKey>>?,
         override val levelOfDetails: LevelOfDetails?
     ) : GeoRequest

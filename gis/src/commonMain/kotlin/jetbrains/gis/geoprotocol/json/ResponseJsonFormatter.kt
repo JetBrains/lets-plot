@@ -29,7 +29,7 @@ import jetbrains.gis.geoprotocol.json.ResponseKeys.STATUS
 import jetbrains.gis.geoprotocol.json.ResponseKeys.TILES
 
 object ResponseJsonFormatter {
-    fun format(response: GeoResponse): JsonObject {
+    fun format(response: GeoResponse): Obj {
         if (response is SuccessGeoResponse) {
             return success(response)
         }
@@ -40,20 +40,20 @@ object ResponseJsonFormatter {
 
         return if (response is ErrorGeoResponse) {
             error(response)
-        } else error(ErrorGeoResponse("Unknown response: " + response::class.simpleName))
+        } else error(ErrorGeoResponse("Unknown response: " + response::class.toString()))
 
     }
 
-    private fun success(response: SuccessGeoResponse): JsonObject {
-        return FluentJsonObject()
+    private fun success(response: SuccessGeoResponse): Obj {
+        return FluentObject()
             .put(STATUS, ResponseStatus.SUCCESS)
             .put(MESSAGE, "OK")
             .put(DATA,
-                FluentJsonObject()
+                FluentObject()
                     .put(LEVEL, response.featureLevel)
-                    .put(FEATURES, FluentJsonArray()
+                    .put(FEATURES, FluentArray()
                         .addAll(response.features.map { feature ->
-                            FluentJsonObject()
+                            FluentObject()
                                 .put(QUERY, feature.request)
                                 .put(ID, feature.id)
                                 .put(NAME, feature.name)
@@ -69,31 +69,31 @@ object ResponseJsonFormatter {
             .get()
     }
 
-    private fun error(response: ErrorGeoResponse): JsonObject {
-        return FluentJsonObject()
+    private fun error(response: ErrorGeoResponse): Obj {
+        return FluentObject()
             .put(STATUS, ResponseStatus.ERROR)
             .put(MESSAGE, response.message)
             .get()
     }
 
-    private fun ambiguous(response: AmbiguousGeoResponse): JsonObject {
-        return FluentJsonObject()
+    private fun ambiguous(response: AmbiguousGeoResponse): Obj {
+        return FluentObject()
             .put(STATUS, ResponseStatus.AMBIGUOUS)
             .put(MESSAGE, "Ambiguous")
-            .put(DATA, FluentJsonObject()
+            .put(DATA, FluentObject()
                 .put(LEVEL, response.featureLevel)
-                .put(FEATURES, FluentJsonArray()
+                .put(FEATURES, FluentArray()
                     .addAll(response.features.map { feature ->
-                        FluentJsonObject()
+                        FluentObject()
                             .put(QUERY, feature.request)
                             .put(NAMESAKE_COUNT, feature.namesakeCount)
-                            .put(NAMESAKE_EXAMPLES, FluentJsonArray()
+                            .put(NAMESAKE_EXAMPLES, FluentArray()
                                 .addAll(feature.namesakes.map { namesake ->
-                                    FluentJsonObject()
+                                    FluentObject()
                                         .put(NAMESAKE_NAME, namesake.name)
-                                        .put(NAMESAKE_PARENTS, FluentJsonArray()
+                                        .put(NAMESAKE_PARENTS, FluentArray()
                                             .addAll(namesake.parents.map { parent ->
-                                                FluentJsonObject()
+                                                FluentObject()
                                                     .put(NAMESAKE_NAME, parent.name)
                                                     .put(LEVEL, parent.level)
                                             })
@@ -106,37 +106,37 @@ object ResponseJsonFormatter {
     }
 
 
-    private fun stringArray(v: List<String>?): JsonArray? {
-        return if (v == null || v.isEmpty()) null else ArrayList(v)
+    private fun stringArray(v: List<String>?): FluentArray? {
+        return if (v == null || v.isEmpty()) null else FluentArray(v)
     }
 
-    private fun formatRect(v: GeoRectangle?): JsonObject? {
-        return if (v == null) {
-            null
-        } else ProtocolJsonHelper.formatGeoRectangle(v)
-
+    private fun formatRect(v: GeoRectangle?): FluentObject? {
+        return when (v) {
+            null -> null
+            else -> ProtocolJsonHelper.formatGeoRectangle(v)
+        }
     }
 
-    private fun formatPoint(v: DoubleVector?): FluentJsonValue? {
-        return v?.let { FluentJsonObject()
+    private fun formatPoint(v: DoubleVector?): FluentValue? {
+        return v?.let { FluentObject()
             .put(LON, it.x)
             .put(LAT, it.y)
         }
     }
 
-    private fun formatGeometry(geometry: Geometry?): String? {
-        return geometry?.let { geometryToString(it) }
+    private fun formatGeometry(geometry: Geometry?): FluentPrimitive? {
+        return geometry?.let { FluentPrimitive(geometryToString(it)) }
     }
 
     private fun geometryToString(geometry: Geometry): String {
         return StringGeometries.getRawData(geometry)
     }
 
-    private fun formatTiles(tiles: List<GeoTile>?): FluentJsonObject? {
+    private fun formatTiles(tiles: List<GeoTile>?): FluentObject? {
         return tiles?.let {
-            val obj = FluentJsonObject()
+            val obj = FluentObject()
             for (tile in tiles) {
-                val geometries = FluentJsonArray()
+                val geometries = FluentArray()
 
                 for (boundary in tile.geometries) {
                     geometries.add(geometryToString(boundary))

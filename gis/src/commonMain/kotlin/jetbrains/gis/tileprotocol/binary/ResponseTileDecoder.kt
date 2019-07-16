@@ -5,7 +5,7 @@ import jetbrains.gis.tileprotocol.GeometryCollection
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileLayerBuilder
 
-internal expect fun byteArrayToUtf8String(bytes: ByteArray): String
+expect fun byteArrayToUtf8String(bytes: ByteArray): String
 
 class ResponseTileDecoder(private val myBytes: ByteArrayStream) {
 

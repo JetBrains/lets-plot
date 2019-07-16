@@ -2,10 +2,8 @@ package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.gis.common.json.FluentJsonArray
-import jetbrains.gis.common.json.FluentJsonObject
-import jetbrains.gis.common.json.FluentJsonValue
-import jetbrains.gis.common.json.JsonObject
+import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.gis.common.json.*
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequest.*
 import jetbrains.gis.geoprotocol.GeocodingMode
@@ -43,82 +41,85 @@ object RequestJsonFormatter {
     private const val PARENT_KIND_ID = true
     private const val PARENT_KIND_NAME = false
 
-    fun format(request: GeoRequest): JsonObject {
+    fun format(request: GeoRequest): Obj {
         return when (request) {
             is GeocodingSearchRequest -> geocoding(request)
             is ExplicitSearchRequest -> explicit(request)
             is ReverseGeocodingSearchRequest -> reverse(request)
-            else -> throw IllegalStateException("Unknown request: " + request::class.simpleName)
+            else -> throw IllegalStateException("Unknown request: " + request::class.toString())
         }
 
     }
 
-    private fun geocoding(request: GeocodingSearchRequest): JsonObject {
+    private fun geocoding(request: GeocodingSearchRequest): Obj {
         return common(request, BY_NAME)
             .put(LEVEL, request.level)
             .put(NAMESAKE_EXAMPLE_LIMIT, request.namesakeExampleLimit)
-            .put(REGION_QUERIES, FluentJsonArray()
+            .put(REGION_QUERIES, FluentArray()
                 .addAll(request.queries.map { regionQuery ->
-                    FluentJsonObject()
+                    FluentObject()
                         .put(REGION_QUERY_NAMES, regionQuery.names)
                         .put(REGION_QUERY_PARENT, formatMapRegion(regionQuery.parent))
-                        .put(
-                            AMBIGUITY_RESOLVER, FluentJsonObject()
-                                .put(AMBIGUITY_IGNORING_STRATEGY, regionQuery.ambiguityResolver.ignoringStrategy)
-                                .put(AMBIGUITY_CLOSEST_COORD, formatCoord(regionQuery.ambiguityResolver.closestCoord))
-                                .put(AMBIGUITY_BOX, regionQuery.ambiguityResolver.box?.let { formatRect(it) })
+                        .put(AMBIGUITY_RESOLVER, FluentObject()
+                            .put(AMBIGUITY_IGNORING_STRATEGY, regionQuery.ambiguityResolver.ignoringStrategy)
+                            .put(AMBIGUITY_CLOSEST_COORD, formatCoord(regionQuery.ambiguityResolver.closestCoord))
+                            .put(AMBIGUITY_BOX, regionQuery.ambiguityResolver.box?.let { formatRect(it) })
                         )
                 })
             )
             .get()
     }
 
-    private fun explicit(request: ExplicitSearchRequest): JsonObject {
+    private fun explicit(request: ExplicitSearchRequest): Obj {
         return common(request, BY_ID)
             .put(IDS, request.ids)
             .get()
     }
 
-    private fun reverse(request: ReverseGeocodingSearchRequest): JsonObject {
+    private fun reverse(request: ReverseGeocodingSearchRequest): Obj {
         return common(request, REVERSE)
             .put(REVERSE_PARENT, formatMapRegion(request.parent))
-            .put(
-                REVERSE_COORDINATES, FluentJsonArray()
-                    .addAll(request.coordinates.map { formatCoord(it) })
+            .put(REVERSE_COORDINATES, FluentArray()
+                .addAll(request.coordinates.map {
+                    FluentArray()
+                        .add(it.x)
+                        .add(it.y)
+                })
             )
             .put(REVERSE_LEVEL, request.level)
             .get()
     }
 
-    private fun formatRect(rect: DoubleRectangle): Any? {
-        return FluentJsonObject()
+    private fun formatRect(rect: DoubleRectangle): FluentObject? =
+        FluentObject()
             .put(LON_MIN, rect.left)
             .put(LAT_MIN, min(rect.top, rect.bottom))
             .put(LON_MAX, rect.right)
             .put(LAT_MAX, max(rect.top, rect.bottom))
-            .get()
+
+    private fun formatCoord(coord: DoubleVector?): FluentArray? = coord?.let {
+        FluentArray()
+            .add(it.x)
+            .add(it.y)
     }
 
-    private fun formatCoord(coord: DoubleVector?): Any? {
-        return coord?.let { v -> formatCoord(v).get() }
-    }
-
-    private fun formatCoord(coord: DoubleVector): FluentJsonValue {
-        return FluentJsonArray()
-            .add(coord.x)
-            .add(coord.y)
-    }
-
-    private fun common(request: GeoRequest, mode: GeocodingMode): FluentJsonObject {
-        return FluentJsonObject()
+    private fun common(request: GeoRequest, mode: GeocodingMode): FluentObject =
+        FluentObject()
             .put(VERSION, PROTOCOL_VERSION)
             .put(MODE, mode)
             .put(RESOLUTION, request.levelOfDetails?.let { v -> v.toResolution() })
-            .putRemovable(TILES, request.tiles)
-            .put(FEATURE_OPTIONS, request.features)
-    }
+            .put(FEATURE_OPTIONS, request.features.map { formatEnum(it) })
+            .putRemovable(TILES, request.tiles?.let {
+                    val obj = FluentObject()
+                    it.map { (region, quads) ->
+                        obj.put(region, quads.map(QuadKey::string))
+                    }
+                    obj
+                }
+            )
 
-    private fun formatMapRegion(v: MapRegion?): Any? {
+
+    private fun formatMapRegion(v: MapRegion?): FluentObject? {
         return v?.let { mapRegion ->
                 val kind = if (mapRegion.containsId())
                     PARENT_KIND_ID
@@ -130,10 +131,9 @@ object RequestJsonFormatter {
                 else
                     listOf(mapRegion.name)
 
-                FluentJsonObject()
+                FluentObject()
                     .put(MAP_REGION_KIND, kind)
                     .put(MAP_REGION_VALUES, values)
-                    .get()
         }
     }
 }

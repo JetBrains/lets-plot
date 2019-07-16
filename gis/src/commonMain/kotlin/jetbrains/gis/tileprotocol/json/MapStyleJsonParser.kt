@@ -2,7 +2,9 @@ package jetbrains.gis.tileprotocol.json
 
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.gis.common.json.*
+import jetbrains.gis.common.json.FluentObject
+import jetbrains.gis.common.json.getAsInt
+import jetbrains.gis.common.json.getString
 import jetbrains.gis.tileprotocol.mapConfig.LayerConfig
 import jetbrains.gis.tileprotocol.mapConfig.MapConfig
 import jetbrains.gis.tileprotocol.mapConfig.Rule
@@ -52,77 +54,68 @@ object MapStyleJsonParser {
     private const val MIN_ZOOM = 1
     private const val MAX_ZOOM = 15
 
-    fun parse(mapStyle: JsonObject): MapConfig {
-        val colors = readColors(mapStyle.getObject(COLORS))
-        val styles = readStyles(mapStyle.getObject(STYLES), colors)
+    fun parse(mapStyle: MutableMap<String, Any?>): MapConfig {
+        val mapStyleJson = FluentObject(mapStyle)
+        val colors = readColors(mapStyleJson.getObject(COLORS))
+        val styles = readStyles(mapStyleJson.getObject(STYLES), colors)
 
         return MapConfig.MapConfigBuilder()
-            .tileSheetBackgrounds(readTileSheets(mapStyle.getObject(TILE_SHEETS), colors))
+            .tileSheetBackgrounds(readTileSheets(mapStyleJson.getObject(TILE_SHEETS), colors))
             .colors(colors)
-            .layerNamesByZoom(readZooms(mapStyle.getObject(ZOOMS)))
-            .layers(readLayers(mapStyle.getObject(LAYERS), styles))
+            .layerNamesByZoom(readZooms(mapStyleJson.getObject(ZOOMS)))
+            .layers(readLayers(mapStyleJson.getObject(LAYERS), styles))
             .build()
     }
 
-    private fun readStyles(stylesJson: JsonObject, colors: Map<String, Color>): Map<String, List<Rule>> {
+    private fun readStyles(stylesJson: FluentObject, colors: Map<String, Color>): Map<String, List<Rule>> {
         val styles = HashMap<String, List<Rule>>()
 
-        for (styleName in stylesJson.keys) {
-            val rulesList = ArrayList<Rule>()
-
-            for (ruleJson in stylesJson.getArray(styleName)) {
-                rulesList.add(readRule(ruleJson as JsonObject, colors))
-            }
-
-            styles[styleName] = rulesList
+        stylesJson.forArrEntries { styleName, rules -> styles[styleName] =
+            rules.map { readRule(FluentObject(it as Map<*, *>), colors) }
         }
 
         return styles
     }
 
-    private fun readZooms(zooms: JsonObject): Map<Int, List<String>> {
+    private fun readZooms(zooms: FluentObject): Map<Int, List<String>> {
         val zoomMap = HashMap<Int, List<String>>()
 
         for (zoom in MIN_ZOOM..MAX_ZOOM) {
-            val layers = ArrayList<String>()
-            zooms.getArray(zoom.toString())
-                .forEach { layerName -> layers.add(layerName as String) }
-
-            zoomMap[zoom] = layers
+            zoomMap[zoom] = zooms.getArray(zoom.toString()).stream().map { it as String }.toList()
         }
 
         return zoomMap
     }
 
-    private fun readLayers(layers: JsonObject, styles: Map<String, List<Rule>>): Map<String, LayerConfig> {
+    private fun readLayers(layers: FluentObject, styles: Map<String, List<Rule>>): Map<String, LayerConfig> {
         val layerConfigMap = HashMap<String, LayerConfig>()
-        layers.keys.forEach { name -> layerConfigMap[name] = parseLayerConfig(name, layers.getObject(name), styles) }
+        layers.forObjEntries{name, layer ->
+            layerConfigMap[name] = parseLayerConfig(name, FluentObject(layer), styles)
+        }
         return layerConfigMap
     }
 
-    private fun readColors(colorsJson: JsonObject): Map<String, Color> {
+    private fun readColors(colorsJson: FluentObject): Map<String, Color> {
         val colors = HashMap<String, Color>()
 
-        for (colorName in colorsJson.keys) {
-            colors.put(colorName, parseHexWithAlpha(colorsJson.getString(colorName)))
+        colorsJson.forEntries {
+                colorName, colorString -> colors[colorName] = parseHexWithAlpha(colorString as String)
         }
 
         return colors
     }
 
-    private fun readTileSheets(tiles: JsonObject, colors: Map<String, Color>): Map<String, Color> {
+    private fun readTileSheets(tiles: FluentObject, colors: Map<String, Color>): Map<String, Color> {
         val sheetBackgrounds = HashMap<String, Color>()
 
-        for (sheetName in tiles.keys) {
-            sheetBackgrounds[sheetName] = colors.getValue(tiles.getObject(sheetName).getString(BACKGROUND))
+        tiles.forObjEntries { sheetName, tile ->
+            sheetBackgrounds[sheetName] = colors.getValue(tile.getString(BACKGROUND))
         }
 
         return sheetBackgrounds
     }
 
-    private fun readRule(json: JsonObject, colors: Map<String, Color>): Rule {
-        val ruleJson = FluentJsonObject(json)
-
+    private fun readRule(ruleJson: FluentObject, colors: Map<String, Color>): Rule {
         val builder = Rule.RuleBuilder()
 
         ruleJson
@@ -131,22 +124,17 @@ object MapStyleJsonParser {
             .getExistingObject(FILTER) { filter ->
                 filter.forEntries { key, value ->
                     val predicate: (Int) -> Boolean
-                    when (value) {
-                        is JsonArray -> {
-                            val filterValues: List<Int> =
-                                FluentJsonArray(value)
-                                    .stream()
-                                    .map { JsonUtils.getAsInt(it) }
-                                    .toList()
-
-                            predicate = { filterValues.contains(it)  }
+                    predicate = when (value) {
+                        is List<*> -> {
+                            val filterValues: List<Int> = value.map(::getAsInt)
+                            ({ filterValues.contains(it)  })
                         }
                         is Number -> {
-                            val intValue = JsonUtils.getAsInt(value)
-                            predicate = { v -> v == intValue }
+                            val intValue = getAsInt(value)
+                            ({ v -> v == intValue })
                         }
-                        is HashMap<*, *> -> { // is JsonObject
-                            predicate = makeCompareFunctions(FluentJsonObject(value as JsonObject))
+                        is Map<*, *> -> { // is JsonObject
+                            makeCompareFunctions(FluentObject(value))
                         }
                         else -> throw IllegalStateException("Unsupported filter type.")
                     }
@@ -181,7 +169,7 @@ object MapStyleJsonParser {
         return builder.build()
     }
 
-    private fun makeCompareFunctions(condition: FluentJsonObject): (Int) -> Boolean {
+    private fun makeCompareFunctions(condition: FluentObject): (Int) -> Boolean {
         val conditionValue: Int
         when {
             condition.contains(GT) -> {
@@ -205,8 +193,7 @@ object MapStyleJsonParser {
 
     }
 
-    private fun parseLayerConfig(layerName: String, json: JsonObject, styles: Map<String, List<Rule>>): LayerConfig {
-        val layerJson = FluentJsonObject(json)
+    private fun parseLayerConfig(layerName: String, layerJson: FluentObject, styles: Map<String, List<Rule>>): LayerConfig {
         val layerConfig = LayerConfig()
 
         layerConfig.name = layerName
@@ -214,18 +201,13 @@ object MapStyleJsonParser {
             .getDouble(BORDER) { layerConfig.border = it }
             .getString(TABLE) { layerConfig.table = it }
             .getExistingString(ORDER) { layerConfig.order = it }
-            .getStrings(COLUMNS) { layerConfig.columns = it as List<String> }
+            .getStrings(COLUMNS) { layerConfig.columns = it.requireNoNulls() }
             .getObject(TILE_SHEETS) { tileSheetsJson ->
                 val rulesByTileSheet = HashMap<String, List<List<Rule>>>()
 
                 tileSheetsJson
-                    .forEntries { tileSheets, styleNames ->
-                        val list = ArrayList<List<Rule>>()
-
-                        FluentJsonArray(styleNames as JsonArray).stream()
-                            .forEach { name -> list.add(styles.getValue(name as String)) }
-
-                        rulesByTileSheet[tileSheets] = list
+                    .forArrEntries { tileSheets, styleNames ->
+                        rulesByTileSheet[tileSheets] = styleNames.map { styles.getValue(it as String) }
                     }
 
             layerConfig.rulesByTileSheet = rulesByTileSheet
@@ -234,12 +216,9 @@ object MapStyleJsonParser {
         return layerConfig
     }
 
-    private fun parseHexWithAlpha(colorString: String): Color {
-
-
-        return Color
+    private fun parseHexWithAlpha(colorString: String) =
+        Color
             .parseHex(colorString.substring(0, 7))
             .changeAlpha(colorString.substring(7, 9).toInt(16))
-    }
 }
 
