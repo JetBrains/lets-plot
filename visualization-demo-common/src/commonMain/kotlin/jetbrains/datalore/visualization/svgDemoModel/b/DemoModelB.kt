@@ -47,7 +47,8 @@ object DemoModelB {
         image.href().set(SvgUtils.pngDataURI(SampleImageData.MINDUKA_PRESENT_BLUE_PACK))
 
         val bitmap = Bitmap(3, 3, SampleImageData.argb3x3())
-        val imageEx = SvgImageElementEx(180.0, 110.0, 100.0, 80.0, bitmap)
+        val imageEx = SvgImageElementEx(180.0, 110.0, 110.0, 80.0, bitmap)
+//        imageEx.preserveAspectRatio().set("true")
 
         svgRoot.children().add(ellipse)
         svgRoot.children().add(rect)

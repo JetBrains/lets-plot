@@ -3,17 +3,14 @@ package jetbrains.datalore.visualization.base.svgMapper.jfx.attr
 import javafx.scene.layout.Pane
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 
-internal class SvgSvgAttrMapping(target: Pane) : SvgAttrMapping<Pane>(target) {
+internal object SvgSvgAttrMapping : SvgAttrMapping<Pane>() {
 
-    override fun setAttribute(name: String, value: Any?) {
+    override fun setAttribute(target: Pane, name: String, value: Any?) {
         when (name) {
-//            SvgSvgElement.X.name -> target.x = value as Double
-//            SvgSvgElement.Y.name -> target.y = value as Double
             SvgSvgElement.WIDTH.name,
-            SvgSvgElement.HEIGHT.name -> {
-            } // ignore
+            SvgSvgElement.HEIGHT.name -> Unit // ignore
 //            SvgSvgElement.VIEW_BOX  ??
-            else -> super.setAttribute(name, value)
+            else -> super.setAttribute(target, name, value)
         }
     }
 }

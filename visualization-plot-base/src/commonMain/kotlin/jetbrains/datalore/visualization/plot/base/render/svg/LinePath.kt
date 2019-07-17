@@ -76,15 +76,10 @@ class LinePath(builder: SvgPathDataBuilder) : SvgComponent() {
         }
     }
 
-    /**
-     * The counterpart of SVG 'stroke-dasharray' attribute but
-     * length of alternating dashes and gaps
-     * is defined as multiples of line width
-     */
     fun dashArray(): WritableProperty<List<Double>> {
         return object : WritableProperty<List<Double>> {
             override fun set(value: List<Double>) {
-                myDashArray = ArrayList<Double>(value)
+                myDashArray = ArrayList(value)
                 updatePathDashArray()
             }
         }
@@ -138,7 +133,10 @@ class LinePath(builder: SvgPathDataBuilder) : SvgComponent() {
                 return
             }
             builder.moveTo(curSegment[0])
-            builder.interpolatePoints(curSegment, if (interpolate) SvgPathDataBuilder.Interpolation.CARDINAL else SvgPathDataBuilder.Interpolation.LINEAR)
+            builder.interpolatePoints(
+                curSegment,
+                if (interpolate) SvgPathDataBuilder.Interpolation.CARDINAL else SvgPathDataBuilder.Interpolation.LINEAR
+            )
         }
     }
 }

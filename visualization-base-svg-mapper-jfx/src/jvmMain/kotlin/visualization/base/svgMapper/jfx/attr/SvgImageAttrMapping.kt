@@ -6,32 +6,38 @@ import jetbrains.datalore.visualization.base.svg.SvgImageElement
 import java.io.ByteArrayInputStream
 import java.util.*
 
-internal class SvgImageAttrMapping(target: ImageView) : SvgAttrMapping<ImageView>(target) {
-    private var imageBytes: ByteArray? = null
-
-    override fun setAttribute(name: String, value: Any?) {
+internal object SvgImageAttrMapping : SvgAttrMapping<ImageView>() {
+    override fun setAttribute(target: ImageView, name: String, value: Any?) {
         when (name) {
-            SvgImageElement.X.name -> target.x = value as Double
-            SvgImageElement.Y.name -> target.y = value as Double
-            SvgImageElement.WIDTH.name -> target.fitWidth = value as Double
-            SvgImageElement.HEIGHT.name -> target.fitHeight = value as Double
-            SvgImageElement.PRESERVE_ASPECT_RATIO.name -> {
-                target.preserveRatioProperty().set(asBoolean(value))
-                updateTargetImage()
-            }
+            SvgImageElement.X.name -> target.x = asDouble(value)
+            SvgImageElement.Y.name -> target.y = asDouble(value)
+            SvgImageElement.WIDTH.name -> target.fitWidth = asDouble(value)
+            SvgImageElement.HEIGHT.name -> target.fitHeight = asDouble(value)
+            SvgImageElement.PRESERVE_ASPECT_RATIO.name -> target.preserveRatioProperty().set(asBoolean(value))
             SvgImageElement.HREF.name -> {
-                val base64Str = (value as String).split(",")[1]
-                imageBytes = Base64.getDecoder().decode(base64Str)
-                updateTargetImage()
+                setHrefDataUrl(target, value as String)
             }
-            else -> super.setAttribute(name, value)
+            else -> super.setAttribute(target, name, value)
         }
     }
 
-    private fun updateTargetImage() {
+    fun setHrefDataUrl(target: ImageView, dataUrl: String): ByteArray {
+        val base64Str = dataUrl.split(",")[1]
+        val imageBytes = Base64.getDecoder().decode(base64Str)
+        updateTargetImage(target, imageBytes)
+        return imageBytes
+    }
+
+    fun updateTargetImage(target: ImageView, imageBytes: ByteArray?) {
         if (imageBytes == null) return
         val inputStream = ByteArrayInputStream(imageBytes)
         // This way image is shown without interpolation
-        target.image = Image(inputStream, target.fitWidth, target.fitHeight, target.preserveRatioProperty().get(), false)
+        target.image = Image(
+            inputStream,
+            target.fitWidth,
+            target.fitHeight,
+            target.preserveRatioProperty().get(),
+            false
+        )
     }
 }

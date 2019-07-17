@@ -7,8 +7,8 @@ import jetbrains.datalore.visualization.base.svg.SvgTransform
 import jetbrains.datalore.visualization.base.svg.SvgTransformable
 import jetbrains.datalore.visualization.base.svgToScene.parseSvgTransform
 
-internal abstract class SvgAttrMapping<TargetT : Node>(val target: TargetT) {
-    open fun setAttribute(name: String, value: Any?) {
+internal abstract class SvgAttrMapping<in TargetT : Node> {
+    open fun setAttribute(target: TargetT, name: String, value: Any?) {
         when (name) {
             SvgConstants.SVG_STYLE_ATTRIBUTE -> setStyle(value as? String ?: "", target)
             SvgStylableElement.CLASS.name -> setStyleClass(value as String?, target)
@@ -39,7 +39,7 @@ internal abstract class SvgAttrMapping<TargetT : Node>(val target: TargetT) {
 
         fun asDouble(value: Any?): Double {
             if (value is Double) return value
-            return (value as? String)?.toDouble()!!
+            return (value as String).toDouble()
         }
 
         fun asBoolean(value: Any?): Boolean {

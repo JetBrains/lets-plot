@@ -19,7 +19,7 @@ import org.w3c.dom.events.EventListener
 import org.w3c.dom.events.EventTarget
 
 
-class BatikTargetPeer(private val doc: AbstractDocument) : TargetPeer<Node> {
+internal class BatikTargetPeer(private val doc: AbstractDocument) : TargetPeer<Node> {
     override fun appendChild(target: Node, child: Node) {
         target.appendChild(child)
     }

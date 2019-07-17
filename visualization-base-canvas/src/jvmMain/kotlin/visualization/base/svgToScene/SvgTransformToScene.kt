@@ -1,12 +1,10 @@
 package jetbrains.datalore.visualization.base.svgToScene
 
-import javafx.scene.transform.Rotate
-import javafx.scene.transform.Scale
-import javafx.scene.transform.Transform
-import javafx.scene.transform.Translate
+import javafx.scene.transform.*
 import jetbrains.datalore.visualization.base.svg.SvgTransform
 import jetbrains.datalore.visualization.base.svgToCanvas.ParsingUtil
 import jetbrains.datalore.visualization.base.svgToCanvas.toRadians
+import kotlin.math.sin
 
 private const val SCALE_X = 0
 private const val SCALE_Y = 1
@@ -30,35 +28,44 @@ fun parseSvgTransform(svgTransform: String): List<Transform> {
     val transforms = ArrayList<Transform>()
     for (res in results) {
         val transform: Transform =
-                when (res.name) {
-                    SvgTransform.SCALE -> {
-                        val scaleX = res.getParam(SCALE_X)!!
-                        val scaleY = res.getParam(SCALE_Y) ?: scaleX
-                        Scale(scaleX, scaleY)
-                    }
-
-                    SvgTransform.SKEW_X,
-                    SvgTransform.SKEW_Y -> TODO("We don't use SKEW_X/SKEW_Y")
-
-                    SvgTransform.ROTATE -> {
-                        val rotate = Rotate(toRadians(res.getParam(ROTATE_ANGLE)!!))
-                        if (res.paramCount == 3) {
-                            rotate.pivotX = res.getParam(ROTATE_X)!!
-                            rotate.pivotY = res.getParam(ROTATE_Y)!!
-                        }
-                        rotate
-                    }
-
-                    SvgTransform.TRANSLATE -> {
-                        val dX = res.getParam(TRANSLATE_X)!!
-                        val dY = res.getParam(TRANSLATE_Y) ?: 0.0
-                        Translate(dX, dY)
-                    }
-
-                    SvgTransform.MATRIX -> TODO("We don't use MATRIX")
-
-                    else -> throw IllegalArgumentException("Unknown transform: " + res.name)
+            when (res.name) {
+                SvgTransform.SCALE -> {
+                    val scaleX = res.getParam(SCALE_X)!!
+                    val scaleY = res.getParam(SCALE_Y) ?: scaleX
+                    Scale(scaleX, scaleY)
                 }
+
+                SvgTransform.SKEW_X -> {
+                    val angle = res.getParam(SKEW_X_ANGLE)!!
+                    val factor = sin(toRadians(angle))
+                    Shear(factor, 0.0)
+                }
+
+                SvgTransform.SKEW_Y -> {
+                    val angle = res.getParam(SKEW_Y_ANGLE)!!
+                    val factor = sin(toRadians(angle))
+                    Shear(0.0, factor)
+                }
+
+                SvgTransform.ROTATE -> {
+                    val rotate = Rotate(toRadians(res.getParam(ROTATE_ANGLE)!!))
+                    if (res.paramCount == 3) {
+                        rotate.pivotX = res.getParam(ROTATE_X)!!
+                        rotate.pivotY = res.getParam(ROTATE_Y)!!
+                    }
+                    rotate
+                }
+
+                SvgTransform.TRANSLATE -> {
+                    val dX = res.getParam(TRANSLATE_X)!!
+                    val dY = res.getParam(TRANSLATE_Y) ?: 0.0
+                    Translate(dX, dY)
+                }
+
+                SvgTransform.MATRIX -> TODO("We don't use MATRIX")
+
+                else -> throw IllegalArgumentException("Unknown transform: " + res.name)
+            }
         transforms.add(transform)
     }
 

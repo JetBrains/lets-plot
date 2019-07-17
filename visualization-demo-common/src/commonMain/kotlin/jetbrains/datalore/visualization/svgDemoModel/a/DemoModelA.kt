@@ -44,7 +44,7 @@ object DemoModelA {
         path.fillColor().set(Color.TRANSPARENT)
         path.strokeColor().set(Color.ORANGE)
         path.strokeWidth().set(2.0)
-        path.transform().set(SvgTransformBuilder().translate(0.0, -30.0).skewY(10.0).build())
+        path.transform().set(SvgTransformBuilder().translate(0.0, -30.0).skewY(20.0).build())
         svgRoot.children().add(path)
 
         path = SvgPathElement(createUnclosedPathFrom(0.0, 200.0))

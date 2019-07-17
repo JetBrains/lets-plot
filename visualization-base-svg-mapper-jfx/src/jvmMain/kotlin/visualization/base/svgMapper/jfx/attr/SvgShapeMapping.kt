@@ -3,24 +3,28 @@ package jetbrains.datalore.visualization.base.svgMapper.jfx.attr
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Shape
-import jetbrains.datalore.visualization.base.svg.SvgColor
 import jetbrains.datalore.visualization.base.svg.SvgColors
+import jetbrains.datalore.visualization.base.svg.SvgConstants
 import jetbrains.datalore.visualization.base.svg.SvgShape
 
-internal abstract class SvgShapeMapping<TargetT : Shape>(target: TargetT) : SvgAttrMapping<TargetT>(target) {
+internal abstract class SvgShapeMapping<TargetT : Shape> : SvgAttrMapping<TargetT>() {
     init {
 //        target.smoothProperty().set(false)
 //        target.strokeType = StrokeType.CENTERED
     }
 
-    override fun setAttribute(name: String, value: Any?) {
+    override fun setAttribute(target: TargetT, name: String, value: Any?) {
         when (name) {
-            SvgShape.FILL.name -> setColor(value as SvgColor, fillGet(target), fillSet(target))
+            SvgShape.FILL.name -> setColor(value, fillGet(target), fillSet(target))
             SvgShape.FILL_OPACITY.name -> setOpacity(asDouble(value), fillGet(target), fillSet(target))
-            SvgShape.STROKE.name -> setColor(value as SvgColor, strokeGet(target), strokeSet(target))
+            SvgShape.STROKE.name -> setColor(value, strokeGet(target), strokeSet(target))
             SvgShape.STROKE_OPACITY.name -> setOpacity(asDouble(value), strokeGet(target), strokeSet(target))
             SvgShape.STROKE_WIDTH.name -> target.strokeWidth = asDouble(value)
-            else -> super.setAttribute(name, value)
+            SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE -> {
+                val strokeDashArray = (value as String).split(",").map { it.toDouble() }
+                target.strokeDashArray.addAll(strokeDashArray)
+            }
+            else -> super.setAttribute(target, name, value)
         }
     }
 
@@ -37,16 +41,21 @@ internal abstract class SvgShapeMapping<TargetT : Shape>(target: TargetT) : SvgA
         private val strokeSet = { shape: Shape -> { c: Color -> shape.stroke = c } }
 
 
-        private fun setColor(value: SvgColor, get: () -> Color, set: (Color) -> Unit) {
+        /**
+         * value : the color name (string) or SvgColor (jetbrains.datalore.visualization.base.svg)
+         */
+        private fun setColor(value: Any?, get: () -> Color, set: (Color) -> Unit) {
+            if (value == null) return
+
             val svgColorString = value.toString()
             val newColor =
-                    if (svgColorString == SvgColors.NONE.toString()) {
-                        Color(0.0, 0.0, 0.0, 0.0)
-                    } else {
-                        val new = Paint.valueOf(svgColorString) as Color
-                        val curr = get()
-                        Color.color(new.red, new.green, new.blue, curr.opacity)
-                    }
+                if (svgColorString == SvgColors.NONE.toString()) {
+                    Color(0.0, 0.0, 0.0, 0.0)
+                } else {
+                    val new = Paint.valueOf(svgColorString) as Color
+                    val curr = get()
+                    Color.color(new.red, new.green, new.blue, curr.opacity)
+                }
             set(newColor)
         }
 

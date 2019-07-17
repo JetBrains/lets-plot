@@ -9,11 +9,11 @@ class SvgTransform internal constructor(private val myTransform: String) {
     companion object {
         val EMPTY = SvgTransform("")
 
-        val MATRIX = "matrix"
-        val ROTATE = "rotate"
-        val SCALE = "scale"
-        val SKEW_X = "skewX"
-        val SKEW_Y = "skewY"
-        val TRANSLATE = "translate"
+        const val MATRIX = "matrix"
+        const val ROTATE = "rotate"
+        const val SCALE = "scale"
+        const val SKEW_X = "skewX"
+        const val SKEW_Y = "skewY"
+        const val TRANSLATE = "translate"
     }
 }

@@ -18,7 +18,7 @@ import org.w3c.dom.events.EventTarget
 import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 
-class DomTargetPeer : TargetPeer<Node> {
+internal class DomTargetPeer : TargetPeer<Node> {
     override fun appendChild(target: Node, child: Node) {
         target.appendChild(child)
     }

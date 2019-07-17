@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.demoUtils.jfx.SceneMapperDemoFrame
 import jetbrains.datalore.visualization.svgDemoModel.a.DemoModelA
 
 fun main() {
-    val size = DoubleVector(500.0, 300.0)
+    val size = DoubleVector(500.0, 500.0)
     val svgGroup = DemoModelA.createModel()
     val svgRoot = SvgSvgElement(size.x, size.y)
     svgRoot.children().add(svgGroup)

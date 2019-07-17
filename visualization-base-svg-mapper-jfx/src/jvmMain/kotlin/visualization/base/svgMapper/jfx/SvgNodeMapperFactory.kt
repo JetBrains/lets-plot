@@ -2,6 +2,7 @@ package jetbrains.datalore.visualization.base.svgMapper.jfx
 
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.image.ImageView
 import javafx.scene.text.Text
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MapperFactory
@@ -34,6 +35,7 @@ internal class SvgNodeMapperFactory(private val peer: SvgAwtPeer) : MapperFactor
             is SvgGElement -> SvgGElementMapper(src, target as Group, peer)
             is SvgTextElement -> SvgTextElementMapper(src, target as Text, peer)
 //            is SvgTextNode -> result = SvgTextNodeMapper(src, target as Text, myDoc, peer)
+            is SvgImageElement -> SvgImageElementMapper(src, target as ImageView, peer)
             is SvgElement -> SvgElementMapper(src, target, peer)
             else -> throw IllegalArgumentException("Unsupported SvgElement: " + src::class.simpleName)
         }

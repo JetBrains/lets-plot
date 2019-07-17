@@ -3,14 +3,14 @@ package jetbrains.datalore.visualization.base.svgMapper.jfx.attr
 import javafx.scene.shape.Rectangle
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 
-internal class SvgRectAttrMapping(target: Rectangle) : SvgShapeMapping<Rectangle>(target) {
-    override fun setAttribute(name: String, value: Any?) {
+internal object SvgRectAttrMapping : SvgShapeMapping<Rectangle>() {
+    override fun setAttribute(target: Rectangle, name: String, value: Any?) {
         when (name) {
-            SvgRectElement.X.name -> target.x = value as Double
-            SvgRectElement.Y.name -> target.y = value as Double
-            SvgRectElement.WIDTH.name -> target.width = value as Double
-            SvgRectElement.HEIGHT.name -> target.height = value as Double
-            else -> super.setAttribute(name, value)
+            SvgRectElement.X.name -> target.x = asDouble(value)
+            SvgRectElement.Y.name -> target.y = asDouble(value)
+            SvgRectElement.WIDTH.name -> target.width = asDouble(value)
+            SvgRectElement.HEIGHT.name -> target.height = asDouble(value)
+            else -> super.setAttribute(target, name, value)
         }
     }
 }
