@@ -4,72 +4,59 @@ import mu.KotlinLogging
 
 private val LOG = KotlinLogging.logger("JsObjectSupportJs")
 
+fun jsonToMap(v: dynamic): MutableMap<String, Any?> = JsonToMap().handleObject(v)
+fun plotToMap(v: dynamic): MutableMap<String, Any> = PlotToMap().handleObject(v) as MutableMap<String, Any>
+
+internal open class JsonToMap(private val allowNullProp: Boolean = true) {
+
+    internal fun handleObject(v: dynamic): MutableMap<String, Any?> {
+        return js("Object").entries(v)
+            .unsafeCast<Array<Array<*>>>()
+            .mapNotNull { (k, v) -> handleProperty(k as String, v) }
+            .toMap(HashMap())
+    }
+
+    protected open fun handleArray(v: Array<*>) = v.map { handleValue(it) }
+
+    private fun handleProperty(k: String, v: Any?): Pair<String, Any?>? {
+        val prop = handleValue(v)
+        return when {
+            prop != null || allowNullProp -> k to prop
+            else -> null
+        }
+
+        // prop inside the when statement breaks tests
+        //return when(val prop = handleValue(v)) {
+        //    prop != null || allowNullProp -> k to prop
+        //    else -> k to prop
+        //}
+
+    }
+
+    private fun handleValue(v: Any?): Any? {
+        return when (v) {
+            is String, Boolean, null -> v
+            is Number -> v.toDouble()
+            is Array<*> -> handleArray(v)
+            else -> handleObject(v)
+        }
+    }
+}
 
 /**
  * Copies all object's properties to hash map recursively with exception of
  * arrays containing only simple values (str,number,boolean,null).
  * 'simple' arrays are wrapped in immutable lists (not copied)
  */
-@Suppress("UNUSED_ANONYMOUS_PARAMETER", "NAME_SHADOWING")
-fun dynamicObjectToMap(o: dynamic): MutableMap<String, Any> {
-
-    var handleAnyNotNull: (o: dynamic) -> Any = {}
-    var handleAnyNullable: (o: dynamic) -> Any? = {}
-
-    val handleObject: (o: dynamic) -> MutableMap<String, Any> = { o: dynamic ->
-        val map = HashMap<String, Any>()
-        val entries = js("Object.entries(o)")
-        for (entry in entries) {
-            val key = entry[0] as String
-            @Suppress("MoveVariableDeclarationIntoWhen")
-            val value = entry[1] ?: continue            // drop nulls
-            try {
-                map[key] = handleAnyNotNull(value)
-            } catch (e: RuntimeException) {
-                LOG.error(e) {}
-            }
+internal class PlotToMap : JsonToMap(allowNullProp = false) {
+    override fun handleArray(v: Array<*>) =
+        when {
+            v.all { isPrimitiveOrNull(it) } -> listOf(*v) // do not copy data vectors
+            else -> super.handleArray(v)
         }
-        map
-    }
 
-    val handleArray = { o: dynamic ->
-        if (isArrayOfPrimitives(o)) {  // do not copy data vectors
-            listOf(*(o as Array<*>))
-        } else {
-            val l = ArrayList<Any?>()
-            for (e in o) {
-                l.add(handleAnyNullable(e))
-            }
-            l
-        }
-    }
-
-    handleAnyNotNull = { o: dynamic ->
-        handleAnyNullable(o) ?: throw IllegalArgumentException("Null value is not expected")
-    }
-    handleAnyNullable = { o: dynamic ->
-        when (o) {
-            is String,
-            is Boolean,
-            null -> o
-            is Number -> o.toDouble()
-            is Array<*> -> handleArray(o)
-            else -> handleObject(o)
-        }
-    }
-
-    // expecting an `object`
-    return handleObject(o)
-}
-
-private fun isArrayOfPrimitives(o: dynamic) = (o as Array<*>).all { isPrimitiveOrNull(it) }
-
-private fun isPrimitiveOrNull(o: dynamic): Boolean {
-    return when (o) {
-        is Number,
-        is String,
-        is Boolean,
-        null -> true
+    private fun isPrimitiveOrNull(v: dynamic) = when (v) {
+        v is Number, String, Boolean, null -> true
         else -> false
     }
 }

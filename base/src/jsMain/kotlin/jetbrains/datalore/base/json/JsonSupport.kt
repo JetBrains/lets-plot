@@ -1,11 +1,15 @@
 package jetbrains.datalore.base.json
 
+import jetbrains.datalore.base.jsObject.JsonToMap
+import kotlin.js.JSON.stringify
+
 actual object JsonSupport {
-    actual fun parseJson(json: String): MutableMap<String, Any> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    actual fun parseJson(json: String): MutableMap<String, Any?> {
+        val j = JSON.parse<Any>(json)
+        return JsonToMap().handleObject(j)
     }
 
     actual fun toJson(o: Any): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return stringify(o)
     }
 }

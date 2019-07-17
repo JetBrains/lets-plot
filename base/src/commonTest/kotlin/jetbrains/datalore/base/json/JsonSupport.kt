@@ -1,63 +1,69 @@
-package jetbrains.datalore.base.jsObject
+package jetbrains.datalore.base.json
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
-class JsObjectSupportJsTest {
+class JsonSupportTest {
 
     @Test
     fun runTestCases() {
         for ((index, datum) in testData.withIndex()) {
-            val actual = plotToMap(datum.input)
-            @Suppress("UNCHECKED_CAST")
-            assertEquals(datum.expectedOutput, actual, "test case [$index]")
+            try {
+                val actual = JsonSupport.parseJson(datum.input)
+                assertEquals(datum.expectedOutput, actual, "test case [$index]")
+            } catch (e: Throwable) {
+                fail("test case [$index] failed with exception ${e.message}")
+            }
         }
     }
 
-    class TestData(val input: dynamic, val expectedOutput: Map<String, Any?>)
+    class TestData(val input: String, val expectedOutput: Map<String, Any?>)
 
     companion object {
-        @Suppress("UnsafeCastFromDynamic")
         val testData: List<TestData> = listOf(
+            //TestData(
+            //    "{}",
+            //    emptyMap()
+            //),
             TestData(
-                js("{}"),
-                emptyMap()
+                """{"k":"v"}""",
+                mapOf("k" to "v")
             ),
             TestData(
-                js("""{"a":null,"b":null}"""),  // null values are dropped
-                emptyMap()
+                "{\"a\":null,\"b\":null}",
+                mapOf("a" to null, "b" to null)
             ),
             TestData(
-                js("""{"array":[]}"""),
+                """{"array":[]}""",
                 mapOf(
                     "array" to emptyList<Any?>()
                 )
             ),
             TestData(
-                js(
                     """{
-                                "int":1.,    
+                                "int":1,    
                                 "double":2.2,    
                                 "str":"hello",    
                                 "null":null,    
                                 "obj":{}    
                             }
                             """
-                ),
+                ,
                 mapOf(
-                    "int" to 1,
+                    "int" to 1.0,
                     "double" to 2.2,
                     "str" to "hello",
-//                    "none" to null,                  // null values are dropped
+                    "null" to null,
                     "obj" to emptyMap<String, Any?>()
                 )
             ),
             TestData(
-                js("""{"level_1":{"level_2":{"list":[1.0,1.0,null,100.0]}}}"""),
+                """{"level_1":{"level_2":{"list":[1,1,null,100.0]}}}""",
                 mapOf(
                     "level_1" to mapOf<String, Any?>(
                         "level_2" to mapOf<String, Any?>(
-                            "list" to listOf<Any?>(1, 1, null, 100.00)
+                            "list" to listOf<Any?>(1.0, 1.0, null, 100.00)
                         )
                     )
                 )
