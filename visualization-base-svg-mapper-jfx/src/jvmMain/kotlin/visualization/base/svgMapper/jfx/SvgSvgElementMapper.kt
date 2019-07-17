@@ -7,19 +7,22 @@ import jetbrains.datalore.mapper.core.Synchronizers
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 
 class SvgSvgElementMapper(
-        source: SvgSvgElement,
-        peer: SvgAwtPeer) : SvgElementMapper<SvgSvgElement, Parent>(source, createTargetContainer(), peer) {
+    source: SvgSvgElement,
+    peer: SvgAwtPeer
+) : SvgElementMapper<SvgSvgElement, Parent>(source, createTargetContainer(), peer) {
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         super.registerSynchronizers(conf)
 
         val targetList = Utils.elementChildren(target)
-        conf.add(Synchronizers.forObservableRole(
+        conf.add(
+            Synchronizers.forObservableRole(
                 this,
                 source.children(),
                 targetList,
                 SvgNodeMapperFactory(peer)
-        ))
+            )
+        )
     }
 
     override fun onAttach(ctx: MappingContext) {
@@ -42,21 +45,14 @@ class SvgSvgElementMapper(
     companion object {
         private fun createTargetContainer(): Parent {
             val pane = Pane()
-
+//            val pane = StackPane()
+//            pane.alignmentProperty().set(Pos.TOP_LEFT)
+                    
             // this makes lines sharp
-            // but we have to un-scale all x,y,width,height etc accordingly.
-/*
-            pane.scaleX = 0.5
-            pane.scaleY = 0.5
+            pane.scaleX = 1 / ScaleFactor.value
+            pane.scaleY = 1 / ScaleFactor.value
 
-            The scale factor can be determined as
-            Toolkit.getDefaultToolkit().getScreenResolution() / 96.
-
-            1 -> standard resolution (no scaling)
-            2 -> retina
-            ...
-            see: https://josm.openstreetmap.de/ticket/9995
-*/
+            pane.centerShapeProperty().set(false)
 
 //            pane.style = "-fx-border-color: red; -fx-border-width: 0 5; -fx-background-color: #2f4f4f"
 //            pane.style = "-fx-border-width: 0"

@@ -5,6 +5,7 @@ import jetbrains.datalore.visualization.base.svg.SvgConstants
 import jetbrains.datalore.visualization.base.svg.SvgStylableElement
 import jetbrains.datalore.visualization.base.svg.SvgTransform
 import jetbrains.datalore.visualization.base.svg.SvgTransformable
+import jetbrains.datalore.visualization.base.svgMapper.jfx.unScaleTransforms
 import jetbrains.datalore.visualization.base.svgToScene.parseSvgTransform
 
 internal abstract class SvgAttrMapping<in TargetT : Node> {
@@ -34,7 +35,7 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
 
         private fun setTransform(value: String, target: Node) {
             val transforms = parseSvgTransform(value)
-            target.transforms.addAll(transforms)
+            target.transforms.addAll(unScaleTransforms(transforms))
         }
 
         fun asDouble(value: Any?): Double {

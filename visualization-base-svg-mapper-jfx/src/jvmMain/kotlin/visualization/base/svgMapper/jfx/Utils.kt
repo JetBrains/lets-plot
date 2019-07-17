@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
+import javafx.scene.layout.StackPane
 import javafx.scene.shape.*
 import javafx.scene.text.Text
 import jetbrains.datalore.base.event.Button
@@ -20,6 +21,7 @@ import kotlin.reflect.KClass
 @Suppress("UNCHECKED_CAST")
 private val ATTR_MAPPINGS: Map<KClass<out Node>, SvgAttrMapping<Node>> = mapOf(
     Pane::class to (SvgSvgAttrMapping as SvgAttrMapping<Node>),
+    StackPane::class to (SvgSvgAttrMapping as SvgAttrMapping<Node>),
     Group::class to (SvgGAttrMapping as SvgAttrMapping<Node>),
     Rectangle::class to (SvgRectAttrMapping as SvgAttrMapping<Node>),
     Line::class to (SvgLineAttrMapping as SvgAttrMapping<Node>),
