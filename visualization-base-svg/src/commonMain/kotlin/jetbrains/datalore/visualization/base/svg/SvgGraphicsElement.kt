@@ -7,8 +7,8 @@ abstract class SvgGraphicsElement : SvgStylableElement() {
     companion object {
 
         private val POINTER_EVENTS: SvgAttributeSpec<PointerEvents> = SvgAttributeSpec.createSpec("pointer-events")
-        private val OPACITY: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("opacity")
-        private val VISIBILITY: SvgAttributeSpec<Visibility> = SvgAttributeSpec.createSpec("visibility")
+        val OPACITY: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("opacity")
+        val VISIBILITY: SvgAttributeSpec<Visibility> = SvgAttributeSpec.createSpec("visibility")
         private val CLIP_PATH: SvgAttributeSpec<SvgIRI> = SvgAttributeSpec.createSpec("clip-path")
     }
 

@@ -1,16 +1,16 @@
 package jetbrains.datalore.visualization.base.svgMapper.jfx.attr
 
 import javafx.scene.Node
-import jetbrains.datalore.visualization.base.svg.SvgConstants
-import jetbrains.datalore.visualization.base.svg.SvgStylableElement
-import jetbrains.datalore.visualization.base.svg.SvgTransform
-import jetbrains.datalore.visualization.base.svg.SvgTransformable
+import jetbrains.datalore.visualization.base.svg.*
 import jetbrains.datalore.visualization.base.svgMapper.jfx.unScaleTransforms
 import jetbrains.datalore.visualization.base.svgToScene.parseSvgTransform
 
 internal abstract class SvgAttrMapping<in TargetT : Node> {
     open fun setAttribute(target: TargetT, name: String, value: Any?) {
         when (name) {
+            SvgGraphicsElement.VISIBILITY.name -> target.visibleProperty().set(asBoolean(value))
+            SvgGraphicsElement.OPACITY.name -> target.opacityProperty().set(asDouble(value))
+
             SvgConstants.SVG_STYLE_ATTRIBUTE -> setStyle(value as? String ?: "", target)
             SvgStylableElement.CLASS.name -> setStyleClass(value as String?, target)
 
