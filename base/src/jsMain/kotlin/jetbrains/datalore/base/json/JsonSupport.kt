@@ -10,6 +10,7 @@ actual object JsonSupport {
     }
 }
 
+
 class JsonParser {
     fun handleObject(v: dynamic): MutableMap<String, Any?> {
         return js("Object").entries(v)
@@ -48,7 +49,7 @@ class JsonFormatter {
 
     private fun formatMap(map: Map<*, *>) {
         append("{")
-        map.entries.headTail(::formatPair) { tail -> tail.forEach{append(",\n"); formatPair(it)}}
+        map.entries.headTail(::formatPair) { tail -> tail.forEach { append(",\n"); formatPair(it) } }
         append("}")
     }
 
