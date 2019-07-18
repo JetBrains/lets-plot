@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.base.svg.SvgStyleElement
 internal class SvgStyleElementMapper(
         source: SvgStyleElement,
         target: Group,
-        peer: SvgAwtPeer) : SvgElementMapper<SvgStyleElement, Group>(source, target, peer) {
+        peer: SvgJfxPeer) : SvgElementMapper<SvgStyleElement, Group>(source, target, peer) {
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         // just empty group - no synchronization.

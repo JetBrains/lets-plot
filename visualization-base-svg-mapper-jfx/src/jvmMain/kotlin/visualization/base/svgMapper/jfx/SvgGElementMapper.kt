@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.base.svgMapper.SvgNodeSubtreeGeneratingS
 internal class SvgGElementMapper(
     source: SvgGElement,
     target: Group,
-    peer: SvgAwtPeer
+    peer: SvgJfxPeer
 ) : SvgElementMapper<SvgGElement, Group>(source, target, peer) {
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {

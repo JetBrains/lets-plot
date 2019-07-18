@@ -12,7 +12,7 @@ internal open class SvgNodeMapper<SourceT : SvgNode, TargetT : Node>(
     source: SourceT,
     target: TargetT,
     private val myDoc: AbstractDocument,
-    private val myPeer: SvgAwtPeer
+    private val myPeer: SvgBatikPeer
 ) : Mapper<SourceT, TargetT>(source, target) {
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {

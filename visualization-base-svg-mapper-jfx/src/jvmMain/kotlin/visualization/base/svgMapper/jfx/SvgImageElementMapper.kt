@@ -9,7 +9,7 @@ import jetbrains.datalore.visualization.base.svgMapper.jfx.attr.SvgImageAttrMapp
 internal class SvgImageElementMapper(
     source: SvgImageElement,
     target: ImageView,
-    peer: SvgAwtPeer
+    peer: SvgJfxPeer
 ) : SvgElementMapper<SvgImageElement, ImageView>(source, target, peer) {
 
     private val myImageViewAttrSupport = ImageViewAttributesSupport(target)

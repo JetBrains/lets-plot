@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 
 class SvgSvgElementMapper(
     source: SvgSvgElement,
-    peer: SvgAwtPeer
+    peer: SvgJfxPeer
 ) : SvgElementMapper<SvgSvgElement, Parent>(source, createTargetContainer(), peer) {
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
@@ -31,7 +31,7 @@ class SvgSvgElementMapper(
         if (!source.isAttached()) {
             throw IllegalStateException("Element must be attached")
         }
-        val peer = SvgAwtPeer()
+//        val peer = SvgAwtPeer()
         source.container().setPeer(peer)
     }
 

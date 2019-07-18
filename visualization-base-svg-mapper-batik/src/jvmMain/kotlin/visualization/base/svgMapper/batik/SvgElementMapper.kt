@@ -21,7 +21,7 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGOMElement>(
         source: SourceT,
         target: TargetT,
         doc: AbstractDocument,
-        peer: SvgAwtPeer) : SvgNodeMapper<SourceT, TargetT>(source, target, doc, peer) {
+        peer: SvgBatikPeer) : SvgNodeMapper<SourceT, TargetT>(source, target, doc, peer) {
 
     private var myHandlerRegs: MutableMap<SvgEventSpec, Registration>? = null
 

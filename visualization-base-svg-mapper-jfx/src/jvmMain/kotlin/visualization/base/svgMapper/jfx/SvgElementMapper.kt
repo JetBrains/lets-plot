@@ -20,23 +20,13 @@ import javafx.scene.input.MouseEvent as MouseEventFx
 open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
     source: SourceT,
     target: TargetT,
-    peer: SvgAwtPeer
+    peer: SvgJfxPeer
 ) : SvgNodeMapper<SourceT, TargetT>(source, target, peer) {
 
-    //    private var _svgAttrMapping: SvgAttrMapping<TargetT>? = null
     private var myHandlerRegs: MutableMap<SvgEventSpec, Registration>? = null
 
 
-//    private val svgAttrMapping: SvgAttrMapping<TargetT>
-//        get() {
-//            if (_svgAttrMapping == null) {
-//                _svgAttrMapping = createSvgAttrMapping(source, target)
-//            }
-//            return _svgAttrMapping!!
-//        }
-
     open fun setTargetAttribute(name: String, value: Any?) {
-//        svgAttrMapping.setAttribute(name, value)
         Utils.setAttribute(target, name, value)
     }
 
@@ -102,11 +92,6 @@ open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
     }
 
     private fun addMouseHandler(spec: SvgEventSpec, eventType: EventType<MouseEventFx>) {
-//        val listener = EventListener { evt ->
-//            evt.stopPropagation()
-//            val e = evt as DOMMouseEvent
-//            source.dispatch(spec, MouseEvent(e.clientX, e.clientY, Utils.getButton(e), Utils.getModifiers(e)))
-//        }
         val listener = EventHandler<Event> { evt ->
             evt.consume()
             val e = evt as MouseEventFx
@@ -116,11 +101,9 @@ open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
             )
         }
 
-//        target.addEventListener(eventType, listener, false)
         target.addEventFilter(eventType, listener)
         myHandlerRegs!![spec] = object : Registration() {
             override fun doRemove() {
-//                target.removeEventListener(eventType, listener, false)
                 target.removeEventFilter(eventType, listener)
             }
         }

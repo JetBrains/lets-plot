@@ -25,7 +25,7 @@ class SvgRootDocumentMapper(source: SvgSvgElement) : Mapper<SvgSvgElement, SVGOM
         if (!source.isAttached()) {
             throw IllegalStateException("Element must be attached")
         }
-        val peer = SvgAwtPeer()
+        val peer = SvgBatikPeer()
         source.container().setPeer(peer)
 
         myRootMapper = SvgElementMapper(source, target.documentElement as SVGOMSVGElement, target, peer)

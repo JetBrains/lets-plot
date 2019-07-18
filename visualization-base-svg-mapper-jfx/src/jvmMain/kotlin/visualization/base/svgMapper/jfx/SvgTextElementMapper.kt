@@ -15,7 +15,7 @@ import jetbrains.datalore.visualization.base.svgMapper.jfx.attr.SvgTextElementAt
 internal class SvgTextElementMapper(
     source: SvgTextElement,
     target: Text,
-    peer: SvgAwtPeer
+    peer: SvgJfxPeer
 ) : SvgElementMapper<SvgTextElement, Text>(source, target, peer) {
 
     private val myTextAttrSupport = TextAttributesSupport(target)
@@ -28,9 +28,15 @@ internal class SvgTextElementMapper(
         super.registerSynchronizers(conf)
 
         // Sync TextNodes, TextSpans
+        val sourceTextProperty = sourceTextProperty(source.children())
+//        sourceTextProperty.addHandler(object : EventHandler<PropertyChangeEvent<out String>> {
+//            override fun onEvent(event: PropertyChangeEvent<out String>) {
+//                println("new text: ${event.newValue}")
+//            }
+//        })
         conf.add(
             Synchronizers.forPropsOneWay(
-                sourceTextProperty(source.children()),
+                sourceTextProperty,
                 targetTextProperty(target)
             )
         )

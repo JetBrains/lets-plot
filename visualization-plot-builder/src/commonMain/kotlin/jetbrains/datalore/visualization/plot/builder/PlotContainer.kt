@@ -19,8 +19,10 @@ import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipLaye
 import jetbrains.datalore.visualization.plot.builder.presentation.Style
 import kotlin.math.max
 
-class PlotContainer(private val plot: Plot,
-                    private val preferredSize: ReadableProperty<DoubleVector>) {
+class PlotContainer(
+    private val plot: Plot,
+    private val preferredSize: ReadableProperty<DoubleVector>
+) {
 
     val svg: SvgSvgElement = SvgSvgElement()
     private val myDecorationLayer = SvgGElement()
@@ -47,8 +49,9 @@ class PlotContainer(private val plot: Plot,
 
         plot.laidOutSize().addHandler(sizePropHandler { laidOutSize ->
             val newSvgSize = DoubleVector(
-                    max(preferredSize.get().x, laidOutSize.x),
-                    max(preferredSize.get().y, laidOutSize.y))
+                max(preferredSize.get().x, laidOutSize.x),
+                max(preferredSize.get().y, laidOutSize.y)
+            )
             setSvgSize(newSvgSize)
         })
 
@@ -87,9 +90,8 @@ class PlotContainer(private val plot: Plot,
         if (plot.isInteractionsEnabled) {
             svg.children().add(myDecorationLayer)
             svg.children().add(myMouseMoveRect)
+            hookupInteractions()
         }
-
-        hookupInteractions()
     }
 
 
@@ -119,31 +121,31 @@ class PlotContainer(private val plot: Plot,
     }
 
     private fun hookupInteractions() {
-        if (plot.isInteractionsEnabled) {
-            val viewport = DoubleRectangle(DoubleVector.ZERO, plot.laidOutSize().get())
-            val tooltipLayer = TooltipLayer(myDecorationLayer, viewport)
+        checkState(plot.isInteractionsEnabled)
 
-            val onMouseMoved = { e: MouseEvent ->
-                val coord = DoubleVector(e.x.toDouble(), e.y.toDouble())
-                val tooltipSpecs = plot.createTooltipSpecs(coord)
-                tooltipLayer.showTooltips(coord, tooltipSpecs)
-            }
-            reg(plot.mouseEventPeer.addEventHandler(MOUSE_MOVED, object : EventHandler<MouseEvent> {
-                override fun onEvent(event: MouseEvent) {
-                    onMouseMoved(event)
-                }
-            }))
-            reg(plot.mouseEventPeer.addEventHandler(MOUSE_DRAGGED, object : EventHandler<MouseEvent> {
-                override fun onEvent(event: MouseEvent) {
-                    tooltipLayer.hideTooltip()
-                }
-            }))
-            reg(plot.mouseEventPeer.addEventHandler(MOUSE_LEFT, object : EventHandler<MouseEvent> {
-                override fun onEvent(event: MouseEvent) {
-                    tooltipLayer.hideTooltip()
-                }
-            }))
+        val viewport = DoubleRectangle(DoubleVector.ZERO, plot.laidOutSize().get())
+        val tooltipLayer = TooltipLayer(myDecorationLayer, viewport)
+
+        val onMouseMoved = { e: MouseEvent ->
+            val coord = DoubleVector(e.x.toDouble(), e.y.toDouble())
+            val tooltipSpecs = plot.createTooltipSpecs(coord)
+            tooltipLayer.showTooltips(coord, tooltipSpecs)
         }
+        reg(plot.mouseEventPeer.addEventHandler(MOUSE_MOVED, object : EventHandler<MouseEvent> {
+            override fun onEvent(event: MouseEvent) {
+                onMouseMoved(event)
+            }
+        }))
+        reg(plot.mouseEventPeer.addEventHandler(MOUSE_DRAGGED, object : EventHandler<MouseEvent> {
+            override fun onEvent(event: MouseEvent) {
+                tooltipLayer.hideTooltip()
+            }
+        }))
+        reg(plot.mouseEventPeer.addEventHandler(MOUSE_LEFT, object : EventHandler<MouseEvent> {
+            override fun onEvent(event: MouseEvent) {
+                tooltipLayer.hideTooltip()
+            }
+        }))
     }
 
 // unused?

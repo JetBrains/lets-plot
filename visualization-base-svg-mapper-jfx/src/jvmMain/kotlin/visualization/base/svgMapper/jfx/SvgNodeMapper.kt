@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.base.svg.SvgNode
 open class SvgNodeMapper<SourceT : SvgNode, TargetT : Node>(
         source: SourceT,
         target: TargetT,
-        protected val peer: SvgAwtPeer) : Mapper<SourceT, TargetT>(source, target) {
+        protected val peer: SvgJfxPeer) : Mapper<SourceT, TargetT>(source, target) {
 
     override fun onAttach(ctx: MappingContext) {
         super.onAttach(ctx)

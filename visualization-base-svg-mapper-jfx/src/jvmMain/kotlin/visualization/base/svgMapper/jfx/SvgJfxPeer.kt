@@ -9,7 +9,7 @@ import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgPlatformPeer
 import jetbrains.datalore.visualization.base.svg.SvgTextContent
 
-class SvgAwtPeer : SvgPlatformPeer {
+class SvgJfxPeer : SvgPlatformPeer {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()
 
 //    private fun ensureElementConsistency(source: SvgNode, target: Node) {
@@ -43,14 +43,13 @@ class SvgAwtPeer : SvgPlatformPeer {
 //        ensureTransformableConsistency(source, target)
 //    }
 
-//    private fun ensureSourceRegistered(source: SvgNode) {
-//        if (!myMappingMap.containsKey(source)) {
-//            throw IllegalStateException("Trying to call platform peer method of unmapped node")
-//        }
-//    }
+    private fun ensureSourceRegistered(source: SvgNode) {
+        if (!myMappingMap.containsKey(source)) {
+            throw IllegalStateException("Trying to call platform peer method of unmapped node: ${source::class.simpleName}")
+        }
+    }
 
     fun registerMapper(source: SvgNode, mapper: SvgNodeMapper<out SvgNode, out Node>) {
-//        ensureSourceTargetConsistency(source, mapper.target)
         myMappingMap[source] = mapper
     }
 
@@ -75,6 +74,14 @@ class SvgAwtPeer : SvgPlatformPeer {
     }
 
     override fun getBBox(element: SvgLocatable): DoubleRectangle {
-        TODO()
+        ensureSourceRegistered(element as SvgNode)
+        val target = myMappingMap[element]!!.target
+        val bounds = target.boundsInParent!!
+        if (bounds.isEmpty) {
+            throw IllegalStateException("Undefined target node bounds: ${target::class.simpleName}")
+        }
+        val bbox = DoubleRectangle(bounds.minX, bounds.minY, bounds.width, bounds.height)
+//        println(bbox)
+        return bbox
     }
 }

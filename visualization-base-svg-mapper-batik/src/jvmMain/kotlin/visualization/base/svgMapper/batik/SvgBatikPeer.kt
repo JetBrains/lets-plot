@@ -11,7 +11,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.svg.SVGLocatable
 import org.w3c.dom.svg.SVGTransformable
 
-internal class SvgAwtPeer : SvgPlatformPeer {
+internal class SvgBatikPeer : SvgPlatformPeer {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()
 
     private fun ensureElementConsistency(source: SvgNode, target: Node) {
@@ -71,7 +71,8 @@ internal class SvgAwtPeer : SvgPlatformPeer {
         ensureSourceRegistered(relative as SvgNode)
 
         val relativeTarget = myMappingMap[relative]!!.target
-        var matrix = (relativeTarget as SVGLocatable).getTransformToElement((relativeTarget as SVGOMElement).ownerSVGElement)
+        var matrix =
+            (relativeTarget as SVGLocatable).getTransformToElement((relativeTarget as SVGOMElement).ownerSVGElement)
         if (inverse) {
             matrix = matrix.inverse()
         }
@@ -93,6 +94,9 @@ internal class SvgAwtPeer : SvgPlatformPeer {
 
         val target = myMappingMap[element]!!.target
         val bBox = (target as SVGLocatable).bBox
-        return DoubleRectangle(bBox.x.toDouble(), bBox.y.toDouble(), bBox.width.toDouble(), bBox.height.toDouble())
+        val bbox =
+            DoubleRectangle(bBox.x.toDouble(), bBox.y.toDouble(), bBox.width.toDouble(), bBox.height.toDouble())
+//        println(bbox)
+        return bbox
     }
 }

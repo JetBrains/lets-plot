@@ -9,7 +9,7 @@ import jetbrains.datalore.visualization.base.svg.SvgElementListener
 import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.base.svg.event.SvgAttributeEvent
-import jetbrains.datalore.visualization.base.svgMapper.jfx.SvgAwtPeer
+import jetbrains.datalore.visualization.base.svgMapper.jfx.SvgJfxPeer
 import jetbrains.datalore.visualization.base.svgMapper.jfx.SvgSvgElementMapper
 import java.awt.Dimension
 
@@ -27,7 +27,7 @@ class SceneMapperJfxPanel(
 
             Preconditions.checkArgument(!svg.isAttached(), "SvgSvgElement must be unattached")
             SvgNodeContainer(svg)  // attach root
-            val rootMapper = SvgSvgElementMapper(svg, SvgAwtPeer())
+            val rootMapper = SvgSvgElementMapper(svg, SvgJfxPeer())
             rootMapper.attachRoot(MappingContext())
             mySceneRoot = rootMapper.target
         }

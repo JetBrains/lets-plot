@@ -9,7 +9,7 @@ import jetbrains.datalore.mapper.core.MapperFactory
 import jetbrains.datalore.visualization.base.svg.*
 import jetbrains.datalore.visualization.base.svgMapper.RGBEncoderAwt
 
-internal class SvgNodeMapperFactory(private val peer: SvgAwtPeer) : MapperFactory<SvgNode, Node> {
+internal class SvgNodeMapperFactory(private val peer: SvgJfxPeer) : MapperFactory<SvgNode, Node> {
 
     override fun createMapper(source: SvgNode): Mapper<out SvgNode, out Node> {
         var src = source

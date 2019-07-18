@@ -9,7 +9,7 @@ import org.apache.batik.dom.svg.SVGOMElement
 import org.w3c.dom.Node
 import org.w3c.dom.Text
 
-internal class SvgNodeMapperFactory(private val myDoc: AbstractDocument, private val myPeer: SvgAwtPeer) : MapperFactory<SvgNode, Node> {
+internal class SvgNodeMapperFactory(private val myDoc: AbstractDocument, private val myPeer: SvgBatikPeer) : MapperFactory<SvgNode, Node> {
 
     override fun createMapper(source: SvgNode): Mapper<out SvgNode, out Node> {
         var src = source
