@@ -8,7 +8,7 @@ class JsObjectSupportJsTest {
     @Test
     fun runTestCases() {
         for ((index, datum) in testData.withIndex()) {
-            val actual = plotToMap(datum.input)
+            val actual = dynamicObjectToMap(datum.input)
             @Suppress("UNCHECKED_CAST")
             assertEquals(datum.expectedOutput, actual, "test case [$index]")
         }
@@ -24,11 +24,11 @@ class JsObjectSupportJsTest {
                 emptyMap()
             ),
             TestData(
-                js("""{"a":null,"b":null}"""),  // null values are dropped
+                js("{a:null,b:null}"),  // null values are dropped
                 emptyMap()
             ),
             TestData(
-                js("""{"array":[]}"""),
+                js("{'array':[]}"),
                 mapOf(
                     "array" to emptyList<Any?>()
                 )
@@ -36,11 +36,11 @@ class JsObjectSupportJsTest {
             TestData(
                 js(
                     """{
-                                "int":1.,    
-                                "double":2.2,    
-                                "str":"hello",    
-                                "null":null,    
-                                "obj":{}    
+                                'int':1,    
+                                'double':2.2,    
+                                'str':"hello",    
+                                'null':null,    
+                                'obj':{}    
                             }
                             """
                 ),
@@ -53,7 +53,7 @@ class JsObjectSupportJsTest {
                 )
             ),
             TestData(
-                js("""{"level_1":{"level_2":{"list":[1.0,1.0,null,100.0]}}}"""),
+                js("{level_1:{level_2:{list:[1,1,null,100.0]}}}"),
                 mapOf(
                     "level_1" to mapOf<String, Any?>(
                         "level_2" to mapOf<String, Any?>(

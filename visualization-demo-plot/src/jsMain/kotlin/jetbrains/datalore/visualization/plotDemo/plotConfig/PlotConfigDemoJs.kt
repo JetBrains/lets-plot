@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plotDemo.plotConfig
 import jetbrains.datalore.base.event.dom.DomEventUtil
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.js.dom.DomEventType
-import jetbrains.datalore.base.jsObject.plotToMap
+import jetbrains.datalore.base.jsObject.dynamicObjectToMap
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
 import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
@@ -23,7 +23,7 @@ import org.w3c.dom.svg.SVGSVGElement
  */
 @JsName("buildPlotSvg")
 fun buildPlotSvg(plotSpecJs: dynamic, width: Double, height: Double, parentElement: Node) {
-    val plotSpec = plotToMap(plotSpecJs)
+    val plotSpec = dynamicObjectToMap(plotSpecJs)
 
     val plotSize = DoubleVector(width, height)
     val svg = buildPlotToSvgIntern(plotSpec, plotSize, parentElement)
