@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
 open class BarPlot : PlotConfigDemoBase() {
@@ -32,7 +32,7 @@ open class BarPlot : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         fun fancy(): Map<String, Any> {
@@ -60,7 +60,7 @@ open class BarPlot : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
     }
 }

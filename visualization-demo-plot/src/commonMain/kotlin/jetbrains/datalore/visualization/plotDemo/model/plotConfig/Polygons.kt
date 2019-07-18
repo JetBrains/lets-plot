@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.SharedPieces
 
@@ -31,7 +31,7 @@ open class Polygons : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = SharedPieces.samplePolygons()
             return plotSpec
         }

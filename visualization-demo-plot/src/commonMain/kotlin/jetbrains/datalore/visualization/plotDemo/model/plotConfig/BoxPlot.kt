@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil.fill
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil.gauss
@@ -62,7 +62,7 @@ open class BoxPlot : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
         }
@@ -82,7 +82,7 @@ open class BoxPlot : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
         }
@@ -102,7 +102,7 @@ open class BoxPlot : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
         }
@@ -124,7 +124,7 @@ open class BoxPlot : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
         }
@@ -144,7 +144,7 @@ open class BoxPlot : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
         }
@@ -165,7 +165,7 @@ open class BoxPlot : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
         }

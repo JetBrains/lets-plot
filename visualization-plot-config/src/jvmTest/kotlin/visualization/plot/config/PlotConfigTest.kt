@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.config
 
-import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plot.config.Option.Scale.CONTINUOUS_TRANSFORM
 import jetbrains.datalore.visualization.plot.config.Option.Scale.NAME
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,7 +23,7 @@ class PlotConfigTest {
                 "           ]" +
                 "}"
 
-        val opts = JsonSupport.parseJson(spec)
+        val opts = parsePlotSpec(spec)
         val plotConfig = PlotConfigClientSide.create(opts)
 
         val scaleConfigs = plotConfig.createScaleConfigs()

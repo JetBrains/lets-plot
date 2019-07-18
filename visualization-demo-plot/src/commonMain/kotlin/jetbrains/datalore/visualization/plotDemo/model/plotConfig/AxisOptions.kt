@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
 open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
@@ -57,7 +57,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     title("Default") +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
@@ -74,7 +74,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     "             }" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
@@ -91,7 +91,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     "             }" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
@@ -108,7 +108,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     "             }" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
@@ -125,7 +125,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     "             }" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
@@ -142,7 +142,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     "             }" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
@@ -160,7 +160,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     "             }" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
@@ -178,7 +178,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     "             }" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
@@ -197,7 +197,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     "             }" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
@@ -215,7 +215,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     "             }" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }

@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.config
 
 import jetbrains.datalore.base.assertion.assertDoesNotFail
-import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plot.DemoAndTestJvm
 import jetbrains.datalore.visualization.plot.config.Option.GeomName
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import kotlin.test.Test
 
 
@@ -31,7 +31,7 @@ class EdgeCasesTest {
                 "           ]" +
                 "}"
 
-        val opts = JsonSupport.parseJson(spec)
+        val opts = parsePlotSpec(spec)
         assertDoesNotFail { DemoAndTestJvm.createPlot(opts) }
     }
 
@@ -59,7 +59,7 @@ class EdgeCasesTest {
                 "           ]" +
                 "}"
 
-        val opts = JsonSupport.parseJson(spec)
+        val opts = parsePlotSpec(spec)
         assertDoesNotFail { DemoAndTestJvm.createPlot(opts) }
     }
 
@@ -91,7 +91,7 @@ class EdgeCasesTest {
                 "           ]" +
                 "}"
 
-        val plotSpec = JsonSupport.parseJson(spec)
+        val plotSpec = parsePlotSpec(spec)
 
         val data = mapOf(
                 "x" to listOf(0.0, Double.NaN, 1.0, 2.0),
