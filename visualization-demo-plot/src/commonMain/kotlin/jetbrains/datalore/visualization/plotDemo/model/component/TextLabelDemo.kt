@@ -18,7 +18,7 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 "font-size: 18px;" +
                 "}"
 
-    protected fun createModel(): GroupComponent {
+    fun createModel(): GroupComponent {
         val specs = ArrayList<LabelSpec>()
         specs.add(LabelSpec(LEFT, BOTTOM, 0.0))
         specs.add(LabelSpec(MIDDLE, BOTTOM, 0.0))
@@ -59,15 +59,21 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
     }
 
     private class LabelSpec(
-            val hAnchor: HorizontalAnchor,
-            val vAnchor: VerticalAnchor,
-            val angle: Double)
+        val hAnchor: HorizontalAnchor,
+        val vAnchor: VerticalAnchor,
+        val angle: Double
+    )
 
 
     companion object {
         private val DEMO_BOX_SIZE = DoubleVector(800.0, 1500.0)
 
-        private fun createLabelExample(dim: DoubleVector, hAnchor: HorizontalAnchor, vAnchor: VerticalAnchor, angle: Double): SvgGElement {
+        private fun createLabelExample(
+            dim: DoubleVector,
+            hAnchor: HorizontalAnchor,
+            vAnchor: VerticalAnchor,
+            angle: Double
+        ): SvgGElement {
             val axis = createAxis(dim)
             val textLabel = createTextLabel(hAnchor, vAnchor, angle)
             textLabel.moveTo(dim.x / 2, dim.y / 2)
