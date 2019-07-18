@@ -63,6 +63,12 @@ class JsonSupportTest {
                         )
                     )
                 )
+            ),
+            TestData(
+                """{"list":["1",2,{"3":5}]}""",
+                mapOf(
+                    "list" to listOf<Any?>("1", 2.0, mapOf("3" to 5.0))
+                )
             )
         )
     }
