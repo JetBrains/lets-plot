@@ -9,7 +9,7 @@ internal class Format(pattern: String) {
     private val matchResult = patternRegex.find(pattern) ?: throw IllegalArgumentException("Wrong pattern format")
 
     private var fill = matchResult.groups[1]?.value ?: " "
-    private var allign = matchResult.groups[2]?.value ?: ">"
+    private var align = matchResult.groups[2]?.value ?: ">"
     private val sign = matchResult.groups[3]?.value ?: "-"
     private val symbol = matchResult.groups[4]?.value
     private var zero = matchResult.groups[5] != null
@@ -24,10 +24,10 @@ internal class Format(pattern: String) {
             type = "g"
         }
 
-        if (zero || (fill == "0" && allign == "=")) {
+        if (zero || (fill == "0" && align == "=")) {
             zero = true
             fill = "0"
-            allign = "="
+            align = "="
         }
 
         var prefix = computePrefix()
@@ -65,7 +65,7 @@ internal class Format(pattern: String) {
             padding = ""
         }
 
-        str = when (allign) {
+        str = when (align) {
             "<" -> "$prefix$str$suffix$padding"
             "=" -> "$prefix$padding$str$suffix"
             "^" -> {
