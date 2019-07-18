@@ -128,7 +128,7 @@ internal class Format(pattern: String) {
 
     companion object {
         private val patternRegex =
-            """^(?:([^{}])?([<>=^]))?([+ -])?(#|$)?(0)?(\d+)?(,)?(?:\.(\d+))?([%bcdefgosXx])?$""".toRegex()
+            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?([%bcdefgosXx])?$""".toRegex()
         private const val CURRENCY = "$"
         private const val PERCENT = "%"
         private const val COMMA = ","
