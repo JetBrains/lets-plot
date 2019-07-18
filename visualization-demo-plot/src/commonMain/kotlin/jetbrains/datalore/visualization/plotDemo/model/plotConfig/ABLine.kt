@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.SharedPieces
 
@@ -27,7 +27,7 @@ open class ABLine : PlotConfigDemoBase() {
                     "         ]" +
                     "}"
 
-            return HashMap(JsonSupport.parseJson(spec))
+            return HashMap(parsePlotSpec(spec))
         }
 
         private fun lineDefault(): Map<String, Any> {

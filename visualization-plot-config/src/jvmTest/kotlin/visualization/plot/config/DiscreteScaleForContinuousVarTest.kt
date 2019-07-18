@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.config
 
-import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.config.TestUtil.assertClientWontFail
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plot.server.config.ServerSideTestUtil.serverTransformWithoutEncoding
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -44,7 +44,7 @@ class DiscreteScaleForContinuousVarTest {
                 "           ]" +
                 "}"
 
-        val opts = JsonSupport.parseJson(spec)
+        val opts = parsePlotSpec(spec)
         val opts1 = serverTransformWithoutEncoding(opts)
 
         val plotConfigClientSide = assertClientWontFail(opts1)

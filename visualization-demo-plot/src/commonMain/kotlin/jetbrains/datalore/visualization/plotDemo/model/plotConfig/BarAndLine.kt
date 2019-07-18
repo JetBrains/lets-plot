@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
 /**
@@ -42,7 +42,7 @@ open class BarAndLine : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         fun barDiscreteXFill(): Map<String, Any> {
@@ -62,7 +62,7 @@ open class BarAndLine : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         fun barDiscreteXFillMappedInGeom(): Map<String, Any> {
@@ -85,7 +85,7 @@ open class BarAndLine : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         fun barDiscreteXFillAndBlackOutline(): Map<String, Any> {
@@ -106,7 +106,7 @@ open class BarAndLine : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         fun barDiscreteXTitleAxisLabelsNarrowWidth(): Map<String, Any> {
@@ -142,7 +142,7 @@ open class BarAndLine : PlotConfigDemoBase() {
                     "               }" +
                     "}"
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
     }
 }

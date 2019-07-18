@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.model
 
 import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 
 object SharedPieces {
 
@@ -105,16 +106,16 @@ object SharedPieces {
     fun samplePolyAndPointsPlotWith(addedLayerSpecJson: String, addedData: Map<String, List<*>>): Map<String, Any> {
         var addedLayerSpecJson = addedLayerSpecJson
         if (addedData.isNotEmpty()) {
-            val layerSpec = JsonSupport.parseJson(addedLayerSpecJson)
+            val layerSpec = parsePlotSpec(addedLayerSpecJson)
             layerSpec["data"] = addedData
-            addedLayerSpecJson = JsonSupport.toJson(layerSpec)
+            addedLayerSpecJson = JsonSupport.formatJson(layerSpec)
         }
 
         val spec = "{" +
                 samplePolyAndPoints(addedLayerSpecJson) +
                 "}"
 
-        val plotSpec = HashMap(JsonSupport.parseJson(spec))
+        val plotSpec = HashMap(parsePlotSpec(spec))
         val data = samplePolygons()
         //data.putAll(addedData);
         plotSpec["data"] = data

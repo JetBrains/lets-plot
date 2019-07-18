@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 import kotlin.math.abs
@@ -56,7 +56,7 @@ open class Histogram : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
         }
@@ -76,7 +76,7 @@ open class Histogram : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            val plotSpec1 = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec1 = HashMap(parsePlotSpec(spec))
             plotSpec1["data"] = DATA
             return plotSpec1
         }
@@ -95,7 +95,7 @@ open class Histogram : PlotConfigDemoBase() {
                     "           ]" +
                     "}"
 
-            val plotSpec = HashMap(JsonSupport.parseJson(spec))
+            val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
         }

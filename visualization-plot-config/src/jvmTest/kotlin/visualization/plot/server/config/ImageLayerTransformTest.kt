@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.server.config
 
-import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.visualization.plot.config.Option.Geom.Image
 import jetbrains.datalore.visualization.plot.config.Option.Geom.Image.Type
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,7 +37,7 @@ class ImageLayerTransformTest {
                 "            ]" +
                 "}"
 
-        val inputSpec = JsonSupport.parseJson(input)
+        val inputSpec = parsePlotSpec(input)
         val transformedSpec = PlotConfigServerSide.processTransform(inputSpec)
 
         val geomSpec = (transformedSpec["layers"] as List<*>)[0] as Map<*, *>

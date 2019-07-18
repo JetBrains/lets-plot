@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
 open class LegendShowByGeom : PlotConfigDemoBase() {
@@ -70,7 +70,7 @@ open class LegendShowByGeom : PlotConfigDemoBase() {
                     "  ]" +
                     "}"
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         fun noLinesLegend(): Map<String, Any> {
@@ -82,7 +82,7 @@ open class LegendShowByGeom : PlotConfigDemoBase() {
                     "  ]" +
                     "}"
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         fun noBothLegends(): Map<String, Any> {
@@ -94,7 +94,7 @@ open class LegendShowByGeom : PlotConfigDemoBase() {
                     "  ]" +
                     "}"
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
     }
 }

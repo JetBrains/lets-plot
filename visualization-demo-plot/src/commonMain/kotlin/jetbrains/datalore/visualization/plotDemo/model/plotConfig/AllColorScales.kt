@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 import kotlin.math.round
 import kotlin.math.sign
@@ -116,7 +116,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
         private fun color_gradient(): Map<String, Any> {
             val spec = specWithContinuousColors(0, 128, "color_gradient")
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_gradient_blue_red(): Map<String, Any> {
@@ -125,13 +125,13 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
                     "high" to "red"
             )
             val spec = specWithContinuousColors(0, 128, "color_gradient", params)
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_gradient2(): Map<String, Any> {
             val spec = specWithContinuousColors(-64, 64, "color_gradient2")
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_gradient2_midpoint(): Map<String, Any> {
@@ -140,7 +140,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             )
             val spec = specWithContinuousColors(-64, 64, "color_gradient2", params)
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_gradient2_rainbow(): Map<String, Any> {
@@ -151,13 +151,13 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             )
             val spec = specWithContinuousColors(-64, 64, "color_gradient2", params)
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_hue(): Map<String, Any> {
             val spec = specWithContinuousColors(-64, 64, "color_hue")
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_hue_chroma(): Map<String, Any> {
@@ -166,7 +166,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             )
             val spec = specWithContinuousColors(-64, 64, "color_hue", params)
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_hue_luminance(): Map<String, Any> {
@@ -175,13 +175,13 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             )
             val spec = specWithContinuousColors(-64, 64, "color_hue", params)
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_grey(): Map<String, Any> {
             val spec = specWithContinuousColors(-64, 64, "color_grey")
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_grey_white2black(): Map<String, Any> {
@@ -191,14 +191,14 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             )
             val spec = specWithContinuousColors(-64, 64, "color_grey", params)
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
 
         private fun color_brewer(): Map<String, Any> {
             val spec = specWithContinuousColors(-64, 64, "color_brewer")
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_brewer_direction(): Map<String, Any> {
@@ -207,7 +207,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             )
             val spec = specWithContinuousColors(-64, 64, "color_brewer", params)
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_brewer_diverging(): Map<String, Any> {
@@ -216,7 +216,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             )
             val spec = specWithContinuousColors(-64, 64, "color_brewer", params)
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_brewer_qualitative(): Map<String, Any> {
@@ -225,7 +225,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             )
             val spec = specWithContinuousColors(-64, 64, "color_brewer", params)
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_brewer_qualitative_paired(): Map<String, Any> {
@@ -235,7 +235,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             )
             val spec = specWithContinuousColors(-64, 64, "color_brewer", params)
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
         private fun color_manual(): Map<String, Any> {
@@ -244,7 +244,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
             )
             val spec = specWithColorScale(-8, 8, params)
 
-            return JsonSupport.parseJson(spec)
+            return parsePlotSpec(spec)
         }
 
     }
