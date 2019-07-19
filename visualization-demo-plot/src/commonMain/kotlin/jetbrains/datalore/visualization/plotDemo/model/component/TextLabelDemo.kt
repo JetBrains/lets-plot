@@ -43,10 +43,9 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val groupComponent = GroupComponent()
 
         var exampleDim = DoubleVector(200.0, 50.0)
-        var i = 0
         var y = 50
-        for (spec in specs) {
-            if (i++ == 9) {
+        for ((i, spec) in specs.withIndex()) {
+            if (i == 9) {
                 exampleDim = exampleDim.add(DoubleVector(0.0, 50.0))
             }
             val labelExample = createLabelExample(exampleDim, spec.hAnchor, spec.vAnchor, spec.angle)
@@ -106,19 +105,6 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             label.setVerticalAnchor(vAnchor)
             label.rotate(angle)
             label.textColor().set(Color.DARK_BLUE)
-            /*
-    switch (hAnchor) {
-      case LEFT:
-        label.setFontFamily("sans-serif");
-        break;
-      case MIDDLE:
-        label.setFontFamily("monospace");
-        break;
-      case RIGHT:
-        label.setFontFamily("serif");
-        break;
-    }
-    */
             return label
         }
     }

@@ -48,7 +48,7 @@ fun parseSvgTransform(svgTransform: String): List<Transform> {
                 }
 
                 SvgTransform.ROTATE -> {
-                    val rotate = Rotate(toRadians(res.getParam(ROTATE_ANGLE)!!))
+                    val rotate = Rotate(res.getParam(ROTATE_ANGLE)!!)
                     if (res.paramCount == 3) {
                         rotate.pivotX = res.getParam(ROTATE_X)!!
                         rotate.pivotY = res.getParam(ROTATE_Y)!!
