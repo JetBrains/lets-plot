@@ -1,75 +1,79 @@
 /*
+Stylesheet for plot mapping to JavaFX platform
 
 JavaFX CSS Reference Guide
 https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html
 */
 
+.root {
+    -fx-font-family: "Verdana", "SansSerif", "Arial";
+}
+
 .plt-container {
-  -fx-font-family: "Lucida Grande", sans-serif;
 }
 
 Text {
-  -fx-font-size: 12px;
-  -fx-fill: #3d3d3d;
+    -fx-font-size: 12px;
+    -fx-fill: #3d3d3d;
 }
 
 .plt-glass-pane {
-  -fx-cursor: crosshair;
+    -fx-cursor: crosshair;
 }
 
 .plt-tooltip {
-  -fx-pointer-events: none;
-  -fx-opacity: 0.0;
+    -fx-pointer-events: none;
+    -fx-opacity: 0.0;
 }
 
 .plt-tooltip.shown {
-  -fx-opacity: 1.0;
+    -fx-opacity: 1.0;
 }
 
 .plt-tooltip.shown .back {
-  -fx-opacity: 0.8;
+    -fx-opacity: 0.8;
 }
 
 .plt-tooltip Text {
-  -fx-font-size: 12px;
+    -fx-font-size: 12px;
 }
 
 .plt-axis Line {
-  -fx-shape-rendering: crispedges;
+    -fx-shape-rendering: crispedges;
 }
 
 .highlight {
-  -fx-fill-opacity: 0.75;
+    -fx-fill-opacity: 0.75;
 }
 
 .plt-plot-title {
 
-  -fx-font-size: 16.0px;
-  -fx-font-weight: bold;
+    -fx-font-size: 16.0px;
+    -fx-font-weight: bold;
 }
 
 .plt-axis .tick Text {
 
-  -fx-font-size: 10.0px;
+    -fx-font-size: 10.0px;
 }
 
 .plt-axis.small-tick-font .tick Text {
 
-  -fx-font-size: 8.0px;
+    -fx-font-size: 8.0px;
 }
 
 .plt-axis-title Text {
 
-  -fx-font-size: 12.0px;
+    -fx-font-size: 12.0px;
 }
 
 .plt_legend .legend-title Text {
 
-  -fx-font-size: 12.0px;
-  -fx-font-weight: bold;
+    -fx-font-size: 12.0px;
+    -fx-font-weight: bold;
 }
 
 .plt_legend Text {
 
-  -fx-font-size: 10.0px;
+    -fx-font-size: 10.0px;
 }
