@@ -13,7 +13,7 @@ import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
-    override val cssStyle: String
+    override val cssStyle: String  // not working for JavaFx target (see)
         get() = "text {" +
                 "font-size: 18px;" +
                 "}"

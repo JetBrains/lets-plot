@@ -5,39 +5,39 @@ import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Plot.
 
 object Defaults {
     // HEX colors only (because of using of parseHex())
-    val DARK_GRAY = "#3d3d3d"
+    const val DARK_GRAY = "#3d3d3d"
     val GRAY = Color.GRAY.toHexColor()
     val LIGHT_GRAY = Color.LIGHT_GRAY.toHexColor()
     val X_LIGHT_GRAY = Color.VERY_LIGHT_GRAY.toHexColor()
-    val XX_LIGHT_GRAY = "#e0e0e0"
+    const val XX_LIGHT_GRAY = "#e0e0e0"
 
-    val TEXT_COLOR = DARK_GRAY
+    const val TEXT_COLOR = DARK_GRAY
 
-    val FONT_LARGE = 16
-    val FONT_MEDIUM = 12
-    val FONT_SMALL = 10
-    val FONT_X_SMALL = 8
+    const val FONT_LARGE = 16
+    const val FONT_MEDIUM = 12
+    const val FONT_SMALL = 10
+    const val FONT_X_SMALL = 8
 
-    val FONT_FAMILY_NORMAL = "\"Lucida Grande\", sans-serif"
-    val FONT_FAMILY_MONOSPACED = "\"Courier New\", Courier, monospace"
+    const val FONT_FAMILY_NORMAL = "\"Lucida Grande\", sans-serif"
+    const val FONT_FAMILY_MONOSPACED = "\"Courier New\", Courier, monospace"
 
     class Common {
         object Title {
-            val FONT_SIZE = FONT_LARGE
+            const val FONT_SIZE = FONT_LARGE
             val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
 
         object Legend {
-            val TITLE_FONT_SIZE = FONT_MEDIUM
-            val ITEM_FONT_SIZE = FONT_SMALL
+            const val TITLE_FONT_SIZE = FONT_MEDIUM
+            const val ITEM_FONT_SIZE = FONT_SMALL
             val OUTLINE_COLOR = Color.parseHex(XX_LIGHT_GRAY)
         }
 
         object Tooltip {
-            val FONT_SIZE = FONT_MEDIUM
+            const val FONT_SIZE = FONT_MEDIUM
             val AXIS_FONT_SIZE = Axis.TICK_FONT_SIZE
             val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
-            val LINE_HEIGHT_CSS = "1.4em"
+            const val LINE_HEIGHT_CSS = "1.4em"
             val BORDER_COLOR = X_LIGHT_GRAY
 
             val DARK_TEXT_COLOR = Color.BLACK
@@ -47,21 +47,21 @@ object Defaults {
 
     class Table {
         object Head {
-            val FONT_SIZE = FONT_MEDIUM
+            const val FONT_SIZE = FONT_MEDIUM
             val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
 
         object Data {
-            val FONT_SIZE = FONT_MEDIUM
+            const val FONT_SIZE = FONT_MEDIUM
             val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
     }
 
     class Plot {
         object Axis {
-            val TITLE_FONT_SIZE = FONT_MEDIUM
-            val TICK_FONT_SIZE = FONT_SMALL
-            val TICK_FONT_SIZE_SMALL = FONT_X_SMALL
+            const val TITLE_FONT_SIZE = FONT_MEDIUM
+            const val TICK_FONT_SIZE = FONT_SMALL
+            const val TICK_FONT_SIZE_SMALL = FONT_X_SMALL
 
             val LINE_COLOR = Color.parseHex(DARK_GRAY)
             val TICK_COLOR = Color.parseHex(DARK_GRAY)
@@ -76,9 +76,9 @@ object Defaults {
       public static final double TICK_LINE_WIDTH = 0.8;
       public static final double GRID_LINE_WIDTH = 0.8;
 */
-            val LINE_WIDTH = 1.0
-            val TICK_LINE_WIDTH = 1.0
-            val GRID_LINE_WIDTH = 1.0
+            const val LINE_WIDTH = 1.0
+            const val TICK_LINE_WIDTH = 1.0
+            const val GRID_LINE_WIDTH = 1.0
         }
     }
 }

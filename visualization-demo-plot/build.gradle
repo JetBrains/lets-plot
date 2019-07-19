@@ -91,6 +91,18 @@ idea {
 }
 
 
+// Workaround for Idea/Gradle bug: https://youtrack.jetbrains.com/issue/KT-24463
+// MPP: Run does not add resource directory to classpath [Cannot get resource when using common module]
+// 
+// JavaFX Scene mapping requires stylesheet resource URI 
+task copyProcessedResources(type: Copy) {
+    from "${project.buildDir}/processedResources"
+    into "${project.buildDir}/classes/kotlin"
+}
+
+build.dependsOn += copyProcessedResources
+
+
 // ---------------------------------
 // Trick to copy kotlin.js etc. to `output`
 configurations {

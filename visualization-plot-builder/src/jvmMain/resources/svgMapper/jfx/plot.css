@@ -5,11 +5,15 @@ JavaFX CSS Reference Guide
 https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html
 */
 
-.root {
-    -fx-font-family: "Verdana", "SansSerif", "Arial";
-}
-
 .plt-container {
+    /*
+    Helvetica is narrower than font we use to have in DOM/Batik
+    See: ...plot.builder.presentation.Defaults.kt
+
+    ToDo: use font of same `size` on all platforms. Update LabelMetrics
+    See: ...plot.builder.presentation.LabelMetrics.kt
+    */
+    -fx-font-family: "Helvetica";
 }
 
 Text {

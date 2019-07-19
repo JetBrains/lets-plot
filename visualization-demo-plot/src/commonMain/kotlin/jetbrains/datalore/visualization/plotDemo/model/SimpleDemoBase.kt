@@ -52,6 +52,7 @@ abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAUL
         val svg = SvgSvgElement()
         svg.width().set(demoComponentSize.x)
         svg.height().set(demoComponentSize.y)
+        svg.addClass(Style.PLOT_CONTAINER)
 
         svg.setStyle(object : SvgCssResource {
             override fun css(): String = cssStyle

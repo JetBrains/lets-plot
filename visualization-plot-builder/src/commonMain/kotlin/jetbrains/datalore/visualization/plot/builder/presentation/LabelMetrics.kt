@@ -52,9 +52,9 @@ class LabelMetrics : LabelSpec, Serializable {
     }
 
     companion object {
-        private val FONT_SIZE_TO_GLYPH_WIDTH_RATIO = 0.67 //0.48; // 0.42;
-        private val FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED = 0.6
-        private val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
-        private val LABEL_PADDING = 0.0 //2;
+        private const val FONT_SIZE_TO_GLYPH_WIDTH_RATIO = 0.67 //0.48; // 0.42;
+        private const val FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED = 0.6
+        private const val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
+        private const val LABEL_PADDING = 0.0 //2;
     }
 }

@@ -1,0 +1,8 @@
+/* Stylesheet for for demo in JavaFx */
+.plt-container {
+    -fx-font-family: "Helvetica";
+}
+
+Text {
+    -fx-font-size: 18px;
+}

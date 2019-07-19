@@ -3,6 +3,7 @@ package jetbrains.datalore.visualization.plot.base.render.svg
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgConstants
+import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_ANCHOR_END
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
 import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_DY_CENTER
@@ -117,7 +118,7 @@ class TextLabel(text: String) : SvgComponent() {
             }
         }
 
-        myText.setAttribute("style", sb.toString())
+        myText.setAttribute(SVG_STYLE_ATTRIBUTE, sb.toString())
     }
 
     private fun toTextAnchor(anchor: HorizontalAnchor): String? {
