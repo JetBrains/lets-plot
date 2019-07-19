@@ -9,7 +9,6 @@ fun main() {
         val svgRoots = createSvgRoots(demoModels)
         SceneMapperDemoFrame.showSvg(
             svgRoots,
-//            listOf("/svgMapper/jfx/plot.css"),
             listOf("/text-label-demo.css"),
             demoComponentSize,
             "Text label anchor and rotation"

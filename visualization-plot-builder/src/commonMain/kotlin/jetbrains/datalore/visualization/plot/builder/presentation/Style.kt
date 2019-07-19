@@ -1,6 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder.presentation
 
 object Style {
+    const val JFX_PLOT_STYLESHEET = "/svgMapper/jfx/plot.css"
+
     const val PLOT_CONTAINER = "plt-container"
     const val PLOT = "plt-plot"
     const val PLOT_TITLE = "plt-plot-title"
@@ -19,17 +21,18 @@ object Style {
     const val PLOT_GLASS_PANE = "plt-glass-pane"
     const val PLOT_TOOLTIP = "plt-tooltip"
 
-    val CSS = CssResourceBuilder().
-            add(SelectorBuilder(PLOT_CONTAINER).fontFamily(Defaults.FONT_FAMILY_NORMAL)).
-            add(SelectorBuilder(SelectorType.TEXT).fontSize(Defaults.FONT_MEDIUM, SizeMeasure.PX).fill(Defaults.TEXT_COLOR)).
-            add(SelectorBuilder(PLOT_GLASS_PANE).cursor(CursorValue.CROSSHAIR)).
-            add(SelectorBuilder(PLOT_TOOLTIP).pointerEvents(PointerEventsValue.NONE).opacity(0.0f)).
-            add(SelectorBuilder(listOf(PLOT_TOOLTIP, "shown")).opacity(1.0f)).
-            add(SelectorBuilder(listOf(PLOT_TOOLTIP, "shown")).innerSelector("back").opacity(0.8f)).
-            add(SelectorBuilder(PLOT_TOOLTIP).innerSelector(SelectorType.TEXT).fontSize(12, SizeMeasure.PX)).
-            add(SelectorBuilder(AXIS).innerSelector(SelectorType.LINE).shapeRendering(ShapeRenderingValue.CRISPEDGES)).
-            add(SelectorBuilder("highlight").fillOpacity(0.75f)).
-            build()
+    val CSS = CssResourceBuilder().add(SelectorBuilder(PLOT_CONTAINER).fontFamily(Defaults.FONT_FAMILY_NORMAL)).add(
+        SelectorBuilder(SelectorType.TEXT).fontSize(
+            Defaults.FONT_MEDIUM,
+            SizeMeasure.PX
+        ).fill(Defaults.TEXT_COLOR)
+    ).add(SelectorBuilder(PLOT_GLASS_PANE).cursor(CursorValue.CROSSHAIR))
+        .add(SelectorBuilder(PLOT_TOOLTIP).pointerEvents(PointerEventsValue.NONE).opacity(0.0f))
+        .add(SelectorBuilder(listOf(PLOT_TOOLTIP, "shown")).opacity(1.0f))
+        .add(SelectorBuilder(listOf(PLOT_TOOLTIP, "shown")).innerSelector("back").opacity(0.8f))
+        .add(SelectorBuilder(PLOT_TOOLTIP).innerSelector(SelectorType.TEXT).fontSize(12, SizeMeasure.PX))
+        .add(SelectorBuilder(AXIS).innerSelector(SelectorType.LINE).shapeRendering(ShapeRenderingValue.CRISPEDGES))
+        .add(SelectorBuilder("highlight").fillOpacity(0.75f)).build()
 
     val css: String
         get() {

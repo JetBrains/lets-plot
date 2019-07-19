@@ -6,15 +6,15 @@ import jetbrains.datalore.visualization.demoUtils.swing.SwingDemoFrame
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class SceneMapperDemoFactory : SwingDemoFactory {
+class SceneMapperDemoFactory(private val stylesheetResource: String) : SwingDemoFactory {
     override fun createDemoFrame(title: String, size: Dimension): SwingDemoFrame {
-        return SceneMapperDemoFrame(title, emptyList(), size)
+        return SceneMapperDemoFrame(title, listOf(stylesheetResource), size)
     }
 
     override fun createSvgComponent(svg: SvgSvgElement): JComponent {
         return SceneMapperDemoFrame.createSvgComponent(
             svg,
-            emptyList()
+            listOf(stylesheetResource)
         )
     }
 

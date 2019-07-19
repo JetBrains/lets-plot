@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder.presentation
 
-class CssResource(val selectorMap: Map<Selector, Map<StyleType, Any>>) {
+class CssResource(private val selectorMap: Map<Selector, Map<StyleType, Any>>) {
     override fun toString(): String {
         val sb = StringBuilder()
 
@@ -24,7 +24,7 @@ class CssResource(val selectorMap: Map<Selector, Map<StyleType, Any>>) {
     }
 }
 
-class Selector(val selectors: List<Any>, val innerSelector: Selector? = null) {
+class Selector(private val selectors: List<Any>, private val innerSelector: Selector? = null) {
     override fun toString(): String {
         val sb = StringBuilder()
 

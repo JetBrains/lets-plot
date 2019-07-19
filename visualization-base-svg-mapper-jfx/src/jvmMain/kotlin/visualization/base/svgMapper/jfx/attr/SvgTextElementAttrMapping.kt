@@ -21,7 +21,7 @@ internal object SvgTextElementAttrMapping : SvgShapeMapping<Text>() {
                 when (value) {
                     SVG_TEXT_DY_TOP -> target.textOrigin = VPos.TOP
                     SVG_TEXT_DY_CENTER -> target.textOrigin = VPos.CENTER
-                    else -> target.textOrigin = VPos.BASELINE
+                    else -> throw IllegalStateException("Unexpected text 'dy' value: $value")
                 }
             }
 

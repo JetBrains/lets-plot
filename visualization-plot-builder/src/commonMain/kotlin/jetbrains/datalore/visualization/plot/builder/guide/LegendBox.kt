@@ -12,7 +12,8 @@ import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Commo
 import jetbrains.datalore.visualization.plot.builder.presentation.Style
 
 abstract class LegendBox internal constructor(
-        protected open val spec: LegendBoxSpec) : SvgComponent() {
+    protected open val spec: LegendBoxSpec
+) : SvgComponent() {
 
     var debug: Boolean = false
 
@@ -39,9 +40,10 @@ abstract class LegendBox internal constructor(
         val l = spec.layout
         if (hasTitle()) {
             val label = createTitleLabel(
-                    l.titleLocation,
-                    l.titleHorizontalAnchor,
-                    l.titleVerticalAnchor)
+                l.titleLocation,
+                l.titleHorizontalAnchor,
+                l.titleVerticalAnchor
+            )
             innerGroup.children().add(label.rootGroup)
         }
 
@@ -86,7 +88,11 @@ abstract class LegendBox internal constructor(
 
     protected abstract fun appendGuideContent(contentRoot: SvgNode): DoubleVector
 
-    protected fun createTitleLabel(origin: DoubleVector, horizontalAnchor: TextLabel.HorizontalAnchor, verticalAnchor: TextLabel.VerticalAnchor): TextLabel {
+    private fun createTitleLabel(
+        origin: DoubleVector,
+        horizontalAnchor: TextLabel.HorizontalAnchor,
+        verticalAnchor: TextLabel.VerticalAnchor
+    ): TextLabel {
         val label = TextLabel(title)
         label.addClassName(Style.LEGEND_TITLE)
         label.setHorizontalAnchor(horizontalAnchor)
