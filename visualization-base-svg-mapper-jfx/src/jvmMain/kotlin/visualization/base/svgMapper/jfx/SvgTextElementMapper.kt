@@ -80,7 +80,7 @@ internal class SvgTextElementMapper(
                 .map {
                     it.textContent().get()
                 }
-                .joinToString("/n")
+                .joinToString("\n")
         }
 
         private fun targetTextProperty(target: Text): WritableProperty<String?> {
