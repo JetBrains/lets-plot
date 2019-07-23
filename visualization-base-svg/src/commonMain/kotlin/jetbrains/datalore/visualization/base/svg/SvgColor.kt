@@ -187,7 +187,7 @@ enum class SvgColors(private val literal: String) : SvgColor {
             } else SvgColorRgb(color.red, color.green, color.blue)
         }
 
-        private class SvgColorRgb(private val myR: Int, private val myG: Int, private val myB: Int) : SvgColor {
+        private data class SvgColorRgb(private val myR: Int, private val myG: Int, private val myB: Int) : SvgColor {
             override fun toString(): String {
                 return "rgb($myR,$myG,$myB)"
             }
