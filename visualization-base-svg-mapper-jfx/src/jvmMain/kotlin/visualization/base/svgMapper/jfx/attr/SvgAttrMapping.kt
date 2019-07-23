@@ -34,6 +34,8 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
         }
 
         private fun setTransform(value: String, target: Node) {
+            target.transforms.clear()
+
             val transforms = parseSvgTransform(value)
             target.transforms.addAll(unScaleTransforms(transforms))
         }
