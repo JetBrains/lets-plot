@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.base.svgToScene.parseSvgTransform
 internal abstract class SvgAttrMapping<in TargetT : Node> {
     open fun setAttribute(target: TargetT, name: String, value: Any?) {
         when (name) {
-            SvgGraphicsElement.VISIBILITY.name -> target.visibleProperty().set(asBoolean(value))
+            SvgGraphicsElement.VISIBILITY.name -> target.visibleProperty().set(visibilityAsBoolean(value))
             SvgGraphicsElement.OPACITY.name -> target.opacityProperty().set(asDouble(value))
 
             SvgConstants.SVG_STYLE_ATTRIBUTE -> setStyle(value as? String ?: "", target)
@@ -17,6 +17,15 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
             SvgTransformable.TRANSFORM.name -> setTransform((value as SvgTransform).toString(), target)
 
             else -> throw IllegalArgumentException("Unsupported attribute `$name` in ${target.javaClass.simpleName}")
+        }
+    }
+
+    private fun visibilityAsBoolean(value: Any?): Boolean {
+        return when (value) {
+            is Boolean -> value
+            is SvgGraphicsElement.Visibility -> value == SvgGraphicsElement.Visibility.VISIBLE
+            is String -> value == SvgGraphicsElement.Visibility.VISIBLE.toString() || asBoolean(value)
+            else -> false
         }
     }
 
