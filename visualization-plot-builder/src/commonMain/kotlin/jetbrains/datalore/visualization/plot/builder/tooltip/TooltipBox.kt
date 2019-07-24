@@ -40,22 +40,19 @@ internal class TooltipBox : SvgComponent() {
         this.fillColor = SvgColors.create(blendedFillColor)
         myFrame.fill().set(this.fillColor)
 
-        val textColor = getProperTextColor(blendedFillColor)
-        borderColor = SvgColors.create(textColor)
+        borderColor = getProperTextColor(blendedFillColor)
         myFrame.stroke().set(borderColor)
 
+        myText.fill().set(borderColor)
         myText.children().clear()
+        lines.map { SvgTSpanElement(it).apply {
+            // TODO: all these attributes don't work in JFX because of concat to a multiline string in SvgTextElementMapper.kt
+            fill().set(borderColor)
+            textDy().set(Tooltip.LINE_HEIGHT_CSS)
+            x().set(H_PADDING)
+            setAttribute("font-size", fontSize.toString())
+        }}.forEach (myText::addTSpan)
 
-        for (line in lines) {
-            val tspan = SvgTSpanElement()
-            tspan.setText(line)
-            tspan.x().set(H_PADDING)
-            tspan.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, Tooltip.LINE_HEIGHT_CSS)
-            tspan.setAttribute("font-size", fontSize.toString())
-            tspan.fillColor().set(textColor)
-
-            myText.children().add(tspan)
-        }
 
         var newWidth = 0.0
         var newHeight = 0.0
@@ -83,13 +80,14 @@ internal class TooltipBox : SvgComponent() {
         contentRect = DoubleRectangle(newX, newY, newWidth, newHeight)
     }
 
-    private fun getProperTextColor(tooltipFillColor: Color): Color {
+    private fun getProperTextColor(tooltipFillColor: Color): SvgColor {
         val luminance = 0.299 * tooltipFillColor.red + 0.587 * tooltipFillColor.green + 0.114 * tooltipFillColor.blue
-        return if (luminance < FILL_COLOR_LUMINANCE_THRESHOLD) {
-            Tooltip.LIGHT_TEXT_COLOR
-        } else {
-            Tooltip.DARK_TEXT_COLOR
-        }
+        return SvgColors.create(
+            when (luminance < FILL_COLOR_LUMINANCE_THRESHOLD) {
+                true -> Tooltip.LIGHT_TEXT_COLOR
+                else -> Tooltip.DARK_TEXT_COLOR
+            }
+        )
     }
 
     companion object {

@@ -175,7 +175,7 @@ class TooltipWithStem : SvgComponent() {
         private const val MAX_STEM_FOOTING_LENGTH = 12.0
         private const val STEM_FOOTING_TO_SIDE_LENGTH_RATIO = 0.4
         private const val SIDE_LENGTH_TO_STEM_FOOTING_RATIO = (1.0 - STEM_FOOTING_TO_SIDE_LENGTH_RATIO) / 2
-        private const val STEM_FOOTING_STROKE_WIDTH = TooltipBox.STROKE_WIDTH + 2
+        private const val STEM_FOOTING_STROKE_WIDTH = TooltipBox.STROKE_WIDTH + 1
     }
 
 }
