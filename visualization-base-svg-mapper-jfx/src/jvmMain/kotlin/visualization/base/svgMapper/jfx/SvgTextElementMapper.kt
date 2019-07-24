@@ -58,29 +58,15 @@ internal class SvgTextElementMapper(
     companion object {
         private fun sourceTextProperty(nodes: ObservableCollection<SvgNode>): ReadableProperty<String> {
             return object : SimpleCollectionProperty<SvgNode, String>(nodes, joinToString(nodes)) {
-
-                override val propExpr: String
-                    get() = "joinToString($collection)"
-
-                override fun doGet(): String {
-                    return joinToString(collection)
-                }
+                override val propExpr = "joinToString($collection)"
+                override fun doGet() = joinToString(collection)
             }
         }
 
         private fun joinToString(nodes: ObservableCollection<SvgNode>): String {
-            return nodes
-                .map {
-                    (it as? SvgTSpanElement)?.children() ?: listOf(it as SvgTextNode)
-                }
-                .flatMap {
-                    @Suppress("UNCHECKED_CAST")
-                    it as List<SvgTextNode>
-                }
-                .map {
-                    it.textContent().get()
-                }
-                .joinToString("\n")
+            return nodes.asSequence()
+                .flatMap{((it as? SvgTSpanElement)?.children() ?: listOf(it as SvgTextNode)).asSequence()}
+                .joinToString ("\n") { (it as SvgTextNode).textContent().get() }
         }
 
         private fun targetTextProperty(target: Text): WritableProperty<String?> {
