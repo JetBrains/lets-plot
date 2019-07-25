@@ -56,84 +56,87 @@ internal class Format(private val spec: Spec) {
         }
     }
 
-    data class Result(
-        val numberInfo: NumberInfo,
-        val typedString: String = "",
+    data class NumberParts(
+        val body: String = "",
         val prefix: String = "",
         val suffix: String = "",
-        val padding: String = "",
-        val resultString: String = ""
+        val padding: String = ""
     )
 
 
     fun apply(num: Number): String {
         val numberInfo = createNumberInfo(num)
-        var result = Result(numberInfo)
+        var parts = NumberParts()
 
-        result = applyType(result)
-        result = computePrefix(result)
-        result = computeSuffix(result)
+        parts = applyType(parts, numberInfo)
+        parts = computePrefix(parts, numberInfo)
+        parts = computeSuffix(parts)
 
         if (spec.comma && !spec.zero) {
-            result = group(result)
+            parts = applyGroup(parts)
         }
 
-        result = computePadding(result)
+        parts = computePadding(parts)
 
         if (spec.comma && spec.zero) {
-            val padding = result.padding
-            result = result.copy(typedString = padding + result.typedString, padding = "")
-            result = group(result)
+            val padding = parts.padding
+            parts = parts.copy(body = padding + parts.body, padding = "")
+            parts = applyGroup(parts)
         }
 
-        result = applyAlign(result)
-
-        return result.resultString
+        return getAlignedString(parts)
     }
 
-    private fun applyAlign(res: Result): Result {
-        val resultString = when (spec.align) {
-            "<" -> "${res.prefix}${res.typedString}${res.suffix}${res.padding}"
-            "=" -> "${res.prefix}${res.padding}${res.typedString}${res.suffix}"
-            "^" -> {
-                val stop = res.padding.length / 2
-                "${res.padding.slice(0 until stop)}${res.prefix}${res.typedString}${res.suffix}${res.padding.slice(stop until res.padding.length)}"
+    private fun getAlignedString(res: NumberParts) = when (spec.align) {
+        "<" -> "${res.prefix}${res.body}${res.suffix}${res.padding}"
+        "=" -> "${res.prefix}${res.padding}${res.body}${res.suffix}"
+        "^" -> {
+            val stop = res.padding.length / 2
+            "${res.padding.slice(0 until stop)}${res.prefix}${res.body}${res.suffix}${res.padding.slice(stop until res.padding.length)}"
 
-            }
-            else -> "${res.padding}${res.prefix}${res.typedString}${res.suffix}"
         }
-
-        return res.copy(resultString = resultString)
+        else -> "${res.padding}${res.prefix}${res.body}${res.suffix}"
     }
 
-    private fun applyType(res: Result): Result {
-        val num = res.numberInfo.number.absoluteValue
+    private fun applyGroup(res: NumberParts): NumberParts {
+        val str = res.body
+        val strList = str.split('.')
+        val intStr = group(strList[0])
+        val fractionStr = if (strList.size > 1) ".${strList[1]}" else ""
+        return res.copy(body = "$intStr$fractionStr")
+    }
+
+    private fun applyType(res: NumberParts, numberInfo: NumberInfo): NumberParts {
+        val num = numberInfo.number.absoluteValue
         val typedString = when (spec.type) {
             "%" -> {
-                val numberInfo = createNumberInfo(num * 100)
-                toFixedString(numberInfo, spec.precision)
+                val percentNumberInfo = createNumberInfo(num * 100)
+                toFixedString(percentNumberInfo, spec.precision)
             }
             "b" -> round(num).toLong().toString(2)
             "c" -> num.toString()
             "d" -> round(num).toLong().toString(10)
-            "e" -> toExponential(res.numberInfo, spec.precision).toString()
-            "f" -> toFixedString(res.numberInfo, spec.precision)
-            "g" -> toPrecision(res.numberInfo, spec.precision).toString()
+            "e" -> toExponential(numberInfo, spec.precision).toString()
+            "f" -> toFixedString(numberInfo, spec.precision)
+            "g" -> toPrecision(numberInfo, spec.precision).toString()
             "o" -> round(num).toLong().toString(8)
             "X" -> round(num).toLong().toString(16).toUpperCase()
             "x" -> round(num).toLong().toString(16)
             else -> throw IllegalArgumentException("Wrong type: ${spec.type}")
         }
-        return res.copy(typedString = typedString)
+        return res.copy(body = typedString)
     }
 
-    private fun computePrefix(res: Result): Result {
+    private fun computePrefix(
+        res: NumberParts,
+        numberInfo: NumberInfo
+    ): NumberParts {
         val prefix = when (spec.symbol) {
             "$" -> CURRENCY
             "#" -> if ("boxX".indexOf(spec.type) > -1) "0${spec.type.toLowerCase()}" else ""
             else -> ""
         }
-        val isNegative = res.numberInfo.number.sign < 0 && res.typedString.toDouble() != 0.0
+        val isNegative = numberInfo.number.sign < 0 && res.body.toDouble() != 0.0
         val signStr = if (isNegative) {
             "-"
         } else {
@@ -142,35 +145,22 @@ internal class Format(private val spec: Spec) {
         return res.copy(prefix = signStr + prefix)
     }
 
-    private fun computeSuffix(res: Result): Result {
+    private fun computeSuffix(res: NumberParts): NumberParts {
         val suffix = if (spec.type == "%") PERCENT else ""
         return res.copy(suffix = suffix)
     }
 
-    private fun computePadding(res: Result): Result {
-        val length = res.prefix.length + res.typedString.length + res.suffix.length
+    private fun computePadding(res: NumberParts): NumberParts {
+        val length = res.prefix.length + res.body.length + res.suffix.length
         val padding = if (length < spec.width) spec.fill.repeat(spec.width - length) else ""
         return res.copy(padding = padding)
-    }
-
-    private fun group(res: Result): Result {
-        val g = 3
-        val str = res.typedString
-        var i = str.length
-        val list = mutableListOf<String>()
-
-        while (i > g) {
-            list.add(str.substring(i - g until i))
-            i -= g
-        }
-
-        return res.copy(typedString = list.joinToString(COMMA))
     }
 
     companion object {
         private const val CURRENCY = "$"
         private const val PERCENT = "%"
         private const val COMMA = ","
+        private const val GROUP_SIZE = 3
 
         fun create(spec: String): Spec {
             return create(parse(spec))
@@ -300,5 +290,12 @@ internal class Format(private val spec: Spec) {
             return numberInfo.copy(number = num, fractionPart = fraction)
         }
 
+        private fun group(str: String) = str
+            .reversed() // 1234 -> 4321
+            .asSequence()
+            .chunked(GROUP_SIZE) // [[4,3,2], [1]]
+            .map { it.joinToString("") } // [[432], [1]]
+            .joinToString(COMMA) // 432,1
+            .reversed() // 1,234
     }
 }
