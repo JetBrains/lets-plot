@@ -1,6 +1,8 @@
 package jetbrains.datalore.visualization.demoUtils.swing
 
+import javafx.application.Platform
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import java.awt.Color
 import java.awt.Component
@@ -20,11 +22,7 @@ abstract class SwingDemoFrame(
             panel.background = Color.WHITE
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
             panel.add(Box.createRigidArea(Dimension(MARGIN_LEFT, 0)))
-
-            panel.add(Box.createRigidArea(Dimension(0,
-                SPACE_V
-            )))
-
+            panel.add(Box.createRigidArea(Dimension(0, SPACE_V)))
             panel.initContent()
 
             if (scroll) {
@@ -55,10 +53,16 @@ abstract class SwingDemoFrame(
                 add(component)
             }
         }
+
+        // hack: force JavaFX to redraw scene (1000 ms may be enough to update scale factor, not yet found proper event)
+        Timer(1000) { redrawSvg(svgRoots) }.apply { isRepeats = false; start() }
     }
 
     abstract fun createSvgComponent(svgRoot: SvgSvgElement): JComponent
 
+    private fun redrawSvg(svgRoots: List<SvgSvgElement>) {
+        Platform.runLater { svgRoots.firstOrNull()?.children()?.add(SvgGElement()) }
+    }
 
     companion object {
         val FRAME_SIZE = Dimension(800, 600)
