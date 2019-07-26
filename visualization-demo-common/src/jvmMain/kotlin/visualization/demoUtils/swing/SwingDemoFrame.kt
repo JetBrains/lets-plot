@@ -61,7 +61,11 @@ abstract class SwingDemoFrame(
     abstract fun createSvgComponent(svgRoot: SvgSvgElement): JComponent
 
     private fun redrawSvg(svgRoots: List<SvgSvgElement>) {
-        Platform.runLater { svgRoots.firstOrNull()?.children()?.add(SvgGElement()) }
+        try {
+            Platform.runLater { svgRoots.firstOrNull()?.children()?.add(SvgGElement()) }
+        } catch (_: Throwable) {
+            // do not log exception when Platform is not available (SWING\Batik)
+        }
     }
 
     companion object {
