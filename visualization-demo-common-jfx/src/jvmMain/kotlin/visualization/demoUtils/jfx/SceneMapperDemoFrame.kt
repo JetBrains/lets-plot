@@ -19,7 +19,7 @@ class SceneMapperDemoFrame(title: String,
                 .showSvg(svgRoots, size)
         }
 
-        fun createSvgComponent(svgRoot: SvgSvgElement, stylesheets: List<String>): SceneMapperJfxPanel = SceneMapperJfxPanel(svgRoot, stylesheets)
+        fun createSvgComponent(svgRoot: SvgSvgElement, stylesheets: List<String>) = SceneMapperJfxPanel(svgRoot, stylesheets)
             .also(::hackScaleFactorUpdate)
 
         // hack: wait for a scale factor update and force JavaFX to redraw the scene (1000 ms may be enough, not yet found proper event)
