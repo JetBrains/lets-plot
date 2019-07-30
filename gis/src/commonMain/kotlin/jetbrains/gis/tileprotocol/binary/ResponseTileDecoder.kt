@@ -1,11 +1,10 @@
 package jetbrains.gis.tileprotocol.binary
 
+import jetbrains.datalore.base.encoding.TextDecoder
 import jetbrains.gis.common.twkb.VarInt
 import jetbrains.gis.tileprotocol.GeometryCollection
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileLayerBuilder
-
-expect fun byteArrayToUtf8String(bytes: ByteArray): String
 
 class ResponseTileDecoder(private val myBytes: ByteArrayStream) {
 
@@ -122,7 +121,7 @@ class ResponseTileDecoder(private val myBytes: ByteArrayStream) {
 
     private fun readString(): String {
         val len = VarInt.readVarUInt(this::readByte)
-        return if (len > 0) byteArrayToUtf8String(myBytes.read(len)) else ""
+        return if (len > 0) TextDecoder().decode(myBytes.read(len)) else ""
 
     }
 
