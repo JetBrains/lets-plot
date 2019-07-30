@@ -90,10 +90,15 @@ internal class Format(private val spec: Spec) {
 
     private fun applyGroup(res: NumberParts): NumberParts {
         val str = res.body
-        val strList = str.split('.')
-        val intStr = group(strList[0])
-        val fractionStr = if (strList.size > 1) ".${strList[1]}" else ""
-        return res.copy(body = "$intStr$fractionStr")
+        val regex = "([0-9a-f]+)(\\.\\d+)?(e[+-]\\d+)?$".toRegex()
+        val matchResult = regex.find(str) ?: throw Exception("Wrong body to apply group: $str")
+        var intStr = matchResult.groups[1]?.value ?: ""
+        val fractionStr = matchResult.groups[2]?.value ?: ""
+        val expStr = matchResult.groups[3]?.value ?: ""
+
+        intStr = group(intStr)
+
+        return res.copy(body = "$intStr$fractionStr$expStr")
     }
 
     private fun applyType(res: NumberParts, numberInfo: NumberInfo): NumberParts {
@@ -106,7 +111,7 @@ internal class Format(private val spec: Spec) {
             }
             "b" -> round(num).toLong().toString(2)
             "c" -> num.toString()
-            "d" -> round(num).toLong().toString(10)
+            "d" -> toString(absoluteNumberInfo, 0)
             "e" -> toString(toExponential(absoluteNumberInfo, spec.precision), spec.precision)
             "f" -> toFixedString(absoluteNumberInfo, spec.precision)
             "g" -> toPrecisionString(absoluteNumberInfo, spec.precision)
@@ -131,7 +136,12 @@ internal class Format(private val spec: Spec) {
             "#" -> if ("boxX".indexOf(spec.type) > -1) "0${spec.type.toLowerCase()}" else ""
             else -> ""
         }
-        val isNegative = numberInfo.number.sign < 0 && res.body.toDouble() != 0.0
+        val isBodyZero = if ("boxX".indexOf(spec.type) == -1) {
+            res.body.toDouble() == 0.0
+        } else {
+            res.body.toLong(16) == 0L
+        }
+        val isNegative = numberInfo.negative && !isBodyZero
         val signStr = if (isNegative) {
             "-"
         } else {
@@ -293,13 +303,15 @@ internal class Format(private val spec: Spec) {
                 ""
             }
 
+            val expNumberInfo = createNumberInfo(numberInfo.integerPart + numberInfo.fractionPart / 10.0.pow(NumberInfo.FRACTION_LENGTH))
+
             if (precision > -1) {
-                return "${toFixedString(numberInfo, precision)}$exponentString"
+                return "${toFixedString(expNumberInfo, precision)}$exponentString"
             }
 
             val sign = if (numberInfo.negative) "-" else ""
-            val integerString = numberInfo.integerPart.toString()
-            val fractionString = if (numberInfo.fractionPart == 0L) "" else ".${numberInfo.fractionString}"
+            val integerString = expNumberInfo.integerPart.toString()
+            val fractionString = if (expNumberInfo.fractionPart == 0L) "" else ".${expNumberInfo.fractionString}"
             return "$sign$integerString$fractionString$exponentString"
         }
 
