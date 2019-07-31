@@ -22,7 +22,7 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
 
     override fun destroy() {}
 
-    protected fun initImpl(context: T) {}
+    protected open fun initImpl(context: T) {}
 
     protected open fun updateImpl(context: T, dt: Double) {}
 

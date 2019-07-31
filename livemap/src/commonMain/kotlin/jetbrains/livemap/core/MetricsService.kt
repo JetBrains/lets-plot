@@ -3,7 +3,7 @@ package jetbrains.livemap.core
 import jetbrains.livemap.core.ecs.EcsSystem
 
 class MetricsService {
-
+    private val systemTime = SystemTime()
     private val myMeasures = PriorityQueue(compareBy(Pair<EcsSystem, Double>::second).reversed())
 
     private var myBeginTime: Long = 0
@@ -27,11 +27,11 @@ class MetricsService {
         }
 
     fun beginMeasureUpdate() {
-        myBeginTime = SystemTime.getTimeMs()
+        myBeginTime = systemTime.getTimeMs()
     }
 
     fun endMeasureUpdate(system: EcsSystem) {
-        val time = SystemTime.getTimeMs() - myBeginTime
+        val time = systemTime.getTimeMs() - myBeginTime
         myMeasures.add(Pair(system, time.toDouble()))
         totalUpdateTime += time
     }

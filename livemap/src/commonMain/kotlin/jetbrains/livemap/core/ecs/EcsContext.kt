@@ -5,6 +5,7 @@ import jetbrains.datalore.visualization.plot.base.event.MouseEventSource
 import jetbrains.livemap.core.MetricsService
 
 class EcsContext(val eventSource: MouseEventSource) : EcsClock {
+    override val systemTime = SystemTime()
     val metricsService = MetricsService()
 
     override var updateStartTime: Long = 0
@@ -14,6 +15,6 @@ class EcsContext(val eventSource: MouseEventSource) : EcsClock {
 
     internal fun startUpdate() {
         tick++
-        updateStartTime = SystemTime.getTimeMs()
+        updateStartTime = systemTime.getTimeMs()
     }
 }
