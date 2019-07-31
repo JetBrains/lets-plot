@@ -26,8 +26,6 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
 
     protected open fun updateImpl(context: T, dt: Double) {}
 
-
-
     inline fun <reified T: EcsComponent> getEntities(): Iterable<EcsEntity> {
         return componentManager.getEntities(T::class)
     }

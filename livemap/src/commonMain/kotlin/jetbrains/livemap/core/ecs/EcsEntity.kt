@@ -41,23 +41,21 @@ class EcsEntity internal constructor(
         return this
     }
 
-    fun removeComponent(componentType: KClass<out EcsComponent>): EcsEntity {
-        componentManager.removeComponent(this, componentType)
-        return this
-    }
+    fun removeComponent(componentType: KClass<out EcsComponent>) =
+        apply { componentManager.removeComponent(this, componentType) }
 
     fun remove() {
         componentManager.removeEntity(this)
     }
 
-    operator fun contains(component: KClass<out EcsComponent>): Boolean {
-        return componentManager.getComponents(this).containsKey(component)
+    operator fun contains(componentType: KClass<out EcsComponent>): Boolean {
+        return componentManager.getComponents(this).containsKey(componentType)
     }
 
 
-    operator fun contains(components: Array<KClass<out EcsComponent>>): Boolean {
+    operator fun contains(componentTypes: Array<KClass<out EcsComponent>>): Boolean {
         val entityComponents = componentManager.getComponents(this)
-        for (component in components) {
+        for (component in componentTypes) {
             if (!entityComponents.containsKey(component)) {
                 return false
             }

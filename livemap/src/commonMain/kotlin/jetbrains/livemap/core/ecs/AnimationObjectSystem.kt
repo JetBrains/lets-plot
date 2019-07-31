@@ -5,14 +5,14 @@ class AnimationObjectSystem(componentManager: EcsComponentManager) : AbstractSys
     override fun init(context: EcsContext) {}
 
     override fun update(context: EcsContext, dt: Double) {
-        for (entity in getEntities(AnimationObjectComponent::class)) {
-            val animationObjectComponent = entity.getComponent<AnimationObjectComponent>()
-            val anim = animationObjectComponent.animation
+        getEntities(AnimationObjectComponent::class).forEach {
 
-            anim.time += dt
-            anim.animate()
-            if (anim.isFinished) {
-                entity.removeComponent(AnimationObjectComponent::class)
+            with (it.getComponent<AnimationObjectComponent>().animation) {
+                time += dt
+                animate()
+                if (isFinished) {
+                    it.removeComponent(AnimationObjectComponent::class)
+                }
             }
         }
     }

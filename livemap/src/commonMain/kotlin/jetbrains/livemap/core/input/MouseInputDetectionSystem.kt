@@ -1,0 +1,109 @@
+package jetbrains.livemap.core.input
+
+import jetbrains.livemap.camera.CameraComponent
+import jetbrains.livemap.core.ecs.*
+import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
+import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.core.rendering.layers.RenderLayer
+import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
+
+class MouseInputDetectionSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {
+
+    private val myInteractiveEntityView: InteractiveEntityView
+
+    init {
+        myInteractiveEntityView = InteractiveEntityView()
+    }
+
+    override fun updateImpl(context: EcsContext, dt: Double) {
+        val entitiesByEventTypeAndZIndex = HashMap<MouseEventType, HashMap<Int, ArrayList<EcsEntity>>>()
+        val renderLayers = componentManager
+            .getSingletonEntity(LayersOrderComponent::class)
+            .getComponent<LayersOrderComponent>()
+            .renderLayers
+
+        getEntities(COMPONENTS).forEach { entity ->
+            myInteractiveEntityView.setEntity(entity)
+
+            MouseEventType.values().forEach { type ->
+                if (myInteractiveEntityView.needToAdd(type)) {
+                    myInteractiveEntityView
+                        .addTo(
+                            entitiesByEventTypeAndZIndex.getOrPut(type, { HashMap() }),
+                            getZIndex(entity, renderLayers)
+                        )
+                }
+            }
+        }
+
+        for (type in MouseEventType.values()) {
+            val entitiesByZIndex = entitiesByEventTypeAndZIndex[type] ?: continue
+
+            for (i in renderLayers.size downTo 0) {
+                entitiesByZIndex[i]?.let { acceptListeners(type, it) }
+            }
+        }
+    }
+
+    private fun acceptListeners(eventType: MouseEventType, entities: ArrayList<EcsEntity>) {
+        entities.forEach { entity ->
+            val input = entity.getComponent<MouseInputComponent>()
+            val listeners = entity.getComponent<EventListenerComponent>()
+
+            input.getEvent(eventType)?.let {
+                if (!it.isStopped) {
+                    for (listener in listeners.getListeners(eventType)) {
+                        listener(it)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getZIndex(entity: EcsEntity, renderLayers: List<RenderLayer>): Int {
+        return if (entity.contains(CameraComponent::class)) { // if UI
+            0
+        } else {
+            val renderLayer = entity.componentManager
+                .getEntityById(entity.getComponent<ParentLayerComponent>().layerId)!!
+                .getComponent<RenderLayerComponent>()
+                .renderLayer
+
+            renderLayers.indexOf(renderLayer) + 1
+        }
+    }
+
+    private class InteractiveEntityView {
+
+        private lateinit var myInput: MouseInputComponent
+        private lateinit var myClickable: ClickableComponent
+        private lateinit var myListeners: EventListenerComponent
+        private lateinit var myEntity: EcsEntity
+
+        internal fun setEntity(entity: EcsEntity) {
+            myEntity = entity
+            myInput = entity.getComponent()
+            myClickable = entity.getComponent()
+            myListeners = entity.getComponent()
+        }
+
+        fun needToAdd(type: MouseEventType): Boolean {
+            val location = myInput.getEvent(type)?.location
+            return (location != null
+                    && myListeners.getListeners(type).isNotEmpty()
+                    && myClickable.rect.contains(location.toDoubleVector()))
+        }
+
+        fun addTo(map: HashMap<Int, ArrayList<EcsEntity>>, zIndex: Int) {
+            map.getOrPut(zIndex, { ArrayList() }).add(myEntity)
+        }
+    }
+
+    companion object {
+        private val COMPONENTS = listOf(
+            MouseInputComponent::class,
+            ClickableComponent::class,
+            EventListenerComponent::class
+        )
+    }
+}
