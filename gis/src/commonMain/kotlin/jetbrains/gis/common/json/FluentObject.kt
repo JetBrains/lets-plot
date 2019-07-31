@@ -7,6 +7,7 @@ class FluentObject : FluentValue {
     private val myObj: MutableMap<String, Any?>
 
     constructor(obj: Map<*, *>) {
+        @Suppress("UNCHECKED_CAST")
         myObj = (obj as Map<String, Any?>).toMutableMap()
     }
 
@@ -32,7 +33,8 @@ class FluentObject : FluentValue {
     fun getBoolean(key: String) = myObj[key] as Boolean
     fun getString(key: String) = myObj[key] as String
     fun getStrings(key: String) = getArr(key).map { getAsString(it) }
-    fun <T : Enum<T>> getEnum(key: String, enumValues: Array<T>) = parseEnum(myObj[key] as String, enumValues)
+    fun <T : Enum<T>> getEnum(key: String, enumValues: Array<T>) = parseEnum<T>(myObj[key] as String, enumValues)
+    inline fun <reified T : Enum<T>> getEnum(key: String) = getEnum<T>(key, enumValues<T>())
     fun getArray(key: String) = FluentArray(getArr(key))
     fun getObject(key: String) = FluentObject(getObj(key))
 

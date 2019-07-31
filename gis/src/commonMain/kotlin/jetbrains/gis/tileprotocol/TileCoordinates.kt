@@ -1,6 +1,6 @@
 package jetbrains.gis.tileprotocol
 
-class TileCoordinates(private val x: Int, private val y: Int, private val z: Int) {
+class TileCoordinates(val x: Int, val y: Int, val z: Int) {
 
     override fun toString(): String {
         return "$z-$x-$y"
