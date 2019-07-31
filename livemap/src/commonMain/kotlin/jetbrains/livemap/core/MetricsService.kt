@@ -7,8 +7,10 @@ class MetricsService {
     private val myMeasures = PriorityQueue(compareBy(Pair<EcsSystem, Double>::second).reversed())
 
     private var myBeginTime: Long = 0
+
     var totalUpdateTime = 0.0
         private set
+
     private val myValues = HashMap<String, String>()
     private var myValuesOrder: List<String>? = null
 
