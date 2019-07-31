@@ -6,13 +6,15 @@ import jetbrains.datalore.base.concurrent.Lock
 import jetbrains.datalore.base.concurrent.execute
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.json.JsonSupport
+import jetbrains.datalore.base.json.JsonSupport.formatJson
 import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 import jetbrains.gis.tileprotocol.Request.ConfigureConnectionRequest
 import jetbrains.gis.tileprotocol.Request.GetBinaryGeometryRequest
+import jetbrains.gis.tileprotocol.TileService.SocketStatus.*
 import jetbrains.gis.tileprotocol.binary.ByteArrayStream
 import jetbrains.gis.tileprotocol.binary.ResponseTileDecoder
 import jetbrains.gis.tileprotocol.json.MapStyleJsonParser
-import jetbrains.gis.tileprotocol.json.RequestJsonFormatter
+import jetbrains.gis.tileprotocol.json.RequestFormatter
 import jetbrains.gis.tileprotocol.mapConfig.MapConfig
 import jetbrains.gis.tileprotocol.socket.SafeSocketHandler
 import jetbrains.gis.tileprotocol.socket.Socket
@@ -24,11 +26,11 @@ class TileService(socketBuilder: SocketBuilder, private val myTheme: String) {
 
     private val mySocket: Socket
     private val myMessageQueue = ArrayList<String>()
-    private val requestMap = RequestMap()
+    private val pendingRequests = RequestMap()
     var mapConfig: MapConfig? = null
         private set
     private var myIncrement: Int = 0
-    private var mySocketStatus = SocketStatus.CLOSE
+    private var mySocketStatus = CLOSE
 
     init {
         mySocket = socketBuilder.build(SafeSocketHandler(TileSocketHandler(), ThrowableHandlers.instance))
@@ -39,32 +41,35 @@ class TileService(socketBuilder: SocketBuilder, private val myTheme: String) {
         val key = myIncrement++.toString()
         val async = ThreadSafeAsync<List<TileLayer>>()
 
-        requestMap.put(key, async)
+        pendingRequests.put(key, async)
 
         try {
-            send(RequestJsonFormatter.format(GetBinaryGeometryRequest(key, zoom, bbox)).toString())
+            sendGeometryRequest(RequestFormatter.format(GetBinaryGeometryRequest(key, zoom, bbox)).toString())
         } catch (err: Throwable) {
-            requestMap.poll(key).failure(err)
+            pendingRequests.poll(key).failure(err)
         }
 
         return async
     }
 
-    private fun send(messageString: String) {
+    private fun sendGeometryRequest(messageString: String) {
         when (mySocketStatus) {
-            SocketStatus.OPEN -> mySocket.send(messageString)
-            SocketStatus.CONNECTING -> myMessageQueue.add(messageString)
-            SocketStatus.CLOSE -> {
+            OPEN -> mySocket.send(messageString)
+            CONNECTING -> myMessageQueue.add(messageString)
+            CLOSE -> {
                 mySocket.connect()
-                mySocketStatus = SocketStatus.CONNECTING
+                mySocketStatus = CONNECTING
                 myMessageQueue.add(messageString)
             }
-            SocketStatus.ERROR -> throw IllegalStateException("Socket error")
+            ERROR -> throw IllegalStateException("Socket error")
         }
     }
 
     private fun sendInitMessage() {
-        mySocket.send(RequestJsonFormatter.format(ConfigureConnectionRequest(myTheme)).toString())
+        ConfigureConnectionRequest(myTheme)
+            .run(RequestFormatter::format)
+            .run(::formatJson)
+            .run(mySocket::send)
     }
 
     private enum class SocketStatus {
@@ -75,37 +80,28 @@ class TileService(socketBuilder: SocketBuilder, private val myTheme: String) {
     }
 
     inner class TileSocketHandler : SocketHandler {
-        override fun onClose() { mySocketStatus = SocketStatus.CLOSE }
-
-        override fun onError(cause: Throwable) {
-            mySocketStatus = SocketStatus.ERROR
-            failAllAsyncs(cause)
-        }
+        override fun onOpen() { mySocketStatus = OPEN; sendInitMessage() }
+        override fun onClose() { mySocketStatus = CLOSE }
+        override fun onError(cause: Throwable) { mySocketStatus = ERROR; failPending(cause) }
 
         override fun onTextMessage(message: String) {
             if (mapConfig == null) {
                 mapConfig = MapStyleJsonParser.parse(JsonSupport.parseJson(message))
             }
 
-            myMessageQueue.forEach { mySocket.send(it) }
-            myMessageQueue.clear()
+            myMessageQueue.run { forEach(mySocket::send); clear() }
         }
 
         override fun onBinaryMessage(message: ByteArray) {
             try {
                 val decoder = ResponseTileDecoder(ByteArrayStream(message))
-                requestMap.poll(decoder.getKey()).success(decoder.getTileLayers())
+                pendingRequests.poll(decoder.getKey()).success(decoder.getTileLayers())
             } catch (e: Throwable) {
-                failAllAsyncs(e)
+                failPending(e)
             }
         }
 
-        override fun onOpen() {
-            mySocketStatus = SocketStatus.OPEN
-            sendInitMessage()
-        }
-
-        private fun failAllAsyncs(cause: Throwable) { requestMap.pollAll().values.forEach { it.failure(cause) } }
+        private fun failPending(cause: Throwable) { pendingRequests.pollAll().values.forEach { it.failure(cause) } }
     }
 
     class RequestMap {

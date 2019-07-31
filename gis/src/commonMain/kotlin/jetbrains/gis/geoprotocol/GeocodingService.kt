@@ -45,7 +45,7 @@ class GeocodingService(private val myTransport: GeoTransport) {
 
         fun <T> restoreDuplicateList(uniqueObjectList: List<T>, getObjectKey: (T) -> String): List<T> {
             val uniqueObjectMap = HashMap<String, T>()
-            uniqueObjectList.forEach { t -> uniqueObjectMap[getObjectKey(t)] = t }
+            uniqueObjectList.forEach { uniqueObjectMap[getObjectKey(it)] = it }
 
             val duplicateObjectList = ArrayList<T>()
             if (myKeys.isEmpty()) {
@@ -53,7 +53,7 @@ class GeocodingService(private val myTransport: GeoTransport) {
             } else {
                 myKeys.forEach { key ->
                     if (uniqueObjectMap.containsKey(key)) {
-                        uniqueObjectMap[key]?.let { duplicateObjectList.add(it) }
+                        uniqueObjectMap[key]?.let(duplicateObjectList::add)
                     }
                 }
             }
@@ -69,25 +69,17 @@ class GeocodingService(private val myTransport: GeoTransport) {
                     ambiguousFeature.namesakeCount == 1 -> {}
                     ambiguousFeature.namesakeCount > 1 -> {
                         message
-                            .append("Multiple objects (" + ambiguousFeature.namesakeCount + ") ")
-                            .append("were found for '" + ambiguousFeature.request + "'")
+                            .append("Multiple objects (${ambiguousFeature.namesakeCount}")
+                            .append("were found for '${ambiguousFeature.request}'")
+                            .append(if (ambiguousFeature.namesakes.isEmpty()) "." else ":")
 
-                        val lines = ArrayList<String>()
-                        ambiguousFeature.namesakes.forEach { namesake ->
-                            val line = StringBuilder("- " + namesake.name)
-                            if (namesake.parents.isNotEmpty()) {
-                                line.append(
-                                    " (" + namesake.parents.joinToString { "${it.name}" } + ")"
-                                )
-                            }
-                            lines.add(line.toString())
-                        }
+                        ambiguousFeature.namesakes
+                            .map { (name, parents) -> "- ${name}${parents.joinToString(prefix = " (", transform = { it.name }, postfix = ")")}"}
+                            .sorted()
+                            .forEach { message.append("\n$it") }
 
-                        lines.sort()
-                        message.append(if (lines.isEmpty()) "." else ":")
-                        lines.forEach { line -> message.append("\n" + line) }
                     }
-                    else -> message.append("No objects were found for '" + ambiguousFeature.request + "'.")
+                    else -> message.append("No objects were found for '${ambiguousFeature.request}'.")
                 }
                 message.append("\n")
             }
