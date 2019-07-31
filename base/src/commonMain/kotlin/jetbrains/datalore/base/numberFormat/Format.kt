@@ -69,8 +69,6 @@ internal class Format(private val spec: Spec) {
         parts = computePadding(parts)
 
         if (spec.comma && spec.zero) {
-            val padding = parts.padding
-            parts = parts.copy(body = padding + parts.body, padding = "")
             parts = applyGroup(parts)
         }
 
@@ -88,17 +86,36 @@ internal class Format(private val spec: Spec) {
         else -> "${res.padding}${res.prefix}${res.body}${res.suffix}"
     }
 
-    private fun applyGroup(res: NumberParts): NumberParts {
-        val str = res.body
+    private fun applyGroup(parts: NumberParts): NumberParts {
+        val str = parts.body
+
         val regex = "([0-9a-f]+)(\\.\\d+)?(e[+-]\\d+)?$".toRegex()
         val matchResult = regex.find(str) ?: throw Exception("Wrong body to apply group: $str")
+
+        val zeroPadding = if (spec.zero) parts.padding else ""
         var intStr = matchResult.groups[1]?.value ?: ""
         val fractionStr = matchResult.groups[2]?.value ?: ""
         val expStr = matchResult.groups[3]?.value ?: ""
 
-        intStr = group(intStr)
+        val fullStr = zeroPadding + intStr
+        val valuableLen = intStr.length
+        val fullLen = fullStr.length
+        val commas = (ceil(fullLen.toDouble() / 3.0) - 1).toInt()
 
-        return res.copy(body = "$intStr$fractionStr$expStr")
+        val width = (spec.width - fractionStr.length - expStr.length).coerceAtLeast(valuableLen + commas)
+
+        intStr = group(fullStr)
+
+        if (intStr.length > width) {
+            intStr = intStr.substring(intStr.length - width)
+            if (intStr[0] == ',') {
+                intStr = "0$intStr"
+            }
+        }
+
+        val padding = if (spec.zero) "" else parts.padding
+
+        return parts.copy(body = "$intStr$fractionStr$expStr", padding = padding)
     }
 
     private fun applyType(res: NumberParts, numberInfo: NumberInfo): NumberParts {
