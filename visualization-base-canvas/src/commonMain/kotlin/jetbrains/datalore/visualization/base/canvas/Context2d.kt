@@ -7,6 +7,7 @@ import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
 interface Context2d {
     fun clearRect(rect: DoubleRectangle)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double)
+    fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double)
     fun beginPath()
     fun closePath()
     fun stroke()
@@ -38,6 +39,7 @@ interface Context2d {
     fun setTextAlign(align: TextAlign)
     fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
     fun setLineDash(lineDash: DoubleArray)
+    fun measureText(str: String): Double
     fun measureText(str: String, font: String): DoubleVector
 
     enum class LineJoin {

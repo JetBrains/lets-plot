@@ -10,6 +10,10 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         return myScale * value
     }
 
+    private fun descaled(value: Double): Double {
+        return value / myScale
+    }
+
     private fun descaled(value: DoubleVector): DoubleVector {
         return value.mul(1.0 / myScale)
     }
@@ -31,6 +35,10 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
         myContext2d.drawImage(snapshot, scaled(x), scaled(y))
+    }
+
+    override fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
+        myContext2d.drawImage(snapshot, scaled(x), scaled(y), scaled(dw), scaled(dh))
     }
 
     override fun beginPath() {
@@ -155,6 +163,10 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
 
     override fun setLineDash(lineDash: DoubleArray) {
         myContext2d.setLineDash(scaled(lineDash))
+    }
+
+    override fun measureText(str: String): Double {
+        return descaled(myContext2d.measureText(str))
     }
 
     override fun measureText(str: String, font: String): DoubleVector {

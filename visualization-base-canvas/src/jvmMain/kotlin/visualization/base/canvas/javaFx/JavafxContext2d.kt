@@ -68,6 +68,11 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.drawImage(javafxSnapshot.image, x, y)
     }
 
+    override fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
+        val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
+        myContext2d.drawImage(javafxSnapshot.image, x, y, dw, dh)
+    }
+
     override fun beginPath() {
         myContext2d.beginPath()
     }
@@ -190,6 +195,12 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
 
     override fun setLineDash(lineDash: DoubleArray) {
         myContext2d.setLineDashes(*lineDash)
+    }
+
+    override fun measureText(str: String): Double {
+        val text = Text(str)
+        text.font = myContext2d.font
+        return text.layoutBounds.width
     }
 
     override fun measureText(str: String, font: String): DoubleVector {

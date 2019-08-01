@@ -55,6 +55,11 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         myContext2d.drawImage(domSnapshot.canvasElement, x, y)
     }
 
+    override fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
+        val domSnapshot = snapshot as DomSnapshot
+        myContext2d.drawImage(domSnapshot.canvasElement, x, y, dw, dh)
+    }
+
     override fun beginPath() {
         myContext2d.beginPath()
     }
@@ -177,6 +182,10 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
 
     override fun setLineDash(lineDash: DoubleArray) {
         myContext2d.setLineDash(lineDash.toTypedArray())
+    }
+
+    override fun measureText(str: String): Double {
+        return myContext2d.measureText(str).width
     }
 
     override fun measureText(str: String, font: String): DoubleVector {
