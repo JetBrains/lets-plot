@@ -105,17 +105,18 @@ class TileService(socketBuilder: SocketBuilder, private val myTheme: String) {
     }
 
     class RequestMap {
+        private val lock = Lock()
         private val myAsyncMap = HashMap<String, ThreadSafeAsync<List<TileLayer>>>()
 
-        fun put(key: String, async: ThreadSafeAsync<List<TileLayer>>) = Lock().execute {
+        fun put(key: String, async: ThreadSafeAsync<List<TileLayer>>) = lock.execute {
             myAsyncMap[key] = async
         }
 
-        fun pollAll(): Map<String, ThreadSafeAsync<List<TileLayer>>> = Lock().execute {
+        fun pollAll(): Map<String, ThreadSafeAsync<List<TileLayer>>> = lock.execute {
             return HashMap(myAsyncMap).also { myAsyncMap.clear() }
         }
 
-        fun poll(key: String): ThreadSafeAsync<List<TileLayer>> = Lock().execute{
+        fun poll(key: String): ThreadSafeAsync<List<TileLayer>> = lock.execute{
             return myAsyncMap.remove(key)!!
         }
     }
