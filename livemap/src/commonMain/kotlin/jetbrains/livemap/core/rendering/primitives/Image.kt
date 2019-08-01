@@ -6,17 +6,9 @@ import jetbrains.datalore.visualization.base.canvas.Context2d
 
 class Image(
     private val snapshot: Snapshot,
-    private val origin: DoubleVector,
-    private val dimension: DoubleVector
+    override val origin: DoubleVector,
+    override val dimension: DoubleVector
 ) : RenderBox {
-
-    override fun origin(): DoubleVector {
-        return origin
-    }
-
-    override fun dimension(): DoubleVector {
-        return dimension
-    }
 
     override fun render(ctx: Context2d) {
         ctx.drawImage(snapshot, 0.0, 0.0, dimension.x, dimension.y)

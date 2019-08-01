@@ -7,26 +7,18 @@ import kotlin.math.max
 
 
 class Text : RenderBox {
-    var origin = DoubleVector.ZERO
-    var dimension = DoubleVector.ZERO
+    override var origin = DoubleVector.ZERO
+    override var dimension = DoubleVector.ZERO
+
     var text: Collection<String> = emptyList()
         set(value) {
             field = value
             isDirty = true
         }
     var color: Color = Color.WHITE
-    var isDirty = true
-        private set
+    var isDirty = true; private set
     var fontHeight: Double = 0.0
     var fontFamily = "sherif"
-
-    override fun origin(): DoubleVector {
-        return origin
-    }
-
-    override fun dimension(): DoubleVector {
-        return dimension
-    }
 
     override fun render(ctx: Context2d) {
         ctx.setFont(fontHeight.toString() + "px " + fontFamily)

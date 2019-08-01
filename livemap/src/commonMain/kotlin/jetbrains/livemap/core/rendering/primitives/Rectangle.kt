@@ -1,11 +1,13 @@
 package jetbrains.livemap.core.rendering.primitives
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.Context2d
 
 class Rectangle : RenderBox {
+    override val origin get() = rect.origin
+    override val dimension get() = rect.dimension
+
     var rect: DoubleRectangle = DoubleRectangle(0.0, 0.0, 0.0, 0.0)
     var color: Color? = null
 
@@ -20,7 +22,4 @@ class Rectangle : RenderBox {
         )
     }
 
-    override fun origin(): DoubleVector = rect.origin
-
-    override fun dimension(): DoubleVector = rect.dimension
 }

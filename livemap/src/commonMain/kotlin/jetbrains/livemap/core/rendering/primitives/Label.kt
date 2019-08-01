@@ -4,36 +4,29 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.livemap.core.rendering.primitives.Label.LabelPosition.*
 
-class Label(private var origin: DoubleVector, private var text: Text) : RenderBox {
+class Label(override var origin: DoubleVector, private var text: Text) : RenderBox {
     private var frame: Frame? = null
-    private var dimension = DoubleVector.ZERO
+    override var dimension = DoubleVector.ZERO
     private val rectangle: Rectangle = Rectangle()
     private var padding: Double = 0.0
     private var background: Color? = null
-    private var position = LabelPosition.RIGHT
-
-    override fun origin(): DoubleVector {
-        return origin
-    }
-
-    override fun dimension(): DoubleVector {
-        return dimension
-    }
+    private var position = RIGHT
 
     override fun render(ctx: Context2d) {
         if (text.isDirty) {
-            dimension = text.measureText(ctx).add(DoubleVector(2 * padding, 2 * padding))
+            dimension = text.measureText(ctx) + DoubleVector(2 * padding, 2 * padding)
 
             rectangle.apply {
                 rect = DoubleRectangle(DoubleVector.ZERO, dimension)
                 color = background
             }
 
-            when (position) {
-                LabelPosition.LEFT -> origin = origin.subtract(DoubleVector(dimension.x, 0.0))
-                LabelPosition.CENTER -> origin = origin.subtract(DoubleVector(dimension.x / 2, 0.0))
-                LabelPosition.RIGHT -> {}
+            origin += when (position) {
+                LEFT -> DoubleVector(-dimension.x, 0.0)
+                CENTER -> DoubleVector(-dimension.x / 2, 0.0)
+                RIGHT -> DoubleVector.ZERO
             }
 
             text.origin = DoubleVector(padding, padding)
@@ -48,4 +41,12 @@ class Label(private var origin: DoubleVector, private var text: Text) : RenderBo
         CENTER,
         LEFT
     }
+}
+
+private operator fun DoubleVector.minus(doubleVector: DoubleVector): DoubleVector {
+    return subtract(doubleVector)
+}
+
+private operator fun DoubleVector.plus(doubleVector: DoubleVector): DoubleVector {
+    return add(doubleVector)
 }

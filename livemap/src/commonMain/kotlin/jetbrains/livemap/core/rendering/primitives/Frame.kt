@@ -7,18 +7,13 @@ import kotlin.math.max
 class Frame constructor(private val position: DoubleVector, private val renderBoxes: List<RenderBox>) :
     RenderBox {
 
-    override fun origin(): DoubleVector {
-        return position
-    }
-
-    override fun dimension(): DoubleVector {
-        return calculateDimension()
-    }
+    override val origin get() = position
+    override val dimension get() = calculateDimension()
 
     override fun render(ctx: Context2d) {
         renderBoxes.forEach { primitive ->
             ctx.save()
-            val origin = primitive.origin()
+            val origin = primitive.origin
             ctx.translate(origin.x, origin.y)
             primitive.render(ctx)
             ctx.restore()
@@ -38,11 +33,11 @@ class Frame constructor(private val position: DoubleVector, private val renderBo
     }
 
     private fun getRight(renderObject: RenderBox): Double {
-        return renderObject.origin().x + renderBoxes[0].dimension().x
+        return renderObject.origin.x + renderBoxes[0].dimension.x
     }
 
     private fun getBottom(renderObject: RenderBox): Double {
-        return renderObject.origin().y + renderBoxes[0].dimension().y
+        return renderObject.origin.y + renderBoxes[0].dimension.y
     }
 
     companion object {
