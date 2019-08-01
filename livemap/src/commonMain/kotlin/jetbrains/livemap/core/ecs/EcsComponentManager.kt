@@ -35,7 +35,7 @@ class EcsComponentManager {
     }
 
     fun getEntities(componentType: KClass<out EcsComponent>): Iterable<EcsEntity> =
-        EcsIterator((myComponents[componentType] ?: emptySet()).iterator()).asSequence().asIterable()
+        EcsIterator((myComponents[componentType] ?: HashSet()).iterator()).asSequence().asIterable()
 
 
     fun getEntities(componentTypes: List<KClass<out EcsComponent>>): Iterable<EcsEntity> {
@@ -111,7 +111,7 @@ class EcsComponentManager {
     }
 
     fun getComponentsCount(componentType: KClass<out EcsComponent>): Int {
-        return myComponents.getOrElse(componentType, ::emptySet).size
+        return myComponents.getOrElse(componentType, ::HashSet).size
     }
 
     fun containsSingletonEntity(componentType: KClass<out EcsComponent>): Boolean {

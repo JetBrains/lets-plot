@@ -45,7 +45,7 @@ object LayerManagers {
                             singleCanvasControl.context.clearRect(rect)
                             renderingOrder.forEach {it.render()}
                             // Force render tasks to be added
-                            layerEntities.forEach(DirtyRenderLayerComponent::tag)
+                            layerEntities.forEach { DirtyRenderLayerComponent.tag(it) }
                         }
 
                     }

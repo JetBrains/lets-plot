@@ -1,11 +1,18 @@
 plugins {
     id 'kotlin-multiplatform'
+    id 'org.jetbrains.gradle.plugin.idea-ext'
 }
 
 kotlin {
     jvm()
     js () {
-        browser {}
+        // browser {}
+        // /\
+        // ||
+        // ERROR in ./kotlin/datalore-plot-livemap.js
+        // Module not found: Error: Can't resolve 'visualization-base-canvas' in '/Users/ikupriyanov/Projects/datalore-plot/build/js/packages/datalore-plot-livemap/kotlin'
+        // @ ./kotlin/datalore-plot-livemap.js 3:4-120
+        // @ multi ./kotlin/datalore-plot-livemap.js source-map-support/browser-source-map-support.js
     }
 
     sourceSets {
@@ -43,6 +50,14 @@ kotlin {
             dependencies {
                 implementation kotlin('test-js')
             }
+        }
+    }
+}
+idea {
+    module {
+        settings {
+            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }
     }
 }
