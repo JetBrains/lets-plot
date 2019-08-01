@@ -38,6 +38,7 @@ interface Context2d {
     fun setTextAlign(align: TextAlign)
     fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
     fun setLineDash(lineDash: DoubleArray)
+    fun measureText(str: String): Double
     fun measureText(str: String, font: String): DoubleVector
 
     enum class LineJoin {

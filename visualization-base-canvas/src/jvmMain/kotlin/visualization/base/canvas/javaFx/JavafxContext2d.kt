@@ -192,6 +192,12 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.setLineDashes(*lineDash)
     }
 
+    override fun measureText(str: String): Double {
+        val text = Text(str)
+        text.font = myContext2d.font
+        return text.layoutBounds.width
+    }
+
     override fun measureText(str: String, font: String): DoubleVector {
         val text = Text(str)
         text.font = convertCssFont(font)

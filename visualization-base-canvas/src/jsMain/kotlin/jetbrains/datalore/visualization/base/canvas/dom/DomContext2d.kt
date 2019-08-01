@@ -179,6 +179,10 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         myContext2d.setLineDash(lineDash.toTypedArray())
     }
 
+    override fun measureText(str: String): Double {
+        return myContext2d.measureText(str).width
+    }
+
     override fun measureText(str: String, font: String): DoubleVector {
         val parser = CssFontParser.create(font) ?: throw IllegalStateException("Could not parse css font string: $font")
         val height = parser.fontSize ?: 10.0
