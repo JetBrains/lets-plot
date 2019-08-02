@@ -1,131 +1,75 @@
 package jetbrains.gis.tileprotocol.binary
 
 import jetbrains.datalore.base.encoding.TextDecoder
-import jetbrains.gis.common.twkb.VarInt
+import jetbrains.gis.common.twkb.VarInt.readVarUInt
 import jetbrains.gis.tileprotocol.GeometryCollection
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileLayerBuilder
 
-class ResponseTileDecoder(private val myBytes: ByteArrayStream) {
-
-    private val myTileLayerBuilder: TileLayerBuilder
-    private val myKey: String
-    private val myTileLayers: List<TileLayer>
-    private var mySize: Int = 0
-
-    init {
-        mySize = myBytes.available()
-        myTileLayerBuilder = TileLayerBuilder()
-        myKey = readString()
-        myTileLayers = readLayers()
-    }
-
-    fun getKey(): String {
-        return myKey
-    }
-
-    fun getTileLayers(): List<TileLayer> {
-        return myTileLayers
-    }
+class ResponseTileDecoder(data: ByteArray) {
+    private val byteArrayStream = ByteArrayStream(data)
+    private val key = readString()
+    private val tileLayers = readLayers()
 
     private fun readLayers(): List<TileLayer> {
         val layers = ArrayList<TileLayer>()
 
-        while (myBytes.available() > 0) {
-            layers.add(
-                readName()
-                    .readTwkb()
-                    .readKinds()
-                    .readSubs()
-                    .readLabels()
-                    .readShorts()
-                    .setSize()
-                    .build()
-            )
-        }
+        do {
+            val layerStartPosition = byteArrayStream.available()
+
+            TileLayerBuilder()
+                .apply {
+                    name = readString()
+                    geometryCollection = readVarUInt(::readByte)    // take length
+                        .run(byteArrayStream::read)                 // take geometry byte array
+                        .run(::GeometryCollection)
+                    kinds = readInts()
+                    subs = readInts()
+                    labels = readStrings()
+                    shorts = readStrings()
+                    layerSize = layerStartPosition - byteArrayStream.available()
+                }
+                .build()
+                .run(layers::add)
+
+        } while (byteArrayStream.available() > 0)
 
         return layers
     }
 
-    private fun setSize(): ResponseTileDecoder {
-        myTileLayerBuilder.setSize(mySize - myBytes.available())
-        mySize = myBytes.available()
-        return this
-    }
-
-    private fun readName(): ResponseTileDecoder {
-        myTileLayerBuilder.setName(readString())
-        return this
-    }
-
-    private fun build(): TileLayer {
-        return myTileLayerBuilder.build()
-    }
-
-    private fun readShorts(): ResponseTileDecoder {
-        myTileLayerBuilder.setShorts(readStrings())
-        return this
-    }
-
-    private fun readLabels(): ResponseTileDecoder {
-        myTileLayerBuilder.setLabels(readStrings())
-        return this
-    }
-
-    private fun readSubs(): ResponseTileDecoder {
-        myTileLayerBuilder.setSubs(readInts())
-        return this
-    }
-
-    private fun readKinds(): ResponseTileDecoder {
-        myTileLayerBuilder.setKinds(readInts())
-        return this
-    }
-
     private fun readInts(): List<Int> {
-        val len = VarInt.readVarUInt(this::readByte)
-        if (len == 0) {
-            return emptyList()
+        val len: Int = readVarUInt(::readByte)
+
+        return when {
+            len > 0 -> (0 until len).map { readVarUInt(::readByte) }
+            len == 0 -> emptyList()
+            else -> throw IllegalStateException()
         }
-
-        val list = ArrayList<Int>()
-
-        for (i in 0 until len) {
-            list.add(VarInt.readVarUInt(this::readByte))
-        }
-
-        return list
     }
 
     private fun readStrings(): List<String> {
-        val len = VarInt.readVarUInt(this::readByte)
-        if (len == 0) {
-            return emptyList()
+        val len: Int = readVarUInt(::readByte)
+
+        return when {
+            len > 0 -> (0 until len).map { readString() }
+            len == 0 -> emptyList()
+            else -> throw IllegalStateException()
         }
-
-        val list = ArrayList<String>()
-
-        for (i in 0 until len) {
-            list.add(readString())
-        }
-
-        return list
-    }
-
-    private fun readTwkb(): ResponseTileDecoder {
-        val len = VarInt.readVarUInt(this::readByte)
-
-        myTileLayerBuilder.setGeometryCollection(GeometryCollection(myBytes.read(len)))
-        return this
     }
 
     private fun readString(): String {
-        val len = VarInt.readVarUInt(this::readByte)
-        return if (len > 0) TextDecoder().decode(myBytes.read(len)) else ""
+        val len: Int = readVarUInt(::readByte)
 
+        return when {
+            len > 0 -> TextDecoder().decode(byteArrayStream.read(len))
+            len == 0 -> ""
+            else -> throw IllegalStateException()
+        }
     }
 
-    private fun readByte(): Int {
-        return myBytes.read().toInt()
-    }
+    private fun readByte(): Int = byteArrayStream.read().toInt()
+
+    operator fun component1(): String = key
+
+    operator fun component2(): List<TileLayer> = tileLayers
 }

@@ -11,7 +11,6 @@ import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 import jetbrains.gis.tileprotocol.Request.ConfigureConnectionRequest
 import jetbrains.gis.tileprotocol.Request.GetBinaryGeometryRequest
 import jetbrains.gis.tileprotocol.TileService.SocketStatus.*
-import jetbrains.gis.tileprotocol.binary.ByteArrayStream
 import jetbrains.gis.tileprotocol.binary.ResponseTileDecoder
 import jetbrains.gis.tileprotocol.json.MapStyleJsonParser
 import jetbrains.gis.tileprotocol.json.RequestFormatter
@@ -94,8 +93,7 @@ class TileService(socketBuilder: SocketBuilder, private val myTheme: String) {
 
         override fun onBinaryMessage(message: ByteArray) {
             try {
-                val decoder = ResponseTileDecoder(ByteArrayStream(message))
-                pendingRequests.poll(decoder.getKey()).success(decoder.getTileLayers())
+                ResponseTileDecoder(message).let { (key, tiles) -> pendingRequests.poll(key).success(tiles) }
             } catch (e: Throwable) {
                 failPending(e)
             }
