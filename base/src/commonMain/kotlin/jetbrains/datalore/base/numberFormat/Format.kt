@@ -42,6 +42,7 @@ internal class Format(private val spec: Spec) {
 
         companion object {
             const val FRACTION_LENGTH = 19
+            val MAX_FRACTION_EXP = 10.0.pow(FRACTION_LENGTH)
         }
     }
 
@@ -75,6 +76,7 @@ internal class Format(private val spec: Spec) {
 
         parts = computeBody(parts, numberInfo)
         parts = applyTrim(parts)
+
         parts = computeSign(parts, numberInfo)
         parts = computePrefix(parts)
         parts = computeSuffix(parts)
@@ -108,17 +110,14 @@ internal class Format(private val spec: Spec) {
     private fun applyGroup(parts: NumberParts): NumberParts {
         val formattedNumber = parts.body
 
-        val intStr = formattedNumber.integerPart
-        val expStr = formattedNumber.exponentPart
-
         val zeroPadding = if (spec.zero) parts.padding else ""
 
-        var fullIntStr = zeroPadding + intStr
-        val valuableLen = intStr.length
-        val fullLen = fullIntStr.length
-        val commas = (ceil(fullLen.toDouble() / 3.0) - 1).toInt()
+        var fullIntStr = zeroPadding + formattedNumber.integerPart
+        val valuableLen = formattedNumber.integerPart.length
+        val fullIntLen = fullIntStr.length
+        val commas = (ceil(fullIntLen.toDouble() / 3.0) - 1).toInt()
 
-        val width = (spec.width - formattedNumber.fractionLength - expStr.length)
+        val width = (spec.width - formattedNumber.fractionLength - formattedNumber.exponentPart.length)
             .coerceAtLeast(valuableLen + commas)
 
         fullIntStr = group(fullIntStr)
@@ -261,26 +260,27 @@ internal class Format(private val spec: Spec) {
 
             val exp = log10(number).toInt()
 
-            return if (exp > NumberInfo.FRACTION_LENGTH) {
-                val integerPart = (number / 10.0.pow(exp)).toLong()
-                NumberInfo(
-                    number,
-                    negative,
-                    integerPart,
-                    0L,
-                    exp
-                )
+            val integerPart: Long
+            val fractionPart: Long
+            val exponentPart: Int?
+
+            if (exp > NumberInfo.FRACTION_LENGTH) {
+                integerPart = (number / 10.0.pow(exp)).toLong()
+                fractionPart = 0L
+                exponentPart = exp
             } else {
-                val integerPart = number.toLong()
-                val fractionPart = ((number - integerPart) * 10.0.pow(NumberInfo.FRACTION_LENGTH)).toLong().absoluteValue
-                NumberInfo(
-                    number,
-                    negative,
-                    integerPart,
-                    fractionPart,
-                    null
-                )
+                integerPart = number.toLong()
+                fractionPart = ((number - integerPart) * NumberInfo.MAX_FRACTION_EXP).toLong().absoluteValue
+                exponentPart = null
             }
+
+            return NumberInfo(
+                number,
+                negative,
+                integerPart,
+                fractionPart,
+                exponentPart
+            )
         }
 
         private fun toExponential(numberInfo: NumberInfo, precision: Int = -1): NumberInfo {
@@ -289,16 +289,14 @@ internal class Format(private val spec: Spec) {
                 return numberInfo.copy(exponent = 0)
             }
 
-            var newInfo = numberInfo
-
-            val e = if (newInfo.integerPart == 0L) {
-                -(newInfo.fractionLeadingZeros + 1)
+            val e = if (numberInfo.integerPart == 0L) {
+                -(numberInfo.fractionLeadingZeros + 1)
             } else {
-                newInfo.integerLength - 1
+                numberInfo.integerLength - 1
             }
             val n = num / 10.0.pow(e)
 
-            newInfo = createNumberInfo(n)
+            var newInfo = createNumberInfo(n)
 
             if (precision > -1) {
                 newInfo = roundToPrecision(newInfo, precision)
@@ -344,13 +342,12 @@ internal class Format(private val spec: Spec) {
                 ""
             }
 
-            val expNumberInfo = createNumberInfo(numberInfo.integerPart + numberInfo.fractionPart / 10.0.pow(NumberInfo.FRACTION_LENGTH))
+            val expNumberInfo = createNumberInfo(numberInfo.integerPart + numberInfo.fractionPart / NumberInfo.MAX_FRACTION_EXP)
 
             if (precision > -1) {
                 val formattedNumber = toFixedString(expNumberInfo, precision)
                 return formattedNumber.copy(exponentPart = exponentString)
             }
-
 
             val integerString = expNumberInfo.integerPart.toString()
             val fractionString = if (expNumberInfo.fractionPart == 0L) "" else expNumberInfo.fractionString
@@ -358,16 +355,16 @@ internal class Format(private val spec: Spec) {
         }
 
         private fun roundToPrecision(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
-            var fraction =
-                ((numberInfo.fractionPart.toDouble() / 10.0.pow(NumberInfo.FRACTION_LENGTH - precision)).roundToLong() *
-                        10.0.pow(NumberInfo.FRACTION_LENGTH - precision)).toLong()
-            if (fraction == 10.0.pow(NumberInfo.FRACTION_LENGTH).toLong()) {
+            val roundExp = NumberInfo.MAX_FRACTION_EXP / 10.0.pow(precision)
+            var fraction = ((numberInfo.fractionPart.toDouble() / roundExp).roundToLong() * roundExp).toLong()
+            if (fraction == NumberInfo.MAX_FRACTION_EXP.toLong()) {
                 fraction = 0
             }
 
             val integerPart = (round(numberInfo.number * 10.0.pow(precision)) / 10.0.pow(precision)).toLong()
 
-            val num = integerPart.toDouble() + fraction.toDouble() / 10.0.pow(NumberInfo.FRACTION_LENGTH)
+            val num = integerPart.toDouble() + fraction.toDouble() / NumberInfo.MAX_FRACTION_EXP
+
             return numberInfo.copy(number = num, fractionPart = fraction, integerPart = integerPart)
         }
 
