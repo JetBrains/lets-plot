@@ -35,18 +35,25 @@ internal class Format(private val spec: Spec) {
             }
 
         val fractionLeadingZeros: Int
-            get() = if (fractionPart != 0L) FRACTION_LENGTH - floor(log10(fractionPart.toDouble())).toInt() - 1 else 1
+            get() = if (fractionPart != 0L) MAX_SUPPORTED_FRACTION_EXP - floor(log10(fractionPart.toDouble())).toInt() - 1 else 1
 
         val integerLength: Int
             get() = integerPart.toString().length
 
+        fun asPercent(): NumberInfo {
+            return createNumberInfo(number * 100)
+        }
+
         companion object {
-            const val FRACTION_LENGTH = 19
-            val MAX_FRACTION_EXP = 10.0.pow(FRACTION_LENGTH)
+            const val MAX_SUPPORTED_FRACTION_EXP = 19 // max fraction length we can format (as any other format library does)
+            val MAX_SUPPORTED_FRACTION_VALUE = 10.0.pow(MAX_SUPPORTED_FRACTION_EXP)
+
+            fun roundWithMul(number: Double, mul: Double) =
+                (round(number / mul) * mul).toLong()
         }
     }
 
-    data class NumberParts(
+    data class Output(
         val body: FormattedNumber = FormattedNumber(),
         val sign: String = "",
         val prefix: String = "",
@@ -72,105 +79,97 @@ internal class Format(private val spec: Spec) {
 
     fun apply(num: Number): String {
         val numberInfo = createNumberInfo(num)
-        var parts = NumberParts()
+        var output = Output()
 
-        parts = computeBody(parts, numberInfo)
-        parts = applyTrim(parts)
+        output = computeBody(output, numberInfo)
+        output = applyTrim(output)
 
-        parts = computeSign(parts, numberInfo)
-        parts = computePrefix(parts)
-        parts = computeSuffix(parts)
+        output = computeSign(output, numberInfo)
+        output = computePrefix(output)
+        output = computeSuffix(output)
 
         if (spec.comma && !spec.zero) {
-            parts = applyGroup(parts)
+            output = applyGroup(output)
         }
 
-        parts = computePadding(parts)
+        output = computePadding(output)
 
         if (spec.comma && spec.zero) {
-            parts = applyGroup(parts)
+            output = applyGroup(output)
         }
 
-        return getAlignedString(parts)
+        return getAlignedString(output)
     }
 
-    private fun getAlignedString(parts: NumberParts): String {
-        return when (spec.align) {
-            "<" -> "${parts.sign}${parts.prefix}${parts.body}${parts.suffix}${parts.padding}"
-            "=" -> "${parts.sign}${parts.prefix}${parts.padding}${parts.body}${parts.suffix}"
-            "^" -> {
-                val stop = parts.padding.length / 2
-                "${parts.padding.slice(0 until stop)}${parts.sign}${parts.prefix}${parts.body}${parts.suffix}${parts.padding.slice(stop until parts.padding.length)}"
-
+    private fun getAlignedString(output: Output): String {
+        with(output) {
+            return when (spec.align) {
+                "<" -> "$sign$prefix$body$suffix$padding"
+                "=" -> "$sign$prefix$padding$body$suffix"
+                "^" -> {
+                    val stop = padding.length / 2
+                    "${padding.slice(0 until stop)}$sign$prefix$body$suffix${padding.slice(stop until output.padding.length)}"
+                }
+                else -> "$padding$sign$prefix$body$suffix"
             }
-            else -> "${parts.padding}${parts.sign}${parts.prefix}${parts.body}${parts.suffix}"
         }
     }
 
-    private fun applyGroup(parts: NumberParts): NumberParts {
-        val formattedNumber = parts.body
+    private fun applyGroup(output: Output): Output {
 
-        val zeroPadding = if (spec.zero) parts.padding else ""
+        val zeroPadding = output.padding.takeIf { spec.zero } ?: ""
 
-        var fullIntStr = zeroPadding + formattedNumber.integerPart
-        val valuableLen = formattedNumber.integerPart.length
-        val fullIntLen = fullIntStr.length
-        val commas = (ceil(fullIntLen.toDouble() / 3.0) - 1).toInt()
+        val body = output.body
+        var fullIntStr = zeroPadding + body.integerPart
+        val commas = (ceil(fullIntStr.length / 3.0) - 1).toInt()
 
-        val width = (spec.width - formattedNumber.fractionLength - formattedNumber.exponentPart.length)
-            .coerceAtLeast(valuableLen + commas)
+        val width = (spec.width - body.fractionLength - body.exponentPart.length)
+            .coerceAtLeast(body.integerPart.length + commas)
 
         fullIntStr = group(fullIntStr)
 
         if (fullIntStr.length > width) {
             fullIntStr = fullIntStr.substring(fullIntStr.length - width)
-            if (fullIntStr[0] == ',') {
+            if (fullIntStr.startsWith(',')) {
                 fullIntStr = "0$fullIntStr"
             }
         }
 
-        val padding = if (spec.zero) "" else parts.padding
-
-        return parts.copy(body = formattedNumber.copy(integerPart = fullIntStr), padding = padding)
+        return output.copy(
+            body = body.copy(integerPart = fullIntStr),
+            padding = "".takeIf { spec.zero } ?: output.padding
+        )
     }
 
-    private fun computeBody(res: NumberParts, numberInfo: NumberInfo): NumberParts {
-        val num = numberInfo.number.absoluteValue
-        val absoluteNumberInfo = createNumberInfo(num)
+    private fun computeBody(res: Output, numberInfo: NumberInfo): Output {
         val formattedNumber = when (spec.type) {
-            "%" -> {
-                val percentNumberInfo = createNumberInfo(num * 100)
-                toFixedString(percentNumberInfo, spec.precision)
-            }
-            "b" -> FormattedNumber(round(num).toLong().toString(2))
-            "c" -> FormattedNumber(num.toString())
-            "d" -> toString(absoluteNumberInfo, 0)
-            "e" -> toString(toExponential(absoluteNumberInfo, spec.precision), spec.precision)
-            "f" -> toFixedString(absoluteNumberInfo, spec.precision)
-            "g" -> toPrecisionString(absoluteNumberInfo, spec.precision)
-            "o" -> FormattedNumber(round(num).toLong().toString(8))
-            "X" -> FormattedNumber(round(num).toLong().toString(16).toUpperCase())
-            "x" -> FormattedNumber(round(num).toLong().toString(16))
+            "%" -> toFixedFormat(numberInfo.asPercent(), spec.precision)
+            "c" -> FormattedNumber(numberInfo.number.toString())
+            "d" -> toSimpleFormat(numberInfo, 0)
+            "e" -> toSimpleFormat(toExponential(numberInfo, spec.precision), spec.precision)
+            "f" -> toFixedFormat(numberInfo, spec.precision)
+            "g" -> toPrecisionFormat(numberInfo, spec.precision)
+            "b" -> FormattedNumber(numberInfo.number.roundToLong().toString(2))
+            "o" -> FormattedNumber(numberInfo.number.roundToLong().toString(8))
+            "X" -> FormattedNumber(numberInfo.number.roundToLong().toString(16).toUpperCase())
+            "x" -> FormattedNumber(numberInfo.number.roundToLong().toString(16))
             else -> throw IllegalArgumentException("Wrong type: ${spec.type}")
         }
         return res.copy(body = formattedNumber)
     }
 
-    private fun applyTrim(res: NumberParts): NumberParts {
-        val formattedNumber = res.body
-        if (!spec.trim || formattedNumber.fractionPart.isEmpty()) return res
+    private fun applyTrim(parts: Output): Output {
+        if (!spec.trim || parts.body.fractionPart.isEmpty()) {
+            return parts
+        }
 
-        val trimmedFraction = formattedNumber.fractionPart.replace("0+\$".toRegex(), "")
-        return res.copy(body = formattedNumber.copy(fractionPart = trimmedFraction))
+        val trimmedFraction = parts.body.fractionPart.replace("0+\$".toRegex(), "")
+        return parts.copy(body = parts.body.copy(fractionPart = trimmedFraction))
     }
 
-    private fun computeSign(parts: NumberParts, numberInfo: NumberInfo): NumberParts {
-        val isBodyZero = if ("boxX".indexOf(spec.type) == -1) {
-            parts.body.integerPart.toLong() == 0L &&
-                    (parts.body.fractionPart.isEmpty() || parts.body.fractionPart.toLong() == 0L)
-        } else {
-            parts.body.integerPart.toLong(16) == 0L
-        }
+    private fun computeSign(parts: Output, numberInfo: NumberInfo): Output {
+        val isBodyZero = parts.body.run { (integerPart.asSequence() + fractionPart.asSequence()).all { it == '0' } }
+
         val isNegative = numberInfo.negative && !isBodyZero
         val signStr = if (isNegative) {
             "-"
@@ -180,7 +179,7 @@ internal class Format(private val spec: Spec) {
         return parts.copy(sign = signStr)
     }
 
-    private fun computePrefix(parts: NumberParts): NumberParts {
+    private fun computePrefix(parts: Output): Output {
         val prefix = when (spec.symbol) {
             "$" -> CURRENCY
             "#" -> if ("boxX".indexOf(spec.type) > -1) "0${spec.type.toLowerCase()}" else ""
@@ -189,15 +188,15 @@ internal class Format(private val spec: Spec) {
         return parts.copy(prefix = prefix)
     }
 
-    private fun computeSuffix(res: NumberParts): NumberParts {
-        val suffix = if (spec.type == "%") PERCENT else ""
+    private fun computeSuffix(res: Output): Output {
+        val suffix = PERCENT.takeIf { spec.type == "%" }.orEmpty()
         return res.copy(suffix = suffix)
     }
 
-    private fun computePadding(parts: NumberParts): NumberParts {
-        val length = parts.sign.length + parts.prefix.length + parts.body.fullLength + parts.suffix.length
+    private fun computePadding(output: Output): Output {
+        val length = output.sign.length + output.prefix.length + output.body.fullLength + output.suffix.length
         val padding = if (length < spec.width) spec.fill.repeat(spec.width - length) else ""
-        return parts.copy(padding = padding)
+        return output.copy(padding = padding)
     }
 
     companion object {
@@ -255,22 +254,21 @@ internal class Format(private val spec: Spec) {
         }
 
         private fun createNumberInfo(num: Number): NumberInfo {
-            val number = num.toDouble()
-            val negative = number < 0.0
-
+            val negative = num.toDouble() < 0.0
+            val number = num.toDouble().absoluteValue
             val exp = log10(number).toInt()
 
             val integerPart: Long
             val fractionPart: Long
             val exponentPart: Int?
 
-            if (exp > NumberInfo.FRACTION_LENGTH) {
+            if (exp > NumberInfo.MAX_SUPPORTED_FRACTION_EXP) { // Long number - to exponential form
                 integerPart = (number / 10.0.pow(exp)).toLong()
-                fractionPart = 0L
+                fractionPart = 0L // integer is too long - drop fraction
                 exponentPart = exp
             } else {
                 integerPart = number.toLong()
-                fractionPart = ((number - integerPart) * NumberInfo.MAX_FRACTION_EXP).toLong().absoluteValue
+                fractionPart = ((number - integerPart) * NumberInfo.MAX_SUPPORTED_FRACTION_VALUE).toLong().absoluteValue
                 exponentPart = null
             }
 
@@ -305,23 +303,24 @@ internal class Format(private val spec: Spec) {
             return newInfo.copy(exponent = e)
         }
 
-        private fun toPrecisionString(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
+        private fun toPrecisionFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
             if (numberInfo.integerPart == 0L) {
                 if (numberInfo.fractionPart == 0L) {
-                    return toFixedString(numberInfo, precision - 1)
+                    return toFixedFormat(numberInfo, precision - 1)
                 }
-                return toFixedString(numberInfo, precision + numberInfo.fractionLeadingZeros)
+                return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
             } else {
                 if (numberInfo.integerLength > precision) {
-                    return toString(toExponential(numberInfo, precision - 1), precision - 1)
+                    return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
                 }
-                return toFixedString(numberInfo, precision - numberInfo.integerLength)
+                return toFixedFormat(numberInfo, precision - numberInfo.integerLength)
             }
         }
 
-
-        private fun toFixedString(numberInfo: NumberInfo, precision: Int = 0): FormattedNumber {
-            if (precision == -1 || precision == 0) return FormattedNumber(round(numberInfo.number).toLong().toString())
+        private fun toFixedFormat(numberInfo: NumberInfo, precision: Int = 0): FormattedNumber {
+            if (precision == -1 || precision == 0) {
+                return FormattedNumber(numberInfo.number.roundToLong().toString())
+            }
 
             val newNumberInfo = roundToPrecision(numberInfo, precision)
 
@@ -334,7 +333,7 @@ internal class Format(private val spec: Spec) {
             return FormattedNumber(newNumberInfo.integerPart.toString(), fractionString)
         }
 
-        private fun toString(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
+        private fun toSimpleFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
             val exponentString = if (numberInfo.exponent != null) {
                 val expSign = if (numberInfo.exponent.sign >= 0) "+" else ""
                 "e$expSign${numberInfo.exponent}"
@@ -342,10 +341,10 @@ internal class Format(private val spec: Spec) {
                 ""
             }
 
-            val expNumberInfo = createNumberInfo(numberInfo.integerPart + numberInfo.fractionPart / NumberInfo.MAX_FRACTION_EXP)
+            val expNumberInfo = createNumberInfo(numberInfo.integerPart + numberInfo.fractionPart / NumberInfo.MAX_SUPPORTED_FRACTION_VALUE)
 
             if (precision > -1) {
-                val formattedNumber = toFixedString(expNumberInfo, precision)
+                val formattedNumber = toFixedFormat(expNumberInfo, precision)
                 return formattedNumber.copy(exponentPart = exponentString)
             }
 
@@ -355,25 +354,26 @@ internal class Format(private val spec: Spec) {
         }
 
         private fun roundToPrecision(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
-            val roundExp = NumberInfo.MAX_FRACTION_EXP / 10.0.pow(precision)
-            var fraction = ((numberInfo.fractionPart.toDouble() / roundExp).roundToLong() * roundExp).toLong()
-            if (fraction == NumberInfo.MAX_FRACTION_EXP.toLong()) {
+            val precisionExp = NumberInfo.MAX_SUPPORTED_FRACTION_VALUE / 10.0.pow(precision)
+            var fraction = ((numberInfo.fractionPart.toDouble() / precisionExp).roundToLong() * precisionExp).toLong()
+            if (fraction == NumberInfo.MAX_SUPPORTED_FRACTION_VALUE.toLong()) {
                 fraction = 0
             }
 
             val integerPart = (round(numberInfo.number * 10.0.pow(precision)) / 10.0.pow(precision)).toLong()
 
-            val num = integerPart.toDouble() + fraction.toDouble() / NumberInfo.MAX_FRACTION_EXP
+            val num = integerPart.toDouble() + fraction.toDouble() / NumberInfo.MAX_SUPPORTED_FRACTION_VALUE
 
             return numberInfo.copy(number = num, fractionPart = fraction, integerPart = integerPart)
         }
 
         private fun group(str: String) = str
             .reversed() // 1234 -> 4321
-            .asSequence()
+            .asSequence() // [4,3,2,1]
             .chunked(GROUP_SIZE) // [[4,3,2], [1]]
             .map { it.joinToString("") } // [[432], [1]]
             .joinToString(COMMA) // 432,1
             .reversed() // 1,234
     }
 }
+
