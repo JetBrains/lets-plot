@@ -121,7 +121,7 @@ internal class Format(private val spec: Spec) {
 
         val body = output.body
         var fullIntStr = zeroPadding + body.integerPart
-        val commas = (ceil(fullIntStr.length / 3.0) - 1).toInt()
+        val commas = (ceil(fullIntStr.length / GROUP_SIZE.toDouble()) - 1).toInt()
 
         val width = (spec.width - body.fractionLength - body.exponentPart.length)
             .coerceAtLeast(body.integerPart.length + commas)
@@ -158,17 +158,17 @@ internal class Format(private val spec: Spec) {
         return res.copy(body = formattedNumber)
     }
 
-    private fun applyTrim(parts: Output): Output {
-        if (!spec.trim || parts.body.fractionPart.isEmpty()) {
-            return parts
+    private fun applyTrim(output: Output): Output {
+        if (!spec.trim || output.body.fractionPart.isEmpty()) {
+            return output
         }
 
-        val trimmedFraction = parts.body.fractionPart.replace("0+\$".toRegex(), "")
-        return parts.copy(body = parts.body.copy(fractionPart = trimmedFraction))
+        val trimmedFraction = output.body.fractionPart.replace("0+\$".toRegex(), "")
+        return output.copy(body = output.body.copy(fractionPart = trimmedFraction))
     }
 
-    private fun computeSign(parts: Output, numberInfo: NumberInfo): Output {
-        val isBodyZero = parts.body.run { (integerPart.asSequence() + fractionPart.asSequence()).all { it == '0' } }
+    private fun computeSign(output: Output, numberInfo: NumberInfo): Output {
+        val isBodyZero = output.body.run { (integerPart.asSequence() + fractionPart.asSequence()).all { it == '0' } }
 
         val isNegative = numberInfo.negative && !isBodyZero
         val signStr = if (isNegative) {
@@ -176,16 +176,16 @@ internal class Format(private val spec: Spec) {
         } else {
             if (spec.sign != "-") spec.sign else ""
         }
-        return parts.copy(sign = signStr)
+        return output.copy(sign = signStr)
     }
 
-    private fun computePrefix(parts: Output): Output {
+    private fun computePrefix(output: Output): Output {
         val prefix = when (spec.symbol) {
             "$" -> CURRENCY
             "#" -> if ("boxX".indexOf(spec.type) > -1) "0${spec.type.toLowerCase()}" else ""
             else -> ""
         }
-        return parts.copy(prefix = prefix)
+        return output.copy(prefix = prefix)
     }
 
     private fun computeSuffix(res: Output): Output {
