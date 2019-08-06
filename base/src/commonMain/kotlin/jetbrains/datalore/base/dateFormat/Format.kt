@@ -1,6 +1,8 @@
 package jetbrains.datalore.base.dateFormat
 
+import jetbrains.datalore.base.datetime.Date
 import jetbrains.datalore.base.datetime.DateTime
+import jetbrains.datalore.base.datetime.Time
 
 class Format(private val spec: List<SpecPart>) {
 
@@ -19,6 +21,28 @@ class Format(private val spec: List<SpecPart>) {
     }
 
     fun apply(dateTime: DateTime): String = spec.joinToString("") { it.exec(dateTime) }
+
+    fun apply(date: Date): String =
+        spec
+            .filter {
+                when {
+                    (it is PatternSpecPart && it.pattern.type == Pattern.DATE_TYPE) -> true
+                    it !is PatternSpecPart -> true
+                    else -> false
+                }
+            }
+            .joinToString("") { it.exec(DateTime(date)) }
+
+    fun apply(time: Time): String =
+        spec
+            .filter {
+                when {
+                    (it is PatternSpecPart && it.pattern.type == Pattern.TIME_TYPE) -> true
+                    it !is PatternSpecPart -> true
+                    else -> false
+                }
+            }
+            .joinToString("") { it.exec(DateTime(Date.EPOCH, time)) }
 
     companion object {
         fun parse(str: String): List<SpecPart> {

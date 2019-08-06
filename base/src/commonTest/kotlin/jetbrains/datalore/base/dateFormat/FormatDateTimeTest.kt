@@ -7,7 +7,7 @@ import jetbrains.datalore.base.datetime.Time
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class FormatTest {
+class FormatDateTimeTest {
     private val date = Date(6, Month.AUGUST, 2019)
     private val time = Time(4, 46, 35)
     private val dateTime = DateTime(date, time)
