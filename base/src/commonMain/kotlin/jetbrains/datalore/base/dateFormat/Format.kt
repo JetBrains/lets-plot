@@ -18,29 +18,6 @@ class Format(private val spec: List<SpecPart>) {
         }
     }
 
-    enum class Pattern(val string: String) {
-        SECOND("%S"),
-        MINUTE("%M"),
-        HOUR_12("%l"),
-        HOUR_12_LEADING_ZERO("%I"),
-        HOUR_24("%H"),
-        DAY_OF_WEEK_ABBR("%a"),
-        DAY_OF_WEEK_FULL("%A"),
-        DAY_OF_MONTH("%e"),
-        DAY_OF_MONTH_LEADING_ZERO("%d"),
-        MONTH_NUMERIC("%m"),
-        MONTH_ABBR("%b"),
-        MONTH_FULL("%B"),
-        YEAR_SHORT("%y"),
-        YEAR_FULL("%Y");
-
-        companion object {
-            val PATTERN_REGEX = "(%[SMlIHaAedmbByY])".toRegex()
-
-            fun patternByString(patternString: String) = values().find { it.string == patternString }
-        }
-    }
-
     fun apply(dateTime: DateTime): String = spec.joinToString("") { it.exec(dateTime) }
 
     companion object {
@@ -75,18 +52,22 @@ class Format(private val spec: List<SpecPart>) {
                 Pattern.HOUR_12 -> getHours12(dateTime).toString()
                 Pattern.HOUR_12_LEADING_ZERO -> leadZero(getHours12(dateTime))
                 Pattern.HOUR_24 -> leadZero(getHours24(dateTime))
+                Pattern.MERIDIAN_LOWER -> getMeridian(dateTime)
+                Pattern.MERIDIAN_UPPER -> getMeridian(dateTime).toUpperCase()
+                Pattern.DAY_OF_WEEK -> dateTime.weekDay.ordinal.toString()
                 Pattern.DAY_OF_WEEK_ABBR -> DateLocale.weekDayAbbr[dateTime.weekDay] ?: ""
                 Pattern.DAY_OF_WEEK_FULL -> DateLocale.weekDayFull[dateTime.weekDay] ?: ""
                 Pattern.DAY_OF_MONTH -> dateTime.day.toString()
                 Pattern.DAY_OF_MONTH_LEADING_ZERO -> leadZero(dateTime.day)
-                Pattern.MONTH_NUMERIC -> dateTime.month?.ordinal().toString()
+                Pattern.DAY_OF_THE_YEAR -> leadZero(dateTime.date.daysFromYearStart(), 3)
+                Pattern.MONTH -> leadZero((dateTime.month?.ordinal() ?: 0) + 1)
                 Pattern.MONTH_ABBR -> DateLocale.monthAbbr[dateTime.month] ?: ""
                 Pattern.MONTH_FULL -> DateLocale.monthFull[dateTime.month] ?: ""
                 Pattern.YEAR_SHORT -> dateTime.year.toString().substring(2)
                 Pattern.YEAR_FULL -> dateTime.year.toString()
             }
 
-        private fun leadZero(value: Int): String = value.toString().padStart(2, '0')
+        private fun leadZero(value: Int, length: Int = 2): String = value.toString().padStart(length, '0')
 
         private fun getHours12(dateTime: DateTime): Int {
             val hours = dateTime.hours
@@ -102,5 +83,14 @@ class Format(private val spec: List<SpecPart>) {
                 0 -> 24
                 else -> dateTime.hours
             }
+
+        private fun getMeridian(dateTime: DateTime): String {
+            val hours = dateTime.hours
+            return when {
+                hours == 24 -> "am"
+                hours <= 12 -> "am"
+                else -> "pm"
+            }
+        }
     }
 }
