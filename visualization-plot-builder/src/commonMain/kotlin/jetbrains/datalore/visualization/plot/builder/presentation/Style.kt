@@ -1,5 +1,11 @@
 package jetbrains.datalore.visualization.plot.builder.presentation
 
+/**
+ * Duplicating stylesheet for JavaFX platform is defined in
+ * visualization-plot-builder/src/jvmMain/resources/svgMapper/jfx/plot.css
+ *
+ * ToDo: revert this code back to plane readable text.
+ */
 object Style {
     const val JFX_PLOT_STYLESHEET = "/svgMapper/jfx/plot.css"
 
@@ -19,7 +25,7 @@ object Style {
     const val LEGEND_TITLE = "legend-title"
 
     const val PLOT_GLASS_PANE = "plt-glass-pane"
-    const val PLOT_TOOLTIP = "plt-tooltip"
+    private const val PLOT_TOOLTIP = "plt-tooltip"
 
     val CSS = CssResourceBuilder().add(SelectorBuilder(PLOT_CONTAINER).fontFamily(Defaults.FONT_FAMILY_NORMAL)).add(
         SelectorBuilder(SelectorType.TEXT).fontSize(

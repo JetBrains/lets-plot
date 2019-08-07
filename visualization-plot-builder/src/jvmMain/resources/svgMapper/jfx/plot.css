@@ -3,6 +3,8 @@ Stylesheet for plot mapping to JavaFX platform
 
 JavaFX CSS Reference Guide
 https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html
+
+None JavaFX platforms use SVG embedded stylesheet defined in Style.kt
 */
 
 .plt-container {
