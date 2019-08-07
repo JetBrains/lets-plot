@@ -4,29 +4,28 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
+import jetbrains.livemap.projections.ProjectionUtil.safeDoubleVector
 import kotlin.math.*
 
 internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection {
 
-    private val myN: Double
-    private val myF: Double
+    private val n: Double
+    private val f: Double
 
     init {
         val cy0 = cos(y0)
-        myN = if (y0 == y1) sin(y0) else ln(cy0 / cos(y1)) / ln(tany(y1) / tany(y0))
-        myF = cy0 * tany(y0).pow(myN) / myN
+        n = if (y0 == y1) sin(y0) else ln(cy0 / cos(y1)) / ln(tany(y1) / tany(y0))
+        f = cy0 * tany(y0).pow(n) / n
     }
 
 
-    override fun validRect(): DoubleRectangle {
-        return VALID_RECTANGLE
-    }
+    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
 
     override fun project(v: DoubleVector): DoubleVector {
         val x = toRadians(v.x)
         var y = toRadians(v.y)
 
-        if (myF > 0) {
+        if (f > 0) {
             if (y < -PI / 2 + EPSILON) {
                 y = -PI / 2 + EPSILON
             }
@@ -36,30 +35,22 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
             }
         }
 
-        val r = myF / tany(y).pow( myN)
+        val r = f / tany(y).pow( n)
 
-        val px = r * sin(myN * x)
-        val py = myF - r * cos(myN * x)
-        return if (px.isNaN() || py.isNaN()) {
-            error("Value for DoubleVector isNaN px = $px and py = $py")
-        } else {
-            DoubleVector(px, py)
-        }
+        val px = r * sin(n * x)
+        val py = f - r * cos(n * x)
+        return safeDoubleVector(px, py)
     }
 
     override fun invert(v: DoubleVector): DoubleVector {
         val x = v.x
         val y = v.y
-        val fy = myF - y
-        val r = myN.sign * sqrt(x * x + fy * fy)
+        val fy = f - y
+        val r = n.sign * sqrt(x * x + fy * fy)
 
-        val ix = toDegrees(atan2(x, abs(fy)) / myN * fy.sign)
-        val iy = toDegrees(2 * atan((myF / r).pow(1 / myN)) - PI / 2)
-        return if (ix.isNaN() || iy.isNaN()) {
-            error("Value for DoubleVector isNaN ix = $ix and iy = $iy")
-        } else {
-            DoubleVector(ix, iy)
-        }
+        val ix = toDegrees(atan2(x, abs(fy)) / n * fy.sign)
+        val iy = toDegrees(2 * atan((f / r).pow(1 / n)) - PI / 2)
+        return safeDoubleVector(ix, iy)
     }
 
     companion object {

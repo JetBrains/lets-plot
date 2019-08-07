@@ -135,13 +135,12 @@ class MultiMapHelper(
         return result
     }
 
-    override fun getCells(viewRect: DoubleRectangle, cellLevel: Int): Set<CellKey> {
-        val visibleRects = splitRect(viewRect)
-
-        val cellKeys = HashSet<CellKey>()
-        visibleRects.forEach { visibleRect -> cellKeys.addAll(calculateCellKeys(myMapRect, visibleRect, cellLevel)) }
-        return cellKeys
-    }
+    override fun getCells(viewRect: DoubleRectangle, cellLevel: Int): Set<CellKey> =
+        HashSet<CellKey>().apply {
+            splitRect(viewRect).forEach {
+                this.addAll(calculateCellKeys(myMapRect, it, cellLevel))
+            }
+        }
 
     private fun splitRect(rect: DoubleRectangle): List<DoubleRectangle> {
         val xRanges = splitRange(rect.xRange(), myMapRect.xRange(), myLoopX)

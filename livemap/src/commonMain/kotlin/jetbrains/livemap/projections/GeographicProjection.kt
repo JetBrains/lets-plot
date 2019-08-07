@@ -7,17 +7,11 @@ import jetbrains.datalore.base.projectionGeometry.GeoUtils.limitLon
 
 internal class GeographicProjection : GeoProjection {
 
-    override fun project(v: DoubleVector): DoubleVector {
-        return DoubleVector(limitLon(v.x), limitLat(v.y))
-    }
+    override fun project(v: DoubleVector): DoubleVector = DoubleVector(limitLon(v.x), limitLat(v.y))
 
-    override fun invert(v: DoubleVector): DoubleVector {
-        return DoubleVector(limitLon(v.x), limitLat(v.y))
-    }
+    override fun invert(v: DoubleVector): DoubleVector = DoubleVector(limitLon(v.x), limitLat(v.y))
 
-    override fun validRect(): DoubleRectangle {
-        return VALID_RECTANGLE
-    }
+    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
 
     companion object {
         private val VALID_RECTANGLE = DoubleRectangle.span(

@@ -4,13 +4,12 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
+import jetbrains.livemap.projections.ProjectionUtil.safeDoubleVector
 import kotlin.math.*
 
 internal abstract class AzimuthalBaseProjection : GeoProjection {
 
-    override fun validRect(): DoubleRectangle {
-        return VALID_RECTANGLE
-    }
+    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
 
     override fun project(v: DoubleVector): DoubleVector {
 
@@ -22,11 +21,8 @@ internal abstract class AzimuthalBaseProjection : GeoProjection {
 
         val px = k * cy * sin(x)
         val py = k * sin(y)
-        return if (px.isNaN() || py.isNaN()) {
-            error("Value for DoubleVector isNaN px = $px and py = $py")
-        } else {
-            DoubleVector(px, py)
-        }
+
+        return safeDoubleVector(px, py)
     }
 
     override fun invert(v: DoubleVector): DoubleVector {
@@ -40,11 +36,8 @@ internal abstract class AzimuthalBaseProjection : GeoProjection {
 
         val ix = toDegrees(atan2(x * sc, z * cc))
         val iy = toDegrees(if (z == 0.0) 0.0 else asin(y * sc / z))
-        return if (ix.isNaN() || iy.isNaN()) {
-            error("Value for DoubleVector isNaN ix = $ix and iy = $iy")
-        } else {
-            DoubleVector(ix, iy)
-        }
+
+        return safeDoubleVector(ix, iy)
     }
 
     protected abstract fun scale(cxcy: Double): Double

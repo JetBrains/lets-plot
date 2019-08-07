@@ -184,4 +184,12 @@ object ProjectionUtil {
         }
         return res
     }
+
+    fun safeDoubleVector(x: Double, y: Double): DoubleVector {
+        return if (x.isNaN() || y.isNaN()) {
+            error("Value for DoubleVector isNaN x = $x and y = $y")
+        } else {
+            DoubleVector(x, y)
+        }
+    }
 }

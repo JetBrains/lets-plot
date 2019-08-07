@@ -10,23 +10,19 @@ import jetbrains.datalore.base.projectionGeometry.MercatorUtils.VALID_LONGITUDE_
 
 internal class MercatorProjection : GeoProjection {
 
-    override fun project(v: DoubleVector): DoubleVector {
-        return DoubleVector(
+    override fun project(v: DoubleVector) =
+        DoubleVector(
             MercatorUtils.getMercatorX(limitLon(v.x)),
             MercatorUtils.getMercatorY(limitLat(v.y))
         )
-    }
 
-    override fun invert(v: DoubleVector): DoubleVector {
-        return DoubleVector(
+    override fun invert(v: DoubleVector) =
+        DoubleVector(
             limitLon(MercatorUtils.getLongitude(v.x)),
             limitLat(MercatorUtils.getLatitude(v.y))
         )
-    }
 
-    override fun validRect(): DoubleRectangle {
-        return VALID_RECTANGLE
-    }
+    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
 
     companion object {
         private val VALID_RECTANGLE = DoubleRectangle.span(
