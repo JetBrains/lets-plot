@@ -68,8 +68,8 @@ internal class ProjectionCoordProvider private constructor(private val myProject
                 projection: Projection, projectionInverse: (Double) -> Double,
                 scaleMapper: (Double?) -> Double?): (Double?) -> Double? {
             return { v ->
-                val projected = projection.apply(v)
-                val unProjected = projectionInverse(projected!!)
+                val projected = projection.apply(v!!)
+                val unProjected = projectionInverse(projected)
                 scaleMapper(unProjected)
             }
         }
