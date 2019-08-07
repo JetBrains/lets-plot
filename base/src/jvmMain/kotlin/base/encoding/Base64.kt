@@ -1,5 +1,6 @@
 package jetbrains.datalore.base.encoding
 
+// ToDo: just use java.util Base64.getDecoder().decode
 actual object Base64 {
     private const val ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
     private val toInt = IntArray(128)

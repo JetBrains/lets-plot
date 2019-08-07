@@ -2,6 +2,8 @@ package jetbrains.datalore.visualization.plot.common.base64
 
 /**
  * Used to replace guava's BaseEncoding
+ *
+ * ToDo: use `common` Base64
  */
 object JavaBase64 {
 
