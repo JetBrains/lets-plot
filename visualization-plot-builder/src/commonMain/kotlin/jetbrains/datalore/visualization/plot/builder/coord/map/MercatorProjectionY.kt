@@ -6,7 +6,7 @@ import jetbrains.datalore.base.projectionGeometry.MercatorUtils.getMercatorY
 import jetbrains.datalore.visualization.plot.base.coord.Projection
 
 class MercatorProjectionY : Projection {
-    override fun apply(v: Double?): Double? {
+    override fun apply(v: Double): Double {
         return getMercatorY(v)
     }
 

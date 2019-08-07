@@ -22,6 +22,7 @@ kotlin {
                 implementation project(':base')
                 implementation project(':visualization-plot-base')
                 implementation project(':visualization-base-canvas')
+                implementation project(':gis')
             }
         }
         commonTest {
