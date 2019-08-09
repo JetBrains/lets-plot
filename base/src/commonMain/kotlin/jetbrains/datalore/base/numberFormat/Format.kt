@@ -47,9 +47,6 @@ internal class Format(private val spec: Spec) {
         companion object {
             const val MAX_SUPPORTED_FRACTION_EXP = 19 // max fraction length we can format (as any other format library does)
             val MAX_SUPPORTED_FRACTION_VALUE = 10.0.pow(MAX_SUPPORTED_FRACTION_EXP)
-
-            fun roundWithMul(number: Double, mul: Double) =
-                (round(number / mul) * mul).toLong()
         }
     }
 
