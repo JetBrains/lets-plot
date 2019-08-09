@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.base.event.MouseEvent
+import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -13,7 +14,6 @@ import jetbrains.datalore.visualization.base.svg.SvgCssResource
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec.*
 import jetbrains.datalore.visualization.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipLayer
 import jetbrains.datalore.visualization.plot.builder.presentation.Style

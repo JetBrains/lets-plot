@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.base.canvas
 
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.canvas.CanvasControl.AnimationEventHandler
+import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationEventHandler
 
 object CanvasControlUtil {
     fun drawLater(canvasControl: CanvasControl, renderer: () -> Unit) {

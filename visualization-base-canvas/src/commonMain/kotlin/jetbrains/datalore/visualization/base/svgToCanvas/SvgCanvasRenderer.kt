@@ -6,6 +6,7 @@ import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.base.canvas.CanvasControlUtil.drawLater
@@ -17,7 +18,7 @@ import jetbrains.datalore.visualization.base.svg.event.SvgAttributeEvent
 import jetbrains.datalore.visualization.base.svg.slim.CanvasAware
 import jetbrains.datalore.visualization.base.svg.slim.CanvasContext
 
-class SvgCanvasRenderer(private val svgRoot: SvgElement, private val canvasControl: CanvasControl) : CanvasControl.AnimationEventHandler, Disposable {
+class SvgCanvasRenderer(private val svgRoot: SvgElement, private val canvasControl: CanvasControl) : AnimationEventHandler, Disposable {
     private val mainCanvas = canvasControl.createCanvas(canvasControl.size)
     private val virtualCanvas = canvasControl.createCanvas(canvasControl.size)
     private val animationTimer = canvasControl.createAnimationTimer(this)

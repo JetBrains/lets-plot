@@ -1,5 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotContainer
 
+import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_LEFT
+import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_MOVED
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -10,7 +12,6 @@ import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.demoUtils.swing.SwingDemoFactory
-import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 import java.awt.Color
 import java.awt.Dimension
@@ -105,7 +106,7 @@ object PlotResizeDemoUtil {
             override fun mouseExited(e: MouseEvent) {
                 super.mouseExited(e)
                 plotEdt {
-                    plot.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
+                    plot.mouseEventPeer.dispatch(MOUSE_LEFT, AwtEventUtil.translate(e))
                 }
             }
         })
@@ -113,7 +114,7 @@ object PlotResizeDemoUtil {
             override fun mouseMoved(e: MouseEvent) {
                 super.mouseMoved(e)
                 plotEdt {
-                    plot.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
+                    plot.mouseEventPeer.dispatch(MOUSE_MOVED, AwtEventUtil.translate(e))
                 }
             }
         })

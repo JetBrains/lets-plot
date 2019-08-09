@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.base.event
+package jetbrains.datalore.base.event
 
 enum class MouseEventSpec {
     MOUSE_ENTERED,

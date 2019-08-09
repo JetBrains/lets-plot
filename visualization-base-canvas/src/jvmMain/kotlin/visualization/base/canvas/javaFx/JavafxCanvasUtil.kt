@@ -4,6 +4,7 @@ import javafx.application.Platform
 import javafx.scene.Node
 import javafx.scene.SnapshotParameters
 import javafx.scene.canvas.Canvas
+import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
@@ -12,21 +13,25 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.SimpleAsync
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.KeyModifiers
+import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec
+import java.io.ByteArrayInputStream
+import java.io.IOException
+import java.nio.charset.StandardCharsets
+import java.util.*
 
 internal object JavafxCanvasUtil {
     private val EVENT_SPEC_MAP = mapOf(
-            EventSpec.MOUSE_ENTERED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_ENTERED),
-            EventSpec.MOUSE_LEFT to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_EXITED),
-            EventSpec.MOUSE_MOVED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_MOVED),
-            EventSpec.MOUSE_DRAGGED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_DRAGGED),
-            EventSpec.MOUSE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED) { e -> e.clickCount % 2 == 1 },
-            EventSpec.MOUSE_DOUBLE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED) { e -> e.clickCount % 2 == 0 },
-            EventSpec.MOUSE_PRESSED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_PRESSED),
-            EventSpec.MOUSE_RELEASED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_RELEASED))
+            MouseEventSpec.MOUSE_ENTERED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_ENTERED),
+            MouseEventSpec.MOUSE_LEFT to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_EXITED),
+            MouseEventSpec.MOUSE_MOVED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_MOVED),
+            MouseEventSpec.MOUSE_DRAGGED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_DRAGGED),
+            MouseEventSpec.MOUSE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED) { e -> e.clickCount % 2 == 1 },
+            MouseEventSpec.MOUSE_DOUBLE_CLICKED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_CLICKED) { e -> e.clickCount % 2 == 0 },
+            MouseEventSpec.MOUSE_PRESSED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_PRESSED),
+            MouseEventSpec.MOUSE_RELEASED to eventOptions(JavafxEventPeer.JavafxEventSpec.MOUSE_RELEASED))
 
     private val MOUSE_BUTTON_MAP = mapOf(
             MouseButton.NONE to Button.NONE,
@@ -71,7 +76,7 @@ internal object JavafxCanvasUtil {
 
     fun addMouseEventHandler(
             eventPeer: JavafxEventPeer,
-            eventSpec: EventSpec,
+            eventSpec: MouseEventSpec,
             eventHandler: EventHandler<jetbrains.datalore.base.event.MouseEvent>
     ): Registration {
         val eventOptions = EVENT_SPEC_MAP[eventSpec]
@@ -83,6 +88,20 @@ internal object JavafxCanvasUtil {
                         }
                     }
                 })
+    }
+
+    fun imagePngBase64ToImage(dataUrl: String): Image {
+        val mediaType = "data:image/png;base64,"
+        val imageString = dataUrl.replace(mediaType, "")
+
+        val bytes = imageString.toByteArray(StandardCharsets.UTF_8)
+        val byteArrayInputStream = ByteArrayInputStream(bytes)
+
+        try {
+            Base64.getDecoder().wrap(byteArrayInputStream).use { wrap -> return Image(wrap) }
+        } catch (e: IOException) {
+            throw IllegalStateException(e)
+        }
     }
 
     private fun createMouseEvent(e: MouseEvent): jetbrains.datalore.base.event.MouseEvent {

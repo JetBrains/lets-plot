@@ -2,23 +2,23 @@ package jetbrains.datalore.visualization.base.canvas.awt
 
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.KeyModifiers
+import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.function.Predicate
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.canvas.CanvasControl.EventSpec
 import jetbrains.datalore.visualization.base.canvas.awt.AwtEventPeer.AwtEventSpec
 import java.awt.event.MouseEvent
 
 internal object AwtCanvasUtil {
     private val EVENT_SPEC_MAP = mapOf(
-            EventSpec.MOUSE_ENTERED to eventOptions(AwtEventSpec.MOUSE_ENTERED),
-            EventSpec.MOUSE_LEFT to eventOptions(AwtEventSpec.MOUSE_EXITED),
-            EventSpec.MOUSE_MOVED to eventOptions(AwtEventSpec.MOUSE_MOVED),
-            EventSpec.MOUSE_DRAGGED to eventOptions(AwtEventSpec.MOUSE_DRAGGED),
-            EventSpec.MOUSE_CLICKED to eventOptions(AwtEventSpec.MOUSE_CLICKED) { e -> e.clickCount % 2 == 1 },
-            EventSpec.MOUSE_DOUBLE_CLICKED to eventOptions(AwtEventSpec.MOUSE_CLICKED) { e -> e.clickCount % 2 == 0 },
-            EventSpec.MOUSE_PRESSED to eventOptions(AwtEventSpec.MOUSE_PRESSED),
-            EventSpec.MOUSE_RELEASED to eventOptions(AwtEventSpec.MOUSE_RELEASED)
+            MouseEventSpec.MOUSE_ENTERED to eventOptions(AwtEventSpec.MOUSE_ENTERED),
+            MouseEventSpec.MOUSE_LEFT to eventOptions(AwtEventSpec.MOUSE_EXITED),
+            MouseEventSpec.MOUSE_MOVED to eventOptions(AwtEventSpec.MOUSE_MOVED),
+            MouseEventSpec.MOUSE_DRAGGED to eventOptions(AwtEventSpec.MOUSE_DRAGGED),
+            MouseEventSpec.MOUSE_CLICKED to eventOptions(AwtEventSpec.MOUSE_CLICKED) { e -> e.clickCount % 2 == 1 },
+            MouseEventSpec.MOUSE_DOUBLE_CLICKED to eventOptions(AwtEventSpec.MOUSE_CLICKED) { e -> e.clickCount % 2 == 0 },
+            MouseEventSpec.MOUSE_PRESSED to eventOptions(AwtEventSpec.MOUSE_PRESSED),
+            MouseEventSpec.MOUSE_RELEASED to eventOptions(AwtEventSpec.MOUSE_RELEASED)
     )
 
     private val MOUSE_BUTTON_MAP = mapOf(
@@ -30,7 +30,7 @@ internal object AwtCanvasUtil {
 
     fun addMouseEventHandler(
             eventPeer: AwtEventPeer,
-            eventSpec: EventSpec,
+            eventSpec: MouseEventSpec,
             eventHandler: EventHandler<jetbrains.datalore.base.event.MouseEvent>
     ): Registration {
         val eventOptions = EVENT_SPEC_MAP[eventSpec]

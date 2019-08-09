@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
+import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.event.MouseEventSource
 import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider.LivemapData
 import jetbrains.datalore.visualization.plot.base.geom.util.GenericLegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
@@ -31,11 +31,11 @@ class LivemapGeom(private val myDisplayMode: DisplayMode) : Geom {
     }
 
     fun createCanvasFigure(
-            aesthetics: Aesthetics,
-            dataAccess: MappedDataAccess,
-            bounds: DoubleRectangle,
-            eventSource: MouseEventSource,
-            layers: List<LivemapLayerData>
+        aesthetics: Aesthetics,
+        dataAccess: MappedDataAccess,
+        bounds: DoubleRectangle,
+        eventSource: MouseEventSource,
+        layers: List<LivemapLayerData>
     ): LivemapData {
         return myMapProvider!!.createLivemap(aesthetics, dataAccess, bounds, eventSource, layers)
     }

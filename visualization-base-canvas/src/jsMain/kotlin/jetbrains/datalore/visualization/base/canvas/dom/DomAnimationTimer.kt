@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.base.canvas.dom
 
 import jetbrains.datalore.base.js.dom.DomElement
 import jetbrains.datalore.base.js.dom.DomWindow
-import jetbrains.datalore.visualization.base.canvas.CanvasControl.AnimationTimer
+import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationTimer
 
 internal abstract class DomAnimationTimer(private val myElement: DomElement) : AnimationTimer {
     private var myHandle: Int? = null
