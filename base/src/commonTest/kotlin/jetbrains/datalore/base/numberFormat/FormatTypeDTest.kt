@@ -5,59 +5,6 @@ import kotlin.test.assertEquals
 
 class FormatTypeDTest {
     @Test
-    fun zeroFill() {
-        val f = Format("08d")
-        assertEquals("00000000", f.apply(0))
-        assertEquals("00000042", f.apply(42))
-        assertEquals("42000000", f.apply(42000000))
-        assertEquals("420000000", f.apply(420000000))
-
-        assertEquals("-0000004", f.apply(-4))
-        assertEquals("-0000042", f.apply(-42))
-        assertEquals("-4200000", f.apply(-4200000))
-        assertEquals("-42000000", f.apply(-42000000))
-    }
-
-    @Test
-    fun spaceFill() {
-        val f = Format("8d")
-        assertEquals("       0", f.apply(0))
-        assertEquals("      42", f.apply(42))
-        assertEquals("42000000", f.apply(42000000))
-        assertEquals("420000000", f.apply(420000000))
-        assertEquals("      -4", f.apply(-4))
-        assertEquals("     -42", f.apply(-42))
-        assertEquals("-4200000", f.apply(-4200000))
-        assertEquals("-42000000", f.apply(-42000000))
-    }
-
-    @Test
-    fun underscoreFill() {
-        val f = Format("_>8d")
-        assertEquals("_______0", f.apply(0))
-        assertEquals("______42", f.apply(42))
-        assertEquals("42000000", f.apply(42000000))
-        assertEquals("420000000", f.apply(420000000))
-        assertEquals("______-4", f.apply(-4))
-        assertEquals("_____-42", f.apply(-42))
-        assertEquals("-4200000", f.apply(-4200000))
-        assertEquals("-42000000", f.apply(-42000000))
-    }
-
-    @Test
-    fun zeroFillWithSignAndGroup() {
-        val f = Format("+08,d")
-        assertEquals("+0,000,000", f.apply(0))
-        assertEquals("+0,000,042", f.apply(42))
-        assertEquals("+42,000,000", f.apply(42000000))
-        assertEquals("+420,000,000", f.apply(420000000))
-        assertEquals("-0,000,004", f.apply(-4))
-        assertEquals("-0,000,042", f.apply(-42))
-        assertEquals("-4,200,000", f.apply(-4200000))
-        assertEquals("-42,000,000", f.apply(-42000000))
-    }
-
-    @Test
     fun alwaysUsesZeroPrecision() {
         val f = Format(".2d")
         assertEquals("0", f.apply(0))
@@ -123,55 +70,6 @@ class FormatTypeDTest {
     }
 
     @Test
-    fun alignLeft() {
-        assertEquals("0", Format("<1,d").apply(0))
-        assertEquals("0 ", Format("<2,d").apply(0))
-        assertEquals("0  ", Format("<3,d").apply(0))
-        assertEquals("0    ", Format("<5,d").apply(0))
-        assertEquals("0       ", Format("<8,d").apply(0))
-        assertEquals("0            ", Format("<13,d").apply(0))
-        assertEquals("0                    ", Format("<21,d").apply(0))
-    }
-
-    @Test
-    fun alignRight() {
-        assertEquals("0", Format(">1,d").apply(0))
-        assertEquals(" 0", Format(">2,d").apply(0))
-        assertEquals("  0", Format(">3,d").apply(0))
-        assertEquals("    0", Format(">5,d").apply(0))
-        assertEquals("       0", Format(">8,d").apply(0))
-        assertEquals("            0", Format(">13,d").apply(0))
-        assertEquals("                    0", Format(">21,d").apply(0))
-        assertEquals("                1,000", Format(">21,d").apply(1000))
-        assertEquals("                1e+21", Format(">21,d").apply(1e21))
-    }
-
-    @Test
-    fun alignCenter() {
-        assertEquals("0", Format("^1,d").apply(0))
-        assertEquals("0 ", Format("^2,d").apply(0))
-        assertEquals(" 0 ", Format("^3,d").apply(0))
-        assertEquals("  0  ", Format("^5,d").apply(0))
-        assertEquals("   0    ", Format("^8,d").apply(0))
-        assertEquals("      0      ", Format("^13,d").apply(0))
-        assertEquals("          0          ", Format("^21,d").apply(0))
-        assertEquals("        1,000        ", Format("^21,d").apply(1000))
-        assertEquals("        1e+21        ", Format("^21,d").apply(1e21))
-    }
-
-    @Test
-    fun padAfterSign() {
-        assertEquals("+0", Format("=+1,d").apply(0))
-        assertEquals("+0", Format("=+2,d").apply(0))
-        assertEquals("+ 0", Format("=+3,d").apply(0))
-        assertEquals("+   0", Format("=+5,d").apply(0))
-        assertEquals("+      0", Format("=+8,d").apply(0))
-        assertEquals("+           0", Format("=+13,d").apply(0))
-        assertEquals("+                   0", Format("=+21,d").apply(0))
-        assertEquals("+               1e+21", Format("=+21,d").apply(1e21))
-    }
-
-    @Test
     fun padAfterSignWithCurrency() {
         assertEquals("+$0", Format("=+$1,d").apply(0))
         assertEquals("+$0", Format("=+$1,d").apply(0))
@@ -195,18 +93,6 @@ class FormatTypeDTest {
         assertEquals("            0", Format(" 13,d").apply(0))
         assertEquals("                    0", Format(" 21,d").apply(0))
         assertEquals("                1e+21", Format(" 21,d").apply(1e21))
-    }
-
-    @Test
-    fun onlyUseSignForNegativeNumbers() {
-        assertEquals("-1", Format("-1,d").apply(-1))
-        assertEquals("0", Format("-1,d").apply(0))
-        assertEquals(" 0", Format("-2,d").apply(0))
-        assertEquals("  0", Format("-3,d").apply(0))
-        assertEquals("    0", Format("-5,d").apply(0))
-        assertEquals("       0", Format("-8,d").apply(0))
-        assertEquals("            0", Format("-13,d").apply(0))
-        assertEquals("                    0", Format("-21,d").apply(0))
     }
 
     @Test
