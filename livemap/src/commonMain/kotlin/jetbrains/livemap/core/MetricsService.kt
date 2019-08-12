@@ -4,52 +4,47 @@ import jetbrains.livemap.core.ecs.EcsSystem
 
 class MetricsService {
     private val systemTime = SystemTime()
-    private val myMeasures = PriorityQueue(compareBy(Pair<EcsSystem, Double>::second).reversed())
+    private val measures = PriorityQueue(compareBy(Pair<EcsSystem, Double>::second).reversed())
 
-    private var myBeginTime: Long = 0
+    private var beginTime: Long = 0
 
     var totalUpdateTime = 0.0
         private set
 
-    private val myValues = HashMap<String, String>()
-    private var myValuesOrder: List<String>? = null
+    private val valuesMap = HashMap<String, String>()
+    private var valuesOrder: List<String> = ArrayList()
 
     val values: Collection<String>
-        get() {
-            val strings = ArrayList<String>()
-            for (key in myValuesOrder!!) {
-                val value = myValues[key]
-                if (value != null && !value.isEmpty()) {
-                    strings.add(value)
-                }
+        get() = ArrayList<String>().apply {
+            for (key in valuesOrder) {
+                valuesMap[key]?.let { if (it.isNotEmpty()) this.add(it) }
             }
-            return strings
         }
 
     fun beginMeasureUpdate() {
-        myBeginTime = systemTime.getTimeMs()
+        beginTime = systemTime.getTimeMs()
     }
 
     fun endMeasureUpdate(system: EcsSystem) {
-        val time = systemTime.getTimeMs() - myBeginTime
-        myMeasures.add(Pair(system, time.toDouble()))
+        val time = systemTime.getTimeMs() - beginTime
+        measures.add(Pair(system, time.toDouble()))
         totalUpdateTime += time
     }
 
     fun reset() {
-        myMeasures.clear()
+        measures.clear()
         totalUpdateTime = 0.0
     }
 
     fun slowestSystem(): Pair<EcsSystem, Double>? {
-        return myMeasures.peek()
+        return measures.peek()
     }
 
     fun setValue(key: String, value: String) {
-        myValues[key] = value
+        valuesMap[key] = value
     }
 
     fun setValuesOrder(keys: List<String>) {
-        myValuesOrder = keys
+        valuesOrder = keys
     }
 }
