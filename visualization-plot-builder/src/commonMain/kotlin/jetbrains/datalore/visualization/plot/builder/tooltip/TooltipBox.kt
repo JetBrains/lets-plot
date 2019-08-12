@@ -38,20 +38,22 @@ internal class TooltipBox : SvgComponent() {
     fun update(fillColor: Color, lines: List<String>, fontSize: Double) {
         val blendedFillColor = blendFillColor(fillColor)
         this.fillColor = SvgColors.create(blendedFillColor)
-        myFrame.fill().set(this.fillColor)
-
         borderColor = getProperTextColor(blendedFillColor)
+
+        myFrame.fill().set(this.fillColor)
         myFrame.stroke().set(borderColor)
 
         myText.fill().set(borderColor)
         myText.children().clear()
-        lines.map { SvgTSpanElement(it).apply {
-            // TODO: all these attributes don't work in JFX because of concat to a multiline string in SvgTextElementMapper.kt
-            fill().set(borderColor)
-            textDy().set(Tooltip.LINE_HEIGHT_CSS)
-            x().set(H_PADDING)
-            setAttribute("font-size", fontSize.toString())
-        }}.forEach (myText::addTSpan)
+        lines.map {
+            SvgTSpanElement(it).apply {
+                // TODO: all these attributes don't work in JFX because of concat to a multiline string in SvgTextElementMapper.kt
+                fill().set(borderColor)
+                textDy().set(Tooltip.LINE_HEIGHT_CSS)
+                x().set(H_PADDING)
+                setAttribute("font-size", fontSize.toString())
+            }
+        }.forEach (myText::addTSpan)
 
 
         var newWidth = 0.0

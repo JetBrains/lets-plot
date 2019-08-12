@@ -7,47 +7,69 @@ import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipWithStem
 
 internal class TooltipUpdater(private val tooltipLayer: SvgGElement) {
 
-    private val myTooltipEntries = HashSet<TooltipEntry>()
-    private val myAddedTooltips = HashMap<TooltipEntry, TooltipWithStem>()
+    private val viewModels = HashSet<TooltipViewModel>()
+    private val views = HashMap<TooltipViewModel, TooltipWithStem>()
 
-    fun updateTooltips(tooltipEntries: Collection<TooltipEntry>) {
-        myTooltipEntries.clear()
-        myTooltipEntries.addAll(tooltipEntries)
-        doUpdateTooltips()
+    fun updateTooltips(tooltipEntries: Collection<TooltipViewModel>) {
+        viewModels.clear()
+        viewModels.addAll(tooltipEntries)
+
+        if (true) {
+            views.values
+                .forEach { tooltipLayer.children().remove(it.rootGroup) }
+                .also { views.clear() }
+
+            println("tooltip update start")
+            viewModels.forEach { vm ->
+                views[vm] = TooltipWithStem().apply {
+                    //rootGroup.visibility().set(HIDDEN) // prevent flickering while changing style properties
+                    tooltipLayer.children().add(rootGroup) // have to be in DOM to calculate bbox on next line
+
+                    with(vm) {
+                        update(fill, text, fontSize)
+                        moveTooltipTo(tooltipCoord, stemCoord, orientation(this))
+                    }
+
+                    //rootGroup.visibility().set(VISIBLE) // initialization done, show the tooltip
+                    //with (it.tooltipContent) { update(fill, text, fontSize) }
+                    //with (it) { moveTooltipTo(tooltipCoord, stemCoord, orientation(this)) }
+                }
+            }
+            println("tooltip update end")
+
+        } else {
+            val spareTooltipView = ArrayList(views.values)
+            views.clear()
+            balanceFreeTooltips(spareTooltipView)
+
+            if (spareTooltipView.size != viewModels.size) {
+                throw IllegalStateException("freeTooltips and updatingTooltips lists should be equal")
+            }
+
+            println("tooltip update start")
+            for (vm in viewModels) {
+                views[vm] = spareTooltipView.pop().apply {
+                    update(vm.fill, vm.text, vm.fontSize)
+                    moveTooltipTo(vm.tooltipCoord, vm.stemCoord, orientation(vm))
+                }
+            }
+            println("tooltip update end")
+
+        }
     }
 
-    private fun doUpdateTooltips() {
-        val freeTooltips = ArrayList(myAddedTooltips.values)
-        myAddedTooltips.clear()
-        balanceFreeTooltips(freeTooltips)
-
-        if (freeTooltips.size != myTooltipEntries.size) {
-            throw IllegalStateException("freeTooltips and updatingTooltips lists should be equal")
+    private fun orientation(entry: TooltipViewModel): TooltipWithStem.Orientation =
+        when {
+            entry.orientation === TooltipOrientation.HORIZONTAL -> TooltipWithStem.Orientation.HORIZONTAL
+            else -> TooltipWithStem.Orientation.VERTICAL
         }
 
-        for (entry in myTooltipEntries) {
-            val orientation = if (entry.orientation === TooltipOrientation.HORIZONTAL)
-                TooltipWithStem.Orientation.HORIZONTAL
-            else
-                TooltipWithStem.Orientation.VERTICAL
-
-            val tooltip = pop(freeTooltips)
-            val content = entry.tooltipContent
-            tooltip.update(content.fill, content.text, content.fontSize)
-            tooltip.moveTooltipTo(entry.tooltipCoord, entry.stemCoord, orientation)
-
-            myAddedTooltips[entry] = tooltip
-        }
-    }
-
-    private fun <T> pop(list: MutableList<T>): T {
-        val top = list[0]
-        list.removeAt(0)
-        return top
+    private fun <T> MutableList<T>.pop(): T {
+        return this.get(0).also { removeAt(0) }
     }
 
     private fun balanceFreeTooltips(freeTooltips: MutableList<TooltipWithStem>) {
-        var tooltipsCountDiff = freeTooltips.size - myTooltipEntries.size
+        var tooltipsCountDiff = freeTooltips.size - viewModels.size
         if (tooltipsCountDiff < 0) {
             while (tooltipsCountDiff++ < 0) {
                 val tooltipWithStem = TooltipWithStem()

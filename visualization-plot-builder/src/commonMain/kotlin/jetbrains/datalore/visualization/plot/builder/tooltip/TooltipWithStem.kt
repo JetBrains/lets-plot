@@ -17,8 +17,7 @@ class TooltipWithStem : SvgComponent() {
     private var myObjectCoord: DoubleVector? = null
     private var myOrientation: Orientation? = null
 
-    val contentRect: DoubleRectangle
-        get() = myTooltipBox.contentRect
+    val contentRect get() = myTooltipBox.contentRect
 
     private val stemDirection: StemDirection
         get() {
@@ -102,28 +101,25 @@ class TooltipWithStem : SvgComponent() {
         val stemFootingCoord0: DoubleVector
         val stemFootingCoord1: DoubleVector
 
-        val dir = stemDirection
-        if (isHorizontal(dir)) {
-            val stemFootingX: Double = if (dir == StemDirection.LEFT) {
-                contentRect.origin.x
-            } else {
-                contentRect.right
+        if (isHorizontal(stemDirection)) {
+            val stemFootingX = when (stemDirection) {
+                StemDirection.LEFT -> contentRect.origin.x
+                StemDirection.RIGHT -> contentRect.right
+                else -> error("Invalid horizontal direction")
             }
 
-            val stemFootingIndent = getStemFootingIndent(contentRect.height)
-
+            val stemFootingIndent = calculateStemFootingIndent(contentRect.height)
             stemFootingCoord0 = DoubleVector(stemFootingX, contentRect.top + stemFootingIndent)
             stemFootingCoord1 = DoubleVector(stemFootingX, contentRect.bottom - stemFootingIndent)
 
         } else {
-            val stemFootingY: Double = if (dir == StemDirection.UP) {
-                contentRect.top
-            } else {
-                contentRect.bottom
+            val stemFootingY = when(stemDirection) {
+                StemDirection.UP -> contentRect.top
+                StemDirection.DOWN -> contentRect.bottom
+                else -> error("Invalid vertical direction")
             }
 
-            val stemFootingIndent = getStemFootingIndent(contentRect.width)
-
+            val stemFootingIndent = calculateStemFootingIndent(contentRect.width)
             stemFootingCoord0 = DoubleVector(contentRect.left + stemFootingIndent, stemFootingY)
             stemFootingCoord1 = DoubleVector(contentRect.right - stemFootingIndent, stemFootingY)
         }
@@ -147,7 +143,7 @@ class TooltipWithStem : SvgComponent() {
         myStemArrow.visibility().set(visibility)
     }
 
-    private fun getStemFootingIndent(sideLength: Double): Double {
+    private fun calculateStemFootingIndent(sideLength: Double): Double {
         return if (sideLength * STEM_FOOTING_TO_SIDE_LENGTH_RATIO > MAX_STEM_FOOTING_LENGTH) {
             (sideLength - MAX_STEM_FOOTING_LENGTH) / 2
         } else sideLength * SIDE_LENGTH_TO_STEM_FOOTING_RATIO
