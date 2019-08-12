@@ -1,11 +1,11 @@
 package jetbrains.datalore.visualization.plot.builder.event
 
 import jetbrains.datalore.base.event.MouseEvent
+import jetbrains.datalore.base.event.MouseEventSource
+import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.plot.base.event.MouseEventSource
-import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
 
 class TileMouseEventPeer(eventSource: MouseEventSource, private val myRect: Rectangle) : MouseEventSource {
 

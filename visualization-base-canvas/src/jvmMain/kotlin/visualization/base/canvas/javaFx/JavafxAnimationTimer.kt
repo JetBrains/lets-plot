@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.base.canvas.javaFx
 
-import jetbrains.datalore.visualization.base.canvas.CanvasControl.AnimationTimer
+import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationTimer
 
 internal abstract class JavafxAnimationTimer : AnimationTimer {
     private val myAnimationTimer: javafx.animation.AnimationTimer

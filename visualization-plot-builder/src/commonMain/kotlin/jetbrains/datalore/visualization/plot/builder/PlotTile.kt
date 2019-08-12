@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.builder
 
+import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -13,7 +14,6 @@ import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.event.MouseEventSource
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
@@ -32,7 +32,8 @@ import jetbrains.datalore.visualization.plot.builder.theme.Theme
 internal class PlotTile(layers: List<GeomLayer>,
                         private val myScaleX: Scale<Double>, private val myScaleY: Scale<Double>,
                         private val myTilesOrigin: DoubleVector, private val myLayoutInfo: TileLayoutInfo, private val myCoord: CoordinateSystem, private val myTheme: Theme,
-                        private val myMouseEventSource: MouseEventSource) : SvgComponent() {
+                        private val myMouseEventSource: MouseEventSource
+) : SvgComponent() {
 
     private val myDebugDrawing = ValueProperty(false)
 

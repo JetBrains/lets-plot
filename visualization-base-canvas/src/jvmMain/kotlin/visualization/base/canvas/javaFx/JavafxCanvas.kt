@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.base.canvas.javaFx
 
-import javafx.scene.image.WritableImage
+import javafx.scene.image.Image
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.visualization.base.canvas.Canvas
@@ -41,5 +41,5 @@ private constructor(
         )
     }
 
-    internal class JavafxSnapshot(val image: WritableImage) : Canvas.Snapshot
+    internal class JavafxSnapshot(val image: Image) : Canvas.Snapshot
 }

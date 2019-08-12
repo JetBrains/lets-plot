@@ -1,6 +1,9 @@
 package jetbrains.datalore.visualization.base.canvas.dom
 
+import jetbrains.datalore.base.async.Async
+import jetbrains.datalore.base.async.SimpleAsync
 import jetbrains.datalore.base.event.MouseEvent
+import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.base.js.css.setPosition
@@ -8,8 +11,12 @@ import jetbrains.datalore.base.js.dom.DomApi
 import jetbrains.datalore.base.js.dom.DomHTMLElement
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationEventHandler
+import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationTimer
 import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
+import jetbrains.datalore.visualization.base.canvas.dom.DomCanvasUtil.imagePngBase64ToImage
+import org.w3c.dom.CanvasRenderingContext2D
 
 class DomCanvasControl(override val size: Vector) : CanvasControl {
     val rootElement: DomHTMLElement = DomApi.createDiv() as DomHTMLElement
@@ -18,7 +25,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         rootElement.style.setPosition(CssPosition.RELATIVE)
     }
 
-    override fun createAnimationTimer(eventHandler: CanvasControl.AnimationEventHandler): CanvasControl.AnimationTimer {
+    override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
         return object : DomAnimationTimer(rootElement) {
             override fun handle(millisTime: Long) {
                 eventHandler.onEvent(millisTime)
@@ -26,7 +33,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         }
     }
 
-    override fun addMouseEventHandler(eventSpec: CanvasControl.EventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
+    override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
         return DomCanvasUtil.addMouseEventHandler(rootElement, eventSpec, eventHandler)
     }
 
@@ -34,6 +41,20 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         val domCanvas = DomCanvas.create(size)
         domCanvas.domHTMLCanvasElement.style.setPosition(CssPosition.ABSOLUTE)
         return domCanvas
+    }
+
+    override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
+        val async = SimpleAsync<Canvas.Snapshot>()
+
+        imagePngBase64ToImage(dataUrl).onSuccess { image ->
+            val domCanvas = DomCanvas.create(Vector(image.width, image.height))
+            val ctx = domCanvas.domHTMLCanvasElement.getContext("2d") as CanvasRenderingContext2D
+            ctx.drawImage(image, 0.0, 0.0)
+
+            domCanvas.takeSnapshot().onSuccess { async.success(it) }
+        }
+
+        return async
     }
 
     override fun addChild(canvas: Canvas) {

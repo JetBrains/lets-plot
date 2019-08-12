@@ -1,11 +1,12 @@
 package jetbrains.datalore.visualization.plotDemo.plotConfig
 
+import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_LEFT
+import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_MOVED
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.demoUtils.swing.SwingDemoFactory
 import jetbrains.datalore.visualization.plot.DemoAndTestJvm
-import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
 import jetbrains.datalore.visualization.plot.builder.PlotContainer
 import java.awt.Color
 import java.awt.Component
@@ -71,7 +72,7 @@ object PlotConfigDemoUtil {
             override fun mouseExited(e: MouseEvent) {
                 super.mouseExited(e)
                 plotEdt {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
+                    plotContainer.mouseEventPeer.dispatch(MOUSE_LEFT, AwtEventUtil.translate(e))
                 }
             }
         })
@@ -79,7 +80,7 @@ object PlotConfigDemoUtil {
             override fun mouseMoved(e: MouseEvent) {
                 super.mouseMoved(e)
                 plotEdt {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
+                    plotContainer.mouseEventPeer.dispatch(MOUSE_MOVED, AwtEventUtil.translate(e))
                 }
             }
         })

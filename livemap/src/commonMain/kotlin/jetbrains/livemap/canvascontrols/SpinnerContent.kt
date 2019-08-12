@@ -2,8 +2,8 @@ package jetbrains.livemap.canvascontrols
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
-import jetbrains.datalore.visualization.base.canvas.CanvasControl.AnimationEventHandler
 import jetbrains.datalore.visualization.base.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.SingleCanvasControl

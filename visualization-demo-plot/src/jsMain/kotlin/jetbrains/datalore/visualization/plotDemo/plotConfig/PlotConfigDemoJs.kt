@@ -1,5 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotConfig
 
+import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_LEFT
+import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_MOVED
 import jetbrains.datalore.base.event.dom.DomEventUtil
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.js.dom.DomEventType
@@ -8,7 +10,6 @@ import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
 import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
 import jetbrains.datalore.visualization.plot.MonolithicJs
-import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec
 import jetbrains.datalore.visualization.plot.builder.PlotContainer
 import org.w3c.dom.Node
 import org.w3c.dom.events.Event
@@ -42,7 +43,7 @@ private fun buildPlotToSvgIntern(
     eventTarget.addEventListener(DomEventType.MOUSE_MOVE.name, { e: Event ->
         e.stopPropagation()
         plotContainer.mouseEventPeer.dispatch(
-            MouseEventSpec.MOUSE_MOVED,
+            MOUSE_MOVED,
             DomEventUtil.translateInTargetCoord(e as MouseEvent)
         )
 
@@ -50,7 +51,7 @@ private fun buildPlotToSvgIntern(
     eventTarget.addEventListener(DomEventType.MOUSE_LEAVE.name, { e: Event ->
         e.stopPropagation()
         plotContainer.mouseEventPeer.dispatch(
-            MouseEventSpec.MOUSE_LEFT,
+            MOUSE_LEFT,
             DomEventUtil.translateInTargetCoord(e as MouseEvent)
         )
     })

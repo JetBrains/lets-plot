@@ -2,10 +2,10 @@ package jetbrains.livemap.core.ecs
 
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.MouseEvent
+import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.visualization.plot.base.event.MouseEventSpec.*
 import jetbrains.livemap.core.input.InputMouseEvent
 
 class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {

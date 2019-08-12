@@ -1,6 +1,5 @@
-package jetbrains.datalore.visualization.plot.base.event
+package jetbrains.datalore.base.event
 
-import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
 
