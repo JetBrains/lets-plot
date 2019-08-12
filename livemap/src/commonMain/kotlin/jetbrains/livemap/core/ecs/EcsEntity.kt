@@ -4,7 +4,7 @@ import kotlin.reflect.KClass
 
 class EcsEntity internal constructor(
     internal val id: Int,
-    private val name: String,
+    val name: String,
     val componentManager: EcsComponentManager,
     componentsMap: Map<KClass<out EcsComponent>, EcsComponent>
 ) : EcsRemovable() {
