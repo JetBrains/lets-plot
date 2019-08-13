@@ -37,12 +37,4 @@ object Utils {
 
         return res
     }
-
-    fun <KeyT, ValueT> provide(key: KeyT, map: MutableMap<KeyT, ValueT>, def: () -> ValueT): ValueT? {
-        if (!map.containsKey(key)) {
-            map[key] = def()
-        }
-
-        return map[key]
-    }
 }
