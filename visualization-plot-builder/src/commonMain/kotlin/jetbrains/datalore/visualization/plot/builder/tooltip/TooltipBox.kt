@@ -3,21 +3,21 @@ package jetbrains.datalore.visualization.plot.builder.tooltip
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.*
+import jetbrains.datalore.visualization.base.svg.SvgColors
+import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip
 import jetbrains.datalore.visualization.plot.builder.presentation.Style
 
 internal class TooltipBox : SvgComponent() {
 
-    private val myFrame: SvgRectElement = SvgRectElement()
-    private val myText: SvgTextElement
-    var borderColor: SvgColor? = null
-        private set
-    var fillColor: SvgColor? = null
-        private set
-    var contentRect = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
-        private set
+    private val myFrame = SvgRectElement()
+    private val myText = GroupComponent()
+    var borderColor: Color? = null; private set
+    var fillColor: Color? = null; private set
+    var contentRect = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO); private set
 
     init {
         myFrame.addClass(Style.BACK)
@@ -25,9 +25,7 @@ internal class TooltipBox : SvgComponent() {
         myFrame.strokeWidth().set(STROKE_WIDTH)
         setFrameSize(0.0, 0.0, 0.0, 0.0)
 
-        myText = SvgTextElement()
-        myText.x().set(H_PADDING)
-        myText.y().set(V_PADDING)
+        myText.rootGroup.addClass(Style.PLOT_TOOLTIP_TEXT)
     }
 
     override fun buildComponent() {
@@ -37,23 +35,20 @@ internal class TooltipBox : SvgComponent() {
 
     fun update(fillColor: Color, lines: List<String>, fontSize: Double) {
         val blendedFillColor = blendFillColor(fillColor)
-        this.fillColor = SvgColors.create(blendedFillColor)
+        this.fillColor = blendedFillColor
         borderColor = getProperTextColor(blendedFillColor)
 
-        myFrame.fill().set(this.fillColor)
-        myFrame.stroke().set(borderColor)
+        myFrame.fillColor().set(this.fillColor)
+        myFrame.strokeColor().set(borderColor)
 
-        myText.fill().set(borderColor)
-        myText.children().clear()
-        lines.map {
-            SvgTSpanElement(it).apply {
-                // TODO: all these attributes don't work in JFX because of concat to a multiline string in SvgTextElementMapper.kt
-                fill().set(borderColor)
-                textDy().set(Tooltip.LINE_HEIGHT_CSS)
-                x().set(H_PADDING)
-                setAttribute("font-size", fontSize.toString())
+        myText.clear()
+        lines.mapIndexed {index, it ->
+            TextLabel(it).apply {
+                textColor().set(borderColor)
+                setFontSize(fontSize)
+                moveTo(0.0, (Tooltip.LINE_HEIGHT * index).toDouble())
             }
-        }.forEach (myText::addTSpan)
+        }.forEach { myText.add(it) }
 
 
         var newWidth = 0.0
@@ -62,13 +57,13 @@ internal class TooltipBox : SvgComponent() {
         var newY = 0.0
 
         if (lines.isNotEmpty()) {
-            val textDim = myText.bBox.dimension
+            val textDim = myText.rootGroup.bBox.dimension
             val frameDim = textDim.add(DoubleVector(2 * H_PADDING, 2 * V_PADDING))
             newWidth = frameDim.x
             newHeight = frameDim.y
 
-            newX = myText.bBox.origin.x - H_PADDING
-            newY = myText.bBox.origin.y - V_PADDING
+            newX = myText.rootGroup.bBox.origin.x - H_PADDING
+            newY = myText.rootGroup.bBox.origin.y - V_PADDING
         }
 
         setFrameSize(newWidth, newHeight, newX, newY)
@@ -82,14 +77,12 @@ internal class TooltipBox : SvgComponent() {
         contentRect = DoubleRectangle(newX, newY, newWidth, newHeight)
     }
 
-    private fun getProperTextColor(tooltipFillColor: Color): SvgColor {
+    private fun getProperTextColor(tooltipFillColor: Color): Color {
         val luminance = 0.299 * tooltipFillColor.red + 0.587 * tooltipFillColor.green + 0.114 * tooltipFillColor.blue
-        return SvgColors.create(
-            when (luminance < FILL_COLOR_LUMINANCE_THRESHOLD) {
-                true -> Tooltip.LIGHT_TEXT_COLOR
-                else -> Tooltip.DARK_TEXT_COLOR
-            }
-        )
+        return when (luminance < FILL_COLOR_LUMINANCE_THRESHOLD) {
+            true -> Tooltip.LIGHT_TEXT_COLOR
+            else -> Tooltip.DARK_TEXT_COLOR
+        }
     }
 
     companion object {

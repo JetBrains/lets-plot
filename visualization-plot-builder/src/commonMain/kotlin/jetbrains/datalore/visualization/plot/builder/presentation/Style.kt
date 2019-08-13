@@ -25,7 +25,8 @@ object Style {
     const val LEGEND_TITLE = "legend-title"
 
     const val PLOT_GLASS_PANE = "plt-glass-pane"
-    private const val PLOT_TOOLTIP = "plt-tooltip"
+    const val PLOT_TOOLTIP = "plt-tooltip"
+    const val PLOT_TOOLTIP_TEXT = "plt-tooltip-text"
 
     val CSS = CssResourceBuilder().add(SelectorBuilder(PLOT_CONTAINER).fontFamily(Defaults.FONT_FAMILY_NORMAL)).add(
         SelectorBuilder(SelectorType.TEXT).fontSize(

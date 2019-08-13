@@ -63,9 +63,9 @@ class TooltipWithStem : SvgComponent() {
     }
 
     private fun setFrameColors() {
-        myStemArrow.stroke().set(myTooltipBox.borderColor)
-        myStemArrow.fill().set(myTooltipBox.fillColor)
-        myStemFootingLine.stroke().set(myTooltipBox.fillColor)
+        myStemArrow.strokeColor().set(myTooltipBox.borderColor)
+        myStemArrow.fillColor().set(myTooltipBox.fillColor)
+        myStemFootingLine.strokeColor().set(myTooltipBox.fillColor)
     }
 
     fun moveTooltipTo(tooltipCoord: DoubleVector, objectCoord: DoubleVector, orientation: Orientation) {

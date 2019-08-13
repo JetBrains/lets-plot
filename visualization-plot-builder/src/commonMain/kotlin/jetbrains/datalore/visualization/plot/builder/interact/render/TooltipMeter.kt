@@ -14,9 +14,7 @@ internal class TooltipMeter(tooltipLayer: SvgNode) {
     }
 
     fun measure(text: List<String>, fontSize: Double): DoubleVector {
-        println("tooltip measure start")
         myHiddenTooltip.update(TooltipUpdater.IGNORED_COLOR, text, fontSize)
-        println("tooltip measure end")
-        return myHiddenTooltip.contentRect.dimension.also { println(it) }
+        return myHiddenTooltip.contentRect.dimension
     }
 }

@@ -174,7 +174,6 @@ abstract class SvgElement : SvgNode() {
                 v
             }
 
-            println("$elementName.$spec: $oldValue -> $value")
             if (value != oldValue) {
                 val event = SvgAttributeEvent(spec, oldValue, value)
                 this@SvgElement.onAttributeChanged(event)
