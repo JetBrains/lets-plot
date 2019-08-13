@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.builder.tooltip.layout
 
-import jetbrains.datalore.base.gcommon.collect.Iterables.find
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind
@@ -24,47 +23,31 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
 
         val desiredPosition = ArrayList<PositionedTooltip>()
 
-        run {
-            // x-axis tooltip
-            val xAxisTooltip = find(
-                    tooltips,
-                    { measuredTooltip -> measuredTooltip!!.hintKind === X_AXIS_TOOLTIP },
-                    null
-            )
-            if (xAxisTooltip != null) {
+        // x-axis tooltip
+        tooltips
+            .firstOrNull { it.hintKind === X_AXIS_TOOLTIP }
+            ?.let { xAxisTooltip ->
                 val positionedTooltip = calculateVerticalTooltipPosition(xAxisTooltip, BOTTOM, SHORT_STEM_LENGTH, true)
                 desiredPosition.add(positionedTooltip)
 
                 // Limit available vertical space for other tooltips by the axis or top side of the tooltip (if not fit under the axis)
                 myVerticalSpace = DoubleRange.withStartAndEnd(
-                        myViewport.top,
-                        min(
-                                positionedTooltip.stemCoord.y,
-                                positionedTooltip.top
-                        )
+                    myViewport.top,
+                    min(
+                        positionedTooltip.stemCoord.y,
+                        positionedTooltip.top
+                    )
                 )
                 myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
             }
-        }
 
-        run {
-            // y-axis tooltip
-            val yAxisTooltip = find(
-                    tooltips,
-                    { measuredTooltip -> measuredTooltip!!.hintKind === Y_AXIS_TOOLTIP },
-                    null
-            )
-            if (yAxisTooltip != null) {
-                desiredPosition.add(
-                        calculateHorizontalTooltipPosition(yAxisTooltip, SHORT_STEM_LENGTH)
-                )
-            }
-        }
+        // y-axis tooltip
+        tooltips
+            .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
+            ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it, SHORT_STEM_LENGTH)) }
 
         // all other tooltips (axis tooltips are ignored in this method)
-        desiredPosition.addAll(
-                calculateDesiredPosition(tooltips)
-        )
+        desiredPosition.addAll(calculateDesiredPosition(tooltips))
 
         return rearrangeWithoutOverlapping(desiredPosition)
     }
@@ -109,17 +92,16 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
         }
 
         // First add tooltips with pre-arranged position
-        select(tooltips, CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP)
-                .forEach(fixate)
+        tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP).forEach(fixate)
 
         // Now try to space out other tooltips.
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.
         HorizontalTooltipExpander(myVerticalSpace)
-                .fixOverlapping(select(tooltips, HORIZONTAL_TOOLTIP))
+                .fixOverlapping(tooltips.select(HORIZONTAL_TOOLTIP))
                 .forEach(fixate)
 
         VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace)
-                .fixOverlapping(select(tooltips, VERTICAL_TOOLTIP), restrictions)
+                .fixOverlapping(tooltips.select(VERTICAL_TOOLTIP), restrictions)
                 .forEach(fixate)
 
         return separatedTooltips
@@ -239,31 +221,18 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
     }
 
     class PositionedTooltip {
+        internal val tooltipSize: DoubleVector
         val tooltipSpec: TooltipSpec
         val tooltipCoord: DoubleVector
-        internal val tooltipSize: DoubleVector
         val stemCoord: DoubleVector
 
-        internal val left: Double
-            get() = tooltipCoord.x
-
-        internal val top: Double
-            get() = tooltipCoord.y
-
-        internal val width: Double
-            get() = tooltipSize.x
-
-        internal val height: Double
-            get() = tooltipSize.y
-
-        internal val bottom: Double
-            get() = tooltipCoord.y + height
-
-        internal val right: Double
-            get() = tooltipCoord.x + width
-
-        internal val hintKind: Kind
-            get() = tooltipSpec.layoutHint.kind
+        internal val left get() = tooltipCoord.x
+        internal val top get() = tooltipCoord.y
+        internal val width get() = tooltipSize.x
+        internal val height get() = tooltipSize.y
+        internal val bottom get() = tooltipCoord.y + height
+        internal val right get() = tooltipCoord.x + width
+        internal val hintKind get() = tooltipSpec.layoutHint.kind
 
         internal constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector) {
             tooltipSpec = measuredTooltip.tooltipSpec
@@ -288,16 +257,13 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
         }
     }
 
-    class MeasuredTooltip(internal val tooltipSpec: TooltipSpec, internal val size: DoubleVector) {
-
-        internal val hintCoord: DoubleVector
-            get() = tooltipSpec.layoutHint.coord!!
-
-        internal val hintKind: Kind
-            get() = tooltipSpec.layoutHint.kind
-
-        internal val hintRadius: Double
-            get() = tooltipSpec.layoutHint.objectRadius
+    class MeasuredTooltip(
+        internal val tooltipSpec: TooltipSpec,
+        internal val size: DoubleVector
+    ) {
+        internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
+        internal val hintKind get() = tooltipSpec.layoutHint.kind
+        internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius
     }
 
     companion object {
@@ -338,10 +304,10 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
             return moveIntoLimit(centered(position, size), range).start()
         }
 
-        private fun select(tooltips: List<PositionedTooltip>, vararg kinds: Kind): List<PositionedTooltip> {
+        private fun List<PositionedTooltip>.select(vararg kinds: Kind): List<PositionedTooltip> {
             val filteredTooltips = ArrayList<PositionedTooltip>()
 
-            for (tooltip in tooltips) {
+            for (tooltip in this) {
                 for (kind in kinds) {
                     if (tooltip.hintKind === kind) {
                         filteredTooltips.add(tooltip)

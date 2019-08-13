@@ -7,63 +7,35 @@ import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipWithStem
 
 internal class TooltipUpdater(private val tooltipLayer: SvgGElement) {
 
-    private val myTooltipEntries = HashSet<TooltipEntry>()
-    private val myAddedTooltips = HashMap<TooltipEntry, TooltipWithStem>()
+    private val viewModels = HashSet<TooltipViewModel>()
+    private val views = HashMap<TooltipViewModel, TooltipWithStem>()
 
-    fun updateTooltips(tooltipEntries: Collection<TooltipEntry>) {
-        myTooltipEntries.clear()
-        myTooltipEntries.addAll(tooltipEntries)
-        doUpdateTooltips()
-    }
+    fun updateTooltips(tooltipEntries: Collection<TooltipViewModel>) {
+        viewModels.clear()
+        viewModels.addAll(tooltipEntries)
 
-    private fun doUpdateTooltips() {
-        val freeTooltips = ArrayList(myAddedTooltips.values)
-        myAddedTooltips.clear()
-        balanceFreeTooltips(freeTooltips)
+        views.values
+            .forEach { view -> tooltipLayer.children().remove(view.rootGroup) }
+            .also { views.clear() }
 
-        if (freeTooltips.size != myTooltipEntries.size) {
-            throw IllegalStateException("freeTooltips and updatingTooltips lists should be equal")
-        }
-
-        for (entry in myTooltipEntries) {
-            val orientation = if (entry.orientation === TooltipOrientation.HORIZONTAL)
-                TooltipWithStem.Orientation.HORIZONTAL
-            else
-                TooltipWithStem.Orientation.VERTICAL
-
-            val tooltip = pop(freeTooltips)
-            val content = entry.tooltipContent
-            tooltip.update(content.fill, content.text, content.fontSize)
-            tooltip.moveTooltipTo(entry.tooltipCoord, entry.stemCoord, orientation)
-
-            myAddedTooltips[entry] = tooltip
-        }
-    }
-
-    private fun <T> pop(list: MutableList<T>): T {
-        val top = list[0]
-        list.removeAt(0)
-        return top
-    }
-
-    private fun balanceFreeTooltips(freeTooltips: MutableList<TooltipWithStem>) {
-        var tooltipsCountDiff = freeTooltips.size - myTooltipEntries.size
-        if (tooltipsCountDiff < 0) {
-            while (tooltipsCountDiff++ < 0) {
-                val tooltipWithStem = TooltipWithStem()
-                freeTooltips.add(tooltipWithStem)
-                tooltipLayer.children().add(tooltipWithStem.rootGroup)
-            }
-        } else if (tooltipsCountDiff > 0) {
-            while (tooltipsCountDiff-- > 0) {
-                tooltipLayer.children().remove(freeTooltips[0].rootGroup)
-                freeTooltips.removeAt(0)
+        viewModels.forEach { vm ->
+            views[vm] = TooltipWithStem().apply {
+                tooltipLayer.children().add(rootGroup) // have to be in DOM to calculate bbox on next line
+                with(vm) {
+                    update(fill, text, fontSize)
+                    moveTooltipTo(tooltipCoord, stemCoord, orientation(this))
+                }
             }
         }
     }
+
+    private fun orientation(entry: TooltipViewModel): TooltipWithStem.Orientation =
+        when {
+            entry.orientation === TooltipOrientation.HORIZONTAL -> TooltipWithStem.Orientation.HORIZONTAL
+            else -> TooltipWithStem.Orientation.VERTICAL
+        }
 
     companion object {
         val IGNORED_COLOR = Color.BLACK
     }
-
 }

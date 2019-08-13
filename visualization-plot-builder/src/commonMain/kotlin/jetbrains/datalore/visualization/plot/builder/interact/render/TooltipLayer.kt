@@ -29,19 +29,15 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle)
 
 
     fun showTooltips(cursor: DoubleVector, tooltipSpecs: List<TooltipSpec>) {
-        updateTooltips(
-                myLayoutManager.arrange(
-                        toMeasured(tooltipSpecs),
-                        cursor)
-        )
+        tooltipSpecs
+            .run { toMeasured(this) }
+            .run { myLayoutManager.arrange(this, cursor) }
+            .run { toTooltipEntries(this) }
+            .run { myTooltipUpdater.updateTooltips(this) }
     }
 
     fun hideTooltip() {
-        updateTooltips(emptyList())
-    }
-
-    private fun updateTooltips(tooltips: List<PositionedTooltip>) {
-        myTooltipUpdater.updateTooltips(toTooltipEntries(tooltips))
+        myTooltipUpdater.updateTooltips(emptyList())
     }
 
     private fun toMeasured(tooltipSpecs: List<TooltipSpec>): List<MeasuredTooltip> {
@@ -56,8 +52,8 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle)
                     MeasuredTooltip(
                             tooltipSpec,
                             myTooltipMeter.measure(
-                                    getSortedText(tooltipSpec),
-                                    getFontSize(tooltipSpec)
+                                    tooltipSpec.lines,
+                                    getFontSize(tooltipSpec.layoutHint.kind)
                             )
                     )
             )
@@ -68,51 +64,31 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle)
 
     companion object {
 
-        fun toTooltipEntries(positionedTooltips: List<PositionedTooltip>): List<TooltipEntry> {
-            val tooltipEntries = ArrayList<TooltipEntry>()
-            for (positionedTooltip in positionedTooltips) {
-
-                val tooltipSpec = positionedTooltip.tooltipSpec
-                val content = TooltipContent(
-                        getSortedText(tooltipSpec),
-                        tooltipSpec.fill,
-                        getFontSize(tooltipSpec)
-                )
-
-                tooltipEntries.add(
-                        TooltipEntry(
-                                content,
-                                positionedTooltip.tooltipCoord,
-                                positionedTooltip.stemCoord,
-                                getOrientation(tooltipSpec.layoutHint.kind)
-                        )
-                )
-            }
-            return tooltipEntries
-        }
-
-        private fun getOrientation(kind: Kind): TooltipOrientation {
-            return when (kind) {
-                Kind.VERTICAL_TOOLTIP -> TooltipOrientation.ANY
-
-                Kind.HORIZONTAL_TOOLTIP, Kind.Y_AXIS_TOOLTIP -> TooltipOrientation.HORIZONTAL
-
-                Kind.CURSOR_TOOLTIP, Kind.X_AXIS_TOOLTIP -> TooltipOrientation.VERTICAL
+        fun toTooltipEntries(positionedTooltips: List<PositionedTooltip>): List<TooltipViewModel> {
+            return positionedTooltips.map {
+                it.run {
+                    TooltipViewModel(
+                        tooltipCoord = tooltipCoord,
+                        stemCoord = stemCoord,
+                        orientation = getOrientation(),
+                        fill = tooltipSpec.fill,
+                        fontSize = tooltipSpec.getFontSize(),
+                        text = tooltipSpec.lines
+                    )
+                }
             }
         }
 
-        private fun getFontSize(tooltipSpec: TooltipSpec): Double {
-            return when (tooltipSpec.layoutHint.kind) {
-                Kind.VERTICAL_TOOLTIP, Kind.HORIZONTAL_TOOLTIP, Kind.CURSOR_TOOLTIP -> Tooltip.FONT_SIZE.toDouble()
-
-                Kind.X_AXIS_TOOLTIP, Kind.Y_AXIS_TOOLTIP -> Tooltip.AXIS_FONT_SIZE.toDouble()
-            }
+        private fun PositionedTooltip.getOrientation() = when (tooltipSpec.layoutHint.kind) {
+            Kind.VERTICAL_TOOLTIP -> TooltipOrientation.ANY
+            Kind.HORIZONTAL_TOOLTIP, Kind.Y_AXIS_TOOLTIP -> TooltipOrientation.HORIZONTAL
+            Kind.CURSOR_TOOLTIP, Kind.X_AXIS_TOOLTIP -> TooltipOrientation.VERTICAL
         }
 
-        private fun getSortedText(spec: TooltipSpec): List<String> {
-            val text = ArrayList(spec.lines)
-            text.sort()
-            return text
+        private fun TooltipSpec.getFontSize() = getFontSize (layoutHint.kind)
+        private fun getFontSize(kind: Kind) = when (kind) {
+            Kind.VERTICAL_TOOLTIP, Kind.HORIZONTAL_TOOLTIP, Kind.CURSOR_TOOLTIP -> Tooltip.FONT_SIZE.toDouble()
+            Kind.X_AXIS_TOOLTIP, Kind.Y_AXIS_TOOLTIP -> Tooltip.AXIS_FONT_SIZE.toDouble()
         }
     }
 }

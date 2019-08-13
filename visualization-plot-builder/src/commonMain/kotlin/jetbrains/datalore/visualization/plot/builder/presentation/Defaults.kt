@@ -37,6 +37,7 @@ object Defaults {
             const val FONT_SIZE = FONT_MEDIUM
             val AXIS_FONT_SIZE = Axis.TICK_FONT_SIZE
             val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+            const val LINE_HEIGHT = FONT_SIZE
             const val LINE_HEIGHT_CSS = "1.4em"
             val BORDER_COLOR = X_LIGHT_GRAY
 

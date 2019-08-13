@@ -4,9 +4,8 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipContent
-import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipEntry
 import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipLayer
+import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipViewModel
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.*
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.NORMAL_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.SHORT_STEM_LENGTH
@@ -29,7 +28,7 @@ internal open class TooltipLayoutTestBase {
         this.myArrangedTooltips = ArrayList()
 
         for (tooltipEntry in layoutManagerController.arrange()) {
-            val measuredTooltip = myTooltipDataProvider!![tooltipEntry.tooltipContent.text]
+            val measuredTooltip = myTooltipDataProvider!![tooltipEntry.text]
             myArrangedTooltips!!.add(TooltipHelper(tooltipEntry, measuredTooltip!!))
         }
     }
@@ -38,7 +37,7 @@ internal open class TooltipLayoutTestBase {
         val strings = listOf(tooltipKey)
 
         for (tooltip in myArrangedTooltips!!) {
-            if (tooltip.content().text == strings) {
+            if (tooltip.text == strings) {
                 return tooltip
             }
         }
@@ -131,7 +130,7 @@ internal open class TooltipLayoutTestBase {
 
     private fun assertExpectations(expectedTooltip: ExpectedTooltip, actual: TooltipHelper) {
         if (shouldCheck(expectedTooltip.text())) {
-            assertEquals(makeText(expectedTooltip.text()!!), actual.content().text)
+            assertEquals(makeText(expectedTooltip.text()!!), actual.text)
         }
 
         if (shouldCheck(expectedTooltip.tooltipX())) {
@@ -184,7 +183,7 @@ internal open class TooltipLayoutTestBase {
     }
 
     internal interface TipLayoutManagerController {
-        fun arrange(): List<TooltipEntry>
+        fun arrange(): List<TooltipViewModel>
     }
 
     internal interface TooltipDataProvider {
@@ -208,7 +207,7 @@ internal open class TooltipLayoutTestBase {
 
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
-                override fun arrange(): List<TooltipEntry> = TooltipLayer.toTooltipEntries(
+                override fun arrange(): List<TooltipViewModel> = TooltipLayer.toTooltipEntries(
                         LayoutManager(myViewport, myHorizontalAlignment).arrange(myTooltipData, myCursor)
                 )
             }
@@ -224,38 +223,19 @@ internal open class TooltipLayoutTestBase {
         }
     }
 
-    internal class TooltipHelper(private val myTooltipEntry: TooltipEntry, private val myMeasuredTooltip: MeasuredTooltip) {
+    internal class TooltipHelper(private val myTooltipEntry: TooltipViewModel, private val myMeasuredTooltip: MeasuredTooltip) {
         private val myHintRadius: Double = myMeasuredTooltip.hintRadius
         private val myTooltipRect: DoubleRectangle = DoubleRectangle(myTooltipEntry.tooltipCoord, myMeasuredTooltip.size)
 
-        fun coord(): DoubleVector {
-            return myTooltipEntry.tooltipCoord
-        }
-
-        fun stemCoord(): DoubleVector {
-            return myTooltipEntry.stemCoord
-        }
-
-        fun rect(): DoubleRectangle {
-            return myTooltipRect
-        }
-
-        fun content(): TooltipContent {
-            return myTooltipEntry.tooltipContent
-        }
-
-
-        fun size(): DoubleVector {
-            return myMeasuredTooltip.size
-        }
-
-        fun cfgHintRadius(): Double {
-            return myHintRadius
-        }
-
-        fun cfgHintCoord(): DoubleVector {
-            return myMeasuredTooltip.hintCoord
-        }
+        val text get() = myTooltipEntry.text
+        val fill get() = myTooltipEntry.fill
+        val fontSize get() = myTooltipEntry.fontSize
+        fun coord() = myTooltipEntry.tooltipCoord
+        fun stemCoord() = myTooltipEntry.stemCoord
+        fun rect() = myTooltipRect
+        fun size() = myMeasuredTooltip.size
+        fun cfgHintRadius() = myHintRadius
+        fun cfgHintCoord() = myMeasuredTooltip.hintCoord
     }
 
     internal class ExpectedTooltip {
