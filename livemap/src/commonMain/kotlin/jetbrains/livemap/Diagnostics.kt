@@ -152,8 +152,8 @@ open class Diagnostics {
                 debugService.setValue(
                     SLOWEST_SYSTEM,
                     "Slowest update: ${
-                        if (slowestSystemTime > 2.0) 
-                            "${formatDouble(slowestSystemTime, 1)} $slowestSystemType" 
+                        if (slowestSystemTime > 2.0)
+                            "${formatDouble(slowestSystemTime, 1)} $slowestSystemType"
                         else "-"
                     }"
                 )
