@@ -61,9 +61,8 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
     }
 
     private fun getZIndex(entity: EcsEntity, renderLayers: List<RenderLayer>): Int {
-        return if (entity.contains(CameraComponent::class)) { // if UI
-            0
-        } else {
+        return if (entity.contains(CameraComponent::class)) 0 // if UI
+        else {
             val renderLayer = entity.componentManager
                 .getEntityById(entity.getComponent<ParentLayerComponent>().layerId)!!
                 .getComponent<RenderLayerComponent>()

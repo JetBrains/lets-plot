@@ -23,19 +23,15 @@ internal class SpinnerContent : CanvasContent {
 
             registration = setAnimationHandler(
                 parentControl,
-                object : AnimationEventHandler {
-                    override fun onEvent(millisTime: Long): Boolean {
-                        context2d.drawSpinner(millisTime)
+                AnimationEventHandler.toHandler { millisTime: Long ->
+                    context2d.drawSpinner(millisTime)
 
-                        takeSnapshot()
-                            .onSuccess { canvasControl.context.drawImage(it, 0.0, 0.0) }
-                        return true
-                    }
+                    takeSnapshot()
+                        .onSuccess { canvasControl.context.drawImage(it, 0.0, 0.0) }
+                    true
                 }
             )
         }
-
-
     }
 
     override fun hide() {

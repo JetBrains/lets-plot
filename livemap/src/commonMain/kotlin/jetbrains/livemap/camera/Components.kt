@@ -72,31 +72,12 @@ class CameraUpdateComponent : EcsComponent {
 }
 
 class CameraComponent : EcsComponent {
-
-    private var myZoom: Double = 0.toDouble()
-    private var myCenter: DoubleVector? = null
-
-    fun getZoom(): Double {
-        return myZoom
-    }
-
-    fun setZoom(zoom: Double): CameraComponent {
-        myZoom = zoom
-        return this
-    }
-
-    fun getCenter(): DoubleVector? {
-        return myCenter
-    }
-
-    fun setCenter(center: DoubleVector): CameraComponent {
-        myCenter = center
-        return this
-    }
+    var zoom: Double = 0.toDouble()
+    var center: DoubleVector? = null
 
     companion object {
         fun getZoom(entity: EcsEntity): Double {
-            return get(entity).getZoom()
+            return get(entity).zoom
         }
 
         operator fun get(entity: EcsEntity): CameraComponent {
