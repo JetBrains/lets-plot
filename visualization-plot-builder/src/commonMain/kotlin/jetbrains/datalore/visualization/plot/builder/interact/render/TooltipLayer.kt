@@ -7,7 +7,6 @@ import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip
-import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipOrientation
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip

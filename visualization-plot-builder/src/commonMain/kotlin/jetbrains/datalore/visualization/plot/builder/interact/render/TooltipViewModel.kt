@@ -2,7 +2,12 @@ package jetbrains.datalore.visualization.plot.builder.interact.render
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipOrientation
+
+enum class TooltipOrientation {
+    VERTICAL,
+    HORIZONTAL,
+    ANY
+}
 
 internal data class TooltipViewModel(
     val text: List<String>,

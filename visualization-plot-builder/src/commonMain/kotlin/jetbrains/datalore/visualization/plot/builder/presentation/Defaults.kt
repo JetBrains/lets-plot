@@ -35,12 +35,15 @@ object Defaults {
 
         object Tooltip {
             const val FONT_SIZE = FONT_MEDIUM
-            val AXIS_FONT_SIZE = Axis.TICK_FONT_SIZE
-            val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
-            const val LINE_HEIGHT = FONT_SIZE
+            const val AXIS_FONT_SIZE = Axis.TICK_FONT_SIZE
+            const val LINE_HEIGHT = FONT_SIZE.toDouble()
+            const val H_TEXT_PADDING = 4.0
+            const val V_TEXT_PADDING = 4.0
+            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
             const val LINE_HEIGHT_CSS = "1.4em"
-            val BORDER_COLOR = X_LIGHT_GRAY
+            const val BORDER_WIDTH = 1.0
 
+            val BORDER_COLOR = X_LIGHT_GRAY
             val DARK_TEXT_COLOR = Color.BLACK
             val LIGHT_TEXT_COLOR = Color.WHITE
         }
@@ -49,12 +52,12 @@ object Defaults {
     class Table {
         object Head {
             const val FONT_SIZE = FONT_MEDIUM
-            val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
 
         object Data {
             const val FONT_SIZE = FONT_MEDIUM
-            val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
     }
 

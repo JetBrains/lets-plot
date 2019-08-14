@@ -23,10 +23,7 @@ text {
     opacity: 1.0;
 }
 .plt-tooltip.shown .back {
-    opacity: 0.8;
-}
-.plt-tooltip text {
-    font-size: 12px;
+    opacity: 1.0;
 }
 .plt-axis line {
     shape-rendering: crispedges;

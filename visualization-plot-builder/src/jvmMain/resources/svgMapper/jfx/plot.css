@@ -36,14 +36,6 @@ Text {
     -fx-opacity: 1.0;
 }
 
-.plt-tooltip.shown .back {
-    -fx-opacity: 0.8;
-}
-
-.plt-tooltip Text {
-    -fx-font-size: 12px;
-}
-
 .plt-axis Line {
     -fx-shape-rendering: crispedges;
 }

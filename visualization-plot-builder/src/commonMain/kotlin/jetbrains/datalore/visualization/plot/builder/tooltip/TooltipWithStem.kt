@@ -8,6 +8,7 @@ import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
 import jetbrains.datalore.visualization.base.svg.SvgPathElement
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.BORDER_WIDTH
 
 class TooltipWithStem : SvgComponent() {
     private val myTooltipBox: TooltipBox = TooltipBox()
@@ -24,27 +25,28 @@ class TooltipWithStem : SvgComponent() {
 
             val tooltipRect = DoubleRectangle(myTooltipCoord!!, contentRect.dimension)
 
+            val objectCoord = myObjectCoord!!
             if (myOrientation == Orientation.HORIZONTAL) {
-                if (myObjectCoord!!.x > tooltipRect.right) {
+                if (objectCoord.x > tooltipRect.right) {
                     return StemDirection.RIGHT
                 }
 
-                if (myObjectCoord!!.x < tooltipRect.left) {
+                if (objectCoord.x < tooltipRect.left) {
                     return StemDirection.LEFT
                 }
             }
 
-            return if (myObjectCoord!!.y < tooltipRect.bottom) {
+            return if (objectCoord.y < tooltipRect.bottom) {
                 StemDirection.UP
             } else StemDirection.DOWN
 
         }
 
     init {
-        myStemFootingLine.strokeWidth().set(STEM_FOOTING_STROKE_WIDTH)
+        myStemFootingLine.strokeWidth().set(STEM_FOOTING_BORDER_WIDTH)
 
         myStemArrow = SvgPathElement()
-        myStemArrow.strokeWidth().set(TooltipBox.STROKE_WIDTH)
+        myStemArrow.strokeWidth().set(BORDER_WIDTH)
 
         setFrameColors()
     }
@@ -63,7 +65,7 @@ class TooltipWithStem : SvgComponent() {
     }
 
     private fun setFrameColors() {
-        myStemArrow.strokeColor().set(myTooltipBox.borderColor)
+        myStemArrow.strokeColor().set(myTooltipBox.textColor)
         myStemArrow.fillColor().set(myTooltipBox.fillColor)
         myStemFootingLine.strokeColor().set(myTooltipBox.fillColor)
     }
@@ -124,16 +126,20 @@ class TooltipWithStem : SvgComponent() {
             stemFootingCoord1 = DoubleVector(contentRect.right - stemFootingIndent, stemFootingY)
         }
 
-        myStemFootingLine.x1().set(stemFootingCoord0.x)
-        myStemFootingLine.y1().set(stemFootingCoord0.y)
-        myStemFootingLine.x2().set(stemFootingCoord1.x)
-        myStemFootingLine.y2().set(stemFootingCoord1.y)
+        myStemFootingLine.apply {
+            x1().set(stemFootingCoord0.x)
+            y1().set(stemFootingCoord0.y)
+            x2().set(stemFootingCoord1.x)
+            y2().set(stemFootingCoord1.y)
+        }
 
-        myStemArrow.d().set(SvgPathDataBuilder()
+        myStemArrow.d().set(
+            SvgPathDataBuilder()
                 .moveTo(stemFootingCoord0)
                 .lineTo(stemArrowTarget)
                 .lineTo(stemFootingCoord1)
-                .build())
+                .build()
+        )
     }
 
     private fun updateStemVisibility(showStem: Boolean) {
@@ -167,11 +173,9 @@ class TooltipWithStem : SvgComponent() {
     }
 
     companion object {
-
         private const val MAX_STEM_FOOTING_LENGTH = 12.0
         private const val STEM_FOOTING_TO_SIDE_LENGTH_RATIO = 0.4
         private const val SIDE_LENGTH_TO_STEM_FOOTING_RATIO = (1.0 - STEM_FOOTING_TO_SIDE_LENGTH_RATIO) / 2
-        private const val STEM_FOOTING_STROKE_WIDTH = TooltipBox.STROKE_WIDTH + 1
+        private const val STEM_FOOTING_BORDER_WIDTH = BORDER_WIDTH + 1
     }
-
 }
