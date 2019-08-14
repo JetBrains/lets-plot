@@ -18,7 +18,6 @@ internal class PointDataAccess(private val data: DataFrame,
 
     private val myFormatters = HashMap<Aes<*>, (Any) -> String>()
 
-
     override fun isMapped(aes: Aes<*>): Boolean {
         return myBindings.containsKey(aes)
     }
