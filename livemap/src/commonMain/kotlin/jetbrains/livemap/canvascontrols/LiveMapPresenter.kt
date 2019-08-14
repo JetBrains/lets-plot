@@ -17,7 +17,7 @@ class LiveMapPresenter : Disposable {
 
     private val initializing = ValueProperty(true)
     private val liveMapIsLoading = ValueProperty(true)
-    val isLoading = Properties.or(initializing, liveMapIsLoading)
+    val isLoading = Properties.map(Properties.or(initializing, liveMapIsLoading)) { value -> value ?: false }
 
     constructor() {
         contentPresenter = CanvasContentPresenter()

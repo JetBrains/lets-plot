@@ -10,5 +10,13 @@ interface AnimationProvider {
 
     interface AnimationEventHandler {
         fun onEvent(millisTime: Long): Boolean
+
+        companion object {
+            fun toHandler(predicate: (Long) -> Boolean): AnimationEventHandler {
+                return object : AnimationEventHandler {
+                    override fun onEvent(millisTime: Long) = predicate(millisTime)
+                }
+            }
+        }
     }
 }
