@@ -33,6 +33,7 @@ internal class SvgNodeMapperFactory(private val peer: SvgJfxPeer) : MapperFactor
         return when (src) {
             is SvgStyleElement -> SvgStyleElementMapper(src, target as Group, peer)
             is SvgGElement -> SvgGElementMapper(src, target as Group, peer)
+            is SvgSvgElement -> SvgSvgElementMapper(src, peer)
             is SvgTextElement -> SvgTextElementMapper(src, target as Text, peer)
 //            is SvgTextNode -> result = SvgTextNodeMapper(src, target as Text, myDoc, peer)
             is SvgImageElement -> SvgImageElementMapper(src, target as ImageView, peer)

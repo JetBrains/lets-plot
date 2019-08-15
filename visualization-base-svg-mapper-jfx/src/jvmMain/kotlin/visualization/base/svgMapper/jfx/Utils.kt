@@ -78,7 +78,7 @@ internal object Utils {
             is SvgTextElement -> Text()
             is SvgPathElement -> SVGPath()
             is SvgLineElement -> Line()
-//            is SvgSvgElement -> SVGOMSVGElement(null, myDoc)
+            is SvgSvgElement -> Rectangle()
             is SvgGElement -> Group()
             is SvgStyleElement -> Group()          // ignore
 //            is SvgTextNode -> myDoc.createTextNode(null)
