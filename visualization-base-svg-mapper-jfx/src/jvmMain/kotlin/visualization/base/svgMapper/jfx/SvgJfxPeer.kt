@@ -76,12 +76,15 @@ class SvgJfxPeer : SvgPlatformPeer {
     override fun getBBox(element: SvgLocatable): DoubleRectangle {
         ensureSourceRegistered(element as SvgNode)
         val target = myMappingMap[element]!!.target
+
+        // Otherwise Node will have outdated bounds if changes made by CSS (JFX apply CSS on next pulse)
+        target.applyCss()
+
         val bounds = target.boundsInParent!!
         if (bounds.isEmpty) {
             throw IllegalStateException("Undefined target node bounds: ${target::class.simpleName}")
         }
-        val bbox = DoubleRectangle(bounds.minX, bounds.minY, bounds.width, bounds.height)
-//        println(bbox)
-        return bbox
+
+        return DoubleRectangle(bounds.minX, bounds.minY, bounds.width, bounds.height)
     }
 }

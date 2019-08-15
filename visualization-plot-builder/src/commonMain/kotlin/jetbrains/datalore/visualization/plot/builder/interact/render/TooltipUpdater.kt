@@ -3,12 +3,12 @@ package jetbrains.datalore.visualization.plot.builder.interact.render
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.plot.builder.presentation.Style
-import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipWithStem
+import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipBox
 
 internal class TooltipUpdater(private val tooltipLayer: SvgGElement) {
 
     private val viewModels = HashSet<TooltipViewModel>()
-    private val views = HashMap<TooltipViewModel, TooltipWithStem>()
+    private val views = HashMap<TooltipViewModel, TooltipBox>()
 
     fun updateTooltips(tooltipEntries: Collection<TooltipViewModel>) {
         viewModels.clear()
@@ -19,7 +19,7 @@ internal class TooltipUpdater(private val tooltipLayer: SvgGElement) {
             .also { views.clear() }
 
         viewModels.forEach { vm ->
-            views[vm] = TooltipWithStem().apply {
+            views[vm] = TooltipBox().apply {
                 tooltipLayer.children().add(rootGroup) // have to be in DOM to calculate bbox on next line
                 with(vm) {
                     update(fill, text, fontSize)
@@ -31,10 +31,10 @@ internal class TooltipUpdater(private val tooltipLayer: SvgGElement) {
         }
     }
 
-    private fun orientation(entry: TooltipViewModel): TooltipWithStem.Orientation =
+    private fun orientation(entry: TooltipViewModel): TooltipBox.Orientation =
         when {
-            entry.orientation === TooltipOrientation.HORIZONTAL -> TooltipWithStem.Orientation.HORIZONTAL
-            else -> TooltipWithStem.Orientation.VERTICAL
+            entry.orientation === TooltipOrientation.HORIZONTAL -> TooltipBox.Orientation.HORIZONTAL
+            else -> TooltipBox.Orientation.VERTICAL
         }
 
     companion object {

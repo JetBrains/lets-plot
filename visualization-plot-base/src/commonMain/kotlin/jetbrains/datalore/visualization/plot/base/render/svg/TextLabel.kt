@@ -43,6 +43,14 @@ class TextLabel(text: String) : SvgComponent() {
         return myText.fillOpacity()
     }
 
+    fun x(): WritableProperty<Double?> {
+        return myText.x()
+    }
+
+    fun y(): WritableProperty<Double?> {
+        return myText.y()
+    }
+
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myText.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
     }
