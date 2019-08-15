@@ -5,5 +5,4 @@ import jetbrains.datalore.base.registration.Registration
 
 interface MouseEventSource {
     fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration
-
 }

@@ -12,9 +12,12 @@ import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 internal class PointDataAccess(private val data: DataFrame,
                                bindings: Map<Aes<*>, VarBinding>) : MappedDataAccess {
 
+    override val mappedAes: Set<Aes<*>> = HashSet(bindings.keys)
+
     private val myBindings: Map<Aes<*>, VarBinding> = bindings.toMap()
 
     private val myFormatters = HashMap<Aes<*>, (Any) -> String>()
+
 
     override fun isMapped(aes: Aes<*>): Boolean {
         return myBindings.containsKey(aes)

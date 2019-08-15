@@ -21,7 +21,7 @@ import jetbrains.gis.tileprotocol.socket.SocketBuilder
 import jetbrains.gis.tileprotocol.socket.SocketHandler
 
 
-class TileService(socketBuilder: SocketBuilder, private val myTheme: String) {
+open class TileService(socketBuilder: SocketBuilder, private val myTheme: String) {
 
     private val mySocket: Socket
     private val myMessageQueue = ArrayList<String>()
@@ -36,7 +36,7 @@ class TileService(socketBuilder: SocketBuilder, private val myTheme: String) {
     }
 
 
-    fun getTileData(bbox: DoubleRectangle, zoom: Int): Async<List<TileLayer>> {
+    open fun getTileData(bbox: DoubleRectangle, zoom: Int): Async<List<TileLayer>> {
         val key = myIncrement++.toString()
         val async = ThreadSafeAsync<List<TileLayer>>()
 

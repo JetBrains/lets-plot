@@ -17,7 +17,7 @@ class GeocodingService(private val myTransport: GeoTransport) {
             is ExplicitSearchRequest -> request.ids
             is GeocodingSearchRequest -> request.queries.flatMap { regionQuery -> regionQuery.names }
             is ReverseGeocodingSearchRequest -> emptyList()
-            else -> return Asyncs.failure(IllegalStateException("Unkown request type: " + request.toString()))
+            else -> return Asyncs.failure(IllegalStateException("Unkown request type: $request"))
         }
 
         val duplicateStorage = DuplicateStorage(requestedStrings)
@@ -29,7 +29,7 @@ class GeocodingService(private val myTransport: GeoTransport) {
                     is SuccessGeoResponse -> duplicateStorage.restoreDuplicateList(response.features, GeocodedFeature::request)
                     is AmbiguousGeoResponse -> throw RuntimeException(createAmbiguousMessage(response.features))
                     is ErrorGeoResponse -> throw RuntimeException("GIS error: " + response.message)
-                    else -> throw IllegalStateException("Unknown response status: " + response.toString())
+                    else -> throw IllegalStateException("Unknown response status: $response")
                 }
             }
     }
