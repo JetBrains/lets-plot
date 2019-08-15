@@ -5,20 +5,32 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.*
 import jetbrains.datalore.visualization.base.svg.SvgGraphicsElement.Visibility
-import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.BORDER_WIDTH
-import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.H_TEXT_PADDING
-import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.V_TEXT_PADDING
+import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
+import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
+import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
 import jetbrains.datalore.visualization.plot.builder.presentation.Style
+import kotlin.math.max
 
 class TooltipBox : SvgComponent() {
+    private val myLines = SvgSvgElement().apply {
+        x().set(0.0)
+        y().set(0.0)
+        width().set(0.0)
+        height().set(0.0)
+    }
+    private val myContent = SvgSvgElement().apply {
+        x().set(0.0)
+        y().set(0.0)
+        width().set(0.0)
+        height().set(0.0)
+    }
+
     private val myStemFootingLine: SvgLineElement = SvgLineElement()
     private val myStemArrow: SvgPathElement
-    private val myContent = GroupComponent()
-    private val myLines = GroupComponent()
     private val myBorder = SvgRectElement().apply {
         moveTo(DoubleVector.ZERO)
         addClass(Style.BACK)
@@ -34,30 +46,15 @@ class TooltipBox : SvgComponent() {
     private var myObjectCoord: DoubleVector? = null
     private var myOrientation: Orientation? = null
 
-    private val contentRect get() = myContent.rootGroup.bBox
+    private val contentRect get() =  myContent.run {
+        DoubleRectangle(
+            x().get()!!,
+            y().get()!!,
+            width().get()!!,
+            height().get()!!
+        )
+    }
     val contentSize get() = contentRect.dimension
-
-    private val stemDirection: StemDirection
-        get() {
-
-            val tooltipRect = DoubleRectangle(myTooltipCoord!!, contentRect.dimension)
-
-            val objectCoord = myObjectCoord!!
-            if (myOrientation == Orientation.HORIZONTAL) {
-                if (objectCoord.x > tooltipRect.right) {
-                    return StemDirection.RIGHT
-                }
-
-                if (objectCoord.x < tooltipRect.left) {
-                    return StemDirection.LEFT
-                }
-            }
-
-            return if (objectCoord.y < tooltipRect.bottom) {
-                StemDirection.UP
-            } else StemDirection.DOWN
-
-        }
 
     init {
         myStemFootingLine.strokeWidth().set(STEM_FOOTING_BORDER_WIDTH)
@@ -71,21 +68,15 @@ class TooltipBox : SvgComponent() {
     }
 
     override fun buildComponent() {
-        //myContent.add(myLines)
-        //add(myBorder)
-        //add(myStemFootingLine)
-        //add(myStemArrow)
-        //add(myContent)
-
-        myContent.add(myBorder)
-        myContent.add(myLines)
-        add(myContent)
+        add(myBorder)
         add(myStemFootingLine)
         add(myStemArrow)
+        add(myContent)
+
+        myContent.children().add(myLines)
     }
 
     fun update(tooltilColor: Color, lines: List<String>, fontSize: Double) {
-        //myTooltipBox.update(fillColor, text, fontSize)
         fillColor = alphaBlendColor(tooltilColor, Color.WHITE)
         textColor = fillColor?.let { computeContrastColor(it) }
 
@@ -94,27 +85,47 @@ class TooltipBox : SvgComponent() {
             strokeColor().set(textColor)
         }
 
-        lines
-            .map {
-                TextLabel(it).apply {
-                    textColor().set(textColor)
-                    setFontSize(fontSize)
-                    myLines.add(this)
-                }
+        val labels = lines.map {
+            TextLabel(it).apply {
+                textColor().set(textColor)
+                setFontSize(fontSize)
             }
-            .fold(0.0, { y, textLabel ->
-                (y + textLabel.rootGroup.bBox.height).also {
-                    textLabel.y().set(it)
-                }
-            })
-
-        val textSize = myLines.rootGroup.bBox.dimension
-        myLines.moveTo(H_TEXT_PADDING, V_TEXT_PADDING)
-        myBorder.apply {
-            width().set(textSize.x + H_TEXT_PADDING * 2)
-            height().set(textSize.y + V_TEXT_PADDING * 2)
         }
 
+        labels.forEach { myLines.children().add(it.rootGroup) }
+
+        val textSize = labels.fold(DoubleVector.ZERO, { size, textLabel ->
+            // bBox.top is negative baseline of the text.
+            // bBox.height can't be used:
+            // it works differently in Batik(close to the baseline value) and JavaFx (always is the same value - font size)
+            textLabel.y().set(size.y - textLabel.rootGroup.bBox.top)
+
+            // Again works differently in Batik(some positive padding) and JavaFX (always zero)
+            textLabel.x().set(-textLabel.rootGroup.bBox.left)
+
+            DoubleVector(
+                max(size.x, textLabel.rootGroup.bBox.width),
+                textLabel.y().get()!! + LINE_INTERVAL
+            )
+        }).run {
+            // subsctract LINE_INTERVAL from content height if there is only one line
+            this.takeIf { labels.size > 0 } ?: this.subtract(DoubleVector(0.0, LINE_INTERVAL))
+        }
+
+        myLines.apply {
+            x().set(H_CONTENT_PADDING)
+            y().set(V_CONTENT_PADDING)
+            width().set(textSize.x)
+            height().set(textSize.y)
+        }
+
+        myContent.apply {
+            width().set(textSize.x + H_CONTENT_PADDING * 2)
+            height().set(textSize.y + V_CONTENT_PADDING * 2)
+        }
+
+        myBorder.width().set(contentSize.x)
+        myBorder.height().set(contentSize.y)
         myStemArrow.strokeColor().set(textColor)
         myStemArrow.fillColor().set(fillColor)
         myStemFootingLine.strokeColor().set(fillColor)
@@ -137,6 +148,28 @@ class TooltipBox : SvgComponent() {
         moveTo(myTooltipCoord!!.x , myTooltipCoord!!.y)
         updateStem()
     }
+
+    private val stemDirection: StemDirection
+        get() {
+
+            val tooltipRect = DoubleRectangle(myTooltipCoord!!, contentRect.dimension)
+
+            val objectCoord = myObjectCoord!!
+            if (myOrientation == Orientation.HORIZONTAL) {
+                if (objectCoord.x > tooltipRect.right) {
+                    return StemDirection.RIGHT
+                }
+
+                if (objectCoord.x < tooltipRect.left) {
+                    return StemDirection.LEFT
+                }
+            }
+
+            return if (objectCoord.y < tooltipRect.bottom) {
+                StemDirection.UP
+            } else StemDirection.DOWN
+
+        }
 
     private fun updateStem() {
         val stemArrowTarget = DoubleVector(

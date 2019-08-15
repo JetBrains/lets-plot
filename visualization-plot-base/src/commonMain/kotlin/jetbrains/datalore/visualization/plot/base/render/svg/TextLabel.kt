@@ -1,5 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.render.svg
 
+import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgConstants
@@ -43,11 +44,11 @@ class TextLabel(text: String) : SvgComponent() {
         return myText.fillOpacity()
     }
 
-    fun x(): WritableProperty<Double?> {
+    fun x(): Property<Double?> {
         return myText.x()
     }
 
-    fun y(): WritableProperty<Double?> {
+    fun y(): Property<Double?> {
         return myText.y()
     }
 

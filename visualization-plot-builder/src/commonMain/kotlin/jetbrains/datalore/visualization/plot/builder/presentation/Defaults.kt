@@ -36,9 +36,10 @@ object Defaults {
         object Tooltip {
             const val FONT_SIZE = FONT_MEDIUM
             const val AXIS_FONT_SIZE = Axis.TICK_FONT_SIZE
-            const val LINE_HEIGHT = FONT_SIZE.toDouble()
-            const val H_TEXT_PADDING = 4.0
-            const val V_TEXT_PADDING = 4.0
+            const val LINE_INTERVAL = 3.0
+            const val H_CONTENT_PADDING = 4.0
+            const val V_CONTENT_PADDING = 4.0
+
             const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
             const val LINE_HEIGHT_CSS = "1.4em"
             const val BORDER_WIDTH = 1.0
