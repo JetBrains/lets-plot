@@ -10,14 +10,14 @@ import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 
-class LiveMapCanvasFigure internal constructor(private val liveMap: Async<BaseLiveMap>) : CanvasFigure {
+class LiveMapCanvasFigure (private val liveMap: Async<BaseLiveMap>) : CanvasFigure {
     private val myBounds = ValueProperty(DoubleRectangle.span(DoubleVector.ZERO, DoubleVector.ZERO))
     private val myLiveMapPresenter = LiveMapPresenter()
 
     val isLoading: ReadableProperty<out Boolean>
         get() = myLiveMapPresenter.isLoading
 
-    internal fun setBounds(bounds: DoubleRectangle) {
+    fun setBounds(bounds: DoubleRectangle) {
         myBounds.set(bounds)
     }
 

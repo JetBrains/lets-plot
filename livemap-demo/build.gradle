@@ -1,0 +1,43 @@
+plugins {
+    id 'kotlin-multiplatform'
+    id 'org.jetbrains.gradle.plugin.idea-ext'
+}
+
+kotlin {
+    jvm("jvmJfx")
+
+    sourceSets {
+        allJvm {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+            }
+        }
+        jvmMain {
+            dependsOn allJvm
+        }
+        jvmJfxMain {
+            dependsOn allJvm
+            dependsOn jvmMain
+            dependencies {
+                implementation project(':base')
+                implementation project(':gis')
+                implementation project(':livemap')
+                implementation project(':visualization-base-svg')
+                implementation project(':visualization-base-canvas')
+                implementation project(':visualization-demo-common')
+                implementation project(':visualization-demo-common-jfx')
+                implementation project(':visualization-plot-builder')
+                implementation project(':visualization-plot-base')
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        settings {
+            packagePrefix["src/jvmJfxMain/kotlin"] = ""
+        }
+    }
+}
