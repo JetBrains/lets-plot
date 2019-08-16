@@ -12,8 +12,8 @@ internal class TooltipMeter(
         val tt = TooltipBox()
         tt.rootGroup.visibility().set(SvgGraphicsElement.Visibility.HIDDEN)
         tooltipLayer.children().add(tt.rootGroup)
-        tt.update(TooltipUpdater.IGNORED_COLOR, text, fontSize)
+        tt.setContent(TooltipUpdater.IGNORED_COLOR, text, fontSize)
 
-        return tt.contentSize.also { tooltipLayer.children().remove(tt.rootGroup) }
+        return tt.contentRect.dimension.also { tooltipLayer.children().remove(tt.rootGroup) }
     }
 }

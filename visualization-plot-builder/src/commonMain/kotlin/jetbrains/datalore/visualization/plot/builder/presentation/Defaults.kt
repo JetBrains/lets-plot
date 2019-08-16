@@ -34,6 +34,9 @@ object Defaults {
         }
 
         object Tooltip {
+            const val MAX_STEM_FOOTING_LENGTH = 12.0
+            const val STEM_FOOTING_TO_SIDE_LENGTH_RATIO = 0.4
+
             const val NORMAL_STEM_LENGTH = 12.0
             const val SHORT_STEM_LENGTH = 5.0
             const val MARGIN_BETWEEN_TOOLTIPS = 5

@@ -22,8 +22,8 @@ internal class TooltipUpdater(private val tooltipLayer: SvgGElement) {
             views[vm] = TooltipBox().apply {
                 tooltipLayer.children().add(rootGroup) // have to be in DOM to calculate bbox on next line
                 with(vm) {
-                    update(fill, text, fontSize)
-                    moveTooltipTo(tooltipCoord, stemCoord, orientation(this))
+                    setContent(fill, text, fontSize)
+                    setPosition(tooltipCoord, stemCoord, orientation(this))
                     addClassName(Style.PLOT_TOOLTIP)
                     addClassName("shown")
                 }
