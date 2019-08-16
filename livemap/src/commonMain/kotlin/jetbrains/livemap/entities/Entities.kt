@@ -25,7 +25,7 @@ object Entities {
             .createEntity(name)
             .addComponent(parentLayerComponent)
             .addComponent(RendererComponent(renderer))
-            .addComponent(Components.WorldOriginComponent().setOrigin(worldPlacement))
+            .addComponent(Components.WorldOriginComponent(worldPlacement))
             .addComponent(CameraListenerComponent())
             .addComponent(CenterChangedComponent())
             .addComponent(ZoomChangedComponent())
@@ -62,7 +62,10 @@ object Entities {
             .addComponent(CameraListenerComponent())
             .addComponent(CenterChangedComponent())
             .addComponent(ZoomChangedComponent())
-            .addComponent(Components.ScreenOriginComponent().setOrigin(screenPlacement))
+            .addComponent(
+                Components.ScreenOriginComponent()
+                    .apply { origin = screenPlacement }
+            )
     }
 
     fun animationObject(componentManager: EcsComponentManager, animation: Animation, name: String): EcsEntity {

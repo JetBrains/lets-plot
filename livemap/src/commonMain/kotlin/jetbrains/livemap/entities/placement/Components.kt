@@ -8,16 +8,7 @@ object Components {
 
     class ScreenLoopComponent : EcsComponent {
 
-        private var myOrigins: List<DoubleVector> = ArrayList<DoubleVector>()
-
-        fun getOrigins(): List<DoubleVector> {
-            return myOrigins
-        }
-
-        fun setOrigins(origins: List<DoubleVector>): ScreenLoopComponent {
-            myOrigins = origins
-            return this
-        }
+        var origins: List<DoubleVector> = ArrayList()
 
         companion object {
             fun provide(entity: EcsEntity): ScreenLoopComponent {
@@ -29,31 +20,21 @@ object Components {
             }
 
             fun getOrigins(entity: EcsEntity): List<DoubleVector> {
-                return get(entity).getOrigins()
+                return get(entity).origins
             }
 
             fun setOrigins(entity: EcsEntity, origins: List<DoubleVector>) {
-                get(entity).setOrigins(origins)
+                get(entity).origins = origins
             }
         }
     }
 
     class ScreenDimensionComponent : EcsComponent {
-
-        private var myDimension: DoubleVector? = null
-
-        fun getDimension(): DoubleVector? {
-            return myDimension
-        }
-
-        fun setDimension(dimension: DoubleVector): ScreenDimensionComponent {
-            myDimension = dimension
-            return this
-        }
+        var dimension: DoubleVector = DoubleVector.ZERO
 
         companion object {
-            fun getDimension(entity: EcsEntity): DoubleVector? {
-                return get(entity).getDimension()
+            fun getDimension(entity: EcsEntity): DoubleVector {
+                return get(entity).dimension
             }
 
             private operator fun get(entity: EcsEntity): ScreenDimensionComponent {
@@ -66,74 +47,41 @@ object Components {
         }
     }
 
-    class WorldDimensionComponent : EcsComponent {
-
-        private var myDimension: DoubleVector? = null
-
-        fun getDimension(): DoubleVector? {
-            return myDimension
-        }
-
-        fun setDimension(dimension: DoubleVector): WorldDimensionComponent {
-            myDimension = dimension
-            return this
-        }
-
+    class WorldDimensionComponent(var dimension: DoubleVector) : EcsComponent {
         companion object {
             operator fun get(entity: EcsEntity): WorldDimensionComponent {
                 return entity.getComponent()
             }
 
-            fun getDimension(entity: EcsEntity): DoubleVector? {
-                return get(entity).getDimension()
+            fun getDimension(entity: EcsEntity): DoubleVector {
+                return get(entity).dimension
             }
         }
     }
 
-    class WorldOriginComponent : EcsComponent {
-
-        private var myOrigin: DoubleVector? = null
-
-        fun getOrigin(): DoubleVector? {
-            return myOrigin
-        }
-
-        fun setOrigin(origin: DoubleVector): WorldOriginComponent {
-            myOrigin = origin
-            return this
-        }
-
+    class WorldOriginComponent(var origin: DoubleVector) : EcsComponent {
         companion object {
             operator fun get(entity: EcsEntity): WorldOriginComponent {
                 return entity.getComponent()
             }
 
-            fun getOrigin(entity: EcsEntity): DoubleVector? {
-                return get(entity).getOrigin()
+            fun getOrigin(entity: EcsEntity): DoubleVector {
+                return get(entity).origin
             }
         }
     }
 
     class ScreenOriginComponent : EcsComponent {
 
-        private var myOrigin: DoubleVector? = null
-
-        fun getOrigin(): DoubleVector? {
-            return myOrigin
-        }
-
-        fun setOrigin(origin: DoubleVector): ScreenOriginComponent {
-            myOrigin = origin
-            return this
-        }
+        var origin: DoubleVector = DoubleVector.ZERO
 
         companion object {
             fun provide(entity: EcsEntity): ScreenOriginComponent {
                 return entity.provideComponent(::ScreenOriginComponent)
             }
 
-            fun getOrigin(entity: EcsEntity): DoubleVector? {
-                return get(entity).getOrigin()
+            fun getOrigin(entity: EcsEntity): DoubleVector {
+                return get(entity).origin
             }
 
             operator fun get(entity: EcsEntity): ScreenOriginComponent {
@@ -141,39 +89,30 @@ object Components {
             }
 
             fun setOrigin(entity: EcsEntity, origin: DoubleVector) {
-                get(entity).setOrigin(origin)
+                get(entity).origin = origin
             }
         }
     }
 
     class ScreenOffsetComponent : EcsComponent {
 
-        private var myScreenOffset: DoubleVector? = null
-
-        fun getScreenOffset(): DoubleVector? {
-            return myScreenOffset
-        }
-
-        fun setScreenOffset(screenOffset: DoubleVector): ScreenOffsetComponent {
-            myScreenOffset = screenOffset
-            return this
-        }
+        var screenOffset: DoubleVector = DoubleVector.ZERO
 
         companion object {
             fun provide(entity: EcsEntity): ScreenOffsetComponent {
                 return entity.provideComponent(::ScreenOffsetComponent)
             }
 
-            fun getScreenOffset(entity: EcsEntity): DoubleVector? {
-                return get(entity).getScreenOffset()
+            fun getScreenOffset(entity: EcsEntity): DoubleVector {
+                return get(entity).screenOffset
             }
 
             operator fun get(entity: EcsEntity): ScreenOffsetComponent {
                 return entity.getComponent()
             }
 
-            fun setScreenOffset(entity: EcsEntity, origin: DoubleVector) {
-                get(entity).setScreenOffset(origin)
+            fun setScreenOffset(entity: EcsEntity, offset: DoubleVector) {
+                get(entity).screenOffset = offset
             }
         }
     }
