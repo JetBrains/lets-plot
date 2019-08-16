@@ -6,9 +6,9 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipLayer
 import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipViewModel
+import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
+import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.*
-import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.NORMAL_STEM_LENGTH
-import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.Companion.SHORT_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

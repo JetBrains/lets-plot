@@ -6,6 +6,8 @@ import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
+import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
 import kotlin.math.min
@@ -267,9 +269,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
     }
 
     companion object {
-        const val NORMAL_STEM_LENGTH = 12.0
-        const val SHORT_STEM_LENGTH = 5.0
-        const val MARGIN_BETWEEN_TOOLTIPS = 5
+
         private val CURSOR_DIMENSION = DoubleVector(10.0, 10.0)
         private val EMPTY_DOUBLE_RANGE = DoubleRange.withStartAndLength(0.0, 0.0)
 

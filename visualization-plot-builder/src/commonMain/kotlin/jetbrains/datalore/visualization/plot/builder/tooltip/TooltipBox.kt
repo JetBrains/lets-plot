@@ -46,14 +46,15 @@ class TooltipBox : SvgComponent() {
     private var myObjectCoord: DoubleVector? = null
     private var myOrientation: Orientation? = null
 
-    private val contentRect get() =  myContent.run {
-        DoubleRectangle(
-            x().get()!!,
-            y().get()!!,
-            width().get()!!,
-            height().get()!!
-        )
-    }
+    private val contentRect
+        get() = myContent.run {
+            DoubleRectangle(
+                x().get()!!,
+                y().get()!!,
+                width().get()!!,
+                height().get()!!
+            )
+        }
     val contentSize get() = contentRect.dimension
 
     init {
@@ -94,23 +95,26 @@ class TooltipBox : SvgComponent() {
 
         labels.forEach { myLines.children().add(it.rootGroup) }
 
-        val textSize = labels.fold(DoubleVector.ZERO, { size, textLabel ->
-            // bBox.top is negative baseline of the text.
-            // bBox.height can't be used:
-            // it works differently in Batik(close to the baseline value) and JavaFx (always is the same value - font size)
-            textLabel.y().set(size.y - textLabel.rootGroup.bBox.top)
+        val textSize = labels
+            .fold(DoubleVector.ZERO, { size, textLabel ->
+                val bBox = textLabel.rootGroup.bBox
 
-            // Again works differently in Batik(some positive padding) and JavaFX (always zero)
-            textLabel.x().set(-textLabel.rootGroup.bBox.left)
+                // bBox.top is negative baseline of the text.
+                // Can't use bBox.height:
+                //  - in Batik close to the abs(bBox.top)
+                //  - in JavaFx is constant = fontSize
+                textLabel.y().set(size.y - bBox.top)
 
-            DoubleVector(
-                max(size.x, textLabel.rootGroup.bBox.width),
-                textLabel.y().get()!! + LINE_INTERVAL
-            )
-        }).run {
+                // Again works differently in Batik(some positive padding) and JavaFX (always zero)
+                textLabel.x().set(-bBox.left)
+
+                DoubleVector(
+                    max(size.x, bBox.width),
+                    textLabel.y().get()!! + LINE_INTERVAL
+                )
+            })
             // subsctract LINE_INTERVAL from content height if there is only one line
-            this.takeIf { labels.size > 0 } ?: this.subtract(DoubleVector(0.0, LINE_INTERVAL))
-        }
+            .subtract(DoubleVector(0.0, LINE_INTERVAL))
 
         myLines.apply {
             x().set(H_CONTENT_PADDING)
@@ -124,8 +128,11 @@ class TooltipBox : SvgComponent() {
             height().set(textSize.y + V_CONTENT_PADDING * 2)
         }
 
-        myBorder.width().set(contentSize.x)
-        myBorder.height().set(contentSize.y)
+        myBorder.apply {
+            width().set(contentSize.x)
+            height().set(contentSize.y)
+        }
+
         myStemArrow.strokeColor().set(textColor)
         myStemArrow.fillColor().set(fillColor)
         myStemFootingLine.strokeColor().set(fillColor)
@@ -145,7 +152,7 @@ class TooltipBox : SvgComponent() {
             return
         }
 
-        moveTo(myTooltipCoord!!.x , myTooltipCoord!!.y)
+        moveTo(myTooltipCoord!!.x, myTooltipCoord!!.y)
         updateStem()
     }
 
@@ -173,8 +180,8 @@ class TooltipBox : SvgComponent() {
 
     private fun updateStem() {
         val stemArrowTarget = DoubleVector(
-                myObjectCoord!!.x - myTooltipCoord!!.x,
-                myObjectCoord!!.y - myTooltipCoord!!.y
+            myObjectCoord!!.x - myTooltipCoord!!.x,
+            myObjectCoord!!.y - myTooltipCoord!!.y
         )
 
         val showStem = !contentRect.contains(stemArrowTarget)
@@ -199,7 +206,7 @@ class TooltipBox : SvgComponent() {
             stemFootingCoord1 = DoubleVector(stemFootingX, contentRect.bottom - stemFootingIndent)
 
         } else {
-            val stemFootingY = when(stemDirection) {
+            val stemFootingY = when (stemDirection) {
                 StemDirection.UP -> contentRect.top
                 StemDirection.DOWN -> contentRect.bottom
                 else -> error("Invalid vertical direction")

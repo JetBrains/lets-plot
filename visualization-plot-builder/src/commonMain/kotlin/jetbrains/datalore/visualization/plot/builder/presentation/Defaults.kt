@@ -34,6 +34,9 @@ object Defaults {
         }
 
         object Tooltip {
+            const val NORMAL_STEM_LENGTH = 12.0
+            const val SHORT_STEM_LENGTH = 5.0
+            const val MARGIN_BETWEEN_TOOLTIPS = 5
             const val FONT_SIZE = FONT_MEDIUM
             const val AXIS_FONT_SIZE = Axis.TICK_FONT_SIZE
             const val LINE_INTERVAL = 3.0
