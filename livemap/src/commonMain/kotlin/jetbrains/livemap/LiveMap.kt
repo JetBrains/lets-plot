@@ -19,6 +19,7 @@ import jetbrains.livemap.DevParams.MicroTaskExecutor.*
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.MapWidgetUtil.MAX_ZOOM
 import jetbrains.livemap.camera.CameraComponent
+import jetbrains.livemap.camera.CameraInputSystem
 import jetbrains.livemap.camera.CameraScale
 import jetbrains.livemap.camera.CameraUpdateDetectionSystem
 import jetbrains.livemap.core.ecs.*
@@ -34,8 +35,12 @@ import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
 import jetbrains.livemap.core.rendering.layers.RenderLayer
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
+import jetbrains.livemap.entities.placement.ScreenLoopsUpdateSystem
+import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
+import jetbrains.livemap.entities.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.entities.regions.EmptinessChecker
 import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
+import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ViewProjection
@@ -145,10 +150,10 @@ class LiveMap(
                 // Input systems
                 MouseInputSystem(componentManager),
                 MouseInputDetectionSystem(componentManager),
-                //CameraInputSystem(componentManager),
+                CameraInputSystem(componentManager),
                 CameraUpdateDetectionSystem(componentManager),
 
-                //ScaleUpdateSystem(componentManager),
+                ScaleUpdateSystem(componentManager),
 
                 // Service systems
                 AnimationObjectSystem(componentManager),
@@ -173,10 +178,10 @@ class LiveMap(
                 //FragmentsRemovingSystem(myDevParams.read(FRAGMENT_CACHE_LIMIT), componentManager),
 
                 // Position update
-                //WorldDimension2ScreenUpdateSystem(componentManager),
-                //WorldOrigin2ScreenUpdateSystem(componentManager),
+                WorldDimension2ScreenUpdateSystem(componentManager),
+                WorldOrigin2ScreenUpdateSystem(componentManager),
                 //WorldGeometry2ScreenUpdateSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
-                //ScreenLoopsUpdateSystem(componentManager),
+                ScreenLoopsUpdateSystem(componentManager),
 
                 // Geoms
                 EntitiesRenderingTaskSystem(componentManager),
