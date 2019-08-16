@@ -9,10 +9,10 @@ object GeoUtils {
     internal val EARTH_RADIUS = 6378137.0
     internal val MIN_LONGITUDE = -180.0
     internal val MAX_LONGITUDE = 180.0
-    internal val FULL_LONGITUDE = MAX_LONGITUDE - MIN_LONGITUDE
+    val FULL_LONGITUDE = MAX_LONGITUDE - MIN_LONGITUDE
     private val MIN_LATITUDE = -90.0
     private val MAX_LATITUDE = 90.0
-    private val FULL_LATITUDE = MAX_LATITUDE - MIN_LATITUDE
+    val FULL_LATITUDE = MAX_LATITUDE - MIN_LATITUDE
     internal val EARTH_RECT = DoubleRectangle(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
     val BBOX_CALCULATOR = GeoBoundingBoxCalculator(EARTH_RECT, true, false)
     private val QUAD_KEY_CREATOR = { tileKey: String -> QuadKey(tileKey) }

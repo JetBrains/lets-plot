@@ -20,6 +20,7 @@ import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.MapWidgetUtil.MAX_ZOOM
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraScale
+import jetbrains.livemap.camera.CameraUpdateDetectionSystem
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.MouseInputDetectionSystem
@@ -34,10 +35,12 @@ import jetbrains.livemap.core.rendering.layers.RenderLayer
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.entities.regions.EmptinessChecker
+import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ViewProjection
 import jetbrains.livemap.tilegeometry.TileGeometryProvider
+import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
 import jetbrains.livemap.ui.UiService
@@ -93,7 +96,7 @@ class LiveMap(
 
     private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {
         if (!myInitialized) {
-            // initLayers(myLayerManager!!, componentManager)
+            initLayers(myLayerManager!!, componentManager)
             initSystems(componentManager)
             initCamera(componentManager)
             if (myDevParams.isSet(PERF_STATS)) {
@@ -143,15 +146,15 @@ class LiveMap(
                 MouseInputSystem(componentManager),
                 MouseInputDetectionSystem(componentManager),
                 //CameraInputSystem(componentManager),
-                //CameraUpdateDetectionSystem(componentManager),
+                CameraUpdateDetectionSystem(componentManager),
 
                 //ScaleUpdateSystem(componentManager),
 
                 // Service systems
                 AnimationObjectSystem(componentManager),
                 AnimationSystem(componentManager),
-                //ViewProjectionUpdateSystem(componentManager),
-                //LiveMapUiSystem(uiService, componentManager, myMapLocationConsumer),
+                ViewProjectionUpdateSystem(componentManager),
+                LiveMapUiSystem(uiService, componentManager, myMapLocationConsumer),
 
                 //CellStateUpdateSystem(componentManager),
                 tileLoadingSystem,
@@ -176,7 +179,7 @@ class LiveMap(
                 //ScreenLoopsUpdateSystem(componentManager),
 
                 // Geoms
-                //EntitiesRenderingTaskSystem(componentManager),
+                EntitiesRenderingTaskSystem(componentManager),
 
                 UiRenderingTaskSystem(componentManager),
                 layerRenderingSystem,
@@ -189,7 +192,7 @@ class LiveMap(
                 // Tooltips
                 //TooltipTargetSystem(componentManager, myRegionGeometryConsumer),
 
-                //LoadingStateSystem(componentManager, isLoading())
+                // LoadingStateSystem(componentManager, isLoading())
             )
         )
     }
@@ -230,21 +233,21 @@ class LiveMap(
         }
     }
 
-//    private fun initLayers(layerManager: LayerManager, componentManager: EcsComponentManager) {
-//        // layers
-//        layersOrder = layerManager.createLayersOrderComponent().renderLayers
-//        layerRenderingSystem = layerManager.createLayerRenderingSystem()
-//
-//        componentManager
-//            .createEntity("layers_order")
-//            .addComponent(layerManager.createLayersOrderComponent())
-//
+    private fun initLayers(layerManager: LayerManager, componentManager: EcsComponentManager) {
+        // layers
+        layersOrder = layerManager.createLayersOrderComponent().renderLayers
+        layerRenderingSystem = layerManager.createLayerRenderingSystem()
+
+        componentManager
+            .createEntity("layers_order")
+            .addComponent(layerManager.createLayersOrderComponent())
+
 //        componentManager
 //            .createEntity("cell_layer_ground")
 //            .addComponent(CellLayerComponent(CellLayerKind.WORLD))
 //            .addComponent(LayerEntitiesComponent())
 //            .addComponent(layerManager.createRenderLayerComponent("ground"))
-//
+
 //        val mapObject2Entity = MapObject2Entity(componentManager, layerManager, myDevParams)
 //        for (mapLayer in myMapLayers) {
 //            val kind = mapLayer.kind
@@ -264,13 +267,13 @@ class LiveMap(
 //                )
 //            }
 //        }
-//
+
 //        componentManager
 //            .createEntity("cell_layer_labels")
 //            .addComponent(CellLayerComponent(CellLayerKind.LABEL))
 //            .addComponent(LayerEntitiesComponent())
 //            .addComponent(layerManager.createRenderLayerComponent("labels"))
-//
+
 //        if (myDevParams.isSet(DEBUG_GRID)) {
 //            componentManager
 //                .createEntity("cell_layer_debug")
@@ -279,12 +282,12 @@ class LiveMap(
 //                .addComponent(LayerEntitiesComponent())
 //                .addComponent(layerManager.createRenderLayerComponent("debug"))
 //        }
-//
-//        componentManager
-//            .createEntity("layer_ui")
-//            .addComponent(UiLayerComponent())
-//            .addComponent(layerManager.createRenderLayerComponent("ui"))
-//    }
+
+        componentManager
+            .createEntity("layer_ui")
+            .addComponent(UiRenderingTaskSystem.UiLayerComponent())
+            .addComponent(layerManager.createRenderLayerComponent("ui"))
+    }
 
     override fun dispose() {
         myTimerReg.dispose()

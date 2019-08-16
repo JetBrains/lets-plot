@@ -17,8 +17,8 @@ class LayersRenderingSystem internal constructor(
     override fun updateImpl(context: EcsContext, dt: Double) {
         val orderedRenderLayers = getSingletonComponent(LayersOrderComponent::class).renderLayers
 
-        val layerEntities = getEntities(RenderLayerComponent::class)
-        val dirtyEntities = getEntities(DirtyRenderLayerComponent::class)
+        val layerEntities = getEntities(RenderLayerComponent::class).toList()
+        val dirtyEntities = getEntities(DirtyRenderLayerComponent::class).toList()
 
         myDirtyLayers.clear()
         dirtyEntities.forEach { myDirtyLayers.add(it.id) }

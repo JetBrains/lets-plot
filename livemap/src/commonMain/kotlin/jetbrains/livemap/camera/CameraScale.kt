@@ -30,13 +30,13 @@ object CameraScale {
 
         cameraEntity
             .setComponent(
-                CameraScaleEffectComponent().apply {
-                    animationId = animation.id
-                    scaleOrigin = origin
-                    newCenter = center
-                    startZoom = camera.zoom
-                    this.delta = delta
-                }
+                CameraScaleEffectComponent(
+                    animation.id,
+                    origin,
+                    center,
+                    camera.zoom,
+                    delta
+                )
             )
     }
 
@@ -68,19 +68,16 @@ object CameraScale {
         }
     }
 
-    class CameraScaleEffectComponent : EcsComponent {
-        var animationId: Int = 0
-        var scaleOrigin: DoubleVector? = null
-        var newCenter: DoubleVector? = null
-        var currentScale: Double = 0.toDouble()
-        var delta: Double = 0.toDouble()
-        var startZoom: Double = 0.toDouble()
+    class CameraScaleEffectComponent(
+        val animationId: Int,
+        val scaleOrigin: DoubleVector,
+        val newCenter: DoubleVector,
+        val delta: Double,
+        val startZoom: Double
+    ) : EcsComponent {
+        var currentScale: Double = 0.0
 
         companion object {
-            fun provide(cameraEntity: EcsEntity): CameraScaleEffectComponent {
-                return cameraEntity.provideComponent(::CameraScaleEffectComponent)
-            }
-
             operator fun get(cameraEntity: EcsEntity): CameraScaleEffectComponent {
                 return cameraEntity.getComponent()
             }
