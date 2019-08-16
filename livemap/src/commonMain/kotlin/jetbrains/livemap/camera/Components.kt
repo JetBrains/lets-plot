@@ -36,31 +36,13 @@ class CameraListenerComponent : EcsComponent {
 
 class CameraUpdateComponent : EcsComponent {
 
-    private var myZoomChanged: Boolean = false
-    private var myMoved: Boolean = false
+    var isZoomChanged: Boolean = false
+    var isMoved: Boolean = false
 
     fun nothing(): CameraUpdateComponent {
-        myMoved = false
-        myZoomChanged = false
+        isMoved = false
+        isZoomChanged = false
         return this
-    }
-
-    fun isZoomChanged(): Boolean {
-        return myZoomChanged
-    }
-
-    fun setMoved(isTrue: Boolean): CameraUpdateComponent {
-        myMoved = isTrue
-        return this
-    }
-
-    fun setZoomChanged(isTrue: Boolean): CameraUpdateComponent {
-        myZoomChanged = isTrue
-        return this
-    }
-
-    fun isMoved(): Boolean {
-        return myMoved
     }
 
     companion object {
@@ -71,9 +53,7 @@ class CameraUpdateComponent : EcsComponent {
     }
 }
 
-class CameraComponent : EcsComponent {
-    var zoom: Double = 0.toDouble()
-    var center: DoubleVector? = null
+class CameraComponent(var zoom: Double, var center: DoubleVector) : EcsComponent {
 
     companion object {
         fun getZoom(entity: EcsEntity): Double {

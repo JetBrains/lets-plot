@@ -12,7 +12,7 @@ class Label(override var origin: DoubleVector, private var text: Text) : RenderB
     private val rectangle: Rectangle = Rectangle()
     var padding: Double = 0.0
     var background: Color = Color.TRANSPARENT
-    private var position = RIGHT
+    var position = RIGHT
 
     override fun render(ctx: Context2d) {
         if (text.isDirty) {

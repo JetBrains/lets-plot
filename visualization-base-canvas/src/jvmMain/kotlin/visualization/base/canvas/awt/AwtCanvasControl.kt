@@ -50,7 +50,7 @@ class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactor
     }
 
     override fun createSnapshot(dataUrl: String): Async<Snapshot> {
-        TODO("not implemented")
+        return myGraphicsCanvasControl.createSnapshot(dataUrl)
     }
 
     override fun addChild(canvas: Canvas) {

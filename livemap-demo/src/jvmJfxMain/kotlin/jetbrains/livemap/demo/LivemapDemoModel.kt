@@ -67,7 +67,7 @@ object LivemapDemoModel {
                     eventSpec: MouseEventSpec,
                     eventHandler: EventHandler<MouseEvent>
                 ): Registration {
-                    TODO("not implemented")
+                    return canvasControl.addEventHandler(eventSpec, eventHandler)
                 }
 
             },
@@ -79,6 +79,7 @@ object LivemapDemoModel {
 
         val livemapFactory = LiveMapFactory(livemapSpec)
         val livemapPresenter = LiveMapPresenter()
+
         livemapPresenter.render(
             canvasControl,
             livemapFactory.createLiveMap()

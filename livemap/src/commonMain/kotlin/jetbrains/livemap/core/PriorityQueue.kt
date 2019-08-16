@@ -7,7 +7,7 @@ class PriorityQueue<T>(private val comparator: Comparator<T>) {
         var index = queue.binarySearch(value, comparator)
 
         if (index < 0) {
-            index = 1 - index
+            index = 0
         }
 
         queue.add(index, value)
