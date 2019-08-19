@@ -2,7 +2,6 @@ package jetbrains.datalore.visualization.plot.builder.interact.render
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.plot.builder.presentation.Style
 import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipBox
 
 internal class TooltipUpdater(private val tooltipLayer: SvgGElement) {
@@ -24,8 +23,6 @@ internal class TooltipUpdater(private val tooltipLayer: SvgGElement) {
                 with(vm) {
                     setContent(fill, text, fontSize)
                     setPosition(tooltipCoord, stemCoord, orientation(this))
-                    addClassName(Style.PLOT_TOOLTIP)
-                    addClassName("shown")
                 }
             }
         }

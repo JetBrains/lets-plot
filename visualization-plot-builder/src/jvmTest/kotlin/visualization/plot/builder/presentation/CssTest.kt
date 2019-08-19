@@ -15,16 +15,6 @@ text {
 .plt-glass-pane {
     cursor: crosshair;
 }
-.plt-tooltip {
-    pointer-events: none;
-    opacity: 0.0;
-}
-.plt-tooltip.shown {
-    opacity: 1.0;
-}
-.plt-tooltip.shown .back {
-    opacity: 1.0;
-}
 .plt-axis line {
     shape-rendering: crispedges;
 }

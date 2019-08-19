@@ -25,8 +25,6 @@ object Style {
     const val LEGEND_TITLE = "legend-title"
 
     const val PLOT_GLASS_PANE = "plt-glass-pane"
-    const val PLOT_TOOLTIP = "plt-tooltip"
-    const val AXIS_TOOLTIP = "axis-tooltip"
 
     val CSS = CssResourceBuilder()
         .add(SelectorBuilder(PLOT_CONTAINER)
@@ -38,16 +36,6 @@ object Style {
         )
         .add(SelectorBuilder(PLOT_GLASS_PANE)
             .cursor(CursorValue.CROSSHAIR)
-        )
-        .add(SelectorBuilder(PLOT_TOOLTIP)
-            .pointerEvents(PointerEventsValue.NONE)
-            .opacity(0.0f)
-        )
-        .add(SelectorBuilder(listOf(PLOT_TOOLTIP, "shown"))
-            .opacity(1.0f)
-        )
-        .add(SelectorBuilder(listOf(PLOT_TOOLTIP, "shown")).innerSelector("back")
-            .opacity(1.0f)
         )
         .add(SelectorBuilder(AXIS).innerSelector(SelectorType.LINE)
             .shapeRendering(ShapeRenderingValue.CRISPEDGES)

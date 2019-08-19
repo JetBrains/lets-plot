@@ -27,15 +27,6 @@ Text {
     -fx-cursor: crosshair;
 }
 
-.plt-tooltip {
-    -fx-pointer-events: none;
-    -fx-opacity: 0.0;
-}
-
-.plt-tooltip.shown {
-    -fx-opacity: 1.0;
-}
-
 .plt-axis Line {
     -fx-shape-rendering: crispedges;
 }
