@@ -4,17 +4,15 @@ import jetbrains.datalore.base.projectionGeometry.MultiLineString
 import jetbrains.datalore.base.projectionGeometry.MultiPoint
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.gis.common.twkb.Twkb.GeometryType
-import jetbrains.gis.common.twkb.Twkb.GeometryType.MULTI_LINESTRING
-import jetbrains.gis.common.twkb.Twkb.GeometryType.MULTI_POINT
-import jetbrains.gis.common.twkb.Twkb.GeometryType.MULTI_POLYGON
+import jetbrains.gis.common.twkb.Twkb.GeometryType.*
 
 
 class TileFeature(
-    val myTileGeometry: TileGeometry,
+    val tileGeometry: TileGeometry,
     private val myKind: Int?,
     private val mySub: Int?,
-    val myLabel: String?,
-    val myShort: String?
+    val label: String?,
+    val short: String?
 ) {
 
     fun getFieldValue(key: String): Int {

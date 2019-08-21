@@ -10,9 +10,12 @@ import jetbrains.datalore.visualization.base.canvas.CanvasControlUtil.setAnimati
 import jetbrains.datalore.visualization.base.canvas.DeltaTime
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams.Companion.COMPUTATION_FRAME_TIME
+import jetbrains.livemap.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
+import jetbrains.livemap.DevParams.Companion.DEBUG_TILES
 import jetbrains.livemap.DevParams.Companion.MICRO_TASK_EXECUTOR
 import jetbrains.livemap.DevParams.Companion.PERF_STATS
 import jetbrains.livemap.DevParams.Companion.RENDER_TARGET
+import jetbrains.livemap.DevParams.Companion.TILE_CACHE_LIMIT
 import jetbrains.livemap.DevParams.Companion.UPDATE_PAUSE_MS
 import jetbrains.livemap.DevParams.Companion.UPDATE_TIME_MULTIPLIER
 import jetbrains.livemap.DevParams.MicroTaskExecutor.*
@@ -45,6 +48,9 @@ import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ViewProjection
 import jetbrains.livemap.tilegeometry.TileGeometryProvider
+import jetbrains.livemap.tiles.CellStateUpdateSystem
+import jetbrains.livemap.tiles.TileLoadingSystem
+import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
@@ -129,11 +135,11 @@ class LiveMap(
     }
 
     private fun initSystems(componentManager: EcsComponentManager) {
-        val tileLoadingSystem = object : AbstractSystem<LiveMapContext>(componentManager) {}
-            // if (myDevParams.isSet(DEBUG_TILES))
-            //     object : AbstractSystem<LiveMapContext>(componentManager) {}
-            // else
-            //     TileLoadingSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), myTileService, componentManager)
+        val tileLoadingSystem =
+            if (myDevParams.isSet(DEBUG_TILES))
+                object : AbstractSystem<LiveMapContext>(componentManager) {}
+            else
+                TileLoadingSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), myTileService, componentManager)
 
 
         val microTaskExecutor: MicroTaskExecutor = when (myDevParams.read(MICRO_TASK_EXECUTOR)) {
@@ -161,9 +167,9 @@ class LiveMap(
                 ViewProjectionUpdateSystem(componentManager),
                 LiveMapUiSystem(uiService, componentManager, myMapLocationConsumer),
 
-                //CellStateUpdateSystem(componentManager),
+                CellStateUpdateSystem(componentManager),
                 tileLoadingSystem,
-                //TileRemovingSystem(myDevParams.read(TILE_CACHE_LIMIT), componentManager),
+                TileRemovingSystem(myDevParams.read(TILE_CACHE_LIMIT), componentManager),
                 //DebugDataSystem(componentManager),
 
                 //Regions
@@ -188,11 +194,11 @@ class LiveMap(
 
                 UiRenderingTaskSystem(componentManager),
                 layerRenderingSystem,
-                schedulerSystem
+                schedulerSystem,
 
                 // Effects
                 //GrowingPathEffectSystem(componentManager),
-                //CameraScaleEffectSystem(componentManager),
+                CameraScale.CameraScaleEffectSystem(componentManager)
 
                 // Tooltips
                 //TooltipTargetSystem(componentManager, myRegionGeometryConsumer),

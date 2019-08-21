@@ -40,5 +40,5 @@ class DebugMicroTask<ItemT>(private val myMicroTask: MicroTask<ItemT>) : MicroTa
 
     override fun alive(): Boolean = myMicroTask.alive()
 
-    override fun getResult(): ItemT? = myMicroTask.getResult()
+    override fun getResult(): ItemT = myMicroTask.getResult()
 }

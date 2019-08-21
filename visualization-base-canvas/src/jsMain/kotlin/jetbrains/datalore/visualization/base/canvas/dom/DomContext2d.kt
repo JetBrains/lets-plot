@@ -60,6 +60,21 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         myContext2d.drawImage(domSnapshot.canvasElement, x, y, dw, dh)
     }
 
+    override fun drawImage(
+        snapshot: Snapshot,
+        sx: Double,
+        sy: Double,
+        sw: Double,
+        sh: Double,
+        dx: Double,
+        dy: Double,
+        dw: Double,
+        dh: Double
+    ) {
+        val domSnapshot = snapshot as DomSnapshot
+        myContext2d.drawImage(domSnapshot.canvasElement, sx, sy, sw, sh, dx, dy, dw, dh)
+    }
+
     override fun beginPath() {
         myContext2d.beginPath()
     }

@@ -8,6 +8,18 @@ interface Context2d {
     fun clearRect(rect: DoubleRectangle)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double)
+    fun drawImage(
+        snapshot: Snapshot,
+        sx: Double,
+        sy: Double,
+        sw: Double,
+        sh: Double,
+        dx: Double,
+        dy: Double,
+        dw: Double,
+        dh: Double
+    )
+
     fun beginPath()
     fun closePath()
     fun stroke()
