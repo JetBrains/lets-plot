@@ -3,12 +3,10 @@ package jetbrains.datalore.visualization.plot.base.stat
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.stat.SmoothStatShell
-import jetbrains.datalore.visualization.plot.base.stat.Stats
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.stat.regression.LinearRegression
 import jetbrains.datalore.visualization.plot.base.stat.regression.LoessRegression
 import jetbrains.datalore.visualization.plot.base.stat.regression.RegressionEvaluator
+import jetbrains.datalore.visualization.plot.base.stat.regression.SimpleRegression
+import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 class SmoothStat internal constructor() : SmoothStatShell() {
 
@@ -73,7 +71,7 @@ class SmoothStat internal constructor() : SmoothStatShell() {
     private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
         val regression: RegressionEvaluator
         when (smoothingMethod) {
-            Method.LM -> regression = LinearRegression(valuesX, valuesY, confidenceLevel)
+            Method.LM -> regression = SimpleRegression(valuesX, valuesY, confidenceLevel)
             Method.LOESS -> regression = LoessRegression(valuesX, valuesY, confidenceLevel)
             else -> throw IllegalArgumentException(
                     "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
