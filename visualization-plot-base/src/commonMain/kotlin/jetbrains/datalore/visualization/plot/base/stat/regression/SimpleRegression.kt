@@ -6,17 +6,14 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class SimpleRegression(
-    xs: List<Double?>,
-    ys: List<Double?>,
-    confidenceLevel: Double
-) : RegressionEvaluator(xs, ys, confidenceLevel) {
+class SimpleRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double)
+    : RegressionEvaluator(xs, ys, confidenceLevel) {
 
     private val n: Int
     private val meanX: Double
     private val sumXX: Double
-    private val k: Double
-    private val b: Double
+    private val beta1: Double
+    private val beta0: Double
     private val sy: Double
     private val tcritical: Double
 
@@ -32,22 +29,29 @@ class SimpleRegression(
 
         n = xVals.size
         meanX = xVals.sum().div(n)
-        val meanY = yVals.sum().div(n)
         sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
-        val sumYY = yVals.sumByDouble { (it - meanY).pow(2) }
-        val sumXY = xVals.zip(yVals).sumByDouble { (x, y) -> (x - meanX) * (y - meanY) }
-        val sse = max(0.0, sumYY - sumXY * sumXY / sumXX);
-        sy = sqrt(sse / (n - 2))
 
-        val variance = xVals.map { (it - meanX).pow(2) }.sum()
-        val covariance = xVals.zip(yVals).map { (x, y) -> (x - meanX) * (y - meanY) }.sum()
-        k = covariance / variance
-        b = meanY - k * meanX
+        val meanY = yVals.sum().div(n)
+        sy = run {
+            val sumYY = yVals.sumByDouble { (it - meanY).pow(2) }
+            val sumXY = xVals.zip(yVals).sumByDouble { (x, y) -> (x - meanX) * (y - meanY) }
+            val sse = max(0.0, sumYY - sumXY * sumXY / sumXX);
+            sqrt(sse / (n - 2))
+        }
 
-        val alpha = 1 - confidenceLevel
-        tcritical = TDistribution(n - 2.0).inverseCumulativeProbability(1.0 - alpha / 2.0)
+        beta1 = run {
+            val variance = xVals.map { (it - meanX).pow(2) }.sum()
+            val covariance = xVals.zip(yVals).map { (x, y) -> (x - meanX) * (y - meanY) }.sum()
+            covariance / variance
+        }
+
+        beta0 = meanY - beta1 * meanX
+
+        tcritical = run {
+            val alpha = 1.0 - confidenceLevel
+            TDistribution(n - 2.0).inverseCumulativeProbability(1.0 - alpha / 2.0)
+        }
     }
-
 
     override fun evalX(x: Double): EvalResult {
 
@@ -60,16 +64,17 @@ class SimpleRegression(
         // http://brownmath.com/swt/symbol.htm
 
 
-        // x deviation squared
-        val xd = x - meanX
-        val dxSquare = xd * xd
-
         // standard error (of estimate?)
-        val se = sy * sqrt(1.0 / n + dxSquare / sumXX)
+        val se = run {
+            // x deviation squared
+            val dxSquare = (x - meanX).pow(2)
+            sy * sqrt(1.0 / n + dxSquare / sumXX)
+        }
+
         // half-width of confidence interval for estimated mean y
         val halfConfidenceInterval = tcritical * se
 
-        val yHat = k * x + b
+        val yHat = beta1 * x + beta0
         return EvalResult(
             yHat,
             yHat - halfConfidenceInterval,
