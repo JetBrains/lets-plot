@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
 expect object StatsServerSide {
-    fun smooth(): SmoothStatShell
+    fun smooth(): SmoothStat
 
     fun density2d(): Density2dStatShell
 

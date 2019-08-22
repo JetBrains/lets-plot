@@ -1,12 +1,12 @@
 package jetbrains.datalore.visualization.plot.server.config
 
 import jetbrains.datalore.visualization.plot.base.stat.Density2dStatShell
-import jetbrains.datalore.visualization.plot.base.stat.SmoothStatShell
+import jetbrains.datalore.visualization.plot.base.stat.SmoothStat
 import jetbrains.datalore.visualization.plot.base.stat.StatsServerSide
 import jetbrains.datalore.visualization.plot.config.StatProto
 
 internal class StatProtoServerSide : StatProto() {
-    override fun createSmoothStat(): SmoothStatShell {
+    override fun createSmoothStat(): SmoothStat {
         return StatsServerSide.smooth()
     }
 

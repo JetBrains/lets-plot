@@ -1,15 +1,99 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
+import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.stat.regression.LoessRegression
 import jetbrains.datalore.visualization.plot.base.stat.regression.RegressionEvaluator
 import jetbrains.datalore.visualization.plot.base.stat.regression.SimpleRegression
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
-class SmoothStat internal constructor() : SmoothStatShell() {
+/**
+ * See doc for stat_smooth / geom_smooth
+ *
+ *
+ *
+ *
+ * Defaults:
+ *
+ *
+ * geom = "smooth"
+ * position = "identity"
+ *
+ *
+ * Other params:
+ *
+ *
+ * method - smoothing method: lm, glm, gam, loess, rlm
+ * (For datasets with n < 1000 default is loess. For datasets with 1000 or more observations defaults to gam)
+ * formula - formula to use in smoothing function
+ * ( eg. y ~ x, y ~ poly(x, 2), y ~ log(x))
+ * se (TRUE ) - display confidence interval around smooth?
+ * n (80) - number of points to evaluate smoother at
+ *
+ *
+ * span (0.75) - controls the amount of smoothing for the default loess smoother.
+ * fullrange (FALSE) - should the fit span the full range of the plot, or just the data
+ * level (0.95) - level of confidence interval to use
+ * method.args - ist of additional arguments passed on to the modelling function defined by method
+ *
+ *
+ *
+ *
+ *
+ *
+ * Adds columns:
+ *
+ *
+ * y    - predicted value
+ * ymin - lower pointwise confidence interval around the mean
+ * ymax - upper pointwise confidence interval around the mean
+ * se   - standard error
+ */
+class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
+    var smootherPointCount = DEF_EVAL_POINT_COUNT
+    // checkArgument(smoothingMethod == Method.LM, "Only linear model is supported, use: method='lm'");
+    var smoothingMethod = DEF_SMOOTHING_METHOD
+    var confidenceLevel = DEF_CONFIDENCE_LEVEL
+    var isDisplayConfidenceInterval = DEF_DISPLAY_CONFIDENCE_INTERVAL
 
+    override fun requires(): List<Aes<*>> {
+        return listOf<Aes<*>>(Aes.Y)
+    }
+
+    override fun hasDefaultMapping(aes: Aes<*>): Boolean {
+        return super.hasDefaultMapping(aes) ||
+                aes == Aes.YMIN && isDisplayConfidenceInterval ||
+                aes == Aes.YMAX && isDisplayConfidenceInterval
+    }
+
+    override fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable {
+        if (aes == Aes.YMIN) {
+            return Stats.Y_MIN
+        }
+        return if (aes == Aes.YMAX) {
+            Stats.Y_MAX
+        } else super.getDefaultMapping(aes)
+    }
+
+    enum class Method {
+        LM, // linear model
+        GLM,
+        GAM,
+        LOESS,
+        RLM
+    }
+
+    companion object {
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y
+        )  // also conditional Y_MIN / Y_MAX
+        private const val DEF_EVAL_POINT_COUNT = 80
+        private val DEF_SMOOTHING_METHOD = Method.LM
+        private const val DEF_CONFIDENCE_LEVEL = 0.95    // 95 %
+        private const val DEF_DISPLAY_CONFIDENCE_INTERVAL = true
+    }
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
         if (!data.has(TransformVar.Y)) {
             return withEmptyStatValues()
@@ -69,12 +153,11 @@ class SmoothStat internal constructor() : SmoothStatShell() {
    * */
 
     private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
-        val regression: RegressionEvaluator
-        when (smoothingMethod) {
-            Method.LM -> regression = SimpleRegression(valuesX, valuesY, confidenceLevel)
-            Method.LOESS -> regression = LoessRegression(valuesX, valuesY, confidenceLevel)
+        val regression = when (smoothingMethod) {
+            Method.LM -> lm(valuesX, valuesY, confidenceLevel)
+            Method.LOESS -> loess(valuesX, valuesY, confidenceLevel)
             else -> throw IllegalArgumentException(
-                    "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
+                "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
             )
         }
         val statX = ArrayList<Double>()
@@ -108,3 +191,9 @@ class SmoothStat internal constructor() : SmoothStatShell() {
         return result
     }
 }
+
+fun lm(valuesX: List<Double?>, valuesY: List<Double?>, confidenceLevel: Double): RegressionEvaluator {
+    return SimpleRegression(valuesX, valuesY, confidenceLevel)
+}
+
+expect fun loess(valuesX: List<Double?>, valuesY: List<Double?>, confidenceLevel: Double): RegressionEvaluator

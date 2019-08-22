@@ -1,13 +1,10 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
-import jetbrains.datalore.visualization.plot.base.stat.Density2dStat
-import jetbrains.datalore.visualization.plot.base.stat.Density2dfStat
-import jetbrains.datalore.visualization.plot.base.stat.SmoothStat
+import jetbrains.datalore.visualization.plot.base.stat.regression.LoessRegression
+import jetbrains.datalore.visualization.plot.base.stat.regression.RegressionEvaluator
 
 actual object StatsServerSide {
-    actual fun smooth(): SmoothStatShell {
-        return SmoothStat()
-    }
+    actual fun smooth() = SmoothStat()
 
     actual fun density2d(): Density2dStatShell {
         return Density2dStat()
@@ -16,4 +13,8 @@ actual object StatsServerSide {
     actual fun density2df(): Density2dStatShell {
         return Density2dfStat()
     }
+}
+
+actual fun loess(valuesX: List<Double?>, valuesY: List<Double?>, confidenceLevel: Double): RegressionEvaluator {
+    return LoessRegression(valuesX, valuesY, confidenceLevel)
 }

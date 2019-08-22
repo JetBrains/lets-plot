@@ -69,8 +69,8 @@ object Stats {
         return BinStatBuilder()
     }
 
-    fun smooth(): SmoothStatShell {
-        return SmoothStatShell()
+    fun smooth(): SmoothStat {
+        return SmoothStat()
     }
 
     fun contour(): ContourStatBuilder {

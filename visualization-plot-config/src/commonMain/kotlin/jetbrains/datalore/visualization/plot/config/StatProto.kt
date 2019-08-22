@@ -119,16 +119,14 @@ open class StatProto {
 
         if (options.containsKey("method")) {
             val method = options["method"] as String
-            val smoothMethod: SmoothStatShell.Method
-            when (method) {
-                "lm" -> smoothMethod = SmoothStatShell.Method.LM
-                "loess", "lowess" -> smoothMethod = SmoothStatShell.Method.LOESS
-                "glm" -> smoothMethod = SmoothStatShell.Method.GLM
-                "gam" -> smoothMethod = SmoothStatShell.Method.GAM
-                "rlm" -> smoothMethod = SmoothStatShell.Method.RLM
+            stat.smoothingMethod = when (method) {
+                "lm" -> SmoothStat.Method.LM
+                "loess", "lowess" -> SmoothStat.Method.LOESS
+                "glm" -> SmoothStat.Method.GLM
+                "gam" -> SmoothStat.Method.GAM
+                "rlm" -> SmoothStat.Method.RLM
                 else -> throw IllegalArgumentException("Unsupported smoother method: $method")
             }
-            stat.smoothingMethod = smoothMethod
         }
 
         if (options.containsKey("level")) {
@@ -201,7 +199,7 @@ open class StatProto {
         return stat
     }
 
-    protected open fun createSmoothStat(): SmoothStatShell {
+    protected open fun createSmoothStat(): SmoothStat {
         return Stats.smooth()
     }
 
