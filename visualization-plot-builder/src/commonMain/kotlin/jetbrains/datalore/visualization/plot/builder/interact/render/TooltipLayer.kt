@@ -4,71 +4,68 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
+import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.visualization.plot.builder.presentation.Style
+import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager
+import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
-import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 
 internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle) {
-
-    private val myTooltipMeter: TooltipMeter
-    private val myTooltipUpdater: TooltipUpdater
-    private val myLayoutManager: LayoutManager
-
-    init {
-        val tooltipLayer = SvgGElement()
-        decorationLayer.children().add(tooltipLayer)
-
-        myTooltipMeter = TooltipMeter(tooltipLayer)
-        myTooltipUpdater = TooltipUpdater(tooltipLayer)
-        myLayoutManager = LayoutManager(viewport, LayoutManager.HorizontalAlignment.LEFT)
-    }
-
+    private val myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
+    private val myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
+    private val myVisibleTooltips = HashSet<TooltipBox>()
 
     fun showTooltips(cursor: DoubleVector, tooltipSpecs: List<TooltipSpec>) {
+        removeVisibleTooltips()
         tooltipSpecs
-            .run(::toMeasured)
-            .run { myLayoutManager.arrange(this, cursor) }
-            .run(::toViewModels)
-            .run(myTooltipUpdater::drawTooltips)
+            .filter { spec -> spec.lines.isNotEmpty() }
+            .map { spec -> spec
+                .run { newTooltipBox() }
+                .apply { setContent(spec.fill, spec.lines, spec.style) }
+                .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
+            }
+            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor) }
+            .map { arranged ->
+                arranged.tooltipBox.apply {
+                    setPosition(
+                        arranged.tooltipCoord,
+                        arranged.stemCoord,
+                        arranged.orientation
+                    )
+                    visible = true
+                }
+            }.forEach { myVisibleTooltips.add(it) }
     }
 
     fun hideTooltip() {
-        myTooltipUpdater.drawTooltips(emptyList())
+        removeVisibleTooltips()
     }
 
-    private fun toMeasured(tooltipSpecs: List<TooltipSpec>): List<MeasuredTooltip> {
-        val measuredTooltips = ArrayList<MeasuredTooltip>()
-
-        for (tooltipSpec in tooltipSpecs) {
-            if (tooltipSpec.lines.isEmpty()) {
-                continue
-            }
-
-            tooltipSpec
-                .run { myTooltipMeter.measure(lines, TooltipViewModel.style(layoutHint.kind)) }
-                .run { MeasuredTooltip(tooltipSpec, this)}
-                .run (measuredTooltips::add)
-        }
-
-        return measuredTooltips
+    private fun removeVisibleTooltips() {
+        myVisibleTooltips.forEach { myTooltipLayer.children().remove(it.rootGroup) }
+        myVisibleTooltips.clear()
     }
 
-    companion object {
+    private fun newTooltipBox(): TooltipBox {
+        return TooltipBox().apply {
+            visible = false
 
-        fun toViewModels(positionedTooltips: List<PositionedTooltip>): List<TooltipViewModel> {
-            return positionedTooltips.map {
-                it.run {
-                    TooltipViewModel(
-                        tooltipCoord = tooltipCoord,
-                        stemCoord = stemCoord,
-                        fill = tooltipSpec.fill,
-                        text = tooltipSpec.lines,
-                        orientation = TooltipViewModel.orientation(hintKind),
-                        style = TooltipViewModel.style(hintKind)
-                    )
-                }
-            }
+            // Add to the layer to be able to calcualte a bbox
+            myTooltipLayer.children().add(rootGroup)
         }
     }
+
+    private val TooltipSpec.style: String
+        get() = when (this.layoutHint.kind) {
+            X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP -> Style.PLOT_AXIS_TOOLTIP
+            else -> Style.PLOT_DATA_TOOLTIP
+        }
+
+    private val LayoutManager.PositionedTooltip.orientation: TooltipBox.Orientation
+        get() = when (this.hintKind) {
+            HORIZONTAL_TOOLTIP, Y_AXIS_TOOLTIP -> TooltipBox.Orientation.HORIZONTAL
+            else -> TooltipBox.Orientation.VERTICAL
+        }
 }

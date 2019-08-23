@@ -8,6 +8,7 @@ import jetbrains.datalore.visualization.plot.builder.interact.MathUtil.DoubleRan
 import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
+import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
 import kotlin.math.min
@@ -49,12 +50,12 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
             ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it, SHORT_STEM_LENGTH)) }
 
         // all other tooltips (axis tooltips are ignored in this method)
-        desiredPosition.addAll(calculateDesiredPosition(tooltips))
+        desiredPosition.addAll(calculateDataTooltipsPosition(tooltips))
 
         return rearrangeWithoutOverlapping(desiredPosition)
     }
 
-    private fun calculateDesiredPosition(tooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
+    private fun calculateDataTooltipsPosition(tooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
         val placementList = ArrayList<PositionedTooltip>()
 
         for (measuredTooltip in tooltips) {
@@ -88,23 +89,23 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
         val restrictions = ArrayList<DoubleRectangle>()
         val separatedTooltips = ArrayList<PositionedTooltip>()
 
-        val fixate: (PositionedTooltip) -> Unit = { positionedTooltip ->
+        fun fixate(positionedTooltip: PositionedTooltip) {
             separatedTooltips.add(positionedTooltip)
             restrictions.add(positionedTooltip.rect())
         }
 
         // First add tooltips with pre-arranged position
-        tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP).forEach(fixate)
+        tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP).forEach(::fixate)
 
         // Now try to space out other tooltips.
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.
         HorizontalTooltipExpander(myVerticalSpace)
                 .fixOverlapping(tooltips.select(HORIZONTAL_TOOLTIP))
-                .forEach(fixate)
+                .forEach(::fixate)
 
         VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace)
                 .fixOverlapping(tooltips.select(VERTICAL_TOOLTIP), restrictions)
-                .forEach(fixate)
+                .forEach(::fixate)
 
         return separatedTooltips
     }
@@ -223,6 +224,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
     }
 
     class PositionedTooltip {
+        val tooltipBox: TooltipBox
         internal val tooltipSize: DoubleVector
         val tooltipSpec: TooltipSpec
         val tooltipCoord: DoubleVector
@@ -239,15 +241,17 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
         internal constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector) {
             tooltipSpec = measuredTooltip.tooltipSpec
             tooltipSize = measuredTooltip.size
+            tooltipBox = measuredTooltip.tooltipBox
             this.tooltipCoord = tooltipCoord
             this.stemCoord = stemCoord
         }
 
         private constructor(positionedTooltip: PositionedTooltip, newTooltipCoord: DoubleVector) {
             tooltipSpec = positionedTooltip.tooltipSpec
-            tooltipCoord = newTooltipCoord
             tooltipSize = positionedTooltip.tooltipSize
+            tooltipBox = positionedTooltip.tooltipBox
             stemCoord = positionedTooltip.stemCoord
+            tooltipCoord = newTooltipCoord
         }
 
         internal fun moveTo(newTooltipCoord: DoubleVector): PositionedTooltip {
@@ -261,8 +265,12 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
 
     class MeasuredTooltip(
         internal val tooltipSpec: TooltipSpec,
-        internal val size: DoubleVector
+        internal val size: DoubleVector,
+        internal val tooltipBox: TooltipBox
     ) {
+        constructor(tooltipSpec: TooltipSpec, tooltipBox: TooltipBox)
+                : this(tooltipSpec, tooltipBox.contentRect.dimension, tooltipBox)
+
         internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
         internal val hintKind get() = tooltipSpec.layoutHint.kind
         internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius

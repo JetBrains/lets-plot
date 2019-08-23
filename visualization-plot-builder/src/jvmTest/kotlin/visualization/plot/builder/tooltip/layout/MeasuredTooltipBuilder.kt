@@ -5,6 +5,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.TooltipLayoutTestBase.Companion.makeText
@@ -41,7 +42,7 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
 
     fun buildTooltip(): MeasuredTooltip {
         val hint = createHint()
-        return MeasuredTooltip(TooltipSpec(hint, makeText(myText!!), myFill!!), mySize!!)
+        return MeasuredTooltip(TooltipSpec(hint, makeText(myText!!), myFill!!), mySize!!, TooltipBox())
     }
 
     private fun createHint(): TipLayoutHint {

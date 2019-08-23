@@ -4,13 +4,13 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
+import jetbrains.datalore.visualization.base.svg.SvgGraphicsElement.Visibility.HIDDEN
+import jetbrains.datalore.visualization.base.svg.SvgGraphicsElement.Visibility.VISIBLE
 import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
 import jetbrains.datalore.visualization.base.svg.SvgPathElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.builder.interact.render.Orientation
-import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipViewModel
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
@@ -23,6 +23,11 @@ import kotlin.math.max
 import kotlin.math.min
 
 class TooltipBox : SvgComponent() {
+    enum class Orientation {
+        VERTICAL,
+        HORIZONTAL
+    }
+
     private enum class PointerDirection {
         LEFT,
         RIGHT,
@@ -31,6 +36,10 @@ class TooltipBox : SvgComponent() {
     }
 
     val contentRect get() = DoubleRectangle.span(DoubleVector.ZERO, myTextBox.dimension)
+    var visible: Boolean
+        get() = rootGroup.visibility().get() == VISIBLE
+        set(isTrue: Boolean) { rootGroup.visibility().set(VISIBLE).takeIf { isTrue } ?: HIDDEN }
+
     private val myPointerBox = PointerBox()
     private val myTextBox = TextBox()
 
@@ -44,10 +53,6 @@ class TooltipBox : SvgComponent() {
         add(myTextBox)
     }
 
-    internal fun setViewModel(viewModel: TooltipViewModel) {
-        setContent(viewModel.fill, viewModel.text, viewModel.style)
-    }
-
     internal fun setContent(background: Color, lines: List<String>, style: String) {
         addClassName(style)
         fillColor = Colors.mimicTransparency(background, background.alpha / 255.0, Color.WHITE)
@@ -56,7 +61,7 @@ class TooltipBox : SvgComponent() {
         myTextBox.update(lines, textColor)
     }
 
-    fun setPosition(contentCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
+    internal fun setPosition(contentCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
         this.pointerCoord = pointerCoord.subtract(contentCoord)
         pointerDirection =
             null.takeIf { contentRect.contains(this.pointerCoord) }

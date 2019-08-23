@@ -4,8 +4,6 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipLayer
-import jetbrains.datalore.visualization.plot.builder.interact.render.TooltipViewModel
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.*
@@ -28,7 +26,7 @@ internal open class TooltipLayoutTestBase {
         this.myArrangedTooltips = ArrayList()
 
         for (tooltipEntry in layoutManagerController.arrange()) {
-            val measuredTooltip = myTooltipDataProvider!![tooltipEntry.text]
+            val measuredTooltip = myTooltipDataProvider!![tooltipEntry.tooltipSpec.lines]
             myArrangedTooltips!!.add(TooltipHelper(tooltipEntry, measuredTooltip!!))
         }
     }
@@ -183,7 +181,7 @@ internal open class TooltipLayoutTestBase {
     }
 
     internal interface TipLayoutManagerController {
-        fun arrange(): List<TooltipViewModel>
+        fun arrange(): List<PositionedTooltip>
     }
 
     internal interface TooltipDataProvider {
@@ -207,9 +205,8 @@ internal open class TooltipLayoutTestBase {
 
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
-                override fun arrange(): List<TooltipViewModel> = TooltipLayer.toViewModels(
-                        LayoutManager(myViewport, myHorizontalAlignment).arrange(myTooltipData, myCursor)
-                )
+                override fun arrange(): List<PositionedTooltip> =
+                    LayoutManager(myViewport, myHorizontalAlignment).arrange(myTooltipData, myCursor)
             }
         }
 
@@ -223,12 +220,12 @@ internal open class TooltipLayoutTestBase {
         }
     }
 
-    internal class TooltipHelper(private val myTooltipEntry: TooltipViewModel, private val myMeasuredTooltip: MeasuredTooltip) {
+    internal class TooltipHelper(private val myTooltipEntry: PositionedTooltip, private val myMeasuredTooltip: MeasuredTooltip) {
         private val myHintRadius: Double = myMeasuredTooltip.hintRadius
         private val myTooltipRect: DoubleRectangle = DoubleRectangle(myTooltipEntry.tooltipCoord, myMeasuredTooltip.size)
 
-        val text get() = myTooltipEntry.text
-        val fill get() = myTooltipEntry.fill
+        val text get() = myTooltipEntry.tooltipSpec.lines
+        val fill get() = myTooltipEntry.tooltipSpec.fill
         fun coord() = myTooltipEntry.tooltipCoord
         fun stemCoord() = myTooltipEntry.stemCoord
         fun rect() = myTooltipRect
