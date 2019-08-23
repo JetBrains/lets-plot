@@ -11,6 +11,7 @@ import jetbrains.datalore.visualization.base.canvas.DeltaTime
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams.Companion.COMPUTATION_FRAME_TIME
 import jetbrains.livemap.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
+import jetbrains.livemap.DevParams.Companion.DEBUG_GRID
 import jetbrains.livemap.DevParams.Companion.DEBUG_TILES
 import jetbrains.livemap.DevParams.Companion.MICRO_TASK_EXECUTOR
 import jetbrains.livemap.DevParams.Companion.PERF_STATS
@@ -43,12 +44,16 @@ import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.entities.regions.EmptinessChecker
 import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
+import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ViewProjection
 import jetbrains.livemap.tilegeometry.TileGeometryProvider
 import jetbrains.livemap.tiles.CellStateUpdateSystem
+import jetbrains.livemap.tiles.Components
+import jetbrains.livemap.tiles.Components.CellLayerComponent
+import jetbrains.livemap.tiles.Components.CellLayerKind
 import jetbrains.livemap.tiles.TileLoadingSystem
 import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.ui.LiveMapUiSystem
@@ -253,11 +258,11 @@ class LiveMap(
             .createEntity("layers_order")
             .addComponent(layerManager.createLayersOrderComponent())
 
-//        componentManager
-//            .createEntity("cell_layer_ground")
-//            .addComponent(CellLayerComponent(CellLayerKind.WORLD))
-//            .addComponent(LayerEntitiesComponent())
-//            .addComponent(layerManager.createRenderLayerComponent("ground"))
+        componentManager
+            .createEntity("cell_layer_ground")
+            .addComponent(CellLayerComponent(CellLayerKind.WORLD))
+            .addComponent(LayerEntitiesComponent())
+            .addComponent(layerManager.createRenderLayerComponent("ground"))
 
 //        val mapObject2Entity = MapObject2Entity(componentManager, layerManager, myDevParams)
 //        for (mapLayer in myMapLayers) {
@@ -279,20 +284,20 @@ class LiveMap(
 //            }
 //        }
 
-//        componentManager
-//            .createEntity("cell_layer_labels")
-//            .addComponent(CellLayerComponent(CellLayerKind.LABEL))
-//            .addComponent(LayerEntitiesComponent())
-//            .addComponent(layerManager.createRenderLayerComponent("labels"))
+        componentManager
+            .createEntity("cell_layer_labels")
+            .addComponent(CellLayerComponent(CellLayerKind.LABEL))
+            .addComponent(LayerEntitiesComponent())
+            .addComponent(layerManager.createRenderLayerComponent("labels"))
 
-//        if (myDevParams.isSet(DEBUG_GRID)) {
-//            componentManager
-//                .createEntity("cell_layer_debug")
-//                .addComponent(CellLayerComponent(CellLayerKind.DEBUG))
-//                .addComponent(DebugCellLayerComponent())
-//                .addComponent(LayerEntitiesComponent())
-//                .addComponent(layerManager.createRenderLayerComponent("debug"))
-//        }
+        if (myDevParams.isSet(DEBUG_GRID)) {
+            componentManager
+                .createEntity("cell_layer_debug")
+                .addComponent(CellLayerComponent(CellLayerKind.DEBUG))
+                .addComponent(Components.DebugCellLayerComponent())
+                .addComponent(LayerEntitiesComponent())
+                .addComponent(layerManager.createRenderLayerComponent("debug"))
+        }
 
         componentManager
             .createEntity("layer_ui")

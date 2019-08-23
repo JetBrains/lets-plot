@@ -117,6 +117,20 @@ class LinkedListTest {
     }
 
     @Test
+    fun emptyForEachTest() {
+        val list = listOf(1,2,3,4,5)
+
+        val linked = LinkedList<Int>()
+        linked.removeAll { true }
+
+        val newList = ArrayList<Int>()
+        linked.forEach { newList.add(it) }
+
+        assertEquals(linked.toList(), newList)
+    }
+
+
+    @Test
     fun forEachRemoveTest() {
         val list = listOf(1,2,3,4,5)
         val afterRemove = emptyList<Int>()

@@ -34,8 +34,8 @@ object CameraScale {
                     animation.id,
                     origin,
                     center,
-                    camera.zoom,
-                    delta
+                    delta,
+                    camera.zoom
                 )
             )
     }

@@ -74,7 +74,7 @@ object LivemapDemoModel {
             isLoopX = true,
             isLoopY = false,
             mapLocationConsumer = { Unit },
-            devParams = DevParams(emptyMap<Any, Any>())
+            devParams = DevParams(mapOf(Pair("debug_grid", true)))
         )
 
         val livemapFactory = LiveMapFactory(livemapSpec)

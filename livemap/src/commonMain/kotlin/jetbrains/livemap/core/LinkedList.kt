@@ -146,23 +146,19 @@ class LinkedList<T> : MutableIterable<T> {
         internal var myNext: Node<T>?
     )
 
-    inner class NodeIterator : MutableIterator<T> {
-        private var node: Node<T>? = null
+    inner class NodeIterator : AbstractIterator<T>(), MutableIterator<T> {
+        private var node: Node<T>? = head
+        private var last: Node<T>? = null
 
-        private var isFirst = true
+        override fun computeNext() {
+            last = node
+            node = node?.myNext
 
-        override fun hasNext() = (isFirst && head != null) || node!!.myNext != null
-
-        override fun next(): T {
-            node = head!!.takeIf { isFirst } ?: node!!.myNext
-
-            isFirst = false
-
-            return node!!.myItem
+            last?.let { setNext(it.myItem) } ?: done()
         }
 
         override fun remove() {
-            remove(node!!)
+            remove(last!!)
         }
     }
 }

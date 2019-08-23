@@ -17,12 +17,6 @@ object SimpleLiveMapDemo {
     private fun show() {
         val canvasControl = AwtCanvasControl(JavafxGraphicsCanvasControlFactory(1.0), VIEW_SIZE)
 
-        //val canvas = canvasControl.createCanvas(VIEW_SIZE)
-        //val ctx = canvas.context2d
-//
-        //ctx.setFillColor(Color.RED.toCssColor())
-        //ctx.fillRect(0.0,0.0, VIEW_SIZE.x.toDouble(), VIEW_SIZE.y.toDouble())
-
         val reg = createLivemapModel(canvasControl)
 
         AwtCanvasDemoUtil.showAwtCanvasControl("AWT Livemap Demo", canvasControl)
