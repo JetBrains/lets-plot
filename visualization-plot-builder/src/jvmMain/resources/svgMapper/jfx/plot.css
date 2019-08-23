@@ -27,6 +27,14 @@ Text {
     -fx-cursor: crosshair;
 }
 
+.plt-data-tooltip Text {
+    -fx-font-size: 12px;
+}
+
+.plt-axis-tooltip Text {
+    -fx-font-size: 10px;
+}
+
 .plt-axis Line {
     -fx-shape-rendering: crispedges;
 }

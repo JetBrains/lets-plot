@@ -4,9 +4,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.visualization.plot.builder.interact.TooltipSpec
-import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
@@ -29,14 +27,14 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle)
 
     fun showTooltips(cursor: DoubleVector, tooltipSpecs: List<TooltipSpec>) {
         tooltipSpecs
-            .run { toMeasured(this) }
+            .run(::toMeasured)
             .run { myLayoutManager.arrange(this, cursor) }
-            .run { toTooltipEntries(this) }
-            .run { myTooltipUpdater.updateTooltips(this) }
+            .run(::toViewModels)
+            .run(myTooltipUpdater::drawTooltips)
     }
 
     fun hideTooltip() {
-        myTooltipUpdater.updateTooltips(emptyList())
+        myTooltipUpdater.drawTooltips(emptyList())
     }
 
     private fun toMeasured(tooltipSpecs: List<TooltipSpec>): List<MeasuredTooltip> {
@@ -47,15 +45,10 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle)
                 continue
             }
 
-            measuredTooltips.add(
-                    MeasuredTooltip(
-                            tooltipSpec,
-                            myTooltipMeter.measure(
-                                    tooltipSpec.lines,
-                                    getFontSize(tooltipSpec.layoutHint.kind)
-                            )
-                    )
-            )
+            tooltipSpec
+                .run { myTooltipMeter.measure(lines, TooltipViewModel.style(layoutHint.kind)) }
+                .run { MeasuredTooltip(tooltipSpec, this)}
+                .run (measuredTooltips::add)
         }
 
         return measuredTooltips
@@ -63,31 +56,19 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle)
 
     companion object {
 
-        fun toTooltipEntries(positionedTooltips: List<PositionedTooltip>): List<TooltipViewModel> {
+        fun toViewModels(positionedTooltips: List<PositionedTooltip>): List<TooltipViewModel> {
             return positionedTooltips.map {
                 it.run {
                     TooltipViewModel(
                         tooltipCoord = tooltipCoord,
                         stemCoord = stemCoord,
-                        orientation = getOrientation(),
                         fill = tooltipSpec.fill,
-                        fontSize = tooltipSpec.getFontSize(),
-                        text = tooltipSpec.lines
+                        text = tooltipSpec.lines,
+                        orientation = TooltipViewModel.orientation(hintKind),
+                        style = TooltipViewModel.style(hintKind)
                     )
                 }
             }
-        }
-
-        private fun PositionedTooltip.getOrientation() = when (tooltipSpec.layoutHint.kind) {
-            Kind.VERTICAL_TOOLTIP -> TooltipOrientation.ANY
-            Kind.HORIZONTAL_TOOLTIP, Kind.Y_AXIS_TOOLTIP -> TooltipOrientation.HORIZONTAL
-            Kind.CURSOR_TOOLTIP, Kind.X_AXIS_TOOLTIP -> TooltipOrientation.VERTICAL
-        }
-
-        private fun TooltipSpec.getFontSize() = getFontSize (layoutHint.kind)
-        private fun getFontSize(kind: Kind) = when (kind) {
-            Kind.VERTICAL_TOOLTIP, Kind.HORIZONTAL_TOOLTIP, Kind.CURSOR_TOOLTIP -> Tooltip.FONT_SIZE.toDouble()
-            Kind.X_AXIS_TOOLTIP, Kind.Y_AXIS_TOOLTIP -> Tooltip.AXIS_FONT_SIZE.toDouble()
         }
     }
 }

@@ -1,5 +1,9 @@
 package jetbrains.datalore.visualization.plot.builder.presentation
 
+import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE
+import jetbrains.datalore.visualization.plot.builder.presentation.SelectorType.LINE
+import jetbrains.datalore.visualization.plot.builder.presentation.SelectorType.TEXT
+
 /**
  * Duplicating stylesheet for JavaFX platform is defined in
  * visualization-plot-builder/src/jvmMain/resources/svgMapper/jfx/plot.css
@@ -25,19 +29,27 @@ object Style {
     const val LEGEND_TITLE = "legend-title"
 
     const val PLOT_GLASS_PANE = "plt-glass-pane"
-
+    const val PLOT_DATA_TOOLTIP = "plt-data-tooltip"
+    const val PLOT_AXIS_TOOLTIP = "plt-axis-tooltip"
     val CSS = CssResourceBuilder()
         .add(SelectorBuilder(PLOT_CONTAINER)
             .fontFamily(Defaults.FONT_FAMILY_NORMAL)
         )
-        .add(SelectorBuilder(SelectorType.TEXT)
+        .add(SelectorBuilder(TEXT)
             .fontSize(Defaults.FONT_MEDIUM, SizeMeasure.PX)
             .fill(Defaults.TEXT_COLOR)
         )
         .add(SelectorBuilder(PLOT_GLASS_PANE)
             .cursor(CursorValue.CROSSHAIR)
         )
-        .add(SelectorBuilder(AXIS).innerSelector(SelectorType.LINE)
+        .add(SelectorBuilder(PLOT_DATA_TOOLTIP)
+            .innerSelector(TEXT)
+            .fontSize(Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE, SizeMeasure.PX)
+        )
+        .add(SelectorBuilder(PLOT_AXIS_TOOLTIP).innerSelector(TEXT)
+            .fontSize(AXIS_TOOLTIP_FONT_SIZE, SizeMeasure.PX)
+        )
+        .add(SelectorBuilder(AXIS).innerSelector(LINE)
             .shapeRendering(ShapeRenderingValue.CRISPEDGES)
         )
         .add(SelectorBuilder("highlight")

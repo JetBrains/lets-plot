@@ -207,7 +207,7 @@ internal open class TooltipLayoutTestBase {
 
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
-                override fun arrange(): List<TooltipViewModel> = TooltipLayer.toTooltipEntries(
+                override fun arrange(): List<TooltipViewModel> = TooltipLayer.toViewModels(
                         LayoutManager(myViewport, myHorizontalAlignment).arrange(myTooltipData, myCursor)
                 )
             }
@@ -229,7 +229,6 @@ internal open class TooltipLayoutTestBase {
 
         val text get() = myTooltipEntry.text
         val fill get() = myTooltipEntry.fill
-        val fontSize get() = myTooltipEntry.fontSize
         fun coord() = myTooltipEntry.tooltipCoord
         fun stemCoord() = myTooltipEntry.stemCoord
         fun rect() = myTooltipRect

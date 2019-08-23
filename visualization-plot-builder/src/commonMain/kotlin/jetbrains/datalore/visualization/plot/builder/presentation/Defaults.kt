@@ -34,23 +34,20 @@ object Defaults {
         }
 
         object Tooltip {
-            const val MAX_STEM_FOOTING_LENGTH = 12.0
-            const val STEM_FOOTING_TO_SIDE_LENGTH_RATIO = 0.4
+            const val MAX_POINTER_FOOTING_LENGTH = 12.0
+            const val POINTER_FOOTING_TO_SIDE_LENGTH_RATIO = 0.4
 
             const val NORMAL_STEM_LENGTH = 12.0
             const val SHORT_STEM_LENGTH = 5.0
             const val MARGIN_BETWEEN_TOOLTIPS = 5
-            const val FONT_SIZE = FONT_MEDIUM
-            const val AXIS_FONT_SIZE = Axis.TICK_FONT_SIZE
+            const val DATA_TOOLTIP_FONT_SIZE = FONT_MEDIUM
+            const val AXIS_TOOLTIP_FONT_SIZE = Axis.TICK_FONT_SIZE
             const val LINE_INTERVAL = 3.0
             const val H_CONTENT_PADDING = 4.0
             const val V_CONTENT_PADDING = 4.0
 
-            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
-            const val LINE_HEIGHT_CSS = "1.4em"
-            const val BORDER_WIDTH = 1.0
+            const val BORDER_WIDTH = 4.0
 
-            val BORDER_COLOR = X_LIGHT_GRAY
             val DARK_TEXT_COLOR = Color.BLACK
             val LIGHT_TEXT_COLOR = Color.WHITE
         }
