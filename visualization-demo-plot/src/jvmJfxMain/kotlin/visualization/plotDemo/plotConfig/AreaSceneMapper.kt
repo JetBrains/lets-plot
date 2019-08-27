@@ -15,7 +15,7 @@ object AreaSceneMapper {
                 "Area plot",
                 plotSpecList,
                 SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
-                DoubleVector(800.0, 800.0)
+                DoubleVector(600.0, 600.0)
             )
         }
     }

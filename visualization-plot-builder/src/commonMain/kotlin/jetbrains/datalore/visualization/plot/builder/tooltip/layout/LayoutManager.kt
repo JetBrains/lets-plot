@@ -17,7 +17,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
     private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)
     private var myCursorCoord: DoubleVector = DoubleVector.ZERO
-    private var myVerticalAlignmentResolver: VerticalAlignmentResolver? = null
+    private lateinit var myVerticalAlignmentResolver: VerticalAlignmentResolver
 
     fun arrange(tooltips: List<MeasuredTooltip>, cursorCoord: DoubleVector): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
@@ -131,7 +131,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
             else
                 EMPTY_DOUBLE_RANGE
 
-            if (myVerticalAlignmentResolver!!.resolve(topTooltipRange, bottomTooltipRange, alignment, cursorVerticalRange) === TOP) {
+            if (myVerticalAlignmentResolver.resolve(topTooltipRange, bottomTooltipRange, alignment, cursorVerticalRange) === TOP) {
                 tooltipY = topTooltipRange.start()
                 stemY = targetTopPoint
             } else {
@@ -140,9 +140,11 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
             }
         }
 
-        val stemCoord = DoubleVector(measuredTooltip.hintCoord.x, stemY)
-        val tooltipCoord = DoubleVector(tooltipX, tooltipY)
-        return PositionedTooltip(measuredTooltip, tooltipCoord, stemCoord)
+        return PositionedTooltip(
+            measuredTooltip = measuredTooltip,
+            tooltipCoord = DoubleVector(tooltipX, tooltipY),
+            stemCoord = DoubleVector(measuredTooltip.hintCoord.x, stemY)
+        )
     }
 
     private fun calculateHorizontalTooltipPosition(measuredTooltip: MeasuredTooltip, stemLength: Double): PositionedTooltip {
@@ -159,14 +161,8 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
             val leftTooltipPlacement = leftAligned(targetCoordX, tooltipWidth, margin)
             val rightTooltipPlacement = rightAligned(targetCoordX, tooltipWidth, margin)
 
-            var canFitLeft = false
-            var canFitRight = false
-            if (leftTooltipPlacement.inside(myHorizontalSpace)) {
-                canFitLeft = true
-            }
-            if (rightTooltipPlacement.inside(myHorizontalSpace)) {
-                canFitRight = true
-            }
+            val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace)
+            val canFitRight = rightTooltipPlacement.inside(myHorizontalSpace)
 
             if (!(canFitLeft || canFitRight)) {
                 tooltipX = 0.0
@@ -313,16 +309,7 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
         }
 
         private fun List<PositionedTooltip>.select(vararg kinds: Kind): List<PositionedTooltip> {
-            val filteredTooltips = ArrayList<PositionedTooltip>()
-
-            for (tooltip in this) {
-                for (kind in kinds) {
-                    if (tooltip.hintKind === kind) {
-                        filteredTooltips.add(tooltip)
-                    }
-                }
-            }
-            return filteredTooltips
+            return this.filter { kinds.contains(it.hintKind) }
         }
     }
 }

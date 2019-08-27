@@ -18,6 +18,8 @@ import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Commo
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
 import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
+import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
+import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.visualization.plot.builder.tooltip.TooltipBox.PointerDirection.*
 import kotlin.math.max
 import kotlin.math.min
@@ -28,7 +30,7 @@ class TooltipBox : SvgComponent() {
         HORIZONTAL
     }
 
-    private enum class PointerDirection {
+    internal enum class PointerDirection {
         LEFT,
         RIGHT,
         UP,
@@ -38,15 +40,14 @@ class TooltipBox : SvgComponent() {
     val contentRect get() = DoubleRectangle.span(DoubleVector.ZERO, myTextBox.dimension)
     var visible: Boolean
         get() = rootGroup.visibility().get() == VISIBLE
-        set(isTrue: Boolean) { rootGroup.visibility().set(VISIBLE).takeIf { isTrue } ?: HIDDEN }
+        set(isVisible: Boolean) { rootGroup.visibility().set(VISIBLE.takeIf { isVisible } ?: HIDDEN) }
 
     private val myPointerBox = PointerBox()
     private val myTextBox = TextBox()
 
     private var textColor: Color = Color.BLACK
     private var fillColor: Color = Color.WHITE
-    private var pointerDirection: PointerDirection? = null
-    private lateinit var pointerCoord: DoubleVector
+    internal val pointerDirection get() = myPointerBox.pointerDirection // for tests
 
     override fun buildComponent() {
         add(myPointerBox)
@@ -61,32 +62,36 @@ class TooltipBox : SvgComponent() {
         myTextBox.update(lines, textColor)
     }
 
-    internal fun setPosition(contentCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
-        this.pointerCoord = pointerCoord.subtract(contentCoord)
-        pointerDirection =
-            null.takeIf { contentRect.contains(this.pointerCoord) }
-                ?: run {
-                    val tooltip = DoubleRectangle(contentCoord, contentRect.dimension)
-                    when (orientation) {
-                        Orientation.HORIZONTAL -> RIGHT.takeIf { pointerCoord.x > tooltip.right } ?: LEFT
-                        Orientation.VERTICAL -> UP.takeIf { pointerCoord.y < tooltip.bottom } ?: DOWN
-                    }
-                }
-
-        myPointerBox.update()
-        moveTo(contentCoord.x, contentCoord.y)
+    internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
+        myPointerBox.update(pointerCoord.subtract(tooltipCoord), orientation)
+        moveTo(tooltipCoord.x, tooltipCoord.y)
     }
 
     private fun Color.isDark() = Colors.luminance(this) < 0.5
 
-    inner class PointerBox : SvgComponent() {
+    private inner class PointerBox : SvgComponent() {
         private val myPointerPath = SvgPathElement()
+        internal var pointerDirection: PointerDirection? = null
 
         override fun buildComponent() {
             add(myPointerPath)
         }
 
-        internal fun update() {
+        internal fun update(pointerCoord: DoubleVector, orientation: Orientation) {
+            pointerDirection = when {
+                orientation == HORIZONTAL -> when {
+                    pointerCoord.x < contentRect.left -> LEFT
+                    pointerCoord.x > contentRect.right -> RIGHT
+                    else -> null
+                }
+                orientation == VERTICAL -> when {
+                    pointerCoord.y > contentRect.bottom -> DOWN
+                    pointerCoord.y < contentRect.top -> UP
+                    else -> null
+                }
+                else -> null
+            }
+
             myPointerPath.strokeColor().set(textColor)
             myPointerPath.fillColor().set(fillColor)
 
@@ -136,7 +141,7 @@ class TooltipBox : SvgComponent() {
         }
     }
 
-    inner class TextBox : SvgComponent() {
+    private inner class TextBox : SvgComponent() {
         private val myLines = SvgSvgElement().apply {
             x().set(0.0)
             y().set(0.0)
