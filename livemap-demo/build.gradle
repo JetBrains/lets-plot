@@ -5,21 +5,19 @@ plugins {
 
 kotlin {
     jvm("jvmJfx")
+    jvm("jvmBrowser")
+    js() {
+        compileKotlinJs {
+            kotlinOptions.sourceMap = true
+            kotlinOptions.sourceMapEmbedSources = "always"
+        }
+    }
+
 
     sourceSets {
-        allJvm {
+        commonMain {
             dependencies {
-                implementation kotlin('stdlib-jdk8')
-                compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
-            }
-        }
-        jvmMain {
-            dependsOn allJvm
-        }
-        jvmJfxMain {
-            dependsOn allJvm
-            dependsOn jvmMain
-            dependencies {
+                implementation kotlin('stdlib-common')
                 implementation project(':base')
                 implementation project(':gis')
                 implementation project(':livemap')
@@ -31,6 +29,28 @@ kotlin {
                 implementation project(':visualization-plot-base')
             }
         }
+        allJvm {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinx_html_version}"
+            }
+        }
+        jvmMain {
+            dependsOn allJvm
+        }
+        jvmJfxMain {
+            dependsOn allJvm
+        }
+        jvmBrowserMain {
+            dependsOn allJvm
+        }
+
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+            }
+        }
     }
 }
 
@@ -38,6 +58,79 @@ idea {
     module {
         settings {
             packagePrefix["src/jvmJfxMain/kotlin"] = ""
+            packagePrefix["src/jvmBrowserMain/kotlin"] = "jetbrains"
         }
     }
 }
+
+// Workaround for Idea/Gradle bug: https://youtrack.jetbrains.com/issue/KT-24463
+// MPP: Run does not add resource directory to classpath [Cannot get resource when using common module]
+//
+// JavaFX Scene mapping requires stylesheet resource URI
+task copyProcessedResources(type: Copy) {
+    from "${project.buildDir}/processedResources"
+    into "${project.buildDir}/classes/kotlin"
+}
+
+build.dependsOn += copyProcessedResources
+
+
+// ---------------------------------
+// Trick to copy kotlin.js etc. to `output`
+configurations {
+    libraryDependenciesJs
+    projectDependenciesJs
+}
+
+dependencies {
+    libraryDependenciesJs "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    libraryDependenciesJs "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+    // for Assertions.kt ToDo: get rid of kotlin-test here
+    libraryDependenciesJs "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+    projectDependenciesJs project(':base')
+    projectDependenciesJs project(':gis')
+    projectDependenciesJs project(':livemap')
+    projectDependenciesJs project(':mapper-core')
+    // projectDependenciesJs project(':visualization-base-svg')
+    // projectDependenciesJs project(':visualization-base-svg-mapper')
+
+    projectDependenciesJs project(':visualization-demo-common')
+
+    projectDependenciesJs project(':visualization-base-canvas')         // required by plot-builder (get rid?)
+
+    projectDependenciesJs project(':visualization-plot-common')
+    projectDependenciesJs project(':visualization-plot-base')
+    projectDependenciesJs project(':visualization-plot-builder')
+    projectDependenciesJs project(':visualization-plot-config')
+}
+
+// ---------------------------------
+def OUTPUT_DIR_JS = "${project.buildDir}/demoWeb"
+def OUTPUT_DIR_JS_LIB = "${OUTPUT_DIR_JS}/lib"
+
+task copyLibraryDependenciesJs(type: Copy) {
+    configurations.libraryDependenciesJs.each {
+        println "library dependency: ${it.absolutePath}"
+        from zipTree(it.absolutePath).matching { include '*.js' }
+    }
+    into OUTPUT_DIR_JS_LIB
+}
+
+task copyProjectDependenciesJs(type: Copy) {
+    configurations.projectDependenciesJs.each {
+        def jarJs = it.absolutePath.replace("-metadata-", "-js-")
+        println "project dependency: $jarJs"
+        from zipTree(jarJs).matching { include '*.js' }
+    }
+    into OUTPUT_DIR_JS_LIB
+}
+
+task copyMainJs(type: Copy) {
+    from "${project.buildDir}/classes/kotlin/js/main"
+    include "*.js"
+    into OUTPUT_DIR_JS
+}
+
+build.dependsOn += copyLibraryDependenciesJs
+build.dependsOn += copyProjectDependenciesJs
+build.dependsOn += copyMainJs
