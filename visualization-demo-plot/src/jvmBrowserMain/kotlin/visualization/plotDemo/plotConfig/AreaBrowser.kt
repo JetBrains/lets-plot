@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plotDemo.plotConfig
 
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.Area
 
-object AreaSceneMapper {
+object AreaBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(Area()) {
