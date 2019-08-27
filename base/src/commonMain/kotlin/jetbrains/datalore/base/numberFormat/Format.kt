@@ -263,40 +263,38 @@ internal class Format(private val spec: Spec) {
             val numberRegex = "^(\\d+)\\.?(\\d+)?e?([+-]?\\d+)?\$".toRegex()
             val matchResult = numberRegex.find(str) ?: throw IllegalArgumentException("Wrong number")
 
-            var exponentPart: Int? = matchResult.groups[3]?.value?.toInt()
-
             val integerString = matchResult.groups[1]?.value ?: "0"
-            var fractionString = matchResult.groups[2]?.value ?: "0"
+            val fractionString = matchResult.groups[2]?.value ?: "0"
 
-            if (exponentPart != null) {
-                if (exponentPart.absoluteValue <= NumberInfo.MAX_SUPPORTED_FRACTION_EXP) {
-                    if (exponentPart >= 0) {
-                        val moveFractionLength = exponentPart.coerceAtMost(fractionString.length)
-                        val moveFractionPart = fractionString.substring(0 until moveFractionLength)
-                        val newIntegerString = integerString + moveFractionPart
-                        integerPart = newIntegerString.toLong() * 10.0.pow(exponentPart - moveFractionLength).toLong()
-                        val sourceFractionLength = fractionString.length
-                        fractionString = fractionString.substring(moveFractionLength)
-                        fractionPart = if (moveFractionLength < sourceFractionLength) {
-                            fractionString.toLong() * 10.0.pow(NumberInfo.MAX_SUPPORTED_FRACTION_EXP - fractionString.length).toLong()
-                        } else {
-                            0
-                        }
+            var exponentPart: Int? = matchResult.groups[3]?.value?.toInt() ?: 0
+
+            if (exponentPart!!.absoluteValue <= NumberInfo.MAX_SUPPORTED_FRACTION_EXP) {
+                val fractionExpPow: Int
+                val newFractionString: String
+
+                if (exponentPart >= 0) {
+                    val moveFractionLength = exponentPart.coerceAtMost(fractionString.length)
+                    val moveFractionPart = fractionString.substring(0 until moveFractionLength)
+                    val newIntegerString = integerString + moveFractionPart
+
+                    integerPart = newIntegerString.toLong() * 10.0.pow(exponentPart - moveFractionLength).toLong()
+                    newFractionString = if (moveFractionLength < fractionString.length) {
+                        fractionString.substring(moveFractionLength)
                     } else {
-                        integerPart = 0
-                        val sourceFractionLength = fractionString.length
-                        fractionString = integerString + fractionString
-                        fractionPart = fractionString.toLong() * 10.0.pow(NumberInfo.MAX_SUPPORTED_FRACTION_EXP - (exponentPart.absoluteValue + sourceFractionLength)).toLong()
+                        "0"
                     }
-
-                    exponentPart = null
+                    fractionExpPow = NumberInfo.MAX_SUPPORTED_FRACTION_EXP - newFractionString.length
                 } else {
-                    integerPart = integerString.toLong()
-                    fractionPart = 0
+                    integerPart = 0
+                    newFractionString = integerString + fractionString
+                    fractionExpPow = NumberInfo.MAX_SUPPORTED_FRACTION_EXP - (exponentPart.absoluteValue + fractionString.length)
                 }
+
+                fractionPart = newFractionString.toLong() * 10.0.pow(fractionExpPow).toLong()
+                exponentPart = null
             } else {
                 integerPart = integerString.toLong()
-                fractionPart = fractionString.toLong() * 10.0.pow(NumberInfo.MAX_SUPPORTED_FRACTION_EXP - fractionString.length).toLong()
+                fractionPart = 0
             }
 
             return NumberInfo(
