@@ -2,7 +2,7 @@ package jetbrains.livemap.core.multitasking
 
 object MicroTaskUtil {
     private val EMPTY_MICRO_THREAD: MicroTask<Unit> = object : MicroTask<Unit> {
-        override fun getResult(): Unit? {return null}
+        override fun getResult() {}
 
         override fun resume() {}
 
@@ -11,7 +11,7 @@ object MicroTaskUtil {
 
     internal fun <ItemT, ResultT> map(
         microTask: MicroTask<ItemT>,
-        mapFunction: (ItemT?) -> ResultT
+        mapFunction: (ItemT) -> ResultT
     ): MicroTask<ResultT> {
         return object : MicroTask<ResultT> {
 
@@ -29,13 +29,13 @@ object MicroTaskUtil {
 
             override fun alive(): Boolean = microTask.alive() || !transformed
 
-            override fun getResult(): ResultT? = result
+            override fun getResult(): ResultT = result ?: error("")
         }
     }
 
     internal fun <ItemT, ResultT> flatMap(
         microTask: MicroTask<ItemT>,
-        mapFunction: (ItemT?) -> MicroTask<ResultT>
+        mapFunction: (ItemT) -> MicroTask<ResultT>
     ): MicroTask<ResultT> {
         return object : MicroTask<ResultT> {
             private var transformed = false
@@ -55,7 +55,7 @@ object MicroTaskUtil {
 
             override fun alive() = microTask.alive() || !transformed || result!!.alive()
 
-            override fun getResult(): ResultT? = result!!.getResult()
+            override fun getResult(): ResultT = result!!.getResult()
         }
     }
 
@@ -77,7 +77,7 @@ object MicroTaskUtil {
 
         override fun alive(): Boolean = myTasks.hasNext()
 
-        override fun getResult(): Unit? = null
+        override fun getResult() {}
     }
 
     private class MultiMicroThread internal constructor(microThreads: Iterable<MicroTask<Unit>>) : MicroTask<Unit> {
@@ -96,7 +96,7 @@ object MicroTaskUtil {
 
         override fun alive(): Boolean = currentMicroThread.alive()
 
-        override fun getResult(): Unit? = null
+        override fun getResult() {}
 
         private fun goToNextAliveMicroThread() {
             while (!currentMicroThread.alive()) {

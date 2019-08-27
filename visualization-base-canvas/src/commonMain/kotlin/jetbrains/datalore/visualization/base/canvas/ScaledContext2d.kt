@@ -41,6 +41,30 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.drawImage(snapshot, scaled(x), scaled(y), scaled(dw), scaled(dh))
     }
 
+    override fun drawImage(
+        snapshot: Snapshot,
+        sx: Double,
+        sy: Double,
+        sw: Double,
+        sh: Double,
+        dx: Double,
+        dy: Double,
+        dw: Double,
+        dh: Double
+    ) {
+        myContext2d.drawImage(
+            snapshot,
+            scaled(sx),
+            scaled(sy),
+            scaled(sw),
+            scaled(sh),
+            scaled(dx),
+            scaled(dy),
+            scaled(dw),
+            scaled(dh)
+        )
+    }
+
     override fun beginPath() {
         myContext2d.beginPath()
     }

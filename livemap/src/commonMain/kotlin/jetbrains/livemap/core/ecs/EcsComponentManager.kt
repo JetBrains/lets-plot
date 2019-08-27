@@ -131,32 +131,16 @@ class EcsComponentManager {
         return myEntities.containsKey(entity)
     }
 
-    private class EcsIterator<T : EcsRemovable> internal constructor(private val myIterator: Iterator<T>) :
-        Iterator<T> {
-        private var myNext: T? = null
+    private class EcsIterator<T : EcsRemovable> (private val myIterator: Iterator<T>) : AbstractIterator<T>() {
 
-        init {
-            myNext = recalculateNext()
-        }
-
-        override fun hasNext(): Boolean {
-            return myNext != null
-        }
-
-        override fun next(): T {
-            val result = myNext
-            myNext = recalculateNext()
-            return result!!
-        }
-
-        private fun recalculateNext(): T? {
+        override fun computeNext() {
             while (myIterator.hasNext()) {
                 val entity = myIterator.next()
                 if (!entity.hasRemoveFlag()) {
-                    return entity
+                    return setNext(entity)
                 }
             }
-            return null
+            return done()
         }
     }
 }

@@ -76,6 +76,18 @@ class LinkedListTest {
     }
 
     @Test
+    fun removeFirstTest() {
+        val list = listOf(1,2,3,4,5)
+        val afterRemove = listOf(2,3,4,5)
+
+        val linked = LinkedList(list)
+
+        assertEquals(afterRemove, linked.apply {
+            remove(0)
+        }.toList())
+    }
+
+    @Test
     fun removeLastTest() {
         val list = listOf(1,2,3,4,5)
         val afterRemove = listOf(1,2,3)
@@ -105,16 +117,62 @@ class LinkedListTest {
     }
 
     @Test
+    fun emptyForEachTest() {
+        val list = listOf(1,2,3,4,5)
+
+        val linked = LinkedList<Int>()
+        linked.removeAll { true }
+
+        val newList = ArrayList<Int>()
+        linked.forEach { newList.add(it) }
+
+        assertEquals(linked.toList(), newList)
+    }
+
+
+    @Test
+    fun forEachRemoveTest() {
+        val list = listOf(1,2,3,4,5)
+        val afterRemove = emptyList<Int>()
+
+        val linked = LinkedList(list)
+
+        val it = linked.iterator()
+        while(it.hasNext()) {
+            it.next()
+            it.remove()
+        }
+
+        assertEquals(afterRemove, linked.toList())
+    }
+
+    @Test
+    fun removeIfTest() {
+        val list = listOf(1,2,3,4,5)
+        val afterRemove = listOf(2,4)
+
+        val linked = LinkedList(list)
+
+        assertEquals(afterRemove, linked.apply {
+            removeAll { it % 2 != 0 }
+        }.toList())
+    }
+
+    @Test
     fun removeByIndexTest() {
         val list = listOf(1,2,3,4,5)
 
         val linked = LinkedList(list)
 
-        assertEquals(listOf(1,2,4,5), linked.apply {
+        assertEquals(listOf(1,2,3,4), linked.apply {
+            remove(4)
+        }.toList())
+
+        assertEquals(listOf(1,2,4), linked.apply {
             remove(2)
         }.toList())
 
-        assertEquals(listOf(2,4,5), linked.apply {
+        assertEquals(listOf(2,4), linked.apply {
             remove(0)
         }.toList())
     }

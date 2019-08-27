@@ -73,6 +73,21 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.drawImage(javafxSnapshot.image, x, y, dw, dh)
     }
 
+    override fun drawImage(
+        snapshot: Snapshot,
+        sx: Double,
+        sy: Double,
+        sw: Double,
+        sh: Double,
+        dx: Double,
+        dy: Double,
+        dw: Double,
+        dh: Double
+    ) {
+        val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
+        myContext2d.drawImage(javafxSnapshot.image, sx, sy, sw, sh, dx, dy, dw, dh)
+    }
+
     override fun beginPath() {
         myContext2d.beginPath()
     }

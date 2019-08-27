@@ -15,7 +15,7 @@ class SchedulerSystem(private val microTaskExecutor: MicroTaskExecutor, componen
 
     override fun updateImpl(context: EcsContext, dt: Double) {
         if (componentManager.getComponentsCount(MicroThreadComponent::class) > 0) {
-            val microThreadEntities = getEntities(MicroThreadComponent::class)
+            val microThreadEntities = getEntities(MicroThreadComponent::class).toList()
             val tasks = HashSet<MicroThreadComponent>()
             microThreadEntities.forEach { tasks.add(MicroThreadComponent[it]) }
 

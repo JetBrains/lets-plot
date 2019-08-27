@@ -42,11 +42,11 @@ class CameraUpdateDetectionSystem(componentManager: EcsComponentManager) :
     }
 
     private fun removeChangedComponents() {
-        for (entity in getEntities(ZoomChangedComponent::class)) {
+        for (entity in getEntities(ZoomChangedComponent::class).toList()) {
             entity.removeComponent(ZoomChangedComponent::class)
         }
 
-        for (entity in getEntities(CenterChangedComponent::class)) {
+        for (entity in getEntities(CenterChangedComponent::class).toList()) {
             entity.removeComponent(CenterChangedComponent::class)
         }
     }
