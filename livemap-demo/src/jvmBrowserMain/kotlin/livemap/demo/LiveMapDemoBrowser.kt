@@ -12,6 +12,6 @@ private val LIBS = KOTLIN_LIBS + BASE_MAPPER_LIBS + PLOT_LIBS + DEMO_COMMON_LIBS
 
 fun main() {
     BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
-        mapperDemoHtml(DEMO_PROJECT, CALL_FUN, LIBS, "HEHEY")
+        mapperDemoHtml(DEMO_PROJECT, CALL_FUN, LIBS, "LiveMap Demo")
     }
 }

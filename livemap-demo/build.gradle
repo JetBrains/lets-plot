@@ -91,8 +91,8 @@ dependencies {
     projectDependenciesJs project(':gis')
     projectDependenciesJs project(':livemap')
     projectDependenciesJs project(':mapper-core')
-    // projectDependenciesJs project(':visualization-base-svg')
-    // projectDependenciesJs project(':visualization-base-svg-mapper')
+    projectDependenciesJs project(':visualization-base-svg')
+    projectDependenciesJs project(':visualization-base-svg-mapper')
 
     projectDependenciesJs project(':visualization-demo-common')
 
