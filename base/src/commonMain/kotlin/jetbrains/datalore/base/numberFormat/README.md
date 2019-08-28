@@ -47,6 +47,7 @@ Precision is ignored for integer formats (types `b`, `o`, `d`, `x`, `X` and `c`)
 * `e` - exponent notation.
 * `f` - fixed point notation.
 * `g` - either decimal or exponent notation, rounded to significant digits.
+* `s` - decimal notation with an SI prefix, rounded to significant digits.
 * `%` - multiply by 100, and then decimal notation with a percent sign.
 * `b` - binary notation, rounded to integer.
 * `o` - octal notation, rounded to integer.
@@ -54,6 +55,26 @@ Precision is ignored for integer formats (types `b`, `o`, `d`, `x`, `X` and `c`)
 * `x` - hexadecimal notation, using lower-case letters, rounded to integer.
 * `X` - hexadecimal notation, using upper-case letters, rounded to integer.
 * `c` - simple toString.
+
+The following SI prefixes are supported for `s` type:
+
+* `y` - yocto, 10⁻²⁴
+* `z` - zepto, 10⁻²¹
+* `a` - atto, 10⁻¹⁸
+* `f` - femto, 10⁻¹⁵
+* `p` - pico, 10⁻¹²
+* `n` - nano, 10⁻⁹
+* `µ` - micro, 10⁻⁶
+* `m` - milli, 10⁻³
+* `​` (none) - 10⁰
+* `k` - kilo, 10³
+* `M` - mega, 10⁶
+* `G` - giga, 10⁹
+* `T` - tera, 10¹²
+* `P` - peta, 10¹⁵
+* `E` - exa, 10¹⁸
+* `Z` - zetta, 10²¹
+* `Y` - yotta, 10²⁴
 
 Format spec compatible with [Python Format Specification Mini-Language](https://docs.python.org/3/library/string.html#format-specification-mini-language) except `s`, `n`, `E`, `F` and `G` types.
 
