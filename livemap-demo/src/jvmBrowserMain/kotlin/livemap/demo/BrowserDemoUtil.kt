@@ -18,8 +18,7 @@ object BrowserDemoUtil {
 //        "base.js",
         "datalore-plot-base.js",
         "mapper-core.js",
-        "visualization-base-svg.js",
-        "visualization-base-svg-mapper.js"
+        "visualization-base-svg.js"
     )
 
     val PLOT_LIBS = listOf(
