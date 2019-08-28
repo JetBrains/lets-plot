@@ -78,7 +78,7 @@ class Format(private val spec: List<SpecPart>) {
                 Pattern.HOUR_24 -> leadZero(getHours24(dateTime))
                 Pattern.MERIDIAN_LOWER -> getMeridian(dateTime)
                 Pattern.MERIDIAN_UPPER -> getMeridian(dateTime).toUpperCase()
-                Pattern.DAY_OF_WEEK -> dateTime.weekDay.ordinal.toString()
+                Pattern.DAY_OF_WEEK -> getWeekDayNumber(dateTime)
                 Pattern.DAY_OF_WEEK_ABBR -> DateLocale.weekDayAbbr[dateTime.weekDay] ?: ""
                 Pattern.DAY_OF_WEEK_FULL -> DateLocale.weekDayFull[dateTime.weekDay] ?: ""
                 Pattern.DAY_OF_MONTH -> dateTime.day.toString()
@@ -115,6 +115,14 @@ class Format(private val spec: List<SpecPart>) {
                 hours <= 12 -> "am"
                 else -> "pm"
             }
+        }
+
+        private fun getWeekDayNumber(dateTime: DateTime): String {
+            var num = dateTime.weekDay.ordinal + 1
+            if (num == 7) {
+                num = 0
+            }
+            return num.toString()
         }
     }
 }
