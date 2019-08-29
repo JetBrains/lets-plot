@@ -8,6 +8,7 @@ import jetbrains.datalore.base.datetime.tz.TimeZone
 import jetbrains.datalore.visualization.plot.common.data.DataType
 import java.util.*
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -62,6 +63,7 @@ class FormatterTest {
     }
 
     @Test
+    @Ignore
     fun number() {
         val expected = listOf(
                 "19,999",
