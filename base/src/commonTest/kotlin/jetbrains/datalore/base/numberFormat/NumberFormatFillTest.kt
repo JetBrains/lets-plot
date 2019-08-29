@@ -3,10 +3,10 @@ package jetbrains.datalore.base.numberFormat
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class FormatFillTest {
+class NumberFormatFillTest {
     @Test
     fun zeroFill() {
-        val f = Format("08d")
+        val f = NumberFormat("08d")
         assertEquals("00000000", f.apply(0))
         assertEquals("00000042", f.apply(42))
         assertEquals("42000000", f.apply(42000000))
@@ -20,7 +20,7 @@ class FormatFillTest {
 
     @Test
     fun spaceFill() {
-        val f = Format("8d")
+        val f = NumberFormat("8d")
         assertEquals("       0", f.apply(0))
         assertEquals("      42", f.apply(42))
         assertEquals("42000000", f.apply(42000000))
@@ -33,7 +33,7 @@ class FormatFillTest {
 
     @Test
     fun underscoreFill() {
-        val f = Format("_>8d")
+        val f = NumberFormat("_>8d")
         assertEquals("_______0", f.apply(0))
         assertEquals("______42", f.apply(42))
         assertEquals("42000000", f.apply(42000000))
@@ -46,7 +46,7 @@ class FormatFillTest {
 
     @Test
     fun zeroFillWithSignAndGroup() {
-        val f = Format("+08,d")
+        val f = NumberFormat("+08,d")
         assertEquals("+0,000,000", f.apply(0))
         assertEquals("+0,000,042", f.apply(42))
         assertEquals("+42,000,000", f.apply(42000000))

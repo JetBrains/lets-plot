@@ -1,20 +1,22 @@
 package jetbrains.datalore.visualization.plot.base.scale.breaks
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.visualization.plot.common.text.Formatter
+import jetbrains.datalore.base.numberFormat.NumberFormat
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
 
 class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Boolean) : Function<Any, String> {
-    private var myFormatter: (Any) -> String
+    private var myFormatter: NumberFormat
 
     init {
         @Suppress("NAME_SHADOWING")
         var step = step
+        var type = "f"
+        var delimiter = ""
         if (value == 0.0) {
             // do not proceed because log10(0) = - Infinity
-            myFormatter = Formatter.number("#,##0.#", false)
+            myFormatter = NumberFormat("d")
         } else {
             step = abs(step)
             if (step == 0.0) {
@@ -27,6 +29,7 @@ class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Bool
             var scientificNotation = false
             if (domain10Power < 0 && step10Power < -4) {
                 scientificNotation = true
+                type = "e"
                 precision = domain10Power - step10Power
             } else if (domain10Power > 7 && step10Power > 2) {
                 scientificNotation = true
@@ -35,42 +38,24 @@ class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Bool
 
             if (precision < 0) {
                 precision = 0.0
+                type = "d"
             }
             precision = ceil(precision)
 
-            val sb = StringBuilder()
-            var useMetricPrefix = false
             if (scientificNotation) {
-                if (domain10Power > 0 && allowMetricPrefix) {
-                    useMetricPrefix = true
+                type = if (domain10Power > 0 && allowMetricPrefix) {
                     // generate 'engineering notation', in which the exponent is a multiple of three
-                    sb.append("##0")
+                    "s"
                 } else {
-                    sb.append("0")
+                    "e"
                 }
             } else {
-                sb.append("#,##0")
+                delimiter = ","
             }
 
-            if (precision > 0) {
-                sb.append('.')
-                var i = 0
-                while (i < precision) {
-                    sb.append('#')
-                    i++
-                }
-            }
-
-            if (scientificNotation) {
-                sb.append("E0")
-            }
-
-            val pattern = sb.toString()
-            myFormatter = Formatter.number(pattern, useMetricPrefix)
+            myFormatter = NumberFormat("$delimiter.${precision.toInt()}$type")
         }
     }
 
-    override fun apply(value: Any): String {
-        return myFormatter(value)
-    }
+    override fun apply(value: Any): String = myFormatter.apply(value as Number)
 }
