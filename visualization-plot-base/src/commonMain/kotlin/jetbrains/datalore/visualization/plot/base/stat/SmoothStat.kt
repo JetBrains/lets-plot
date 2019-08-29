@@ -4,8 +4,6 @@ import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.stat.regression.RegressionEvaluator
-import jetbrains.datalore.visualization.plot.base.stat.regression.SimpleRegression
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 /**
@@ -154,8 +152,8 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
 
     private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
         val regression = when (smoothingMethod) {
-            Method.LM -> lm(valuesX, valuesY, confidenceLevel)
-            Method.LOESS -> loess(valuesX, valuesY, confidenceLevel)
+            Method.LM -> SmoothingMethods.lm(valuesX, valuesY, confidenceLevel)
+            Method.LOESS -> SmoothingMethods.loess(valuesX, valuesY, confidenceLevel)
             else -> throw IllegalArgumentException(
                 "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
             )
@@ -192,8 +190,4 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     }
 }
 
-fun lm(valuesX: List<Double?>, valuesY: List<Double?>, confidenceLevel: Double): RegressionEvaluator {
-    return SimpleRegression(valuesX, valuesY, confidenceLevel)
-}
 
-expect fun loess(valuesX: List<Double?>, valuesY: List<Double?>, confidenceLevel: Double): RegressionEvaluator
