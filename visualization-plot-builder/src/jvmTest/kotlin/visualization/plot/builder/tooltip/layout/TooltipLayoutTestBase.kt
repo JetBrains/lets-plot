@@ -13,8 +13,8 @@ import kotlin.test.assertTrue
 
 internal open class TooltipLayoutTestBase {
 
-    private var myArrangedTooltips: MutableList<TooltipHelper>? = null
-    private var myTooltipDataProvider: TooltipDataProvider? = null
+    private lateinit var myArrangedTooltips: MutableList<TooltipHelper>
+    private lateinit var myTooltipDataProvider: TooltipDataProvider
 
     fun createTipLayoutManagerBuilder(viewport: DoubleRectangle): TipLayoutManagerBuilder {
         val tipLayoutManagerBuilder = TipLayoutManagerBuilder(viewport)
@@ -26,26 +26,25 @@ internal open class TooltipLayoutTestBase {
         this.myArrangedTooltips = ArrayList()
 
         for (tooltipEntry in layoutManagerController.arrange()) {
-            val measuredTooltip = myTooltipDataProvider!![tooltipEntry.tooltipSpec.lines]
-            myArrangedTooltips!!.add(TooltipHelper(tooltipEntry, measuredTooltip!!))
+            val measuredTooltip = myTooltipDataProvider[tooltipEntry.tooltipSpec.lines]!!
+            myArrangedTooltips.add(TooltipHelper(tooltipEntry, measuredTooltip))
         }
     }
 
-    fun tooltip(tooltipKey: String): TooltipHelper? {
+    fun tooltip(tooltipKey: String): TooltipHelper {
         val strings = listOf(tooltipKey)
 
-        for (tooltip in myArrangedTooltips!!) {
+        for (tooltip in myArrangedTooltips) {
             if (tooltip.text == strings) {
                 return tooltip
             }
         }
 
-        return null
+        error("Tooltip $tooltipKey is not found")
     }
 
     fun expectedSideTipY(tooltipKey: String): Double {
-        val data = tooltip(tooltipKey)
-        return data!!.stemCoord().y - data.rect().height / 2
+        return tooltip(tooltipKey).run { stemCoord().y - rect().height / 2 }
     }
 
     fun expectedSideTipX(key: String, alignment: HorizontalAlignment): Double {
@@ -57,9 +56,9 @@ internal open class TooltipLayoutTestBase {
 
         return when {
             alignment === HorizontalAlignment.RIGHT ->
-                tooltip!!.cfgHintCoord().x + tooltip.cfgHintRadius() + stemLength
+                tooltip.cfgHintCoord().x + tooltip.cfgHintRadius() + stemLength
             alignment === LEFT ->
-                tooltip!!.cfgHintCoord().x - tooltip.cfgHintRadius() - stemLength - tooltip.size().x
+                tooltip.cfgHintCoord().x - tooltip.cfgHintRadius() - stemLength - tooltip.size().x
             else ->
                 throw IllegalArgumentException("Center alignment is not supported for this tooltip's kind")
         }
@@ -68,7 +67,7 @@ internal open class TooltipLayoutTestBase {
     fun expectedAroundPointX(tooltipKey: String): Double {
         val tooltip = tooltip(tooltipKey)
 
-        return tooltip!!.cfgHintCoord().x - tooltip.size().x / 2
+        return tooltip.cfgHintCoord().x - tooltip.size().x / 2
     }
 
     fun expectedAroundPointY(tooltipKey: String, verticalAlignment: VerticalAlignment): Double {
@@ -76,9 +75,9 @@ internal open class TooltipLayoutTestBase {
 
         return when (verticalAlignment) {
             VerticalAlignment.TOP ->
-                tooltip!!.cfgHintCoord().y - tooltip.size().y - NORMAL_STEM_LENGTH - tooltip.cfgHintRadius()
+                tooltip.cfgHintCoord().y - tooltip.size().y - NORMAL_STEM_LENGTH - tooltip.cfgHintRadius()
             VerticalAlignment.BOTTOM ->
-                tooltip!!.cfgHintCoord().y + NORMAL_STEM_LENGTH + tooltip.cfgHintRadius()
+                tooltip.cfgHintCoord().y + NORMAL_STEM_LENGTH + tooltip.cfgHintRadius()
 
             else -> throw IllegalArgumentException("Placement is not supported: $verticalAlignment")
         }
@@ -87,7 +86,7 @@ internal open class TooltipLayoutTestBase {
     fun expectedAroundPointStem(tooltipKey: String): DoubleVector {
         val tooltip = tooltip(tooltipKey)
 
-        val hintCoord = tooltip!!.cfgHintCoord()
+        val hintCoord = tooltip.cfgHintCoord()
         val hintRadius = tooltip.cfgHintRadius()
 
         return hintCoord.add(size(0.0, hintRadius))
@@ -99,9 +98,9 @@ internal open class TooltipLayoutTestBase {
         return when (verticalAlignment) {
 
             VerticalAlignment.TOP ->
-                tooltip!!.cfgHintCoord().y - tooltip.size().y - SHORT_STEM_LENGTH
+                tooltip.cfgHintCoord().y - tooltip.size().y - SHORT_STEM_LENGTH
             VerticalAlignment.BOTTOM ->
-                tooltip!!.cfgHintCoord().y + SHORT_STEM_LENGTH
+                tooltip.cfgHintCoord().y + SHORT_STEM_LENGTH
 
             else -> throw IllegalArgumentException("Placement is not supported: $verticalAlignment")
         }
@@ -116,12 +115,12 @@ internal open class TooltipLayoutTestBase {
     }
 
     fun assertAllTooltips(vararg expectations: ExpectedTooltip) {
-        assertEquals(expectations.size, myArrangedTooltips!!.size)
+        assertEquals(expectations.size, myArrangedTooltips.size)
 
         var i = 0
         val n = expectations.size
         while (i < n) {
-            assertExpectations(expectations[i], myArrangedTooltips!![i])
+            assertExpectations(expectations[i], myArrangedTooltips[i])
             ++i
         }
     }
@@ -153,7 +152,7 @@ internal open class TooltipLayoutTestBase {
     }
 
     fun assertInsideView(viewport: DoubleRectangle) {
-        for (arrangedTooltip in myArrangedTooltips!!) {
+        for (arrangedTooltip in myArrangedTooltips) {
             val tooltip = arrangedTooltip.rect()
             for (side in tooltip.parts) {
                 assertTrue(viewport.contains(side.start))

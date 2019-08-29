@@ -23,7 +23,7 @@ internal class VerticalTooltipLayoutTest : TooltipLayoutTestBase() {
 
         arrange(layoutManagerController)
 
-        assertFalse(tooltip(HORIZONTAL_TIP_KEY)!!.rect().intersects(tooltip(VERTICAL_TIP_KEY)!!.rect()))
+        assertFalse(tooltip(HORIZONTAL_TIP_KEY).rect().intersects(tooltip(VERTICAL_TIP_KEY).rect()))
     }
 
     @Test

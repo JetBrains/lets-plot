@@ -20,7 +20,7 @@ internal class TooltipLayoutRegressionTest : TooltipLayoutTestBase() {
 
         arrange(layoutManagerController)
 
-        assertFalse(tooltip(VERTICAL_POINT_KEY)!!.rect().contains(tooltip(VERTICAL_POINT_KEY)!!.stemCoord()))
+        assertFalse(tooltip(VERTICAL_POINT_KEY).rect().contains(tooltip(VERTICAL_POINT_KEY).stemCoord()))
     }
 
     @Test
@@ -65,7 +65,7 @@ internal class TooltipLayoutRegressionTest : TooltipLayoutTestBase() {
                 expect().text(VERTICAL_POINT_KEY).tooltipCoord(coord(304.72, 177.87))
         )
 
-        assertFalse(tooltip(FIRST_TOOLTIP_KEY)!!.rect().intersects(tooltip(VERTICAL_POINT_KEY)!!.rect()))
+        assertFalse(tooltip(FIRST_TOOLTIP_KEY).rect().intersects(tooltip(VERTICAL_POINT_KEY).rect()))
     }
 
     @Test

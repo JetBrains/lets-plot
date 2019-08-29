@@ -37,7 +37,7 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
 
         assertAllTooltips(
                 expect(X_AXIS_TOOLTIP_KEY),
-                expect(HORIZONTAL_TOOLTIP_KEY).tooltipY(DEFAULT_AXIS_ORIGIN.y - tooltip(HORIZONTAL_TOOLTIP_KEY)!!.size().y)
+                expect(HORIZONTAL_TOOLTIP_KEY).tooltipY(DEFAULT_AXIS_ORIGIN.y - tooltip(HORIZONTAL_TOOLTIP_KEY).size().y)
         )
     }
 
@@ -60,7 +60,7 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
 
         assertAllTooltips(
                 expect(X_AXIS_TOOLTIP_KEY).tooltipY(expectedAxisTipY(X_AXIS_TOOLTIP_KEY, TOP)),
-                expect(HORIZONTAL_TOOLTIP_KEY).tooltipY(tooltip(X_AXIS_TOOLTIP_KEY)!!.coord().y - tooltip(HORIZONTAL_TOOLTIP_KEY)!!.size().y)
+                expect(HORIZONTAL_TOOLTIP_KEY).tooltipY(tooltip(X_AXIS_TOOLTIP_KEY).coord().y - tooltip(HORIZONTAL_TOOLTIP_KEY).size().y)
         )
     }
 

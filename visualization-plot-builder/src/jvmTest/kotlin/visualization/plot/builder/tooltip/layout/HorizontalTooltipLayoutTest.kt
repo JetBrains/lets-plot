@@ -5,7 +5,6 @@ import jetbrains.datalore.visualization.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import jetbrains.datalore.visualization.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
@@ -149,7 +148,6 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
     }
 
     @Test
-    @Ignore
     fun whenOverlappedAfterArrange_ShouldRearrangeOverlappedAgain() {
         val tooltipBuilder = MeasuredTooltipBuilderFactory()
                 .defaultObjectRadius(DEFAULT_OBJECT_RADIUS)
@@ -166,9 +164,9 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
 
         // after rearrange tip1 should overlap tip2 and another rearrange should happen
         assertAllTooltips(
-                expect().tooltipY(75.0),
-                expect().tooltipY(120.0),
-                expect().tooltipY(325.0)
+                expect().tooltipY(108.33333333333331),
+                expect().tooltipY(153.33333333333331),
+                expect().tooltipY(358.3333333333333)
         )
     }
 
