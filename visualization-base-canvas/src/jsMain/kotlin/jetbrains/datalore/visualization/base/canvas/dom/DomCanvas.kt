@@ -33,10 +33,10 @@ internal class DomCanvas private constructor(val canvasElement: HTMLCanvasElemen
     }
 
     companion object {
-        private val DEVICE_PIXEL_RATIO = window.devicePixelRatio
+        val DEVICE_PIXEL_RATIO = window.devicePixelRatio
 
-        fun create(size: Vector): DomCanvas {
-            return DomCanvas(document.createElement("canvas") as HTMLCanvasElement, size, DEVICE_PIXEL_RATIO)
+        fun create(size: Vector, pixelRatio: Double): DomCanvas {
+            return DomCanvas(document.createElement("canvas") as HTMLCanvasElement, size, pixelRatio)
         }
     }
 }

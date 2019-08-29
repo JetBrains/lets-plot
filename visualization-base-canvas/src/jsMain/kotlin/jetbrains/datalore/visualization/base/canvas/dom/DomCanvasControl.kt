@@ -13,6 +13,7 @@ import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationE
 import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationTimer
 import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
+import jetbrains.datalore.visualization.base.canvas.dom.DomCanvas.Companion.DEVICE_PIXEL_RATIO
 import jetbrains.datalore.visualization.base.canvas.dom.DomCanvasUtil.imagePngBase64ToImage
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLElement
@@ -39,7 +40,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
     }
 
     override fun createCanvas(size: Vector): Canvas {
-        val domCanvas = DomCanvas.create(size)
+        val domCanvas = DomCanvas.create(size, DEVICE_PIXEL_RATIO)
         domCanvas.canvasElement.style.setPosition(CssPosition.ABSOLUTE)
         return domCanvas
     }
@@ -48,7 +49,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         val async = SimpleAsync<Canvas.Snapshot>()
 
         imagePngBase64ToImage(dataUrl).onSuccess { image ->
-            val domCanvas = DomCanvas.create(Vector(image.width, image.height))
+            val domCanvas = DomCanvas.create(Vector(image.width, image.height), 1.0)
             val ctx = domCanvas.canvasElement.getContext("2d") as CanvasRenderingContext2D
             ctx.drawImage(image, 0.0, 0.0)
 
