@@ -12,11 +12,9 @@ object Formatter {
     private const val DATE_MEDIUM = "EEE, MMM d, y"
     private const val DATE_MEDIUM_TIME_SHORT = "EEE, MMM d, y h:mm a"
 
-    private val SCI_NOTATION_EXP_REGEX = Regex("(.+)([eE][0-9]+)(.*)")
-
     private val DEF_NUMBER_FORMATTER: (Any) -> String = { input ->
         val number = input as Number
-        NumberFormatUtil.formatNumber(number, "#,###.##")
+        NumberFormatUtil.formatNumber(number, ",g")
     }
 
     fun time(pattern: String): (Any) -> String {
@@ -24,41 +22,12 @@ object Formatter {
     }
 
     @JvmOverloads
-    fun number(pattern: String, useMetricPrefix: Boolean = false): (Any) -> String = { input ->
+    fun number(pattern: String): (Any) -> String = { input ->
         var result = "NaN"
         if (input is Number) {
-            var s = NumberFormatUtil.formatNumber(input, pattern)
-            if (useMetricPrefix) {
-                s = replaceExponentWithMetricPrefix(s)
-            }
-            result = s
+            result = NumberFormatUtil.formatNumber(input, pattern)
         }
         result
-    }
-
-    private fun replaceExponentWithMetricPrefix(number: String): String {
-        val result = SCI_NOTATION_EXP_REGEX.find(number)
-                ?: // not a scientific notation
-                return number
-
-        val groups = result.groups
-        if (groups.size != 4) {
-            // strange
-            return number
-        }
-
-        val exp = result.groupValues[2]
-        val metricPrefix: String
-        metricPrefix = when (exp.toUpperCase()) {
-            "E0" -> ""
-            "E3" -> "k"
-            "E6" -> "M"
-            "E9" -> "G"
-            "E12" -> "T"
-            "E18" -> "E"
-            else -> return number
-        }
-        return result.groupValues[1] + metricPrefix + result.groupValues[3]
     }
 
     fun legend(dataType: DataType): (Any?) -> String {
