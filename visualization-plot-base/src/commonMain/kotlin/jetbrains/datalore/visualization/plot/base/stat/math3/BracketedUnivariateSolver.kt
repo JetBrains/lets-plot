@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package jetbrains.datalore.visualization.plot.base.stat.regression.math3
+package jetbrains.datalore.visualization.plot.base.stat.math3
 
 /** Interface for [(univariate real) root-finding][UnivariateSolver] that maintain a bracketed solution. There are several advantages
  * to having such root-finding algorithms:

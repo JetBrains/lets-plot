@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package jetbrains.datalore.visualization.plot.base.stat.regression.math3
+package jetbrains.datalore.visualization.plot.base.stat.math3
 
 import kotlin.jvm.JvmOverloads
 import kotlin.math.abs

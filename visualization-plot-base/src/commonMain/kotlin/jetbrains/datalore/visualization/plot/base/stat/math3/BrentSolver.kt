@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.datalore.visualization.plot.base.stat.regression.math3
+package jetbrains.datalore.visualization.plot.base.stat.math3
 
 
 import kotlin.jvm.JvmOverloads

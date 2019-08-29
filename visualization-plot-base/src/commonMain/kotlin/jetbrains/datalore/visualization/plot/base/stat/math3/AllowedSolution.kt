@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package jetbrains.datalore.visualization.plot.base.stat.regression.math3
+package jetbrains.datalore.visualization.plot.base.stat.math3
 
 
 /** The kinds of solutions that a [ (bracketed univariate real) root-finding algorithm][BracketedUnivariateSolver] may accept as solutions.
