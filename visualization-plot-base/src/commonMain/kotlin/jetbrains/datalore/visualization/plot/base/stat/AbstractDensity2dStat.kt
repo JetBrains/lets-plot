@@ -4,7 +4,7 @@ import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
 
-open class Density2dStatShell : BaseStat(DEF_MAPPING) {
+abstract class AbstractDensity2dStat : BaseStat(DEF_MAPPING) {
 
     var adjust = DEF_ADJUST
     var nx = DEF_N

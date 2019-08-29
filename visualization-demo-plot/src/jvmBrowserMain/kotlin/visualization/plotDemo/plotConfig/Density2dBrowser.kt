@@ -1,0 +1,13 @@
+package jetbrains.datalore.visualization.plotDemo.plotConfig
+
+import jetbrains.datalore.visualization.plotDemo.model.plotConfig.Density2d
+
+object Density2dBrowser {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        with(Density2d()) {
+            @Suppress("UNCHECKED_CAST")
+            PlotConfigDemoUtil.show("Density2d plot", plotSpecList() as List<MutableMap<String, Any>>, demoComponentSize)
+        }
+    }
+}

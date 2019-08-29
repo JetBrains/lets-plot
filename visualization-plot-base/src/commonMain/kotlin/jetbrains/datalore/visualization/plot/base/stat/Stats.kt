@@ -89,12 +89,12 @@ object Stats {
         return DensityStat()
     }
 
-    fun density2d(): Density2dStatShell {
-        return Density2dStatShell()
+    fun density2d(): AbstractDensity2dStat {
+        return Density2dStat()
     }
 
-    fun density2df(): Density2dStatShell {
-        return Density2dStatShell()
+    fun density2df(): AbstractDensity2dStat {
+        return Density2dfStat()
     }
 
     private class IdentityStat internal constructor() : BaseStat(emptyMap()) {

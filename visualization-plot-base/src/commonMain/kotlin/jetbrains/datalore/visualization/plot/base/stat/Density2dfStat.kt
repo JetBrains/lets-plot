@@ -3,11 +3,10 @@ package jetbrains.datalore.visualization.plot.base.stat
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.stat.*
+import jetbrains.datalore.visualization.plot.base.stat.regression.math3.BlockRealMatrix
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import org.apache.commons.math3.linear.BlockRealMatrix
 
-class Density2dfStat internal constructor() : Density2dStatShell() {
+class Density2dfStat internal constructor() : AbstractDensity2dStat() {
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
         if (!(data.has(TransformVar.X) && data.has(TransformVar.Y))) {

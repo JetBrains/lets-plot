@@ -4,7 +4,7 @@ import jetbrains.datalore.visualization.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.Iris
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 
-class Area : PlotConfigDemoBase() {
+class Density2d : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             sepanLength()
@@ -15,17 +15,13 @@ class Area : PlotConfigDemoBase() {
         val spec = "{" +
                 "   'mapping': {" +
                 "             'x': 'sepal length (cm)'," +
-                "             'group': 'target'," +
-                "             'color': 'sepal width (cm)'," +
-                "             'fill': 'target'" +
+                "             'y': 'sepal width (cm)'," +
+                "             'color': 'target'" +
                 "           }," +
 
                 "   'layers': [" +
                 "               {" +
-                "                  'geom': 'area'," +
-                "                   'stat': 'density'," +
-                "                   'position' : 'identity'," +
-                "                   'alpha': 0.7" +
+                "                  'geom': 'density2d'" +
                 "               }" +
                 "           ]" +
                 "}"

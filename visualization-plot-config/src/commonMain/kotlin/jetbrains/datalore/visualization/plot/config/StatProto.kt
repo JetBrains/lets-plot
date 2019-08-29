@@ -143,7 +143,7 @@ open class StatProto {
         return stat
     }
 
-    private fun configureDensity2dStat(stat: Density2dStatShell, options: Map<*, *>): Stat {
+    private fun configureDensity2dStat(stat: AbstractDensity2dStat, options: Map<*, *>): Stat {
         if (options.containsKey("kernel")) {
             val method = options["kernel"] as String
             stat.setKernel(DensityStatUtil.toKernel(method))
@@ -203,11 +203,11 @@ open class StatProto {
         return Stats.smooth()
     }
 
-    protected open fun createDensity2dStat(): Density2dStatShell {
+    protected open fun createDensity2dStat(): AbstractDensity2dStat {
         return Stats.density2d()
     }
 
-    protected open fun createDensity2dfStat(): Density2dStatShell {
+    protected open fun createDensity2dfStat(): AbstractDensity2dStat {
         return Stats.density2df()
     }
 
@@ -264,12 +264,12 @@ open class StatProto {
 
         private fun createDensity2dDefaults(): Map<String, Any> {
             return mapOf(
-                    "n" to Density2dStatShell.DEF_N,
-                    "kernel" to Density2dStatShell.DEF_KERNEL,
-                    "bw" to Density2dStatShell.DEF_BW,
-                    "adjust" to Density2dStatShell.DEF_ADJUST,
-                    "contour" to Density2dStatShell.DEF_CONTOUR,
-                    "bins" to Density2dStatShell.DEF_BIN_COUNT
+                    "n" to AbstractDensity2dStat.DEF_N,
+                    "kernel" to AbstractDensity2dStat.DEF_KERNEL,
+                    "bw" to AbstractDensity2dStat.DEF_BW,
+                    "adjust" to AbstractDensity2dStat.DEF_ADJUST,
+                    "contour" to AbstractDensity2dStat.DEF_CONTOUR,
+                    "bins" to AbstractDensity2dStat.DEF_BIN_COUNT
             )
         }
     }
