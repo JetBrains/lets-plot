@@ -219,6 +219,9 @@ class NumberFormat(private val spec: Spec) {
                     precision = 12
                 }
                 type = "g"
+            }
+
+            if (type == "g") {
                 trim = true
             }
 
