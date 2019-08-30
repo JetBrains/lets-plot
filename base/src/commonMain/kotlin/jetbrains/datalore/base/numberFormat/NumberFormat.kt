@@ -26,19 +26,19 @@ class NumberFormat(private val spec: Spec) {
         val fractionPart: Long,
         val exponent: Int?
     ) {
-
         val fractionString: String
-            get() {
-                val fractionString = fractionPart.toString()
-                val fractionPrefix = "0".repeat(fractionLeadingZeros)
-                return fractionPrefix + fractionString.replace("0+$".toRegex(), "")
-            }
-
         val fractionLeadingZeros: Int
-            get() = if (fractionPart != 0L) MAX_SUPPORTED_FRACTION_EXP - floor(log10(fractionPart.toDouble())).toInt() - 1 else 1
-
         val integerLength: Int
-            get() = integerPart.toString().length
+
+        init {
+            fractionLeadingZeros =
+                if (fractionPart != 0L) MAX_SUPPORTED_FRACTION_EXP - floor(log10(fractionPart.toDouble())).toInt() - 1 else 1
+
+            val fractionPrefix = "0".repeat(fractionLeadingZeros)
+            fractionString = fractionPrefix + fractionPart.toString().replace("0+$".toRegex(), "")
+
+            integerLength = integerPart.toString().length
+        }
 
         fun asPercent(): NumberInfo {
             return createNumberInfo(number * 100)
@@ -46,7 +46,7 @@ class NumberFormat(private val spec: Spec) {
 
         companion object {
             const val MAX_SUPPORTED_FRACTION_EXP = 18 // max fraction length we can format (as any other format library does)
-            val MAX_SUPPORTED_FRACTION_VALUE = 10.0.pow(MAX_SUPPORTED_FRACTION_EXP)
+            val MAX_SUPPORTED_FRACTION_VALUE = 10.0.pow(MAX_SUPPORTED_FRACTION_EXP).toLong()
         }
     }
 
@@ -380,7 +380,7 @@ class NumberFormat(private val spec: Spec) {
                 ""
             }
 
-            val expNumberInfo = createNumberInfo(numberInfo.integerPart + numberInfo.fractionPart / NumberInfo.MAX_SUPPORTED_FRACTION_VALUE)
+            val expNumberInfo = createNumberInfo(numberInfo.integerPart + numberInfo.fractionPart / NumberInfo.MAX_SUPPORTED_FRACTION_VALUE.toDouble())
 
             if (precision > -1) {
                 val formattedNumber = toFixedFormat(expNumberInfo, precision)
@@ -409,17 +409,33 @@ class NumberFormat(private val spec: Spec) {
         }
 
         private fun roundToPrecision(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
-            val precisionExp = NumberInfo.MAX_SUPPORTED_FRACTION_VALUE / 10.0.pow(precision)
-            var fraction = ((numberInfo.fractionPart.toDouble() / precisionExp).roundToLong() * precisionExp).toLong()
-            var integerPart = numberInfo.integerPart
-            if (fraction == NumberInfo.MAX_SUPPORTED_FRACTION_VALUE.toLong()) {
-                fraction = 0
-                ++integerPart
+            val exp = numberInfo.exponent ?: 0
+            val totalPrecision = precision + exp
+
+            var fractionPart: Long
+            var integerPart: Long
+
+            if (totalPrecision < 0) {
+                fractionPart = 0L
+                val intShift = totalPrecision.absoluteValue
+                integerPart = if (numberInfo.integerLength <= intShift) {
+                    0
+                } else {
+                    numberInfo.integerPart / 10.0.pow(intShift).toLong() * 10.0.pow(intShift).toLong()
+                }
+            } else {
+                val precisionExp = NumberInfo.MAX_SUPPORTED_FRACTION_VALUE / 10.0.pow(totalPrecision).toLong()
+                fractionPart = (numberInfo.fractionPart.toDouble() / precisionExp).roundToLong() * precisionExp
+                integerPart = numberInfo.integerPart
+                if (fractionPart == NumberInfo.MAX_SUPPORTED_FRACTION_VALUE) {
+                    fractionPart = 0
+                    ++integerPart
+                }
             }
 
-            val num = integerPart.toDouble() + fraction.toDouble() / NumberInfo.MAX_SUPPORTED_FRACTION_VALUE
+            val num = integerPart + fractionPart.toDouble() / NumberInfo.MAX_SUPPORTED_FRACTION_VALUE
 
-            return numberInfo.copy(number = num, fractionPart = fraction, integerPart = integerPart)
+            return numberInfo.copy(number = num, fractionPart = fractionPart, integerPart = integerPart)
         }
 
         private fun group(str: String) = str

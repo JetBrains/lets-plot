@@ -5,6 +5,11 @@ import kotlin.test.assertEquals
 
 class NumberFormatTypeFTest {
     @Test
+    fun canOutputSmallNumberAndGroupThousands() {
+        assertEquals("0.00", NumberFormat(",.2f").apply(9.104303610446121E-38))
+    }
+
+    @Test
     fun canOutputFixedPointNotation() {
         assertEquals("0.5", NumberFormat(".1f").apply(0.49))
         assertEquals("0.45", NumberFormat(".2f").apply(0.449))
