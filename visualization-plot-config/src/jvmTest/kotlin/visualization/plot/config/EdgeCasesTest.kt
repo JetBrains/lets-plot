@@ -4,6 +4,7 @@ import jetbrains.datalore.base.assertion.assertDoesNotFail
 import jetbrains.datalore.visualization.plot.DemoAndTestJvm
 import jetbrains.datalore.visualization.plot.config.Option.GeomName
 import jetbrains.datalore.visualization.plot.parsePlotSpec
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 
@@ -64,6 +65,7 @@ class EdgeCasesTest {
     }
 
     @Test
+    @Ignore
     fun lineWithNaNInXYSeries() {
         for (geomName in GeomName.values()) {
             if (GeomName.LIVE_MAP == geomName || GeomName.IMAGE == geomName) {
