@@ -32,7 +32,11 @@ class NumberFormat(private val spec: Spec) {
 
         init {
             fractionLeadingZeros =
-                if (fractionPart != 0L) MAX_SUPPORTED_FRACTION_EXP - floor(log10(fractionPart.toDouble())).toInt() - 1 else 1
+                if (fractionPart != 0L) {
+                    (MAX_SUPPORTED_FRACTION_EXP - floor(log10(fractionPart.toDouble())).toInt() - 1).coerceAtLeast(0)
+                } else {
+                    1
+                }
 
             val fractionPrefix = "0".repeat(fractionLeadingZeros)
             fractionString = fractionPrefix + fractionPart.toString().replace("0+$".toRegex(), "")

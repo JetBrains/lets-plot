@@ -10,6 +10,11 @@ class NumberFormatTypeFTest {
     }
 
     @Test
+    fun edgeCases() {
+        assertEquals("2.0", NumberFormat(",.1f").apply(1.9999999999999998))
+    }
+
+    @Test
     fun canOutputFixedPointNotation() {
         assertEquals("0.5", NumberFormat(".1f").apply(0.49))
         assertEquals("0.45", NumberFormat(".2f").apply(0.449))

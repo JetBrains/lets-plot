@@ -65,7 +65,6 @@ class EdgeCasesTest {
     }
 
     @Test
-    @Ignore
     fun lineWithNaNInXYSeries() {
         for (geomName in GeomName.values()) {
             if (GeomName.LIVE_MAP == geomName || GeomName.IMAGE == geomName) {
