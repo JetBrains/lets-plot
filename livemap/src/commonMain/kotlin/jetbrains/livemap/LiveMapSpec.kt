@@ -24,7 +24,7 @@ class LiveMapSpec(
     val isUseFrame: Boolean,
     val theme: LivemapGeom.Theme,
     val projectionType: ProjectionType,
-    val location: MapLocation,
+    val location: MapLocation?,
     val zoom: Int?,
     val level: FeatureLevel?,
     val parent: MapRegion?,

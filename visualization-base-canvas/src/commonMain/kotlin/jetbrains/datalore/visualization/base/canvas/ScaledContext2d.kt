@@ -105,12 +105,12 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.restore()
     }
 
-    override fun setFillColor(color: String?) {
-        myContext2d.setFillColor(color)
+    override fun setFillStyle(color: String?) {
+        myContext2d.setFillStyle(color)
     }
 
-    override fun setStrokeColor(color: String?) {
-        myContext2d.setStrokeColor(color)
+    override fun setStrokeStyle(color: String?) {
+        myContext2d.setStrokeStyle(color)
     }
 
     override fun setGlobalAlpha(alpha: Double) {

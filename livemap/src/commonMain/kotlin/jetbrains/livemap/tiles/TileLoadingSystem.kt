@@ -136,7 +136,7 @@ class TileLoadingSystem(
         val cellMapRect = getTileRect(myMapRect, cellKey.toString())
 
         for (layer in getEntities(CellLayerComponent::class)) {
-            val layerEntities = LayerEntitiesComponent.get(layer)
+            val layerEntities = layer.getComponent<LayerEntitiesComponent>()
             val layerKind = CellLayerComponent.getKind(layer)
 
             val donorTile = calculateDonorTile(layerKind, cellKey)

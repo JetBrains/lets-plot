@@ -41,12 +41,12 @@ internal class MessageContent(private val message: String) : CanvasContent {
 
             save()
 
-            setFillColor(BACKGROUND_COLOR)
+            setFillStyle(BACKGROUND_COLOR)
             fillRect(0.0, 0.0, dimension.x, dimension.y)
 
             setTextBaseline(TextBaseline.TOP)
             setTextAlign(TextAlign.LEFT)
-            setFillColor(FONT_COLOR)
+            setFillStyle(FONT_COLOR)
             setFont("400 " + FONT_SIZE + "px/" + FONT_HEIGHT + "px Helvetica, Arial, sans-serif")
 
             val height = FONT_HEIGHT * lines.size

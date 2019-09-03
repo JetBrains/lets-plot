@@ -16,7 +16,7 @@ class DirtyRenderLayerComponent : EcsComponent {
         fun tagParentLayer(entity: EcsEntity) {
             val layerId = ParentLayerComponent.getLayerId(entity)
             val layer = entity.componentManager.getEntityById(layerId)
-            tag(layer!!)
+            tag(layer)
         }
     }
 }
@@ -42,7 +42,7 @@ class ParentLayerComponent(val layerId: Int) : EcsComponent {
         fun tagDirtyParentLayer(entity: EcsEntity) {
             val parentLayer = get(entity)
             val layer = entity.componentManager.getEntityById(parentLayer.layerId)
-            DirtyRenderLayerComponent.tag(layer!!)
+            DirtyRenderLayerComponent.tag(layer)
         }
 
 

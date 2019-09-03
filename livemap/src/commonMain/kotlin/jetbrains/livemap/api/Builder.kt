@@ -1,0 +1,226 @@
+package jetbrains.livemap.api
+
+import jetbrains.datalore.base.async.Async
+import jetbrains.datalore.base.async.Asyncs
+import jetbrains.datalore.base.event.MouseEvent
+import jetbrains.datalore.base.event.MouseEventSource
+import jetbrains.datalore.base.event.MouseEventSpec
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.observable.event.EventHandler
+import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
+import jetbrains.gis.geoprotocol.*
+import jetbrains.gis.tileprotocol.TileLayer
+import jetbrains.gis.tileprotocol.TileService
+import jetbrains.gis.tileprotocol.socket.Socket
+import jetbrains.gis.tileprotocol.socket.SocketBuilder
+import jetbrains.gis.tileprotocol.socket.SocketHandler
+import jetbrains.livemap.DevParams
+import jetbrains.livemap.LiveMapSpec
+import jetbrains.livemap.MapLocation
+import jetbrains.livemap.mapobjects.MapLayer
+import jetbrains.livemap.mapobjects.MapPoint
+import jetbrains.livemap.projections.ProjectionType
+
+@LiveMapDsl
+class LiveMapBuilder {
+    lateinit var size: DoubleVector
+    lateinit var geocodingService: GeocodingService
+    lateinit var tileService: TileService
+    lateinit var mouseEventSource: MouseEventSource
+
+    var zoom: Int? = null
+    var interactive: Boolean = true
+    var mapLocation: MapLocation? = null
+    var level: FeatureLevel? = null
+    var parent: MapRegion? = null
+    var layers: List<MapLayer> = ArrayList()
+    var theme: LivemapGeom.Theme = LivemapGeom.Theme.COLOR
+
+    var projectionType: ProjectionType = ProjectionType.MERCATOR
+    var isLoopX: Boolean = true
+    var isLoopY: Boolean = false
+
+    var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit}
+    var devParams: DevParams = DevParams(HashMap<String, Any>())
+
+    fun location(block: Location.() -> Unit) {
+        Location().apply(block).let { location ->
+            this.level = location.hint?.level
+            this.parent = location.hint?.parent
+            this.mapLocation = location.mapRegion?.run(MapLocation.Companion::create)
+        }
+    }
+
+    fun params(vararg vals: Pair<String, Any>) {
+        this.devParams = DevParams(mapOf(*vals))
+    }
+
+
+    private fun empty(): MouseEventSource {
+        return object : MouseEventSource {
+            override fun addEventHandler(
+                eventSpec: MouseEventSpec,
+                eventHandler: EventHandler<MouseEvent>
+            ): Registration {
+                return Registration.EMPTY
+            }
+        }
+    }
+
+    fun build(): LiveMapSpec {
+        return LiveMapSpec(
+            size = size,
+            zoom = zoom,
+            isInteractive = interactive,
+            layers = layers,
+
+            level = level,
+            location = mapLocation,
+            parent = parent,
+
+            projectionType = projectionType,
+            isLoopX = isLoopX,
+            isLoopY = isLoopY,
+
+            tileService = tileService,
+            theme = theme,
+
+            geocodingService = geocodingService,
+
+            devParams = devParams,
+
+            mapLocationConsumer = mapLocationConsumer,
+            eventSource = mouseEventSource,
+
+            // deprecated
+            isClustering = false,
+            isEnableMagnifier = false,
+            isLabels = true,
+            isScaled = false,
+            isTiles = true,
+            isUseFrame = true
+        )
+    }
+}
+
+@DslMarker
+annotation class LiveMapDsl {}
+
+@LiveMapDsl
+class LayersBuilder {
+
+}
+
+@LiveMapDsl
+class Points {
+}
+
+fun layers(block: LayersBuilder.() -> Unit) {
+    LayersBuilder().apply(block)
+}
+
+fun points(block: Points.() -> Unit) {
+    Points().apply(block)
+}
+
+@LiveMapDsl
+class PointBuilder {
+    var animation: Int? = null
+    var label: String? = null
+    var shape: Int = 1
+    var lat: Double? = null
+    var lon: Double? = null
+    var radius: Double? = null
+    var fillColor: Color? = null
+    var strokeColor: Color? = null
+    var strokeWidth: Double? = null
+    var index: Int? = null
+    var mapId: String? = null
+    var regionId: String? = null
+    fun build(): MapPoint {
+        return MapPoint( index!!, mapId!!, regionId!!, DoubleVector(lon!!, lat!!), label!!, animation!!, shape, radius!!, fillColor!!, strokeColor!!, strokeWidth!!)
+    }
+}
+
+fun point(block: PointBuilder.() -> Unit) {
+    PointBuilder().apply(block)
+}
+
+@LiveMapDsl
+class Projection {
+    var kind = ProjectionType.MERCATOR
+    var loopX = true
+    var loopY = false
+}
+
+@LiveMapDsl
+class Location {
+    var name: String? = null
+        set(v) { field = v; mapRegion = v?.let { MapRegion.withName(it) } }
+    var omsId: String? = null
+        set(v) { field = v; mapRegion = v?.let { MapRegion.withId(it) } }
+    var mapRegion: MapRegion? = null
+    var hint: GeocodingHint? = null
+
+}
+
+fun Location.geocodingHint(block: GeocodingHint.() -> Unit) {
+    GeocodingHint().apply(block).let {
+        this.hint = it
+    }
+}
+
+@LiveMapDsl
+class GeocodingHint {
+    var level: FeatureLevel? = null
+    var parent: MapRegion? = null
+}
+
+fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block).build()
+
+
+fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
+    Projection().apply(block).let {
+        this.projectionType = it.kind
+        this.isLoopX = it.loopX
+        this.isLoopY = it.loopY
+    }
+}
+
+
+val dummyGeocodingService: GeocodingService = GeocodingService(
+    object : GeoTransport {
+        override fun send(request: GeoRequest): Async<GeoResponse> {
+            TODO("not implemented")
+        }
+    }
+)
+
+val dummyTileService: TileService = object : TileService(DummySocketBuilder(), LivemapGeom.Theme.COLOR.name) {
+    override fun getTileData(bbox: DoubleRectangle, zoom: Int): Async<List<TileLayer>> {
+        return Asyncs.constant(emptyList())
+    }
+}
+
+internal class DummySocketBuilder : SocketBuilder {
+    override fun build(handler: SocketHandler): Socket {
+        return object : Socket {
+            override fun connect() {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun close() {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun send(msg: String) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+        }
+    }
+}
+

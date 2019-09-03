@@ -12,7 +12,7 @@ class Rectangle : RenderBox {
     var color: Color? = null
 
     override fun render(ctx: Context2d) {
-        color?.let { ctx.setFillColor(it.toCssColor()) }
+        color?.let { ctx.setFillStyle(it.toCssColor()) }
 
         ctx.fillRect(
             rect.left,

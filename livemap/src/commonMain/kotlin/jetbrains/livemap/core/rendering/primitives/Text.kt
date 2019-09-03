@@ -29,7 +29,7 @@ class Text : RenderBox {
             isDirty = false
         }
 
-        ctx.setFillColor(color.toHexColor())
+        ctx.setFillStyle(color.toHexColor())
 
         var y = fontHeight
         for (s in text) {

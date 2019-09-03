@@ -34,7 +34,7 @@ class DevParams(private val devParams: Map<*, *>) {
         return devParams[key]
     }
 
-    class IntParam(private val key: String, private val defaultValue: Int) {
+    class IntParam(val key: String, private val defaultValue: Int) {
 
         fun read(params: DevParams): Int =
             when(val v = params[key]) {
@@ -42,11 +42,9 @@ class DevParams(private val devParams: Map<*, *>) {
                 is Number -> v.toInt()
                 else -> error("")
             }
-
-        fun key() = key
     }
 
-    class DoubleParam(private val key: String, private val defaultValue: Double) {
+    class DoubleParam(val key: String, private val defaultValue: Double) {
 
         fun read(params: DevParams): Double =
             when(val v = params[key]) {
@@ -56,7 +54,7 @@ class DevParams(private val devParams: Map<*, *>) {
             }
     }
 
-    class StringParam(private val key: String, private val defaultValue: String) {
+    class StringParam(val key: String, private val defaultValue: String) {
 
         fun read(params: DevParams): String =
             when(val v = params[key]) {
@@ -66,7 +64,10 @@ class DevParams(private val devParams: Map<*, *>) {
             }
     }
 
-    class BoolParam(private val key: String, private val defaultValue: Boolean) {
+    class BoolParam(
+        val key: String,
+        private val defaultValue: Boolean
+    ) {
 
         internal fun isSet(params: DevParams): Boolean =
             when(val v = params[key]) {
@@ -75,12 +76,10 @@ class DevParams(private val devParams: Map<*, *>) {
                 is String -> v.toBoolean()
                 else -> throw IllegalArgumentException()
             }
-
-        fun key() = key
     }
 
     class EnumParam<ValueT>(
-        private val key: String,
+        val key: String,
         private val defaultValue: ValueT,
         private val valuesMap: List<Pair<String, ValueT>>
     ) {
@@ -101,8 +100,6 @@ class DevParams(private val devParams: Map<*, *>) {
                 is String -> fromString(v)
                 else -> throw IllegalArgumentException()
             }
-
-        fun key() = key
     }
 
     companion object {

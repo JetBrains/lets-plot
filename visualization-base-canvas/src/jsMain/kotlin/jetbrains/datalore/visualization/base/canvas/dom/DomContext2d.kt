@@ -119,11 +119,11 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         myContext2d.restore()
     }
 
-    override fun setFillColor(color: String?) {
+    override fun setFillStyle(color: String?) {
         myContext2d.fillStyle = color
     }
 
-    override fun setStrokeColor(color: String?) {
+    override fun setStrokeStyle(color: String?) {
         myContext2d.strokeStyle = color
     }
 

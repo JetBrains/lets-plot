@@ -25,7 +25,7 @@ class LayerEntitiesComponent : EcsComponent {
         }
 
         fun getEntities(entity: EcsEntity): Iterable<EcsEntity> {
-            return entity.componentManager.getEntitiesById(get(entity).entities)
+            return entity.componentManager.getEntitiesById(entity.get<LayerEntitiesComponent>().entities)
         }
     }
 }

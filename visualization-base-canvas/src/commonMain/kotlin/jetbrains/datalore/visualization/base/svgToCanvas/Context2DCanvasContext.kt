@@ -42,8 +42,8 @@ internal class Context2DCanvasContext(private val myContext: Context2d) : Canvas
     private fun drawNextElement(lineDash: DoubleArray?, transform: String?, fillColor: SvgColor,
                                 strokeColor: SvgColor, strokeWidth: Double) {
         myContext.save()
-        myContext.setFillColor(svgColorToString(fillColor))
-        myContext.setStrokeColor(svgColorToString(strokeColor))
+        myContext.setFillStyle(svgColorToString(fillColor))
+        myContext.setStrokeStyle(svgColorToString(strokeColor))
         myContext.setLineWidth(strokeWidth)
         if (lineDash != null) {
             myContext.setLineDash(lineDash)

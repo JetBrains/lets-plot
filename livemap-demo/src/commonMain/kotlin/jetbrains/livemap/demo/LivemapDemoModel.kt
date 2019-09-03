@@ -1,31 +1,18 @@
 package jetbrains.livemap.demo
 
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
-import jetbrains.gis.geoprotocol.GeoRequest
-import jetbrains.gis.geoprotocol.GeoResponse
-import jetbrains.gis.geoprotocol.GeoTransport
-import jetbrains.gis.geoprotocol.GeocodingService
-import jetbrains.gis.tileprotocol.TileLayer
-import jetbrains.gis.tileprotocol.TileService
-import jetbrains.gis.tileprotocol.socket.Socket
-import jetbrains.gis.tileprotocol.socket.SocketBuilder
-import jetbrains.gis.tileprotocol.socket.SocketHandler
+import jetbrains.gis.geoprotocol.FeatureLevel
+import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapFactory
-import jetbrains.livemap.LiveMapSpec
-import jetbrains.livemap.MapLocation
+import jetbrains.livemap.api.*
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.projections.ProjectionType
 
@@ -33,49 +20,89 @@ object LivemapDemoModel {
     val VIEW_SIZE = Vector(800, 600)
 
     fun createLivemapModel(canvasControl: CanvasControl): Registration {
-        val livemapSpec = LiveMapSpec(
-            GeocodingService(
-                object : GeoTransport {
-                    override fun send(request: GeoRequest): Async<GeoResponse> {
-                        TODO("not implemented")
-                    }
-                }
-            ) ,
-            object : TileService(DummySocketBuilder(), LivemapGeom.Theme.COLOR.name) {
-                override fun getTileData(bbox: DoubleRectangle, zoom: Int): Async<List<TileLayer>> {
-                    return Asyncs.constant(emptyList())
-                }
-            },
-            DoubleVector(canvasControl.size.x.toDouble(), canvasControl.size.y.toDouble()),
-            false,
-            true,
-            false,
-            false,
-            true,
-            true,
-            false,
-            LivemapGeom.Theme.COLOR,
-            ProjectionType.MERCATOR,
-            MapLocation.create(
-                GeoRectangle(-90.0, -45.0, 90.0, 45.0)),
-            1,
-            null,
-            null,
-            emptyList(),
-            object : MouseEventSource {
-                override fun addEventHandler(
-                    eventSpec: MouseEventSpec,
-                    eventHandler: EventHandler<MouseEvent>
-                ): Registration {
-                    return canvasControl.addEventHandler(eventSpec, eventHandler)
-                }
+        val mouse = object : MouseEventSource {
+            override fun addEventHandler(
+                eventSpec: MouseEventSpec,
+                eventHandler: EventHandler<MouseEvent>
+            ): Registration {
+                return canvasControl.addEventHandler(eventSpec, eventHandler)
+            }
+        }
 
-            },
-            isLoopX = true,
-            isLoopY = false,
-            mapLocationConsumer = { Unit },
-            devParams = DevParams(mapOf(Pair("debug_grid", true)))
-        )
+        val livemapSpec = liveMapConfig {
+            mouseEventSource = mouse
+
+            tileService = dummyTileService
+            //tileService = { //HorisTileGen {
+            //name = "HorisTileGen"
+            //theme = "LivemapGeom.Theme.COLOR"
+            //url = "tilegen.horis.ru:1234"
+            //}
+
+            geocodingService = dummyGeocodingService
+            //geocodingService = HorisGeocoding {
+            //url = "tilegen.horis.ru:4321"
+            //}
+
+
+            size = canvasControl.size.toDoubleVector()
+            zoom = 1
+            theme = LivemapGeom.Theme.COLOR
+            interactive = true
+
+            location {
+                name = "boston"
+
+                geocodingHint {
+                    level = FeatureLevel.CITY
+                    parent = MapRegion.withName("USA")
+                }
+            }
+
+            projection {
+                kind = ProjectionType.MERCATOR
+                loopX = true
+                loopY = false
+            }
+
+        layers {
+            points {
+                point {// spb
+                    lon = 30.1751
+                    lat = 59.5439
+                    shape = 1
+                }
+                point {// boston
+                    lon = 42.2130
+                    lat = 71.0335
+                    shape = 1
+                }
+                point {// moscow
+                    lon = 37.3659
+                    lat = 55.4507
+                    shape = 1
+                }
+                point {// new york
+                    lon = 73.5939
+                    lat = 40.4342
+                    shape = 1
+                }
+//            }
+//            points {
+//                data {
+//                    point {
+//                        lon=44,
+//                        lat=50
+//                        shape=1
+//                    }
+//                }
+            }
+        }
+
+            params(
+                DevParams.DEBUG_GRID.key to true
+            )
+        }
 
         val livemapFactory = LiveMapFactory(livemapSpec)
         val livemapPresenter = LiveMapPresenter()
@@ -144,23 +171,4 @@ object LivemapDemoModel {
     //     return MapJsPoint(i, "0", 13, Color.CONSOLE_YELLOW, Color.TRANSPARENT, 0, 50, null, center, 0)
     // }
 
-    internal class DummySocketBuilder : SocketBuilder {
-        override fun build(handler: SocketHandler): Socket {
-            return object : Socket {
-                override fun connect() {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-                override fun close() {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-                override fun send(msg: String) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-            }
-        }
-
-    }
 }

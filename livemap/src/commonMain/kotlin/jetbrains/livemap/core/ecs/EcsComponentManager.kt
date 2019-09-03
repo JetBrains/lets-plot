@@ -22,8 +22,8 @@ class EcsComponentManager {
         return entity
     }
 
-    fun getEntityById(entityId: Int): EcsEntity? {
-        return myEntitiesIndex[entityId]?.takeIf { !it.hasRemoveFlag() }
+    fun getEntityById(entityId: Int): EcsEntity {
+        return myEntitiesIndex[entityId]?.takeIf { !it.hasRemoveFlag() }!!
     }
 
     fun getEntitiesById(ids: Collection<Int>): Iterable<EcsEntity> {

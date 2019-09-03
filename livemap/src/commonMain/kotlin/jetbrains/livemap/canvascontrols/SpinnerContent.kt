@@ -50,12 +50,12 @@ internal class SpinnerContent : CanvasContent {
         val dimension = canvasControl.size
         spinnerCenter = DoubleVector((dimension.x - width) / 2 + spinnerWidth / 2, dimension.y / 2.0)
 
-        setFillColor(BACKGROUND_COLOR)
+        setFillStyle(BACKGROUND_COLOR)
         fillRect(0.0, 0.0, dimension.x.toDouble(), dimension.y.toDouble())
 
         setTextBaseline(Context2d.TextBaseline.MIDDLE)
         setTextAlign(Context2d.TextAlign.LEFT)
-        setFillColor(FONT_COLOR)
+        setFillStyle(FONT_COLOR)
         fillText(LOADING_TEXT, (dimension.x + width) / 2 - textWidth, dimension.y / 2.0)
 
         restore()
@@ -64,7 +64,7 @@ internal class SpinnerContent : CanvasContent {
     private fun Context2d.drawSpinner(time: Long) {
         save()
 
-        setFillColor(BACKGROUND_COLOR)
+        setFillStyle(BACKGROUND_COLOR)
         fillRect(
             spinnerCenter.x - BACK_RADIUS,
             spinnerCenter.y - BACK_RADIUS,
@@ -82,7 +82,7 @@ internal class SpinnerContent : CanvasContent {
 
     private fun Context2d.drawSpinnerArc(color: String, startAngle: Double, arcAngle: Double) {
         setLineWidth(LINE_WIDTH)
-        setStrokeColor(color)
+        setStrokeStyle(color)
         beginPath()
         arc(spinnerCenter.x, spinnerCenter.y, RADIUS, startAngle, startAngle + arcAngle)
         stroke()

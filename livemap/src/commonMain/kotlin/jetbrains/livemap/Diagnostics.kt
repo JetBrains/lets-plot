@@ -36,7 +36,7 @@ open class Diagnostics {
         private val metrics: Text
 
         private val slowestSystemType: String?
-            get() = debugService.slowestSystem()?.first!!::class.simpleName
+            get() = debugService.slowestSystem()?.first!!::class.toString()
 
         private val slowestSystemTime: Double
             get() = debugService.slowestSystem()?.second ?: 0.0

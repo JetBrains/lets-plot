@@ -49,7 +49,7 @@ internal class TileDataRendererImpl(
         val tasks = ArrayList<() -> Unit>()
 
         if (tileFeatures.isNotEmpty() && mapConfig != null) {
-            tasks.add { ctx.setFillColor(mapConfig.tileSheetBackgrounds[layerKind.toString()]!!.toCssColor()) }
+            tasks.add { ctx.setFillStyle(mapConfig.tileSheetBackgrounds[layerKind.toString()]!!.toCssColor()) }
             tasks.add { ctx.fillRect(0.0, 0.0, size.x.toDouble(), size.y.toDouble()) }
 
             val labelBounds = ArrayList<DoubleRectangle>()
@@ -81,13 +81,13 @@ internal class TileDataRendererImpl(
             if (layerKind === Components.CellLayerKind.WORLD) {
                 tasks.add {
                     ctx.save()
-                    ctx.setFillColor(Color.GRAY.toCssColor())
+                    ctx.setFillStyle(Color.GRAY.toCssColor())
                     ctx.fillRect(0.0, 0.0, size.x.toDouble(), size.y.toDouble())
 
-                    ctx.setStrokeColor(Color.WHITE.toCssColor())
+                    ctx.setStrokeStyle(Color.WHITE.toCssColor())
                     ctx.strokeRect(0.0, 0.0, size.x.toDouble(), size.y.toDouble())
 
-                    ctx.setStrokeColor(Color.LIGHT_GRAY.toCssColor())
+                    ctx.setStrokeStyle(Color.LIGHT_GRAY.toCssColor())
                     ctx.moveTo(0.0, 0.0)
                     ctx.lineTo(size.x.toDouble(), size.y.toDouble())
                     ctx.moveTo(0.0, size.y.toDouble())

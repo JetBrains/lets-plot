@@ -132,11 +132,11 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.restore()
     }
 
-    override fun setFillColor(color: String?) {
+    override fun setFillStyle(color: String?) {
         myContext2d.fill = if (color != null) JavafxColor.valueOf(color) else null
     }
 
-    override fun setStrokeColor(color: String?) {
+    override fun setStrokeStyle(color: String?) {
         myContext2d.stroke = if (color != null) JavafxColor.valueOf(color) else null
     }
 

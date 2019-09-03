@@ -64,7 +64,7 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
         return if (entity.contains(CameraComponent::class)) 0 // if UI
         else {
             val renderLayer = entity.componentManager
-                .getEntityById(entity.getComponent<ParentLayerComponent>().layerId)!!
+                .getEntityById(entity.getComponent<ParentLayerComponent>().layerId)
                 .getComponent<RenderLayerComponent>()
                 .renderLayer
 

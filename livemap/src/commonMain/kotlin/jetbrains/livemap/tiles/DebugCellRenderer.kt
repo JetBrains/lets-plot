@@ -25,8 +25,8 @@ class DebugCellRenderer : Renderer {
 
         myOffset = 0
 
-        ctx.setFillColor(Color.RED.toCssColor())
-        ctx.setStrokeColor(Color.RED.toCssColor())
+        ctx.setFillStyle(Color.RED.toCssColor())
+        ctx.setStrokeStyle(Color.RED.toCssColor())
         ctx.setLineWidth(2.0)
         ctx.setFont("12px serif")
 
