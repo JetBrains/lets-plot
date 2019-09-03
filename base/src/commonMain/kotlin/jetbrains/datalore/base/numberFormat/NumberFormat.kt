@@ -49,7 +49,8 @@ class NumberFormat(private val spec: Spec) {
         }
 
         companion object {
-            const val MAX_SUPPORTED_FRACTION_EXP = 18 // max fraction length we can format (as any other format library does)
+            const val MAX_SUPPORTED_FRACTION_EXP =
+                18 // max fraction length we can format (as any other format library does)
             val MAX_SUPPORTED_FRACTION_VALUE = 10.0.pow(MAX_SUPPORTED_FRACTION_EXP).toLong()
         }
     }
@@ -74,7 +75,7 @@ class NumberFormat(private val spec: Spec) {
             get() = integerPart.length + fractionLength + exponentPart.length
 
         override fun toString() =
-                "$integerPart${FRACTION_DELIMITER.takeIf { fractionPart.isNotEmpty() } ?: ""}$fractionPart$exponentPart"
+            "$integerPart${FRACTION_DELIMITER.takeIf { fractionPart.isNotEmpty() } ?: ""}$fractionPart$exponentPart"
     }
 
 
@@ -208,7 +209,8 @@ class NumberFormat(private val spec: Spec) {
         private const val FRACTION_DELIMITER = "."
         private const val FRACTION_DELIMITER_LENGTH = FRACTION_DELIMITER.length
         private const val GROUP_SIZE = 3
-        private val SI_SUFFIXES = arrayOf("y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y")
+        private val SI_SUFFIXES =
+            arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
 
         fun create(spec: String): Spec {
             return create(parse(spec))
@@ -294,7 +296,8 @@ class NumberFormat(private val spec: Spec) {
                 } else {
                     integerPart = 0
                     newFractionString = integerString + fractionString
-                    fractionExpPow = NumberInfo.MAX_SUPPORTED_FRACTION_EXP - (exponentPart.absoluteValue + fractionString.length)
+                    fractionExpPow =
+                        NumberInfo.MAX_SUPPORTED_FRACTION_EXP - (exponentPart.absoluteValue + fractionString.length)
                 }
 
                 fractionPart = newFractionString.toLong() * 10.0.pow(fractionExpPow).toLong()
@@ -384,7 +387,8 @@ class NumberFormat(private val spec: Spec) {
                 ""
             }
 
-            val expNumberInfo = createNumberInfo(numberInfo.integerPart + numberInfo.fractionPart / NumberInfo.MAX_SUPPORTED_FRACTION_VALUE.toDouble())
+            val expNumberInfo =
+                createNumberInfo(numberInfo.integerPart + numberInfo.fractionPart / NumberInfo.MAX_SUPPORTED_FRACTION_VALUE.toDouble())
 
             if (precision > -1) {
                 val formattedNumber = toFixedFormat(expNumberInfo, precision)

@@ -1,9 +1,8 @@
 package jetbrains.datalore.visualization.plot.common.text
 
-import jetbrains.datalore.base.numberFormat.NumberFormatUtil
+import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.visualization.plot.common.data.DataType
 import jetbrains.datalore.visualization.plot.common.time.interval.TimeInterval
-import kotlin.jvm.JvmOverloads
 
 object Formatter {
     private const val YEAR = "MMM y"
@@ -12,28 +11,30 @@ object Formatter {
     private const val DATE_MEDIUM = "EEE, MMM d, y"
     private const val DATE_MEDIUM_TIME_SHORT = "EEE, MMM d, y h:mm a"
 
+    private val DEF_NUMBER_FORMAT = NumberFormat(",g")
+
     private val DEF_NUMBER_FORMATTER: (Any) -> String = { input ->
-        val number = input as Number
-        NumberFormatUtil.formatNumber(number, ",g")
+        DEF_NUMBER_FORMAT.apply(input as Number)
     }
 
     fun time(pattern: String): (Any) -> String {
         return { input -> DateTimeFormatUtil.formatDateUTC(input as Number, pattern) }
     }
 
-    @JvmOverloads
-    fun number(pattern: String): (Any) -> String = { input ->
-        var result = "NaN"
-        if (input is Number) {
-            result = NumberFormatUtil.formatNumber(input, pattern)
-        }
-        result
-    }
+//    @JvmOverloads
+//    fun number(pattern: String): (Any) -> String = { input ->
+//        var result = "NaN"
+//        if (input is Number) {
+//            result = NumberFormatUtil.formatNumber(input, pattern)
+//        }
+//        result
+//    }
 
-    fun legend(dataType: DataType): (Any?) -> String {
-        return tooltip(dataType)
-    }
+//    fun legend(dataType: DataType): (Any?) -> String {
+//        return tooltip(dataType)
+//    }
 
+    // ToDo: remove - only used in tests (?)
     fun tooltip(dataType: DataType): (Any?) -> String {
         return nullable(tooltipImpl(dataType), "null")
     }
@@ -50,6 +51,7 @@ object Formatter {
         }
     }
 
+    // ToDo: remove - only used in tests (?)
     fun tableCell(dataType: DataType): (Any?) -> String {
         return tableCell(dataType, "null")
     }
@@ -76,7 +78,7 @@ object Formatter {
         if (input == null) nullString else f(input)
     }
 
-    fun ordinalSeries(dataType: DataType): (Any?) -> String {
-        return tableCell(dataType)
-    }
+//    fun ordinalSeries(dataType: DataType): (Any?) -> String {
+//        return tableCell(dataType)
+//    }
 }
