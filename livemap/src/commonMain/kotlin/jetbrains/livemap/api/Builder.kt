@@ -2,13 +2,9 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
-import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSource
-import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
 import jetbrains.gis.geoprotocol.*
@@ -46,23 +42,11 @@ class LiveMapBuilder {
     var isLoopY: Boolean = false
 
     var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit}
-    var devParams: DevParams = DevParams(HashMap<String, Any>())
+    var devParams: Map<String, Any> = HashMap()
 
 
     fun params(vararg vals: Pair<String, Any>) {
-        this.devParams = DevParams(mapOf(*vals))
-    }
-
-
-    private fun empty(): MouseEventSource {
-        return object : MouseEventSource {
-            override fun addEventHandler(
-                eventSpec: MouseEventSpec,
-                eventHandler: EventHandler<MouseEvent>
-            ): Registration {
-                return Registration.EMPTY
-            }
-        }
+        this.devParams = mapOf(*vals)
     }
 
     fun build(): LiveMapSpec {
@@ -85,10 +69,10 @@ class LiveMapBuilder {
 
             geocodingService = geocodingService,
 
-            devParams = devParams,
-
             mapLocationConsumer = mapLocationConsumer,
             eventSource = mouseEventSource,
+
+            devParams = DevParams(devParams),
 
             // deprecated
             isClustering = false,
@@ -104,7 +88,7 @@ class LiveMapBuilder {
 @DslMarker
 annotation class LiveMapDsl {}
 
-fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block).build()
+fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
 
 @LiveMapDsl
 class LayersBuilder {
@@ -209,9 +193,19 @@ val dummyTileService: TileService = object : TileService(DummySocketBuilder(), L
     }
 }
 
-fun tileService(block: OurVectorTileServiceBuilder.() -> Unit) = OurVectorTileServiceBuilder().apply(block).build()
+fun internalTiles(block: LiveMapTileServiceBuilder.() -> Unit): TileService {
+    return LiveMapTileServiceBuilder()
+        .apply{
+            theme = LivemapGeom.Theme.COLOR
+            host = "10.0.0.127"
+            port = 3933
+        }
+        .apply(block).build()
+}
+fun liveMapTiles(block: LiveMapTileServiceBuilder.() -> Unit) = LiveMapTileServiceBuilder().apply(block).build()
 
-class OurVectorTileServiceBuilder {
+@LiveMapDsl
+class LiveMapTileServiceBuilder {
     var theme = LivemapGeom.Theme.COLOR
     var host = "localhost"
     var port = 3012
