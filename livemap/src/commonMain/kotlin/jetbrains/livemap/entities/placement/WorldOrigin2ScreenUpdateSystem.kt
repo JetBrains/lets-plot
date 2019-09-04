@@ -16,7 +16,7 @@ class WorldOrigin2ScreenUpdateSystem(componentManager: EcsComponentManager) : Li
             val worldOrigin = Components.WorldOriginComponent.getOrigin(worldEntity)
             val screenOrigin = viewProjection.getViewCoord(worldOrigin)
 
-            worldEntity.provideComponent(::ScreenOriginComponent).origin = screenOrigin
+            worldEntity.provide(::ScreenOriginComponent).origin = screenOrigin
             ParentLayerComponent.tagDirtyParentLayer(worldEntity)
         }
     }

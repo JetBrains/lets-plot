@@ -12,7 +12,7 @@ object Components {
 
         companion object {
             fun provide(entity: EcsEntity): ScreenLoopComponent {
-                return entity.provideComponent(::ScreenLoopComponent)
+                return entity.provide(::ScreenLoopComponent)
             }
 
             operator fun get(entity: EcsEntity): ScreenLoopComponent {
@@ -42,7 +42,7 @@ object Components {
             }
 
             fun provide(entity: EcsEntity): ScreenDimensionComponent {
-                return entity.provideComponent(::ScreenDimensionComponent)
+                return entity.provide(::ScreenDimensionComponent)
             }
         }
     }
@@ -77,7 +77,7 @@ object Components {
 
         companion object {
             fun provide(entity: EcsEntity): ScreenOriginComponent {
-                return entity.provideComponent(::ScreenOriginComponent)
+                return entity.provide(::ScreenOriginComponent)
             }
 
             fun getOrigin(entity: EcsEntity): DoubleVector {
@@ -100,7 +100,7 @@ object Components {
 
         companion object {
             fun provide(entity: EcsEntity): ScreenOffsetComponent {
-                return entity.provideComponent(::ScreenOffsetComponent)
+                return entity.provide(::ScreenOffsetComponent)
             }
 
             fun getScreenOffset(entity: EcsEntity): DoubleVector {

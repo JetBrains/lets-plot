@@ -10,7 +10,7 @@ class DirtyRenderLayerComponent : EcsComponent {
         }
 
         fun tag(entity: EcsEntity) {
-            entity.provideComponent(::DirtyRenderLayerComponent)
+            entity.provide(::DirtyRenderLayerComponent)
         }
 
         fun tagParentLayer(entity: EcsEntity) {

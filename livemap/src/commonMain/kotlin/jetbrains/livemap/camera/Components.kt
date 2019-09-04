@@ -8,7 +8,7 @@ class ZoomChangedComponent : EcsComponent {
     companion object {
 
         fun tag(entity: EcsEntity) {
-            entity.provideComponent(::ZoomChangedComponent)
+            entity.provide(::ZoomChangedComponent)
         }
     }
 }
@@ -17,7 +17,7 @@ class CenterChangedComponent : EcsComponent {
     companion object {
 
         fun tag(entity: EcsEntity) {
-            entity.provideComponent(::CenterChangedComponent)
+            entity.provide(::CenterChangedComponent)
         }
     }
 }
@@ -29,7 +29,7 @@ class CameraListenerComponent : EcsComponent {
         }
 
         fun tag(entity: EcsEntity) {
-            entity.provideComponent(::CameraListenerComponent)
+            entity.provide(::CameraListenerComponent)
         }
     }
 }
@@ -69,7 +69,7 @@ class CameraComponent(var zoom: Double, var center: DoubleVector) : EcsComponent
 class UpdateViewProjectionComponent : EcsComponent {
     companion object {
         fun tag(cellEntity: EcsEntity) {
-            cellEntity.provideComponent(::UpdateViewProjectionComponent)
+            cellEntity.provide(::UpdateViewProjectionComponent)
         }
     }
 }

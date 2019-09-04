@@ -25,7 +25,7 @@ class TransformComponent : EcsComponent {
         }
 
         fun provide(entity: EcsEntity): TransformComponent {
-            return entity.provideComponent(::TransformComponent)
+            return entity.provide(::TransformComponent)
         }
     }
 }

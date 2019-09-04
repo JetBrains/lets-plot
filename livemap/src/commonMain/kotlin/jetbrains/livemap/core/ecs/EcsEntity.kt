@@ -29,9 +29,9 @@ class EcsEntity internal constructor(
         return componentManager.getComponents(this)[T::class] as T? ?: throw IllegalStateException("Component " + T::class.simpleName + " is not found")
     }
 
-    inline fun <reified T : EcsComponent> provideComponent(byDefault: () -> T): T {
+    inline fun <reified T : EcsComponent> provide(byDefault: () -> T): T {
         if (!contains(T::class)) {
-            addComponent(byDefault())
+            return byDefault().also { addComponent(it) }
         }
 
         return getComponent()

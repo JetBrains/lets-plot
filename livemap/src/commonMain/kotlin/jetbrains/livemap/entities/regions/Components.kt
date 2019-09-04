@@ -322,7 +322,7 @@ object Components {
             }
 
             fun provide(entity: EcsEntity): FragmentGeometryComponent {
-                return entity.provideComponent(::FragmentGeometryComponent)
+                return entity.provide(::FragmentGeometryComponent)
             }
         }
     }
