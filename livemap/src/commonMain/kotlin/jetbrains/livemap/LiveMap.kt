@@ -52,12 +52,9 @@ import jetbrains.livemap.obj2entity.MapObject2Entity
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ViewProjection
 import jetbrains.livemap.tilegeometry.TileGeometryProvider
-import jetbrains.livemap.tiles.CellStateUpdateSystem
-import jetbrains.livemap.tiles.Components
+import jetbrains.livemap.tiles.*
 import jetbrains.livemap.tiles.Components.CellLayerComponent
 import jetbrains.livemap.tiles.Components.CellLayerKind
-import jetbrains.livemap.tiles.TileLoadingSystem
-import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
@@ -177,7 +174,7 @@ class LiveMap(
                 CellStateUpdateSystem(componentManager),
                 tileLoadingSystem,
                 TileRemovingSystem(myDevParams.read(TILE_CACHE_LIMIT), componentManager),
-                //DebugDataSystem(componentManager),
+                DebugDataSystem(componentManager),
 
                 //Regions
                 //FragmentUpdateSystem(componentManager, myEmptinessChecker),

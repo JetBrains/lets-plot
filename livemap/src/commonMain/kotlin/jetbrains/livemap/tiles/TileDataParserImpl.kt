@@ -21,7 +21,8 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
         val microThreads = ArrayList<MicroTask<Unit>>()
         tileData.forEach { tileLayer ->
             microThreads.add(
-                parseTileLayer(tileLayer, transform).map { result[tileLayer.name] = it }
+                parseTileLayer(tileLayer, transform)
+                    .map { result[tileLayer.name] = it }
             )
         }
 

@@ -16,25 +16,19 @@ import jetbrains.gis.tileprotocol.json.MapStyleJsonParser
 import jetbrains.gis.tileprotocol.json.RequestFormatter
 import jetbrains.gis.tileprotocol.mapConfig.MapConfig
 import jetbrains.gis.tileprotocol.socket.SafeSocketHandler
-import jetbrains.gis.tileprotocol.socket.Socket
 import jetbrains.gis.tileprotocol.socket.SocketBuilder
 import jetbrains.gis.tileprotocol.socket.SocketHandler
 
 
 open class TileService(socketBuilder: SocketBuilder, private val myTheme: String) {
 
-    private val mySocket: Socket
+    private val mySocket = socketBuilder.build(SafeSocketHandler(TileSocketHandler(), ThrowableHandlers.instance))
     private val myMessageQueue = ArrayList<String>()
     private val pendingRequests = RequestMap()
     var mapConfig: MapConfig? = null
         private set
     private var myIncrement: Int = 0
-    private var mySocketStatus = CLOSE
-
-    init {
-        mySocket = socketBuilder.build(SafeSocketHandler(TileSocketHandler(), ThrowableHandlers.instance))
-    }
-
+    private var mySocketStatus = NOT_CONNECTED
 
     open fun getTileData(bbox: DoubleRectangle, zoom: Int): Async<List<TileLayer>> {
         val key = myIncrement++.toString()
@@ -43,7 +37,11 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: String
         pendingRequests.put(key, async)
 
         try {
-            sendGeometryRequest(RequestFormatter.format(GetBinaryGeometryRequest(key, zoom, bbox)).toString())
+            GetBinaryGeometryRequest(key, zoom, bbox)
+                .run(RequestFormatter::format)
+                .run(JsonSupport::formatJson)
+                .run(this::sendGeometryRequest)
+
         } catch (err: Throwable) {
             pendingRequests.poll(key).failure(err)
         }
@@ -53,13 +51,13 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: String
 
     private fun sendGeometryRequest(messageString: String) {
         when (mySocketStatus) {
+            NOT_CONNECTED -> {
+                myMessageQueue.add(messageString)
+                mySocketStatus = CONNECTING
+                mySocket.connect()
+            }
             OPEN -> mySocket.send(messageString)
             CONNECTING -> myMessageQueue.add(messageString)
-            CLOSE -> {
-                mySocket.connect()
-                mySocketStatus = CONNECTING
-                myMessageQueue.add(messageString)
-            }
             ERROR -> throw IllegalStateException("Socket error")
         }
     }
@@ -72,15 +70,21 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: String
     }
 
     private enum class SocketStatus {
+        NOT_CONNECTED,
         OPEN,
         CONNECTING,
-        CLOSE,
         ERROR
     }
 
     inner class TileSocketHandler : SocketHandler {
         override fun onOpen() { mySocketStatus = OPEN; sendInitMessage() }
-        override fun onClose() { mySocketStatus = CLOSE }
+        override fun onClose(message: String) {
+            myMessageQueue.add(message)
+            if (mySocketStatus == OPEN) {
+                mySocketStatus = CONNECTING
+                mySocket.connect()
+            }
+        }
         override fun onError(cause: Throwable) { mySocketStatus = ERROR; failPending(cause) }
 
         override fun onTextMessage(message: String) {
@@ -93,7 +97,8 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: String
 
         override fun onBinaryMessage(message: ByteArray) {
             try {
-                ResponseTileDecoder(message).let { (key, tiles) -> pendingRequests.poll(key).success(tiles) }
+                ResponseTileDecoder(message)
+                    .let { (key, tiles) -> pendingRequests.poll(key).success(tiles) }
             } catch (e: Throwable) {
                 failPending(e)
             }

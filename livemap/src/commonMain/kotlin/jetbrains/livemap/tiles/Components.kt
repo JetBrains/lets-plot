@@ -76,6 +76,7 @@ object Components {
         }
 
         companion object {
+            private val lock = Lock()
             val PARSING_TIME = "Parsing time: "
             val WORLD_RENDER_TIME = "Render time ${CellLayerKind.WORLD}: "
             val LABEL_RENDER_TIME = "Render time ${CellLayerKind.LABEL}: "
@@ -90,9 +91,11 @@ object Components {
             }
 
             internal fun addData(entity: EcsEntity, data: Map<String, String>) {
-                val cellData = entity.getComponent<DebugDataComponent>().myData
+                lock.execute {
+                    val cellData = entity.getComponent<DebugDataComponent>().myData
 
-                data.entries.forEach { cellData[it.key] = it.value }
+                    data.entries.forEach { cellData[it.key] = it.value }
+                }
             }
         }
     }

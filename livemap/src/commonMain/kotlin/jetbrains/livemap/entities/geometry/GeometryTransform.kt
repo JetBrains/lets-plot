@@ -56,15 +56,16 @@ object GeometryTransform {
     internal class IterativeResampler(private val myTransform: (DoubleVector) -> DoubleVector) {
         private val myAdaptiveResampling = AdaptiveResampling(myTransform, SAMPLING_EPSILON)
         private var myPrevPoint: DoubleVector? = null
-        private lateinit var myRing: MutableCollection<DoubleVector>
+        private var myRing: MutableCollection<DoubleVector>? = null
 
         fun next(p: DoubleVector, ring: MutableCollection<DoubleVector>) {
-            if (ring !== myRing) {
+            if (myRing == null || // first call
+                ring != myRing) { // next ring
                 myRing = ring
                 myPrevPoint = null
             }
 
-            resample(p).forEach { newPoint -> myRing.add(myTransform(newPoint)) }
+            resample(p).forEach { newPoint -> myRing!!.add(myTransform(newPoint)) }
         }
 
         private fun resample(p: DoubleVector): List<DoubleVector> {

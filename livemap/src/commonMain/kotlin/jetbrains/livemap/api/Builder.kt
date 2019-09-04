@@ -17,6 +17,7 @@ import jetbrains.gis.tileprotocol.TileService
 import jetbrains.gis.tileprotocol.socket.Socket
 import jetbrains.gis.tileprotocol.socket.SocketBuilder
 import jetbrains.gis.tileprotocol.socket.SocketHandler
+import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
@@ -205,6 +206,18 @@ val dummyGeocodingService: GeocodingService = GeocodingService(
 val dummyTileService: TileService = object : TileService(DummySocketBuilder(), LivemapGeom.Theme.COLOR.name) {
     override fun getTileData(bbox: DoubleRectangle, zoom: Int): Async<List<TileLayer>> {
         return Asyncs.constant(emptyList())
+    }
+}
+
+fun tileService(block: OurVectorTileServiceBuilder.() -> Unit) = OurVectorTileServiceBuilder().apply(block).build()
+
+class OurVectorTileServiceBuilder {
+    var theme = LivemapGeom.Theme.COLOR
+    var host = "localhost"
+    var port = 3012
+
+    fun build(): TileService {
+        return TileService(TileWebSocketBuilder(host, port), theme.name.toLowerCase())
     }
 }
 

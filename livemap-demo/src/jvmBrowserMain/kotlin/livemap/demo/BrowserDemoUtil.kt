@@ -11,7 +11,14 @@ object BrowserDemoUtil {
     val KOTLIN_LIBS = listOf(
         "kotlin.js",
         "kotlin-logging.js",
-        "kotlin-test.js"
+        "kotlin-test.js",
+        "kotlinx-io.js",
+        "kotlinx-coroutines-core.js",
+        "kotlinx-coroutines-io.js",
+        "ktor-ktor-utils.js",
+        "ktor-ktor-http.js",
+        "ktor-ktor-http-cio.js",
+        "ktor-ktor-client-core.js"
     )
 
     val BASE_MAPPER_LIBS = listOf(
