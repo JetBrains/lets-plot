@@ -12,7 +12,8 @@ import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
-import jetbrains.livemap.DevParams
+import jetbrains.livemap.DevParams.Companion.DEBUG_GRID
+import jetbrains.livemap.DevParams.Companion.MICRO_TASK_EXECUTOR
 import jetbrains.livemap.LiveMapFactory
 import jetbrains.livemap.api.*
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
@@ -44,7 +45,11 @@ object LivemapDemoModel {
         val livemapSpec = liveMapConfig {
             mouseEventSource = mouse
 
-            tileService = dummyTileService
+            tileService = tileService {
+                theme = LivemapGeom.Theme.DARK
+                // host = "localhost"
+                // port = 3012
+            }
             //tileService = { //HorisTileGen {
             //name = "HorisTileGen"
             //theme = "LivemapGeom.Theme.COLOR"
@@ -108,7 +113,8 @@ object LivemapDemoModel {
             }
 
             params(
-                DevParams.DEBUG_GRID.key to true
+                DEBUG_GRID.key to true,
+                MICRO_TASK_EXECUTOR.key to "ui_thread"
             )
         }
 

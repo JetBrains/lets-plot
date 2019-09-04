@@ -28,7 +28,7 @@ class FluentObject : FluentValue {
     fun put(key: String, v: Boolean?) = apply { myObj[key] = v }
     fun <T : Enum<T>> put(key: String, v: T?) = apply { myObj[key] = v?.let { formatEnum(it) } }
 
-    fun getInt(key: String) = myObj[key] as Int
+    fun getInt(key: String) = myObj.getNumber(key).toInt()
     fun getDouble(key: String) = myObj.getDouble(key)
     fun getBoolean(key: String) = myObj[key] as Boolean
     fun getString(key: String) = myObj[key] as String
@@ -119,8 +119,6 @@ class FluentObject : FluentValue {
         }
     }
 
-
-
     fun <T : Enum<T>> forEnums(key: String, processor: (T) -> Unit, enumValues: Array<T>) = apply {
         getArr(key).forEach { processor(parseEnum(it as String, enumValues)) }
     }
@@ -131,51 +129,4 @@ class FluentObject : FluentValue {
             else -> processor(null)
         }
     }
-
-    private fun toJsonType(v: Any?): Any? {
-        if (v == null) {
-            return null
-        }
-
-        return when (v) {
-            null -> null
-            is Boolean,
-            is String,
-            is Number,
-            is Map<*, *> -> v
-            is Collection<*> -> v.toList()
-            is FluentValue -> v.get()
-            else -> throw IllegalArgumentException("Not supported type: ${v.toString()}")
-        }
-    }
-
-    //    fun <T : Enum<T>> getExistingEnum(key: String, processor: Consumer<T>, enumValues: Array<T>): FluentObject {
-//        if (containsNotNull(key)) {
-//            processor.accept(getEnum(key, enumValues))
-//        }
-//        return this
-//    }
-//
-//    fun forKeys(consumer: Consumer<String>): FluentObject {
-//        myObj.getKeys().forEach(consumer)
-//        return this
-//    }
-//
-
-
-
-
-//    operator fun get(key: String, processor: Consumer<JsonValue>): FluentObject {
-//        processor.accept(myObj.get(key))
-//        return this
-//    }
-//
-//    fun getExisting(key: String, processor: Consumer<JsonValue>): FluentObject {
-//        if (containsNotNull(key)) {
-//            processor.accept(myObj.get(key))
-//        }
-//        return this
-//    }
-//
-
 }

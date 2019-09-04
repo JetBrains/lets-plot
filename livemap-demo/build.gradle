@@ -34,6 +34,7 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinx_html_version}"
+                implementation "io.ktor:ktor-client-cio:$ktor_version"
             }
         }
         jvmMain {
@@ -87,6 +88,9 @@ dependencies {
     libraryDependenciesJs "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
     // for Assertions.kt ToDo: get rid of kotlin-test here
     libraryDependenciesJs "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+    libraryDependenciesJs "io.ktor:ktor-client-websockets:$ktor_version"
+    libraryDependenciesJs "io.ktor:ktor-client-cio:$ktor_version"
+    libraryDependenciesJs "io.ktor:ktor-client-js:$ktor_version"
     projectDependenciesJs project(':base')
     projectDependenciesJs project(':gis')
     projectDependenciesJs project(':livemap')

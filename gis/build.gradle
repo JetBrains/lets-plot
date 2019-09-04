@@ -10,6 +10,9 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation "io.ktor:ktor-client-websockets:$ktor_version"
+                implementation "io.ktor:ktor-client-cio:$ktor_version"
+                implementation "io.ktor:ktor-client-js:$ktor_version"
                 implementation project(':base')
             }
         }
@@ -22,6 +25,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                implementation "io.ktor:ktor-client-cio:$ktor_version"
             }
         }
         jvmTest {
@@ -33,6 +37,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
+                implementation "io.ktor:ktor-client-js:$ktor_version"
             }
         }
         jsTest {
