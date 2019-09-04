@@ -18,7 +18,12 @@ class DensityStatTest {
         return SimpleStatContext(d)
     }
 
-    private fun generateNormalDatapointsWithFixedEnds(n: Int, mu: Double, stddev: Double, halfRange: Double): List<Double> {
+    private fun generateNormalDatapointsWithFixedEnds(
+        n: Int,
+        mu: Double,
+        stddev: Double,
+        halfRange: Double
+    ): List<Double> {
         val gaussian = ArrayList<Double>()
         val random = RandomGaussian(Random)
         //random.setSeed(43);
@@ -38,9 +43,11 @@ class DensityStatTest {
         val halfRange = 10 * stddev
         val test = generateNormalDatapointsWithFixedEnds(length, mu, stddev, halfRange)
 
-        val df = DataFrameUtil.fromMap(mapOf(
+        val df = DataFrameUtil.fromMap(
+            mapOf(
                 TransformVar.X.name to test
-        ))
+            )
+        )
 
         val n = 512
         val binWidth = SeriesUtil.span(SeriesUtil.range(test)!!) / (n - 1)
@@ -62,7 +69,11 @@ class DensityStatTest {
             assertEquals(n, statDf[Stats.SCALED].size)
 
             assertEquals(1.0, SeriesUtil.sum(statDf.getNumeric(Stats.DENSITY)) * binWidth, .01) //integral is one
-            assertEquals(length.toDouble(), SeriesUtil.sum(statDf.getNumeric(Stats.COUNT)) * binWidth, length / 100.0) //integral is the number of data points
+            assertEquals(
+                length.toDouble(),
+                SeriesUtil.sum(statDf.getNumeric(Stats.COUNT)) * binWidth,
+                length / 100.0
+            ) //integral is the number of data points
             assertEquals(1.0, statDf.getNumeric(Stats.SCALED).maxBy { v -> v!! }, 0.0) //maximum is one
         }
     }
@@ -76,16 +87,19 @@ class DensityStatTest {
         val testX = generateNormalDatapointsWithFixedEnds(length, mu, stddev, halfRange)
         val testY = generateNormalDatapointsWithFixedEnds(length, mu, stddev, halfRange)
 
-        val df = DataFrameUtil.fromMap(mapOf(
+        val df = DataFrameUtil.fromMap(
+            mapOf(
                 TransformVar.X.name to testX,
                 TransformVar.Y.name to testY
-        ))
+            )
+        )
 
         val n1 = 512
         val n2 = 256
-        val binArea = SeriesUtil.span(SeriesUtil.range(testX)!!) / (n1 - 1) * SeriesUtil.span(SeriesUtil.range(testY)!!) / (n2 - 1)
+        val binArea =
+            SeriesUtil.span(SeriesUtil.range(testX)!!) / (n1 - 1) * SeriesUtil.span(SeriesUtil.range(testY)!!) / (n2 - 1)
 
-        val stat = StatsServerSide.density2d()
+        val stat = Stats.density2d()
         stat.nx = n1
         stat.ny = n2
         stat.isContour = false

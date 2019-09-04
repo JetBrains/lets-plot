@@ -92,12 +92,12 @@ open class StatProto {
             }
 
             StatKind.DENSITY2D -> {
-                val density2dStat = createDensity2dStat()
+                val density2dStat = Stats.density2d()
                 return configureDensity2dStat(density2dStat, options)
             }
 
             StatKind.DENSITY2DF -> {
-                val density2dfStat = createDensity2dfStat()
+                val density2dfStat = Stats.density2df()
                 return configureDensity2dStat(density2dfStat, options)
             }
 
@@ -111,7 +111,7 @@ open class StatProto {
         //  n (80) - number of points to evaluate smoother at
         //  se (TRUE ) - display confidence interval around smooth?
         //  level (0.95) - level of confidence interval to use
-        val stat = createSmoothStat()
+        val stat = Stats.smooth()
 
         if (options.containsKey("n")) {
             stat.smootherPointCount = (options["n"] as Number).toInt()
@@ -199,18 +199,6 @@ open class StatProto {
         return stat
     }
 
-    protected open fun createSmoothStat(): SmoothStat {
-        return Stats.smooth()
-    }
-
-    protected open fun createDensity2dStat(): AbstractDensity2dStat {
-        return Stats.density2d()
-    }
-
-    protected open fun createDensity2dfStat(): AbstractDensity2dStat {
-        return Stats.density2df()
-    }
-
     companion object {
         private val DEFAULTS = HashMap<String, Map<String, Any>>()
 
@@ -230,46 +218,46 @@ open class StatProto {
 
         private fun createBinDefaults(): Map<String, Any> {
             return mapOf(
-                    "bins" to BinStatBuilder.DEF_BIN_COUNT
+                "bins" to BinStatBuilder.DEF_BIN_COUNT
             )
         }
 
         private fun createContourDefaults(): Map<String, Any> {
             return mapOf(
-                    "bins" to ContourStatBuilder.DEF_BIN_COUNT
+                "bins" to ContourStatBuilder.DEF_BIN_COUNT
             )
         }
 
         private fun createContourfDefaults(): Map<String, Any> {
             return mapOf(
-                    "bins" to ContourfStatBuilder.DEF_BIN_COUNT
+                "bins" to ContourfStatBuilder.DEF_BIN_COUNT
             )
         }
 
         private fun createBoxplotDefaults(): Map<String, Any> {
             return mapOf(
-                    P_COEF to BoxplotStat.DEF_WHISKER_IQR_RATIO,
-                    P_VARWIDTH to BoxplotStat.DEF_COMPUTE_WIDTH
+                P_COEF to BoxplotStat.DEF_WHISKER_IQR_RATIO,
+                P_VARWIDTH to BoxplotStat.DEF_COMPUTE_WIDTH
             )
         }
 
         private fun createDensityDefaults(): Map<String, Any> {
             return mapOf(
-                    "n" to DensityStat.DEF_N,
-                    "kernel" to DensityStat.DEF_KERNEL,
-                    "bw" to DensityStat.DEF_BW,
-                    "adjust" to DensityStat.DEF_ADJUST
+                "n" to DensityStat.DEF_N,
+                "kernel" to DensityStat.DEF_KERNEL,
+                "bw" to DensityStat.DEF_BW,
+                "adjust" to DensityStat.DEF_ADJUST
             )
         }
 
         private fun createDensity2dDefaults(): Map<String, Any> {
             return mapOf(
-                    "n" to AbstractDensity2dStat.DEF_N,
-                    "kernel" to AbstractDensity2dStat.DEF_KERNEL,
-                    "bw" to AbstractDensity2dStat.DEF_BW,
-                    "adjust" to AbstractDensity2dStat.DEF_ADJUST,
-                    "contour" to AbstractDensity2dStat.DEF_CONTOUR,
-                    "bins" to AbstractDensity2dStat.DEF_BIN_COUNT
+                "n" to AbstractDensity2dStat.DEF_N,
+                "kernel" to AbstractDensity2dStat.DEF_KERNEL,
+                "bw" to AbstractDensity2dStat.DEF_BW,
+                "adjust" to AbstractDensity2dStat.DEF_ADJUST,
+                "contour" to AbstractDensity2dStat.DEF_CONTOUR,
+                "bins" to AbstractDensity2dStat.DEF_BIN_COUNT
             )
         }
     }

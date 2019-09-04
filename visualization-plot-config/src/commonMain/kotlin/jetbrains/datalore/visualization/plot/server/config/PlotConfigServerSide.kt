@@ -11,6 +11,7 @@ import jetbrains.datalore.visualization.plot.builder.data.GroupingContext
 import jetbrains.datalore.visualization.plot.config.LayerConfig
 import jetbrains.datalore.visualization.plot.config.PlotConfig
 import jetbrains.datalore.visualization.plot.config.PlotConfigUtil
+import jetbrains.datalore.visualization.plot.config.StatProto
 import jetbrains.datalore.visualization.plot.config.transform.encode.DataSpecEncodeTransforms
 import jetbrains.datalore.visualization.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.visualization.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
@@ -18,16 +19,18 @@ import jetbrains.datalore.visualization.plot.server.config.transform.PlotConfigS
 class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotConfig(opts) {
 
     override fun createLayerConfig(
-            layerOptions: Map<*, *>, sharedData: DataFrame?, plotMapping: Map<*, *>,
-            scaleProviderByAes: TypedScaleProviderMap): LayerConfig {
+        layerOptions: Map<*, *>, sharedData: DataFrame?, plotMapping: Map<*, *>,
+        scaleProviderByAes: TypedScaleProviderMap
+    ): LayerConfig {
 
         return LayerConfig(
-                layerOptions,
-                sharedData!!,
-                plotMapping,
-                StatProtoServerSide(),
-                scaleProviderByAes,
-                false)
+            layerOptions,
+            sharedData!!,
+            plotMapping,
+            StatProto(),
+            scaleProviderByAes,
+            false
+        )
     }
 
     /**
@@ -211,8 +214,10 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
             for (tileIndex in inputDataByTileByLayer.indices) {
                 val tileLayerInputData = inputDataByTileByLayer[tileIndex][layerIndex]
                 val varBindings = layerConfig.varBindings
-                val groupingContext = GroupingContext(tileLayerInputData,
-                        varBindings, layerConfig.explicitGroupingVarName, true)
+                val groupingContext = GroupingContext(
+                    tileLayerInputData,
+                    varBindings, layerConfig.explicitGroupingVarName, true
+                )
 
                 val groupingContextAfterStat: GroupingContext
                 val stat = layerConfig.stat
@@ -222,12 +227,14 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
                     tileLayerDataAfterStat = tileLayerInputData
                     groupingContextAfterStat = groupingContext
                 } else {
-                    val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(tileLayerInputData,
-                            stat, varBindings,
-                            groupingContext,
-                            facets.xVar,
-                            facets.yVar,
-                            statCtx)
+                    val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
+                        tileLayerInputData,
+                        stat, varBindings,
+                        groupingContext,
+                        facets.xVar,
+                        facets.yVar,
+                        statCtx
+                    )
 
                     tileLayerDataAfterStat = tileLayerDataAndGroupingContextAfterStat.data
                     groupingContextAfterStat = tileLayerDataAndGroupingContextAfterStat.groupingContext
@@ -235,13 +242,14 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
 
                 // Apply sampling to layer tile data if necessary
                 tileLayerDataAfterStat = PlotSampling.apply(tileLayerDataAfterStat, // layerConfig,
-                        layerConfig.samplings!!,
-                        groupingContextAfterStat.groupMapper,
-                        { message ->
-                            layerIndexAndSamplingMessage(
-                                    layerIndex,
-                                    createSamplingMessage(message, layerConfig))
-                        })
+                    layerConfig.samplings!!,
+                    groupingContextAfterStat.groupMapper,
+                    { message ->
+                        layerIndexAndSamplingMessage(
+                            layerIndex,
+                            createSamplingMessage(message, layerConfig)
+                        )
+                    })
                 result[tileIndex].add(tileLayerDataAfterStat)
             }
 
@@ -281,7 +289,10 @@ class PlotConfigServerSide private constructor(opts: Map<String, Any>) : PlotCon
             return processTransform(opts, true)
         }
 
-        private fun processTransform(plotSpecRaw: MutableMap<String, Any>, encodeOnExit: Boolean): MutableMap<String, Any> {
+        private fun processTransform(
+            plotSpecRaw: MutableMap<String, Any>,
+            encodeOnExit: Boolean
+        ): MutableMap<String, Any> {
             var plotSpec = migrationTransform().apply(plotSpecRaw)
             plotSpec = entryTransform().apply(plotSpec)
             PlotConfigServerSide(plotSpec).updatePlotSpec()

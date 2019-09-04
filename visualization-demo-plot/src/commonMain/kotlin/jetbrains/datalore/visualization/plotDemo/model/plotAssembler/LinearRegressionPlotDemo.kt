@@ -9,7 +9,6 @@ import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.stat.Stats
-import jetbrains.datalore.visualization.plot.base.stat.StatsServerSide
 import jetbrains.datalore.visualization.plot.builder.Plot
 import jetbrains.datalore.visualization.plot.builder.VarBinding
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder
@@ -30,7 +29,7 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
 
     fun createPlots(): List<Plot> {
         return listOf(
-                createPlot()
+            createPlot()
         )
     }
 
@@ -46,17 +45,17 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         val varOrigX = DataFrame.Variable("A")
         val varOrigY = DataFrame.Variable("B")
         val data = DataFrame.Builder()
-                .putNumeric(varOrigX, valuesX)
-                .putNumeric(varOrigY, valuesY)
-                .build()
+            .putNumeric(varOrigX, valuesX)
+            .putNumeric(varOrigY, valuesY)
+            .build()
 
         val scatterLayer = GeomLayerBuilder.demoAndTest()
-                .stat(Stats.IDENTITY)
-                .geom(GeomProvider.point())
-                .pos(PosProvider.wrap(PositionAdjustments.identity()))
-                .addBinding(VarBinding(varOrigX, Aes.X, Scales.continuousDomainNumericRange("A")))
-                .addBinding(VarBinding(varOrigY, Aes.Y, Scales.continuousDomainNumericRange("B")))
-                .build(data)
+            .stat(Stats.IDENTITY)
+            .geom(GeomProvider.point())
+            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+            .addBinding(VarBinding(varOrigX, Aes.X, Scales.continuousDomainNumericRange("A")))
+            .addBinding(VarBinding(varOrigY, Aes.Y, Scales.continuousDomainNumericRange("B")))
+            .build(data)
 
         //
         // true line
@@ -68,52 +67,54 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         val varTLX = DataFrame.Variable("true X")
         val varTLY = DataFrame.Variable("true Y")
         val line = DataFrame.Builder()
-                .putNumeric(varTLX, valuesX)
-                .putNumeric(varTLY, valuesY)
-                .build()
+            .putNumeric(varTLX, valuesX)
+            .putNumeric(varTLY, valuesY)
+            .build()
         val trueLineLayer = GeomLayerBuilder.demoAndTest()
-                .stat(Stats.IDENTITY)
-                .geom(GeomProvider.line())
-                .pos(PosProvider.wrap(PositionAdjustments.identity()))
-                .addBinding(VarBinding(varTLX, Aes.X, Scales.continuousDomainNumericRange("A")))
-                .addBinding(VarBinding(varTLY, Aes.Y, Scales.continuousDomainNumericRange("B")))
-                .addConstantAes(Aes.LINETYPE, NamedLineType.DASHED)
-                .build(line)
+            .stat(Stats.IDENTITY)
+            .geom(GeomProvider.line())
+            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+            .addBinding(VarBinding(varTLX, Aes.X, Scales.continuousDomainNumericRange("A")))
+            .addBinding(VarBinding(varTLY, Aes.Y, Scales.continuousDomainNumericRange("B")))
+            .addConstantAes(Aes.LINETYPE, NamedLineType.DASHED)
+            .build(line)
 
 
         //
         // Smooth stat (regression)
         //
         val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-                .stat(StatsServerSide.smooth())
-                .geom(GeomProvider.smooth())
-                .pos(PosProvider.wrap(PositionAdjustments.identity()))
-                .addBinding(VarBinding(varOrigX, Aes.X, Scales.continuousDomainNumericRange("A")))
-                .addBinding(VarBinding(varOrigY, Aes.Y, Scales.continuousDomainNumericRange("B")))
-                .build(data)
+            .stat(Stats.smooth())
+            .geom(GeomProvider.smooth())
+            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+            .addBinding(VarBinding(varOrigX, Aes.X, Scales.continuousDomainNumericRange("A")))
+            .addBinding(VarBinding(varOrigY, Aes.Y, Scales.continuousDomainNumericRange("B")))
+            .build(data)
 
         //
         // Smooth stat - standard error
         //
         val seLineLayer = GeomLayerBuilder.demoAndTest()
-                .stat(StatsServerSide.smooth())
-                .geom(GeomProvider.point())
-                .pos(PosProvider.wrap(PositionAdjustments.identity()))
-                .addBinding(VarBinding(varOrigX, Aes.X, Scales.continuousDomainNumericRange("A")))
-                .addBinding(VarBinding(varOrigY, Aes.Y, Scales.continuousDomainNumericRange("B")))
-                .addBinding(VarBinding.deferred(Stats.SE, Aes.Y, ScaleProviderHelper.createDefault(Aes.Y)))
-                .addConstantAes(Aes.COLOR, Color.RED)
-                .build(data)
+            .stat(Stats.smooth())
+            .geom(GeomProvider.point())
+            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+            .addBinding(VarBinding(varOrigX, Aes.X, Scales.continuousDomainNumericRange("A")))
+            .addBinding(VarBinding(varOrigY, Aes.Y, Scales.continuousDomainNumericRange("B")))
+            .addBinding(VarBinding.deferred(Stats.SE, Aes.Y, ScaleProviderHelper.createDefault(Aes.Y)))
+            .addConstantAes(Aes.COLOR, Color.RED)
+            .build(data)
 
         //
         // Plot
         //
-        val assembler = PlotAssembler.singleTile(listOf(
+        val assembler = PlotAssembler.singleTile(
+            listOf(
                 scatterLayer,
                 trueLineLayer,
                 regressionLineLayer,
                 seLineLayer
-        ), CoordProviders.cartesian(), DefaultTheme())
+            ), CoordProviders.cartesian(), DefaultTheme()
+        )
         assembler.setTitle("Linear Regression")
         assembler.disableInteractions()
         return assembler.createPlot()
