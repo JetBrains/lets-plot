@@ -2,9 +2,6 @@ plugins {
     id 'kotlin-multiplatform'
     id 'org.jetbrains.gradle.plugin.idea-ext'
 }
-repositories {
-    mavenCentral()
-}
 
 kotlin {
     jvm()

@@ -1,0 +1,81 @@
+plugins {
+    id 'kotlin-multiplatform'
+    id 'org.jetbrains.gradle.plugin.idea-ext'
+}
+
+kotlin {
+    jvm()
+    js()
+
+    macosX64() {
+        binaries {
+            sharedLib {
+                baseName = "dlvisportable"
+            }
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+//                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+//                implementation project(':base')
+//                implementation project(':mapper-core')
+//                implementation project(':visualization-base-svg')
+//                implementation project(':visualization-base-svg-mapper')
+//                implementation project(':visualization-plot-base')
+//                implementation project(':visualization-plot-common')
+//                implementation project(':visualization-plot-builder')
+//                implementation project(':visualization-plot-config')
+//                implementation project(':visualization-demo-common')
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+//                implementation "com.google.code.gson:gson:$gson_version"
+//                implementation "org.slf4j:slf4j-simple:$slf4j_version"
+//                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+//                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+                implementation "org.hamcrest:hamcrest-core:$hamcrest_version"
+                implementation "org.hamcrest:hamcrest-library:$hamcrest_version"
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation "org.mockito:mockito-core:$mockito_version"
+                implementation "org.assertj:assertj-core:$assertj_version"
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+//                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation kotlin('test-js')
+            }
+        }
+
+        macosX64Main {
+            dependencies {
+//                implementation project(':visualization-plot-config')
+            }
+        }
+    }
+
+}

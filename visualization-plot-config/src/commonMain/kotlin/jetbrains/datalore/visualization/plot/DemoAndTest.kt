@@ -1,8 +1,18 @@
 package jetbrains.datalore.visualization.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.plot.builder.Plot
 
 object DemoAndTest {
+
+    fun createPlot(plotSpec: MutableMap<String, Any>, andBuildComponent: Boolean = true): Plot {
+        val plot = Monolithic.createPlot(plotSpec, null)
+        if (andBuildComponent) {
+            val rootGroup = plot.rootGroup
+        }
+        return plot
+    }
+
     fun contourDemoData(): Map<String, List<*>> {
         val countX = 20
         val countY = 20

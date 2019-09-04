@@ -1,10 +1,9 @@
 package jetbrains.datalore.visualization.plot.config
 
 import jetbrains.datalore.base.assertion.assertDoesNotFail
-import jetbrains.datalore.visualization.plot.DemoAndTestJvm
+import jetbrains.datalore.visualization.plot.DemoAndTest
 import jetbrains.datalore.visualization.plot.config.Option.GeomName
 import jetbrains.datalore.visualization.plot.parsePlotSpec
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 
@@ -33,7 +32,7 @@ class EdgeCasesTest {
                 "}"
 
         val opts = parsePlotSpec(spec)
-        assertDoesNotFail { DemoAndTestJvm.createPlot(opts) }
+        assertDoesNotFail { DemoAndTest.createPlot(opts) }
     }
 
     @Test
@@ -61,7 +60,7 @@ class EdgeCasesTest {
                 "}"
 
         val opts = parsePlotSpec(spec)
-        assertDoesNotFail { DemoAndTestJvm.createPlot(opts) }
+        assertDoesNotFail { DemoAndTest.createPlot(opts) }
     }
 
     @Test
@@ -95,11 +94,11 @@ class EdgeCasesTest {
         val plotSpec = parsePlotSpec(spec)
 
         val data = mapOf(
-                "x" to listOf(0.0, Double.NaN, 1.0, 2.0),
-                "y" to listOf(0.0, Double.NaN, 1.0, 2.0)
+            "x" to listOf(0.0, Double.NaN, 1.0, 2.0),
+            "y" to listOf(0.0, Double.NaN, 1.0, 2.0)
         )
 
         plotSpec["data"] = data
-        assertDoesNotFail("geom $geom: ") { DemoAndTestJvm.createPlot(plotSpec) }
+        assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(plotSpec) }
     }
 }
