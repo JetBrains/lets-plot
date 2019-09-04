@@ -1,7 +1,7 @@
 package jetbrains.gis.tileprotocol.socket
 
 import io.ktor.client.HttpClient
-import io.ktor.client.features.websocket.wss
+import io.ktor.client.features.websocket.ws
 import io.ktor.http.HttpMethod
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.WebSocketSession
@@ -25,7 +25,7 @@ class TileWebSocket(
     override fun connect() {
         with(myClient) {
             launch {
-                wss(
+                ws(
                     method = HttpMethod.Get,
                     host = myHost,
                     port = myPort

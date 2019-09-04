@@ -47,8 +47,8 @@ object LivemapDemoModel {
 
             tileService = tileService {
                 theme = LivemapGeom.Theme.DARK
-                // host = "localhost"
-                // port = 3012
+                host = "tiles.datalore.io"
+                port = 0
             }
             //tileService = { //HorisTileGen {
             //name = "HorisTileGen"
