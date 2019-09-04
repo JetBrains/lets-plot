@@ -3,9 +3,11 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
 import jetbrains.gis.geoprotocol.FeatureLevel
@@ -17,10 +19,16 @@ import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.projections.ProjectionType
 
 object LivemapDemoModel {
+
+    val SPB = GeoObject(lon = 30.1751, lat = 59.5439)
+    val MOSCOW = GeoObject(lon = 37.3659, lat = 55.4507)
+    val BOSTON = GeoObject(lon = -71.0335, lat = 42.2130)
+    val NEW_YORK = GeoObject(lon = -73.5939, lat = 40.4342)
+
     val VIEW_SIZE = Vector(800, 600)
 
-    fun createLivemapModel(canvasControl: CanvasControl): Registration {
-        val mouse = object : MouseEventSource {
+    private fun mouseEvents(canvasControl: CanvasControl): MouseEventSource {
+        return object : MouseEventSource {
             override fun addEventHandler(
                 eventSpec: MouseEventSpec,
                 eventHandler: EventHandler<MouseEvent>
@@ -28,6 +36,10 @@ object LivemapDemoModel {
                 return canvasControl.addEventHandler(eventSpec, eventHandler)
             }
         }
+    }
+
+    fun createLivemapModel(canvasControl: CanvasControl): Registration {
+        val mouse = mouseEvents(canvasControl)
 
         val livemapSpec = liveMapConfig {
             mouseEventSource = mouse
@@ -61,56 +73,49 @@ object LivemapDemoModel {
 
             projection {
                 kind = ProjectionType.MERCATOR
-                loopX = true
+                loopX = false
                 loopY = false
             }
 
-        layers {
-            points {
-                point {// spb
-                    lon = 30.1751
-                    lat = 59.5439
-                    shape = 1
+            layers {
+                points {
+                    point {
+                        coord(SPB)
+                        strokeColor = Color.WHITE
+                    }
+                    point {
+                        coord(MOSCOW)
+                        strokeColor = Color.RED
+                    }
+                    point {
+                        coord(BOSTON)
+                        strokeColor = Color.BLUE
+                    }
+                    point {
+                        coord(NEW_YORK)
+                        strokeColor = Color.GREEN
+                    }
                 }
-                point {// boston
-                    lon = 42.2130
-                    lat = 71.0335
-                    shape = 1
+                points {
+                    point {
+                        lon = 0.0
+                        lat = 0.0
+                        shape = 21
+                        radius = 10.0
+                        fillColor = Color.MAGENTA
+                    }
                 }
-                point {// moscow
-                    lon = 37.3659
-                    lat = 55.4507
-                    shape = 1
-                }
-                point {// new york
-                    lon = 73.5939
-                    lat = 40.4342
-                    shape = 1
-                }
-//            }
-//            points {
-//                data {
-//                    point {
-//                        lon=44,
-//                        lat=50
-//                        shape=1
-//                    }
-//                }
             }
-        }
 
             params(
                 DevParams.DEBUG_GRID.key to true
             )
         }
 
-        val livemapFactory = LiveMapFactory(livemapSpec)
+        val livemap = LiveMapFactory(livemapSpec).createLiveMap()
         val livemapPresenter = LiveMapPresenter()
 
-        livemapPresenter.render(
-            canvasControl,
-            livemapFactory.createLiveMap()
-        )
+        livemapPresenter.render(canvasControl, livemap)
 
         return Registration.from(livemapPresenter)
     }
@@ -171,4 +176,39 @@ object LivemapDemoModel {
     //     return MapJsPoint(i, "0", 13, Color.CONSOLE_YELLOW, Color.TRANSPARENT, 0, 50, null, center, 0)
     // }
 
+
+    data class GeoObject(
+        val lon: Double,
+        val lat: Double
+    ) {
+        val geoCoord = DoubleVector(lon, lat)
+    }
+
+    fun PointBuilder.coord(geoObj: LivemapDemoModel.GeoObject) {
+        lon = geoObj.lon
+        lat = geoObj.lat
+    }
 }
+
+fun Points.point(block: PointBuilder.() -> Unit) {
+    items.add(
+        PointBuilder().apply {
+            animation = 0
+            index = 0
+            mapId = ""
+            regionId = ""
+            label = ""
+
+            strokeWidth = 1.0
+            strokeColor = Color.BLACK
+
+            fillColor = Color.WHITE
+
+            radius = 4.0
+            shape = 1
+        }
+            .apply(block)
+            .build()
+    )
+}
+

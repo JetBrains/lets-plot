@@ -47,6 +47,8 @@ import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
 import jetbrains.livemap.mapobjects.MapLayer
+import jetbrains.livemap.mapobjects.MapLayerKind
+import jetbrains.livemap.obj2entity.MapObject2Entity
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ViewProjection
 import jetbrains.livemap.tilegeometry.TileGeometryProvider
@@ -81,7 +83,7 @@ class LiveMap(
     private lateinit var layersOrder: List<RenderLayer>
     private var myInitialized: Boolean = false
     private var myLayerManager: LayerManager? = null
-    private var myDiagnostics: Diagnostics? = null
+    private lateinit var myDiagnostics: Diagnostics
     private lateinit var schedulerSystem: SchedulerSystem
     private lateinit var uiService: UiService
 
@@ -115,8 +117,8 @@ class LiveMap(
             initLayers(myLayerManager!!, componentManager)
             initSystems(componentManager)
             initCamera(componentManager)
-            if (myDevParams.isSet(PERF_STATS)) {
-                myDiagnostics = LiveMapDiagnostics(
+            myDiagnostics = if (myDevParams.isSet(PERF_STATS)) {
+                LiveMapDiagnostics(
                     isLoading,
                     layersOrder,
                     layerRenderingSystem,
@@ -126,7 +128,7 @@ class LiveMap(
                     componentManager
                 )
             } else {
-                myDiagnostics = Diagnostics()
+                Diagnostics()
             }
 
             myInitialized = true
@@ -134,7 +136,7 @@ class LiveMap(
 
         ecsController?.update(dt.toDouble())
 
-        myDiagnostics!!.update(dt)
+        myDiagnostics.update(dt)
 
         return true
     }
@@ -264,25 +266,26 @@ class LiveMap(
             .addComponent(LayerEntitiesComponent())
             .addComponent(layerManager.createRenderLayerComponent("ground"))
 
-//        val mapObject2Entity = MapObject2Entity(componentManager, layerManager, myDevParams)
-//        for (mapLayer in myMapLayers) {
-//            val kind = mapLayer.kind
-//            val mapObjects = mapLayer.mapObjects
-//
-//            when(kind) {
-//                PATH -> mapObject2Entity.processPath(mapObjects)
-//                POLYGON -> mapObject2Entity.processPolygon(mapObjects)
-//                POINT -> mapObject2Entity.processPoint(mapObjects)
-//                BAR -> mapObject2Entity.processBar(mapObjects)
-//                PIE -> mapObject2Entity.processPie(mapObjects)
-//                H_LINE -> mapObject2Entity.processLine(mapObjects, true, myMapProjection.mapRect)
-//                V_LINE -> mapObject2Entity.processLine(mapObjects, false, myMapProjection.mapRect)
-//                TEXT -> mapObject2Entity.processText(
-//                    mapObjects,
-//                    TextSpec.createMeasurer(context.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
-//                )
-//            }
-//        }
+        val mapObject2Entity = MapObject2Entity(componentManager, layerManager, myDevParams, myMapProjection)
+        for (mapLayer in myMapLayers) {
+            val kind = mapLayer.kind
+            val mapObjects = mapLayer.mapObjects
+
+            when(kind) {
+                MapLayerKind.POINT -> mapObject2Entity.processPoint(mapObjects)
+                //MapLayerKind.PATH -> mapObject2Entity.processPath(mapObjects)
+                //MapLayerKind.POLYGON -> mapObject2Entity.processPolygon(mapObjects)
+                //MapLayerKind.BAR -> mapObject2Entity.processBar(mapObjects)
+                //MapLayerKind.PIE -> mapObject2Entity.processPie(mapObjects)
+                //MapLayerKind.H_LINE -> mapObject2Entity.processLine(mapObjects, true, myMapProjection.mapRect)
+                //MapLayerKind.V_LINE -> mapObject2Entity.processLine(mapObjects, false, myMapProjection.mapRect)
+                //MapLayerKind.TEXT -> mapObject2Entity.processText(
+                    //mapObjects,
+                    //TextSpec.createMeasurer(context.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
+                //)
+                else -> error("")
+            }
+        }
 
         componentManager
             .createEntity("cell_layer_labels")

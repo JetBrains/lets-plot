@@ -5,6 +5,7 @@ import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.CenterChangedComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.entities.placement.Components.ScreenOriginComponent
 
 class WorldOrigin2ScreenUpdateSystem(componentManager: EcsComponentManager) : LiveMapSystem(componentManager) {
 
@@ -15,7 +16,7 @@ class WorldOrigin2ScreenUpdateSystem(componentManager: EcsComponentManager) : Li
             val worldOrigin = Components.WorldOriginComponent.getOrigin(worldEntity)
             val screenOrigin = viewProjection.getViewCoord(worldOrigin)
 
-            Components.ScreenOriginComponent.provide(worldEntity).origin = screenOrigin
+            worldEntity.provideComponent(::ScreenOriginComponent).origin = screenOrigin
             ParentLayerComponent.tagDirtyParentLayer(worldEntity)
         }
     }

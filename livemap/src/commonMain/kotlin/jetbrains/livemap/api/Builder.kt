@@ -21,6 +21,7 @@ import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.mapobjects.MapLayer
+import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.mapobjects.MapPoint
 import jetbrains.livemap.projections.ProjectionType
 
@@ -36,7 +37,7 @@ class LiveMapBuilder {
     var mapLocation: MapLocation? = null
     var level: FeatureLevel? = null
     var parent: MapRegion? = null
-    var layers: List<MapLayer> = ArrayList()
+    var layers: MutableList<MapLayer> = ArrayList()
     var theme: LivemapGeom.Theme = LivemapGeom.Theme.COLOR
 
     var projectionType: ProjectionType = ProjectionType.MERCATOR
@@ -46,13 +47,6 @@ class LiveMapBuilder {
     var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit}
     var devParams: DevParams = DevParams(HashMap<String, Any>())
 
-    fun location(block: Location.() -> Unit) {
-        Location().apply(block).let { location ->
-            this.level = location.hint?.level
-            this.parent = location.hint?.parent
-            this.mapLocation = location.mapRegion?.run(MapLocation.Companion::create)
-        }
-    }
 
     fun params(vararg vals: Pair<String, Any>) {
         this.devParams = DevParams(mapOf(*vals))
@@ -109,28 +103,31 @@ class LiveMapBuilder {
 @DslMarker
 annotation class LiveMapDsl {}
 
+fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block).build()
+
 @LiveMapDsl
 class LayersBuilder {
+    val items = ArrayList<MapLayer>()
+}
 
+fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
+    this.layers.addAll(LayersBuilder().apply(block).items)
 }
 
 @LiveMapDsl
 class Points {
+    val items = ArrayList<MapPoint>()
 }
 
-fun layers(block: LayersBuilder.() -> Unit) {
-    LayersBuilder().apply(block)
-}
-
-fun points(block: Points.() -> Unit) {
-    Points().apply(block)
+fun LayersBuilder.points(block: Points.() -> Unit) {
+    items.add(MapLayer(MapLayerKind.POINT, Points().apply(block).items))
 }
 
 @LiveMapDsl
 class PointBuilder {
     var animation: Int? = null
     var label: String? = null
-    var shape: Int = 1
+    var shape: Int? = null
     var lat: Double? = null
     var lon: Double? = null
     var radius: Double? = null
@@ -141,7 +138,7 @@ class PointBuilder {
     var mapId: String? = null
     var regionId: String? = null
     fun build(): MapPoint {
-        return MapPoint( index!!, mapId!!, regionId!!, DoubleVector(lon!!, lat!!), label!!, animation!!, shape, radius!!, fillColor!!, strokeColor!!, strokeWidth!!)
+        return MapPoint( index!!, mapId, regionId, DoubleVector(lon!!, lat!!), label!!, animation!!, shape!!, radius!!, fillColor!!, strokeColor!!, strokeWidth!!)
     }
 }
 
@@ -150,26 +147,30 @@ fun point(block: PointBuilder.() -> Unit) {
 }
 
 @LiveMapDsl
-class Projection {
-    var kind = ProjectionType.MERCATOR
-    var loopX = true
-    var loopY = false
-}
-
-@LiveMapDsl
 class Location {
     var name: String? = null
-        set(v) { field = v; mapRegion = v?.let { MapRegion.withName(it) } }
-    var omsId: String? = null
-        set(v) { field = v; mapRegion = v?.let { MapRegion.withId(it) } }
+        set(v) {
+            field = v;
+            osmId = null;
+            mapRegion = v?.let { MapRegion.withName(it) }
+        }
+    var osmId: String? = null
+        set(v) {
+            field = v;
+            name = null;
+            mapRegion = v?.let { MapRegion.withId(it) }
+        }
+
     var mapRegion: MapRegion? = null
     var hint: GeocodingHint? = null
 
 }
 
-fun Location.geocodingHint(block: GeocodingHint.() -> Unit) {
-    GeocodingHint().apply(block).let {
-        this.hint = it
+fun LiveMapBuilder.location(block: Location.() -> Unit) {
+    Location().apply(block).let { location ->
+        this.level = location.hint?.level
+        this.parent = location.hint?.parent
+        this.mapLocation = location.mapRegion?.run(MapLocation.Companion::create)
     }
 }
 
@@ -179,8 +180,19 @@ class GeocodingHint {
     var parent: MapRegion? = null
 }
 
-fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block).build()
+fun Location.geocodingHint(block: GeocodingHint.() -> Unit) {
+    GeocodingHint().apply(block).let {
+        this.hint = it
+    }
+}
 
+
+@LiveMapDsl
+class Projection {
+    var kind = ProjectionType.MERCATOR
+    var loopX = true
+    var loopY = false
+}
 
 fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
     Projection().apply(block).let {

@@ -5,8 +5,8 @@ import jetbrains.datalore.base.values.Color
 
 class MapPoint(
     index: Int,
-    mapId: String,
-    regionId: String,
+    mapId: String?,
+    regionId: String?,
 
     val point: DoubleVector,
     val label: String,
