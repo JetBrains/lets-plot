@@ -149,21 +149,12 @@ fun point(block: PointBuilder.() -> Unit) {
 @LiveMapDsl
 class Location {
     var name: String? = null
-        set(v) {
-            field = v;
-            osmId = null;
-            mapRegion = v?.let { MapRegion.withName(it) }
-        }
+        set(v) { field = v; mapRegion = v?.let { MapRegion.withName(it) } }
     var osmId: String? = null
-        set(v) {
-            field = v;
-            name = null;
-            mapRegion = v?.let { MapRegion.withId(it) }
-        }
+        set(v) { field = v; mapRegion = v?.let { MapRegion.withId(it) } }
 
     var mapRegion: MapRegion? = null
     var hint: GeocodingHint? = null
-
 }
 
 fun LiveMapBuilder.location(block: Location.() -> Unit) {
