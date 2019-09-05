@@ -4,12 +4,13 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.projections.CellKey
-import jetbrains.livemap.tiles.Components.DebugDataComponent.Companion.BIGGEST_LAYER
-import jetbrains.livemap.tiles.Components.DebugDataComponent.Companion.CELL_DATA_SIZE
-import jetbrains.livemap.tiles.Components.DebugDataComponent.Companion.LOADING_TIME
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.BIGGEST_LAYER
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.CELL_DATA_SIZE
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LOADING_TIME
+import jetbrains.livemap.tiles.components.StatisticsComponent
 
 internal class DebugTileDataFetcher(
-    private val myStats: Components.StatisticsComponent,
+    private val myStats: StatisticsComponent,
     private val myTileDataFetcher: TileDataFetcher
 ) : TileDataFetcher {
 

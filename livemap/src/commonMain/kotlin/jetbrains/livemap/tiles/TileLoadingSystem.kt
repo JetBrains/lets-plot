@@ -19,18 +19,8 @@ import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
-import jetbrains.livemap.tiles.Components.CellComponent
-import jetbrains.livemap.tiles.Components.CellLayerComponent
-import jetbrains.livemap.tiles.Components.CellLayerKind
-import jetbrains.livemap.tiles.Components.CellStateComponent
-import jetbrains.livemap.tiles.Components.DebugCellLayerComponent
-import jetbrains.livemap.tiles.Components.DebugDataComponent
-import jetbrains.livemap.tiles.Components.KindComponent
-import jetbrains.livemap.tiles.Components.RendererCacheComponent
-import jetbrains.livemap.tiles.Components.RendererCacheComponent.Companion.NULL_RENDERER
-import jetbrains.livemap.tiles.Components.StatisticsComponent
-import jetbrains.livemap.tiles.Components.TileComponent
-import jetbrains.livemap.tiles.Components.TileResponseComponent
+import jetbrains.livemap.tiles.components.*
+import jetbrains.livemap.tiles.components.RendererCacheComponent.Companion.NULL_RENDERER
 
 class TileLoadingSystem(
     private val myQuantumIterations: Int,

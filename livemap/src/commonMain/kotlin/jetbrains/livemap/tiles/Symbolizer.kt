@@ -2,6 +2,10 @@ package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.AbstractGeometryList
+import jetbrains.datalore.base.projectionGeometry.MultiLineString
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.projectionGeometry.Ring
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.gis.tileprotocol.TileFeature
 import jetbrains.gis.tileprotocol.mapConfig.Style
@@ -14,25 +18,30 @@ interface Symbolizer {
     fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable>
     fun applyTo(ctx: Context2d)
 
+    fun Context2d.drawLine(line: AbstractGeometryList<DoubleVector>) {
+        moveTo(round(line[0].x), round(line[0].y))
+
+        for (i in 1 until line.size) {
+            val point = line[i]
+            lineTo(round(point.x), round(point.y))
+        }
+    }
+
     class PolygonSymbolizer internal constructor(private val myStyle: Style) : Symbolizer {
+
+        private fun Context2d.drawMultiPolygon(multiPolygon: MultiPolygon) {
+            beginPath()
+            for (polygon in multiPolygon) {
+                for (ring: Ring in polygon) {
+                    drawLine(ring)
+                }
+            }
+        }
 
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable> {
             val tasks = ArrayList<Runnable>()
-            feature.tileGeometry.multiPolygon?.let { multiPolygon ->
-                tasks.add {
-                    ctx.beginPath()
-                    for (polygon in multiPolygon) {
-                        for (ring in polygon) {
-                            var viewCoord = ring.get(0)
-                            ctx.moveTo(round(viewCoord.x), round(viewCoord.y))
-
-                            for (i in 1 until ring.size) {
-                                viewCoord = ring.get(i)
-                                ctx.lineTo(round(viewCoord.x), round(viewCoord.y))
-                            }
-                        }
-                    }
-                }
+            feature.tileGeometry.multiPolygon?.let {
+                tasks.add { ctx.drawMultiPolygon(it) }
                 tasks.add(ctx::fill)
             }
             return tasks
@@ -45,33 +54,31 @@ interface Symbolizer {
 
     class LineSymbolizer internal constructor(private val myStyle: Style) : Symbolizer {
 
+        private fun Context2d.drawMultiLine(multiLine: MultiLineString) {
+            beginPath()
+            for (line in multiLine) {
+                drawLine(line)
+            }
+        }
+
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable> {
             val tasks = ArrayList<Runnable>()
-            feature.tileGeometry.multiLineString?.let { multiLine ->
-                tasks.add {
-                    ctx.beginPath()
-                    for (line in multiLine) {
-                        var viewCoord = line[0]
-                        ctx.moveTo(viewCoord.x, viewCoord.y)
 
-                        for (i in 1 until line.size) {
-                            viewCoord = line[i]
-                            ctx.lineTo(viewCoord.x, viewCoord.y)
-                        }
-                    }
-                }
+            feature.tileGeometry.multiLineString?.let {
+                tasks.add { ctx.drawMultiLine(it) }
                 tasks.add(ctx::stroke)
             }
+
             return tasks
         }
 
         override fun applyTo(ctx: Context2d) {
-            myStyle.stroke?.let { color -> ctx.setStrokeStyle(color.toCssColor()) }
+            myStyle.stroke?.let { ctx.setStrokeStyle(it.toCssColor()) }
             myStyle.strokeWidth?.let(ctx::setLineWidth)
 
-            myStyle.lineCap?.let { lineCap -> ctx.setLineCap(stringToLineCap(lineCap)) }
-            myStyle.lineJoin?.let { lineJoin -> ctx.setLineJoin(stringToLineJoin(lineJoin)) }
-            myStyle.lineDash?.let { lineDash -> ctx.setLineDash(lineDash.toDoubleArray()) }
+            myStyle.lineCap?.let { ctx.setLineCap(stringToLineCap(it)) }
+            myStyle.lineJoin?.let { ctx.setLineJoin(stringToLineJoin(it)) }
+            myStyle.lineDash?.let { ctx.setLineDash(it.toDoubleArray()) }
         }
     }
 
@@ -85,12 +92,13 @@ interface Symbolizer {
             feature.tileGeometry.multiPoint?.let { multiPoint ->
                 getLabel(feature)?.let { label ->
                     tasks.add {
+
                         val wrapWidth = myStyle.wrapWidth
 
-                        if (wrapWidth != null && wrapWidth != 0.0 && wrapWidth < ctx.measureText(label)) {
-                            drawWrapText(ctx, multiPoint, label, wrapWidth)
+                        if (wrapWidth != null && wrapWidth > 0.0 && wrapWidth < ctx.measureText(label)) {
+                            ctx.drawWrapText(multiPoint, label, wrapWidth)
                         } else {
-                            drawTextFast(ctx, multiPoint, label)
+                            ctx.drawTextFast(multiPoint, label)
                         }
                     }
                 }
@@ -98,47 +106,51 @@ interface Symbolizer {
             return tasks
         }
 
-        private fun drawTextFast(ctx: Context2d, multiPoint: List<DoubleVector>, label: String) {
-            val width = ctx.measureText(label)
+        private fun bboxFromPoint(point: DoubleVector, width: Double, height: Double): DoubleRectangle {
+            return DoubleRectangle.span(
+                DoubleVector(
+                    point.x - width / 2,
+                    point.y - height / 2
+                ),
+                DoubleVector(
+                    point.x + width / 2,
+                    point.y + height / 2
+                )
+            )
+        }
+
+        private fun Context2d.drawTextFast(multiPoint: List<DoubleVector>, label: String) {
+            val width = measureText(label)
             val height = myStyle.size ?: 10.0
 
             multiPoint.forEach { point ->
-                val bbox = DoubleRectangle.span(
-                    DoubleVector(
-                        point.x - width / 2,
-                        point.y - height / 2
-                    ),
-                    DoubleVector(
-                        point.x + width / 2,
-                        point.y + height / 2
-                    )
-                )
+                val bbox = bboxFromPoint(point, width, height)
 
                 if (!labelInBounds(bbox)) {
-                    ctx.strokeText(label, point.x, point.y)
-                    ctx.fillText(label, point.x, point.y)
+                    strokeText(label, point.x, point.y)
+                    fillText(label, point.x, point.y)
 
                     myLabelBounds.add(bbox)
                 }
             }
         }
 
-        private fun drawWrapText(ctx: Context2d, multiPoint: List<DoubleVector>, label: String, wrapWidth: Double) {
+        private fun Context2d.drawWrapText(multiPoint: List<DoubleVector>, label: String, wrapWidth: Double) {
             var width = wrapWidth
-            var words: MutableList<String> = splitLabel(label)
-            var next: MutableList<String> = ArrayList()
+            var words = splitLabel(label)
+            var next = ArrayList<String>()
             val rows = ArrayList<String>()
 
             val height = myStyle.size ?: 10.0
 
-            while (!words.isEmpty()) {
-                while (ctx.measureText(words.joinToString(" ")) > width && words.size != 1) {
+            while (words.isNotEmpty()) {
+                while (measureText(words.joinToString(" ")) > width && words.size != 1) {
                     next.add(0, words.removeAt(words.size - 1))
                 }
 
-                if (words.size == 1 && ctx.measureText(words[0]) > width) {
+                if (words.size == 1 && measureText(words[0]) > width) {
                     rows.add(words[0])
-                    width = ctx.measureText(words[0])
+                    width = measureText(words[0])
                 } else {
                     rows.add(words.joinToString(" "))
                 }
@@ -148,23 +160,13 @@ interface Symbolizer {
             }
 
             multiPoint.forEach { point ->
-                val bbox = DoubleRectangle.span(
-                    DoubleVector(
-                        point.x - width / 2,
-                        point.y - height * rows.size / 2
-                    ),
-                    DoubleVector(
-                        point.x + width / 2,
-                        point.y + height * rows.size / 2
-                    )
-                )
+                val bbox = bboxFromPoint(point, width, height)
 
                 if (!labelInBounds(bbox)) {
-                    for (i in rows.indices) {
-                        val row = rows[i]
+                    rows.forEachIndexed { i, row ->
                         val y = bbox.origin.y + height / 2 + height * i
-                        ctx.strokeText(row, point.x, y)
-                        ctx.fillText(row, point.x, y)
+                        strokeText(row, point.x, y)
+                        fillText(row, point.x, y)
                     }
 
                     myLabelBounds.add(bbox)
@@ -173,13 +175,7 @@ interface Symbolizer {
         }
 
         private fun labelInBounds(bbox: DoubleRectangle): Boolean {
-            for (bounds in myLabelBounds) {
-                if (bbox.intersects(bounds)) {
-                    return true
-                }
-            }
-
-            return false
+            return myLabelBounds.find { bbox.intersects(it) } != null
         }
 
         private fun getLabel(feature: TileFeature): String? =
@@ -206,7 +202,7 @@ interface Symbolizer {
     class ShieldTextSymbolizer internal constructor(style: Style, labelBounds: List<DoubleRectangle>) : Symbolizer {
 
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable> {
-            return emptyList<Runnable>()
+            return emptyList()
         }
 
         override fun applyTo(ctx: Context2d) {
@@ -217,7 +213,7 @@ interface Symbolizer {
     class LineTextSymbolizer internal constructor(style: Style, labelBounds: List<DoubleRectangle>) : Symbolizer {
 
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable> {
-            return emptyList<Runnable>()
+            return emptyList()
         }
 
         override fun applyTo(ctx: Context2d) {
@@ -226,15 +222,9 @@ interface Symbolizer {
     }
 
     class FontBuilder internal constructor() {
-        private var myFontStyle: String? = null
-        private var mySize: String? = null
-        private var myFontFace: String? = null
-
-        init {
-            myFontStyle = ""
-            mySize = ""
-            myFontFace = ""
-        }
+        private var myFontStyle: String = ""
+        private var mySize: String = ""
+        private var myFontFace: String = ""
 
         internal fun build(): String {
             return "$myFontStyle $mySize $myFontFace"
@@ -244,8 +234,8 @@ interface Symbolizer {
             myFontStyle = fontStyle
         }
 
-        fun setSize(size: Double?) {
-            mySize = size!!.toString() + "px"
+        internal fun setSize(size: Double) {
+            mySize = "${size}px"
         }
 
         internal fun setFontFace(fontFace: String) {
@@ -303,7 +293,7 @@ interface Symbolizer {
             val characters = "-',.)!?"
             var lastIndex = 0
 
-            for (i in 0 until label.length) {
+            for (i in label.indices) {
                 if (' ' == label[i]) {
                     if (lastIndex != i) {
                         splitted.add(label.substring(lastIndex, i))
@@ -324,8 +314,8 @@ interface Symbolizer {
 
         fun setBaseStyle(ctx: Context2d, style: Style) {
             style.strokeWidth?.let(ctx::setLineWidth)
-            style.fill?.let { color -> ctx.setFillStyle(color.toCssColor()) }
-            style.stroke?.let { color -> ctx.setStrokeStyle(color.toCssColor()) }
+            style.fill?.let { ctx.setFillStyle(it.toCssColor()) }
+            style.stroke?.let { ctx.setStrokeStyle(it.toCssColor()) }
         }
     }
 }

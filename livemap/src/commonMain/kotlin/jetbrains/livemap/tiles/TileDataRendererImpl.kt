@@ -10,6 +10,7 @@ import jetbrains.gis.tileprotocol.mapConfig.Rule
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.tiles.components.CellLayerKind
 
 internal class TileDataRendererImpl(
     private val myCanvasSupplier: () -> Canvas,
@@ -38,7 +39,7 @@ internal class TileDataRendererImpl(
     override fun render(
         tileFeatures: Map<String, List<TileFeature>>,
         cellKey: CellKey,
-        layerKind: Components.CellLayerKind
+        layerKind: CellLayerKind
     ): MicroTask<Async<Canvas.Snapshot>> {
         val zoom = cellKey.toString().length
         val canvas = myCanvasSupplier()
@@ -78,7 +79,7 @@ internal class TileDataRendererImpl(
                 }
             }
         } else {
-            if (layerKind === Components.CellLayerKind.WORLD) {
+            if (layerKind === CellLayerKind.WORLD) {
                 tasks.add {
                     ctx.save()
                     ctx.setFillStyle(Color.GRAY.toCssColor())

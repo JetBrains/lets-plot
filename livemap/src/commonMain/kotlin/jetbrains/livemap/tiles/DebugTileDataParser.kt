@@ -5,10 +5,11 @@ import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.multitasking.DebugMicroTask
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.projections.CellKey
-import jetbrains.livemap.tiles.Components.DebugDataComponent.Companion.PARSING_TIME
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.PARSING_TIME
+import jetbrains.livemap.tiles.components.StatisticsComponent
 
 internal class DebugTileDataParser(
-    private val myStats: Components.StatisticsComponent,
+    private val myStats: StatisticsComponent,
     private val myTileDataParser: TileDataParser
 ) : TileDataParser {
 

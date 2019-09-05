@@ -22,7 +22,7 @@ class EcsEntity internal constructor(
         if (!contains(T::class)) {
             return null
         }
-        return get<T>()
+        return get()
     }
 
     inline fun <reified T : EcsComponent> getComponent(): T {
