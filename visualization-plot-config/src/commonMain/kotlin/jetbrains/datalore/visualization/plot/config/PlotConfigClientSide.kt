@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
 import jetbrains.datalore.visualization.plot.builder.theme.Theme
 import jetbrains.datalore.visualization.plot.config.Option.Plot.COORD
 import jetbrains.datalore.visualization.plot.config.Option.Plot.THEME
-import jetbrains.datalore.visualization.plot.config.PlotConfigUtil.createGuideOptionsMap
+import jetbrains.datalore.visualization.plot.config.PlotConfigClientSideUtil.createGuideOptionsMap
 import jetbrains.datalore.visualization.plot.config.theme.ThemeConfig
 import jetbrains.datalore.visualization.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.visualization.plot.config.transform.encode.DataSpecEncodeTransforms
@@ -37,19 +37,22 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             }
         }
         this.coordProvider = coordProvider
-        guideOptionsMap = createGuideOptionsMap(createScaleConfigs())
+//        guideOptionsMap = createGuideOptionsMap(createScaleConfigs())
+        guideOptionsMap = createGuideOptionsMap(this.scaleConfigs)
     }
 
     override fun createLayerConfig(
-            layerOptions: Map<*, *>, sharedData: DataFrame?, plotMapping: Map<*, *>,
-            scaleProviderByAes: TypedScaleProviderMap): LayerConfig {
+        layerOptions: Map<*, *>, sharedData: DataFrame?, plotMapping: Map<*, *>,
+        scaleProviderByAes: TypedScaleProviderMap
+    ): LayerConfig {
 
         return LayerConfig(
-                layerOptions,
-                sharedData!!,
-                plotMapping,
-                StatProto(),
-                scaleProviderByAes, true)
+            layerOptions,
+            sharedData!!,
+            plotMapping,
+            StatProto(),
+            scaleProviderByAes, true
+        )
     }
 
     companion object {
@@ -62,8 +65,11 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             // needed to support 'saved output' in old format
             // remove after reasonable period of time (24 Sep, 2018)
             val migrations = PlotSpecTransform.builderForRawSpec()
-                    .change(MoveGeomPropertiesToLayerMigration.specSelector(isGGBunch), MoveGeomPropertiesToLayerMigration())
-                    .build()
+                .change(
+                    MoveGeomPropertiesToLayerMigration.specSelector(isGGBunch),
+                    MoveGeomPropertiesToLayerMigration()
+                )
+                .build()
             plotSpec = migrations.apply(plotSpec)
 
             return DataSpecEncodeTransforms.clientSideDecode(isGGBunch).apply(plotSpec)

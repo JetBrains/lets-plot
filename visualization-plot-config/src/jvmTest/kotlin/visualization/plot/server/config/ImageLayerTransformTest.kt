@@ -38,7 +38,7 @@ class ImageLayerTransformTest {
                 "}"
 
         val inputSpec = parsePlotSpec(input)
-        val transformedSpec = PlotConfigServerSide.processTransform(inputSpec)
+        val transformedSpec = PlotConfigServerSideJvm.processTransformWithEncoding(inputSpec)
 
         val geomSpec = (transformedSpec["layers"] as List<*>)[0] as Map<*, *>
 

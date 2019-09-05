@@ -19,6 +19,7 @@ import kotlin.test.assertEquals
 class ScaleConfigTest {
 
     private fun checkRGBMapping(aes: Aes<*>, input: List<*>) {
+        @Suppress("UNCHECKED_CAST")
         val mapperProvider = ScaleConfig.createIdentityMapperProvider(aes as Aes<Any>, Color.TRANSPARENT)
         val expected = listOf(RED, GREEN, BLUE)
         checkMappingDiscrete(expected, input, mapperProvider)
@@ -88,6 +89,7 @@ class ScaleConfigTest {
 
     @Test
     fun linetypeIdentityMapper() {
+        @Suppress("SpellCheckingInspection")
         val input = listOf(2.0, "longdash", 5.0, "twodash")
         val expected = listOf(DASHED, LONGDASH, LONGDASH, TWODASH)
         val mapperProvider = ScaleConfig.createIdentityMapperProvider(Aes.LINETYPE, LineTypeMapper.NA_VALUE)
@@ -99,9 +101,9 @@ class ScaleConfigTest {
         val input = listOf(2.0, 3.0, 5.0, 7.0, Double.NaN)
         for (aes in Aes.values()) {
             if (aes.isNumeric) {
+                @Suppress("UNCHECKED_CAST")
                 checkIdentityMappingNumeric(aes as Aes<Double>, input)
             }
         }
     }
-
 }

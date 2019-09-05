@@ -11,13 +11,16 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
+
                 implementation project(':base')
                 implementation project(':visualization-base-svg')
-                implementation project(':visualization-base-canvas')
+//                implementation project(':visualization-base-canvas')
                 implementation project(':visualization-plot-base')
+                implementation project(':visualization-plot-common-portable')
                 implementation project(':visualization-plot-common')
                 implementation project(':visualization-plot-builder')
-                implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
+                implementation project(':visualization-plot-config-portable')
             }
         }
         commonTest {

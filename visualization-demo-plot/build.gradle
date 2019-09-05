@@ -29,8 +29,10 @@ kotlin {
                 implementation project(':visualization-base-svg')
                 implementation project(':visualization-base-svg-mapper')
                 implementation project(':visualization-plot-base')
+                implementation project(':visualization-plot-common-portable')
                 implementation project(':visualization-plot-common')
                 implementation project(':visualization-plot-builder')
+                implementation project(':visualization-plot-config-portable')
                 implementation project(':visualization-plot-config')
                 implementation project(':visualization-demo-common')
             }
@@ -124,9 +126,11 @@ dependencies {
 
     projectDependenciesJs project(':visualization-base-canvas')         // required by plot-builder (get rid?)
 
+    projectDependenciesJs project(':visualization-plot-common-portable')
     projectDependenciesJs project(':visualization-plot-common')
     projectDependenciesJs project(':visualization-plot-base')
     projectDependenciesJs project(':visualization-plot-builder')
+    projectDependenciesJs project(':visualization-plot-config-portable')
     projectDependenciesJs project(':visualization-plot-config')
 }
 

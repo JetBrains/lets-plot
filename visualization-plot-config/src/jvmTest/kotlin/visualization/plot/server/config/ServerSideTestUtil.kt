@@ -33,7 +33,7 @@ object ServerSideTestUtil {
     }
 
     fun serverTransformWithoutEncoding(plotSpec: MutableMap<String, Any>): Map<String, Any> {
-        return PlotConfigServerSide.processTransformWithoutEncoding(plotSpec)
+        return PlotConfigServerSide.processTransform(plotSpec)
     }
 
     fun serverTransformOnlyEncoding(plotSpec: MutableMap<String, Any>): Map<String, Any> {
@@ -43,31 +43,34 @@ object ServerSideTestUtil {
     fun createLayerConfigsWithoutEncoding(plotSpec: MutableMap<String, Any>): List<LayerConfig> {
         @Suppress("NAME_SHADOWING")
         val plotSpec = serverTransformWithoutEncoding(plotSpec)
-        return PlotConfigServerSide.createLayerConfigsWithoutEncoding(plotSpec)
+        return PlotConfigServerSide(plotSpec).layerConfigs
     }
 
     internal fun createLayerConfigsByLayerSpec(layerSpec: Map<String, Any?>): List<LayerConfig> {
         return createLayerConfigsWithoutEncoding(
-                mutableMapOf(
-                        KIND to PLOT,
-                        SCALES to emptyList,
-                        LAYERS to listOf(
-                                layerSpec
-                        )
+            mutableMapOf(
+                KIND to PLOT,
+                SCALES to emptyList,
+                LAYERS to listOf(
+                    layerSpec
                 )
+            )
         )
     }
 
-    internal fun geoPositionsDict(geoReference: Map<String, Any>, geoReferenceMeta: Map<String, Any>): Map<String, Any?> {
+    internal fun geoPositionsDict(
+        geoReference: Map<String, Any>,
+        geoReferenceMeta: Map<String, Any>
+    ): Map<String, Any?> {
         return mapOf(
-                GEOM to GeomName.POLYGON,
-                DATA to null,
-                DATA_META to null,
-                GEO_POSITIONS to geoReference,
-                MAP_DATA_META to geoReferenceMeta,
-                MAPPING to emptyMap,
-                STAT to null,
-                POS to null
+            GEOM to GeomName.POLYGON,
+            DATA to null,
+            DATA_META to null,
+            GEO_POSITIONS to geoReference,
+            MAP_DATA_META to geoReferenceMeta,
+            MAPPING to emptyMap,
+            STAT to null,
+            POS to null
         )
     }
 }

@@ -8,6 +8,7 @@ import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.visualization.plot.builder.GeomLayer
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder
+import jetbrains.datalore.visualization.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.visualization.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.visualization.plot.builder.interact.GeomInteractionBuilder
@@ -16,6 +17,19 @@ import jetbrains.datalore.visualization.plot.builder.interact.GeomInteractionBui
 import jetbrains.datalore.visualization.plot.config.Option.Plot
 
 object PlotConfigClientSideUtil {
+    internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
+        val guideOptionsByAes = HashMap<Aes<*>, GuideOptions>()
+
+        // ToDo: 'guide_xxx' can also be found in 'guides(<aes>=....)'
+
+        for (scaleConfig in scaleConfigs) {
+            if (scaleConfig.hasGuideOptions()) {
+                val guideOptions = scaleConfig.gerGuideOptions().createGuideOptions()
+                guideOptionsByAes[scaleConfig.aes] = guideOptions
+            }
+        }
+        return guideOptionsByAes
+    }
 
     fun createPlotAssembler(opts: Map<String, Any>): PlotAssembler {
         val config = PlotConfigClientSide.create(opts)
@@ -81,29 +95,33 @@ object PlotConfigClientSideUtil {
         val geomProvider = layerConfig.geomProvider
 
         val geomInteraction = createGeomInteractionBuilder(
-                geomProvider.renders(),
-                geomProvider.geomKind,
-                layerConfig.statKind,
-                multilayer
+            geomProvider.renders(),
+            geomProvider.geomKind,
+            layerConfig.statKind,
+            multilayer
         ).build()
 
         layerBuilder
-                .locatorLookupSpec(geomInteraction.createLookupSpec())
-                .contextualMappingProvider(geomInteraction)
+            .locatorLookupSpec(geomInteraction.createLookupSpec())
+            .contextualMappingProvider(geomInteraction)
     }
 
-    private fun createLayerBuilder(layerConfig: LayerConfig, scaleProvidersMap: TypedScaleProviderMap): GeomLayerBuilder {
+    private fun createLayerBuilder(
+        layerConfig: LayerConfig,
+        scaleProvidersMap: TypedScaleProviderMap
+    ): GeomLayerBuilder {
         val geomProvider = layerConfig.geomProvider
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder()
-                .stat(stat)
-                .geom(geomProvider)
-                .pos(layerConfig.posProvider)
+            .stat(stat)
+            .geom(geomProvider)
+            .pos(layerConfig.posProvider)
 
 
         val constantAesMap = layerConfig.constantsMap
         for (aes in constantAesMap.keys) {
+            @Suppress("UNCHECKED_CAST")
             layerBuilder.addConstantAes(aes as Aes<Any>, constantAesMap[aes]!!)
         }
 
@@ -119,18 +137,20 @@ object PlotConfigClientSideUtil {
 
         // scale providers
         for (aes in scaleProvidersMap.keySet()) {
+            @Suppress("UNCHECKED_CAST")
             layerBuilder.addScaleProvider(aes as Aes<Any>, scaleProvidersMap[aes])
         }
 
         layerBuilder.disableLegend(layerConfig.isLegendDisabled)
-
         return layerBuilder
     }
 
-    internal fun createGeomInteractionBuilder(renders: List<Aes<*>>,
-                                              geomKind: GeomKind,
-                                              statKind: StatKind,
-                                              multilayer: Boolean): GeomInteractionBuilder {
+    internal fun createGeomInteractionBuilder(
+        renders: List<Aes<*>>,
+        geomKind: GeomKind,
+        statKind: StatKind,
+        multilayer: Boolean
+    ): GeomInteractionBuilder {
 
         val builder = initGeomInteractionBuilder(renders, geomKind, statKind)
 
@@ -154,7 +174,11 @@ object PlotConfigClientSideUtil {
         return builder
     }
 
-    private fun initGeomInteractionBuilder(renders: List<Aes<*>>, geomKind: GeomKind, statKind: StatKind): GeomInteractionBuilder {
+    private fun initGeomInteractionBuilder(
+        renders: List<Aes<*>>,
+        geomKind: GeomKind,
+        statKind: StatKind
+    ): GeomInteractionBuilder {
         val builder = GeomInteractionBuilder(renders)
         if (statKind === StatKind.SMOOTH) {
             when (geomKind) {
@@ -166,7 +190,9 @@ object PlotConfigClientSideUtil {
         }
 
         when (geomKind) {
-            GeomKind.DENSITY, GeomKind.FREQPOLY, GeomKind.BOX_PLOT, GeomKind.HISTOGRAM, GeomKind.LINE, GeomKind.AREA -> return builder.univariateFunction(LookupStrategy.HOVER)
+            GeomKind.DENSITY, GeomKind.FREQPOLY, GeomKind.BOX_PLOT, GeomKind.HISTOGRAM, GeomKind.LINE, GeomKind.AREA -> return builder.univariateFunction(
+                LookupStrategy.HOVER
+            )
 
             GeomKind.BAR, GeomKind.ERROR_BAR -> return builder.univariateFunction(LookupStrategy.NEAREST)
 
@@ -179,7 +205,9 @@ object PlotConfigClientSideUtil {
 
             GeomKind.PATH -> {
                 when (statKind) {
-                    StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> return builder.bivariateFunction(NON_AREA_GEOM)
+                    StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> return builder.bivariateFunction(
+                        NON_AREA_GEOM
+                    )
                     else -> {
                     }
                 }
@@ -187,7 +215,9 @@ object PlotConfigClientSideUtil {
             }
             // fall through
 
-            GeomKind.DENSITY2DF, GeomKind.CONTOURF, GeomKind.POLYGON, GeomKind.MAP -> return builder.bivariateFunction(AREA_GEOM)
+            GeomKind.DENSITY2DF, GeomKind.CONTOURF, GeomKind.POLYGON, GeomKind.MAP -> return builder.bivariateFunction(
+                AREA_GEOM
+            )
 
             GeomKind.LIVE_MAP -> return builder.multilayerLookupStrategy()
 

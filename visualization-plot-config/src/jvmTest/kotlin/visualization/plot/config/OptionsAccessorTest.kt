@@ -13,7 +13,7 @@ class OptionsAccessorTest {
         options[integersKey] = listOf(0, 1, 2)
         val opts = OptionsAccessor.over(options)
         val firstString = opts.getList(integersKey)[0] as String
-        assertTrue(!firstString.isEmpty())
+        assertTrue(firstString.isNotEmpty())
     }
 
     @Test

@@ -17,7 +17,7 @@ class PlotConfigClientSideUtilTest {
                 .forEach { geomKind -> layerSettingsList.add(Pair(geomKind, StatKind.IDENTITY)) }
 
         listOf(StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D)
-                .forEach { statKind -> layerSettingsList.add(Pair(PATH, statKind)) }
+                .forEach { statKind -> layerSettingsList.add(Pair(GeomKind.PATH, statKind)) }
 
         assertAxisTooltipEnabled(layerSettingsList, true)
     }
@@ -43,7 +43,6 @@ class PlotConfigClientSideUtilTest {
     }
 
     companion object {
-
         private val WITHOUT_AXIS_TOOLTIP = listOf(PATH, MAP, DENSITY2DF, CONTOURF, POLYGON, LIVE_MAP)
     }
 }

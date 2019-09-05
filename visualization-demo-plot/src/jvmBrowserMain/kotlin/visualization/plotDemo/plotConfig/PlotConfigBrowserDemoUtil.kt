@@ -39,7 +39,7 @@ object PlotConfigDemoUtil {
         var first = true
         for (spec in plotSpecList) {
             @Suppress("NAME_SHADOWING")
-            val spec = PlotConfigServerSide.processTransformWithoutEncoding(spec)
+            val spec = PlotConfigServerSide.processTransform(spec)
             if (!first) plotSpecListJs.append(',') else first = false
             plotSpecListJs.append(mapToJsObjectInitializer(spec))
         }

@@ -22,14 +22,17 @@ include 'base',
         'visualization-base-svg-mapper-batik',
         'visualization-base-canvas',
         'visualization-plot-base',
+        'visualization-plot-common-portable',
         'visualization-plot-common',
         'visualization-plot-builder',
+        'visualization-plot-config-portable',
         'visualization-plot-config',
         'visualization-demo-common',
         'visualization-demo-common-jfx',
         'visualization-demo-svg-canvas-renderer',
         'visualization-demo-svg-mapper',
-        'visualization-demo-plot'
+        'visualization-demo-plot',
+        'python-extension'
 
 
 // publishing

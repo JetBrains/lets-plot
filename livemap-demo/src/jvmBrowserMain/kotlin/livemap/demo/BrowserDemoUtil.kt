@@ -33,7 +33,7 @@ object BrowserDemoUtil {
         "visualization-plot-common.js",
         "visualization-plot-base.js",
         "visualization-plot-builder.js",
-        "visualization-plot-config.js",
+        "visualization-plot-config-portable.js",
         "gis.js",
         "livemap.js"
     )

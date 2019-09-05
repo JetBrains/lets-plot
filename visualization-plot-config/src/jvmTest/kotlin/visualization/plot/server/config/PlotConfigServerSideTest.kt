@@ -72,7 +72,7 @@ class PlotConfigServerSideTest {
             plotSpec[LAYERS] = layers
 
             // ====================
-            plotSpecTransformed = PlotConfigServerSide.processTransform(plotSpec)
+            plotSpecTransformed = PlotConfigServerSideJvm.processTransformWithEncoding(plotSpec)
         }
 
         // Expecting 'auto-mapping': x -> __0
