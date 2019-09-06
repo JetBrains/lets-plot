@@ -1,7 +1,7 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.Asyncs
+import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -22,10 +22,14 @@ import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.mapobjects.MapLayer
-import jetbrains.livemap.mapobjects.MapLayerKind
+import jetbrains.livemap.mapobjects.MapLayerKind.PATH
+import jetbrains.livemap.mapobjects.MapLayerKind.POINT
 import jetbrains.livemap.mapobjects.MapPoint
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.createArcPath
+
+@DslMarker
+annotation class LiveMapDsl {}
 
 @LiveMapDsl
 class LiveMapBuilder {
@@ -90,18 +94,9 @@ class LiveMapBuilder {
     }
 }
 
-@DslMarker
-annotation class LiveMapDsl {}
-
-fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
-
 @LiveMapDsl
 class LayersBuilder {
     val items = ArrayList<MapLayer>()
-}
-
-fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
-    this.layers.addAll(LayersBuilder().apply(block).items)
 }
 
 @LiveMapDsl
@@ -109,17 +104,9 @@ class Points {
     val items = ArrayList<MapPoint>()
 }
 
-fun LayersBuilder.points(block: Points.() -> Unit) {
-    items.add(MapLayer(MapLayerKind.POINT, Points().apply(block).items))
-}
-
 @LiveMapDsl
 class Paths {
     val items = ArrayList<MapPath>()
-}
-
-fun LayersBuilder.paths(block: Paths.() -> Unit) {
-    items.add(MapLayer(MapLayerKind.PATH, Paths().apply(block).items))
 }
 
 @LiveMapDsl
@@ -139,10 +126,6 @@ class PointBuilder {
     fun build(): MapPoint {
         return MapPoint( index!!, mapId, regionId, DoubleVector(lon!!, lat!!), label!!, animation!!, shape!!, radius!!, fillColor!!, strokeColor!!, strokeWidth!!)
     }
-}
-
-fun point(block: PointBuilder.() -> Unit) {
-    PointBuilder().apply(block)
 }
 
 @LiveMapDsl
@@ -178,10 +161,6 @@ class PathBuilder {
     }
 }
 
-fun path(block: PathBuilder.() -> Unit) {
-    PathBuilder().apply(block)
-}
-
 @LiveMapDsl
 class Location {
     var name: String? = null
@@ -193,24 +172,10 @@ class Location {
     var hint: GeocodingHint? = null
 }
 
-fun LiveMapBuilder.location(block: Location.() -> Unit) {
-    Location().apply(block).let { location ->
-        this.level = location.hint?.level
-        this.parent = location.hint?.parent
-        this.mapLocation = location.mapRegion?.run(MapLocation.Companion::create)
-    }
-}
-
 @LiveMapDsl
 class GeocodingHint {
     var level: FeatureLevel? = null
     var parent: MapRegion? = null
-}
-
-fun Location.geocodingHint(block: GeocodingHint.() -> Unit) {
-    GeocodingHint().apply(block).let {
-        this.hint = it
-    }
 }
 
 
@@ -221,26 +186,54 @@ class Projection {
     var loopY = false
 }
 
-fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
-    Projection().apply(block).let {
-        this.projectionType = it.kind
-        this.isLoopX = it.loopX
-        this.isLoopY = it.loopY
+@LiveMapDsl
+class LiveMapTileServiceBuilder {
+    var theme = LivemapGeom.Theme.COLOR
+    var host = "localhost"
+    var port = 3012
+
+    fun build(): TileService {
+        return TileService(TileWebSocketBuilder(host, port), theme.name.toLowerCase())
     }
 }
 
+fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
 
-val dummyGeocodingService: GeocodingService = GeocodingService(
-    object : GeoTransport {
-        override fun send(request: GeoRequest): Async<GeoResponse> {
-            TODO("not implemented")
-        }
+fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
+    layers.addAll(LayersBuilder().apply(block).items)
+}
+
+fun LayersBuilder.points(block: Points.() -> Unit) {
+    items.add(MapLayer(POINT, Points().apply(block).items))
+}
+
+fun LayersBuilder.paths(block: Paths.() -> Unit) {
+    items.add(MapLayer(PATH, Paths().apply(block).items))
+}
+
+fun point(block: PointBuilder.() -> Unit) = PointBuilder().apply(block)
+
+fun path(block: PathBuilder.() -> Unit) = PathBuilder().apply(block)
+
+fun LiveMapBuilder.location(block: Location.() -> Unit) {
+    Location().apply(block).let { location ->
+        level = location.hint?.level
+        parent = location.hint?.parent
+        mapLocation = location.mapRegion?.run(MapLocation.Companion::create)
     }
-)
+}
 
-val dummyTileService: TileService = object : TileService(DummySocketBuilder(), LivemapGeom.Theme.COLOR.name) {
-    override fun getTileData(bbox: DoubleRectangle, zoom: Int): Async<List<TileLayer>> {
-        return Asyncs.constant(emptyList())
+fun Location.geocodingHint(block: GeocodingHint.() -> Unit) {
+    GeocodingHint().apply(block).let {
+        hint = it
+    }
+}
+
+fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
+    Projection().apply(block).let {
+        projectionType = it.kind
+        isLoopX = it.loopX
+        isLoopY = it.loopY
     }
 }
 
@@ -253,18 +246,23 @@ fun internalTiles(block: LiveMapTileServiceBuilder.() -> Unit): TileService {
         }
         .apply(block).build()
 }
+
 fun liveMapTiles(block: LiveMapTileServiceBuilder.() -> Unit) = LiveMapTileServiceBuilder().apply(block).build()
 
-@LiveMapDsl
-class LiveMapTileServiceBuilder {
-    var theme = LivemapGeom.Theme.COLOR
-    var host = "localhost"
-    var port = 3012
+val dummyGeocodingService: GeocodingService = GeocodingService(
+    object : GeoTransport {
+        override fun send(request: GeoRequest): Async<GeoResponse> {
+            TODO("not implemented")
+        }
+    }
+)
 
-    fun build(): TileService {
-        return TileService(TileWebSocketBuilder(host, port), theme.name.toLowerCase())
+val dummyTileService: TileService = object : TileService(DummySocketBuilder(), LivemapGeom.Theme.COLOR.name) {
+    override fun getTileData(bbox: DoubleRectangle, zoom: Int): Async<List<TileLayer>> {
+        return constant(emptyList<TileLayer>())
     }
 }
+
 
 internal class DummySocketBuilder : SocketBuilder {
     override fun build(handler: SocketHandler): Socket {
