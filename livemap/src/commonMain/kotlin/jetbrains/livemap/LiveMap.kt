@@ -39,6 +39,7 @@ import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
 import jetbrains.livemap.core.rendering.layers.RenderLayer
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
+import jetbrains.livemap.entities.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.WorldOrigin2ScreenUpdateSystem
@@ -190,7 +191,7 @@ class LiveMap(
                 // Position update
                 WorldDimension2ScreenUpdateSystem(componentManager),
                 WorldOrigin2ScreenUpdateSystem(componentManager),
-                //WorldGeometry2ScreenUpdateSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
+                WorldGeometry2ScreenUpdateSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
                 ScreenLoopsUpdateSystem(componentManager),
 
                 // Geoms
@@ -270,7 +271,7 @@ class LiveMap(
 
             when(kind) {
                 MapLayerKind.POINT -> mapObject2Entity.processPoint(mapObjects)
-                //MapLayerKind.PATH -> mapObject2Entity.processPath(mapObjects)
+                MapLayerKind.PATH -> mapObject2Entity.processPath(mapObjects)
                 //MapLayerKind.POLYGON -> mapObject2Entity.processPolygon(mapObjects)
                 //MapLayerKind.BAR -> mapObject2Entity.processBar(mapObjects)
                 //MapLayerKind.PIE -> mapObject2Entity.processPie(mapObjects)

@@ -26,7 +26,7 @@ class EcsEntity internal constructor(
     }
 
     inline fun <reified T : EcsComponent> getComponent(): T {
-        return componentManager.getComponents(this)[T::class] as T? ?: throw IllegalStateException("Component " + T::class.simpleName + " is not found")
+        return get<T>();
     }
 
     inline fun <reified T : EcsComponent> provide(byDefault: () -> T): T {
@@ -34,7 +34,7 @@ class EcsEntity internal constructor(
             return byDefault().also { addComponent(it) }
         }
 
-        return getComponent()
+        return get<T>()
     }
 
     fun <T : EcsComponent> addComponent(component: T): EcsEntity {
@@ -51,13 +51,13 @@ class EcsEntity internal constructor(
 
         return this
     }
+    
+    inline fun <reified T: EcsComponent> remove() = apply { removeComponent(T::class) }
 
     fun removeComponent(componentType: KClass<out EcsComponent>) =
         apply { componentManager.removeComponent(this, componentType) }
 
-    fun remove() {
-        componentManager.removeEntity(this)
-    }
+    fun remove() = componentManager.removeEntity(this)
 
     operator fun contains(componentType: KClass<out EcsComponent>): Boolean {
         return componentManager.getComponents(this).containsKey(componentType)

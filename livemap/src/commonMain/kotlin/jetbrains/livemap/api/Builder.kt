@@ -5,7 +5,11 @@ import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.projectionGeometry.Polygon
+import jetbrains.datalore.base.projectionGeometry.Ring
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.maps.cell.mapobjects.MapPath
 import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.tileprotocol.TileLayer
@@ -21,6 +25,7 @@ import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.mapobjects.MapPoint
 import jetbrains.livemap.projections.ProjectionType
+import jetbrains.livemap.projections.createArcPath
 
 @LiveMapDsl
 class LiveMapBuilder {
@@ -109,6 +114,15 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
 }
 
 @LiveMapDsl
+class Paths {
+    val items = ArrayList<MapPath>()
+}
+
+fun LayersBuilder.paths(block: Paths.() -> Unit) {
+    items.add(MapLayer(MapLayerKind.PATH, Paths().apply(block).items))
+}
+
+@LiveMapDsl
 class PointBuilder {
     var animation: Int? = null
     var label: String? = null
@@ -129,6 +143,43 @@ class PointBuilder {
 
 fun point(block: PointBuilder.() -> Unit) {
     PointBuilder().apply(block)
+}
+
+@LiveMapDsl
+class PathBuilder {
+    var index: Int? = null
+    var mapId: String? = null
+    var regionId: String? = null
+
+    var lineDash: List<Double>? = null
+    var strokeColor: Color? = null
+    var strokeWidth: Double? = null
+    var coordinates: List<DoubleVector>? = null
+
+    var animation: Int? = null
+    var speed: Double? = null
+    var flow: Double? = null
+
+    var geodesic: Boolean? = null
+
+    fun build(): MapPath {
+        val coord = coordinates.takeIf { !geodesic!! } ?: createArcPath(coordinates!!)
+
+        return MapPath(
+            index!!, mapId, regionId,
+            animation!!, speed!!, flow!!,
+            lineDash!!, strokeColor!!, strokeWidth!!,
+            coord
+                .run(::Ring)
+                .run(::Polygon)
+                .run(::MultiPolygon)
+                .run(Geometry.Companion::create)
+        )
+    }
+}
+
+fun path(block: PathBuilder.() -> Unit) {
+    PathBuilder().apply(block)
 }
 
 @LiveMapDsl
