@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
-import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil.fromColor
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.TooltipParams
@@ -13,7 +12,7 @@ class DensityGeom : AreaGeom() {
     }
 
     companion object {
-        val RENDERS: List<Aes<*>> = AreaGeom.RENDERS
+//        val RENDERS: List<Aes<*>> = AreaGeom.RENDERS
 
         const val HANDLES_GROUPS = AreaGeom.HANDLES_GROUPS
     }

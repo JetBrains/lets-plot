@@ -1,7 +1,10 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.gcommon.base.Strings
-import jetbrains.datalore.visualization.plot.base.*
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.GeomContext
+import jetbrains.datalore.visualization.plot.base.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
@@ -31,20 +34,20 @@ class TextGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.X,
-                Aes.Y,
-                Aes.SIZE,
-                Aes.COLOR,
-                Aes.ALPHA,
-
-                Aes.LABEL,
-                Aes.FAMILY,
-                Aes.FONTFACE,
-                Aes.HJUST,
-                Aes.VJUST,
-                Aes.ANGLE
-        )
+//        val RENDERS = listOf(
+//                Aes.X,
+//                Aes.Y,
+//                Aes.SIZE,
+//                Aes.COLOR,
+//                Aes.ALPHA,
+//
+//                Aes.LABEL,
+//                Aes.FAMILY,
+//                Aes.FONTFACE,
+//                Aes.HJUST,
+//                Aes.VJUST,
+//                Aes.ANGLE
+//        )
 
         val HANDLES_GROUPS = false
     }

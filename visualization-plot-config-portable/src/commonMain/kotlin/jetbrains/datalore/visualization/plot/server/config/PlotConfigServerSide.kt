@@ -8,24 +8,26 @@ import jetbrains.datalore.visualization.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.visualization.plot.builder.data.DataProcessing
 import jetbrains.datalore.visualization.plot.builder.data.GroupingContext
-import jetbrains.datalore.visualization.plot.config.LayerConfig
-import jetbrains.datalore.visualization.plot.config.PlotConfig
-import jetbrains.datalore.visualization.plot.config.PlotConfigUtil
-import jetbrains.datalore.visualization.plot.config.StatProto
+import jetbrains.datalore.visualization.plot.config.*
 import jetbrains.datalore.visualization.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.visualization.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
 
 open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
     override fun createLayerConfig(
-        layerOptions: Map<*, *>, sharedData: DataFrame?, plotMapping: Map<*, *>,
+        layerOptions: Map<*, *>,
+        sharedData: DataFrame?,
+        plotMapping: Map<*, *>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig {
 
+        val geomName = layerOptions[Option.Layer.GEOM] as String
+        val geomKind = Option.GeomName.toGeomKind(geomName)
         return LayerConfig(
             layerOptions,
             sharedData!!,
             plotMapping,
+            GeomProto(geomKind),
             StatProto(),
             scaleProviderByAes,
             false
@@ -148,8 +150,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             }
 
             // drop var if aes is not rendered by geom
-            val geomProvider = layerConfig.geomProvider
-            val renderedAes = HashSet(geomProvider.renders())
+//            val renderedAes = HashSet(layerConfig.geomProvider.renders())
+            val renderedAes = HashSet(layerConfig.geomProto.renders())
             val renderedVars = HashSet<Variable>()
             val notRenderedVars = HashSet<Variable>()
             for (binding in bindings) {
@@ -258,7 +260,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
     }
 
     private fun createSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
-        val geomKind = layerConfig.geomProvider.geomKind
+//        val geomKind = layerConfig.geomProvider.geomKind
+        val geomKind = layerConfig.geomProto.geomKind
 
         var stat: String = layerConfig.stat::class.simpleName!!
         stat = stat.replace("Stat", " stat")

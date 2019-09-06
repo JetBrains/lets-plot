@@ -16,18 +16,18 @@ class RectGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.XMIN,
-                Aes.XMAX,
-                Aes.YMIN,
-                Aes.YMAX,
-                Aes.SIZE,
-                Aes.LINETYPE,
-                Aes.COLOR,
-                Aes.FILL,
-                Aes.ALPHA,
-                Aes.MAP_ID
-        )
+//        val RENDERS = listOf(
+//                Aes.XMIN,
+//                Aes.XMAX,
+//                Aes.YMIN,
+//                Aes.YMAX,
+//                Aes.SIZE,
+//                Aes.LINETYPE,
+//                Aes.COLOR,
+//                Aes.FILL,
+//                Aes.ALPHA,
+//                Aes.MAP_ID
+//        )
         //rectangle groups are used in geom_livemap
         const val HANDLES_GROUPS = true
 

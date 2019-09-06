@@ -272,24 +272,24 @@ class BoxplotGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.LOWER, // NaN for 'outlier' data-point
-                Aes.MIDDLE, // NaN for 'outlier' data-point
-                Aes.UPPER, // NaN for 'outlier' data-point
-
-                Aes.X,
-                Aes.Y, // NaN for 'box' data-point
-                Aes.YMAX,
-                Aes.YMIN,
-
-                Aes.ALPHA,
-                Aes.COLOR,
-                Aes.FILL,
-                Aes.LINETYPE,
-                Aes.SHAPE,
-                Aes.SIZE, // path width
-                Aes.WIDTH
-        )
+//        val RENDERS = listOf(
+//                Aes.LOWER, // NaN for 'outlier' data-point
+//                Aes.MIDDLE, // NaN for 'outlier' data-point
+//                Aes.UPPER, // NaN for 'outlier' data-point
+//
+//                Aes.X,
+//                Aes.Y, // NaN for 'box' data-point
+//                Aes.YMAX,
+//                Aes.YMIN,
+//
+//                Aes.ALPHA,
+//                Aes.COLOR,
+//                Aes.FILL,
+//                Aes.LINETYPE,
+//                Aes.SHAPE,
+//                Aes.SIZE, // path width
+//                Aes.WIDTH
+//        )
 
         const val HANDLES_GROUPS = false
 

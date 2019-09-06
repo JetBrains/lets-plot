@@ -23,17 +23,17 @@ open class PolygonGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.X,
-                Aes.Y,
-
-                Aes.SIZE, // path width
-                Aes.LINETYPE,
-                Aes.COLOR,
-                Aes.FILL,
-                Aes.ALPHA,
-                Aes.MAP_ID
-        )
+//        val RENDERS = listOf(
+//                Aes.X,
+//                Aes.Y,
+//
+//                Aes.SIZE, // path width
+//                Aes.LINETYPE,
+//                Aes.COLOR,
+//                Aes.FILL,
+//                Aes.ALPHA,
+//                Aes.MAP_ID
+//        )
 
         const val HANDLES_GROUPS = true
     }

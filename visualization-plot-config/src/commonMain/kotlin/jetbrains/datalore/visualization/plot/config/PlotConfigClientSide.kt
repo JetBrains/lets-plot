@@ -30,26 +30,31 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         if (!hasOwn(COORD)) {
             // if coord wasn't set explicitly then geom can provide its own preferred coord system
             for (layerConfig in layerConfigs) {
-                val geomProvider = layerConfig.geomProvider
-                if (geomProvider.hasPreferredCoordinateSystem()) {
-                    coordProvider = geomProvider.preferredCoordinateSystem
+//                val geomProvider = layerConfig.geomProvider
+                val geomProtoClientSide = layerConfig.geomProto as GeomProtoClientSide
+                if (geomProtoClientSide.hasPreferredCoordinateSystem()) {
+                    coordProvider = geomProtoClientSide.preferredCoordinateSystem()
                 }
             }
         }
         this.coordProvider = coordProvider
-//        guideOptionsMap = createGuideOptionsMap(createScaleConfigs())
         guideOptionsMap = createGuideOptionsMap(this.scaleConfigs)
     }
 
     override fun createLayerConfig(
-        layerOptions: Map<*, *>, sharedData: DataFrame?, plotMapping: Map<*, *>,
+        layerOptions: Map<*, *>,
+        sharedData: DataFrame?,
+        plotMapping: Map<*, *>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig {
 
+        val geomName = layerOptions[Option.Layer.GEOM] as String
+        val geomKind = Option.GeomName.toGeomKind(geomName)
         return LayerConfig(
             layerOptions,
             sharedData!!,
             plotMapping,
+            GeomProtoClientSide(geomKind),
             StatProto(),
             scaleProviderByAes, true
         )

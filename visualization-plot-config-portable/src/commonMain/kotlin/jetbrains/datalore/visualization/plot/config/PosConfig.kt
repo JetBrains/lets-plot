@@ -4,11 +4,7 @@ import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
 
 internal class PosConfig private constructor(name: String, options: Map<String, Any>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
 
-    val pos: PosProvider
-
-    init {
-        pos = PosProto.createPosProvider(name, mergedOptions)
-    }
+    val pos: PosProvider = PosProto.createPosProvider(name, mergedOptions)
 
     companion object {
         fun create(position: Any): PosConfig {

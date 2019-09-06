@@ -58,17 +58,17 @@ open class PointGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.X,
-                Aes.Y,
-                Aes.SIZE,
-                Aes.COLOR,
-                Aes.FILL,
-                Aes.ALPHA,
-                Aes.SHAPE,
-                Aes.MAP_ID
-                // strokeWidth
-        )
+//        val RENDERS = listOf(
+//                Aes.X,
+//                Aes.Y,
+//                Aes.SIZE,
+//                Aes.COLOR,
+//                Aes.FILL,
+//                Aes.ALPHA,
+//                Aes.SHAPE,
+//                Aes.MAP_ID
+//                // strokeWidth
+//        )
 
         const val HANDLES_GROUPS = false
     }

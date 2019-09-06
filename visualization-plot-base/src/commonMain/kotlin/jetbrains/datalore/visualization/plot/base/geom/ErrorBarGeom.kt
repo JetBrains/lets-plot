@@ -86,17 +86,17 @@ class ErrorBarGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.X,
-                Aes.YMIN,
-                Aes.YMAX,
-                Aes.WIDTH,
-
-                Aes.SIZE, // path width
-                Aes.LINETYPE,
-                Aes.COLOR,
-                Aes.ALPHA
-        )
+//        val RENDERS = listOf(
+//                Aes.X,
+//                Aes.YMIN,
+//                Aes.YMAX,
+//                Aes.WIDTH,
+//
+//                Aes.SIZE, // path width
+//                Aes.LINETYPE,
+//                Aes.COLOR,
+//                Aes.ALPHA
+//        )
 
         const val HANDLES_GROUPS = false
 

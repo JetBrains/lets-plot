@@ -10,7 +10,7 @@ import kotlin.jvm.JvmOverloads
 open class OptionsAccessor protected constructor(private val myOptions: Map<*, *>, defaultOptions: Map<*, *>) {
     private val myDefaultOptions: Map<*, *>
 
-    internal val mergedOptions: Map<*, *>
+    val mergedOptions: Map<*, *>
         get() {
             val mergedOptions = HashMap(myDefaultOptions)
             mergedOptions.putAll(myOptions)
@@ -133,11 +133,11 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
         return mapper(v)
     }
 
-    internal fun getColor(option: String): Color? {
+    fun getColor(option: String): Color? {
         return getValue(Aes.COLOR, option)
     }
 
-    internal fun getShape(option: String): PointShape? {
+    fun getShape(option: String): PointShape? {
         return getValue(Aes.SHAPE, option)
     }
 

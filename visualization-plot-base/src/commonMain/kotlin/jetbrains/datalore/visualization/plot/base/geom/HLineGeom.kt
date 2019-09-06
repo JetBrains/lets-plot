@@ -2,7 +2,10 @@ package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.plot.base.*
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.GeomContext
+import jetbrains.datalore.visualization.plot.base.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
@@ -37,16 +40,16 @@ class HLineGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                //Aes.X,
-                //Aes.Y,
-                Aes.YINTERCEPT,
-
-                Aes.SIZE, // path width
-                Aes.LINETYPE,
-                Aes.COLOR,
-                Aes.ALPHA
-        )
+//        val RENDERS = listOf(
+//                //Aes.X,
+//                //Aes.Y,
+//                Aes.YINTERCEPT,
+//
+//                Aes.SIZE, // path width
+//                Aes.LINETYPE,
+//                Aes.COLOR,
+//                Aes.ALPHA
+//        )
 
         const val HANDLES_GROUPS = false
     }

@@ -52,16 +52,16 @@ class RibbonGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.X,
-                Aes.YMIN,
-                Aes.YMAX,
-                Aes.SIZE,
-                Aes.LINETYPE,
-                Aes.COLOR,
-                Aes.FILL,
-                Aes.ALPHA
-        )
+//        val RENDERS = listOf(
+//                Aes.X,
+//                Aes.YMIN,
+//                Aes.YMAX,
+//                Aes.SIZE,
+//                Aes.LINETYPE,
+//                Aes.COLOR,
+//                Aes.FILL,
+//                Aes.ALPHA
+//        )
 
         const val HANDLES_GROUPS = true
     }

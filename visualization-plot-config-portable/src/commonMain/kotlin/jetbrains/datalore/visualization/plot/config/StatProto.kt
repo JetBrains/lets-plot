@@ -6,7 +6,7 @@ import jetbrains.datalore.visualization.plot.base.stat.*
 import jetbrains.datalore.visualization.plot.base.stat.BoxplotStat.Companion.P_COEF
 import jetbrains.datalore.visualization.plot.base.stat.BoxplotStat.Companion.P_VARWIDTH
 
-open class StatProto {
+class StatProto {
 
     internal fun defaultOptions(statName: String): Map<String, Any> {
         checkArgument(DEFAULTS.containsKey(statName), "Unknown stat name: '$statName'")

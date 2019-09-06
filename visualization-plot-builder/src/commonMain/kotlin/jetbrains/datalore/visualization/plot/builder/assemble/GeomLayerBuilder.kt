@@ -126,7 +126,6 @@ class GeomLayerBuilder {
             replacementBindings[binding.aes] = binding
         }
 
-//        val dataAccess = myGeomProvider.createDataAccess(data, replacementBindings)
         // (!) Positional aes scales have undefined `mapper` at this time because
         // dimensions of plot are not yet known.
         // Data Access shouldn't use aes mapper (!)

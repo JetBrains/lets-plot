@@ -92,11 +92,13 @@ object PlotConfigClientSideUtil {
     }
 
     private fun configGeomTargets(layerBuilder: GeomLayerBuilder, layerConfig: LayerConfig, multilayer: Boolean) {
-        val geomProvider = layerConfig.geomProvider
+//        val geomProvider = layerConfig.geomProvider
 
         val geomInteraction = createGeomInteractionBuilder(
-            geomProvider.renders(),
-            geomProvider.geomKind,
+//            geomProvider.renders(),
+            layerConfig.geomProto.renders(),
+//            geomProvider.geomKind,
+            layerConfig.geomProto.geomKind,
             layerConfig.statKind,
             multilayer
         ).build()
@@ -110,7 +112,8 @@ object PlotConfigClientSideUtil {
         layerConfig: LayerConfig,
         scaleProvidersMap: TypedScaleProviderMap
     ): GeomLayerBuilder {
-        val geomProvider = layerConfig.geomProvider
+//        val geomProvider = layerConfig.geomProvider
+        val geomProvider = (layerConfig.geomProto as GeomProtoClientSide).geomProvider(layerConfig)
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder()

@@ -42,7 +42,7 @@ class StepGeom : LineGeom() {
     companion object {
         // default
         val DEF_DIRECTION = Direction.HV
-        val RENDERS = LineGeom.RENDERS
-        val HANDLES_GROUPS = LineGeom.HANDLES_GROUPS
+//        val RENDERS = LineGeom.RENDERS
+        const  val HANDLES_GROUPS = LineGeom.HANDLES_GROUPS
     }
 }

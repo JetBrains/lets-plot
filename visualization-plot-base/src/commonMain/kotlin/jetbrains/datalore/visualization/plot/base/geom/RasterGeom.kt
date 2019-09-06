@@ -109,14 +109,14 @@ class RasterGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.X,
-                Aes.Y,
-                Aes.WIDTH, // not rendered but required for correct x aes range computation
-                Aes.HEIGHT, // -- the same --
-                Aes.FILL,
-                Aes.ALPHA
-        )
+//        val RENDERS = listOf(
+//                Aes.X,
+//                Aes.Y,
+//                Aes.WIDTH, // not rendered but required for correct x aes range computation
+//                Aes.HEIGHT, // -- the same --
+//                Aes.FILL,
+//                Aes.ALPHA
+//        )
 
         const val HANDLES_GROUPS = false
     }

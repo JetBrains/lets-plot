@@ -25,15 +25,15 @@ open class BarGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.X,
-                Aes.Y,
-                Aes.COLOR,
-                Aes.FILL,
-                Aes.ALPHA,
-                Aes.WIDTH,
-                Aes.SIZE
-        )
+//        val RENDERS = listOf(
+//                Aes.X,
+//                Aes.Y,
+//                Aes.COLOR,
+//                Aes.FILL,
+//                Aes.ALPHA,
+//                Aes.WIDTH,
+//                Aes.SIZE
+//        )
 
         const val HANDLES_GROUPS = false
 

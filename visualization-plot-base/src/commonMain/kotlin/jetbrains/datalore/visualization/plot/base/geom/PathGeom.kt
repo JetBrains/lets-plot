@@ -33,17 +33,17 @@ open class PathGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.X,
-                Aes.Y,
-                Aes.SIZE, // path width
-                Aes.LINETYPE,
-                Aes.COLOR,
-                Aes.ALPHA,
-                Aes.MAP_ID,
-                Aes.SPEED,
-                Aes.FLOW
-        )
+//        val RENDERS = listOf(
+//                Aes.X,
+//                Aes.Y,
+//                Aes.SIZE, // path width
+//                Aes.LINETYPE,
+//                Aes.COLOR,
+//                Aes.ALPHA,
+//                Aes.MAP_ID,
+//                Aes.SPEED,
+//                Aes.FLOW
+//        )
 
         const val HANDLES_GROUPS = true
         val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory = PathLegendKeyElementFactory()

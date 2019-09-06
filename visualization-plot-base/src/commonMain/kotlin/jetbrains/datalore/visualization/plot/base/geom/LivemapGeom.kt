@@ -64,17 +64,17 @@ class LivemapGeom(private val myDisplayMode: DisplayMode) : Geom {
     companion object {
 
         // ToDo: not static, depends on 'display mode'
-        val RENDERS = listOf(
-                Aes.MAP_ID,
-                Aes.ALPHA,
-                Aes.COLOR,
-                Aes.FILL,
-                Aes.SIZE,
-                Aes.SHAPE,
-                Aes.FRAME,
-                Aes.X,
-                Aes.Y
-        )
+//        val RENDERS = listOf(
+//                Aes.MAP_ID,
+//                Aes.ALPHA,
+//                Aes.COLOR,
+//                Aes.FILL,
+//                Aes.SIZE,
+//                Aes.SHAPE,
+//                Aes.FRAME,
+//                Aes.X,
+//                Aes.Y
+//        )
         const val HANDLES_GROUPS = false
     }
 }

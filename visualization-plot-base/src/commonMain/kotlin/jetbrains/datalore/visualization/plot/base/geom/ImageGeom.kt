@@ -3,7 +3,10 @@ package jetbrains.datalore.visualization.plot.base.geom
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgImageElement
-import jetbrains.datalore.visualization.plot.base.*
+import jetbrains.datalore.visualization.plot.base.Aesthetics
+import jetbrains.datalore.visualization.plot.base.CoordinateSystem
+import jetbrains.datalore.visualization.plot.base.GeomContext
+import jetbrains.datalore.visualization.plot.base.PositionAdjustment
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 
@@ -31,12 +34,12 @@ class ImageGeom(private val imageUrl: String) : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.XMIN,
-                Aes.XMAX,
-                Aes.YMIN,
-                Aes.YMAX
-        )
+//        val RENDERS = listOf(
+//                Aes.XMIN,
+//                Aes.XMAX,
+//                Aes.YMIN,
+//                Aes.YMAX
+//        )
 
         const val HANDLES_GROUPS = false
     }

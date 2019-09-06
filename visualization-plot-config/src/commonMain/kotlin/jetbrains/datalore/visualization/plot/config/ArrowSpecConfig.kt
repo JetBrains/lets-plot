@@ -40,8 +40,8 @@ internal class ArrowSpecConfig private constructor(options: Map<*, *>) : Options
     }
 
     companion object {
-        private val DEF_ANGLE = 30.0
-        private val DEF_LENGTH = 10.0
+        private const val DEF_ANGLE = 30.0
+        private const val DEF_LENGTH = 10.0
         private val DEF_END = ArrowSpec.End.LAST
         private val DEF_TYPE = ArrowSpec.Type.OPEN
 

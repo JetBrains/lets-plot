@@ -23,17 +23,17 @@ class TileGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.X,
-                Aes.Y,
-                Aes.WIDTH,
-                Aes.HEIGHT,
-                Aes.COLOR,
-                Aes.FILL,
-                Aes.ALPHA,
-                Aes.LINETYPE,
-                Aes.SIZE
-        )
+//        val RENDERS = listOf(
+//                Aes.X,
+//                Aes.Y,
+//                Aes.WIDTH,
+//                Aes.HEIGHT,
+//                Aes.COLOR,
+//                Aes.FILL,
+//                Aes.ALPHA,
+//                Aes.LINETYPE,
+//                Aes.SIZE
+//        )
 
         const val HANDLES_GROUPS = false
 

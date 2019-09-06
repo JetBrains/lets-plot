@@ -63,18 +63,18 @@ class SmoothGeom : GeomBase() {
     }
 
     companion object {
-        val RENDERS = listOf(
-                Aes.X,
-                Aes.Y,
-                Aes.YMIN,
-                Aes.YMAX,
-
-                Aes.SIZE, // path width
-                Aes.LINETYPE,
-                Aes.COLOR,
-                Aes.FILL,
-                Aes.ALPHA
-        )
+//        val RENDERS = listOf(
+//                Aes.X,
+//                Aes.Y,
+//                Aes.YMIN,
+//                Aes.YMAX,
+//
+//                Aes.SIZE, // path width
+//                Aes.LINETYPE,
+//                Aes.COLOR,
+//                Aes.FILL,
+//                Aes.ALPHA
+//        )
 
         const val HANDLES_GROUPS = true
 
