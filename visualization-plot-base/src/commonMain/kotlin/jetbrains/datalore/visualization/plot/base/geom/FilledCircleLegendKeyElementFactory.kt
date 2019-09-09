@@ -6,12 +6,14 @@ import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
 import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
+import jetbrains.datalore.visualization.plot.base.render.point.PointShapeSvg
 
 internal class FilledCircleLegendKeyElementFactory : LegendKeyElementFactory {
 
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
         val location = DoubleVector(size.x / 2, size.y / 2)
-        val slimObject = SHAPE.create(location, p)
+//        val slimObject = SHAPE.create(location, p)
+        val slimObject = PointShapeSvg.create(SHAPE, location, p)
         val slimGroup = SvgSlimElements.g(1)
         slimObject.appendTo(slimGroup)
         return GeomBase.wrap(slimGroup)

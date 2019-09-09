@@ -182,7 +182,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             }
         }
 
-        fun <T> textLabelAnchor(o: Any, conversionMap: Map<Any, T>, def: T): T {
+        private fun <T> textLabelAnchor(o: Any, conversionMap: Map<Any, T>, def: T): T {
             return conversionMap.getOrElse(o, { def })
         }
 

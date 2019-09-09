@@ -12,8 +12,11 @@ enum class NamedLineType(val code: Int, private val myDashArray: List<Double>?) 
     },
     DASHED(2, listOf(4.3, 4.3)),
     DOTTED(3, listOf(1.0, 3.2)),
+    @Suppress("SpellCheckingInspection")
     DOTDASH(4, listOf(1.0, 3.2, 4.3, 3.2)),
+    @Suppress("SpellCheckingInspection")
     LONGDASH(5, listOf(7.4, 3.2)),
+    @Suppress("SpellCheckingInspection")
     TWODASH(6, listOf(2.4, 2.4, 6.4, 2.4));
 
     override val isSolid: Boolean

@@ -12,6 +12,7 @@ import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.T
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
+import jetbrains.datalore.visualization.plot.base.render.point.PointShapeSvg
 import jetbrains.datalore.visualization.plot.base.render.point.PointShapes
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
@@ -22,7 +23,13 @@ open class PointGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
 
-    public override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    public override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
 
@@ -38,7 +45,8 @@ open class PointGeom : GeomBase() {
 
                 val shape = p.shape()!!
                 targetCollector.addPoint(i, location, shape.size(p) / 2, getTooltipParams(p))
-                val o = shape.create(location, p)
+//                val o = shape.create(location, p)
+                val o = PointShapeSvg.create(shape, location, p)
                 o.appendTo(slimGroup)
             }
         }

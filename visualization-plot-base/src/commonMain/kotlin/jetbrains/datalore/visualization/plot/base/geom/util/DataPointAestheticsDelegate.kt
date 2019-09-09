@@ -6,161 +6,161 @@ import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.linetype.LineType
 import jetbrains.datalore.visualization.plot.base.render.point.PointShape
 
-open class DataPointAestheticsDelegate(private val myP: DataPointAesthetics) : DataPointAesthetics {
+open class DataPointAestheticsDelegate(private val p: DataPointAesthetics) : DataPointAesthetics {
 
     override fun index(): Int {
-        return myP.index()
+        return p.index()
     }
 
     override fun x(): Double? {
-        return myP.x()
+        return p.x()
     }
 
     override fun y(): Double? {
-        return myP.y()
+        return p.y()
     }
 
     override fun z(): Double? {
-        return myP.z()
+        return p.z()
     }
 
     override fun ymin(): Double? {
-        return myP.ymin()
+        return p.ymin()
     }
 
     override fun ymax(): Double? {
-        return myP.ymax()
+        return p.ymax()
     }
 
     override fun color(): Color? {
-        return myP.color()
+        return p.color()
     }
 
     override fun fill(): Color? {
-        return myP.fill()
+        return p.fill()
     }
 
     override fun alpha(): Double? {
-        return myP.alpha()
+        return p.alpha()
     }
 
     override fun shape(): PointShape? {
-        return myP.shape()
+        return p.shape()
     }
 
     override fun lineType(): LineType {
-        return myP.lineType()
+        return p.lineType()
     }
 
     override fun size(): Double? {
-        return myP.size()
+        return p.size()
     }
 
     override fun width(): Double? {
-        return myP.width()
+        return p.width()
     }
 
     override fun height(): Double? {
-        return myP.height()
+        return p.height()
     }
 
     override fun weight(): Double? {
-        return myP.weight()
+        return p.weight()
     }
 
     override fun intercept(): Double? {
-        return myP.intercept()
+        return p.intercept()
     }
 
     override fun slope(): Double? {
-        return myP.slope()
+        return p.slope()
     }
 
     override fun interceptX(): Double? {
-        return myP.interceptX()
+        return p.interceptX()
     }
 
     override fun interceptY(): Double? {
-        return myP.interceptY()
+        return p.interceptY()
     }
 
     override fun lower(): Double? {
-        return myP.lower()
+        return p.lower()
     }
 
     override fun middle(): Double? {
-        return myP.middle()
+        return p.middle()
     }
 
     override fun upper(): Double? {
-        return myP.upper()
+        return p.upper()
     }
 
     override fun mapId(): Any {
-        return myP.mapId()
+        return p.mapId()
     }
 
     override fun frame(): String {
-        return myP.frame()
+        return p.frame()
     }
 
     override fun speed(): Double? {
-        return myP.speed()
+        return p.speed()
     }
 
     override fun flow(): Double? {
-        return myP.flow()
+        return p.flow()
     }
 
     override fun xmin(): Double? {
-        return myP.xmin()
+        return p.xmin()
     }
 
     override fun xmax(): Double? {
-        return myP.xmax()
+        return p.xmax()
     }
 
     override fun xend(): Double? {
-        return myP.xend()
+        return p.xend()
     }
 
     override fun yend(): Double? {
-        return myP.yend()
+        return p.yend()
     }
 
     override fun label(): String {
-        return myP.label()
+        return p.label()
     }
 
     override fun family(): String {
-        return myP.family()
+        return p.family()
     }
 
     override fun fontface(): String {
-        return myP.fontface()
+        return p.fontface()
     }
 
     override fun hjust(): Any {
-        return myP.hjust()
+        return p.hjust()
     }
 
     override fun vjust(): Any {
-        return myP.vjust()
+        return p.vjust()
     }
 
     override fun angle(): Double? {
-        return myP.angle()
+        return p.angle()
     }
 
     override fun group(): Int? {
-        return myP.group()
+        return p.group()
     }
 
     override fun numeric(aes: Aes<Double>): Double? {
-        return myP.numeric(aes)
+        return p.numeric(aes)
     }
 
     override fun <T> get(aes: Aes<T>): T? {
-        return myP[aes]
+        return p[aes]
     }
 }

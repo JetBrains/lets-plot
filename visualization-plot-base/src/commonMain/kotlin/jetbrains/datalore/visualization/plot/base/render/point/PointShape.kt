@@ -1,7 +1,5 @@
 package jetbrains.datalore.visualization.plot.base.render.point
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimObject
 import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 
 interface PointShape {
@@ -11,5 +9,5 @@ interface PointShape {
 
     fun strokeWidth(dataPoint: DataPointAesthetics): Double
 
-    fun create(location: DoubleVector, dataPoint: DataPointAesthetics): SvgSlimObject
+//    fun create(location: DoubleVector, dataPoint: DataPointAesthetics): SvgSlimObject
 }

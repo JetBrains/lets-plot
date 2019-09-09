@@ -19,7 +19,7 @@ internal class ShapeOptionConverter : Function<Any?, PointShape?> {
             for (shape in NamedShape.values()) {
                 map[shape.code] = shape
             }
-            map[46] = PointShapes.dot()
+            map[PointShapes.dot().code] = PointShapes.dot()
             SHAPE_BY_CODE = map
         }
 
