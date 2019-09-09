@@ -5,7 +5,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
+import jetbrains.datalore.visualization.plot.base.aes.AesScaling
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil.fromColor
@@ -27,7 +27,13 @@ class ErrorBarGeom : GeomBase() {
         return GeomUtil.with_X_Y(aesthetics.dataPoints())
     }
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = LinesHelper(pos, coord, ctx)
         val dataPoints = dataPoints(aesthetics)
         val geomHelper = GeomHelper(pos, coord, ctx)
@@ -56,26 +62,27 @@ class ErrorBarGeom : GeomBase() {
         val clientRect = geomHelper.toClient(rect, p)
 
         val hint = HintConfigFactory()
-                .defaultObjectRadius(clientRect.width / 2.0)
-                .defaultX(p.x()!!)
-                .defaultKind(HORIZONTAL_TOOLTIP)
+            .defaultObjectRadius(clientRect.width / 2.0)
+            .defaultX(p.x()!!)
+            .defaultKind(HORIZONTAL_TOOLTIP)
 
         val hints = HintsCollection(p, geomHelper)
-                .addHint(hint.create(Aes.YMAX))
-                .addHint(hint.create(Aes.YMIN))
-                .hints
+            .addHint(hint.create(Aes.YMAX))
+            .addHint(hint.create(Aes.YMIN))
+            .hints
 
-        ctx.targetCollector.addRectangle(p.index(), clientRect,
-                params()
-                        .setTipLayoutHints(hints)
-                        .setColor(fromColor(p))
+        ctx.targetCollector.addRectangle(
+            p.index(), clientRect,
+            params()
+                .setTipLayoutHints(hints)
+                .setColor(fromColor(p))
         )
     }
 
     private class MyLegendKeyElementFactory : LegendKeyElementFactory {
 
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
-            val strokeWidth = AestheticsUtil.strokeWidth(p)
+            val strokeWidth = AesScaling.strokeWidth(p)
 
             val width = p.width()!! * (size.x - strokeWidth)
             val height = size.y - strokeWidth

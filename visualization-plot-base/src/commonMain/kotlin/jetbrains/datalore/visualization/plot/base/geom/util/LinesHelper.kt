@@ -7,13 +7,15 @@ import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.GeomContext
 import jetbrains.datalore.visualization.plot.base.PositionAdjustment
+import jetbrains.datalore.visualization.plot.base.aes.AesScaling
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.base.geom.StepGeom
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.visualization.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.visualization.plot.base.render.svg.LinePath
 
-open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) : GeomHelper(pos, coord, ctx) {
+open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
+    GeomHelper(pos, coord, ctx) {
 
     private var myAlphaFilter = { v: Double? -> v }
     private var myWidthFilter = { v: Double? -> v }
@@ -36,19 +38,23 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         this.myAlphaEnabled = b
     }
 
-    fun createLines(dataPoints: Iterable<DataPointAesthetics>,
-                    toLocation: (DataPointAesthetics) -> DoubleVector?): MutableList<LinePath> {
+    fun createLines(
+        dataPoints: Iterable<DataPointAesthetics>,
+        toLocation: (DataPointAesthetics) -> DoubleVector?
+    ): MutableList<LinePath> {
         return createPaths(dataPoints, toLocation, false)
     }
 
-    private fun createPaths(dataPoints: Iterable<DataPointAesthetics>,
-                            toLocation: (DataPointAesthetics) -> DoubleVector?,
-                            closePath: Boolean): MutableList<LinePath> {
+    private fun createPaths(
+        dataPoints: Iterable<DataPointAesthetics>,
+        toLocation: (DataPointAesthetics) -> DoubleVector?,
+        closePath: Boolean
+    ): MutableList<LinePath> {
         val paths = ArrayList<LinePath>()
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-                dataPoints,
-                singlePointAppender(toClientLocation { toLocation(it) }),
-                reducer(0.999, closePath)
+            dataPoints,
+            singlePointAppender(toClientLocation { toLocation(it) }),
+            reducer(0.999, closePath)
         )
 
         // draw line for each group
@@ -73,9 +79,9 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     internal fun createSteps(dataPoints: Iterable<DataPointAesthetics>, dir: StepGeom.Direction): List<PathInfo> {
         val pathInfos = ArrayList<PathInfo>()
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-                dataPoints,
-                singlePointAppender(toClientLocation(GeomUtil.TO_LOCATION_X_Y)),
-                reducer(0.999, false)
+            dataPoints,
+            singlePointAppender(toClientLocation(GeomUtil.TO_LOCATION_X_Y)),
+            reducer(0.999, false)
         )
 
         // draw step for each group
@@ -103,9 +109,11 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         return pathInfos
     }
 
-    fun createBands(dataPoints: Iterable<DataPointAesthetics>,
-                    toLocationUpper: (DataPointAesthetics) -> DoubleVector?,
-                    toLocationLower: (DataPointAesthetics) -> DoubleVector?): MutableList<LinePath> {
+    fun createBands(
+        dataPoints: Iterable<DataPointAesthetics>,
+        toLocationUpper: (DataPointAesthetics) -> DoubleVector?,
+        toLocationLower: (DataPointAesthetics) -> DoubleVector?
+    ): MutableList<LinePath> {
 
         val lines = ArrayList<LinePath>()
         val pointsByGroup = GeomUtil.createGroups(dataPoints)
@@ -144,7 +152,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             decorateFillingPart(path, p)
         }
 
-        val size = myWidthFilter(AestheticsUtil.strokeWidth(p))!!
+        val size = myWidthFilter(AesScaling.strokeWidth(p))!!
         path.width().set(size)
 
         val lineType = p.lineType()

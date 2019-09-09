@@ -10,7 +10,7 @@ import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.datalore.base.projectionGeometry.Ring
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.cell.mapobjects.MapPath
-import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
+import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService
@@ -44,13 +44,13 @@ class LiveMapBuilder {
     var level: FeatureLevel? = null
     var parent: MapRegion? = null
     var layers: MutableList<MapLayer> = ArrayList()
-    var theme: LivemapGeom.Theme = LivemapGeom.Theme.COLOR
+    var theme: LivemapConstants.Theme = LivemapConstants.Theme.COLOR
 
     var projectionType: ProjectionType = ProjectionType.MERCATOR
     var isLoopX: Boolean = true
     var isLoopY: Boolean = false
 
-    var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit}
+    var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit }
     var devParams: Map<String, Any> = HashMap()
 
 
@@ -124,7 +124,19 @@ class PointBuilder {
     var mapId: String? = null
     var regionId: String? = null
     fun build(): MapPoint {
-        return MapPoint( index!!, mapId, regionId, DoubleVector(lon!!, lat!!), label!!, animation!!, shape!!, radius!!, fillColor!!, strokeColor!!, strokeWidth!!)
+        return MapPoint(
+            index!!,
+            mapId,
+            regionId,
+            DoubleVector(lon!!, lat!!),
+            label!!,
+            animation!!,
+            shape!!,
+            radius!!,
+            fillColor!!,
+            strokeColor!!,
+            strokeWidth!!
+        )
     }
 }
 
@@ -164,9 +176,13 @@ class PathBuilder {
 @LiveMapDsl
 class Location {
     var name: String? = null
-        set(v) { field = v; mapRegion = v?.let { MapRegion.withName(it) } }
+        set(v) {
+            field = v; mapRegion = v?.let { MapRegion.withName(it) }
+        }
     var osmId: String? = null
-        set(v) { field = v; mapRegion = v?.let { MapRegion.withId(it) } }
+        set(v) {
+            field = v; mapRegion = v?.let { MapRegion.withId(it) }
+        }
 
     var mapRegion: MapRegion? = null
     var hint: GeocodingHint? = null
@@ -188,7 +204,7 @@ class Projection {
 
 @LiveMapDsl
 class LiveMapTileServiceBuilder {
-    var theme = LivemapGeom.Theme.COLOR
+    var theme = LivemapConstants.Theme.COLOR
     var host = "localhost"
     var port = 3012
 
@@ -239,8 +255,8 @@ fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
 
 fun internalTiles(block: LiveMapTileServiceBuilder.() -> Unit): TileService {
     return LiveMapTileServiceBuilder()
-        .apply{
-            theme = LivemapGeom.Theme.COLOR
+        .apply {
+            theme = LivemapConstants.Theme.COLOR
             host = "10.0.0.127"
             port = 3933
         }
@@ -257,7 +273,7 @@ val dummyGeocodingService: GeocodingService = GeocodingService(
     }
 )
 
-val dummyTileService: TileService = object : TileService(DummySocketBuilder(), LivemapGeom.Theme.COLOR.name) {
+val dummyTileService: TileService = object : TileService(DummySocketBuilder(), LivemapConstants.Theme.COLOR.name) {
     override fun getTileData(bbox: DoubleRectangle, zoom: Int): Async<List<TileLayer>> {
         return constant(emptyList<TileLayer>())
     }

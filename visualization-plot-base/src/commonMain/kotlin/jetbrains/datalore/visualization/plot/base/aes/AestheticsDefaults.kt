@@ -4,7 +4,7 @@ import jetbrains.datalore.base.typedKey.TypedKeyContainer
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
+import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
 
 open class AestheticsDefaults {
 
@@ -125,19 +125,19 @@ open class AestheticsDefaults {
                     .update(Aes.FILL, Color.WHITE)
         }
 
-        fun livemap(displayMode: LivemapGeom.DisplayMode, scaled: Boolean): AestheticsDefaults {
+        fun livemap(displayMode: LivemapConstants.DisplayMode, scaled: Boolean): AestheticsDefaults {
             return when (displayMode) {
-                LivemapGeom.DisplayMode.POLYGON -> polygon()
-                LivemapGeom.DisplayMode.POINT -> point()
+                LivemapConstants.DisplayMode.POLYGON -> polygon()
+                LivemapConstants.DisplayMode.POINT -> point()
                         .updateInLegend(Aes.SIZE, 5.0)
-                LivemapGeom.DisplayMode.BAR -> base()
+                LivemapConstants.DisplayMode.BAR -> base()
                         .update(Aes.SIZE, 40.0)
                         .update(Aes.COLOR, Color.TRANSPARENT)
-                LivemapGeom.DisplayMode.PIE -> base()
+                LivemapConstants.DisplayMode.PIE -> base()
                         .update(Aes.SIZE, 20.0)
                         .update(Aes.COLOR, Color.TRANSPARENT)
                         .updateInLegend(Aes.SIZE, 5.0)
-                LivemapGeom.DisplayMode.HEATMAP -> base().update(Aes.SIZE, if (scaled) 0.01 else 10.0)
+                LivemapConstants.DisplayMode.HEATMAP -> base().update(Aes.SIZE, if (scaled) 0.01 else 10.0)
             }
         }
 

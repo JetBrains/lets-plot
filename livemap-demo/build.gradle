@@ -26,6 +26,7 @@ kotlin {
                 implementation project(':visualization-demo-common')
                 implementation project(':visualization-demo-common-jfx')
                 implementation project(':visualization-plot-builder')
+                implementation project(':visualization-plot-base-portable')
                 implementation project(':visualization-plot-base')
             }
         }
@@ -103,7 +104,9 @@ dependencies {
 
     projectDependenciesJs project(':visualization-plot-common')
     projectDependenciesJs project(':visualization-plot-base')
+    projectDependenciesJs project(':visualization-plot-base-portable')
     projectDependenciesJs project(':visualization-plot-builder')
+    projectDependenciesJs project(':visualization-plot-config-portable')
     projectDependenciesJs project(':visualization-plot-config')
 }
 

@@ -1,0 +1,84 @@
+plugins {
+    id 'kotlin-multiplatform'
+    id 'org.jetbrains.gradle.plugin.idea-ext'
+}
+
+repositories {
+    mavenCentral()
+}
+
+kotlin {
+    jvm()
+    js()
+    
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation project(':base')
+//                implementation project(':visualization-base-svg')
+//                implementation project(':visualization-base-canvas')
+                implementation project(':visualization-plot-common-portable')
+//                implementation project(':visualization-plot-common')
+                implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                implementation "org.apache.commons:commons-math3:$math3_version"
+                implementation "org.slf4j:slf4j-simple:$slf4j_version"
+                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+                implementation "org.hamcrest:hamcrest-core:$hamcrest_version"
+                implementation "org.hamcrest:hamcrest-library:$hamcrest_version"
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation "org.mockito:mockito-core:$mockito_version"
+                implementation "org.assertj:assertj-core:$assertj_version"
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation kotlin('test-js')
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        settings {
+            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
+        }
+    }
+}
+
+
+// TMP: publish artifacts needed to build batik-based demo
+apply plugin: 'maven-publish'
+publishing {
+    repositories {
+        maven {
+            url = uri("$rootDir/out-repo")
+        }
+    }
+}

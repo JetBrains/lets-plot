@@ -18,6 +18,7 @@ kotlin {
                 implementation project(':base')
                 implementation project(':visualization-base-svg')
                 implementation project(':visualization-base-canvas')
+                implementation project(':visualization-plot-base-portable')
                 implementation project(':visualization-plot-base')
                 implementation project(':visualization-plot-common-portable')
                 implementation project(':visualization-plot-common')

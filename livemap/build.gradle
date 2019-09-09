@@ -20,6 +20,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':base')
+                implementation project(':visualization-plot-base-portable')
                 implementation project(':visualization-plot-base')
                 implementation project(':visualization-plot-builder')
                 implementation project(':visualization-plot-config')

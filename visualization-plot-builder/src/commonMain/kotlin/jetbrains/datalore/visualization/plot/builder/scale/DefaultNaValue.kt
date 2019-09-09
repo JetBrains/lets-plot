@@ -39,7 +39,7 @@ import jetbrains.datalore.visualization.plot.base.Aes.Companion.YINTERCEPT
 import jetbrains.datalore.visualization.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.visualization.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.visualization.plot.base.Aes.Companion.Z
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
+import jetbrains.datalore.visualization.plot.base.aes.AesScaling
 import jetbrains.datalore.visualization.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.visualization.plot.base.render.point.PointShapes
 
@@ -57,7 +57,7 @@ object DefaultNaValue {
         VALUE_MAP.put(ALPHA, 0.0)
         VALUE_MAP.put(SHAPE, PointShapes.dot())
         VALUE_MAP.put(LINETYPE, NamedLineType.SOLID)
-        VALUE_MAP.put(SIZE, AestheticsUtil.sizeFromCircleDiameter(1.0))
+        VALUE_MAP.put(SIZE, AesScaling.sizeFromCircleDiameter(1.0))
         VALUE_MAP.put(WIDTH, 1.0)
         VALUE_MAP.put(HEIGHT, 1.0)
         VALUE_MAP.put(WEIGHT, 1.0)

@@ -6,7 +6,7 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
-import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
+import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapFactory
 import jetbrains.livemap.LiveMapSpec
@@ -31,13 +31,13 @@ abstract class DemoModelBase(private val canvasControl: CanvasControl) {
             mouseEventSource = mouseListener(canvasControl)
 
             tileService = internalTiles {
-                theme = LivemapGeom.Theme.COLOR
+                theme = LivemapConstants.Theme.COLOR
             }
 
             geocodingService = dummyGeocodingService
 
             zoom = 1
-            theme = LivemapGeom.Theme.COLOR
+            theme = LivemapConstants.Theme.COLOR
             interactive = true
 
             projection {

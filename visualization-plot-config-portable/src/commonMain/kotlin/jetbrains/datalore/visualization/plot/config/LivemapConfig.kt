@@ -1,7 +1,6 @@
 package jetbrains.datalore.visualization.plot.config
 
-import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
-import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom.*
+import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants.*
 import jetbrains.datalore.visualization.plot.config.Option.Geom.Livemap
 import jetbrains.datalore.visualization.plot.config.Option.GeomName
 import jetbrains.datalore.visualization.plot.config.Option.Layer.GEOM
@@ -87,21 +86,21 @@ class LivemapConfig private constructor(options: Map<*, *>) : OptionsAccessor(op
         }
 
         return LivemapOptions(
-                zoom,
-                location,
-                stroke,
-                interactive,
-                magnifier,
-                displayMode,
-                featureLevel,
-                parent,
-                scaled,
-                clustering,
-                labels,
-                theme,
-                projection,
-                geodesic,
-                devParams
+            zoom,
+            location,
+            stroke,
+            interactive,
+            magnifier,
+            displayMode,
+            featureLevel,
+            parent,
+            scaled,
+            clustering,
+            labels,
+            theme,
+            projection,
+            geodesic,
+            devParams
         )
     }
 
@@ -159,18 +158,17 @@ class LivemapConfig private constructor(options: Map<*, *>) : OptionsAccessor(op
 
         fun <ValueT : Enum<ValueT>> validValues(values: Array<ValueT>): String {
             return values
-                    .map { it.name }
-                    .map { it.toLowerCase() }
-                    .joinToString("|", "=[", "]") { s -> "'$s'" }
+                .map { it.name }
+                .map { it.toLowerCase() }
+                .joinToString("|", "=[", "]") { s -> "'$s'" }
         }
 
-        fun getDisplayMode(displayMode: String?): LivemapGeom.DisplayMode {
+        fun getDisplayMode(displayMode: String?): DisplayMode {
             try {
-                return LivemapGeom.DisplayMode.valueOf(displayMode!!.toUpperCase())
+                return DisplayMode.valueOf(displayMode!!.toUpperCase())
             } catch (ignored: Exception) {
-                throw IllegalArgumentException("geom" + validValues(LivemapGeom.DisplayMode.values()))
+                throw IllegalArgumentException("geom" + validValues(DisplayMode.values()))
             }
-
         }
     }
 }

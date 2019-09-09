@@ -6,6 +6,7 @@ import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.GeomMeta
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.geom.*
+import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
 
 abstract class GeomProvider private constructor(val geomKind: GeomKind) {
@@ -328,7 +329,7 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun livemap(supplier: () -> Geom, displayMode: LivemapGeom.DisplayMode, scaled: Boolean): GeomProvider {
+        fun livemap(supplier: () -> Geom, displayMode: LivemapConstants.DisplayMode, scaled: Boolean): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.LIVE_MAP,
 //                LivemapGeom.RENDERS,

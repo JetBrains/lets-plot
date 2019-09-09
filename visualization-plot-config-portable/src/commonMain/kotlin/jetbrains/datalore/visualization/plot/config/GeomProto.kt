@@ -13,8 +13,6 @@ import jetbrains.datalore.visualization.plot.builder.sampling.Samplings
 
 open class GeomProto constructor(val geomKind: GeomKind) {
 
-    //    fun defaultOptions(geomName: String): Map<String, Any> {
-//        val geomKind = GeomName.toGeomKind(geomName)
     fun defaultOptions(): Map<String, Any> {
         checkArgument(DEFAULTS.containsKey(geomKind), "Default values doesn't support geom kind: '$geomKind'")
         return DEFAULTS[geomKind]!!

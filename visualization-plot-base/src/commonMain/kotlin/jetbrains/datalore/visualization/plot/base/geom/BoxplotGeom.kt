@@ -9,8 +9,8 @@ import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.plot.base.*
+import jetbrains.datalore.visualization.plot.base.aes.AesScaling
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.*
 import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil.fromColor
 import jetbrains.datalore.visualization.plot.base.geom.util.HintsCollection.HintConfigFactory
@@ -47,7 +47,13 @@ class BoxplotGeom : GeomBase() {
         myOutlierSize = outlierSize
     }
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         buildBoxes(root, aesthetics, pos, coord, ctx)
         buildLines(root, aesthetics, pos, coord, ctx)
         buildOutliers(root, aesthetics, pos, coord, ctx)
@@ -66,37 +72,49 @@ class BoxplotGeom : GeomBase() {
             val objectRadius = clientRect.width / 2.0
 
             val hint = HintConfigFactory()
-                    .defaultObjectRadius(objectRadius)
-                    .defaultX(xCoord)
-                    .defaultKind(HORIZONTAL_TOOLTIP)
+                .defaultObjectRadius(objectRadius)
+                .defaultX(xCoord)
+                .defaultKind(HORIZONTAL_TOOLTIP)
 
             val hints = HintsCollection(p, helper)
-                    .addHint(hint.create(Aes.YMAX))
-                    .addHint(hint.create(Aes.UPPER))
-                    .addHint(hint.create(Aes.MIDDLE))
-                    .addHint(hint.create(Aes.LOWER))
-                    .addHint(hint.create(Aes.YMIN))
-                    .hints
+                .addHint(hint.create(Aes.YMAX))
+                .addHint(hint.create(Aes.UPPER))
+                .addHint(hint.create(Aes.MIDDLE))
+                .addHint(hint.create(Aes.LOWER))
+                .addHint(hint.create(Aes.YMIN))
+                .hints
 
             ctx.targetCollector.addRectangle(
-                    p.index(),
-                    helper.toClient(rect, p),
-                    params()
-                            .setTipLayoutHints(hints)
-                            .setColor(fromColor(p))
+                p.index(),
+                helper.toClient(rect, p),
+                params()
+                    .setTipLayoutHints(hints)
+                    .setColor(fromColor(p))
             )
 
         }
     }
 
-    private fun buildBoxes(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    private fun buildBoxes(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         // rectangles
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx)
         val rectangles = helper.createRectangles(rectangleByDataPoint(ctx))
         rectangles.forEach { root.add(it) }
     }
 
-    private fun buildLines(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    private fun buildLines(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = GeomHelper(pos, coord, ctx)
         val elementHelper = helper.createSvgElementHelper()
 
@@ -113,10 +131,13 @@ class BoxplotGeom : GeomBase() {
             // middle
             if (hasWidth && p.defined(Aes.MIDDLE)) {
                 val middle = p.middle()!!
-                lines.add(elementHelper.createLine(
+                lines.add(
+                    elementHelper.createLine(
                         DoubleVector(x - width / 2, middle),
                         DoubleVector(x + width / 2, middle),
-                        p))
+                        p
+                    )
+                )
             }
 
             /*
@@ -130,10 +151,13 @@ class BoxplotGeom : GeomBase() {
                 val hinge = p.lower()!!
                 val fence = p.ymin()!!
                 // whisker line
-                lines.add(elementHelper.createLine(
+                lines.add(
+                    elementHelper.createLine(
                         DoubleVector(x, hinge),
                         DoubleVector(x, fence),
-                        p))
+                        p
+                    )
+                )
                 // fence line
                 /*
         lines.add(elementHelper.createLine(
@@ -148,10 +172,13 @@ class BoxplotGeom : GeomBase() {
                 val hinge = p.upper()!!
                 val fence = p.ymax()!!
                 // whisker line
-                lines.add(elementHelper.createLine(
+                lines.add(
+                    elementHelper.createLine(
                         DoubleVector(x, hinge),
                         DoubleVector(x, fence),
-                        p))
+                        p
+                    )
+                )
                 // fence line
                 /*
         lines.add(elementHelper.createLine(
@@ -165,19 +192,27 @@ class BoxplotGeom : GeomBase() {
         }
     }
 
-    private fun buildOutliers(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    private fun buildOutliers(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val outlierAesthetics = getOutliersAesthetics(aesthetics)
         PointGeom().buildIntern(root, outlierAesthetics, pos, coord, ctx.withTargetCollector(NullGeomTargetCollector()))
     }
 
     private fun getOutliersAesthetics(aesthetics: Aesthetics): Aesthetics {
         val outlierAesMapper = OutlierAestheticsMapper(
-                myOutlierColor, myOutlierFill, myOutlierShape, myOutlierSize)
+            myOutlierColor, myOutlierFill, myOutlierShape, myOutlierSize
+        )
 
         return MappedAesthetics(aesthetics) { outlierAesMapper.apply(it) }
     }
 
-    private class OutlierAestheticsMapper(color: Color?, fill: Color?, shape: PointShape?, size: Double?) : Function<DataPointAesthetics, DataPointAesthetics> {
+    private class OutlierAestheticsMapper(color: Color?, fill: Color?, shape: PointShape?, size: Double?) :
+        Function<DataPointAesthetics, DataPointAesthetics> {
 
         //private final Map<Aes, Object> myValueByAes = new HashMap<>();
         private val myValueByAes = TypedKeyHashMap()
@@ -241,7 +276,7 @@ class BoxplotGeom : GeomBase() {
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
             val whiskerSize = .2
 
-            val strokeWidth = AestheticsUtil.strokeWidth(p)
+            val strokeWidth = AesScaling.strokeWidth(p)
             val width = (size.x - strokeWidth) * .8 // a bit narrower
             val height = size.y - strokeWidth
             val x = (size.x - width) / 2
@@ -296,9 +331,10 @@ class BoxplotGeom : GeomBase() {
         private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 if (p.defined(Aes.X) &&
-                        p.defined(Aes.LOWER) &&
-                        p.defined(Aes.UPPER) &&
-                        p.defined(Aes.WIDTH)) {
+                    p.defined(Aes.LOWER) &&
+                    p.defined(Aes.UPPER) &&
+                    p.defined(Aes.WIDTH)
+                ) {
                     val x = p.x()!!
                     val lower = p.lower()!!
                     val upper = p.upper()!!
