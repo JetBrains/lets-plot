@@ -2,7 +2,10 @@ package jetbrains.livemap.core.multitasking
 
 import jetbrains.livemap.core.ecs.EcsClock
 
-class SyncMicroTaskExecutor(private val myClock: EcsClock, private val myUpdateTimeLimit: Long) : MicroTaskExecutor {
+class SyncMicroTaskExecutor(
+    private val myClock: EcsClock,
+    private val myUpdateTimeLimit: Long
+) : MicroTaskExecutor {
 
     override fun start() {}
 
@@ -12,7 +15,7 @@ class SyncMicroTaskExecutor(private val myClock: EcsClock, private val myUpdateT
         val finishedTasks = HashSet<MicroThreadComponent>()
 
         var enoughTime = true
-        while (enoughTime && !tasks.isEmpty()) {
+        while (enoughTime && tasks.isNotEmpty()) {
             val it = tasks.iterator()
             while (it.hasNext()) {
                 if (myClock.systemTime.getTimeMs() - myClock.updateStartTime > myUpdateTimeLimit) {

@@ -19,7 +19,7 @@ internal class TileDataFetcherImpl(private val myMapProjection: MapProjection, p
         val quadKeys = convertCellKeyToQuadKeys(myMapProjection, cellKey)
         val bbox = calculateBBox(quadKeys)
 
-        val zoom = cellKey.toString().length
+        val zoom = cellKey.length
         return myTileService.getTileData(bbox, zoom)
     }
 

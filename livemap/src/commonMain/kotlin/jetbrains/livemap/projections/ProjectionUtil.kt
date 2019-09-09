@@ -40,7 +40,7 @@ object ProjectionUtil {
     fun convertCellKeyToQuadKeys(mapProjection: MapProjection, cellKey: CellKey): Set<QuadKey> {
         val cellRect = getTileRect(mapProjection.mapRect, cellKey.key)
         val geoRect = transformBBox(cellRect, mapProjection::invert)
-        return calculateQuadKeys(geoRect, cellKey.key.length)
+        return calculateQuadKeys(geoRect, cellKey.length)
     }
 
     internal fun calculateCellKeys(mapRect: DoubleRectangle, rect: DoubleRectangle, zoom: Int): Set<CellKey> {

@@ -5,8 +5,8 @@ import jetbrains.livemap.core.MetricsService
 import jetbrains.livemap.core.SystemTime
 
 open class EcsContext(val eventSource: MouseEventSource) : EcsClock {
-    override val systemTime = SystemTime()
-    val metricsService = MetricsService()
+    final override val systemTime = SystemTime()
+    val metricsService = MetricsService(systemTime)
 
     final override var updateStartTime: Long = 0
         private set

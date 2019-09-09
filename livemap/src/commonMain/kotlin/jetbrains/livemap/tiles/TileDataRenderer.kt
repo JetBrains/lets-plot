@@ -9,6 +9,7 @@ import jetbrains.livemap.tiles.components.CellLayerKind
 
 internal interface TileDataRenderer {
     fun render(
+        canvas: Canvas,
         tileFeatures: Map<String, List<TileFeature>>,
         cellKey: CellKey,
         layerKind: CellLayerKind

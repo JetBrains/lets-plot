@@ -36,28 +36,10 @@ class CellStateComponent : EcsComponent {
 
 class StatisticsComponent : EcsComponent {
 
-    private val myStats = HashMap<CellKey, HashMap<String, String>>()
+    val stats = HashMap<CellKey, HashMap<String, String>>()
 
     fun add(cellKey: CellKey, key: String, value: String) {
-        myStats.getOrPut(cellKey, ::HashMap)[key] = value
-    }
-
-    operator fun contains(cellKey: CellKey): Boolean {
-        return myStats.containsKey(cellKey)
-    }
-
-    operator fun get(cellKey: CellKey): Map<String, String>? {
-        return myStats[cellKey]
-    }
-
-    internal fun remove(cellKey: CellKey) {
-        myStats.remove(cellKey)
-    }
-
-    companion object {
-        fun get(entity: EcsEntity): StatisticsComponent {
-            return entity.getComponent()
-        }
+        stats.getOrPut(cellKey, ::HashMap)[key] = value
     }
 }
 
@@ -70,15 +52,17 @@ class CellComponent(val cellKey: CellKey) : EcsComponent {
 }
 
 class DebugDataComponent : EcsComponent {
-
     private val myData = HashMap<String, String>()
 
     fun getLine(key: String): String {
         return key + myData[key]
     }
 
+    internal fun addData(data: Map<String, String>) {
+        myData.putAll(data)
+    }
+
     companion object {
-        private val lock = Lock()
         const val PARSING_TIME = "Parsing time: "
         val WORLD_RENDER_TIME = "Render time ${CellLayerKind.WORLD}: "
         val LABEL_RENDER_TIME = "Render time ${CellLayerKind.LABEL}: "
@@ -87,14 +71,6 @@ class DebugDataComponent : EcsComponent {
         const val LOADING_TIME = "Loading time: "
         const val CELL_DATA_SIZE = "Cell data size: "
         const val BIGGEST_LAYER = "BL: "
-
-        internal fun addData(entity: EcsEntity, data: Map<String, String>) {
-            lock.execute {
-                val cellData = entity.getComponent<DebugDataComponent>().myData
-
-                data.entries.forEach { cellData[it.key] = it.value }
-            }
-        }
     }
 }
 

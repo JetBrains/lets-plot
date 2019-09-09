@@ -16,17 +16,17 @@ import jetbrains.livemap.tiles.components.StatisticsComponent
 
 internal class DebugTileDataRenderer(
     private val myStats: StatisticsComponent,
+    private val mySystemTime: SystemTime,
     private val myTileDataRenderer: TileDataRenderer
 ) : TileDataRenderer {
 
-    private val mySystemTime: SystemTime = SystemTime()
-
     override fun render(
+        canvas: Canvas,
         tileFeatures: Map<String, List<TileFeature>>,
         cellKey: CellKey,
         layerKind: CellLayerKind
     ): MicroTask<Async<Canvas.Snapshot>> {
-        val microTask = myTileDataRenderer.render(tileFeatures, cellKey, layerKind)
+        val microTask = myTileDataRenderer.render(canvas, tileFeatures, cellKey, layerKind)
 
         val renderKey: String
         val snapshotKey: String
@@ -42,7 +42,7 @@ internal class DebugTileDataRenderer(
             CellLayerKind.DEBUG -> return microTask
         }
 
-        val debugMicroTask = DebugMicroTask(microTask)
+        val debugMicroTask = DebugMicroTask(mySystemTime, microTask)
         debugMicroTask.addFinishHandler {
             val start = mySystemTime.getTimeMs()
             debugMicroTask.getResult()

@@ -2,7 +2,9 @@ package jetbrains.livemap.tiles
 
 import jetbrains.livemap.core.LinkedList
 import jetbrains.livemap.projections.CellKey
-import jetbrains.livemap.tiles.EmptyTile.Companion.EMPTY_TILE
+import jetbrains.livemap.tiles.Tile.CompositeTile
+import jetbrains.livemap.tiles.Tile.EmptyTile.Companion.EMPTY_TILE
+import jetbrains.livemap.tiles.Tile.SubTile
 import kotlin.collections.Map.Entry
 
 internal class DonorTileCalculator(private val myExistedTiles: Map<CellKey, Tile>) {
@@ -28,52 +30,35 @@ internal class DonorTileCalculator(private val myExistedTiles: Map<CellKey, Tile
     private fun findDownDonorTile(cellKey: CellKey): Tile {
         val downDonors = LinkedList<Entry<CellKey, Tile>>()
 
-        for (entry in myExistedTiles) {
-            val tileKey = entry.key
-
-            if (!tileKey.startsWith(cellKey)) {
-                continue
+        myExistedTiles
+            .filter { it.key.startsWith(cellKey) }
+            .forEach { entry ->
+                if (!downDonors.any { entry.key.startsWith(it.key) }) {
+                    downDonors.removeAll { it.key.startsWith(entry.key) }
+                    downDonors.append(entry)
+                }
             }
 
-            if (!downDonors.any { tileKey.startsWith(it.key) }) {
-                downDonors.removeAll { it.key.startsWith(tileKey) }
-                downDonors.append(entry)
+        return if (downDonors.isNotEmpty()) {
+            CompositeTile().apply {
+                downDonors.forEach { (tileKey, tile) ->
+                    add(tile, tileKey.subKey(cellKey.length))
+                }
             }
-        }
-
-        if (downDonors.isEmpty()) {
-            return EMPTY_TILE
-        }
-
-        return CompositeTile().apply {
-            downDonors.forEach {
-                add(it.value, it.key.subKey(cellKey.length))
-            }
+        } else {
+            EMPTY_TILE
         }
     }
 
     private fun findUpDonorTile(cellKey: CellKey): Tile {
-        var upDonor: Entry<CellKey, Tile>? = null
-
-        for (entry in myExistedTiles) {
-            val tileKey = entry.key
-
-            if (cellKey.startsWith(tileKey) && (upDonor == null || tileKey.length > upDonor.key.length)) {
-                upDonor = entry
-            }
-        }
-
-        if (upDonor == null) {
-            return EMPTY_TILE
-        }
-
-        return SubTile(upDonor.value, cellKey.subKey(upDonor.key.length))
+        return myExistedTiles
+            .filter { cellKey.startsWith(it.key) }
+            .maxBy { it.key.length }
+            ?.let { SubTile(it.value, cellKey.subKey(it.key.length)) }
+            ?: EMPTY_TILE
     }
 
     private fun CellKey.startsWith(other: CellKey): Boolean = this.key.startsWith(other.key)
 
     private fun CellKey.subKey(length: Int): String = this.key.substring(length)
-
-    private val CellKey.length: Int
-        get() = key.length
 }

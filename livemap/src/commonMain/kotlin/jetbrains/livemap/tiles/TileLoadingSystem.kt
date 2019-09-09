@@ -2,6 +2,7 @@ package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileRect
+import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.plot.builder.layout.GeometryUtil.round
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.LiveMapContext
@@ -19,6 +20,7 @@ import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
+import jetbrains.livemap.tiles.Tile.SnapshotTile
 import jetbrains.livemap.tiles.components.*
 import jetbrains.livemap.tiles.components.RendererCacheComponent.Companion.NULL_RENDERER
 
@@ -28,6 +30,7 @@ class TileLoadingSystem(
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myMapRect: DoubleRectangle
+    private lateinit var myCanvasSupplier: () -> Canvas
     private lateinit var myTileDataFetcher: TileDataFetcher
     private lateinit var myTileDataParser: TileDataParser
     private lateinit var myTileDataRenderer: TileDataRenderer
@@ -36,18 +39,18 @@ class TileLoadingSystem(
     override fun initImpl(context: LiveMapContext) {
         myMapRect = context.mapProjection.mapRect
         val dimension = round(myMapRect.dimension)
-        val canvasSupplier = { context.mapRenderContext.canvasProvider.createCanvas(dimension) }
+        myCanvasSupplier = { context.mapRenderContext.canvasProvider.createCanvas(dimension) }
 
         myTileDataFetcher = TileDataFetcherImpl(context.mapProjection, myTileService)
         myTileDataParser = TileDataParserImpl(context.mapProjection)
-        myTileDataRenderer = TileDataRendererImpl(canvasSupplier, myTileService::mapConfig)
+        myTileDataRenderer = TileDataRendererImpl(myTileService::mapConfig)
 
         run {
-            //enable debug stats
-            val stats = StatisticsComponent.get(getSingletonEntity(CELL_STATE_REQUIRED_COMPONENTS))
-            myTileDataFetcher = DebugTileDataFetcher(stats, myTileDataFetcher)
-            myTileDataParser = DebugTileDataParser(stats, myTileDataParser)
-            myTileDataRenderer = DebugTileDataRenderer(stats, myTileDataRenderer)
+            // enable debug stats
+            val stats: StatisticsComponent = getSingletonEntity(CELL_STATE_REQUIRED_COMPONENTS).get()
+            myTileDataFetcher = DebugTileDataFetcher(stats, context.systemTime, myTileDataFetcher)
+            myTileDataParser = DebugTileDataParser(stats, context.systemTime, myTileDataParser)
+            myTileDataRenderer = DebugTileDataRenderer(stats, context.systemTime, myTileDataRenderer)
         }
     }
 
@@ -97,7 +100,7 @@ class TileLoadingSystem(
                         tileLayerEntities.forEach { tileLayerEntity ->
                             microThreads.add(
                                 myTileDataRenderer
-                                    .render(tileFeatures, cellKey, KindComponent.getLayerKind(tileLayerEntity))
+                                    .render(myCanvasSupplier(), tileFeatures, cellKey, KindComponent.getLayerKind(tileLayerEntity))
                                     .map { snapshotAsync ->
                                         snapshotAsync.onSuccess { snapshot ->
                                             runLaterBySystem(tileLayerEntity) { theEntity ->
@@ -121,7 +124,7 @@ class TileLoadingSystem(
     }
 
     private fun createTileLayerEntities(cellKey: CellKey) {
-        val zoom = cellKey.toString().length
+        val zoom = cellKey.length
 
         val cellMapRect = getTileRect(myMapRect, cellKey.toString())
 
@@ -172,8 +175,6 @@ class TileLoadingSystem(
     private fun createDonorTileCalculators(): Map<CellLayerKind, DonorTileCalculator> {
         val layerTileMap = HashMap<CellLayerKind, MutableMap<CellKey, Tile>>()
 
-
-
         for (entity in getEntities(TILE_COMPONENT_LIST)) {
             val tile = TileComponent.getTile(entity) ?: continue
 
@@ -182,9 +183,7 @@ class TileLoadingSystem(
             layerTileMap.getOrPut(layerKind, ::HashMap)[CellComponent.getCellKey(entity)] = tile
         }
 
-        return HashMap<CellLayerKind, DonorTileCalculator>().apply {
-            layerTileMap.forEach { put(it.key, DonorTileCalculator(it.value)) }
-        }
+        return layerTileMap.mapValues {(_, tilesMap) -> DonorTileCalculator(tilesMap) }
     }
 
     companion object {

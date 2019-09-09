@@ -57,6 +57,7 @@ class LinkedList<T> : MutableIterable<T> {
     }
 
     fun isEmpty(): Boolean = head == null
+    fun isNotEmpty(): Boolean = head != null
 
     private fun remove(node: Node<T>) {
         if (node == head) {

@@ -18,14 +18,14 @@ class DebugDataSystem(componentManager: EcsComponentManager) : AbstractSystem<Li
         }
 
         val debugLayer = getSingletonEntity(DebugCellLayerComponent::class)
-        val stats = StatisticsComponent.get(getSingletonEntity(CELL_STATE_REQUIRED_COMPONENTS))
+        val statistics: StatisticsComponent = getSingletonEntity(CELL_STATE_REQUIRED_COMPONENTS).get()
 
         getEntities(DEBUG_REQUIRED_COMPONENTS).forEach { cellEntity ->
             val cellKey = cellEntity.get<CellComponent>().cellKey
+            val debug: DebugDataComponent = cellEntity.get()
 
-            stats[cellKey]?.let {
-                DebugDataComponent.addData(cellEntity, it)
-                stats.remove(cellKey)
+            statistics.stats.remove(cellKey)?.let {
+                debug.addData(it)
                 DirtyRenderLayerComponent.tag(debugLayer)
             }
         }

@@ -7,6 +7,7 @@ import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
+import jetbrains.livemap.tiles.Tile.*
 import jetbrains.livemap.tiles.components.TileComponent
 
 class TileRenderer : Renderer {
