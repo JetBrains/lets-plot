@@ -6,7 +6,7 @@ import jetbrains.livemap.core.ecs.EcsContext
 
 class SchedulerSystem(private val microTaskExecutor: MicroTaskExecutor, componentManager: EcsComponentManager) :
     AbstractSystem<EcsContext>(componentManager) {
-    var loading: Double = 0.0
+    var loading: Long = 0
         private set
 
     override fun initImpl(context: EcsContext) {
@@ -27,9 +27,9 @@ class SchedulerSystem(private val microTaskExecutor: MicroTaskExecutor, componen
                 }
             }
 
-            loading = (context.systemTime.getTimeMs() - context.updateStartTime).toDouble()
+            loading = (context.systemTime.getTimeMs() - context.updateStartTime)
         } else {
-            loading = 0.0
+            loading = 0
         }
     }
 

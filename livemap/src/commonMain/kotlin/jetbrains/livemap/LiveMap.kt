@@ -53,9 +53,13 @@ import jetbrains.livemap.obj2entity.MapObject2Entity
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ViewProjection
 import jetbrains.livemap.tilegeometry.TileGeometryProvider
-import jetbrains.livemap.tiles.*
-import jetbrains.livemap.tiles.Components.CellLayerComponent
-import jetbrains.livemap.tiles.Components.CellLayerKind
+import jetbrains.livemap.tiles.CellStateUpdateSystem
+import jetbrains.livemap.tiles.DebugDataSystem
+import jetbrains.livemap.tiles.TileLoadingSystem
+import jetbrains.livemap.tiles.TileRemovingSystem
+import jetbrains.livemap.tiles.components.CellLayerComponent
+import jetbrains.livemap.tiles.components.CellLayerKind
+import jetbrains.livemap.tiles.components.DebugCellLayerComponent
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
@@ -295,7 +299,7 @@ class LiveMap(
             componentManager
                 .createEntity("cell_layer_debug")
                 .addComponent(CellLayerComponent(CellLayerKind.DEBUG))
-                .addComponent(Components.DebugCellLayerComponent())
+                .addComponent(DebugCellLayerComponent())
                 .addComponent(LayerEntitiesComponent())
                 .addComponent(layerManager.createRenderLayerComponent("debug"))
         }

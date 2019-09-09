@@ -5,10 +5,10 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.DirtyRenderLayerComponent
 import jetbrains.livemap.tiles.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
-import jetbrains.livemap.tiles.Components.CellComponent
-import jetbrains.livemap.tiles.Components.DebugCellLayerComponent
-import jetbrains.livemap.tiles.Components.DebugDataComponent
-import jetbrains.livemap.tiles.Components.StatisticsComponent
+import jetbrains.livemap.tiles.components.CellComponent
+import jetbrains.livemap.tiles.components.DebugCellLayerComponent
+import jetbrains.livemap.tiles.components.DebugDataComponent
+import jetbrains.livemap.tiles.components.StatisticsComponent
 
 class DebugDataSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
@@ -18,14 +18,14 @@ class DebugDataSystem(componentManager: EcsComponentManager) : AbstractSystem<Li
         }
 
         val debugLayer = getSingletonEntity(DebugCellLayerComponent::class)
-        val stats = StatisticsComponent.get(getSingletonEntity(CELL_STATE_REQUIRED_COMPONENTS))
+        val statistics: StatisticsComponent = getSingletonEntity(CELL_STATE_REQUIRED_COMPONENTS).get()
 
         getEntities(DEBUG_REQUIRED_COMPONENTS).forEach { cellEntity ->
-            val cellKey = CellComponent.getCellKey(cellEntity)
+            val cellKey = cellEntity.get<CellComponent>().cellKey
+            val debug: DebugDataComponent = cellEntity.get()
 
-            stats[cellKey]?.let {
-                DebugDataComponent.addData(cellEntity, it)
-                stats.remove(cellKey)
+            statistics.stats.remove(cellKey)?.let {
+                debug.addData(it)
                 DirtyRenderLayerComponent.tag(debugLayer)
             }
         }

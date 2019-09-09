@@ -6,10 +6,12 @@ import jetbrains.datalore.base.registration.Registration
 import jetbrains.livemap.core.SystemTime
 import kotlin.math.max
 
-class DebugMicroTask<ItemT>(private val myMicroTask: MicroTask<ItemT>) : MicroTask<ItemT> {
+class DebugMicroTask<ItemT>(
+    private val mySystemTime: SystemTime,
+    private val myMicroTask: MicroTask<ItemT>
+) : MicroTask<ItemT> {
 
     private val finishEventSource = SimpleEventSource<Unit?>()
-    private val systemTime = SystemTime()
 
     var processTime: Long = 0
         private set
@@ -18,9 +20,9 @@ class DebugMicroTask<ItemT>(private val myMicroTask: MicroTask<ItemT>) : MicroTa
 
 
     override fun resume() {
-        val start = systemTime.getTimeMs()
+        val start = mySystemTime.getTimeMs()
         myMicroTask.resume()
-        val resumeTime = systemTime.getTimeMs() - start
+        val resumeTime = mySystemTime.getTimeMs() - start
 
         processTime += resumeTime
         maxResumeTime = max(resumeTime, maxResumeTime)

@@ -18,22 +18,18 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
         val transform = calculateTransform(cellKey)
 
         val result = HashMap<String, List<TileFeature>>()
-        val microThreads = ArrayList<MicroTask<Unit>>()
-        tileData.forEach { tileLayer ->
-            microThreads.add(
-                parseTileLayer(tileLayer, transform)
-                    .map { result[tileLayer.name] = it }
-            )
+
+        val microThreads = tileData.map { tileLayer ->
+            parseTileLayer(tileLayer, transform)
+                .map { result[tileLayer.name] = it }
         }
 
         return MicroTaskUtil.join(microThreads).map { result }
     }
 
     private fun calculateTransform(cellKey: CellKey): (DoubleVector) -> DoubleVector {
+        val zoomProjection = ProjectionUtil.square(ProjectionUtil.zoom(cellKey.length))
         val cellMapRect = getTileRect(myMapProjection.mapRect, cellKey.toString())
-        val zoom = cellKey.toString().length
-
-        val zoomProjection = ProjectionUtil.square(ProjectionUtil.zoom(zoom))
         val cellViewOrigin = zoomProjection.project(cellMapRect.origin)
 
         return { zoomProjection.project(myMapProjection.project(it)).subtract(cellViewOrigin) }
@@ -55,10 +51,10 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
                             tileFeatures.add(
                                 TileFeature(
                                     worldMultiPolygon,
-                                    emptyOrValue(tileLayer.kinds, it),
-                                    emptyOrValue(tileLayer.subs, it),
-                                    emptyOrValue(tileLayer.labels, it),
-                                    emptyOrValue(tileLayer.shorts, it)
+                                    tileLayer.kinds.getOrNull(it),
+                                    tileLayer.subs.getOrNull(it),
+                                    tileLayer.labels.getOrNull(it),
+                                    tileLayer.shorts.getOrNull(it)
                                 )
                             )
 
@@ -69,10 +65,6 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
 
                 MicroTaskUtil.join(microThreads).map<List<TileFeature>> { tileFeatures }
             }
-    }
-
-    private fun <T> emptyOrValue(list: List<T>, index: Int): T? {
-        return if (list.isEmpty()) null else list[index]
     }
 
     private fun createMicroThread(tileGeometryParser: TileGeometryParser): MicroTask<List<TileFeature.TileGeometry>> {

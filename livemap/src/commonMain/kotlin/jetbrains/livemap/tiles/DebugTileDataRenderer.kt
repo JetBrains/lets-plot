@@ -7,40 +7,42 @@ import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.multitasking.DebugMicroTask
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.projections.CellKey
-import jetbrains.livemap.tiles.Components.DebugDataComponent.Companion.LABEL_RENDER_TIME
-import jetbrains.livemap.tiles.Components.DebugDataComponent.Companion.LABEL_SNAPSHOT_TIME
-import jetbrains.livemap.tiles.Components.DebugDataComponent.Companion.WORLD_RENDER_TIME
-import jetbrains.livemap.tiles.Components.DebugDataComponent.Companion.WORLD_SNAPSHOT_TIME
+import jetbrains.livemap.tiles.components.CellLayerKind
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LABEL_RENDER_TIME
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LABEL_SNAPSHOT_TIME
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.WORLD_RENDER_TIME
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.WORLD_SNAPSHOT_TIME
+import jetbrains.livemap.tiles.components.StatisticsComponent
 
 internal class DebugTileDataRenderer(
-    private val myStats: Components.StatisticsComponent,
+    private val myStats: StatisticsComponent,
+    private val mySystemTime: SystemTime,
     private val myTileDataRenderer: TileDataRenderer
 ) : TileDataRenderer {
 
-    private val mySystemTime: SystemTime = SystemTime()
-
     override fun render(
+        canvas: Canvas,
         tileFeatures: Map<String, List<TileFeature>>,
         cellKey: CellKey,
-        layerKind: Components.CellLayerKind
+        layerKind: CellLayerKind
     ): MicroTask<Async<Canvas.Snapshot>> {
-        val microTask = myTileDataRenderer.render(tileFeatures, cellKey, layerKind)
+        val microTask = myTileDataRenderer.render(canvas, tileFeatures, cellKey, layerKind)
 
         val renderKey: String
         val snapshotKey: String
         when (layerKind) {
-            Components.CellLayerKind.WORLD -> {
+            CellLayerKind.WORLD -> {
                 renderKey = WORLD_RENDER_TIME
                 snapshotKey = WORLD_SNAPSHOT_TIME
             }
-            Components.CellLayerKind.LABEL -> {
+            CellLayerKind.LABEL -> {
                 renderKey = LABEL_RENDER_TIME
                 snapshotKey = LABEL_SNAPSHOT_TIME
             }
-            Components.CellLayerKind.DEBUG -> return microTask
+            CellLayerKind.DEBUG -> return microTask
         }
 
-        val debugMicroTask = DebugMicroTask(microTask)
+        val debugMicroTask = DebugMicroTask(mySystemTime, microTask)
         debugMicroTask.addFinishHandler {
             val start = mySystemTime.getTimeMs()
             debugMicroTask.getResult()

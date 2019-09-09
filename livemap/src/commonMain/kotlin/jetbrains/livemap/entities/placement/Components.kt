@@ -34,11 +34,7 @@ object Components {
 
         companion object {
             fun getDimension(entity: EcsEntity): DoubleVector {
-                return get(entity).dimension
-            }
-
-            private operator fun get(entity: EcsEntity): ScreenDimensionComponent {
-                return entity.getComponent()
+                return entity.get<ScreenDimensionComponent>().dimension
             }
 
             fun provide(entity: EcsEntity): ScreenDimensionComponent {
