@@ -13,6 +13,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
                 implementation project(':visualization-base-svg')

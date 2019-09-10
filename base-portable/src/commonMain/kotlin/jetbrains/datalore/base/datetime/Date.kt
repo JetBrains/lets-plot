@@ -47,7 +47,7 @@ class Date(val day: Int, val month: Month, val year: Int) : Comparable<Date> {
         return result + daysFromYearStart() - date.daysFromYearStart()
     }
 
-    internal fun daysFromYearStart(): Int {
+    fun daysFromYearStart(): Int {
         var result = day
         var current = month.prev()
         while (current != null) {

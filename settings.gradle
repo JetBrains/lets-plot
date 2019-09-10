@@ -11,7 +11,8 @@ pluginManagement {
     }
 }
 
-include 'base',
+include 'base-portable',
+        'base',
         'gis',
         'livemap',
         'livemap-demo',
@@ -34,7 +35,8 @@ include 'base',
         'visualization-demo-svg-canvas-renderer',
         'visualization-demo-svg-mapper',
         'visualization-demo-plot',
-        'python-extension'
+        'python-extension',
+        'test-common'
 
 
 // publishing

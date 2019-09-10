@@ -15,6 +15,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':visualization-base-svg')
                 implementation project(':visualization-base-canvas')
@@ -28,6 +29,7 @@ kotlin {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
+                implementation project(':test-common')
             }
         }
         jvmMain {

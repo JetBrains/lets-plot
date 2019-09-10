@@ -31,8 +31,12 @@ object JvmDateTimeUtil {
 
     fun fromJavaDate(date: java.util.Date?): DateTime? {
         return if (date == null) null else DateTime(
-                Date(date.date, Month.values()[date.month], BASE_YEAR + date.year),
-                Time(date.hours, date.minutes, date.seconds)
+            Date(
+                date.date,
+                Month.values()[date.month],
+                BASE_YEAR + date.year
+            ),
+            Time(date.hours, date.minutes, date.seconds)
         )
 
     }
@@ -42,7 +46,12 @@ object JvmDateTimeUtil {
     }
 
     fun toJavaDate(time: DateTime?, sourceZone: TimeZone, targetZone: TimeZone): java.util.Date? {
-        return if (time == null) null else toJavaDate(sourceZone.convertTo(time, targetZone))
+        return if (time == null) null else toJavaDate(
+            sourceZone.convertTo(
+                time,
+                targetZone
+            )
+        )
 
     }
 }

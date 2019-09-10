@@ -13,6 +13,7 @@ kotlin {
                 implementation "io.ktor:ktor-client-websockets:$ktor_version"
                 implementation "io.ktor:ktor-client-cio:$ktor_version"
                 implementation "io.ktor:ktor-client-js:$ktor_version"
+                implementation project(':base-portable')
                 implementation project(':base')
             }
         }

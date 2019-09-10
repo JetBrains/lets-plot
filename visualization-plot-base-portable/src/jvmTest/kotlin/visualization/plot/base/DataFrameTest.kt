@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base
 
-import jetbrains.datalore.base.gcommon.collect.Sets
+//import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.visualization.plot.base.data.DataFrameAssert
 import jetbrains.datalore.visualization.plot.base.data.generateData
 import jetbrains.datalore.visualization.plot.base.data.indices
@@ -31,26 +31,27 @@ class DataFrameTest {
     @Test
     fun selectIndices() {
         assertThat(myData.selectIndices(HashSet(mySelectIndices)))
-                .hasRowCount(3)
-                .hasSerie("x", toSerie("x", mySelectIndices))
-                .hasSerie("y", toSerie("y", mySelectIndices))
-                .hasSerie("c", toSerie("c", mySelectIndices))
+            .hasRowCount(3)
+            .hasSerie("x", toSerie("x", mySelectIndices))
+            .hasSerie("y", toSerie("y", mySelectIndices))
+            .hasSerie("c", toSerie("c", mySelectIndices))
     }
 
     @Test
     fun dropIndices() {
-        val dropIndices = Sets.difference(myAllIndices, HashSet(mySelectIndices))
+//        val dropIndices = Sets.difference(myAllIndices, HashSet(mySelectIndices))
+        val dropIndices = myAllIndices.minus(mySelectIndices)
         assertThat(myData.dropIndices(dropIndices))
-                .hasRowCount(3)
-                .hasSerie("x", toSerie("x", mySelectIndices))
-                .hasSerie("y", toSerie("y", mySelectIndices))
-                .hasSerie("c", toSerie("c", mySelectIndices))
+            .hasRowCount(3)
+            .hasSerie("x", toSerie("x", mySelectIndices))
+            .hasSerie("y", toSerie("y", mySelectIndices))
+            .hasSerie("c", toSerie("c", mySelectIndices))
     }
 
     @Test
     fun emptyData() {
         assertThat(DataFrame.Builder.emptyFrame())
-                .hasRowCount(0)
+            .hasRowCount(0)
     }
 
     companion object {

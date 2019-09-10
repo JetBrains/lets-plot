@@ -8,7 +8,7 @@ plugins {
 kotlin {
     jvm()
     js() {
-        browser { }
+        browser {}
         compileKotlinJs {
             kotlinOptions.sourceMap = true
             kotlinOptions.sourceMapEmbedSources = "always"
@@ -22,8 +22,7 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
-                // ToDo: get rid of this dependency
-                implementation kotlin('test-common')    // for Assertions.kt
+                implementation project(':base-portable')
             }
         }
         commonTest {
@@ -39,9 +38,6 @@ kotlin {
                 compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
                 compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
-
-                // ToDo: get rid of this dependency
-                compileOnly kotlin('test')  // for Assertions.kt
             }
         }
         jvmTest {
@@ -58,9 +54,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-js')
                 implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-
-                // ToDo: get rid of this dependency
-                compileOnly kotlin('test-js')   // for Assertions.kt
             }
         }
         jsTest {

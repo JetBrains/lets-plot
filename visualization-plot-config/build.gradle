@@ -13,9 +13,9 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
+                implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':visualization-base-svg')
-//                implementation project(':visualization-base-canvas')
                 implementation project(':visualization-plot-base-portable')
                 implementation project(':visualization-plot-base')
                 implementation project(':visualization-plot-common-portable')
@@ -29,6 +29,7 @@ kotlin {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
+                implementation project(':test-common')
             }
         }
         jvmMain {

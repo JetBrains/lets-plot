@@ -1,7 +1,5 @@
 package jetbrains.datalore.base.gcommon.collect
 
-import jetbrains.datalore.base.observable.collections.Collections
-
 object Sets {
     /**
      * Mutable set
@@ -17,7 +15,7 @@ object Sets {
     /**
      * Mutable set
      */
-    fun <E> newHashSet(elements: Iterator<E>): MutableSet<E> {
+    private fun <E> newHashSet(elements: Iterator<E>): MutableSet<E> {
         val set = HashSet<E>()
         while (elements.hasNext()) {
             set.add(elements.next())
@@ -25,12 +23,12 @@ object Sets {
         return set
     }
 
-    /**
-     * Unmodifiable copy
-     */
-    fun <E> difference(set1: Set<E>, set2: Set<E>): Set<E> {
-        val copy = HashSet(set1)
-        copy.removeAll(set2)
-        return Collections.unmodifiableSet(copy)
-    }
+//    /**
+//     * Unmodifiable copy
+//     */
+//    fun <E> difference(set1: Set<E>, set2: Set<E>): Set<E> {
+//        val copy = HashSet(set1)
+//        copy.removeAll(set2)
+//        return copy
+//    }
 }

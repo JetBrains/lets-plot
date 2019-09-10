@@ -1,6 +1,6 @@
 package jetbrains.datalore.base.gcommon.collect
 
-import jetbrains.datalore.base.assertion.assertFails
+//import jetbrains.datalore.base.assertion.assertFails
 import jetbrains.datalore.base.function.Predicate
 import kotlin.test.*
 

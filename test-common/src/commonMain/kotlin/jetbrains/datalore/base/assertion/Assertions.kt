@@ -29,13 +29,13 @@ private fun messagePrefix(message: String?): String {
     return if (message == null) "" else "$message "
 }
 
-fun assertFails(block: () -> Unit) {
-    try {
-        block()
-        throw AssertionError("Exception was expected")
-    } catch (ignore: RuntimeException) {
-    }
-}
+//fun assertFails(block: () -> Unit) {
+//    try {
+//        block()
+//        throw AssertionError("Exception was expected")
+//    } catch (ignore: RuntimeException) {
+//    }
+//}
 
 fun assertDoesNotFail(r: () -> Unit) {
     assertDoesNotFail("", r)

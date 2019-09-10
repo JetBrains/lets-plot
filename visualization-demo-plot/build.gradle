@@ -24,6 +24,7 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
+                implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
                 implementation project(':visualization-base-svg')
@@ -117,8 +118,9 @@ configurations {
 dependencies {
     libraryDependenciesJs "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
     libraryDependenciesJs "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-    // for Assertions.kt ToDo: get rid of kotlin-test here
-    libraryDependenciesJs "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+//    // for Assertions.kt ToDo: get rid of kotlin-test here
+//    libraryDependenciesJs "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+    projectDependenciesJs project(':base-portable')
     projectDependenciesJs project(':base')
     projectDependenciesJs project(':mapper-core')
     projectDependenciesJs project(':visualization-base-svg')

@@ -1,32 +1,26 @@
 plugins {
     id 'kotlin-multiplatform'
     id 'org.jetbrains.gradle.plugin.idea-ext'
-}
-repositories {
-    mavenCentral()
+    id 'groovy'   // add 'test' task
+    id 'com.moowork.node'
 }
 
 kotlin {
     jvm()
     js()
+
     sourceSets {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation project(':base-portable')
-                implementation project(':base')
-                implementation project(':mapper-core')
-                implementation project(':visualization-base-svg')
+                implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
+
+                implementation kotlin('test-common')
             }
         }
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-            }
-        }
-        jvmTest {
-            dependencies {
                 implementation kotlin('test')
                 implementation kotlin('test-junit')
             }
@@ -34,7 +28,9 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
-                implementation project(':visualization-base-svg')
+                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+
+                compileOnly kotlin('test-js')
             }
         }
     }
@@ -45,17 +41,6 @@ idea {
         settings {
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
-        }
-    }
-}
-
-
-// TMP: publish artifacts needed to build batik-based demo
-apply plugin: 'maven-publish'
-publishing {
-    repositories {
-        maven {
-            url = uri("$rootDir/out-repo")
         }
     }
 }

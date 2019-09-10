@@ -13,13 +13,9 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
-                implementation project(':base')
-//                implementation project(':visualization-base-svg')
-//                implementation project(':visualization-base-canvas')
-//                implementation project(':visualization-plot-base')
-                implementation project(':visualization-plot-base-portable')
+                implementation project(':base-portable')
                 implementation project(':visualization-plot-common-portable')
-//                implementation project(':visualization-plot-common')
+                implementation project(':visualization-plot-base-portable')
                 implementation project(':visualization-plot-builder-portable')
             }
         }
@@ -68,10 +64,6 @@ kotlin {
 idea {
     module {
         settings {
-//            packagePrefix["src/commonMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsTest/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }

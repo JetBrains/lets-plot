@@ -15,8 +15,8 @@ object BrowserDemoUtil {
     )
 
     val BASE_MAPPER_LIBS = listOf(
-//        "base.js",
-        "datalore-plot-base.js",
+        "datalore-plot-base-portable.js",          // base-portable
+        "datalore-plot-base.js",                   // base
         "mapper-core.js",
         "visualization-base-svg.js",
         "visualization-base-svg-mapper.js"

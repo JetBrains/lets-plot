@@ -15,13 +15,14 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation project(':base')
+                implementation project(':base-portable')
             }
         }
         commonTest {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
+                implementation project(':test-common')
             }
         }
         jvmMain {

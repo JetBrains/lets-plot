@@ -18,6 +18,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':gis')
                 implementation project(':livemap')
@@ -25,6 +26,7 @@ kotlin {
                 implementation project(':visualization-base-canvas')
                 implementation project(':visualization-demo-common')
                 implementation project(':visualization-demo-common-jfx')
+                implementation project(':visualization-plot-builder-portable')
                 implementation project(':visualization-plot-builder')
                 implementation project(':visualization-plot-base-portable')
                 implementation project(':visualization-plot-base')
