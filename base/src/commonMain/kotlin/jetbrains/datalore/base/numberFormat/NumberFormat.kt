@@ -1,6 +1,24 @@
 package jetbrains.datalore.base.numberFormat
 
+import jetbrains.datalore.base.numberFormat.NumberFormat.NumberInfo.Companion.createNumberInfo
 import kotlin.math.*
+
+fun length(v: Long): Int {
+    // log10 doesn't work for values 10^17 + 1, returning 17.0 instead of 17.00001
+
+    if (v == 0L) {
+        return 1
+    }
+
+    var len = 0
+    var rem = v
+    while(rem > 0) {
+        len++
+        rem /= 10
+    }
+
+    return len
+}
 
 class NumberFormat(private val spec: Spec) {
 
@@ -19,39 +37,89 @@ class NumberFormat(private val spec: Spec) {
         val trim: Boolean = false
     )
 
+
     data class NumberInfo(
-        val number: Double,
-        val negative: Boolean,
-        val integerPart: Long,
-        val fractionPart: Long,
-        val exponent: Int?
+        val number: Double = 0.0,
+        val negative: Boolean = false,
+        val integerPart: Long = 0,
+        val fractionalPart: Long = 0,
+        val exponent: Int? = null
     ) {
-        val fractionString: String
-        val fractionLeadingZeros: Int
-        val integerLength: Int
+        constructor(
+            number: Number,
+            integerPart: Long = 0,
+            fractionalPart: Long = 0,
+            exponent: Int? = null
+        ) : this(number.toDouble().absoluteValue, number.toDouble() < 0.0, integerPart, fractionalPart, exponent)
 
-        init {
-            fractionLeadingZeros =
-                if (fractionPart != 0L) {
-                    (MAX_SUPPORTED_FRACTION_EXP - floor(log10(fractionPart.toDouble())).toInt() - 1).coerceAtLeast(0)
-                } else {
-                    1
-                }
-
-            val fractionPrefix = "0".repeat(fractionLeadingZeros)
-            fractionString = fractionPrefix + fractionPart.toString().replace("0+$".toRegex(), "")
-
-            integerLength = integerPart.toString().length
-        }
-
-        fun asPercent(): NumberInfo {
-            return createNumberInfo(number * 100)
-        }
+        val fractionLeadingZeros = MAX_DECIMALS - length(fractionalPart)
+        val integerLength = length(integerPart)
+        val fractionString = "0".repeat(fractionLeadingZeros) + fractionalPart.toString().trimEnd('0')
 
         companion object {
-            const val MAX_SUPPORTED_FRACTION_EXP =
-                18 // max fraction length we can format (as any other format library does)
-            val MAX_SUPPORTED_FRACTION_VALUE = 10.0.pow(MAX_SUPPORTED_FRACTION_EXP).toLong()
+            /**
+             * max fraction length we can format (as any other format library does)
+            */
+            private const val MAX_DECIMALS = 18
+            internal val MAX_DECIMAL_VALUE = 10.0.pow(MAX_DECIMALS).toLong()
+
+            internal fun createNumberInfo(num: Number): NumberInfo {
+                // frac: "123", exp: 8, double: 0.00000123
+                //   -> long: 000_001_230_000_000_000 (extended to max decimal digits)
+                val encodeFraction = { frac: String, exp: Int -> frac.toLong() * 10.0.pow(MAX_DECIMALS - exp).toLong() }
+
+                val (intStr, fracStr, exponentString) =
+                    "^(\\d+)\\.?(\\d+)?e?([+-]?\\d+)?\$"
+                        .toRegex()
+                        .find(num.toDouble().absoluteValue.toString().toLowerCase())
+                        ?.destructured
+                        ?: error("Wrong number")
+
+                val exponent: Int = exponentString.toIntOrNull() ?: 0
+
+                // number = 1.23456E+55
+                if (exponent.absoluteValue > MAX_DECIMALS) {
+                    return NumberInfo(
+                        number = num,
+                        // "1" -> 1
+                        integerPart = intStr.toLong(),
+                        // fraction part ignored intentionally
+                        fractionalPart = 0,
+                        // 55
+                        exponent = exponent
+                    )
+                }
+
+                check(exponent < MAX_DECIMALS)
+                // number = 1.23E-4. double: 0.000123
+                if (exponent < 0) {
+                    return NumberInfo(
+                        number = num,
+                        // "1" + "23" -> 000_123_000_000_000_000L
+                        fractionalPart = encodeFraction(intStr + fracStr, exponent.absoluteValue + fracStr.length)
+                    )
+                }
+
+                check(exponent >= 0 && exponent <= MAX_DECIMALS)
+                // number = 1.234E+5, double: 123400.0
+                if (exponent >= fracStr.length) {
+                    return NumberInfo(
+                        number = num,
+                        // "1" + "234" + "00" -> 123400
+                        integerPart = (intStr + fracStr + "0".repeat(exponent - fracStr.length)).toLong()
+                    )
+                }
+
+                check(exponent >= 0 && exponent < fracStr.length)
+                // number = 1.234567E+3, double: 1234.567
+                return NumberInfo(
+                    number = num,
+                    // "1" + "[234]567" -> 1234
+                    integerPart = (intStr + fracStr.substring(0 until exponent)).toLong(),
+                    // "234[567]" -> 567_000_000_000_000_000
+                    fractionalPart = fracStr.substring(exponent).run { encodeFraction(this, this.length) }
+                )
+            }
         }
     }
 
@@ -65,26 +133,22 @@ class NumberFormat(private val spec: Spec) {
 
     data class FormattedNumber(
         val integerPart: String = "",
-        val fractionPart: String = "",
-        val exponentPart: String = ""
+        val fractionalPart: String = "",
+        val exponentialPart: String = ""
     ) {
-        val fractionLength
-            get() = if (fractionPart.isNotEmpty()) FRACTION_DELIMITER_LENGTH + fractionPart.length else 0
-
-        val fullLength: Int
-            get() = integerPart.length + fractionLength + exponentPart.length
+        val fractionalLength = 0.takeIf {fractionalPart.isEmpty() } ?: FRACTION_DELIMITER_LENGTH + fractionalPart.length
+        val fullLength = integerPart.length + fractionalLength + exponentialPart.length
 
         override fun toString() =
-            "$integerPart${FRACTION_DELIMITER.takeIf { fractionPart.isNotEmpty() } ?: ""}$fractionPart$exponentPart"
+            "$integerPart${FRACTION_DELIMITER.takeIf { fractionalPart.isNotEmpty() } ?: ""}$fractionalPart$exponentialPart"
     }
-
 
     fun apply(num: Number): String {
         val numberInfo = createNumberInfo(num)
         var output = Output()
 
         output = computeBody(output, numberInfo)
-        output = applyTrim(output)
+        output = trimFraction(output)
 
         output = computeSign(output, numberInfo)
         output = computePrefix(output)
@@ -125,7 +189,7 @@ class NumberFormat(private val spec: Spec) {
         var fullIntStr = zeroPadding + body.integerPart
         val commas = (ceil(fullIntStr.length / GROUP_SIZE.toDouble()) - 1).toInt()
 
-        val width = (spec.width - body.fractionLength - body.exponentPart.length)
+        val width = (spec.width - body.fractionalLength - body.exponentialPart.length)
             .coerceAtLeast(body.integerPart.length + commas)
 
         fullIntStr = group(fullIntStr)
@@ -145,7 +209,7 @@ class NumberFormat(private val spec: Spec) {
 
     private fun computeBody(res: Output, numberInfo: NumberInfo): Output {
         val formattedNumber = when (spec.type) {
-            "%" -> toFixedFormat(numberInfo.asPercent(), spec.precision)
+            "%" -> toFixedFormat(createNumberInfo(numberInfo.number * 100), spec.precision)
             "c" -> FormattedNumber(numberInfo.number.toString())
             "d" -> toSimpleFormat(numberInfo, 0)
             "e" -> toSimpleFormat(toExponential(numberInfo, spec.precision), spec.precision)
@@ -161,17 +225,151 @@ class NumberFormat(private val spec: Spec) {
         return res.copy(body = formattedNumber)
     }
 
-    private fun applyTrim(output: Output): Output {
-        if (!spec.trim || output.body.fractionPart.isEmpty()) {
+    private fun toExponential(numberInfo: NumberInfo, precision: Int = -1): NumberInfo {
+        val num = numberInfo.number
+        if (num == 0.0) {
+            return numberInfo.copy(exponent = 0)
+        }
+
+        var e = if (numberInfo.integerPart == 0L) {
+            -(numberInfo.fractionLeadingZeros + 1)
+        } else {
+            numberInfo.integerLength - 1
+        }
+        val n = num / 10.0.pow(e)
+
+        var newInfo = createNumberInfo(n)
+
+        if (precision > -1) {
+            newInfo = roundToPrecision(newInfo, precision)
+        }
+
+        if (newInfo.integerLength > 1) {
+            e += 1
+            newInfo = createNumberInfo(n / 10)
+        }
+
+        return newInfo.copy(exponent = e)
+    }
+
+    private fun toPrecisionFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
+        if (numberInfo.integerPart == 0L) {
+            if (numberInfo.fractionalPart == 0L) {
+                return toFixedFormat(numberInfo, precision - 1)
+            }
+            return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
+        } else {
+            if (numberInfo.integerLength > precision) {
+                return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
+            }
+            return toFixedFormat(numberInfo, precision - numberInfo.integerLength)
+        }
+    }
+
+    private fun toFixedFormat(numberInfo: NumberInfo, precision: Int = 0): FormattedNumber {
+        if (precision <= 0) {
+            return FormattedNumber(numberInfo.number.roundToLong().toString())
+        }
+
+        val newNumberInfo = roundToPrecision(numberInfo, precision)
+
+        val completePrecision = if (numberInfo.integerLength < newNumberInfo.integerLength) {
+            precision - 1
+        } else {
+            precision
+        }
+
+        if (newNumberInfo.fractionalPart == 0L) {
+            return FormattedNumber(newNumberInfo.integerPart.toString(), "0".repeat(completePrecision))
+        }
+
+        val fractionString = newNumberInfo.fractionString.padEnd(completePrecision, '0')
+
+        return FormattedNumber(newNumberInfo.integerPart.toString(), fractionString)
+    }
+
+    private fun toSimpleFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
+        val exponentString = if (numberInfo.exponent != null) {
+            val expSign = if (numberInfo.exponent.sign >= 0) "+" else ""
+            "e$expSign${numberInfo.exponent}"
+        } else {
+            ""
+        }
+
+        val expNumberInfo =
+            createNumberInfo(numberInfo.integerPart + numberInfo.fractionalPart / NumberInfo.MAX_DECIMAL_VALUE.toDouble())
+
+        if (precision > -1) {
+            val formattedNumber = toFixedFormat(expNumberInfo, precision)
+            return formattedNumber.copy(exponentialPart = exponentString)
+        }
+
+        val integerString = expNumberInfo.integerPart.toString()
+        val fractionString = if (expNumberInfo.fractionalPart == 0L) "" else expNumberInfo.fractionString
+        return FormattedNumber(integerString, fractionString, exponentString)
+    }
+
+    private fun toSiFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
+        val expNumberInfo = if (numberInfo.exponent == null) {
+            toExponential(numberInfo, precision - 1)
+        } else {
+            numberInfo
+        }
+        val exponent = expNumberInfo.exponent ?: 0
+        val suffixExp = floor(exponent / 3.0).coerceAtLeast(-8.0).coerceAtMost(8.0).toInt() * 3
+        val newNumberInfo = createNumberInfo(numberInfo.number * 10.0.pow(-suffixExp))
+
+        val suffixIndex = 8 + suffixExp / 3
+        val exponentString = SI_SUFFIXES[suffixIndex]
+        val formattedNumber = toFixedFormat(newNumberInfo, precision - newNumberInfo.integerLength)
+        return formattedNumber.copy(exponentialPart = exponentString)
+    }
+
+    private fun roundToPrecision(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
+        val exp = numberInfo.exponent ?: 0
+        val totalPrecision = precision + exp
+
+        var fractionalPart: Long
+        var integerPart: Long
+
+        if (totalPrecision < 0) {
+            fractionalPart = 0L
+            val intShift = totalPrecision.absoluteValue
+            integerPart = if (numberInfo.integerLength <= intShift) {
+                0
+            } else {
+                numberInfo.integerPart / 10.0.pow(intShift).toLong() * 10.0.pow(intShift).toLong()
+            }
+        } else {
+            val precisionExp = NumberInfo.MAX_DECIMAL_VALUE / 10.0.pow(totalPrecision).toLong()
+            fractionalPart = (numberInfo.fractionalPart.toDouble() / precisionExp).roundToLong() * precisionExp
+            integerPart = numberInfo.integerPart
+            if (fractionalPart == NumberInfo.MAX_DECIMAL_VALUE) {
+                fractionalPart = 0
+                ++integerPart
+            }
+        }
+
+        val num = integerPart + fractionalPart.toDouble() / NumberInfo.MAX_DECIMAL_VALUE
+
+        return numberInfo.copy(number = num, fractionalPart = fractionalPart, integerPart = integerPart)
+    }
+
+    private fun trimFraction(output: Output): Output {
+        if (!spec.trim || output.body.fractionalPart.isEmpty()) {
             return output
         }
 
-        val trimmedFraction = output.body.fractionPart.replace("0+\$".toRegex(), "")
-        return output.copy(body = output.body.copy(fractionPart = trimmedFraction))
+        val trimmedFraction = output.body.fractionalPart.trimEnd('0')
+        return output.copy(
+            body = output.body.copy(
+                fractionalPart = trimmedFraction
+            )
+        )
     }
 
     private fun computeSign(output: Output, numberInfo: NumberInfo): Output {
-        val isBodyZero = output.body.run { (integerPart.asSequence() + fractionPart.asSequence()).all { it == '0' } }
+        val isBodyZero = output.body.run { (integerPart.asSequence() + fractionalPart.asSequence()).all { it == '0' } }
 
         val isNegative = numberInfo.negative && !isBodyZero
         val signStr = if (isNegative) {
@@ -192,8 +390,9 @@ class NumberFormat(private val spec: Spec) {
     }
 
     private fun computeSuffix(res: Output): Output {
-        val suffix = PERCENT.takeIf { spec.type == "%" }.orEmpty()
-        return res.copy(suffix = suffix)
+        return res.copy(
+            suffix = PERCENT.takeIf { spec.type == "%" }.orEmpty()
+        )
     }
 
     private fun computePadding(output: Output): Output {
@@ -261,191 +460,6 @@ class NumberFormat(private val spec: Spec) {
             )
         }
 
-        private fun createNumberInfo(num: Number): NumberInfo {
-            val negative = num.toDouble() < 0.0
-            val number = num.toDouble().absoluteValue
-
-            val integerPart: Long
-            val fractionPart: Long
-
-            val str = number.toString().toLowerCase()
-            val numberRegex = "^(\\d+)\\.?(\\d+)?e?([+-]?\\d+)?\$".toRegex()
-            val matchResult = numberRegex.find(str) ?: throw IllegalArgumentException("Wrong number")
-
-            val integerString = matchResult.groups[1]?.value ?: "0"
-            val fractionString = matchResult.groups[2]?.value ?: "0"
-
-            var exponentPart: Int? = matchResult.groups[3]?.value?.toInt() ?: 0
-
-            if (exponentPart!!.absoluteValue <= NumberInfo.MAX_SUPPORTED_FRACTION_EXP) {
-                val fractionExpPow: Int
-                val newFractionString: String
-
-                if (exponentPart >= 0) {
-                    val moveFractionLength = exponentPart.coerceAtMost(fractionString.length)
-                    val moveFractionPart = fractionString.substring(0 until moveFractionLength)
-                    val newIntegerString = integerString + moveFractionPart
-
-                    integerPart = newIntegerString.toLong() * 10.0.pow(exponentPart - moveFractionLength).toLong()
-                    newFractionString = if (moveFractionLength < fractionString.length) {
-                        fractionString.substring(moveFractionLength)
-                    } else {
-                        "0"
-                    }
-                    fractionExpPow = NumberInfo.MAX_SUPPORTED_FRACTION_EXP - newFractionString.length
-                } else {
-                    integerPart = 0
-                    newFractionString = integerString + fractionString
-                    fractionExpPow =
-                        NumberInfo.MAX_SUPPORTED_FRACTION_EXP - (exponentPart.absoluteValue + fractionString.length)
-                }
-
-                fractionPart = newFractionString.toLong() * 10.0.pow(fractionExpPow).toLong()
-                exponentPart = null
-            } else {
-                integerPart = integerString.toLong()
-                fractionPart = 0
-            }
-
-            return NumberInfo(
-                number,
-                negative,
-                integerPart,
-                fractionPart,
-                exponentPart
-            )
-        }
-
-        private fun toExponential(numberInfo: NumberInfo, precision: Int = -1): NumberInfo {
-            val num = numberInfo.number
-            if (num == 0.0) {
-                return numberInfo.copy(exponent = 0)
-            }
-
-            var e = if (numberInfo.integerPart == 0L) {
-                -(numberInfo.fractionLeadingZeros + 1)
-            } else {
-                numberInfo.integerLength - 1
-            }
-            val n = num / 10.0.pow(e)
-
-            var newInfo = createNumberInfo(n)
-
-            if (precision > -1) {
-                newInfo = roundToPrecision(newInfo, precision)
-            }
-
-            if (newInfo.integerLength > 1) {
-                e += 1
-                newInfo = createNumberInfo(n / 10)
-            }
-
-            return newInfo.copy(exponent = e)
-        }
-
-        private fun toPrecisionFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-            if (numberInfo.integerPart == 0L) {
-                if (numberInfo.fractionPart == 0L) {
-                    return toFixedFormat(numberInfo, precision - 1)
-                }
-                return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
-            } else {
-                if (numberInfo.integerLength > precision) {
-                    return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
-                }
-                return toFixedFormat(numberInfo, precision - numberInfo.integerLength)
-            }
-        }
-
-        private fun toFixedFormat(numberInfo: NumberInfo, precision: Int = 0): FormattedNumber {
-            if (precision <= 0) {
-                return FormattedNumber(numberInfo.number.roundToLong().toString())
-            }
-
-            val newNumberInfo = roundToPrecision(numberInfo, precision)
-
-            var completePrecision = precision
-
-            if (numberInfo.integerLength < newNumberInfo.integerLength) {
-                --completePrecision
-            }
-
-            if (newNumberInfo.fractionPart == 0L) {
-                return FormattedNumber(newNumberInfo.integerPart.toString(), "0".repeat(completePrecision))
-            }
-
-            val fractionString = newNumberInfo.fractionString.padEnd(completePrecision, '0')
-
-            return FormattedNumber(newNumberInfo.integerPart.toString(), fractionString)
-        }
-
-        private fun toSimpleFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-            val exponentString = if (numberInfo.exponent != null) {
-                val expSign = if (numberInfo.exponent.sign >= 0) "+" else ""
-                "e$expSign${numberInfo.exponent}"
-            } else {
-                ""
-            }
-
-            val expNumberInfo =
-                createNumberInfo(numberInfo.integerPart + numberInfo.fractionPart / NumberInfo.MAX_SUPPORTED_FRACTION_VALUE.toDouble())
-
-            if (precision > -1) {
-                val formattedNumber = toFixedFormat(expNumberInfo, precision)
-                return formattedNumber.copy(exponentPart = exponentString)
-            }
-
-            val integerString = expNumberInfo.integerPart.toString()
-            val fractionString = if (expNumberInfo.fractionPart == 0L) "" else expNumberInfo.fractionString
-            return FormattedNumber(integerString, fractionString, exponentString)
-        }
-
-        private fun toSiFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-            val expNumberInfo = if (numberInfo.exponent == null) {
-                toExponential(numberInfo, precision - 1)
-            } else {
-                numberInfo
-            }
-            val exponent = expNumberInfo.exponent ?: 0
-            val suffixExp = floor(exponent / 3.0).coerceAtLeast(-8.0).coerceAtMost(8.0).toInt() * 3
-            val newNumberInfo = createNumberInfo(numberInfo.number * 10.0.pow(-suffixExp))
-
-            val suffixIndex = 8 + suffixExp / 3
-            val exponentString = SI_SUFFIXES[suffixIndex]
-            val formattedNumber = toFixedFormat(newNumberInfo, precision - newNumberInfo.integerLength)
-            return formattedNumber.copy(exponentPart = exponentString)
-        }
-
-        private fun roundToPrecision(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
-            val exp = numberInfo.exponent ?: 0
-            val totalPrecision = precision + exp
-
-            var fractionPart: Long
-            var integerPart: Long
-
-            if (totalPrecision < 0) {
-                fractionPart = 0L
-                val intShift = totalPrecision.absoluteValue
-                integerPart = if (numberInfo.integerLength <= intShift) {
-                    0
-                } else {
-                    numberInfo.integerPart / 10.0.pow(intShift).toLong() * 10.0.pow(intShift).toLong()
-                }
-            } else {
-                val precisionExp = NumberInfo.MAX_SUPPORTED_FRACTION_VALUE / 10.0.pow(totalPrecision).toLong()
-                fractionPart = (numberInfo.fractionPart.toDouble() / precisionExp).roundToLong() * precisionExp
-                integerPart = numberInfo.integerPart
-                if (fractionPart == NumberInfo.MAX_SUPPORTED_FRACTION_VALUE) {
-                    fractionPart = 0
-                    ++integerPart
-                }
-            }
-
-            val num = integerPart + fractionPart.toDouble() / NumberInfo.MAX_SUPPORTED_FRACTION_VALUE
-
-            return numberInfo.copy(number = num, fractionPart = fractionPart, integerPart = integerPart)
-        }
-
         private fun group(str: String) = str
             .reversed() // 1234 -> 4321
             .asSequence() // [4,3,2,1]
@@ -455,4 +469,3 @@ class NumberFormat(private val spec: Spec) {
             .reversed() // 1,234
     }
 }
-
