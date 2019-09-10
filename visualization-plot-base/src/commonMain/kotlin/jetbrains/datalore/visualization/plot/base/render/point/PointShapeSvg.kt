@@ -11,7 +11,7 @@ import jetbrains.datalore.visualization.plot.base.render.point.symbol.Glyphs
 
 object PointShapeSvg {
     fun create(shape: PointShape, location: DoubleVector, p: DataPointAesthetics): SvgSlimObject {
-        if (shape.code == PointShapes.dot().code) {
+        if (shape == TinyPointShape) {
             return createTinyDotShape(location, p)
         }
         if (shape is NamedShape) {

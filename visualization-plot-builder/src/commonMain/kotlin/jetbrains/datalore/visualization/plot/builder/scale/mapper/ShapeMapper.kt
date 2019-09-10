@@ -2,10 +2,10 @@ package jetbrains.datalore.visualization.plot.builder.scale.mapper
 
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.base.render.point.PointShape
-import jetbrains.datalore.visualization.plot.base.render.point.PointShapes
+import jetbrains.datalore.visualization.plot.base.render.point.TinyPointShape
 
 object ShapeMapper {
-    val NA_VALUE = PointShapes.dot()
+    val NA_VALUE = TinyPointShape
 
     fun allShapes(): List<PointShape> {
         val bestSix: List<PointShape> = listOf(

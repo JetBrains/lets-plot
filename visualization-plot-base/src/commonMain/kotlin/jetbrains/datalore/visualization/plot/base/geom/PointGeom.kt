@@ -13,7 +13,7 @@ import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.base.render.point.PointShapeSvg
-import jetbrains.datalore.visualization.plot.base.render.point.PointShapes
+import jetbrains.datalore.visualization.plot.base.render.point.TinyPointShape
 import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 open class PointGeom : GeomBase() {
@@ -55,7 +55,7 @@ open class PointGeom : GeomBase() {
 
     private fun getTooltipParams(p: DataPointAesthetics): TooltipParams {
         var color = Color.TRANSPARENT
-        if (p.shape()!!.code == PointShapes.dot().code) {
+        if (p.shape() == TinyPointShape) {
             color = p.color()!!
         } else if (p.shape() is NamedShape) {
             val shape = p.shape() as NamedShape

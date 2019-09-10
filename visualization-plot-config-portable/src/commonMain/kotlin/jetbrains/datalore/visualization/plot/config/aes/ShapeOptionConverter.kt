@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.config.aes
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.base.render.point.PointShape
-import jetbrains.datalore.visualization.plot.base.render.point.PointShapes
+import jetbrains.datalore.visualization.plot.base.render.point.TinyPointShape
 
 internal class ShapeOptionConverter : Function<Any?, PointShape?> {
 
@@ -19,7 +19,7 @@ internal class ShapeOptionConverter : Function<Any?, PointShape?> {
             for (shape in NamedShape.values()) {
                 map[shape.code] = shape
             }
-            map[PointShapes.dot().code] = PointShapes.dot()
+            map[TinyPointShape.code] = TinyPointShape
             SHAPE_BY_CODE = map
         }
 
@@ -45,11 +45,11 @@ internal class ShapeOptionConverter : Function<Any?, PointShape?> {
             if (s.isNotEmpty()) {
                 val ch = s[0]
                 return if (ch == '.') {
-                    PointShapes.dot()
+                    TinyPointShape
                 } else NamedShape.BULLET
                 // TODO: implement
             }
-            return PointShapes.dot()
+            return TinyPointShape
         }
     }
 }
