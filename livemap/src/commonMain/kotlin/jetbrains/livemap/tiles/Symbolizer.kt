@@ -11,11 +11,9 @@ import jetbrains.gis.tileprotocol.TileFeature
 import jetbrains.gis.tileprotocol.mapConfig.Style
 import kotlin.math.round
 
-typealias Runnable = () -> Unit
-
 interface Symbolizer {
 
-    fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable>
+    fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit>
     fun applyTo(ctx: Context2d)
 
     fun Context2d.drawLine(line: AbstractGeometryList<DoubleVector>) {
@@ -38,8 +36,8 @@ interface Symbolizer {
             }
         }
 
-        override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable> {
-            val tasks = ArrayList<Runnable>()
+        override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
+            val tasks = ArrayList<() -> Unit>()
             feature.tileGeometry.multiPolygon?.let {
                 tasks.add { ctx.drawMultiPolygon(it) }
                 tasks.add(ctx::fill)
@@ -56,13 +54,11 @@ interface Symbolizer {
 
         private fun Context2d.drawMultiLine(multiLine: MultiLineString) {
             beginPath()
-            for (line in multiLine) {
-                drawLine(line)
-            }
+            multiLine.forEach { drawLine(it) }
         }
 
-        override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable> {
-            val tasks = ArrayList<Runnable>()
+        override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
+            val tasks = ArrayList<() -> Unit>()
 
             feature.tileGeometry.multiLineString?.let {
                 tasks.add { ctx.drawMultiLine(it) }
@@ -87,8 +83,8 @@ interface Symbolizer {
         private val myLabelBounds: MutableList<DoubleRectangle>
     ) : Symbolizer {
 
-        override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable> {
-            val tasks = ArrayList<Runnable>()
+        override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
+            val tasks = ArrayList<() -> Unit>()
             feature.tileGeometry.multiPoint?.let { multiPoint ->
                 getLabel(feature)?.let { label ->
                     tasks.add {
@@ -201,7 +197,7 @@ interface Symbolizer {
 
     class ShieldTextSymbolizer internal constructor(style: Style, labelBounds: List<DoubleRectangle>) : Symbolizer {
 
-        override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable> {
+        override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             return emptyList()
         }
 
@@ -212,7 +208,7 @@ interface Symbolizer {
 
     class LineTextSymbolizer internal constructor(style: Style, labelBounds: List<DoubleRectangle>) : Symbolizer {
 
-        override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<Runnable> {
+        override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             return emptyList()
         }
 

@@ -65,7 +65,7 @@ class TileLoadingSystem(
 
         getEntities(CellComponent::class).forEach { cellEntity ->
             requestTiles.remove(
-                CellComponent.getCellKey(cellEntity)
+                cellEntity.get<CellComponent>().cellKey
             )
         }
 
@@ -86,10 +86,10 @@ class TileLoadingSystem(
 
         val downloadedEntities = ArrayList<EcsEntity>()
         for (entity in getEntities(TileResponseComponent::class)) {
-            val tileData = TileResponseComponent.getTileData(entity) ?: continue
+            val tileData = entity.get<TileResponseComponent>().tileData ?: continue
             downloadedEntities.add(entity)
 
-            val cellKey = CellComponent.getCellKey(entity)
+            val cellKey = entity.get<CellComponent>().cellKey
             val tileLayerEntities = getTileLayerEntities(cellKey)
 
             val microThreadComponent = MicroThreadComponent(
@@ -100,11 +100,11 @@ class TileLoadingSystem(
                         tileLayerEntities.forEach { tileLayerEntity ->
                             microThreads.add(
                                 myTileDataRenderer
-                                    .render(myCanvasSupplier(), tileFeatures, cellKey, KindComponent.getLayerKind(tileLayerEntity))
+                                    .render(myCanvasSupplier(), tileFeatures, cellKey, tileLayerEntity.get<KindComponent>().layerKind)
                                     .map { snapshotAsync ->
                                         snapshotAsync.onSuccess { snapshot ->
                                             runLaterBySystem(tileLayerEntity) { theEntity ->
-                                                TileComponent.setTile(theEntity, SnapshotTile(snapshot))
+                                                theEntity.get<TileComponent>().tile = SnapshotTile(snapshot)
                                                 ParentLayerComponent.tagDirtyParentLayer(theEntity)
                                             }
                                         }
@@ -130,7 +130,7 @@ class TileLoadingSystem(
 
         for (layer in getEntities(CellLayerComponent::class)) {
             val layerEntities = layer.getComponent<LayerEntitiesComponent>()
-            val layerKind = CellLayerComponent.getKind(layer)
+            val layerKind = layer.get<CellLayerComponent>().layerKind
 
             val donorTile = calculateDonorTile(layerKind, cellKey)
 
@@ -151,7 +151,9 @@ class TileLoadingSystem(
                 layer.contains(DebugCellLayerComponent::class) ->
                     tileLayerEntity.addComponent(DebugDataComponent())
                 else ->
-                    tileLayerEntity.addComponent(TileComponent().setTile(donorTile))
+                    tileLayerEntity.addComponent(TileComponent().apply {
+                        tile = donorTile
+                    })
             }
 
             layerEntities.add(tileLayerEntity.id)
@@ -160,7 +162,7 @@ class TileLoadingSystem(
 
     private fun getTileLayerEntities(cellKey: CellKey): Iterable<EcsEntity> {
         return getEntities(CELL_COMPONENT_LIST)
-            .filter { CellComponent.getCellKey(it) == cellKey && KindComponent.getLayerKind(it) != CellLayerKind.DEBUG }
+            .filter { it.get<CellComponent>().cellKey == cellKey && it.get<KindComponent>().layerKind != CellLayerKind.DEBUG }
     }
 
     private fun getRenderer(layer: EcsEntity): Renderer = when {
@@ -176,11 +178,11 @@ class TileLoadingSystem(
         val layerTileMap = HashMap<CellLayerKind, MutableMap<CellKey, Tile>>()
 
         for (entity in getEntities(TILE_COMPONENT_LIST)) {
-            val tile = TileComponent.getTile(entity) ?: continue
+            val tile = entity.get<TileComponent>().tile ?: continue
 
-            val layerKind = KindComponent.getLayerKind(entity)
+            val layerKind = entity.get<KindComponent>().layerKind
 
-            layerTileMap.getOrPut(layerKind, ::HashMap)[CellComponent.getCellKey(entity)] = tile
+            layerTileMap.getOrPut(layerKind, ::HashMap)[entity.get<CellComponent>().cellKey] = tile
         }
 
         return layerTileMap.mapValues {(_, tilesMap) -> DonorTileCalculator(tilesMap) }

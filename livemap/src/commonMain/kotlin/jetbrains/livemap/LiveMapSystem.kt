@@ -30,7 +30,7 @@ abstract class LiveMapSystem protected constructor(componentManager: EcsComponen
             get() = myCamera.zoom % CAMERA_STEP == 0.0
 
         fun ifZoomChanged(consumer: (CameraUpdateComponent) -> Unit) {
-            val cameraUpdate = CameraUpdateComponent[entity]
+            val cameraUpdate: CameraUpdateComponent = entity.get()
 
             if (cameraUpdate.isZoomChanged) {
                 consumer(cameraUpdate)

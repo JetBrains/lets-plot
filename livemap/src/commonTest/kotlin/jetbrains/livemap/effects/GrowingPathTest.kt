@@ -11,9 +11,6 @@ import jetbrains.datalore.base.projectionGeometry.Ring
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
-import jetbrains.datalore.maps.livemap.entities.rendering.StyleComponent
-import jetbrains.datalore.maps.livemap.entities.rendering.setFillColor
-import jetbrains.datalore.maps.livemap.entities.rendering.setStrokeColor
 import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.livemap.core.animation.Animation.Direction
 import jetbrains.livemap.core.animation.Animation.Loop
@@ -25,6 +22,9 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectSystem
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
+import jetbrains.livemap.entities.rendering.StyleComponent
+import jetbrains.livemap.entities.rendering.setFillColor
+import jetbrains.livemap.entities.rendering.setStrokeColor
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.round

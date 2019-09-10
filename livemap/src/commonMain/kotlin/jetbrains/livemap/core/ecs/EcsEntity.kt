@@ -26,7 +26,7 @@ class EcsEntity internal constructor(
     }
 
     inline fun <reified T : EcsComponent> getComponent(): T {
-        return get<T>();
+        return get()
     }
 
     inline fun <reified T : EcsComponent> provide(byDefault: () -> T): T {
@@ -34,7 +34,7 @@ class EcsEntity internal constructor(
             return byDefault().also { addComponent(it) }
         }
 
-        return get<T>()
+        return get()
     }
 
     fun <T : EcsComponent> addComponent(component: T): EcsEntity {
@@ -84,5 +84,9 @@ class EcsEntity internal constructor(
         }
 
         return true
+    }
+
+    inline fun <reified T : EcsComponent> tag(supplier: () -> T) {
+        provide(supplier)
     }
 }

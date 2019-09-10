@@ -3,7 +3,7 @@ package jetbrains.livemap.entities.rendering
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraComponent
-import jetbrains.livemap.camera.CameraScale
+import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.DirtyRenderLayerComponent
@@ -15,13 +15,9 @@ class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val cameraEntity = getSingletonEntity(CameraComponent::class)
-
         val scaleEffect =
-            if (cameraEntity.contains(CameraScale.CameraScaleEffectComponent::class))
-                CameraScale.CameraScaleEffectComponent[cameraEntity]
-            else
-                null
+            getSingletonEntity(CameraComponent::class)
+                .tryGet<CameraScaleEffectComponent>()
 
         for (layer in getEntities(DIRTY_LAYERS)) {
             RenderLayerComponent.getRenderLayer(layer).addRenderTask { layerCtx ->

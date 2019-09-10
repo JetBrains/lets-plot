@@ -1,4 +1,4 @@
-package jetbrains.datalore.maps.livemap.entities.rendering
+package jetbrains.livemap.entities.rendering
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.ecs.EcsComponent

@@ -3,9 +3,6 @@ package jetbrains.livemap.obj2entity
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.maps.livemap.entities.point.PointComponent
 import jetbrains.datalore.maps.livemap.entities.point.PointRenderer
-import jetbrains.datalore.maps.livemap.entities.rendering.StyleComponent
-import jetbrains.datalore.maps.livemap.entities.rendering.setFillColor
-import jetbrains.datalore.maps.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.DevParams.Companion.POINT_SCALING
 import jetbrains.livemap.core.animation.Animation
@@ -21,6 +18,9 @@ import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.Components.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
+import jetbrains.livemap.entities.rendering.StyleComponent
+import jetbrains.livemap.entities.rendering.setFillColor
+import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.mapobjects.MapPoint
 import jetbrains.livemap.projections.MapProjection

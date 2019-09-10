@@ -15,7 +15,7 @@ class TileRenderer : Renderer {
     private lateinit var myCtx: Context2d
 
     override fun render(entity: EcsEntity, ctx: Context2d) {
-        val tile = TileComponent.getTile(entity) ?: return
+        val tile = entity.get<TileComponent>().tile ?: return
 
         val dimension = ScreenDimensionComponent.getDimension(entity)
         render(tile, DoubleRectangle(DoubleVector.ZERO, dimension), ctx)

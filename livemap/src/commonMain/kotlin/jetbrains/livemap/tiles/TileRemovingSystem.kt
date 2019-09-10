@@ -21,10 +21,10 @@ class TileRemovingSystem(private val myTileCacheLimit: Int, componentManager: Ec
         val cellState: CellStateComponent = getSingletonEntity(CELL_STATE_REQUIRED_COMPONENTS).get()
 
         getEntities(RendererCacheComponent::class).forEach { cellEntity ->
-            val cellKey = CellComponent.getCellKey(cellEntity)
+            val cellKey = cellEntity.get<CellComponent>().cellKey
 
             if (cellState.visibleCells.contains(cellKey)) {
-                val renderer = RendererCacheComponent.getRenderer(cellEntity)
+                val renderer = cellEntity.get<RendererCacheComponent>().renderer
                 RendererComponent.setRenderer(cellEntity, renderer)
             }
 
@@ -49,7 +49,7 @@ class TileRemovingSystem(private val myTileCacheLimit: Int, componentManager: Ec
         val layers = getEntities(LayerEntitiesComponent::class).toList()
 
         getEntities(CellComponent::class)
-            .filter { tilesToRemove.contains(CellComponent.getCellKey(it)) }
+            .filter { tilesToRemove.contains(it.get<CellComponent>().cellKey) }
             .forEach { cellEntity ->
                 layers.forEach { LayerEntitiesComponent[it].remove(cellEntity.id) }
                 cellEntity.remove()

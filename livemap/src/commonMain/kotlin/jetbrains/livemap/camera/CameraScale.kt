@@ -9,15 +9,13 @@ import jetbrains.livemap.core.ecs.*
 object CameraScale {
 
     fun setAnimation(cameraEntity: EcsEntity, origin: DoubleVector, center: DoubleVector, delta: Double) {
-        val camera: CameraComponent = cameraEntity.getComponent()
-
-        val manager = cameraEntity.componentManager
+        val camera = cameraEntity.get<CameraComponent>()
 
         if (camera.zoom % 1 != 0.0) {
             error("Non integer camera zoom detected: ${camera.zoom}")
         }
 
-        val animation = manager
+        val animation = cameraEntity.componentManager
             .createEntity("camera_scale_animation")
             .addComponent(
                 AnimationComponent().apply {
@@ -45,11 +43,9 @@ object CameraScale {
 
         override fun updateImpl(context: LiveMapContext, dt: Double) {
             val cameraEntity = getSingletonEntity(CameraComponent::class)
-            val camera: CameraComponent = cameraEntity.getComponent()
+            val camera = cameraEntity.get<CameraComponent>()
 
-            if (cameraEntity.contains(CameraScaleEffectComponent::class)) {
-                val scaleEffect = CameraScaleEffectComponent[cameraEntity]
-
+            cameraEntity.tryGet<CameraScaleEffectComponent>()?.let { scaleEffect ->
                 val animation = getEntityById(scaleEffect.animationId) ?: return
 
                 val progress = AnimationComponent[animation].progress
@@ -62,7 +58,7 @@ object CameraScale {
                 if (progress == 1.0) {
                     camera.center = scaleEffect.newCenter
                     cameraEntity.removeComponent(CameraScaleEffectComponent::class)
-                    UpdateViewProjectionComponent.tag(cameraEntity)
+                    cameraEntity.tag(::UpdateViewProjectionComponent)
                 }
             }
         }
@@ -76,11 +72,5 @@ object CameraScale {
         val startZoom: Double
     ) : EcsComponent {
         var currentScale: Double = 0.0
-
-        companion object {
-            operator fun get(cameraEntity: EcsEntity): CameraScaleEffectComponent {
-                return cameraEntity.getComponent()
-            }
-        }
     }
 }

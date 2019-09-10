@@ -25,8 +25,8 @@ class CameraUpdateDetectionSystem(componentManager: EcsComponentManager) :
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val cameraEntity = Entities.camera(componentManager)
-        val camera = CameraComponent[cameraEntity]
-        val cameraUpdate = CameraUpdateComponent[cameraEntity]
+        val camera = cameraEntity.get<CameraComponent>()
+        val cameraUpdate = cameraEntity.get<CameraUpdateComponent>()
 
         removeChangedComponents()
 
@@ -54,12 +54,12 @@ class CameraUpdateDetectionSystem(componentManager: EcsComponentManager) :
     private fun updateAll(zoomChanged: Boolean, centerChanged: Boolean) {
         for (entity in getEntities(CameraListenerComponent::class)) {
             if (zoomChanged) {
-                ZoomChangedComponent.tag(entity)
-                CenterChangedComponent.tag(entity)
+                entity.tag(::ZoomChangedComponent)
+                entity.tag(::CenterChangedComponent)
             }
 
             if (centerChanged) {
-                CenterChangedComponent.tag(entity)
+                entity.tag(::CenterChangedComponent)
             }
         }
     }

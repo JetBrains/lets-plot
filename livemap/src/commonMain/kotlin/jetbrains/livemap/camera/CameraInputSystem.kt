@@ -10,8 +10,8 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val cameraEntity = getSingletonEntity(CameraComponent::class)
-        val camera = cameraEntity.getComponent<CameraComponent>()
-        val mouseInput = cameraEntity.getComponent<MouseInputComponent>()
+        val camera = cameraEntity.get<CameraComponent>()
+        val mouseInput = cameraEntity.get<MouseInputComponent>()
         val viewProjection = context.mapRenderContext.viewProjection
 
         val dragDistance = mouseInput.dragDistance

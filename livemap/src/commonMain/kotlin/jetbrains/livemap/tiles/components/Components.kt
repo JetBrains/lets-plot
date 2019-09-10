@@ -43,13 +43,7 @@ class StatisticsComponent : EcsComponent {
     }
 }
 
-class CellComponent(val cellKey: CellKey) : EcsComponent {
-    companion object {
-        fun getCellKey(entity: EcsEntity): CellKey {
-            return entity.getComponent<CellComponent>().cellKey
-        }
-    }
-}
+class CellComponent(val cellKey: CellKey) : EcsComponent
 
 class DebugDataComponent : EcsComponent {
     private val myData = HashMap<String, String>()
@@ -74,26 +68,9 @@ class DebugDataComponent : EcsComponent {
     }
 }
 
-class KindComponent(val layerKind: CellLayerKind) : EcsComponent {
-    companion object {
-        fun getLayerKind(entity: EcsEntity): CellLayerKind {
-            return entity.getComponent<KindComponent>().layerKind
-        }
-    }
-}
+class KindComponent(val layerKind: CellLayerKind) : EcsComponent
 
-class CellLayerComponent(val kind: CellLayerKind) : EcsComponent {
-    companion object {
-
-        operator fun get(entity: EcsEntity): CellLayerComponent {
-            return entity.getComponent()
-        }
-
-        fun getKind(entity: EcsEntity): CellLayerKind {
-            return get(entity).kind
-        }
-    }
-}
+class CellLayerComponent(val layerKind: CellLayerKind) : EcsComponent
 
 class DebugCellLayerComponent : EcsComponent
 
@@ -102,71 +79,29 @@ class RendererCacheComponent : EcsComponent {
     var renderer: Renderer = NULL_RENDERER
 
     companion object {
-
         val NULL_RENDERER = object : Renderer {
             override fun render(entity: EcsEntity, ctx: Context2d) {}
-        }
-
-        internal operator fun get(entity: EcsEntity): RendererCacheComponent {
-            return entity.getComponent()
-        }
-
-        fun getRenderer(entity: EcsEntity): Renderer {
-            return get(entity).renderer
         }
     }
 }
 
 class TileResponseComponent : EcsComponent {
 
-    private val lock = Lock()
+    private val myLock = Lock()
     private var myTileData: List<TileLayer>? = null
 
     var tileData: List<TileLayer>?
-        get() = lock.execute {
+        get() = myLock.execute {
             return myTileData
         }
-        set(tileData) = lock.execute {
+        set(tileData) = myLock.execute {
             myTileData = tileData
         }
-
-    companion object {
-        fun get(entity: EcsEntity): TileResponseComponent {
-            return entity.getComponent()
-        }
-
-        fun getTileData(entity: EcsEntity): List<TileLayer>? {
-            return get(entity).tileData
-        }
-    }
 }
 
 class TileComponent : EcsComponent {
 
-    private var myTile: Tile? = null
-
-    internal fun getTile(): Tile? {
-        return myTile
-    }
-
-    fun setTile(tile: Tile?): TileComponent {
-        myTile = tile
-        return this
-    }
-
-    companion object {
-        fun get(entity: EcsEntity): TileComponent {
-            return entity.getComponent()
-        }
-
-        fun getTile(entity: EcsEntity): Tile? {
-            return get(entity).getTile()
-        }
-
-        fun setTile(entity: EcsEntity, tile: Tile) {
-            get(entity).setTile(tile)
-        }
-    }
+    var tile: Tile? = null
 }
 
 enum class CellLayerKind constructor(private val myValue: String) {

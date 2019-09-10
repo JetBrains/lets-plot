@@ -2,37 +2,12 @@ package jetbrains.livemap.camera
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.core.ecs.EcsEntity
 
-class ZoomChangedComponent : EcsComponent {
-    companion object {
+class ZoomChangedComponent : EcsComponent
 
-        fun tag(entity: EcsEntity) {
-            entity.provide(::ZoomChangedComponent)
-        }
-    }
-}
+class CenterChangedComponent : EcsComponent
 
-class CenterChangedComponent : EcsComponent {
-    companion object {
-
-        fun tag(entity: EcsEntity) {
-            entity.provide(::CenterChangedComponent)
-        }
-    }
-}
-
-class CameraListenerComponent : EcsComponent {
-    companion object {
-        operator fun get(entity: EcsEntity): CameraListenerComponent {
-            return entity.getComponent()
-        }
-
-        fun tag(entity: EcsEntity) {
-            entity.provide(::CameraListenerComponent)
-        }
-    }
-}
+class CameraListenerComponent : EcsComponent
 
 class CameraUpdateComponent : EcsComponent {
 
@@ -44,32 +19,8 @@ class CameraUpdateComponent : EcsComponent {
         isZoomChanged = false
         return this
     }
-
-    companion object {
-
-        operator fun get(entity: EcsEntity): CameraUpdateComponent {
-            return entity.getComponent()
-        }
-    }
 }
 
-class CameraComponent(var zoom: Double, var center: DoubleVector) : EcsComponent {
+class CameraComponent(var zoom: Double, var center: DoubleVector) : EcsComponent
 
-    companion object {
-        fun getZoom(entity: EcsEntity): Double {
-            return get(entity).zoom
-        }
-
-        operator fun get(entity: EcsEntity): CameraComponent {
-            return entity.getComponent()
-        }
-    }
-}
-
-class UpdateViewProjectionComponent : EcsComponent {
-    companion object {
-        fun tag(cellEntity: EcsEntity) {
-            cellEntity.provide(::UpdateViewProjectionComponent)
-        }
-    }
-}
+class UpdateViewProjectionComponent : EcsComponent

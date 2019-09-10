@@ -4,8 +4,6 @@ package jetbrains.datalore.maps.livemap.mapObjects2Entity
 import jetbrains.datalore.maps.cell.mapobjects.MapPath
 import jetbrains.datalore.maps.livemap.entities.geometry.Renderers
 import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
-import jetbrains.datalore.maps.livemap.entities.rendering.StyleComponent
-import jetbrains.datalore.maps.livemap.entities.rendering.setStrokeColor
 import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.animation.Animation
@@ -19,6 +17,8 @@ import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.placement.Components
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.RendererComponent
+import jetbrains.livemap.entities.rendering.StyleComponent
+import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil.transformMultipolygon

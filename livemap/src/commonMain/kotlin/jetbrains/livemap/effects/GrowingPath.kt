@@ -3,13 +3,13 @@ package jetbrains.livemap.effects
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.LineString
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
-import jetbrains.datalore.maps.livemap.entities.rendering.StyleComponent
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.gis.geoprotocol.GeometryUtil.asLineString
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.entities.rendering.Renderer
+import jetbrains.livemap.entities.rendering.StyleComponent
 import kotlin.math.sqrt
 
 

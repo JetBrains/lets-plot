@@ -2,12 +2,12 @@ package jetbrains.datalore.maps.livemap.entities.geometry
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.maps.livemap.entities.rendering.Common
-import jetbrains.datalore.maps.livemap.entities.rendering.StyleComponent
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.Context2d.LineJoin
 import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.rendering.Renderer
+import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.scaling.ScaleComponent
 
 object Renderers {
