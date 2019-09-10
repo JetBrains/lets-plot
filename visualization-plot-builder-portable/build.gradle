@@ -17,14 +17,10 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
                 implementation project(':base')
-//                implementation project(':visualization-base-svg')
-//                implementation project(':visualization-base-canvas')
                 implementation project(':visualization-plot-base-portable')
                 // TODO TMP
                 implementation project(':visualization-plot-base')
                 implementation project(':visualization-plot-common-portable')
-                // TODO TMP
-                implementation project(':visualization-plot-common')
             }
         }
         commonTest {
