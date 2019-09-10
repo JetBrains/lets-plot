@@ -116,7 +116,7 @@ object GeomUtil {
         return DoubleRectangle(origin, dimensions)
     }
 
-    internal fun createGroups(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<DataPointAesthetics>> {
+    fun createGroups(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<DataPointAesthetics>> {
         val pointsByGroup = HashMap<Int, MutableList<DataPointAesthetics>>()
         for (p in dataPoints) {
             val group = p.group()!!
