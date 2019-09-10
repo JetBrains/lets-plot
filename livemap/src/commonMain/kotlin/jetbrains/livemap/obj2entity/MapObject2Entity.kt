@@ -1,6 +1,5 @@
 package jetbrains.livemap.obj2entity
 
-import jetbrains.datalore.maps.livemap.mapObjects2Entity.MapPathProcessor
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager

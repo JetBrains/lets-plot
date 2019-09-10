@@ -3,7 +3,7 @@ package jetbrains.livemap.entities.regions
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.gis.geoprotocol.Geometry
-import jetbrains.livemap.core.LruCache
+import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 

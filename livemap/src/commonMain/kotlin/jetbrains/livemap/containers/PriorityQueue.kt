@@ -1,4 +1,4 @@
-package jetbrains.livemap.core
+package jetbrains.livemap.containers
 
 class PriorityQueue<T>(private val comparator: Comparator<T>) {
     private val queue: ArrayList<T> = ArrayList()

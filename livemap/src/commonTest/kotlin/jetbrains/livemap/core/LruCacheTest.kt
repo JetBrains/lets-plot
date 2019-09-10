@@ -1,5 +1,6 @@
 package jetbrains.livemap.core
 
+import jetbrains.livemap.containers.LruCache
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

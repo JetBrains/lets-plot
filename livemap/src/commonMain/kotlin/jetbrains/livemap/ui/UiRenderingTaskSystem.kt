@@ -4,7 +4,6 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.ecs.UiRenderComponent
 import jetbrains.livemap.core.rendering.layers.DirtyRenderLayerComponent
 import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
 

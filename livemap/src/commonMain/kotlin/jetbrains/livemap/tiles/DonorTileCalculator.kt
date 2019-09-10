@@ -1,6 +1,6 @@
 package jetbrains.livemap.tiles
 
-import jetbrains.livemap.core.LinkedList
+import jetbrains.livemap.containers.LinkedList
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.Tile.CompositeTile
 import jetbrains.livemap.tiles.Tile.EmptyTile.Companion.EMPTY_TILE

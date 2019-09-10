@@ -3,7 +3,7 @@ package jetbrains.livemap.tilegeometry
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.gis.geoprotocol.GeoTile
-import jetbrains.livemap.core.LruCache
+import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
 
 internal open class TileGeometryCache(mapSize: DoubleVector) {

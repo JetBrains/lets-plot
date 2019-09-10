@@ -1,4 +1,4 @@
-package jetbrains.datalore.maps.livemap.mapObjects2Entity
+package jetbrains.livemap.obj2entity
 
 
 import jetbrains.datalore.maps.cell.mapobjects.MapPath

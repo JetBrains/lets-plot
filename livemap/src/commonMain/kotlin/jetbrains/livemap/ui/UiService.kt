@@ -1,7 +1,10 @@
 package jetbrains.livemap.ui
 
-import jetbrains.livemap.core.ecs.*
+import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.input.ClickableComponent
 import jetbrains.livemap.core.input.EventListenerComponent
+import jetbrains.livemap.core.input.MouseInputComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.rendering.primitives.RenderBox
 import jetbrains.livemap.ui.UiRenderingTaskSystem.UiLayerComponent

@@ -1,7 +1,7 @@
 package jetbrains.livemap.tiles
 
 import jetbrains.datalore.visualization.base.canvas.Canvas
-import jetbrains.livemap.core.LinkedList
+import jetbrains.livemap.containers.LinkedList
 
 interface Tile {
     class SnapshotTile(val snapshot: Canvas.Snapshot) : Tile

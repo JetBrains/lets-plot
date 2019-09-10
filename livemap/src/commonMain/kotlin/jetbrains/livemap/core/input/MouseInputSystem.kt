@@ -1,4 +1,4 @@
-package jetbrains.livemap.core.ecs
+package jetbrains.livemap.core.input
 
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.MouseEvent
@@ -6,7 +6,9 @@ import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.livemap.core.input.InputMouseEvent
+import jetbrains.livemap.core.ecs.AbstractSystem
+import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.ecs.EcsContext
 
 class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {
 
@@ -18,8 +20,6 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
     private var myDragStartLocation: Vector? = null
     private var myDragCurrentLocation: Vector? = null
     private var myDragDelta: Vector? = null
-
-
 
     override fun init(context: EcsContext) {
         myRegs.add(context.eventSource.addEventHandler(MOUSE_DOUBLE_CLICKED, handler(this::onMouseDoubleClicked)))

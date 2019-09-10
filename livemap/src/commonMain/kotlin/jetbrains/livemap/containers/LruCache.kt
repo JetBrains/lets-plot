@@ -1,4 +1,4 @@
-package jetbrains.livemap.core
+package jetbrains.livemap.containers
 
 class LruCache<K, E>(private val limit: Int) {
     val values: List<E>

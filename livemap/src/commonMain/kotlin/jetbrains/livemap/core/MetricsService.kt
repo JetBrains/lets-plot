@@ -1,5 +1,6 @@
 package jetbrains.livemap.core
 
+import jetbrains.livemap.containers.PriorityQueue
 import jetbrains.livemap.core.ecs.EcsSystem
 
 class MetricsService (private val mySystemTime: SystemTime) {

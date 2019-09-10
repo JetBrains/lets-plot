@@ -4,7 +4,7 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.ecs.MouseInputComponent
+import jetbrains.livemap.core.input.MouseInputComponent
 
 class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 

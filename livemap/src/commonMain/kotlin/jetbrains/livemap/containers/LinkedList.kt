@@ -1,4 +1,4 @@
-package jetbrains.livemap.core
+package jetbrains.livemap.containers
 
 
 class LinkedList<T> : MutableIterable<T> {

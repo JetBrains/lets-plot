@@ -27,8 +27,7 @@ import jetbrains.livemap.camera.CameraInputSystem
 import jetbrains.livemap.camera.CameraScale
 import jetbrains.livemap.camera.CameraUpdateDetectionSystem
 import jetbrains.livemap.core.ecs.*
-import jetbrains.livemap.core.input.EventListenerComponent
-import jetbrains.livemap.core.input.MouseInputDetectionSystem
+import jetbrains.livemap.core.input.*
 import jetbrains.livemap.core.multitasking.AsyncMicroTaskExecutorFactory
 import jetbrains.livemap.core.multitasking.MicroTaskExecutor
 import jetbrains.livemap.core.multitasking.SchedulerSystem

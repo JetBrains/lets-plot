@@ -1,8 +1,7 @@
-package jetbrains.livemap.core.ecs
+package jetbrains.livemap.core.input
 
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.livemap.core.input.InputMouseEvent
-import jetbrains.livemap.core.input.MouseEventType
+import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.input.MouseEventType.*
 
 class MouseInputComponent : EcsComponent {
