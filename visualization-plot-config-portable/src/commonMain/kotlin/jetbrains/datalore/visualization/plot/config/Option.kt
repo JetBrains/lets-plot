@@ -263,35 +263,35 @@ object Option {
     }
 
     object GeomName {
-        const val PATH = "path"
-        const val LINE = "line"
-        const val SMOOTH = "smooth"
-        const val BAR = "bar"
+        private const val PATH = "path"
+        private const val LINE = "line"
+        private const val SMOOTH = "smooth"
+        private const val BAR = "bar"
         const val HISTOGRAM = "histogram"
-        const val TILE = "tile"
-        const val MAP = "map"
-        const val ERROR_BAR = "errorbar"
+        private const val TILE = "tile"
+        private const val MAP = "map"
+        private const val ERROR_BAR = "errorbar"
         const val POLYGON = "polygon"
-        const val AB_LINE = "abline"
-        const val H_LINE = "hline"
-        const val V_LINE = "vline"
-        const val BOX_PLOT = "boxplot"
+        private const val AB_LINE = "abline"
+        private const val H_LINE = "hline"
+        private const val V_LINE = "vline"
+        private const val BOX_PLOT = "boxplot"
         const val LIVE_MAP = "livemap"
         const val POINT = "point"
-        const val RIBBON = "ribbon"
-        const val AREA = "area"
-        const val DENSITY = "density"
-        const val CONTOUR = "contour"
-        const val CONTOURF = "contourf"
-        const val DENSITY2D = "density2d"
-        const val DENSITY2DF = "density2df"
-        const val JITTER = "jitter"
-        const val FREQPOLY = "freqpoly"
-        const val STEP = "step"
-        const val RECT = "rect"
-        const val SEGMENT = "segment"
-        const val TEXT = "text"
-        const val RASTER = "raster"
+        private const val RIBBON = "ribbon"
+        private const val AREA = "area"
+        private const val DENSITY = "density"
+        private const val CONTOUR = "contour"
+        private const val CONTOURF = "contourf"
+        private const val DENSITY2D = "density2d"
+        private const val DENSITY2DF = "density2df"
+        private const val JITTER = "jitter"
+        private const val FREQPOLY = "freqpoly"
+        private const val STEP = "step"
+        private const val RECT = "rect"
+        private const val SEGMENT = "segment"
+        private const val TEXT = "text"
+        private const val RASTER = "raster"
         const val IMAGE = "image"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
@@ -342,5 +342,17 @@ object Option {
         fun values(): Set<String> {
             return GEOM_KIND_MAP.keys
         }
+    }
+
+    object CoordName {
+        // coordinate systems
+        const val CARTESIAN = "cartesian"
+        const val FIXED = "fixed"
+        const val MAP = "map"
+        const val QUICK_MAP = "quickmap"  // todo
+        const val FLIP = "flip"      // todo
+        const val EQUAL = "equal"    // todo
+        const val POLAR = "polar"    // todo
+        const val TRANS = "trans"    // todo
     }
 }

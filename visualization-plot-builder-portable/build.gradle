@@ -3,6 +3,10 @@ plugins {
     id 'org.jetbrains.gradle.plugin.idea-ext'
 }
 
+repositories {
+    mavenCentral()
+}
+
 kotlin {
     jvm()
     js()
@@ -12,15 +16,15 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
-
                 implementation project(':base')
 //                implementation project(':visualization-base-svg')
 //                implementation project(':visualization-base-canvas')
-//                implementation project(':visualization-plot-base')
                 implementation project(':visualization-plot-base-portable')
+                // TODO TMP
+                implementation project(':visualization-plot-base')
                 implementation project(':visualization-plot-common-portable')
-//                implementation project(':visualization-plot-common')
-                implementation project(':visualization-plot-builder-portable')
+                // TODO TMP
+                implementation project(':visualization-plot-common')
             }
         }
         commonTest {
@@ -32,12 +36,9 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "com.google.code.gson:gson:$gson_version"
                 implementation "org.slf4j:slf4j-simple:$slf4j_version"
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-
-                implementation project(':visualization-base-svg')
             }
         }
         jvmTest {
@@ -68,10 +69,6 @@ kotlin {
 idea {
     module {
         settings {
-//            packagePrefix["src/commonMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsTest/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }
@@ -79,19 +76,21 @@ idea {
 }
 
 
+// Workaround for Idea/Gradle bug: https://youtrack.jetbrains.com/issue/KT-24463
+// MPP: Run does not add resource directory to classpath [Cannot get resource when using common module]
+task copyProcessedResources(type: Copy) {
+    from "${project.buildDir}/processedResources"
+    into "${project.buildDir}/classes/kotlin"
+}
+
+build.dependsOn += copyProcessedResources
+
+
 // TMP: publish artifacts needed to build batik-based demo
 apply plugin: 'maven-publish'
-//apply plugin: 'java-library'
 publishing {
-//    publications {
-//        mavenJava(MavenPublication) {
-//            from components.java
-//            artifact sourcesJar
-//        }
-//    }
     repositories {
         maven {
-//            url = uri("$buildDir/repository")
             url = uri("$rootDir/out-repo")
         }
     }

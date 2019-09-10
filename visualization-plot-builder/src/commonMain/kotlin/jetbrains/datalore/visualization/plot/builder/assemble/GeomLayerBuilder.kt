@@ -106,7 +106,12 @@ class GeomLayerBuilder {
 
         // create missing bindings for 'stat' variables
         // and other adjustments in bindings.
-        val replacementBindings = GeomLayerBuilderUtil.rewireBindingsAfterStat(data, myStat, myBindings, TypedScaleProviderMap(myScaleProviderByAes))
+        val replacementBindings = GeomLayerBuilderUtil.rewireBindingsAfterStat(
+            data,
+            myStat,
+            myBindings,
+            TypedScaleProviderMap(myScaleProviderByAes)
+        )
 
         // add 'transform' variable for each 'stat' variable
         val bindingsToPut = ArrayList<VarBinding>()
@@ -131,22 +136,25 @@ class GeomLayerBuilder {
         // Data Access shouldn't use aes mapper (!)
         val dataAccess = PointDataAccess(data, replacementBindings)
 
-        return MyGeomLayer(data,
-                myGeomProvider,
-                myPosProvider,
-                handledAes(),
-                myGeomProvider.renders(),
-                GroupingContext(data, myBindings, myGroupingVarName, handlesGroups()).groupMapper,
-                replacementBindings.values,
-                myConstantByAes,
-                dataAccess,
-                myLocatorLookupSpec,
-                myContextualMappingProvider.createContextualMapping(dataAccess),
-                myIsLegendDisabled)
+        return MyGeomLayer(
+            data,
+            myGeomProvider,
+            myPosProvider,
+            handledAes(),
+            myGeomProvider.renders(),
+            GroupingContext(data, myBindings, myGroupingVarName, handlesGroups()).groupMapper,
+            replacementBindings.values,
+            myConstantByAes,
+            dataAccess,
+            myLocatorLookupSpec,
+            myContextualMappingProvider.createContextualMapping(dataAccess),
+            myIsLegendDisabled
+        )
     }
 
     private fun handlesGroups(): Boolean {
-        return DataProcessing.groupsHandled(myGeomProvider, myPosProvider)
+//        return DataProcessing.groupsHandled(myGeomProvider, myPosProvider)
+        return myGeomProvider.handlesGroups() || myPosProvider.handlesGroups()
     }
 
     private fun handledAes(): List<Aes<*>> {
@@ -154,18 +162,20 @@ class GeomLayerBuilder {
     }
 
 
-    private class MyGeomLayer(override val dataFrame: DataFrame,
-                              geomProvider: GeomProvider,
-                              private val myPosProvider: PosProvider,
-                              handledAes: List<Aes<*>>,
-                              renderedAes: List<Aes<*>>,
-                              override val group: (Int) -> Int,
-                              varBindings: Collection<VarBinding>,
-                              constantByAes: TypedKeyHashMap,
-                              override val dataAccess: MappedDataAccess,
-                              override val locatorLookupSpec: LookupSpec,
-                              override val contextualMapping: ContextualMapping,
-                              override val isLegendDisabled: Boolean) : GeomLayer {
+    private class MyGeomLayer(
+        override val dataFrame: DataFrame,
+        geomProvider: GeomProvider,
+        private val myPosProvider: PosProvider,
+        handledAes: List<Aes<*>>,
+        renderedAes: List<Aes<*>>,
+        override val group: (Int) -> Int,
+        varBindings: Collection<VarBinding>,
+        constantByAes: TypedKeyHashMap,
+        override val dataAccess: MappedDataAccess,
+        override val locatorLookupSpec: LookupSpec,
+        override val contextualMapping: ContextualMapping,
+        override val isLegendDisabled: Boolean
+    ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()
         override val geomKind: GeomKind = geomProvider.geomKind
@@ -255,12 +265,14 @@ class GeomLayerBuilder {
                     Stats.IDENTITY -> transformedData
                     else -> {
                         val statCtx = SimpleStatContext(transformedData)
-                        val groupingContext = GroupingContext(transformedData, builder.myBindings, builder.myGroupingVarName, true)
+                        val groupingContext =
+                            GroupingContext(transformedData, builder.myBindings, builder.myGroupingVarName, true)
                         val dataAndGroupingContext = DataProcessing.buildStatData(
-                                transformedData,
-                                stat,
-                                builder.myBindings,
-                                groupingContext, null, null, statCtx)
+                            transformedData,
+                            stat,
+                            builder.myBindings,
+                            groupingContext, null, null, statCtx
+                        )
 
                         dataAndGroupingContext.data
                     }

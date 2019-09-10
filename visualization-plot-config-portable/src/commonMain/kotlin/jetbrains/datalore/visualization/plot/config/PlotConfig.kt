@@ -120,14 +120,14 @@ abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(opts, DEF_OP
     companion object {
         private const val ERROR_MESSAGE = "__error_message"
         private val DEF_OPTIONS = mapOf(
-            COORD to CoordProto.CARTESIAN
+            COORD to Option.CoordName.CARTESIAN
         )
         internal const val PLOT_COMPUTATION_MESSAGES = "computation_messages"
 
         fun failure(e: Exception): Map<String, Any> {
             val message = e.message
             val errorMessage = if (Strings.isNullOrEmpty(message)) e::class.simpleName!! else "Error: $message"
-            return mapOf(PlotConfig.ERROR_MESSAGE to errorMessage)
+            return mapOf(ERROR_MESSAGE to errorMessage)
         }
 
         fun assertPlotSpecOrErrorMessage(opts: Map<String, Any>) {

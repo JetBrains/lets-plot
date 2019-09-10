@@ -28,6 +28,7 @@ object BrowserDemoUtil {
         "visualization-plot-common.js",
         "visualization-plot-base-portable.js",
         "visualization-plot-base.js",
+        "visualization-plot-builder-portable.js",
         "visualization-plot-builder.js",
         "visualization-plot-config-portable.js",
         "visualization-plot-config.js"
