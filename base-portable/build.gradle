@@ -14,12 +14,19 @@ kotlin {
             kotlinOptions.sourceMapEmbedSources = "always"
         }
     }
+    macosX64() {
+        binaries {
+            sharedLib {
+                baseName = "datalore-${project.name}"
+            }
+        }
+    }
 
     sourceSets {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+//                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
             }
         }
@@ -62,6 +69,8 @@ kotlin {
                 implementation kotlin('test-js')
             }
         }
+
+        
     }
 }
 

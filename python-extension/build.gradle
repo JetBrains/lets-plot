@@ -7,7 +7,7 @@ kotlin {
     macosX64() {
         binaries {
             sharedLib {
-                baseName = "dlplot"
+                baseName = "datalore-${project.name}"
             }
         }
     }
@@ -16,8 +16,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-//                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-
 
 //                implementation project(':base')
 //                implementation project(':mapper-core')
@@ -26,14 +24,12 @@ kotlin {
 //                implementation project(':visualization-plot-base')
 //                implementation project(':visualization-plot-common')
 //                implementation project(':visualization-plot-builder')
-//                implementation project(':visualization-plot-config-portable')
-//                implementation project(':visualization-demo-common')
+                implementation project(':visualization-plot-config-portable')
             }
         }
 
         macosX64Main {
             dependencies {
-//                implementation project(':visualization-plot-config-portable')
             }
         }
     }

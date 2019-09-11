@@ -4,7 +4,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 object ColorPalette {
-    private val MIN_COLOR_SET_SIZE = 3
+    private const val MIN_COLOR_SET_SIZE = 3
 
     private fun colors(scheme: ColorScheme, count: Int): Array<String> {
         @Suppress("NAME_SHADOWING") var count = count
@@ -28,7 +28,12 @@ object ColorPalette {
         }
     }
 
-    enum class Sequential(private val myPresentation: String, override val colorSet: Array<Array<String>>) : ColorScheme {
+    // redundant `final` in overridden members are necessary due to kotlin-native issue:
+    // `Not in vtable error` #2865
+    // https://github.com/JetBrains/kotlin-native/issues/2865
+    @Suppress("RedundantModalityModifier")
+    enum class Sequential(private val myPresentation: String, final override val colorSet: Array<Array<String>>) :
+        ColorScheme {
         Blues("blues", ColorSets.BLUES),
         BuGn("blue-green", ColorSets.BU_GN),
         BuPu("blue-purple", ColorSets.BU_PU),
@@ -48,22 +53,27 @@ object ColorPalette {
         YlOrBr("yellow-orange-brown", ColorSets.YL_OR_BR),
         YlOrRd("yellow-orange-red", ColorSets.YL_OR_RD);
 
-        override val type: Type
+        final override val type: Type
             get() = Type.SEQUENTIAL
 
-        override val maxColors: Int
+        final override val maxColors: Int
             get() = maxColorSetSize(this)
 
-        override fun getColors(count: Int): Array<String> {
+        final override fun getColors(count: Int): Array<String> {
             return colors(this, count)
         }
 
-        override fun toString(): String {
+        final override fun toString(): String {
             return myPresentation
         }
     }
 
-    enum class Diverging(private val myPresentation: String, override val colorSet: Array<Array<String>>) : ColorScheme {
+    // redundant `final` in overridden members are necessary due to kotlin-native issue:
+    // `Not in vtable error` #2865
+    // https://github.com/JetBrains/kotlin-native/issues/2865
+    @Suppress("RedundantModalityModifier")
+    enum class Diverging(private val myPresentation: String, final override val colorSet: Array<Array<String>>) :
+        ColorScheme {
         BrBG("brown-blue/green", ColorSets.BR_BG),
         PiYG("pink-yellow/green", ColorSets.PI_YG),
         PRGn("purple/red-green", ColorSets.PR_GN),
@@ -74,22 +84,27 @@ object ColorPalette {
         RdYlGn("red-yellow-green", ColorSets.RD_YL_GN),
         Spectral("spectral", ColorSets.SPECTRAL);
 
-        override val type: Type
+        final override val type: Type
             get() = Type.DIVERGING
 
-        override val maxColors: Int
+        final override val maxColors: Int
             get() = maxColorSetSize(this)
 
-        override fun getColors(count: Int): Array<String> {
+        final override fun getColors(count: Int): Array<String> {
             return colors(this, count)
         }
 
-        override fun toString(): String {
+        final override fun toString(): String {
             return myPresentation
         }
     }
 
-    enum class Qualitative(private val myPresentation: String, override val colorSet: Array<Array<String>>) : ColorScheme {
+    // redundant `final` in overridden members are necessary due to kotlin-native issue:
+    // `Not in vtable error` #2865
+    // https://github.com/JetBrains/kotlin-native/issues/2865
+    @Suppress("RedundantModalityModifier")
+    enum class Qualitative(private val myPresentation: String, final override val colorSet: Array<Array<String>>) :
+        ColorScheme {
         Accent("accent", ColorSets.ACCENT),
         Dark2("dark 2", ColorSets.DARK_2),
         Paired("paired", ColorSets.PAIRED),
@@ -99,17 +114,17 @@ object ColorPalette {
         Set2("set 2", ColorSets.SET_2),
         Set3("set 3", ColorSets.SET_3);
 
-        override val type: Type
+        final override val type: Type
             get() = Type.QUALITATIVE
 
-        override val maxColors: Int
+        final override val maxColors: Int
             get() = maxColorSetSize(this)
 
-        override fun getColors(count: Int): Array<String> {
+        final override fun getColors(count: Int): Array<String> {
             return colors(this, count)
         }
 
-        override fun toString(): String {
+        final override fun toString(): String {
             return myPresentation
         }
     }

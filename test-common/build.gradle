@@ -1,20 +1,17 @@
 plugins {
     id 'kotlin-multiplatform'
     id 'org.jetbrains.gradle.plugin.idea-ext'
-    id 'groovy'   // add 'test' task
-    id 'com.moowork.node'
 }
 
 kotlin {
     jvm()
     js()
+    macosX64()
 
     sourceSets {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
-
                 implementation kotlin('test-common')
             }
         }
@@ -28,8 +25,6 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
-                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-
                 compileOnly kotlin('test-js')
             }
         }

@@ -17,7 +17,7 @@ object PaletteUtil {
             ColorPalette.Qualitative.Set3
     )
 
-    fun isExtensibleScheme(colorScheme: ColorScheme): Boolean {
+    private fun isExtensibleScheme(colorScheme: ColorScheme): Boolean {
         return EXTENSIBLE_COLOR_SCHEMES.contains(colorScheme)
     }
 
@@ -38,7 +38,7 @@ object PaletteUtil {
 //                .domain(minValue, maxValue)
 //    }
 
-    fun fromColorsHex(hexColors: Array<String>): List<Color> {
+    private fun fromColorsHex(hexColors: Array<String>): List<Color> {
         val colors = ArrayList<Color>()
         for (hexColor in hexColors) {
             try {

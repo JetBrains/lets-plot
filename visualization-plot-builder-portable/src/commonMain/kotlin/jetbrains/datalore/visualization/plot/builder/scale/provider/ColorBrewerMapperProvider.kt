@@ -23,7 +23,7 @@ class ColorBrewerMapperProvider
  * If -1, the order of colors is reversed
  * @param naValue
  */
-(type: String?, palette: Any?, direction: Double?, naValue: Color) : MapperProviderBase<Color>(naValue), WithGuideBreaks {
+constructor(type: String?, palette: Any?, direction: Double?, naValue: Color) : MapperProviderBase<Color>(naValue), WithGuideBreaks {
 
     private val myColorScheme: ColorScheme
     private val myReversedColors: Boolean
@@ -65,13 +65,10 @@ class ColorBrewerMapperProvider
 
             throw IllegalArgumentException("Palette name expected in: $names but was: '$name'")
         }
-
-        throw IllegalArgumentException("Unexpected palette type: $paletteType")
     }
 
     private fun colorSchemeByIndex(paletteType: ColorPalette.Type, index: Int): ColorScheme {
-        val values: Array<ColorScheme>
-        values = when (paletteType) {
+        val values: Array<ColorScheme> = when (paletteType) {
             ColorPalette.Type.SEQUENTIAL -> ColorPalette.Sequential.values() as Array<ColorScheme>
             ColorPalette.Type.DIVERGING -> ColorPalette.Diverging.values() as Array<ColorScheme>
             ColorPalette.Type.QUALITATIVE -> ColorPalette.Qualitative.values() as Array<ColorScheme>
