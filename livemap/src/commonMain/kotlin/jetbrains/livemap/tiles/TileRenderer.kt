@@ -18,8 +18,10 @@ class TileRenderer : Renderer {
     override fun render(entity: EcsEntity, ctx: Context2d) {
         val tile = entity.get<TileComponent>().tile ?: return
 
-        val dimension = ScreenDimensionComponent.getDimension(entity)
-        render(tile, newDoubleRectangle(ZERO_CLIENT_POINT, dimension), ctx)
+        entity.get<ScreenDimensionComponent>()
+            .dimension
+            .run { newDoubleRectangle(ZERO_CLIENT_POINT, this) }
+            .run { render(tile, this, ctx) }
     }
 
     internal fun render(tile: Tile, cellRect: DoubleRectangle, ctx: Context2d) {
@@ -59,6 +61,6 @@ class TileRenderer : Renderer {
     }
 
     private fun renderCompositeTile(tile: CompositeTile, srcKey: String, dstKey: String) {
-        tile.tiles.forEach { subTile -> renderTile(subTile.first, srcKey, dstKey + subTile.second) }
+        tile.tiles.forEach { (tile, key) -> renderTile(tile, srcKey, dstKey + key) }
     }
 }

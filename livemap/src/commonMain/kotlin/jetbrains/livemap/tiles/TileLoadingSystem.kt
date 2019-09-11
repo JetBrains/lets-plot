@@ -130,7 +130,6 @@ class TileLoadingSystem(
         val cellMapRect = getTileRect(myMapRect, cellKey.toString())
 
         for (layer in getEntities(CellLayerComponent::class)) {
-            val layerEntities = layer.getComponent<LayerEntitiesComponent>()
             val layerKind = layer.get<CellLayerComponent>().layerKind
 
             val donorTile = calculateDonorTile(layerKind, cellKey)
@@ -157,7 +156,7 @@ class TileLoadingSystem(
                     })
             }
 
-            layerEntities.add(tileLayerEntity.id)
+            layer.get<LayerEntitiesComponent>().add(tileLayerEntity.id)
         }
     }
 

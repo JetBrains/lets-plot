@@ -11,7 +11,7 @@ class ScaleUpdateSystem(componentManager: EcsComponentManager) : LiveMapSystem(c
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         if (camera().isIntegerZoom) {
             for (entity in getEntities(COMPONENT_TYPES)) {
-                val scaleComponent = ScaleComponent.get(entity)
+                val scaleComponent = entity.get<ScaleComponent>()
                 val scale = 2.0.pow(camera().zoom - scaleComponent.zoom)
                 scaleComponent.scale = scale
             }

@@ -6,10 +6,11 @@ import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.DirtyRenderLayerComponent
 import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
 import jetbrains.livemap.core.rendering.primitives.RenderObject
-import jetbrains.livemap.entities.placement.Components
+import jetbrains.livemap.entities.placement.Components.ScreenLoopComponent
 
 class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
@@ -20,23 +21,19 @@ class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
                 .tryGet<CameraScaleEffectComponent>()
 
         for (layer in getEntities(DIRTY_LAYERS)) {
-            RenderLayerComponent.getRenderLayer(layer).addRenderTask { layerCtx ->
+            layer.get<RenderLayerComponent>().renderLayer.addRenderTask { layerCtx ->
                 layerCtx.save()
-                if (scaleEffect != null) {
-                    val scaleOrigin = scaleEffect.scaleOrigin
-                    val scale = scaleEffect.currentScale
 
+                scaleEffect?.apply {
                     layerCtx.translate(scaleOrigin.x, scaleOrigin.y)
-                    layerCtx.scale(scale, scale)
+                    layerCtx.scale(currentScale, currentScale)
                     layerCtx.translate(-scaleOrigin.x, -scaleOrigin.y)
-                } else {
-                    layerCtx.scale(1.0, 1.0)
                 }
+                    ?: layerCtx.scale(1.0, 1.0)
 
-                for (layerEntity in LayerEntitiesComponent.getEntities(layer)) {
+                for (layerEntity in getLayerEntities(layer)) {
                     val renderer = RendererComponent.getRenderer(layerEntity)
-                    val origins = Components.ScreenLoopComponent.getOrigins(layerEntity)
-                    for (origin in origins) {
+                    layerEntity.get<ScreenLoopComponent>().origins.forEach { origin ->
                         context.mapRenderContext.draw(
                             layerCtx,
                             origin,
@@ -55,6 +52,10 @@ class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
     }
 
     companion object {
+        fun getLayerEntities(entity: EcsEntity): Iterable<EcsEntity> {
+            return entity.componentManager.getEntitiesById(entity.get<LayerEntitiesComponent>().entities)
+        }
+
         private val DIRTY_LAYERS = listOf(
             DirtyRenderLayerComponent::class,
             LayerEntitiesComponent::class,

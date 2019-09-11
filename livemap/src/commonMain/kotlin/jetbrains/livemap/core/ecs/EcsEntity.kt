@@ -25,10 +25,6 @@ class EcsEntity internal constructor(
         return get()
     }
 
-    inline fun <reified T : EcsComponent> getComponent(): T {
-        return get()
-    }
-
     inline fun <reified T : EcsComponent> provide(byDefault: () -> T): T {
         if (!contains(T::class)) {
             return byDefault().also { addComponent(it) }
@@ -52,7 +48,6 @@ class EcsEntity internal constructor(
         return this
     }
     
-    inline fun <reified T: EcsComponent> remove() = apply { removeComponent(T::class) }
 
     fun removeComponent(componentType: KClass<out EcsComponent>) =
         apply { componentManager.removeComponent(this, componentType) }
@@ -86,7 +81,8 @@ class EcsEntity internal constructor(
         return true
     }
 
-    inline fun <reified T : EcsComponent> tag(supplier: () -> T) {
-        provide(supplier)
-    }
+    inline fun <reified T : EcsComponent> getComponent(): T  = get()
+    inline fun <reified T: EcsComponent> remove() = apply { removeComponent(T::class) }
+    inline fun <reified T : EcsComponent> tag(supplier: () -> T) = provide(supplier)
+    inline fun <reified T : EcsComponent> untag() = removeComponent(T::class)
 }

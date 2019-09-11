@@ -35,7 +35,7 @@ object GrowingPath {
 
                 val animation = getEntityById(effectComponent.getAnimationId()) ?: return
 
-                calculateEffectState(effectComponent, path, AnimationComponent.get(animation).progress)
+                calculateEffectState(effectComponent, path, animation.get<AnimationComponent>().progress)
 
                 tagDirtyParentLayer(entity)
             }

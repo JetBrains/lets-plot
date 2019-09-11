@@ -4,7 +4,6 @@ package jetbrains.livemap.obj2entity
 import jetbrains.datalore.maps.cell.mapobjects.MapPath
 import jetbrains.datalore.maps.livemap.entities.geometry.Renderers
 import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
-import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.animation.Animations
@@ -48,7 +47,7 @@ internal class MapPathProcessor(
         toMapProjection = { geometry ->
             geometry.asMultipolygon()
                 .run { transformMultipolygon(this, myMapProjection::project) }
-                .run { WorldGeometry(Geometry.create(this))}
+                .run { WorldGeometry.create(this) }
         }
     }
 

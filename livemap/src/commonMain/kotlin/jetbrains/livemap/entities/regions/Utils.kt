@@ -4,6 +4,7 @@ import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.entities.regions.Components.RegionComponent
 
 object Utils {
     fun entityName(fragmentKey: FragmentKey): String {
@@ -26,8 +27,8 @@ object Utils {
                 return myComponentManager.getEntityById(myRegionIndex[regionId] ?: error(""))
             }
 
-            for (entity in myComponentManager.getEntities(Components.RegionComponent::class)) {
-                if (Components.RegionComponent.getId(entity).equals(regionId)) {
+            for (entity in myComponentManager.getEntities(RegionComponent::class)) {
+                if (entity.get<RegionComponent>().id.equals(regionId)) {
                     myRegionIndex.put(regionId, entity.id)
                     return entity
                 }

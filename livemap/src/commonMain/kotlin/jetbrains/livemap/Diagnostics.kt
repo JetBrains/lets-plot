@@ -129,7 +129,7 @@ open class Diagnostics {
             override fun update() {
                 val dirtyLayers = ArrayList<RenderLayer>()
                 for (dirtyLayerEntity in componentManager.getEntitiesById(layerRenderingSystem.dirtyLayers)) {
-                    dirtyLayers.add(RenderLayerComponent.getRenderLayer(dirtyLayerEntity))
+                    dirtyLayers.add(dirtyLayerEntity.get<RenderLayerComponent>().renderLayer)
                 }
 
                 val dirtyLayersString = StringBuilder()

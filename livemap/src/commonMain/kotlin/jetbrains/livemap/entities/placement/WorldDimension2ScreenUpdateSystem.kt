@@ -5,7 +5,8 @@ import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.ZoomChangedComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.entities.placement.Components.WorldDimensionComponent.Companion.getDimension
+import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
+import jetbrains.livemap.entities.placement.Components.WorldDimensionComponent
 import jetbrains.livemap.projections.ClientPoint
 import jetbrains.livemap.projections.WorldPoint
 import kotlin.math.pow
@@ -15,8 +16,11 @@ class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) :
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         if (camera().isIntegerZoom) {
             for (worldEntity in getEntities(COMPONENT_TYPES)) {
-                val screenDimension = world2Screen(getDimension(worldEntity), camera().zoom)
-                Components.ScreenDimensionComponent.provide(worldEntity).dimension = screenDimension
+                worldEntity.get<WorldDimensionComponent>()
+                    .dimension
+                    .let { world2Screen(it, camera().zoom) }
+                    .let { worldEntity.provide(::ScreenDimensionComponent).dimension = it }
+                
                 ParentLayerComponent.tagDirtyParentLayer(worldEntity)
             }
         }
@@ -26,7 +30,7 @@ class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) :
 
         private val COMPONENT_TYPES = listOf(
             ZoomChangedComponent::class,
-            Components.WorldDimensionComponent::class,
+            WorldDimensionComponent::class,
             ParentLayerComponent::class
         )
 

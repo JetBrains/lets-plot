@@ -43,9 +43,9 @@ object LayerManagers {
                             dirtyLayerEntities: Iterable<EcsEntity>
                         ) {
                             singleCanvasControl.context.clearRect(rect)
-                            renderingOrder.forEach {it.render()}
+                            renderingOrder.forEach(RenderLayer::render)
                             // Force render tasks to be added
-                            layerEntities.forEach { DirtyRenderLayerComponent.tag(it) }
+                            layerEntities.forEach { it.tag(::DirtyRenderLayerComponent) }
                         }
 
                     }
@@ -80,19 +80,17 @@ object LayerManagers {
                             layerEntities: Iterable<EcsEntity>,
                             dirtyLayerEntities: Iterable<EcsEntity>
                         ) {
-                            dirtyLayerEntities.forEach { dirtyLayer ->
-                                val renderLayer = RenderLayerComponent.getRenderLayer(dirtyLayer)
-                                renderLayer.clear()
-                                renderLayer.render()
-                                DirtyRenderLayerComponent.untag(dirtyLayer)
+                            dirtyLayerEntities.forEach {
+                                it.get<RenderLayerComponent>().renderLayer.apply { clear(); render(); }
+                                it.untag<DirtyRenderLayerComponent>()
                             }
 
-                            PlatformAsyncs.composite(
-                                renderingOrder.map { it.takeSnapshot() }
-                            ).onSuccess { snapshots ->
-                                singleCanvasControl.context.clearRect(rect)
-                                snapshots.forEach { singleCanvasControl.context.drawImage(it, 0.0, 0.0) }
-                            }
+                            PlatformAsyncs
+                                .composite(renderingOrder.map(RenderLayer::takeSnapshot))
+                                .onSuccess { snapshots ->
+                                    singleCanvasControl.context.clearRect(rect)
+                                    snapshots.forEach { singleCanvasControl.context.drawImage(it, 0.0, 0.0) }
+                                }
                         }
                     }
                 )
@@ -123,11 +121,9 @@ object LayerManagers {
                             layerEntities: Iterable<EcsEntity>,
                             dirtyLayerEntities: Iterable<EcsEntity>
                         ) {
-                            dirtyLayerEntities.forEach { entity ->
-                                val renderLayer = RenderLayerComponent.getRenderLayer(entity)
-                                renderLayer.clear()
-                                renderLayer.render()
-                                DirtyRenderLayerComponent.untag(entity)
+                            dirtyLayerEntities.forEach {
+                                it.get<RenderLayerComponent>().renderLayer.apply { clear(); render(); }
+                                it.untag<DirtyRenderLayerComponent>()
                             }
                         }
                     }

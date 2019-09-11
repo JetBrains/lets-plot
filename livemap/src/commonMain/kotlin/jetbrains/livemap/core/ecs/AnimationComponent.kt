@@ -13,10 +13,4 @@ class AnimationComponent : EcsComponent {
     lateinit var easingFunction: EasingFunction
     lateinit var loop: Loop
     lateinit var direction: Direction
-
-    companion object {
-        operator fun get(entity: EcsEntity): AnimationComponent {
-            return entity.getComponent()
-        }
-    }
 }

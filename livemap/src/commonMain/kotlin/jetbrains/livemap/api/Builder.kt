@@ -169,7 +169,7 @@ class PathBuilder {
                 .run(::Ring)
                 .run(::Polygon)
                 .run(::MultiPolygon)
-                .run { LonLatGeometry(Geometry.create(this)) }
+                .run(LonLatGeometry.Companion::create)
         )
     }
 }

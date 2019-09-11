@@ -26,7 +26,7 @@ class DebugDataSystem(componentManager: EcsComponentManager) : AbstractSystem<Li
 
             statistics.stats.remove(cellKey)?.let {
                 debug.addData(it)
-                DirtyRenderLayerComponent.tag(debugLayer)
+                debugLayer.tag(::DirtyRenderLayerComponent)
             }
         }
     }

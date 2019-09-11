@@ -95,7 +95,7 @@ internal class MapPointProcessor(
                 val transformComponent = TransformComponent()
                 val scaleAnimator = Animations.DoubleAnimator(0.0,1.0) {
                     transformComponent.scale = it
-                    DirtyRenderLayerComponent.tag(myLayerEntity)
+                    myLayerEntity.tag(::DirtyRenderLayerComponent)
                 }
 
                 animation.addAnimator(scaleAnimator)

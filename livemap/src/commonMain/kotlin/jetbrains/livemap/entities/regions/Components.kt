@@ -123,20 +123,12 @@ object Components {
     }
 
     class FragmentComponent(val fragmentKey: FragmentKey) : EcsComponent {
-
-        val quad: QuadKey
-            get() = fragmentKey.quadKey
-
-        companion object {
-            operator fun get(entity: EcsEntity): FragmentComponent {
-                return entity.getComponent()
-            }
-        }
+        val quad: QuadKey get() = fragmentKey.quadKey
     }
 
     class RegionComponent : EcsComponent {
 
-        private var myId: String? = null
+        var id: String? = null
         private val myFragmentEntities = HashSet<EcsEntity>()
 
         var fragments: Collection<EcsEntity>
@@ -146,32 +138,12 @@ object Components {
                 myFragmentEntities.addAll(fragments)
             }
 
-        fun getId(): String? {
-            return myId
-        }
-
         internal fun addFragment(fragmentEntity: EcsEntity) {
             myFragmentEntities.add(fragmentEntity)
         }
 
         internal fun removeFragment(fragmentEntityId: EcsEntity) {
             myFragmentEntities.remove(fragmentEntityId)
-        }
-
-        fun setId(id: String): RegionComponent {
-            myId = id
-            return this
-        }
-
-        companion object {
-
-            operator fun get(entity: EcsEntity): RegionComponent {
-                return entity.getComponent()
-            }
-
-            fun getId(entity: EcsEntity): String? {
-                return get(entity).getId()
-            }
         }
     }
 
@@ -309,21 +281,6 @@ object Components {
     }
 
     class FragmentGeometryComponent : EcsComponent {
-
         var geometry: Geometry? = null
-
-        companion object {
-            operator fun get(entity: EcsEntity): FragmentGeometryComponent {
-                return entity.getComponent()
-            }
-
-            fun getGeometry(entity: EcsEntity): Geometry? {
-                return entity.getComponent<FragmentGeometryComponent>().geometry
-            }
-
-            fun provide(entity: EcsEntity): FragmentGeometryComponent {
-                return entity.provide(::FragmentGeometryComponent)
-            }
-        }
     }
 }

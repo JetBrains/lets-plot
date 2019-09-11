@@ -3,7 +3,6 @@ package jetbrains.livemap.entities.geometry
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
-import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.ZoomChangedComponent
@@ -38,7 +37,7 @@ class WorldGeometry2ScreenUpdateSystem(private val myQuantIterations: Int, compo
                 runLaterBySystem(entity) { theEntity ->
                     ParentLayerComponent.tagDirtyParentLayer(theEntity)
                     theEntity.provide(::ScreenGeometryComponent).apply {
-                        geometry = ClientGeometry(Geometry.create(screenMultipolygon))
+                        geometry = ClientGeometry.create(screenMultipolygon)
                         this.zoom = zoom
                     }
                     
@@ -54,10 +53,10 @@ class WorldGeometry2ScreenUpdateSystem(private val myQuantIterations: Int, compo
         val viewProjection = context.mapRenderContext.viewProjection
 
         if (camera().isIntegerZoom) {
-            for (entity in getEntities(COMPONENT_TYPES)) {
-                entity.setComponent(
+            getEntities(COMPONENT_TYPES).forEach {
+                it.setComponent(
                     MicroThreadComponent(
-                        createScalingTask(entity, viewProjection.zoom),
+                        createScalingTask(it, viewProjection.zoom),
                         myQuantIterations
                     )
                 )

@@ -17,17 +17,17 @@ class SchedulerSystem(private val microTaskExecutor: MicroTaskExecutor, componen
         if (componentManager.getComponentsCount(MicroThreadComponent::class) > 0) {
             val microThreadEntities = getEntities(MicroThreadComponent::class).toList()
             val tasks = HashSet<MicroThreadComponent>()
-            microThreadEntities.forEach { tasks.add(MicroThreadComponent[it]) }
+            microThreadEntities.forEach { tasks.add(it.get<MicroThreadComponent>()) }
 
             val finishedTasks = microTaskExecutor.updateAndGetFinished(tasks)
 
             microThreadEntities.forEach {
-                if (finishedTasks.contains(MicroThreadComponent[it])) {
+                if (finishedTasks.contains(it.get<MicroThreadComponent>())) {
                     it.removeComponent(MicroThreadComponent::class)
                 }
             }
 
-            loading = (context.systemTime.getTimeMs() - context.updateStartTime)
+            loading = context.systemTime.getTimeMs() - context.updateStartTime
         } else {
             loading = 0
         }

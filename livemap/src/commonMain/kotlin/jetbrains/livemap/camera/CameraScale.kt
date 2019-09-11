@@ -49,7 +49,7 @@ object CameraScale {
             cameraEntity.tryGet<CameraScaleEffectComponent>()?.let { scaleEffect ->
                 val animation = getEntityById(scaleEffect.animationId) ?: return
 
-                val progress = AnimationComponent[animation].progress
+                val progress = animation.get<AnimationComponent>().progress
                 val deltaZoom = scaleEffect.delta * progress
 
                 scaleEffect.currentScale = if (deltaZoom < 0) 0.5 + (1 + deltaZoom) / 2 else 1.0 + deltaZoom

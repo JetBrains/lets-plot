@@ -43,7 +43,7 @@ class AnimationSystem(componentManager: EcsComponentManager) : AbstractSystem<Ec
 
     protected override fun updateImpl(context: EcsContext, dt: Double) {
         for (entity in getEntities(AnimationComponent::class)) {
-            val animationComponent = AnimationComponent[entity]
+            val animationComponent = entity.get<AnimationComponent>()
             updateTime(animationComponent, dt)
             updateProgress(animationComponent)
         }

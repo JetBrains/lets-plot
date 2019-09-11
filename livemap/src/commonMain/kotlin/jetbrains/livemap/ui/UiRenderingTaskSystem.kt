@@ -13,16 +13,16 @@ class UiRenderingTaskSystem(componentManager: EcsComponentManager) : AbstractSys
         val uiLayer = getSingletonEntity(UiLayerComponent::class)
 
         uiLayer
-            .getComponent<RenderLayerComponent>()
+            .get<RenderLayerComponent>()
             .renderLayer
             .addRenderTask { context2d ->
-                for (entity in getEntities(UiRenderComponent::class)) {
-                    val renderObject = entity.getComponent<UiRenderComponent>().renderBox
+                getEntities(UiRenderComponent::class).forEach {
+                    val renderObject = it.get<UiRenderComponent>().renderBox
                     context.mapRenderContext.draw(context2d, renderObject.origin, renderObject)
                 }
             }
 
-        DirtyRenderLayerComponent.tag(uiLayer)
+        uiLayer.tag(::DirtyRenderLayerComponent)
     }
 
     class UiLayerComponent : EcsComponent

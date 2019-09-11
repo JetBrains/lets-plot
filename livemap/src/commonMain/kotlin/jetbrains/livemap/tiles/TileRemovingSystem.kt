@@ -51,7 +51,7 @@ class TileRemovingSystem(private val myTileCacheLimit: Int, componentManager: Ec
         getEntities(CellComponent::class)
             .filter { tilesToRemove.contains(it.get<CellComponent>().cellKey) }
             .forEach { cellEntity ->
-                layers.forEach { LayerEntitiesComponent[it].remove(cellEntity.id) }
+                layers.forEach { it.get<LayerEntitiesComponent>().remove(cellEntity.id) }
                 cellEntity.remove()
             }
     }
