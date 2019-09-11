@@ -14,7 +14,9 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.effects.GrowingPath
 import jetbrains.livemap.entities.Entities
-import jetbrains.livemap.entities.placement.Components
+import jetbrains.livemap.entities.geometry.LonLatGeometry
+import jetbrains.livemap.entities.geometry.WorldGeometry
+import jetbrains.livemap.entities.placement.Components.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.RendererComponent
 import jetbrains.livemap.entities.rendering.StyleComponent
@@ -22,6 +24,7 @@ import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil.transformMultipolygon
+import jetbrains.livemap.projections.toWorldPoint
 import kotlin.collections.Map.Entry
 
 
@@ -33,7 +36,7 @@ internal class MapPathProcessor(
     private val myLayerEntitiesComponent = LayerEntitiesComponent()
     private val myObjectsMap = HashMap<MapPath, EcsEntity>()
     private val myFactory: Entities.MapEntityFactory
-    private val toMapProjection: (Geometry) -> Geometry
+    private val toMapProjection: (LonLatGeometry) -> WorldGeometry
 
     init {
 
@@ -45,7 +48,7 @@ internal class MapPathProcessor(
         toMapProjection = { geometry ->
             geometry.asMultipolygon()
                 .run { transformMultipolygon(this, myMapProjection::project) }
-                .run { Geometry.create(this)}
+                .run { WorldGeometry(Geometry.create(this))}
         }
     }
 
@@ -62,12 +65,12 @@ internal class MapPathProcessor(
 
             GeometryUtil.bbox(coordinates.asMultipolygon())?.let { bbox ->
                 val pathEntity = myFactory
-                    .createMapEntity(bbox.origin, SIMPLE_RENDERER, "map_ent_path")
+                    .createMapEntity(bbox.origin.toWorldPoint(), SIMPLE_RENDERER, "map_ent_path")
                     .addComponent(WorldGeometryComponent().apply {
                         geometry = coordinates
                     })
                     //.addComponent(ScaleComponent())
-                    .addComponent(Components.WorldDimensionComponent(bbox.dimension))
+                    .addComponent(WorldDimensionComponent(bbox.dimension.toWorldPoint()))
                     .addComponent(
                         StyleComponent().apply {
                             setStrokeColor(mapPath.strokeColor)

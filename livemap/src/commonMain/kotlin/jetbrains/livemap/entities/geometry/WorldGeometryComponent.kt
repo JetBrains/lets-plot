@@ -1,8 +1,8 @@
 package jetbrains.datalore.maps.livemap.entities.geometry
 
-import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.livemap.core.ecs.EcsComponent
+import jetbrains.livemap.entities.geometry.WorldGeometry
 
 class WorldGeometryComponent : EcsComponent {
-    var geometry: Geometry? = null
+    var geometry: WorldGeometry? = null
 }

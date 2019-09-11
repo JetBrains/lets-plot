@@ -1,6 +1,5 @@
 package jetbrains.livemap.obj2entity
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.maps.livemap.entities.point.PointComponent
 import jetbrains.datalore.maps.livemap.entities.point.PointRenderer
 import jetbrains.livemap.DevParams
@@ -23,7 +22,10 @@ import jetbrains.livemap.entities.rendering.setFillColor
 import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.mapobjects.MapPoint
+import jetbrains.livemap.projections.ClientPoint
 import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projections.toWorldPoint
 
 
 internal class MapPointProcessor(
@@ -57,7 +59,7 @@ internal class MapPointProcessor(
             val mapPoint = mapObject as MapPoint
 
             val pointEntity = myFactory
-                .createMapEntity(myMapProjection.project(mapPoint.point), SIMPLE_RENDERER, "map_ent_point")
+                .createMapEntity(myMapProjection.project(mapPoint.point).toWorldPoint(), SIMPLE_RENDERER, "map_ent_point")
                 .addComponent(PointComponent().apply { shape = mapPoint.shape })
                 .addComponent(createStyle(mapPoint))
 
@@ -68,11 +70,13 @@ internal class MapPointProcessor(
 
     private fun processDimension() {
         for ((point, entity) in myObjectsMap.entries) {
-            val dimension = (point.radius * 2.0).let { DoubleVector(it, it) }
+            val size = point.radius * 2.0
             if (myDevParams.isSet(POINT_SCALING)) {
-                entity.addComponent(WorldDimensionComponent(dimension))
+                entity.addComponent(WorldDimensionComponent(WorldPoint(size, size)))
             } else {
-                entity.addComponent(ScreenDimensionComponent().apply { this.dimension = dimension })
+                entity.addComponent(ScreenDimensionComponent().apply {
+                    dimension = ClientPoint(size, size)
+                })
             }
         }
     }

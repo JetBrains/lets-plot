@@ -5,6 +5,7 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.input.MouseInputComponent
+import jetbrains.livemap.projections.toClientPoint
 
 class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
@@ -20,7 +21,7 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
             camera.center = viewProjection.getMapCoord(
                 viewProjection.viewSize
                     .mul(0.5)
-                    .subtract(dragDistance.toDoubleVector())
+                    .subtract(dragDistance.toClientPoint())
             )
         }
     }

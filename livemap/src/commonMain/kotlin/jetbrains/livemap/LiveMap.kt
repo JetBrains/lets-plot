@@ -2,7 +2,6 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
@@ -49,8 +48,7 @@ import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.obj2entity.MapObject2Entity
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.ViewProjection
+import jetbrains.livemap.projections.*
 import jetbrains.livemap.tilegeometry.TileGeometryProvider
 import jetbrains.livemap.tiles.CellStateUpdateSystem
 import jetbrains.livemap.tiles.DebugDataSystem
@@ -225,8 +223,8 @@ class LiveMap(
             .addComponent(
                 ClickableComponent(
                     Rectangle().apply {
-                        rect = DoubleRectangle(
-                            DoubleVector.ZERO,
+                        rect = newDoubleRectangle(
+                            Coordinates.ZERO_CLIENT_POINT,
                             viewProjection.viewSize
                         )
                     }
@@ -239,7 +237,7 @@ class LiveMap(
                 return@addDoubleClickListener
             }
 
-            val origin = event.location!!.toDoubleVector()
+            val origin = event.location!!.let { ClientPoint(it.x, it.y) }
             val currentMapCenter = viewProjection.getMapCoord(viewProjection.viewSize.mul(0.5))
             val mapOrigin = viewProjection.getMapCoord(origin)
 

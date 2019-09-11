@@ -19,6 +19,7 @@ import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem.Co
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.projections.toWorldPoint
 import jetbrains.livemap.tiles.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
 import jetbrains.livemap.tiles.Tile.SnapshotTile
 import jetbrains.livemap.tiles.components.*
@@ -137,9 +138,9 @@ class TileLoadingSystem(
             val parentLayerComponent = ParentLayerComponent(layer.id)
             val name = "tile_${layerKind}_$cellKey"
             val tileLayerEntity =
-                mapEntity(componentManager, cellMapRect.origin, parentLayerComponent, NULL_RENDERER, name)
+                mapEntity(componentManager, cellMapRect.origin.toWorldPoint(), parentLayerComponent, NULL_RENDERER, name)
                     .addComponent(ScreenDimensionComponent().apply {
-                        dimension = world2Screen(cellMapRect.dimension, zoom.toDouble())
+                        dimension = world2Screen(cellMapRect.dimension.toWorldPoint(), zoom.toDouble())
                     })
                     .addComponent(CellComponent(cellKey))
                     .addComponent(KindComponent(layerKind))

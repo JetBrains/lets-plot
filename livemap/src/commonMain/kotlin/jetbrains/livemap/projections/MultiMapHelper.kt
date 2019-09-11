@@ -2,7 +2,6 @@ package jetbrains.livemap.projections
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.deltaOnLoop
 import jetbrains.livemap.projections.ProjectionUtil.calculateCellKeys
@@ -122,14 +121,14 @@ class MultiMapHelper(
         return normalize(y, myMapRect.top, myMapRect.bottom, myLoopY)
     }
 
-    override fun getOrigins(objRect: DoubleRectangle, viewRect: DoubleRectangle): List<DoubleVector> {
+    override fun getOrigins(objRect: DoubleRectangle, viewRect: DoubleRectangle): List<WorldPoint> {
         val xOrigins = getOrigins(objRect.xRange(), myMapRect.xRange(), viewRect.xRange(), myLoopX)
         val yOrigins = getOrigins(objRect.yRange(), myMapRect.yRange(), viewRect.yRange(), myLoopY)
 
-        val result = ArrayList<DoubleVector>()
+        val result = ArrayList<WorldPoint>()
         for (xOrigin in xOrigins) {
             for (yOrigin in yOrigins) {
-                result.add(DoubleVector(xOrigin, yOrigin))
+                result.add(WorldPoint(xOrigin, yOrigin))
             }
         }
         return result

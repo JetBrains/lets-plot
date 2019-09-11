@@ -1,11 +1,12 @@
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
+import jetbrains.livemap.projections.ClientPoint
+import jetbrains.livemap.projections.Coordinates.Companion.ZERO_CLIENT_POINT
 import jetbrains.livemap.tiles.components.CellComponent
 import jetbrains.livemap.tiles.components.DebugDataComponent
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.BIGGEST_LAYER
@@ -30,14 +31,14 @@ class DebugCellRenderer : Renderer {
         ctx.setLineWidth(LINE_WIDTH)
         ctx.setFont(FONT_STYLE)
 
-        ctx.strokeRect(DoubleVector.ZERO, cellDimension)
+        ctx.strokeRect(ZERO_CLIENT_POINT, cellDimension)
 
         ctx.drawNextLine(entity.get<CellComponent>().cellKey.toString())
 
         ctx.drawNextLines(entity.get(), LINES)
     }
 
-    private fun Context2d.strokeRect(origin: DoubleVector, dimension: DoubleVector) {
+    private fun Context2d.strokeRect(origin: ClientPoint, dimension: ClientPoint) {
         strokeRect(origin.x, origin.y, dimension.x, dimension.y)
     }
 

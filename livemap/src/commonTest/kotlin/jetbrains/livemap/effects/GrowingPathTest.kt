@@ -22,6 +22,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectSystem
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
+import jetbrains.livemap.entities.geometry.ClientGeometry
 import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.rendering.setFillColor
 import jetbrains.livemap.entities.rendering.setStrokeColor
@@ -120,7 +121,7 @@ class GrowingPathTest {
             .addComponent(myGrowingPathEffectComponent)
             .addComponent(
                 ScreenGeometryComponent().apply {
-                    geometry = createGeometry(*points)
+                    geometry = ClientGeometry(createGeometry(*points))
                 }
             )
             .addComponent(
@@ -141,7 +142,7 @@ class GrowingPathTest {
             )
             .addComponent(
                 ScreenGeometryComponent().apply {
-                    geometry = createGeometry(p(0.0, 0.0), p(1.0, 1.0), p(2.0, 2.0), p(3.0, 3.0), p(4.0, 4.0))
+                    geometry = ClientGeometry(createGeometry(p(0.0, 0.0), p(1.0, 1.0), p(2.0, 2.0), p(3.0, 3.0), p(4.0, 4.0)))
                 }
             )
             .addComponent(

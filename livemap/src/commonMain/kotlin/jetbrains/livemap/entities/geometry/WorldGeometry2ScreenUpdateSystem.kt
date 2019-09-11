@@ -1,5 +1,6 @@
 package jetbrains.livemap.entities.geometry
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.gis.geoprotocol.Geometry
@@ -27,7 +28,7 @@ class WorldGeometry2ScreenUpdateSystem(private val myQuantIterations: Int, compo
             entity.remove<ScreenGeometryComponent>()
         }
 
-        val worldOrigin = entity.get<WorldOriginComponent>().origin
+        val worldOrigin = entity.get<WorldOriginComponent>().origin.let { DoubleVector(it.x, it.y) }
         val zoomProjection = ProjectionUtil.square(ProjectionUtil.zoom(zoom))
         return GeometryTransform
             .simple(entity.get<WorldGeometryComponent>().geometry!!.asMultipolygon()) {
@@ -37,7 +38,7 @@ class WorldGeometry2ScreenUpdateSystem(private val myQuantIterations: Int, compo
                 runLaterBySystem(entity) { theEntity ->
                     ParentLayerComponent.tagDirtyParentLayer(theEntity)
                     theEntity.provide(::ScreenGeometryComponent).apply {
-                        geometry = Geometry.create(screenMultipolygon)
+                        geometry = ClientGeometry(Geometry.create(screenMultipolygon))
                         this.zoom = zoom
                     }
                     

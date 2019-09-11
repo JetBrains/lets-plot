@@ -21,6 +21,7 @@ import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
+import jetbrains.livemap.entities.geometry.LonLatGeometry
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind.PATH
 import jetbrains.livemap.mapobjects.MapLayerKind.POINT
@@ -168,7 +169,7 @@ class PathBuilder {
                 .run(::Ring)
                 .run(::Polygon)
                 .run(::MultiPolygon)
-                .run(Geometry.Companion::create)
+                .run { LonLatGeometry(Geometry.create(this)) }
         )
     }
 }

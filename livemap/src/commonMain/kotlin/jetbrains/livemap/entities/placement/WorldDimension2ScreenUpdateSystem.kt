@@ -1,12 +1,13 @@
 package jetbrains.livemap.entities.placement
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.ZoomChangedComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.placement.Components.WorldDimensionComponent.Companion.getDimension
+import jetbrains.livemap.projections.ClientPoint
+import jetbrains.livemap.projections.WorldPoint
 import kotlin.math.pow
 
 class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) : LiveMapSystem(componentManager) {
@@ -29,8 +30,8 @@ class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) :
             ParentLayerComponent::class
         )
 
-        fun world2Screen(p: DoubleVector, zoom: Double): DoubleVector {
-            return p.mul(2.0.pow(zoom))
+        fun world2Screen(p: WorldPoint, zoom: Double): ClientPoint {
+            return 2.0.pow(zoom).let { ClientPoint(p.x * it, p.y * it) }
         }
     }
 }

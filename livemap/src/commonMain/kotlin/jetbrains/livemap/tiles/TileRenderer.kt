@@ -1,12 +1,13 @@
 package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileRect
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
+import jetbrains.livemap.projections.Coordinates.Companion.ZERO_CLIENT_POINT
+import jetbrains.livemap.projections.newDoubleRectangle
 import jetbrains.livemap.tiles.Tile.*
 import jetbrains.livemap.tiles.components.TileComponent
 
@@ -18,7 +19,7 @@ class TileRenderer : Renderer {
         val tile = entity.get<TileComponent>().tile ?: return
 
         val dimension = ScreenDimensionComponent.getDimension(entity)
-        render(tile, DoubleRectangle(DoubleVector.ZERO, dimension), ctx)
+        render(tile, newDoubleRectangle(ZERO_CLIENT_POINT, dimension), ctx)
     }
 
     internal fun render(tile: Tile, cellRect: DoubleRectangle, ctx: Context2d) {

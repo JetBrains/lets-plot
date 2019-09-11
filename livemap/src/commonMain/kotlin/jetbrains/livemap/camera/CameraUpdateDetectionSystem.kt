@@ -1,15 +1,16 @@
 package jetbrains.livemap.camera
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.entities.Entities
+import jetbrains.livemap.projections.Coordinates
+import jetbrains.livemap.projections.WorldPoint
 
 class CameraUpdateDetectionSystem(componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
     private var myPreviousCameraZoom: Double = 0.0
-    private var myPreviousCameraCenter: DoubleVector = DoubleVector.ZERO
+    private var myPreviousCameraCenter: WorldPoint = Coordinates.ZERO_WORLD_POINT
 
     override fun initImpl(context: LiveMapContext) {
         val viewProjection = context.mapRenderContext.viewProjection

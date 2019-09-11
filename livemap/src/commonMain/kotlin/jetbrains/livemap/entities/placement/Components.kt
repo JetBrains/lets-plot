@@ -1,14 +1,16 @@
 package jetbrains.livemap.entities.placement
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.projections.ClientPoint
+import jetbrains.livemap.projections.Coordinates
+import jetbrains.livemap.projections.WorldPoint
 
 object Components {
 
     class ScreenLoopComponent : EcsComponent {
 
-        var origins: List<DoubleVector> = ArrayList()
+        var origins: List<ClientPoint> = ArrayList()
 
         companion object {
             fun provide(entity: EcsEntity): ScreenLoopComponent {
@@ -19,21 +21,21 @@ object Components {
                 return entity.getComponent()
             }
 
-            fun getOrigins(entity: EcsEntity): List<DoubleVector> {
+            fun getOrigins(entity: EcsEntity): List<ClientPoint> {
                 return get(entity).origins
             }
 
-            fun setOrigins(entity: EcsEntity, origins: List<DoubleVector>) {
+            fun setOrigins(entity: EcsEntity, origins: List<ClientPoint>) {
                 get(entity).origins = origins
             }
         }
     }
 
     class ScreenDimensionComponent : EcsComponent {
-        var dimension: DoubleVector = DoubleVector.ZERO
+        var dimension: ClientPoint = Coordinates.ZERO_CLIENT_POINT
 
         companion object {
-            fun getDimension(entity: EcsEntity): DoubleVector {
+            fun getDimension(entity: EcsEntity): ClientPoint {
                 return entity.get<ScreenDimensionComponent>().dimension
             }
 
@@ -43,25 +45,25 @@ object Components {
         }
     }
 
-    class WorldDimensionComponent(var dimension: DoubleVector) : EcsComponent {
+    class WorldDimensionComponent(var dimension: WorldPoint) : EcsComponent {
         companion object {
             operator fun get(entity: EcsEntity): WorldDimensionComponent {
                 return entity.getComponent()
             }
 
-            fun getDimension(entity: EcsEntity): DoubleVector {
+            fun getDimension(entity: EcsEntity): WorldPoint {
                 return get(entity).dimension
             }
         }
     }
 
-    class WorldOriginComponent(var origin: DoubleVector) : EcsComponent {
+    class WorldOriginComponent(var origin: WorldPoint) : EcsComponent {
         companion object {
             operator fun get(entity: EcsEntity): WorldOriginComponent {
                 return entity.getComponent()
             }
 
-            fun getOrigin(entity: EcsEntity): DoubleVector {
+            fun getOrigin(entity: EcsEntity): WorldPoint {
                 return get(entity).origin
             }
         }
@@ -69,14 +71,14 @@ object Components {
 
     class ScreenOriginComponent : EcsComponent {
 
-        var origin: DoubleVector = DoubleVector.ZERO
+        var origin: ClientPoint = Coordinates.ZERO_CLIENT_POINT
 
         companion object {
             fun provide(entity: EcsEntity): ScreenOriginComponent {
                 return entity.provide(::ScreenOriginComponent)
             }
 
-            fun getOrigin(entity: EcsEntity): DoubleVector {
+            fun getOrigin(entity: EcsEntity): ClientPoint {
                 return get(entity).origin
             }
 
@@ -84,7 +86,7 @@ object Components {
                 return entity.getComponent()
             }
 
-            fun setOrigin(entity: EcsEntity, origin: DoubleVector) {
+            fun setOrigin(entity: EcsEntity, origin: ClientPoint) {
                 get(entity).origin = origin
             }
         }
@@ -92,14 +94,14 @@ object Components {
 
     class ScreenOffsetComponent : EcsComponent {
 
-        var screenOffset: DoubleVector = DoubleVector.ZERO
+        var screenOffset: ClientPoint = Coordinates.ZERO_CLIENT_POINT
 
         companion object {
             fun provide(entity: EcsEntity): ScreenOffsetComponent {
                 return entity.provide(::ScreenOffsetComponent)
             }
 
-            fun getScreenOffset(entity: EcsEntity): DoubleVector {
+            fun getScreenOffset(entity: EcsEntity): ClientPoint {
                 return get(entity).screenOffset
             }
 
@@ -107,7 +109,7 @@ object Components {
                 return entity.getComponent()
             }
 
-            fun setScreenOffset(entity: EcsEntity, offset: DoubleVector) {
+            fun setScreenOffset(entity: EcsEntity, offset: ClientPoint) {
                 get(entity).screenOffset = offset
             }
         }

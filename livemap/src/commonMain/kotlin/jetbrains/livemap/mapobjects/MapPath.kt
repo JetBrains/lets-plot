@@ -1,7 +1,7 @@
 package jetbrains.datalore.maps.cell.mapobjects
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.gis.geoprotocol.Geometry
+import jetbrains.livemap.entities.geometry.LonLatGeometry
 import jetbrains.livemap.mapobjects.MapObject
 
 class MapPath (
@@ -16,7 +16,7 @@ class MapPath (
     val lineDash: List<Double>,
     val strokeColor: Color,
     val strokeWidth: Double,
-    val geometry: Geometry
+    val geometry: LonLatGeometry
     //val arrowSpec: ArrowSpec,
 
 ) : MapObject(index, mapId, regionId)

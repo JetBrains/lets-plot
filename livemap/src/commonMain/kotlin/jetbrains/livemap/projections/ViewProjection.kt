@@ -1,36 +1,35 @@
 package jetbrains.livemap.projections
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 
 interface ViewProjection {
 
-    val viewSize: DoubleVector
+    val viewSize: ClientPoint
 
-    var center: DoubleVector
+    var center: WorldPoint
 
     var zoom: Int
 
     val visibleCells: Set<CellKey>
     val viewRect: DoubleRectangle
 
-    fun getViewX(mapX: Double): Double
-    fun getViewY(mapY: Double): Double
+    fun getViewX(p: WorldPoint): Double
+    fun getViewY(p: WorldPoint): Double
 
-    fun getMapX(viewX: Double): Double
-    fun getMapY(viewY: Double): Double
-    fun getOrigins(viewOrigin: DoubleVector, viewDimension: DoubleVector): List<DoubleVector>
+    fun getMapX(p: ClientPoint): Double
+    fun getMapY(p: ClientPoint): Double
+    fun getOrigins(viewOrigin: ClientPoint, viewDimension: ClientPoint): List<ClientPoint>
 
-    fun getMapCoord(viewCoord: DoubleVector): DoubleVector {
-        return DoubleVector(getMapX(viewCoord.x), getMapY(viewCoord.y))
+    fun getMapCoord(viewCoord: ClientPoint): WorldPoint {
+        return WorldPoint(getMapX(viewCoord), getMapY(viewCoord))
     }
 
-    fun getViewCoord(mapCoord: DoubleVector): DoubleVector {
-        return DoubleVector(getViewX(mapCoord.x), getViewY(mapCoord.y))
+    fun getViewCoord(mapCoord: WorldPoint): ClientPoint {
+        return ClientPoint(getViewX(mapCoord), getViewY(mapCoord))
     }
 
     companion object {
-        fun create(helper: ViewProjectionHelper, viewSize: DoubleVector, viewCenter: DoubleVector): ViewProjection {
+        fun create(helper: ViewProjectionHelper, viewSize: ClientPoint, viewCenter: WorldPoint): ViewProjection {
             return ViewProjectionImpl(helper, viewSize, viewCenter)
         }
     }

@@ -18,7 +18,7 @@ class UiRenderingTaskSystem(componentManager: EcsComponentManager) : AbstractSys
             .addRenderTask { context2d ->
                 for (entity in getEntities(UiRenderComponent::class)) {
                     val renderObject = entity.getComponent<UiRenderComponent>().renderBox
-                    context.mapRenderContext.draw(renderObject.origin, renderObject, context2d)
+                    context.mapRenderContext.draw(context2d, renderObject.origin, renderObject)
                 }
             }
 

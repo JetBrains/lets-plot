@@ -1,6 +1,5 @@
 package jetbrains.livemap.entities
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraListenerComponent
 import jetbrains.livemap.camera.CenterChangedComponent
@@ -14,11 +13,13 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.placement.Components
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.RendererComponent
+import jetbrains.livemap.projections.ClientPoint
+import jetbrains.livemap.projections.WorldPoint
 
 object Entities {
 
     fun mapEntity(
-        componentManager: EcsComponentManager, worldPlacement: DoubleVector,
+        componentManager: EcsComponentManager, worldPlacement: WorldPoint,
         parentLayerComponent: ParentLayerComponent, renderer: Renderer, name: String
     ): EcsEntity {
         return componentManager
@@ -54,7 +55,7 @@ object Entities {
 
     fun createScreenEntity(
         componentManager: EcsComponentManager,
-        screenPlacement: DoubleVector,
+        screenPlacement: ClientPoint,
         name: String
     ): EcsEntity {
         return componentManager
@@ -80,7 +81,7 @@ object Entities {
         private val myComponentManager: EcsComponentManager = layerEntity.componentManager
         private val myParentLayerComponent: ParentLayerComponent = ParentLayerComponent(layerEntity.id)
 
-        fun createMapEntity(worldPlacement: DoubleVector, renderer: Renderer, name: String): EcsEntity {
+        fun createMapEntity(worldPlacement: WorldPoint, renderer: Renderer, name: String): EcsEntity {
             return Entities.mapEntity(myComponentManager, worldPlacement, myParentLayerComponent, renderer, name)
         }
 

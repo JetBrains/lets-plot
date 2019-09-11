@@ -8,12 +8,9 @@ import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.livemap.entities.regions.EmptinessChecker
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.MapRuler
-import jetbrains.livemap.projections.MultiMapHelper
+import jetbrains.livemap.projections.*
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
 import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
-import jetbrains.livemap.projections.ViewProjection
 import jetbrains.livemap.tilegeometry.TileGeometryProvider
 
 class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactory {
@@ -30,8 +27,8 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
         myMapRuler = multiMapHelper
         myViewProjection = ViewProjection.create(
             multiMapHelper,
-            myLiveMapSpec.size,
-            mapRect.center
+            myLiveMapSpec.size.toClientPoint(),
+            mapRect.center.toWorldPoint()
         )
 
         myRegionGeometryStorage = RegionGeometryStorage()
@@ -69,10 +66,10 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
 //    }
 
     override fun createLiveMap(): Async<BaseLiveMap> {
-        return Asyncs.constant(createLiveMap(2, ZERO, emptyMap()))
+        return Asyncs.constant(createLiveMap(2, Coordinates.ZERO_WORLD_POINT, emptyMap()))
     }
 
-    private fun createLiveMap(zoom: Int, center: DoubleVector, regionBBoxes: Map<String, GeoRectangle>): BaseLiveMap {
+    private fun createLiveMap(zoom: Int, center: WorldPoint, regionBBoxes: Map<String, GeoRectangle>): BaseLiveMap {
         myViewProjection.zoom = zoom
         myViewProjection.center = center
 

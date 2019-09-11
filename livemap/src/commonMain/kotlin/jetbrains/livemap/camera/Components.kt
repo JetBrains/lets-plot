@@ -1,7 +1,7 @@
 package jetbrains.livemap.camera
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.core.ecs.EcsComponent
+import jetbrains.livemap.projections.WorldPoint
 
 class ZoomChangedComponent : EcsComponent
 
@@ -21,6 +21,6 @@ class CameraUpdateComponent : EcsComponent {
     }
 }
 
-class CameraComponent(var zoom: Double, var center: DoubleVector) : EcsComponent
+class CameraComponent(var zoom: Double, var center: WorldPoint) : EcsComponent
 
 class UpdateViewProjectionComponent : EcsComponent

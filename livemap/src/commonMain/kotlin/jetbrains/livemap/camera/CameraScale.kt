@@ -1,14 +1,15 @@
 package jetbrains.livemap.camera
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.animation.Animations.EASE_OUT_QUAD
 import jetbrains.livemap.core.ecs.*
+import jetbrains.livemap.projections.ClientPoint
+import jetbrains.livemap.projections.WorldPoint
 
 object CameraScale {
 
-    fun setAnimation(cameraEntity: EcsEntity, origin: DoubleVector, center: DoubleVector, delta: Double) {
+    fun setAnimation(cameraEntity: EcsEntity, origin: ClientPoint, center: WorldPoint, delta: Double) {
         val camera = cameraEntity.get<CameraComponent>()
 
         if (camera.zoom % 1 != 0.0) {
@@ -66,8 +67,8 @@ object CameraScale {
 
     class CameraScaleEffectComponent(
         val animationId: Int,
-        val scaleOrigin: DoubleVector,
-        val newCenter: DoubleVector,
+        val scaleOrigin: ClientPoint,
+        val newCenter: WorldPoint,
         val delta: Double,
         val startZoom: Double
     ) : EcsComponent {
