@@ -1,5 +1,5 @@
 package jetbrains.livemap.core
 
-expect class SystemTime() {
+expect open class SystemTime() {
     fun getTimeMs(): Long
 }

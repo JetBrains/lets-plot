@@ -47,6 +47,8 @@ kotlin {
             dependencies {
                 implementation kotlin('test')
                 implementation kotlin('test-junit')
+                implementation "org.mockito:mockito-core:$mockito_version"
+                implementation "org.assertj:assertj-core:$assertj_version"
             }
         }
         jsMain {

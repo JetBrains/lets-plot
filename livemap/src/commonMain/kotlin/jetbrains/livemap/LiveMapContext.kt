@@ -5,9 +5,9 @@ import jetbrains.livemap.core.ecs.EcsContext
 import jetbrains.livemap.core.rendering.SpriteSheet
 import jetbrains.livemap.projections.MapProjection
 
-class LiveMapContext(
+open class LiveMapContext(
     val mapProjection: MapProjection,
     eventSource: MouseEventSource,
-    val mapRenderContext: MapRenderContext,
+    open val mapRenderContext: MapRenderContext,
     val spriteSheet: SpriteSheet?
 ) : EcsContext(eventSource)

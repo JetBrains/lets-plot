@@ -91,7 +91,7 @@ object Components {
     class DownloadingFragmentsComponent : EcsComponent {
         val queue = HashMap<Int, MutableSet<FragmentKey>>()
         val downloading = HashSet<FragmentKey>()
-        var downloaded = HashMap<FragmentKey, MultiPolygon>()
+        var downloaded: MutableMap<FragmentKey, MultiPolygon> = HashMap()
             set(fragments) {
                 downloaded.clear()
                 downloaded.putAll(fragments)

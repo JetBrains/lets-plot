@@ -7,8 +7,8 @@ import jetbrains.livemap.core.rendering.primitives.RenderObject
 import jetbrains.livemap.projections.ClientPoint
 import jetbrains.livemap.projections.ViewProjection
 
-class MapRenderContext internal constructor(
-    val viewProjection: ViewProjection,
+open class MapRenderContext internal constructor(
+    open val viewProjection: ViewProjection,
     val canvasProvider: CanvasProvider
 ) {
 
