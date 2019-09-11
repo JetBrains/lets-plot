@@ -15,11 +15,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation project(':base')
-//                implementation project(':visualization-base-svg')
-//                implementation project(':visualization-base-canvas')
-                implementation project(':visualization-plot-common-portable')
-                implementation project(':visualization-plot-common')
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
                 implementation project(':base-portable')
                 implementation project(':visualization-plot-common-portable')
