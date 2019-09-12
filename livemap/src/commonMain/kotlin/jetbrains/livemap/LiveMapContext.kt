@@ -6,7 +6,7 @@ import jetbrains.livemap.core.rendering.SpriteSheet
 import jetbrains.livemap.projections.MapProjection
 
 open class LiveMapContext(
-    val mapProjection: MapProjection,
+    open val mapProjection: MapProjection,
     eventSource: MouseEventSource,
     open val mapRenderContext: MapRenderContext,
     val spriteSheet: SpriteSheet?

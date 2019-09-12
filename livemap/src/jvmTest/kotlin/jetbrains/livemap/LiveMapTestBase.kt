@@ -25,7 +25,7 @@ import kotlin.test.assertTrue
 
 abstract class LiveMapTestBase {
     lateinit var componentManager: EcsComponentManager
-    protected lateinit var liveMapContext: LiveMapContext
+    lateinit var liveMapContext: LiveMapContext
     private lateinit var mySystemTime: SystemTime
     private val mySystems = HashMap<KClass<out EcsSystem>, EcsSystem>()
     private var dt: Double = 0.0

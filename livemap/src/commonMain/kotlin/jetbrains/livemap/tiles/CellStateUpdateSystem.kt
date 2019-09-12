@@ -34,11 +34,7 @@ class CellStateUpdateSystem(componentManager: EcsComponentManager) : AbstractSys
     }
 
     private fun toQuads(cellKeys: Set<CellKey>, mapProjection: MapProjection): List<QuadKey> {
-        return ArrayList<QuadKey>().apply {
-            for (cellKey in cellKeys) {
-                addAll(convertCellKeyToQuadKeys(mapProjection, cellKey))
-            }
-        }
+        return cellKeys.flatMap { convertCellKeyToQuadKeys(mapProjection, it) }
     }
 
     companion object {
@@ -74,10 +70,14 @@ class CellStateUpdateSystem(componentManager: EcsComponentManager) : AbstractSys
             }
         }
 
-        private fun decRef(counter: MutableMap<QuadKey, Int>, quad: QuadKey): Int {
-            return ((counter[quad] ?: error("")) - 1).also {
-                if (it == 0) counter.remove(quad)
-            }
+        private fun decRef(counter:MutableMap<QuadKey, Int>, quad:QuadKey):Int {
+            counter[quad]?.let {
+                if (counter.put(quad, it - 1) == 1) {
+                    counter.remove(quad)
+                    return 0
+                }
+                return it - 1
+            } ?: throw IllegalStateException()
         }
     }
 }

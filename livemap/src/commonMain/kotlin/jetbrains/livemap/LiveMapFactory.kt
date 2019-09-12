@@ -20,7 +20,6 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
     private val myRegionGeometryStorage: RegionGeometryStorage
 
     init {
-
         val mapRect = DoubleRectangle(ZERO, DoubleVector(TILE_PIXEL_SIZE, TILE_PIXEL_SIZE))
         myMapProjection = createMapProjection(myLiveMapSpec.projectionType, mapRect)
         val multiMapHelper = MultiMapHelper(mapRect, myLiveMapSpec.isLoopX, myLiveMapSpec.isLoopY)
