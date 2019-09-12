@@ -1,18 +1,21 @@
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.projectionGeometry.Generic
+import jetbrains.datalore.base.projectionGeometry.Typed
 
-interface Geometry {
+interface TypedGeometry<ProjT> {
 
-    fun asMultipolygon(): MultiPolygon
+    fun asMultipolygon(): Typed.MultiPolygon<ProjT>
 
     companion object {
-        fun create(points: MultiPolygon): Geometry {
-            return object : Geometry {
-                override fun asMultipolygon(): MultiPolygon {
+        fun <ProjT> create(points: Typed.MultiPolygon<ProjT>): TypedGeometry<ProjT> {
+            return object : TypedGeometry<ProjT> {
+                override fun asMultipolygon(): Typed.MultiPolygon<ProjT> {
                     return points
                 }
             }
         }
     }
 }
+
+typealias Geometry = TypedGeometry<Generic>

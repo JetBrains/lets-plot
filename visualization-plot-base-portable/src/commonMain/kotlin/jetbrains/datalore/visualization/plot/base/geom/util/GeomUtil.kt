@@ -5,6 +5,7 @@ import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.projectionGeometry.Point
 import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.datalore.base.projectionGeometry.Ring
 import jetbrains.datalore.visualization.plot.base.Aes
@@ -131,18 +132,18 @@ object GeomUtil {
 
     fun createMultipolygon(points: List<DoubleVector>): MultiPolygon {
         if (points.isEmpty()) {
-            return MultiPolygon.create()
+            return MultiPolygon(emptyList())
         }
 
         val polygons = ArrayList<Polygon>()
         var rings: MutableList<Ring> = ArrayList<Ring>()
 
-        for (ring in GeomUtil.createRingsFromPoints(points)) {
-            if (!rings.isEmpty() && GeomUtil.isClockwise(ring)) {
+        for (ring in createRingsFromPoints(points)) {
+            if (rings.isNotEmpty() && isClockwise(ring)) {
                 polygons.add(Polygon(rings))
                 rings = ArrayList<Ring>()
             }
-            rings.add(Ring(ring))
+            rings.add(Ring(ring.map { Point(it.x, it.y) }))
         }
 
         if (!rings.isEmpty()) {

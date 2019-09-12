@@ -1,7 +1,7 @@
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
+import jetbrains.datalore.base.projectionGeometry.Point
 
 interface GeoResponse {
 
@@ -14,7 +14,7 @@ interface GeoResponse {
             val request: String,
             val id: String,
             val name: String,
-            val centroid: DoubleVector?,
+            val centroid: Point?,
             val position: GeoRectangle?,
             val limit: GeoRectangle?,
             val boundary: Geometry?,

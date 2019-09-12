@@ -3,16 +3,7 @@ package jetbrains.livemap.projections
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
-
-data class Coordinate<T>(val x: Double, val y: Double) {
-    constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
-
-    fun add(p: Coordinate<T>) = Coordinate<T>(x + p.x, y + p.y)
-    fun subtract(p: Coordinate<T>) = Coordinate<T>(x - p.x, y - p.y)
-    fun mul(d: Double) = Coordinate<T>(x * d, y * d)
-
-    companion object {}
-}
+import jetbrains.datalore.base.projectionGeometry.Typed
 
 
 interface LonLat
@@ -20,9 +11,9 @@ interface World
 interface Client
 
 
-typealias LonLatPoint = Coordinate<LonLat>
-typealias WorldPoint = Coordinate<World>
-typealias ClientPoint = Coordinate<Client>
+typealias LonLatPoint = Typed.Coordinate<LonLat>
+typealias WorldPoint = Typed.Coordinate<World>
+typealias ClientPoint = Typed.Coordinate<Client>
 
 class Coordinates {
     companion object {
@@ -33,7 +24,7 @@ class Coordinates {
 
 }
 
-fun <T> newDoubleRectangle(origin: Coordinate<T>, dimension: Coordinate<T>): DoubleRectangle {
+fun newDoubleRectangle(origin: Typed.Coordinate<*>, dimension: Typed.Coordinate<*>): DoubleRectangle {
     return DoubleRectangle(origin.x, origin.y, dimension.x, dimension.y)
 }
 

@@ -27,6 +27,8 @@ import jetbrains.livemap.mapobjects.MapLayerKind.*
 import jetbrains.livemap.mapobjects.MapLine
 import jetbrains.livemap.mapobjects.MapPoint
 import jetbrains.livemap.mapobjects.MapPolygon
+import jetbrains.livemap.projections.Coordinate
+import jetbrains.livemap.projections.LonLat
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.createArcPath
 
@@ -161,7 +163,7 @@ class PathBuilder {
     var lineDash: List<Double>? = null
     var strokeColor: Color? = null
     var strokeWidth: Double? = null
-    var coordinates: List<DoubleVector>? = null
+    var coordinates: List<Coordinate<LonLat>>? = null
 
     var animation: Int? = null
     var speed: Double? = null

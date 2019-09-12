@@ -6,13 +6,7 @@ import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Functions
 import jetbrains.datalore.base.function.Functions.funcOf
 import jetbrains.datalore.base.gcommon.collect.Stack
-import jetbrains.datalore.base.projectionGeometry.LineString
-import jetbrains.datalore.base.projectionGeometry.MultiLineString
-import jetbrains.datalore.base.projectionGeometry.MultiPoint
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.Ring
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.*
 
 internal class GeometryObjectParser(precision: Double, input: Input) {
     private val myGeometryStream: GeometryStream
@@ -30,7 +24,7 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         return !myParsers.empty()
     }
 
-    fun parsePoint(onParse: Consumer<DoubleVector>) {
+    fun parsePoint(onParse: Consumer<Point>) {
         pushParser(PointParser(onParse, this))
     }
 
@@ -81,7 +75,7 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         return myGeometryStream.readCount()
     }
 
-    private fun readPoint(): DoubleVector {
+    private fun readPoint(): Point {
         return myGeometryStream.readPoint()
     }
 
@@ -109,7 +103,7 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
             }
         }
 
-        fun readPoint(): DoubleVector {
+        fun readPoint(): Point {
             return myCtx.readPoint()
         }
 
@@ -118,9 +112,9 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         }
     }
 
-    internal class PointParser(private val myParsingResultConsumer: Consumer<DoubleVector>, ctx: GeometryObjectParser) :
+    internal class PointParser(private val myParsingResultConsumer: Consumer<Point>, ctx: GeometryObjectParser) :
         GeometryParser(ctx) {
-        private lateinit var myP: DoubleVector
+        private lateinit var myP: Point
 
         override fun parsePoint() {
             myP = readPoint()
@@ -161,8 +155,8 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         }
     }
 
-    internal class PointsParser(parsingResultConsumer: Consumer<List<DoubleVector>>, ctx: GeometryObjectParser) :
-        GeometryListParser<DoubleVector>(ctx.readCount(), parsingResultConsumer, ctx) {
+    internal class PointsParser(parsingResultConsumer: Consumer<List<Point>>, ctx: GeometryObjectParser) :
+        GeometryListParser<Point>(ctx.readCount(), parsingResultConsumer, ctx) {
 
         override fun parsePoint() {
             addGeometry(readPoint())
@@ -195,7 +189,7 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
     }
 
     internal class PolygonParser(parsingResultConsumer: Consumer<List<Ring>>, ctx: GeometryObjectParser) :
-        NestedGeometryParser<List<DoubleVector>, Ring>(
+        NestedGeometryParser<List<Point>, Ring>(
             ctx.readCount(),
             funcOf { points -> PointsParser(points, ctx) },
             funcOf(::Ring),
@@ -205,9 +199,9 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
 
     internal class MultiPointParser(
         nGeometries: Int,
-        parsingResultConsumer: Consumer<List<DoubleVector>>,
+        parsingResultConsumer: Consumer<List<Point>>,
         ctx: GeometryObjectParser
-    ) : NestedGeometryParser<DoubleVector, DoubleVector>(
+    ) : NestedGeometryParser<Point, Point>(
         nGeometries,
         funcOf { point -> PointParser(point, ctx) },
         funcOf(Functions.identity()),
@@ -219,7 +213,7 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         nGeometries: Int,
         parsingResultConsumer: Consumer<List<LineString>>,
         ctx: GeometryObjectParser
-    ) : NestedGeometryParser<List<DoubleVector>, LineString>(
+    ) : NestedGeometryParser<List<Point>, LineString>(
         nGeometries,
         funcOf { points -> PointsParser(points, ctx) },
         funcOf(::LineString),
@@ -243,10 +237,10 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         private var x = 0
         private var y = 0
 
-        fun readPoint(): DoubleVector {
+        fun readPoint(): Point {
             x += myInput.readVarInt()
             y += myInput.readVarInt()
-            return DoubleVector(x / myPrecision, y / myPrecision)
+            return Point(x / myPrecision, y / myPrecision)
         }
 
         fun readCount(): Int {

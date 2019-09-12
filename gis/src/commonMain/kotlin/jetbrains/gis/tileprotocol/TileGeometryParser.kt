@@ -1,6 +1,5 @@
 package jetbrains.gis.tileprotocol
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.gis.common.twkb.Parser
 import jetbrains.gis.common.twkb.Twkb
@@ -28,7 +27,7 @@ class TileGeometryParser(geometryCollection: GeometryCollection) {
         val tileGeometries: List<TileGeometry>
             get() = myTileGeometries
 
-        override fun onPoint(point: DoubleVector) {
+        override fun onPoint(point: Point) {
             myTileGeometries.add(TileGeometry.createMultiPoint(MultiPoint(listOf(point))))
         }
 

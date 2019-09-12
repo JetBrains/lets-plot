@@ -1,8 +1,8 @@
 package jetbrains.gis.geoprotocol.json
 
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
+import jetbrains.datalore.base.projectionGeometry.Point
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.FeatureLevel.STATE
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse
@@ -101,8 +101,8 @@ class GeoResponseJsonTest {
             .setTotalNamesakeCount(0)
             .build()
 
-        private fun point(lon: Double, lat: Double): DoubleVector {
-            return DoubleVector(lon, lat)
+        private fun point(lon: Double, lat: Double): Point {
+            return Point(lon, lat)
         }
 
         private fun rectangle(minLon: Double, minLat: Double, maxLon: Double, maxLat: Double): GeoRectangle {

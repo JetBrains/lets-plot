@@ -19,7 +19,7 @@ object GeometryTransform {
         return createTransformer(geometry, resampling(transform))
     }
 
-    fun simple(geometry: MultiPolygon, transform: (DoubleVector) -> DoubleVector): MicroTask<MultiPolygon> {
+    fun <PtojT> simple(geometry: MultiPolygon<PtojT>, transform: (DoubleVector) -> DoubleVector): MicroTask<MultiPolygon<PtojT>> {
         return MultiPolygonTransform(geometry, simple(transform))
     }
 
