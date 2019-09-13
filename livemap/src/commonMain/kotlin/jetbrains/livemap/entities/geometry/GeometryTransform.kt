@@ -1,6 +1,7 @@
 package jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.projectionGeometry.Typed
+import jetbrains.datalore.base.projectionGeometry.reinterpret
 import jetbrains.gis.common.twkb.Twkb
 import jetbrains.gis.tileprotocol.TileFeature
 import jetbrains.gis.tileprotocol.TileFeature.TileGeometry.Companion.createMultiLineString
@@ -50,11 +51,11 @@ object GeometryTransform {
     ): MicroTask<TileFeature.TileGeometry> {
         return when (geometry.type) {
             Twkb.GeometryType.MULTI_POLYGON ->
-                MultiPolygonTransform(geometry.multiPolygon!!, transform).map(::createMultiPolygon)
+                MultiPolygonTransform<InT, OutT>(geometry.multiPolygon!!.reinterpret(), transform).map(::createMultiPolygon)
             Twkb.GeometryType.MULTI_LINESTRING ->
-                MultiLineStringTransform(geometry.multiLineString!!, transform).map(::createMultiLineString)
+                MultiLineStringTransform<InT, OutT>(geometry.multiLineString!!.reinterpret(), transform).map(::createMultiLineString)
             Twkb.GeometryType.MULTI_POINT ->
-                MultiPointTransform(geometry.multiPoint!!, transform).map(::createMultiPoint)
+                MultiPointTransform<InT, OutT>(geometry.multiPoint!!.reinterpret(), transform).map(::createMultiPoint)
             else ->
                 throw IllegalArgumentException("Unsupported geometry type: ${geometry.type}")
         }

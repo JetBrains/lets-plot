@@ -1,9 +1,7 @@
 package jetbrains.datalore.base.projectionGeometry
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles
-import jetbrains.datalore.base.geometry.DoubleVector
 
 object Typed {
     data class Scalar<ProjT>(
@@ -43,16 +41,24 @@ object Typed {
     class MultiPolygon<ProjT>(polygons: List<Polygon<ProjT>>) : AbstractGeometryList<Polygon<ProjT>>(polygons)
 }
 
-fun Typed.Polygon<*>.limit(): DoubleRectangle {
+fun <ProjT> Typed.Polygon<ProjT>.limit(): Typed.Rectangle<ProjT> {
     return DoubleRectangles.boundingBox(
         this.asSequence()
             .flatten()
-            .map { DoubleVector(it.x, it.y) }
+            .map { it }
             .asIterable()
     )
 }
 
-fun Typed.MultiPolygon<*>.limit(): List<DoubleRectangle> { return map { polygon -> polygon.limit() } }
+fun <ProjT> Typed.Rectangle<ProjT>.intersects(rect: Typed.Rectangle<ProjT>): Boolean {
+    val t1 = origin
+    val t2 = origin.add(dimension)
+    val r1 = rect.origin
+    val r2 = rect.origin.add(rect.dimension)
+    return r2.x >= t1.x && t2.x >= r1.x && r2.y >= t1.y && t2.y >= r1.y
+}
+
+fun <ProjT> Typed.MultiPolygon<ProjT>.limit(): List<Typed.Rectangle<ProjT>> { return map { polygon -> polygon.limit() } }
 
 class Generic
 class LonLat
@@ -73,7 +79,10 @@ typealias LonLatRectangle = Typed.Rectangle<LonLat>
 typealias AnyPoint = Typed.Point<*>
 typealias AnyLineString = Typed.LineString<*>
 
-fun <ProjT> Point.reinterpret(): Typed.Point<ProjT> = this as Typed.Point<ProjT>
+fun <ProjT> Typed.Point<*>.reinterpret(): Typed.Point<ProjT> = this as Typed.Point<ProjT>
+fun <ProjT> Typed.MultiPoint<*>.reinterpret(): Typed.MultiPoint<ProjT> = this as Typed.MultiPoint<ProjT>
+fun <ProjT> Typed.MultiLineString<*>.reinterpret(): Typed.MultiLineString<ProjT> = this as Typed.MultiLineString<ProjT>
+fun <ProjT> Typed.MultiPolygon<*>.reinterpret(): Typed.MultiPolygon<ProjT> = this as Typed.MultiPolygon<ProjT>
 
 /**
  * Create generic rectangle by any points

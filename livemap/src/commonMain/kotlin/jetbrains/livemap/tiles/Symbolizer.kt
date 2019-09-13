@@ -2,10 +2,9 @@ package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.AbstractGeometryList
+import jetbrains.datalore.base.projectionGeometry.AnyPoint
 import jetbrains.datalore.base.projectionGeometry.MultiLineString
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Ring
+import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.gis.tileprotocol.TileFeature
 import jetbrains.gis.tileprotocol.mapConfig.Style
@@ -16,7 +15,7 @@ interface Symbolizer {
     fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit>
     fun applyTo(ctx: Context2d)
 
-    fun Context2d.drawLine(line: AbstractGeometryList<DoubleVector>) {
+    fun Context2d.drawLine(line: List<Typed.Point<*>>) {
         moveTo(round(line[0].x), round(line[0].y))
 
         for (i in 1 until line.size) {
@@ -27,10 +26,10 @@ interface Symbolizer {
 
     class PolygonSymbolizer internal constructor(private val myStyle: Style) : Symbolizer {
 
-        private fun Context2d.drawMultiPolygon(multiPolygon: MultiPolygon) {
+        private fun Context2d.drawMultiPolygon(multiPolygon: Typed.MultiPolygon<*>) {
             beginPath()
             for (polygon in multiPolygon) {
-                for (ring: Ring in polygon) {
+                for (ring: Typed.Ring<*> in polygon) {
                     drawLine(ring)
                 }
             }
@@ -102,7 +101,7 @@ interface Symbolizer {
             return tasks
         }
 
-        private fun bboxFromPoint(point: DoubleVector, width: Double, height: Double): DoubleRectangle {
+        private fun bboxFromPoint(point: AnyPoint, width: Double, height: Double): DoubleRectangle {
             return DoubleRectangle.span(
                 DoubleVector(
                     point.x - width / 2,
@@ -115,7 +114,7 @@ interface Symbolizer {
             )
         }
 
-        private fun Context2d.drawTextFast(multiPoint: List<DoubleVector>, label: String) {
+        private fun Context2d.drawTextFast(multiPoint: List<AnyPoint>, label: String) {
             val width = measureText(label)
             val height = myStyle.size ?: 10.0
 
@@ -131,7 +130,7 @@ interface Symbolizer {
             }
         }
 
-        private fun Context2d.drawWrapText(multiPoint: List<DoubleVector>, label: String, wrapWidth: Double) {
+        private fun Context2d.drawWrapText(multiPoint: List<AnyPoint>, label: String, wrapWidth: Double) {
             var width = wrapWidth
             var words = splitLabel(label)
             var next = ArrayList<String>()
@@ -315,3 +314,4 @@ interface Symbolizer {
         }
     }
 }
+

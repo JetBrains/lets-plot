@@ -1,22 +1,20 @@
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.projectionGeometry.LineString
-import jetbrains.datalore.base.projectionGeometry.MultiLineString
-import jetbrains.datalore.base.projectionGeometry.Point
+import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.livemap.core.multitasking.MicroTask
 
-internal class MultiLineStringTransform(
-    multiLineString: MultiLineString,
-    private val myTransform: (Point, MutableCollection<Point>) -> Unit
-) : MicroTask<MultiLineString> {
-    private lateinit var myLineStringIterator: Iterator<LineString>
-    private lateinit var myPointIterator: Iterator<Point>
+internal class MultiLineStringTransform<InT, OutT> (
+    multiLineString: Typed.MultiLineString<InT>,
+    private val myTransform: (Typed.Point<InT>, MutableCollection<Typed.Point<OutT>>) -> Unit
+) : MicroTask<Typed.MultiLineString<OutT>> {
+    private lateinit var myLineStringIterator: Iterator<Typed.LineString<InT>>
+    private lateinit var myPointIterator: Iterator<Typed.Point<InT>>
 
-    private var myNewLineString: MutableList<Point> = ArrayList()
-    private val myNewMultiLineString: MutableList<LineString> = ArrayList()
+    private var myNewLineString: MutableList<Typed.Point<OutT>> = ArrayList()
+    private val myNewMultiLineString: MutableList<Typed.LineString<OutT>> = ArrayList()
 
     private var myHasNext = true
-    private lateinit var myResult: MultiLineString
+    private lateinit var myResult: Typed.MultiLineString<OutT>
 
     init {
         try {
@@ -27,16 +25,16 @@ internal class MultiLineStringTransform(
         }
     }
 
-    override fun getResult(): MultiLineString {
+    override fun getResult(): Typed.MultiLineString<OutT> {
         return myResult
     }
 
     override fun resume() {
         if (!myPointIterator.hasNext()) {
-            myNewMultiLineString.add(LineString(myNewLineString))
+            myNewMultiLineString.add(Typed.LineString(myNewLineString))
             if (!myLineStringIterator.hasNext()) {
                 myHasNext = false
-                myResult = MultiLineString(myNewMultiLineString)
+                myResult = Typed.MultiLineString(myNewMultiLineString)
                 return
             } else {
                 myPointIterator = myLineStringIterator.next().iterator()

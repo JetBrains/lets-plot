@@ -1,7 +1,5 @@
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileRect
 import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.plot.builder.layout.GeometryUtil.round
 import jetbrains.gis.tileprotocol.TileService
@@ -19,7 +17,7 @@ import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem.Co
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.projections.CellKey
-import jetbrains.livemap.projections.toWorldPoint
+import jetbrains.livemap.projections.WorldRectangle
 import jetbrains.livemap.tiles.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
 import jetbrains.livemap.tiles.Tile.SnapshotTile
 import jetbrains.livemap.tiles.components.*
@@ -30,7 +28,7 @@ class TileLoadingSystem(
     private val myTileService: TileService,
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
-    private lateinit var myMapRect: DoubleRectangle
+    private lateinit var myMapRect: WorldRectangle
     private lateinit var myCanvasSupplier: () -> Canvas
     private lateinit var myTileDataFetcher: TileDataFetcher
     private lateinit var myTileDataParser: TileDataParser
@@ -39,7 +37,7 @@ class TileLoadingSystem(
 
     override fun initImpl(context: LiveMapContext) {
         myMapRect = context.mapProjection.mapRect
-        val dimension = round(myMapRect.dimension)
+        val dimension = round(myMapRect.dimension.x, myMapRect.dimension.y)
         myCanvasSupplier = { context.mapRenderContext.canvasProvider.createCanvas(dimension) }
 
         myTileDataFetcher = TileDataFetcherImpl(context.mapProjection, myTileService)
@@ -137,9 +135,9 @@ class TileLoadingSystem(
             val parentLayerComponent = ParentLayerComponent(layer.id)
             val name = "tile_${layerKind}_$cellKey"
             val tileLayerEntity =
-                mapEntity(componentManager, cellMapRect.origin.toWorldPoint(), parentLayerComponent, NULL_RENDERER, name)
+                mapEntity(componentManager, cellMapRect.origin, parentLayerComponent, NULL_RENDERER, name)
                     .addComponent(ScreenDimensionComponent().apply {
-                        dimension = world2Screen(cellMapRect.dimension.toWorldPoint(), zoom.toDouble())
+                        dimension = world2Screen(cellMapRect.dimension, zoom.toDouble())
                     })
                     .addComponent(CellComponent(cellKey))
                     .addComponent(KindComponent(layerKind))

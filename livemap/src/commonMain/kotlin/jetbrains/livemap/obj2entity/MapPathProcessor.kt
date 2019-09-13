@@ -23,7 +23,6 @@ import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil.transformMultipolygon
-import jetbrains.livemap.projections.toWorldPoint
 import kotlin.collections.Map.Entry
 
 
@@ -64,12 +63,12 @@ internal class MapPathProcessor(
 
             GeometryUtil.bbox(coordinates.asMultipolygon())?.let { bbox ->
                 val pathEntity = myFactory
-                    .createMapEntity(bbox.origin.toWorldPoint(), SIMPLE_RENDERER, "map_ent_path")
+                    .createMapEntity(bbox.origin, SIMPLE_RENDERER, "map_ent_path")
                     .addComponent(WorldGeometryComponent().apply {
                         geometry = coordinates
                     })
                     //.addComponent(ScaleComponent())
-                    .addComponent(WorldDimensionComponent(bbox.dimension.toWorldPoint()))
+                    .addComponent(WorldDimensionComponent(bbox.dimension))
                     .addComponent(
                         StyleComponent().apply {
                             setStrokeColor(mapPath.strokeColor)

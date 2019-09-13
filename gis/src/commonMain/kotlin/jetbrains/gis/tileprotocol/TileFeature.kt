@@ -1,8 +1,6 @@
 package jetbrains.gis.tileprotocol
 
-import jetbrains.datalore.base.projectionGeometry.MultiLineString
-import jetbrains.datalore.base.projectionGeometry.MultiPoint
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.gis.common.twkb.Twkb.GeometryType
 import jetbrains.gis.common.twkb.Twkb.GeometryType.*
 
@@ -32,16 +30,16 @@ class TileFeature(
         val multiPolygon: MultiPolygon?
     ) {
         companion object {
-            fun createMultiPoint(multiPoint: MultiPoint): TileGeometry {
-                return TileGeometry(MULTI_POINT, multiPoint, null, null)
+            fun <ProjT> createMultiPoint(multiPoint: Typed.MultiPoint<ProjT>): TileGeometry {
+                return TileGeometry(MULTI_POINT, multiPoint.reinterpret(), null, null)
             }
 
-            fun createMultiLineString(multiLineString: MultiLineString): TileGeometry {
-                return TileGeometry(MULTI_LINESTRING, null, multiLineString, null)
+            fun <ProjT> createMultiLineString(multiLineString: Typed.MultiLineString<ProjT>): TileGeometry {
+                return TileGeometry(MULTI_LINESTRING, null, multiLineString.reinterpret(), null)
             }
 
-            fun createMultiPolygon(multiPolygon: MultiPolygon): TileGeometry {
-                return TileGeometry(MULTI_POLYGON, null, null, multiPolygon)
+            fun <ProjT> createMultiPolygon(multiPolygon: Typed.MultiPolygon<ProjT>): TileGeometry {
+                return TileGeometry(MULTI_POLYGON, null, null, multiPolygon.reinterpret())
             }
         }
     }

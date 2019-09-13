@@ -13,7 +13,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.placement.Components
 import jetbrains.livemap.entities.placement.Components.WorldOriginComponent
 import jetbrains.livemap.entities.scaling.ScaleComponent
-import jetbrains.livemap.projections.ProjectionUtil
+import jetbrains.livemap.projections.WorldProjection
 
 
 class WorldGeometry2ScreenUpdateSystem(
@@ -29,7 +29,7 @@ class WorldGeometry2ScreenUpdateSystem(
         }
 
         val worldOrigin = entity.get<WorldOriginComponent>().origin
-        val zoomProjection = ProjectionUtil.square(ProjectionUtil.zoom(zoom))
+        val zoomProjection = WorldProjection(zoom)
         return GeometryTransform
             .simple(entity.get<WorldGeometryComponent>().geometry!!.asMultipolygon()) {
                 zoomProjection.project(it.subtract(worldOrigin))

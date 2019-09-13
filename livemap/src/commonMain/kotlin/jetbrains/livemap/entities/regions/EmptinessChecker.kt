@@ -3,6 +3,7 @@ package jetbrains.livemap.entities.regions
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.getQuadKeyRect
 import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.projectionGeometry.intersects
 
 interface EmptinessChecker {
     fun test(regionId: String, quadKey: QuadKey): Boolean

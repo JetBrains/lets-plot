@@ -1,7 +1,8 @@
 package jetbrains.gis.tileprotocol.json
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.LonLatPoint
+import jetbrains.datalore.base.projectionGeometry.LonLatRectangle
+import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
 import jetbrains.gis.common.json.FluentArray
 import jetbrains.gis.common.json.FluentObject
 import jetbrains.gis.common.json.Obj
@@ -43,10 +44,10 @@ object RequestJsonParser {
         }
     }
 
-    private fun parseBBox(bbox: FluentArray): DoubleRectangle {
-        return DoubleRectangle.span(
-            DoubleVector(bbox.getDouble(0), bbox.getDouble(1)),
-            DoubleVector(bbox.getDouble(2), bbox.getDouble(3))
+    private fun parseBBox(bbox: FluentArray): LonLatRectangle {
+        return newSpanRectangle(
+            LonLatPoint(bbox.getDouble(0), bbox.getDouble(1)),
+            LonLatPoint(bbox.getDouble(2), bbox.getDouble(3))
         )
     }
 

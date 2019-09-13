@@ -1,11 +1,12 @@
 package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.BBOX_CALCULATOR
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.convertToGeoRectangle
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.getQuadKeyRect
+import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.projections.CellKey
@@ -23,7 +24,7 @@ internal class TileDataFetcherImpl(private val myMapProjection: MapProjection, p
         return myTileService.getTileData(bbox, zoom)
     }
 
-    private fun calculateBBox(quadKeys: Set<QuadKey>): DoubleRectangle = // TODO: add tests for antimeridians
+    private fun calculateBBox(quadKeys: Set<QuadKey>): Typed.Rectangle<LonLat> = // TODO: add tests for antimeridians
         BBOX_CALCULATOR
             .calculateBoundingBoxFromGeoRectangles(
                 quadKeys.map { convertToGeoRectangle(getQuadKeyRect(it)) }

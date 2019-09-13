@@ -1,10 +1,10 @@
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
-import jetbrains.livemap.projections.ProjectionUtil.safeDoubleVector
+import jetbrains.datalore.base.projectionGeometry.LonLatRectangle
+import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
+import jetbrains.livemap.projections.ProjectionUtil.safePoint
 import kotlin.math.*
 
 internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection {
@@ -19,9 +19,9 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
     }
 
 
-    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
+    override fun validRect(): LonLatRectangle = VALID_RECTANGLE
 
-    override fun project(v: DoubleVector): DoubleVector {
+    override fun project(v: LonLatPoint): GeographicPoint {
         val x = toRadians(v.x)
         var y = toRadians(v.y)
 
@@ -39,10 +39,10 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
 
         val px = r * sin(n * x)
         val py = f - r * cos(n * x)
-        return safeDoubleVector(px, py)
+        return safePoint(px, py)
     }
 
-    override fun invert(v: DoubleVector): DoubleVector {
+    override fun invert(v: GeographicPoint): LonLatPoint {
         val x = v.x
         val y = v.y
         val fy = f - y
@@ -50,13 +50,13 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
 
         val ix = toDegrees(atan2(x, abs(fy)) / n * fy.sign)
         val iy = toDegrees(2 * atan((f / r).pow(1 / n)) - PI / 2)
-        return safeDoubleVector(ix, iy)
+        return safePoint(ix, iy)
     }
 
     companion object {
-        private val VALID_RECTANGLE = DoubleRectangle.span(
-            DoubleVector(-180.0, -65.0),
-            DoubleVector(+180.0, +90.0)
+        private val VALID_RECTANGLE = newSpanRectangle(
+            LonLatPoint(-180.0, -65.0),
+            LonLatPoint(+180.0, +90.0)
         )
         private const val EPSILON = 0.001
 

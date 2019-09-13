@@ -5,13 +5,11 @@ import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.Ring
+import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
-import jetbrains.gis.geoprotocol.Geometry
+import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.core.animation.Animation.Direction
 import jetbrains.livemap.core.animation.Animation.Loop
 import jetbrains.livemap.core.animation.Animations
@@ -22,10 +20,10 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectSystem
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
-import jetbrains.livemap.entities.geometry.ClientGeometry
 import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.rendering.setFillColor
 import jetbrains.livemap.entities.rendering.setStrokeColor
+import jetbrains.livemap.projections.Client
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.round
@@ -42,8 +40,8 @@ class GrowingPathTest {
     private lateinit var myAnimationComponent: AnimationComponent
     private lateinit var myGrowingPathEffectComponent: GrowingPathEffectComponent
 
-    private fun p(x: Double, y: Double): DoubleVector {
-        return DoubleVector(x, y)
+    private fun p(x: Double, y: Double): Typed.Point<Client> {
+        return Typed.Point(x, y)
     }
 
     private fun index(i: Int): EffectState {
@@ -112,16 +110,16 @@ class GrowingPathTest {
         return progress
     }
 
-    private fun createGeometry(vararg points: DoubleVector): Geometry {
-        return Geometry.create(MultiPolygon(listOf(Polygon(listOf(Ring(listOf(*points)))))))
+    private fun createGeometry(vararg points: Typed.Point<Client>): TypedGeometry<Client> {
+        return TypedGeometry.create(Typed.MultiPolygon(listOf(Typed.Polygon(listOf(Typed.Ring(listOf(*points)))))))
     }
 
-    private fun createEffect(vararg points: DoubleVector) {
+    private fun createEffect(vararg points: Typed.Point<Client>) {
         myComponentManager.createEntity("effect")
             .addComponent(myGrowingPathEffectComponent)
             .addComponent(
                 ScreenGeometryComponent().apply {
-                    geometry = ClientGeometry(createGeometry(*points))
+                    geometry = createGeometry(*points)
                 }
             )
             .addComponent(
@@ -138,11 +136,11 @@ class GrowingPathTest {
             .addComponent(
                 GrowingPathEffectComponent()
                     .setEndIndex(3)
-                    .setInterpolatedPoint(p(3.5, 3.5))
+                    .setInterpolatedPoint(DoubleVector(3.5, 3.5))
             )
             .addComponent(
                 ScreenGeometryComponent().apply {
-                    geometry = ClientGeometry(createGeometry(p(0.0, 0.0), p(1.0, 1.0), p(2.0, 2.0), p(3.0, 3.0), p(4.0, 4.0)))
+                    geometry = createGeometry(p(0.0, 0.0), p(1.0, 1.0), p(2.0, 2.0), p(3.0, 3.0), p(4.0, 4.0))
                 }
             )
             .addComponent(
@@ -186,9 +184,9 @@ class GrowingPathTest {
         assertEquals(
             listOf(
                 index(0),
-                interpolated(0, p(0.0, 75.0)),
-                interpolated(1, p(0.0, 150.0)),
-                interpolated(1, p(0.0, 225.0)),
+                interpolated(0, DoubleVector(0.0, 75.0)),
+                interpolated(1, DoubleVector(0.0, 150.0)),
+                interpolated(1, DoubleVector(0.0, 225.0)),
                 index(2)
             ),
             myEffectState
@@ -202,8 +200,8 @@ class GrowingPathTest {
         assertEquals(
             listOf(
                 index(0),
-                interpolated(0, p(0.0, 100.0)),
-                interpolated(0, p(0.0, 200.0)),
+                interpolated(0, DoubleVector(0.0, 100.0)),
+                interpolated(0, DoubleVector(0.0, 200.0)),
                 index(1)
             ),
             myEffectState

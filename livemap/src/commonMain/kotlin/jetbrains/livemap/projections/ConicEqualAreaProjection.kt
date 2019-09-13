@@ -1,10 +1,10 @@
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
-import jetbrains.livemap.projections.ProjectionUtil.safeDoubleVector
+import jetbrains.datalore.base.projectionGeometry.LonLatRectangle
+import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
+import jetbrains.livemap.projections.ProjectionUtil.safePoint
 import kotlin.math.*
 
 internal class ConicEqualAreaProjection(y0: Double, y1: Double) : GeoProjection {
@@ -23,9 +23,9 @@ internal class ConicEqualAreaProjection(y0: Double, y1: Double) : GeoProjection 
         r0 = sqrt(c) / n
     }
 
-    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
+    override fun validRect(): LonLatRectangle = VALID_RECTANGLE
 
-    override fun project(v: DoubleVector): DoubleVector {
+    override fun project(v: LonLatPoint): GeographicPoint {
         var x = toRadians(v.x)
         val y = toRadians(v.y)
 
@@ -34,23 +34,23 @@ internal class ConicEqualAreaProjection(y0: Double, y1: Double) : GeoProjection 
 
         val px = r * sin(x)
         val py = r0 - r * cos(x)
-        return safeDoubleVector(px, py)
+        return safePoint(px, py)
     }
 
-    override fun invert(v: DoubleVector): DoubleVector {
+    override fun invert(v: GeographicPoint): LonLatPoint {
         val x = v.x
         val y = v.y
         val r0y = r0 - y
 
         val ix = toDegrees(atan2(x, abs(r0y)) / n * r0y.sign)
         val iy = toDegrees(asin((c - (x * x + r0y * r0y) * n * n) / (2 * n)))
-        return safeDoubleVector(ix, iy)
+        return safePoint(ix, iy)
     }
 
     companion object {
-        private val VALID_RECTANGLE = DoubleRectangle.span(
-            DoubleVector(-180.0, -90.0),
-            DoubleVector(+180.0, +90.0)
+        private val VALID_RECTANGLE = newSpanRectangle(
+            LonLatPoint(-180.0, -90.0),
+            LonLatPoint(+180.0, +90.0)
         )
     }
 }

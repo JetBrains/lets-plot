@@ -13,7 +13,7 @@ object GeoUtils {
     private val MIN_LATITUDE = -90.0
     private val MAX_LATITUDE = 90.0
     val FULL_LATITUDE = MAX_LATITUDE - MIN_LATITUDE
-    internal val EARTH_RECT = LonLatRectangle(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
+    val EARTH_RECT = LonLatRectangle(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
     val BBOX_CALCULATOR = GeoBoundingBoxCalculator(EARTH_RECT, true, false)
     private val QUAD_KEY_CREATOR = { tileKey: String -> QuadKey(tileKey) }
 
@@ -85,22 +85,25 @@ object GeoUtils {
         return GeoRectangle(left, limitLat(rect.top), right, limitLat(rect.bottom))
     }
 
-    fun getQuadKeyRect(quadKey: QuadKey): Rectangle {
-        val origin = getTileOrigin(EARTH_RECT, quadKey.string)
-        val dimension = EARTH_RECT.dimension.mul(1.0 / getTileCount(quadKey.string.length))
-
-        val flipY = EARTH_RECT.bottom - (origin.y + dimension.y - EARTH_RECT.top)
-        return erasedRectangle(Point(origin.x, flipY), dimension)
+    fun calculateQuadKeys(lonLatRect: Typed.Rectangle<LonLat>, zoom: Int?): Set<QuadKey> {
+        val flipRect = LonLatRectangle(
+                lonLatRect.left,
+                -lonLatRect.bottom,
+                lonLatRect.width,
+                lonLatRect.height
+        )
+        return calculateTileKeys(EARTH_RECT, flipRect, zoom, QUAD_KEY_CREATOR)
     }
 
-    fun getTileRect(mapRect: Typed.Rectangle<*>, tileKey: String): Rectangle {
-        val origin = getTileOrigin(mapRect, tileKey)
-        val dimension = mapRect.dimension.mul(1.0 / getTileCount(tileKey.length))
+    fun getQuadKeyRect(quadKey: QuadKey): LonLatRectangle {
+        val origin = getTileOrigin(GeoUtils.EARTH_RECT, quadKey.string)
+        val dimension = GeoUtils.EARTH_RECT.dimension.mul(1.0 / getTileCount(quadKey.string.length))
 
-        return erasedRectangle(origin, dimension)
+        val flipY = GeoUtils.EARTH_RECT.bottom - (origin.y + dimension.y - GeoUtils.EARTH_RECT.top)
+        return Typed.Rectangle(LonLatPoint(origin.x, flipY), dimension)
     }
 
-    private fun getTileOrigin(mapRect: Typed.Rectangle<*>, tileKey: String): Point {
+    fun <ProjT> getTileOrigin(mapRect: Typed.Rectangle<ProjT>, tileKey: String): Typed.Point<ProjT> {
         var left = mapRect.left
         var top = mapRect.top
         var width = mapRect.width
@@ -117,17 +120,7 @@ object GeoUtils {
                 top += height
             }
         }
-        return Point(left, top)
-    }
-
-    fun calculateQuadKeys(lonLatRect: Typed.Rectangle<LonLat>, zoom: Int?): Set<QuadKey> {
-        val flipRect = LonLatRectangle(
-                lonLatRect.left,
-                -lonLatRect.bottom,
-                lonLatRect.width,
-                lonLatRect.height
-        )
-        return calculateTileKeys(EARTH_RECT, flipRect, zoom, QUAD_KEY_CREATOR)
+        return Typed.Point(left, top)
     }
 
     fun <T> calculateTileKeys(mapRect: LonLatRectangle, viewRect: LonLatRectangle, zoom: Int?, constructor: (String) -> T): Set<T> {
@@ -174,7 +167,8 @@ object GeoUtils {
         return tileID
     }
 
-    private fun getTileCount(zoom: Int): Int {
+    fun getTileCount(zoom: Int): Int {
         return 1 shl zoom
     }
+
 }

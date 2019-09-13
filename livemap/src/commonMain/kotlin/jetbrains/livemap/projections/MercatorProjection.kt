@@ -6,18 +6,17 @@ import jetbrains.datalore.base.projectionGeometry.LonLatRectangle
 import jetbrains.datalore.base.projectionGeometry.MercatorUtils
 import jetbrains.datalore.base.projectionGeometry.MercatorUtils.VALID_LATITUDE_RANGE
 import jetbrains.datalore.base.projectionGeometry.MercatorUtils.VALID_LONGITUDE_RANGE
-import jetbrains.datalore.base.projectionGeometry.Point
 import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
 
 internal class MercatorProjection : GeoProjection {
 
-    override fun project(v: LonLatPoint) =
-        Point(
+    override fun project(v: LonLatPoint): GeographicPoint =
+        GeographicPoint(
             MercatorUtils.getMercatorX(limitLon(v.x)),
             MercatorUtils.getMercatorY(limitLat(v.y))
         )
 
-    override fun invert(v: Point) =
+    override fun invert(v: GeographicPoint): LonLatPoint =
         LonLatPoint(
             limitLon(MercatorUtils.getLongitude(v.x)),
             limitLat(MercatorUtils.getLatitude(v.y))

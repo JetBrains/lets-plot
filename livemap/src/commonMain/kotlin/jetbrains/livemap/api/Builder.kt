@@ -6,6 +6,7 @@ import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.LonLatRectangle
 import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.cell.mapobjects.MapPath
@@ -138,7 +139,7 @@ class PointBuilder {
             index!!,
             mapId,
             regionId,
-            DoubleVector(lon!!, lat!!),
+            LonLatPoint(lon!!, lat!!),
             label!!,
             animation!!,
             shape!!,
@@ -348,7 +349,7 @@ val dummyGeocodingService: GeocodingService = GeocodingService(
 )
 
 val dummyTileService: TileService = object : TileService(DummySocketBuilder(), LivemapConstants.Theme.COLOR.name) {
-    override fun getTileData(bbox: DoubleRectangle, zoom: Int): Async<List<TileLayer>> {
+    override fun getTileData(bbox: LonLatRectangle, zoom: Int): Async<List<TileLayer>> {
         return constant(emptyList<TileLayer>())
     }
 }

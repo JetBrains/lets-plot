@@ -130,6 +130,24 @@ object ProjectionUtil {
         }
     }
 
+    internal fun <InT, OutT> tuple(xProjection: Projection<Double>, yProjection: Projection<Double>): Transform<Typed.Point<InT>, Typed.Point<OutT>> {
+        return object : Transform<Typed.Point<InT>, Typed.Point<OutT>> {
+            override fun project(v: Typed.Point<InT>): Typed.Point<OutT> {
+                return Typed.Point(
+                    xProjection.project(v.x),
+                    yProjection.project(v.y)
+                )
+            }
+
+            override fun invert(v: Typed.Point<OutT>): Typed.Point<InT> {
+                return Typed.Point(
+                    xProjection.invert(v.x),
+                    yProjection.invert(v.y)
+                )
+            }
+        }
+    }
+
     fun <T> composite(proj1: Projection<T>, proj2: Projection<T>): Projection<T> {
         return object : Projection<T> {
             override fun project(v: T): T {
@@ -260,6 +278,14 @@ object ProjectionUtil {
             error("Value for DoubleVector isNaN x = $x and y = $y")
         } else {
             DoubleVector(x, y)
+        }
+    }
+
+    fun <ProjT> safePoint(x: Double, y: Double): Typed.Point<ProjT> {
+        return if (x.isNaN() || y.isNaN()) {
+            error("Value for DoubleVector isNaN x = $x and y = $y")
+        } else {
+            Typed.Point(x, y)
         }
     }
 }

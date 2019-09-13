@@ -21,6 +21,8 @@ typealias ClientRectangle = Typed.Rectangle<Client>
 typealias WorldPoint = Typed.Point<World>
 typealias WorldRectangle = Typed.Rectangle<World>
 
+
+
 class Coordinates {
     companion object {
         val ZERO_LONLAT_POINT = LonLatPoint(0.0, 0.0)
@@ -38,9 +40,7 @@ fun GeoRectangle.toLonLatRectangle(): LonLatRectangle {
     return LonLatRectangle(
         LonLatPoint(this.minLongitude(), this.minLatitude()),
         LonLatPoint(this.maxLongitude(), maxLongitude())
-
-
-        )
+    )
 }
 
 fun Vector.toClientPoint() = ClientPoint(x, y)
