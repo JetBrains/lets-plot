@@ -1,13 +1,15 @@
 package jetbrains.livemap.projections
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.center
+import jetbrains.datalore.base.projectionGeometry.height
+import jetbrains.datalore.base.projectionGeometry.width
 import jetbrains.livemap.projections.ProjectionUtil.transformBBox
 import kotlin.math.min
 
 internal class MapProjectionBuilder(
     private val geoProjection: GeoProjection,
-    private val mapRect: DoubleRectangle
+    private val mapRect: WorldRectangle
 ) {
     private var reverseX = false
     private var reverseY = false
@@ -47,11 +49,11 @@ internal class MapProjectionBuilder(
             override val mapRect: DoubleRectangle
                 get() = this@MapProjectionBuilder.mapRect
 
-            override fun project(v: DoubleVector): DoubleVector {
-                return proj.project(v)
+            override fun project(v: LonLatPoint): WorldPoint {
+                return proj.project(v).toWorldPoint()
             }
 
-            override fun invert(v: DoubleVector): DoubleVector {
+            override fun invert(v: WorldPoint): LonLatPoint {
                 return proj.invert(v)
             }
         }

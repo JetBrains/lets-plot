@@ -1,7 +1,9 @@
 package jetbrains.livemap.effects
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.LineString
+import jetbrains.datalore.base.projectionGeometry.AnyLineString
+import jetbrains.datalore.base.projectionGeometry.AnyPoint
+import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.gis.geoprotocol.GeometryUtil.asLineString
@@ -10,12 +12,13 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.StyleComponent
+import jetbrains.livemap.projections.Client
 import kotlin.math.sqrt
 
 
 object GrowingPath {
 
-    private fun length(p1: DoubleVector, p2: DoubleVector): Double {
+    private fun length(p1: AnyPoint, p2: AnyPoint): Double {
         val x = p2.x - p1.x
         val y = p2.y - p1.y
         return sqrt(x * x + y * y)
@@ -43,7 +46,7 @@ object GrowingPath {
 
         private fun calculateEffectState(
             effectComponent: GrowingPathEffectComponent,
-            path: LineString,
+            path: AnyLineString,
             progress: Double
         ) {
             val lengthIndex = effectComponent.getLengthIndex()!!
@@ -93,7 +96,7 @@ object GrowingPath {
                 ParentLayerComponent::class
             )
 
-            private fun initComponent(effectComponent: GrowingPathEffectComponent, path: LineString) {
+            private fun initComponent(effectComponent: GrowingPathEffectComponent, path: AnyLineString) {
                 val lengthIndex = ArrayList<Double>(path.size)
                 lengthIndex.add(0.0)
                 var l = 0.0
@@ -187,7 +190,7 @@ object GrowingPath {
 
             for (polygon in geometry.asMultipolygon()) {
                 val ring = polygon.get(0)
-                var viewCoord: DoubleVector = ring.get(0)
+                var viewCoord: Typed.Point<Client> = ring.get(0)
                 ctx.moveTo(viewCoord.x, viewCoord.y)
 
                 for (i in 1..growingPath.getEndIndex()) {

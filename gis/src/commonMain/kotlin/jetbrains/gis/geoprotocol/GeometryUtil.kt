@@ -2,7 +2,6 @@ package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles
-import jetbrains.datalore.base.projectionGeometry.LineString
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.datalore.base.projectionGeometry.limit
@@ -20,7 +19,7 @@ object GeometryUtil {
         )
     }
 
-    fun asLineString(geometry: Geometry): LineString {
+    fun <ProjT> asLineString(geometry: TypedGeometry<ProjT>): Typed.LineString<ProjT> {
         return Typed.LineString(geometry.asMultipolygon().get(0).get(0))
     }
 }

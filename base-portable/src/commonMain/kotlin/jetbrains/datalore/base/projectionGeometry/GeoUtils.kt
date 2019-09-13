@@ -1,9 +1,9 @@
 package jetbrains.datalore.base.projectionGeometry
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import kotlin.math.*
+
 
 object GeoUtils {
     internal val EARTH_RADIUS = 6378137.0
@@ -13,7 +13,7 @@ object GeoUtils {
     private val MIN_LATITUDE = -90.0
     private val MAX_LATITUDE = 90.0
     val FULL_LATITUDE = MAX_LATITUDE - MIN_LATITUDE
-    internal val EARTH_RECT = DoubleRectangle(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
+    internal val EARTH_RECT = LonLatRectangle(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
     val BBOX_CALCULATOR = GeoBoundingBoxCalculator(EARTH_RECT, true, false)
     private val QUAD_KEY_CREATOR = { tileKey: String -> QuadKey(tileKey) }
 
@@ -70,7 +70,7 @@ object GeoUtils {
         return closestX2 - x1
     }
 
-    fun convertToGeoRectangle(rect: DoubleRectangle): GeoRectangle {
+    fun convertToGeoRectangle(rect: Typed.Rectangle<LonLat>): GeoRectangle {
         val left: Double
         val right: Double
 
@@ -85,22 +85,22 @@ object GeoUtils {
         return GeoRectangle(left, limitLat(rect.top), right, limitLat(rect.bottom))
     }
 
-    fun getQuadKeyRect(quadKey: QuadKey): DoubleRectangle {
+    fun getQuadKeyRect(quadKey: QuadKey): Rectangle {
         val origin = getTileOrigin(EARTH_RECT, quadKey.string)
         val dimension = EARTH_RECT.dimension.mul(1.0 / getTileCount(quadKey.string.length))
 
         val flipY = EARTH_RECT.bottom - (origin.y + dimension.y - EARTH_RECT.top)
-        return DoubleRectangle(DoubleVector(origin.x, flipY), dimension)
+        return erasedRectangle(Point(origin.x, flipY), dimension)
     }
 
-    fun getTileRect(mapRect: DoubleRectangle, tileKey: String): DoubleRectangle {
+    fun getTileRect(mapRect: Typed.Rectangle<*>, tileKey: String): Rectangle {
         val origin = getTileOrigin(mapRect, tileKey)
         val dimension = mapRect.dimension.mul(1.0 / getTileCount(tileKey.length))
 
-        return DoubleRectangle(origin, dimension)
+        return erasedRectangle(origin, dimension)
     }
 
-    private fun getTileOrigin(mapRect: DoubleRectangle, tileKey: String): DoubleVector {
+    private fun getTileOrigin(mapRect: Typed.Rectangle<*>, tileKey: String): Point {
         var left = mapRect.left
         var top = mapRect.top
         var width = mapRect.width
@@ -117,11 +117,11 @@ object GeoUtils {
                 top += height
             }
         }
-        return DoubleVector(left, top)
+        return Point(left, top)
     }
 
-    fun calculateQuadKeys(lonLatRect: DoubleRectangle, zoom: Int?): Set<QuadKey> {
-        val flipRect = DoubleRectangle(
+    fun calculateQuadKeys(lonLatRect: Typed.Rectangle<LonLat>, zoom: Int?): Set<QuadKey> {
+        val flipRect = LonLatRectangle(
                 lonLatRect.left,
                 -lonLatRect.bottom,
                 lonLatRect.width,
@@ -130,7 +130,7 @@ object GeoUtils {
         return calculateTileKeys(EARTH_RECT, flipRect, zoom, QUAD_KEY_CREATOR)
     }
 
-    fun <T> calculateTileKeys(mapRect: DoubleRectangle, viewRect: DoubleRectangle, zoom: Int?, constructor: (String) -> T): Set<T> {
+    fun <T> calculateTileKeys(mapRect: LonLatRectangle, viewRect: LonLatRectangle, zoom: Int?, constructor: (String) -> T): Set<T> {
         val tileKeys = HashSet<T>()
         val tileCount = getTileCount(zoom!!)
 
@@ -148,12 +148,12 @@ object GeoUtils {
         return tileKeys
     }
 
-    private fun calcTileNum(value: Double, range: ClosedRange<Double>, tileCount: Int): Int {
+    fun calcTileNum(value: Double, range: ClosedRange<Double>, tileCount: Int): Int {
         val position = (value - range.lowerEndpoint()) / (range.upperEndpoint() - range.lowerEndpoint())
         return max(0.0, min(position * tileCount, (tileCount - 1).toDouble())).toInt()
     }
 
-    internal fun tileXYToTileID(tileX: Int, tileY: Int, zoom: Int): String {
+    fun tileXYToTileID(tileX: Int, tileY: Int, zoom: Int): String {
         var tileID = ""
 
         for (i in zoom downTo 1) {

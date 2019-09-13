@@ -4,19 +4,21 @@ import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.maps.livemap.entities.rendering.Common
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.Context2d.LineJoin
-import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.entities.geometry.ClientGeometry
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.StyleComponent
+import jetbrains.livemap.entities.rendering.lineTo
+import jetbrains.livemap.entities.rendering.moveTo
 import jetbrains.livemap.entities.scaling.ScaleComponent
 
 object Renderers {
 
-    fun drawLines(geometry: Geometry, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
+    fun drawLines(geometry: ClientGeometry, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
         for (polygon in geometry.asMultipolygon()) {
             for (ring in polygon) {
-                ring[0].let { ctx.moveTo(it.x, it.y) }
-                ring.drop(1).forEach { ctx.lineTo(it.x, it.y) }
+                ring[0].let { ctx.moveTo(it) }
+                ring.drop(1).forEach { ctx.lineTo(it) }
             }
         }
         afterPolygon(ctx)
@@ -68,3 +70,4 @@ object Renderers {
         }
     }
 }
+

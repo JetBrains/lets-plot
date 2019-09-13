@@ -2,7 +2,7 @@ package jetbrains.livemap.projections
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.deltaOnLoop
 import jetbrains.livemap.projections.ProjectionUtil.calculateCellKeys
 import kotlin.math.abs
@@ -10,11 +10,11 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-class MultiMapHelper(
-    private val myMapRect: DoubleRectangle,
+class MultiMapHelper<ProjT>(
+    private val myMapRect: Typed.Rectangle<ProjT>,
     private val myLoopX: Boolean,
     private val myLoopY: Boolean
-) : ViewProjectionHelper, MapRuler {
+) : ViewProjectionHelper, MapRuler<ProjT> {
     private fun splitRange(
         range: ClosedRange<Double>,
         mapRange: ClosedRange<Double>,
@@ -109,7 +109,7 @@ class MultiMapHelper(
         return abs(deltaY(y1, y2))
     }
 
-    override fun calculateBoundingBox(xyRects: List<DoubleRectangle>): DoubleRectangle {
+    override fun calculateBoundingBox(xyRects: List<Typed.Rectangle<ProjT>>): Typed.Rectangle<ProjT> {
         return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).calculateBoundingBoxFromRectangles(xyRects)
     }
 
@@ -121,7 +121,7 @@ class MultiMapHelper(
         return normalize(y, myMapRect.top, myMapRect.bottom, myLoopY)
     }
 
-    override fun getOrigins(objRect: DoubleRectangle, viewRect: DoubleRectangle): List<WorldPoint> {
+    override fun getOrigins(objRect: WorldRectangle, viewRect: WorldRectangle): List<WorldPoint> {
         val xOrigins = getOrigins(objRect.xRange(), myMapRect.xRange(), viewRect.xRange(), myLoopX)
         val yOrigins = getOrigins(objRect.yRange(), myMapRect.yRange(), viewRect.yRange(), myLoopY)
 
@@ -134,14 +134,14 @@ class MultiMapHelper(
         return result
     }
 
-    override fun getCells(viewRect: DoubleRectangle, cellLevel: Int): Set<CellKey> =
+    override fun getCells(viewRect: WorldRectangle, cellLevel: Int): Set<CellKey> =
         HashSet<CellKey>().apply {
             splitRect(viewRect).forEach {
                 this.addAll(calculateCellKeys(myMapRect, it, cellLevel))
             }
         }
 
-    private fun splitRect(rect: DoubleRectangle): List<DoubleRectangle> {
+    private fun splitRect(rect: WorldRectangle): List<DoubleRectangle> {
         val xRanges = splitRange(rect.xRange(), myMapRect.xRange(), myLoopX)
         val yRanges = splitRange(rect.yRange(), myMapRect.yRange(), myLoopY)
 

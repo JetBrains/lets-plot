@@ -1,18 +1,18 @@
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.LineString
 import jetbrains.datalore.base.projectionGeometry.MultiLineString
+import jetbrains.datalore.base.projectionGeometry.Point
 import jetbrains.livemap.core.multitasking.MicroTask
 
 internal class MultiLineStringTransform(
     multiLineString: MultiLineString,
-    private val myTransform: (DoubleVector, MutableCollection<DoubleVector>) -> Unit
+    private val myTransform: (Point, MutableCollection<Point>) -> Unit
 ) : MicroTask<MultiLineString> {
     private lateinit var myLineStringIterator: Iterator<LineString>
-    private lateinit var myPointIterator: Iterator<DoubleVector>
+    private lateinit var myPointIterator: Iterator<Point>
 
-    private var myNewLineString: MutableList<DoubleVector> = ArrayList()
+    private var myNewLineString: MutableList<Point> = ArrayList()
     private val myNewMultiLineString: MutableList<LineString> = ArrayList()
 
     private var myHasNext = true

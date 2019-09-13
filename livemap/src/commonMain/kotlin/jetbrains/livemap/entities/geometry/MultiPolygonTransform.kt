@@ -1,25 +1,22 @@
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.Ring
+import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.livemap.core.multitasking.MicroTask
 
-internal class MultiPolygonTransform(
-    multiPolygon: MultiPolygon,
-    private val myTransform: (DoubleVector, MutableCollection<DoubleVector>) -> Unit
-) : MicroTask<MultiPolygon> {
-    private lateinit var myPolygonsIterator: Iterator<Polygon>
-    private lateinit var myRingIterator: Iterator<Ring>
-    private lateinit var myPointIterator: Iterator<DoubleVector>
+internal class MultiPolygonTransform<InT, OutT>(
+    multiPolygon: Typed.MultiPolygon<InT>,
+    private val myTransform: (Typed.Point<InT>, MutableCollection<Typed.Point<OutT>>) -> Unit
+) : MicroTask<Typed.MultiPolygon<OutT>> {
+    private lateinit var myPolygonsIterator: Iterator<Typed.Polygon<InT>>
+    private lateinit var myRingIterator: Iterator<Typed.Ring<InT>>
+    private lateinit var myPointIterator: Iterator<Typed.Point<InT>>
 
-    private var myNewRing: MutableList<DoubleVector> = ArrayList()
-    private var myNewPolygon: MutableList<Ring> = ArrayList()
-    private val myNewMultiPolygon = ArrayList<Polygon>()
+    private var myNewRing: MutableList<Typed.Point<OutT>> = ArrayList()
+    private var myNewPolygon: MutableList<Typed.Ring<OutT>> = ArrayList()
+    private val myNewMultiPolygon = ArrayList<Typed.Polygon<OutT>>()
 
     private var myHasNext = true
-    private lateinit var myResult: MultiPolygon
+    private lateinit var myResult: Typed.MultiPolygon<OutT>
 
     init {
         try {
@@ -31,18 +28,18 @@ internal class MultiPolygonTransform(
         }
     }
 
-    override fun getResult(): MultiPolygon {
+    override fun getResult(): Typed.MultiPolygon<OutT> {
         return myResult
     }
 
     override fun resume() {
         if (!myPointIterator.hasNext()) {
-            myNewPolygon.add(Ring(myNewRing))
+            myNewPolygon.add(Typed.Ring(myNewRing))
             if (!myRingIterator.hasNext()) {
-                myNewMultiPolygon.add(Polygon(myNewPolygon))
+                myNewMultiPolygon.add(Typed.Polygon(myNewPolygon))
                 if (!myPolygonsIterator.hasNext()) {
                     myHasNext = false
-                    myResult = MultiPolygon(myNewMultiPolygon)
+                    myResult = Typed.MultiPolygon(myNewMultiPolygon)
                     return
                 } else {
                     myRingIterator = myPolygonsIterator.next().iterator()

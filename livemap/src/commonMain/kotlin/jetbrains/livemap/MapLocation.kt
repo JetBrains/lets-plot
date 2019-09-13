@@ -2,13 +2,14 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
+import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.gis.geoprotocol.MapRegion
+import jetbrains.livemap.projections.World
 
 interface MapLocation {
 
-    fun getBBox(geocoder: MapLocationGeocoder): Async<DoubleRectangle>
+    fun getBBox(geocoder: MapLocationGeocoder): Async<Typed.Rectangle<World>>
 
     companion object {
         fun create(geoRectangle: GeoRectangle): MapLocation {

@@ -1,7 +1,7 @@
 package jetbrains.livemap
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.normalizeLon
 import jetbrains.livemap.projections.MapRuler
 import kotlin.math.*
@@ -144,11 +144,11 @@ object MapWidgetUtil {
         }
     }
 
-    internal fun calculateExtendedRectangleWithCenter(
-        mapRuler: MapRuler,
-        rect: DoubleRectangle,
-        center: DoubleVector
-    ): DoubleRectangle {
+    internal fun <ProjT> calculateExtendedRectangleWithCenter(
+        mapRuler: MapRuler<ProjT>,
+        rect: Typed.Rectangle<ProjT>,
+        center: Typed.Point<ProjT>
+    ): Typed.Rectangle<ProjT> {
         val radiusX = calculateRadius(
             center.x,
             rect.left,
@@ -160,7 +160,7 @@ object MapWidgetUtil {
             rect.height,
             mapRuler::distanceY)
 
-        return DoubleRectangle(center.x - radiusX, center.y - radiusY, radiusX * 2, radiusY * 2)
+        return Typed.Rectangle<ProjT>(center.x - radiusX, center.y - radiusY, radiusX * 2, radiusY * 2)
     }
 
     private fun calculateRadius(

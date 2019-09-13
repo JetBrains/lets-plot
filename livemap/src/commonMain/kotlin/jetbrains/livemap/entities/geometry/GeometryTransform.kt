@@ -1,7 +1,6 @@
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.gis.common.twkb.Twkb
 import jetbrains.gis.tileprotocol.TileFeature
 import jetbrains.gis.tileprotocol.TileFeature.TileGeometry.Companion.createMultiLineString
@@ -12,34 +11,42 @@ import jetbrains.livemap.projections.AdaptiveResampling
 import jetbrains.livemap.projections.ProjectionUtil.SAMPLING_EPSILON
 
 object GeometryTransform {
-    fun resampling(
+    fun <InT, OutT> resampling(
         geometry: TileFeature.TileGeometry,
-        transform: (DoubleVector) -> DoubleVector
+        transform: (Typed.Point<InT>) -> Typed.Point<OutT>
     ): MicroTask<TileFeature.TileGeometry> {
         return createTransformer(geometry, resampling(transform))
     }
 
-    fun <PtojT> simple(geometry: MultiPolygon<PtojT>, transform: (DoubleVector) -> DoubleVector): MicroTask<MultiPolygon<PtojT>> {
+    fun <InT, OutT> simple(
+        geometry: Typed.MultiPolygon<InT>,
+        transform: (Typed.Point<InT>) -> Typed.Point<OutT>
+    ): MicroTask<Typed.MultiPolygon<OutT>> {
         return MultiPolygonTransform(geometry, simple(transform))
     }
 
-    fun resampling(geometry: MultiPolygon, transform: (DoubleVector) -> DoubleVector): MicroTask<MultiPolygon> {
+    fun <InT, OutT> resampling(
+        geometry: Typed.MultiPolygon<InT>,
+        transform: (Typed.Point<InT>) -> Typed.Point<OutT>
+    ): MicroTask<Typed.MultiPolygon<OutT>> {
         return MultiPolygonTransform(geometry, resampling(transform))
     }
 
-    private fun simple(transform: (DoubleVector) -> DoubleVector): (DoubleVector, MutableCollection<DoubleVector>) -> Unit {
+    private fun <InT, OutT> simple(
+        transform: (Typed.Point<InT>) -> Typed.Point<OutT>
+    ): (Typed.Point<InT>, MutableCollection<Typed.Point<OutT>>) -> Unit {
         return { p, ring -> ring.add(transform(p)) }
     }
 
-    private fun resampling(transform: (DoubleVector) -> DoubleVector): (DoubleVector, MutableCollection<DoubleVector>) -> Unit {
-        return { p, ring ->
-            IterativeResampler(transform).next(p, ring)
-        }
+    private fun <InT, OutT> resampling(
+        transform: (Typed.Point<InT>) -> Typed.Point<OutT>
+    ): (Typed.Point<InT>, MutableCollection<Typed.Point<OutT>>) -> Unit {
+        return { p, ring -> IterativeResampler(transform).next(p, ring) }
     }
 
-    private fun createTransformer(
+    private fun <InT, OutT> createTransformer(
         geometry: TileFeature.TileGeometry,
-        transform: (DoubleVector, MutableCollection<DoubleVector>) -> Unit
+        transform: (Typed.Point<InT>, MutableCollection<Typed.Point<OutT>>) -> Unit
     ): MicroTask<TileFeature.TileGeometry> {
         return when (geometry.type) {
             Twkb.GeometryType.MULTI_POLYGON ->
@@ -53,12 +60,14 @@ object GeometryTransform {
         }
     }
 
-    internal class IterativeResampler(private val myTransform: (DoubleVector) -> DoubleVector) {
+    internal class IterativeResampler<InT, OutT>(
+        private val myTransform: (Typed.Point<InT>) -> Typed.Point<OutT>
+    ) {
         private val myAdaptiveResampling = AdaptiveResampling(myTransform, SAMPLING_EPSILON)
-        private var myPrevPoint: DoubleVector? = null
-        private var myRing: MutableCollection<DoubleVector>? = null
+        private var myPrevPoint: Typed.Point<InT>? = null
+        private var myRing: MutableCollection<Typed.Point<OutT>>? = null
 
-        fun next(p: DoubleVector, ring: MutableCollection<DoubleVector>) {
+        fun next(p: Typed.Point<InT>, ring: MutableCollection<Typed.Point<OutT>>) {
             if (myRing == null || // first call
                 ring != myRing) { // next ring
                 myRing = ring
@@ -68,7 +77,7 @@ object GeometryTransform {
             resample(p).forEach { newPoint -> myRing!!.add(myTransform(newPoint)) }
         }
 
-        private fun resample(p: DoubleVector): List<DoubleVector> {
+        private fun resample(p: Typed.Point<InT>): List<Typed.Point<InT>> {
             val prev = myPrevPoint
             myPrevPoint = p
 

@@ -5,9 +5,8 @@ import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.Ring
+import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.cell.mapobjects.MapPath
 import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
@@ -27,10 +26,7 @@ import jetbrains.livemap.mapobjects.MapLayerKind.*
 import jetbrains.livemap.mapobjects.MapLine
 import jetbrains.livemap.mapobjects.MapPoint
 import jetbrains.livemap.mapobjects.MapPolygon
-import jetbrains.livemap.projections.Coordinate
-import jetbrains.livemap.projections.LonLat
-import jetbrains.livemap.projections.ProjectionType
-import jetbrains.livemap.projections.createArcPath
+import jetbrains.livemap.projections.*
 
 @DslMarker
 annotation class LiveMapDsl {}
@@ -163,7 +159,7 @@ class PathBuilder {
     var lineDash: List<Double>? = null
     var strokeColor: Color? = null
     var strokeWidth: Double? = null
-    var coordinates: List<Coordinate<LonLat>>? = null
+    var coordinates: List<Typed.Point<LonLat>>? = null
 
     var animation: Int? = null
     var speed: Double? = null
@@ -179,10 +175,10 @@ class PathBuilder {
             animation!!, speed!!, flow!!,
             lineDash!!, strokeColor!!, strokeWidth!!,
             coord
-                .run(::Ring)
-                .run(::Polygon)
-                .run(::MultiPolygon)
-                .run(LonLatGeometry.Companion::create)
+                .let { LonLatRing(it) }
+                .let { LonLatPolygon(listOf(it)) }
+                .let { LonLatMultiPolygon(listOf(it)) }
+                .let { LonLatGeometry.create(it) }
         )
     }
 }

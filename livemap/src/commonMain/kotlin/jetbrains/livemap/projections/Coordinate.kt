@@ -3,17 +3,23 @@ package jetbrains.livemap.projections
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.projectionGeometry.Typed
+import jetbrains.datalore.base.projectionGeometry.*
 
 
-interface LonLat
 interface World
 interface Client
 
 
-typealias LonLatPoint = Typed.Coordinate<LonLat>
-typealias WorldPoint = Typed.Coordinate<World>
-typealias ClientPoint = Typed.Coordinate<Client>
+typealias LonLatPoint = Typed.Point<LonLat>
+typealias LonLatRing = Typed.Ring<LonLat>
+typealias LonLatPolygon = Typed.Polygon<LonLat>
+typealias LonLatMultiPolygon = Typed.MultiPolygon<LonLat>
+
+typealias ClientPoint = Typed.Point<Client>
+typealias ClientRectangle = Typed.Rectangle<Client>
+
+typealias WorldPoint = Typed.Point<World>
+typealias WorldRectangle = Typed.Rectangle<World>
 
 class Coordinates {
     companion object {
@@ -24,8 +30,17 @@ class Coordinates {
 
 }
 
-fun newDoubleRectangle(origin: Typed.Coordinate<*>, dimension: Typed.Coordinate<*>): DoubleRectangle {
+fun newDoubleRectangle(origin: AnyPoint, dimension: AnyPoint): DoubleRectangle {
     return DoubleRectangle(origin.x, origin.y, dimension.x, dimension.y)
+}
+
+fun GeoRectangle.toLonLatRectangle(): LonLatRectangle {
+    return LonLatRectangle(
+        LonLatPoint(this.minLongitude(), this.minLatitude()),
+        LonLatPoint(this.maxLongitude(), maxLongitude())
+
+
+        )
 }
 
 fun Vector.toClientPoint() = ClientPoint(x, y)

@@ -1,6 +1,5 @@
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.normalizeLon
 import kotlin.math.*
 
@@ -8,8 +7,8 @@ private val LONGITUDE_EPS = 1.0
 private val FULL_ANGLE = 360.0
 private val STRAIGHT_ANGLE = 180.0
 
-fun createArcPath(path: List<DoubleVector>): List<DoubleVector> {
-    val arcPath = ArrayList<DoubleVector>()
+fun createArcPath(path: List<LonLatPoint>): List<LonLatPoint> {
+    val arcPath = ArrayList<LonLatPoint>()
     if (path.isEmpty()) {
         return arcPath
     }
@@ -23,7 +22,7 @@ fun createArcPath(path: List<DoubleVector>): List<DoubleVector> {
     return arcPath
 }
 
-private fun addArcPointsToPath(path: MutableList<DoubleVector>, start: DoubleVector, finish: DoubleVector) {
+private fun addArcPointsToPath(path: MutableList<LonLatPoint>, start: LonLatPoint, finish: LonLatPoint) {
     val lonDelta = abs(start.x - finish.x)
     if (lonDelta <= LONGITUDE_EPS) {
         //the shortest path along a meridian
@@ -33,8 +32,8 @@ private fun addArcPointsToPath(path: MutableList<DoubleVector>, start: DoubleVec
     if (abs(STRAIGHT_ANGLE - lonDelta) < LONGITUDE_EPS) {
         //the shortest path through North/South pole
         val latitude = (if (start.y + finish.y >= 0) +1 else -1) * STRAIGHT_ANGLE / 2
-        path.add(DoubleVector(start.x, latitude))
-        path.add(DoubleVector(finish.x, latitude))
+        path.add(LonLatPoint(start.x, latitude))
+        path.add(LonLatPoint(finish.x, latitude))
         return
     }
 
@@ -64,7 +63,7 @@ private fun addArcPointsToPath(path: MutableList<DoubleVector>, start: DoubleVec
             )
         )
 
-        path.add(DoubleVector(longitude, latitude))
+        path.add(LonLatPoint(longitude, latitude))
     }
 }
 

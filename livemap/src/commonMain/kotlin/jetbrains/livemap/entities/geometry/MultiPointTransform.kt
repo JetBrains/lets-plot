@@ -1,16 +1,16 @@
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.MultiPoint
+import jetbrains.datalore.base.projectionGeometry.Point
 import jetbrains.livemap.core.multitasking.MicroTask
 
 internal class MultiPointTransform(
     multiPoint: MultiPoint,
-    private val myTransform: (DoubleVector, MutableCollection<DoubleVector>) -> Unit
+    private val myTransform: (Point, MutableCollection<Point>) -> Unit
 ) : MicroTask<MultiPoint> {
-    private lateinit var myPointIterator: Iterator<DoubleVector>
+    private lateinit var myPointIterator: Iterator<Point>
 
-    private val myNewMultiPoint = ArrayList<DoubleVector>()
+    private val myNewMultiPoint = ArrayList<Point>()
 
     private var myHasNext = true
     private lateinit var myResult: MultiPoint

@@ -1,25 +1,44 @@
 package jetbrains.datalore.base.projectionGeometry
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
 
 object Typed {
-    data class Coordinate<ProjT>(
+    data class Scalar<ProjT>(
+        val value: Double
+    )
+
+    data class Point<ProjT>(
         val x: Double,
         val y: Double
     ) {
         constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
 
-        fun add(p: Coordinate<ProjT>) = Coordinate<ProjT>(x + p.x, y + p.y)
-        fun subtract(p: Coordinate<ProjT>) = Coordinate<ProjT>(x - p.x, y - p.y)
-        fun mul(d: Double) = Coordinate<ProjT>(x * d, y * d)
+        fun add(p: Point<ProjT>) =
+            Point<ProjT>(x + p.x, y + p.y)
+        fun subtract(p: Point<ProjT>) =
+            Point<ProjT>(x - p.x, y - p.y)
+        fun mul(d: Double) = Point<ProjT>(x * d, y * d)
     }
 
-    class Ring<ProjT>(points: List<Coordinate<ProjT>>) : AbstractGeometryList<Coordinate<ProjT>>(points)
-    class LineString<ProjT>(geometry: List<Coordinate<ProjT>>) : AbstractGeometryList<Coordinate<ProjT>>(geometry)
+    class Rectangle<ProjT>(
+        val origin: Point<ProjT>,
+        val dimension: Point<ProjT>
+    ) {
+        constructor(
+            left: Double,
+            top: Double,
+            width: Double,
+            height: Double
+        ) : this(Point(left, top), Point(width, height))
+    }
+
+    class Ring<ProjT>(points: List<Point<ProjT>>) : AbstractGeometryList<Point<ProjT>>(points)
+    class LineString<ProjT>(geometry: List<Point<ProjT>>) : AbstractGeometryList<Point<ProjT>>(geometry)
     class Polygon<ProjT>(rings: List<Ring<ProjT>>) : AbstractGeometryList<Ring<ProjT>>(rings)
-    class MultiPoint<ProjT>(geometry: List<Coordinate<ProjT>>) : AbstractGeometryList<Coordinate<ProjT>>(geometry)
+    class MultiPoint<ProjT>(geometry: List<Point<ProjT>>) : AbstractGeometryList<Point<ProjT>>(geometry)
     class MultiLineString<ProjT>(geometry: List<LineString<ProjT>>) : AbstractGeometryList<LineString<ProjT>>(geometry)
     class MultiPolygon<ProjT>(polygons: List<Polygon<ProjT>>) : AbstractGeometryList<Polygon<ProjT>>(polygons)
 }
@@ -38,10 +57,50 @@ fun Typed.MultiPolygon<*>.limit(): List<DoubleRectangle> { return map { polygon 
 class Generic
 class LonLat
 
-typealias Point = Typed.Coordinate<Generic>
+typealias Rectangle = Typed.Rectangle<Generic>
+
+typealias Point = Typed.Point<Generic>
 typealias Ring = Typed.Ring<Generic>
 typealias LineString = Typed.LineString<Generic>
 typealias Polygon = Typed.Polygon<Generic>
 typealias MultiPoint = Typed.MultiPoint<Generic>
 typealias MultiLineString = Typed.MultiLineString<Generic>
 typealias MultiPolygon = Typed.MultiPolygon<Generic>
+
+typealias LonLatPoint = Typed.Point<LonLat>
+typealias LonLatRectangle = Typed.Rectangle<LonLat>
+
+typealias AnyPoint = Typed.Point<*>
+typealias AnyLineString = Typed.LineString<*>
+
+fun <ProjT> Point.reinterpret(): Typed.Point<ProjT> = this as Typed.Point<ProjT>
+
+/**
+ * Create generic rectangle by any points
+ */
+fun erasedRectangle(origin: AnyPoint, dimension: AnyPoint): Rectangle {
+    return Rectangle(
+        origin as Point,
+        dimension as Point
+    )
+}
+
+fun <ProjT> newSpanRectangle(leftTop: Typed.Point<ProjT>, rightBottom: Typed.Point<ProjT>): Typed.Rectangle<ProjT> {
+    return Typed.Rectangle(leftTop, rightBottom.subtract(leftTop))
+}
+
+fun Typed.Rectangle<*>.xRange() = ClosedRange.closed(origin.x, origin.x + dimension.x)
+fun Typed.Rectangle<*>.yRange() = ClosedRange.closed(origin.y, origin.y + dimension.y)
+
+val Typed.Rectangle<*>.bottom: Double get() = origin.y + dimension.y
+val Typed.Rectangle<*>.right: Double get() = origin.x + dimension.x
+val Typed.Rectangle<*>.height: Double get() = dimension.y
+val Typed.Rectangle<*>.width: Double get() = dimension.x
+val Typed.Rectangle<*>.top: Double get() = origin.y
+val Typed.Rectangle<*>.left: Double get() = origin.x
+val <ProjT> Typed.Rectangle<ProjT>.center: Typed.Point<ProjT> get() = origin.add(dimension.mul(0.5))
+
+fun <ProjT> Typed.Point<ProjT>.subX(p: Typed.Point<ProjT>) = Typed.Point<ProjT>(x - p.x, y)
+fun <ProjT> Typed.Point<ProjT>.subY(p: Typed.Point<ProjT>) = Typed.Point<ProjT>(x, y - p.y)
+fun <ProjT> Typed.Point<ProjT>.addX(p: Typed.Point<ProjT>) = Typed.Point<ProjT>(x + p.x, y)
+fun <ProjT> Typed.Point<ProjT>.addY(p: Typed.Point<ProjT>) = Typed.Point<ProjT>(x, y + p.y)

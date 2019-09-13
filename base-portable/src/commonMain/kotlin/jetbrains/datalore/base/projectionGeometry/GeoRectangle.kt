@@ -1,8 +1,6 @@
 package jetbrains.datalore.base.projectionGeometry
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 
 class GeoRectangle(minLongitude: Double, minLatitude: Double, maxLongitude: Double, maxLatitude: Double) {
     private val myLongitudeRange: LongitudeRange
@@ -44,14 +42,17 @@ class GeoRectangle(minLongitude: Double, minLatitude: Double, maxLongitude: Doub
         return myLongitudeRange.encloses(rect.myLongitudeRange) && myLatitudeRange.encloses(rect.myLatitudeRange)
     }
 
-    fun splitByAntiMeridian(): List<DoubleRectangle> {
-        val rects = ArrayList<DoubleRectangle>()
+    fun splitByAntiMeridian(): List<LonLatRectangle> {
+        val rects = ArrayList<LonLatRectangle>()
 
         val longitudeRanges = myLongitudeRange.splitByAntiMeridian()
         for (longitudeRange in longitudeRanges) {
-            rects.add(DoubleRectangle.span(
-                    DoubleVector(longitudeRange.lowerEndpoint(), myLatitudeRange.lowerEndpoint()),
-                    DoubleVector(longitudeRange.upperEndpoint(), myLatitudeRange.upperEndpoint())))
+            rects.add(
+                newSpanRectangle(
+                    LonLatPoint(longitudeRange.lowerEndpoint(), myLatitudeRange.lowerEndpoint()),
+                    LonLatPoint(longitudeRange.upperEndpoint(), myLatitudeRange.upperEndpoint())
+                )
+            )
         }
         return rects
     }

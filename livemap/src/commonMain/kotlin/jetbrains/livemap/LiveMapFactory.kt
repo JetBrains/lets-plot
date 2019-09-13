@@ -2,10 +2,9 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
+import jetbrains.datalore.base.projectionGeometry.center
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.livemap.entities.regions.EmptinessChecker
 import jetbrains.livemap.projections.*
@@ -16,18 +15,18 @@ import jetbrains.livemap.tilegeometry.TileGeometryProvider
 class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactory {
     private val myMapProjection: MapProjection
     private val myViewProjection: ViewProjection
-    private val myMapRuler: MapRuler
+    private val myMapRuler: MapRuler<World>
     private val myRegionGeometryStorage: RegionGeometryStorage
 
     init {
-        val mapRect = DoubleRectangle(ZERO, DoubleVector(TILE_PIXEL_SIZE, TILE_PIXEL_SIZE))
+        val mapRect = WorldRectangle(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
         myMapProjection = createMapProjection(myLiveMapSpec.projectionType, mapRect)
         val multiMapHelper = MultiMapHelper(mapRect, myLiveMapSpec.isLoopX, myLiveMapSpec.isLoopY)
         myMapRuler = multiMapHelper
         myViewProjection = ViewProjection.create(
             multiMapHelper,
             myLiveMapSpec.size.toClientPoint(),
-            mapRect.center.toWorldPoint()
+            mapRect.center
         )
 
         myRegionGeometryStorage = RegionGeometryStorage()

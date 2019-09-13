@@ -1,10 +1,13 @@
 package jetbrains.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.FULL_LONGITUDE
+import jetbrains.datalore.base.projectionGeometry.addX
+import jetbrains.datalore.base.projectionGeometry.subX
+import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ViewProjection
+import jetbrains.livemap.projections.WorldPoint
 import kotlin.math.pow
 import kotlin.math.round
 
@@ -20,18 +23,20 @@ class LiveMapLocation(private val myViewProjection: ViewProjection, private val 
             return DoubleRectangle(nw.x, se.y, se.x - nw.x, nw.y - se.y)
         }
 
-    private fun worldToLonLat(worldCoord: DoubleVector): DoubleVector {
+    private fun worldToLonLat(worldCoord: WorldPoint): LonLatPoint {
         var coord = worldCoord
         val mapSize = myMapProjection.mapRect.dimension
 
-        var shift = DoubleVector.ZERO
+        val shift: LonLatPoint
 
         if (worldCoord.x > mapSize.x) {
-            shift = DoubleVector(FULL_LONGITUDE, shift.y)
-            coord = DoubleVector(worldCoord.x - mapSize.x, worldCoord.y)
+            shift = LonLatPoint(FULL_LONGITUDE, 0.0)
+            coord = worldCoord.subX(mapSize)
         } else if (worldCoord.x < 0) {
-            shift = DoubleVector(-FULL_LONGITUDE, shift.y)
-            coord = DoubleVector(mapSize.x + worldCoord.x, worldCoord.y)
+            shift = LonLatPoint(-FULL_LONGITUDE, 0.0)
+            coord = mapSize.addX(mapSize)
+        } else {
+            shift = LonLatPoint(0.0, 0.0)
         }
 
         return shift.add(myMapProjection.invert(coord))
