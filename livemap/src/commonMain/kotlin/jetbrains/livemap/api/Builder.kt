@@ -26,6 +26,7 @@ import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind.*
 import jetbrains.livemap.mapobjects.MapLine
 import jetbrains.livemap.mapobjects.MapPoint
+import jetbrains.livemap.mapobjects.MapPolygon
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.createArcPath
 
@@ -109,6 +110,12 @@ class Points {
 class Paths {
     val items = ArrayList<MapPath>()
 }
+
+@LiveMapDsl
+class Polygons {
+    val items = ArrayList<MapPolygon>()
+}
+
 @LiveMapDsl
 class Lines {
     val items = ArrayList<MapLine>()
@@ -170,6 +177,35 @@ class PathBuilder {
             animation!!, speed!!, flow!!,
             lineDash!!, strokeColor!!, strokeWidth!!,
             coord
+                .run(::Ring)
+                .run(::Polygon)
+                .run(::MultiPolygon)
+                .run(LonLatGeometry.Companion::create)
+        )
+    }
+}
+
+
+
+@LiveMapDsl
+class PolygonsBuilder {
+    var index: Int? = null
+    var mapId: String? = null
+    var regionId: String? = null
+
+    var lineDash: List<Double>? = null
+    var strokeColor: Color? = null
+    var strokeWidth: Double? = null
+    var fillColor: Color? = null
+    var coordinates: List<DoubleVector>? = null
+
+    fun build(): MapPolygon {
+
+        return MapPolygon(
+            index!!, mapId, regionId,
+            lineDash!!, strokeColor!!, strokeWidth!!,
+            fillColor!!,
+            coordinates!!
                 .run(::Ring)
                 .run(::Polygon)
                 .run(::MultiPolygon)
@@ -253,6 +289,10 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
 
 fun LayersBuilder.paths(block: Paths.() -> Unit) {
     items.add(MapLayer(PATH, Paths().apply(block).items))
+}
+
+fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
+    items.add(MapLayer(POLYGON, Polygons().apply(block).items))
 }
 
 fun LayersBuilder.hLines(block: Lines.() -> Unit) {

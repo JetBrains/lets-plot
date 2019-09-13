@@ -31,6 +31,13 @@ class FeaturesDemoModel(canvasControl: CanvasControl): DemoModelBase(canvasContr
                     }
                 }
 
+                polygons {
+                    polygon {
+                        coordinates = listOf(BOSTON, SPB, MOSCOW).map(GeoObject::geoCoord)
+                        fillColor = Color.LIGHT_CYAN
+                    }
+                }
+
                 hLines {
                     line {
                         lon = MOSCOW.lon
