@@ -8,9 +8,7 @@ class AdaptiveResampling<InT, OutT>(private val transform: (Typed.Point<InT>) ->
     private val epsilonSqr: Double = epsilon * epsilon
 
     private fun <T> MutableList<T>.pop(): T {
-        val last = get(size - 1)
-        removeAt(size - 1)
-        return last
+        return get(lastIndex).also { removeAt(lastIndex) }
     }
 
     fun resample(points: List<Typed.Point<InT>>): List<Typed.Point<OutT>> {
