@@ -23,8 +23,8 @@ import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.entities.geometry.LonLatGeometry
 import jetbrains.livemap.mapobjects.MapLayer
-import jetbrains.livemap.mapobjects.MapLayerKind.PATH
-import jetbrains.livemap.mapobjects.MapLayerKind.POINT
+import jetbrains.livemap.mapobjects.MapLayerKind.*
+import jetbrains.livemap.mapobjects.MapLine
 import jetbrains.livemap.mapobjects.MapPoint
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.createArcPath
@@ -109,6 +109,10 @@ class Points {
 class Paths {
     val items = ArrayList<MapPath>()
 }
+@LiveMapDsl
+class Lines {
+    val items = ArrayList<MapLine>()
+}
 
 @LiveMapDsl
 class PointBuilder {
@@ -175,6 +179,29 @@ class PathBuilder {
 }
 
 @LiveMapDsl
+class LineBuilder {
+    var index: Int? = null
+    var mapId: String? = null
+    var regionId: String? = null
+
+    var lon: Double? = null
+    var lat: Double? = null
+    var lineDash: List<Double>? = null
+    var strokeColor: Color? = null
+    var strokeWidth: Double? = null
+
+
+    fun build(): MapLine {
+
+        return MapLine(
+            index!!, mapId, regionId,
+            lineDash!!, strokeColor!!, strokeWidth!!,
+            DoubleVector(lon!!, lat!!)
+        )
+    }
+}
+
+@LiveMapDsl
 class Location {
     var name: String? = null
         set(v) {
@@ -226,6 +253,14 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
 
 fun LayersBuilder.paths(block: Paths.() -> Unit) {
     items.add(MapLayer(PATH, Paths().apply(block).items))
+}
+
+fun LayersBuilder.hLines(block: Lines.() -> Unit) {
+    items.add(MapLayer(H_LINE, Lines().apply(block).items))
+}
+
+fun LayersBuilder.vLines(block: Lines.() -> Unit) {
+    items.add(MapLayer(V_LINE, Lines().apply(block).items))
 }
 
 fun point(block: PointBuilder.() -> Unit) = PointBuilder().apply(block)

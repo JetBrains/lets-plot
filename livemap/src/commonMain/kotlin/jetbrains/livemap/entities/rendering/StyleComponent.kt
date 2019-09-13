@@ -13,3 +13,4 @@ class StyleComponent : EcsComponent {
 fun StyleComponent.setLineDash(lineDash: List<Double>) { this.lineDash = lineDash.toDoubleArray() }
 fun StyleComponent.setFillColor(fillColor: Color) { this.fillColor = fillColor.toCssColor() }
 fun StyleComponent.setStrokeColor(strokeColor: Color) { this.strokeColor = strokeColor.toCssColor() }
+fun StyleComponent.setStrokeWidth(strokeWidth: Double) { this.strokeWidth = strokeWidth }

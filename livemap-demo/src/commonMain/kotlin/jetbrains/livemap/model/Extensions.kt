@@ -1,10 +1,7 @@
 package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.api.PathBuilder
-import jetbrains.livemap.api.Paths
-import jetbrains.livemap.api.PointBuilder
-import jetbrains.livemap.api.Points
+import jetbrains.livemap.api.*
 import jetbrains.livemap.demo.model.GeoObject
 
 fun Points.point(block: PointBuilder.() -> Unit) {
@@ -44,6 +41,23 @@ fun Paths.path(block: PathBuilder.() -> Unit) {
             animation = 0
             speed = 0.0
             flow = 0.0
+
+        }
+            .apply(block)
+            .build()
+    )
+}
+
+fun Lines.line(block: LineBuilder.() -> Unit) {
+    items.add(
+        LineBuilder().apply {
+            index = 0
+            mapId = ""
+            regionId = ""
+
+            lineDash = emptyList()
+            strokeColor = Color.BLACK
+            strokeWidth = 1.0
 
         }
             .apply(block)

@@ -276,8 +276,8 @@ class LiveMap(
                 //MapLayerKind.POLYGON -> mapObject2Entity.processPolygon(mapObjects)
                 //MapLayerKind.BAR -> mapObject2Entity.processBar(mapObjects)
                 //MapLayerKind.PIE -> mapObject2Entity.processPie(mapObjects)
-                //MapLayerKind.H_LINE -> mapObject2Entity.processLine(mapObjects, true, myMapProjection.mapRect)
-                //MapLayerKind.V_LINE -> mapObject2Entity.processLine(mapObjects, false, myMapProjection.mapRect)
+                MapLayerKind.H_LINE -> mapObject2Entity.processLine(mapObjects, true, myMapProjection)
+                MapLayerKind.V_LINE -> mapObject2Entity.processLine(mapObjects, false, myMapProjection)
                 //MapLayerKind.TEXT -> mapObject2Entity.processText(
                     //mapObjects,
                     //TextSpec.createMeasurer(context.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
