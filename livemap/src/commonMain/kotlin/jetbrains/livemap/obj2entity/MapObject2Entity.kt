@@ -22,10 +22,16 @@ class MapObject2Entity(
         MapPathProcessor(myComponentManager, myLayerManager, myMapProjection).process(mapObjects)
     }
 
-    /*
-    fun processPolygon(mapObjects: List<MapObject>) {
-        MapPolygonProcessor(myComponentManager, myLayerManager).process(mapObjects)
+    fun processLine(mapObjects: List<MapObject>, horizontal: Boolean) {
+        MapLineProcessor(myComponentManager, myLayerManager, myMapProjection).process(mapObjects, horizontal)
     }
+
+    fun processPolygon(mapObjects: List<MapObject>) {
+        MapPolygonProcessor(myComponentManager, myLayerManager, myMapProjection).process(mapObjects)
+    }
+
+
+    /*
 
     fun processBar(mapObjects: List<MapObject>) {
         MapBarProcessor(myComponentManager, myLayerManager).process(mapObjects)
@@ -33,10 +39,6 @@ class MapObject2Entity(
 
     fun processPie(mapObjects: List<MapObject>) {
         MapPieProcessor(myComponentManager, myLayerManager).process(mapObjects)
-    }
-
-    fun processLine(mapObjects: List<MapObject>, horizontal: Boolean, mapRect: DoubleRectangle) {
-        MapLineProcessor(myComponentManager, myLayerManager, mapRect).process(mapObjects, horizontal)
     }
 
     fun processText(mapObjects: List<MapObject>, textMeasurer: TextMeasurer) {

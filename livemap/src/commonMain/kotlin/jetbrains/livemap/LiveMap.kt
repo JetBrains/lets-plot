@@ -273,11 +273,11 @@ class LiveMap(
             when(kind) {
                 MapLayerKind.POINT -> mapObject2Entity.processPoint(mapObjects)
                 MapLayerKind.PATH -> mapObject2Entity.processPath(mapObjects)
-                //MapLayerKind.POLYGON -> mapObject2Entity.processPolygon(mapObjects)
+                MapLayerKind.POLYGON -> mapObject2Entity.processPolygon(mapObjects)
                 //MapLayerKind.BAR -> mapObject2Entity.processBar(mapObjects)
                 //MapLayerKind.PIE -> mapObject2Entity.processPie(mapObjects)
-                //MapLayerKind.H_LINE -> mapObject2Entity.processLine(mapObjects, true, myMapProjection.mapRect)
-                //MapLayerKind.V_LINE -> mapObject2Entity.processLine(mapObjects, false, myMapProjection.mapRect)
+                MapLayerKind.H_LINE -> mapObject2Entity.processLine(mapObjects, true)
+                MapLayerKind.V_LINE -> mapObject2Entity.processLine(mapObjects, false)
                 //MapLayerKind.TEXT -> mapObject2Entity.processText(
                     //mapObjects,
                     //TextSpec.createMeasurer(context.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
