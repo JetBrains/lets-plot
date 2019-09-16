@@ -6,7 +6,6 @@ import jetbrains.datalore.base.projectionGeometry.AnyPoint
 import jetbrains.datalore.base.projectionGeometry.MultiLineString
 import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.datalore.visualization.base.canvas.Context2d
-import jetbrains.gis.tileprotocol.TileFeature
 import jetbrains.gis.tileprotocol.mapConfig.Style
 import kotlin.math.round
 

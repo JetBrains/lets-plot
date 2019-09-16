@@ -2,7 +2,6 @@ package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.projectionGeometry.LonLatPoint
 import jetbrains.datalore.base.projectionGeometry.Typed
-import jetbrains.gis.tileprotocol.TileFeature
 import jetbrains.gis.tileprotocol.TileGeometryParser
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.multitasking.MicroTask

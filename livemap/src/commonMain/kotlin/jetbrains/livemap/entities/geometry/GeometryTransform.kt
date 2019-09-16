@@ -1,15 +1,14 @@
 package jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.projectionGeometry.Typed
-import jetbrains.datalore.base.projectionGeometry.reinterpret
 import jetbrains.gis.common.twkb.Twkb
-import jetbrains.gis.tileprotocol.TileFeature
-import jetbrains.gis.tileprotocol.TileFeature.TileGeometry.Companion.createMultiLineString
-import jetbrains.gis.tileprotocol.TileFeature.TileGeometry.Companion.createMultiPoint
-import jetbrains.gis.tileprotocol.TileFeature.TileGeometry.Companion.createMultiPolygon
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.projections.AdaptiveResampling
 import jetbrains.livemap.projections.ProjectionUtil.SAMPLING_EPSILON
+import jetbrains.livemap.tiles.TileFeature
+import jetbrains.livemap.tiles.TileFeature.TileGeometry.Companion.createMultiLineString
+import jetbrains.livemap.tiles.TileFeature.TileGeometry.Companion.createMultiPoint
+import jetbrains.livemap.tiles.TileFeature.TileGeometry.Companion.createMultiPolygon
 
 object GeometryTransform {
     fun <InT, OutT> resampling(

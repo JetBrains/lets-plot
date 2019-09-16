@@ -39,6 +39,33 @@ object Typed {
     class MultiPoint<ProjT>(geometry: List<Point<ProjT>>) : AbstractGeometryList<Point<ProjT>>(geometry)
     class MultiLineString<ProjT>(geometry: List<LineString<ProjT>>) : AbstractGeometryList<LineString<ProjT>>(geometry)
     class MultiPolygon<ProjT>(polygons: List<Polygon<ProjT>>) : AbstractGeometryList<Polygon<ProjT>>(polygons)
+
+    class TileGeometry<ProjT> private constructor(
+        val type: GeometryType,
+        val multiPoint: MultiPoint<ProjT>?,
+        val multiLineString: MultiLineString<ProjT>?,
+        val multiPolygon: MultiPolygon<ProjT>?
+    ) {
+        companion object {
+            fun <ProjT> createMultiPoint(multiPoint: MultiPoint<ProjT>): TileGeometry<ProjT> {
+                return TileGeometry(MULTI_POINT, multiPoint, null, null)
+            }
+
+            fun <ProjT> createMultiLineString(multiLineString: MultiLineString<ProjT>): TileGeometry<ProjT> {
+                return TileGeometry(MULTI_LINESTRING, null, multiLineString, null)
+            }
+
+            fun <ProjT> createMultiPolygon(multiPolygon: MultiPolygon<ProjT>): TileGeometry<ProjT> {
+                return TileGeometry(MULTI_POLYGON, null, null, multiPolygon)
+            }
+        }
+    }
+
+    enum class GeometryType {
+        MULTI_POINT,
+        MULTI_LINESTRING,
+        MULTI_POLYGON;
+    }
 }
 
 fun <ProjT> Typed.Polygon<ProjT>.limit(): Typed.Rectangle<ProjT> {
