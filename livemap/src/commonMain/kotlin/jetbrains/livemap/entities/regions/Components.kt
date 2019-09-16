@@ -1,5 +1,6 @@
 package jetbrains.livemap.entities.regions
 
+import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.gis.geoprotocol.Geometry
@@ -91,7 +92,7 @@ object Components {
     class DownloadingFragmentsComponent : EcsComponent {
         val queue = HashMap<Int, MutableSet<FragmentKey>>()
         val downloading = HashSet<FragmentKey>()
-        var downloaded: MutableMap<FragmentKey, MultiPolygon> = HashMap()
+        var downloaded: MutableMap<FragmentKey, MultiPolygon<Generic>> = HashMap()
             set(fragments) {
                 downloaded.clear()
                 downloaded.putAll(fragments)

@@ -1,25 +1,25 @@
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.datalore.base.projectionGeometry.Ring
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.livemap.core.multitasking.MicroTask
 
-internal class MultiPolygonTransform(
-    multiPolygon: MultiPolygon,
-    private val myTransform: (DoubleVector, MutableCollection<DoubleVector>) -> Unit
-) : MicroTask<MultiPolygon> {
-    private lateinit var myPolygonsIterator: Iterator<Polygon>
-    private lateinit var myRingIterator: Iterator<Ring>
-    private lateinit var myPointIterator: Iterator<DoubleVector>
+internal class MultiPolygonTransform<InT, OutT>(
+    multiPolygon: MultiPolygon<InT>,
+    private val myTransform: (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit
+) : MicroTask<MultiPolygon<OutT>> {
+    private lateinit var myPolygonsIterator: Iterator<Polygon<InT>>
+    private lateinit var myRingIterator: Iterator<Ring<InT>>
+    private lateinit var myPointIterator: Iterator<Vec<InT>>
 
-    private var myNewRing: MutableList<DoubleVector> = ArrayList()
-    private var myNewPolygon: MutableList<Ring> = ArrayList()
-    private val myNewMultiPolygon = ArrayList<Polygon>()
+    private var myNewRing: MutableList<Vec<OutT>> = ArrayList()
+    private var myNewPolygon: MutableList<Ring<OutT>> = ArrayList()
+    private val myNewMultiPolygon = ArrayList<Polygon<OutT>>()
 
     private var myHasNext = true
-    private lateinit var myResult: MultiPolygon
+    private lateinit var myResult: MultiPolygon<OutT>
 
     init {
         try {
@@ -31,7 +31,7 @@ internal class MultiPolygonTransform(
         }
     }
 
-    override fun getResult(): MultiPolygon {
+    override fun getResult(): MultiPolygon<OutT> {
         return myResult
     }
 

@@ -1,12 +1,9 @@
 package jetbrains.livemap.obj2entity
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.Ring
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.maps.livemap.entities.geometry.Renderers
 import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
+import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.entities.Entities
@@ -16,8 +13,9 @@ import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.mapobjects.MapLine
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.World
 import jetbrains.livemap.projections.WorldPoint
-import jetbrains.livemap.projections.toWorldPoint
+import jetbrains.livemap.projections.WorldRectangle
 
 class MapLineProcessor internal constructor(
     componentManager: EcsComponentManager,
@@ -43,14 +41,14 @@ class MapLineProcessor internal constructor(
     private fun createEntities(mapObjects: List<MapObject>, horizontal: Boolean) {
         for (obj in mapObjects) {
             val mapLine = obj as MapLine
-            val worldPoint = myMapProjection.project(mapLine.point).toWorldPoint()
+            val worldPoint = myMapProjection.project(mapLine.point)
             val geometry = createLineGeometry(worldPoint, horizontal, myMapProjection.mapRect)
             val bbox = createLineBBox(worldPoint, mapLine.strokeWidth, horizontal, myMapProjection.mapRect)
 
             val lineEntity = myFactory
-                .createMapEntity(bbox.origin.toWorldPoint(), SIMPLE_RENDERER, "map_ent_line")
+                .createMapEntity(bbox.origin, SIMPLE_RENDERER, "map_ent_line")
                 .addComponent(WorldGeometryComponent().apply { this.geometry = geometry })
-                .addComponent(Components.WorldDimensionComponent(bbox.dimension.toWorldPoint()))
+                .addComponent(Components.WorldDimensionComponent(bbox.dimension))
                 .addComponent(
                     StyleComponent().apply {
                         setStrokeColor(mapLine.strokeColor)
@@ -66,40 +64,49 @@ class MapLineProcessor internal constructor(
     companion object {
         private val SIMPLE_RENDERER = Renderers.PathRenderer()
 
-        private fun createLineGeometry(point: WorldPoint, horizontal: Boolean, mapRect: DoubleRectangle): WorldGeometry {
+        private fun createLineGeometry(point: WorldPoint, horizontal: Boolean, mapRect: WorldRectangle): WorldGeometry {
             return if (horizontal) {
                 listOf(
-                    DoubleVector(mapRect.left, point.y),
-                    DoubleVector(mapRect.right, point.y)
+                    point.transform(
+                        fx = { mapRect.left }
+                    ),
+                    point.transform(
+                        fx = { mapRect.right }
+                    )
+
                 )
             } else {
                 listOf(
-                    DoubleVector(point.x, mapRect.top),
-                    DoubleVector(point.x, mapRect.bottom)
+                    point.transform(
+                        fy = { mapRect.top }
+                    ),
+                    point.transform(
+                        fy = { mapRect.bottom }
+                    )
                 )
             }
-                .run(::Ring)
-                .run(::Polygon)
-                .run(::MultiPolygon)
-                .run(WorldGeometry.Companion::create)
+                .run { listOf(Ring(this)) }
+                .run { listOf(Polygon(this)) }
+                .run { MultiPolygon(this) }
+                .run(TypedGeometry.Companion::create) // World
         }
 
         private fun createLineBBox(
             point: WorldPoint,
             strokeWidth: Double,
             horizontal: Boolean,
-            mapRect: DoubleRectangle
-        ): DoubleRectangle {
-            val origin: DoubleVector
-            val dimension: DoubleVector
+            mapRect: WorldRectangle
+        ): WorldRectangle {
+            val origin: Vec<World>
+            val dimension: Vec<World>
             if (horizontal) {
-                origin = DoubleVector(mapRect.left, point.y - strokeWidth / 2)
-                dimension = DoubleVector(mapRect.width, strokeWidth)
+                origin = Vec(mapRect.left, point.y - strokeWidth / 2)
+                dimension = Vec(mapRect.width, strokeWidth)
             } else {
-                origin = DoubleVector(point.x - strokeWidth / 2, mapRect.top)
-                dimension = DoubleVector(strokeWidth, mapRect.height)
+                origin = Vec(point.x - strokeWidth / 2, mapRect.top)
+                dimension = Vec(strokeWidth, mapRect.height)
             }
-            return DoubleRectangle(origin, dimension)
+            return WorldRectangle(origin, dimension)
         }
     }
 }

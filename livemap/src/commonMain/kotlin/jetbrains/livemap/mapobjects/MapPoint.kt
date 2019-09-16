@@ -1,14 +1,14 @@
 package jetbrains.livemap.mapobjects
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.projections.LonLatPoint
 
 class MapPoint(
     index: Int,
     mapId: String?,
     regionId: String?,
 
-    val point: DoubleVector,
+    val point: LonLatPoint,
     val label: String,
     val animation: Int,
 

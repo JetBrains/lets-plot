@@ -6,7 +6,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.base.canvas.Context2d
-import jetbrains.gis.tileprotocol.TileFeature
 import jetbrains.gis.tileprotocol.mapConfig.MapConfig
 import jetbrains.gis.tileprotocol.mapConfig.Rule
 import jetbrains.livemap.core.multitasking.MicroTask

@@ -1,18 +1,17 @@
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileRect
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
+import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.Coordinates.Companion.ZERO_CLIENT_POINT
-import jetbrains.livemap.projections.newDoubleRectangle
 import jetbrains.livemap.tiles.Tile.*
 import jetbrains.livemap.tiles.components.TileComponent
 
 class TileRenderer : Renderer {
-    private lateinit var myCellRect: DoubleRectangle
+    private lateinit var myCellRect: Rect<Client>
     private lateinit var myCtx: Context2d
 
     override fun render(entity: EcsEntity, ctx: Context2d) {
@@ -20,11 +19,11 @@ class TileRenderer : Renderer {
 
         entity.get<ScreenDimensionComponent>()
             .dimension
-            .run { newDoubleRectangle(ZERO_CLIENT_POINT, this) }
+            .run { Rect(ZERO_CLIENT_POINT, this) }
             .run { render(tile, this, ctx) }
     }
 
-    internal fun render(tile: Tile, cellRect: DoubleRectangle, ctx: Context2d) {
+    internal fun render(tile: Tile, cellRect: Rect<Client>, ctx: Context2d) {
         myCellRect = cellRect
         myCtx = ctx
         renderTile(tile, "", "")

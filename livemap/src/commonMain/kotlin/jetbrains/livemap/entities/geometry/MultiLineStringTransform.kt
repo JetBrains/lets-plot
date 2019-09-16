@@ -1,22 +1,22 @@
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.LineString
 import jetbrains.datalore.base.projectionGeometry.MultiLineString
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.livemap.core.multitasking.MicroTask
 
-internal class MultiLineStringTransform(
-    multiLineString: MultiLineString,
-    private val myTransform: (DoubleVector, MutableCollection<DoubleVector>) -> Unit
-) : MicroTask<MultiLineString> {
-    private lateinit var myLineStringIterator: Iterator<LineString>
-    private lateinit var myPointIterator: Iterator<DoubleVector>
+internal class MultiLineStringTransform<InT, OutT> (
+    multiLineString: MultiLineString<InT>,
+    private val myTransform: (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit
+) : MicroTask<MultiLineString<OutT>> {
+    private lateinit var myLineStringIterator: Iterator<LineString<InT>>
+    private lateinit var myPointIterator: Iterator<Vec<InT>>
 
-    private var myNewLineString: MutableList<DoubleVector> = ArrayList()
-    private val myNewMultiLineString: MutableList<LineString> = ArrayList()
+    private var myNewLineString: MutableList<Vec<OutT>> = ArrayList()
+    private val myNewMultiLineString: MutableList<LineString<OutT>> = ArrayList()
 
     private var myHasNext = true
-    private lateinit var myResult: MultiLineString
+    private lateinit var myResult: MultiLineString<OutT>
 
     init {
         try {
@@ -27,7 +27,7 @@ internal class MultiLineStringTransform(
         }
     }
 
-    override fun getResult(): MultiLineString {
+    override fun getResult(): MultiLineString<OutT> {
         return myResult
     }
 

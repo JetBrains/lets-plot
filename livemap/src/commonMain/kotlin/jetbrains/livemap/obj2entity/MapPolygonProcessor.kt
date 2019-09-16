@@ -15,7 +15,6 @@ import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.mapobjects.MapPolygon
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil
-import jetbrains.livemap.projections.toWorldPoint
 
 internal class MapPolygonProcessor(
     componentManager: EcsComponentManager,
@@ -64,9 +63,9 @@ internal class MapPolygonProcessor(
         val bbox = GeometryUtil.bbox(geometry.asMultipolygon()) ?: error("")
 
         val geometryEntity = myFactory
-            .createMapEntity(bbox.origin.toWorldPoint(), SIMPLE_RENDERER, "map_ent_spolygon")
+            .createMapEntity(bbox.origin, SIMPLE_RENDERER, "map_ent_spolygon")
             .addComponent(WorldGeometryComponent().apply { this.geometry = geometry } )
-            .addComponent(Components.WorldDimensionComponent(bbox.dimension.toWorldPoint()))
+            .addComponent(Components.WorldDimensionComponent(bbox.dimension))
             .addComponent(ScaleComponent())
             .addComponent(
                 StyleComponent().apply {

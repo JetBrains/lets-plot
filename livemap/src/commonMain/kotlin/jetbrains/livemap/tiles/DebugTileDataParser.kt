@@ -1,6 +1,5 @@
 package jetbrains.livemap.tiles
 
-import jetbrains.gis.tileprotocol.TileFeature
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.multitasking.DebugMicroTask

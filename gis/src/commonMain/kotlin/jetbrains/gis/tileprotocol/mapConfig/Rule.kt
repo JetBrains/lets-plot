@@ -1,15 +1,17 @@
 package jetbrains.gis.tileprotocol.mapConfig
 
-import jetbrains.gis.tileprotocol.TileFeature
+interface TilePredicate {
+    fun getFieldValue(key: String): Int
+}
 
 class Rule(
     val minZoom: Int,
     val maxZoom: Int,
-    val filters: List<(TileFeature) -> Boolean>,
+    val filters: List<(TilePredicate) -> Boolean>,
     val style: Style
 ) {
 
-    fun predicate(feature: TileFeature, zoom: Int): Boolean {
+    fun predicate(feature: TilePredicate, zoom: Int): Boolean {
         if (maxZoom < zoom || minZoom > zoom) {
             return false
         }
@@ -25,14 +27,14 @@ class Rule(
     class RuleBuilder {
         private var minZoom: Int? = null
         private var maxZoom: Int? = null
-        private var filters: ArrayList<(TileFeature) -> Boolean> = ArrayList()
+        private var filters: ArrayList<(TilePredicate) -> Boolean> = ArrayList()
         private lateinit var style: Style
 
         fun minZoom(minZoom: Int) { this.minZoom = minZoom }
         fun maxZoom(maxZoom: Int) { this.maxZoom = maxZoom }
         fun style(style: Style) { this.style = style }
 
-        fun addFilterFunction(filter: (TileFeature) -> Boolean) {
+        fun addFilterFunction(filter: (TilePredicate) -> Boolean) {
             filters.add(filter)
         }
 

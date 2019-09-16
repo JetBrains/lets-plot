@@ -1,6 +1,5 @@
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.LiveMapContext
@@ -14,11 +13,13 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.placement.Components
 import jetbrains.livemap.entities.placement.Components.WorldOriginComponent
 import jetbrains.livemap.entities.scaling.ScaleComponent
-import jetbrains.livemap.projections.ProjectionUtil
+import jetbrains.livemap.projections.WorldProjection
 
 
-class WorldGeometry2ScreenUpdateSystem(private val myQuantIterations: Int, componentManager: EcsComponentManager) :
-    LiveMapSystem(componentManager) {
+class WorldGeometry2ScreenUpdateSystem(
+    private val myQuantIterations: Int,
+    componentManager: EcsComponentManager
+) : LiveMapSystem(componentManager) {
 
     private fun createScalingTask(entity: EcsEntity, zoom: Int): MicroTask<Unit> {
 
@@ -27,8 +28,8 @@ class WorldGeometry2ScreenUpdateSystem(private val myQuantIterations: Int, compo
             entity.remove<ScreenGeometryComponent>()
         }
 
-        val worldOrigin = entity.get<WorldOriginComponent>().origin.let { DoubleVector(it.x, it.y) }
-        val zoomProjection = ProjectionUtil.square(ProjectionUtil.zoom(zoom))
+        val worldOrigin = entity.get<WorldOriginComponent>().origin
+        val zoomProjection = WorldProjection(zoom)
         return GeometryTransform
             .simple(entity.get<WorldGeometryComponent>().geometry!!.asMultipolygon()) {
                 zoomProjection.project(it.subtract(worldOrigin))

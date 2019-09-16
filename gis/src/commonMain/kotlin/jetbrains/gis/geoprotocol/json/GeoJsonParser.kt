@@ -1,17 +1,14 @@
 package jetbrains.gis.geoprotocol.json
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.Ring
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.gis.common.json.Arr
 import jetbrains.gis.common.json.FluentArray
 import jetbrains.gis.common.json.FluentObject
 
 internal class GeoJsonParser private constructor() {
 
-    private fun doParsing(data: String): MultiPolygon {
+    private fun doParsing(data: String): MultiPolygon<Generic> {
 
         var original = JsonSupport.parseJson(data)
         val obj = HashMap<String, Any?>(original)
@@ -22,25 +19,33 @@ internal class GeoJsonParser private constructor() {
         if (type == GEOMETRY_MULTIPOLYGON) {
             return parseMultiPolygon(coordinates)
         } else if (type == GEOMETRY_POLYGON) {
-            return MultiPolygon.create(parsePolygon(coordinates))
+            return MultiPolygon<Generic>(listOf(parsePolygon(coordinates)))
         }
-        return MultiPolygon.create()
+        return MultiPolygon<Generic>(emptyList())
     }
 
-    private fun parseMultiPolygon(jsonMultiPolygon: FluentArray): MultiPolygon {
-        return MultiPolygon(parseJsonArrayOfArray(jsonMultiPolygon) { this.parsePolygon(FluentArray(it)) })
+    private fun parseMultiPolygon(jsonMultiPolygon: FluentArray): MultiPolygon<Generic> {
+        return MultiPolygon<Generic>(parseJsonArrayOfArray(jsonMultiPolygon) {
+            this.parsePolygon(
+                FluentArray(it)
+            )
+        })
     }
 
-    private fun parsePolygon(jsonPolygon: FluentArray): Polygon {
-        return Polygon(parseJsonArrayOfArray(jsonPolygon) {parseRing(FluentArray(it))})
+    private fun parsePolygon(jsonPolygon: FluentArray): Polygon<Generic> {
+        return Polygon<Generic>(parseJsonArrayOfArray(jsonPolygon) {
+            parseRing(
+                FluentArray(it)
+            )
+        })
     }
 
-    private fun parseRing(jsonRing: FluentArray): Ring {
+    private fun parseRing(jsonRing: FluentArray): Ring<Generic> {
         return Ring(parseJsonArrayOfArray(jsonRing) { this.parsePoint(FluentArray(it)) })
     }
 
-    private fun parsePoint(jsonPoint: FluentArray): DoubleVector {
-        return DoubleVector(
+    private fun parsePoint(jsonPoint: FluentArray): Point {
+        return Point(
             jsonPoint.getDouble(GEOMETRY_LON_INDEX),
             jsonPoint.getDouble(GEOMETRY_LAT_INDEX)
         )
@@ -58,7 +63,7 @@ internal class GeoJsonParser private constructor() {
         private const val GEOMETRY_LON_INDEX = 0
         private const val GEOMETRY_LAT_INDEX = 1
 
-        fun parse(data: String): MultiPolygon {
+        fun parse(data: String): MultiPolygon<Generic> {
             return GeoJsonParser().doParsing(data)
         }
     }

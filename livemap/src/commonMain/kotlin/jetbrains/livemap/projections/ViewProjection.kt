@@ -1,7 +1,5 @@
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-
 interface ViewProjection {
 
     val viewSize: ClientPoint
@@ -11,7 +9,7 @@ interface ViewProjection {
     var zoom: Int
 
     val visibleCells: Set<CellKey>
-    val viewRect: DoubleRectangle
+    val viewRect: WorldRectangle
 
     fun getViewX(p: WorldPoint): Double
     fun getViewY(p: WorldPoint): Double

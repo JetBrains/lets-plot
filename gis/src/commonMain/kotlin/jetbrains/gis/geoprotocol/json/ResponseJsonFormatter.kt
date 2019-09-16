@@ -1,7 +1,7 @@
 package jetbrains.gis.geoprotocol.json
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
+import jetbrains.datalore.base.projectionGeometry.Point
 import jetbrains.gis.common.json.*
 import jetbrains.gis.geoprotocol.GeoResponse
 import jetbrains.gis.geoprotocol.GeoResponse.*
@@ -117,7 +117,7 @@ object ResponseJsonFormatter {
         }
     }
 
-    private fun formatPoint(v: DoubleVector?): FluentValue? {
+    private fun formatPoint(v: Point?): FluentValue? {
         return v?.let { FluentObject()
             .put(LON, it.x)
             .put(LAT, it.y)

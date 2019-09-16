@@ -1,8 +1,10 @@
 package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
+import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.Rect
+import jetbrains.datalore.base.projectionGeometry.reinterpret
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder
 import jetbrains.gis.geoprotocol.GeocodingService
@@ -11,14 +13,16 @@ import jetbrains.livemap.MapWidgetUtil.calculateExtendedRectangleWithCenter
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.MapRuler
 import jetbrains.livemap.projections.ProjectionUtil.transformBBox
+import jetbrains.livemap.projections.World
+import jetbrains.livemap.projections.WorldRectangle
 
 class MapLocationGeocoder(
     private val myGeocodingService: GeocodingService,
-    private val myMapRuler: MapRuler,
+    private val myMapRuler: MapRuler<World>,
     private val myMapProjection: MapProjection
 ) {
 
-    fun geocodeMapRegion(mapRegion: MapRegion): Async<DoubleRectangle> {
+    fun geocodeMapRegion(mapRegion: MapRegion): Async<WorldRectangle> {
         val requestBuilder: GeoRequestBuilder.RequestBuilderBase<*>
 
         if (mapRegion.containsId()) {
@@ -46,13 +50,13 @@ class MapLocationGeocoder(
                 throw RuntimeException("There is no geocoded feature for location.")
             }
 
-            val boundingBox: DoubleRectangle
+            val boundingBox: WorldRectangle
             if (features.size == 1) {
                 val feature = features.get(0)
                 boundingBox = calculateExtendedRectangleWithCenter(
                     myMapRuler,
                     calculateBBoxOfGeoRect(feature.position!!),
-                    myMapProjection.project(feature.centroid!!)
+                    myMapProjection.project(feature.centroid!!.reinterpret<LonLat>())
                 )
             } else {
                 val positions = ArrayList<GeoRectangle>()
@@ -63,25 +67,25 @@ class MapLocationGeocoder(
         }
     }
 
-    fun calculateBBoxOfGeoRect(geoRectangle: GeoRectangle): DoubleRectangle {
+    fun calculateBBoxOfGeoRect(geoRectangle: GeoRectangle): Rect<World> {
         return myMapRuler.calculateBoundingBox(convertToXYRects(geoRectangle, myMapProjection))
     }
 
-    private fun calculateBBoxOfGeoRects(geoRects: List<GeoRectangle>): DoubleRectangle {
-        val xyRects = ArrayList<DoubleRectangle>()
+    private fun calculateBBoxOfGeoRects(geoRects: List<GeoRectangle>): Rect<World> {
+        val xyRects = ArrayList<WorldRectangle>()
         geoRects.forEach { geoRect -> xyRects.addAll(convertToXYRects(geoRect, myMapProjection)) }
         return myMapRuler.calculateBoundingBox(xyRects)
     }
 
     companion object {
 
-        fun convertToXYRects(geoRect: GeoRectangle, mapProjection: MapProjection): List<DoubleRectangle> {
-            val xyRects = ArrayList<DoubleRectangle>()
-            geoRect.splitByAntiMeridian().forEach { lonLatRect ->
-                xyRects.add(
-                    transformBBox(lonLatRect, mapProjection::project)
-                )
-            }
+        fun convertToXYRects(geoRect: GeoRectangle, mapProjection: MapProjection): ArrayList<WorldRectangle> {
+            val xyRects = ArrayList<WorldRectangle>()
+            geoRect.splitByAntiMeridian()
+                .map { Rect<LonLat>(it.origin, it.dimension) }
+                .forEach { rect ->
+                    xyRects.add(transformBBox(rect) { mapProjection.project(it) })
+                }
             return xyRects
         }
     }

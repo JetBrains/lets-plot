@@ -3,26 +3,30 @@ package jetbrains.livemap.projections
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.projectionGeometry.*
 
-data class Coordinate<T>(val x: Double, val y: Double) {
-    constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
-
-    fun add(p: Coordinate<T>) = Coordinate<T>(x + p.x, y + p.y)
-    fun subtract(p: Coordinate<T>) = Coordinate<T>(x - p.x, y - p.y)
-    fun mul(d: Double) = Coordinate<T>(x * d, y * d)
-
-    companion object {}
-}
-
-
-interface LonLat
+/**
+ * Coordinates in [0.0.. 256.0]
+ */
 interface World
+
+/**
+ * Coordinates used by Context2d
+ */
 interface Client
 
 
-typealias LonLatPoint = Coordinate<LonLat>
-typealias WorldPoint = Coordinate<World>
-typealias ClientPoint = Coordinate<Client>
+typealias LonLatPoint = Vec<LonLat>
+typealias LonLatRing = Ring<LonLat>
+typealias LonLatPolygon = Polygon<LonLat>
+typealias LonLatMultiPolygon = MultiPolygon<LonLat>
+
+typealias ClientPoint = Vec<Client>
+typealias ClientRectangle = Rect<Client>
+
+typealias WorldPoint = Vec<World>
+typealias WorldRectangle = Rect<World>
+
 
 class Coordinates {
     companion object {
@@ -33,11 +37,9 @@ class Coordinates {
 
 }
 
-fun <T> newDoubleRectangle(origin: Coordinate<T>, dimension: Coordinate<T>): DoubleRectangle {
+fun newDoubleRectangle(origin: AnyPoint, dimension: AnyPoint): DoubleRectangle {
     return DoubleRectangle(origin.x, origin.y, dimension.x, dimension.y)
 }
 
 fun Vector.toClientPoint() = ClientPoint(x, y)
-fun DoubleVector.toLonLatPoint() = LonLatPoint(x, y)
-fun DoubleVector.toWorldPoint() = WorldPoint(x, y)
 fun DoubleVector.toClientPoint() = ClientPoint(x, y)

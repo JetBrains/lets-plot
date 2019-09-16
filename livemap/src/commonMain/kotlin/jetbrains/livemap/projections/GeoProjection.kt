@@ -1,8 +1,13 @@
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.Rect
+import jetbrains.datalore.base.projectionGeometry.Vec
 
-internal interface GeoProjection : Projection<DoubleVector> {
-    fun validRect(): DoubleRectangle
+interface Geographic
+
+typealias GeographicPoint = Vec<Geographic>
+
+internal interface GeoProjection : Transform<LonLatPoint, GeographicPoint> {
+    fun validRect(): Rect<LonLat>
 }

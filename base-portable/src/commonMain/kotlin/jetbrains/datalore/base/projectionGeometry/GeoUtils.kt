@@ -1,9 +1,9 @@
 package jetbrains.datalore.base.projectionGeometry
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import kotlin.math.*
+
 
 object GeoUtils {
     internal val EARTH_RADIUS = 6378137.0
@@ -13,7 +13,7 @@ object GeoUtils {
     private val MIN_LATITUDE = -90.0
     private val MAX_LATITUDE = 90.0
     val FULL_LATITUDE = MAX_LATITUDE - MIN_LATITUDE
-    internal val EARTH_RECT = DoubleRectangle(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
+    val EARTH_RECT = Rect<LonLat>(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
     val BBOX_CALCULATOR = GeoBoundingBoxCalculator(EARTH_RECT, true, false)
     private val QUAD_KEY_CREATOR = { tileKey: String -> QuadKey(tileKey) }
 
@@ -70,7 +70,7 @@ object GeoUtils {
         return closestX2 - x1
     }
 
-    fun convertToGeoRectangle(rect: DoubleRectangle): GeoRectangle {
+    fun convertToGeoRectangle(rect: Rect<LonLat>): GeoRectangle {
         val left: Double
         val right: Double
 
@@ -85,22 +85,25 @@ object GeoUtils {
         return GeoRectangle(left, limitLat(rect.top), right, limitLat(rect.bottom))
     }
 
-    fun getQuadKeyRect(quadKey: QuadKey): DoubleRectangle {
-        val origin = getTileOrigin(EARTH_RECT, quadKey.string)
-        val dimension = EARTH_RECT.dimension.mul(1.0 / getTileCount(quadKey.string.length))
-
-        val flipY = EARTH_RECT.bottom - (origin.y + dimension.y - EARTH_RECT.top)
-        return DoubleRectangle(DoubleVector(origin.x, flipY), dimension)
+    fun calculateQuadKeys(lonLatRect: Rect<LonLat>, zoom: Int?): Set<QuadKey> {
+        val flipRect = Rect<LonLat>(
+                lonLatRect.left,
+                -lonLatRect.bottom,
+                lonLatRect.width,
+                lonLatRect.height
+        )
+        return calculateTileKeys(EARTH_RECT, flipRect, zoom, QUAD_KEY_CREATOR)
     }
 
-    fun getTileRect(mapRect: DoubleRectangle, tileKey: String): DoubleRectangle {
-        val origin = getTileOrigin(mapRect, tileKey)
-        val dimension = mapRect.dimension.mul(1.0 / getTileCount(tileKey.length))
+    fun getQuadKeyRect(quadKey: QuadKey): Rect<LonLat> {
+        val origin = getTileOrigin(GeoUtils.EARTH_RECT, quadKey.string)
+        val dimension = GeoUtils.EARTH_RECT.dimension.mul(1.0 / getTileCount(quadKey.string.length))
 
-        return DoubleRectangle(origin, dimension)
+        val flipY = GeoUtils.EARTH_RECT.bottom - (origin.y + dimension.y - GeoUtils.EARTH_RECT.top)
+        return Rect(Vec<LonLat>(origin.x, flipY), dimension)
     }
 
-    private fun getTileOrigin(mapRect: DoubleRectangle, tileKey: String): DoubleVector {
+    fun <TypeT> getTileOrigin(mapRect: Rect<TypeT>, tileKey: String): Vec<TypeT> {
         var left = mapRect.left
         var top = mapRect.top
         var width = mapRect.width
@@ -117,20 +120,10 @@ object GeoUtils {
                 top += height
             }
         }
-        return DoubleVector(left, top)
+        return Vec(left, top)
     }
 
-    fun calculateQuadKeys(lonLatRect: DoubleRectangle, zoom: Int?): Set<QuadKey> {
-        val flipRect = DoubleRectangle(
-                lonLatRect.left,
-                -lonLatRect.bottom,
-                lonLatRect.width,
-                lonLatRect.height
-        )
-        return calculateTileKeys(EARTH_RECT, flipRect, zoom, QUAD_KEY_CREATOR)
-    }
-
-    fun <T> calculateTileKeys(mapRect: DoubleRectangle, viewRect: DoubleRectangle, zoom: Int?, constructor: (String) -> T): Set<T> {
+    fun <T> calculateTileKeys(mapRect: Rect<LonLat>, viewRect: Rect<LonLat>, zoom: Int?, constructor: (String) -> T): Set<T> {
         val tileKeys = HashSet<T>()
         val tileCount = getTileCount(zoom!!)
 
@@ -148,12 +141,12 @@ object GeoUtils {
         return tileKeys
     }
 
-    private fun calcTileNum(value: Double, range: ClosedRange<Double>, tileCount: Int): Int {
+    fun calcTileNum(value: Double, range: ClosedRange<Double>, tileCount: Int): Int {
         val position = (value - range.lowerEndpoint()) / (range.upperEndpoint() - range.lowerEndpoint())
         return max(0.0, min(position * tileCount, (tileCount - 1).toDouble())).toInt()
     }
 
-    internal fun tileXYToTileID(tileX: Int, tileY: Int, zoom: Int): String {
+    fun tileXYToTileID(tileX: Int, tileY: Int, zoom: Int): String {
         var tileID = ""
 
         for (i in zoom downTo 1) {
@@ -174,7 +167,8 @@ object GeoUtils {
         return tileID
     }
 
-    private fun getTileCount(zoom: Int): Int {
+    fun getTileCount(zoom: Int): Int {
         return 1 shl zoom
     }
+
 }

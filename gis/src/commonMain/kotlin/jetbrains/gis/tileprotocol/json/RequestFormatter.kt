@@ -1,5 +1,9 @@
 package jetbrains.gis.tileprotocol.json
 
+import jetbrains.datalore.base.projectionGeometry.bottom
+import jetbrains.datalore.base.projectionGeometry.left
+import jetbrains.datalore.base.projectionGeometry.right
+import jetbrains.datalore.base.projectionGeometry.top
 import jetbrains.gis.common.json.FluentArray
 import jetbrains.gis.common.json.FluentObject
 import jetbrains.gis.common.json.Obj

@@ -1,64 +1,75 @@
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.GeometryType.*
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.gis.common.twkb.Twkb
-import jetbrains.gis.tileprotocol.TileFeature
-import jetbrains.gis.tileprotocol.TileFeature.TileGeometry.Companion.createMultiLineString
-import jetbrains.gis.tileprotocol.TileFeature.TileGeometry.Companion.createMultiPoint
-import jetbrains.gis.tileprotocol.TileFeature.TileGeometry.Companion.createMultiPolygon
+import jetbrains.datalore.base.projectionGeometry.TileGeometry
+import jetbrains.datalore.base.projectionGeometry.TileGeometry.Companion.createMultiLineString
+import jetbrains.datalore.base.projectionGeometry.TileGeometry.Companion.createMultiPoint
+import jetbrains.datalore.base.projectionGeometry.TileGeometry.Companion.createMultiPolygon
+import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.reinterpret
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.projections.AdaptiveResampling
 import jetbrains.livemap.projections.ProjectionUtil.SAMPLING_EPSILON
 
 object GeometryTransform {
-    fun resampling(
-        geometry: TileFeature.TileGeometry,
-        transform: (DoubleVector) -> DoubleVector
-    ): MicroTask<TileFeature.TileGeometry> {
+    fun <InT, OutT> resampling(
+        geometry: TileGeometry<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>
+    ): MicroTask<TileGeometry<OutT>> {
         return createTransformer(geometry, resampling(transform))
     }
 
-    fun simple(geometry: MultiPolygon, transform: (DoubleVector) -> DoubleVector): MicroTask<MultiPolygon> {
+    fun <InT, OutT> simple(
+        geometry: MultiPolygon<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>
+    ): MicroTask<MultiPolygon<OutT>> {
         return MultiPolygonTransform(geometry, simple(transform))
     }
 
-    fun resampling(geometry: MultiPolygon, transform: (DoubleVector) -> DoubleVector): MicroTask<MultiPolygon> {
+    fun <InT, OutT> resampling(
+        geometry: MultiPolygon<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>
+    ): MicroTask<MultiPolygon<OutT>> {
         return MultiPolygonTransform(geometry, resampling(transform))
     }
 
-    private fun simple(transform: (DoubleVector) -> DoubleVector): (DoubleVector, MutableCollection<DoubleVector>) -> Unit {
+    private fun <InT, OutT> simple(
+        transform: (Vec<InT>) -> Vec<OutT>
+    ): (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit {
         return { p, ring -> ring.add(transform(p)) }
     }
 
-    private fun resampling(transform: (DoubleVector) -> DoubleVector): (DoubleVector, MutableCollection<DoubleVector>) -> Unit {
-        return { p, ring ->
-            IterativeResampler(transform).next(p, ring)
-        }
+    private fun <InT, OutT> resampling(
+        transform: (Vec<InT>) -> Vec<OutT>
+    ): (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit {
+        return { p, ring -> IterativeResampler(transform).next(p, ring) }
     }
 
-    private fun createTransformer(
-        geometry: TileFeature.TileGeometry,
-        transform: (DoubleVector, MutableCollection<DoubleVector>) -> Unit
-    ): MicroTask<TileFeature.TileGeometry> {
+    private fun <InT, OutT> createTransformer(
+        geometry: TileGeometry<InT>,
+        transform: (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit
+    ): MicroTask<TileGeometry<OutT>> {
         return when (geometry.type) {
-            Twkb.GeometryType.MULTI_POLYGON ->
-                MultiPolygonTransform(geometry.multiPolygon!!, transform).map(::createMultiPolygon)
-            Twkb.GeometryType.MULTI_LINESTRING ->
-                MultiLineStringTransform(geometry.multiLineString!!, transform).map(::createMultiLineString)
-            Twkb.GeometryType.MULTI_POINT ->
-                MultiPointTransform(geometry.multiPoint!!, transform).map(::createMultiPoint)
+            MULTI_POLYGON ->
+                MultiPolygonTransform(geometry.multiPolygon!!.reinterpret(), transform).map(::createMultiPolygon)
+            MULTI_LINESTRING ->
+                MultiLineStringTransform(geometry.multiLineString!!.reinterpret(), transform).map(::createMultiLineString)
+            MULTI_POINT ->
+                MultiPointTransform(geometry.multiPoint!!.reinterpret(), transform).map(::createMultiPoint)
             else ->
                 throw IllegalArgumentException("Unsupported geometry type: ${geometry.type}")
         }
     }
 
-    internal class IterativeResampler(private val myTransform: (DoubleVector) -> DoubleVector) {
+    internal class IterativeResampler<InT, OutT>(
+        private val myTransform: (Vec<InT>) -> Vec<OutT>
+    ) {
         private val myAdaptiveResampling = AdaptiveResampling(myTransform, SAMPLING_EPSILON)
-        private var myPrevPoint: DoubleVector? = null
-        private var myRing: MutableCollection<DoubleVector>? = null
+        private var myPrevPoint: Vec<InT>? = null
+        private var myRing: MutableCollection<Vec<OutT>>? = null
 
-        fun next(p: DoubleVector, ring: MutableCollection<DoubleVector>) {
+        fun next(p: Vec<InT>, ring: MutableCollection<Vec<OutT>>) {
             if (myRing == null || // first call
                 ring != myRing) { // next ring
                 myRing = ring
@@ -68,7 +79,7 @@ object GeometryTransform {
             resample(p).forEach { newPoint -> myRing!!.add(myTransform(newPoint)) }
         }
 
-        private fun resample(p: DoubleVector): List<DoubleVector> {
+        private fun resample(p: Vec<InT>): List<Vec<InT>> {
             val prev = myPrevPoint
             myPrevPoint = p
 

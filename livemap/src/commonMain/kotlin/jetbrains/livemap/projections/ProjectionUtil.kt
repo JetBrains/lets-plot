@@ -3,13 +3,8 @@ package jetbrains.livemap.projections
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.calculateQuadKeys
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.calculateTileKeys
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileRect
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.QuadKey
-import jetbrains.datalore.base.projectionGeometry.Ring
 import jetbrains.livemap.projections.ProjectionType.*
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -27,11 +22,60 @@ object ProjectionUtil {
         CONIC_EQUAL_AREA to ConicEqualAreaProjection(0.0, PI / 3)
     )
 
+    private fun getTileCount(zoom: Int): Int {
+        return 1 shl zoom
+    }
+
+    fun <T> calculateTileKeys(mapRect: Rect<*>, viewRect: DoubleRectangle, zoom: Int?, constructor: (String) -> T): Set<T> {
+        val tileKeys = HashSet<T>()
+        val tileCount = getTileCount(zoom!!)
+
+        val xmin = GeoUtils.calcTileNum(viewRect.left, mapRect.xRange(), tileCount)
+        val xmax = GeoUtils.calcTileNum(viewRect.right, mapRect.xRange(), tileCount)
+        val ymin = GeoUtils.calcTileNum(viewRect.top, mapRect.yRange(), tileCount)
+        val ymax = GeoUtils.calcTileNum(viewRect.bottom, mapRect.yRange(), tileCount)
+
+        for (x in xmin..xmax) {
+            for (y in ymin..ymax) {
+                tileKeys.add(constructor(GeoUtils.tileXYToTileID(x, y, zoom)))
+            }
+        }
+
+        return tileKeys
+    }
+
+    fun getTileRect(mapRect: WorldRectangle, tileKey: String): WorldRectangle {
+        val origin = getTileOrigin(mapRect, tileKey)
+        val dimension = mapRect.dimension.mul(1.0 / getTileCount(tileKey.length))
+
+        return WorldRectangle(origin, dimension)
+    }
+
+    private fun getTileOrigin(mapRect: WorldRectangle, tileKey: String): WorldPoint {
+        var left = mapRect.left
+        var top = mapRect.top
+        var width = mapRect.width
+        var height = mapRect.height
+
+        for (quadrant in tileKey) {
+            width /= 2.0
+            height /= 2.0
+
+            if (quadrant == '1' || quadrant == '3') {
+                left += width
+            }
+            if (quadrant == '2' || quadrant == '3') {
+                top += height
+            }
+        }
+        return WorldPoint(left, top)
+    }
+
     internal fun createGeoProjection(projectionType: ProjectionType): GeoProjection {
         return PROJECTION_MAP[projectionType] ?: error("Unknown projection type: $projectionType")
     }
 
-    fun createMapProjection(projectionType: ProjectionType, mapRect: DoubleRectangle): MapProjection {
+    fun createMapProjection(projectionType: ProjectionType, mapRect: WorldRectangle): MapProjection {
         return MapProjectionBuilder(createGeoProjection(projectionType), mapRect)
             .reverseY()
             .create()
@@ -43,7 +87,7 @@ object ProjectionUtil {
         return calculateQuadKeys(geoRect, cellKey.length)
     }
 
-    internal fun calculateCellKeys(mapRect: DoubleRectangle, rect: DoubleRectangle, zoom: Int): Set<CellKey> {
+    internal fun calculateCellKeys(mapRect: Rect<*>, rect: DoubleRectangle, zoom: Int): Set<CellKey> {
         return calculateTileKeys(mapRect, rect, zoom, ::CellKey)
     }
 
@@ -54,31 +98,31 @@ object ProjectionUtil {
         )
     }
 
-    private fun rectToPolygon(rect: DoubleRectangle): List<DoubleVector> {
-        val points = ArrayList<DoubleVector>()
+    private fun <TypeT> rectToPolygon(rect: Rect<TypeT>): List<Vec<TypeT>> {
+        val points = ArrayList<Vec<TypeT>>()
         points.add(rect.origin)
-        points.add(rect.origin.add(DoubleVector(rect.width, 0.0)))
+        points.add(rect.origin.addX(rect.dimension))
         points.add(rect.origin.add(rect.dimension))
-        points.add(rect.origin.add(DoubleVector(0.0, rect.height)))
+        points.add(rect.origin.addY(rect.dimension))
         points.add(rect.origin)
         return points
     }
 
-    fun square(projection: Projection<Double>): Projection<DoubleVector> {
+    fun <InT, OutT> square(projection: Projection<Double>): Transform<Vec<InT>, Vec<OutT>> {
         return tuple(projection, projection)
     }
 
-    internal fun tuple(xProjection: Projection<Double>, yProjection: Projection<Double>): Projection<DoubleVector> {
-        return object : Projection<DoubleVector> {
-            override fun project(v: DoubleVector): DoubleVector {
-                return DoubleVector(
+    internal fun <InT, OutT> tuple(xProjection: Projection<Double>, yProjection: Projection<Double>): Transform<Vec<InT>, Vec<OutT>> {
+        return object : Transform<Vec<InT>, Vec<OutT>> {
+            override fun project(v: Vec<InT>): Vec<OutT> {
+                return Vec(
                     xProjection.project(v.x),
                     yProjection.project(v.y)
                 )
             }
 
-            override fun invert(v: DoubleVector): DoubleVector {
-                return DoubleVector(
+            override fun invert(v: Vec<OutT>): Vec<InT> {
+                return Vec(
                     xProjection.invert(v.x),
                     yProjection.invert(v.y)
                 )
@@ -86,14 +130,26 @@ object ProjectionUtil {
         }
     }
 
-    fun <T> composite(projection1: Projection<T>, projection2: Projection<T>): Projection<T> {
+    fun <T> composite(proj1: Projection<T>, proj2: Projection<T>): Projection<T> {
         return object : Projection<T> {
             override fun project(v: T): T {
-                return projection2.project(projection1.project(v))
+                return v.run(proj1::project).run(proj2::project)
             }
 
             override fun invert(v: T): T {
-                return projection1.invert(projection2.invert(v))
+                return v.run(proj2::invert).run(proj1::invert)
+            }
+        }
+    }
+
+    fun <InT, InterT, OutT> composite(t1: Transform<InT, InterT>, t2: Transform<InterT, OutT>): Transform<InT, OutT> {
+        return object : Transform<InT, OutT> {
+            override fun project(v: InT): OutT {
+                return v.run(t1::project).run(t2::project)
+            }
+
+            override fun invert(v: OutT): InT {
+                return v.run(t2::invert).run(t1::invert)
             }
         }
     }
@@ -130,66 +186,98 @@ object ProjectionUtil {
         }
     }
 
-    fun transformBBox(bbox: DoubleRectangle, transform: (DoubleVector) -> DoubleVector): DoubleRectangle {
-        return DoubleRectangles.boundingBox(transformRing(rectToPolygon(bbox), transform, SAMPLING_EPSILON))
+    fun <InT, OutT> transformBBox(bbox: Rect<InT>, transform: (Vec<InT>) -> Vec<OutT>): Rect<OutT> {
+        return bbox
+            .let(::rectToPolygon)
+            .let { transformRing(it, transform, SAMPLING_EPSILON) }
+            .let { DoubleRectangles.boundingBox(it) }
+            .let {
+                Rect<OutT>(
+                    Vec<OutT>(it.origin.x, it.origin.y),
+                    Vec<OutT>(it.dimension.x, it.dimension.y)
+                )
+            }
     }
 
-    fun transformMultipolygon(
-        multiPolygon: MultiPolygon,
-        transform: (DoubleVector) -> DoubleVector
-    ): MultiPolygon {
-        val xyMultipolygon = ArrayList<Polygon>(multiPolygon.size)
+    fun <InT, OutT> transformMultipolygon(
+        multiPolygon: MultiPolygon<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>
+    ): MultiPolygon<OutT> {
+        val xyMultipolygon = ArrayList<Polygon<OutT>>(multiPolygon.size)
         multiPolygon.forEach { xyMultipolygon.add(transformPolygon(it, transform, SAMPLING_EPSILON)) }
-        return MultiPolygon(xyMultipolygon)
+        return MultiPolygon<OutT>(xyMultipolygon)
     }
 
-    private fun transformPolygon(
-        polygon: Polygon,
-        transform: (DoubleVector) -> DoubleVector,
+    private fun <InT, OutT> transformPolygon(
+        polygon: Polygon<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>,
         epsilon: Double
-    ): Polygon {
-        val xyPolygon = ArrayList<Ring>(polygon.size)
-        polygon.forEach { ring -> xyPolygon.add(Ring(transformRing(ring, transform, epsilon))) }
-        return Polygon(xyPolygon)
+    ): Polygon<OutT> {
+        val xyPolygon = ArrayList<Ring<OutT>>(polygon.size)
+        polygon.forEach { ring -> xyPolygon.add(
+            Ring<OutT>(
+                transformRing(
+                    ring,
+                    transform,
+                    epsilon
+                )
+            )
+        ) }
+        return Polygon<OutT>(xyPolygon)
     }
 
-    private fun transformRing(
-        path: List<DoubleVector>,
-        transform: (DoubleVector) -> DoubleVector,
+    private fun <InT, OutT> transformRing(
+        path: List<Vec<InT>>,
+        transform: (Vec<InT>) -> Vec<OutT>,
         epsilon: Double
-    ): List<DoubleVector> {
+    ): List<Vec<OutT>> {
         return AdaptiveResampling(transform, epsilon).resample(path)
     }
 
-    fun transform(multiPolygon: MultiPolygon, transform: (DoubleVector) -> DoubleVector): MultiPolygon {
-        val xyMultipolygon = ArrayList<Polygon>(multiPolygon.size)
+    fun <InT, OutT> transform(
+        multiPolygon: MultiPolygon<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>
+    ): MultiPolygon<OutT> {
+        val xyMultipolygon = ArrayList<Polygon<OutT>>(multiPolygon.size)
         multiPolygon.forEach { polygon -> xyMultipolygon.add(transform(polygon, transform, SAMPLING_EPSILON)) }
-        return MultiPolygon(xyMultipolygon)
+        return MultiPolygon<OutT>(xyMultipolygon)
     }
 
-    private fun transform(polygon: Polygon, transform: (DoubleVector) -> DoubleVector, epsilon: Double): Polygon {
-        val xyPolygon = ArrayList<Ring>(polygon.size)
-        polygon.forEach { ring -> xyPolygon.add(Ring(transform(ring, transform, epsilon))) }
-        return Polygon(xyPolygon)
-    }
-
-    private fun transform(
-        path: List<DoubleVector>,
-        transform: (DoubleVector) -> DoubleVector,
+    private fun <InT, OutT> transform(
+        polygon: Polygon<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>,
         epsilon: Double
-    ): List<DoubleVector> {
-        val res = ArrayList<DoubleVector>(path.size)
+    ): Polygon<OutT> {
+        val xyPolygon = ArrayList<Ring<OutT>>(polygon.size)
+        polygon.forEach { ring -> xyPolygon.add(
+            Ring<OutT>(
+                transform(
+                    ring,
+                    transform,
+                    epsilon
+                )
+            )
+        ) }
+        return Polygon<OutT>(xyPolygon)
+    }
+
+    private fun <InT, OutT> transform(
+        path: List<Vec<InT>>,
+        transform: (Vec<InT>) -> Vec<OutT>,
+        epsilon: Double
+    ): List<Vec<OutT>> {
+        val res = ArrayList<Vec<OutT>>(path.size)
         for (p in path) {
             res.add(transform(p))
         }
         return res
     }
 
-    fun safeDoubleVector(x: Double, y: Double): DoubleVector {
+    fun <TypeT> safePoint(x: Double, y: Double): Vec<TypeT> {
         return if (x.isNaN() || y.isNaN()) {
             error("Value for DoubleVector isNaN x = $x and y = $y")
         } else {
-            DoubleVector(x, y)
+            Vec(x, y)
         }
     }
 }

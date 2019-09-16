@@ -7,27 +7,29 @@ import jetbrains.datalore.base.projectionGeometry.LongitudeRange.Companion.split
 import kotlin.math.max
 import kotlin.math.min
 
-class GeoBoundingBoxCalculator(
-        private val myMapRect: DoubleRectangle,
-        private val myLoopX: Boolean,
-        private val myLoopY: Boolean) {
+class GeoBoundingBoxCalculator<TypeT>(
+    private val myMapRect: Rect<TypeT>,
+    private val myLoopX: Boolean,
+    private val myLoopY: Boolean) {
 
-    fun calculateBoundingBox(xyCoords: List<Double>): DoubleRectangle {
+    fun calculateBoundingBox(xyCoords: List<Double>): Rect<TypeT> {
         checkArgument(xyCoords.size % 2 == 0, "Longitude-Latitude list is not even-numbered.")
 
         return calculateBoundingBox(evenItemGetter(xyCoords), oddItemGetter(xyCoords), xyCoords.size / 2)
     }
 
-    fun calculateBoundingBox(xCoords: List<Double>, yCoords: List<Double>): DoubleRectangle {
+    fun calculateBoundingBox(xCoords: List<Double>, yCoords: List<Double>): Rect<TypeT> {
         checkArgument(xCoords.size == yCoords.size, "Longitude list count is not equal Latitude list count.")
 
         return calculateBoundingBox(itemGetter(xCoords), itemGetter(yCoords), yCoords.size)
     }
 
     fun calculateBoundingBox(
-            minXCoords: List<Double>, minYCoords: List<Double>,
-            maxXCoords: List<Double>, maxYCoords: List<Double>
-    ): DoubleRectangle {
+            minXCoords: List<Double>,
+            minYCoords: List<Double>,
+            maxXCoords: List<Double>,
+            maxYCoords: List<Double>
+    ): Rect<TypeT> {
         val count = minXCoords.size
         checkArgument(minYCoords.size == count && maxXCoords.size == count && maxYCoords.size == count,
                 "Counts of 'minLongitudes', 'minLatitudes', 'maxLongitudes', 'maxLatitudes' lists are not equal.")
@@ -41,7 +43,7 @@ class GeoBoundingBoxCalculator(
         )
     }
 
-    fun calculateBoundingBoxFromGeoRectangles(rectangles: List<GeoRectangle>): DoubleRectangle {
+    fun calculateBoundingBoxFromGeoRectangles(rectangles: List<GeoRectangle>): Rect<TypeT> {
         val geoRectGetter = itemGetter(rectangles)
         return calculateBoundingBox(
                 { x: Int -> MIN_LONGITUDE_GETTER(geoRectGetter(x)) },
@@ -52,18 +54,18 @@ class GeoBoundingBoxCalculator(
         )
     }
 
-    fun calculateBoundingBoxFromRectangles(rectangles: List<DoubleRectangle>): DoubleRectangle {
+    fun calculateBoundingBoxFromRectangles(rectangles: List<Rect<TypeT>>): Rect<TypeT> {
         val rectGetter = itemGetter(rectangles)
         return calculateBoundingBox(
-                { x: Int -> LEFT_GETTER(rectGetter(x)) },
-                { x: Int -> RIGHT_GETTER(rectGetter(x)) },
-                { x: Int -> TOP_GETTER(rectGetter(x)) },
-                { x: Int -> BOTTOM_GETTER(rectGetter(x)) },
+                { x: Int -> LEFT_RECT_GETTER(rectGetter(x)) },
+                { x: Int -> RIGHT_RECT_GETTER(rectGetter(x)) },
+                { x: Int -> TOP_RECT_GETTER(rectGetter(x)) },
+                { x: Int -> BOTTOM_RECT_GETTER(rectGetter(x)) },
                 rectangles.size
         )
     }
 
-    private fun calculateBoundingBox(x: (Int) -> Double, y: (Int) -> Double, size: Int): DoubleRectangle {
+    private fun calculateBoundingBox(x: (Int) -> Double, y: (Int) -> Double, size: Int): Rect<TypeT> {
         return calculateBoundingBox(x, x, y, y, size)
     }
 
@@ -71,10 +73,15 @@ class GeoBoundingBoxCalculator(
             minX: (Int) -> Double, maxX: (Int) -> Double,
             minY: (Int) -> Double, maxY: (Int) -> Double,
             size: Int
-    ): DoubleRectangle {
+    ): Rect<TypeT> {
         val xRange = calculateBoundingRange(CoordinateHelperImpl(minX, maxX, size), myMapRect.xRange(), myLoopX)
         val yRange = calculateBoundingRange(CoordinateHelperImpl(minY, maxY, size), myMapRect.yRange(), myLoopY)
-        return DoubleRectangle(xRange.lowerEndpoint(), yRange.lowerEndpoint(), length(xRange), length(yRange))
+        return Rect(
+            xRange.lowerEndpoint(),
+            yRange.lowerEndpoint(),
+            length(xRange),
+            length(yRange)
+        )
     }
 
     private fun calculateBoundingRange(helper: CoordinateHelper, mapRange: ClosedRange<Double>, loop: Boolean): ClosedRange<Double> {
@@ -97,19 +104,15 @@ class GeoBoundingBoxCalculator(
         fun size(): Int
     }
 
-    private class CoordinateHelperImpl internal constructor(private val myMinCoord: (Int) -> Double, private val myMaxCoord: (Int) -> Double, private val mySize: Int) : CoordinateHelper {
+    private class CoordinateHelperImpl internal constructor(
+        private val myMinCoord: (Int) -> Double,
+        private val myMaxCoord: (Int) -> Double,
+        private val mySize: Int
+    ) : CoordinateHelper {
 
-        override fun minCoord(index: Int): Double {
-            return myMinCoord(index)
-        }
-
-        override fun maxCoord(index: Int): Double {
-            return myMaxCoord(index)
-        }
-
-        override fun size(): Int {
-            return mySize
-        }
+        override fun minCoord(index: Int) = myMinCoord(index)
+        override fun maxCoord(index: Int) = myMaxCoord(index)
+        override fun size() = mySize
     }
 
     companion object {
@@ -128,6 +131,14 @@ class GeoBoundingBoxCalculator(
         internal val TOP_GETTER = { rectangle: DoubleRectangle -> rectangle.top }
 
         internal val BOTTOM_GETTER = { rectangle: DoubleRectangle -> rectangle.bottom }
+
+        internal val LEFT_RECT_GETTER = { rectangle: Rect<*> -> rectangle.left }
+
+        internal val RIGHT_RECT_GETTER = { rectangle: Rect<*> -> rectangle.right }
+
+        internal val TOP_RECT_GETTER = { rectangle: Rect<*> -> rectangle.top }
+
+        internal val BOTTOM_RECT_GETTER = { rectangle: Rect<*> -> rectangle.bottom }
 
         private val LOWER_ENDPOINT_GETTER = { range: ClosedRange<Double> -> range.lowerEndpoint() }
 

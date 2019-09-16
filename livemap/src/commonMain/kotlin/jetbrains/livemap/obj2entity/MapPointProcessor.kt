@@ -25,7 +25,6 @@ import jetbrains.livemap.mapobjects.MapPoint
 import jetbrains.livemap.projections.ClientPoint
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.WorldPoint
-import jetbrains.livemap.projections.toWorldPoint
 
 
 internal class MapPointProcessor(
@@ -59,7 +58,7 @@ internal class MapPointProcessor(
             val mapPoint = mapObject as MapPoint
 
             val pointEntity = myFactory
-                .createMapEntity(myMapProjection.project(mapPoint.point).toWorldPoint(), SIMPLE_RENDERER, "map_ent_point")
+                .createMapEntity(myMapProjection.project(mapPoint.point), SIMPLE_RENDERER, "map_ent_point")
                 .addComponent(PointComponent().apply { shape = mapPoint.shape })
                 .addComponent(createStyle(mapPoint))
 
