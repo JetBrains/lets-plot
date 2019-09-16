@@ -5,9 +5,7 @@ import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.LonLat
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.cell.mapobjects.MapPath
 import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
@@ -196,7 +194,7 @@ class PolygonsBuilder {
     var strokeColor: Color? = null
     var strokeWidth: Double? = null
     var fillColor: Color? = null
-    var coordinates: List<DoubleVector>? = null
+    var coordinates: List<Vec<LonLat>>? = null
 
     fun build(): MapPolygon {
 
@@ -205,10 +203,10 @@ class PolygonsBuilder {
             lineDash!!, strokeColor!!, strokeWidth!!,
             fillColor!!,
             coordinates!!
-                .run(::Ring)
-                .run(::Polygon)
-                .run(::MultiPolygon)
-                .run(LonLatGeometry.Companion::create)
+                .run { listOf(Ring(this)) }
+                .run { listOf(Polygon(this)) }
+                .run { MultiPolygon(this) }
+                .run(TypedGeometry.Companion::create)
         )
     }
 }
@@ -231,7 +229,7 @@ class LineBuilder {
         return MapLine(
             index!!, mapId, regionId,
             lineDash!!, strokeColor!!, strokeWidth!!,
-            DoubleVector(lon!!, lat!!)
+            Vec(lon!!, lat!!)
         )
     }
 }

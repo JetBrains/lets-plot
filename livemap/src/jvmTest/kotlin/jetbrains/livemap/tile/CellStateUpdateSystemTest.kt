@@ -1,14 +1,15 @@
 package jetbrains.datalore.jetbrains.livemap.tile
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.livemap.core.Utils.common
 import jetbrains.livemap.core.ecs.EcsSystem
 import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.projections.Coordinates.Companion.ZERO_WORLD_POINT
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.ProjectionUtil
+import jetbrains.livemap.projections.WorldRectangle
 import jetbrains.livemap.tiles.CellStateUpdateSystem
 import jetbrains.livemap.tiles.components.CellStateComponent
 import org.junit.Before
@@ -26,11 +27,12 @@ class CellStateUpdateSystemTest : LiveMapTestBase() {
     override fun setUp() {
         super.setUp()
 
-        val mapRect = DoubleRectangle(
-            DoubleVector.ZERO, DoubleVector(
+        val mapRect = WorldRectangle(
+            ZERO_WORLD_POINT, Vec(
                 ProjectionUtil.TILE_PIXEL_SIZE,
                 ProjectionUtil.TILE_PIXEL_SIZE
-            ))
+            )
+        )
         val mapProjection = ProjectionUtil.createMapProjection(ProjectionType.MERCATOR, mapRect)
 
         `when`(liveMapContext.mapProjection).thenReturn(mapProjection)

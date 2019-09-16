@@ -41,14 +41,5 @@ fun newDoubleRectangle(origin: AnyPoint, dimension: AnyPoint): DoubleRectangle {
     return DoubleRectangle(origin.x, origin.y, dimension.x, dimension.y)
 }
 
-fun GeoRectangle.toLonLatRectangle(): Rect<LonLat> {
-    return Rect<LonLat>(
-        LonLatPoint(this.minLongitude(), this.minLatitude()),
-        LonLatPoint(this.maxLongitude(), maxLongitude())
-    )
-}
-
 fun Vector.toClientPoint() = ClientPoint(x, y)
-fun DoubleVector.toLonLatPoint() = LonLatPoint(x, y)
-fun DoubleVector.toWorldPoint() = WorldPoint(x, y)
 fun DoubleVector.toClientPoint() = ClientPoint(x, y)

@@ -70,3 +70,6 @@ fun <TypeT> Vec<TypeT>.addX(p: Vec<TypeT>) =
     Vec<TypeT>(x + p.x, y)
 fun <TypeT> Vec<TypeT>.addY(p: Vec<TypeT>) =
     Vec<TypeT>(x, y + p.y)
+
+fun <TypeT> Vec<TypeT>.transform(fx: (Double) -> Double = { it }, fy: (Double) -> Double = { it }) =
+    Vec<TypeT>(fx(x), fy(y))
