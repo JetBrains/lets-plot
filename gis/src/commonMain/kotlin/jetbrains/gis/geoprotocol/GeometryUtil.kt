@@ -1,11 +1,13 @@
 package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.geometry.DoubleRectangles
-import jetbrains.datalore.base.projectionGeometry.Typed
+import jetbrains.datalore.base.projectionGeometry.LineString
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.projectionGeometry.limit
 
 object GeometryUtil {
-    fun <TypeT> bbox(multipolygon: Typed.MultiPolygon<TypeT>): Typed.Rectangle<TypeT>? {
+    fun <TypeT> bbox(multipolygon: MultiPolygon<TypeT>): Rect<TypeT>? {
         val rects = multipolygon.limit()
         return if (rects.isEmpty()) {
             null
@@ -17,7 +19,7 @@ object GeometryUtil {
         )
     }
 
-    fun <TypeT> asLineString(geometry: TypedGeometry<TypeT>): Typed.LineString<TypeT> {
-        return Typed.LineString(geometry.asMultipolygon().get(0).get(0))
+    fun <TypeT> asLineString(geometry: TypedGeometry<TypeT>): LineString<TypeT> {
+        return LineString(geometry.asMultipolygon().get(0).get(0))
     }
 }

@@ -2,7 +2,8 @@ package jetbrains.livemap.projections
 
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
-import jetbrains.datalore.base.projectionGeometry.LonLatRectangle
+import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
 import jetbrains.livemap.projections.ProjectionUtil.safePoint
 import kotlin.math.*
@@ -23,7 +24,7 @@ internal class ConicEqualAreaProjection(y0: Double, y1: Double) : GeoProjection 
         r0 = sqrt(c) / n
     }
 
-    override fun validRect(): LonLatRectangle = VALID_RECTANGLE
+    override fun validRect(): Rect<LonLat> = VALID_RECTANGLE
 
     override fun project(v: LonLatPoint): GeographicPoint {
         var x = toRadians(v.x)

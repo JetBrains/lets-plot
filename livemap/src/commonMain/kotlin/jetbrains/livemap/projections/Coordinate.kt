@@ -16,16 +16,16 @@ interface World
 interface Client
 
 
-typealias LonLatPoint = Typed.Vec<LonLat>
-typealias LonLatRing = Typed.Ring<LonLat>
-typealias LonLatPolygon = Typed.Polygon<LonLat>
-typealias LonLatMultiPolygon = Typed.MultiPolygon<LonLat>
+typealias LonLatPoint = Vec<LonLat>
+typealias LonLatRing = Ring<LonLat>
+typealias LonLatPolygon = Polygon<LonLat>
+typealias LonLatMultiPolygon = MultiPolygon<LonLat>
 
-typealias ClientPoint = Typed.Vec<Client>
-typealias ClientRectangle = Typed.Rectangle<Client>
+typealias ClientPoint = Vec<Client>
+typealias ClientRectangle = Rect<Client>
 
-typealias WorldPoint = Typed.Vec<World>
-typealias WorldRectangle = Typed.Rectangle<World>
+typealias WorldPoint = Vec<World>
+typealias WorldRectangle = Rect<World>
 
 
 class Coordinates {
@@ -41,8 +41,8 @@ fun newDoubleRectangle(origin: AnyPoint, dimension: AnyPoint): DoubleRectangle {
     return DoubleRectangle(origin.x, origin.y, dimension.x, dimension.y)
 }
 
-fun GeoRectangle.toLonLatRectangle(): LonLatRectangle {
-    return LonLatRectangle(
+fun GeoRectangle.toLonLatRectangle(): Rect<LonLat> {
+    return Rect<LonLat>(
         LonLatPoint(this.minLongitude(), this.minLatitude()),
         LonLatPoint(this.maxLongitude(), maxLongitude())
     )

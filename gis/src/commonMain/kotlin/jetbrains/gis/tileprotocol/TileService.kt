@@ -6,7 +6,8 @@ import jetbrains.datalore.base.concurrent.Lock
 import jetbrains.datalore.base.concurrent.execute
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.json.JsonSupport.formatJson
-import jetbrains.datalore.base.projectionGeometry.LonLatRectangle
+import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 import jetbrains.gis.tileprotocol.Request.ConfigureConnectionRequest
 import jetbrains.gis.tileprotocol.Request.GetBinaryGeometryRequest
@@ -30,7 +31,7 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: String
     private var myIncrement: Int = 0
     private var mySocketStatus = NOT_CONNECTED
 
-    open fun getTileData(bbox: LonLatRectangle, zoom: Int): Async<List<TileLayer>> {
+    open fun getTileData(bbox: Rect<LonLat>, zoom: Int): Async<List<TileLayer>> {
         val key = myIncrement++.toString()
         val async = ThreadSafeAsync<List<TileLayer>>()
 

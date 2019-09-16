@@ -27,7 +27,7 @@ internal object GeoRectangleTestHelper {
         assertDoubleEquals(getter(expected), getter(actual))
     }
 
-    fun assertRectangleEquals(expected: Typed.Rectangle<*>, actual: Typed.Rectangle<*>) {
+    fun assertRectangleEquals(expected: Rect<*>, actual: Rect<*>) {
         assertDoubleParameterEquals(expected, actual, LEFT_RECT_GETTER)
         assertDoubleParameterEquals(expected, actual, TOP_RECT_GETTER)
         assertDoubleParameterEquals(expected, actual, RIGHT_RECT_GETTER)

@@ -1,18 +1,19 @@
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.projectionGeometry.Typed
+import jetbrains.datalore.base.projectionGeometry.MultiPoint
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.livemap.core.multitasking.MicroTask
 
 internal class MultiPointTransform<InT, OutT>(
-    multiPoint: Typed.MultiPoint<InT>,
-    private val myTransform: (Typed.Vec<InT>, MutableCollection<Typed.Vec<OutT>>) -> Unit
-) : MicroTask<Typed.MultiPoint<OutT>> {
-    private lateinit var myPointIterator: Iterator<Typed.Vec<InT>>
+    multiPoint: MultiPoint<InT>,
+    private val myTransform: (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit
+) : MicroTask<MultiPoint<OutT>> {
+    private lateinit var myPointIterator: Iterator<Vec<InT>>
 
-    private val myNewMultiPoint = ArrayList<Typed.Vec<OutT>>()
+    private val myNewMultiPoint = ArrayList<Vec<OutT>>()
 
     private var myHasNext = true
-    private lateinit var myResult: Typed.MultiPoint<OutT>
+    private lateinit var myResult: MultiPoint<OutT>
 
     init {
         try {
@@ -22,14 +23,14 @@ internal class MultiPointTransform<InT, OutT>(
         }
     }
 
-    override fun getResult(): Typed.MultiPoint<OutT> {
+    override fun getResult(): MultiPoint<OutT> {
         return myResult
     }
 
     override fun resume() {
         if (!myPointIterator.hasNext()) {
             myHasNext = false
-            myResult = Typed.MultiPoint(myNewMultiPoint)
+            myResult = MultiPoint(myNewMultiPoint)
             return
         }
 

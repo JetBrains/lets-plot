@@ -3,7 +3,7 @@ package jetbrains.livemap.effects
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.AnyLineString
 import jetbrains.datalore.base.projectionGeometry.AnyPoint
-import jetbrains.datalore.base.projectionGeometry.Typed
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.gis.geoprotocol.GeometryUtil.asLineString
@@ -190,7 +190,7 @@ object GrowingPath {
 
             for (polygon in geometry.asMultipolygon()) {
                 val ring = polygon.get(0)
-                var viewCoord: Typed.Vec<Client> = ring.get(0)
+                var viewCoord: Vec<Client> = ring.get(0)
                 ctx.moveTo(viewCoord.x, viewCoord.y)
 
                 for (i in 1..growingPath.getEndIndex()) {

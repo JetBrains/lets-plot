@@ -1,7 +1,8 @@
 package jetbrains.datalore.base.geometry
 
 import jetbrains.datalore.base.projectionGeometry.AnyPoint
-import jetbrains.datalore.base.projectionGeometry.Typed
+import jetbrains.datalore.base.projectionGeometry.Rect
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
 import kotlin.math.max
 import kotlin.math.min
@@ -22,12 +23,12 @@ object DoubleRectangles {
         }
     }
 
-    fun <TypeT> boundingBox(points: Iterable<Typed.Vec<TypeT>>): Typed.Rectangle<TypeT> {
+    fun <TypeT> boundingBox(points: Iterable<Vec<TypeT>>): Rect<TypeT> {
         return calculateBoundingBox(points, GET_POINT_X, GET_POINT_Y)
         { minX, minY, maxX, maxY ->
             newSpanRectangle(
-                Typed.Vec(minX, minY),
-                Typed.Vec(maxX, maxY)
+                Vec(minX, minY),
+                Vec(maxX, maxY)
             )
         }
     }

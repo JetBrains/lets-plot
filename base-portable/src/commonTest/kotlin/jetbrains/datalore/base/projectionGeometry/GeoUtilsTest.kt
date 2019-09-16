@@ -19,7 +19,7 @@ class GeoUtilsTest {
 
     @Test
     fun calculateTexasQuadKey() {
-        val bbox = LonLatRectangle(-107.0, 25.0, 14.0, 12.0)
+        val bbox = Rect<LonLat>(-107.0, 25.0, 14.0, 12.0)
         val tileIDs = calculateQuadKeys(bbox, 5)
         assertEquals(tileIDs, quadKeys("02130", "02112", "02133", "02132", "02131", "02113"))
     }
@@ -27,7 +27,7 @@ class GeoUtilsTest {
     @Test
     fun calculateZeroTileBBox() {
         val rect = getQuadKeyRect(QuadKey("0"))
-        val expectedRect = Rectangle(
+        val expectedRect = Rect<Generic>(
                 EARTH_RECT.left,
                 EARTH_RECT.center.x,
                 EARTH_RECT.width / 2,

@@ -2,7 +2,8 @@ package jetbrains.livemap.projections
 
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.limitLat
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.limitLon
-import jetbrains.datalore.base.projectionGeometry.LonLatRectangle
+import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
 
 internal class GeographicProjection : GeoProjection {
@@ -11,7 +12,7 @@ internal class GeographicProjection : GeoProjection {
 
     override fun invert(v: GeographicPoint): LonLatPoint = LonLatPoint(limitLon(v.x), limitLat(v.y))
     
-    override fun validRect(): LonLatRectangle = VALID_RECTANGLE
+    override fun validRect(): Rect<LonLat> = VALID_RECTANGLE
 
     companion object {
         private val VALID_RECTANGLE = newSpanRectangle(

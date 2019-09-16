@@ -26,7 +26,7 @@ object ProjectionUtil {
         return 1 shl zoom
     }
 
-    fun <T> calculateTileKeys(mapRect: Typed.Rectangle<*>, viewRect: DoubleRectangle, zoom: Int?, constructor: (String) -> T): Set<T> {
+    fun <T> calculateTileKeys(mapRect: Rect<*>, viewRect: DoubleRectangle, zoom: Int?, constructor: (String) -> T): Set<T> {
         val tileKeys = HashSet<T>()
         val tileCount = getTileCount(zoom!!)
 
@@ -87,7 +87,7 @@ object ProjectionUtil {
         return calculateQuadKeys(geoRect, cellKey.length)
     }
 
-    internal fun calculateCellKeys(mapRect: Typed.Rectangle<*>, rect: DoubleRectangle, zoom: Int): Set<CellKey> {
+    internal fun calculateCellKeys(mapRect: Rect<*>, rect: DoubleRectangle, zoom: Int): Set<CellKey> {
         return calculateTileKeys(mapRect, rect, zoom, ::CellKey)
     }
 
@@ -98,8 +98,8 @@ object ProjectionUtil {
         )
     }
 
-    private fun <TypeT> rectToPolygon(rect: Typed.Rectangle<TypeT>): List<Typed.Vec<TypeT>> {
-        val points = ArrayList<Typed.Vec<TypeT>>()
+    private fun <TypeT> rectToPolygon(rect: Rect<TypeT>): List<Vec<TypeT>> {
+        val points = ArrayList<Vec<TypeT>>()
         points.add(rect.origin)
         points.add(rect.origin.addX(rect.dimension))
         points.add(rect.origin.add(rect.dimension))
@@ -108,21 +108,21 @@ object ProjectionUtil {
         return points
     }
 
-    fun <InT, OutT> square(projection: Projection<Double>): Transform<Typed.Vec<InT>, Typed.Vec<OutT>> {
+    fun <InT, OutT> square(projection: Projection<Double>): Transform<Vec<InT>, Vec<OutT>> {
         return tuple(projection, projection)
     }
 
-    internal fun <InT, OutT> tuple(xProjection: Projection<Double>, yProjection: Projection<Double>): Transform<Typed.Vec<InT>, Typed.Vec<OutT>> {
-        return object : Transform<Typed.Vec<InT>, Typed.Vec<OutT>> {
-            override fun project(v: Typed.Vec<InT>): Typed.Vec<OutT> {
-                return Typed.Vec(
+    internal fun <InT, OutT> tuple(xProjection: Projection<Double>, yProjection: Projection<Double>): Transform<Vec<InT>, Vec<OutT>> {
+        return object : Transform<Vec<InT>, Vec<OutT>> {
+            override fun project(v: Vec<InT>): Vec<OutT> {
+                return Vec(
                     xProjection.project(v.x),
                     yProjection.project(v.y)
                 )
             }
 
-            override fun invert(v: Typed.Vec<OutT>): Typed.Vec<InT> {
-                return Typed.Vec(
+            override fun invert(v: Vec<OutT>): Vec<InT> {
+                return Vec(
                     xProjection.invert(v.x),
                     yProjection.invert(v.y)
                 )
@@ -186,80 +186,98 @@ object ProjectionUtil {
         }
     }
 
-    fun <InT, OutT> transformBBox(bbox: Typed.Rectangle<InT>, transform: (Typed.Vec<InT>) -> Typed.Vec<OutT>): Typed.Rectangle<OutT> {
+    fun <InT, OutT> transformBBox(bbox: Rect<InT>, transform: (Vec<InT>) -> Vec<OutT>): Rect<OutT> {
         return bbox
             .let(::rectToPolygon)
             .let { transformRing(it, transform, SAMPLING_EPSILON) }
             .let { DoubleRectangles.boundingBox(it) }
-            .let { Typed.Rectangle<OutT>(
-                Typed.Vec<OutT>(it.origin.x, it.origin.y),
-                Typed.Vec<OutT>(it.dimension.x, it.dimension.y)
-            ) }
+            .let {
+                Rect<OutT>(
+                    Vec<OutT>(it.origin.x, it.origin.y),
+                    Vec<OutT>(it.dimension.x, it.dimension.y)
+                )
+            }
     }
 
     fun <InT, OutT> transformMultipolygon(
-        multiPolygon: Typed.MultiPolygon<InT>,
-        transform: (Typed.Vec<InT>) -> Typed.Vec<OutT>
-    ): Typed.MultiPolygon<OutT> {
-        val xyMultipolygon = ArrayList<Typed.Polygon<OutT>>(multiPolygon.size)
+        multiPolygon: MultiPolygon<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>
+    ): MultiPolygon<OutT> {
+        val xyMultipolygon = ArrayList<Polygon<OutT>>(multiPolygon.size)
         multiPolygon.forEach { xyMultipolygon.add(transformPolygon(it, transform, SAMPLING_EPSILON)) }
-        return Typed.MultiPolygon<OutT>(xyMultipolygon)
+        return MultiPolygon<OutT>(xyMultipolygon)
     }
 
     private fun <InT, OutT> transformPolygon(
-        polygon: Typed.Polygon<InT>,
-        transform: (Typed.Vec<InT>) -> Typed.Vec<OutT>,
+        polygon: Polygon<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>,
         epsilon: Double
-    ): Typed.Polygon<OutT> {
-        val xyPolygon = ArrayList<Typed.Ring<OutT>>(polygon.size)
-        polygon.forEach { ring -> xyPolygon.add(Typed.Ring<OutT>(transformRing(ring, transform, epsilon))) }
-        return Typed.Polygon<OutT>(xyPolygon)
+    ): Polygon<OutT> {
+        val xyPolygon = ArrayList<Ring<OutT>>(polygon.size)
+        polygon.forEach { ring -> xyPolygon.add(
+            Ring<OutT>(
+                transformRing(
+                    ring,
+                    transform,
+                    epsilon
+                )
+            )
+        ) }
+        return Polygon<OutT>(xyPolygon)
     }
 
     private fun <InT, OutT> transformRing(
-        path: List<Typed.Vec<InT>>,
-        transform: (Typed.Vec<InT>) -> Typed.Vec<OutT>,
+        path: List<Vec<InT>>,
+        transform: (Vec<InT>) -> Vec<OutT>,
         epsilon: Double
-    ): List<Typed.Vec<OutT>> {
+    ): List<Vec<OutT>> {
         return AdaptiveResampling(transform, epsilon).resample(path)
     }
 
     fun <InT, OutT> transform(
-        multiPolygon: Typed.MultiPolygon<InT>,
-        transform: (Typed.Vec<InT>) -> Typed.Vec<OutT>
-    ): Typed.MultiPolygon<OutT> {
-        val xyMultipolygon = ArrayList<Typed.Polygon<OutT>>(multiPolygon.size)
+        multiPolygon: MultiPolygon<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>
+    ): MultiPolygon<OutT> {
+        val xyMultipolygon = ArrayList<Polygon<OutT>>(multiPolygon.size)
         multiPolygon.forEach { polygon -> xyMultipolygon.add(transform(polygon, transform, SAMPLING_EPSILON)) }
-        return Typed.MultiPolygon<OutT>(xyMultipolygon)
+        return MultiPolygon<OutT>(xyMultipolygon)
     }
 
     private fun <InT, OutT> transform(
-        polygon: Typed.Polygon<InT>,
-        transform: (Typed.Vec<InT>) -> Typed.Vec<OutT>,
+        polygon: Polygon<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>,
         epsilon: Double
-    ): Typed.Polygon<OutT> {
-        val xyPolygon = ArrayList<Typed.Ring<OutT>>(polygon.size)
-        polygon.forEach { ring -> xyPolygon.add(Typed.Ring<OutT>(transform(ring, transform, epsilon))) }
-        return Typed.Polygon<OutT>(xyPolygon)
+    ): Polygon<OutT> {
+        val xyPolygon = ArrayList<Ring<OutT>>(polygon.size)
+        polygon.forEach { ring -> xyPolygon.add(
+            Ring<OutT>(
+                transform(
+                    ring,
+                    transform,
+                    epsilon
+                )
+            )
+        ) }
+        return Polygon<OutT>(xyPolygon)
     }
 
     private fun <InT, OutT> transform(
-        path: List<Typed.Vec<InT>>,
-        transform: (Typed.Vec<InT>) -> Typed.Vec<OutT>,
+        path: List<Vec<InT>>,
+        transform: (Vec<InT>) -> Vec<OutT>,
         epsilon: Double
-    ): List<Typed.Vec<OutT>> {
-        val res = ArrayList<Typed.Vec<OutT>>(path.size)
+    ): List<Vec<OutT>> {
+        val res = ArrayList<Vec<OutT>>(path.size)
         for (p in path) {
             res.add(transform(p))
         }
         return res
     }
 
-    fun <TypeT> safePoint(x: Double, y: Double): Typed.Vec<TypeT> {
+    fun <TypeT> safePoint(x: Double, y: Double): Vec<TypeT> {
         return if (x.isNaN() || y.isNaN()) {
             error("Value for DoubleVector isNaN x = $x and y = $y")
         } else {
-            Typed.Vec(x, y)
+            Vec(x, y)
         }
     }
 }

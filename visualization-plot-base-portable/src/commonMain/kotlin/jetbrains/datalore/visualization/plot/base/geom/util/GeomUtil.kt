@@ -4,10 +4,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Point
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.Ring
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.GeomContext
@@ -130,27 +127,27 @@ object GeomUtil {
         return pointsByGroup
     }
 
-    fun createMultipolygon(points: List<DoubleVector>): MultiPolygon {
+    fun createMultipolygon(points: List<DoubleVector>): MultiPolygon<Generic> {
         if (points.isEmpty()) {
-            return MultiPolygon(emptyList())
+            return MultiPolygon<Generic>(emptyList())
         }
 
-        val polygons = ArrayList<Polygon>()
-        var rings: MutableList<Ring> = ArrayList<Ring>()
+        val polygons = ArrayList<Polygon<Generic>>()
+        var rings: MutableList<Ring<Generic>> = ArrayList<Ring<Generic>>()
 
         for (ring in createRingsFromPoints(points)) {
             if (rings.isNotEmpty() && isClockwise(ring)) {
-                polygons.add(Polygon(rings))
-                rings = ArrayList<Ring>()
+                polygons.add(Polygon<Generic>(rings))
+                rings = ArrayList<Ring<Generic>>()
             }
             rings.add(Ring(ring.map { Point(it.x, it.y) }))
         }
 
         if (!rings.isEmpty()) {
-            polygons.add(Polygon(rings))
+            polygons.add(Polygon<Generic>(rings))
         }
 
-        return MultiPolygon(polygons)
+        return MultiPolygon<Generic>(polygons)
     }
 
     private fun isClockwise(ring: List<DoubleVector>): Boolean {

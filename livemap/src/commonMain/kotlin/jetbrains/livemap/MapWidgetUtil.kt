@@ -146,9 +146,9 @@ object MapWidgetUtil {
 
     internal fun <TypeT> calculateExtendedRectangleWithCenter(
         mapRuler: MapRuler<TypeT>,
-        rect: Typed.Rectangle<TypeT>,
-        center: Typed.Vec<TypeT>
-    ): Typed.Rectangle<TypeT> {
+        rect: Rect<TypeT>,
+        center: Vec<TypeT>
+    ): Rect<TypeT> {
         val radiusX = calculateRadius(
             center.x,
             rect.left,
@@ -160,7 +160,12 @@ object MapWidgetUtil {
             rect.height,
             mapRuler::distanceY)
 
-        return Typed.Rectangle<TypeT>(center.x - radiusX, center.y - radiusY, radiusX * 2, radiusY * 2)
+        return Rect<TypeT>(
+            center.x - radiusX,
+            center.y - radiusY,
+            radiusX * 2,
+            radiusY * 2
+        )
     }
 
     private fun calculateRadius(

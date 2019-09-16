@@ -8,17 +8,17 @@ import kotlin.math.max
 import kotlin.math.min
 
 class GeoBoundingBoxCalculator<TypeT>(
-        private val myMapRect: Typed.Rectangle<TypeT>,
-        private val myLoopX: Boolean,
-        private val myLoopY: Boolean) {
+    private val myMapRect: Rect<TypeT>,
+    private val myLoopX: Boolean,
+    private val myLoopY: Boolean) {
 
-    fun calculateBoundingBox(xyCoords: List<Double>): Typed.Rectangle<TypeT> {
+    fun calculateBoundingBox(xyCoords: List<Double>): Rect<TypeT> {
         checkArgument(xyCoords.size % 2 == 0, "Longitude-Latitude list is not even-numbered.")
 
         return calculateBoundingBox(evenItemGetter(xyCoords), oddItemGetter(xyCoords), xyCoords.size / 2)
     }
 
-    fun calculateBoundingBox(xCoords: List<Double>, yCoords: List<Double>): Typed.Rectangle<TypeT> {
+    fun calculateBoundingBox(xCoords: List<Double>, yCoords: List<Double>): Rect<TypeT> {
         checkArgument(xCoords.size == yCoords.size, "Longitude list count is not equal Latitude list count.")
 
         return calculateBoundingBox(itemGetter(xCoords), itemGetter(yCoords), yCoords.size)
@@ -29,7 +29,7 @@ class GeoBoundingBoxCalculator<TypeT>(
             minYCoords: List<Double>,
             maxXCoords: List<Double>,
             maxYCoords: List<Double>
-    ): Typed.Rectangle<TypeT> {
+    ): Rect<TypeT> {
         val count = minXCoords.size
         checkArgument(minYCoords.size == count && maxXCoords.size == count && maxYCoords.size == count,
                 "Counts of 'minLongitudes', 'minLatitudes', 'maxLongitudes', 'maxLatitudes' lists are not equal.")
@@ -43,7 +43,7 @@ class GeoBoundingBoxCalculator<TypeT>(
         )
     }
 
-    fun calculateBoundingBoxFromGeoRectangles(rectangles: List<GeoRectangle>): Typed.Rectangle<TypeT> {
+    fun calculateBoundingBoxFromGeoRectangles(rectangles: List<GeoRectangle>): Rect<TypeT> {
         val geoRectGetter = itemGetter(rectangles)
         return calculateBoundingBox(
                 { x: Int -> MIN_LONGITUDE_GETTER(geoRectGetter(x)) },
@@ -54,7 +54,7 @@ class GeoBoundingBoxCalculator<TypeT>(
         )
     }
 
-    fun calculateBoundingBoxFromRectangles(rectangles: List<Typed.Rectangle<TypeT>>): Typed.Rectangle<TypeT> {
+    fun calculateBoundingBoxFromRectangles(rectangles: List<Rect<TypeT>>): Rect<TypeT> {
         val rectGetter = itemGetter(rectangles)
         return calculateBoundingBox(
                 { x: Int -> LEFT_RECT_GETTER(rectGetter(x)) },
@@ -65,7 +65,7 @@ class GeoBoundingBoxCalculator<TypeT>(
         )
     }
 
-    private fun calculateBoundingBox(x: (Int) -> Double, y: (Int) -> Double, size: Int): Typed.Rectangle<TypeT> {
+    private fun calculateBoundingBox(x: (Int) -> Double, y: (Int) -> Double, size: Int): Rect<TypeT> {
         return calculateBoundingBox(x, x, y, y, size)
     }
 
@@ -73,10 +73,15 @@ class GeoBoundingBoxCalculator<TypeT>(
             minX: (Int) -> Double, maxX: (Int) -> Double,
             minY: (Int) -> Double, maxY: (Int) -> Double,
             size: Int
-    ): Typed.Rectangle<TypeT> {
+    ): Rect<TypeT> {
         val xRange = calculateBoundingRange(CoordinateHelperImpl(minX, maxX, size), myMapRect.xRange(), myLoopX)
         val yRange = calculateBoundingRange(CoordinateHelperImpl(minY, maxY, size), myMapRect.yRange(), myLoopY)
-        return Typed.Rectangle(xRange.lowerEndpoint(), yRange.lowerEndpoint(), length(xRange), length(yRange))
+        return Rect(
+            xRange.lowerEndpoint(),
+            yRange.lowerEndpoint(),
+            length(xRange),
+            length(yRange)
+        )
     }
 
     private fun calculateBoundingRange(helper: CoordinateHelper, mapRange: ClosedRange<Double>, loop: Boolean): ClosedRange<Double> {
@@ -127,13 +132,13 @@ class GeoBoundingBoxCalculator<TypeT>(
 
         internal val BOTTOM_GETTER = { rectangle: DoubleRectangle -> rectangle.bottom }
 
-        internal val LEFT_RECT_GETTER = { rectangle: Typed.Rectangle<*> -> rectangle.left }
+        internal val LEFT_RECT_GETTER = { rectangle: Rect<*> -> rectangle.left }
 
-        internal val RIGHT_RECT_GETTER = { rectangle: Typed.Rectangle<*> -> rectangle.right }
+        internal val RIGHT_RECT_GETTER = { rectangle: Rect<*> -> rectangle.right }
 
-        internal val TOP_RECT_GETTER = { rectangle: Typed.Rectangle<*> -> rectangle.top }
+        internal val TOP_RECT_GETTER = { rectangle: Rect<*> -> rectangle.top }
 
-        internal val BOTTOM_RECT_GETTER = { rectangle: Typed.Rectangle<*> -> rectangle.bottom }
+        internal val BOTTOM_RECT_GETTER = { rectangle: Rect<*> -> rectangle.bottom }
 
         private val LOWER_ENDPOINT_GETTER = { range: ClosedRange<Double> -> range.lowerEndpoint() }
 

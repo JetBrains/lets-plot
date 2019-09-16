@@ -1,8 +1,8 @@
 package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
-import jetbrains.datalore.base.projectionGeometry.LonLatPoint
-import jetbrains.datalore.base.projectionGeometry.Typed
+import jetbrains.datalore.base.projectionGeometry.TileGeometry
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.gis.tileprotocol.TileGeometryParser
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.multitasking.MicroTask
@@ -28,7 +28,7 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
         return MicroTaskUtil.join(microThreads).map { result }
     }
 
-    private fun calculateTransform(cellKey: CellKey): (LonLatPoint) -> Typed.Vec<Client> {
+    private fun calculateTransform(cellKey: CellKey): (Vec<LonLat>) -> Vec<Client> {
         val zoomProjection = WorldProjection(cellKey.length)
         val cellMapRect = getTileRect(myMapProjection.mapRect, cellKey.toString())
         val cellViewOrigin = zoomProjection.project(cellMapRect.origin)
@@ -38,7 +38,7 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
 
     private fun parseTileLayer(
         tileLayer: TileLayer,
-        transform: (LonLatPoint) -> Typed.Vec<Client>
+        transform: (Vec<LonLat>) -> Vec<Client>
     ): MicroTask<List<TileFeature>> {
         return createMicroThread(TileGeometryParser(tileLayer.geometryCollection))
             .flatMap { tileGeometries ->
@@ -48,7 +48,7 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
                 repeat(tileGeometries.size) {
                     val geometry = tileGeometries[it]
                     microThreads.add(
-                        GeometryTransform.resampling(geometry, transform).map { worldMultiPolygon: Typed.TileGeometry<Client> ->
+                        GeometryTransform.resampling(geometry, transform).map { worldMultiPolygon: TileGeometry<Client> ->
                             tileFeatures.add(
                                 TileFeature(
                                     worldMultiPolygon,
@@ -68,11 +68,11 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
             }
     }
 
-    private fun createMicroThread(tileGeometryParser: TileGeometryParser): MicroTask<List<Typed.TileGeometry<LonLat>>> {
-        return object : MicroTask<List<Typed.TileGeometry<LonLat>>> {
+    private fun createMicroThread(tileGeometryParser: TileGeometryParser): MicroTask<List<TileGeometry<LonLat>>> {
+        return object : MicroTask<List<TileGeometry<LonLat>>> {
             private var myDone = false
 
-            override fun getResult(): List<Typed.TileGeometry<LonLat>> = tileGeometryParser.geometries
+            override fun getResult(): List<TileGeometry<LonLat>> = tileGeometryParser.geometries
 
             override fun resume() {
                 if (!tileGeometryParser.resume()) {

@@ -1,6 +1,7 @@
 package jetbrains.datalore.jetbrains.livemap
 
 import jetbrains.datalore.base.async.SimpleAsync
+import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase.*
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
@@ -193,10 +194,10 @@ object Mocks {
     }
 
     class DownloadingFragmentsSpec(testBase: LiveMapTestBase) : MockSpec(testBase) {
-        private var myDownloaded: MutableMap<FragmentKey, MultiPolygon> = HashMap()
+        private var myDownloaded: MutableMap<FragmentKey, MultiPolygon<Generic>> = HashMap()
 
         fun downloaded(vararg downloaded: FragmentSpec): DownloadingFragmentsSpec {
-            val r = HashMap<FragmentKey, MultiPolygon>()
+            val r = HashMap<FragmentKey, MultiPolygon<Generic>>()
             for (fragmentSpec in downloaded) {
                 r[fragmentSpec.key()] = fragmentSpec.geometries()!!.asMultipolygon()
             }

@@ -28,44 +28,44 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         pushParser(PointParser(onParse, this))
     }
 
-    fun parseLineString(onParse: Consumer<LineString>) {
+    fun parseLineString(onParse: Consumer<LineString<Generic>>) {
         pushParser(
             PointsParser(
-                { points -> onParse(LineString(points)) },
+                { points -> onParse(LineString<Generic>(points)) },
                 this
             )
         )
     }
 
-    fun parsePolygon(onParse: Consumer<Polygon>) {
-        pushParser(PolygonParser({ rings -> onParse(Polygon(rings)) }, this))
+    fun parsePolygon(onParse: Consumer<Polygon<Generic>>) {
+        pushParser(PolygonParser({ rings -> onParse(Polygon<Generic>(rings)) }, this))
     }
 
-    fun parseMultiPoint(n: Int, ids: List<Int>, onParse: BiConsumer<MultiPoint, List<Int>>) {
+    fun parseMultiPoint(n: Int, ids: List<Int>, onParse: BiConsumer<MultiPoint<Generic>, List<Int>>) {
         pushParser(
             MultiPointParser(
                 n,
-                { points -> onParse(MultiPoint(points), ids) },
+                { points -> onParse(MultiPoint<Generic>(points), ids) },
                 this
             )
         )
     }
 
-    fun parseMultiLine(n: Int, ids: List<Int>, onParse: BiConsumer<MultiLineString, List<Int>>) {
+    fun parseMultiLine(n: Int, ids: List<Int>, onParse: BiConsumer<MultiLineString<Generic>, List<Int>>) {
         pushParser(
             MultiLineStringParser(
                 n,
-                { points -> onParse(MultiLineString(points), ids) },
+                { points -> onParse(MultiLineString<Generic>(points), ids) },
                 this
             )
         )
     }
 
-    fun pushMultiPolygon(n: Int, ids: List<Int>, onParse: BiConsumer<MultiPolygon, List<Int>>) {
+    fun pushMultiPolygon(n: Int, ids: List<Int>, onParse: BiConsumer<MultiPolygon<Generic>, List<Int>>) {
         pushParser(
             MultiPolygonParser(
                 n,
-                { points -> onParse(MultiPolygon(points), ids) },
+                { points -> onParse(MultiPolygon<Generic>(points), ids) },
                 this
             )
         )
@@ -188,8 +188,8 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         }
     }
 
-    internal class PolygonParser(parsingResultConsumer: Consumer<List<Ring>>, ctx: GeometryObjectParser) :
-        NestedGeometryParser<List<Point>, Ring>(
+    internal class PolygonParser(parsingResultConsumer: Consumer<List<Ring<Generic>>>, ctx: GeometryObjectParser) :
+        NestedGeometryParser<List<Point>, Ring<Generic>>(
             ctx.readCount(),
             funcOf { points -> PointsParser(points, ctx) },
             funcOf(::Ring),
@@ -211,9 +211,9 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
 
     internal class MultiLineStringParser(
         nGeometries: Int,
-        parsingResultConsumer: Consumer<List<LineString>>,
+        parsingResultConsumer: Consumer<List<LineString<Generic>>>,
         ctx: GeometryObjectParser
-    ) : NestedGeometryParser<List<Point>, LineString>(
+    ) : NestedGeometryParser<List<Point>, LineString<Generic>>(
         nGeometries,
         funcOf { points -> PointsParser(points, ctx) },
         funcOf(::LineString),
@@ -223,9 +223,9 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
 
     internal class MultiPolygonParser(
         nGeometries: Int,
-        parsingResultConsumer: Consumer<List<Polygon>>,
+        parsingResultConsumer: Consumer<List<Polygon<Generic>>>,
         ctx: GeometryObjectParser
-    ) : NestedGeometryParser<List<Ring>, Polygon>(
+    ) : NestedGeometryParser<List<Ring<Generic>>, Polygon<Generic>>(
         nGeometries,
         funcOf { ringsConsumer -> PolygonParser(ringsConsumer, ctx) },
         funcOf(::Polygon),

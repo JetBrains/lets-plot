@@ -5,7 +5,10 @@ import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.projectionGeometry.Typed
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.projectionGeometry.Polygon
+import jetbrains.datalore.base.projectionGeometry.Ring
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
@@ -40,8 +43,8 @@ class GrowingPathTest {
     private lateinit var myAnimationComponent: AnimationComponent
     private lateinit var myGrowingPathEffectComponent: GrowingPathEffectComponent
 
-    private fun p(x: Double, y: Double): Typed.Vec<Client> {
-        return Typed.Vec(x, y)
+    private fun p(x: Double, y: Double): Vec<Client> {
+        return Vec(x, y)
     }
 
     private fun index(i: Int): EffectState {
@@ -110,11 +113,23 @@ class GrowingPathTest {
         return progress
     }
 
-    private fun createGeometry(vararg points: Typed.Vec<Client>): TypedGeometry<Client> {
-        return TypedGeometry.create(Typed.MultiPolygon(listOf(Typed.Polygon(listOf(Typed.Ring(listOf(*points)))))))
+    private fun createGeometry(vararg points: Vec<Client>): TypedGeometry<Client> {
+        return TypedGeometry.create(
+            MultiPolygon(
+                listOf(
+                    Polygon(
+                        listOf(
+                            Ring(
+                                listOf(*points)
+                            )
+                        )
+                    )
+                )
+            )
+        )
     }
 
-    private fun createEffect(vararg points: Typed.Vec<Client>) {
+    private fun createEffect(vararg points: Vec<Client>) {
         myComponentManager.createEntity("effect")
             .addComponent(myGrowingPathEffectComponent)
             .addComponent(

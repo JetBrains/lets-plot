@@ -1,6 +1,6 @@
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.base.projectionGeometry.Typed
+import jetbrains.datalore.base.projectionGeometry.TileGeometry
 import jetbrains.gis.tileprotocol.mapConfig.TilePredicate
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.tiles.TileFeature.FieldName.CLASS
@@ -8,7 +8,7 @@ import jetbrains.livemap.tiles.TileFeature.FieldName.SUB
 
 
 class TileFeature(
-    val tileGeometry: Typed.TileGeometry<Client>,
+    val tileGeometry: TileGeometry<Client>,
     private val myKind: Int?,
     private val mySub: Int?,
     val label: String?,
