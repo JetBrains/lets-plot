@@ -3,14 +3,14 @@ package jetbrains.gis.geoprotocol
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.Typed
 
-interface TypedGeometry<ProjT> {
+interface TypedGeometry<TypeT> {
 
-    fun asMultipolygon(): Typed.MultiPolygon<ProjT>
+    fun asMultipolygon(): Typed.MultiPolygon<TypeT>
 
     companion object {
-        fun <ProjT> create(points: Typed.MultiPolygon<ProjT>): TypedGeometry<ProjT> {
-            return object : TypedGeometry<ProjT> {
-                override fun asMultipolygon(): Typed.MultiPolygon<ProjT> {
+        fun <TypeT> create(points: Typed.MultiPolygon<TypeT>): TypedGeometry<TypeT> {
+            return object : TypedGeometry<TypeT> {
+                override fun asMultipolygon(): Typed.MultiPolygon<TypeT> {
                     return points
                 }
             }

@@ -41,12 +41,12 @@ class TileGeometryParser(geometryCollection: GeometryCollection) {
         }
 
         override fun onPolygon(polygon: Polygon) {
-            myTileGeometries.add(Typed.TileGeometry.createMultiPolygon(MultiPolygon(listOf(polygon))))
+            myTileGeometries.add(Typed.TileGeometry.createMultiPolygon(Typed.MultiPolygon(listOf(polygon.reinterpret()))))
         }
 
         override fun onMultiPoint(multiPoint: MultiPoint, idList: List<Int>) {
             if (idList.isEmpty()) {
-                myTileGeometries.add(Typed.TileGeometry.createMultiPoint(multiPoint))
+                myTileGeometries.add(Typed.TileGeometry.createMultiPoint(multiPoint.reinterpret()))
             } else {
                 multiPoint.forEach(this::onPoint)
             }
@@ -54,7 +54,7 @@ class TileGeometryParser(geometryCollection: GeometryCollection) {
 
         override fun onMultiLineString(multiLineString: MultiLineString, idList: List<Int>) {
             if (idList.isEmpty()) {
-                myTileGeometries.add(Typed.TileGeometry.createMultiLineString(multiLineString))
+                myTileGeometries.add(Typed.TileGeometry.createMultiLineString(multiLineString.reinterpret()))
             } else {
                 multiLineString.forEach(this::onLineString)
             }
@@ -62,7 +62,7 @@ class TileGeometryParser(geometryCollection: GeometryCollection) {
 
         override fun onMultiPolygon(multipolygon: MultiPolygon, idList: List<Int>) {
             if (idList.isEmpty()) {
-                myTileGeometries.add(Typed.TileGeometry.createMultiPolygon(multipolygon))
+                myTileGeometries.add(Typed.TileGeometry.createMultiPolygon(multipolygon.reinterpret()))
             } else {
                 multipolygon.forEach(this::onPolygon)
             }

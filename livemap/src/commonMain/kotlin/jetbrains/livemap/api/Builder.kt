@@ -160,7 +160,7 @@ class PathBuilder {
     var lineDash: List<Double>? = null
     var strokeColor: Color? = null
     var strokeWidth: Double? = null
-    var coordinates: List<Typed.Point<LonLat>>? = null
+    var coordinates: List<Typed.Vec<LonLat>>? = null
 
     var animation: Int? = null
     var speed: Double? = null

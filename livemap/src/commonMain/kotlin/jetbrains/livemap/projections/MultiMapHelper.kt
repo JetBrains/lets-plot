@@ -10,11 +10,11 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-class MultiMapHelper<ProjT>(
-    private val myMapRect: Typed.Rectangle<ProjT>,
+class MultiMapHelper<TypeT>(
+    private val myMapRect: Typed.Rectangle<TypeT>,
     private val myLoopX: Boolean,
     private val myLoopY: Boolean
-) : ViewProjectionHelper, MapRuler<ProjT> {
+) : ViewProjectionHelper, MapRuler<TypeT> {
     private fun splitRange(
         range: ClosedRange<Double>,
         mapRange: ClosedRange<Double>,
@@ -109,7 +109,7 @@ class MultiMapHelper<ProjT>(
         return abs(deltaY(y1, y2))
     }
 
-    override fun calculateBoundingBox(xyRects: List<Typed.Rectangle<ProjT>>): Typed.Rectangle<ProjT> {
+    override fun calculateBoundingBox(xyRects: List<Typed.Rectangle<TypeT>>): Typed.Rectangle<TypeT> {
         return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).calculateBoundingBoxFromRectangles(xyRects)
     }
 

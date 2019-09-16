@@ -3,10 +3,10 @@ package jetbrains.livemap.tiles
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.AnyPoint
-import jetbrains.datalore.base.projectionGeometry.MultiLineString
 import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.gis.tileprotocol.mapConfig.Style
+import jetbrains.livemap.projections.Client
 import kotlin.math.round
 
 interface Symbolizer {
@@ -14,7 +14,7 @@ interface Symbolizer {
     fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit>
     fun applyTo(ctx: Context2d)
 
-    fun Context2d.drawLine(line: List<Typed.Point<*>>) {
+    fun Context2d.drawLine(line: List<Typed.Vec<*>>) {
         moveTo(round(line[0].x), round(line[0].y))
 
         for (i in 1 until line.size) {
@@ -50,7 +50,7 @@ interface Symbolizer {
 
     class LineSymbolizer internal constructor(private val myStyle: Style) : Symbolizer {
 
-        private fun Context2d.drawMultiLine(multiLine: MultiLineString) {
+        private fun Context2d.drawMultiLine(multiLine: Typed.MultiLineString<Client>) {
             beginPath()
             multiLine.forEach { drawLine(it) }
         }

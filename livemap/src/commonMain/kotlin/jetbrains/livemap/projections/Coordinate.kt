@@ -5,22 +5,27 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.projectionGeometry.*
 
-
+/**
+ * Coordinates in [0.0.. 256.0]
+ */
 interface World
+
+/**
+ * Coordinates used by Context2d
+ */
 interface Client
 
 
-typealias LonLatPoint = Typed.Point<LonLat>
+typealias LonLatPoint = Typed.Vec<LonLat>
 typealias LonLatRing = Typed.Ring<LonLat>
 typealias LonLatPolygon = Typed.Polygon<LonLat>
 typealias LonLatMultiPolygon = Typed.MultiPolygon<LonLat>
 
-typealias ClientPoint = Typed.Point<Client>
+typealias ClientPoint = Typed.Vec<Client>
 typealias ClientRectangle = Typed.Rectangle<Client>
 
-typealias WorldPoint = Typed.Point<World>
+typealias WorldPoint = Typed.Vec<World>
 typealias WorldRectangle = Typed.Rectangle<World>
-
 
 
 class Coordinates {

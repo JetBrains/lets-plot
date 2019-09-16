@@ -64,7 +64,7 @@ internal class ViewProjectionImpl(
     }
 
     private fun invert(p: ClientPoint): WorldPoint {
-        return Typed.Point(invertX(p.x), invertY(p.y))
+        return Typed.Vec(invertX(p.x), invertY(p.y))
     }
 
     override fun getOrigins(viewOrigin: ClientPoint, viewDimension: ClientPoint): List<ClientPoint> {

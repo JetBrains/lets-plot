@@ -22,12 +22,12 @@ object DoubleRectangles {
         }
     }
 
-    fun <ProjT> boundingBox(points: Iterable<Typed.Point<ProjT>>): Typed.Rectangle<ProjT> {
+    fun <TypeT> boundingBox(points: Iterable<Typed.Vec<TypeT>>): Typed.Rectangle<TypeT> {
         return calculateBoundingBox(points, GET_POINT_X, GET_POINT_Y)
         { minX, minY, maxX, maxY ->
             newSpanRectangle(
-                Typed.Point<ProjT>(minX, minY),
-                Typed.Point<ProjT>(maxX, maxY)
+                Typed.Vec(minX, minY),
+                Typed.Vec(maxX, maxY)
             )
         }
     }

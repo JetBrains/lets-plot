@@ -40,8 +40,8 @@ class GrowingPathTest {
     private lateinit var myAnimationComponent: AnimationComponent
     private lateinit var myGrowingPathEffectComponent: GrowingPathEffectComponent
 
-    private fun p(x: Double, y: Double): Typed.Point<Client> {
-        return Typed.Point(x, y)
+    private fun p(x: Double, y: Double): Typed.Vec<Client> {
+        return Typed.Vec(x, y)
     }
 
     private fun index(i: Int): EffectState {
@@ -110,11 +110,11 @@ class GrowingPathTest {
         return progress
     }
 
-    private fun createGeometry(vararg points: Typed.Point<Client>): TypedGeometry<Client> {
+    private fun createGeometry(vararg points: Typed.Vec<Client>): TypedGeometry<Client> {
         return TypedGeometry.create(Typed.MultiPolygon(listOf(Typed.Polygon(listOf(Typed.Ring(listOf(*points)))))))
     }
 
-    private fun createEffect(vararg points: Typed.Point<Client>) {
+    private fun createEffect(vararg points: Typed.Vec<Client>) {
         myComponentManager.createEntity("effect")
             .addComponent(myGrowingPathEffectComponent)
             .addComponent(

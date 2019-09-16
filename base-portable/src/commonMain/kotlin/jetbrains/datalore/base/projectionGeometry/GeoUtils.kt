@@ -103,7 +103,7 @@ object GeoUtils {
         return Typed.Rectangle(LonLatPoint(origin.x, flipY), dimension)
     }
 
-    fun <ProjT> getTileOrigin(mapRect: Typed.Rectangle<ProjT>, tileKey: String): Typed.Point<ProjT> {
+    fun <TypeT> getTileOrigin(mapRect: Typed.Rectangle<TypeT>, tileKey: String): Typed.Vec<TypeT> {
         var left = mapRect.left
         var top = mapRect.top
         var width = mapRect.width
@@ -120,7 +120,7 @@ object GeoUtils {
                 top += height
             }
         }
-        return Typed.Point(left, top)
+        return Typed.Vec(left, top)
     }
 
     fun <T> calculateTileKeys(mapRect: LonLatRectangle, viewRect: LonLatRectangle, zoom: Int?, constructor: (String) -> T): Set<T> {

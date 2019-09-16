@@ -5,13 +5,13 @@ import jetbrains.livemap.core.multitasking.MicroTask
 
 internal class MultiPolygonTransform<InT, OutT>(
     multiPolygon: Typed.MultiPolygon<InT>,
-    private val myTransform: (Typed.Point<InT>, MutableCollection<Typed.Point<OutT>>) -> Unit
+    private val myTransform: (Typed.Vec<InT>, MutableCollection<Typed.Vec<OutT>>) -> Unit
 ) : MicroTask<Typed.MultiPolygon<OutT>> {
     private lateinit var myPolygonsIterator: Iterator<Typed.Polygon<InT>>
     private lateinit var myRingIterator: Iterator<Typed.Ring<InT>>
-    private lateinit var myPointIterator: Iterator<Typed.Point<InT>>
+    private lateinit var myPointIterator: Iterator<Typed.Vec<InT>>
 
-    private var myNewRing: MutableList<Typed.Point<OutT>> = ArrayList()
+    private var myNewRing: MutableList<Typed.Vec<OutT>> = ArrayList()
     private var myNewPolygon: MutableList<Typed.Ring<OutT>> = ArrayList()
     private val myNewMultiPolygon = ArrayList<Typed.Polygon<OutT>>()
 

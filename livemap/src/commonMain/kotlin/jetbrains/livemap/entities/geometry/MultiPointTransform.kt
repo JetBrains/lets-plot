@@ -5,11 +5,11 @@ import jetbrains.livemap.core.multitasking.MicroTask
 
 internal class MultiPointTransform<InT, OutT>(
     multiPoint: Typed.MultiPoint<InT>,
-    private val myTransform: (Typed.Point<InT>, MutableCollection<Typed.Point<OutT>>) -> Unit
+    private val myTransform: (Typed.Vec<InT>, MutableCollection<Typed.Vec<OutT>>) -> Unit
 ) : MicroTask<Typed.MultiPoint<OutT>> {
-    private lateinit var myPointIterator: Iterator<Typed.Point<InT>>
+    private lateinit var myPointIterator: Iterator<Typed.Vec<InT>>
 
-    private val myNewMultiPoint = ArrayList<Typed.Point<OutT>>()
+    private val myNewMultiPoint = ArrayList<Typed.Vec<OutT>>()
 
     private var myHasNext = true
     private lateinit var myResult: Typed.MultiPoint<OutT>

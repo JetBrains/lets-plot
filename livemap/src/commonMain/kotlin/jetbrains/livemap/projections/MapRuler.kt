@@ -2,12 +2,12 @@ package jetbrains.livemap.projections
 
 import jetbrains.datalore.base.projectionGeometry.Typed
 
-interface MapRuler<ProjT> {
+interface MapRuler<TypeT> {
     fun deltaX(x1: Double, x2: Double): Double
     fun deltaY(y1: Double, y2: Double): Double
 
     fun distanceX(x1: Double, x2: Double): Double
     fun distanceY(y1: Double, y2: Double): Double
 
-    fun calculateBoundingBox(xyRects: List<Typed.Rectangle<ProjT>>): Typed.Rectangle<ProjT>
+    fun calculateBoundingBox(xyRects: List<Typed.Rectangle<TypeT>>): Typed.Rectangle<TypeT>
 }

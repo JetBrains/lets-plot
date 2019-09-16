@@ -1,7 +1,10 @@
 package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.projectionGeometry.Typed
+import jetbrains.gis.tileprotocol.mapConfig.TilePredicate
 import jetbrains.livemap.projections.Client
+import jetbrains.livemap.tiles.TileFeature.FieldName.CLASS
+import jetbrains.livemap.tiles.TileFeature.FieldName.SUB
 
 
 class TileFeature(
@@ -10,20 +13,20 @@ class TileFeature(
     private val mySub: Int?,
     val label: String?,
     val short: String?
-) {
+) : TilePredicate {
 
-    fun getFieldValue(key: String): Int {
-        if (SUB.equals(key, ignoreCase = true)) {
+    override fun getFieldValue(key: String): Int {
+        if (SUB.field.equals(key, ignoreCase = true)) {
             return mySub ?: throw IllegalStateException("sub is empty")
-        } else if (CLASS.equals(key, ignoreCase = true)) {
+        } else if (CLASS.field.equals(key, ignoreCase = true)) {
             return myKind ?: throw IllegalStateException("kind is empty")
         }
 
         throw IllegalArgumentException("Unknown myKey kind: $key")
     }
 
-    companion object {
-        private const val CLASS = "class"
-        private const val SUB = "sub"
+    enum class FieldName (val field: String) {
+        CLASS("class"),
+        SUB("sub")
     }
 }

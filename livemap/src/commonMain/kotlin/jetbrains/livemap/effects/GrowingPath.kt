@@ -190,7 +190,7 @@ object GrowingPath {
 
             for (polygon in geometry.asMultipolygon()) {
                 val ring = polygon.get(0)
-                var viewCoord: Typed.Point<Client> = ring.get(0)
+                var viewCoord: Typed.Vec<Client> = ring.get(0)
                 ctx.moveTo(viewCoord.x, viewCoord.y)
 
                 for (i in 1..growingPath.getEndIndex()) {

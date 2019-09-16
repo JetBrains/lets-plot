@@ -5,7 +5,7 @@ import jetbrains.datalore.base.projectionGeometry.Typed
 import jetbrains.datalore.base.projectionGeometry.limit
 
 object GeometryUtil {
-    fun <ProjT> bbox(multipolygon: Typed.MultiPolygon<ProjT>): Typed.Rectangle<ProjT>? {
+    fun <TypeT> bbox(multipolygon: Typed.MultiPolygon<TypeT>): Typed.Rectangle<TypeT>? {
         val rects = multipolygon.limit()
         return if (rects.isEmpty()) {
             null
@@ -17,7 +17,7 @@ object GeometryUtil {
         )
     }
 
-    fun <ProjT> asLineString(geometry: TypedGeometry<ProjT>): Typed.LineString<ProjT> {
+    fun <TypeT> asLineString(geometry: TypedGeometry<TypeT>): Typed.LineString<TypeT> {
         return Typed.LineString(geometry.asMultipolygon().get(0).get(0))
     }
 }

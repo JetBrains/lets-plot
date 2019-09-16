@@ -5,12 +5,12 @@ import jetbrains.livemap.core.multitasking.MicroTask
 
 internal class MultiLineStringTransform<InT, OutT> (
     multiLineString: Typed.MultiLineString<InT>,
-    private val myTransform: (Typed.Point<InT>, MutableCollection<Typed.Point<OutT>>) -> Unit
+    private val myTransform: (Typed.Vec<InT>, MutableCollection<Typed.Vec<OutT>>) -> Unit
 ) : MicroTask<Typed.MultiLineString<OutT>> {
     private lateinit var myLineStringIterator: Iterator<Typed.LineString<InT>>
-    private lateinit var myPointIterator: Iterator<Typed.Point<InT>>
+    private lateinit var myPointIterator: Iterator<Typed.Vec<InT>>
 
-    private var myNewLineString: MutableList<Typed.Point<OutT>> = ArrayList()
+    private var myNewLineString: MutableList<Typed.Vec<OutT>> = ArrayList()
     private val myNewMultiLineString: MutableList<Typed.LineString<OutT>> = ArrayList()
 
     private var myHasNext = true
