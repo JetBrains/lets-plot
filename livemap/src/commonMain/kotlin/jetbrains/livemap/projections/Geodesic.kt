@@ -1,5 +1,6 @@
 package jetbrains.livemap.projections
 
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.normalizeLon
 import kotlin.math.*
 
@@ -31,9 +32,10 @@ private fun addArcPointsToPath(path: MutableList<LonLatPoint>, start: LonLatPoin
 
     if (abs(STRAIGHT_ANGLE - lonDelta) < LONGITUDE_EPS) {
         //the shortest path through North/South pole
-        val latitude = (if (start.y + finish.y >= 0) +1 else -1) * STRAIGHT_ANGLE / 2
-        path.add(LonLatPoint(start.x, latitude))
-        path.add(LonLatPoint(finish.x, latitude))
+        val sign = if (start.scalarY + finish.scalarY >= 0) +1.0 else -1.0
+        val latitude = sign * STRAIGHT_ANGLE / 2.0
+        path.add(start.transform(fy = { Scalar(latitude) }))
+        path.add(finish.transform(fy = { Scalar(latitude) }))
         return
     }
 
@@ -63,9 +65,10 @@ private fun addArcPointsToPath(path: MutableList<LonLatPoint>, start: LonLatPoin
             )
         )
 
-        path.add(LonLatPoint(longitude, latitude))
+        path.add(explicitVec(longitude, latitude))
     }
 }
+
 
 private fun calculateIncreasingDistance(start: Double, finish: Double): Double {
     val dist = finish - start

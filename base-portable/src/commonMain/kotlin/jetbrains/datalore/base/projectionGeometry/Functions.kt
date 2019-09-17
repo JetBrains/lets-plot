@@ -57,6 +57,9 @@ operator fun <T> Scalar<T>.div(other: Scalar<T>): Scalar<T> = Scalar(value / oth
 
 operator fun <T> Scalar<T>.div(other: Double): Scalar<T> = Scalar(value / other)
 operator fun <T> Scalar<T>.times(other: Double): Scalar<T> = Scalar(value * other)
+operator fun <T> Scalar<T>.unaryMinus(): Scalar<T> = Scalar(-value)
+
+operator fun <T> Scalar<T>.compareTo(i: Int) = value.compareTo(i)
 
 
 fun <TypeT> newSpanRectangle(leftTop: Vec<TypeT>, rightBottom: Vec<TypeT>): Rect<TypeT> {

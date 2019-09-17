@@ -1,7 +1,7 @@
 package jetbrains.datalore.jetbrains.livemap.tile
 
 import jetbrains.datalore.base.projectionGeometry.QuadKey
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.livemap.core.Utils.common
 import jetbrains.livemap.core.ecs.EcsSystem
@@ -28,7 +28,7 @@ class CellStateUpdateSystemTest : LiveMapTestBase() {
         super.setUp()
 
         val mapRect = WorldRectangle(
-            ZERO_WORLD_POINT, Vec(
+            ZERO_WORLD_POINT, explicitVec(
                 ProjectionUtil.TILE_PIXEL_SIZE,
                 ProjectionUtil.TILE_PIXEL_SIZE
             )

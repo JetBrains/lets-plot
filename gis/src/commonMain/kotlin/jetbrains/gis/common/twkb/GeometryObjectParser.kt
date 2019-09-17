@@ -240,7 +240,7 @@ internal class GeometryObjectParser(precision: Double, input: Input) {
         fun readPoint(): Point {
             x += myInput.readVarInt()
             y += myInput.readVarInt()
-            return Point(x / myPrecision, y / myPrecision)
+            return explicitVec<Generic>(x / myPrecision, y / myPrecision)
         }
 
         fun readCount(): Int {

@@ -2,6 +2,8 @@ package jetbrains.livemap.projections
 
 import jetbrains.datalore.base.projectionGeometry.AnyPoint
 import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.div
+import jetbrains.datalore.base.projectionGeometry.plus
 import kotlin.math.sqrt
 
 class AdaptiveResampling<InT, OutT>(private val transform: (Vec<InT>) -> Vec<OutT>, epsilon: Double) {
@@ -46,7 +48,7 @@ class AdaptiveResampling<InT, OutT>(private val transform: (Vec<InT>) -> Vec<Out
     }
 
     private fun getSamplePoint(p1: Vec<InT>, p2: Vec<InT>): Vec<InT>? {
-        val pc = Vec<InT>((p1.x + p2.x) / 2, (p1.y + p2.y) / 2)
+        val pc = (p1 + p2) / 2.0;
         val q1 = transform(p1)
         val q2 = transform(p2)
         val qc = transform(pc)

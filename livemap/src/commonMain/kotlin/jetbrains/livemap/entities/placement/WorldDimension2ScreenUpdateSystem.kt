@@ -9,7 +9,7 @@ import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.Components.WorldDimensionComponent
 import jetbrains.livemap.projections.ClientPoint
 import jetbrains.livemap.projections.WorldPoint
-import kotlin.math.pow
+import jetbrains.livemap.projections.WorldProjection
 
 class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) : LiveMapSystem(componentManager) {
 
@@ -35,7 +35,7 @@ class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) :
         )
 
         fun world2Screen(p: WorldPoint, zoom: Double): ClientPoint {
-            return 2.0.pow(zoom).let { ClientPoint(p.x * it, p.y * it) }
+            return WorldProjection(zoom.toInt()).project(p)
         }
     }
 }

@@ -140,7 +140,7 @@ object GeomUtil {
                 polygons.add(Polygon<Generic>(rings))
                 rings = ArrayList<Ring<Generic>>()
             }
-            rings.add(Ring(ring.map { Point(it.x, it.y) }))
+            rings.add(Ring(ring.map { explicitVec<Generic>(it.x, it.y) }))
         }
 
         if (!rings.isEmpty()) {

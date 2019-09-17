@@ -1,5 +1,6 @@
 package jetbrains.livemap.obj2entity
 
+import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.maps.livemap.entities.point.PointComponent
 import jetbrains.datalore.maps.livemap.entities.point.PointRenderer
 import jetbrains.livemap.DevParams
@@ -22,9 +23,9 @@ import jetbrains.livemap.entities.rendering.setFillColor
 import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.mapobjects.MapPoint
-import jetbrains.livemap.projections.ClientPoint
+import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projections.World
 
 
 internal class MapPointProcessor(
@@ -71,10 +72,10 @@ internal class MapPointProcessor(
         for ((point, entity) in myObjectsMap.entries) {
             val size = point.radius * 2.0
             if (myDevParams.isSet(POINT_SCALING)) {
-                entity.addComponent(WorldDimensionComponent(WorldPoint(size, size)))
+                entity.addComponent(WorldDimensionComponent(explicitVec<World>(size, size)))
             } else {
                 entity.addComponent(ScreenDimensionComponent().apply {
-                    dimension = ClientPoint(size, size)
+                    dimension = explicitVec<Client>(size, size)
                 })
             }
         }

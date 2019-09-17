@@ -9,7 +9,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ParserTest {
-
+    private fun p(x: Double, y: Double): Point {
+        return explicitVec(x, y)
+    }
+    
     private fun <T> optionalListOf (vararg elements: T): List<T>? {
         return if (elements.isNotEmpty()) elements.asList() else emptyList()
     }
@@ -22,7 +25,7 @@ class ParserTest {
         val c = SimpleGeometryConsumer()
         Twkb.parse(data, c)
 
-        assertEquals(Point(-71.064544, 42.28787), c.point)
+        assertEquals(p(-71.064544, 42.28787), c.point)
     }
 
     @Test
@@ -36,8 +39,8 @@ class ParserTest {
 
         assertEquals(
             optionalListOf(
-                Point(1.0, 2.0),
-                Point(3.0, 4.0)
+                p(1.0, 2.0),
+                p(3.0, 4.0)
             ),
             c.lineString
         )
@@ -60,11 +63,11 @@ class ParserTest {
         assertEquals(
             optionalListOf( // rings
                 optionalListOf( // ring
-                    Point(-71.177659, 42.390291),
-                    Point(-71.177682, 42.39037),
-                    Point(-71.177606, 42.390383),
-                    Point(-71.177583, 42.390303),
-                    Point(-71.177659, 42.390291)
+                    p(-71.177659, 42.390291),
+                    p(-71.177682, 42.39037),
+                    p(-71.177606, 42.390383),
+                    p(-71.177583, 42.390303),
+                    p(-71.177659, 42.390291)
                 )
             ),
             c.polygon
@@ -81,8 +84,8 @@ class ParserTest {
 
         assertEquals(
             optionalListOf(
-                Point(1.0, 2.0),
-                Point(3.0, 4.0)
+                p(1.0, 2.0),
+                p(3.0, 4.0)
             ),
             c.multiPoint
         )
@@ -100,16 +103,16 @@ class ParserTest {
         assertEquals(
             optionalListOf(
                 optionalListOf(
-                    Point(1.0, 2.0),
-                    Point(3.0, 4.0)
+                    p(1.0, 2.0),
+                    p(3.0, 4.0)
                 ),
                 optionalListOf(
-                    Point(5.0, 6.0),
-                    Point(7.0, 8.0)
+                    p(5.0, 6.0),
+                    p(7.0, 8.0)
                 ),
                 optionalListOf(
-                    Point(9.0, 10.0),
-                    Point(11.0, 12.0)
+                    p(9.0, 10.0),
+                    p(11.0, 12.0)
                 )
             ),
             c.multiLineString
@@ -180,55 +183,55 @@ class ParserTest {
             optionalListOf( // polygons
                 optionalListOf( // polygon
                     optionalListOf( // ring
-                        Point(-71.103188, 42.315277),
-                        Point(-71.103162, 42.315296),
-                        Point(-71.102923, 42.314915),
-                        Point(-71.102309, 42.315196),
-                        Point(-71.101928, 42.314738),
-                        Point(-71.102505, 42.314472),
-                        Point(-71.102774, 42.314165),
-                        Point(-71.103113, 42.314273),
-                        Point(-71.103248, 42.314024),
-                        Point(-71.1033, 42.314039),
-                        Point(-71.103348, 42.313949),
-                        Point(-71.103396, 42.313863),
-                        Point(-71.104152, 42.314115),
-                        Point(-71.104141, 42.314154),
-                        Point(-71.104128, 42.314211),
-                        Point(-71.104118, 42.314269),
-                        Point(-71.104111, 42.314327),
-                        Point(-71.104107, 42.314385),
-                        Point(-71.104105, 42.314443),
-                        Point(-71.104106, 42.3145),
-                        Point(-71.104109, 42.314558),
-                        Point(-71.104116, 42.314616),
-                        Point(-71.104125, 42.314674),
-                        Point(-71.104137, 42.314731),
-                        Point(-71.104149, 42.314771),
-                        Point(-71.104159, 42.314808),
-                        Point(-71.104251, 42.315128),
-                        Point(-71.104117, 42.315073),
-                        Point(-71.10408, 42.315134),
-                        Point(-71.104043, 42.315119),
-                        Point(-71.104019, 42.315183),
-                        Point(-71.103873, 42.315114),
-                        Point(-71.103844, 42.3151),
-                        Point(-71.103831, 42.315094),
-                        Point(-71.103739, 42.315054),
-                        Point(-71.103544, 42.31526),
-                        Point(-71.103343, 42.315164),
-                        Point(-71.103258, 42.315226),
-                        Point(-71.103223, 42.315251),
-                        Point(-71.103188, 42.315277)
+                        p(-71.103188, 42.315277),
+                        p(-71.103162, 42.315296),
+                        p(-71.102923, 42.314915),
+                        p(-71.102309, 42.315196),
+                        p(-71.101928, 42.314738),
+                        p(-71.102505, 42.314472),
+                        p(-71.102774, 42.314165),
+                        p(-71.103113, 42.314273),
+                        p(-71.103248, 42.314024),
+                        p(-71.1033, 42.314039),
+                        p(-71.103348, 42.313949),
+                        p(-71.103396, 42.313863),
+                        p(-71.104152, 42.314115),
+                        p(-71.104141, 42.314154),
+                        p(-71.104128, 42.314211),
+                        p(-71.104118, 42.314269),
+                        p(-71.104111, 42.314327),
+                        p(-71.104107, 42.314385),
+                        p(-71.104105, 42.314443),
+                        p(-71.104106, 42.3145),
+                        p(-71.104109, 42.314558),
+                        p(-71.104116, 42.314616),
+                        p(-71.104125, 42.314674),
+                        p(-71.104137, 42.314731),
+                        p(-71.104149, 42.314771),
+                        p(-71.104159, 42.314808),
+                        p(-71.104251, 42.315128),
+                        p(-71.104117, 42.315073),
+                        p(-71.10408, 42.315134),
+                        p(-71.104043, 42.315119),
+                        p(-71.104019, 42.315183),
+                        p(-71.103873, 42.315114),
+                        p(-71.103844, 42.3151),
+                        p(-71.103831, 42.315094),
+                        p(-71.103739, 42.315054),
+                        p(-71.103544, 42.31526),
+                        p(-71.103343, 42.315164),
+                        p(-71.103258, 42.315226),
+                        p(-71.103223, 42.315251),
+                        p(-71.103188, 42.315277)
                     ) // ring
                 ), // polygon
                 optionalListOf( // polygon
                     optionalListOf( // ring
-                        Point(-71.104363, 42.315113),
-                        Point(-71.104358, 42.315121),
-                        Point(-71.104344, 42.315067),
-                        Point(-71.104385, 42.315079),
-                        Point(-71.104363, 42.315113)
+                        p(-71.104363, 42.315113),
+                        p(-71.104358, 42.315121),
+                        p(-71.104344, 42.315067),
+                        p(-71.104385, 42.315079),
+                        p(-71.104363, 42.315113)
                     ) // ring
                 ) // polygon
             ), // polygons
@@ -248,7 +251,7 @@ class ParserTest {
 
         assertEquals(
             optionalListOf(
-                Point(0.0001, 0.0002)
+                p(0.0001, 0.0002)
             ),
             c.points
         )
@@ -268,9 +271,9 @@ class ParserTest {
 
         assertEquals(
             optionalListOf(
-                Point(0.00001, 0.00002),
-                Point(0.00003, 0.00004),
-                Point(0.00005, 0.00006)
+                p(0.00001, 0.00002),
+                p(0.00003, 0.00004),
+                p(0.00005, 0.00006)
             ),
             c.points
         )
@@ -291,16 +294,16 @@ class ParserTest {
         assertEquals(
             optionalListOf(
                 optionalListOf(
-                    Point(0.00001, 0.00002),
-                    Point(0.00003, 0.00004)
+                    p(0.00001, 0.00002),
+                    p(0.00003, 0.00004)
                 ),
                 optionalListOf(
-                    Point(0.00005, 0.00006),
-                    Point(0.00007, 0.00008)
+                    p(0.00005, 0.00006),
+                    p(0.00007, 0.00008)
                 ),
                 optionalListOf(
-                    Point(0.00009, 0.00010),
-                    Point(0.00011, 0.00012)
+                    p(0.00009, 0.00010),
+                    p(0.00011, 0.00012)
                 )
             ),
             c.lineStrings
@@ -323,27 +326,27 @@ class ParserTest {
             optionalListOf( // polygons
                 optionalListOf( // 1 ring
                     optionalListOf(
-                        Point(0.0, 0.0),
-                        Point(4.0, 0.0),
-                        Point(4.0, 4.0),
-                        Point(0.0, 4.0),
-                        Point(0.0, 0.0)
+                        p(0.0, 0.0),
+                        p(4.0, 0.0),
+                        p(4.0, 4.0),
+                        p(0.0, 4.0),
+                        p(0.0, 0.0)
                     )
                 ),
                 optionalListOf( // 2 rings
                     optionalListOf(
-                        Point(0.0, 0.0),
-                        Point(4.0, 0.0),
-                        Point(4.0, 4.0),
-                        Point(0.0, 4.0),
-                        Point(0.0, 0.0)
+                        p(0.0, 0.0),
+                        p(4.0, 0.0),
+                        p(4.0, 4.0),
+                        p(0.0, 4.0),
+                        p(0.0, 0.0)
                     ),
                     optionalListOf(
-                        Point(1.0, 1.0),
-                        Point(1.0, 3.0),
-                        Point(3.0, 3.0),
-                        Point(3.0, 1.0),
-                        Point(1.0, 1.0)
+                        p(1.0, 1.0),
+                        p(1.0, 3.0),
+                        p(3.0, 3.0),
+                        p(3.0, 1.0),
+                        p(1.0, 1.0)
                     )
                 )
             ),
@@ -365,12 +368,12 @@ class ParserTest {
         assertEquals(
             optionalListOf(
                 optionalListOf( // multipoint
-                    Point(0.0, 1.0),
-                    Point(2.0, 3.0)
+                    p(0.0, 1.0),
+                    p(2.0, 3.0)
                 ),
                 optionalListOf( // multipoint
-                    Point(4.0, 5.0),
-                    Point(6.0, 7.0)
+                    p(4.0, 5.0),
+                    p(6.0, 7.0)
                 )
             ),
             c.multiPoints
@@ -393,22 +396,22 @@ class ParserTest {
             optionalListOf( // multi lines
                 optionalListOf( // lines
                     optionalListOf(
-                        Point(1.0, 2.0),
-                        Point(3.0, 4.0)
+                        p(1.0, 2.0),
+                        p(3.0, 4.0)
                     ),
                     optionalListOf(
-                        Point(4.0, 5.0),
-                        Point(6.0, 7.0)
+                        p(4.0, 5.0),
+                        p(6.0, 7.0)
                     )
                 ),
                 optionalListOf(
                     optionalListOf(
-                        Point(8.0, 7.0),
-                        Point(6.0, 5.0)
+                        p(8.0, 7.0),
+                        p(6.0, 5.0)
                     ),
                     optionalListOf(
-                        Point(4.0, 3.0),
-                        Point(2.0, 1.0)
+                        p(4.0, 3.0),
+                        p(2.0, 1.0)
                     )
                 )
             ),
@@ -433,28 +436,28 @@ class ParserTest {
                 optionalListOf( // multi1
                     optionalListOf( // poly1
                         optionalListOf( // ring
-                            Point(0.0, 0.0),
-                            Point(1.0, 0.0),
-                            Point(0.0, 1.0),
-                            Point(0.0, 0.0)
+                            p(0.0, 0.0),
+                            p(1.0, 0.0),
+                            p(0.0, 1.0),
+                            p(0.0, 0.0)
                         )
                     ),
                     optionalListOf( // poly2
                         optionalListOf( // ring
-                            Point(1.0, 1.0),
-                            Point(0.0, 1.0),
-                            Point(1.0, 0.0),
-                            Point(1.0, 1.0)
+                            p(1.0, 1.0),
+                            p(0.0, 1.0),
+                            p(1.0, 0.0),
+                            p(1.0, 1.0)
                         )
                     )
                 ),
                 optionalListOf( // multi2
                     optionalListOf( // poly
                         optionalListOf( // ring
-                            Point(2.0, 0.0),
-                            Point(3.0, 0.0),
-                            Point(2.0, 1.0),
-                            Point(2.0, 0.0)
+                            p(2.0, 0.0),
+                            p(3.0, 0.0),
+                            p(2.0, 1.0),
+                            p(2.0, 0.0)
                         )
                     )
                 )
@@ -478,8 +481,8 @@ class ParserTest {
 
         assertEquals(
             optionalListOf(
-                Point(0.00001, 0.00002),
-                Point(0.00005, 0.00006)
+                p(0.00001, 0.00002),
+                p(0.00005, 0.00006)
             ),
             c.points
         )

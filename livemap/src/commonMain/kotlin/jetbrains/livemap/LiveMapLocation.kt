@@ -21,18 +21,17 @@ class LiveMapLocation(private val myViewProjection: ViewProjection, private val 
 
     private fun worldToLonLat(worldCoord: WorldPoint): LonLatPoint {
         val coord: Vec<World>
-        val mapSize = myMapProjection.mapRect.dimension
-
         val shift: LonLatPoint
+        val worldSize = myMapProjection.mapRect.dimension
 
-        if (worldCoord.x > mapSize.x) {
-            shift = LonLatPoint(FULL_LONGITUDE, 0.0)
-            coord = worldCoord.transform(fx = { it - mapSize.scalarX })
+        if (worldCoord.x > worldSize.x) {
+            shift = explicitVec<LonLat>(FULL_LONGITUDE, 0.0)
+            coord = worldCoord.transform(fx = { it - worldSize.scalarX })
         } else if (worldCoord.x < 0) {
-            shift = LonLatPoint(-FULL_LONGITUDE, 0.0)
-            coord = mapSize.transform(fx = { it + mapSize.scalarX })
+            shift = explicitVec<LonLat>(-FULL_LONGITUDE, 0.0)
+            coord = worldSize.transform(fx = { it + worldSize.scalarX })
         } else {
-            shift = LonLatPoint(0.0, 0.0)
+            shift = explicitVec<LonLat>(0.0, 0.0)
             coord = worldCoord
         }
 

@@ -4,6 +4,7 @@ import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Rect
+import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
 import jetbrains.livemap.projections.ProjectionUtil.safePoint
 import kotlin.math.*
@@ -56,8 +57,8 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
 
     companion object {
         private val VALID_RECTANGLE = newSpanRectangle(
-            LonLatPoint(-180.0, -65.0),
-            LonLatPoint(+180.0, +90.0)
+            explicitVec<LonLat>(-180.0, -65.0),
+            explicitVec<LonLat>(+180.0, +90.0)
         )
         private const val EPSILON = 0.001
 

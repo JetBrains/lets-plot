@@ -64,7 +64,7 @@ internal class ViewProjectionImpl(
     }
 
     private fun invert(p: ClientPoint): WorldPoint {
-        return Vec(invertX(p.x), invertY(p.y))
+        return explicitVec<World>(invertX(p.x), invertY(p.y))
     }
 
     override fun getOrigins(viewOrigin: ClientPoint, viewDimension: ClientPoint): List<ClientPoint> {
@@ -85,10 +85,10 @@ internal class ViewProjectionImpl(
     }
 
     private fun unzoom(v: ClientPoint): WorldPoint {
-        return WorldPoint(unzoom(v.x), unzoom(v.y))
+        return explicitVec<World>(unzoom(v.x), unzoom(v.y))
     }
 
     private fun normalize(v: WorldPoint): WorldPoint {
-        return WorldPoint(helper.normalizeX(v.x), helper.normalizeY(v.y))
+        return explicitVec<World>(helper.normalizeX(v.x), helper.normalizeY(v.y))
     }
 }

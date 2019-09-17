@@ -5,6 +5,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.calculateQuadKeys
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileOrigin
 import jetbrains.livemap.projections.ProjectionType.*
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -51,26 +52,6 @@ object ProjectionUtil {
         return WorldRectangle(origin, dimension)
     }
 
-    private fun getTileOrigin(mapRect: WorldRectangle, tileKey: String): WorldPoint {
-        var left = mapRect.left
-        var top = mapRect.top
-        var width = mapRect.width
-        var height = mapRect.height
-
-        for (quadrant in tileKey) {
-            width /= 2.0
-            height /= 2.0
-
-            if (quadrant == '1' || quadrant == '3') {
-                left += width
-            }
-            if (quadrant == '2' || quadrant == '3') {
-                top += height
-            }
-        }
-        return WorldPoint(left, top)
-    }
-
     internal fun createGeoProjection(projectionType: ProjectionType): GeoProjection {
         return PROJECTION_MAP[projectionType] ?: error("Unknown projection type: $projectionType")
     }
@@ -101,9 +82,9 @@ object ProjectionUtil {
     private fun <TypeT> rectToPolygon(rect: Rect<TypeT>): List<Vec<TypeT>> {
         val points = ArrayList<Vec<TypeT>>()
         points.add(rect.origin)
-        points.add(rect.origin.transform(fx = { it + rect.dimension.scalarX }))
+        points.add(rect.origin.transform(fx = { it + rect.scalarWidth }))
         points.add(rect.origin + rect.dimension)
-        points.add(rect.origin.transform(fy = { it + rect.dimension.scalarY }))
+        points.add(rect.origin.transform(fy = { it + rect.scalarHeight }))
         points.add(rect.origin)
         return points
     }
@@ -115,14 +96,14 @@ object ProjectionUtil {
     internal fun <InT, OutT> tuple(xProjection: Projection<Double>, yProjection: Projection<Double>): Transform<Vec<InT>, Vec<OutT>> {
         return object : Transform<Vec<InT>, Vec<OutT>> {
             override fun project(v: Vec<InT>): Vec<OutT> {
-                return Vec(
+                return explicitVec(
                     xProjection.project(v.x),
                     yProjection.project(v.y)
                 )
             }
 
             override fun invert(v: Vec<OutT>): Vec<InT> {
-                return Vec(
+                return explicitVec(
                     xProjection.invert(v.x),
                     yProjection.invert(v.y)
                 )
@@ -271,7 +252,7 @@ object ProjectionUtil {
         return if (x.isNaN() || y.isNaN()) {
             error("Value for DoubleVector isNaN x = $x and y = $y")
         } else {
-            Vec(x, y)
+            explicitVec(x, y)
         }
     }
 }

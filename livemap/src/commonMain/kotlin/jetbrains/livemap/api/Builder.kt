@@ -137,7 +137,7 @@ class PointBuilder {
             index!!,
             mapId,
             regionId,
-            LonLatPoint(lon!!, lat!!),
+            explicitVec<LonLat>(lon!!, lat!!),
             label!!,
             animation!!,
             shape!!,
@@ -229,7 +229,7 @@ class LineBuilder {
         return MapLine(
             index!!, mapId, regionId,
             lineDash!!, strokeColor!!, strokeWidth!!,
-            Vec(lon!!, lat!!)
+            explicitVec<LonLat>(lon!!, lat!!)
         )
     }
 }

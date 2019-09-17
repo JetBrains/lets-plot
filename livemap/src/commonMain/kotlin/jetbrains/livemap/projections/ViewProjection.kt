@@ -1,5 +1,7 @@
 package jetbrains.livemap.projections
 
+import jetbrains.datalore.base.projectionGeometry.explicitVec
+
 interface ViewProjection {
 
     val viewSize: ClientPoint
@@ -19,11 +21,11 @@ interface ViewProjection {
     fun getOrigins(viewOrigin: ClientPoint, viewDimension: ClientPoint): List<ClientPoint>
 
     fun getMapCoord(viewCoord: ClientPoint): WorldPoint {
-        return WorldPoint(getMapX(viewCoord), getMapY(viewCoord))
+        return explicitVec<World>(getMapX(viewCoord), getMapY(viewCoord))
     }
 
     fun getViewCoord(mapCoord: WorldPoint): ClientPoint {
-        return ClientPoint(getViewX(mapCoord), getViewY(mapCoord))
+        return explicitVec<Client>(getViewX(mapCoord), getViewY(mapCoord))
     }
 
     companion object {

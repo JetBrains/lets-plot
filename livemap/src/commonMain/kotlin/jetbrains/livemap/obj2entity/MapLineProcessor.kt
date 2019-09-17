@@ -100,11 +100,11 @@ class MapLineProcessor internal constructor(
             val origin: Vec<World>
             val dimension: Vec<World>
             if (horizontal) {
-                origin = Vec(mapRect.left, point.y - strokeWidth / 2)
-                dimension = Vec(mapRect.width, strokeWidth)
+                origin = explicitVec<World>(mapRect.left, point.y - strokeWidth / 2)
+                dimension = explicitVec<World>(mapRect.width, strokeWidth)
             } else {
-                origin = Vec(point.x - strokeWidth / 2, mapRect.top)
-                dimension = Vec(strokeWidth, mapRect.height)
+                origin = explicitVec<World>(point.x - strokeWidth / 2, mapRect.top)
+                dimension = explicitVec<World>(strokeWidth, mapRect.height)
             }
             return WorldRectangle(origin, dimension)
         }

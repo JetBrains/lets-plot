@@ -30,9 +30,9 @@ typealias WorldRectangle = Rect<World>
 
 class Coordinates {
     companion object {
-        val ZERO_LONLAT_POINT = LonLatPoint(0.0, 0.0)
-        val ZERO_WORLD_POINT = WorldPoint(0.0, 0.0)
-        val ZERO_CLIENT_POINT = ClientPoint(0.0, 0.0)
+        val ZERO_LONLAT_POINT = explicitVec<LonLat>(0.0, 0.0)
+        val ZERO_WORLD_POINT = explicitVec<World>(0.0, 0.0)
+        val ZERO_CLIENT_POINT = explicitVec<Client>(0.0, 0.0)
     }
 
 }
@@ -42,4 +42,4 @@ fun newDoubleRectangle(origin: AnyPoint, dimension: AnyPoint): DoubleRectangle {
 }
 
 fun Vector.toClientPoint() = ClientPoint(x, y)
-fun DoubleVector.toClientPoint() = ClientPoint(x, y)
+fun DoubleVector.toClientPoint() = explicitVec<Client>(x, y)

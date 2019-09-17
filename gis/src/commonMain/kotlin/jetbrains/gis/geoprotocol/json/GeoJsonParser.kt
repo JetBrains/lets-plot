@@ -45,7 +45,7 @@ internal class GeoJsonParser private constructor() {
     }
 
     private fun parsePoint(jsonPoint: FluentArray): Point {
-        return Point(
+        return explicitVec<Generic>(
             jsonPoint.getDouble(GEOMETRY_LON_INDEX),
             jsonPoint.getDouble(GEOMETRY_LAT_INDEX)
         )

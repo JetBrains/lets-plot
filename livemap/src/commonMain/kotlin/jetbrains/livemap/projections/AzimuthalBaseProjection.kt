@@ -1,10 +1,8 @@
 package jetbrains.livemap.projections
 
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
-import jetbrains.datalore.base.projectionGeometry.LonLat
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
 import jetbrains.livemap.projections.ProjectionUtil.safePoint
 import kotlin.math.*
 
@@ -46,9 +44,13 @@ internal abstract class AzimuthalBaseProjection : GeoProjection {
     protected abstract fun angle(z: Double): Double
 
     companion object {
+
+        private val LON_LIMIT = Scalar<LonLat>(180.0 - 1e-3)
+        private val LAT_LIMIT = Scalar<LonLat>(90.0)
+
         private val VALID_RECTANGLE = newSpanRectangle(
-            LonLatPoint(-(180.0 - 1e-3), -90.0),
-            LonLatPoint(+(180.0 - 1e-3), +90.0)
+            newVec(-LON_LIMIT, -LAT_LIMIT),
+            newVec(LON_LIMIT, LAT_LIMIT)
         )
     }
 }

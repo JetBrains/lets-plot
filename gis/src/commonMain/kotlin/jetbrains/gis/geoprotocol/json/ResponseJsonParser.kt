@@ -1,8 +1,6 @@
 package jetbrains.gis.geoprotocol.json
 
-import jetbrains.datalore.base.projectionGeometry.GeoRectangle
-import jetbrains.datalore.base.projectionGeometry.Point
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.gis.common.json.FluentObject
 import jetbrains.gis.common.json.Obj
 import jetbrains.gis.geoprotocol.*
@@ -103,7 +101,7 @@ object ResponseJsonParser {
     }
 
     private fun parseCentroid(centroid: FluentObject): Point {
-        return Point(
+        return explicitVec<Generic>(
             centroid.getDouble(LON),
             centroid.getDouble(LAT)
         )

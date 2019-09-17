@@ -128,7 +128,7 @@ class MultiMapHelper<TypeT>(
         val result = ArrayList<WorldPoint>()
         for (xOrigin in xOrigins) {
             for (yOrigin in yOrigins) {
-                result.add(WorldPoint(xOrigin, yOrigin))
+                result.add(explicitVec<World>(xOrigin, yOrigin))
             }
         }
         return result

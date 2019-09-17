@@ -96,18 +96,18 @@ object GeoUtils {
     }
 
     fun getQuadKeyRect(quadKey: QuadKey): Rect<LonLat> {
-        val origin = getTileOrigin(GeoUtils.EARTH_RECT, quadKey.string)
-        val dimension = GeoUtils.EARTH_RECT.dimension * (1.0 / getTileCount(quadKey.string.length))
+        val origin = getTileOrigin(EARTH_RECT, quadKey.string)
+        val dimension = EARTH_RECT.dimension * (1.0 / getTileCount(quadKey.string.length))
 
-        val flipY = GeoUtils.EARTH_RECT.bottom - (origin.y + dimension.y - GeoUtils.EARTH_RECT.top)
-        return Rect(Vec<LonLat>(origin.x, flipY), dimension)
+        val flipY = EARTH_RECT.scalarBottom - (origin.scalarY + dimension.scalarY - EARTH_RECT.scalarTop)
+        return Rect(origin.transform(fy = { flipY }), dimension)
     }
 
     fun <TypeT> getTileOrigin(mapRect: Rect<TypeT>, tileKey: String): Vec<TypeT> {
-        var left = mapRect.left
-        var top = mapRect.top
-        var width = mapRect.width
-        var height = mapRect.height
+        var left = mapRect.scalarLeft
+        var top = mapRect.scalarTop
+        var width = mapRect.scalarWidth
+        var height = mapRect.scalarHeight
 
         for (quadrant in tileKey) {
             width /= 2.0
@@ -120,7 +120,7 @@ object GeoUtils {
                 top += height
             }
         }
-        return Vec(left, top)
+        return newVec(left, top)
     }
 
     fun <T> calculateTileKeys(mapRect: Rect<LonLat>, viewRect: Rect<LonLat>, zoom: Int?, constructor: (String) -> T): Set<T> {

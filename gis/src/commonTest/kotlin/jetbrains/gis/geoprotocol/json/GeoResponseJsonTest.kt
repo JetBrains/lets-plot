@@ -3,6 +3,7 @@ package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.Point
+import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.FeatureLevel.STATE
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse
@@ -102,7 +103,7 @@ class GeoResponseJsonTest {
             .build()
 
         private fun point(lon: Double, lat: Double): Point {
-            return Point(lon, lat)
+            return explicitVec(lon, lat)
         }
 
         private fun rectangle(minLon: Double, minLat: Double, maxLon: Double, maxLat: Double): GeoRectangle {

@@ -5,10 +5,7 @@ import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.Ring
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
@@ -44,7 +41,7 @@ class GrowingPathTest {
     private lateinit var myGrowingPathEffectComponent: GrowingPathEffectComponent
 
     private fun p(x: Double, y: Double): Vec<Client> {
-        return Vec(x, y)
+        return explicitVec<Client>(x, y)
     }
 
     private fun index(i: Int): EffectState {

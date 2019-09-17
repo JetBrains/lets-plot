@@ -2,7 +2,7 @@ package jetbrains.gis.tileprotocol.json
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
 import jetbrains.gis.common.json.FluentArray
 import jetbrains.gis.common.json.FluentObject
@@ -47,8 +47,8 @@ object RequestJsonParser {
 
     private fun parseBBox(bbox: FluentArray): Rect<LonLat> {
         return newSpanRectangle(
-            Vec(bbox.getDouble(0), bbox.getDouble(1)),
-            Vec(bbox.getDouble(2), bbox.getDouble(3))
+            explicitVec<LonLat>(bbox.getDouble(0), bbox.getDouble(1)),
+            explicitVec<LonLat>(bbox.getDouble(2), bbox.getDouble(3))
         )
     }
 
