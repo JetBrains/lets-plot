@@ -191,12 +191,6 @@ object ProjectionUtil {
             .let(::rectToPolygon)
             .let { transformRing(it, transform, SAMPLING_EPSILON) }
             .let { DoubleRectangles.boundingBox(it) }
-            .let {
-                Rect<OutT>(
-                    Vec<OutT>(it.origin.x, it.origin.y),
-                    Vec<OutT>(it.dimension.x, it.dimension.y)
-                )
-            }
     }
 
     fun <InT, OutT> transformMultipolygon(

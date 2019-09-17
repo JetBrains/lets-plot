@@ -68,20 +68,20 @@ class MapLineProcessor internal constructor(
             return if (horizontal) {
                 listOf(
                     point.transform(
-                        fx = { mapRect.left }
+                        fx = { mapRect.scalarLeft }
                     ),
                     point.transform(
-                        fx = { mapRect.right }
+                        fx = { mapRect.scalarRight / 2.0 }
                     )
 
                 )
             } else {
                 listOf(
                     point.transform(
-                        fy = { mapRect.top }
+                        fy = { mapRect.scalarTop }
                     ),
                     point.transform(
-                        fy = { mapRect.bottom }
+                        fy = { mapRect.scalarBottom }
                     )
                 )
             }

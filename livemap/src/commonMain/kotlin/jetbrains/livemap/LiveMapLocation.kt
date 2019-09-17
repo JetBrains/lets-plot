@@ -18,7 +18,7 @@ class LiveMapLocation(private val myViewProjection: ViewProjection, private val 
             val viewRect = myViewProjection.viewRect
 
             val nw = worldToLonLat(viewRect.origin)
-            val se = worldToLonLat(viewRect.origin.add(viewRect.dimension))
+            val se = worldToLonLat(viewRect.origin + viewRect.dimension)
 
             return DoubleRectangle(nw.x, se.y, se.x - nw.x, nw.y - se.y)
         }
@@ -39,7 +39,7 @@ class LiveMapLocation(private val myViewProjection: ViewProjection, private val 
             shift = LonLatPoint(0.0, 0.0)
         }
 
-        return shift.add(myMapProjection.invert(coord))
+        return shift + myMapProjection.invert(coord)
     }
 
     companion object {

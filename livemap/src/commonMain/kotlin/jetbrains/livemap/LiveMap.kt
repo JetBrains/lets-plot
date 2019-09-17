@@ -2,6 +2,10 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.projectionGeometry.div
+import jetbrains.datalore.base.projectionGeometry.minus
+import jetbrains.datalore.base.projectionGeometry.plus
+import jetbrains.datalore.base.projectionGeometry.times
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
@@ -238,13 +242,13 @@ class LiveMap(
             }
 
             val origin = event.location!!.let { ClientPoint(it.x, it.y) }
-            val currentMapCenter = viewProjection.getMapCoord(viewProjection.viewSize.mul(0.5))
+            val currentMapCenter = viewProjection.getMapCoord(viewProjection.viewSize / 2.0)
             val mapOrigin = viewProjection.getMapCoord(origin)
 
             CameraScale.setAnimation(
                 camera,
                 origin,
-                currentMapCenter.add(mapOrigin.subtract(currentMapCenter).mul(0.5)),
+                currentMapCenter + (mapOrigin - (currentMapCenter * 0.5)),
                 1.0
             )
         }
