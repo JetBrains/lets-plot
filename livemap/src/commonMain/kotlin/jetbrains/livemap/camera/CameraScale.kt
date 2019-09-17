@@ -6,6 +6,7 @@ import jetbrains.livemap.core.animation.Animations.EASE_OUT_QUAD
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.projections.ClientPoint
 import jetbrains.livemap.projections.WorldPoint
+import kotlin.math.sign
 
 object CameraScale {
 
@@ -52,13 +53,16 @@ object CameraScale {
                 val progress = animation.get<AnimationComponent>().progress
                 val deltaZoom = scaleEffect.delta * progress
 
-                scaleEffect.currentScale = if (deltaZoom < 0) 0.5 + (1 + deltaZoom) / 2 else 1.0 + deltaZoom
+                scaleEffect.currentScale = when(scaleEffect.delta.sign) {
+                    -1.0 -> 1.0 + deltaZoom / 2
+                    else -> 1.0 + deltaZoom
+                }
 
                 camera.zoom = scaleEffect.startZoom + deltaZoom
 
                 if (progress == 1.0) {
                     camera.center = scaleEffect.newCenter
-                    cameraEntity.removeComponent(CameraScaleEffectComponent::class)
+                    cameraEntity.remove<CameraScaleEffectComponent>()
                     cameraEntity.tag(::UpdateViewProjectionComponent)
                 }
             }
