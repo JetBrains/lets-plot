@@ -1,13 +1,9 @@
 package jetbrains.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.FULL_LONGITUDE
-import jetbrains.datalore.base.projectionGeometry.addX
-import jetbrains.datalore.base.projectionGeometry.subX
-import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.ViewProjection
-import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projections.*
 import kotlin.math.pow
 import kotlin.math.round
 
@@ -24,19 +20,20 @@ class LiveMapLocation(private val myViewProjection: ViewProjection, private val 
         }
 
     private fun worldToLonLat(worldCoord: WorldPoint): LonLatPoint {
-        var coord = worldCoord
+        val coord: Vec<World>
         val mapSize = myMapProjection.mapRect.dimension
 
         val shift: LonLatPoint
 
         if (worldCoord.x > mapSize.x) {
             shift = LonLatPoint(FULL_LONGITUDE, 0.0)
-            coord = worldCoord.subX(mapSize)
+            coord = worldCoord.transform(fx = { it - mapSize.scalarX })
         } else if (worldCoord.x < 0) {
             shift = LonLatPoint(-FULL_LONGITUDE, 0.0)
-            coord = mapSize.addX(mapSize)
+            coord = mapSize.transform(fx = { it + mapSize.scalarX })
         } else {
             shift = LonLatPoint(0.0, 0.0)
+            coord = worldCoord
         }
 
         return shift + myMapProjection.invert(coord)

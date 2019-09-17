@@ -3,6 +3,7 @@ package jetbrains.livemap.ui
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.projectionGeometry.div
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapLocation
@@ -108,7 +109,7 @@ class LiveMapUiSystem(
 
             CameraScale.setAnimation(
                 camera,
-                myViewProjection.viewSize.mul(.5),
+                myViewProjection.viewSize / 2.0,
                 myViewProjection.center,
                 animationDelta
             )

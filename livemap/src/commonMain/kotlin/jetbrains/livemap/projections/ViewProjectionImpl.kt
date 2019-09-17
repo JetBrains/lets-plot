@@ -1,7 +1,6 @@
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.livemap.MapWidgetUtil.MAX_ZOOM
 import jetbrains.livemap.MapWidgetUtil.MIN_ZOOM
 import kotlin.math.max
@@ -26,7 +25,7 @@ internal class ViewProjectionImpl(
     override val viewRect: WorldRectangle
         get() {
             val mapViewSize = unzoom(viewSize)
-            val mapOrigin = viewCenter.subtract(mapViewSize.mul(0.5))
+            val mapOrigin = viewCenter - mapViewSize / 2.0
             return WorldRectangle(mapOrigin, mapViewSize)
         }
 
@@ -70,7 +69,7 @@ internal class ViewProjectionImpl(
 
     override fun getOrigins(viewOrigin: ClientPoint, viewDimension: ClientPoint): List<ClientPoint> {
         val rect =
-            Rect(invert(viewOrigin), invert(viewOrigin.add(viewDimension)))
+            Rect(invert(viewOrigin), invert(viewOrigin + viewDimension))
 
         val result = ArrayList<ClientPoint>()
         helper.getOrigins(rect, viewRect).forEach { point -> result.add(getViewCoord(point)) }

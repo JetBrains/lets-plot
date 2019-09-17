@@ -26,9 +26,8 @@ internal class MapProjectionBuilder(
 
         val scale = min(mapRect.width / rect.width, mapRect.height / rect.height)
 
-        val projSize = mapRect.dimension.mul(1.0 / scale).reinterpret<Geographic>()
-        val projRect =
-            Rect(rect.center.subtract(projSize.mul(0.5)), projSize)
+        val projSize = (mapRect.dimension * (1.0 / scale)).reinterpret<Geographic>()
+        val projRect = Rect(rect.center - projSize * 0.5, projSize)
 
         val offsetX = if (reverseX) projRect.right else projRect.left
         val scaleX = if (reverseX) -scale else scale

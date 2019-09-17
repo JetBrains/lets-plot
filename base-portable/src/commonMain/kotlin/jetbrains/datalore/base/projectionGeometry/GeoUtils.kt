@@ -97,7 +97,7 @@ object GeoUtils {
 
     fun getQuadKeyRect(quadKey: QuadKey): Rect<LonLat> {
         val origin = getTileOrigin(GeoUtils.EARTH_RECT, quadKey.string)
-        val dimension = GeoUtils.EARTH_RECT.dimension.mul(1.0 / getTileCount(quadKey.string.length))
+        val dimension = GeoUtils.EARTH_RECT.dimension * (1.0 / getTileCount(quadKey.string.length))
 
         val flipY = GeoUtils.EARTH_RECT.bottom - (origin.y + dimension.y - GeoUtils.EARTH_RECT.top)
         return Rect(Vec<LonLat>(origin.x, flipY), dimension)

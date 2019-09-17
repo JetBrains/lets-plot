@@ -1,5 +1,6 @@
 package jetbrains.livemap.entities.geometry
 
+import jetbrains.datalore.base.projectionGeometry.minus
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.LiveMapContext
@@ -32,7 +33,7 @@ class WorldGeometry2ScreenUpdateSystem(
         val zoomProjection = WorldProjection(zoom)
         return GeometryTransform
             .simple(entity.get<WorldGeometryComponent>().geometry!!.asMultipolygon()) {
-                zoomProjection.project(it.subtract(worldOrigin))
+                zoomProjection.project(it - worldOrigin)
             }
             .map { screenMultipolygon ->
                 runLaterBySystem(entity) { theEntity ->

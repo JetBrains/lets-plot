@@ -46,7 +46,7 @@ object ProjectionUtil {
 
     fun getTileRect(mapRect: WorldRectangle, tileKey: String): WorldRectangle {
         val origin = getTileOrigin(mapRect, tileKey)
-        val dimension = mapRect.dimension.mul(1.0 / getTileCount(tileKey.length))
+        val dimension = mapRect.dimension * (1.0 / getTileCount(tileKey.length))
 
         return WorldRectangle(origin, dimension)
     }
@@ -101,9 +101,9 @@ object ProjectionUtil {
     private fun <TypeT> rectToPolygon(rect: Rect<TypeT>): List<Vec<TypeT>> {
         val points = ArrayList<Vec<TypeT>>()
         points.add(rect.origin)
-        points.add(rect.origin.addX(rect.dimension))
-        points.add(rect.origin.add(rect.dimension))
-        points.add(rect.origin.addY(rect.dimension))
+        points.add(rect.origin.transform(fx = { it + rect.dimension.scalarX }))
+        points.add(rect.origin + rect.dimension)
+        points.add(rect.origin.transform(fy = { it + rect.dimension.scalarY }))
         points.add(rect.origin)
         return points
     }

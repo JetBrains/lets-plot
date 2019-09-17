@@ -1,5 +1,6 @@
 package jetbrains.livemap.entities.placement
 
+import jetbrains.datalore.base.projectionGeometry.plus
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.CenterChangedComponent
@@ -18,7 +19,7 @@ class ScreenLoopsUpdateSystem(componentManager: EcsComponentManager) : LiveMapSy
         getEntities(COMPONENT_TYPES).forEach { entity ->
             val origin = entity
                 .tryGet<ScreenOffsetComponent>()?.screenOffset ?: ZERO_CLIENT_POINT
-                .let { entity.get<ScreenOriginComponent>().origin.add(it) }
+                .let { entity.get<ScreenOriginComponent>().origin + it }
 
             val dimension = entity.get<ScreenDimensionComponent>().dimension
 

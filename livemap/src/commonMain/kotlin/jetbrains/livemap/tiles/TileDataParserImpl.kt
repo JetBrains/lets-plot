@@ -3,6 +3,7 @@ package jetbrains.livemap.tiles
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.TileGeometry
 import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.minus
 import jetbrains.gis.tileprotocol.TileGeometryParser
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.multitasking.MicroTask
@@ -33,7 +34,7 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
         val cellMapRect = getTileRect(myMapProjection.mapRect, cellKey.toString())
         val cellViewOrigin = zoomProjection.project(cellMapRect.origin)
 
-        return { zoomProjection.project(myMapProjection.project(it)).subtract(cellViewOrigin) }
+        return { zoomProjection.project(myMapProjection.project(it)) - cellViewOrigin }
     }
 
     private fun parseTileLayer(
