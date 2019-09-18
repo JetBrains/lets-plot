@@ -24,12 +24,12 @@ class TileRemovingSystem(private val myTileCacheLimit: Int, componentManager: Ec
             val cellKey = cellEntity.get<CellComponent>().cellKey
 
             if (cellState.visibleCells.contains(cellKey)) {
-                val renderer = cellEntity.get<RendererCacheComponent>().renderer
-                RendererComponent.setRenderer(cellEntity, renderer)
+                cellEntity.get<RendererComponent>().renderer =
+                    cellEntity.get<RendererCacheComponent>().renderer
             }
 
             if (cellState.cellsToRemove.contains(cellKey)) {
-                RendererComponent.setRenderer(cellEntity, NULL_RENDERER)
+                cellEntity.get<RendererComponent>().renderer = NULL_RENDERER
             }
         }
 

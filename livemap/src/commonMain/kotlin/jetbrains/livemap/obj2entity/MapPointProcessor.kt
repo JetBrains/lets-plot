@@ -15,8 +15,8 @@ import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.DirtyRenderLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
-import jetbrains.livemap.entities.placement.Components.WorldDimensionComponent
+import jetbrains.livemap.entities.placement.ScreenDimensionComponent
+import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.rendering.setFillColor

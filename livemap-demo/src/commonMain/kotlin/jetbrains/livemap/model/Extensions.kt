@@ -83,6 +83,10 @@ fun Lines.line(block: LineBuilder.() -> Unit) {
     )
 }
 
+fun Bars.bar(block: BarSource.() -> Unit) {
+    factory.add(BarSource().apply(block))
+}
+
 fun PointBuilder.coord(geoObj: GeoObject) {
     lon = geoObj.lon
     lat = geoObj.lat

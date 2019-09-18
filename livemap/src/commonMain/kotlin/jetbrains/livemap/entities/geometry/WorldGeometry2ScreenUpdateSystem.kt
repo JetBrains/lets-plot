@@ -11,8 +11,8 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.entities.placement.Components
-import jetbrains.livemap.entities.placement.Components.WorldOriginComponent
+import jetbrains.livemap.entities.placement.ScreenOriginComponent
+import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.scaling.ScaleComponent
 import jetbrains.livemap.projections.WorldProjection
 
@@ -71,7 +71,7 @@ class WorldGeometry2ScreenUpdateSystem(
             ZoomChangedComponent::class,
             WorldOriginComponent::class,
             WorldGeometryComponent::class,
-            Components.ScreenOriginComponent::class,
+            ScreenOriginComponent::class,
             ParentLayerComponent::class
         )
     }

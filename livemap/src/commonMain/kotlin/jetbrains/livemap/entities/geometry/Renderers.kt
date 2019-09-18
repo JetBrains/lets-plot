@@ -6,6 +6,7 @@ import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.Context2d.LineJoin
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.geometry.ClientGeometry
+import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.rendering.lineTo
@@ -67,6 +68,24 @@ object Renderers {
             ctx.beginPath()
 
             drawLines(entity.get<ScreenGeometryComponent>().geometry, ctx) { it.stroke() }
+        }
+    }
+
+    class BarRenderer : Renderer {
+        override fun render(entity: EcsEntity, ctx: Context2d) {
+            val style = entity.get<StyleComponent>()
+            val dimension = entity.get<ScreenDimensionComponent>().dimension
+
+            if (style.fillColor != null) {
+                ctx.setFillStyle(style.fillColor)
+                ctx.fillRect(0.0, 0.0, dimension.x, dimension.y)
+            }
+
+            if (style.strokeColor != null && style.strokeWidth != 0.0) {
+                ctx.setStrokeStyle(style.strokeColor)
+                ctx.setLineWidth(style.strokeWidth)
+                ctx.strokeRect(0.0, 0.0, dimension.x, dimension.y)
+            }
         }
     }
 }

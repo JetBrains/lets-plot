@@ -3,7 +3,7 @@ package jetbrains.livemap.tiles
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
+import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.Coordinates.Companion.ZERO_CLIENT_POINT

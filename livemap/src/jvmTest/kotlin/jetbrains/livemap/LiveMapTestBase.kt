@@ -11,7 +11,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.EcsSystem
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.core.multitasking.SyncMicroTaskExecutor
-import jetbrains.livemap.entities.placement.Components.WorldOriginComponent
+import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.projections.Coordinates
 import jetbrains.livemap.projections.ViewProjection
 import jetbrains.livemap.projections.WorldPoint

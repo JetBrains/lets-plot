@@ -12,7 +12,6 @@ import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.Tile
 
-
 class CellStateComponent : EcsComponent {
     var visibleCells: Set<CellKey> = HashSet()
     var requestCells: Set<CellKey> = HashSet()

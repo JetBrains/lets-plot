@@ -8,7 +8,7 @@ import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.LonLatGeometry
 import jetbrains.livemap.entities.geometry.WorldGeometry
-import jetbrains.livemap.entities.placement.Components
+import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.scaling.ScaleComponent
 import jetbrains.livemap.mapobjects.MapObject
@@ -65,7 +65,7 @@ internal class MapPolygonProcessor(
         val geometryEntity = myFactory
             .createMapEntity(bbox.origin, SIMPLE_RENDERER, "map_ent_spolygon")
             .addComponent(WorldGeometryComponent().apply { this.geometry = geometry } )
-            .addComponent(Components.WorldDimensionComponent(bbox.dimension))
+            .addComponent(WorldDimensionComponent(bbox.dimension))
             .addComponent(ScaleComponent())
             .addComponent(
                 StyleComponent().apply {
