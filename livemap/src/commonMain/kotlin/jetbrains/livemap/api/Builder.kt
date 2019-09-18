@@ -255,11 +255,9 @@ class BarsFactory {
             .maxBy { abs(it) }
             ?: error("")
 
-        return myItems.flatMap { splitMapBarChart(it, maxAbsValue) }
+        return myItems.flatMap { splitMapBarChart(it, abs(maxAbsValue)) }
     }
 }
-
-
 
 @LiveMapDsl
 class BarSource {

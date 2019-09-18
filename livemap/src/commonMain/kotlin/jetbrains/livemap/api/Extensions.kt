@@ -1,8 +1,6 @@
-package jetbrains.livemap.demo
+package jetbrains.livemap.api
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.api.*
-import jetbrains.livemap.demo.model.GeoObject
 
 fun Points.point(block: PointBuilder.() -> Unit) {
     items.add(
@@ -85,9 +83,4 @@ fun Lines.line(block: LineBuilder.() -> Unit) {
 
 fun Bars.bar(block: BarSource.() -> Unit) {
     factory.add(BarSource().apply(block))
-}
-
-fun PointBuilder.coord(geoObj: GeoObject) {
-    lon = geoObj.lon
-    lat = geoObj.lat
 }

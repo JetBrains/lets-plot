@@ -7,16 +7,23 @@ import kotlin.math.abs
 
 object Utils {
     private const val ONE_HUNDRED_PERCENTS = 1.0
-    private const val MIN_PERCENT = 0.1
+    private const val MIN_PERCENT = 0.05
 
     fun splitMapBarChart(source: BarSource, maxAbsValue: Double): List<MapBar> {
         val result = ArrayList<MapBar>()
         val percents = transformValues2Percents(source.values, maxAbsValue)
 
+        val radius = source.radius
+        val barCount = percents.size
+        val spacing = 0.1 * radius
+        val barWidth = (2 * radius - (barCount - 1) * spacing) / barCount
+
         for (i in percents.indices) {
-            val radius = source.radius
-            val barRadius =  explicitVec<Client>(radius / percents.size, radius * percents[i] / 2)
-            val barCenterOffset = explicitVec<Client>(-radius + 2 * (i + 0.5) * barRadius.x, -barRadius.y)
+            val barDimension =  explicitVec<Client>(barWidth, radius * abs(percents[i]))
+            val barOffset = explicitVec<Client>(
+                (barWidth + spacing) * i - radius,
+                if (percents[i] > 0) -barDimension.y else 0.0
+            )
             result.add(
                 MapBar(
                     source.indices[i],
@@ -26,8 +33,8 @@ object Utils {
                     source.colors[i],
                     source.strokeColor,
                     source.strokeWidth,
-                    barRadius,
-                    barCenterOffset
+                    barDimension,
+                    barOffset
                 )
             )
         }

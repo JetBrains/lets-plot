@@ -15,6 +15,6 @@ class MapBar(
     val fillColor: Color,
     val strokeColor: Color,
     val strokeWidth: Double,
-    val barRadius: Vec<Client>,
-    val centerOffset: Vec<Client>
+    val dimension: Vec<Client>,
+    val offset: Vec<Client>
 ) : MapObject(index, mapId, regionId)

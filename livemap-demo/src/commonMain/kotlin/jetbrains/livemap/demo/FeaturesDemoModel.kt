@@ -55,14 +55,14 @@ class FeaturesDemoModel(canvasControl: CanvasControl): DemoModelBase(canvasContr
                 }
 
                 bars {
-//                    bar {
-//                        indices = listOf(0, 1, 2)
-//                        lon = BOSTON.lon
-//                        lat = BOSTON.lat
-//                        radius = 50.0
-//                        values = listOf(1.0, 3.0, 2.0)
-//                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-//                    }
+                    bar {
+                        indices = listOf(0, 1, 2)
+                        lon = BOSTON.lon
+                        lat = BOSTON.lat
+                        radius = 50.0
+                        values = listOf(3.0, 0.0, 2.0)
+                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
+                    }
 
                     bar {
                         indices = listOf(3, 4, 5)

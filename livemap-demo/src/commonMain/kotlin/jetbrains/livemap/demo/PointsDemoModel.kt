@@ -4,11 +4,13 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.api.layers
+import jetbrains.livemap.api.point
 import jetbrains.livemap.api.points
 import jetbrains.livemap.demo.model.Cities.BOSTON
 import jetbrains.livemap.demo.model.Cities.MOSCOW
 import jetbrains.livemap.demo.model.Cities.NEW_YORK
 import jetbrains.livemap.demo.model.Cities.SPB
+import jetbrains.livemap.model.coord
 
 class PointsDemoModel(canvasControl: CanvasControl) : DemoModelBase(canvasControl) {
 

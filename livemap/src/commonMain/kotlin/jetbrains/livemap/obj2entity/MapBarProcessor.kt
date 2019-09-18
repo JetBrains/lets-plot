@@ -1,8 +1,5 @@
 package jetbrains.livemap.obj2entity
 
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.projectionGeometry.minus
-import jetbrains.datalore.base.projectionGeometry.times
 import jetbrains.datalore.maps.livemap.entities.geometry.Renderers.BarRenderer
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -13,7 +10,6 @@ import jetbrains.livemap.entities.placement.ScreenOffsetComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.mapobjects.MapBar
 import jetbrains.livemap.mapobjects.MapObject
-import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.MapProjection
 
 class MapBarProcessor(
@@ -36,7 +32,6 @@ class MapBarProcessor(
 
     internal fun process(mapObjects: List<MapObject>) {
         createEntities(mapObjects)
-        processDimension()
     }
 
     private fun createEntities(mapObjects: List<MapObject>) {
@@ -46,8 +41,10 @@ class MapBarProcessor(
             val barEntity = myFactory
                 .createMapEntity(myMapProjection.project(mapBar.point), BarRenderer(), "map_ent_bar")
                 .addComponent(
-                    ScreenOffsetComponent().apply { offset = mapBar.centerOffset - mapBar.barRadius }
-
+                    ScreenOffsetComponent().apply { offset = mapBar.offset}
+                )
+                .addComponent(
+                    ScreenDimensionComponent().apply { dimension = mapBar.dimension }
                 )
                 .addComponent(
                     StyleComponent().apply {
@@ -55,23 +52,10 @@ class MapBarProcessor(
                         setStrokeColor(mapBar.strokeColor)
                         setStrokeWidth(mapBar.strokeWidth)
                     }
-
                 )
 
             myObjectsMap[mapBar] = barEntity
             myLayerEntitiesComponent.add(barEntity.id)
         }
-    }
-
-    private fun processDimension() {
-        for ((mapBar, entity) in myObjectsMap.entries) {
-            entity.addComponent(
-                ScreenDimensionComponent().apply { this.dimension = mapBar.dimension() }
-            )
-        }
-    }
-
-    private fun MapBar.dimension(): Vec<Client> {
-        return barRadius * 2.0
     }
 }
