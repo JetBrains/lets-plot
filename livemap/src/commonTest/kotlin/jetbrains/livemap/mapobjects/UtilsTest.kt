@@ -23,7 +23,7 @@ class UtilsTest {
 
         val dims = listOf<Vec<Client>>(
             explicitVec(6.0, 5.0),
-            explicitVec(6.0, 1.0),
+            explicitVec(6.0, 0.5),
             explicitVec(6.0, 10.0)
         )
 
@@ -33,7 +33,7 @@ class UtilsTest {
 
         val offsets = listOf(
             explicitVec<Client>(-10.0, 0.0),
-            explicitVec<Client>(-3.0, -1.0),
+            explicitVec<Client>(-3.0, -0.5),
             explicitVec<Client>(4.0, -10.0)
         )
 
