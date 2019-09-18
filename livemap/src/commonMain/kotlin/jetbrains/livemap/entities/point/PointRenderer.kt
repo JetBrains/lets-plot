@@ -4,7 +4,7 @@ import jetbrains.datalore.maps.livemap.entities.point.RendererUtils.drawPath
 import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.TransformComponent
-import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
+import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.StyleComponent
 
@@ -33,6 +33,6 @@ class PointRenderer : Renderer {
             .run { times(entity.tryGet<TransformComponent>()?.scale ?: 1.0) }
 
         ctx.translate(-radius, -radius)
-        renderFeature(entity.get<StyleComponent>(), ctx, radius, entity.get<PointComponent>().shape)
+        renderFeature(entity.get(), ctx, radius, entity.get<PointComponent>().shape)
     }
 }

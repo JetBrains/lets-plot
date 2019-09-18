@@ -15,7 +15,7 @@ import jetbrains.livemap.effects.GrowingPath
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.LonLatGeometry
 import jetbrains.livemap.entities.geometry.WorldGeometry
-import jetbrains.livemap.entities.placement.Components.WorldDimensionComponent
+import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.RendererComponent
 import jetbrains.livemap.entities.rendering.StyleComponent

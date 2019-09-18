@@ -30,12 +30,11 @@ class MapObject2Entity(
         MapPolygonProcessor(myComponentManager, myLayerManager, myMapProjection).process(mapObjects)
     }
 
+    fun processBar(mapObjects: List<MapObject>) {
+        MapBarProcessor(myComponentManager, myLayerManager, myMapProjection).process(mapObjects)
+    }
 
     /*
-
-    fun processBar(mapObjects: List<MapObject>) {
-        MapBarProcessor(myComponentManager, myLayerManager).process(mapObjects)
-    }
 
     fun processPie(mapObjects: List<MapObject>) {
         MapPieProcessor(myComponentManager, myLayerManager).process(mapObjects)

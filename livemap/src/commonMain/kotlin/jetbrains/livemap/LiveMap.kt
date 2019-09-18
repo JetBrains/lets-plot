@@ -279,7 +279,7 @@ class LiveMap(
                 MapLayerKind.POINT -> mapObject2Entity.processPoint(mapObjects)
                 MapLayerKind.PATH -> mapObject2Entity.processPath(mapObjects)
                 MapLayerKind.POLYGON -> mapObject2Entity.processPolygon(mapObjects)
-                //MapLayerKind.BAR -> mapObject2Entity.processBar(mapObjects)
+                MapLayerKind.BAR -> mapObject2Entity.processBar(mapObjects)
                 //MapLayerKind.PIE -> mapObject2Entity.processPie(mapObjects)
                 MapLayerKind.H_LINE -> mapObject2Entity.processLine(mapObjects, true)
                 MapLayerKind.V_LINE -> mapObject2Entity.processLine(mapObjects, false)

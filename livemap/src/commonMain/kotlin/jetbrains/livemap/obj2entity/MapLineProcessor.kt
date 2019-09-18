@@ -8,7 +8,7 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.WorldGeometry
-import jetbrains.livemap.entities.placement.Components
+import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.mapobjects.MapLine
 import jetbrains.livemap.mapobjects.MapObject
@@ -17,7 +17,7 @@ import jetbrains.livemap.projections.World
 import jetbrains.livemap.projections.WorldPoint
 import jetbrains.livemap.projections.WorldRectangle
 
-class MapLineProcessor internal constructor(
+class MapLineProcessor(
     componentManager: EcsComponentManager,
     layerManager: LayerManager,
     private val myMapProjection: MapProjection
@@ -48,7 +48,7 @@ class MapLineProcessor internal constructor(
             val lineEntity = myFactory
                 .createMapEntity(bbox.origin, SIMPLE_RENDERER, "map_ent_line")
                 .addComponent(WorldGeometryComponent().apply { this.geometry = geometry })
-                .addComponent(Components.WorldDimensionComponent(bbox.dimension))
+                .addComponent(WorldDimensionComponent(bbox.dimension))
                 .addComponent(
                     StyleComponent().apply {
                         setStrokeColor(mapLine.strokeColor)

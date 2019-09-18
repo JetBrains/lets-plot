@@ -5,8 +5,6 @@ import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.ZoomChangedComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
-import jetbrains.livemap.entities.placement.Components.WorldDimensionComponent
 import jetbrains.livemap.projections.ClientPoint
 import jetbrains.livemap.projections.WorldPoint
 import jetbrains.livemap.projections.WorldProjection

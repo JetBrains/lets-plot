@@ -10,7 +10,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.DirtyRenderLayerComponent
 import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
 import jetbrains.livemap.core.rendering.primitives.RenderObject
-import jetbrains.livemap.entities.placement.Components.ScreenLoopComponent
+import jetbrains.livemap.entities.placement.ScreenLoopComponent
 
 class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
@@ -32,7 +32,7 @@ class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
                     ?: layerCtx.scale(1.0, 1.0)
 
                 for (layerEntity in getLayerEntities(layer)) {
-                    val renderer = RendererComponent.getRenderer(layerEntity)
+                    val renderer = layerEntity.get<RendererComponent>().renderer
                     layerEntity.get<ScreenLoopComponent>().origins.forEach { origin ->
                         context.mapRenderContext.draw(
                             layerCtx,

@@ -71,9 +71,7 @@ internal class ViewProjectionImpl(
         val rect =
             Rect(invert(viewOrigin), invert(viewOrigin + viewDimension))
 
-        val result = ArrayList<ClientPoint>()
-        helper.getOrigins(rect, viewRect).forEach { point -> result.add(getViewCoord(point)) }
-        return result
+        return helper.getOrigins(rect, viewRect).map { getViewCoord(it) }
     }
 
     private fun zoom(coord: Double): Double {

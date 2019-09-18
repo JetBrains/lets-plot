@@ -20,12 +20,11 @@ import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.entities.geometry.LonLatGeometry
-import jetbrains.livemap.mapobjects.MapLayer
+import jetbrains.livemap.mapobjects.*
 import jetbrains.livemap.mapobjects.MapLayerKind.*
-import jetbrains.livemap.mapobjects.MapLine
-import jetbrains.livemap.mapobjects.MapPoint
-import jetbrains.livemap.mapobjects.MapPolygon
+import jetbrains.livemap.mapobjects.Utils.splitMapBarChart
 import jetbrains.livemap.projections.*
+import kotlin.math.abs
 
 @DslMarker
 annotation class LiveMapDsl {}
@@ -116,6 +115,12 @@ class Polygons {
 @LiveMapDsl
 class Lines {
     val items = ArrayList<MapLine>()
+}
+
+@LiveMapDsl
+class Bars {
+    val factory = BarsFactory()
+    val items = ArrayList<MapBar>()
 }
 
 @LiveMapDsl
@@ -235,6 +240,40 @@ class LineBuilder {
 }
 
 @LiveMapDsl
+class BarsFactory {
+    private val myItems = ArrayList<BarSource>()
+
+    fun add(source: BarSource) {
+        myItems.add(source)
+    }
+
+    fun produce(): List<MapBar> {
+        val maxAbsValue = myItems
+            .asSequence()
+            .mapNotNull { it.values }
+            .flatten()
+            .maxBy { abs(it) }
+            ?: error("")
+
+        return myItems.flatMap { splitMapBarChart(it, abs(maxAbsValue)) }
+    }
+}
+
+@LiveMapDsl
+class BarSource {
+    var lon: Double = 0.0
+    var lat: Double = 0.0
+    var radius: Double = 0.0
+
+    val strokeColor: Color = Color.BLACK
+    val strokeWidth: Double = 0.0
+
+    var indices: List<Int> = emptyList()
+    var values: List<Double> = emptyList()
+    var colors: List<Color> = emptyList()
+}
+
+@LiveMapDsl
 class Location {
     var name: String? = null
         set(v) {
@@ -298,6 +337,10 @@ fun LayersBuilder.hLines(block: Lines.() -> Unit) {
 
 fun LayersBuilder.vLines(block: Lines.() -> Unit) {
     items.add(MapLayer(V_LINE, Lines().apply(block).items))
+}
+
+fun LayersBuilder.bars(block: Bars.() -> Unit) {
+    items.add(MapLayer(BAR, Bars().apply(block).factory.produce()))
 }
 
 fun point(block: PointBuilder.() -> Unit) = PointBuilder().apply(block)

@@ -10,7 +10,9 @@ import jetbrains.livemap.core.ecs.AnimationObjectComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.entities.placement.Components
+import jetbrains.livemap.entities.placement.ScreenLoopComponent
+import jetbrains.livemap.entities.placement.ScreenOriginComponent
+import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.RendererComponent
 import jetbrains.livemap.projections.ClientPoint
@@ -26,12 +28,12 @@ object Entities {
             .createEntity(name)
             .addComponent(parentLayerComponent)
             .addComponent(RendererComponent(renderer))
-            .addComponent(Components.WorldOriginComponent(worldPlacement))
+            .addComponent(WorldOriginComponent(worldPlacement))
             .addComponent(CameraListenerComponent())
             .addComponent(CenterChangedComponent())
             .addComponent(ZoomChangedComponent())
-            .addComponent(Components.ScreenLoopComponent())
-            .addComponent(Components.ScreenOriginComponent())
+            .addComponent(ScreenLoopComponent())
+            .addComponent(ScreenOriginComponent())
     }
 
     fun dynamicMapEntity(
@@ -45,8 +47,8 @@ object Entities {
             .addComponent(CameraListenerComponent())
             .addComponent(CenterChangedComponent())
             .addComponent(ZoomChangedComponent())
-            .addComponent(Components.ScreenLoopComponent())
-            .addComponent(Components.ScreenOriginComponent())
+            .addComponent(ScreenLoopComponent())
+            .addComponent(ScreenOriginComponent())
     }
 
     fun camera(componentManager: EcsComponentManager): EcsEntity {
@@ -64,7 +66,7 @@ object Entities {
             .addComponent(CenterChangedComponent())
             .addComponent(ZoomChangedComponent())
             .addComponent(
-                Components.ScreenOriginComponent()
+                ScreenOriginComponent()
                     .apply { origin = screenPlacement }
             )
     }
@@ -82,11 +84,11 @@ object Entities {
         private val myParentLayerComponent: ParentLayerComponent = ParentLayerComponent(layerEntity.id)
 
         fun createMapEntity(worldPlacement: WorldPoint, renderer: Renderer, name: String): EcsEntity {
-            return Entities.mapEntity(myComponentManager, worldPlacement, myParentLayerComponent, renderer, name)
+            return mapEntity(myComponentManager, worldPlacement, myParentLayerComponent, renderer, name)
         }
 
         fun createDynamicMapEntity(name: String, renderer: Renderer): EcsEntity {
-            return Entities.dynamicMapEntity(myComponentManager, myParentLayerComponent, renderer, name)
+            return dynamicMapEntity(myComponentManager, myParentLayerComponent, renderer, name)
         }
     }
 }

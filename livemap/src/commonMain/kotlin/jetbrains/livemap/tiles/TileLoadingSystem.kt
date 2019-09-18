@@ -12,7 +12,7 @@ import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities.mapEntity
-import jetbrains.livemap.entities.placement.Components.ScreenDimensionComponent
+import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem.Companion.world2Screen
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.Renderer
