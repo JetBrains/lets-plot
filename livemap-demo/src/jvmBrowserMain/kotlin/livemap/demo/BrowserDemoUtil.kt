@@ -23,6 +23,7 @@ object BrowserDemoUtil {
 
     val BASE_MAPPER_LIBS = listOf(
 //        "base.js",
+        "datalore-plot-base-portable.js",
         "datalore-plot-base.js",
         "mapper-core.js",
         "visualization-base-svg.js"
@@ -30,8 +31,11 @@ object BrowserDemoUtil {
 
     val PLOT_LIBS = listOf(
         "visualization-base-canvas.js",     // required by plot-builder (get rid?)
+        "visualization-plot-common-portable.js",
         "visualization-plot-common.js",
+        "visualization-plot-base-portable.js",
         "visualization-plot-base.js",
+        "visualization-plot-builder-portable.js",
         "visualization-plot-builder.js",
         "visualization-plot-config-portable.js",
         "gis.js",
