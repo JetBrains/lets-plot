@@ -1,5 +1,7 @@
 package jetbrains.datalore.visualization.plot.pythonExtension
 
+import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide
+
 //import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide
 
 class SampleBarPlot {
@@ -9,15 +11,15 @@ class SampleBarPlot {
 
         var plotSpec = plotSpecMap()
         // apply server-side transforms (statistics, sampling etc.)
-//        plotSpec = PlotConfigServerSide.processTransformWithoutEncoding(plotSpec)
+        plotSpec = PlotConfigServerSide.processTransform(plotSpec)
 
-        return ""
+        return PlotHtmlGen.getHtml(plotSpec)
     }
 
-    companion object {
+    private companion object {
         private fun plotSpecMap(): MutableMap<String, Any> {
             val map = HashMap<String, Any>()
-            map["data"] = mapOf("time" to listOf<String>("Lunch", "Lunch", "Dinner", "Dinner", "Dinner"))
+            map["data"] = mapOf("time" to listOf("Lunch", "Lunch", "Dinner", "Dinner", "Dinner"))
             map["mapping"] = mapOf(
                 "x" to "time",
                 "y" to "..count..",

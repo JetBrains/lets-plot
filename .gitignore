@@ -8,4 +8,5 @@
 node_modules/
 package-lock.json
 
-python-extension/src/python_runtime
+*.egg-info
+python-extension/packages/dist

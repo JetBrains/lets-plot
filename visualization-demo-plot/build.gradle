@@ -118,8 +118,7 @@ configurations {
 dependencies {
     libraryDependenciesJs "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
     libraryDependenciesJs "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-//    // for Assertions.kt ToDo: get rid of kotlin-test here
-//    libraryDependenciesJs "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+
     projectDependenciesJs project(':base-portable')
     projectDependenciesJs project(':base')
     projectDependenciesJs project(':mapper-core')

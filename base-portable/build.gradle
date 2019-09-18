@@ -8,10 +8,11 @@ plugins {
 kotlin {
     jvm()
     js() {
-        browser { }
+        browser {}   // required for js tests running (?)
         compileKotlinJs {
             kotlinOptions.sourceMap = true
             kotlinOptions.sourceMapEmbedSources = "always"
+//            kotlinOptions.moduleKind = "umd"
         }
     }
     macosX64() {
@@ -39,10 +40,10 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                api "com.google.code.gson:gson:$gson_version"
-                compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
-                compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                api "com.google.code.gson:gson:$gson_version"
+//                compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
+//                compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
             }
         }
         jvmTest {
@@ -70,7 +71,7 @@ kotlin {
             }
         }
 
-        
+
     }
 }
 

@@ -1,5 +1,8 @@
 package jetbrains.datalore.visualization.plot.base
 
+import kotlin.native.concurrent.ThreadLocal
+
+@ThreadLocal  // objects a frozen by default but we are going to mutate `renderedAesByGeom` map
 object GeomMeta {
     private val renderedAesByGeom = HashMap<GeomKind, List<Aes<*>>>()
 

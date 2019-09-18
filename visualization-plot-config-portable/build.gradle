@@ -7,11 +7,11 @@ kotlin {
     jvm()
     js()
     macosX64() {
-        binaries {
-            sharedLib {
-                baseName = "datalore-${project.name}"
-            }
-        }
+//        binaries {
+//            sharedLib {
+//                baseName = "datalore-${project.name}"
+//            }
+//        }
     }
 
     sourceSets {

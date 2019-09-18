@@ -6,8 +6,8 @@ plugins {
 kotlin {
     macosX64() {
         binaries {
-            sharedLib {
-                baseName = "datalore-${project.name}"
+            staticLib {
+                baseName = "datalore-plot-${project.name}"
             }
         }
     }
@@ -17,21 +17,8 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
 
-//                implementation project(':base')
-//                implementation project(':mapper-core')
-//                implementation project(':visualization-base-svg')
-//                implementation project(':visualization-base-svg-mapper')
-//                implementation project(':visualization-plot-base')
-//                implementation project(':visualization-plot-common')
-//                implementation project(':visualization-plot-builder')
                 implementation project(':visualization-plot-config-portable')
             }
         }
-
-        macosX64Main {
-            dependencies {
-            }
-        }
     }
-
 }
