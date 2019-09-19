@@ -129,6 +129,11 @@ class Pies {
 }
 
 @LiveMapDsl
+class Texts {
+    val items = ArrayList<MapText>()
+}
+
+@LiveMapDsl
 class PointBuilder {
     var animation: Int? = null
     var label: String? = null
@@ -240,6 +245,38 @@ class LineBuilder {
             index!!, mapId, regionId,
             lineDash!!, strokeColor!!, strokeWidth!!,
             explicitVec<LonLat>(lon!!, lat!!)
+        )
+    }
+}
+
+@LiveMapDsl
+class TextBuilder {
+    var index: Int = 0
+    var mapId: String = ""
+    var regionId: String = ""
+
+    var lon: Double = 0.0
+    var lat: Double = 0.0
+
+    var fillColor: Color = Color.BLACK
+    var strokeColor: Color = Color.TRANSPARENT
+    var strokeWidth: Double = 0.0
+
+    var label: String = ""
+    var size: Double = 10.0
+    var family: String = "Arial"
+    var fontface: String = ""
+    var hjust: Double = 0.0
+    var vjust: Double = 0.0
+    var angle: Double = 0.0
+
+
+    fun build(): MapText {
+        return MapText(
+            index, mapId, regionId,
+            explicitVec(lon, lat),
+            fillColor, strokeColor, strokeWidth,
+            label, size, family, fontface, hjust, vjust, angle
         )
     }
 }
@@ -363,6 +400,10 @@ fun LayersBuilder.bars(block: Bars.() -> Unit) {
 
 fun LayersBuilder.pies(block: Pies.() -> Unit) {
     items.add(MapLayer(PIE, Pies().apply(block).factory.produce()))
+}
+
+fun LayersBuilder.texts(block: Texts.() -> Unit) {
+    items.add(MapLayer(TEXT, Texts().apply(block).items))
 }
 
 fun point(block: PointBuilder.() -> Unit) = PointBuilder().apply(block)

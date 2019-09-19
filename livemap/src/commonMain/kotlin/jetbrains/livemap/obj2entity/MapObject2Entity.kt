@@ -38,10 +38,7 @@ class MapObject2Entity(
         MapPieProcessor(myComponentManager, myLayerManager, myMapProjection).process(mapObjects)
     }
 
-    /*
-
     fun processText(mapObjects: List<MapObject>, textMeasurer: TextMeasurer) {
-        MapTextProcessor(myComponentManager, myLayerManager, textMeasurer).process(mapObjects)
+        MapTextProcessor(myComponentManager, myLayerManager, textMeasurer, myMapProjection).process(mapObjects)
     }
-    */
 }

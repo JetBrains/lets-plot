@@ -66,16 +66,17 @@ fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
 
 fun Lines.line(block: LineBuilder.() -> Unit) {
     items.add(
-        LineBuilder().apply {
-            index = 0
-            mapId = ""
-            regionId = ""
+        LineBuilder()
+            .apply {
+                index = 0
+                mapId = ""
+                regionId = ""
 
-            lineDash = emptyList()
-            strokeColor = Color.BLACK
-            strokeWidth = 1.0
+                lineDash = emptyList()
+                strokeColor = Color.BLACK
+                strokeWidth = 1.0
 
-        }
+            }
             .apply(block)
             .build()
     )
@@ -87,4 +88,12 @@ fun Bars.bar(block: ChartSource.() -> Unit) {
 
 fun Pies.pie(block: ChartSource.() -> Unit) {
     factory.add(ChartSource().apply(block))
+}
+
+fun Texts.text(block: TextBuilder.() -> Unit) {
+    items.add(
+        TextBuilder()
+            .apply(block)
+            .build()
+    )
 }
