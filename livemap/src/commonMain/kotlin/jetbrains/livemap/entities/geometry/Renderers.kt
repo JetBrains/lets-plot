@@ -6,6 +6,7 @@ import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.datalore.visualization.base.canvas.Context2d.LineJoin
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.geometry.ClientGeometry
+import jetbrains.livemap.entities.geometry.PieSectorComponent
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.StyleComponent
@@ -85,6 +86,34 @@ object Renderers {
                 ctx.setStrokeStyle(style.strokeColor)
                 ctx.setLineWidth(style.strokeWidth)
                 ctx.strokeRect(0.0, 0.0, dimension.x, dimension.y)
+            }
+        }
+    }
+
+    class PieSectorRenderer : Renderer {
+
+        override fun render(entity: EcsEntity, ctx: Context2d) {
+            val style = entity.get<StyleComponent>()
+            val sector = entity.get<PieSectorComponent>()
+
+            if (style.strokeColor != null && style.strokeWidth > 0.0) {
+                ctx.setStrokeStyle(style.strokeColor)
+                ctx.setLineWidth(style.strokeWidth)
+                ctx.beginPath()
+                ctx.arc(
+                    0.0, 0.0,
+                    sector.radius + style.strokeWidth / 2,
+                    sector.startAngle, sector.endAngle
+                )
+                ctx.stroke()
+            }
+
+            if (style.fillColor != null) {
+                ctx.setFillStyle(style.fillColor)
+                ctx.beginPath()
+                ctx.moveTo(0.0, 0.0)
+                ctx.arc(0.0, 0.0, sector.radius, sector.startAngle, sector.endAngle)
+                ctx.fill()
             }
         }
     }

@@ -6,6 +6,7 @@ import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.api.*
 import jetbrains.livemap.demo.model.Cities.BOSTON
 import jetbrains.livemap.demo.model.Cities.MOSCOW
+import jetbrains.livemap.demo.model.Cities.NEW_YORK
 import jetbrains.livemap.demo.model.Cities.SPB
 import jetbrains.livemap.demo.model.GeoObject
 
@@ -70,6 +71,17 @@ class FeaturesDemoModel(canvasControl: CanvasControl): DemoModelBase(canvasContr
                         lat = SPB.lat
                         radius = 50.0
                         values = listOf(-2.0, -1.0, 4.0)
+                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
+                    }
+                }
+
+                pies {
+                    pie {
+                        indices = listOf(0, 1, 2)
+                        lon = NEW_YORK.lon
+                        lat = NEW_YORK.lat
+                        radius = 20.0
+                        values = listOf(3.0, 1.0, 2.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
                     }
                 }

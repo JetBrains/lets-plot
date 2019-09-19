@@ -81,6 +81,10 @@ fun Lines.line(block: LineBuilder.() -> Unit) {
     )
 }
 
-fun Bars.bar(block: BarSource.() -> Unit) {
-    factory.add(BarSource().apply(block))
+fun Bars.bar(block: ChartSource.() -> Unit) {
+    factory.add(ChartSource().apply(block))
+}
+
+fun Pies.pie(block: ChartSource.() -> Unit) {
+    factory.add(ChartSource().apply(block))
 }
