@@ -3,7 +3,7 @@ package jetbrains.livemap.mapobjects
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.api.BarSource
+import jetbrains.livemap.api.ChartSource
 import jetbrains.livemap.projections.Client
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,7 +12,7 @@ class UtilsTest {
 
     @Test
     fun splitMapBarChartTest() {
-        val bars = Utils.splitMapBarChart(BarSource().apply {
+        val bars = Utils.splitMapBarChart(ChartSource().apply {
             indices = listOf(3, 4, 5)
             lon = 0.0
             lat = 0.0

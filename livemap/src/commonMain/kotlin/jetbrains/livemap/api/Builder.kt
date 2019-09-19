@@ -23,6 +23,7 @@ import jetbrains.livemap.entities.geometry.LonLatGeometry
 import jetbrains.livemap.mapobjects.*
 import jetbrains.livemap.mapobjects.MapLayerKind.*
 import jetbrains.livemap.mapobjects.Utils.splitMapBarChart
+import jetbrains.livemap.mapobjects.Utils.splitMapPieChart
 import jetbrains.livemap.projections.*
 import kotlin.math.abs
 
@@ -120,7 +121,11 @@ class Lines {
 @LiveMapDsl
 class Bars {
     val factory = BarsFactory()
-    val items = ArrayList<MapBar>()
+}
+
+@LiveMapDsl
+class Pies {
+    val factory = PiesFactory()
 }
 
 @LiveMapDsl
@@ -241,9 +246,9 @@ class LineBuilder {
 
 @LiveMapDsl
 class BarsFactory {
-    private val myItems = ArrayList<BarSource>()
+    private val myItems = ArrayList<ChartSource>()
 
-    fun add(source: BarSource) {
+    fun add(source: ChartSource) {
         myItems.add(source)
     }
 
@@ -260,7 +265,20 @@ class BarsFactory {
 }
 
 @LiveMapDsl
-class BarSource {
+class PiesFactory {
+    private val myItems = ArrayList<ChartSource>()
+
+    fun add(source: ChartSource) {
+        myItems.add(source)
+    }
+
+    fun produce(): List<MapPieSector> {
+        return myItems.flatMap { splitMapPieChart(it) }
+    }
+}
+
+@LiveMapDsl
+class ChartSource {
     var lon: Double = 0.0
     var lat: Double = 0.0
     var radius: Double = 0.0
@@ -341,6 +359,10 @@ fun LayersBuilder.vLines(block: Lines.() -> Unit) {
 
 fun LayersBuilder.bars(block: Bars.() -> Unit) {
     items.add(MapLayer(BAR, Bars().apply(block).factory.produce()))
+}
+
+fun LayersBuilder.pies(block: Pies.() -> Unit) {
+    items.add(MapLayer(PIE, Pies().apply(block).factory.produce()))
 }
 
 fun point(block: PointBuilder.() -> Unit) = PointBuilder().apply(block)

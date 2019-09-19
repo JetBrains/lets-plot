@@ -1,15 +1,45 @@
 package jetbrains.livemap.mapobjects
 
 import jetbrains.datalore.base.projectionGeometry.explicitVec
-import jetbrains.livemap.api.BarSource
+import jetbrains.livemap.api.ChartSource
 import jetbrains.livemap.projections.Client
+import kotlin.math.PI
 import kotlin.math.abs
 
 object Utils {
     private const val ONE_HUNDRED_PERCENTS = 1.0
     private const val MIN_PERCENT = 0.05
 
-    fun splitMapBarChart(source: BarSource, maxAbsValue: Double): List<MapBar> {
+    fun splitMapPieChart(source: ChartSource): List<MapPieSector> {
+        val result = ArrayList<MapPieSector>()
+        val angles = transformValues2Angles(source.values)
+        var startAngle = 0.0
+
+        for (i in angles.indices) {
+            val endAngle = startAngle + angles[i]
+            result.add(
+                MapPieSector(
+                    source.indices[i],
+                    "",
+                    "",
+
+                    explicitVec(source.lon, source.lat),
+                    source.radius,
+                    startAngle,
+                    endAngle,
+
+                    source.colors[i],
+                    source.strokeColor,
+                    source.strokeWidth
+                )
+            )
+            startAngle = endAngle
+        }
+
+        return result
+    }
+
+    fun splitMapBarChart(source: ChartSource, maxAbsValue: Double): List<MapBar> {
         val result = ArrayList<MapBar>()
         val percents = transformValues2Percents(source.values, maxAbsValue)
 
@@ -43,6 +73,16 @@ object Utils {
 
     private fun transformValues2Percents(values: List<Double>, maxAbsValue: Double): List<Double> {
         return values.map { calculatePercent(it, maxAbsValue) }
+    }
+
+    private fun transformValues2Angles(values: List<Double>): List<Double> {
+        val sum = values.map { abs(it) }.sum()
+
+        return if (sum == 0.0) {
+            MutableList(values.size) { 2 * PI / values.size }
+        } else {
+            values.map { 2 * PI * abs(it) / sum }
+        }
     }
 
     private fun calculatePercent(value: Double, maxAbsValue: Double): Double {

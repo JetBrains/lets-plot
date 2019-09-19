@@ -23,39 +23,35 @@ class MapBarProcessor(
     private val myFactory: Entities.MapEntityFactory
 
     init {
-        val layerEntity = componentManager
+        componentManager
             .createEntity("map_layer_bar")
             .addComponent(layerManager.createRenderLayerComponent("livemap_bar"))
             .addComponent(myLayerEntitiesComponent)
-        myFactory = Entities.MapEntityFactory(layerEntity)
+            .run { myFactory = Entities.MapEntityFactory(this) }
     }
 
     internal fun process(mapObjects: List<MapObject>) {
-        createEntities(mapObjects)
-    }
-
-    private fun createEntities(mapObjects: List<MapObject>) {
         for (mapObject in mapObjects) {
-            val mapBar = mapObject as MapBar
+            val barEntity = createEntity(mapObject as MapBar)
 
-            val barEntity = myFactory
-                .createMapEntity(myMapProjection.project(mapBar.point), BarRenderer(), "map_ent_bar")
-                .addComponent(
-                    ScreenOffsetComponent().apply { offset = mapBar.offset}
-                )
-                .addComponent(
-                    ScreenDimensionComponent().apply { dimension = mapBar.dimension }
-                )
-                .addComponent(
-                    StyleComponent().apply {
-                        setFillColor(mapBar.fillColor)
-                        setStrokeColor(mapBar.strokeColor)
-                        setStrokeWidth(mapBar.strokeWidth)
-                    }
-                )
-
-            myObjectsMap[mapBar] = barEntity
+            myObjectsMap[mapObject] = barEntity
             myLayerEntitiesComponent.add(barEntity.id)
         }
     }
+
+    private fun createEntity(mapBar: MapBar): EcsEntity = myFactory
+        .createMapEntity(myMapProjection.project(mapBar.point), BarRenderer(), "map_ent_bar")
+        .addComponent(
+            ScreenOffsetComponent().apply { offset = mapBar.offset}
+        )
+        .addComponent(
+            ScreenDimensionComponent().apply { dimension = mapBar.dimension }
+        )
+        .addComponent(
+            StyleComponent().apply {
+                setFillColor(mapBar.fillColor)
+                setStrokeColor(mapBar.strokeColor)
+                setStrokeWidth(mapBar.strokeWidth)
+            }
+        )
 }
