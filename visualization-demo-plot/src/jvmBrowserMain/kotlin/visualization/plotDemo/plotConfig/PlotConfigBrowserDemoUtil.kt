@@ -13,7 +13,8 @@ import kotlinx.html.stream.appendHTML
 import java.io.StringWriter
 
 private const val DEMO_PROJECT = "visualization-demo-plot"
-private const val CALL_FUN = "jetbrains.datalore.visualization.plotDemo.plotConfig.buildPlotSvg"
+private const val CALL_MODULE = "visualization-plot-config"
+private const val CALL_FUN = "jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs"
 private val LIBS = KOTLIN_LIBS + BASE_MAPPER_LIBS + PLOT_LIBS + DEMO_COMMON_LIBS
 
 object PlotConfigDemoUtil {
@@ -62,18 +63,15 @@ object PlotConfigDemoUtil {
 
                 script {
                     type = "text/javascript"
-                    src = "$DEMO_PROJECT.js"
-                }
-
-                script {
-                    type = "text/javascript"
                     unsafe {
                         +"""
                         |var plotSpecList=$plotSpecListJs;
                         |plotSpecList.forEach(function (spec, index) {
+                        |
                         |   var parentElement = document.createElement('div');
                         |   document.getElementById("root").appendChild(parentElement);
-                        |   window['$DEMO_PROJECT'].$CALL_FUN(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
+                        |   window['$CALL_MODULE'].$CALL_FUN(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
+                        |   
                         |});
                     """.trimMargin()
 

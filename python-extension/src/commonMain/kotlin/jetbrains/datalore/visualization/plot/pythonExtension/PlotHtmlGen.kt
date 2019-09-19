@@ -158,12 +158,12 @@ object PlotHtmlGen {
 ];
 
 plotSpecList.forEach(function (spec, index) {
-   require(['visualization-plot-config'], function(plotConfig) {
+   requirejs(['visualization-plot-config'], function(module) {
         var plots = ${'$'}( "#$plotOutputId" ).get(0);
         var plotContainer = document.createElement('div');
         plots.appendChild(plotContainer);
     
-        plotConfig.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(spec, 440.0, 340.0, plotContainer);
+        module.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(spec, 440.0, 340.0, plotContainer);
 	});
 });</script>
 """
