@@ -7,6 +7,7 @@ import jetbrains.datalore.visualization.base.canvas.Context2d.LineJoin
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.geometry.ClientGeometry
 import jetbrains.livemap.entities.geometry.PieSectorComponent
+import jetbrains.livemap.entities.geometry.TextComponent
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.StyleComponent
@@ -115,6 +116,25 @@ object Renderers {
                 ctx.arc(0.0, 0.0, sector.radius, sector.startAngle, sector.endAngle)
                 ctx.fill()
             }
+        }
+    }
+
+    class TextRenderer : Renderer {
+
+        override fun render(entity: EcsEntity, ctx: Context2d) {
+            val style = entity.get<StyleComponent>()
+            val textSpec = entity.get<TextComponent>().textSpec
+
+            ctx.save()
+            ctx.rotate(textSpec.angle)
+
+            ctx.setTextAlign(Context2d.TextAlign.CENTER)
+            ctx.setTextBaseline(Context2d.TextBaseline.MIDDLE)
+            ctx.setFont(textSpec.font)
+            ctx.setFillStyle(style.fillColor)
+
+            ctx.fillText(textSpec.label, textSpec.alignment.x, textSpec.alignment.y)
+            ctx.restore()
         }
     }
 }

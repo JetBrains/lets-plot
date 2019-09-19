@@ -2,6 +2,7 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.projectionGeometry.div
 import jetbrains.datalore.base.projectionGeometry.minus
 import jetbrains.datalore.base.projectionGeometry.plus
@@ -51,6 +52,7 @@ import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.obj2entity.MapObject2Entity
+import jetbrains.livemap.obj2entity.TextMeasurer
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.tilegeometry.TileGeometryProvider
 import jetbrains.livemap.tiles.CellStateUpdateSystem
@@ -283,10 +285,10 @@ class LiveMap(
                 MapLayerKind.PIE -> mapObject2Entity.processPie(mapObjects)
                 MapLayerKind.H_LINE -> mapObject2Entity.processLine(mapObjects, true)
                 MapLayerKind.V_LINE -> mapObject2Entity.processLine(mapObjects, false)
-                //MapLayerKind.TEXT -> mapObject2Entity.processText(
-                    //mapObjects,
-                    //TextSpec.createMeasurer(context.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
-                //)
+                MapLayerKind.TEXT -> mapObject2Entity.processText(
+                    mapObjects,
+                    TextMeasurer(context.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
+                )
                 else -> error("")
             }
         }

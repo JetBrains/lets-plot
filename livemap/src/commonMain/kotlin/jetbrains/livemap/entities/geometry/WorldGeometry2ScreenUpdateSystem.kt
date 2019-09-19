@@ -51,7 +51,7 @@ class WorldGeometry2ScreenUpdateSystem(
             }
     }
 
-    protected override fun updateImpl(context: LiveMapContext, dt: Double) {
+    override fun updateImpl(context: LiveMapContext, dt: Double) {
         val viewProjection = context.mapRenderContext.viewProjection
 
         if (camera().isIntegerZoom) {
