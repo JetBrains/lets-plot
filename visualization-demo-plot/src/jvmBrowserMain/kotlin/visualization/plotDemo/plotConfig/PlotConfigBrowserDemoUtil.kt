@@ -26,7 +26,6 @@ object PlotConfigDemoUtil {
                 plotSize
             )
         }
-
     }
 
     private fun getHtml(

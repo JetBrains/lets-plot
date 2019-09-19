@@ -10,13 +10,7 @@ repositories {
 kotlin {
     jvm()
     js()
-    macosX64() {
-        binaries {
-            sharedLib {
-                baseName = "datalore-${project.name}"
-            }
-        }
-    }
+    macosX64()
 
     sourceSets {
         commonMain {
