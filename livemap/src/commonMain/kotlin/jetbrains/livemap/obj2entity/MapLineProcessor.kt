@@ -71,7 +71,7 @@ class MapLineProcessor(
                         fx = { mapRect.scalarLeft }
                     ),
                     point.transform(
-                        fx = { mapRect.scalarRight / 2.0 }
+                        fx = { mapRect.scalarRight }
                     )
 
                 )
