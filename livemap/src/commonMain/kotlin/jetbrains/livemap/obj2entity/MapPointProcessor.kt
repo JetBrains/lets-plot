@@ -6,8 +6,8 @@ import jetbrains.datalore.maps.livemap.entities.point.PointRenderer
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.DevParams.Companion.POINT_SCALING
 import jetbrains.livemap.core.animation.Animation
-import jetbrains.livemap.core.animation.Animations
 import jetbrains.livemap.core.animation.Animations.AnimationBuilder
+import jetbrains.livemap.core.animation.Animations.DoubleAnimator
 import jetbrains.livemap.core.ecs.AnimationObjectComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -40,7 +40,6 @@ internal class MapPointProcessor(
     private val myFactory: MapEntityFactory
 
     init {
-
         myLayerEntity = myComponentManager
             .createEntity("map_layer_point")
             .addComponent(layerManager.createRenderLayerComponent("geom_point"))
@@ -49,43 +48,35 @@ internal class MapPointProcessor(
     }
 
     fun process(mapObjects: List<MapObject>) {
-        createEntities(mapObjects)
-        processDimension()
+        for (mapObject in mapObjects) {
+            val pointEntity = createEntity(mapObject as MapPoint)
+
+            myObjectsMap[mapObject] = pointEntity
+            myLayerEntitiesComponent.add(pointEntity.id)
+        }
+
         processAnimation()
     }
 
-    private fun createEntities(mapObjects: List<MapObject>) {
-        for (mapObject in mapObjects) {
-            val mapPoint = mapObject as MapPoint
+    private fun createEntity(mapPoint: MapPoint): EcsEntity {
+        val size = mapPoint.radius * 2.0
 
-            val pointEntity = myFactory
-                .createMapEntity(myMapProjection.project(mapPoint.point), SIMPLE_RENDERER, "map_ent_point")
-                .addComponent(PointComponent().apply { shape = mapPoint.shape })
-                .addComponent(createStyle(mapPoint))
-
-            myObjectsMap[mapPoint] = pointEntity
-            myLayerEntitiesComponent.add(pointEntity.id)
-        }
-    }
-
-    private fun processDimension() {
-        for ((point, entity) in myObjectsMap.entries) {
-            val size = point.radius * 2.0
-            if (myDevParams.isSet(POINT_SCALING)) {
-                entity.addComponent(WorldDimensionComponent(explicitVec<World>(size, size)))
-            } else {
-                entity.addComponent(ScreenDimensionComponent().apply {
-                    dimension = explicitVec<Client>(size, size)
-                })
-            }
-        }
+        return myFactory
+            .createMapEntity(myMapProjection.project(mapPoint.point), PointRenderer(), "map_ent_point")
+            .addComponent(PointComponent().apply { shape = mapPoint.shape })
+            .addComponent(createStyle(mapPoint))
+            .addComponent(
+                if (myDevParams.isSet(POINT_SCALING)) {
+                    WorldDimensionComponent(explicitVec<World>(size, size))
+                } else {
+                    ScreenDimensionComponent().apply {
+                        dimension = explicitVec<Client>(size, size)
+                    }
+                }
+            )
     }
 
     private fun processAnimation() {
-        if (myObjectsMap.keys.first().animation != 2) {
-            return
-        }
-
         val animation = AnimationBuilder(500.0)
                 .setDirection(Animation.Direction.FORWARD)
                 .setLoop(Animation.Loop.SWITCH_DIRECTION)
@@ -93,7 +84,7 @@ internal class MapPointProcessor(
         for ((point, entity) in myObjectsMap.entries) {
             if (point.animation == 2) {
                 val transformComponent = TransformComponent()
-                val scaleAnimator = Animations.DoubleAnimator(0.0,1.0) {
+                val scaleAnimator = DoubleAnimator(0.0,1.0) {
                     transformComponent.scale = it
                     myLayerEntity.tag(::DirtyRenderLayerComponent)
                 }
@@ -107,12 +98,6 @@ internal class MapPointProcessor(
             .createEntity("map_ent_point_animation")
             .setComponent(
                 AnimationObjectComponent(animation.build()))
-    }
-
-    companion object {
-
-        private val SIMPLE_RENDERER = PointRenderer()
-
     }
 
     private fun createStyle(mapPoint: MapPoint): StyleComponent {

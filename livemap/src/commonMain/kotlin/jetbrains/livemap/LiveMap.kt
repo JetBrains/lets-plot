@@ -41,6 +41,7 @@ import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
 import jetbrains.livemap.core.rendering.layers.RenderLayer
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
+import jetbrains.livemap.effects.GrowingPath
 import jetbrains.livemap.entities.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
@@ -208,7 +209,7 @@ class LiveMap(
                 schedulerSystem,
 
                 // Effects
-                //GrowingPathEffectSystem(componentManager),
+                GrowingPath.GrowingPathEffectSystem(componentManager),
                 CameraScale.CameraScaleEffectSystem(componentManager)
 
                 // Tooltips

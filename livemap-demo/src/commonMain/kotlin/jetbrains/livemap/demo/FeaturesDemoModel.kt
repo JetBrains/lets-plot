@@ -5,6 +5,7 @@ import jetbrains.datalore.visualization.base.canvas.CanvasControl
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.api.*
 import jetbrains.livemap.demo.model.Cities.BOSTON
+import jetbrains.livemap.demo.model.Cities.FRISCO
 import jetbrains.livemap.demo.model.Cities.MOSCOW
 import jetbrains.livemap.demo.model.Cities.NEW_YORK
 import jetbrains.livemap.demo.model.Cities.SPB
@@ -16,11 +17,20 @@ class FeaturesDemoModel(canvasControl: CanvasControl): DemoModelBase(canvasContr
             layers {
                 points {
                     point {
+                        lon = 10.0
+                        lat = 10.0
+                        shape = 21
+                        radius = 10.0
+                        fillColor = Color.LIGHT_CYAN
+                    }
+
+                    point {
                         lon = 0.0
                         lat = 0.0
                         shape = 21
                         radius = 10.0
                         fillColor = Color.MAGENTA
+                        animation = 2
                     }
                 }
 
@@ -29,6 +39,13 @@ class FeaturesDemoModel(canvasControl: CanvasControl): DemoModelBase(canvasContr
                         geodesic = true
                         coordinates = listOf(BOSTON, SPB).map(GeoObject::geoCoord)
                         strokeWidth = 1.0
+                    }
+
+                    path {
+                        geodesic = true
+                        coordinates = listOf(BOSTON, FRISCO).map(GeoObject::geoCoord)
+                        strokeWidth = 1.0
+                        animation = 2
                     }
                 }
 

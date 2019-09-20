@@ -41,7 +41,7 @@ class AnimationSystem(componentManager: EcsComponentManager) : AbstractSystem<Ec
         animation.time = newTime
     }
 
-    protected override fun updateImpl(context: EcsContext, dt: Double) {
+    override fun updateImpl(context: EcsContext, dt: Double) {
         for (entity in getEntities(AnimationComponent::class)) {
             val animationComponent = entity.get<AnimationComponent>()
             updateTime(animationComponent, dt)
