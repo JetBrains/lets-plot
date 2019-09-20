@@ -11,3 +11,4 @@ package-lock.json
 *.egg-info
 **/dist
 venv
+python-package/datalore/package_data
