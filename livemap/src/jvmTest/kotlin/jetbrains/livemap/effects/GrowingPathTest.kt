@@ -3,12 +3,12 @@ package jetbrains.livemap.effects
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
+import jetbrains.datalore.visualization.base.canvas.Context2d
 import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.core.animation.Animation.Direction
 import jetbrains.livemap.core.animation.Animation.Loop
@@ -24,7 +24,7 @@ import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.rendering.setFillColor
 import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.projections.Client
-import kotlin.math.abs
+import org.mockito.Mockito
 import kotlin.math.pow
 import kotlin.math.round
 import kotlin.test.BeforeTest
@@ -52,7 +52,7 @@ class GrowingPathTest {
         return v.map { index(it) }
     }
 
-    private fun interpolated(i: Int, p: DoubleVector): EffectState {
+    private fun interpolated(i: Int, p: Vec<Client>): EffectState {
         return EffectState(i, p)
     }
 
@@ -76,12 +76,11 @@ class GrowingPathTest {
             easingFunction = Animations.LINEAR
         }
 
-        myGrowingPathEffectComponent = GrowingPathEffectComponent()
-            .setAnimationId(
-                myComponentManager
-                    .createEntity("animation")
-                    .addComponent(myAnimationComponent).id
-            )
+        myGrowingPathEffectComponent = GrowingPathEffectComponent().apply {
+            animationId = myComponentManager
+                .createEntity("animation")
+                .addComponent(myAnimationComponent).id
+        }
     }
 
     private fun doAnimation(progress: Double) {
@@ -89,11 +88,13 @@ class GrowingPathTest {
         myGrowingPathEffectSystem.update(myEcsContext, 0.0)
         myEffectState.add(
             EffectState(
-                myGrowingPathEffectComponent.getEndIndex(),
-                myGrowingPathEffectComponent.getInterpolatedPoint()?.roundDecimals(3)
+                myGrowingPathEffectComponent.endIndex,
+                myGrowingPathEffectComponent.interpolatedPoint?.roundDecimals(3)
             )
         )
     }
+
+
 
     private fun doAnimationSequence(progress: List<Double>) {
         for (v in progress) {
@@ -144,11 +145,13 @@ class GrowingPathTest {
     @Test
     fun rendererTest() {
         val renderer = GrowingPathRenderer()
-        val path_entity = myComponentManager.createEntity("path_entity")
+        val pathEntity = myComponentManager.createEntity("path_entity")
             .addComponent(
-                GrowingPathEffectComponent()
-                    .setEndIndex(3)
-                    .setInterpolatedPoint(DoubleVector(3.5, 3.5))
+                GrowingPathEffectComponent().apply {
+                    endIndex = 3
+                    interpolatedPoint = explicitVec(3.5, 3.5)
+                }
+
             )
             .addComponent(
                 ScreenGeometryComponent().apply {
@@ -160,19 +163,18 @@ class GrowingPathTest {
                     setFillColor(Color.BLACK)
                     setStrokeColor(Color.BLACK)
                     strokeWidth = 1.0
-                }
-                        )
+                })
             )
 
-        //val context2d = Mockito.mock(Context2d::class)
+        val context2d = Mockito.mock(Context2d::class.java)
 
-        //renderer.render(path_entity, context2d)
+        renderer.render(pathEntity, context2d)
 
-        //Mockito.verify(context2d).moveTo(0, 0)
-        //Mockito.verify(context2d).lineTo(1, 1)
-        //Mockito.verify(context2d).lineTo(2, 2)
-        //Mockito.verify(context2d).lineTo(3, 3) // end point
-        //Mockito.verify(context2d).lineTo(3.5, 3.5) // interpolated point;
+        Mockito.verify(context2d).moveTo(0.0, 0.0)
+        Mockito.verify(context2d).lineTo(1.0, 1.0)
+        Mockito.verify(context2d).lineTo(2.0, 2.0)
+        Mockito.verify(context2d).lineTo(3.0, 3.0) // end point
+        Mockito.verify(context2d).lineTo(3.5, 3.5) // interpolated point;
     }
 
     @Test
@@ -196,9 +198,9 @@ class GrowingPathTest {
         assertEquals(
             listOf(
                 index(0),
-                interpolated(0, DoubleVector(0.0, 75.0)),
-                interpolated(1, DoubleVector(0.0, 150.0)),
-                interpolated(1, DoubleVector(0.0, 225.0)),
+                interpolated(0, explicitVec(0.0, 75.0)),
+                interpolated(1, explicitVec(0.0, 150.0)),
+                interpolated(1, explicitVec(0.0, 225.0)),
                 index(2)
             ),
             myEffectState
@@ -212,37 +214,19 @@ class GrowingPathTest {
         assertEquals(
             listOf(
                 index(0),
-                interpolated(0, DoubleVector(0.0, 100.0)),
-                interpolated(0, DoubleVector(0.0, 200.0)),
+                interpolated(0, explicitVec(0.0, 100.0)),
+                interpolated(0, explicitVec(0.0, 200.0)),
                 index(1)
             ),
             myEffectState
         )
     }
 
-    internal data class EffectState(private val endIndex: Int, private val endPoint: DoubleVector?) {
-
-        companion object {
-            fun vectorEquals(v1: DoubleVector?, v2: DoubleVector?): Boolean {
-                if (v1 == null && v2 == null) {
-                    return true
-                }
-
-                return if (v1 != null && v2 != null) {
-                    doubleEquals(v1.x, v2.x) && doubleEquals(v1.y, v2.y)
-                } else false
-
-            }
-
-            fun doubleEquals(v1: Double, v2: Double): Boolean {
-                return abs(v1 - v2) < 0.0001
-            }
-        }
-    }
+    internal data class EffectState(private val endIndex: Int, private val endPoint: Vec<Client>?)
 }
 
-private fun DoubleVector.roundDecimals(places: Int): DoubleVector {
-    return (10.ipow(places)).let { DoubleVector(x.roundDecimals(it), y.roundDecimals(it)) }
+private fun <TypeT> Vec<TypeT>.roundDecimals(places: Int): Vec<TypeT> {
+    return (10.ipow(places)).let { explicitVec(x.roundDecimals(it), y.roundDecimals(it)) }
 }
 
 private fun Double.roundDecimals(places: Int) = round(this * places) / places
