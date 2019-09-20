@@ -4,12 +4,14 @@
 
 In terminal:
     - create/activate Python environment (I use conda)
-    - cd to ..../datalore-plot/python-extension/packages
-    - build `wheel`: python setup.py bdist_wheel
-    - install wheel to Python from local dist: pip install --no-index --find-links=dist/ datalore-plot
+    - cd to datalore-plot/python-package
+    - build `wheel`:    python setup.py bdist_wheel
+    - install wheel to Python from local dist:  pip install --no-index --find-links=dist/ datalore-plot
+        If `datalore-plot` was already installed - uninstall: pip uninstall datalore-plot
+
 
 Start local web-server to serve our js scripts (from /datalore-plot/visualization-demo-plot/build/demoWeb/lib):
-    - cd to ..../datalore-plot/visualization-demo-plot/build/demoWeb/lib
+    - cd to datalore-plot/visualization-demo-plot/build/demoWeb/lib
     - python -m http.server 8080
 
 

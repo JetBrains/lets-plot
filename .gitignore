@@ -9,4 +9,5 @@ node_modules/
 package-lock.json
 
 *.egg-info
-python-extension/packages/dist
+**/dist
+venv
