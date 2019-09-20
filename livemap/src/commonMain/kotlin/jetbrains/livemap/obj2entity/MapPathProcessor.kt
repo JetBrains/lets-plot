@@ -2,7 +2,7 @@ package jetbrains.livemap.obj2entity
 
 
 import jetbrains.datalore.maps.cell.mapobjects.MapPath
-import jetbrains.datalore.maps.livemap.entities.geometry.Renderers
+import jetbrains.datalore.maps.livemap.entities.geometry.Renderers.PathRenderer
 import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.animation.Animation
@@ -11,7 +11,8 @@ import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.effects.GrowingPath
+import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
+import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.LonLatGeometry
 import jetbrains.livemap.entities.geometry.WorldGeometry
@@ -23,7 +24,6 @@ import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil.transformMultipolygon
-import kotlin.collections.Map.Entry
 
 
 internal class MapPathProcessor(
@@ -63,7 +63,7 @@ internal class MapPathProcessor(
 
             GeometryUtil.bbox(coordinates.asMultipolygon())?.let { bbox ->
                 val pathEntity = myFactory
-                    .createMapEntity(bbox.origin, SIMPLE_RENDERER, "map_ent_path")
+                    .createMapEntity(bbox.origin, PathRenderer(), "map_ent_path")
                     .addComponent(WorldGeometryComponent().apply {
                         geometry = coordinates
                     })
@@ -84,8 +84,8 @@ internal class MapPathProcessor(
     }
 
     private fun processAnimation() {
-        for (entry in myObjectsMap.entries) {
-            if (mapPath(entry).animation == 2) {
+        for ((mapPath, entity) in myObjectsMap.entries) {
+            if (mapPath.animation == 2) {
 
                 val animation = myComponentManager
                     .createEntity("map_ent_path_animation")
@@ -98,24 +98,10 @@ internal class MapPathProcessor(
                         }
                     )
 
-                entity(entry)
-                    .setComponent(RendererComponent(GrowingPath.GrowingPathRenderer()))
-                    .addComponent(GrowingPath.GrowingPathEffectComponent().setAnimationId(animation.id))
+                entity
+                    .setComponent(RendererComponent(GrowingPathRenderer()))
+                    .addComponent(GrowingPathEffectComponent().apply { animationId = animation.id })
             }
         }
     }
-
-    companion object {
-        private val SIMPLE_RENDERER = Renderers.PathRenderer()
-
-        private fun mapPath(entry: Entry<MapPath, EcsEntity>): MapPath {
-            return entry.key
-        }
-
-        private fun entity(entry: Entry<MapPath, EcsEntity>): EcsEntity {
-            return entry.value
-        }
-    }
-
-
 }

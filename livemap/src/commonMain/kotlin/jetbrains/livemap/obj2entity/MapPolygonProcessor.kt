@@ -1,6 +1,6 @@
 package jetbrains.livemap.obj2entity
 
-import jetbrains.datalore.maps.livemap.entities.geometry.Renderers
+import jetbrains.datalore.maps.livemap.entities.geometry.Renderers.PolygonRenderer
 import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -26,12 +26,11 @@ internal class MapPolygonProcessor(
     private val toMapProjection: (LonLatGeometry) -> WorldGeometry
 
     init {
-        myFactory = Entities.MapEntityFactory(
-            componentManager
-                .createEntity("map_layer_polygon")
-                .addComponent(layerManager.createRenderLayerComponent("geom_polygon"))
-                .addComponent(myLayerEntitiesComponent)
-        )
+        componentManager
+            .createEntity("map_layer_polygon")
+            .addComponent(layerManager.createRenderLayerComponent("geom_polygon"))
+            .addComponent(myLayerEntitiesComponent)
+            .run { myFactory = Entities.MapEntityFactory(this) }
 
         toMapProjection = { geometry ->
             geometry.asMultipolygon()
@@ -41,19 +40,17 @@ internal class MapPolygonProcessor(
     }
 
     fun process(mapObjects: List<MapObject>) {
-        createEntities(mapObjects)
-    }
+        for (mapObject in mapObjects) {
+            val mapPolygon = mapObject as MapPolygon
 
-    private fun createEntities(mapObjects: List<MapObject>) {
-        for (`object` in mapObjects) {
-            val mapPolygon = `object` as MapPolygon
-
-            if (mapPolygon.geometry != null) {
-                createStaticEntity(mapPolygon)
-            } else if (mapPolygon.regionId != null) {
-//                createDynamicEntity(mapPolygon)
-            } else {
-                // do not create entities for empty geometries
+            when {
+                mapPolygon.geometry != null -> createStaticEntity(mapPolygon)
+                mapPolygon.regionId != null -> {
+                    //                createDynamicEntity(mapPolygon)
+                }
+                else -> {
+                    // do not create entities for empty geometries
+                }
             }
         }
     }
@@ -63,7 +60,7 @@ internal class MapPolygonProcessor(
         val bbox = GeometryUtil.bbox(geometry.asMultipolygon()) ?: error("")
 
         val geometryEntity = myFactory
-            .createMapEntity(bbox.origin, SIMPLE_RENDERER, "map_ent_spolygon")
+            .createMapEntity(bbox.origin, PolygonRenderer(), "map_ent_spolygon")
             .addComponent(WorldGeometryComponent().apply { this.geometry = geometry } )
             .addComponent(WorldDimensionComponent(bbox.dimension))
             .addComponent(ScaleComponent())
@@ -80,7 +77,7 @@ internal class MapPolygonProcessor(
 
 //    private fun createDynamicEntity(mapPolygon: MapPolygon) {
 //        val regionEntity = myFactory
-//            .createDynamicMapEntity("map_ent_dpolygon_" + mapPolygon.regionId, FRAGMENTS_RENDERER)
+//            .createDynamicMapEntity("map_ent_dpolygon_" + mapPolygon.regionId, RegionRenderer())
 //            .addComponent(RegionComponent().apply { id = mapPolygon.regionId })
 //            .addComponent(
 //                StyleComponent().apply {
@@ -93,9 +90,4 @@ internal class MapPolygonProcessor(
 //        regionEntity.get<ScreenLoopComponent>().origins = listOf(ZERO_CLIENT_POINT)
 //        myLayerEntitiesComponent.add(regionEntity.id)
 //    }
-
-    companion object {
-        private val SIMPLE_RENDERER = Renderers.PolygonRenderer()
-        // private val FRAGMENTS_RENDERER = RegionRenderer()
-    }
 }
