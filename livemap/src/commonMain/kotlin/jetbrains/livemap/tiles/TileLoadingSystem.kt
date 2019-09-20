@@ -7,9 +7,7 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.core.multitasking.MicroTask
-import jetbrains.livemap.core.multitasking.MicroTaskUtil
-import jetbrains.livemap.core.multitasking.MicroThreadComponent
+import jetbrains.livemap.core.multitasking.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities.mapEntity
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
@@ -57,9 +55,7 @@ class TileLoadingSystem(
         myDonorTileCalculators = createDonorTileCalculators()
 
         val requestTiles = HashSet(
-            getSingletonEntity(CellStateComponent::class)
-                .getComponent<CellStateComponent>()
-                .requestCells
+            getSingletonComponent<CellStateComponent>().requestCells
         )
 
         getEntities(CellComponent::class).forEach { cellEntity ->
@@ -119,40 +115,30 @@ class TileLoadingSystem(
             entity.addComponent(microThreadComponent)
         }
 
-        downloadedEntities.forEach { entity -> entity.removeComponent(TileResponseComponent::class) }
+        downloadedEntities.forEach { it.remove<TileResponseComponent>() }
     }
 
     private fun createTileLayerEntities(cellKey: CellKey) {
         val zoom = cellKey.length
-
-        val cellMapRect = getTileRect(myMapRect, cellKey.toString())
+        val tileRect = getTileRect(myMapRect, cellKey.toString())
 
         for (layer in getEntities(CellLayerComponent::class)) {
             val layerKind = layer.get<CellLayerComponent>().layerKind
 
-            val donorTile = calculateDonorTile(layerKind, cellKey)
-
             val parentLayerComponent = ParentLayerComponent(layer.id)
             val name = "tile_${layerKind}_$cellKey"
             val tileLayerEntity =
-                mapEntity(componentManager, cellMapRect.origin, parentLayerComponent, NULL_RENDERER, name)
-                    .addComponent(ScreenDimensionComponent().apply {
-                        dimension = world2Screen(cellMapRect.dimension, zoom.toDouble())
-                    })
+                mapEntity(componentManager, tileRect.origin, parentLayerComponent, NULL_RENDERER, name)
+                    .addComponent(ScreenDimensionComponent().apply { dimension = world2Screen(tileRect.dimension, zoom) })
                     .addComponent(CellComponent(cellKey))
                     .addComponent(KindComponent(layerKind))
-                    .addComponent(RendererCacheComponent().apply {
-                        renderer = getRenderer(layer)
-                    })
-
-            when {
-                layer.contains(DebugCellLayerComponent::class) ->
-                    tileLayerEntity.addComponent(DebugDataComponent())
-                else ->
-                    tileLayerEntity.addComponent(TileComponent().apply {
-                        tile = donorTile
-                    })
-            }
+                    .addComponent(RendererCacheComponent().apply { renderer = getRenderer(layer) })
+                    .addComponent(
+                        when {
+                            layer.contains<DebugCellLayerComponent>() -> DebugDataComponent()
+                            else -> TileComponent().apply { tile = calculateDonorTile(layerKind, cellKey) }
+                        }
+                    )
 
             layer.get<LayerEntitiesComponent>().add(tileLayerEntity.id)
         }

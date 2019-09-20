@@ -8,6 +8,8 @@ import jetbrains.gis.tileprotocol.TileGeometryParser
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
+import jetbrains.livemap.core.multitasking.flatMap
+import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.entities.geometry.GeometryTransform
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.Client
@@ -21,8 +23,8 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
 
         val result = HashMap<String, List<TileFeature>>()
 
-        val microThreads = tileData.map { tileLayer ->
-            parseTileLayer(tileLayer, transform)
+        val microThreads = tileData
+            .map { tileLayer -> parseTileLayer(tileLayer, transform)
                 .map { result[tileLayer.name] = it }
         }
 
@@ -49,23 +51,24 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
                 repeat(tileGeometries.size) {
                     val geometry = tileGeometries[it]
                     microThreads.add(
-                        GeometryTransform.resampling(geometry, transform).map { worldMultiPolygon: TileGeometry<Client> ->
-                            tileFeatures.add(
-                                TileFeature(
-                                    worldMultiPolygon,
-                                    tileLayer.kinds.getOrNull(it),
-                                    tileLayer.subs.getOrNull(it),
-                                    tileLayer.labels.getOrNull(it),
-                                    tileLayer.shorts.getOrNull(it)
+                        GeometryTransform.resampling(geometry, transform)
+                            .map { worldMultiPolygon: TileGeometry<Client> ->
+                                tileFeatures.add(
+                                    TileFeature(
+                                        worldMultiPolygon,
+                                        tileLayer.kinds.getOrNull(it),
+                                        tileLayer.subs.getOrNull(it),
+                                        tileLayer.labels.getOrNull(it),
+                                        tileLayer.shorts.getOrNull(it)
+                                    )
                                 )
-                            )
-
-                            return@map
-                        }
+                                return@map
+                            }
                     )
                 }
-
-                MicroTaskUtil.join(microThreads).map<List<TileFeature>> { tileFeatures }
+                MicroTaskUtil
+                    .join(microThreads)
+                    .map<Unit, List<TileFeature>> { tileFeatures }
             }
     }
 

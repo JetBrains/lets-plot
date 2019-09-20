@@ -82,6 +82,7 @@ class EcsEntity internal constructor(
     }
 
     inline fun <reified T : EcsComponent> getComponent(): T  = get()
+    inline fun <reified T: EcsComponent> contains() = contains(T::class)
     inline fun <reified T: EcsComponent> remove() = apply { removeComponent(T::class) }
     inline fun <reified T : EcsComponent> tag(supplier: () -> T) = provide(supplier)
     inline fun <reified T : EcsComponent> untag() = removeComponent(T::class)

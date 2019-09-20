@@ -10,6 +10,7 @@ import jetbrains.gis.tileprotocol.mapConfig.MapConfig
 import jetbrains.gis.tileprotocol.mapConfig.Rule
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
+import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.components.CellLayerKind
 
@@ -68,28 +69,31 @@ internal class TileDataRendererImpl(
         zoom: Int
     ): Collection<() -> Unit> {
         val mapConfig = myMapConfigSupplier()
+        if (mapConfig == null) {
+            return emptyList()
+        }
+
         val tasks = ArrayList<() -> Unit>()
         val labelBounds = ArrayList<DoubleRectangle>()
 
-        mapConfig?.run {
-            for (layerName in getLayersByZoom(zoom)) {
-                val rules = getLayerConfig(layerName).getRules(layerKind.toString()).flatten()
-                val featuresByRule = getFeaturesByRule(zoom, tileFeatures[layerName]!!, rules)
 
-                for (rule in rules) {
-                    tasks.add(ctx::save)
+        for (layerName in mapConfig.getLayersByZoom(zoom)) {
+            val rules = mapConfig.getLayerConfig(layerName).getRules(layerKind.toString()).flatten()
+            val featuresByRule = getFeaturesByRule(zoom, tileFeatures[layerName]!!, rules)
 
-                    val symbolizer = Symbolizer.create(rule.style, labelBounds)
-                    tasks.add { symbolizer.applyTo(ctx) }
+            for (rule in rules) {
+                tasks.add(ctx::save)
 
-                    featuresByRule
-                        .getOrElse(rule, ::emptyList)
-                        .forEach { feature ->
-                            symbolizer.createDrawTasks(ctx, feature).forEach { tasks.add(it) }
-                        }
+                val symbolizer = Symbolizer.create(rule.style, labelBounds)
+                tasks.add { symbolizer.applyTo(ctx) }
 
-                    tasks.add(ctx::restore)
-                }
+                featuresByRule
+                    .getOrElse(rule, ::emptyList)
+                    .forEach { feature ->
+                        symbolizer.createDrawTasks(ctx, feature).forEach { tasks.add(it) }
+                    }
+
+                tasks.add(ctx::restore)
             }
         }
 

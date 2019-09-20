@@ -29,14 +29,14 @@ class SchedulerSystemTest : LiveMapTestBase() {
             Mocks.scheduler(this).frameTime()
         )
 
-        assertTrue { getEntity(SINGLE_IT).contains(MicroThreadComponent::class) }
+        assertTrue { getEntity(SINGLE_IT).contains<MicroThreadComponent>() }
 
         update(
             microThread(this).finished(SINGLE_IT),
             Mocks.scheduler(this).runAll()
         )
 
-        assertTrue { !getEntity(SINGLE_IT).contains(MicroThreadComponent::class) }
+        assertTrue { !getEntity(SINGLE_IT).contains<MicroThreadComponent>() }
     }
 
     fun microThread(testBase: LiveMapTestBase) = MicroThreadSpec(testBase)

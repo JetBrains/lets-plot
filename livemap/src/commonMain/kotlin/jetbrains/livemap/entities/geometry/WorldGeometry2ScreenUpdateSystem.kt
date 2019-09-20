@@ -10,7 +10,9 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
+import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
+import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.scaling.ScaleComponent
@@ -37,7 +39,7 @@ class WorldGeometry2ScreenUpdateSystem(
             }
             .map { screenMultipolygon ->
                 runLaterBySystem(entity) { theEntity ->
-                    ParentLayerComponent.tagDirtyParentLayer(theEntity)
+                    tagDirtyParentLayer(theEntity)
                     theEntity.provide(::ScreenGeometryComponent).apply {
                         geometry = ClientGeometry.create(screenMultipolygon)
                         this.zoom = zoom

@@ -16,7 +16,7 @@ class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) :
             for (worldEntity in getEntities(COMPONENT_TYPES)) {
                 worldEntity.get<WorldDimensionComponent>()
                     .dimension
-                    .let { world2Screen(it, camera().zoom) }
+                    .let { world2Screen(it, camera().zoom.toInt()) }
                     .let { worldEntity.provide(::ScreenDimensionComponent).dimension = it }
                 
                 ParentLayerComponent.tagDirtyParentLayer(worldEntity)
@@ -32,8 +32,8 @@ class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) :
             ParentLayerComponent::class
         )
 
-        fun world2Screen(p: WorldPoint, zoom: Double): ClientPoint {
-            return WorldProjection(zoom.toInt()).project(p)
+        fun world2Screen(p: WorldPoint, zoom: Int): ClientPoint {
+            return WorldProjection(zoom).project(p)
         }
     }
 }

@@ -16,24 +16,26 @@ class SyncMicroTaskExecutor(
 
         var enoughTime = true
         while (enoughTime && tasks.isNotEmpty()) {
-            val it = tasks.iterator()
-            while (it.hasNext()) {
+            val taskIterator = tasks.iterator()
+            while (taskIterator.hasNext()) {
                 if (myClock.systemTime.getTimeMs() - myClock.updateStartTime > myUpdateTimeLimit) {
                     enoughTime = false
                     break
                 }
 
-                val task = it.next()
-                var iterations = task.quantumIterations
-                val microThread = task.microThread
+                taskIterator.next().run {
+                    var iterations = quantumIterations
 
-                while (iterations-- > 0 && microThread.alive()) {
-                    microThread.resume()
-                }
+                    if (microThread is MicroTask<*>) {
+                        while (iterations-- > 0 && microThread.alive()) {
+                            microThread.resume()
+                        }
 
-                if (!microThread.alive()) {
-                    finishedTasks.add(task)
-                    it.remove()
+                        if (!microThread.alive()) {
+                            finishedTasks.add(this)
+                            taskIterator.remove()
+                        }
+                    }
                 }
             }
         }

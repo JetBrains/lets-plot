@@ -9,6 +9,7 @@ import jetbrains.datalore.base.projectionGeometry.TileGeometry.Companion.createM
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.reinterpret
 import jetbrains.livemap.core.multitasking.MicroTask
+import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.projections.AdaptiveResampling
 import jetbrains.livemap.projections.ProjectionUtil.SAMPLING_EPSILON
 

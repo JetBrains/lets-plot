@@ -13,7 +13,9 @@ import jetbrains.livemap.core.rendering.layers.RenderLayer
 import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.Text
-import jetbrains.livemap.entities.regions.Components
+import jetbrains.livemap.entities.regions.Components.CachedFragmentsComponent
+import jetbrains.livemap.entities.regions.Components.DownloadingFragmentsComponent
+import jetbrains.livemap.entities.regions.Components.StreamingFragmentsComponent
 import jetbrains.livemap.ui.UiService
 
 open class Diagnostics {
@@ -172,7 +174,11 @@ open class Diagnostics {
 
             override fun update() {
                 val size =
-                    componentManager.getSingletonComponent<Components.CachedFragmentsComponent>().keys().size
+                    if (componentManager.containsSingletonEntity(CachedFragmentsComponent::class))
+                        componentManager.getSingletonComponent<CachedFragmentsComponent>().keys().size
+                    else
+                        0
+
                 debugService.setValue(FRAGMENTS_CACHE, "Fragments cache: $size")
             }
         }
@@ -181,7 +187,10 @@ open class Diagnostics {
 
             override fun update() {
                 val size =
-                    componentManager.getSingletonComponent<Components.StreamingFragmentsComponent>().keys().size
+                    if (componentManager.containsSingletonEntity(StreamingFragmentsComponent::class))
+                        componentManager.getSingletonComponent<StreamingFragmentsComponent>().keys().size
+                    else
+                        0
                 debugService.setValue(STREAMING_FRAGMENTS, "Streaming fragments: $size")
             }
         }
@@ -189,12 +198,18 @@ open class Diagnostics {
         internal inner class DownloadingFragmentsDiagnostic : Diagnostic {
 
             override fun update() {
-                val downloadingFragmentsComponent =
-                    componentManager.getSingletonComponent<Components.DownloadingFragmentsComponent>()
-                val downloading = downloadingFragmentsComponent.downloading.size
-                var queued = 0
-                for (queue in downloadingFragmentsComponent.queue.values) {
-                    queued += queue.size
+                val downloading: Int
+                val queued: Int
+
+                if (componentManager.containsSingletonEntity(DownloadingFragmentsComponent::class)) {
+                    componentManager.getSingletonComponent<DownloadingFragmentsComponent>().let {
+                        downloading = it.downloading.size
+                        queued = it.queue.values.sumBy { queue -> queue.size }
+                    }
+
+                } else {
+                    downloading = 0
+                    queued = 0
                 }
 
                 debugService.setValue(DOWNLOADING_FRAGMENTS, "Downloading fragments: D: $downloading Q: $queued")

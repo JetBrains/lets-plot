@@ -15,17 +15,17 @@ class SchedulerSystem(private val microTaskExecutor: MicroTaskExecutor, componen
 
     override fun updateImpl(context: EcsContext, dt: Double) {
         if (componentManager.getComponentsCount(MicroThreadComponent::class) > 0) {
-            val microThreadEntities = getEntities(MicroThreadComponent::class).toList()
-            val tasks = HashSet<MicroThreadComponent>()
-            microThreadEntities.forEach { tasks.add(it.get<MicroThreadComponent>()) }
+            val microThreadEntities = getEntities(MicroThreadComponent::class).toList().asSequence()
 
-            val finishedTasks = microTaskExecutor.updateAndGetFinished(tasks)
+            val finishedTasks = microThreadEntities
+                .map { it.get<MicroThreadComponent>() }
+                .toHashSet()
+                .run (microTaskExecutor::updateAndGetFinished)
 
-            microThreadEntities.forEach {
-                if (finishedTasks.contains(it.get<MicroThreadComponent>())) {
-                    it.removeComponent(MicroThreadComponent::class)
-                }
-            }
+
+            microThreadEntities
+                .filter { it.get<MicroThreadComponent>() in finishedTasks }
+                .forEach {it.remove<MicroThreadComponent>() }
 
             loading = context.systemTime.getTimeMs() - context.updateStartTime
         } else {
