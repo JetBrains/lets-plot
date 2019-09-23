@@ -8,11 +8,15 @@ import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.LonLatGeometry
 import jetbrains.livemap.entities.geometry.WorldGeometry
+import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
+import jetbrains.livemap.entities.regions.RegionComponent
+import jetbrains.livemap.entities.regions.RegionRenderer
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.scaling.ScaleComponent
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.mapobjects.MapPolygon
+import jetbrains.livemap.projections.Coordinates.Companion.ZERO_CLIENT_POINT
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil
 
@@ -45,9 +49,7 @@ internal class MapPolygonProcessor(
 
             when {
                 mapPolygon.geometry != null -> createStaticEntity(mapPolygon)
-                mapPolygon.regionId != null -> {
-                    //                createDynamicEntity(mapPolygon)
-                }
+                mapPolygon.regionId != null -> createDynamicEntity(mapPolygon)
                 else -> {
                     // do not create entities for empty geometries
                 }
@@ -75,19 +77,19 @@ internal class MapPolygonProcessor(
         myLayerEntitiesComponent.add(geometryEntity.id)
     }
 
-//    private fun createDynamicEntity(mapPolygon: MapPolygon) {
-//        val regionEntity = myFactory
-//            .createDynamicMapEntity("map_ent_dpolygon_" + mapPolygon.regionId, RegionRenderer())
-//            .addComponent(RegionComponent().apply { id = mapPolygon.regionId })
-//            .addComponent(
-//                StyleComponent().apply {
-//                    setFillColor(mapPolygon.fillColor)
-//                    setStrokeColor(mapPolygon.strokeColor)
-//                    setStrokeWidth(mapPolygon.strokeWidth)
-//                }
-//            )
-//
-//        regionEntity.get<ScreenLoopComponent>().origins = listOf(ZERO_CLIENT_POINT)
-//        myLayerEntitiesComponent.add(regionEntity.id)
-//    }
+    private fun createDynamicEntity(mapPolygon: MapPolygon) {
+        val regionEntity = myFactory
+            .createDynamicMapEntity("map_ent_dpolygon_" + mapPolygon.regionId, RegionRenderer())
+            .addComponent(RegionComponent().apply { id = mapPolygon.regionId })
+            .addComponent(
+                StyleComponent().apply {
+                    setFillColor(mapPolygon.fillColor)
+                    setStrokeColor(mapPolygon.strokeColor)
+                    setStrokeWidth(mapPolygon.strokeWidth)
+                }
+            )
+
+        regionEntity.get<ScreenLoopComponent>().origins = listOf(ZERO_CLIENT_POINT)
+        myLayerEntitiesComponent.add(regionEntity.id)
+    }
 }
