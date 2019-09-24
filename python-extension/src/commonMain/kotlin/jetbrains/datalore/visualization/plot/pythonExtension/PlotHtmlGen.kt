@@ -110,28 +110,28 @@ object PlotHtmlGen {
     <div id="$plotOutputId"</div>
 
 
-    <script type="text/javascript">
-    requirejs.config({
-        paths: {
-            'kotlin': "$baseUrl/kotlin",
-            'kotlin-logging': "$baseUrl/kotlin-logging",                   
-            'datalore-plot-base-portable': "$baseUrl/datalore-plot-base-portable",      
-            'datalore-plot-base': "$baseUrl/datalore-plot-base",               
-            'mapper-core': "$baseUrl/mapper-core",                      
-            'visualization-base-svg': "$baseUrl/visualization-base-svg",           
-            'visualization-base-svg-mapper': "$baseUrl/visualization-base-svg-mapper",    
-            'visualization-base-canvas': "$baseUrl/visualization-base-canvas",        
-            'visualization-plot-common-portable': "$baseUrl/visualization-plot-common-portable",
-            'visualization-plot-common': "$baseUrl/visualization-plot-common",        
-            'visualization-plot-base-portable': "$baseUrl/visualization-plot-base-portable",  
-            'visualization-plot-base': "$baseUrl/visualization-plot-base",          
-            'visualization-plot-builder-portable': "$baseUrl/visualization-plot-builder-portable",
-            'visualization-plot-builder': "$baseUrl/visualization-plot-builder",       
-            'visualization-plot-config-portable': "$baseUrl/visualization-plot-config-portable",
-            'visualization-plot-config': "$baseUrl/visualization-plot-config"        
-        }
-    });
-</script>
+<!--    <script type="text/javascript"> 
+//    requirejs.config({
+//        paths: {
+//            'kotlin': "$baseUrl/kotlin",
+//            'kotlin-logging': "$baseUrl/kotlin-logging",                   
+//            'datalore-plot-base-portable': "$baseUrl/datalore-plot-base-portable",      
+//            'datalore-plot-base': "$baseUrl/datalore-plot-base",               
+//            'mapper-core': "$baseUrl/mapper-core",                      
+//            'visualization-base-svg': "$baseUrl/visualization-base-svg",           
+//            'visualization-base-svg-mapper': "$baseUrl/visualization-base-svg-mapper",    
+//            'visualization-base-canvas': "$baseUrl/visualization-base-canvas",        
+//            'visualization-plot-common-portable': "$baseUrl/visualization-plot-common-portable",
+//            'visualization-plot-common': "$baseUrl/visualization-plot-common",        
+//            'visualization-plot-base-portable': "$baseUrl/visualization-plot-base-portable",  
+//            'visualization-plot-base': "$baseUrl/visualization-plot-base",          
+//            'visualization-plot-builder-portable': "$baseUrl/visualization-plot-builder-portable",
+//            'visualization-plot-builder': "$baseUrl/visualization-plot-builder",       
+//            'visualization-plot-config-portable': "$baseUrl/visualization-plot-config-portable",
+//            'visualization-plot-config': "$baseUrl/visualization-plot-config"        
+//        }
+//    });
+</script>    -->
     
     <script type="text/javascript">var plotSpecList=[
 {

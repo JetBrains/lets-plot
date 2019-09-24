@@ -13,12 +13,12 @@ kotlin_binaries_macosX64 = os.path.join(root_dir, 'python-extension', 'build', '
 
 
 def update_js():
-    js_relative_path = ['build', 'classes', 'kotlin', 'js', 'main']
-    js_projects = [
-        # 'kotlin',
-        # 'kotlin-logging',
-        # 'datalore-plot-base-portable',
-        # 'datalore-plot-base',
+    js_relative_path = ['visualization-demo-plot', 'build', 'demoWeb', 'lib']
+    js_libs = [
+        'kotlin',
+        'kotlin-logging',
+        'datalore-plot-base-portable',
+        'datalore-plot-base',
         'mapper-core',
         'visualization-base-svg',
         'visualization-base-svg-mapper',
@@ -33,14 +33,10 @@ def update_js():
         'visualization-plot-config',
     ]
 
-    def js_module_prefix(project_name):
-        return 'datalore-plot-' if project_name in ['base', 'base-portable'] else ''
-
     from shutil import copy
 
-    for prj in js_projects:
-        js_name = js_module_prefix(prj) + prj + '.js'
-        js_path = os.path.join(root_dir, prj, *js_relative_path, js_name)
+    for lib in js_libs:
+        js_path = os.path.join(root_dir, *js_relative_path, lib + '.js')
 
         dst_dir = os.path.join(this_dir, 'datalore', 'package_data')
         if not os.path.isdir(dst_dir):
