@@ -17,6 +17,8 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
 
+                // (!) only `portable` sources
+                implementation project(':base-portable')
                 implementation project(':visualization-plot-config-portable')
             }
         }
