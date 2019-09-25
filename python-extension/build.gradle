@@ -10,6 +10,12 @@ kotlin {
                 baseName = "datalore-plot-${project.name}"
             }
         }
+
+        compilations.main.cinterops {
+            python {
+                //compilerOpts "-I$System.env.PYTHON_INCLUDE"
+            }
+        }
     }
 
     sourceSets {

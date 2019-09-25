@@ -1,15 +1,10 @@
 package jetbrains.datalore.visualization.plot.pythonExtension
 
-import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide
-
 class SampleBarPlot {
 
     fun getHTML(): String {
-        var plotSpec = plotSpecMap()
-        // server-side transforms: statistics, sampling, etc.
-        plotSpec = PlotConfigServerSide.processTransform(plotSpec)
-
-        return PlotHtmlGen.getHtml(plotSpec)
+        val plotSpec = plotSpecMap()
+        return PlotHtmlGen.applyToRawSpecs(plotSpec)
     }
 
     private companion object {

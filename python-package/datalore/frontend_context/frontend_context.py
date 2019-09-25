@@ -57,8 +57,7 @@ class JupyterNotebookContext(FrontendContext):
 
     def as_str(self, plot_spec: Dict) -> str:
         import datalore_plot_kotlin_bridge
-        return datalore_plot_kotlin_bridge.generate_html()
-        # return '<p>***plot***</p>'
+        return datalore_plot_kotlin_bridge.generate_html(plot_spec)
 
     def configure(self):
         display_html(self._undef_modules_script(), raw=True)

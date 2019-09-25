@@ -1,5 +1,7 @@
 - Jupyter must be installed in Python environment (IPython.display is required)
 
+- edit paths to python in python-extension/src/nativeInterop/cinterop/python.def
+
 - build project (gradle)
 
 In terminal:

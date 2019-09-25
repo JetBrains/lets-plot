@@ -4,7 +4,7 @@
 
 
 #define __ libdatalore_plot_python_extension_symbols()->
-#define T_(name) libdatalore_plot_python_extension_kref_jetbrains_datalore_visualization_plot_pythonExtension_ ## name
+#define T_(name) libdatalore_plot_python_extension_kref_jetbrains_datalore_visualization_plot_pythonExtension_interop_ ## name
 
 // Note, that as we cache this in the global, and Kotlin/Native object references
 // are currently thread local, we make this global a TLS variable.
@@ -19,21 +19,24 @@
 //    return result;
 //}
 
-static PyObject* generate_html(PyObject* self) {
-    T_(SampleBarPlot) sampleBarPlot = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.SampleBarPlot.SampleBarPlot();
-    const char* html = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.SampleBarPlot.getHTML(sampleBarPlot);
-    __ DisposeStablePointer(sampleBarPlot.pinned);
+//static PyObject* generate_html_sample(PyObject* self) {
+//    T_(SampleBarPlot) sampleBarPlot = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.SampleBarPlot.SampleBarPlot();
+//    const char* html = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.SampleBarPlot.getHTML(sampleBarPlot);
+//    __ DisposeStablePointer(sampleBarPlot.pinned);
+//
+//
+//    PyObject* result = Py_BuildValue("s", html);
+//    return result;
+//}
 
-
-//    PyObject* result = Py_BuildValue("s", "Hello from datalore_plot_kotlin_bridge.generate_html()");
-    PyObject* result = Py_BuildValue("s", html);
-    return result;
+static PyObject* generate_html(PyObject* self, PyObject* plotSpecDict) {
+    T_(PlotHtmlGenProxy) htmlGen = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.interop.PlotHtmlGenProxy._instance();
+    PyObject* html = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.interop.PlotHtmlGenProxy.applyToRawSpecs(htmlGen, plotSpecDict);
+    return html;
 }
 
-
 static PyMethodDef module_methods[] = {
-//   { "ping", (PyCFunction)ping, METH_NOARGS, "Just for test" },
-   { "generate_html", (PyCFunction)generate_html, METH_NOARGS, "Show sample plot" },
+   { "generate_html", (PyCFunction)generate_html, METH_O, "Generates HTML representing plot" },
    { NULL }
 };
 
