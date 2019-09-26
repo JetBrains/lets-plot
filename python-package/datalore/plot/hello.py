@@ -35,10 +35,10 @@ def plotgg():
     # # display_object = html_data
     # display(display_object)
 
-    return PlotSpec()
+    return _HelloPlotSpec()
 
 
-class PlotSpec:
+class _HelloPlotSpec:
     def _repr_html_(self):
         # called by IPython.display.display
         from ..frontend_context.frontend_context import as_html
