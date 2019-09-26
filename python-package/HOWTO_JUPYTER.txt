@@ -7,7 +7,7 @@
 In terminal:
     - create/activate Python environment (I use conda)
     - cd to datalore-plot/python-package
-    - copy all JS to package data:  setup.py updatejs
+    - copy all JS to package data: python setup.py updatejs
     - build `wheel`:    python setup.py bdist_wheel
     - install wheel to Python from local dist:  pip install --no-index --find-links=dist/ datalore-plot
         If `datalore-plot` was already installed - uninstall: pip uninstall datalore-plot
