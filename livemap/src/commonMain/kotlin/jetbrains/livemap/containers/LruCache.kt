@@ -11,6 +11,10 @@ class LruCache<K, E>(private val limit: Int) {
 
     operator fun get(key: K): E? {
         val index = linked.indexOf(key)
+        if (index == -1) {
+            return null
+        }
+
         linked.remove(index)
         linked.prepend(key)
 

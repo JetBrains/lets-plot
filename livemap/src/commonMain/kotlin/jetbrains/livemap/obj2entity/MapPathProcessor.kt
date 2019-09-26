@@ -1,7 +1,6 @@
 package jetbrains.livemap.obj2entity
 
 
-import jetbrains.datalore.maps.cell.mapobjects.MapPath
 import jetbrains.datalore.maps.livemap.entities.geometry.Renderers.PathRenderer
 import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.gis.geoprotocol.GeometryUtil
@@ -22,6 +21,7 @@ import jetbrains.livemap.entities.rendering.RendererComponent
 import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.mapobjects.MapObject
+import jetbrains.livemap.mapobjects.MapPath
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil.transformMultipolygon
 

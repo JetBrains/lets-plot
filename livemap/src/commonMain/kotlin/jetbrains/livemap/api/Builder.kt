@@ -7,7 +7,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.maps.cell.mapobjects.MapPath
 import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.tileprotocol.TileLayer
@@ -186,13 +185,14 @@ class PathBuilder {
 
         return MapPath(
             index!!, mapId, regionId,
-            animation!!, speed!!, flow!!,
-            lineDash!!, strokeColor!!, strokeWidth!!,
             coord
-                .let { LonLatRing(it) }
-                .let { LonLatPolygon(listOf(it)) }
-                .let { LonLatMultiPolygon(listOf(it)) }
-                .let { LonLatGeometry.create(it) }
+                .run { LonLatRing(this) }
+                .run { LonLatPolygon(listOf(this)) }
+                .run { LonLatMultiPolygon(listOf(this)) }
+                .run { LonLatGeometry.create(this) },
+            animation!!, speed!!,
+            flow!!, lineDash!!, strokeColor!!,
+            strokeWidth!!
         )
     }
 }
@@ -217,11 +217,12 @@ class PolygonsBuilder {
             index!!, mapId, regionId,
             lineDash!!, strokeColor!!, strokeWidth!!,
             fillColor!!,
-            coordinates!!
-                .run { listOf(Ring(this)) }
-                .run { listOf(Polygon(this)) }
-                .run { MultiPolygon(this) }
-                .run(TypedGeometry.Companion::create)
+            coordinates
+                ?.run { listOf(Ring(this)) }
+                ?.run { listOf(Polygon(this)) }
+                ?.run { MultiPolygon(this) }
+                ?.run(TypedGeometry.Companion::create)
+
         )
     }
 }
@@ -243,8 +244,8 @@ class LineBuilder {
 
         return MapLine(
             index!!, mapId, regionId,
-            lineDash!!, strokeColor!!, strokeWidth!!,
-            explicitVec<LonLat>(lon!!, lat!!)
+            explicitVec(lon!!, lat!!), lineDash!!, strokeColor!!,
+            strokeWidth!!
         )
     }
 }
@@ -269,7 +270,6 @@ class TextBuilder {
     var hjust: Double = 0.0
     var vjust: Double = 0.0
     var angle: Double = 0.0
-
 
     fun build(): MapText {
         return MapText(
@@ -368,6 +368,18 @@ class LiveMapTileServiceBuilder {
     }
 }
 
+@LiveMapDsl
+class LiveMapGeocodingServiceBuilder {
+    private val subUrl = "/map_data/geocoding"
+
+    var host = "localhost" // "https://geoserver.jetbrains-boston.com"
+    var port = 3010
+
+    fun build(): GeocodingService {
+        return GeocodingService(GeoTransportImpl(host + subUrl))
+    }
+}
+
 fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
 
 fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
@@ -443,6 +455,10 @@ fun internalTiles(block: LiveMapTileServiceBuilder.() -> Unit): TileService {
 }
 
 fun liveMapTiles(block: LiveMapTileServiceBuilder.() -> Unit) = LiveMapTileServiceBuilder().apply(block).build()
+
+fun liveMapGeocoding(block: LiveMapGeocodingServiceBuilder.() -> Unit): GeocodingService {
+    return LiveMapGeocodingServiceBuilder().apply(block).build()
+}
 
 val dummyGeocodingService: GeocodingService = GeocodingService(
     object : GeoTransport {

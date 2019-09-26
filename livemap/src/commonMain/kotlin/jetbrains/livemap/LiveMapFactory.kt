@@ -1,7 +1,6 @@
 package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.center
@@ -45,26 +44,26 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
 //        return LivemapTargetLocator.create(targetLocators, myViewProjection, myRegionGeometryStorage)
     }
 
-//    fun createLivemap(): Async<BaseLiveMap> {
-//        val mapDataGeocodingHelper = MapDataGeocodingHelper(
-//            myLiveMapSpec.size,
-//            myLiveMapSpec.geocodingService,
-//            myLiveMapSpec.layers,
-//            myLiveMapSpec.level,
-//            myLiveMapSpec.parent,
-//            myLiveMapSpec.location,
-//            myLiveMapSpec.zoom,
-//            myMapRuler,
-//            myMapProjection,
-//            true //for BBoxEmptinessChecker
-//        )
-//
-//        return mapDataGeocodingHelper.geocodeMapData()
-//            .map({ mapPosition -> createLivemap(mapPosition, mapDataGeocodingHelper.getRegionBBoxes()) })
-//    }
-
     override fun createLiveMap(): Async<BaseLiveMap> {
-        return Asyncs.constant(createLiveMap(2, Coordinates.ZERO_WORLD_POINT, emptyMap()))
+        val mapDataGeocodingHelper = MapDataGeocodingHelper(
+            myLiveMapSpec.size,
+            myLiveMapSpec.geocodingService,
+            myLiveMapSpec.layers,
+            myLiveMapSpec.level,
+            myLiveMapSpec.parent,
+            myLiveMapSpec.location,
+            myLiveMapSpec.zoom,
+            myMapRuler,
+            myMapProjection,
+            true //for BBoxEmptinessChecker
+        )
+
+        return mapDataGeocodingHelper.geocodeMapData()
+            .map { mapPosition ->
+                mapPosition
+                    ?.let { createLiveMap(it.zoom, it.coordinate, mapDataGeocodingHelper.regionBBoxes) }
+                    ?: error("Map position must to be not null")
+            }
     }
 
     private fun createLiveMap(zoom: Int, center: WorldPoint, regionBBoxes: Map<String, GeoRectangle>): BaseLiveMap {

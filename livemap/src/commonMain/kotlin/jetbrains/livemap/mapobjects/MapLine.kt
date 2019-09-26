@@ -9,8 +9,9 @@ class MapLine(
     mapId: String?,
     regionId: String?,
 
+    override val point: Vec<LonLat>,
+
     val lineDash: List<Double>,
     val strokeColor: Color,
-    val strokeWidth: Double,
-    val point: Vec<LonLat>
-) : MapObject(index, mapId, regionId)
+    val strokeWidth: Double
+) : MapObject(index, mapId, regionId), MapPointGeometry

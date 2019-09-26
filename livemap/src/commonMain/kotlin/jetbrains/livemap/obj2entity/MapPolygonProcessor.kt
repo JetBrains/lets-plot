@@ -6,8 +6,7 @@ import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.entities.Entities
-import jetbrains.livemap.entities.geometry.LonLatGeometry
-import jetbrains.livemap.entities.geometry.WorldGeometry
+import jetbrains.livemap.entities.geometry.toWorldGeometry
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.regions.RegionComponent
@@ -18,7 +17,6 @@ import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.mapobjects.MapPolygon
 import jetbrains.livemap.projections.Coordinates.Companion.ZERO_CLIENT_POINT
 import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.ProjectionUtil
 
 internal class MapPolygonProcessor(
     componentManager: EcsComponentManager,
@@ -27,7 +25,6 @@ internal class MapPolygonProcessor(
 ) {
     private val myFactory: Entities.MapEntityFactory
     private val myLayerEntitiesComponent = LayerEntitiesComponent()
-    private val toMapProjection: (LonLatGeometry) -> WorldGeometry
 
     init {
         componentManager
@@ -35,12 +32,6 @@ internal class MapPolygonProcessor(
             .addComponent(layerManager.createRenderLayerComponent("geom_polygon"))
             .addComponent(myLayerEntitiesComponent)
             .run { myFactory = Entities.MapEntityFactory(this) }
-
-        toMapProjection = { geometry ->
-            geometry.asMultipolygon()
-                .run { ProjectionUtil.transformMultipolygon(this, myMapProjection::project) }
-                .run { WorldGeometry.create(this) }
-        }
     }
 
     fun process(mapObjects: List<MapObject>) {
@@ -58,7 +49,7 @@ internal class MapPolygonProcessor(
     }
 
     private fun createStaticEntity(mapPolygon: MapPolygon) {
-        val geometry = toMapProjection(mapPolygon.geometry!!)
+        val geometry = mapPolygon.geometry!!.toWorldGeometry(myMapProjection)
         val bbox = GeometryUtil.bbox(geometry.asMultipolygon()) ?: error("")
 
         val geometryEntity = myFactory

@@ -28,6 +28,6 @@ interface Async<ItemT> {
      * See [A+ promise spec](https://promisesaplus.com/) for more detail.
      * This method must always create new async every time it's called.
      * Every error thrown in `success` should fail async with corresponding `Throwable`
-     */
+    */
     fun <ResultT> flatMap(success: (ItemT) -> Async<ResultT>?): Async<ResultT?>
 }

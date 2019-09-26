@@ -3,7 +3,10 @@ package jetbrains.livemap
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.normalizeLon
+import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.MapRuler
+import jetbrains.livemap.projections.ProjectionUtil
+import jetbrains.livemap.projections.World
 import kotlin.math.*
 
 object MapWidgetUtil {
@@ -120,7 +123,7 @@ object MapWidgetUtil {
         return STRAIGHT_ANGLE * rad / PI
     }
 
-    internal fun calculateMaxZoom(rectSize: DoubleVector, containerSize: DoubleVector): Int {
+    internal fun calculateMaxZoom(rectSize: Vec<World>, containerSize: DoubleVector): Int {
         val xZoom = calculateMaxZoom(rectSize.x, containerSize.x)
         val yZoom = calculateMaxZoom(rectSize.y, containerSize.y)
         val zoom = min(xZoom, yZoom)
@@ -202,5 +205,12 @@ object MapWidgetUtil {
 
             return mappingsList
         }
+    }
+
+    fun GeoRectangle.convertToWorldRects(mapProjection: MapProjection): List<Rect<World>> {
+        return splitByAntiMeridian()
+            .map { rect ->
+                ProjectionUtil.transformBBox(rect) { mapProjection.project(it) }
+            }
     }
 }

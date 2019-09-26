@@ -9,7 +9,7 @@ class MapText(
     mapId: String?,
     regionId: String?,
 
-    val point: Vec<LonLat>,
+    override val point: Vec<LonLat>,
 
     val fillColor: Color,
     val strokeColor: Color,
@@ -22,4 +22,4 @@ class MapText(
     val hjust: Double,
     val vjust: Double,
     val angle: Double
-) : MapObject(index, mapId, regionId)
+) : MapObject(index, mapId, regionId), MapPointGeometry

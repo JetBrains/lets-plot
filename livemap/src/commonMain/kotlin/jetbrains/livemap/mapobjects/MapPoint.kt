@@ -9,7 +9,8 @@ class MapPoint(
     mapId: String?,
     regionId: String?,
 
-    val point: Vec<LonLat>,
+    override var point: Vec<LonLat>,
+
     val label: String,
     val animation: Int,
 
@@ -18,4 +19,4 @@ class MapPoint(
     val fillColor: Color,
     val strokeColor: Color,
     val strokeWidth: Double
-) : MapObject(index, mapId, regionId)
+) : MapObject(index, mapId, regionId), MapPointGeometry

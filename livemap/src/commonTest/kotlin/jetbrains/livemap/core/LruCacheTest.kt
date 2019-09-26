@@ -21,4 +21,12 @@ class LruCacheTest {
 
         assertEquals(listOf(8,9,7), cache.values)
     }
+
+    @Test
+    fun getByEmptyTest() {
+        val cache = LruCache<String, Int>(1)
+        val nullResult = cache["missing"]
+
+        assertEquals(null, nullResult)
+    }
 }

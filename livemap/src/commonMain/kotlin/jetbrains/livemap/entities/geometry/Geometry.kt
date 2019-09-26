@@ -3,6 +3,8 @@ package jetbrains.livemap.entities.geometry
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.projections.Client
+import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.ProjectionUtil
 import jetbrains.livemap.projections.World
 
 typealias LonLatGeometry = TypedGeometry<LonLat>
@@ -25,3 +27,9 @@ typealias ClientGeometry = TypedGeometry<Client>
 //        fun create(points: TypedGeometry<Client>) = ClientGeometry(Geometry.create(points) as TypedGeometry<Client>)
 //    }
 //}
+
+fun LonLatGeometry.toWorldGeometry(mapProjection: MapProjection): WorldGeometry {
+    return asMultipolygon()
+        .run { ProjectionUtil.transformMultipolygon(this, mapProjection::project) }
+        .run { WorldGeometry.create(this) }
+}
