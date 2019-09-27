@@ -1,6 +1,5 @@
 import os
 import pkgutil
-import re
 from typing import Dict
 
 from IPython.display import display_html
@@ -34,8 +33,10 @@ class JupyterNotebookContext(FrontendContext):
         self.connected = connected
 
     def as_str(self, plot_spec: Dict) -> str:
-        from datalore.plot import libdatalore_plot_python_extension
-        return libdatalore_plot_python_extension.generate_html(plot_spec)
+        # from datalore.plot import libdatalore_plot_python_extension
+        # return libdatalore_plot_python_extension.generate_html(plot_spec)
+        import datalore_plot_kotlin_bridge
+        return datalore_plot_kotlin_bridge.generate_html(plot_spec)
 
     def configure(self):
         display_html(self._undef_modules_script(), raw=True)

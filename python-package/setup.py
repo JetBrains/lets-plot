@@ -3,41 +3,43 @@
 import os
 import platform
 
-from setuptools import Extension, Command
+from setuptools import Command, Extension
 from setuptools import setup, find_packages
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'datalore_plot_kotlin_bridge.c')
 
 root_dir = os.path.dirname(this_dir)
-kotlin_binaries_macosX64 = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
+# kotlin_binaries_macosX64 = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
 
 
-LIB_NAME = "libdatalore_plot_python_extension"
-MACOS_LIB_NAME = LIB_NAME + ".dylib"
-LINUX_LIB_NAME = LIB_NAME + ".so"
+# LIB_NAME = "libdatalore_plot_python_extension"
+# MACOS_LIB_NAME = LIB_NAME + ".dylib"
+# LINUX_LIB_NAME = LIB_NAME + ".so"
 
 build_paths = {
     "Linux": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'linuxX64', 'debugShared'),
-    "Darwin": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugShared')
+    "Darwin": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
 }
 
-def detect_platform():
-    platform_type = platform.system()
-    build_path = build_paths.get(platform_type, None)
-    assert build_paths is not None, "Invalid platform: " + platform_type
-    if platform_type == "Darwin":
-        src_file = build_path + "/" + MACOS_LIB_NAME
-        dest_file = build_path + "/" + LINUX_LIB_NAME
-        if os.path.isfile(src_file):
-            if os.path.isfile(dest_file):
-                os.remove(dest_file)
-            os.rename(src_file, dest_file)
+# def detect_platform():
+#     platform_type = platform.system()
+#     build_path = build_paths.get(platform_type, None)
+#     assert build_paths is not None, "Invalid platform: " + platform_type
+#     if platform_type == "Darwin":
+#         src_file = build_path + "/" + MACOS_LIB_NAME
+#         dest_file = build_path + "/" + LINUX_LIB_NAME
+#         if os.path.isfile(src_file):
+#             if os.path.isfile(dest_file):
+#                 os.remove(dest_file)
+#             os.rename(src_file, dest_file)
+#
+#     return build_path
+#
+#
+# BUILD_PATH = detect_platform()
 
-    return build_path
-
-
-BUILD_PATH = detect_platform()
+BUILD_PATH = build_paths.get(platform.system(), None)
 
 
 def update_js():
@@ -114,17 +116,18 @@ setup(name='datalore-plot',
           ],
       },
 
-      data_files=[("datalore/plot", [BUILD_PATH + "/" + LINUX_LIB_NAME])],
+# ToDo: if required for Linux - do conditionally
+      # data_files=[("datalore/plot", [BUILD_PATH + "/" + LINUX_LIB_NAME])],
 
-      # ext_modules=[
-      #     Extension('datalore_plot_kotlin_bridge',
-      #               include_dirs=[kotlin_binaries_macosX64],
-      #               libraries=['datalore_plot_python_extension'],
-      #               library_dirs=[kotlin_binaries_macosX64],
-      #               depends=['libdatalore_plot_python_extension_api.h'],
-      #               sources=[kotlin_bridge_src],
-      #               )
-      # ],
+      ext_modules=[
+          Extension('datalore_plot_kotlin_bridge',
+                    include_dirs=[BUILD_PATH],
+                    libraries=['datalore_plot_python_extension'],
+                    library_dirs=[BUILD_PATH],
+                    depends=['libdatalore_plot_python_extension_api.h'],
+                    sources=[kotlin_bridge_src],
+                    )
+      ],
 
       cmdclass=dict(
           updatejs=UpdateJsCommand,
