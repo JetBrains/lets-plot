@@ -56,6 +56,13 @@ class FeaturesDemoModel(canvasControl: CanvasControl): DemoModelBase(canvasContr
                     }
                 }
 
+                polygons {
+                    polygon {
+                        mapId = "texas"
+                        fillColor = Color.GREEN
+                    }
+                }
+
                 hLines {
                     line {
                         lon = MOSCOW.lon

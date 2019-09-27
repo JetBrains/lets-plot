@@ -10,11 +10,11 @@ class MapBar(
     mapId: String?,
     regionId: String?,
 
-    val point: Vec<LonLat>,
+    override val point: Vec<LonLat>,
 
     val fillColor: Color,
     val strokeColor: Color,
     val strokeWidth: Double,
     val dimension: Vec<Client>,
     val offset: Vec<Client>
-) : MapObject(index, mapId, regionId)
+) : MapObject(index, mapId, regionId), MapPointGeometry

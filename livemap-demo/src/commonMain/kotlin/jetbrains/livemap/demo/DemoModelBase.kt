@@ -34,9 +34,11 @@ abstract class DemoModelBase(private val canvasControl: CanvasControl) {
                 theme = LivemapConstants.Theme.COLOR
             }
 
-            geocodingService = dummyGeocodingService
+            geocodingService = liveMapGeocoding {
+                host = "geo.datalore.io"
+                port = null
+            }
 
-            zoom = 1
             theme = LivemapConstants.Theme.COLOR
             interactive = true
 
@@ -56,7 +58,6 @@ abstract class DemoModelBase(private val canvasControl: CanvasControl) {
     }
 
     abstract fun createLiveMapSpec(): LiveMapSpec
-
 }
 
 private fun mouseListener(canvasControl: CanvasControl): MouseEventSource {

@@ -16,6 +16,8 @@ import jetbrains.livemap.DevParams.Companion.COMPUTATION_FRAME_TIME
 import jetbrains.livemap.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
 import jetbrains.livemap.DevParams.Companion.DEBUG_GRID
 import jetbrains.livemap.DevParams.Companion.DEBUG_TILES
+import jetbrains.livemap.DevParams.Companion.FRAGMENT_ACTIVE_DOWNLOADS_LIMIT
+import jetbrains.livemap.DevParams.Companion.FRAGMENT_CACHE_LIMIT
 import jetbrains.livemap.DevParams.Companion.MICRO_TASK_EXECUTOR
 import jetbrains.livemap.DevParams.Companion.PERF_STATS
 import jetbrains.livemap.DevParams.Companion.RENDER_TARGET
@@ -46,7 +48,7 @@ import jetbrains.livemap.entities.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.WorldOrigin2ScreenUpdateSystem
-import jetbrains.livemap.entities.regions.EmptinessChecker
+import jetbrains.livemap.entities.regions.*
 import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
@@ -185,15 +187,15 @@ class LiveMap(
                 DebugDataSystem(componentManager),
 
                 //Regions
-                //FragmentUpdateSystem(componentManager, myEmptinessChecker),
-                //FragmentDownloadingSystem(
-                //    myDevParams.read(FRAGMENT_ACTIVE_DOWNLOADS_LIMIT),
-                //    myTileGeometryProvider,
-                //    componentManager
-                //),
-                //FragmentEmitSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
-                //RegionEmitSystem(componentManager),
-                //FragmentsRemovingSystem(myDevParams.read(FRAGMENT_CACHE_LIMIT), componentManager),
+                FragmentUpdateSystem(componentManager, myEmptinessChecker),
+                FragmentDownloadingSystem(
+                    myDevParams.read(FRAGMENT_ACTIVE_DOWNLOADS_LIMIT),
+                    myTileGeometryProvider,
+                    componentManager
+                ),
+                FragmentEmitSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
+                RegionEmitSystem(componentManager),
+                FragmentsRemovingSystem(myDevParams.read(FRAGMENT_CACHE_LIMIT), componentManager),
 
                 // Position update
                 WorldDimension2ScreenUpdateSystem(componentManager),
@@ -215,7 +217,7 @@ class LiveMap(
                 // Tooltips
                 //TooltipTargetSystem(componentManager, myRegionGeometryConsumer),
 
-                // LoadingStateSystem(componentManager, isLoading())
+                //LoadingStateSystem(componentManager, isLoading())
             )
         )
     }

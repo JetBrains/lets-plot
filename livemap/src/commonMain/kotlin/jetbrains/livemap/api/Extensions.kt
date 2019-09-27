@@ -57,7 +57,7 @@ fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
             strokeColor = Color.BLACK
             strokeWidth = 0.0
             fillColor = Color.GREEN
-            coordinates = emptyList()
+            coordinates = null
         }
             .apply(block)
             .build()

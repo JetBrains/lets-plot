@@ -14,9 +14,7 @@ class GeoRectangle(minLongitude: Double, minLatitude: Double, maxLongitude: Doub
     }
 
     init {
-        if (minLatitude > maxLatitude) {
-            throw IllegalArgumentException("Invalid latitude range: [$minLatitude..$maxLatitude]")
-        }
+        require(minLatitude <= maxLatitude) { "Invalid latitude range: [$minLatitude..$maxLatitude]" }
 
         myLongitudeRange = LongitudeRange(minLongitude, maxLongitude)
         myLatitudeRange = ClosedRange.closed(minLatitude, maxLatitude)
@@ -49,8 +47,8 @@ class GeoRectangle(minLongitude: Double, minLatitude: Double, maxLongitude: Doub
         for (longitudeRange in longitudeRanges) {
             rects.add(
                 newSpanRectangle(
-                    Vec<LonLat>(longitudeRange.lowerEndpoint(), myLatitudeRange.lowerEndpoint()),
-                    Vec<LonLat>(longitudeRange.upperEndpoint(), myLatitudeRange.upperEndpoint())
+                    Vec(longitudeRange.lowerEndpoint(), myLatitudeRange.lowerEndpoint()),
+                    Vec(longitudeRange.upperEndpoint(), myLatitudeRange.upperEndpoint())
                 )
             )
         }

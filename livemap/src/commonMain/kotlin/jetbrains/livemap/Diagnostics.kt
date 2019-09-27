@@ -13,9 +13,9 @@ import jetbrains.livemap.core.rendering.layers.RenderLayer
 import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.Text
-import jetbrains.livemap.entities.regions.Components.CachedFragmentsComponent
-import jetbrains.livemap.entities.regions.Components.DownloadingFragmentsComponent
-import jetbrains.livemap.entities.regions.Components.StreamingFragmentsComponent
+import jetbrains.livemap.entities.regions.CachedFragmentsComponent
+import jetbrains.livemap.entities.regions.DownloadingFragmentsComponent
+import jetbrains.livemap.entities.regions.StreamingFragmentsComponent
 import jetbrains.livemap.ui.UiService
 
 open class Diagnostics {

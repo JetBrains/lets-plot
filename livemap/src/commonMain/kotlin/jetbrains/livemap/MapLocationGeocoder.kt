@@ -10,9 +10,9 @@ import jetbrains.gis.geoprotocol.GeoRequestBuilder
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.MapWidgetUtil.calculateExtendedRectangleWithCenter
+import jetbrains.livemap.MapWidgetUtil.convertToWorldRects
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.MapRuler
-import jetbrains.livemap.projections.ProjectionUtil.transformBBox
 import jetbrains.livemap.projections.World
 import jetbrains.livemap.projections.WorldRectangle
 
@@ -67,26 +67,13 @@ class MapLocationGeocoder(
         }
     }
 
-    fun calculateBBoxOfGeoRect(geoRectangle: GeoRectangle): Rect<World> {
-        return myMapRuler.calculateBoundingBox(convertToXYRects(geoRectangle, myMapProjection))
+    fun calculateBBoxOfGeoRect(geoRect: GeoRectangle): Rect<World> {
+        return myMapRuler.calculateBoundingBox(geoRect.convertToWorldRects(myMapProjection))
     }
 
     private fun calculateBBoxOfGeoRects(geoRects: List<GeoRectangle>): Rect<World> {
-        val xyRects = ArrayList<WorldRectangle>()
-        geoRects.forEach { geoRect -> xyRects.addAll(convertToXYRects(geoRect, myMapProjection)) }
+        val xyRects = ArrayList<Rect<World>>()
+        geoRects.forEach { geoRect -> xyRects.addAll(geoRect.convertToWorldRects(myMapProjection)) }
         return myMapRuler.calculateBoundingBox(xyRects)
-    }
-
-    companion object {
-
-        fun convertToXYRects(geoRect: GeoRectangle, mapProjection: MapProjection): ArrayList<WorldRectangle> {
-            val xyRects = ArrayList<WorldRectangle>()
-            geoRect.splitByAntiMeridian()
-                .map { Rect<LonLat>(it.origin, it.dimension) }
-                .forEach { rect ->
-                    xyRects.add(transformBBox(rect) { mapProjection.project(it) })
-                }
-            return xyRects
-        }
     }
 }

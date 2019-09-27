@@ -4,7 +4,6 @@ import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.regions.Components.RegionComponent
 
 object Utils {
     fun entityName(fragmentKey: FragmentKey): String {
@@ -34,7 +33,7 @@ object Utils {
                 }
             }
 
-            throw IllegalStateException()
+            error("")
         }
 
     }

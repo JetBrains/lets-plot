@@ -9,7 +9,8 @@ class MapPieSector(
     mapId: String?,
     regionId: String?,
 
-    val point: Vec<LonLat>,
+    override val point: Vec<LonLat>,
+
     val radius: Double,
     val startAngle: Double,
     val endAngle: Double,
@@ -18,4 +19,4 @@ class MapPieSector(
     val strokeColor: Color,
     val strokeWidth: Double
 
-) : MapObject(index, mapId, regionId)
+) : MapObject(index, mapId, regionId), MapPointGeometry

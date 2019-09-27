@@ -10,9 +10,7 @@ import jetbrains.gis.geoprotocol.GeoTile
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraUpdateComponent
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.regions.Components
-import jetbrains.livemap.entities.regions.Components.ChangedFragmentsComponent
-import jetbrains.livemap.entities.regions.FragmentKey
+import jetbrains.livemap.entities.regions.*
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -98,7 +96,7 @@ object Mocks {
         }
 
         override fun apply() {
-            val component = componentManager.getSingletonComponent<Components.EmptyFragmentsComponent>()
+            val component = componentManager.getSingletonComponent<EmptyFragmentsComponent>()
             component.addAll(myEmptyFragments)
         }
     }
@@ -108,7 +106,7 @@ object Mocks {
         private val myRemovedFragments = HashSet<FragmentKey>()
 
         override fun apply() {
-            val cachedFragmentsComponent = componentManager.getSingletonComponent<Components.CachedFragmentsComponent>()
+            val cachedFragmentsComponent = componentManager.getSingletonComponent<CachedFragmentsComponent>()
             myAddedFragments.forEach(cachedFragmentsComponent::store)
             myRemovedFragments.forEach(cachedFragmentsComponent::dispose)
         }
@@ -128,7 +126,7 @@ object Mocks {
         }
 
         fun none(): MockSpec {
-            myRemovedFragments.addAll(componentManager.getSingletonComponent<Components.CachedFragmentsComponent>().keys())
+            myRemovedFragments.addAll(componentManager.getSingletonComponent<CachedFragmentsComponent>().keys())
             return this
         }
     }
@@ -149,7 +147,7 @@ object Mocks {
 
         override fun apply() {
             val emittedFragmentsComponent =
-                componentManager.getSingletonComponent<Components.EmittedFragmentsComponent>()
+                componentManager.getSingletonComponent<EmittedFragmentsComponent>()
             emittedFragmentsComponent.setEmitted(myReceivedFragments)
         }
     }
@@ -206,7 +204,7 @@ object Mocks {
         }
 
         override fun apply() {
-            val component = componentManager.getSingletonComponent<Components.DownloadingFragmentsComponent>()
+            val component = componentManager.getSingletonComponent<DownloadingFragmentsComponent>()
             component.downloaded = myDownloaded
         }
 

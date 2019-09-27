@@ -12,6 +12,6 @@ class MapPolygon(
     val strokeColor: Color,
     val strokeWidth: Double,
     val fillColor: Color,
-    val geometry: LonLatGeometry?
+    override val geometry: LonLatGeometry?
 
-) : MapObject(index, mapId, regionId)
+) : MapObject(index, mapId, regionId), MapGeometry
