@@ -20,17 +20,11 @@ internal object PlotHtmlGen {
             <div id="$plotOutputId"</div>
             <script type="text/javascript">
                 var plotSpecList=[
-                    ${plotSpecJs}    
+                    ${plotSpecJs}
                 ];
                 
                 plotSpecList.forEach(function (spec, index) {
-                   requirejs(['visualization-plot-config'], function(module) {
-                        var plots = ${'$'}( "#$plotOutputId" ).get(0);
-                        var plotContainer = document.createElement('div');
-                        plots.appendChild(plotContainer);
-                    
-                        module.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(spec, 440.0, 340.0, plotContainer);
-                    });
+                    datalorePlot.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(spec, 440.0, 340.0, plotContainer);
                 });
             </script>
         """

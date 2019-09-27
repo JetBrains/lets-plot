@@ -1,6 +1,7 @@
 plugins {
     id 'kotlin-multiplatform'
     id 'org.jetbrains.gradle.plugin.idea-ext'
+    id "com.moowork.node"
 }
 repositories {
     mavenCentral()
@@ -166,9 +167,15 @@ task copyMainJs(type: Copy) {
     into OUTPUT_DIR_JS
 }
 
-build.dependsOn += copyLibraryDependenciesJs
-build.dependsOn += copyProjectDependenciesJs
-build.dependsOn += copyMainJs
+task webpackBuild(type: NpmTask) {
+    args = ['run', 'webpack-build']
+}
+
+webpackBuild.dependsOn += copyLibraryDependenciesJs
+webpackBuild.dependsOn += copyProjectDependenciesJs
+webpackBuild.dependsOn += copyMainJs
+webpackBuild.dependsOn += npmInstall
+assemble.dependsOn += webpackBuild
 
 //println "======================================="
 //build.dependsOn.forEach {

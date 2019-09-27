@@ -11,6 +11,7 @@ kotlin {
     jvm()
     js()
     macosX64()
+    linuxX64()
 
     sourceSets {
         commonMain {

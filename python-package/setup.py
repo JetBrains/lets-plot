@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import platform
 
 from setuptools import Extension, Command
 from setuptools import setup, find_packages
@@ -12,25 +13,52 @@ root_dir = os.path.dirname(this_dir)
 kotlin_binaries_macosX64 = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
 
 
+LIB_NAME = "libdatalore_plot_python_extension"
+MACOS_LIB_NAME = LIB_NAME + ".dylib"
+LINUX_LIB_NAME = LIB_NAME + ".so"
+
+build_paths = {
+    "Linux": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'linuxX64', 'debugShared'),
+    "Darwin": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugShared')
+}
+
+def detect_platform():
+    platform_type = platform.system()
+    build_path = build_paths.get(platform_type, None)
+    assert build_paths is not None, "Invalid platform: " + platform_type
+    if platform_type == "Darwin":
+        os.rename(build_path + "/" + MACOS_LIB_NAME, build_path + "/" + LINUX_LIB_NAME)
+
+    return build_path
+
+
+BUILD_PATH = detect_platform()
+
+
 def update_js():
-    js_relative_path = ['visualization-demo-plot', 'build', 'demoWeb', 'lib']
+    # js_relative_path = ['visualization-demo-plot', 'build', 'demoWeb', 'lib']
+    # js_libs = [
+    #     'kotlin',
+    #     'kotlin-logging',
+    #     'datalore-plot-base-portable',
+    #     'datalore-plot-base',
+    #     'mapper-core',
+    #     'visualization-base-svg',
+    #     'visualization-base-svg-mapper',
+    #     'visualization-base-canvas',
+    #     'visualization-plot-common-portable',
+    #     'visualization-plot-common',
+    #     'visualization-plot-base-portable',
+    #     'visualization-plot-base',
+    #     'visualization-plot-builder-portable',
+    #     'visualization-plot-builder',
+    #     'visualization-plot-config-portable',
+    #     'visualization-plot-config',
+    # ]
+
+    js_relative_path = ['visualization-demo-plot', 'build', 'demoWeb', 'dist']
     js_libs = [
-        'kotlin',
-        'kotlin-logging',
-        'datalore-plot-base-portable',
-        'datalore-plot-base',
-        'mapper-core',
-        'visualization-base-svg',
-        'visualization-base-svg-mapper',
-        'visualization-base-canvas',
-        'visualization-plot-common-portable',
-        'visualization-plot-common',
-        'visualization-plot-base-portable',
-        'visualization-plot-base',
-        'visualization-plot-builder-portable',
-        'visualization-plot-builder',
-        'visualization-plot-config-portable',
-        'visualization-plot-config',
+        'datalore-plot',
     ]
 
     from shutil import copy
@@ -81,15 +109,17 @@ setup(name='datalore-plot',
           ],
       },
 
-      ext_modules=[
-          Extension('datalore_plot_kotlin_bridge',
-                    include_dirs=[kotlin_binaries_macosX64],
-                    libraries=['datalore_plot_python_extension'],
-                    library_dirs=[kotlin_binaries_macosX64],
-                    depends=['libdatalore_plot_python_extension_api.h'],
-                    sources=[kotlin_bridge_src],
-                    )
-      ],
+      data_files=[("datalore/plot", [BUILD_PATH + "/" + LINUX_LIB_NAME])],
+
+      # ext_modules=[
+      #     Extension('datalore_plot_kotlin_bridge',
+      #               include_dirs=[kotlin_binaries_macosX64],
+      #               libraries=['datalore_plot_python_extension'],
+      #               library_dirs=[kotlin_binaries_macosX64],
+      #               depends=['libdatalore_plot_python_extension_api.h'],
+      #               sources=[kotlin_bridge_src],
+      #               )
+      # ],
 
       cmdclass=dict(
           updatejs=UpdateJsCommand,

@@ -12,3 +12,4 @@ package-lock.json
 **/dist
 venv
 python-package/datalore/package_data
+__pycache__/

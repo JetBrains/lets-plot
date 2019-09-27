@@ -34,8 +34,8 @@ class JupyterNotebookContext(FrontendContext):
         self.connected = connected
 
     def as_str(self, plot_spec: Dict) -> str:
-        import datalore_plot_kotlin_bridge
-        return datalore_plot_kotlin_bridge.generate_html(plot_spec)
+        from datalore.plot import libdatalore_plot_python_extension
+        return libdatalore_plot_python_extension.generate_html(plot_spec)
 
     def configure(self):
         display_html(self._undef_modules_script(), raw=True)
@@ -60,29 +60,32 @@ class JupyterNotebookContext(FrontendContext):
 
     def _configure_embedded_script(self) -> str:
         js_code_blocks = []
-        for lib in _libs:
-            path = os.path.join("package_data", lib + ".js")
-            lib_js = pkgutil.get_data("datalore", path).decode("utf-8")
-
-            # !!!
-            # kotlin JS generates anonymous modules (modules that call define() with no string ID)
-            # anonymous module can't be loaded inside script tag.
-            # See https://requirejs.org/docs/errors.html#mismatch
-            # Some discussion see:
-            # https://discuss.kotlinlang.org/t/include-packages-from-bower/6300
-            # https://stackoverflow.com/questions/15371918/mismatched-anonymous-define-module
-            # Therefore we have to patch each anonymous by passing the module ID to `define()`
-            lib_js_patched = re.sub(r'define\(\[', "define('{module}', [".format(module=lib), lib_js)
-
-            module_code_block = """\
-                    console.log('Embedding: {module}.js');
-                    // *** {module}.js ***
-                    {js_code}
-                """.format(module=lib, js_code=lib_js_patched)
-
-            js_code_blocks.append(module_code_block)
-
-        return self._wrap_in_script_element("".join(js_code_blocks))
+        path = os.path.join("package_data", "datalore-plot.js")
+        lib_js = pkgutil.get_data("datalore", path).decode("utf-8")
+        return self._wrap_in_script_element(lib_js)
+        # for lib in _libs:
+        #     path = os.path.join("package_data", lib + ".js")
+        #     lib_js = pkgutil.get_data("datalore", path).decode("utf-8")
+        #
+        #     # !!!
+        #     # kotlin JS generates anonymous modules (modules that call define() with no string ID)
+        #     # anonymous module can't be loaded inside script tag.
+        #     # See https://requirejs.org/docs/errors.html#mismatch
+        #     # Some discussion see:
+        #     # https://discuss.kotlinlang.org/t/include-packages-from-bower/6300
+        #     # https://stackoverflow.com/questions/15371918/mismatched-anonymous-define-module
+        #     # Therefore we have to patch each anonymous by passing the module ID to `define()`
+        #     lib_js_patched = re.sub(r'define\(\[', "define('{module}', [".format(module=lib), lib_js)
+        #
+        #     module_code_block = """\
+        #             console.log('Embedding: {module}.js');
+        #             // *** {module}.js ***
+        #             {js_code}
+        #         """.format(module=lib, js_code=lib_js_patched)
+        #
+        #     js_code_blocks.append(module_code_block)
+        #
+        # return self._wrap_in_script_element("".join(js_code_blocks))
 
     def _undef_modules_script(self) -> str:
         code = "".join(["requirejs.undef('{v}');\n".format(v=v) for v in _libs])

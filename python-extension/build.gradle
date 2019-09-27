@@ -6,14 +6,29 @@ plugins {
 kotlin {
     macosX64() {
         binaries {
-            staticLib {
+            sharedLib {
+                baseName = "datalore-plot-${project.name}"
+                linkerOpts = ["-undefined", "dynamic_lookup"]
+            }
+        }
+
+        compilations.main.cinterops {
+            python {
+                compilerOpts "-I$System.env.PYTHON_INCLUDE"
+            }
+        }
+    }
+
+    linuxX64() {
+        binaries {
+            sharedLib {
                 baseName = "datalore-plot-${project.name}"
             }
         }
 
         compilations.main.cinterops {
             python {
-                //compilerOpts "-I$System.env.PYTHON_INCLUDE"
+                compilerOpts "-I$System.env.PYTHON_INCLUDE"
             }
         }
     }
