@@ -6,7 +6,6 @@
 **/out-repo
 
 node_modules/
-package-lock.json
 
 *.egg-info
 **/dist
