@@ -17,13 +17,18 @@ internal object PlotHtmlGen {
         val plotOutputId = "plot_output_$randomString"
         val plotSpecJs = mapToJsObjectInitializer(plotSpec)
         return """
-            <div id="$plotOutputId"</div>
+            <div id="$plotOutputId"></div>
             <script type="text/javascript">
                 var plotSpecList=[
                     ${plotSpecJs}
                 ];
-                
+
+                var plots = document.getElementById("$plotOutputId");
+                var plotContainer = document.createElement('div');
+                plots.appendChild(plotContainer);
+
                 plotSpecList.forEach(function (spec, index) {
+
                     datalorePlot.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(spec, 440.0, 340.0, plotContainer);
                 });
             </script>

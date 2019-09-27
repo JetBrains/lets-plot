@@ -6,13 +6,21 @@ import kotlinx.cinterop.*
 
 val scope = MemScope()
 
+fun getHtml(self: CPointer<PyObject>?, args: CPointer<PyObject>?): CPointer<PyObject>? {
+    val inputDict: CPointerVar<PyObject> = nativeHeap.allocPointerTo<PyObject>()
+
+    PyArg_ParseTuple(args, "O", inputDict.ptr)
+
+    return PlotHtmlGenProxy.applyToRawSpecs(inputDict.value)
+}
+
 fun createMethods(): CArrayPointer<PyMethodDef> {
     val methodDefs = nativeHeap.allocArray<PyMethodDef>(2)
 
     cValue<PyMethodDef> {
         ml_name = "generate_html".cstr.getPointer(scope)
         ml_flags = METH_VARARGS
-        ml_meth = staticCFunction { _, args -> PlotHtmlGenProxy.applyToRawSpecs(args)}
+        ml_meth = staticCFunction { self, args -> getHtml(self, args)}
         ml_doc = "Generates HTML representing plot".cstr.getPointer(scope)
     }.place(methodDefs[0].ptr)
     cValue<PyMethodDef> {
@@ -34,4 +42,4 @@ val module = cValue<PyModuleDef> {
 }
 
 @CName("PyInit_libdatalore_plot_python_extension")
-fun PyInit_libdatalore_plot_python_extension() = PyModule_Create2(module, PYTHON_API_VERSION)
+fun PyInit_libdatalore_plot_python_extension(): CPointer<PyObject>? = PyModule_Create2(module.getPointer(scope), PYTHON_API_VERSION)

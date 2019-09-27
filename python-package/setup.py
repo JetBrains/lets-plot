@@ -27,7 +27,12 @@ def detect_platform():
     build_path = build_paths.get(platform_type, None)
     assert build_paths is not None, "Invalid platform: " + platform_type
     if platform_type == "Darwin":
-        os.rename(build_path + "/" + MACOS_LIB_NAME, build_path + "/" + LINUX_LIB_NAME)
+        src_file = build_path + "/" + MACOS_LIB_NAME
+        dest_file = build_path + "/" + LINUX_LIB_NAME
+        if os.path.isfile(src_file):
+            if os.path.isfile(dest_file):
+                os.remove(dest_file)
+            os.rename(src_file, dest_file)
 
     return build_path
 

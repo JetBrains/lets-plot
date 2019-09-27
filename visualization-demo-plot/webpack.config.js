@@ -10,8 +10,8 @@ module.exports = {
         library: 'datalorePlot',
         filename: 'datalore-plot.js',
         path: distPath,
-        libraryTarget: 'umd',
-        globalObject: 'this'
+        libraryTarget: 'window',
+        globalObject: 'window'
     },
     resolve: {
         modules: [libPath, 'node_modules']

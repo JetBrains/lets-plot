@@ -61,7 +61,11 @@ class JupyterNotebookContext(FrontendContext):
     def _configure_embedded_script(self) -> str:
         js_code_blocks = []
         path = os.path.join("package_data", "datalore-plot.js")
-        lib_js = pkgutil.get_data("datalore", path).decode("utf-8")
+        lib_js = """
+            console.log('Embedding: datalore-plot.js');
+            
+            {js_code}
+        """.format(js_code=pkgutil.get_data("datalore", path).decode("utf-8"))
         return self._wrap_in_script_element(lib_js)
         # for lib in _libs:
         #     path = os.path.join("package_data", lib + ".js")
