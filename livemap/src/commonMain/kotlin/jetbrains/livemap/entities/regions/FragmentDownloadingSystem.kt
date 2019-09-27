@@ -85,10 +85,11 @@ class FragmentDownloadingSystem(
         }
 
         val res = HashSet<T>(number)
+        val iter = iterator()
 
-        while (iterator().hasNext() && number >= 0) {
-            res.add(iterator().next())
-            iterator().remove()
+        while (iter.hasNext() && number >= 0) {
+            res.add(iter.next())
+            iter.remove()
             number--
         }
 

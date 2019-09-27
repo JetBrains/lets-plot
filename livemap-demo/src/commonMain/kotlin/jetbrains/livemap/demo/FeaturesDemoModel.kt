@@ -58,7 +58,7 @@ class FeaturesDemoModel(canvasControl: CanvasControl): DemoModelBase(canvasContr
 
                 polygons {
                     polygon {
-                        regionId = "texas"
+                        mapId = "texas"
                         fillColor = Color.GREEN
                     }
                 }

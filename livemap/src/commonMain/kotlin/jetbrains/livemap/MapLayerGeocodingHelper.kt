@@ -84,7 +84,7 @@ internal class MapLayerGeocodingHelper(
         myMapIdSpecified = allMapObjectMatch(::isMapIdSet)
         myOsmIdInsideMapIdSpecified = allMapObjectMatch(::isMapIdWithOsmId)
         myPointSpecified = allMapObjectMatch(::isMapPointObject)
-        myGeometrySpecified = allMapObjectMatch { true } // Now we can't create MapObject without point or geometry
+        myGeometrySpecified = allMapObjectMatch(::isMapObjectContainsGeometry)
     }
 
     fun geocodeLayerData(): Async<List<Rect<World>>> {
@@ -93,6 +93,14 @@ internal class MapLayerGeocodingHelper(
                 if (regionsAreGeocoded) geocodeLayerGeometries()
                 else Asyncs.voidAsync() }
             .map { calculateLayerBBoxes() }
+    }
+
+    private fun isMapObjectContainsGeometry(mapObject: MapObject): Boolean {
+        return when (mapObject) {
+            is MapPointGeometry -> true
+            is MapGeometry -> mapObject.geometry != null
+            else -> throw IllegalStateException("Unexpected MapObject type: " + mapObject::class.simpleName)
+        }
     }
 
     private fun geocodeLayerRegionIds(): Async<Boolean> {

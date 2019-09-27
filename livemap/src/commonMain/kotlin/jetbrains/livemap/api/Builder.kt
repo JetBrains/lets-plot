@@ -372,11 +372,11 @@ class LiveMapTileServiceBuilder {
 class LiveMapGeocodingServiceBuilder {
     private val subUrl = "/map_data/geocoding"
 
-    var host = "localhost" // "https://geoserver.jetbrains-boston.com"
-    var port = 3010
+    var host = "localhost"
+    var port: Int? = null
 
     fun build(): GeocodingService {
-        return GeocodingService(GeoTransportImpl(host + subUrl))
+        return GeocodingService(GeoTransportImpl(host, port, subUrl))
     }
 }
 
