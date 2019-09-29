@@ -4,8 +4,10 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsContext
 
-class SchedulerSystem(private val microTaskExecutor: MicroTaskExecutor, componentManager: EcsComponentManager) :
-    AbstractSystem<EcsContext>(componentManager) {
+class SchedulerSystem(
+    private val microTaskExecutor: MicroTaskExecutor,
+    componentManager: EcsComponentManager
+) : AbstractSystem<EcsContext>(componentManager) {
     var loading: Long = 0
         private set
 

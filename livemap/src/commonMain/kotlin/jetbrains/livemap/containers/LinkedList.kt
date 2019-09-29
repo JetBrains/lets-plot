@@ -59,7 +59,7 @@ class LinkedList<T> : MutableIterable<T> {
     fun isEmpty(): Boolean = head == null
     fun isNotEmpty(): Boolean = head != null
 
-    private fun remove(node: Node<T>) {
+    private fun remove(node: Node<T>): T {
         if (node == head) {
             head = head!!.myNext
             head?.myPrev = null
@@ -67,10 +67,12 @@ class LinkedList<T> : MutableIterable<T> {
             node.myPrev?.myNext = node.myNext
             node.myNext?.myPrev = node.myPrev
         }
+
+        return node.myItem
     }
 
-    fun remove(index: Int) {
-        remove(getNodeByIndex(index))
+    fun remove(index: Int): T {
+        return remove(getNodeByIndex(index))
     }
 
     fun removeFirst() = remove(0)
@@ -147,7 +149,7 @@ class LinkedList<T> : MutableIterable<T> {
         internal var myNext: Node<T>?
     )
 
-    inner class NodeIterator : AbstractIterator<T>(), MutableIterator<T> {
+    private inner class NodeIterator : AbstractIterator<T>(), MutableIterator<T> {
         private var node: Node<T>? = head
         private var last: Node<T>? = null
 
