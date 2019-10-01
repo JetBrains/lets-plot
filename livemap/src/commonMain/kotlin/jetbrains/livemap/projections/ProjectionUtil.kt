@@ -5,8 +5,8 @@ import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.calculateQuadKeys
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileOrigin
 import jetbrains.livemap.projections.ProjectionType.*
+import jetbrains.livemap.tiles.getTileRect
 import kotlin.math.PI
 import kotlin.math.atan2
 
@@ -43,13 +43,6 @@ object ProjectionUtil {
         }
 
         return tileKeys
-    }
-
-    fun getTileRect(mapRect: WorldRectangle, tileKey: String): WorldRectangle {
-        val origin = getTileOrigin(mapRect, tileKey)
-        val dimension = mapRect.dimension * (1.0 / getTileCount(tileKey.length))
-
-        return WorldRectangle(origin, dimension)
     }
 
     internal fun createGeoProjection(projectionType: ProjectionType): GeoProjection {
