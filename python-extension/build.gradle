@@ -6,10 +6,6 @@ plugins {
 kotlin {
     macosX64() {
         binaries {
-//            sharedLib {
-//                baseName = "datalore-plot-${project.name}"
-//                linkerOpts = ["-undefined", "dynamic_lookup"]
-//            }
             staticLib {
                 baseName = "datalore-plot-${project.name}"
             }
