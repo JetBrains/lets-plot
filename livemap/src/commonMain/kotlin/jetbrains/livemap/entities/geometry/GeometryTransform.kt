@@ -44,7 +44,7 @@ object GeometryTransform {
     private fun <InT, OutT> resampling(
         transform: (Vec<InT>) -> Vec<OutT>
     ): (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit {
-        return { p, ring -> IterativeResampler(transform).next(p, ring) }
+        return IterativeResampler(transform)::next
     }
 
     private fun <InT, OutT> createTransformer(
