@@ -6,9 +6,9 @@
 **/out-repo
 
 node_modules/
-package-lock.json
 
 *.egg-info
 **/dist
 venv
 python-package/datalore/package_data
+__pycache__/

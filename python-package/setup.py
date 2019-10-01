@@ -1,36 +1,34 @@
 #!/usr/bin/python
 
 import os
+import platform
 
-from setuptools import Extension, Command
+from setuptools import Command, Extension
 from setuptools import setup, find_packages
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'datalore_plot_kotlin_bridge.c')
 
 root_dir = os.path.dirname(this_dir)
-kotlin_binaries_macosX64 = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
+# kotlin_binaries_macosX64 = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
+
+
+LIB_NAME = "libdatalore_plot_python_extension"
+# MACOS_LIB_NAME = LIB_NAME + ".dylib"
+LINUX_LIB_NAME = LIB_NAME + ".so"
+
+build_paths = {
+    "Linux": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'linuxX64', 'debugShared'),
+    "Darwin": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
+}
+
+BUILD_PATH = build_paths.get(platform.system(), None)
 
 
 def update_js():
-    js_relative_path = ['visualization-demo-plot', 'build', 'demoWeb', 'lib']
+    js_relative_path = ['visualization-demo-plot', 'build', 'demoWeb', 'dist']
     js_libs = [
-        'kotlin',
-        'kotlin-logging',
-        'datalore-plot-base-portable',
-        'datalore-plot-base',
-        'mapper-core',
-        'visualization-base-svg',
-        'visualization-base-svg-mapper',
-        'visualization-base-canvas',
-        'visualization-plot-common-portable',
-        'visualization-plot-common',
-        'visualization-plot-base-portable',
-        'visualization-plot-base',
-        'visualization-plot-builder-portable',
-        'visualization-plot-builder',
-        'visualization-plot-config-portable',
-        'visualization-plot-config',
+        'datalore-plot',
     ]
 
     from shutil import copy
@@ -81,11 +79,14 @@ setup(name='datalore-plot',
           ],
       },
 
+      data_files= [("datalore/plot", [BUILD_PATH + "/" + LINUX_LIB_NAME])] if platform.system() == 'Linux'  else [],
+
       ext_modules=[
           Extension('datalore_plot_kotlin_bridge',
-                    include_dirs=[kotlin_binaries_macosX64],
+                    include_dirs=[BUILD_PATH],
                     libraries=['datalore_plot_python_extension'],
-                    library_dirs=[kotlin_binaries_macosX64],
+                    library_dirs=[BUILD_PATH, 'datalore/plot'],
+                    runtime_library_dirs=[BUILD_PATH, 'datalore/plot'],
                     depends=['libdatalore_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],
                     )

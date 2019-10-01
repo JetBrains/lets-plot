@@ -1,9 +1,24 @@
 plugins {
     id 'kotlin-multiplatform'
     id 'org.jetbrains.gradle.plugin.idea-ext'
+    id "com.moowork.node"
 }
 repositories {
     mavenCentral()
+}
+
+node {
+    version = '10.16.3'
+    npmVersion = '6.9.0'
+    download = true
+}
+
+repositories.whenObjectAdded {
+    if (it instanceof IvyArtifactRepository) {
+        metadataSources {
+            artifact()
+        }
+    }
 }
 
 kotlin {
@@ -166,9 +181,15 @@ task copyMainJs(type: Copy) {
     into OUTPUT_DIR_JS
 }
 
-build.dependsOn += copyLibraryDependenciesJs
-build.dependsOn += copyProjectDependenciesJs
-build.dependsOn += copyMainJs
+task webpackBuild(type: NpmTask) {
+    args = ['run', 'webpack-build']
+}
+
+webpackBuild.dependsOn += copyLibraryDependenciesJs
+webpackBuild.dependsOn += copyProjectDependenciesJs
+webpackBuild.dependsOn += copyMainJs
+webpackBuild.dependsOn += npmInstall
+assemble.dependsOn += webpackBuild
 
 //println "======================================="
 //build.dependsOn.forEach {

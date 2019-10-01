@@ -10,6 +10,11 @@ allprojects {
 //    println "--- project ---: $project.name $project.rootDir"
 }
 
+task printProps {
+    doLast {
+        println System.env.PYTHON_INCLUDE
+    }
+}
 subprojects {
     group 'org.jetbrains.datalore-plot'
     version = "1.0-SNAPSHOT"

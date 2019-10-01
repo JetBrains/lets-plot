@@ -14,21 +14,6 @@
 #define TLSVAR __thread
 #endif
 
-//static PyObject* ping(PyObject* self) {
-//    PyObject* result = Py_BuildValue("s", "Hello from datalore_plot_kotlin_bridge");
-//    return result;
-//}
-
-//static PyObject* generate_html_sample(PyObject* self) {
-//    T_(SampleBarPlot) sampleBarPlot = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.SampleBarPlot.SampleBarPlot();
-//    const char* html = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.SampleBarPlot.getHTML(sampleBarPlot);
-//    __ DisposeStablePointer(sampleBarPlot.pinned);
-//
-//
-//    PyObject* result = Py_BuildValue("s", html);
-//    return result;
-//}
-
 static PyObject* generate_html(PyObject* self, PyObject* plotSpecDict) {
     T_(PlotHtmlGenProxy) htmlGen = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.interop.PlotHtmlGenProxy._instance();
     PyObject* html = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.interop.PlotHtmlGenProxy.applyToRawSpecs(htmlGen, plotSpecDict);

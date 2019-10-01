@@ -1,12 +1,2 @@
 headers = Python.h
 package = Python
-
-#compilerOpts = -I$System.env.PYTHON_INCLUDE
-#linkerOpts = "-L$System.env.PYTHON_LIB"
-
-#compilerOpts = -I/Library/Frameworks/Python.framework/Versions/3.5/include/python3.5m
-compilerOpts = -I/anaconda3/envs/dl-python-extension/include/python3.7m
-
-#linkerOpts.osx = -L/Library/Frameworks/Python.framework/Versions/3.5/lib -lpython3.5m
-linkerOpts.osx = -L/anaconda3/envs/dl-python-extension/lib -lpython3.7m
-#linkerOpts.linux = -L/Library/Frameworks/Python.framework/Versions/3.5/lib

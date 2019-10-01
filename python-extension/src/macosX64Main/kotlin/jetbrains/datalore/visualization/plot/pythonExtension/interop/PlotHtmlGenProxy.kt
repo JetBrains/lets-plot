@@ -10,8 +10,9 @@ object PlotHtmlGenProxy {
     fun applyToRawSpecs(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
         val plotSpecMap = pyDictToMap(plotSpecDict)
 
-        val html = PlotHtmlGen.applyToRawSpecs(plotSpecMap as MutableMap<String, Any>)
         println(plotSpecMap)
+
+        val html = PlotHtmlGen.applyToRawSpecs(plotSpecMap as MutableMap<String, Any>)
 
         val result = Py_BuildValue("s", html);
         return result

@@ -17,20 +17,19 @@ internal object PlotHtmlGen {
         val plotOutputId = "plot_output_$randomString"
         val plotSpecJs = mapToJsObjectInitializer(plotSpec)
         return """
-            <div id="$plotOutputId"</div>
+            <div id="$plotOutputId"></div>
             <script type="text/javascript">
                 var plotSpecList=[
-                    ${plotSpecJs}    
+                    ${plotSpecJs}
                 ];
-                
+
+                var plots = document.getElementById("$plotOutputId");
+                var plotContainer = document.createElement('div');
+                plots.appendChild(plotContainer);
+
                 plotSpecList.forEach(function (spec, index) {
-                   requirejs(['visualization-plot-config'], function(module) {
-                        var plots = ${'$'}( "#$plotOutputId" ).get(0);
-                        var plotContainer = document.createElement('div');
-                        plots.appendChild(plotContainer);
-                    
-                        module.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(spec, 440.0, 340.0, plotContainer);
-                    });
+
+                    datalorePlot.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(spec, 440.0, 340.0, plotContainer);
                 });
             </script>
         """
