@@ -1,0 +1,126 @@
+plugins {
+    id 'kotlin-multiplatform'
+    id "com.moowork.node"
+}
+repositories {
+    mavenCentral()
+}
+
+kotlin {
+    js() {
+        compileKotlinJs {
+            kotlinOptions.sourceMap = true
+            kotlinOptions.sourceMapEmbedSources = "always"
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+                implementation project(':base-portable')
+                implementation project(':base')
+                implementation project(':mapper-core')
+                implementation project(':visualization-base-svg')
+                implementation project(':visualization-base-svg-mapper')
+                implementation project(':visualization-plot-base-portable')
+                implementation project(':visualization-plot-base')
+                implementation project(':visualization-plot-common-portable')
+                implementation project(':visualization-plot-common')
+                implementation project(':visualization-plot-builder-portable')
+                implementation project(':visualization-plot-builder')
+                implementation project(':visualization-plot-config-portable')
+                implementation project(':visualization-plot-config')
+            }
+        }
+
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+            }
+        }
+    }
+}
+
+node {
+    version = '10.16.3'
+    npmVersion = '6.9.0'
+    download = true
+}
+
+repositories.whenObjectAdded {
+    if (it instanceof IvyArtifactRepository) {
+        metadataSources {
+            artifact()
+        }
+    }
+}
+
+// ---------------------------------
+// Trick to copy kotlin.js etc. to `output`
+configurations {
+    libraryDependenciesJs
+    projectDependenciesJs
+}
+
+dependencies {
+    libraryDependenciesJs "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    libraryDependenciesJs "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+
+    projectDependenciesJs project(':base-portable')
+    projectDependenciesJs project(':base')
+    projectDependenciesJs project(':mapper-core')
+    projectDependenciesJs project(':visualization-base-svg')
+    projectDependenciesJs project(':visualization-base-svg-mapper')
+
+    projectDependenciesJs project(':visualization-base-canvas')         // required by plot-builder (get rid?)
+
+    projectDependenciesJs project(':visualization-plot-common-portable')
+    projectDependenciesJs project(':visualization-plot-common')
+    projectDependenciesJs project(':visualization-plot-base-portable')
+    projectDependenciesJs project(':visualization-plot-base')
+    projectDependenciesJs project(':visualization-plot-builder-portable')
+    projectDependenciesJs project(':visualization-plot-builder')
+    projectDependenciesJs project(':visualization-plot-config-portable')
+    projectDependenciesJs project(':visualization-plot-config')
+}
+
+// ---------------------------------
+def OUTPUT_DIR_JS_LIB = "${project.buildDir}/js"
+
+task copyLibraryDependenciesJs(type: Copy) {
+    configurations.libraryDependenciesJs.each {
+        println "library dependency: ${it.absolutePath}"
+        from zipTree(it.absolutePath).matching { include '*.js' }
+    }
+    into OUTPUT_DIR_JS_LIB
+}
+
+task copyProjectDependenciesJs(type: Copy) {
+    configurations.projectDependenciesJs.each {
+        def jarJs = it.absolutePath.replace("-metadata-", "-js-")
+        println "project dependency: $jarJs"
+        from zipTree(jarJs).matching { include '*.js' }
+    }
+    into OUTPUT_DIR_JS_LIB
+}
+
+task webpackBuildProd(type: NpmTask) {
+    args = ['run', 'webpack-build-prod']
+}
+
+task webpackBuildDev(type: NpmTask) {
+    args = ['run', 'webpack-build-dev']
+}
+
+webpackBuildProd.dependsOn += copyLibraryDependenciesJs
+webpackBuildProd.dependsOn += copyProjectDependenciesJs
+webpackBuildProd.dependsOn += npmInstall
+webpackBuildDev.dependsOn += copyLibraryDependenciesJs
+webpackBuildDev.dependsOn += copyProjectDependenciesJs
+webpackBuildDev.dependsOn += npmInstall
+
+assemble.dependsOn += webpackBuildProd
+assemble.dependsOn += webpackBuildDev
