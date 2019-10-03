@@ -29,7 +29,7 @@ internal object PlotHtmlGen {
 
                 plotSpecList.forEach(function (spec, index) {
 
-                    datalorePlot.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(spec, 440.0, 340.0, plotContainer);
+                    DatalorePlot.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(spec, 440.0, 340.0, plotContainer);
                 });
             </script>
         """
