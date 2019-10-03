@@ -2,7 +2,6 @@ plugins {
     id 'kotlin-multiplatform'
     id 'org.jetbrains.gradle.plugin.idea-ext'
     id 'groovy'   // add 'test' task
-    id 'com.moowork.node'
 }
 
 kotlin {
