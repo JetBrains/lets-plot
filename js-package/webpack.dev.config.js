@@ -1,20 +1,10 @@
-const path = require('path');
-
-const buildPath = path.resolve(__dirname, 'build');
-const libPath = path.resolve(buildPath, 'js');
-const distPath = path.resolve(buildPath, 'dist');
+const commonConfig = require('./webpack.common.config');
 
 module.exports = {
-    entry: `${libPath}/visualization-plot-config.js`,
-    output: {
-        library: 'datalorePlot',
-        filename: 'datalore-plot.js',
-        path: distPath,
-        libraryTarget: 'window',
-        globalObject: 'window'
-    },
-    resolve: {
-        modules: [libPath, 'node_modules']
-    },
+    entry: commonConfig.entry,
+    output: Object.assign(commonConfig.output, {
+        filename: 'datalore-plot.js'
+    }),
+    resolve: commonConfig.resolve,
     mode: 'development'
 };
