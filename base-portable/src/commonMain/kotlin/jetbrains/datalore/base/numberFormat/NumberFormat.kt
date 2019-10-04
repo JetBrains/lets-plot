@@ -66,7 +66,14 @@ class NumberFormat(private val spec: Spec) {
             internal fun createNumberInfo(num: Number): NumberInfo {
                 // frac: "123", exp: 8, double: 0.00000123
                 //   -> long: 000_001_230_000_000_000 (extended to max decimal digits)
-                val encodeFraction = { frac: String, exp: Int -> frac.toLong() * 10.0.pow(MAX_DECIMALS - exp).toLong() }
+                val encodeFraction = { frac: String, exp: Int ->
+                    var fraction = frac
+                    // cutting the fraction if it longer than max decimal digits
+                    if (exp > MAX_DECIMALS) {
+                        fraction = frac.substring(0 until (frac.length - (exp - MAX_DECIMALS)))
+                    }
+                    fraction.toLong() * 10.0.pow((MAX_DECIMALS - exp).coerceAtLeast(0)).toLong()
+                }
 
                 val (intStr, fracStr, exponentString) =
                     "^(\\d+)\\.?(\\d+)?e?([+-]?\\d+)?\$"

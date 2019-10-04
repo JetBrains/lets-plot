@@ -16,6 +16,7 @@ class NumberFormatTypeFTest {
 
     @Test
     fun canOutputFixedPointNotation() {
+        assertEquals("0.000270", NumberFormat("f").apply(2.6985974025974023E-4))
         assertEquals("0.5", NumberFormat(".1f").apply(0.49))
         assertEquals("0.45", NumberFormat(".2f").apply(0.449))
         assertEquals("0.445", NumberFormat(".3f").apply(0.4449))
