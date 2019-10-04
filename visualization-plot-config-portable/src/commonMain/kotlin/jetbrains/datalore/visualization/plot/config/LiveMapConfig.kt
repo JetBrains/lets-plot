@@ -1,14 +1,14 @@
 package jetbrains.datalore.visualization.plot.config
 
 import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants.*
-import jetbrains.datalore.visualization.plot.config.Option.Geom.Livemap
+import jetbrains.datalore.visualization.plot.config.Option.Geom.LiveMap
 import jetbrains.datalore.visualization.plot.config.Option.GeomName
 import jetbrains.datalore.visualization.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.visualization.plot.config.Option.Plot.LAYERS
 
-class LivemapConfig private constructor(options: Map<*, *>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
+class LiveMapConfig private constructor(options: Map<*, *>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
 
-    fun createLivemapOptions(): LivemapOptions {
+    fun createLivemapOptions(): LiveMapOptions {
         var zoom: Int? = null
         var location: Any? = null
         var stroke: Double? = null
@@ -25,67 +25,67 @@ class LivemapConfig private constructor(options: Map<*, *>) : OptionsAccessor(op
         var geodesic = DEF_GEODESIC
         var devParams: Map<*, *> = emptyMap<Any, Any>()
 
-        if (has(Livemap.ZOOM)) {
-            zoom = getInteger(Livemap.ZOOM)
+        if (has(LiveMap.ZOOM)) {
+            zoom = getInteger(LiveMap.ZOOM)
         }
 
-        if (has(Livemap.LOCATION)) {
-            location = get(Livemap.LOCATION)
+        if (has(LiveMap.LOCATION)) {
+            location = get(LiveMap.LOCATION)
         }
 
-        if (has(Livemap.STROKE)) {
-            stroke = getDouble(Livemap.STROKE)
+        if (has(LiveMap.STROKE)) {
+            stroke = getDouble(LiveMap.STROKE)
         }
 
-        if (has(Livemap.INTERACTIVE)) {
-            interactive = getBoolean(Livemap.INTERACTIVE)
+        if (has(LiveMap.INTERACTIVE)) {
+            interactive = getBoolean(LiveMap.INTERACTIVE)
         }
 
-        if (has(Livemap.MAGNIFIER)) {
-            magnifier = getBoolean(Livemap.MAGNIFIER)
+        if (has(LiveMap.MAGNIFIER)) {
+            magnifier = getBoolean(LiveMap.MAGNIFIER)
         }
 
-        if (has(Livemap.DISPLAY_MODE)) {
-            displayMode = getDisplayMode(getString(Livemap.DISPLAY_MODE))
+        if (has(LiveMap.DISPLAY_MODE)) {
+            displayMode = getDisplayMode(getString(LiveMap.DISPLAY_MODE))
         }
 
-        if (has(Livemap.FEATURE_LEVEL)) {
-            featureLevel = getString(Livemap.FEATURE_LEVEL)
+        if (has(LiveMap.FEATURE_LEVEL)) {
+            featureLevel = getString(LiveMap.FEATURE_LEVEL)
         }
 
-        if (has(Livemap.PARENT)) {
-            parent = get(Livemap.PARENT)
+        if (has(LiveMap.PARENT)) {
+            parent = get(LiveMap.PARENT)
         }
 
-        if (has(Livemap.SCALED)) {
-            scaled = getBoolean(Livemap.SCALED)
+        if (has(LiveMap.SCALED)) {
+            scaled = getBoolean(LiveMap.SCALED)
         }
 
-        if (has(Livemap.CLUSTERING)) {
-            clustering = getBoolean(Livemap.CLUSTERING)
+        if (has(LiveMap.CLUSTERING)) {
+            clustering = getBoolean(LiveMap.CLUSTERING)
         }
 
-        if (has(Livemap.LABELS)) {
-            labels = getBoolean(Livemap.LABELS)
+        if (has(LiveMap.LABELS)) {
+            labels = getBoolean(LiveMap.LABELS)
         }
 
-        if (has(Livemap.THEME)) {
-            theme = getTheme(getString(Livemap.THEME))
+        if (has(LiveMap.THEME)) {
+            theme = getTheme(getString(LiveMap.THEME))
         }
 
-        if (has(Livemap.PROJECTION)) {
-            projection = getProjection(getString(Livemap.PROJECTION))
+        if (has(LiveMap.PROJECTION)) {
+            projection = getProjection(getString(LiveMap.PROJECTION))
         }
 
-        if (has(Livemap.GEODESIC)) {
-            geodesic = getBoolean(Livemap.GEODESIC)
+        if (has(LiveMap.GEODESIC)) {
+            geodesic = getBoolean(LiveMap.GEODESIC)
         }
 
-        if (has(Livemap.DEV_PARAMS)) {
-            devParams = getMap(Livemap.DEV_PARAMS)
+        if (has(LiveMap.DEV_PARAMS)) {
+            devParams = getMap(LiveMap.DEV_PARAMS)
         }
 
-        return LivemapOptions(
+        return LiveMapOptions(
             zoom,
             location,
             stroke,
@@ -108,7 +108,7 @@ class LivemapConfig private constructor(options: Map<*, *>) : OptionsAccessor(op
         try {
             return Theme.valueOf(theme!!.toUpperCase())
         } catch (ignored: Exception) {
-            throw IllegalArgumentException(Livemap.THEME + validValues(Theme.values()))
+            throw IllegalArgumentException(LiveMap.THEME + validValues(Theme.values()))
         }
 
     }
@@ -117,7 +117,7 @@ class LivemapConfig private constructor(options: Map<*, *>) : OptionsAccessor(op
         try {
             return Projection.valueOf(projection!!.toUpperCase())
         } catch (ignored: Exception) {
-            throw IllegalArgumentException(Livemap.PROJECTION + validValues(Projection.values()))
+            throw IllegalArgumentException(LiveMap.PROJECTION + validValues(Projection.values()))
         }
 
     }
@@ -134,26 +134,25 @@ class LivemapConfig private constructor(options: Map<*, *>) : OptionsAccessor(op
         private val DEF_GEODESIC = true
 
 
-        fun getLivemapOptions(plotOptions: Map<*, *>): Map<*, *>? {
+        fun getLiveMapOptions(plotOptions: Map<*, *>): Map<*, *> {
             val plotOptionsAccessor = OptionsAccessor(plotOptions)
             if (!plotOptionsAccessor.has(LAYERS)) {
-                return null
+                return emptyMap<Any, Any>()
             }
 
-            // ToDo: do not return null
             val layersList = plotOptionsAccessor.getList(LAYERS)
             if (layersList.isEmpty() || layersList[0] !is Map<*, *>) {
-                return null
+                return emptyMap<Any, Any>()
             }
 
             val layerOptions = layersList[0] as Map<*, *>
             return if (GeomName.LIVE_MAP == layerOptions[GEOM]) {
                 layerOptions
-            } else null
+            } else emptyMap<Any, Any>()
         }
 
-        fun create(livemapOtherOptions: Map<*, *>): LivemapConfig {
-            return LivemapConfig(livemapOtherOptions)
+        fun create(livemapOtherOptions: Map<*, *>): LiveMapConfig {
+            return LiveMapConfig(livemapOtherOptions)
         }
 
         fun <ValueT : Enum<ValueT>> validValues(values: Array<ValueT>): String {

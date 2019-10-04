@@ -10,6 +10,7 @@ import jetbrains.datalore.base.observable.property.PropertyChangeEvent
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
 import jetbrains.datalore.visualization.base.svg.SvgCssResource
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
@@ -31,9 +32,8 @@ class PlotContainer(
     private var myContentBuilt: Boolean = false
     private var myRegistrations = CompositeRegistration()
 
-// unused?
-//    val tileCanvasFigures: List<CanvasFigure>
-//        get() = plot.tileCanvasFigures
+    val tileCanvasFigures: List<CanvasFigure>
+        get() = plot.tileCanvasFigures
 
     val mouseEventPeer: MouseEventPeer
         get() = plot.mouseEventPeer

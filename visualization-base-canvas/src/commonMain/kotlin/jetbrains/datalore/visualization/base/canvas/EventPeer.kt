@@ -27,18 +27,15 @@ protected constructor(specClass: KClass<SpecT>) { // originally `specClass` was 
                     onSpecRemoved(eventSpec)
                 }
             }
-
         })
     }
 
     protected fun dispatch(eventSpec: SpecT, event: EventT) {
-        if (myEventHandlers.containsKey(eventSpec)) {
-            myEventHandlers[eventSpec]!!.fire(object : ListenerCaller<EventHandler<EventT>> {
-                override fun call(l: EventHandler<EventT>) {
-                    l.onEvent(event)
-                }
-            })
-        }
+        myEventHandlers[eventSpec]?.fire(object : ListenerCaller<EventHandler<EventT>> {
+            override fun call(l: EventHandler<EventT>) {
+                l.onEvent(event)
+            }
+        })
     }
 
     protected abstract fun onSpecAdded(spec: SpecT)

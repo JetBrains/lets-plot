@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const buildPath = path.resolve(__dirname, 'build');
 const libPath = path.resolve(buildPath, 'js');
@@ -14,5 +15,8 @@ module.exports = {
     },
     resolve: {
         modules: [libPath, 'node_modules']
-    }
+    },
+    plugins: [
+        new webpack.IgnorePlugin(/^(ws|text-encoding)$/)
+    ]
 };

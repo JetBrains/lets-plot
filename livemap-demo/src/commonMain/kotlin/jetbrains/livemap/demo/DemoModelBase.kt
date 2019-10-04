@@ -32,6 +32,7 @@ abstract class DemoModelBase(private val canvasControl: CanvasControl) {
 
             tileService = internalTiles {
                 theme = LivemapConstants.Theme.COLOR
+                host = "tiles.datalore.io"
             }
 
             geocodingService = liveMapGeocoding {

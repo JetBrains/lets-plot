@@ -7,14 +7,14 @@ import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 
-interface LivemapProvider {
-    fun createLivemap(
+interface LiveMapProvider {
+    fun createLiveMap(
         aesthetics: Aesthetics,
         dataAccess: MappedDataAccess,
         bounds: DoubleRectangle,
         eventSource: MouseEventSource,
-        layers: List<LivemapLayerData>
-    ): LivemapData
+        layers: List<LiveMapLayerData>
+    ): LiveMapData
 
-    class LivemapData(val canvasFigure: CanvasFigure, val targetLocator: GeomTargetLocator)
+    class LiveMapData(val canvasFigure: CanvasFigure, val targetLocator: GeomTargetLocator)
 }

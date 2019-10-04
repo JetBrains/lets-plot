@@ -64,8 +64,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     protected abstract val isCanvasEnabled: Boolean
 
-//    internal val tileCanvasFigures: List<CanvasFigure>
-//        get() = myCanvasFigures
+    internal val tileCanvasFigures: List<CanvasFigure>
+        get() = myCanvasFigures
 
     internal fun preferredSize(): WritableProperty<DoubleVector> {
         return myPreferredSize

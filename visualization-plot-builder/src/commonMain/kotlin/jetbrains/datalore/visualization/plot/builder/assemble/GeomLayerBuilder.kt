@@ -6,8 +6,8 @@ import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
-import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider
+import jetbrains.datalore.visualization.plot.base.geom.LiveMapGeom
+import jetbrains.datalore.visualization.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
@@ -190,7 +190,7 @@ class GeomLayerBuilder {
             get() = geom.legendKeyElementFactory
 
         override val isLivemap: Boolean
-            get() = geom is LivemapGeom
+            get() = geom is LiveMapGeom
 
         init {
             myHandledAes = ArrayList(handledAes)
@@ -246,9 +246,9 @@ class GeomLayerBuilder {
             return aestheticsDefaults.rangeIncludesZero(aes)
         }
 
-        override fun setLivemapProvider(livemapProvider: LivemapProvider) {
-            if (geom is LivemapGeom) {
-                geom.setLivemapProvider(livemapProvider)
+        override fun setLiveMapProvider(liveMapProvider: LiveMapProvider) {
+            if (geom is LiveMapGeom) {
+                geom.setLiveMapProvider(liveMapProvider)
             } else {
                 throw IllegalStateException("Not Livemap: " + geom::class.simpleName)
             }

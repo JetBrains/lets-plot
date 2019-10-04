@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.config
 
 import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants.*
 
-class LivemapOptions internal constructor(
+class LiveMapOptions internal constructor(
     val zoom: Int?,
     val location: Any?,
     val stroke: Double?,

@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider
+import jetbrains.datalore.visualization.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
@@ -49,5 +49,5 @@ interface GeomLayer {
 
     fun rangeIncludesZero(aes: Aes<*>): Boolean
 
-    fun setLivemapProvider(livemapProvider: LivemapProvider)
+    fun setLiveMapProvider(liveMapProvider: LiveMapProvider)
 }

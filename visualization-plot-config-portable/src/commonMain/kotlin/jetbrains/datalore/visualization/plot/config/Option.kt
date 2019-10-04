@@ -121,7 +121,7 @@ object Option {
             }
         }
 
-        object Livemap {
+        object LiveMap {
             const val PARENT = "within"
             const val DISPLAY_MODE = "display_mode"
             const val FEATURE_LEVEL = "level"

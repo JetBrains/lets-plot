@@ -52,8 +52,8 @@ class LiveMapBuilder {
     var devParams: Map<String, Any> = HashMap()
 
 
-    fun params(vararg vals: Pair<String, Any>) {
-        this.devParams = mapOf(*vals)
+    fun params(vararg values: Pair<String, Any>) {
+        devParams = mapOf(*values)
     }
 
     fun build(): LiveMapSpec {
@@ -361,7 +361,7 @@ class Projection {
 class LiveMapTileServiceBuilder {
     var theme = LivemapConstants.Theme.COLOR
     var host = "localhost"
-    var port = 3012
+    var port: Int? = null
 
     fun build(): TileService {
         return TileService(TileWebSocketBuilder(host, port), theme.name.toLowerCase())

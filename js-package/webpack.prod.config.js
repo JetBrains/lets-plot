@@ -6,5 +6,6 @@ module.exports = {
         filename: 'datalore-plot.min.js'
     }),
     resolve: commonConfig.resolve,
-    mode: 'production'
+    mode: 'production',
+    plugins: commonConfig.plugins
 };

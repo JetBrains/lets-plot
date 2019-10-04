@@ -4,12 +4,12 @@ import jetbrains.datalore.base.js.dom.DomEventListener
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.visualization.base.canvas.EventPeer
 import jetbrains.datalore.visualization.base.canvas.dom.DomEventPeer.DomEventSpec
-import org.w3c.dom.Element
+import org.w3c.dom.Node
 
 typealias W3cMouseEvent = org.w3c.dom.events.MouseEvent
 
 
-internal class DomEventPeer (rootElement: Element) :
+class DomEventPeer (rootElement: Node) :
     EventPeer<DomEventSpec, W3cMouseEvent>(DomEventSpec::class) {
     private var myButtonPressed = false
 
@@ -47,7 +47,6 @@ internal class DomEventPeer (rootElement: Element) :
         })
 
         rootElement.addEventListener(DomEventType.MOUSE_MOVE.name, DomEventListener<W3cMouseEvent> {
-            dispatch(DomEventSpec.MOUSE_MOVED, it)
             if (myButtonPressed) {
                 dispatch(DomEventSpec.MOUSE_DRAGGED, it)
             }
@@ -59,7 +58,7 @@ internal class DomEventPeer (rootElement: Element) :
 
     override fun onSpecRemoved(spec: DomEventSpec) {}
 
-    internal enum class DomEventSpec {
+    enum class DomEventSpec {
         MOUSE_ENTERED,
         MOUSE_EXITED,
         MOUSE_MOVED,
