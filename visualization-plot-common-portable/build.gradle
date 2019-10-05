@@ -60,13 +60,3 @@ idea {
         }
     }
 }
-
-// TMP: publish artifacts needed to build batik-based demo
-apply plugin: 'maven-publish'
-publishing {
-    repositories {
-        maven {
-            url = uri("$rootDir/out-repo")
-        }
-    }
-}

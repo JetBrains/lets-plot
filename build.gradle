@@ -1,7 +1,9 @@
 plugins {
     id 'kotlin-multiplatform' version '1.3.50' apply false
+    id "org.jetbrains.kotlin.jvm" version "1.3.50" apply false
     id 'org.jetbrains.gradle.plugin.idea-ext' version '0.5' apply false
-    id 'com.moowork.node' version '1.3.1' apply false // executing node scripts (adds support for Yarn. Also - NPM, Grunt and Gulp)
+    // executing node scripts (adds support for Yarn. Also - NPM, Grunt and Gulp)
+    id 'com.moowork.node' version '1.3.1' apply false
 }
 
 
@@ -15,6 +17,28 @@ task printProps {
         println System.env.PYTHON_INCLUDE
     }
 }
+
+def publishedProjects = [
+        'base-portable',
+        'base',
+        'mapper-core',
+        'visualization-base-canvas',
+        'visualization-base-svg',
+        'visualization-base-svg-mapper',
+        'visualization-base-svg-mapper-jfx',
+        'visualization-plot-base-portable',
+        'visualization-plot-base',
+        'visualization-plot-common-portable',
+        'visualization-plot-common',
+        'visualization-plot-builder-portable',
+        'visualization-plot-builder',
+        'visualization-plot-config-portable',
+        'visualization-plot-config',
+        'visualization-demo-common',
+        'visualization-demo-common-jfx',
+        'jvm-jfx-package',
+]
+
 subprojects {
     group 'org.jetbrains.datalore-plot'
     version = "1.0-SNAPSHOT"
@@ -28,26 +52,19 @@ subprojects {
         if (name in ['compileKotlinJvm', 'compileTestKotlinJvm']) {
             kotlinOptions.jvmTarget = "1.8"
 
-//            doFirst {
-//                println "doFirst : $name in $project.name jvmTarget=$kotlinOptions.jvmTarget"
-//            }
         }
-        if (name == 'compileKotlinJs') {
-//            doFirst {
-//                println "doFirst : $name in $project.name jvmTarget=$kotlinOptions.jvmTarget"
-//            }
-//            doFirst {
-//                println "doFirst : $name in $project.name"
-//                println "kotlinOptions.sourceMap: ${kotlinOptions.sourceMap}"
-//                println "kotlinOptions.sourceMapEmbedSources: ${kotlinOptions.sourceMapEmbedSources}"
-//            }
-//            doLast {
-//                println "doLast : $name in $project.name"
-//                println "kotlinOptions.sourceMap: ${kotlinOptions.sourceMap}"
-//                println "kotlinOptions.sourceMapEmbedSources: ${kotlinOptions.sourceMapEmbedSources}"
-//            }
+//        if (name == 'compileKotlinJs') {
+//        }
+    }
+
+    if (name in publishedProjects) {
+        apply plugin: 'maven-publish'
+        publishing {
+            repositories {
+                maven {
+                    url = uri("$rootDir/.maven-publish-dev-repo")
+                }
+            }
         }
     }
 }
-
-

@@ -3,7 +3,8 @@
 .gradle
 .DS_Store
 **/build
-**/out-repo
+#**/out-repo  - no longer used
+.maven-publish-dev-repo
 
 node_modules/
 

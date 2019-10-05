@@ -71,22 +71,3 @@ idea {
         }
     }
 }
-
-
-// TMP: publish artifacts needed to build batik-based demo
-apply plugin: 'maven-publish'
-//apply plugin: 'java-library'
-publishing {
-//    publications {
-//        mavenJava(MavenPublication) {
-//            from components.java
-//            artifact sourcesJar
-//        }
-//    }
-    repositories {
-        maven {
-//            url = uri("$buildDir/repository")
-            url = uri("$rootDir/out-repo")
-        }
-    }
-}

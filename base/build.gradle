@@ -72,37 +72,3 @@ idea {
         }
     }
 }
-
-
-// TMP: publish artifacts needed to build batik-based demo
-apply plugin: 'maven-publish'
-publishing {
-    repositories {
-        maven {
-            url = uri("$rootDir/out-repo")
-        }
-    }
-}
-
-// from here: https://mrhaki.blogspot.com/2014/10/gradle-goodness-show-standard-out-or.html
-// or here: https://stackoverflow.com/questions/43289503/where-does-the-output-of-system-out-println-go-in-gradle-test
-// but it doesn't seem to make any difference: println: jvmTest - OK, macosTest - nothing.
-//test {
-//    testLogging {
-//        // Make sure output from
-//        // standard out or error is shown
-//        // in Gradle output.
-////        showStandardStreams = true
-//
-//        // Or we use events method:
-//         events 'standard_out', 'standard_error'
-//
-//        // Or set property events:
-//        // events = ['standard_out', 'standard_error']
-//
-//        // Instead of string values we can
-//        // use enum values:
-//        // events org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT,
-//        //        org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
-//    }
-//}

@@ -37,6 +37,7 @@ include 'base-portable',
         'visualization-demo-plot',
         'python-extension',
         'js-package',
+        'jvm-jfx-package',
         'test-common'
 
 
