@@ -1,6 +1,8 @@
 package jetbrains.datalore.base.gcommon.collect
 
 class TreeMap<K : Comparable<K>, V> {
+    val values: Collection<V>
+        get() = map.values
     private val sortedKeys: MutableList<K> = ArrayList()
     private val map: MutableMap<K, V> = HashMap()
 

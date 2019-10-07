@@ -36,9 +36,7 @@ class LiveMapPresenter : Disposable {
     }
 
     private fun showLiveMap(liveMap: BaseLiveMap) {
-        if (isLoadingLiveMapRegistration !== Registration.EMPTY) {
-            throw IllegalStateException("Unexpected")
-        }
+        check(isLoadingLiveMapRegistration === Registration.EMPTY) { "Unexpected" }
 
         initializing.set(false)
         isLoadingLiveMapRegistration = PropertyBinding.bindOneWay(liveMap.isLoading, liveMapIsLoading)
