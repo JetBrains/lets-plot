@@ -7,7 +7,7 @@ import io.ktor.util.KtorExperimentalAPI
 
 actual class TileWebSocketBuilder actual constructor(
     private val myHost: String,
-    private val myPort: Int
+    private val myPort: Int?
 ) : SocketBuilder {
     @KtorExperimentalAPI
     override fun build(handler: SocketHandler): Socket {

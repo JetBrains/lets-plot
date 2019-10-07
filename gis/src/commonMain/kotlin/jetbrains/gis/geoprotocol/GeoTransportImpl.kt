@@ -2,8 +2,6 @@ package jetbrains.gis.geoprotocol
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
-import io.ktor.content.TextContent
-import io.ktor.http.ContentType.Application.Json
 import io.ktor.http.DEFAULT_PORT
 import io.ktor.http.URLProtocol
 import jetbrains.datalore.base.async.Async
@@ -24,13 +22,13 @@ class GeoTransportImpl(private val myHost: String, private val myPort: Int?, pri
 
             val response= myClient.post<String> {
                 url {
-                    protocol = URLProtocol.HTTP
+                    protocol = URLProtocol.HTTPS
                     host = myHost
                     port = myPort ?: DEFAULT_PORT
                     encodedPath = mySubUrl
                 }
 
-                body = TextContent(JsonSupport.formatJson(format(request)), Json)
+                body = JsonSupport.formatJson(format(request))
             }
 
             async.success(parse(parseJson(response)))

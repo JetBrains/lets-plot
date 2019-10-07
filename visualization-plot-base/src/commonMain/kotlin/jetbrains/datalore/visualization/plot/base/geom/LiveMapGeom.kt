@@ -3,7 +3,7 @@ package jetbrains.datalore.visualization.plot.base.geom
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.geom.LivemapProvider.LivemapData
+import jetbrains.datalore.visualization.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.visualization.plot.base.geom.util.GenericLegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants.DisplayMode
@@ -11,8 +11,8 @@ import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 
 
-class LivemapGeom(private val myDisplayMode: DisplayMode) : Geom {
-    private var myMapProvider: LivemapProvider? = null
+class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
+    private var myMapProvider: LiveMapProvider? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() {
@@ -33,8 +33,8 @@ class LivemapGeom(private val myDisplayMode: DisplayMode) : Geom {
         throw IllegalStateException("Not applicable to live map")
     }
 
-    fun setLivemapProvider(livemapProvider: LivemapProvider) {
-        myMapProvider = livemapProvider
+    fun setLiveMapProvider(liveMapProvider: LiveMapProvider) {
+        myMapProvider = liveMapProvider
     }
 
     fun createCanvasFigure(
@@ -42,9 +42,9 @@ class LivemapGeom(private val myDisplayMode: DisplayMode) : Geom {
         dataAccess: MappedDataAccess,
         bounds: DoubleRectangle,
         eventSource: MouseEventSource,
-        layers: List<LivemapLayerData>
-    ): LivemapData {
-        return myMapProvider!!.createLivemap(aesthetics, dataAccess, bounds, eventSource, layers)
+        layers: List<LiveMapLayerData>
+    ): LiveMapData {
+        return myMapProvider!!.createLiveMap(aesthetics, dataAccess, bounds, eventSource, layers)
     }
 
     companion object {

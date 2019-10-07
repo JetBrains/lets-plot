@@ -34,7 +34,7 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
     override fun createGeomTargetLocator(): GeomTargetLocator {
         return object: GeomTargetLocator {
             override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                return null
             }
         }
 //        val targetLocatorFactory = TargetLocatorFactory(myMapRuler, myRegionGeometryStorage)

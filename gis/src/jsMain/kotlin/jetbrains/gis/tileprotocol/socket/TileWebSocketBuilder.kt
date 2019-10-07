@@ -7,7 +7,7 @@ import io.ktor.client.features.websocket.WebSockets
 actual class TileWebSocketBuilder
 actual constructor(
     private val myHost: String,
-    private val myPort: Int
+    private val myPort: Int?
 ) : SocketBuilder {
     override fun build(handler: SocketHandler): Socket {
         val client = HttpClient(Js) {

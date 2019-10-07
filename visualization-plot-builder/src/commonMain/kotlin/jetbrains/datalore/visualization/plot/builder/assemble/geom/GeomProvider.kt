@@ -334,7 +334,7 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 GeomKind.LIVE_MAP,
 //                LivemapGeom.RENDERS,
                 AestheticsDefaults.livemap(displayMode, scaled),
-                LivemapGeom.HANDLES_GROUPS,
+                LiveMapGeom.HANDLES_GROUPS,
                 supplier
             )
                 .build()

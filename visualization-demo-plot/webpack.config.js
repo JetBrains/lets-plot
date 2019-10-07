@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const demoWepPath = path.resolve(__dirname, 'build', 'demoWeb');
 const libPath = path.resolve(demoWepPath, 'lib');
@@ -16,5 +17,8 @@ module.exports = {
     resolve: {
         modules: [libPath, 'node_modules']
     },
-    mode: 'production'
+    mode: 'production',
+    plugins: [
+        new webpack.IgnorePlugin(/^(ws|text-encoding)$/)
+    ]
 };

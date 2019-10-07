@@ -19,6 +19,7 @@ class MouseEventPeer : MouseEventSource {
             myEventHandlers[eventSpec] = Listeners()
             onAddSpec(eventSpec)
         }
+
         val addReg = myEventHandlers[eventSpec]?.add(eventHandler)
         return object : Registration() {
             override fun doRemove() {

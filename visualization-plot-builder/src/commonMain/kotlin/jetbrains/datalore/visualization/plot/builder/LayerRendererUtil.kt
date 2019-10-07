@@ -2,7 +2,7 @@ package jetbrains.datalore.visualization.plot.builder
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.geom.LivemapGeom
+import jetbrains.datalore.visualization.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 
 internal object LayerRendererUtil {
@@ -16,7 +16,7 @@ internal object LayerRendererUtil {
         var rendererData = createLayerRendererData(livemapLayer, noSharedNumericMappers, noOverallNumericDomains)
         val livemapRenderer = LivemapLayerRenderer(
                 rendererData.aesthetics,
-                rendererData.geom as LivemapGeom,
+                rendererData.geom as LiveMapGeom,
                 rendererData.dataAccess
         )
 

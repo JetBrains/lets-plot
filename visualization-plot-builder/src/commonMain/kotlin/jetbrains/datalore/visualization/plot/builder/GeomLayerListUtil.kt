@@ -5,7 +5,7 @@ import jetbrains.datalore.visualization.plot.base.Scale
 
 object GeomLayerListUtil {
     fun containsLivemapLayer(layersByTile: List<List<GeomLayer>>): Boolean {
-        return !layersByTile.isEmpty() && containsLivemapLayer2(layersByTile[0])
+        return layersByTile.isNotEmpty() && containsLivemapLayer2(layersByTile[0])
     }
 
     fun anyBoundXScale(layersByTile: List<List<GeomLayer>>): Scale<*>? {

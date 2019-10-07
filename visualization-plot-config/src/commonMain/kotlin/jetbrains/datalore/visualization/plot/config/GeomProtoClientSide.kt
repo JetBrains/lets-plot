@@ -47,11 +47,11 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
             GeomKind.LIVE_MAP -> {
-                val cfg = LivemapConfig.create(opts.mergedOptions)
+                val cfg = LiveMapConfig.create(opts.mergedOptions)
                 val livemapOptions = cfg.createLivemapOptions()
 
                 return GeomProvider.livemap(
-                    { LivemapGeom(livemapOptions.displayMode) },
+                    { LiveMapGeom(livemapOptions.displayMode) },
                     livemapOptions.displayMode,
                     livemapOptions.scaled
                 )
