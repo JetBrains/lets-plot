@@ -37,11 +37,6 @@ import jetbrains.livemap.core.multitasking.AsyncMicroTaskExecutorFactory
 import jetbrains.livemap.core.multitasking.MicroTaskExecutor
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.core.multitasking.SyncMicroTaskExecutor
-import jetbrains.livemap.core.multitasking.coroutine.CooperativeCoroutineDispatcher
-import jetbrains.livemap.core.multitasking.coroutine.CooperativeCoroutineTaskExecutor
-import jetbrains.livemap.core.multitasking.coroutine.CooperativeCoroutineTaskExecutor.TotalUpdateTimeLimit
-import jetbrains.livemap.core.multitasking.coroutine.CoroutineSchedulerSystem
-import jetbrains.livemap.core.multitasking.coroutine.defaultCoroutineDispatcher
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.layers.LayerManagers.createLayerManager
 import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
@@ -97,7 +92,6 @@ class LiveMap(
     private var myLayerManager: LayerManager? = null
     private lateinit var myDiagnostics: Diagnostics
     private lateinit var schedulerSystem: SchedulerSystem
-    private lateinit var coroutineSchedulerSystem: CoroutineSchedulerSystem
     private lateinit var uiService: UiService
 
     override fun draw(canvasControl: CanvasControl) {
@@ -169,23 +163,6 @@ class LiveMap(
 
 
         schedulerSystem = SchedulerSystem(microTaskExecutor, componentManager)
-
-
-        coroutineSchedulerSystem = run {
-            val cooperativeCoroutineDispatcher = CooperativeCoroutineDispatcher()
-            defaultCoroutineDispatcher = cooperativeCoroutineDispatcher
-
-            val executionLimitPolicy = TotalUpdateTimeLimit(context, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
-
-            CoroutineSchedulerSystem(
-                CooperativeCoroutineTaskExecutor(
-                    cooperativeCoroutineDispatcher,
-                    executionLimitPolicy
-                ),
-                componentManager
-            )
-        }
-
         ecsController = EcsController(
             componentManager,
             context,
@@ -232,7 +209,6 @@ class LiveMap(
                 UiRenderingTaskSystem(componentManager),
                 layerRenderingSystem,
                 schedulerSystem,
-                coroutineSchedulerSystem,
 
                 // Effects
                 GrowingPath.GrowingPathEffectSystem(componentManager),

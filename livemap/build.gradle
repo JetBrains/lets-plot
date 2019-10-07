@@ -18,7 +18,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinx_coroutines"
                 implementation kotlin('stdlib-common')
                 implementation project(':base-portable')
                 implementation project(':base')
@@ -41,7 +40,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinx_coroutines"
             }
         }
         jvmTest {
@@ -54,7 +52,6 @@ kotlin {
         }
         jsMain {
             dependencies {
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinx_coroutines"
                 implementation kotlin('stdlib-js')
             }
         }
