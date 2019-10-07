@@ -1,5 +1,5 @@
 package jetbrains.datalore.base.projectionGeometry
 
-inline class Scalar<T>(
+data class Scalar<T>(
     val value: Double
 )
