@@ -3,19 +3,22 @@ package jetbrains.datalore.visualization.plotDemo.plotConfig
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.jsObject.mapToJsObjectInitializer
 import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil
-import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.BASE_MAPPER_LIBS
-import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.DEMO_COMMON_LIBS
-import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.KOTLIN_LIBS
-import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.PLOT_LIBS
+//import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.BASE_MAPPER_LIBS
+//import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.DEMO_COMMON_LIBS
+//import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.KOTLIN_LIBS
+//import jetbrains.datalore.visualization.demoUtils.browser.BrowserDemoUtil.PLOT_LIBS
 import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import java.io.StringWriter
 
 private const val DEMO_PROJECT = "visualization-demo-plot"
-private const val CALL_MODULE = "visualization-plot-config"
 private const val CALL_FUN = "jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs"
-private val LIBS = KOTLIN_LIBS + BASE_MAPPER_LIBS + PLOT_LIBS + DEMO_COMMON_LIBS
+
+private const val ROOT_ELEMENT_ID = "root"
+
+private const val JS_DIST_PATH = "js-package/build/dist"
+private const val PLOT_LIB = "datalore-plot.js"
 
 object PlotConfigDemoUtil {
     fun show(title: String, plotSpecList: List<MutableMap<String, Any>>, plotSize: DoubleVector) {
@@ -27,6 +30,8 @@ object PlotConfigDemoUtil {
             )
         }
     }
+
+    private fun getPlotLibPath() = "${BrowserDemoUtil.getRootPath()}/$JS_DIST_PATH/$PLOT_LIB"
 
     private fun getHtml(
         title: String,
@@ -51,14 +56,12 @@ object PlotConfigDemoUtil {
                 title(title)
             }
             body {
-                div { id = "root" }
-
-                for (lib in LIBS) {
-                    script {
-                        type = "text/javascript"
-                        src = "lib/$lib"
-                    }
+                script {
+                    type = "text/javascript"
+                    src = getPlotLibPath()
                 }
+
+                div { id = ROOT_ELEMENT_ID }
 
                 script {
                     type = "text/javascript"
@@ -69,8 +72,7 @@ object PlotConfigDemoUtil {
                         |
                         |   var parentElement = document.createElement('div');
                         |   document.getElementById("root").appendChild(parentElement);
-                        |   window['$CALL_MODULE'].$CALL_FUN(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
-                        |   
+                        |   DatalorePlot.$CALL_FUN(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
                         |});
                     """.trimMargin()
 

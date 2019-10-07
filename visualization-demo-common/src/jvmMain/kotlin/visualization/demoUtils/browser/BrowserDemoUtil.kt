@@ -29,6 +29,15 @@ object BrowserDemoUtil {
         "visualization-plot-base.js",
         "visualization-plot-builder-portable.js",
         "visualization-plot-builder.js",
+        "kotlinx-io.js",
+        "kotlinx-coroutines-core.js",
+        "kotlinx-coroutines-io.js",
+        "ktor-ktor-utils.js",
+        "ktor-ktor-http.js",
+        "ktor-ktor-http-cio.js",
+        "ktor-ktor-client-core.js",
+        "gis.js",
+        "livemap.js",
         "visualization-plot-config-portable.js",
         "visualization-plot-config.js"
     )
@@ -38,13 +47,14 @@ object BrowserDemoUtil {
     )
 
     private const val ROOT_PROJECT = "datalore-plot"
+    private const val JS_PATH = "js-package/build/js"
+    private const val ROOT_ELEMENT_ID = "root"
 
     fun openInBrowser(demoProject: String, html: () -> String) {
-        val outputDir = "$demoProject/build/demoWeb"
 
-        val projectRoot = getProjectRoot()
-        println("Project root: $projectRoot")
-        val tmpDir = File(projectRoot, outputDir)
+        val rootPath = getRootPath()
+        println("Project root: $rootPath")
+        val tmpDir = File(rootPath, "$demoProject/build/tmp")
         val file = File.createTempFile("index", ".html", tmpDir)
         println(file.canonicalFile)
 
@@ -56,7 +66,7 @@ object BrowserDemoUtil {
         desktop.browse(file.toURI());
     }
 
-    private fun getProjectRoot(): String {
+    fun getRootPath(): String {
         // works when launching from IDEA
         val projectRoot = System.getenv()["PWD"] ?: throw IllegalStateException("'PWD' env variable is not defined")
 
@@ -66,21 +76,20 @@ object BrowserDemoUtil {
         return projectRoot
     }
 
-
     fun mapperDemoHtml(demoProject: String, callFun: String, libs: List<String>, title: String): String {
-        val mainScript = "$demoProject.js"
+//        val mainScript = "$demoProject.js"
+        val mainScript = "${getRootPath()}/$demoProject/build/classes/kotlin/js/main/$demoProject.js"
         val writer = StringWriter().appendHTML().html {
             lang = "en"
             head {
                 title(title)
             }
             body {
-                div { id = "root" }
-
                 for (lib in libs) {
                     script {
                         type = "text/javascript"
-                        src = "lib/$lib"
+//                        src = "lib/$lib"
+                        src = "${getRootPath()}/$JS_PATH/$lib"
                     }
                 }
 
@@ -88,6 +97,8 @@ object BrowserDemoUtil {
                     type = "text/javascript"
                     src = mainScript
                 }
+
+                div { id = ROOT_ELEMENT_ID }
 
                 script {
                     type = "text/javascript"
