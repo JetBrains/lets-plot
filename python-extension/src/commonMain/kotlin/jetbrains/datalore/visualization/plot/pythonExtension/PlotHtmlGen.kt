@@ -19,18 +19,10 @@ internal object PlotHtmlGen {
         return """
             <div id="$plotOutputId"></div>
             <script type="text/javascript">
-                var plotSpecList=[
-                    ${plotSpecJs}
-                ];
+                var plotSpec=$plotSpecJs
 
-                var plots = document.getElementById("$plotOutputId");
-                var plotContainer = document.createElement('div');
-                plots.appendChild(plotContainer);
-
-                plotSpecList.forEach(function (spec, index) {
-
-                    DatalorePlot.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(spec, 440.0, 340.0, plotContainer);
-                });
+                var plotContainer = document.getElementById("$plotOutputId");
+                DatalorePlot.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(plotSpec, 440.0, 340.0, plotContainer);
             </script>
         """
     }

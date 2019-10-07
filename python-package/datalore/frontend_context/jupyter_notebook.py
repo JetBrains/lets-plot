@@ -6,25 +6,6 @@ from IPython.display import display_html
 
 from .frontend_context import FrontendContext
 
-_libs = [
-    'kotlin',
-    'kotlin-logging',
-    'datalore-plot-base-portable',
-    'datalore-plot-base',
-    'mapper-core',
-    'visualization-base-svg',
-    'visualization-base-svg-mapper',
-    'visualization-base-canvas',
-    'visualization-plot-common-portable',
-    'visualization-plot-common',
-    'visualization-plot-base-portable',
-    'visualization-plot-base',
-    'visualization-plot-builder-portable',
-    'visualization-plot-builder',
-    'visualization-plot-config-portable',
-    'visualization-plot-config',
-]
-
 
 class JupyterNotebookContext(FrontendContext):
 
@@ -39,7 +20,6 @@ class JupyterNotebookContext(FrontendContext):
         return datalore_plot_kotlin_bridge.generate_html(plot_spec)
 
     def configure(self):
-        display_html(self._undef_modules_script(), raw=True)
         if self.connected:
             display_html(self._configure_connected_script(), raw=True)
         else:
@@ -48,33 +28,27 @@ class JupyterNotebookContext(FrontendContext):
     def _configure_connected_script(self) -> str:
         # ToDo: CDN
         base_url = "http://0.0.0.0:8080"
-        lib_paths = ",\n".join(["'{v}':'{base_url}/{v}'".format(v=v, base_url=base_url) for v in _libs])
-        code = """\
-                requirejs.config({{
-                    paths: {{
-                        {paths}        
-                    }}
-                }});
-        """.format(paths=lib_paths)
-
-        return self._wrap_in_script_element(code)
+        url = "{base_url}/datalore-plot.min.js".format(base_url=base_url)
+        return """\
+                <script type="text/javascript" src="{script_src}"/>
+            """.format(script_src=url)
 
     def _configure_embedded_script(self) -> str:
         path = os.path.join("package_data", "datalore-plot.min.js")
+        js_code = pkgutil.get_data("datalore", path).decode("utf-8")
         lib_js = """
-            console.log('Embedding: datalore-plot.min.js');
-            
-            {js_code}
-        """.format(js_code=pkgutil.get_data("datalore", path).decode("utf-8"))
+                console.log('Embedding: datalore-plot.min.js');
+                
+                {js_code}
+            """.format(js_code=js_code)
         return self._wrap_in_script_element(lib_js)
 
     def _undef_modules_script(self) -> str:
-        code = "".join(["requirejs.undef('{v}');\n".format(v=v) for v in _libs])
-        return self._wrap_in_script_element(code)
+        pass
 
     def _wrap_in_script_element(self, script: str) -> str:
         return """\
-                <script type="text/javascript">
-                    {script}
-                </script>
-            """.format(script=script)
+                    <script type="text/javascript">
+                        {script}
+                    </script>
+                """.format(script=script)
