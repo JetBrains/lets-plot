@@ -1,3 +1,21 @@
+from .coord import *
+from .core import *
+from .facet import *
+from .geom import *
+from .geom_extras import *
+from .geom_image_ import *
+from .geom_livemap_ import *
+from .guide import *
+from .image_matrix import *
+from .label import *
+from .plot import *
+from .pos import *
+from .sampling import *
+from .scale import *
+from .scale_convenience import *
+from .scale_identity import *
+from .theme_ import *
+
 __all__ = (coord.__all__ +
            core.__all__ +
            facet.__all__ +
