@@ -112,8 +112,8 @@ dependencies {
     projectDependenciesJs project(':visualization-plot-base-portable')
     projectDependenciesJs project(':visualization-plot-builder-portable')
     projectDependenciesJs project(':visualization-plot-builder')
-    projectDependenciesJs project(':visualization-plot-config-portable')
-    projectDependenciesJs project(':visualization-plot-config')
+    projectDependenciesJs project(':plot-config-portable')
+    projectDependenciesJs project(':plot-config')
 }
 
 // ---------------------------------

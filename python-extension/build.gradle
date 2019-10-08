@@ -39,7 +39,7 @@ kotlin {
 
                 // (!) only `portable` sources
                 implementation project(':base-portable')
-                implementation project(':visualization-plot-config-portable')
+                implementation project(':plot-config-portable')
             }
         }
     }

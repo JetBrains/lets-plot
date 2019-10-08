@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.parsePlotSpec
+import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 import kotlin.math.round
 import kotlin.math.sign

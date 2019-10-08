@@ -27,8 +27,8 @@ kotlin {
                 api project(':visualization-plot-common')
                 api project(':visualization-plot-builder-portable')
                 api project(':visualization-plot-builder')
-                api project(':visualization-plot-config-portable')
-                api project(':visualization-plot-config')
+                api project(':plot-config-portable')
+                api project(':plot-config')
                 api project(':visualization-demo-common')
                 api project(':visualization-demo-common-jfx')
             }

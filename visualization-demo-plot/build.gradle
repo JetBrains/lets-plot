@@ -50,8 +50,8 @@ kotlin {
                 implementation project(':visualization-plot-common')
                 implementation project(':visualization-plot-builder-portable')
                 implementation project(':visualization-plot-builder')
-                implementation project(':visualization-plot-config-portable')
-                implementation project(':visualization-plot-config')
+                implementation project(':plot-config-portable')
+                implementation project(':plot-config')
                 implementation project(':visualization-demo-common')
             }
         }

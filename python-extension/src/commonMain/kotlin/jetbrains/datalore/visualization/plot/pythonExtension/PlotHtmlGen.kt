@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.pythonExtension
 
 import jetbrains.datalore.base.jsObject.mapToJsObjectInitializer
-import jetbrains.datalore.visualization.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
 internal object PlotHtmlGen {
     fun applyToRawSpecs(plotSpec: MutableMap<String, Any>): String {
@@ -22,7 +22,7 @@ internal object PlotHtmlGen {
                 var plotSpec=$plotSpecJs
 
                 var plotContainer = document.getElementById("$plotOutputId");
-                DatalorePlot.jetbrains.datalore.visualization.plot.MonolithicJs.buildPlotFromProcessedSpecs(plotSpec, 440.0, 340.0, plotContainer);
+                DatalorePlot.jetbrains.datalore.plot.MonolithicJs.buildPlotFromProcessedSpecs(plotSpec, 440.0, 340.0, plotContainer);
             </script>
         """
     }

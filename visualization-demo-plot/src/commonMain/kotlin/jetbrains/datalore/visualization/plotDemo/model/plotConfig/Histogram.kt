@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotConfig
 
-import jetbrains.datalore.visualization.plot.parsePlotSpec
+import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.visualization.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 import kotlin.math.abs

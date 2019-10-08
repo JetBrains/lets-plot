@@ -38,8 +38,8 @@ object BrowserDemoUtil {
         "ktor-ktor-client-core.js",
         "gis.js",
         "livemap.js",
-        "visualization-plot-config-portable.js",
-        "visualization-plot-config.js"
+        "plot-config-portable.js",
+        "plot-config.js"
     )
 
     val DEMO_COMMON_LIBS = listOf(

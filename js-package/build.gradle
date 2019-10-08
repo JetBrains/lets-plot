@@ -33,8 +33,8 @@ kotlin {
                 implementation project(':visualization-plot-common')
                 implementation project(':visualization-plot-builder-portable')
                 implementation project(':visualization-plot-builder')
-                implementation project(':visualization-plot-config-portable')
-                implementation project(':visualization-plot-config')
+                implementation project(':plot-config-portable')
+                implementation project(':plot-config')
             }
         }
 
@@ -90,8 +90,8 @@ dependencies {
     projectDependenciesJs project(':visualization-plot-base')
     projectDependenciesJs project(':visualization-plot-builder-portable')
     projectDependenciesJs project(':visualization-plot-builder')
-    projectDependenciesJs project(':visualization-plot-config-portable')
-    projectDependenciesJs project(':visualization-plot-config')
+    projectDependenciesJs project(':plot-config-portable')
+    projectDependenciesJs project(':plot-config')
 }
 
 // ---------------------------------
