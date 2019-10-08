@@ -7,7 +7,6 @@ import jetbrains.datalore.plot.config.Option.Layer.MAPPING
 import jetbrains.datalore.plot.config.Option.Plot
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.transform.encode.DataFrameEncoding
-import jetbrains.datalore.visualization.plot.FeatureSwitch
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -40,7 +39,7 @@ class PlotConfigServerSideTest {
         }
 
         @Suppress("ConstantConditionIf")
-        if (!FeatureSwitch.USE_DATA_FRAME_ENCODING) {
+        if (!jetbrains.datalore.plot.FeatureSwitch.USE_DATA_FRAME_ENCODING) {
             return
         }
 

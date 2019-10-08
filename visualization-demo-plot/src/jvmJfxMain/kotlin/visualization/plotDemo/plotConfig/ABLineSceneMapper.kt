@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotConfig
 
+import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
 import jetbrains.datalore.visualization.demoUtils.jfx.SceneMapperDemoFactory
-import jetbrains.datalore.visualization.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
 import jetbrains.datalore.visualization.plotDemo.model.plotConfig.ABLine
 
 object ABLineSceneMapper {

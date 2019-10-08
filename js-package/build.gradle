@@ -29,10 +29,10 @@ kotlin {
                 implementation project(':visualization-base-svg-mapper')
                 implementation project(':visualization-plot-base-portable')
                 implementation project(':visualization-plot-base')
-                implementation project(':visualization-plot-common-portable')
-                implementation project(':visualization-plot-common')
-                implementation project(':visualization-plot-builder-portable')
-                implementation project(':visualization-plot-builder')
+                implementation project(':plot-common-portable')
+                implementation project(':plot-common')
+                implementation project(':plot-builder-portable')
+                implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
             }
@@ -84,12 +84,12 @@ dependencies {
 
     projectDependenciesJs project(':visualization-base-canvas')         // required by plot-builder (get rid?)
 
-    projectDependenciesJs project(':visualization-plot-common-portable')
-    projectDependenciesJs project(':visualization-plot-common')
+    projectDependenciesJs project(':plot-common-portable')
+    projectDependenciesJs project(':plot-common')
     projectDependenciesJs project(':visualization-plot-base-portable')
     projectDependenciesJs project(':visualization-plot-base')
-    projectDependenciesJs project(':visualization-plot-builder-portable')
-    projectDependenciesJs project(':visualization-plot-builder')
+    projectDependenciesJs project(':plot-builder-portable')
+    projectDependenciesJs project(':plot-builder')
     projectDependenciesJs project(':plot-config-portable')
     projectDependenciesJs project(':plot-config')
 }

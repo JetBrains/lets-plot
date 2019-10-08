@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.*
 
 object DensityStatUtil {

@@ -1,16 +1,16 @@
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.plot.builder.sampling.Sampling
+import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.SAMPLING
 import jetbrains.datalore.plot.config.aes.AesOptionConversion
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.builder.VarBinding
-import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
-import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
-import jetbrains.datalore.visualization.plot.builder.sampling.Sampling
-import jetbrains.datalore.visualization.plot.builder.scale.ScaleProviderHelper
 
 internal object LayerConfigUtil {
 
@@ -38,8 +38,8 @@ internal object LayerConfigUtil {
     }
 
     fun createBindings(
-            data: DataFrame, mapping: Map<Aes<*>, Variable>?,
-            scaleProviders: TypedScaleProviderMap, consumedAesSet: Set<Aes<*>>): List<VarBinding> {
+        data: DataFrame, mapping: Map<Aes<*>, Variable>?,
+        scaleProviders: TypedScaleProviderMap, consumedAesSet: Set<Aes<*>>): List<VarBinding> {
 
         val result = ArrayList<VarBinding>()
         if (mapping != null) {
@@ -50,7 +50,11 @@ internal object LayerConfigUtil {
                 val scaleProvider = ScaleProviderHelper.getOrCreateDefault(aes, scaleProviders)
                 val binding: VarBinding
                 binding = when {
-                    data.has(variable) -> VarBinding(variable, aes, scaleProvider.createScale(data, variable))
+                    data.has(variable) -> VarBinding(
+                        variable,
+                        aes,
+                        scaleProvider.createScale(data, variable)
+                    )
                     variable.isStat -> VarBinding.deferred(variable, aes, scaleProvider)
                     else -> throw IllegalArgumentException("Undefined variable: '" + variable.name + "'. Variables in data frame: " + data.variables())
                 }

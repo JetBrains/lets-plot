@@ -9,19 +9,17 @@ import jetbrains.datalore.visualization.plot.base.GeomKind.*
 import jetbrains.datalore.visualization.plot.base.geom.LiveMapLayerData
 import jetbrains.datalore.visualization.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.visualization.plot.builder.GeomLayer
-import jetbrains.datalore.visualization.plot.builder.GeomLayerListUtil
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapCanvasFigure
 import jetbrains.livemap.LiveMapFactory
 
 object LiveMapUtil {
 
-    fun containsLiveMap(layersByTile: List<List<GeomLayer>>): Boolean {
-        return GeomLayerListUtil.containsLivemapLayer(layersByTile)
+    fun containsLiveMap(layersByTile: List<List<jetbrains.datalore.plot.builder.GeomLayer>>): Boolean {
+        return jetbrains.datalore.plot.builder.GeomLayerListUtil.containsLivemapLayer(layersByTile)
     }
 
-    fun initLiveMapProvider(layersByTile: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
+    fun initLiveMapProvider(layersByTile: List<List<jetbrains.datalore.plot.builder.GeomLayer>>, liveMapOptions: LiveMapOptions) {
         val liveMapProvider = MyLiveMapProvider(liveMapOptions)
         for (layers in layersByTile) {
             for (layer in layers) {

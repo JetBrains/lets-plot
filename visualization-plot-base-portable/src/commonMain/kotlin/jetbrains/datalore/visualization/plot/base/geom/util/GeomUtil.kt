@@ -5,11 +5,11 @@ import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.geometry.Utils.isClosed
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.GeomContext
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.common.geometry.Utils.isClosed
 import kotlin.math.max
 
 

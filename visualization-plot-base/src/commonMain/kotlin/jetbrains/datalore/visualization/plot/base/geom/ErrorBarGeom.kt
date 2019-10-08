@@ -2,6 +2,7 @@ package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.plot.base.*
@@ -16,7 +17,6 @@ import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.T
 import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 class ErrorBarGeom : GeomBase() {
 

@@ -3,6 +3,7 @@ package jetbrains.datalore.visualization.plotDemo.model.component
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
@@ -12,10 +13,6 @@ import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
-import jetbrains.datalore.visualization.plot.builder.AxisUtil
-import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent
-import jetbrains.datalore.visualization.plot.builder.guide.Orientation
-import jetbrains.datalore.visualization.plot.builder.presentation.Defaults.Plot
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
@@ -48,19 +45,19 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
         val coord = Coords.create(rangeX, rangeY)
 
-        val leftAxis = createAxis(CENTER_SQUARE_SIZE.y, scaleY, coord, Orientation.LEFT)
+        val leftAxis = createAxis(CENTER_SQUARE_SIZE.y, scaleY, coord, jetbrains.datalore.plot.builder.guide.Orientation.LEFT)
         leftAxis.moveTo(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble())
         groupComponent.add(leftAxis.rootGroup)
 
-        val bottomAxis = createAxis(CENTER_SQUARE_SIZE.x, scaleX, coord, Orientation.BOTTOM)
+        val bottomAxis = createAxis(CENTER_SQUARE_SIZE.x, scaleX, coord, jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM)
         bottomAxis.moveTo(LEFT_MARGIN.toDouble(), TOP_MARGIN + CENTER_SQUARE_SIZE.y)
         groupComponent.add(bottomAxis.rootGroup)
 
-        val rightAxis = createAxis(CENTER_SQUARE_SIZE.y, scaleY, coord, Orientation.RIGHT)
+        val rightAxis = createAxis(CENTER_SQUARE_SIZE.y, scaleY, coord, jetbrains.datalore.plot.builder.guide.Orientation.RIGHT)
         rightAxis.moveTo(LEFT_MARGIN + CENTER_SQUARE_SIZE.x, TOP_MARGIN.toDouble())
         groupComponent.add(rightAxis.rootGroup)
 
-        val topAxis = createAxis(CENTER_SQUARE_SIZE.x, scaleX, coord, Orientation.TOP)
+        val topAxis = createAxis(CENTER_SQUARE_SIZE.x, scaleX, coord, jetbrains.datalore.plot.builder.guide.Orientation.TOP)
         topAxis.moveTo(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble())
         groupComponent.add(topAxis.rootGroup)
 
@@ -88,10 +85,10 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             axisLength: Double,
             scale: Scale<Double>,
             coord: CoordinateSystem,
-            orientation: Orientation
-        ): AxisComponent {
-            val axis = AxisComponent(axisLength, orientation)
-            AxisUtil.setBreaks(axis, scale, coord, orientation.isHorizontal)
+            orientation: jetbrains.datalore.plot.builder.guide.Orientation
+        ): jetbrains.datalore.plot.builder.guide.AxisComponent {
+            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(axisLength, orientation)
+            jetbrains.datalore.plot.builder.AxisUtil.setBreaks(axis, scale, coord, orientation.isHorizontal)
             axis.gridLineColor.set(Color.RED)
             axis.gridLineWidth.set(Plot.Axis.GRID_LINE_WIDTH)
             axis.gridLineLength.set(100.0)

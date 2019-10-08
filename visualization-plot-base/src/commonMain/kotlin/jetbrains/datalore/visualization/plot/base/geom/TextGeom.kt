@@ -1,6 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
 import jetbrains.datalore.visualization.plot.base.GeomContext
@@ -9,7 +10,6 @@ import jetbrains.datalore.visualization.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 class TextGeom : GeomBase() {
 

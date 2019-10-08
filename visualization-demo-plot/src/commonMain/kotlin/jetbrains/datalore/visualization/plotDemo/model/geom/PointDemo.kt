@@ -10,7 +10,6 @@ import jetbrains.datalore.visualization.plot.base.geom.PointGeom
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class PointDemo : SimpleDemoBase() {
@@ -44,7 +43,13 @@ open class PointDemo : SimpleDemoBase() {
         val groupComponent = GroupComponent()
 
         val coord = Coords.create(DoubleVector(0.0, demoInnerSize.y / 2))
-        val layer = SvgLayerRenderer(aes, PointGeom(), PositionAdjustments.identity(), coord, EMPTY_GEOM_CONTEXT)
+        val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
+            aes,
+            PointGeom(),
+            PositionAdjustments.identity(),
+            coord,
+            EMPTY_GEOM_CONTEXT
+        )
         groupComponent.add(layer.rootGroup)
         return groupComponent
     }

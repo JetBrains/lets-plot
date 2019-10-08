@@ -2,14 +2,13 @@ package jetbrains.datalore.plot.config.transform.encode
 
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
-import jetbrains.datalore.visualization.plot.FeatureSwitch
 
 internal class ServerSideEncodeChange : SpecChange {
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
-        FeatureSwitch.printEncodedDataSummary("DataFrameOptionHelper.encodeUpdateOption", spec)
+        jetbrains.datalore.plot.FeatureSwitch.printEncodedDataSummary("DataFrameOptionHelper.encodeUpdateOption", spec)
 
         @Suppress("ConstantConditionIf")
-        if (FeatureSwitch.USE_DATA_FRAME_ENCODING) {
+        if (jetbrains.datalore.plot.FeatureSwitch.USE_DATA_FRAME_ENCODING) {
             val encoded = DataFrameEncoding.encode1(spec)
             spec.clear()
             spec.putAll(encoded)

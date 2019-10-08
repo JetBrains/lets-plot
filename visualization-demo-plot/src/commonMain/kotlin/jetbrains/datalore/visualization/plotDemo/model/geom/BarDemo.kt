@@ -11,7 +11,6 @@ import jetbrains.datalore.visualization.plot.base.coord.Coords
 import jetbrains.datalore.visualization.plot.base.geom.BarGeom
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 
@@ -92,7 +91,8 @@ open class BarDemo : SimpleDemoBase() {
     private fun createGeomLayer(aes: Aesthetics, pos: PositionAdjustment): GroupComponent {
         val groupComponent = GroupComponent()
         val coord = Coords.create(DoubleVector(0.0, demoInnerSize.y / 2))
-        val layer = SvgLayerRenderer(aes, BarGeom(), pos, coord, DemoUtil.geomContext(aes))
+        val layer =
+            jetbrains.datalore.plot.builder.SvgLayerRenderer(aes, BarGeom(), pos, coord, DemoUtil.geomContext(aes))
         groupComponent.add(layer.rootGroup)
         return groupComponent
     }

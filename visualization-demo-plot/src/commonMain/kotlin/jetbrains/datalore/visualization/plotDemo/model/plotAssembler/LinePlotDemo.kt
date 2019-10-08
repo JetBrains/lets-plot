@@ -2,19 +2,14 @@ package jetbrains.datalore.visualization.plotDemo.model.plotAssembler
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.stat.Stats
-import jetbrains.datalore.visualization.plot.builder.Plot
-import jetbrains.datalore.visualization.plot.builder.VarBinding
-import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder
-import jetbrains.datalore.visualization.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
-import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
-import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
-import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 
@@ -22,7 +17,7 @@ open class LinePlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<Plot> {
+    fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
         return listOf(
                 simple(),
                 grouped(),
@@ -30,13 +25,13 @@ open class LinePlotDemo : SimpleDemoBase() {
         )
     }
 
-    private fun simple(): Plot = createSimplePlot()
+    private fun simple(): jetbrains.datalore.plot.builder.Plot = createSimplePlot()
 
-    private fun grouped(): Plot = createGroupedLinePlot(true)
+    private fun grouped(): jetbrains.datalore.plot.builder.Plot = createGroupedLinePlot(true)
 
-    private fun notGrouped(): Plot = createGroupedLinePlot(false)
+    private fun notGrouped(): jetbrains.datalore.plot.builder.Plot = createGroupedLinePlot(false)
 
-    private fun createSimplePlot(): Plot {
+    private fun createSimplePlot(): jetbrains.datalore.plot.builder.Plot {
         val count = 100
         val a = xValues(count)
         val b = yValues(count, 32)
@@ -48,20 +43,32 @@ open class LinePlotDemo : SimpleDemoBase() {
                 .putNumeric(varB, b)
                 .build()
 
-        val layer = GeomLayerBuilder.demoAndTest()
+        val layer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
                 .stat(Stats.IDENTITY)
-                .geom(GeomProvider.path())
+                .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.path())
                 .pos(PosProvider.wrap(PositionAdjustments.identity()))
-                .addBinding(VarBinding(varA, Aes.X, Scales.continuousDomainNumericRange("A")))
-                .addBinding(VarBinding(varB, Aes.Y, Scales.continuousDomainNumericRange("B")))
+                .addBinding(
+                    VarBinding(
+                        varA,
+                        Aes.X,
+                        Scales.continuousDomainNumericRange("A")
+                    )
+                )
+                .addBinding(
+                    VarBinding(
+                        varB,
+                        Aes.Y,
+                        Scales.continuousDomainNumericRange("B")
+                    )
+                )
                 .build(data)
 
-        val assembler = PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
+        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
         assembler.disableInteractions()
         return assembler.createPlot()
     }
 
-    private fun createGroupedLinePlot(grouped: Boolean): Plot {
+    private fun createGroupedLinePlot(grouped: Boolean): jetbrains.datalore.plot.builder.Plot {
         //    boolean grouped = false;
         val count = 100 / 2
         val a = DemoUtil.zip(xValues(count), xValues(count))
@@ -77,20 +84,38 @@ open class LinePlotDemo : SimpleDemoBase() {
                 .put(varC, c)
                 .build()
 
-        val layer = with(GeomLayerBuilder.demoAndTest()) {
+        val layer = with(jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()) {
             stat(Stats.IDENTITY)
-            geom(GeomProvider.path())
+            geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.path())
             pos(PosProvider.wrap(PositionAdjustments.identity()))
             if (grouped) {
                 groupingVar(varC)
             }
-            addBinding(VarBinding(varA, Aes.X, Scales.continuousDomainNumericRange("A")))
-            addBinding(VarBinding(varB, Aes.Y, Scales.continuousDomainNumericRange("B")))
-            addBinding(VarBinding(varC, Aes.COLOR, Scales.pureDiscrete("C", listOf("F", "M"), listOf(Color.RED, Color.BLUE), Color.GRAY)))
+            addBinding(
+                VarBinding(
+                    varA,
+                    Aes.X,
+                    Scales.continuousDomainNumericRange("A")
+                )
+            )
+            addBinding(
+                VarBinding(
+                    varB,
+                    Aes.Y,
+                    Scales.continuousDomainNumericRange("B")
+                )
+            )
+            addBinding(
+                VarBinding(
+                    varC,
+                    Aes.COLOR,
+                    Scales.pureDiscrete("C", listOf("F", "M"), listOf(Color.RED, Color.BLUE), Color.GRAY)
+                )
+            )
             build(data)
         }
 
-        val assembler = PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
+        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
         assembler.disableInteractions()
         return assembler.createPlot()
     }

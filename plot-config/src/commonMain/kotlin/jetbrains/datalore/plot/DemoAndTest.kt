@@ -1,11 +1,10 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.builder.Plot
 
 object DemoAndTest {
 
-    fun createPlot(plotSpec: MutableMap<String, Any>, andBuildComponent: Boolean = true): Plot {
+    fun createPlot(plotSpec: MutableMap<String, Any>, andBuildComponent: Boolean = true): jetbrains.datalore.plot.builder.Plot {
         val plot = jetbrains.datalore.plot.Monolithic.createPlot(plotSpec, null)
         if (andBuildComponent) {
             val rootGroup = plot.rootGroup

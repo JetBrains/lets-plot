@@ -3,8 +3,8 @@ package jetbrains.datalore.visualization.plot.base.scale
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantizeScale
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import kotlin.math.round
 
 object Mappers {

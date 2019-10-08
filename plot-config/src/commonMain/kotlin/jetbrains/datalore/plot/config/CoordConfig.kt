@@ -1,10 +1,8 @@
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
-
 class CoordConfig private constructor(name: String, options: Map<String, Any>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
 
-    val coord: CoordProvider = CoordProto.createCoordProvider(name, this)
+    val coord: jetbrains.datalore.plot.builder.coord.CoordProvider = CoordProto.createCoordProvider(name, this)
 
     companion object {
         fun create(coord: Any): CoordConfig {

@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
 
 internal object PosProto {
     // position adjustments

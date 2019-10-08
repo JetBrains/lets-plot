@@ -3,6 +3,9 @@ package jetbrains.datalore.visualization.plotDemo.model.component
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.common.color.ColorPalette
+import jetbrains.datalore.plot.common.color.ColorScheme
+import jetbrains.datalore.plot.common.color.PaletteUtil.schemeColors
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.Scale
@@ -21,12 +24,6 @@ import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantizeScale
-import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
-import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent
-import jetbrains.datalore.visualization.plot.builder.guide.Orientation
-import jetbrains.datalore.visualization.plot.common.color.ColorPalette
-import jetbrains.datalore.visualization.plot.common.color.ColorScheme
-import jetbrains.datalore.visualization.plot.common.color.PaletteUtil.schemeColors
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 
@@ -95,7 +92,10 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
-            val axis = AxisComponent(rangeX, Orientation.BOTTOM)
+            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+                rangeX,
+                jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
+            )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleX, coord, true))
             axis.labels.set(scaleX.labels)
 
@@ -115,7 +115,10 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
-            val axis = AxisComponent(rangeY, Orientation.LEFT)
+            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+                rangeY,
+                jetbrains.datalore.plot.builder.guide.Orientation.LEFT
+            )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
             axis.labels.set(scaleY.labels)
 
@@ -145,7 +148,8 @@ open class ScatterDemo : SimpleDemoBase() {
                     .build()
 
             val pos = PositionAdjustments.identity()
-            val layer = SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+            val layer =
+                jetbrains.datalore.plot.builder.SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
             layer.moveTo(plotLeftTop)
             groupComponent.add(layer.rootGroup)
         }
@@ -258,7 +262,10 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
-            val axis = AxisComponent(rangeX, Orientation.BOTTOM)
+            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+                rangeX,
+                jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
+            )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleX, coord, true))
             axis.labels.set(ScaleUtil.labels(scaleX))
 
@@ -280,7 +287,10 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
-            val axis = AxisComponent(rangeY, Orientation.LEFT)
+            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+                rangeY,
+                jetbrains.datalore.plot.builder.guide.Orientation.LEFT
+            )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
             axis.labels.set(ScaleUtil.labels(scaleY))
 
@@ -313,7 +323,8 @@ open class ScatterDemo : SimpleDemoBase() {
                     .build()
 
             val pos = PositionAdjustments.identity()
-            val layer = SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+            val layer =
+                jetbrains.datalore.plot.builder.SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
             layer.moveTo(plotLeftTop)
             groupComponent.add(layer.rootGroup)
         }
@@ -382,7 +393,10 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
-            val axis = AxisComponent(rangeX, Orientation.BOTTOM)
+            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+                rangeX,
+                jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
+            )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleX, coord, true))
             axis.labels.set(ScaleUtil.labels(scaleX))
 
@@ -404,7 +418,10 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
-            val axis = AxisComponent(rangeY, Orientation.LEFT)
+            val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(
+                rangeY,
+                jetbrains.datalore.plot.builder.guide.Orientation.LEFT
+            )
             axis.breaks.set(ScaleUtil.axisBreaks(scaleY, coord, false))
             axis.labels.set(ScaleUtil.labels(scaleY))
 
@@ -434,7 +451,8 @@ open class ScatterDemo : SimpleDemoBase() {
                     .build()
 
             val pos = PositionAdjustments.identity()
-            val layer = SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+            val layer =
+                jetbrains.datalore.plot.builder.SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
             layer.moveTo(plotLeftTop)
             groupComponent.add(layer.rootGroup)
         }

@@ -18,7 +18,6 @@ import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.visualization.plot.base.stat.Stats
-import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 
@@ -98,7 +97,13 @@ open class BinDemo : SimpleDemoBase() {
                         .build()
 
                 val pos = PositionAdjustments.dodge(aes, 1, .95)
-                val layer = SvgLayerRenderer(aes, BarGeom(), pos, coord, DemoUtil.geomContext(aes))
+                val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                    aes,
+                    BarGeom(),
+                    pos,
+                    coord,
+                    DemoUtil.geomContext(aes)
+                )
                 groupComponent.add(layer.rootGroup)
             }
 
@@ -113,7 +118,8 @@ open class BinDemo : SimpleDemoBase() {
                         .build()
 
                 val pos = PositionAdjustments.identity()
-                val layer = SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+                val layer =
+                    jetbrains.datalore.plot.builder.SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
                 groupComponent.add(layer.rootGroup)
             }
         }
@@ -129,7 +135,8 @@ open class BinDemo : SimpleDemoBase() {
                     .build()
 
             val pos = PositionAdjustments.identity()
-            val layer = SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+            val layer =
+                jetbrains.datalore.plot.builder.SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
             groupComponent.add(layer.rootGroup)
         }
 

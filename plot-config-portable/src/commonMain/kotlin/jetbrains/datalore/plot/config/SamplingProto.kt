@@ -1,18 +1,18 @@
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.builder.sampling.Sampling
+import jetbrains.datalore.plot.builder.sampling.Samplings
+import jetbrains.datalore.plot.builder.sampling.Samplings.PICK
+import jetbrains.datalore.plot.builder.sampling.Samplings.RANDOM
+import jetbrains.datalore.plot.builder.sampling.Samplings.RANDOM_GROUP
+import jetbrains.datalore.plot.builder.sampling.Samplings.RANDOM_STRATIFIED
+import jetbrains.datalore.plot.builder.sampling.Samplings.SYSTEMATIC
+import jetbrains.datalore.plot.builder.sampling.Samplings.SYSTEMATIC_GROUP
+import jetbrains.datalore.plot.builder.sampling.Samplings.VERTEX_DP
+import jetbrains.datalore.plot.builder.sampling.Samplings.VERTEX_VW
 import jetbrains.datalore.plot.config.Option.Sampling.MIN_SUB_SAMPLE
 import jetbrains.datalore.plot.config.Option.Sampling.N
 import jetbrains.datalore.plot.config.Option.Sampling.SEED
-import jetbrains.datalore.visualization.plot.builder.sampling.Sampling
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.PICK
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.RANDOM
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.RANDOM_GROUP
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.RANDOM_STRATIFIED
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.SYSTEMATIC
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.SYSTEMATIC_GROUP
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.VERTEX_DP
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings.VERTEX_VW
 
 internal object SamplingProto {
 

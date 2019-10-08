@@ -2,11 +2,11 @@ package jetbrains.datalore.visualization.plot.base.stat
 
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.random.RandomGaussian
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -97,7 +97,8 @@ class DensityStatTest {
         val n1 = 512
         val n2 = 256
         val binArea =
-            SeriesUtil.span(SeriesUtil.range(testX)!!) / (n1 - 1) * SeriesUtil.span(SeriesUtil.range(testY)!!) / (n2 - 1)
+            SeriesUtil.span(SeriesUtil.range(testX)!!) / (n1 - 1) * SeriesUtil.span(
+                SeriesUtil.range(testY)!!) / (n2 - 1)
 
         val stat = Stats.density2d()
         stat.nx = n1

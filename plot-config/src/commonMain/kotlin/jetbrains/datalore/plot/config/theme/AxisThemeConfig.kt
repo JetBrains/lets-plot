@@ -1,12 +1,12 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.config.Option.Theme.AXIS_LINE
 import jetbrains.datalore.plot.config.Option.Theme.AXIS_TEXT
 import jetbrains.datalore.plot.config.Option.Theme.AXIS_TICKS
 import jetbrains.datalore.plot.config.Option.Theme.AXIS_TITLE
 import jetbrains.datalore.plot.config.OptionsAccessor
-import jetbrains.datalore.visualization.plot.builder.theme.AxisTheme
 
 class AxisThemeConfig private constructor(options: Map<*, *>, defOptions: Map<*, *>, private val myX: Boolean) : OptionsAccessor(options, defOptions), AxisTheme {
 

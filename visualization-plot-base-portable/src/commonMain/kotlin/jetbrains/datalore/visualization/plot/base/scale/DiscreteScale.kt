@@ -2,9 +2,9 @@ package jetbrains.datalore.visualization.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.TreeMap
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.Transform
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import kotlin.math.abs
 
 internal class DiscreteScale<T> : AbstractScale<Any, T> {

@@ -27,8 +27,8 @@ kotlin {
                 implementation project(':visualization-base-canvas')
                 implementation project(':visualization-demo-common')
                 implementation project(':visualization-demo-common-jfx')
-                implementation project(':visualization-plot-builder-portable')
-                implementation project(':visualization-plot-builder')
+                implementation project(':plot-builder-portable')
+                implementation project(':plot-builder')
                 implementation project(':visualization-plot-base-portable')
                 implementation project(':visualization-plot-base')
             }
@@ -106,12 +106,12 @@ dependencies {
 
     projectDependenciesJs project(':visualization-base-canvas')         // required by plot-builder (get rid?)
 
-    projectDependenciesJs project(':visualization-plot-common-portable')
-    projectDependenciesJs project(':visualization-plot-common')
+    projectDependenciesJs project(':plot-common-portable')
+    projectDependenciesJs project(':plot-common')
     projectDependenciesJs project(':visualization-plot-base')
     projectDependenciesJs project(':visualization-plot-base-portable')
-    projectDependenciesJs project(':visualization-plot-builder-portable')
-    projectDependenciesJs project(':visualization-plot-builder')
+    projectDependenciesJs project(':plot-builder-portable')
+    projectDependenciesJs project(':plot-builder')
     projectDependenciesJs project(':plot-config-portable')
     projectDependenciesJs project(':plot-config')
 }

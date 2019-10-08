@@ -3,8 +3,6 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.config.Option.CoordName.CARTESIAN
 import jetbrains.datalore.plot.config.Option.CoordName.FIXED
 import jetbrains.datalore.plot.config.Option.CoordName.MAP
-import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
-import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
 
 internal object CoordProto {
 
@@ -16,17 +14,17 @@ internal object CoordProto {
     private const val ORIENTATION = "orientation" // todo
     private const val PROJECTION = "projection"   // todo
 
-    fun createCoordProvider(coordName: String, options: OptionsAccessor): CoordProvider {
+    fun createCoordProvider(coordName: String, options: OptionsAccessor): jetbrains.datalore.plot.builder.coord.CoordProvider {
         return when (coordName) {
-            CARTESIAN -> CoordProviders.cartesian()
+            CARTESIAN -> jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian()
             FIXED -> {
                 var ratio = 1.0
                 if (options.has(RATIO)) {
                     ratio = options.getDouble(RATIO)!!
                 }
-                CoordProviders.fixed(ratio)
+                jetbrains.datalore.plot.builder.coord.CoordProviders.fixed(ratio)
             }
-            MAP -> CoordProviders.map()
+            MAP -> jetbrains.datalore.plot.builder.coord.CoordProviders.map()
             else -> throw IllegalArgumentException("Unknown coordinate system name: '$coordName'")
         }
     }

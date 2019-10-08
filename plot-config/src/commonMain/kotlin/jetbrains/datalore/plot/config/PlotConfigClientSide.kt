@@ -1,5 +1,8 @@
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.builder.assemble.GuideOptions
+import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot.COORD
 import jetbrains.datalore.plot.config.Option.Plot.THEME
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createGuideOptionsMap
@@ -9,15 +12,11 @@ import jetbrains.datalore.plot.config.transform.encode.DataSpecEncodeTransforms
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.builder.assemble.GuideOptions
-import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
-import jetbrains.datalore.visualization.plot.builder.coord.CoordProvider
-import jetbrains.datalore.visualization.plot.builder.theme.Theme
 
 class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotConfig(opts) {
 
     internal val theme: Theme = ThemeConfig(getMap(THEME)).theme
-    internal val coordProvider: CoordProvider
+    internal val coordProvider: jetbrains.datalore.plot.builder.coord.CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
 
     override val isClientSide: Boolean

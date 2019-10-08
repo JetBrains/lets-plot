@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotAssembler
 
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.visualization.demoUtils.jfx.SceneMapperDemoFrame
-import jetbrains.datalore.visualization.plot.builder.presentation.Style
 import jetbrains.datalore.visualization.plotDemo.model.plotAssembler.BarPlotDemo
 
 class BarPlotDemoSceneMapper : BarPlotDemo() {

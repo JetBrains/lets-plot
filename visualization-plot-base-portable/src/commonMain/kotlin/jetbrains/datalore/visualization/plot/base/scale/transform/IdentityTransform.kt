@@ -2,10 +2,10 @@ package jetbrains.datalore.visualization.plot.base.scale.transform
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.Transform
 import jetbrains.datalore.visualization.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.visualization.plot.base.scale.ScaleBreaks
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
 internal class IdentityTransform @JvmOverloads constructor(

@@ -3,21 +3,16 @@ package jetbrains.datalore.visualization.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
+import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.stat.Stats
-import jetbrains.datalore.visualization.plot.builder.Plot
-import jetbrains.datalore.visualization.plot.builder.VarBinding
-import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder
-import jetbrains.datalore.visualization.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
-import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
-import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
-import jetbrains.datalore.visualization.plot.builder.scale.ScaleProviderHelper
-import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import kotlin.random.Random
 
@@ -27,13 +22,13 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         get() = DoubleVector.ZERO
 
 
-    fun createPlots(): List<Plot> {
+    fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
         return listOf(
             createPlot()
         )
     }
 
-    private fun createPlot(): Plot {
+    private fun createPlot(): jetbrains.datalore.plot.builder.Plot {
         val count = 10
 
         //
@@ -49,12 +44,24 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
             .putNumeric(varOrigY, valuesY)
             .build()
 
-        val scatterLayer = GeomLayerBuilder.demoAndTest()
+        val scatterLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
             .stat(Stats.IDENTITY)
-            .geom(GeomProvider.point())
+            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.point())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
-            .addBinding(VarBinding(varOrigX, Aes.X, Scales.continuousDomainNumericRange("A")))
-            .addBinding(VarBinding(varOrigY, Aes.Y, Scales.continuousDomainNumericRange("B")))
+            .addBinding(
+                VarBinding(
+                    varOrigX,
+                    Aes.X,
+                    Scales.continuousDomainNumericRange("A")
+                )
+            )
+            .addBinding(
+                VarBinding(
+                    varOrigY,
+                    Aes.Y,
+                    Scales.continuousDomainNumericRange("B")
+                )
+            )
             .build(data)
 
         //
@@ -70,12 +77,24 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
             .putNumeric(varTLX, valuesX)
             .putNumeric(varTLY, valuesY)
             .build()
-        val trueLineLayer = GeomLayerBuilder.demoAndTest()
+        val trueLineLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
             .stat(Stats.IDENTITY)
-            .geom(GeomProvider.line())
+            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.line())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
-            .addBinding(VarBinding(varTLX, Aes.X, Scales.continuousDomainNumericRange("A")))
-            .addBinding(VarBinding(varTLY, Aes.Y, Scales.continuousDomainNumericRange("B")))
+            .addBinding(
+                VarBinding(
+                    varTLX,
+                    Aes.X,
+                    Scales.continuousDomainNumericRange("A")
+                )
+            )
+            .addBinding(
+                VarBinding(
+                    varTLY,
+                    Aes.Y,
+                    Scales.continuousDomainNumericRange("B")
+                )
+            )
             .addConstantAes(Aes.LINETYPE, NamedLineType.DASHED)
             .build(line)
 
@@ -83,23 +102,47 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         //
         // Smooth stat (regression)
         //
-        val regressionLineLayer = GeomLayerBuilder.demoAndTest()
+        val regressionLineLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
             .stat(Stats.smooth())
-            .geom(GeomProvider.smooth())
+            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.smooth())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
-            .addBinding(VarBinding(varOrigX, Aes.X, Scales.continuousDomainNumericRange("A")))
-            .addBinding(VarBinding(varOrigY, Aes.Y, Scales.continuousDomainNumericRange("B")))
+            .addBinding(
+                VarBinding(
+                    varOrigX,
+                    Aes.X,
+                    Scales.continuousDomainNumericRange("A")
+                )
+            )
+            .addBinding(
+                VarBinding(
+                    varOrigY,
+                    Aes.Y,
+                    Scales.continuousDomainNumericRange("B")
+                )
+            )
             .build(data)
 
         //
         // Smooth stat - standard error
         //
-        val seLineLayer = GeomLayerBuilder.demoAndTest()
+        val seLineLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
             .stat(Stats.smooth())
-            .geom(GeomProvider.point())
+            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.point())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
-            .addBinding(VarBinding(varOrigX, Aes.X, Scales.continuousDomainNumericRange("A")))
-            .addBinding(VarBinding(varOrigY, Aes.Y, Scales.continuousDomainNumericRange("B")))
+            .addBinding(
+                VarBinding(
+                    varOrigX,
+                    Aes.X,
+                    Scales.continuousDomainNumericRange("A")
+                )
+            )
+            .addBinding(
+                VarBinding(
+                    varOrigY,
+                    Aes.Y,
+                    Scales.continuousDomainNumericRange("B")
+                )
+            )
             .addBinding(VarBinding.deferred(Stats.SE, Aes.Y, ScaleProviderHelper.createDefault(Aes.Y)))
             .addConstantAes(Aes.COLOR, Color.RED)
             .build(data)
@@ -107,13 +150,13 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         //
         // Plot
         //
-        val assembler = PlotAssembler.singleTile(
+        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(
             listOf(
                 scatterLayer,
                 trueLineLayer,
                 regressionLineLayer,
                 seLineLayer
-            ), CoordProviders.cartesian(), DefaultTheme()
+            ), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme()
         )
         assembler.setTitle("Linear Regression")
         assembler.disableInteractions()

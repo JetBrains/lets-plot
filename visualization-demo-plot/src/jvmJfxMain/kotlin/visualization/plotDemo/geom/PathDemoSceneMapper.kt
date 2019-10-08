@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.geom
 
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.visualization.demoUtils.jfx.SceneMapperDemoFrame
-import jetbrains.datalore.visualization.plot.builder.presentation.Style
 import jetbrains.datalore.visualization.plotDemo.model.geom.PathDemo
 
 class PathDemoSceneMapper : PathDemo() {

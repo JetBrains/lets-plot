@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.stat.regression
 
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.stat.math3.TDistribution
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt

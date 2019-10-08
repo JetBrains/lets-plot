@@ -6,7 +6,6 @@ import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.demoUtils.swing.SwingDemoFactory
-import jetbrains.datalore.visualization.plot.builder.PlotContainer
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -60,7 +59,7 @@ object PlotConfigDemoUtil {
         plotSize: DoubleVector
     ): JComponent {
         val plot = jetbrains.datalore.plot.DemoAndTest.createPlot(plotSpec, false)
-        val plotContainer = PlotContainer(plot, ValueProperty(plotSize))
+        val plotContainer = jetbrains.datalore.plot.builder.PlotContainer(plot, ValueProperty(plotSize))
         plotContainer.ensureContentBuilt()
 
         val component = factory.createSvgComponent(plotContainer.svg)

@@ -1,13 +1,13 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.visualization.plot.base.geom.util.RectTargetCollectorHelper
 import jetbrains.datalore.visualization.plot.base.geom.util.RectanglesHelper
 import jetbrains.datalore.visualization.plot.base.render.SvgRoot
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 /**
  * TODO: position adjustment (identity, dodge, stack, fill)

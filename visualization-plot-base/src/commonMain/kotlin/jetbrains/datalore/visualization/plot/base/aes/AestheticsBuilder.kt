@@ -6,6 +6,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.visualization.plot.base.Aes.Companion.ANGLE
@@ -46,7 +47,6 @@ import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.DataPointAesthetics
 import jetbrains.datalore.visualization.plot.base.render.linetype.LineType
 import jetbrains.datalore.visualization.plot.base.render.point.PointShape
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
 class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: Int = 0) {

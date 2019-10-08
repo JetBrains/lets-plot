@@ -4,10 +4,9 @@ import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.config.PlotConfigUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
-import jetbrains.datalore.visualization.plot.builder.Plot
 
 object Monolithic {
-    fun createPlot(plotSpec: MutableMap<String, Any>, computationMessagesHandler: ((List<String>) -> Unit)?): Plot {
+    fun createPlot(plotSpec: MutableMap<String, Any>, computationMessagesHandler: ((List<String>) -> Unit)?): jetbrains.datalore.plot.builder.Plot {
         @Suppress("NAME_SHADOWING")
         var plotSpec = plotSpec
         plotSpec = transformPlotSpec(plotSpec)

@@ -31,12 +31,12 @@ object BrowserDemoUtil {
 
     val PLOT_LIBS = listOf(
         "visualization-base-canvas.js",     // required by plot-builder (get rid?)
-        "visualization-plot-common-portable.js",
-        "visualization-plot-common.js",
+        "plot-common-portable.js",
+        "plot-common.js",
         "visualization-plot-base-portable.js",
         "visualization-plot-base.js",
-        "visualization-plot-builder-portable.js",
-        "visualization-plot-builder.js",
+        "plot-builder-portable.js",
+        "plot-builder.js",
         "plot-config-portable.js",
         "gis.js",
         "livemap.js"

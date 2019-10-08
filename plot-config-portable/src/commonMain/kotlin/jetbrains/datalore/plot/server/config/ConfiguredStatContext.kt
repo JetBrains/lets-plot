@@ -1,17 +1,18 @@
 package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 internal class ConfiguredStatContext(
         private val myDataFrames: List<DataFrame>,
-        private val myScaleProviderMap: TypedScaleProviderMap) : StatContext {
+        private val myScaleProviderMap: TypedScaleProviderMap
+) : StatContext {
 
     private fun overallRange(variable: DataFrame.Variable, dataFrames: List<DataFrame>): ClosedRange<Double>? {
         var range: ClosedRange<Double>? = null

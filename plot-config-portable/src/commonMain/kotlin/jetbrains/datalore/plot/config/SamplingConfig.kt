@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.builder.sampling.Sampling
+import jetbrains.datalore.plot.builder.sampling.Samplings
 import jetbrains.datalore.plot.config.Option.Sampling.NONE
-import jetbrains.datalore.visualization.plot.builder.sampling.Sampling
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings
 
 internal object SamplingConfig {
     fun create(sampling: Any): List<Sampling> {

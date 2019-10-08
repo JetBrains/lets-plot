@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.base.scale.breaks
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.common.text.Formatter
-import jetbrains.datalore.visualization.plot.common.time.interval.NiceTimeInterval
-import jetbrains.datalore.visualization.plot.common.time.interval.TimeInterval
-import jetbrains.datalore.visualization.plot.common.time.interval.YearInterval
+import jetbrains.datalore.plot.common.text.Formatter
+import jetbrains.datalore.plot.common.time.interval.NiceTimeInterval
+import jetbrains.datalore.plot.common.time.interval.TimeInterval
+import jetbrains.datalore.plot.common.time.interval.YearInterval
 
 internal class TimeScaleTickFormatterFactory(
         private val myMinInterval: TimeInterval?) :

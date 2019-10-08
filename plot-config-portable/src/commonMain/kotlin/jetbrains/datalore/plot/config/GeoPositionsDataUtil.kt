@@ -2,12 +2,12 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.plot.builder.map.GeoPositionField
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.builder.map.GeoPositionField
 
 object GeoPositionsDataUtil {
     // Fixed columns in dataframe supplied by 'geo-coding'

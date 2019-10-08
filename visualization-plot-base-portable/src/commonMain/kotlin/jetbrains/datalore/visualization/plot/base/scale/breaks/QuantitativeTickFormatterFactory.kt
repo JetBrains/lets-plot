@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.base.scale.breaks
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.common.time.interval.TimeInterval
+import jetbrains.datalore.plot.common.time.interval.TimeInterval
 import kotlin.jvm.JvmOverloads
 
 abstract class QuantitativeTickFormatterFactory {

@@ -3,27 +3,21 @@ package jetbrains.datalore.visualization.plotDemo.model.plotContainer
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Scale
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.stat.Stats
-import jetbrains.datalore.visualization.plot.builder.PlotContainer
-import jetbrains.datalore.visualization.plot.builder.VarBinding
-import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder
-import jetbrains.datalore.visualization.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
-import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
-import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
-import jetbrains.datalore.visualization.plot.builder.interact.GeomInteractionBuilder
-import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
 
 class BarPlotResizeDemo private constructor(
         private val sclData: SinCosLineData,
         private val xScale: Scale<*>) {
 
-    fun createPlot(plotSize: ReadableProperty<DoubleVector>): PlotContainer {
+    fun createPlot(plotSize: ReadableProperty<DoubleVector>): jetbrains.datalore.plot.builder.PlotContainer {
         val varX = sclData.varX
         val varY = sclData.varY
         val varCat = sclData.varCat
@@ -34,18 +28,30 @@ class BarPlotResizeDemo private constructor(
         val fillScale = Scales.pureDiscrete("C", categories, colors, Color.GRAY)
 
 
-        val layerBuilder = GeomLayerBuilder.demoAndTest()
+        val layerBuilder = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
                 .stat(Stats.IDENTITY)
-                .geom(GeomProvider.bar())
+                .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.bar())
                 .pos(PosProvider.dodge())
                 .groupingVar(varCat)
                 .addBinding(VarBinding(varX, Aes.X, xScale))
-                .addBinding(VarBinding(varY, Aes.Y, Scales.continuousDomain("sin, cos, line", Aes.Y)))
+                .addBinding(
+                    VarBinding(
+                        varY,
+                        Aes.Y,
+                        Scales.continuousDomain("sin, cos, line", Aes.Y)
+                    )
+                )
                 .addBinding(VarBinding(varCat, Aes.FILL, fillScale))
                 .addConstantAes(Aes.WIDTH, 0.9)
 
         // Add bar plot interactions
-        val geomInteraction = GeomInteractionBuilder(listOf(Aes.X, Aes.Y, Aes.FILL))
+        val geomInteraction = jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder(
+            listOf(
+                Aes.X,
+                Aes.Y,
+                Aes.FILL
+            )
+        )
                 .univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
                 .build()
         val layer = layerBuilder
@@ -65,9 +71,9 @@ class BarPlotResizeDemo private constructor(
         //    };
         //  }
         //};
-        val assembler = PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
+        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
 //        assembler.disableInteractions()
-        return PlotContainer(assembler.createPlot(), plotSize)
+        return jetbrains.datalore.plot.builder.PlotContainer(assembler.createPlot(), plotSize)
     }
 
     companion object {

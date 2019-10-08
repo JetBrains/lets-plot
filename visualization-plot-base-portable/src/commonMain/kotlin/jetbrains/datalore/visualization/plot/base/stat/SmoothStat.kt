@@ -1,10 +1,10 @@
 package jetbrains.datalore.visualization.plot.base.stat
 
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.StatContext
 import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 /**
  * See doc for stat_smooth / geom_smooth

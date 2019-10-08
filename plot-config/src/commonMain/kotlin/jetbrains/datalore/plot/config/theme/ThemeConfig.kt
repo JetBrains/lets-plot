@@ -1,12 +1,12 @@
 package jetbrains.datalore.plot.config.theme
 
+import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.plot.builder.theme.DefaultTheme
+import jetbrains.datalore.plot.builder.theme.LegendTheme
+import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_DIRECTION
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_POSITION
-import jetbrains.datalore.visualization.plot.builder.theme.AxisTheme
-import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
-import jetbrains.datalore.visualization.plot.builder.theme.LegendTheme
-import jetbrains.datalore.visualization.plot.builder.theme.Theme
 
 class ThemeConfig(options: Map<*, *>) {
 

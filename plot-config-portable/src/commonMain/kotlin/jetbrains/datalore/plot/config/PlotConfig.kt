@@ -3,6 +3,8 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.plot.builder.assemble.PlotFacets
+import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.Kind
 import jetbrains.datalore.plot.config.Option.Plot.COORD
@@ -16,8 +18,6 @@ import jetbrains.datalore.plot.config.Option.Plot.TITLE_TEXT
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.visualization.plot.builder.assemble.TypedScaleProviderMap
 
 abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(opts,
     DEF_OPTIONS

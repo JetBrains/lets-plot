@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotContainer
 
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.visualization.demoUtils.jfx.SceneMapperDemoFactory
-import jetbrains.datalore.visualization.plot.builder.presentation.Style
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 
 object BarPlotResizeDiscreteXDemoSceneMapper {

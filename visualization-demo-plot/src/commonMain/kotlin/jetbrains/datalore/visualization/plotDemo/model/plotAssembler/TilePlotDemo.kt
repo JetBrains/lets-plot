@@ -1,33 +1,28 @@
 package jetbrains.datalore.visualization.plotDemo.model.plotAssembler
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
+import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.stat.Stats
-import jetbrains.datalore.visualization.plot.builder.Plot
-import jetbrains.datalore.visualization.plot.builder.VarBinding
-import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder
-import jetbrains.datalore.visualization.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
-import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
-import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
-import jetbrains.datalore.visualization.plot.builder.scale.ScaleProviderHelper
-import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class TilePlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<Plot> {
+    fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
         return listOf(
                 createPlot()
         )
     }
 
-    private fun createPlot(): Plot {
+    private fun createPlot(): jetbrains.datalore.plot.builder.Plot {
         val valuesX = ArrayList<Double>()
         val valuesY = ArrayList<Double>()
         val valuesV = ArrayList<Double>()
@@ -53,21 +48,42 @@ open class TilePlotDemo : SimpleDemoBase() {
         //
         // tiles plot layer
         //
-        val tilesLayer = GeomLayerBuilder.demoAndTest()
+        val tilesLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
                 .stat(Stats.IDENTITY)
-                .geom(GeomProvider.tile())
+                .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.tile())
                 .pos(PosProvider.wrap(PositionAdjustments.identity()))
                 //      .addConstantAes(Aes.ALPHA, 0.5)
-                .addBinding(VarBinding(varX, Aes.X, Scales.continuousDomainNumericRange("X")))
-                .addBinding(VarBinding(varY, Aes.Y, Scales.continuousDomainNumericRange("Y")))
-                .addBinding(VarBinding(varV, Aes.FILL, ScaleProviderHelper.createDefault(Aes.FILL).createScale(data, varV)))
+                .addBinding(
+                    VarBinding(
+                        varX,
+                        Aes.X,
+                        Scales.continuousDomainNumericRange("X")
+                    )
+                )
+                .addBinding(
+                    VarBinding(
+                        varY,
+                        Aes.Y,
+                        Scales.continuousDomainNumericRange("Y")
+                    )
+                )
+                .addBinding(
+                    VarBinding(
+                        varV,
+                        Aes.FILL,
+                        ScaleProviderHelper.createDefault(Aes.FILL).createScale(
+                            data,
+                            varV
+                        )
+                    )
+                )
                 .build(data)
 
         //
         // Plot
         //
-        val assembler = PlotAssembler.singleTile(listOf(tilesLayer),
-                CoordProviders.cartesian(), DefaultTheme())
+        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(tilesLayer),
+                jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
         assembler.setTitle("Tile geometry")
         assembler.disableInteractions()
         return assembler.createPlot()

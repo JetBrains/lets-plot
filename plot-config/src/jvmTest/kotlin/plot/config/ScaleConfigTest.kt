@@ -4,15 +4,15 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Color.Companion.BLUE
 import jetbrains.datalore.base.values.Color.Companion.GREEN
 import jetbrains.datalore.base.values.Color.Companion.RED
+import jetbrains.datalore.plot.builder.scale.MapperProvider
+import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
+import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 import jetbrains.datalore.visualization.plot.base.render.linetype.NamedLineType.*
 import jetbrains.datalore.visualization.plot.base.render.point.NamedShape.STICK_SQUARE_TRIANGLE_UP
 import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
 import jetbrains.datalore.visualization.plot.base.scale.transform.Transforms
-import jetbrains.datalore.visualization.plot.builder.scale.MapperProvider
-import jetbrains.datalore.visualization.plot.builder.scale.mapper.LineTypeMapper
-import jetbrains.datalore.visualization.plot.builder.scale.mapper.ShapeMapper
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

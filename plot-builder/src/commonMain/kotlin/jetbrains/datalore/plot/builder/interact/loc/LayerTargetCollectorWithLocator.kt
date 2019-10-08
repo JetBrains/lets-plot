@@ -1,0 +1,65 @@
+package jetbrains.datalore.plot.builder.interact.loc
+
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.plot.base.GeomKind
+import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.visualization.plot.base.interact.HitShape
+
+class LayerTargetCollectorWithLocator(
+        private val geomKind: GeomKind,
+        private val lookupSpec: GeomTargetLocator.LookupSpec,
+        private val contextualMapping: ContextualMapping) : GeomTargetCollector, GeomTargetLocator {
+
+    private val myTargets = ArrayList<jetbrains.datalore.plot.builder.interact.loc.TargetPrototype>()
+    private var myLocator: GeomTargetLocator? = null
+
+    override fun addPoint(index: Int, point: DoubleVector, radius: Double, tooltipParams: GeomTargetCollector.TooltipParams) {
+        addTarget(
+            jetbrains.datalore.plot.builder.interact.loc.TargetPrototype(
+                HitShape.point(point, radius),
+                { index },
+                tooltipParams
+            )
+        )
+    }
+
+    override fun addRectangle(index: Int, rectangle: DoubleRectangle, tooltipParams: GeomTargetCollector.TooltipParams) {
+        addTarget(
+            jetbrains.datalore.plot.builder.interact.loc.TargetPrototype(
+                HitShape.rect(rectangle),
+                { index },
+                tooltipParams
+            )
+        )
+    }
+
+    override fun addPath(points: List<DoubleVector>, localToGlobalIndex: (Int) -> Int, tooltipParams: GeomTargetCollector.TooltipParams, closePath: Boolean) {
+        addTarget(
+            jetbrains.datalore.plot.builder.interact.loc.TargetPrototype(
+                HitShape.path(points, closePath),
+                localToGlobalIndex,
+                tooltipParams
+            )
+        )
+    }
+
+    private fun addTarget(targetPrototype: jetbrains.datalore.plot.builder.interact.loc.TargetPrototype) {
+        myTargets.add(targetPrototype)
+        myLocator = null
+    }
+
+    override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
+        if (myLocator == null) {
+            myLocator = jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator(
+                geomKind,
+                lookupSpec,
+                contextualMapping,
+                myTargets
+            )
+        }
+        return myLocator!!.search(coord)
+    }
+}

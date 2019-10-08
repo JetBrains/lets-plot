@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plot.base
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
 class DataFrame private constructor(builder: Builder) {

@@ -1,15 +1,15 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
+import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling
+import jetbrains.datalore.plot.builder.sampling.Sampling
+import jetbrains.datalore.plot.builder.sampling.Samplings
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.GeomKind.*
 import jetbrains.datalore.visualization.plot.base.GeomMeta
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
-import jetbrains.datalore.visualization.plot.builder.assemble.geom.DefaultSampling
-import jetbrains.datalore.visualization.plot.builder.sampling.Sampling
-import jetbrains.datalore.visualization.plot.builder.sampling.Samplings
 
 open class GeomProto constructor(val geomKind: GeomKind) {
 

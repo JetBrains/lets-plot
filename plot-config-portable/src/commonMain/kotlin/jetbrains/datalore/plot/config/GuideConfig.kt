@@ -1,6 +1,9 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.function.Runnable
+import jetbrains.datalore.plot.builder.assemble.ColorBarOptions
+import jetbrains.datalore.plot.builder.assemble.GuideOptions
+import jetbrains.datalore.plot.builder.assemble.LegendOptions
 import jetbrains.datalore.plot.config.Option.Guide.COLOR_BAR
 import jetbrains.datalore.plot.config.Option.Guide.COLOR_BAR_GB
 import jetbrains.datalore.plot.config.Option.Guide.ColorBar.BIN_COUNT
@@ -11,9 +14,6 @@ import jetbrains.datalore.plot.config.Option.Guide.Legend.COL_COUNT
 import jetbrains.datalore.plot.config.Option.Guide.Legend.ROW_COUNT
 import jetbrains.datalore.plot.config.Option.Guide.NONE
 import jetbrains.datalore.plot.config.Option.Guide.REVERSE
-import jetbrains.datalore.visualization.plot.builder.assemble.ColorBarOptions
-import jetbrains.datalore.visualization.plot.builder.assemble.GuideOptions
-import jetbrains.datalore.visualization.plot.builder.assemble.LegendOptions
 
 abstract class GuideConfig private constructor(opts: Map<String, Any>) : OptionsAccessor(opts, emptyMap<Any, Any>()) {
 

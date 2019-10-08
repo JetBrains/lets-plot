@@ -2,6 +2,9 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.scale.*
+import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
+import jetbrains.datalore.plot.builder.scale.provider.*
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CHROMA
@@ -34,9 +37,6 @@ import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.scale.Mappers.nullable
 import jetbrains.datalore.visualization.plot.base.scale.transform.DateTimeBreaksGen
 import jetbrains.datalore.visualization.plot.base.scale.transform.Transforms
-import jetbrains.datalore.visualization.plot.builder.scale.*
-import jetbrains.datalore.visualization.plot.builder.scale.mapper.ShapeMapper
-import jetbrains.datalore.visualization.plot.builder.scale.provider.*
 
 /**
  * @param <T> - target aesthetic type of the configured scale
@@ -70,12 +70,15 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
             val solid = get(SHAPE_SOLID)
             // False - show only hollow shapes, otherwise - all (default)
             if (solid is Boolean && solid == false) {
-                mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE)
+                mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(
+                    ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE)
             }
         } else if (aes == Aes.ALPHA && has(RANGE)) {
-            mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double))
+            mapperProvider =
+                AlphaMapperProvider(getRange(RANGE), (naValue as Double))
         } else if (aes == Aes.SIZE && has(RANGE)) {
-            mapperProvider = SizeMapperProvider(getRange(RANGE), (naValue as Double))
+            mapperProvider =
+                SizeMapperProvider(getRange(RANGE), (naValue as Double))
         }
 
         if (has(SCALE_MAPPER_KIND)) {
@@ -84,27 +87,44 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
                     mapperProvider =
                         createIdentityMapperProvider(aes, naValue)
                 COLOR_GRADIENT ->
-                    mapperProvider = ColorGradientMapperProvider(getColor(LOW), getColor(HIGH), (naValue as Color))
+                    mapperProvider = ColorGradientMapperProvider(
+                        getColor(LOW),
+                        getColor(HIGH),
+                        (naValue as Color)
+                    )
                 COLOR_GRADIENT2 ->
                     mapperProvider = ColorGradient2MapperProvider(
-                            getColor(LOW),
-                            getColor(MID),
-                            getColor(HIGH),
-                            getDouble(MIDPOINT), naValue as Color)
+                        getColor(LOW),
+                        getColor(MID),
+                        getColor(HIGH),
+                        getDouble(MIDPOINT), naValue as Color
+                    )
                 COLOR_HUE ->
                     mapperProvider = ColorHueMapperProvider(
-                            getDoubleList(HUE_RANGE),
-                            getDouble(CHROMA),
-                            getDouble(LUMINANCE),
-                            getDouble(START_HUE),
-                            getDouble(DIRECTION), naValue as Color
+                        getDoubleList(HUE_RANGE),
+                        getDouble(CHROMA),
+                        getDouble(LUMINANCE),
+                        getDouble(START_HUE),
+                        getDouble(DIRECTION), naValue as Color
                     )
                 COLOR_GREY ->
-                    mapperProvider = ColorLuminanceMapperProvider(getDouble(START), getDouble(END), naValue as Color)
+                    mapperProvider = ColorLuminanceMapperProvider(
+                        getDouble(START),
+                        getDouble(END),
+                        naValue as Color
+                    )
                 COLOR_BREWER ->
-                    mapperProvider = ColorBrewerMapperProvider(getString(PALETTE_TYPE), get(PALETTE), getDouble(DIRECTION), naValue as Color)
+                    mapperProvider = ColorBrewerMapperProvider(
+                        getString(PALETTE_TYPE),
+                        get(PALETTE),
+                        getDouble(DIRECTION),
+                        naValue as Color
+                    )
                 SIZE_AREA ->
-                    mapperProvider = SizeAreaMapperProvider(getDouble(MAX_SIZE), naValue as Double)
+                    mapperProvider = SizeAreaMapperProvider(
+                        getDouble(MAX_SIZE),
+                        naValue as Double
+                    )
                 else ->
                     throw IllegalArgumentException("Aes '" + aes.name + "' - unexpected scale mapper kind: '" + mapperKind + "'")
             }
@@ -186,14 +206,16 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
         fun <T> createIdentityMapperProvider(aes: Aes<T>, naValue: T): MapperProvider<T> {
             // There is an option value converter for every AES (which can be used as discrete identity mapper)
             val cvt = AesOptionConversion.getConverter(aes)
-            val discreteMapperProvider = IdentityDiscreteMapperProvider(cvt, naValue)
+            val discreteMapperProvider =
+                IdentityDiscreteMapperProvider(cvt, naValue)
 
             // For some AES there is also a continuous identity mapper
             if (TypedContinuousIdentityMappers.contain(aes)) {
                 val continuousMapper = TypedContinuousIdentityMappers[aes]
                 return IdentityMapperProvider(
-                        discreteMapperProvider,
-                        nullable(continuousMapper, naValue))
+                    discreteMapperProvider,
+                    nullable(continuousMapper, naValue)
+                )
             }
 
             return discreteMapperProvider

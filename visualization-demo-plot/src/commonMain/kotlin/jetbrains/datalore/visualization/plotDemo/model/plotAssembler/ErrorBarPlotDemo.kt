@@ -2,20 +2,15 @@ package jetbrains.datalore.visualization.plotDemo.model.plotAssembler
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.DataFrame
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plot.base.stat.Stats
-import jetbrains.datalore.visualization.plot.builder.Plot
-import jetbrains.datalore.visualization.plot.builder.VarBinding
-import jetbrains.datalore.visualization.plot.builder.assemble.GeomLayerBuilder
-import jetbrains.datalore.visualization.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.visualization.plot.builder.assemble.PosProvider
-import jetbrains.datalore.visualization.plot.builder.assemble.geom.GeomProvider
-import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
-import jetbrains.datalore.visualization.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.plotAssembler.ErrorBarPlotDemo.DemoVariant.*
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
@@ -24,7 +19,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
     override val padding: DoubleVector
         get() = DoubleVector.ZERO
 
-    fun createPlots(): List<Plot> {
+    fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
         return listOf(
                 simple(),
                 withDodgePos(),
@@ -32,16 +27,16 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
         )
     }
 
-    private fun simple(): Plot = createPlot(SIMPLE)
+    private fun simple(): jetbrains.datalore.plot.builder.Plot = createPlot(SIMPLE)
 
-    private fun withDodgePos(): Plot = createPlot(WITH_DODGE_POS)
+    private fun withDodgePos(): jetbrains.datalore.plot.builder.Plot = createPlot(WITH_DODGE_POS)
 
-    private fun blackWithGroup(): Plot = createPlot(BLACK_WITH_GROUP)
+    private fun blackWithGroup(): jetbrains.datalore.plot.builder.Plot = createPlot(BLACK_WITH_GROUP)
 
 
     companion object {
 
-        private fun createPlot(demoVariant: DemoVariant): Plot {
+        private fun createPlot(demoVariant: DemoVariant): jetbrains.datalore.plot.builder.Plot {
             // sample see: Cookbook for R: http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)
             /*
 
@@ -94,17 +89,41 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                     .put(varYMax, DemoUtil.add(data.getNumeric(varLen), data.getNumeric(varSE)))
                     .build()
 
-            val layerBuilder = GeomLayerBuilder.demoAndTest()
+            val layerBuilder = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
                     .stat(Stats.IDENTITY)
-                    .geom(GeomProvider.errorBar())
+                    .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.errorBar())
                     .pos(pos)
-                    .addBinding(VarBinding(varDose, Aes.X, Scales.continuousDomainNumericRange("Dose (mg)")))
-                    .addBinding(VarBinding(varYMin, Aes.YMIN, Scales.continuousDomainNumericRange("Y min")))
-                    .addBinding(VarBinding(varYMax, Aes.YMAX, Scales.continuousDomainNumericRange("Y max")))
+                    .addBinding(
+                        VarBinding(
+                            varDose,
+                            Aes.X,
+                            Scales.continuousDomainNumericRange("Dose (mg)")
+                        )
+                    )
+                    .addBinding(
+                        VarBinding(
+                            varYMin,
+                            Aes.YMIN,
+                            Scales.continuousDomainNumericRange("Y min")
+                        )
+                    )
+                    .addBinding(
+                        VarBinding(
+                            varYMax,
+                            Aes.YMAX,
+                            Scales.continuousDomainNumericRange("Y max")
+                        )
+                    )
                     .addConstantAes(Aes.WIDTH, 0.1)
 
             when (demoVariant) {
-                SIMPLE, WITH_DODGE_POS -> layerBuilder.addBinding(VarBinding(varSupp, Aes.COLOR, colorScale))
+                SIMPLE, WITH_DODGE_POS -> layerBuilder.addBinding(
+                    VarBinding(
+                        varSupp,
+                        Aes.COLOR,
+                        colorScale
+                    )
+                )
                 BLACK_WITH_GROUP -> {
                     layerBuilder.addConstantAes(Aes.COLOR, Color.BLACK)
                     layerBuilder.groupingVar(varSupp)
@@ -115,24 +134,48 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
             //
             // lines layer
             //
-            val linesLayer = GeomLayerBuilder.demoAndTest()
+            val linesLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
                     .stat(Stats.IDENTITY)
-                    .geom(GeomProvider.line())
+                    .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.line())
                     .pos(pos)
-                    .addBinding(VarBinding(varDose, Aes.X, Scales.continuousDomainNumericRange("Dose (mg)")))
-                    .addBinding(VarBinding(varLen, Aes.Y, Scales.continuousDomainNumericRange("Tooth length")))
+                    .addBinding(
+                        VarBinding(
+                            varDose,
+                            Aes.X,
+                            Scales.continuousDomainNumericRange("Dose (mg)")
+                        )
+                    )
+                    .addBinding(
+                        VarBinding(
+                            varLen,
+                            Aes.Y,
+                            Scales.continuousDomainNumericRange("Tooth length")
+                        )
+                    )
                     .addBinding(VarBinding(varSupp, Aes.COLOR, colorScale))
                     .build(data)
 
             //
             // points layer
             //
-            val pointsLayer = GeomLayerBuilder.demoAndTest()
+            val pointsLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
                     .stat(Stats.IDENTITY)
-                    .geom(GeomProvider.point())
+                    .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.point())
                     .pos(pos)
-                    .addBinding(VarBinding(varDose, Aes.X, Scales.continuousDomainNumericRange("Dose (mg)")))
-                    .addBinding(VarBinding(varLen, Aes.Y, Scales.continuousDomainNumericRange("Tooth length")))
+                    .addBinding(
+                        VarBinding(
+                            varDose,
+                            Aes.X,
+                            Scales.continuousDomainNumericRange("Dose (mg)")
+                        )
+                    )
+                    .addBinding(
+                        VarBinding(
+                            varLen,
+                            Aes.Y,
+                            Scales.continuousDomainNumericRange("Tooth length")
+                        )
+                    )
                     .addBinding(VarBinding(varSupp, Aes.COLOR, colorScale))
                     .addConstantAes(Aes.SIZE, 5.0)
                     .build(data)
@@ -140,11 +183,11 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
             //
             // Plot
             //
-            val assembler = PlotAssembler.singleTile(listOf(
+            val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(
                     errorBarsLayer,
                     linesLayer,
                     pointsLayer
-            ), CoordProviders.cartesian(), DefaultTheme())
+            ), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
             assembler.setTitle("Error Bars")
             assembler.disableInteractions()
             return assembler.createPlot()

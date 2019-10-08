@@ -2,6 +2,8 @@ package jetbrains.datalore.visualization.plotDemo.model.geom
 
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.array
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.collection
@@ -11,10 +13,6 @@ import jetbrains.datalore.visualization.plot.base.geom.PolygonGeom
 import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
-import jetbrains.datalore.visualization.plot.builder.SvgLayerRenderer
-import jetbrains.datalore.visualization.plot.builder.coord.CoordProviders
-import jetbrains.datalore.visualization.plot.builder.scale.mapper.ColorMapper
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plotDemo.model.KansasPolygon.KANSAS_X
 import jetbrains.datalore.visualization.plotDemo.model.KansasPolygon.KANSAS_Y
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
@@ -76,9 +74,15 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
                 .color(constant(Color.DARK_MAGENTA))
                 .alpha(constant(0.5))
                 .build()
-        val coord = CoordProviders.map()
+        val coord = jetbrains.datalore.plot.builder.coord.CoordProviders.map()
                 .createCoordinateSystem(domainX, lengthX, domainY, lengthY)
-        val layer = SvgLayerRenderer(aes, PolygonGeom(), PositionAdjustments.identity(), coord, EMPTY_GEOM_CONTEXT)
+        val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
+            aes,
+            PolygonGeom(),
+            PositionAdjustments.identity(),
+            coord,
+            EMPTY_GEOM_CONTEXT
+        )
         val groupComponent = GroupComponent()
         groupComponent.add(layer.rootGroup)
         return groupComponent

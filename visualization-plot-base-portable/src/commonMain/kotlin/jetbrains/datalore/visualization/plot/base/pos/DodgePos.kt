@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 
 internal class DodgePos(aesthetics: Aesthetics,
                         private val myGroupCount: Int,

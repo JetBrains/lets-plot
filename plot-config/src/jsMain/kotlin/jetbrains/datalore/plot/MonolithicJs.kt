@@ -15,8 +15,6 @@ import jetbrains.datalore.plot.config.PlotConfigUtil
 import jetbrains.datalore.visualization.base.canvas.dom.DomCanvasControl
 import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
 import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
-import jetbrains.datalore.visualization.plot.builder.Plot
-import jetbrains.datalore.visualization.plot.builder.PlotContainer
 import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
@@ -54,7 +52,7 @@ object MonolithicJs {
 
         // ToDo: computationMessagesHandler
         val plot = createPlot(plotSpec, null)
-        val plotContainer = PlotContainer(plot, ValueProperty(plotSize))
+        val plotContainer = jetbrains.datalore.plot.builder.PlotContainer(plot, ValueProperty(plotSize))
 
         eventTarget.addEventListener(DomEventType.MOUSE_MOVE.name, { e: Event ->
             plotContainer.mouseEventPeer.dispatch(
@@ -97,7 +95,7 @@ object MonolithicJs {
     private fun createPlot(
         plotSpec: MutableMap<String, Any>,
         computationMessagesHandler: ((List<String>) -> Unit)?
-    ): Plot {
+    ): jetbrains.datalore.plot.builder.Plot {
         @Suppress("NAME_SHADOWING")
         var plotSpec = plotSpec
         plotSpec = PlotConfigClientSide.processTransform(plotSpec)

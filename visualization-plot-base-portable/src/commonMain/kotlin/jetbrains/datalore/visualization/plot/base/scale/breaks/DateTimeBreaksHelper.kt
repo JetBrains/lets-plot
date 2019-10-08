@@ -1,9 +1,9 @@
 package jetbrains.datalore.visualization.plot.base.scale.breaks
 
-import jetbrains.datalore.visualization.plot.common.time.TimeUtil
-import jetbrains.datalore.visualization.plot.common.time.interval.NiceTimeInterval
-import jetbrains.datalore.visualization.plot.common.time.interval.TimeInterval
-import jetbrains.datalore.visualization.plot.common.time.interval.YearInterval
+import jetbrains.datalore.plot.common.time.TimeUtil
+import jetbrains.datalore.plot.common.time.interval.NiceTimeInterval
+import jetbrains.datalore.plot.common.time.interval.TimeInterval
+import jetbrains.datalore.plot.common.time.interval.YearInterval
 import kotlin.math.round
 
 class DateTimeBreaksHelper(

@@ -3,6 +3,7 @@ package jetbrains.datalore.visualization.plot.base.geom
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx
 import jetbrains.datalore.visualization.base.svg.SvgImageElementEx.Bitmap
 import jetbrains.datalore.visualization.base.svg.SvgUtils
@@ -14,7 +15,6 @@ import jetbrains.datalore.visualization.plot.base.render.SvgRoot
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.VerticalAnchor
-import jetbrains.datalore.visualization.plot.common.data.SeriesUtil
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.round
