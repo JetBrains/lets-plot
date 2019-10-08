@@ -38,7 +38,7 @@ open class Diagnostics {
         private val metrics: Text
 
         private val slowestSystemType: String?
-            get() = debugService.slowestSystem()?.first!!::class.toString()
+            get() = debugService.slowestSystem()?.first!!::class.simpleName
 
         private val slowestSystemTime: Double
             get() = debugService.slowestSystem()?.second ?: 0.0
@@ -111,7 +111,7 @@ open class Diagnostics {
                 if (slowestSystemTime > 16.0) {
                     if (slowestSystemTime > freezeTime) {
                         timeToShowLeft = timeToShow.toLong()
-                        message = "Freezed by: ${formatDouble(slowestSystemTime, 1)} $slowestSystemType"
+                        message = "Freezed by: ${formatDouble(slowestSystemTime, 1)} ${slowestSystemType}"
                         freezeTime = slowestSystemTime
                     }
                 } else {

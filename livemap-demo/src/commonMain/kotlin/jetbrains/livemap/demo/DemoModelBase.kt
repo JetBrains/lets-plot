@@ -52,7 +52,8 @@ abstract class DemoModelBase(private val canvasControl: CanvasControl) {
 
             params(
                 DevParams.DEBUG_GRID.key to true,
-                DevParams.MICRO_TASK_EXECUTOR.key to "ui_thread"
+                DevParams.MICRO_TASK_EXECUTOR.key to "ui_thread",
+                DevParams.PERF_STATS.key to true
             )
         }
             .apply(block)
