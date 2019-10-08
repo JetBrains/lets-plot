@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.builder
 
-import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.Geom
@@ -17,7 +16,7 @@ internal class LivemapLayerRenderer(private val myAesthetics: Aesthetics, privat
         myLayers.add(LiveMapLayerData(geom, geomKind, aesthetics, dataAccess))
     }
 
-    fun createLivemapData(bounds: DoubleRectangle, eventSource: MouseEventSource): LiveMapData {
-        return myGeom.createCanvasFigure(myAesthetics, myDataAccess, bounds, eventSource, myLayers)
+    fun createLiveMapData(bounds: DoubleRectangle): LiveMapData {
+        return myGeom.createCanvasFigure(myAesthetics, myDataAccess, bounds, myLayers)
     }
 }

@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
-import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.geom.LiveMapProvider.LiveMapData
@@ -41,10 +40,9 @@ class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
         aesthetics: Aesthetics,
         dataAccess: MappedDataAccess,
         bounds: DoubleRectangle,
-        eventSource: MouseEventSource,
         layers: List<LiveMapLayerData>
     ): LiveMapData {
-        return myMapProvider!!.createLiveMap(aesthetics, dataAccess, bounds, eventSource, layers)
+        return myMapProvider!!.createLiveMap(aesthetics, dataAccess, bounds, layers)
     }
 
     companion object {

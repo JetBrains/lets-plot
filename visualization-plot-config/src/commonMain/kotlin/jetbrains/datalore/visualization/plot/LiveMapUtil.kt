@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot
 
-import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Aesthetics
@@ -72,7 +71,6 @@ object LiveMapUtil {
             aesthetics: Aesthetics,
             dataAccess: MappedDataAccess,
             bounds: DoubleRectangle,
-            eventSource: MouseEventSource,
             layers: List<LiveMapLayerData>
         ): LiveMapProvider.LiveMapData {
 
@@ -80,7 +78,6 @@ object LiveMapUtil {
                 .livemapOptions(myLiveMapOptions)
                 .aesthetics(aesthetics)
                 .dataAccess(dataAccess)
-                .eventSource(eventSource)
                 .size(bounds.dimension)
                 .layers(layers)
                 .devParams(DevParams(myLiveMapOptions.devParams))

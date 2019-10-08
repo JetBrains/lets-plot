@@ -1,10 +1,8 @@
 package jetbrains.datalore.visualization.plot.builder
 
-import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.values.Color
@@ -19,20 +17,22 @@ import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import jetbrains.datalore.visualization.plot.builder.assemble.GeomContextBuilder
-import jetbrains.datalore.visualization.plot.builder.event.TileMouseEventPeer
 import jetbrains.datalore.visualization.plot.builder.guide.AxisComponent
 import jetbrains.datalore.visualization.plot.builder.interact.loc.LayerTargetCollectorWithLocator
 import jetbrains.datalore.visualization.plot.builder.layout.AxisLayoutInfo
-import jetbrains.datalore.visualization.plot.builder.layout.GeometryUtil.round
 import jetbrains.datalore.visualization.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.visualization.plot.builder.presentation.Style
 import jetbrains.datalore.visualization.plot.builder.theme.AxisTheme
 import jetbrains.datalore.visualization.plot.builder.theme.Theme
 
-internal class PlotTile(layers: List<GeomLayer>,
-                        private val myScaleX: Scale<Double>, private val myScaleY: Scale<Double>,
-                        private val myTilesOrigin: DoubleVector, private val myLayoutInfo: TileLayoutInfo, private val myCoord: CoordinateSystem, private val myTheme: Theme,
-                        private val myMouseEventSource: MouseEventSource
+internal class PlotTile(
+    layers: List<GeomLayer>,
+    private val myScaleX: Scale<Double>,
+    private val myScaleY: Scale<Double>,
+    private val myTilesOrigin: DoubleVector,
+    private val myLayoutInfo: TileLayoutInfo,
+    private val myCoord: CoordinateSystem,
+    private val myTheme: Theme
 ) : SvgComponent() {
 
     private val myDebugDrawing = ValueProperty(false)
@@ -105,24 +105,19 @@ internal class PlotTile(layers: List<GeomLayer>,
 
         if (isLivemap) {
             // 'live map' requires all positions to be passed "as is", without mapping
-            val livemapLayer = GeomLayerListUtil.getLivemapLayer(myLayers)
+            val liveMapLayer = GeomLayerListUtil.getLivemapLayer(myLayers)
             val origin = myLayoutInfo.getAbsoluteGeomBounds(myTilesOrigin).origin
-            val livemapLayerRenderer = LayerRendererUtil.createLivemapLayerRenderer(livemapLayer, myLayers)
+            val liveMapLayerRenderer = LayerRendererUtil.createLivemapLayerRenderer(liveMapLayer, myLayers)
 
             val rectElement = SvgRectElement(geomBounds)
             rectElement.addClass(Style.PLOT_GLASS_PANE)
             rectElement.opacity().set(0.0)
             add(rectElement)
 
-            val rect = Rectangle(round(origin), round(geomBounds.dimension))
-
-            val livemapData = livemapLayerRenderer.createLivemapData(
-                    DoubleRectangle(origin, geomBounds.dimension),
-                    TileMouseEventPeer(myMouseEventSource, rect)
-            )
-            myCanvasFigures.add(livemapData.canvasFigure)
-            myTargetLocators.add(livemapData.targetLocator)
-
+            liveMapLayerRenderer.createLiveMapData(DoubleRectangle(origin, geomBounds.dimension)).let {
+                myCanvasFigures.add(it.canvasFigure)
+                myTargetLocators.add(it.targetLocator)
+            }
         } else {
             // normal plot tile
             val sharedNumericMappers = HashMap<Aes<Double>, (Double?) -> Double?>()

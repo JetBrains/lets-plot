@@ -1,6 +1,5 @@
 package jetbrains.livemap
 
-import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.projectionGeometry.div
@@ -73,7 +72,6 @@ import jetbrains.livemap.ui.UiService
 class LiveMap(
     private val myMapProjection: MapProjection,
     private val viewProjection: ViewProjection,
-    private val myEventSource: MouseEventSource,
     private val myMapLayers: List<MapLayer>,
     private val myTileService: TileService,
     private val myTileGeometryProvider: TileGeometryProvider,
@@ -98,7 +96,7 @@ class LiveMap(
         val componentManager = EcsComponentManager()
         context = LiveMapContext(
             myMapProjection,
-            myEventSource,
+            canvasControl,
             MapRenderContext(viewProjection, canvasControl),
             null
         )

@@ -4,11 +4,10 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.dom.DomEventUtil
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
-import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.visualization.base.canvas.dom.DomCanvasControl
-import jetbrains.datalore.visualization.base.canvas.dom.DomEventPeer
 import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
 import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
 import jetbrains.datalore.visualization.plot.LiveMapUtil.containsLiveMap
@@ -57,45 +56,16 @@ object MonolithicJs {
         val plot = createPlot(plotSpec, null)
         val plotContainer = PlotContainer(plot, ValueProperty(plotSize))
 
-        val peer = DomEventPeer(eventTarget)
-
-        peer.addEventHandler(DomEventPeer.DomEventSpec.MOUSE_MOVED, handler { e: Event ->
+        eventTarget.addEventListener(DomEventType.MOUSE_MOVE.name, { e: Event ->
             plotContainer.mouseEventPeer.dispatch(
                 MouseEventSpec.MOUSE_MOVED,
                 DomEventUtil.translateInTargetCoord(e as MouseEvent)
             )
         })
-        peer.addEventHandler(DomEventPeer.DomEventSpec.MOUSE_EXITED, handler { e: Event ->
+
+        eventTarget.addEventListener(DomEventType.MOUSE_LEAVE.name, { e: Event ->
             plotContainer.mouseEventPeer.dispatch(
                 MouseEventSpec.MOUSE_LEFT,
-                DomEventUtil.translateInTargetCoord(e as MouseEvent)
-            )
-        })
-
-        peer.addEventHandler(DomEventPeer.DomEventSpec.MOUSE_DRAGGED, handler { e: Event ->
-            plotContainer.mouseEventPeer.dispatch(
-                MouseEventSpec.MOUSE_DRAGGED,
-                DomEventUtil.translateInTargetCoord(e as MouseEvent)
-            )
-        })
-
-        peer.addEventHandler(DomEventPeer.DomEventSpec.MOUSE_PRESSED, handler { e: Event ->
-            plotContainer.mouseEventPeer.dispatch(
-                MouseEventSpec.MOUSE_PRESSED,
-                DomEventUtil.translateInTargetCoord(e as MouseEvent)
-            )
-        })
-
-        peer.addEventHandler(DomEventPeer.DomEventSpec.MOUSE_RELEASED, handler { e: Event ->
-            plotContainer.mouseEventPeer.dispatch(
-                MouseEventSpec.MOUSE_RELEASED,
-                DomEventUtil.translateInTargetCoord(e as MouseEvent)
-            )
-        })
-
-        peer.addEventHandler(DomEventPeer.DomEventSpec.MOUSE_DOUBLE_CLICKED, handler { e: Event ->
-            plotContainer.mouseEventPeer.dispatch(
-                MouseEventSpec.MOUSE_DOUBLE_CLICKED,
                 DomEventUtil.translateInTargetCoord(e as MouseEvent)
             )
         })

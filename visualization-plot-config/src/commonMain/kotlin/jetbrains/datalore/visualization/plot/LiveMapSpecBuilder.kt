@@ -1,6 +1,5 @@
 package jetbrains.datalore.visualization.plot
 
-import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
@@ -40,7 +39,6 @@ internal class LiveMapSpecBuilder {
     private var myLayers: List<LiveMapLayerData>? = null
     private var myLiveMapOptions: LiveMapOptions? = null
     private var myDataAccess: MappedDataAccess? = null
-    private var myEventSource: MouseEventSource? = null
     private var mySize: DoubleVector? = null
     private var myDevParams: DevParams? = null
     private var myMapLocationConsumer: ((DoubleRectangle) -> Unit)? = null
@@ -62,11 +60,6 @@ internal class LiveMapSpecBuilder {
 
     fun dataAccess(dataAccess: MappedDataAccess): LiveMapSpecBuilder {
         myDataAccess = dataAccess
-        return this
-    }
-
-    fun eventSource(eventSource: MouseEventSource): LiveMapSpecBuilder {
-        myEventSource = eventSource
         return this
     }
 
@@ -122,7 +115,6 @@ internal class LiveMapSpecBuilder {
             getFeatureLevel(myLiveMapOptions!!.featureLevel),
             createMapRegion(myLiveMapOptions!!.parent),
             mapLayers,
-            myEventSource!!,
             CYLINDRICAL_PROJECTIONS.contains(projectionType),
             DEFAULT_LOOP_Y,
             myMapLocationConsumer!!,

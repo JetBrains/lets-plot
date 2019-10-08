@@ -2,7 +2,6 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs.constant
-import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
@@ -34,7 +33,6 @@ class LiveMapBuilder {
     lateinit var size: DoubleVector
     lateinit var geocodingService: GeocodingService
     lateinit var tileService: TileService
-    lateinit var mouseEventSource: MouseEventSource
 
     var zoom: Int? = null
     var interactive: Boolean = true
@@ -77,7 +75,6 @@ class LiveMapBuilder {
             geocodingService = geocodingService,
 
             mapLocationConsumer = mapLocationConsumer,
-            eventSource = mouseEventSource,
 
             devParams = DevParams(devParams),
 

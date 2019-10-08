@@ -73,7 +73,6 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
         return LiveMap(
             myMapProjection,
             myViewProjection,
-            myLiveMapSpec.eventSource,
             myLiveMapSpec.layers,
             myLiveMapSpec.tileService,
             TileGeometryProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),

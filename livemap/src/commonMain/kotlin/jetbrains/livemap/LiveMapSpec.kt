@@ -1,6 +1,5 @@
 package jetbrains.livemap
 
-import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
@@ -29,7 +28,6 @@ class LiveMapSpec(
     val level: FeatureLevel?,
     val parent: MapRegion?,
     val layers: List<MapLayer>,
-    val eventSource: MouseEventSource,
     val isLoopX: Boolean,
     val isLoopY: Boolean,
     val mapLocationConsumer: (DoubleRectangle) -> Unit,
