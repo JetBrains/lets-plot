@@ -1,19 +1,26 @@
 package jetbrains.datalore.visualization.base.canvas.javaFx
 
 import javafx.scene.Group
+import javafx.scene.Node
 import javafx.scene.Parent
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
+import jetbrains.datalore.base.event.MouseEventSpec.*
+import jetbrains.datalore.base.event.jfx.JfxEventUtil
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
+import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationTimer
 import jetbrains.datalore.visualization.base.canvas.Canvas
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
+import jetbrains.datalore.visualization.base.canvas.EventPeer
 import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxCanvasUtil.imagePngBase64ToImage
+import javafx.event.EventHandler as jfxHandler
+import javafx.scene.input.MouseEvent as JfxMouseEvent
 
 class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: Double) : CanvasControl {
     private val myEventPeer: JavafxEventPeer
@@ -35,7 +42,12 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-        return JavafxCanvasUtil.addMouseEventHandler(myEventPeer, eventSpec, eventHandler)
+        return myEventPeer.addEventHandler(
+            eventSpec,
+            handler {
+                eventHandler.onEvent(JfxEventUtil.translate(it))
+            }
+        )
     }
 
     override fun createCanvas(size: Vector): Canvas {
@@ -52,5 +64,40 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
 
     override fun removeChild(canvas: Canvas) {
         myRoot.children.remove((canvas as JavafxCanvas).nativeCanvas)
+    }
+
+    private class JavafxEventPeer(node: Node) : EventPeer<MouseEventSpec, JfxMouseEvent>(MouseEventSpec::class) {
+
+        init {
+            node.onMouseEntered = jfxHandler {
+                dispatch(MOUSE_ENTERED, it)
+            }
+            node.onMouseExited = jfxHandler {
+                dispatch(MOUSE_LEFT, it)
+            }
+            node.onMouseMoved = jfxHandler {
+                dispatch(MOUSE_MOVED, it)
+            }
+            node.onMouseDragged = jfxHandler {
+                dispatch(MOUSE_DRAGGED, it)
+            }
+            node.onMouseClicked = jfxHandler {
+                if (it.clickCount % 2 == 1) {
+                    dispatch(MOUSE_CLICKED, it)
+                } else {
+                    dispatch(MOUSE_DOUBLE_CLICKED, it)
+                }
+            }
+            node.onMousePressed = jfxHandler {
+                dispatch(MOUSE_PRESSED, it)
+            }
+            node.onMouseReleased = jfxHandler {
+                dispatch(MOUSE_RELEASED, it)
+            }
+        }
+
+        override fun onSpecAdded(spec: MouseEventSpec) {}
+
+        override fun onSpecRemoved(spec: MouseEventSpec) {}
     }
 }
