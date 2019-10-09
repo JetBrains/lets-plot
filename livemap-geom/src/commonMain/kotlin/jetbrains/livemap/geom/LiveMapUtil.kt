@@ -1,7 +1,6 @@
-package jetbrains.datalore.plot
+package jetbrains.livemap.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.plot.config.LiveMapOptions
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.GeomKind
@@ -88,7 +87,7 @@ object LiveMapUtil {
             val liveMapCanvasFigure = LiveMapCanvasFigure(liveMapFactory.createLiveMap())
             liveMapCanvasFigure.setBounds(bounds)
 
-            return LiveMapProvider.LiveMapData(liveMapCanvasFigure, liveMapFactory.createGeomTargetLocator())
+            return LiveMapProvider.LiveMapData(liveMapCanvasFigure)
         }
     }
 }

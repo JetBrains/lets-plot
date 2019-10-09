@@ -75,7 +75,6 @@ class LiveMap(
     private val myMapLayers: List<MapLayer>,
     private val myTileService: TileService,
     private val myTileGeometryProvider: TileGeometryProvider,
-    private val myRegionGeometryConsumer: RegionGeometryConsumer,
     private val myDevParams: DevParams,
     private val myEmptinessChecker: EmptinessChecker,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit

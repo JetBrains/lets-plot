@@ -109,7 +109,6 @@ internal class PlotTile(
 
             liveMapLayerRenderer.createLiveMapData(DoubleRectangle(origin, geomBounds.dimension)).let {
                 liveMapFigure = it.canvasFigure
-                myTargetLocators.add(it.targetLocator)
             }
         } else {
             // normal plot tile

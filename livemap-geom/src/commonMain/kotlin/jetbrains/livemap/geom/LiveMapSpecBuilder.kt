@@ -1,4 +1,4 @@
-package jetbrains.datalore.plot
+package jetbrains.livemap.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -11,8 +11,6 @@ import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_XMAX
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_XMIN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_YMAX
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_YMIN
-import jetbrains.datalore.plot.config.LiveMapConfig.Companion.validValues
-import jetbrains.datalore.plot.config.LiveMapOptions
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.geom.LiveMapLayerData
@@ -20,11 +18,13 @@ import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
+import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.internalTiles
 import jetbrains.livemap.api.liveMapGeocoding
+import jetbrains.livemap.geom.LiveMapConfig.Companion.validValues
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionType
@@ -96,7 +96,7 @@ internal class LiveMapSpecBuilder {
                 port = null
             },
             internalTiles {
-                theme = myLiveMapOptions!!.theme
+                theme = TileService.Theme.COLOR
                 host = "tiles.datalore.io"
                 port = null
             },
@@ -108,7 +108,6 @@ internal class LiveMapSpecBuilder {
             myLiveMapOptions!!.labels,
             DEFAULT_SHOW_TILES,
             false, //liveMapProcessor.heatMapWithFrame(),
-            myLiveMapOptions!!.theme,
             projectionType,
             createMapLocation(myLiveMapOptions?.location),
             myLiveMapOptions!!.zoom,

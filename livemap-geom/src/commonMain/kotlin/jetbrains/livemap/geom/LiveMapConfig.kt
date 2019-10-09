@@ -1,9 +1,10 @@
-package jetbrains.datalore.plot.config
+package jetbrains.livemap.geom
 
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
+import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants.*
 
 class LiveMapConfig private constructor(options: Map<*, *>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
