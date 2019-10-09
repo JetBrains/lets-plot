@@ -8,7 +8,7 @@ import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants.*
 
 class LiveMapConfig private constructor(options: Map<*, *>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
 
-    fun createLivemapOptions(): LiveMapOptions {
+    private fun parseLivemapOptions(): LiveMapOptions {
         var zoom: Int? = null
         var location: Any? = null
         var stroke: Double? = null
@@ -114,17 +114,13 @@ class LiveMapConfig private constructor(options: Map<*, *>) : OptionsAccessor(op
             )
             )
         }
-
     }
 
     private fun getProjection(projection: String?): Projection {
         try {
             return Projection.valueOf(projection!!.toUpperCase())
         } catch (ignored: Exception) {
-            throw IllegalArgumentException(LiveMap.PROJECTION + validValues(
-                Projection.values()
-            )
-            )
+            throw IllegalArgumentException(LiveMap.PROJECTION + validValues(Projection.values()))
         }
 
     }
@@ -140,26 +136,27 @@ class LiveMapConfig private constructor(options: Map<*, *>) : OptionsAccessor(op
         private val DEF_PROJECTION = Projection.EPSG3857
         private val DEF_GEODESIC = true
 
+        fun parseLiveMapFromLayerOptions(liveMapLayerOptions: Map<*, *>): LiveMapOptions {
+            return LiveMapConfig(liveMapLayerOptions).parseLivemapOptions()
+        }
 
-        fun getLiveMapOptions(plotOptions: Map<*, *>): Map<*, *> {
+        fun parseLiveMapFromPlotOptions(plotOptions: Map<*, *>): LiveMapOptions? {
             val plotOptionsAccessor = OptionsAccessor(plotOptions)
             if (!plotOptionsAccessor.has(LAYERS)) {
-                return emptyMap<Any, Any>()
+                return null
             }
 
             val layersList = plotOptionsAccessor.getList(LAYERS)
             if (layersList.isEmpty() || layersList[0] !is Map<*, *>) {
-                return emptyMap<Any, Any>()
+                return null
             }
 
             val layerOptions = layersList[0] as Map<*, *>
-            return if (GeomName.LIVE_MAP == layerOptions[GEOM]) {
-                layerOptions
-            } else emptyMap<Any, Any>()
-        }
+            if (GeomName.LIVE_MAP != layerOptions[GEOM]) {
+                return null
+            }
 
-        fun create(livemapOtherOptions: Map<*, *>): LiveMapConfig {
-            return LiveMapConfig(livemapOtherOptions)
+            return LiveMapConfig(layerOptions).parseLivemapOptions()
         }
 
         fun <ValueT : Enum<ValueT>> validValues(values: Array<ValueT>): String {

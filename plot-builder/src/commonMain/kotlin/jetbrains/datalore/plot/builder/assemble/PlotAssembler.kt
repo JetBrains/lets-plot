@@ -22,7 +22,6 @@ class PlotAssembler private constructor(
     private var myAxisEnabled: Boolean = false
     private var myLegendsEnabled = true
     private var myInteractionsEnabled = true
-    private var myCanvasEnabled = false
 
     val layersByTile: List<List<jetbrains.datalore.plot.builder.GeomLayer>>
         get() = myLayersByTile
@@ -145,7 +144,6 @@ class PlotAssembler private constructor(
         plotBuilder.setPlotLayout(plotLayout)
         plotBuilder.axisEnabled(myAxisEnabled)
         plotBuilder.interactionsEnabled(myInteractionsEnabled)
-        plotBuilder.canvasEnabled(myCanvasEnabled)
         return plotBuilder.build()
     }
 
@@ -163,10 +161,6 @@ class PlotAssembler private constructor(
 
     fun disableInteractions() {
         myInteractionsEnabled = false
-    }
-
-    fun enableCanvas() {
-        myCanvasEnabled = true
     }
 
     companion object {

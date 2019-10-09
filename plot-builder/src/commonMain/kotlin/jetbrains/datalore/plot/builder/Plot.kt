@@ -35,7 +35,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     private val myPreferredSize = ValueProperty(jetbrains.datalore.plot.builder.Plot.Companion.DEF_PLOT_SIZE)
     private val myLaidOutSize = ValueProperty(DoubleVector.ZERO)
     private val myTooltipHelper = jetbrains.datalore.plot.builder.PlotTooltipHelper()
-    private val myCanvasFigures = ArrayList<CanvasFigure>()
+    private val myLiveMapFigures = ArrayList<CanvasFigure>()
 
     internal val mouseEventPeer = jetbrains.datalore.plot.builder.event.MouseEventPeer()
 
@@ -57,10 +57,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     abstract val isInteractionsEnabled: Boolean
 
-    protected abstract val isCanvasEnabled: Boolean
-
-    internal val tileCanvasFigures: List<CanvasFigure>
-        get() = myCanvasFigures
+    internal val liveMapFigures: List<CanvasFigure>
+        get() = myLiveMapFigures
 
     internal fun preferredSize(): WritableProperty<DoubleVector> {
         return myPreferredSize
@@ -120,7 +118,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         reg(object : Registration() {
             override fun doRemove() {
                 myTooltipHelper.removeAllTileInfos()
-                myCanvasFigures.clear()
+                myLiveMapFigures.clear()
             }
         })
     }
@@ -161,7 +159,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             jetbrains.datalore.plot.builder.PlotTile(tileLayers, xScale, yScale, tilesOrigin, tileInfo, coord, theme)
         tile.setShowAxis(isAxisEnabled)
         tile.debugDrawing().set(jetbrains.datalore.plot.builder.Plot.Companion.DEBUG_DRAWING)
-        tile.setUseCanvas(isCanvasEnabled)
 
         return tile
     }
@@ -320,7 +317,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
             add(tile)
 
-            myCanvasFigures.addAll(tile.canvasFigures)
+            tile.liveMapFigure?.let(myLiveMapFigures::add)
 
             val realGeomBounds = tileInfo.geomBounds.add(tilesOrigin.add(tileInfo.plotOffset))
             myTooltipHelper.addTileInfo(realGeomBounds, tile.targetLocators)
