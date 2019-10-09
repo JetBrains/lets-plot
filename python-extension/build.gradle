@@ -4,33 +4,38 @@ plugins {
 }
 
 kotlin {
-    macosX64() {
-        binaries {
-            staticLib {
-                baseName = "datalore-plot-${project.name}"
+    if (project.properties['python_include_path'] != null && project.properties['python_include_path'] != "") {
+        macosX64() {
+            binaries {
+                staticLib {
+                    baseName = "datalore-plot-${project.name}"
+                }
+            }
+
+            compilations.main.cinterops {
+                python {
+                    compilerOpts "-I${project.properties['python_include_path']}"
+                }
             }
         }
 
-        compilations.main.cinterops {
-            python {
-                compilerOpts "-I$System.env.PYTHON_INCLUDE"
+        linuxX64() {
+            binaries {
+                sharedLib {
+                    baseName = "datalore-plot-${project.name}"
+                }
+            }
+
+            compilations.main.cinterops {
+                python {
+                    compilerOpts "-I${project.properties['python_include_path']}"
+                }
             }
         }
+    } else {
+        println("AAAAAAAAAAAAAAAAAAAAAAAAAAA!!!")
     }
 
-    linuxX64() {
-        binaries {
-            sharedLib {
-                baseName = "datalore-plot-${project.name}"
-            }
-        }
-
-        compilations.main.cinterops {
-            python {
-                compilerOpts "-I$System.env.PYTHON_INCLUDE"
-            }
-        }
-    }
 
     sourceSets {
         commonMain {
