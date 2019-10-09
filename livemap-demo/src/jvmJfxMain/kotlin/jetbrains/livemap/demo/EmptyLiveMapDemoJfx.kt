@@ -6,7 +6,7 @@ object EmptyLiveMapDemoJfx {
     @JvmStatic
     fun main(args: Array<String>) {
         SwingUtilities.invokeLater {
-            DemoBaseJfx(::EmptyLivemMapDemoModel).show()
+            DemoBaseJfx(::EmptyLiveMapDemoModel).show()
         }
     }
 }

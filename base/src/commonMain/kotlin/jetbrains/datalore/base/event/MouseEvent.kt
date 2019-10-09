@@ -26,9 +26,7 @@ class MouseEvent(x: Int, y: Int, val button: Button?, val modifiers: KeyModifier
     }
 
     init {
-        if (button == null) {
-            throw IllegalArgumentException("Null button")
-        }
+        requireNotNull(button) { "Null button" }
     }
 
     constructor(v: Vector, button: Button, modifiers: KeyModifiers) : this(v.x, v.y, button, modifiers)

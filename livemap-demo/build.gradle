@@ -5,6 +5,7 @@ plugins {
 
 kotlin {
     jvm("jvmJfx")
+    jvm("jvmRawJfx")
     jvm("jvmBrowser")
     js() {
         compileKotlinJs {
@@ -45,6 +46,9 @@ kotlin {
             dependsOn allJvm
         }
         jvmJfxMain {
+            dependsOn allJvm
+        }
+        jvmRawJfxMain {
             dependsOn allJvm
         }
         jvmBrowserMain {
