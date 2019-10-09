@@ -7,8 +7,7 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
 import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.plot.LiveMapUtil.containsLiveMap
-import jetbrains.datalore.plot.config.LiveMapConfig
+import jetbrains.datalore.plot.config.LiveMapConfig.Companion.parseLiveMapFromPlotOptions
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.config.PlotConfigUtil
@@ -22,8 +21,6 @@ import org.w3c.dom.svg.SVGSVGElement
 
 
 object MonolithicJs {
-    private var myIsLiveMap: Boolean = false
-
     @Suppress("unused")
     @JsName("buildPlotFromRawSpecs")
     fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: Node) {
@@ -70,14 +67,10 @@ object MonolithicJs {
 
         plotContainer.ensureContentBuilt()
 
-        if (myIsLiveMap) {
-            val canvasFigures = plotContainer.tileCanvasFigures
-
-            canvasFigures.forEach {
-                val canvasControl = DomCanvasControl(it.bounds().get().dimension.toVector())
-                it.mapToCanvas(canvasControl)
-                eventTarget.appendChild(canvasControl.rootElement)
-            }
+        plotContainer.liveMapFigures.forEach { liveMapFigure ->
+            val canvasControl = DomCanvasControl(liveMapFigure.bounds().get().dimension.toVector())
+            liveMapFigure.mapToCanvas(canvasControl)
+            eventTarget.appendChild(canvasControl.rootElement)
         }
 
         val svgRoot = plotContainer.svg
@@ -108,15 +101,9 @@ object MonolithicJs {
 
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
 
-        val layersByTile = assembler.layersByTile
-        val isLiveMap = containsLiveMap(layersByTile)
-
-        if (isLiveMap) {
-            myIsLiveMap = true
-            val liveMapOpts = LiveMapConfig.getLiveMapOptions(plotSpec)
-            val liveMapConfig = LiveMapConfig.create(liveMapOpts)
-            LiveMapUtil.initLiveMapProvider(layersByTile, liveMapConfig.createLivemapOptions())
-        }
+        plotSpec
+            .run(::parseLiveMapFromPlotOptions)
+            ?.run { LiveMapUtil.initLiveMapProvider(assembler.layersByTile, this) }
 
         return assembler.createPlot()
     }

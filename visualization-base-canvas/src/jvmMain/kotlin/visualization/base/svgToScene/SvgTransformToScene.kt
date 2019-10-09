@@ -2,8 +2,6 @@ package jetbrains.datalore.visualization.base.svgToScene
 
 import javafx.scene.transform.*
 import jetbrains.datalore.visualization.base.svg.SvgTransform
-import jetbrains.datalore.visualization.base.svgToCanvas.ParsingUtil
-import jetbrains.datalore.visualization.base.svgToCanvas.toRadians
 import kotlin.math.sin
 
 private const val SCALE_X = 0

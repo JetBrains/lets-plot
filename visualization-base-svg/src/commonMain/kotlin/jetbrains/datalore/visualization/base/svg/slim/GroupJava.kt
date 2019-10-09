@@ -15,14 +15,6 @@ internal class GroupJava(initialCapacity: Int) :
         setAttribute(SlimBase.transform, transform)
     }
 
-    private fun draw(context: CanvasContext) {
-        context.push(getAttribute(transform))
-        for (child in myChildren) {
-            SvgSlimRenderer.draw(child, context)
-        }
-        context.restore()
-    }
-
     internal fun addChild(o: ElementJava) {
         myChildren.add(o)
     }
@@ -33,8 +25,7 @@ internal class GroupJava(initialCapacity: Int) :
 
     private class MyDummySvgNode internal constructor(private val myGroup: GroupJava) :
             DummySvgNode(),
-            SvgSlimNode,
-            CanvasAware {
+            SvgSlimNode {
 
         override val elementName: String
             get() = myGroup.elementName
@@ -45,8 +36,5 @@ internal class GroupJava(initialCapacity: Int) :
         override val slimChildren: Iterable<SvgSlimNode>
             get() = myGroup.slimChildren
 
-        override fun draw(context: CanvasContext) {
-            myGroup.draw(context)
-        }
     }
 }

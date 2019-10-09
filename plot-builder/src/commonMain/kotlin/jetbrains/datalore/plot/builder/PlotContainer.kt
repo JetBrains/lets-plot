@@ -31,8 +31,8 @@ class PlotContainer(
     private var myContentBuilt: Boolean = false
     private var myRegistrations = CompositeRegistration()
 
-    val tileCanvasFigures: List<CanvasFigure>
-        get() = plot.tileCanvasFigures
+    val liveMapFigures: List<CanvasFigure>
+        get() = plot.liveMapFigures
 
     val mouseEventPeer: jetbrains.datalore.plot.builder.event.MouseEventPeer
         get() = plot.mouseEventPeer
@@ -146,14 +146,6 @@ class PlotContainer(
             }
         }))
     }
-
-// unused?
-//    fun createCanvasFigure(): CanvasFigure {
-//        val canvasFigure = SvgCanvasFigure()
-//        canvasFigure.svgGElement.children().add(svg)
-//        canvasFigure.setBounds(DoubleRectangle(DoubleVector.ZERO, myLaidOutSize.get()))
-//        return canvasFigure
-//    }
 
     companion object {
         private fun sizePropHandler(block: (newValue: DoubleVector) -> Unit): EventHandler<PropertyChangeEvent<out DoubleVector>> {

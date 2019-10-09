@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
-import jetbrains.datalore.visualization.base.canvasFigure.SvgCanvasFigure
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.CoordinateSystem
@@ -23,7 +22,7 @@ import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import jetbrains.datalore.visualization.plot.base.scale.Mappers
 
 internal class PlotTile(
-    layers: List<jetbrains.datalore.plot.builder.GeomLayer>,
+    layers: List<GeomLayer>,
     private val myScaleX: Scale<Double>,
     private val myScaleY: Scale<Double>,
     private val myTilesOrigin: DoubleVector,
@@ -33,16 +32,12 @@ internal class PlotTile(
 ) : SvgComponent() {
 
     private val myDebugDrawing = ValueProperty(false)
-
-    private val myLayers: List<jetbrains.datalore.plot.builder.GeomLayer>
-    private val myCanvasFigures = ArrayList<CanvasFigure>()
+    private val myLayers: List<GeomLayer>
     private val myTargetLocators = ArrayList<GeomTargetLocator>()
-
     private var myShowAxis: Boolean = false
-    private var myUseCanvas: Boolean = false
 
-    val canvasFigures: List<CanvasFigure>
-        get() = myCanvasFigures
+    var liveMapFigure: CanvasFigure? = null
+        private set
 
     val targetLocators: List<GeomTargetLocator>
         get() = myTargetLocators
@@ -67,7 +62,7 @@ internal class PlotTile(
         val geomBounds = myLayoutInfo.geomBounds
         addFacetLabels(geomBounds)
 
-        val isLivemap = jetbrains.datalore.plot.builder.GeomLayerListUtil.containsLivemapLayer2(myLayers)
+        val isLivemap = GeomLayerListUtil.containsLivemapLayer2(myLayers)
         if (!isLivemap && myShowAxis) {
             addAxis(geomBounds)
         }
@@ -102,10 +97,10 @@ internal class PlotTile(
 
         if (isLivemap) {
             // 'live map' requires all positions to be passed "as is", without mapping
-            val liveMapLayer = jetbrains.datalore.plot.builder.GeomLayerListUtil.getLivemapLayer(myLayers)
+            val liveMapLayer = GeomLayerListUtil.getLivemapLayer(myLayers)
             val origin = myLayoutInfo.getAbsoluteGeomBounds(myTilesOrigin).origin
             val liveMapLayerRenderer =
-                jetbrains.datalore.plot.builder.LayerRendererUtil.createLivemapLayerRenderer(liveMapLayer, myLayers)
+                LayerRendererUtil.createLivemapLayerRenderer(liveMapLayer, myLayers)
 
             val rectElement = SvgRectElement(geomBounds)
             rectElement.addClass(Style.PLOT_GLASS_PANE)
@@ -113,7 +108,7 @@ internal class PlotTile(
             add(rectElement)
 
             liveMapLayerRenderer.createLiveMapData(DoubleRectangle(origin, geomBounds.dimension)).let {
-                myCanvasFigures.add(it.canvasFigure)
+                liveMapFigure = it.canvasFigure
                 myTargetLocators.add(it.targetLocator)
             }
         } else {
@@ -136,17 +131,8 @@ internal class PlotTile(
             val geomLayerRenderers = buildGeoms(sharedNumericMappers, overallNumericDomains, myCoord)
             for (layerRenderer in geomLayerRenderers) {
                 val layerComponent = layerRenderer as SvgComponent
-                if (myUseCanvas) {
-                    // SVG on canvas
-                    val svgCanvasFigure = SvgCanvasFigure()
-                    svgCanvasFigure.svgGElement.children().add(layerComponent.rootGroup)
-                    svgCanvasFigure.setBounds(myLayoutInfo.getAbsoluteGeomBounds(myTilesOrigin))
-                    myCanvasFigures.add(svgCanvasFigure)
-                } else {
-                    // regular SVG
-                    layerComponent.moveTo(geomBounds.origin)
-                    add(layerComponent)
-                }
+                layerComponent.moveTo(geomBounds.origin)
+                add(layerComponent)
             }
         }
     }
@@ -156,7 +142,7 @@ internal class PlotTile(
         if (myLayoutInfo.facetXLabel != null) {
             val lab = TextLabel(myLayoutInfo.facetXLabel)
             val w = geomBounds.width
-            val h = jetbrains.datalore.plot.builder.PlotTile.Companion.FACET_LABEL_HEIGHT
+            val h = FACET_LABEL_HEIGHT
             val x = geomBounds.left + w / 2
             val y = geomBounds.top - h / 2
 
@@ -169,7 +155,7 @@ internal class PlotTile(
         // facet Y label (to the right from geom area)
         if (myLayoutInfo.facetYLabel != null) {
             val lab = TextLabel(myLayoutInfo.facetYLabel)
-            val w = jetbrains.datalore.plot.builder.PlotTile.Companion.FACET_LABEL_HEIGHT
+            val w = FACET_LABEL_HEIGHT
             val h = geomBounds.height
             val x = geomBounds.right + w / 2
             val y = geomBounds.top + h / 2
@@ -199,9 +185,9 @@ internal class PlotTile(
 
     private fun buildAxis(scale: Scale<Double>, info: AxisLayoutInfo, coord: CoordinateSystem, theme: AxisTheme): jetbrains.datalore.plot.builder.guide.AxisComponent {
         val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(info.axisLength, info.orientation!!)
-        jetbrains.datalore.plot.builder.AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
-        jetbrains.datalore.plot.builder.AxisUtil.applyLayoutInfo(axis, info)
-        jetbrains.datalore.plot.builder.AxisUtil.applyTheme(axis, theme)
+        AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
+        AxisUtil.applyLayoutInfo(axis, info)
+        AxisUtil.applyTheme(axis, theme)
         if (isDebugDrawing) {
             if (info.tickLabelsBounds != null) {
                 val rect = SvgRectElement(info.tickLabelsBounds)
@@ -217,11 +203,11 @@ internal class PlotTile(
     private fun buildGeoms(
             sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
             overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>,
-            coord: CoordinateSystem): List<jetbrains.datalore.plot.builder.GeomLayerRenderer> {
+            coord: CoordinateSystem): List<GeomLayerRenderer> {
 
-        val layerRenderers = ArrayList<jetbrains.datalore.plot.builder.GeomLayerRenderer>()
+        val layerRenderers = ArrayList<GeomLayerRenderer>()
         for (layer in myLayers) {
-            val rendererData = jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData(
+            val rendererData = LayerRendererUtil.createLayerRendererData(
                 layer,
                 sharedNumericMappers,
                 overallNumericDomains
@@ -246,17 +232,13 @@ internal class PlotTile(
             val pos = rendererData.pos
             val geom = layer.geom
 
-            layerRenderers.add(jetbrains.datalore.plot.builder.SvgLayerRenderer(aesthetics, geom, pos, coord, ctx))
+            layerRenderers.add(SvgLayerRenderer(aesthetics, geom, pos, coord, ctx))
         }
         return layerRenderers
     }
 
     fun setShowAxis(showAxis: Boolean) {
         myShowAxis = showAxis
-    }
-
-    fun setUseCanvas(useCanvas: Boolean) {
-        myUseCanvas = useCanvas
     }
 
     fun debugDrawing(): Property<Boolean> {

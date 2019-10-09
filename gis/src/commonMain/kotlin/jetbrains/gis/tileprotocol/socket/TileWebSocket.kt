@@ -1,7 +1,7 @@
 package jetbrains.gis.tileprotocol.socket
 
 import io.ktor.client.HttpClient
-import io.ktor.client.features.websocket.ws
+import io.ktor.client.features.websocket.wss
 import io.ktor.http.DEFAULT_PORT
 import io.ktor.http.HttpMethod
 import io.ktor.http.cio.websocket.Frame
@@ -26,7 +26,7 @@ class TileWebSocket(
     override fun connect() {
         with(myClient) {
             launch {
-                ws(
+                wss(
                     method = HttpMethod.Get,
                     host = myHost,
                     port = myPort ?: DEFAULT_PORT
