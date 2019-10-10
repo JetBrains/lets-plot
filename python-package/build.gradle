@@ -2,17 +2,39 @@ plugins {
     id 'kotlin-multiplatform'
 }
 
+def PYTHON_BIN_PATH_PROPERTY = "python_bin_path"
+
 if (project.properties['python_include_path'] != null) {
-    if (project.properties['python_bin'] != null) {
-        task installPythonPackage(type:Exec) {
+    if (project.properties[PYTHON_BIN_PATH_PROPERTY] != null) {
+
+
+        task updateJs(type:Exec) {
             workingDir project.projectDir
 
-            commandLine project.properties['python_bin'], 'setup.py', 'install'
+            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/python3", 'setup.py', 'updatejs'
         }
 
-        installPythonPackage.dependsOn(':python-extension:build')
+        task buildPythonPackage(type:Exec) {
+            workingDir project.projectDir
 
-        build.dependsOn(installPythonPackage)
+            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/python3", 'setup.py', 'bdist_wheel', "--dist-dir=${project.buildDir}/dist"
+        }
+
+        task localInstallPythonPackage(type:Exec) {
+            workingDir "${project.buildDir}/dist"
+
+            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/pip3", 'install', '--no-index', '--find-links=./', 'datalore-plot'
+        }
+
+        updateJs.dependsOn(':js-package:build')
+
+        buildPythonPackage.dependsOn(':python-extension:build')
+
+        buildPythonPackage.dependsOn(updateJs)
+
+        build.dependsOn(buildPythonPackage)
+
+
     } else {
         println("------------------------------------------------------------------------------------------------")
         println("Python package build unavailable. Please set \"python_bin\" property in gradle.properties file.")
