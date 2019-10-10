@@ -44,7 +44,7 @@ def update_js():
 
 
 class UpdateJsCommand(Command):
-    description = "Copy js files from the last build"
+    description = "Copy datalore plot js files from last build"
     user_options = []
 
     def initialize_options(self):
@@ -97,6 +97,6 @@ setup(name='datalore-plot',
       ],
 
       cmdclass=dict(
-          updatejs=UpdateJsCommand,
+          update_js=UpdateJsCommand,
       ),
       )

@@ -1,9 +1,9 @@
-package jetbrains.datalore.visualization.plot.pythonExtension.interop
+package jetbrains.datalore.plot.pythonExtension.interop
 
 import Python.PyObject
 import Python.Py_BuildValue
-import jetbrains.datalore.visualization.plot.pythonExtension.PlotHtmlGen
-import jetbrains.datalore.visualization.plot.pythonExtension.interop.TypeUtils.pyDictToMap
+import jetbrains.datalore.plot.pythonExtension.PlotHtmlGen
+import jetbrains.datalore.plot.pythonExtension.interop.TypeUtils.pyDictToMap
 import kotlinx.cinterop.CPointer
 
 object PlotHtmlGenProxy {

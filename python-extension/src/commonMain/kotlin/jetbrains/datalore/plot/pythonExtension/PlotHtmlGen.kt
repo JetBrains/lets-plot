@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.pythonExtension
+package jetbrains.datalore.plot.pythonExtension
 
 import jetbrains.datalore.base.jsObject.mapToJsObjectInitializer
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide

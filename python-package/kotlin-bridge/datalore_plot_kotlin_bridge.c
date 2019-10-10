@@ -4,7 +4,7 @@
 
 
 #define __ libdatalore_plot_python_extension_symbols()->
-#define T_(name) libdatalore_plot_python_extension_kref_jetbrains_datalore_visualization_plot_pythonExtension_interop_ ## name
+#define T_(name) libdatalore_plot_python_extension_kref_jetbrains_datalore_plot_pythonExtension_interop_ ## name
 
 // Note, that as we cache this in the global, and Kotlin/Native object references
 // are currently thread local, we make this global a TLS variable.
@@ -15,8 +15,8 @@
 #endif
 
 static PyObject* generate_html(PyObject* self, PyObject* plotSpecDict) {
-    T_(PlotHtmlGenProxy) htmlGen = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.interop.PlotHtmlGenProxy._instance();
-    PyObject* html = __ kotlin.root.jetbrains.datalore.visualization.plot.pythonExtension.interop.PlotHtmlGenProxy.applyToRawSpecs(htmlGen, plotSpecDict);
+    T_(PlotHtmlGenProxy) htmlGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotHtmlGenProxy._instance();
+    PyObject* html = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotHtmlGenProxy.applyToRawSpecs(htmlGen, plotSpecDict);
     return html;
 }
 

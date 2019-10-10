@@ -1,13 +1,13 @@
-package jetbrains.datalore.visualization.plot.pythonExtension.interop
+package jetbrains.datalore.plot.pythonExtension.interop
 
 import Python.*
-import jetbrains.datalore.visualization.plot.pythonExtension.interop.PythonTypes.BOOL
-import jetbrains.datalore.visualization.plot.pythonExtension.interop.PythonTypes.DICT
-import jetbrains.datalore.visualization.plot.pythonExtension.interop.PythonTypes.FLOAT
-import jetbrains.datalore.visualization.plot.pythonExtension.interop.PythonTypes.INT
-import jetbrains.datalore.visualization.plot.pythonExtension.interop.PythonTypes.LIST
-import jetbrains.datalore.visualization.plot.pythonExtension.interop.PythonTypes.NONE
-import jetbrains.datalore.visualization.plot.pythonExtension.interop.PythonTypes.STR
+import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.BOOL
+import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.DICT
+import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.FLOAT
+import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.INT
+import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.LIST
+import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.NONE
+import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.STR
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.reinterpret

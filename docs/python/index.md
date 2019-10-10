@@ -37,7 +37,7 @@ Typically, anything could be visualized through geoms. Edit the position and sta
 - `geom_text()` | Add text
 
 ### Layer - stats
-Stat_functions enable visualisation of statistical transformations of the original data, which is sometimes helps for more clear figure. Select the necessary function to draw percentage, means
+Stat_functions enable visualization of statistical transformations of the original data, which is sometimes helps for more clear figure. Select the necessary function to draw percentage, means
 
 ### Layers - annotations
 

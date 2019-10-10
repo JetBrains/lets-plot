@@ -1,4 +1,4 @@
-package jetbrains.datalore.visualization.plot.pythonExtension.interop
+package jetbrains.datalore.plot.pythonExtension.interop
 
 internal object PythonTypes {
     const val STR = "str"
