@@ -15,7 +15,7 @@ internal object LayerRendererUtil {
     ): CanvasFigure {
 
         require(layers.isNotEmpty())
-        require(layers.first().isLivemap)
+        require(layers.first().isLiveMap) { "geom_livemap have to be the very first geom after ggplot()"}
 
         // liveMap uses raw positions, so no mappings needed
         val newLiveMapLayerRendererData = { layer: GeomLayer -> createLayerRendererData(layer, emptyMap(), emptyMap()) }

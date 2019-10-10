@@ -4,11 +4,6 @@ import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Scale
 
 object GeomLayerListUtil {
-    fun containsLivemapLayer(layersByTile: List<List<GeomLayer>>): Boolean {
-        return layersByTile.isNotEmpty() && containsLivemapLayer2(
-            layersByTile[0]
-        )
-    }
 
     fun anyBoundXScale(layersByTile: List<List<GeomLayer>>): Scale<*>? {
         for (layer in layersByTile[0]) {
@@ -41,14 +36,4 @@ object GeomLayerListUtil {
         }
         return null
     }
-
-    fun containsLivemapLayer2(tileLayers: List<GeomLayer>): Boolean {
-        for (layer in tileLayers) {
-            if (layer.isLivemap) {
-                return true
-            }
-        }
-        return false
-    }
-
 }

@@ -23,7 +23,7 @@ interface GeomLayer {
 
     val aestheticsDefaults: AestheticsDefaults
 
-    val isLivemap: Boolean
+    val isLiveMap: Boolean
 
     val isLegendDisabled: Boolean
 

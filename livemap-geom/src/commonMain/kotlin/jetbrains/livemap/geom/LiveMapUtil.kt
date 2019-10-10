@@ -17,19 +17,12 @@ import jetbrains.livemap.LiveMapFactory
 
 object LiveMapUtil {
 
-    fun containsLiveMap(layersByTile: List<List<GeomLayer>>): Boolean {
-        return jetbrains.datalore.plot.builder.GeomLayerListUtil.containsLivemapLayer(layersByTile)
-    }
-
-    fun injectLiveMapProvider(layersByTile: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
+    fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
         val liveMapProvider = MyLiveMapProvider(liveMapOptions)
-        for (tiles in layersByTile) {
-            for (layer in tiles) {
-                if (layer.isLivemap) {
-                    layer.setLiveMapProvider(liveMapProvider)
-                }
-            }
-        }
+        plotTiles
+            .flatten()
+            .filter(GeomLayer::isLiveMap)
+            .forEach { it.setLiveMapProvider(liveMapProvider) }
     }
 
 //    internal fun createTooltipAesSpec(geomKind: GeomKind, dataAccess: MappedDataAccess): TooltipAesSpec {

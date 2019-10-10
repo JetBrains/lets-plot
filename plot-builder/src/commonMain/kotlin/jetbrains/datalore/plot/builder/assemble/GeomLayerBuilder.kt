@@ -35,57 +35,57 @@ class GeomLayerBuilder {
 
     private var myIsLegendDisabled: Boolean = false
 
-    fun stat(v: Stat): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun stat(v: Stat): GeomLayerBuilder {
         myStat = v
         return this
     }
 
-    fun pos(v: PosProvider): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun pos(v: PosProvider): GeomLayerBuilder {
         myPosProvider = v
         return this
     }
 
-    fun geom(v: jetbrains.datalore.plot.builder.assemble.geom.GeomProvider): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun geom(v: jetbrains.datalore.plot.builder.assemble.geom.GeomProvider): GeomLayerBuilder {
         myGeomProvider = v
         return this
     }
 
-    fun addBinding(v: VarBinding): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun addBinding(v: VarBinding): GeomLayerBuilder {
         myBindings.add(v)
         return this
     }
 
-    fun groupingVar(v: DataFrame.Variable): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun groupingVar(v: DataFrame.Variable): GeomLayerBuilder {
         myGroupingVarName = v.name
         return this
     }
 
-    fun groupingVarName(v: String): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun groupingVarName(v: String): GeomLayerBuilder {
         myGroupingVarName = v
         return this
     }
 
-    fun <T> addConstantAes(aes: Aes<T>, v: T): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun <T> addConstantAes(aes: Aes<T>, v: T): GeomLayerBuilder {
         myConstantByAes.put(aes, v)
         return this
     }
 
-    fun <T> addScaleProvider(aes: Aes<T>, scaleProvider: ScaleProvider<T>): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun <T> addScaleProvider(aes: Aes<T>, scaleProvider: ScaleProvider<T>): GeomLayerBuilder {
         myScaleProviderByAes[aes] = scaleProvider
         return this
     }
 
-    fun locatorLookupSpec(v: LookupSpec): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun locatorLookupSpec(v: LookupSpec): GeomLayerBuilder {
         myLocatorLookupSpec = v
         return this
     }
 
-    fun contextualMappingProvider(v: jetbrains.datalore.plot.builder.interact.ContextualMappingProvider): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun contextualMappingProvider(v: jetbrains.datalore.plot.builder.interact.ContextualMappingProvider): GeomLayerBuilder {
         myContextualMappingProvider = v
         return this
     }
 
-    fun disableLegend(v: Boolean): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
+    fun disableLegend(v: Boolean): GeomLayerBuilder {
         myIsLegendDisabled = v
         return this
     }
@@ -102,7 +102,7 @@ class GeomLayerBuilder {
 
         // create missing bindings for 'stat' variables
         // and other adjustments in bindings.
-        val replacementBindings = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilderUtil.rewireBindingsAfterStat(
+        val replacementBindings = GeomLayerBuilderUtil.rewireBindingsAfterStat(
             data,
             myStat,
             myBindings,
@@ -132,7 +132,7 @@ class GeomLayerBuilder {
         // Data Access shouldn't use aes mapper (!)
         val dataAccess = jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess(data, replacementBindings)
 
-        return jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.MyGeomLayer(
+        return MyGeomLayer(
             data,
             myGeomProvider,
             myPosProvider,
@@ -154,7 +154,7 @@ class GeomLayerBuilder {
     }
 
     private fun handledAes(): List<Aes<*>> {
-        return jetbrains.datalore.plot.builder.assemble.GeomLayerBuilderUtil.handledAes(myGeomProvider, myStat)
+        return GeomLayerBuilderUtil.handledAes(myGeomProvider, myStat)
     }
 
 
@@ -185,7 +185,7 @@ class GeomLayerBuilder {
         override val legendKeyElementFactory: LegendKeyElementFactory
             get() = geom.legendKeyElementFactory
 
-        override val isLivemap: Boolean
+        override val isLiveMap: Boolean
             get() = geom is LiveMapGeom
 
         init {
@@ -253,8 +253,8 @@ class GeomLayerBuilder {
 
     companion object {
 
-        fun demoAndTest(): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
-            val builder = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder()
+        fun demoAndTest(): GeomLayerBuilder {
+            val builder = GeomLayerBuilder()
             builder.myDataPreprocessor = { data ->
                 val transformedData = DataProcessing.transformOriginals(data, builder.myBindings)
                 when (val stat = builder.myStat) {

@@ -63,8 +63,8 @@ internal class PlotTile(
         val geomBounds = myLayoutInfo.geomBounds
         addFacetLabels(geomBounds)
 
-        val isLivemap = GeomLayerListUtil.containsLivemapLayer2(myLayers)
-        if (!isLivemap && myShowAxis) {
+        val isLiveMap = myLayers.any(GeomLayer::isLiveMap)
+        if (!isLiveMap && myShowAxis) {
             addAxis(geomBounds)
         }
 
@@ -96,7 +96,7 @@ internal class PlotTile(
 
         // render geoms
 
-        if (isLivemap) {
+        if (isLiveMap) {
             // 'live map' requires all positions to be passed "as is", without mapping
             liveMapFigure = createLiveMapFigure(myLayers, geomBounds.dimension)
 
