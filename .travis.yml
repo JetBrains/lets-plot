@@ -1,0 +1,18 @@
+language: java
+
+os: linux
+dist: bionic
+jdk: oraclejdk8
+
+branches:
+  only:
+   - horis-ci
+
+before_install:
+  - sudo apt install -y python3-dev
+
+install: true
+
+env: ORG_GRADLE_PROJECT_python_include_path=/usr/include/python3.6m
+
+script: ./gradlew build
