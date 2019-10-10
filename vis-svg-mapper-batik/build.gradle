@@ -25,7 +25,7 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation project(':vis-svg-mapper')
-                implementation project(':visualization-demo-common')
+                implementation project(':vis-demo-common')
 
                 api "org.apache.xmlgraphics:batik-anim:$batik_version"
                 api "org.apache.xmlgraphics:batik-awt-util:$batik_version"

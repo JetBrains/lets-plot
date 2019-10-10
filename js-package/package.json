@@ -2,7 +2,7 @@
   "name": "demoweb",
   "version": "1.0.0",
   "description": "",
-  "main": "visualization-demo-plot.js",
+  "main": "plot-demo.js",
   "directories": {
     "lib": "lib"
   },

@@ -34,8 +34,8 @@ def publishedProjects = [
         'plot-builder',
         'plot-config-portable',
         'plot-config',
-        'visualization-demo-common',
-        'visualization-demo-common-jfx',
+        'vis-demo-common',
+        'vis-demo-common-jfx',
         'jvm-jfx-package',
 ]
 

@@ -43,7 +43,7 @@ object BrowserDemoUtil {
     )
 
     val DEMO_COMMON_LIBS = listOf(
-        "visualization-demo-common.js"
+        "package jetbrains.datalore.vis.js"
     )
 
     private const val ROOT_PROJECT = "datalore-plot"

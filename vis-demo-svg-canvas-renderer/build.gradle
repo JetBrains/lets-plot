@@ -1,0 +1,40 @@
+plugins {
+    id 'kotlin-multiplatform'
+    id 'org.jetbrains.gradle.plugin.idea-ext'
+}
+repositories {
+    mavenCentral()
+}
+
+kotlin {
+    jvm()
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation project(':base-portable')
+                implementation project(':base')
+                implementation project(':vis-svg')
+                implementation project(':vis-canvas')
+                implementation project(':vis-demo-common')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation project(':vis-demo-common-jfx')
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        settings {
+            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
+        }
+    }
+}
+
