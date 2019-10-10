@@ -9,8 +9,7 @@ class SvgLayerRenderer(
         private val myGeom: Geom,
         private val myPos: PositionAdjustment,
         private val myCoord: CoordinateSystem,
-        private val myGeomContext: GeomContext) : SvgComponent(), SvgRoot,
-    jetbrains.datalore.plot.builder.GeomLayerRenderer {
+        private val myGeomContext: GeomContext) : SvgComponent(), SvgRoot {
 
     override fun buildComponent() {
         buildLayer()

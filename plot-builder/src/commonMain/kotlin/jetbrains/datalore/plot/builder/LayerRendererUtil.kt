@@ -5,49 +5,40 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
 import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.geom.LiveMapGeom
+import jetbrains.datalore.visualization.plot.base.geom.LiveMapLayerData
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 
 internal object LayerRendererUtil {
     fun createLiveMapFigure(
-        allLayers: List<GeomLayer>,
+        layers: List<GeomLayer>,
         dimension: DoubleVector
     ): CanvasFigure {
-        val noSharedNumericMappers = emptyMap<Aes<Double>, (Double?) -> Double>() // dummy maps
-        val noOverallNumericDomains = emptyMap<Aes<Double>, ClosedRange<Double>>()
-        val livemapLayer = allLayers.first { it.isLivemap }
-        var rendererData = createLayerRendererData(
-            livemapLayer,
-            noSharedNumericMappers,
-            noOverallNumericDomains
-        )
-        val livemapRenderer = LivemapLayerRenderer(
-            rendererData.aesthetics,
-            rendererData.geom as LiveMapGeom,
-            rendererData.dataAccess
-        )
 
-        for (layer in allLayers) {
-            if (!layer.isLivemap) {
-                rendererData = createLayerRendererData(
-                    layer,
-                    noSharedNumericMappers,
-                    noOverallNumericDomains
-                )
-                livemapRenderer.addDataLayer(
-                        rendererData.geom,
-                        rendererData.geomKind,
-                        rendererData.aesthetics,
-                        rendererData.dataAccess
-                )
-            }
-        }
+        require(layers.isNotEmpty())
+        require(layers.first().isLivemap)
 
-        return livemapRenderer.createLiveMapFigure(dimension)
+        // liveMap uses raw positions, so no mappings needed
+        val newLiveMapLayerRendererData = { layer: GeomLayer -> createLayerRendererData(layer, emptyMap(), emptyMap()) }
+
+        val liveMapRendererData = newLiveMapLayerRendererData(layers.first())
+        val layersRendererData = layers
+            .drop(1) // skip geom_livemap
+            .map(newLiveMapLayerRendererData)
+            .map { with(it) { LiveMapLayerData(geom, geomKind, aesthetics, dataAccess) } }
+
+
+        return (liveMapRendererData.geom as LiveMapGeom).createCanvasFigure(
+            liveMapRendererData.aesthetics,
+            liveMapRendererData.dataAccess,
+            dimension,
+            layersRendererData
+        )
     }
 
     fun createLayerRendererData(layer: GeomLayer,
                                 sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
-                                overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>): LayerRendererData {
+                                overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>
+    ): LayerRendererData {
 
         val aestheticMappers =
             PlotUtil.prepareLayerAestheticMappers(layer, sharedNumericMappers)

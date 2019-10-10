@@ -100,9 +100,10 @@ internal class PlotTile(
             // 'live map' requires all positions to be passed "as is", without mapping
             liveMapFigure = createLiveMapFigure(myLayers, geomBounds.dimension)
 
-            val rectElement = SvgRectElement(geomBounds)
-            rectElement.addClass(Style.PLOT_GLASS_PANE)
-            rectElement.opacity().set(0.0)
+            val rectElement = SvgRectElement(geomBounds).apply {
+                addClass(Style.PLOT_GLASS_PANE)
+                opacity().set(0.0)
+            }
             add(rectElement)
         } else {
             // normal plot tile
@@ -196,9 +197,9 @@ internal class PlotTile(
     private fun buildGeoms(
             sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
             overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>,
-            coord: CoordinateSystem): List<GeomLayerRenderer> {
+            coord: CoordinateSystem): List<SvgLayerRenderer> {
 
-        val layerRenderers = ArrayList<GeomLayerRenderer>()
+        val layerRenderers = ArrayList<SvgLayerRenderer>()
         for (layer in myLayers) {
             val rendererData = LayerRendererUtil.createLayerRendererData(
                 layer,
