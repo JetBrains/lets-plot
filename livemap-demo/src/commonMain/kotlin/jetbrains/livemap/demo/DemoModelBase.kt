@@ -2,7 +2,7 @@ package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.visualization.base.canvas.CanvasControl
-import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
+import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapFactory
 import jetbrains.livemap.LiveMapSpec
@@ -26,7 +26,7 @@ abstract class DemoModelBase(private val canvasControl: CanvasControl) {
             size = canvasControl.size.toDoubleVector()
 
             tileService = internalTiles {
-                theme = LivemapConstants.Theme.COLOR
+                theme = TileService.Theme.COLOR
                 host = "tiles.datalore.io"
                 port = null
             }
@@ -36,7 +36,6 @@ abstract class DemoModelBase(private val canvasControl: CanvasControl) {
                 port = null
             }
 
-            theme = LivemapConstants.Theme.COLOR
             interactive = true
 
             projection {

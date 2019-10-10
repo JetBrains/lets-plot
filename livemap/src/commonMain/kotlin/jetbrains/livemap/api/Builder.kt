@@ -6,7 +6,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService
@@ -40,7 +39,6 @@ class LiveMapBuilder {
     var level: FeatureLevel? = null
     var parent: MapRegion? = null
     var layers: MutableList<MapLayer> = ArrayList()
-    var theme: LivemapConstants.Theme = LivemapConstants.Theme.COLOR
 
     var projectionType: ProjectionType = ProjectionType.MERCATOR
     var isLoopX: Boolean = true
@@ -70,7 +68,6 @@ class LiveMapBuilder {
             isLoopY = isLoopY,
 
             tileService = tileService,
-            theme = theme,
 
             geocodingService = geocodingService,
 
@@ -356,12 +353,12 @@ class Projection {
 
 @LiveMapDsl
 class LiveMapTileServiceBuilder {
-    var theme = LivemapConstants.Theme.COLOR
+    var theme = TileService.Theme.COLOR
     var host = "localhost"
     var port: Int? = null
 
     fun build(): TileService {
-        return TileService(TileWebSocketBuilder(host, port), theme.name.toLowerCase())
+        return TileService(TileWebSocketBuilder(host, port), theme)
     }
 }
 
@@ -444,7 +441,7 @@ fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
 fun internalTiles(block: LiveMapTileServiceBuilder.() -> Unit): TileService {
     return LiveMapTileServiceBuilder()
         .apply {
-            theme = LivemapConstants.Theme.COLOR
+            theme = TileService.Theme.COLOR
             host = "10.0.0.127"
             port = 3933
         }
@@ -465,7 +462,7 @@ val dummyGeocodingService: GeocodingService = GeocodingService(
     }
 )
 
-val dummyTileService: TileService = object : TileService(DummySocketBuilder(), LivemapConstants.Theme.COLOR.name) {
+val dummyTileService: TileService = object : TileService(DummySocketBuilder(), Theme.COLOR) {
     override fun getTileData(bbox: Rect<LonLat>, zoom: Int): Async<List<TileLayer>> {
         return constant(emptyList<TileLayer>())
     }

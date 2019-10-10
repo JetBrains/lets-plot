@@ -1,24 +1,26 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
 import jetbrains.datalore.visualization.plot.base.*
 import jetbrains.datalore.visualization.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 
 internal object LayerRendererUtil {
-    fun createLivemapLayerRenderer(
-        livemapLayer: jetbrains.datalore.plot.builder.GeomLayer,
-        allLayers: List<jetbrains.datalore.plot.builder.GeomLayer>
-    ): jetbrains.datalore.plot.builder.LivemapLayerRenderer {
+    fun createLiveMapFigure(
+        allLayers: List<GeomLayer>,
+        dimension: DoubleVector
+    ): CanvasFigure {
         val noSharedNumericMappers = emptyMap<Aes<Double>, (Double?) -> Double>() // dummy maps
         val noOverallNumericDomains = emptyMap<Aes<Double>, ClosedRange<Double>>()
-
-        var rendererData = jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData(
+        val livemapLayer = allLayers.first { it.isLivemap }
+        var rendererData = createLayerRendererData(
             livemapLayer,
             noSharedNumericMappers,
             noOverallNumericDomains
         )
-        val livemapRenderer = jetbrains.datalore.plot.builder.LivemapLayerRenderer(
+        val livemapRenderer = LivemapLayerRenderer(
             rendererData.aesthetics,
             rendererData.geom as LiveMapGeom,
             rendererData.dataAccess
@@ -26,7 +28,7 @@ internal object LayerRendererUtil {
 
         for (layer in allLayers) {
             if (!layer.isLivemap) {
-                rendererData = jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData(
+                rendererData = createLayerRendererData(
                     layer,
                     noSharedNumericMappers,
                     noOverallNumericDomains
@@ -40,22 +42,22 @@ internal object LayerRendererUtil {
             }
         }
 
-        return livemapRenderer
+        return livemapRenderer.createLiveMapFigure(dimension)
     }
 
-    fun createLayerRendererData(layer: jetbrains.datalore.plot.builder.GeomLayer,
+    fun createLayerRendererData(layer: GeomLayer,
                                 sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
-                                overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>): jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData {
+                                overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>): LayerRendererData {
 
         val aestheticMappers =
-            jetbrains.datalore.plot.builder.PlotUtil.prepareLayerAestheticMappers(layer, sharedNumericMappers)
-        val aesthetics = jetbrains.datalore.plot.builder.PlotUtil.createLayerAesthetics(
+            PlotUtil.prepareLayerAestheticMappers(layer, sharedNumericMappers)
+        val aesthetics = PlotUtil.createLayerAesthetics(
             layer,
             aestheticMappers,
             overallNumericDomains
         )
-        val pos = jetbrains.datalore.plot.builder.PlotUtil.createLayerPos(layer, aesthetics)
-        return jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData(
+        val pos = PlotUtil.createLayerPos(layer, aesthetics)
+        return LayerRendererData(
             layer.geom,
             layer.geomKind,
             aesthetics,

@@ -2,7 +2,6 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
@@ -21,7 +20,6 @@ class LiveMapSpec(
     val isLabels: Boolean,
     val isTiles: Boolean,
     val isUseFrame: Boolean,
-    val theme: LivemapConstants.Theme,
     val projectionType: ProjectionType,
     val location: MapLocation?,
     val zoom: Int?,

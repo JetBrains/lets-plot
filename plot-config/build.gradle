@@ -16,7 +16,7 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':gis')
-                implementation project(':livemap')
+                implementation project(':livemap-geom')
                 implementation project(':visualization-base-svg')
                 implementation project(':visualization-base-canvas')
                 implementation project(':visualization-plot-base-portable')
