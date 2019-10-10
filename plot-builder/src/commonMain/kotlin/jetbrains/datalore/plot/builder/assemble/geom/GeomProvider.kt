@@ -1,12 +1,12 @@
 package jetbrains.datalore.plot.builder.assemble.geom
 
+import jetbrains.datalore.plot.config.LiveMapOptions
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Geom
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.GeomMeta
 import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.visualization.plot.base.geom.*
-import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
 
 abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 
@@ -329,18 +329,15 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
         }
 
         fun livemap(
-            displayMode: LivemapConstants.DisplayMode,
-            scaled: Boolean,
-            supplier: () -> Geom
+            options: LiveMapOptions
         ): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.LIVE_MAP,
 //                LivemapGeom.RENDERS,
-                AestheticsDefaults.livemap(displayMode, scaled),
+                AestheticsDefaults.livemap(options.displayMode, options.scaled),
                 LiveMapGeom.HANDLES_GROUPS,
-                supplier
-            )
-                .build()
+                myGeomSupplier = { LiveMapGeom(options.displayMode) }
+            ).build()
         }
 
         fun ribbon(): GeomProvider {

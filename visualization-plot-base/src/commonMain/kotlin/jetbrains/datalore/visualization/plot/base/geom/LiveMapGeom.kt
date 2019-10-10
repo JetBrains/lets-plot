@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
 import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.visualization.plot.base.geom.util.GenericLegendKeyElementFactory
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants.DisplayMode
@@ -39,10 +39,10 @@ class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
     fun createCanvasFigure(
         aesthetics: Aesthetics,
         dataAccess: MappedDataAccess,
-        bounds: DoubleRectangle,
+        dinension: DoubleVector,
         layers: List<LiveMapLayerData>
-    ): LiveMapData {
-        return myMapProvider!!.createLiveMap(aesthetics, dataAccess, bounds, layers)
+    ): CanvasFigure {
+        return myMapProvider!!.createLiveMap(aesthetics, dataAccess, dinension, layers)
     }
 
     companion object {

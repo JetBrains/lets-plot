@@ -1,6 +1,9 @@
 package jetbrains.livemap.geom
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.config.LiveMapOptions
+import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
 import jetbrains.datalore.visualization.plot.base.Aes
 import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.GeomKind
@@ -14,14 +17,14 @@ import jetbrains.livemap.LiveMapFactory
 
 object LiveMapUtil {
 
-    fun containsLiveMap(layersByTile: List<List<jetbrains.datalore.plot.builder.GeomLayer>>): Boolean {
+    fun containsLiveMap(layersByTile: List<List<GeomLayer>>): Boolean {
         return jetbrains.datalore.plot.builder.GeomLayerListUtil.containsLivemapLayer(layersByTile)
     }
 
-    fun initLiveMapProvider(layersByTile: List<List<jetbrains.datalore.plot.builder.GeomLayer>>, liveMapOptions: LiveMapOptions) {
+    fun injectLiveMapProvider(layersByTile: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
         val liveMapProvider = MyLiveMapProvider(liveMapOptions)
-        for (layers in layersByTile) {
-            for (layer in layers) {
+        for (tiles in layersByTile) {
+            for (layer in tiles) {
                 if (layer.isLivemap) {
                     layer.setLiveMapProvider(liveMapProvider)
                 }
@@ -67,15 +70,15 @@ object LiveMapUtil {
         override fun createLiveMap(
             aesthetics: Aesthetics,
             dataAccess: MappedDataAccess,
-            bounds: DoubleRectangle,
+            dimension: DoubleVector,
             layers: List<LiveMapLayerData>
-        ): LiveMapProvider.LiveMapData {
+        ): CanvasFigure {
 
             val liveMapSpec = LiveMapSpecBuilder()
                 .livemapOptions(myLiveMapOptions)
                 .aesthetics(aesthetics)
                 .dataAccess(dataAccess)
-                .size(bounds.dimension)
+                .size(dimension)
                 .layers(layers)
                 .devParams(DevParams(myLiveMapOptions.devParams))
                 .mapLocationConsumer { locationRect ->
@@ -85,9 +88,9 @@ object LiveMapUtil {
 
             val liveMapFactory = LiveMapFactory(liveMapSpec)
             val liveMapCanvasFigure = LiveMapCanvasFigure(liveMapFactory.createLiveMap())
-            liveMapCanvasFigure.setBounds(bounds)
+            liveMapCanvasFigure.setDimension(dimension)
 
-            return LiveMapProvider.LiveMapData(liveMapCanvasFigure)
+            return liveMapCanvasFigure
         }
     }
 }

@@ -2,6 +2,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromLayerOptions
 import jetbrains.datalore.visualization.plot.base.GeomKind
 import jetbrains.datalore.visualization.plot.base.geom.*
 
@@ -45,9 +46,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
             GeomKind.LIVE_MAP -> {
-                return opts.mergedOptions
-                    .run { LiveMapConfig.parseLiveMapFromLayerOptions(this) }
-                    .run { GeomProvider.livemap(displayMode, scaled) { LiveMapGeom(displayMode) } }
+                return GeomProvider.livemap(parseFromLayerOptions(opts))
             }
 //            GeomKind.JITTER -> return GeomProvider.jitter(
 //                PosProvider.jitter(

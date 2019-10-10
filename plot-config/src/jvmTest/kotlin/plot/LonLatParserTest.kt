@@ -26,6 +26,4 @@ class LonLatParserTest {
     fun withSpaces_ShouldParse() {
         assertEquals(explicitVec(-1.0, 9.0), LonLatParser.parse("-1.0, 9"))
     }
-
-
 }

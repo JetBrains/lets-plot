@@ -6,6 +6,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.LayerRendererUtil.createLiveMapFigure
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -97,19 +98,12 @@ internal class PlotTile(
 
         if (isLivemap) {
             // 'live map' requires all positions to be passed "as is", without mapping
-            val liveMapLayer = GeomLayerListUtil.getLivemapLayer(myLayers)
-            val origin = myLayoutInfo.getAbsoluteGeomBounds(myTilesOrigin).origin
-            val liveMapLayerRenderer =
-                LayerRendererUtil.createLivemapLayerRenderer(liveMapLayer, myLayers)
+            liveMapFigure = createLiveMapFigure(myLayers, geomBounds.dimension)
 
             val rectElement = SvgRectElement(geomBounds)
             rectElement.addClass(Style.PLOT_GLASS_PANE)
             rectElement.opacity().set(0.0)
             add(rectElement)
-
-            liveMapLayerRenderer.createLiveMapData(DoubleRectangle(origin, geomBounds.dimension)).let {
-                liveMapFigure = it.canvasFigure
-            }
         } else {
             // normal plot tile
             val sharedNumericMappers = HashMap<Aes<Double>, (Double?) -> Double?>()

@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plot.base.geom
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
 import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
@@ -9,9 +9,7 @@ interface LiveMapProvider {
     fun createLiveMap(
         aesthetics: Aesthetics,
         dataAccess: MappedDataAccess,
-        bounds: DoubleRectangle,
+        dimension: DoubleVector,
         layers: List<LiveMapLayerData>
-    ): LiveMapData
-
-    class LiveMapData(val canvasFigure: CanvasFigure)
+    ): CanvasFigure
 }

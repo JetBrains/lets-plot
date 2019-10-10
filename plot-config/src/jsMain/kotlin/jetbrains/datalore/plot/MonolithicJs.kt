@@ -7,13 +7,11 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
 import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.plot.config.LiveMapConfig.Companion.parseLiveMapFromPlotOptions
-import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
-import jetbrains.datalore.plot.config.PlotConfigUtil
+import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.visualization.base.canvas.dom.DomCanvasControl
 import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
 import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
+import jetbrains.livemap.geom.LiveMapUtil
 import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
@@ -68,7 +66,7 @@ object MonolithicJs {
         plotContainer.ensureContentBuilt()
 
         plotContainer.liveMapFigures.forEach { liveMapFigure ->
-            val canvasControl = DomCanvasControl(liveMapFigure.bounds().get().dimension.toVector())
+            val canvasControl = DomCanvasControl(liveMapFigure.dimension().get().toVector())
             liveMapFigure.mapToCanvas(canvasControl)
             eventTarget.appendChild(canvasControl.rootElement)
         }
@@ -101,9 +99,7 @@ object MonolithicJs {
 
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
 
-        plotSpec
-            .run(::parseLiveMapFromPlotOptions)
-            ?.run { LiveMapUtil.initLiveMapProvider(assembler.layersByTile, this) }
+        LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(plotSpec))?.run { LiveMapUtil.injectLiveMapProvider(assembler.layersByTile, this) }
 
         return assembler.createPlot()
     }

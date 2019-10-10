@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_XMAX
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_XMIN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_YMAX
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_YMIN
+import jetbrains.datalore.plot.config.LiveMapOptions
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.visualization.plot.base.Aesthetics
 import jetbrains.datalore.visualization.plot.base.geom.LiveMapLayerData
@@ -24,7 +25,6 @@ import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.internalTiles
 import jetbrains.livemap.api.liveMapGeocoding
-import jetbrains.livemap.geom.LiveMapConfig.Companion.validValues
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionType
@@ -35,13 +35,13 @@ import jetbrains.livemap.projections.WorldRectangle
 
 internal class LiveMapSpecBuilder {
 
-    private var myAesthetics: Aesthetics? = null
-    private var myLayers: List<LiveMapLayerData>? = null
-    private var myLiveMapOptions: LiveMapOptions? = null
-    private var myDataAccess: MappedDataAccess? = null
-    private var mySize: DoubleVector? = null
-    private var myDevParams: DevParams? = null
-    private var myMapLocationConsumer: ((DoubleRectangle) -> Unit)? = null
+    private lateinit var myAesthetics: Aesthetics
+    private lateinit var myLayers: List<LiveMapLayerData>
+    private lateinit var myLiveMapOptions: LiveMapOptions
+    private lateinit var myDataAccess: MappedDataAccess
+    private lateinit var mySize: DoubleVector
+    private lateinit var myDevParams: DevParams
+    private lateinit var myMapLocationConsumer: ((DoubleRectangle) -> Unit)
 
     fun aesthetics(aesthetics: Aesthetics): LiveMapSpecBuilder {
         myAesthetics = aesthetics
@@ -79,7 +79,7 @@ internal class LiveMapSpecBuilder {
     }
 
     fun build(): LiveMapSpec {
-        val projectionType = convertProjectionType(myLiveMapOptions!!.projection)
+        val projectionType = convertProjectionType(myLiveMapOptions.projection)
         val mapRect = WorldRectangle(0.0, 0.0, ProjectionUtil.TILE_PIXEL_SIZE, ProjectionUtil.TILE_PIXEL_SIZE)
         val mapProjection = createMapProjection(projectionType, mapRect)
 
@@ -100,30 +100,30 @@ internal class LiveMapSpecBuilder {
                 host = "tiles.datalore.io"
                 port = null
             },
-            mySize!!,
-            myLiveMapOptions!!.scaled,
-            myLiveMapOptions!!.interactive,
-            myLiveMapOptions!!.magnifier,
-            myLiveMapOptions!!.clustering,
-            myLiveMapOptions!!.labels,
+            mySize,
+            myLiveMapOptions.scaled,
+            myLiveMapOptions.interactive,
+            myLiveMapOptions.magnifier,
+            myLiveMapOptions.clustering,
+            myLiveMapOptions.labels,
             DEFAULT_SHOW_TILES,
             false, //liveMapProcessor.heatMapWithFrame(),
             projectionType,
-            createMapLocation(myLiveMapOptions?.location),
-            myLiveMapOptions!!.zoom,
-            getFeatureLevel(myLiveMapOptions!!.featureLevel),
-            createMapRegion(myLiveMapOptions!!.parent),
+            createMapLocation(myLiveMapOptions.location),
+            myLiveMapOptions.zoom,
+            getFeatureLevel(myLiveMapOptions.featureLevel),
+            createMapRegion(myLiveMapOptions.parent),
             mapLayers,
             CYLINDRICAL_PROJECTIONS.contains(projectionType),
             DEFAULT_LOOP_Y,
-            myMapLocationConsumer!!,
-            myDevParams!!
+            myMapLocationConsumer,
+            myDevParams
         )
     }
 
     private fun createMapLayers(mapProjection: MapProjection): List<MapLayer> {
         val mapLayers = ArrayList<MapLayer>()
-//        val layerProcessor = LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions!!.geodesic)
+//        val layerProcessor = LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions.geodesic)
 //
 //        for (layerData in myLayers!!) {
 //            val mapLayer = layerProcessor.createMapLayer(layerData)
@@ -223,7 +223,7 @@ internal class LiveMapSpecBuilder {
             try {
                 return FeatureLevel.valueOf(level.toUpperCase())
             } catch (ignored: Exception) {
-                throw IllegalArgumentException(Option.Geom.LiveMap.FEATURE_LEVEL + validValues(FeatureLevel.values()))
+                throw IllegalArgumentException(Option.Geom.LiveMap.FEATURE_LEVEL + FeatureLevel.values())
             }
 
         }
