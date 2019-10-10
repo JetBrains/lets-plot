@@ -13,3 +13,4 @@ node_modules/
 venv
 python-package/datalore/package_data
 __pycache__/
+/python-package/*.ipynb
