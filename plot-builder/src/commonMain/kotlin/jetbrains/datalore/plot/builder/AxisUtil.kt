@@ -1,10 +1,10 @@
 package jetbrains.datalore.plot.builder
 
+import jetbrains.datalore.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.visualization.plot.base.CoordinateSystem
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 
 object AxisUtil {
     fun applyLayoutInfo(axis: jetbrains.datalore.plot.builder.guide.AxisComponent, info: AxisLayoutInfo) {

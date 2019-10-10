@@ -1,9 +1,9 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 
 open class IdentityDiscreteMapperProvider<T>(
         private val inputConverter: (Any?) -> T?, naValue: T) :

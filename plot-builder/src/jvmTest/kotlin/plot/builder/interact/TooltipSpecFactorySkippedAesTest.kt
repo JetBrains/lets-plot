@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.builder.interact
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.map.GeoPositionField.DATA_COLUMN_JOIN_KEY
-import jetbrains.datalore.visualization.plot.base.Aes
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 

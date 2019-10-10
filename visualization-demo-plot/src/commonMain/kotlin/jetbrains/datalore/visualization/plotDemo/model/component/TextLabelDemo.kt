@@ -2,13 +2,13 @@ package jetbrains.datalore.visualization.plotDemo.model.component
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
+import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
+import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
 import jetbrains.datalore.visualization.base.svg.*
-import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.HorizontalAnchor
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.HorizontalAnchor.*
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.VerticalAnchor
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.VerticalAnchor.*
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {

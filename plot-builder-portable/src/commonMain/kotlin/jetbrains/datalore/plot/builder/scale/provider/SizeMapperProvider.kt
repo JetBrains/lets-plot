@@ -1,9 +1,9 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.SIZE
-import jetbrains.datalore.visualization.plot.base.aes.AesScaling
 
 class SizeMapperProvider(
     range: ClosedRange<Double>,

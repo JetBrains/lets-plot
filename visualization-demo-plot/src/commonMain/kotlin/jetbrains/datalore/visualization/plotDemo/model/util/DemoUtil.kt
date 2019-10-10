@@ -1,8 +1,8 @@
 package jetbrains.datalore.visualization.plotDemo.model.util
 
 import jetbrains.datalore.base.random.RandomGaussian
-import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.GeomContext
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.GeomContext
 import kotlin.random.Random
 
 object DemoUtil {

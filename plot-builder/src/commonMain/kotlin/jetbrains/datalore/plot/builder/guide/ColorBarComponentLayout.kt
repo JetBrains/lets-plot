@@ -3,9 +3,9 @@ package jetbrains.datalore.plot.builder.guide
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.scale.GuideBreak
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import kotlin.math.max
 
 abstract class ColorBarComponentLayout(
@@ -73,8 +73,8 @@ abstract class ColorBarComponentLayout(
     internal abstract fun createBreakInfo(tickLocation: Double): jetbrains.datalore.plot.builder.guide.ColorBarComponentLayout.BreakInfo
 
     internal class BreakInfo(
-            val tickLocation: Double, val labelLocation: DoubleVector,
-            val labelHorizontalAnchor: TextLabel.HorizontalAnchor, val labelVerticalAnchor: TextLabel.VerticalAnchor)
+        val tickLocation: Double, val labelLocation: DoubleVector,
+        val labelHorizontalAnchor: TextLabel.HorizontalAnchor, val labelVerticalAnchor: TextLabel.VerticalAnchor)
 
     private class MyHorizontal internal constructor(title: String, domain: ClosedRange<Double>, breaks: List<GuideBreak<Double>>, barSize: DoubleVector) : jetbrains.datalore.plot.builder.guide.ColorBarComponentLayout(title, domain, breaks, barSize,
         jetbrains.datalore.plot.builder.guide.LegendDirection.HORIZONTAL

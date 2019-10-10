@@ -12,6 +12,12 @@ import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
+import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -22,12 +28,6 @@ import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.event.SvgEventHandler
 import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
-import jetbrains.datalore.visualization.plot.base.CoordinateSystem
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.HorizontalAnchor
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.VerticalAnchor
 import mu.KotlinLogging
 
 abstract class Plot(private val theme: Theme) : SvgComponent() {

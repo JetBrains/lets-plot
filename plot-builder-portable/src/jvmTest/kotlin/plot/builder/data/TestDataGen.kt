@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.builder.data
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DataFrame
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin

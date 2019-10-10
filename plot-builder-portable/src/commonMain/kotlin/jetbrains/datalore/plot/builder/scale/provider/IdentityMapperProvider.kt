@@ -1,11 +1,11 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.base.Transform
 
 class IdentityMapperProvider<T>(
     private val myDiscreteMapperProvider: IdentityDiscreteMapperProvider<T>,

@@ -2,23 +2,23 @@ package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
+import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.data.TransformVar
+import jetbrains.datalore.plot.base.geom.LiveMapGeom
+import jetbrains.datalore.plot.base.geom.LiveMapProvider
+import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.plot.base.stat.SimpleStatContext
+import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.PosProviderContext
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
-import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.geom.LiveMapGeom
-import jetbrains.datalore.visualization.plot.base.geom.LiveMapProvider
-import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpec
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.visualization.plot.base.stat.SimpleStatContext
-import jetbrains.datalore.visualization.plot.base.stat.Stats
 
 class GeomLayerBuilder {
     private val myBindings = ArrayList<VarBinding>()

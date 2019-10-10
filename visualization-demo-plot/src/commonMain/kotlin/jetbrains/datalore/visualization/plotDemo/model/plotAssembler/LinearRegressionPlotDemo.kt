@@ -3,16 +3,16 @@ package jetbrains.datalore.visualization.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.render.linetype.NamedLineType
+import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.base.render.linetype.NamedLineType
-import jetbrains.datalore.visualization.plot.base.scale.Scales
-import jetbrains.datalore.visualization.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import kotlin.random.Random
 
@@ -143,7 +143,9 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
                     Scales.continuousDomainNumericRange("B")
                 )
             )
-            .addBinding(VarBinding.deferred(Stats.SE, Aes.Y, ScaleProviderHelper.createDefault(Aes.Y)))
+            .addBinding(VarBinding.deferred(
+                Stats.SE, Aes.Y, ScaleProviderHelper.createDefault(
+                    Aes.Y)))
             .addConstantAes(Aes.COLOR, Color.RED)
             .build(data)
 

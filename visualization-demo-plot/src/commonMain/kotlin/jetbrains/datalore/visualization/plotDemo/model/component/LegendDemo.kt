@@ -2,13 +2,13 @@ package jetbrains.datalore.visualization.plotDemo.model.component
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
+import jetbrains.datalore.plot.base.geom.util.GenericLegendKeyElementFactory
+import jetbrains.datalore.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.builder.scale.GuideBreak
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.array
-import jetbrains.datalore.visualization.plot.base.geom.util.GenericLegendKeyElementFactory
-import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.base.scale.Scales
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class LegendDemo : SimpleDemoBase() {

@@ -1,10 +1,10 @@
 package jetbrains.datalore.plot.builder.data
 
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.DataProcessing.findOptionalVariable
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.base.stat.Stats
 
 class GroupingContext(private val myData: DataFrame, bindings: List<VarBinding>, groupingVarName: String?, private val myExpectMultiple: Boolean) {
     private val myBindings: List<VarBinding>

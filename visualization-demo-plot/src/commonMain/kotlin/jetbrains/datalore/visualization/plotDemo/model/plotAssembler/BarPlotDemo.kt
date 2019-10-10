@@ -2,17 +2,17 @@ package jetbrains.datalore.visualization.plotDemo.model.plotAssembler
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.base.scale.Scales
-import jetbrains.datalore.visualization.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 import kotlin.math.round

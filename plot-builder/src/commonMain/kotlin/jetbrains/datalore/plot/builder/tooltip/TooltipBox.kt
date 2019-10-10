@@ -4,6 +4,8 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
+import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
@@ -19,8 +21,6 @@ import jetbrains.datalore.visualization.base.svg.SvgGraphicsElement.Visibility.V
 import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
 import jetbrains.datalore.visualization.base.svg.SvgPathElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import kotlin.math.max
 import kotlin.math.min
 

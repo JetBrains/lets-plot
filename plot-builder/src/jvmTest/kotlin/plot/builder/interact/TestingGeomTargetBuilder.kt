@@ -3,11 +3,11 @@ package jetbrains.datalore.plot.builder.interact
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.GeomTarget
+import jetbrains.datalore.plot.base.interact.HitShape
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.loc.TargetPrototype.Companion.createTipLayoutHint
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
-import jetbrains.datalore.visualization.plot.base.interact.HitShape
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
 
 class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
 
@@ -48,9 +48,9 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
 
     fun build(): GeomTarget {
         return GeomTarget(
-            jetbrains.datalore.plot.builder.interact.TestingGeomTargetBuilder.Companion.IGNORED_HIT_INDEX,
-                createTipLayoutHint(myTargetHitCoord, myHintShape, myFill),
-                myAesTipLayoutHints
+            IGNORED_HIT_INDEX,
+            createTipLayoutHint(myTargetHitCoord, myHintShape, myFill),
+            myAesTipLayoutHints
         )
     }
 

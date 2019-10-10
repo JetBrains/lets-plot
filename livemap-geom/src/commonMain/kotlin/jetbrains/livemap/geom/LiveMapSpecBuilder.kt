@@ -5,6 +5,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.BBOX_CALCULATOR
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.convertToGeoRectangle
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.geom.LiveMapLayerData
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.POINT_X
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.POINT_Y
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_XMAX
@@ -13,10 +17,6 @@ import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_YMAX
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_YMIN
 import jetbrains.datalore.plot.config.LiveMapOptions
 import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.geom.LiveMapLayerData
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService

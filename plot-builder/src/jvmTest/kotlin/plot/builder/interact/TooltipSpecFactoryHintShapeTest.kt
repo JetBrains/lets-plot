@@ -1,10 +1,10 @@
 package jetbrains.datalore.plot.builder.interact
 
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.TestUtil.rect
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 

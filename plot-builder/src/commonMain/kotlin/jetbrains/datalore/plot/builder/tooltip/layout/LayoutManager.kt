@@ -2,14 +2,14 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind.*
 import kotlin.math.min
 
 class LayoutManager(private val myViewport: DoubleRectangle, private val myPreferredHorizontalAlignment: HorizontalAlignment) {

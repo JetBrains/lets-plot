@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
-import jetbrains.datalore.visualization.plot.base.GeomKind
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupResult
+import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 
 internal class LocatedTargetsPicker {
 

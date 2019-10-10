@@ -1,14 +1,15 @@
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder
+import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
 
 internal object LegendAssemblerUtil {
     fun <T> mapToAesthetics(
-            valuesByAes: Map<Aes<T>, List<T>>, constantByAes: Map<Aes<T>, T>, aestheticsDefaults: AestheticsDefaults): Aesthetics {
+        valuesByAes: Map<Aes<T>, List<T>>, constantByAes: Map<Aes<T>, T>, aestheticsDefaults: AestheticsDefaults
+    ): Aesthetics {
         val builder = AestheticsBuilder(0)
         for (aes in Aes.values()) {
             builder.constantAes(aes as Aes<Any>, aestheticsDefaults.defaultValue(aes))
@@ -26,7 +27,8 @@ internal object LegendAssemblerUtil {
 
 
     fun mapToAesthetics(
-            valueByAesIterable: Collection<Map<Aes<*>, Any>>, constantByAes: Map<Aes<*>, Any>, aestheticsDefaults: AestheticsDefaults): Aesthetics {
+        valueByAesIterable: Collection<Map<Aes<*>, Any>>, constantByAes: Map<Aes<*>, Any>, aestheticsDefaults: AestheticsDefaults
+    ): Aesthetics {
         val dataPoints = ArrayList<Map<Aes<*>, Any>>()
         for (valueByAes in valueByAesIterable) {
             val dataPoint = HashMap<Aes<*>, Any>()

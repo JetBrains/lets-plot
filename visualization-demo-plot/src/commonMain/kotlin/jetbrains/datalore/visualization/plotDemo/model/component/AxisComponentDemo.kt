@@ -3,16 +3,16 @@ package jetbrains.datalore.visualization.plotDemo.model.component
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.coord.Coords
+import jetbrains.datalore.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.plot.base.scale.Mappers
+import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.plot.base.CoordinateSystem
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.coord.Coords
-import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.base.scale.Mappers
-import jetbrains.datalore.visualization.plot.base.scale.Scales
-import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {

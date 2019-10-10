@@ -4,10 +4,10 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Scale
 
 internal object PlotGuidesAssemblerUtil {
     fun mappedRenderedAesToCreateGuides(layerTiles: jetbrains.datalore.plot.builder.assemble.StitchedPlotLayers, guideOptionsMap: Map<Aes<*>, GuideOptions>): List<Aes<*>> {

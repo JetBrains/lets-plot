@@ -4,9 +4,9 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.scale.Scales
 import kotlin.test.assertEquals
 
 internal open class CoordTestBase {

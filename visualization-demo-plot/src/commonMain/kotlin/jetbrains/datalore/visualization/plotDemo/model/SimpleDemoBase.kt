@@ -3,6 +3,8 @@ package jetbrains.datalore.visualization.plotDemo.model
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ValueProperty
+import jetbrains.datalore.plot.base.GeomContext
+import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -10,8 +12,6 @@ import jetbrains.datalore.visualization.base.svg.SvgColors
 import jetbrains.datalore.visualization.base.svg.SvgCssResource
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
 import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.plot.base.GeomContext
-import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
 
 abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAULT_INNER_SIZE) {
 

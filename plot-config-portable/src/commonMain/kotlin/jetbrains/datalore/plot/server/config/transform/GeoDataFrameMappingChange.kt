@@ -1,5 +1,6 @@
 package jetbrains.datalore.plot.server.config.transform
 
+import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.DATA_COLUMN_JOIN_KEY
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_COLUMN_GEOJSON
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_COLUMN_JOIN_KEY
@@ -12,7 +13,6 @@ import jetbrains.datalore.plot.config.Option.Plot
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.MAP_ID
 
 class GeoDataFrameMappingChange : SpecChange {
 

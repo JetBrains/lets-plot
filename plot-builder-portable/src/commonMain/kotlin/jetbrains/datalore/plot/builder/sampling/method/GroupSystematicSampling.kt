@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.builder.sampling.method
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.sampling.method.SystematicSampling.Companion.computeStep
-import jetbrains.datalore.visualization.plot.base.DataFrame
 
 internal class GroupSystematicSampling(sampleSize: Int) : GroupSamplingBase(sampleSize) {
 

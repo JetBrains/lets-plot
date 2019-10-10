@@ -2,15 +2,15 @@ package jetbrains.datalore.visualization.plotDemo.model.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.PositionAdjustment
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.array
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.constant
-import jetbrains.datalore.visualization.plot.base.coord.Coords
-import jetbrains.datalore.visualization.plot.base.geom.BarGeom
-import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
+import jetbrains.datalore.plot.base.coord.Coords
+import jetbrains.datalore.plot.base.geom.BarGeom
+import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 
@@ -92,7 +92,8 @@ open class BarDemo : SimpleDemoBase() {
         val groupComponent = GroupComponent()
         val coord = Coords.create(DoubleVector(0.0, demoInnerSize.y / 2))
         val layer =
-            jetbrains.datalore.plot.builder.SvgLayerRenderer(aes, BarGeom(), pos, coord, DemoUtil.geomContext(aes))
+            jetbrains.datalore.plot.builder.SvgLayerRenderer(aes,
+                BarGeom(), pos, coord, DemoUtil.geomContext(aes))
         groupComponent.add(layer.rootGroup)
         return groupComponent
     }

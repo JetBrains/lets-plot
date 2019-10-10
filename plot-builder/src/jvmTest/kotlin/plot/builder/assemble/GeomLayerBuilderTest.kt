@@ -1,11 +1,11 @@
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.scale.Scales
-import jetbrains.datalore.visualization.plot.base.stat.Stats
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

@@ -1,6 +1,6 @@
 package jetbrains.datalore.plot.builder.sampling
 
-import jetbrains.datalore.visualization.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DataFrame
 
 interface PointSampling : Sampling {
     fun isApplicable(population: DataFrame): Boolean

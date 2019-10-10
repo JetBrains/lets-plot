@@ -1,9 +1,9 @@
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.*
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
 
 class GeomInteraction(builder: jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder) :
     jetbrains.datalore.plot.builder.interact.ContextualMappingProvider {
@@ -29,7 +29,8 @@ class GeomInteraction(builder: jetbrains.datalore.plot.builder.interact.GeomInte
     companion object {
         fun createContextualMapping(displayableAes: List<Aes<*>>,
                                     axisAes: List<Aes<*>>,
-                                    dataAccess: MappedDataAccess): ContextualMapping {
+                                    dataAccess: MappedDataAccess
+        ): ContextualMapping {
 
             val showInTip = ArrayList<Aes<*>>()
             for (aes in displayableAes) {

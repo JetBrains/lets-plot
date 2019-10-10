@@ -1,13 +1,13 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.scale.Scales
 
 class PlotAssembler private constructor(
     layersByTile: List<List<GeomLayer>>,
@@ -125,8 +125,8 @@ class PlotAssembler private constructor(
 
 
     private fun createXYPlot(
-            xScaleProto: Scale<Double>, yScaleProto: Scale<Double>,
-            plotLayout: PlotLayout, legendBoxInfos: List<LegendBoxInfo>): jetbrains.datalore.plot.builder.Plot {
+        xScaleProto: Scale<Double>, yScaleProto: Scale<Double>,
+        plotLayout: PlotLayout, legendBoxInfos: List<LegendBoxInfo>): jetbrains.datalore.plot.builder.Plot {
 
         val plotBuilder = jetbrains.datalore.plot.builder.PlotBuilder(myTheme)
         plotBuilder.setTitle(myTitle)

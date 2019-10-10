@@ -8,14 +8,14 @@ import jetbrains.datalore.base.observable.property.PropertyBinding.bindOneWay
 import jetbrains.datalore.base.observable.property.PropertyChangeEvent
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgUtils.transformTranslate
-import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.HorizontalAnchor.*
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.VerticalAnchor.*
 
 class AxisComponent(length: Double, orientation: jetbrains.datalore.plot.builder.guide.Orientation) : SvgComponent() {
 

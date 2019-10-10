@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 
 class PlotFacets(val xVar: String?, val yVar: String?, val xLevels: List<*>?, val yLevels: List<*>?) {
 

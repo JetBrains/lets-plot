@@ -30,8 +30,8 @@ kotlin {
                 implementation project(':visualization-demo-common-jfx')
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
-                implementation project(':visualization-plot-base-portable')
-                implementation project(':visualization-plot-base')
+                implementation project(':plot-base-portable')
+                implementation project(':plot-base')
             }
         }
         allJvm {
@@ -112,8 +112,8 @@ dependencies {
 
     projectDependenciesJs project(':plot-common-portable')
     projectDependenciesJs project(':plot-common')
-    projectDependenciesJs project(':visualization-plot-base')
-    projectDependenciesJs project(':visualization-plot-base-portable')
+    projectDependenciesJs project(':plot-base')
+    projectDependenciesJs project(':plot-base-portable')
     projectDependenciesJs project(':plot-builder-portable')
     projectDependenciesJs project(':plot-builder')
     projectDependenciesJs project(':plot-config-portable')

@@ -1,16 +1,16 @@
 package jetbrains.livemap.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomKind.*
+import jetbrains.datalore.plot.base.geom.LiveMapLayerData
+import jetbrains.datalore.plot.base.geom.LiveMapProvider
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.config.LiveMapOptions
 import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.GeomKind
-import jetbrains.datalore.visualization.plot.base.GeomKind.*
-import jetbrains.datalore.visualization.plot.base.geom.LiveMapLayerData
-import jetbrains.datalore.visualization.plot.base.geom.LiveMapProvider
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapCanvasFigure
 import jetbrains.livemap.LiveMapFactory

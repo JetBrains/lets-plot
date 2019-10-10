@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.ALPHA
 
 class AlphaMapperProvider(
         range: ClosedRange<Double>,

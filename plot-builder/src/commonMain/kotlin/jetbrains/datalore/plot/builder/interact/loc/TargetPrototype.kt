@@ -2,22 +2,22 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.visualization.plot.base.interact.HitShape
-import jetbrains.datalore.visualization.plot.base.interact.HitShape.Kind.*
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.interact.GeomTarget
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
+import jetbrains.datalore.plot.base.interact.HitShape
+import jetbrains.datalore.plot.base.interact.HitShape.Kind.*
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 
 class TargetPrototype(
-        internal val hitShape: HitShape,
-        internal val indexMapper: (Int) -> Int,
-        private val tooltipParams: TooltipParams) {
+    internal val hitShape: HitShape,
+    internal val indexMapper: (Int) -> Int,
+    private val tooltipParams: TooltipParams) {
 
     internal fun crateGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
         return GeomTarget(
-                hitIndex,
-                createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor()),
-                tooltipParams.getTipLayoutHints()
+            hitIndex,
+            createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor()),
+            tooltipParams.getTipLayoutHints()
         )
     }
 

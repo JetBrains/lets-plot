@@ -2,8 +2,8 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 
 class AxisLabelsLayoutInfo private constructor(b: Builder) {
     val breaks: GuideBreaks?

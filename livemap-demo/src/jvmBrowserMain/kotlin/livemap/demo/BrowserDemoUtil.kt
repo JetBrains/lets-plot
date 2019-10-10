@@ -33,8 +33,8 @@ object BrowserDemoUtil {
         "visualization-base-canvas.js",     // required by plot-builder (get rid?)
         "plot-common-portable.js",
         "plot-common.js",
-        "visualization-plot-base-portable.js",
-        "visualization-plot-base.js",
+        "plot-base-portable.js",
+        "plot-base.js",
         "plot-builder-portable.js",
         "plot-builder.js",
         "plot-config-portable.js",

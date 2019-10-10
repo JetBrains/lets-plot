@@ -2,22 +2,22 @@ package jetbrains.datalore.visualization.plotDemo.model.stat
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.collection
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.constant
-import jetbrains.datalore.visualization.plot.base.coord.Coords
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.geom.BarGeom
-import jetbrains.datalore.visualization.plot.base.geom.PointGeom
-import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
-import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.base.scale.Mappers
-import jetbrains.datalore.visualization.plot.base.scale.Scales
-import jetbrains.datalore.visualization.plot.base.stat.SimpleStatContext
-import jetbrains.datalore.visualization.plot.base.stat.Stats
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
+import jetbrains.datalore.plot.base.coord.Coords
+import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.geom.BarGeom
+import jetbrains.datalore.plot.base.geom.PointGeom
+import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.render.point.NamedShape
+import jetbrains.datalore.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.plot.base.scale.Mappers
+import jetbrains.datalore.plot.base.scale.Scales
+import jetbrains.datalore.plot.base.stat.SimpleStatContext
+import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.visualization.plotDemo.model.util.DemoUtil
 
@@ -119,7 +119,8 @@ open class BinDemo : SimpleDemoBase() {
 
                 val pos = PositionAdjustments.identity()
                 val layer =
-                    jetbrains.datalore.plot.builder.SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+                    jetbrains.datalore.plot.builder.SvgLayerRenderer(aes,
+                        PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
                 groupComponent.add(layer.rootGroup)
             }
         }
@@ -136,7 +137,8 @@ open class BinDemo : SimpleDemoBase() {
 
             val pos = PositionAdjustments.identity()
             val layer =
-                jetbrains.datalore.plot.builder.SvgLayerRenderer(aes, PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
+                jetbrains.datalore.plot.builder.SvgLayerRenderer(aes,
+                    PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT)
             groupComponent.add(layer.rootGroup)
         }
 

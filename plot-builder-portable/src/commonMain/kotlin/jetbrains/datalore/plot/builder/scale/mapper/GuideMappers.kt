@@ -1,14 +1,14 @@
 package jetbrains.datalore.plot.builder.scale.mapper
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.scale.MapperUtil
+import jetbrains.datalore.plot.base.scale.Mappers
+import jetbrains.datalore.plot.base.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.plot.builder.scale.GuideBreak
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
-import jetbrains.datalore.visualization.plot.base.scale.Mappers
-import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantitativeTickFormatterFactory
 
 object GuideMappers {
     val IDENTITY: GuideMapper<Double> =
@@ -17,10 +17,10 @@ object GuideMappers {
         GuideMapperAdapter(Mappers.undefined())
 
     fun <TargetT> discreteToDiscrete(
-            data: DataFrame,
-            variable: DataFrame.Variable,
-            outputValues: List<TargetT>,
-            naValue: TargetT): GuideMapper<TargetT> {
+        data: DataFrame,
+        variable: DataFrame.Variable,
+        outputValues: List<TargetT>,
+        naValue: TargetT): GuideMapper<TargetT> {
 
         val domainValues = DataFrameUtil.distinctValues(data, variable)
         return discreteToDiscrete(

@@ -2,16 +2,17 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.GeomKind
-import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.interact.HitShape
+import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.interact.HitShape
 
 class LayerTargetCollectorWithLocator(
-        private val geomKind: GeomKind,
-        private val lookupSpec: GeomTargetLocator.LookupSpec,
-        private val contextualMapping: ContextualMapping) : GeomTargetCollector, GeomTargetLocator {
+    private val geomKind: GeomKind,
+    private val lookupSpec: GeomTargetLocator.LookupSpec,
+    private val contextualMapping: ContextualMapping
+) : GeomTargetCollector, GeomTargetLocator {
 
     private val myTargets = ArrayList<jetbrains.datalore.plot.builder.interact.loc.TargetPrototype>()
     private var myLocator: GeomTargetLocator? = null

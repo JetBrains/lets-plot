@@ -1,11 +1,11 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.Transform
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
 
 class ColorLuminanceMapperProvider(start: Double?, end: Double?, naValue: Color) : HSVColorMapperProvider(naValue) {
 

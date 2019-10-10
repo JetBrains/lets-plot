@@ -2,10 +2,10 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.layout.PlotLayout
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.visualization.plot.base.Scale
 
 class PlotBuilder(private val myTheme: Theme) {
     private val myLayersByTile = ArrayList<List<GeomLayer>>()

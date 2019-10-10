@@ -1,11 +1,11 @@
 package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.coord.Projection
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.coord.Projection
-import jetbrains.datalore.visualization.plot.base.scale.Mappers
 
 internal class ProjectionCoordProvider private constructor(private val myProjectionX: Projection?, private val myProjectionY: Projection?)// square grid
     : jetbrains.datalore.plot.builder.coord.FixedRatioCoordProvider(1.0) {
@@ -89,8 +89,8 @@ internal class ProjectionCoordProvider private constructor(private val myProject
         }
 
         private fun twistScaleMapper(
-                projection: Projection, projectionInverse: (Double) -> Double,
-                scaleMapper: (Double?) -> Double?): (Double?) -> Double? {
+            projection: Projection, projectionInverse: (Double) -> Double,
+            scaleMapper: (Double?) -> Double?): (Double?) -> Double? {
             return { v ->
                 val projected = projection.apply(v!!)
                 val unProjected = projectionInverse(projected)

@@ -6,6 +6,13 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.LayerRendererUtil.createLiveMapFigure
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
@@ -14,13 +21,6 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.CoordinateSystem
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.base.scale.Mappers
 
 internal class PlotTile(
     layers: List<GeomLayer>,
@@ -195,9 +195,10 @@ internal class PlotTile(
     }
 
     private fun buildGeoms(
-            sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
-            overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>,
-            coord: CoordinateSystem): List<SvgLayerRenderer> {
+        sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
+        overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>,
+        coord: CoordinateSystem
+    ): List<SvgLayerRenderer> {
 
         val layerRenderers = ArrayList<SvgLayerRenderer>()
         for (layer in myLayers) {

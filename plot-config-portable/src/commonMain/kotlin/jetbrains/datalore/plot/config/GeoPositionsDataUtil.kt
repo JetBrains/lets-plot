@@ -2,12 +2,12 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.map.GeoPositionField
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.base.GeomKind
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 
 object GeoPositionsDataUtil {
     // Fixed columns in dataframe supplied by 'geo-coding'
@@ -65,7 +65,7 @@ object GeoPositionsDataUtil {
     }
 
     internal fun initDataAndMappingForGeoPositions(
-            geomKind: GeomKind, layerData: DataFrame, geoPositions: DataFrame, mappingOptions: Map<*, *>): Pair<DataFrame, Map<Aes<*>, Variable>> {
+        geomKind: GeomKind, layerData: DataFrame, geoPositions: DataFrame, mappingOptions: Map<*, *>): Pair<DataFrame, Map<Aes<*>, Variable>> {
         @Suppress("NAME_SHADOWING")
         var layerData = layerData
 

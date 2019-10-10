@@ -4,14 +4,14 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.visualization.base.svg.SvgGElement
 import jetbrains.datalore.visualization.base.svg.SvgLineElement
 import jetbrains.datalore.visualization.base.svg.SvgNode
 import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 import kotlin.math.max
 
 class ColorBarComponent(spec: jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec) : jetbrains.datalore.plot.builder.guide.LegendBox(spec) {
@@ -96,13 +96,13 @@ class ColorBarComponent(spec: jetbrains.datalore.plot.builder.guide.ColorBarComp
     }
 
     private fun addColorBar(
-            g: SvgGElement,
-            domain: ClosedRange<Double>,
-            scale: Scale<Color>,
-            numBins: Int,
-            barBounds: DoubleRectangle,
-            barLengthExpand: Double,
-            horizontal: Boolean) {
+        g: SvgGElement,
+        domain: ClosedRange<Double>,
+        scale: Scale<Color>,
+        numBins: Int,
+        barBounds: DoubleRectangle,
+        barLengthExpand: Double,
+        horizontal: Boolean) {
 
         val domainSpan = SeriesUtil.span(domain)
         val stepCount = max(2, numBins)

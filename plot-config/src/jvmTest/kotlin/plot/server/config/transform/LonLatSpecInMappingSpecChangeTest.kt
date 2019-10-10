@@ -1,5 +1,6 @@
 package jetbrains.datalore.plot.server.config.transform
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.Layer.DATA
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
@@ -13,7 +14,6 @@ import jetbrains.datalore.plot.server.config.transform.LonLatSpecInMappingSpecCh
 import jetbrains.datalore.plot.server.config.transform.LonLatSpecInMappingSpecChange.Companion.LONLAT_SPEC_KEY
 import jetbrains.datalore.plot.server.config.transform.LonLatSpecInMappingSpecChange.Companion.LONLAT_SPEC_VALUE
 import jetbrains.datalore.plot.server.config.transform.LonLatSpecInMappingSpecChange.Companion.LON_KEY
-import jetbrains.datalore.visualization.plot.base.Aes
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

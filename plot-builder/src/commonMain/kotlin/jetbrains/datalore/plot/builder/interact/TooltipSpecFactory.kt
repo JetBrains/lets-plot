@@ -3,21 +3,21 @@ package jetbrains.datalore.plot.builder.interact
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.GeomTarget
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.interact.MappedDataAccess.MappedData
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.map.GeoPositionField.DATA_COLUMN_JOIN_KEY
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X1
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y1
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
-import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess.MappedData
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
 
 class TooltipSpecFactory(
-        contextualMapping: ContextualMapping,
-        private val axisOrigin: DoubleVector) {
+    contextualMapping: ContextualMapping,
+    private val axisOrigin: DoubleVector) {
 
     private val myTooltipAes: List<Aes<*>> = contextualMapping.tooltipAes
     private val myAxisAes: List<Aes<*>> = contextualMapping.axisAes

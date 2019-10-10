@@ -1,9 +1,9 @@
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.DATA_COLUMN_JOIN_KEY
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_COLUMN_JOIN_KEY
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 import kotlin.test.assertEquals

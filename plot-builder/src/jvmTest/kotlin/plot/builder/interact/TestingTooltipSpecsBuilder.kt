@@ -2,13 +2,13 @@ package jetbrains.datalore.plot.builder.interact
 
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.GeomTarget
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.mockito.ReturnsNotNullValuesAnswer
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 import org.mockito.Mockito.*
 
 

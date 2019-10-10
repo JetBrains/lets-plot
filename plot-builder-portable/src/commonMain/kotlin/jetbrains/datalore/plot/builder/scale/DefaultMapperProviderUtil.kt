@@ -1,15 +1,15 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 import jetbrains.datalore.plot.builder.scale.provider.ColorBrewerMapperProvider
 import jetbrains.datalore.plot.builder.scale.provider.ColorGradientMapperProvider
 import jetbrains.datalore.plot.builder.scale.provider.IdentityDiscreteMapperProvider
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.base.Transform
-import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
 
 object DefaultMapperProviderUtil {
 
@@ -23,7 +23,7 @@ object DefaultMapperProviderUtil {
             }
 
             override fun createContinuousMapper(
-                    data: DataFrame, variable: Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
+                data: DataFrame, variable: Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
                 return continuous.createContinuousMapper(data, variable, lowerLimit, upperLimit, trans)
             }
         }

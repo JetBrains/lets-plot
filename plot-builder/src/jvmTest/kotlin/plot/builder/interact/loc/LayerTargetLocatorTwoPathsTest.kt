@@ -1,11 +1,11 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertEncodedObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.createLocator
 import jetbrains.datalore.plot.builder.interact.TestUtil.horizontalPathTarget
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 import kotlin.test.Test
 
 class LayerTargetLocatorTwoPathsTest {

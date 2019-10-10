@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

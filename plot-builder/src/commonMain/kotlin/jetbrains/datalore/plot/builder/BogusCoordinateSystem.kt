@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.CoordinateSystem
 
 internal class BogusCoordinateSystem : CoordinateSystem {
     override fun toClient(p: DoubleVector): DoubleVector {

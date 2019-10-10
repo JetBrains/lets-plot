@@ -1,12 +1,12 @@
 package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.coord.Coords
+import jetbrains.datalore.plot.base.scale.MapperUtil
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
-import jetbrains.datalore.visualization.plot.base.CoordinateSystem
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.coord.Coords
-import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
-import jetbrains.datalore.visualization.plot.base.scale.Mappers
 
 internal abstract class CoordProviderBase : jetbrains.datalore.plot.builder.coord.CoordProvider {
 

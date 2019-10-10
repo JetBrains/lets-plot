@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Scale
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Scale
 
 object GeomLayerListUtil {
 

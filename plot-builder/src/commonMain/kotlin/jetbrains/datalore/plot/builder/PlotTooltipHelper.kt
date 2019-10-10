@@ -2,9 +2,9 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.plot.builder.interact.loc.TransformedTargetLocator
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupResult
 
 internal class PlotTooltipHelper {
     private val myTileInfos = ArrayList<jetbrains.datalore.plot.builder.PlotTooltipHelper.TileInfo>()

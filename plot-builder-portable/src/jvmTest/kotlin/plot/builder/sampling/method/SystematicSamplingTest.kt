@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.builder.sampling.method
 
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.data.generateData
-import jetbrains.datalore.visualization.plot.base.DataFrame
 import kotlin.math.floor
 import kotlin.test.*
 

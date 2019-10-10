@@ -19,7 +19,7 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
                 implementation project(':base-portable')
-                implementation project(':visualization-plot-base-portable')
+                implementation project(':plot-base-portable')
                 implementation project(':plot-common-portable')
             }
         }

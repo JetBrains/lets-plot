@@ -2,11 +2,11 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.LiveMapGeom
+import jetbrains.datalore.plot.base.geom.LiveMapLayerData
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
-import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.geom.LiveMapGeom
-import jetbrains.datalore.visualization.plot.base.geom.LiveMapLayerData
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
 
 internal object LayerRendererUtil {
     fun createLiveMapFigure(
@@ -24,7 +24,14 @@ internal object LayerRendererUtil {
         val layersRendererData = layers
             .drop(1) // skip geom_livemap
             .map(newLiveMapLayerRendererData)
-            .map { with(it) { LiveMapLayerData(geom, geomKind, aesthetics, dataAccess) } }
+            .map { with(it) {
+                LiveMapLayerData(
+                    geom,
+                    geomKind,
+                    aesthetics,
+                    dataAccess
+                )
+            } }
 
 
         return (liveMapRendererData.geom as LiveMapGeom).createCanvasFigure(
@@ -59,10 +66,11 @@ internal object LayerRendererUtil {
     }
 
     internal class LayerRendererData(
-            val geom: Geom,
-            val geomKind: GeomKind,
-            val aesthetics: Aesthetics,
-            val aestheticMappers: Map<Aes<*>, (Double?) -> Any?>,
-            val pos: PositionAdjustment,
-            val dataAccess: MappedDataAccess)
+        val geom: Geom,
+        val geomKind: GeomKind,
+        val aesthetics: Aesthetics,
+        val aestheticMappers: Map<Aes<*>, (Double?) -> Any?>,
+        val pos: PositionAdjustment,
+        val dataAccess: MappedDataAccess
+    )
 }

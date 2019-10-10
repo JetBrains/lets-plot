@@ -1,12 +1,12 @@
 package jetbrains.datalore.plot.builder.assemble.geom
 
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Geom
+import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomMeta
+import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.config.LiveMapOptions
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Geom
-import jetbrains.datalore.visualization.plot.base.GeomKind
-import jetbrains.datalore.visualization.plot.base.GeomMeta
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.base.geom.*
 
 abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 

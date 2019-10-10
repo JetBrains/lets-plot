@@ -1,6 +1,10 @@
 package jetbrains.datalore.plot.builder.assemble.geom
 
 import jetbrains.datalore.base.gcommon.collect.Iterables
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.AesAutoMapper
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y
@@ -8,10 +12,6 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMAX
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMIN
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMAX
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.GeomKind
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 
 class DefaultAesAutoMapper constructor(
     private val autoMappedAes: List<Aes<*>>,

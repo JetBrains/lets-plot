@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.builder.layout.axis
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
-import jetbrains.datalore.visualization.plot.base.coord.Coords
 
 class HorizontalAxisLayouter(orientation: jetbrains.datalore.plot.builder.guide.Orientation, domainRange: ClosedRange<Double>, labelsLayout: AxisLabelsLayout) : AxisLayouter(orientation, domainRange, labelsLayout) {
 

@@ -22,8 +22,8 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation project(':base-portable')
                 implementation project(':base')
-                implementation project(':visualization-plot-base-portable')
-                implementation project(':visualization-plot-base')
+                implementation project(':plot-base-portable')
+                implementation project(':plot-base')
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')

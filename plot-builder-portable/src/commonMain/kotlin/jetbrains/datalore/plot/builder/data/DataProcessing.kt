@@ -6,14 +6,14 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
+import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.DataFrame.Builder
+import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.scale.ScaleUtil
+import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.DataFrame.Builder
-import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
-import jetbrains.datalore.visualization.plot.base.stat.Stats
 
 object DataProcessing {
 
