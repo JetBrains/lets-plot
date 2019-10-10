@@ -42,7 +42,7 @@ class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
         dinension: DoubleVector,
         layers: List<LiveMapLayerData>
     ): CanvasFigure {
-        return myMapProvider!!.createLiveMap(aesthetics, dataAccess, dinension, layers)
+        return myMapProvider?.createLiveMap(aesthetics, dataAccess, dinension, layers) ?: error("geom_livemap is not enabled")
     }
 
     companion object {
