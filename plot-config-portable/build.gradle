@@ -35,7 +35,7 @@ kotlin {
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-                implementation project(':visualization-base-svg')
+                implementation project(':vis-svg')
             }
         }
         jvmTest {

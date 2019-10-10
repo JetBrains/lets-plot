@@ -24,8 +24,8 @@ kotlin {
                 implementation project(':base')
                 implementation project(':gis')
                 implementation project(':livemap')
-                implementation project(':visualization-base-svg')
-                implementation project(':visualization-base-canvas')
+                implementation project(':vis-svg')
+                implementation project(':vis-canvas')
                 implementation project(':visualization-demo-common')
                 implementation project(':visualization-demo-common-jfx')
                 implementation project(':plot-builder-portable')
@@ -104,11 +104,11 @@ dependencies {
     projectDependenciesJs project(':gis')
     projectDependenciesJs project(':livemap')
     projectDependenciesJs project(':mapper-core')
-    projectDependenciesJs project(':visualization-base-svg')
+    projectDependenciesJs project(':vis-svg')
 
     projectDependenciesJs project(':visualization-demo-common')
 
-    projectDependenciesJs project(':visualization-base-canvas')         // required by plot-builder (get rid?)
+    projectDependenciesJs project(':vis-canvas')         // required by plot-builder (get rid?)
 
     projectDependenciesJs project(':plot-common-portable')
     projectDependenciesJs project(':plot-common')

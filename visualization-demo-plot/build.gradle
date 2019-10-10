@@ -42,8 +42,8 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
-                implementation project(':visualization-base-svg')
-                implementation project(':visualization-base-svg-mapper')
+                implementation project(':vis-svg')
+                implementation project(':vis-svg-mapper')
                 implementation project(':plot-base-portable')
                 implementation project(':plot-base')
                 implementation project(':plot-common-portable')
@@ -70,7 +70,7 @@ kotlin {
             dependsOn jvmMain
             dependencies {
                 implementation "org.apache.commons:commons-math3:$math3_version"
-                implementation project(':visualization-base-svg-mapper-batik')
+                implementation project(':vis-svg-mapper-batik')
             }
         }
         jvmJfxMain {
@@ -78,8 +78,8 @@ kotlin {
             dependsOn jvmMain
             dependencies {
                 implementation "org.apache.commons:commons-math3:$math3_version"
-                implementation project(':visualization-base-canvas')
-                implementation project(':visualization-base-svg-mapper-jfx')
+                implementation project(':vis-canvas')
+                implementation project(':vis-svg-mapper-jfx')
                 implementation project(':visualization-demo-common-jfx')
             }
         }

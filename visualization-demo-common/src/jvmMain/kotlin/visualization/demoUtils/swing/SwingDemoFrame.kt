@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.demoUtils.swing
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.vis.svg.SvgSvgElement
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension

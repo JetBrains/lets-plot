@@ -8,7 +8,7 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
-import jetbrains.datalore.visualization.base.svg.*
+import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {

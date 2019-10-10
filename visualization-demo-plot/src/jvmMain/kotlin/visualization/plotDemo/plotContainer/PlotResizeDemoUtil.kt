@@ -9,8 +9,8 @@ import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.PropertyChangeEvent
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.visualization.base.svg.SvgColors
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.SvgColors
+import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.visualization.demoUtils.swing.SwingDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 import java.awt.Color
@@ -85,7 +85,8 @@ object PlotResizeDemoUtil {
         val svg = plot.svg
 
         // make a blue frame
-        val frameRect = SvgRectElement(DoubleRectangle(DoubleVector.ZERO, plotSizeProp.get()))
+        val frameRect =
+            SvgRectElement(DoubleRectangle(DoubleVector.ZERO, plotSizeProp.get()))
         frameRect.stroke().set(SvgColors.LIGHT_CORAL)
         frameRect.fill().set(SvgColors.NONE)
         svg.children().add(frameRect)

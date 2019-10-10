@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.plotAssembler
 
-import jetbrains.datalore.visualization.base.swing.BatikMapperDemoFrame
+import jetbrains.datalore.vis.swing.BatikMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.plotAssembler.LinePlotDemo
 
 class LinePlotDemoBatik : LinePlotDemo() {

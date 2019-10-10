@@ -4,13 +4,13 @@ import javafx.scene.Parent
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.mapper.core.MappingContext
-import jetbrains.datalore.visualization.base.svg.SvgConstants
-import jetbrains.datalore.visualization.base.svg.SvgElementListener
-import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
-import jetbrains.datalore.visualization.base.svg.SvgSvgElement
-import jetbrains.datalore.visualization.base.svg.event.SvgAttributeEvent
-import jetbrains.datalore.visualization.base.svgMapper.jfx.SvgJfxPeer
-import jetbrains.datalore.visualization.base.svgMapper.jfx.SvgSvgElementMapper
+import jetbrains.datalore.vis.svg.SvgConstants
+import jetbrains.datalore.vis.svg.SvgElementListener
+import jetbrains.datalore.vis.svg.SvgNodeContainer
+import jetbrains.datalore.vis.svg.SvgSvgElement
+import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
+import jetbrains.datalore.vis.svgMapper.jfx.SvgJfxPeer
+import jetbrains.datalore.vis.svgMapper.jfx.SvgSvgElementMapper
 import java.awt.Dimension
 
 class SceneMapperJfxPanel(

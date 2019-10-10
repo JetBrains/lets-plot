@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.base.render.point.symbol
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimGroup
+import jetbrains.datalore.vis.svg.slim.SvgSlimGroup
 
 internal class GlyphPair(private val myG1: Glyph, private val myG2: Glyph) :
     Glyph {

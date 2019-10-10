@@ -5,7 +5,7 @@ import javafx.scene.Group
 import javafx.scene.Scene
 import javafx.stage.Stage
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.visualization.base.canvas.javaFx.JavafxCanvasControl
+import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 
 class SimpleRawJfxDemo : Application() {
 

@@ -1,7 +1,7 @@
 package jetbrains.livemap.core.rendering.primitives
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Context2d
 import kotlin.math.max
 
 class Frame constructor(private val position: DoubleVector, private val renderBoxes: List<RenderBox>) :

@@ -3,7 +3,7 @@ package jetbrains.datalore.plot.builder.guide
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.visualization.base.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgGElement
 
 class LegendBreak(val label: String) {
     private val myLayers = ArrayList<jetbrains.datalore.plot.builder.guide.LegendBreak.MyLayer>()

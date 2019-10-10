@@ -2,8 +2,8 @@ package jetbrains.datalore.plot.base.render.point.symbol
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.collect.Iterables
-import jetbrains.datalore.visualization.base.svg.SvgPathData
-import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
+import jetbrains.datalore.vis.svg.SvgPathData
+import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 
 internal object GlyphUtil {
     fun buildPathData(xs: Collection<Double>, ys: Collection<Double>): SvgPathData {

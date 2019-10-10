@@ -3,9 +3,9 @@ package jetbrains.datalore.plot.base.render.svg
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.SvgColors
-import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
-import jetbrains.datalore.visualization.base.svg.SvgPathElement
+import jetbrains.datalore.vis.svg.SvgColors
+import jetbrains.datalore.vis.svg.SvgPathDataBuilder
+import jetbrains.datalore.vis.svg.SvgPathElement
 
 /**
  * Poly-line

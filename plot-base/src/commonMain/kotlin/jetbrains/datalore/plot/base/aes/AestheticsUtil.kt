@@ -4,8 +4,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors.solid
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.render.point.UpdatableShape
-import jetbrains.datalore.visualization.base.svg.SvgShape
-import jetbrains.datalore.visualization.base.svg.SvgUtils
+import jetbrains.datalore.vis.svg.SvgShape
+import jetbrains.datalore.vis.svg.SvgUtils
 
 object AestheticsUtil {
     //affects bar, smooth, area and ribbon

@@ -3,13 +3,13 @@ package jetbrains.datalore.plot.base.render.svg
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.SvgConstants
-import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
-import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_ANCHOR_END
-import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
-import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_DY_CENTER
-import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_TEXT_DY_TOP
-import jetbrains.datalore.visualization.base.svg.SvgTextElement
+import jetbrains.datalore.vis.svg.SvgConstants
+import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
+import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_ANCHOR_END
+import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
+import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_DY_CENTER
+import jetbrains.datalore.vis.svg.SvgConstants.SVG_TEXT_DY_TOP
+import jetbrains.datalore.vis.svg.SvgTextElement
 
 class TextLabel(text: String) : SvgComponent() {
     private val myText: SvgTextElement = SvgTextElement(text)

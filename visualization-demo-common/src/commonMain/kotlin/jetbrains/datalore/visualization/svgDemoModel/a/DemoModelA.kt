@@ -2,10 +2,10 @@ package jetbrains.datalore.visualization.svgDemoModel.a
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.*
-import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE
-import jetbrains.datalore.visualization.base.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
+import jetbrains.datalore.vis.svg.*
+import jetbrains.datalore.vis.svg.SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE
+import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
+import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 
 object DemoModelA {
 

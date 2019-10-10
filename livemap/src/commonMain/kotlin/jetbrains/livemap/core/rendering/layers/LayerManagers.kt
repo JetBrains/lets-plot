@@ -3,8 +3,8 @@ package jetbrains.livemap.core.rendering.layers
 import jetbrains.datalore.base.async.PlatformAsyncs
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
-import jetbrains.datalore.visualization.base.canvas.SingleCanvasControl
+import jetbrains.datalore.vis.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.SingleCanvasControl
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem.RenderingStrategy

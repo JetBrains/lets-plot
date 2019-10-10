@@ -3,7 +3,7 @@ package jetbrains.datalore.plot.base.render
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesScaling
-import jetbrains.datalore.visualization.base.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgGElement
 
 interface LegendKeyElementFactory {
     fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement

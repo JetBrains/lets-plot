@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.base.render.point.symbol
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimGroup
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimShape
+import jetbrains.datalore.vis.svg.slim.SvgSlimGroup
+import jetbrains.datalore.vis.svg.slim.SvgSlimShape
 
 internal abstract class TwoShapeGlyph : MultiShapeGlyph() {
     private var myS1: SvgSlimShape? = null

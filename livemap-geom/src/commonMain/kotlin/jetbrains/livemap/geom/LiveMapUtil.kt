@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.config.LiveMapOptions
-import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
+import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapCanvasFigure
 import jetbrains.livemap.LiveMapFactory

@@ -3,8 +3,8 @@ package jetbrains.livemap.core.rendering.layers
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.visualization.base.canvas.Canvas
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.datalore.vis.canvas.Context2d
 
 class RenderLayer(private val myCanvas: Canvas, val name: String) {
     private val myRect = DoubleRectangle(0.0, 0.0, myCanvas.size.x.toDouble(), myCanvas.size.y.toDouble())

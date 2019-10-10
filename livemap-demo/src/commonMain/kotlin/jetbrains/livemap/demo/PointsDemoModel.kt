@@ -1,7 +1,7 @@
 package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.api.layers
 import jetbrains.livemap.api.point

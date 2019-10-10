@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.plotContainer
 
-import jetbrains.datalore.visualization.base.swing.BatikMapperDemoFactory
+import jetbrains.datalore.vis.swing.BatikMapperDemoFactory
 import jetbrains.datalore.visualization.plotDemo.model.plotContainer.BarPlotResizeDemo
 
 object BarPlotResizeDiscreteXDemoBatik {

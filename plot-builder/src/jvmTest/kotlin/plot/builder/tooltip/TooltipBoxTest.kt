@@ -6,7 +6,7 @@ import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
-import jetbrains.datalore.visualization.base.svg.*
+import jetbrains.datalore.vis.svg.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

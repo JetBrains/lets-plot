@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.svgMapperDemo
 
-import jetbrains.datalore.visualization.base.browser.DomMapperDemoUtil
+import jetbrains.datalore.vis.browser.DomMapperDemoUtil
 import jetbrains.datalore.visualization.svgDemoModel.b.DemoModelB
 
 fun svgElementsDemo() {

@@ -1,8 +1,8 @@
 package jetbrains.livemap.core.rendering.primitives
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Canvas.Snapshot
+import jetbrains.datalore.vis.canvas.Context2d
 
 class MutableImage(override val origin: DoubleVector, override val dimension: DoubleVector) : RenderBox {
     var snapshot: Snapshot? = null

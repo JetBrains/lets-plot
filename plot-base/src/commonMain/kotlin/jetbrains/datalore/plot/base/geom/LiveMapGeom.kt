@@ -7,7 +7,7 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
+import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 
 
 class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {

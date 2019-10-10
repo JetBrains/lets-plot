@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.geom
 
-import jetbrains.datalore.visualization.base.swing.BatikMapperDemoFrame
+import jetbrains.datalore.vis.swing.BatikMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.geom.PathDemo
 
 class PathDemoBatik : PathDemo() {

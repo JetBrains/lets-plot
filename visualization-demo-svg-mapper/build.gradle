@@ -21,8 +21,8 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
-                implementation project(':visualization-base-svg')
-                implementation project(':visualization-base-svg-mapper')
+                implementation project(':vis-svg')
+                implementation project(':vis-svg-mapper')
                 implementation project(':visualization-demo-common')
                 implementation project(':visualization-demo-common-jfx')
             }
@@ -38,16 +38,16 @@ kotlin {
             dependsOn allJvm
             dependencies {
                 implementation "org.apache.commons:commons-math3:$math3_version"
-                implementation project(":visualization-base-svg-mapper-batik")
+                implementation project(":vis-svg-mapper-batik")
             }
         }
         jvmJfxMain {
             dependsOn allJvm
             dependencies {
                 implementation "org.apache.commons:commons-math3:$math3_version"
-//                runtimeOnly project(':visualization-base-canvas') // needed for `svg transform` parsing
-                implementation project(':visualization-base-canvas') // needed for `svg transform` parsing
-                implementation project(":visualization-base-svg-mapper-jfx")
+//                runtimeOnly project(':vis-canvas') // needed for `svg transform` parsing
+                implementation project(':vis-canvas') // needed for `svg transform` parsing
+                implementation project(":vis-svg-mapper-jfx")
             }
         }
         jvmBrowserMain {
@@ -91,8 +91,8 @@ dependencies {
     libraryDependenciesJs "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
     projectDependenciesJs project(':base')
     projectDependenciesJs project(':mapper-core')
-    projectDependenciesJs project(':visualization-base-svg')
-    projectDependenciesJs project(':visualization-base-svg-mapper')
+    projectDependenciesJs project(':vis-svg')
+    projectDependenciesJs project(':vis-svg-mapper')
     projectDependenciesJs project(':visualization-demo-common')
 }
 

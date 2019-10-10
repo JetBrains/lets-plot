@@ -7,9 +7,9 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Legend.OUTLINE_COLOR
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgNode
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgNode
+import jetbrains.datalore.vis.svg.SvgRectElement
 
 abstract class LegendBox internal constructor(
     protected open val spec: jetbrains.datalore.plot.builder.guide.LegendBoxSpec

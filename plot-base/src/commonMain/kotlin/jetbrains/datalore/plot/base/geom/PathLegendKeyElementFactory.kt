@@ -5,8 +5,8 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgLineElement
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgLineElement
 
 internal class PathLegendKeyElementFactory : LegendKeyElementFactory {
 

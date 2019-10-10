@@ -19,8 +19,8 @@ import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.vis.canvasFigure.CanvasFigure
+import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class PlotTile(
     layers: List<GeomLayer>,

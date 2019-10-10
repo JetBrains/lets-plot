@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.base.render.point.symbol
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
+import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 
 internal class PlusGlyph(location: DoubleVector, size: Double) : TwoShapeGlyph() {
 

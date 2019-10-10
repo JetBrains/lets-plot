@@ -15,8 +15,8 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLT
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgLineElement
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgLineElement
 
 class ErrorBarGeom : GeomBase() {
 

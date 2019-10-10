@@ -4,8 +4,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.point.PointShapeSvg
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 
 internal class PointLegendKeyElementFactory : LegendKeyElementFactory {
 

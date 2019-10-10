@@ -4,8 +4,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgRectElement
 
 class FilledSquareLegendKeyElementFactory : LegendKeyElementFactory {
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {

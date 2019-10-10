@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.plotDemo.plotAssembler
 
-import jetbrains.datalore.visualization.base.browser.DomMapperDemoUtil
-import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.vis.browser.DomMapperDemoUtil
+import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.visualization.plotDemo.model.plotAssembler.LinearRegressionPlotDemo
 
 /**

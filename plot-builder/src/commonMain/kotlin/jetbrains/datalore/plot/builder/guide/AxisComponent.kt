@@ -13,9 +13,9 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.base.svg.SvgUtils.transformTranslate
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgLineElement
+import jetbrains.datalore.vis.svg.SvgUtils.transformTranslate
 
 class AxisComponent(length: Double, orientation: jetbrains.datalore.plot.builder.guide.Orientation) : SvgComponent() {
 

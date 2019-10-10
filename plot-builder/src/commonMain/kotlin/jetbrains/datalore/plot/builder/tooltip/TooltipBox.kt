@@ -16,11 +16,11 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CO
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.PointerDirection.*
-import jetbrains.datalore.visualization.base.svg.SvgGraphicsElement.Visibility.HIDDEN
-import jetbrains.datalore.visualization.base.svg.SvgGraphicsElement.Visibility.VISIBLE
-import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
-import jetbrains.datalore.visualization.base.svg.SvgPathElement
-import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility.HIDDEN
+import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility.VISIBLE
+import jetbrains.datalore.vis.svg.SvgPathDataBuilder
+import jetbrains.datalore.vis.svg.SvgPathElement
+import jetbrains.datalore.vis.svg.SvgSvgElement
 import kotlin.math.max
 import kotlin.math.min
 

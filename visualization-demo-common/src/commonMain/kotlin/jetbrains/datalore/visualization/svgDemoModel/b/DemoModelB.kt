@@ -2,10 +2,10 @@ package jetbrains.datalore.visualization.svgDemoModel.b
 
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.svg.*
-import jetbrains.datalore.visualization.base.svg.SvgImageElementEx.Bitmap
-import jetbrains.datalore.visualization.base.svg.event.SvgEventHandler
-import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
+import jetbrains.datalore.vis.svg.*
+import jetbrains.datalore.vis.svg.SvgImageElementEx.Bitmap
+import jetbrains.datalore.vis.svg.event.SvgEventHandler
+import jetbrains.datalore.vis.svg.event.SvgEventSpec
 
 object DemoModelB {
     fun createModel(): SvgSvgElement {
@@ -58,7 +58,8 @@ object DemoModelB {
         svgRoot.children().add(image)
         svgRoot.children().add(imageEx)
 
-        ellipse.addEventHandler(SvgEventSpec.MOUSE_CLICKED, object : SvgEventHandler<MouseEvent> {
+        ellipse.addEventHandler(SvgEventSpec.MOUSE_CLICKED, object :
+            SvgEventHandler<MouseEvent> {
             override fun handle(node: SvgNode, e: MouseEvent) {
                 addCircle(svgRoot, e.x, e.y)
             }
@@ -97,7 +98,8 @@ object DemoModelB {
         svgRoot.children().add(rect)
         svgRoot.children().add(ellipse)
 
-        ellipse.addEventHandler(SvgEventSpec.MOUSE_PRESSED, object : SvgEventHandler<MouseEvent> {
+        ellipse.addEventHandler(SvgEventSpec.MOUSE_PRESSED, object :
+            SvgEventHandler<MouseEvent> {
             override fun handle(node: SvgNode, e: MouseEvent) {
                 addCircle(svgRoot, e.x, e.y)
             }

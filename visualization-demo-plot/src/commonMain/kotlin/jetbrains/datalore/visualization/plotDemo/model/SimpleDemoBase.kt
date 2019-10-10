@@ -8,10 +8,10 @@ import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.visualization.base.svg.SvgColors
-import jetbrains.datalore.visualization.base.svg.SvgCssResource
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.vis.svg.SvgColors
+import jetbrains.datalore.vis.svg.SvgCssResource
+import jetbrains.datalore.vis.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.SvgSvgElement
 
 abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAULT_INNER_SIZE) {
 

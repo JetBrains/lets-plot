@@ -12,9 +12,9 @@ import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.config.PlotConfigUtil
-import jetbrains.datalore.visualization.base.canvas.dom.DomCanvasControl
-import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
-import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
+import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
+import jetbrains.datalore.vis.svg.SvgNodeContainer
+import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
 import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
@@ -69,7 +69,8 @@ object MonolithicJs {
         plotContainer.ensureContentBuilt()
 
         plotContainer.liveMapFigures.forEach { liveMapFigure ->
-            val canvasControl = DomCanvasControl(liveMapFigure.dimension().get().toVector())
+            val canvasControl =
+                DomCanvasControl(liveMapFigure.dimension().get().toVector())
             liveMapFigure.mapToCanvas(canvasControl)
             eventTarget.appendChild(canvasControl.rootElement)
         }

@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.demoUtils.jfx
 
-import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.visualization.demoUtils.swing.SwingDemoFactory
 import jetbrains.datalore.visualization.demoUtils.swing.SwingDemoFrame
 import java.awt.Dimension

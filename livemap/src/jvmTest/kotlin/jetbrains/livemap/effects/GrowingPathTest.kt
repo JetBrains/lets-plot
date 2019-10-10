@@ -8,7 +8,7 @@ import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.core.animation.Animation.Direction
 import jetbrains.livemap.core.animation.Animation.Loop

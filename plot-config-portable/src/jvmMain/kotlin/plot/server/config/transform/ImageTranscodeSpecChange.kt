@@ -13,8 +13,8 @@ import jetbrains.datalore.plot.config.Option.Plot
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector
-import jetbrains.datalore.visualization.base.svg.SvgUtils
-import jetbrains.datalore.visualization.base.svg.buildDataUrl
+import jetbrains.datalore.vis.svg.SvgUtils
+import jetbrains.datalore.vis.svg.buildDataUrl
 import java.awt.image.BufferedImage
 import java.io.IOException
 import java.lang.Byte.toUnsignedInt

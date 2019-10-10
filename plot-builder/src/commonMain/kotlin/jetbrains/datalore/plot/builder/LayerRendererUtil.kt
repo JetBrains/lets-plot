@@ -6,7 +6,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapLayerData
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
+import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 
 internal object LayerRendererUtil {
     fun createLiveMapFigure(

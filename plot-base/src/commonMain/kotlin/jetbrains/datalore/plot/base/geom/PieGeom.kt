@@ -8,7 +8,7 @@ import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
-import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
+import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import kotlin.math.PI
 
 /**

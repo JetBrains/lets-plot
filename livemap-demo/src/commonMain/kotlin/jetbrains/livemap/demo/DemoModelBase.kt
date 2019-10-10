@@ -1,7 +1,7 @@
 package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapFactory

@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.base.browser.DomMapperDemoUtil.mapToDom
+import jetbrains.datalore.vis.browser.DomMapperDemoUtil.mapToDom
 import jetbrains.datalore.visualization.plotDemo.model.component.AxisComponentDemo
 
 /**

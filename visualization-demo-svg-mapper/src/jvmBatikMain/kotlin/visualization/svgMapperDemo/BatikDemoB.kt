@@ -1,7 +1,7 @@
 package jetbrains.datalore.visualization.svgMapperDemo
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.swing.BatikMapperDemoFrame
+import jetbrains.datalore.vis.swing.BatikMapperDemoFrame
 import jetbrains.datalore.visualization.svgDemoModel.b.DemoModelB
 
 fun main() {

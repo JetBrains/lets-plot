@@ -8,8 +8,8 @@ import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgNode
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgNode
 
 internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle) {
     private val myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)

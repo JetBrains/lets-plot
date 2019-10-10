@@ -12,9 +12,9 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.base.svg.SvgImageElementEx
-import jetbrains.datalore.visualization.base.svg.SvgImageElementEx.Bitmap
-import jetbrains.datalore.visualization.base.svg.SvgUtils
+import jetbrains.datalore.vis.svg.SvgImageElementEx
+import jetbrains.datalore.vis.svg.SvgImageElementEx.Bitmap
+import jetbrains.datalore.vis.svg.SvgUtils
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.round
@@ -102,9 +102,10 @@ class RasterGeom : GeomBase() {
 
         val bitmap = Bitmap(cols, rows, argbValues)
         val svgImageElement = SvgImageElementEx(
-                min(corner0.x, corner2.x), min(corner0.y, corner2.y),
-                abs(corner0.x - corner2.x), abs(corner0.y - corner2.y),
-                bitmap)
+            min(corner0.x, corner2.x), min(corner0.y, corner2.y),
+            abs(corner0.x - corner2.x), abs(corner0.y - corner2.y),
+            bitmap
+        )
         root.add(svgImageElement)
     }
 

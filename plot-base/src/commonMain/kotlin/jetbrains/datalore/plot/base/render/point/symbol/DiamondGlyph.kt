@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.base.render.point.symbol
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimShape
+import jetbrains.datalore.vis.svg.slim.SvgSlimElements
+import jetbrains.datalore.vis.svg.slim.SvgSlimShape
 
 class DiamondGlyph(location: DoubleVector, width: Double) : SingletonGlyph(location, width) {
 

@@ -1,8 +1,8 @@
 package jetbrains.datalore.jetbrains.livemap.tile
 
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.visualization.base.canvas.Canvas
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.tiles.DonorTileCalculator

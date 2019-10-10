@@ -4,9 +4,9 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgLineElement
+import jetbrains.datalore.vis.svg.SvgRectElement
 
 class GenericLegendKeyElementFactory : LegendKeyElementFactory {
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {

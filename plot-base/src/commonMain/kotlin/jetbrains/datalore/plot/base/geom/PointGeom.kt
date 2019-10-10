@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.base.render.point.PointShapeSvg
 import jetbrains.datalore.plot.base.render.point.TinyPointShape
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
+import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 
 open class PointGeom : GeomBase() {
 

@@ -4,8 +4,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.render.linetype.LineType
 import jetbrains.datalore.plot.base.render.linetype.NamedLineType
-import jetbrains.datalore.visualization.base.svg.SvgPathDataBuilder
-import jetbrains.datalore.visualization.base.svg.SvgPathElement
+import jetbrains.datalore.vis.svg.SvgPathDataBuilder
+import jetbrains.datalore.vis.svg.SvgPathElement
 import kotlin.math.cos
 import kotlin.math.sin
 

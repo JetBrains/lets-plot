@@ -21,13 +21,13 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
-import jetbrains.datalore.visualization.base.svg.SvgElement
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgNode
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.base.svg.event.SvgEventHandler
-import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
+import jetbrains.datalore.vis.canvasFigure.CanvasFigure
+import jetbrains.datalore.vis.svg.SvgElement
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgNode
+import jetbrains.datalore.vis.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.event.SvgEventHandler
+import jetbrains.datalore.vis.svg.event.SvgEventSpec
 import mu.KotlinLogging
 
 abstract class Plot(private val theme: Theme) : SvgComponent() {
@@ -204,7 +204,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     }
 
     private fun onMouseMove(e: SvgElement, message: String) {
-        e.addEventHandler(SvgEventSpec.MOUSE_MOVE, object : SvgEventHandler<Event> {
+        e.addEventHandler(SvgEventSpec.MOUSE_MOVE, object :
+            SvgEventHandler<Event> {
             override fun handle(node: SvgNode, e: Event) {
                 println(message)
             }

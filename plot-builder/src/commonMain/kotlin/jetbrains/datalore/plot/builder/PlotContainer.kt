@@ -12,11 +12,11 @@ import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.plot.builder.interact.render.TooltipLayer
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
-import jetbrains.datalore.visualization.base.svg.SvgCssResource
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.vis.canvasFigure.CanvasFigure
+import jetbrains.datalore.vis.svg.SvgCssResource
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.SvgSvgElement
 import kotlin.math.max
 
 class PlotContainer(

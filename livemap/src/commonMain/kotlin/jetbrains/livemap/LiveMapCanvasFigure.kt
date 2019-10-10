@@ -5,8 +5,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
-import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
+import jetbrains.datalore.vis.canvas.CanvasControl
+import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 
 class LiveMapCanvasFigure (private val liveMap: Async<BaseLiveMap>) : CanvasFigure {

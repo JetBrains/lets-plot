@@ -6,7 +6,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.base.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgGElement
 
 internal class TextLegendKeyElementFactory : LegendKeyElementFactory {
 

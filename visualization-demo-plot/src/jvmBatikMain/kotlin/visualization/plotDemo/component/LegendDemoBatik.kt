@@ -1,6 +1,6 @@
 package jetbrains.datalore.visualization.plotDemo.component
 
-import jetbrains.datalore.visualization.base.swing.BatikMapperDemoFrame
+import jetbrains.datalore.vis.swing.BatikMapperDemoFrame
 import jetbrains.datalore.visualization.plotDemo.model.component.LegendDemo
 
 class LegendDemoBatik : LegendDemo() {

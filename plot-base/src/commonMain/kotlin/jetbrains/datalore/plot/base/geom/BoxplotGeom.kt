@@ -17,9 +17,9 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLT
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.point.PointShape
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgLineElement
+import jetbrains.datalore.vis.svg.SvgRectElement
 
 class BoxplotGeom : GeomBase() {
 
@@ -290,7 +290,12 @@ class BoxplotGeom : GeomBase() {
 
 
             // box
-            val rect = SvgRectElement(x, y + height * whiskerSize, width, height * (1 - 2 * whiskerSize))
+            val rect = SvgRectElement(
+                x,
+                y + height * whiskerSize,
+                width,
+                height * (1 - 2 * whiskerSize)
+            )
             GeomHelper.decorate(rect, p)
 
             // lines
@@ -298,7 +303,8 @@ class BoxplotGeom : GeomBase() {
             val middle = SvgLineElement(x, middleY, x + width, middleY)
             GeomHelper.decorate(middle, p)
             val middleX = x + width * .5
-            val lowerWhisker = SvgLineElement(middleX, y + height * (1 - whiskerSize), middleX, y + height)
+            val lowerWhisker =
+                SvgLineElement(middleX, y + height * (1 - whiskerSize), middleX, y + height)
             GeomHelper.decorate(lowerWhisker, p)
             val upperWhisker = SvgLineElement(middleX, y, middleX, y + height * whiskerSize)
             GeomHelper.decorate(upperWhisker, p)

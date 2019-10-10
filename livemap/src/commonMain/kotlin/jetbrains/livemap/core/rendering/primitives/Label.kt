@@ -3,7 +3,7 @@ package jetbrains.livemap.core.rendering.primitives
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.rendering.primitives.Label.LabelPosition.*
 
 class Label(override var origin: DoubleVector, private var text: Text) : RenderBox {

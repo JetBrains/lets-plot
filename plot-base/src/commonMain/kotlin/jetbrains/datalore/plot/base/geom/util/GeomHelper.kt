@@ -11,11 +11,11 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.render.svg.StrokeDashArraySupport
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.base.svg.SvgElement
-import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.base.svg.SvgNode
-import jetbrains.datalore.visualization.base.svg.SvgShape
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimShape
+import jetbrains.datalore.vis.svg.SvgElement
+import jetbrains.datalore.vis.svg.SvgLineElement
+import jetbrains.datalore.vis.svg.SvgNode
+import jetbrains.datalore.vis.svg.SvgShape
+import jetbrains.datalore.vis.svg.slim.SvgSlimShape
 
 open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSystem, protected val ctx: GeomContext) {
     private val myGeomCoord: GeomCoord =

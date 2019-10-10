@@ -8,10 +8,10 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgLineElement
-import jetbrains.datalore.visualization.base.svg.SvgNode
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgLineElement
+import jetbrains.datalore.vis.svg.SvgNode
+import jetbrains.datalore.vis.svg.SvgRectElement
 import kotlin.math.max
 
 class ColorBarComponent(spec: jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec) : jetbrains.datalore.plot.builder.guide.LegendBox(spec) {
@@ -129,7 +129,12 @@ class ColorBarComponent(spec: jetbrains.datalore.plot.builder.guide.ColorBarComp
 
         var isFirst = true
         for (color in colors) {
-            val r = SvgRectElement(segmentLeft, segmentTop, segmentRight - segmentLeft, segmentBottom - segmentTop)
+            val r = SvgRectElement(
+                segmentLeft,
+                segmentTop,
+                segmentRight - segmentLeft,
+                segmentBottom - segmentTop
+            )
             r.strokeWidth().set(0.0)
             r.fillColor().set(color)
             g.children().add(r)

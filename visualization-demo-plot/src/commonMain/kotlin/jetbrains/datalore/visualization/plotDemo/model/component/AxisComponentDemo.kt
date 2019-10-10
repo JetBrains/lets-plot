@@ -11,8 +11,8 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.base.svg.SvgSvgElement
+import jetbrains.datalore.vis.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.visualization.plotDemo.model.SimpleDemoBase
 
 open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {

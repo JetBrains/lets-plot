@@ -9,8 +9,8 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimGroup
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.slim.SvgSlimGroup
 
 abstract class GeomBase : Geom {
 

@@ -6,8 +6,8 @@ import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.render.point.NamedShape.*
 import jetbrains.datalore.plot.base.render.point.symbol.Glyph
 import jetbrains.datalore.plot.base.render.point.symbol.Glyphs
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimElements
-import jetbrains.datalore.visualization.base.svg.slim.SvgSlimObject
+import jetbrains.datalore.vis.svg.slim.SvgSlimElements
+import jetbrains.datalore.vis.svg.slim.SvgSlimObject
 
 object PointShapeSvg {
     fun create(shape: PointShape, location: DoubleVector, p: DataPointAesthetics): SvgSlimObject {

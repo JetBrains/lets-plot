@@ -5,7 +5,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.svg.*
+import jetbrains.datalore.vis.svg.*
 import kotlin.random.Random
 
 abstract class SvgComponent {
