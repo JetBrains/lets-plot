@@ -4,7 +4,7 @@ plugins {
 }
 
 kotlin {
-    if (project.properties['python_include_path'] != null && project.properties['python_include_path'] != "") {
+    if (project.properties['python_include_path'] != null) {
         macosX64() {
             binaries {
                 staticLib {
@@ -33,7 +33,9 @@ kotlin {
             }
         }
     } else {
-        println("AAAAAAAAAAAAAAAAAAAAAAAAAAA!!!")
+        println("------------------------------------------------------------------------------------------------")
+        println("Python package build unavailable. Please set \"python_include_path\" property in gradle.properties file.")
+        println("------------------------------------------------------------------------------------------------")
     }
 
 

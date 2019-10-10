@@ -12,12 +12,6 @@ allprojects {
 //    println "--- project ---: $project.name $project.rootDir"
 }
 
-task printProps {
-    doLast {
-        println System.env.PYTHON_INCLUDE
-    }
-}
-
 def publishedProjects = [
         'base-portable',
         'base',

@@ -36,6 +36,7 @@ include 'base-portable',
         'visualization-demo-svg-mapper',
         'visualization-demo-plot',
         'python-extension',
+        'python-package',
         'js-package',
         'jvm-jfx-package',
         'test-common'
