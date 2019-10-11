@@ -6,8 +6,12 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
+import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.AREA_GEOM
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.NON_AREA_GEOM
 import jetbrains.datalore.plot.config.Option.Plot
@@ -27,11 +31,12 @@ object PlotConfigClientSideUtil {
         return guideOptionsByAes
     }
 
-    fun createPlotAssembler(opts: Map<String, Any>): jetbrains.datalore.plot.builder.assemble.PlotAssembler {
+    fun createPlotAssembler(opts: Map<String, Any>): PlotAssembler {
         val config = PlotConfigClientSide.create(opts)
         val coordProvider = config.coordProvider
         val layersByTile = buildPlotLayers(config)
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.multiTile(layersByTile, coordProvider, config.theme)
+        val assembler =
+            PlotAssembler.multiTile(layersByTile, coordProvider, config.theme)
         assembler.setTitle(config.title)
         assembler.setGuideOptionsMap(config.guideOptionsMap)
         assembler.facets = config.facets
@@ -44,12 +49,15 @@ object PlotConfigClientSideUtil {
         }
         val map = OptionsAccessor.over(opts).getMap(Plot.SIZE)
         val sizeSpec = OptionsAccessor.over(map)
-        val width = sizeSpec.getDouble("width")!!
-        val height = sizeSpec.getDouble("height")!!
+        val width = sizeSpec.getDouble("width")
+        val height = sizeSpec.getDouble("height")
+        if (width == null || height == null) {
+            return null
+        }
         return DoubleVector(width, height)
     }
 
-    private fun buildPlotLayers(cfg: PlotConfig): List<List<jetbrains.datalore.plot.builder.GeomLayer>> {
+    private fun buildPlotLayers(cfg: PlotConfig): List<List<GeomLayer>> {
         val dataByLayer = ArrayList<DataFrame>()
         for (layerConfig in cfg.layerConfigs) {
             val layerData = layerConfig.combinedData
@@ -59,10 +67,10 @@ object PlotConfigClientSideUtil {
         val layersDataByTile = PlotConfigUtil.toLayersDataByTile(dataByLayer, cfg.facets).iterator()
 
         val scaleProvidersMap = cfg.scaleProvidersMap
-        val layerBuilders = ArrayList<jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder>()
-        val layersByTile = ArrayList<List<jetbrains.datalore.plot.builder.GeomLayer>>()
+        val layerBuilders = ArrayList<GeomLayerBuilder>()
+        val layersByTile = ArrayList<List<GeomLayer>>()
         while (layersDataByTile.hasNext()) {
-            val panelLayers = ArrayList<jetbrains.datalore.plot.builder.GeomLayer>()
+            val panelLayers = ArrayList<GeomLayer>()
             val tileDataByLayer = layersDataByTile.next()
 
             val isMultilayer = tileDataByLayer.size > 1
@@ -87,7 +95,11 @@ object PlotConfigClientSideUtil {
         return layersByTile
     }
 
-    private fun configGeomTargets(layerBuilder: jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder, layerConfig: LayerConfig, multilayer: Boolean) {
+    private fun configGeomTargets(
+        layerBuilder: GeomLayerBuilder,
+        layerConfig: LayerConfig,
+        multilayer: Boolean
+    ) {
 //        val geomProvider = layerConfig.geomProvider
 
         val geomInteraction = createGeomInteractionBuilder(
@@ -107,12 +119,11 @@ object PlotConfigClientSideUtil {
     private fun createLayerBuilder(
         layerConfig: LayerConfig,
         scaleProvidersMap: TypedScaleProviderMap
-    ): jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder {
-//        val geomProvider = layerConfig.geomProvider
+    ): GeomLayerBuilder {
         val geomProvider = (layerConfig.geomProto as GeomProtoClientSide).geomProvider(layerConfig)
 
         val stat = layerConfig.stat
-        val layerBuilder = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder()
+        val layerBuilder = GeomLayerBuilder()
             .stat(stat)
             .geom(geomProvider)
             .pos(layerConfig.posProvider)
@@ -149,7 +160,7 @@ object PlotConfigClientSideUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         multilayer: Boolean
-    ): jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder {
+    ): GeomInteractionBuilder {
 
         val builder = initGeomInteractionBuilder(renders, geomKind, statKind)
 
@@ -177,8 +188,8 @@ object PlotConfigClientSideUtil {
         renders: List<Aes<*>>,
         geomKind: GeomKind,
         statKind: StatKind
-    ): jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder {
-        val builder = jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder(renders)
+    ): GeomInteractionBuilder {
+        val builder = GeomInteractionBuilder(renders)
         if (statKind === StatKind.SMOOTH) {
             when (geomKind) {
                 GeomKind.POINT, GeomKind.CONTOUR -> return builder.univariateFunction(LookupStrategy.NEAREST)

@@ -5,22 +5,26 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.builder.PlotBuilder
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class PlotAssembler private constructor(
     layersByTile: List<List<GeomLayer>>,
-    private val myCoordProvider: jetbrains.datalore.plot.builder.coord.CoordProvider,
-    private val myTheme: Theme) {
+    private val myCoordProvider: CoordProvider,
+    private val myTheme: Theme
+) {
 
     private val myLayersByTile = ArrayList<List<GeomLayer>>()
-    private val myContainsLiveMap: Boolean
+    val containsLiveMap: Boolean
 
-    var facets: PlotFacets? = null
+    var facets: PlotFacets = PlotFacets.undefined()
     private var myTitle: String? = null
     private var myGuideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap()
-    private var myAxisEnabled: Boolean = false
+    private var myAxisEnabled: Boolean
     private var myLegendsEnabled = true
     private var myInteractionsEnabled = true
 
@@ -28,14 +32,14 @@ class PlotAssembler private constructor(
         get() = myLayersByTile
 
     private val isFacetLayout: Boolean
-        get() = hasFacets() && facets!!.isDefined
+        get() = hasFacets()
 
     init {
         for (plotLayers in layersByTile) {
             myLayersByTile.add(ArrayList(plotLayers))
         }
-        myContainsLiveMap = myLayersByTile.flatten().any(GeomLayer::isLiveMap)
-        myAxisEnabled = !myContainsLiveMap  // no axis on livemap
+        containsLiveMap = myLayersByTile.flatten().any(GeomLayer::isLiveMap)
+        myAxisEnabled = !containsLiveMap  // no axis on livemap
     }
 
     fun setTitle(title: String?) {
@@ -43,19 +47,19 @@ class PlotAssembler private constructor(
     }
 
     private fun hasFacets(): Boolean {
-        return facets != null
+        return facets.isDefined
     }
 
     private fun hasLayers(): Boolean {
         for (tileLayers in myLayersByTile) {
-            if (!tileLayers.isEmpty()) {
+            if (tileLayers.isNotEmpty()) {
                 return true
             }
         }
         return false
     }
 
-    fun createPlot(): jetbrains.datalore.plot.builder.Plot {
+    fun createPlot(): Plot {
         checkState(hasLayers(), "No layers in plot")
 
         val legendsBoxInfos = if (myLegendsEnabled)
@@ -65,19 +69,21 @@ class PlotAssembler private constructor(
                 myTheme.legend()
             )
         else
-            emptyList<LegendBoxInfo>()
+            emptyList()
 
         // share first X/Y scale among all layers
-        var xScaleProto = jetbrains.datalore.plot.builder.GeomLayerListUtil.anyBoundXScale(myLayersByTile) as Scale<Double>?
+        var xScaleProto =
+            jetbrains.datalore.plot.builder.GeomLayerListUtil.anyBoundXScale(myLayersByTile) as Scale<Double>?
         if (xScaleProto == null) {
             xScaleProto = Scales.continuousDomain("x", Aes.X)
         }
-        var yScaleProto = jetbrains.datalore.plot.builder.GeomLayerListUtil.anyBoundYScale(myLayersByTile) as Scale<Double>?
+        var yScaleProto =
+            jetbrains.datalore.plot.builder.GeomLayerListUtil.anyBoundYScale(myLayersByTile) as Scale<Double>?
         if (yScaleProto == null) {
             yScaleProto = Scales.continuousDomain("y", Aes.Y)
         }
 
-        if (myContainsLiveMap) {
+        if (containsLiveMap) {
             // build 'live map' plot:
             //  - skip X/Y scale training
             //  - ignore coord provider
@@ -126,9 +132,10 @@ class PlotAssembler private constructor(
 
     private fun createXYPlot(
         xScaleProto: Scale<Double>, yScaleProto: Scale<Double>,
-        plotLayout: PlotLayout, legendBoxInfos: List<LegendBoxInfo>): jetbrains.datalore.plot.builder.Plot {
+        plotLayout: PlotLayout, legendBoxInfos: List<LegendBoxInfo>
+    ): Plot {
 
-        val plotBuilder = jetbrains.datalore.plot.builder.PlotBuilder(myTheme)
+        val plotBuilder = PlotBuilder(myTheme)
         plotBuilder.setTitle(myTitle)
         plotBuilder.scaleXProto(xScaleProto)
         plotBuilder.scaleYProto(yScaleProto)
@@ -165,7 +172,11 @@ class PlotAssembler private constructor(
     }
 
     companion object {
-        fun singleTile(plotLayers: List<GeomLayer>, coordProvider: jetbrains.datalore.plot.builder.coord.CoordProvider, theme: Theme): PlotAssembler {
+        fun singleTile(
+            plotLayers: List<GeomLayer>,
+            coordProvider: CoordProvider,
+            theme: Theme
+        ): PlotAssembler {
             val layersByTile = ArrayList<List<GeomLayer>>()
             layersByTile.add(plotLayers)
             return multiTile(
@@ -175,7 +186,11 @@ class PlotAssembler private constructor(
             )
         }
 
-        fun multiTile(layersByTile: List<List<GeomLayer>>, coordProvider: jetbrains.datalore.plot.builder.coord.CoordProvider, theme: Theme): PlotAssembler {
+        fun multiTile(
+            layersByTile: List<List<GeomLayer>>,
+            coordProvider: CoordProvider,
+            theme: Theme
+        ): PlotAssembler {
             return PlotAssembler(layersByTile, coordProvider, theme)
         }
     }
