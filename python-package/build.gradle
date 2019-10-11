@@ -3,6 +3,7 @@ plugins {
 }
 
 def PYTHON_BIN_PATH_PROPERTY = "python_bin_path"
+def PYTHON_REPOSITORY_URL_PROPERTY = "python_repository_url"
 
 if (project.properties['python_include_path'] != null) {
     if (project.properties[PYTHON_BIN_PATH_PROPERTY] != null) {
@@ -17,13 +18,40 @@ if (project.properties['python_include_path'] != null) {
         task buildPythonPackage(type:Exec) {
             workingDir project.projectDir
 
-            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/python3", 'setup.py', 'bdist_wheel', "--dist-dir=${project.buildDir}/dist"
+            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/python3",
+                    'setup.py',
+                    'bdist_wheel',
+                    "--dist-dir=${project.buildDir}/dist"
         }
 
         task localInstallPythonPackage(type:Exec) {
             workingDir "${project.buildDir}/dist"
 
-            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/pip", 'install', '--no-index', '--find-links=./', 'datalore-plot'
+            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/pip",
+                    'install',
+                    '--no-index',
+                    '--find-links=./',
+                    'datalore-plot'
+        }
+
+        task publishPythonPackage(type:Exec) {
+            workingDir "${project.buildDir}/dist"
+
+            if (project.properties[PYTHON_REPOSITORY_URL_PROPERTY] != null) {
+                commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/twine",
+                        "upload",
+                        "--repository-url",
+                        project.properties[PYTHON_REPOSITORY_URL_PROPERTY],
+                        "-u",
+                        project.properties["pypi_username"],
+                        "-p",
+                        project.properties["pypi_password"],
+                        "./*"
+            } else {
+                commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/twine",
+                        "upload",
+                        "./*"
+            }
         }
 
         updateJs.dependsOn(':js-package:build')
@@ -33,6 +61,9 @@ if (project.properties['python_include_path'] != null) {
         buildPythonPackage.dependsOn(updateJs)
 
         build.dependsOn(buildPythonPackage)
+
+        localInstallPythonPackage.dependsOn(buildPythonPackage)
+        publishPythonPackage.dependsOn(buildPythonPackage)
 
 
     } else {

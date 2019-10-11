@@ -6,7 +6,7 @@
 
 - uninstall datalore-plot with `pip uninstall datalore-plot` if needed
 
-- run localInstallPythonPackage gradle task from python-package module (./gredlew :python-package:localInstallPythonPackage)
+- run localInstallPythonPackage gradle task from python-package module (./gradlew :python-package:localInstallPythonPackage)
 
 
 Start local web-server to serve our js scripts (from /datalore-plot/plot-demo/build/demoWeb/lib):
