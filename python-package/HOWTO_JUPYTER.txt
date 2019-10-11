@@ -1,18 +1,12 @@
 - Jupyter must be installed in Python environment (IPython.display is required)
 
-- set PYTHON_INCLUDE environment variable with path to python include path
+- set `python_include_path` and `python_bin_path` properties in gradle.properties file.
 
 - build project (gradle)
 
-In terminal:
-    - create/activate Python environment (I use conda)
-    - cd to datalore-plot/python-package
-    - copy all JS to package data: python setup.py update_js
-    - install python package (egg): python setup.py install
-    or
-    - build and install wheel:
-       python setup.py bdist_wheel
-       pip install --no-index --find-links=dist/ datalore-plot
+- uninstall datalore-plot with `pip uninstall datalore-plot` if needed
+
+- run localInstallPythonPackage gradle task from python-package module (./gredlew :python-package:localInstallPythonPackage)
 
 
 Start local web-server to serve our js scripts (from /datalore-plot/plot-demo/build/demoWeb/lib):
