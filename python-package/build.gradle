@@ -11,7 +11,7 @@ if (project.properties['python_include_path'] != null) {
         task updateJs(type:Exec) {
             workingDir project.projectDir
 
-            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/python3", 'setup.py', 'updatejs'
+            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/python3", 'setup.py', 'update_js'
         }
 
         task buildPythonPackage(type:Exec) {
