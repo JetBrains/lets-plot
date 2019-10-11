@@ -8,14 +8,13 @@ import jetbrains.datalore.base.projectionGeometry.GeoUtils.convertToGeoRectangle
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.POINT_X
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.POINT_Y
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_XMAX
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_XMIN
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_YMAX
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_YMIN
+import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X
+import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y
+import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMAX
+import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMIN
+import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMAX
+import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
 import jetbrains.datalore.plot.config.LiveMapOptions
-import jetbrains.datalore.plot.config.Option
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
@@ -161,6 +160,7 @@ internal class LiveMapSpecBuilder {
         }
 
         private fun getWithIdList(data: Any): MapRegion {
+            @Suppress("UNCHECKED_CAST")
             val list = data as List<String>
             return MapRegion.withIdList(list)
         }
@@ -168,7 +168,7 @@ internal class LiveMapSpecBuilder {
         private fun calculateGeoRectangle(lonLatList: List<*>): GeoRectangle {
             if (lonLatList.isNotEmpty() && lonLatList.size % 2 != 0) {
                 throw IllegalArgumentException(
-                    "Expected: " + Option.Geom.LiveMap.LOCATION
+                    "Expected: location"
                             + " = [double lon1, double lat1, double lon2, double lat2, ... , double lonN, double latN]"
                 )
             }
@@ -199,7 +199,7 @@ internal class LiveMapSpecBuilder {
             }
 
             throw IllegalArgumentException(
-                ("Expected: " + Option.Geom.LiveMap.LOCATION + " = DataFrame with "
+                ("Expected: location" + " = DataFrame with "
                         + "['" + POINT_X + "', '" + POINT_Y + "'] or "
                         + "['" + RECT_XMIN + "', '" + RECT_YMIN + "', '" + RECT_XMAX + "', '" + RECT_YMAX + "'] columns")
             )
@@ -222,7 +222,7 @@ internal class LiveMapSpecBuilder {
             try {
                 return FeatureLevel.valueOf(level.toUpperCase())
             } catch (ignored: Exception) {
-                throw IllegalArgumentException(Option.Geom.LiveMap.FEATURE_LEVEL + FeatureLevel.values())
+                throw IllegalArgumentException("FeatureLevel: " + FeatureLevel.values())
             }
 
         }
@@ -236,7 +236,7 @@ internal class LiveMapSpecBuilder {
                 handlerMap[REGION_TYPE_IDS] = { getWithIdList(it) }
                 return handleRegionObject((region as Map<*, *>?)!!, handlerMap)
             } else {
-                throw IllegalArgumentException("Expected: " + Option.Geom.LiveMap.PARENT + " = [String]")
+                throw IllegalArgumentException("Expected: parent" + " = [String]")
             }
         }
 
@@ -253,7 +253,7 @@ internal class LiveMapSpecBuilder {
                     { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
                 return handleRegionObject((location as Map<*, *>?)!!, handlerMap)
             } else {
-                throw IllegalArgumentException("Expected: " + Option.Geom.LiveMap.LOCATION + " = [String|Array|DataFrame]")
+                throw IllegalArgumentException("Expected: locatiobn" + " = [String|Array|DataFrame]")
             }
         }
 
