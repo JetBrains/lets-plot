@@ -6,7 +6,7 @@ import jetbrains.datalore.base.observable.property.PropertyBinding
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.livemap.BaseLiveMap
 
 class LiveMapPresenter : Disposable {

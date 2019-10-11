@@ -3,6 +3,8 @@ package jetbrains.datalore.plot.builder.sampling.method
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.util.MutableInteger
 import jetbrains.datalore.plot.builder.sampling.PointSampling
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.calculateRingLimits
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.getRingIndex
@@ -11,8 +13,6 @@ import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.splitRings
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.geometry.PolylineSimplifier
 import jetbrains.datalore.plot.common.geometry.Utils.isClosed
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.util.MutableInteger
 
 internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSize),
     PointSampling {

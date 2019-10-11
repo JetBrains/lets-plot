@@ -4,11 +4,11 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksUtil
 import jetbrains.datalore.plot.builder.layout.axis.AxisLayouter
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.visualization.plot.base.Scale
 
 class PlotAxisLayout private constructor(private val myScale: Scale<Double>, private val myXDomain: ClosedRange<Double>, private val myYDomain: ClosedRange<Double>, private val myCoordProvider: jetbrains.datalore.plot.builder.coord.CoordProvider,
                                          private val myTheme: AxisTheme, private val myOrientation: jetbrains.datalore.plot.builder.guide.Orientation

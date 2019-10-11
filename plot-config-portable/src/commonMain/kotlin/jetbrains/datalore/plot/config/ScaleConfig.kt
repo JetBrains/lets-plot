@@ -2,6 +2,10 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.scale.Mappers.nullable
+import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
+import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.*
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.*
@@ -33,10 +37,6 @@ import jetbrains.datalore.plot.config.Option.Scale.START
 import jetbrains.datalore.plot.config.Option.Scale.START_HUE
 import jetbrains.datalore.plot.config.aes.AesOptionConversion
 import jetbrains.datalore.plot.config.aes.TypedContinuousIdentityMappers
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.scale.Mappers.nullable
-import jetbrains.datalore.visualization.plot.base.scale.transform.DateTimeBreaksGen
-import jetbrains.datalore.visualization.plot.base.scale.transform.Transforms
 
 /**
  * @param <T> - target aesthetic type of the configured scale

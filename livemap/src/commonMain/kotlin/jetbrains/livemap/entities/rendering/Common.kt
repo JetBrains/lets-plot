@@ -1,6 +1,6 @@
 package jetbrains.datalore.maps.livemap.entities.rendering
 
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.entities.rendering.StyleComponent
 
 object Common {

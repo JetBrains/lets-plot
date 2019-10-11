@@ -2,9 +2,9 @@ package jetbrains.datalore.plot.builder.guide
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.svg.*
-import jetbrains.datalore.visualization.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.vis.svg.*
 
 class LegendComponent(legendSpec: jetbrains.datalore.plot.builder.guide.LegendComponentSpec) : jetbrains.datalore.plot.builder.guide.LegendBox(legendSpec) {
 

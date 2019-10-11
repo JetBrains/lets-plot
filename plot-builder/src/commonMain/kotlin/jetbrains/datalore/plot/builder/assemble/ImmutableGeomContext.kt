@@ -1,9 +1,9 @@
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.GeomContext
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.GeomContext
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 
 interface ImmutableGeomContext : GeomContext {
 

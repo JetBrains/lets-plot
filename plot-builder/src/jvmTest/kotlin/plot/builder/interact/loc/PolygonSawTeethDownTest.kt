@@ -1,18 +1,19 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.createLocator
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.polygon
 import jetbrains.datalore.plot.builder.interact.TestUtil.polygonTarget
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import kotlin.test.Test
 
 class PolygonSawTeethDownTest {
 
     private val polygonLocator: GeomTargetLocator
-        get() = createLocator(GeomTargetLocator.LookupStrategy.HOVER, GeomTargetLocator.LookupSpace.XY,
+        get() = createLocator(
+            GeomTargetLocator.LookupStrategy.HOVER, GeomTargetLocator.LookupSpace.XY,
             jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.TARGET
         )
 

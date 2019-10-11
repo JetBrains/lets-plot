@@ -3,8 +3,8 @@ package jetbrains.datalore.plot.builder.guide
 import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 
 abstract class LegendBoxLayout protected constructor(private val myTitle: String, private val myLegendDirection: jetbrains.datalore.plot.builder.guide.LegendDirection) {
     val titleHorizontalAnchor: TextLabel.HorizontalAnchor

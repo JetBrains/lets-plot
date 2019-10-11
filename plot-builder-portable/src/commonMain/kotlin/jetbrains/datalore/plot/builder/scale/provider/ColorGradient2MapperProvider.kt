@@ -2,13 +2,13 @@ package jetbrains.datalore.plot.builder.scale.provider
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.Transform
-import jetbrains.datalore.visualization.plot.base.scale.MapperUtil
 import kotlin.math.max
 import kotlin.math.min
 

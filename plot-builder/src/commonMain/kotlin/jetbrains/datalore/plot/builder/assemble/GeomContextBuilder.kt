@@ -1,16 +1,17 @@
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.GeomContext
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.GeomContext
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.visualization.plot.base.interact.NullGeomTargetCollector
 
 class GeomContextBuilder : jetbrains.datalore.plot.builder.assemble.ImmutableGeomContext.Builder {
     private var myAesthetics: Aesthetics? = null
     private var myAestheticMappers: Map<Aes<*>, (Double?) -> Any?>? = null
-    private var myGeomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
+    private var myGeomTargetCollector: GeomTargetCollector =
+        NullGeomTargetCollector()
 
     constructor()
 

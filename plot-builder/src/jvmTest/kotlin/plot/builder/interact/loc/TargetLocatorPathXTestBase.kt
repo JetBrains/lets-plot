@@ -1,12 +1,12 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.TestUtil.PathPoint
 import jetbrains.datalore.plot.builder.interact.TestUtil.PathPointsBuilder
 import jetbrains.datalore.plot.builder.interact.TestUtil.createLocator
 import jetbrains.datalore.plot.builder.interact.TestUtil.pathTarget
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 import kotlin.test.BeforeTest
 
 abstract class TargetLocatorPathXTestBase {

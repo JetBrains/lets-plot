@@ -1,16 +1,17 @@
 package jetbrains.datalore.plot.builder.assemble.geom
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.scale.breaks.QuantitativeTickFormatterFactory
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.scale.breaks.QuantitativeTickFormatterFactory
 
 internal class PointDataAccess(private val data: DataFrame,
-                               bindings: Map<Aes<*>, VarBinding>) : MappedDataAccess {
+                               bindings: Map<Aes<*>, VarBinding>) :
+    MappedDataAccess {
 
     override val mappedAes: Set<Aes<*>> = HashSet(bindings.keys)
 

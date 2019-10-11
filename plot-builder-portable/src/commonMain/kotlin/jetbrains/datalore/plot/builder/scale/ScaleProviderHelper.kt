@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.builder.scale
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
-import jetbrains.datalore.visualization.plot.base.Aes
 
 object ScaleProviderHelper {
     fun getOrCreateDefault(aes: Aes<*>, providers: TypedScaleProviderMap): ScaleProvider<*> {

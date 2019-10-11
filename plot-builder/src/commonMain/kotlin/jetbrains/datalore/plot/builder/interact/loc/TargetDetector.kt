@@ -1,12 +1,12 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.interact.loc.PathTargetProjection.PathPoint
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 
 internal class TargetDetector(
         private val locatorLookupSpace: LookupSpace,

@@ -1,12 +1,12 @@
 package jetbrains.livemap.canvascontrols
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
-import jetbrains.datalore.visualization.base.canvas.CanvasControlUtil.drawLater
-import jetbrains.datalore.visualization.base.canvas.Context2d
-import jetbrains.datalore.visualization.base.canvas.Context2d.TextAlign
-import jetbrains.datalore.visualization.base.canvas.Context2d.TextBaseline
-import jetbrains.datalore.visualization.base.canvas.SingleCanvasControl
+import jetbrains.datalore.vis.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.CanvasControlUtil.drawLater
+import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Context2d.TextAlign
+import jetbrains.datalore.vis.canvas.Context2d.TextBaseline
+import jetbrains.datalore.vis.canvas.SingleCanvasControl
 import kotlin.math.max
 
 internal class MessageContent(private val message: String) : CanvasContent {

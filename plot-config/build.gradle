@@ -16,11 +16,11 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':gis')
-                implementation project(':livemap')
-                implementation project(':visualization-base-svg')
-                implementation project(':visualization-base-canvas')
-                implementation project(':visualization-plot-base-portable')
-                implementation project(':visualization-plot-base')
+                implementation project(':livemap-geom')
+                implementation project(':vis-svg')
+                implementation project(':vis-canvas')
+                implementation project(':plot-base-portable')
+                implementation project(':plot-base')
                 implementation project(':plot-common-portable')
                 implementation project(':plot-common')
                 implementation project(':plot-builder-portable')
@@ -61,7 +61,7 @@ kotlin {
                 implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
                 
                 implementation project(':mapper-core')
-                implementation project(':visualization-base-svg-mapper')
+                implementation project(':vis-svg-mapper')
             }
         }
         jsTest {

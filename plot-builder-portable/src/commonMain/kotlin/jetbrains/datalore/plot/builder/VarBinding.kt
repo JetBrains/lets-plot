@@ -1,9 +1,9 @@
 package jetbrains.datalore.plot.builder
 
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.Scale
 
 //import jetbrains.datalore.plot.builder.scale.ScaleProvider
 

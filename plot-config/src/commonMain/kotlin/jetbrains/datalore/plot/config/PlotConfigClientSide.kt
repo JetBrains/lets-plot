@@ -1,5 +1,7 @@
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -10,8 +12,6 @@ import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.encode.DataSpecEncodeTransforms
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
 
 class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotConfig(opts) {
 

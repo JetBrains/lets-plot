@@ -7,11 +7,15 @@
 In terminal:
     - create/activate Python environment (I use conda)
     - cd to datalore-plot/python-package
-    - copy all JS to package data: python setup.py updatejs
-    - install python package: python setup.py install
+    - copy all JS to package data: python setup.py update_js
+    - install python package (egg): python setup.py install
+    or
+    - build and install wheel:
+       python setup.py bdist_wheel
+       pip install --no-index --find-links=dist/ datalore-plot
 
 
-Start local web-server to serve our js scripts (from /datalore-plot/visualization-demo-plot/build/demoWeb/lib):
+Start local web-server to serve our js scripts (from /datalore-plot/plot-demo/build/demoWeb/lib):
     - cd to datalore-plot/js-package/build/dist
     - python -m http.server 8080
 Note: this step is not necessary is our JS is injected into notebook from the package resources (the default currently)

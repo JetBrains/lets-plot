@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot.server.config
 
+import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.config.TestUtil
-import jetbrains.datalore.visualization.plot.base.data.TransformVar
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

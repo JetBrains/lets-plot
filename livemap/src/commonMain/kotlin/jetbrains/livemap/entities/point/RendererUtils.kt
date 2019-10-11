@@ -1,6 +1,6 @@
 package jetbrains.datalore.maps.livemap.entities.point
 
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Context2d
 import kotlin.math.PI
 import kotlin.math.sqrt
 

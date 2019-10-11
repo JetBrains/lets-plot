@@ -4,8 +4,8 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 
 class AxisLayoutInfo private constructor(b: Builder) {
     val axisBreaks: GuideBreaks?

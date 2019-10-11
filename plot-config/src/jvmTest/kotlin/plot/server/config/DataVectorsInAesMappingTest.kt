@@ -1,12 +1,12 @@
 package jetbrains.datalore.plot.server.config
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Plot.DATA
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.Plot.MAPPING
-import jetbrains.datalore.visualization.plot.base.Aes
 import kotlin.test.Test
 
 class DataVectorsInAesMappingTest {

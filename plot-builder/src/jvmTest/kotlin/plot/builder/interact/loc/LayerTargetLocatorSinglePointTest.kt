@@ -1,14 +1,14 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.offsetX
 import jetbrains.datalore.plot.builder.interact.TestUtil.offsetY
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.pointTarget
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 import kotlin.test.Test
 
 class LayerTargetLocatorSinglePointTest {

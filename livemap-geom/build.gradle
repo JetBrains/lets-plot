@@ -1,0 +1,74 @@
+plugins {
+    id 'kotlin-multiplatform'
+    id 'org.jetbrains.gradle.plugin.idea-ext'
+}
+
+kotlin {
+    jvm()
+    js () {
+        // browser {}
+        // /\
+        // ||
+        // ERROR in ./kotlin/datalore-plot-livemap.js
+        // Module not found: Error: Can't resolve 'vis-canvas' in '/Users/ikupriyanov/Projects/datalore-plot/build/js/packages/datalore-plot-livemap/kotlin'
+        // @ ./kotlin/datalore-plot-livemap.js 3:4-120
+        // @ multi ./kotlin/datalore-plot-livemap.js source-map-support/browser-source-map-support.js
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation project(':base-portable')
+                implementation project(':base')
+                implementation project(':plot-base-portable')
+                implementation project(':plot-base')
+                implementation project(':plot-builder-portable')
+                implementation project(':plot-builder')
+                implementation project(':plot-config-portable')
+                implementation project(':vis-canvas')
+                implementation project(':gis')
+                implementation project(':livemap')
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+                implementation "org.mockito:mockito-core:$mockito_version"
+                implementation "org.assertj:assertj-core:$assertj_version"
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation kotlin('test-js')
+            }
+        }
+    }
+}
+idea {
+    module {
+        settings {
+            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
+        }
+    }
+}

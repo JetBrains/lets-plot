@@ -2,6 +2,7 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.between
@@ -11,13 +12,13 @@ import jetbrains.datalore.plot.builder.interact.TestUtil.outsideX
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.polygon
 import jetbrains.datalore.plot.builder.interact.TestUtil.polygonTarget
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
 import kotlin.test.Test
 
 class MultiPolygonTest {
 
     private val polygonLocator: GeomTargetLocator
-        get() = createLocator(GeomTargetLocator.LookupStrategy.HOVER, GeomTargetLocator.LookupSpace.XY,
+        get() = createLocator(
+            GeomTargetLocator.LookupStrategy.HOVER, GeomTargetLocator.LookupSpace.XY,
             jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.FIRST_TARGET
         )
 

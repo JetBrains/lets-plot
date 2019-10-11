@@ -10,7 +10,7 @@ kotlin {
         // /\
         // ||
         // ERROR in ./kotlin/datalore-plot-livemap.js
-        // Module not found: Error: Can't resolve 'visualization-base-canvas' in '/Users/ikupriyanov/Projects/datalore-plot/build/js/packages/datalore-plot-livemap/kotlin'
+        // Module not found: Error: Can't resolve 'vis-canvas' in '/Users/ikupriyanov/Projects/datalore-plot/build/js/packages/datalore-plot-livemap/kotlin'
         // @ ./kotlin/datalore-plot-livemap.js 3:4-120
         // @ multi ./kotlin/datalore-plot-livemap.js source-map-support/browser-source-map-support.js
     }
@@ -22,12 +22,7 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation project(':base-portable')
                 implementation project(':base')
-                implementation project(':visualization-plot-base-portable')
-                implementation project(':visualization-plot-base')
-                implementation project(':plot-builder-portable')
-                implementation project(':plot-builder')
-                implementation project(':plot-config-portable')
-                implementation project(':visualization-base-canvas')
+                implementation project(':vis-canvas')
                 implementation project(':gis')
             }
         }

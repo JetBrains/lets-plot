@@ -1,6 +1,6 @@
 package jetbrains.livemap.core.rendering
 
-import jetbrains.datalore.visualization.base.canvas.Canvas.Snapshot
+import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 
 class Sprite {
     var snapshot: Snapshot? = null

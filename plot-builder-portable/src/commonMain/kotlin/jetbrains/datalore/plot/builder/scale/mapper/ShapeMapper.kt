@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.builder.scale.mapper
 
-import jetbrains.datalore.visualization.plot.base.render.point.NamedShape
-import jetbrains.datalore.visualization.plot.base.render.point.PointShape
-import jetbrains.datalore.visualization.plot.base.render.point.TinyPointShape
+import jetbrains.datalore.plot.base.render.point.NamedShape
+import jetbrains.datalore.plot.base.render.point.PointShape
+import jetbrains.datalore.plot.base.render.point.TinyPointShape
 
 object ShapeMapper {
     val NA_VALUE = TinyPointShape

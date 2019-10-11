@@ -1,7 +1,7 @@
 package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.visualization.base.canvas.Canvas
+import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.multitasking.DebugMicroTask
 import jetbrains.livemap.core.multitasking.MicroTask

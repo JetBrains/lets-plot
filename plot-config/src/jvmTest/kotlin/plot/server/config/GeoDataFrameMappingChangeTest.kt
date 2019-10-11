@@ -1,5 +1,6 @@
 package jetbrains.datalore.plot.server.config
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.DATA_COLUMN_JOIN_KEY
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_COLUMN_JOIN_KEY
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_COLUMN_REGION
@@ -17,7 +18,6 @@ import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.createLayerConfigsByLayerSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.geoPositionsDict
 import jetbrains.datalore.plot.server.config.SingleLayerAssert.Companion.assertThat
-import jetbrains.datalore.visualization.plot.base.Aes
 import kotlin.test.Test
 
 class GeoDataFrameMappingChangeTest {

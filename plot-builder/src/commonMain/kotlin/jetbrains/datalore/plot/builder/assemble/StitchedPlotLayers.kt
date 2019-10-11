@@ -2,12 +2,12 @@ package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
 
 internal class StitchedPlotLayers(layers: List<jetbrains.datalore.plot.builder.GeomLayer>) {
     private val myLayers: List<jetbrains.datalore.plot.builder.GeomLayer>

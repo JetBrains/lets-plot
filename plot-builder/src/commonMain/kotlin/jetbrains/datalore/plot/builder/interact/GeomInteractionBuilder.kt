@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 
 class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     lateinit var locatorLookupSpace: LookupSpace

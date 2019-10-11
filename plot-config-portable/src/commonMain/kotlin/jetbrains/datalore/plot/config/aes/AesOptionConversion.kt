@@ -1,6 +1,6 @@
 package jetbrains.datalore.plot.config.aes
 
-import jetbrains.datalore.visualization.plot.base.Aes
+import jetbrains.datalore.plot.base.Aes
 
 object AesOptionConversion {
     private val CONVERTERS_MAP = TypedOptionConverterMap()

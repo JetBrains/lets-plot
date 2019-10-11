@@ -6,10 +6,10 @@ import jetbrains.datalore.base.projectionGeometry.div
 import jetbrains.datalore.base.projectionGeometry.minus
 import jetbrains.datalore.base.projectionGeometry.plus
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationEventHandler
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
-import jetbrains.datalore.visualization.base.canvas.CanvasControlUtil.setAnimationHandler
-import jetbrains.datalore.visualization.base.canvas.DeltaTime
+import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
+import jetbrains.datalore.vis.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
+import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams.Companion.COMPUTATION_FRAME_TIME
 import jetbrains.livemap.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
@@ -75,7 +75,6 @@ class LiveMap(
     private val myMapLayers: List<MapLayer>,
     private val myTileService: TileService,
     private val myTileGeometryProvider: TileGeometryProvider,
-    private val myRegionGeometryConsumer: RegionGeometryConsumer,
     private val myDevParams: DevParams,
     private val myEmptinessChecker: EmptinessChecker,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit

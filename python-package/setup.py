@@ -44,7 +44,7 @@ def update_js():
 
 
 class UpdateJsCommand(Command):
-    description = "Copy js files from the last build"
+    description = "Copy datalore plot js files from last build"
     user_options = []
 
     def initialize_options(self):
@@ -57,8 +57,12 @@ class UpdateJsCommand(Command):
         update_js()
 
 
+version_locals = {}
+with open(os.path.join(this_dir, 'datalore', '_version.py')) as f:
+    exec(f.read(), {}, version_locals)
+
 setup(name='datalore-plot',
-      version='1.0.0',
+      version=version_locals['__version__'],
       maintainer='JetBrains',
       maintainer_email='info@jetbrains.com',
       author='JetBrains',
@@ -79,7 +83,7 @@ setup(name='datalore-plot',
           ],
       },
 
-      data_files= [("datalore/plot", [BUILD_PATH + "/" + LINUX_LIB_NAME])] if platform.system() == 'Linux'  else [],
+      data_files=[("datalore/plot", [BUILD_PATH + "/" + LINUX_LIB_NAME])] if platform.system() == 'Linux' else [],
 
       ext_modules=[
           Extension('datalore_plot_kotlin_bridge',
@@ -93,6 +97,6 @@ setup(name='datalore-plot',
       ],
 
       cmdclass=dict(
-          updatejs=UpdateJsCommand,
+          update_js=UpdateJsCommand,
       ),
       )

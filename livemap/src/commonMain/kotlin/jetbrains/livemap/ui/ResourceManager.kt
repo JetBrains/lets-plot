@@ -1,7 +1,7 @@
 package jetbrains.livemap.ui
 
-import jetbrains.datalore.visualization.base.canvas.Canvas
-import jetbrains.datalore.visualization.base.canvas.CanvasProvider
+import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.datalore.vis.canvas.CanvasProvider
 
 class ResourceManager(private val canvasProvider: CanvasProvider) {
     private val snapshotMap: MutableMap<String, Canvas.Snapshot> = HashMap()

@@ -3,12 +3,12 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.ScaleUtil
+import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.scale.GuideBreak
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
-import jetbrains.datalore.visualization.plot.base.scale.breaks.ScaleBreaksUtil
 
 class ColorBarAssembler(private val legendTitle: String,
                         private val domain: ClosedRange<Double>,

@@ -1,6 +1,6 @@
 package jetbrains.livemap.canvascontrols
 
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.CanvasControl
 
 internal class CanvasContentPresenter {
     lateinit var canvasControl: CanvasControl

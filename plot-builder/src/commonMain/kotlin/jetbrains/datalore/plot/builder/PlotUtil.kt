@@ -6,12 +6,12 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Sets
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
+import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
+import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
-import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsBuilder.Companion.listMapper
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.scale.Mappers
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
@@ -67,7 +67,8 @@ object PlotUtil {
     }
 
     private fun computeLayerDryRunXYRangesAfterPosAdjustment(
-        layer: jetbrains.datalore.plot.builder.GeomLayer, aes: Aesthetics, geomCtx: GeomContext): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
+        layer: jetbrains.datalore.plot.builder.GeomLayer, aes: Aesthetics, geomCtx: GeomContext
+    ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val posAesX = Iterables.toList(Aes.affectingScaleX(layer.renderedAes()))
         val posAesY = Iterables.toList(Aes.affectingScaleY(layer.renderedAes()))
 
@@ -142,7 +143,8 @@ object PlotUtil {
     private fun computeLayerDryRunXYRangesAfterSizeExpand(
         layer: jetbrains.datalore.plot.builder.GeomLayer,
         aesthetics: Aesthetics,
-        geomCtx: GeomContext): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
+        geomCtx: GeomContext
+    ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val renderedAes = layer.renderedAes()
         val computeExpandX = renderedAes.contains(Aes.WIDTH)
         val computeExpandY = renderedAes.contains(Aes.HEIGHT)
@@ -169,7 +171,8 @@ object PlotUtil {
     }
 
     private fun computeLayerDryRunRangeAfterSizeExpand(
-            locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, geomCtx: GeomContext): ClosedRange<Double>? {
+        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, geomCtx: GeomContext
+    ): ClosedRange<Double>? {
         val locations = aesthetics.numericValues(locationAes).iterator()
         val sizes = aesthetics.numericValues(sizeAes).iterator()
 

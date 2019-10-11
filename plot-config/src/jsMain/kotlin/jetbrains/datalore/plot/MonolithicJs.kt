@@ -7,14 +7,14 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
 import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.plot.LiveMapUtil.containsLiveMap
-import jetbrains.datalore.plot.config.LiveMapConfig
+import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromPlotOptions
+import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.config.PlotConfigUtil
-import jetbrains.datalore.visualization.base.canvas.dom.DomCanvasControl
-import jetbrains.datalore.visualization.base.svg.SvgNodeContainer
-import jetbrains.datalore.visualization.base.svgMapper.dom.SvgRootDocumentMapper
+import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
+import jetbrains.datalore.vis.svg.SvgNodeContainer
+import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
 import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
@@ -22,8 +22,6 @@ import org.w3c.dom.svg.SVGSVGElement
 
 
 object MonolithicJs {
-    private var myIsLiveMap: Boolean = false
-
     @Suppress("unused")
     @JsName("buildPlotFromRawSpecs")
     fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: Node) {
@@ -70,14 +68,11 @@ object MonolithicJs {
 
         plotContainer.ensureContentBuilt()
 
-        if (myIsLiveMap) {
-            val canvasFigures = plotContainer.tileCanvasFigures
-
-            canvasFigures.forEach {
-                val canvasControl = DomCanvasControl(it.bounds().get().dimension.toVector())
-                it.mapToCanvas(canvasControl)
-                eventTarget.appendChild(canvasControl.rootElement)
-            }
+        plotContainer.liveMapFigures.forEach { liveMapFigure ->
+            val canvasControl =
+                DomCanvasControl(liveMapFigure.dimension().get().toVector())
+            liveMapFigure.mapToCanvas(canvasControl)
+            eventTarget.appendChild(canvasControl.rootElement)
         }
 
         val svgRoot = plotContainer.svg
@@ -108,15 +103,8 @@ object MonolithicJs {
 
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
 
-        val layersByTile = assembler.layersByTile
-        val isLiveMap = containsLiveMap(layersByTile)
-
-        if (isLiveMap) {
-            myIsLiveMap = true
-            val liveMapOpts = LiveMapConfig.getLiveMapOptions(plotSpec)
-            val liveMapConfig = LiveMapConfig.create(liveMapOpts)
-            LiveMapUtil.initLiveMapProvider(layersByTile, liveMapConfig.createLivemapOptions())
-        }
+        parseFromPlotOptions(OptionsAccessor(plotSpec))
+            ?.let { jetbrains.livemap.geom.LiveMapUtil.injectLiveMapProvider(assembler.layersByTile, it) }
 
         return assembler.createPlot()
     }

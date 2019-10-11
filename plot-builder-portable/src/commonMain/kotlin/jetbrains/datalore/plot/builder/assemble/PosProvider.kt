@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.builder.PosProviderContext
-import jetbrains.datalore.visualization.plot.base.PositionAdjustment
-import jetbrains.datalore.visualization.plot.base.pos.PositionAdjustments
 import kotlin.jvm.JvmOverloads
 
 abstract class PosProvider {

@@ -1,8 +1,8 @@
 package jetbrains.datalore.plot.config.transform.encode
 
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
 
 /**
  * Feb 16, 2018

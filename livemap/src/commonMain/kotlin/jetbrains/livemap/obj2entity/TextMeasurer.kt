@@ -1,8 +1,8 @@
 package jetbrains.livemap.obj2entity
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.canvas.Context2d
-import jetbrains.datalore.visualization.base.canvas.CssFontParser
+import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.CssFontParser
 
 class TextMeasurer(private val myContext2d: Context2d) {
     fun measure(label: String, font: String): DoubleVector {

@@ -1,7 +1,7 @@
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 
 object FeatureSwitch {
     const val PLOT_DEBUG_DRAWING = false

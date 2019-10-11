@@ -3,6 +3,10 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.createColorBarAssembler
@@ -12,10 +16,6 @@ import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.mappedRe
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aesthetics
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
 
 internal object PlotAssemblerUtil {
 

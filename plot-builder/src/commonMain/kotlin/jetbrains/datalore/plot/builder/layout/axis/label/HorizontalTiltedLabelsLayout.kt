@@ -4,11 +4,11 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
+import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
 import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin

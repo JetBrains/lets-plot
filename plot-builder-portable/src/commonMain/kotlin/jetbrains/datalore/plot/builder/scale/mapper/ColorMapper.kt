@@ -3,7 +3,7 @@ package jetbrains.datalore.plot.builder.scale.mapper
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
-import jetbrains.datalore.visualization.plot.base.scale.Mappers
+import jetbrains.datalore.plot.base.scale.Mappers
 import kotlin.math.abs
 
 object ColorMapper {

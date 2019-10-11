@@ -22,7 +22,7 @@ p`
 
 ### `position_jitter()` 
 
-Jittering adds a little random noise to the plot elements, shifting overlapping individual data points aside. This provides cleaner visualisation for scatterplots with a discrete variable. Shift distance is relative to the data resolution in pixels. 
+Jittering adds a little random noise to the plot elements, shifting overlapping individual data points aside. This provides cleaner visualization for scatterplots with a discrete variable. Shift distance is relative to the data resolution in pixels. 
 
 `position_jitter(width=None, height=None)`
 

@@ -1,10 +1,10 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.visualization.plot.base.Stat
-import jetbrains.datalore.visualization.plot.base.stat.*
-import jetbrains.datalore.visualization.plot.base.stat.BoxplotStat.Companion.P_COEF
-import jetbrains.datalore.visualization.plot.base.stat.BoxplotStat.Companion.P_VARWIDTH
+import jetbrains.datalore.plot.base.Stat
+import jetbrains.datalore.plot.base.stat.*
+import jetbrains.datalore.plot.base.stat.BoxplotStat.Companion.P_COEF
+import jetbrains.datalore.plot.base.stat.BoxplotStat.Companion.P_VARWIDTH
 
 class StatProto {
 

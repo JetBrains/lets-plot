@@ -3,9 +3,9 @@ package jetbrains.datalore.plot.builder.guide
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.scale.GuideBreak
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.visualization.plot.base.Scale
 
 class ColorBarComponentSpec(title: String,
                             internal val domain: ClosedRange<Double>,

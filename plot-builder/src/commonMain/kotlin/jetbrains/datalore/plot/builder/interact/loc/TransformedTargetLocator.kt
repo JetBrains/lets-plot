@@ -2,12 +2,13 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.gcommon.collect.Lists
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.GeomTarget
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 
-abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLocator) : GeomTargetLocator {
+abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLocator) :
+    GeomTargetLocator {
 
     override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
         val targetCoord = convertToTargetCoord(coord)
@@ -27,19 +28,19 @@ abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLoc
     private fun convertGeomTargets(geomTargets: List<GeomTarget>): List<GeomTarget> {
         return ArrayList(Lists.transform(geomTargets) { geomTarget ->
             GeomTarget(
-                    geomTarget.hitIndex,
-                    convertTipLayoutHint(geomTarget.tipLayoutHint),
-                    convertTipLayoutHints(geomTarget.aesTipLayoutHints)
+                geomTarget.hitIndex,
+                convertTipLayoutHint(geomTarget.tipLayoutHint),
+                convertTipLayoutHints(geomTarget.aesTipLayoutHints)
             )
         })
     }
 
     private fun convertTipLayoutHint(hint: TipLayoutHint): TipLayoutHint {
         return TipLayoutHint(
-                hint.kind,
-                safeConvertToPlotCoord(hint.coord)!!,
-                convertToPlotDistance(hint.objectRadius),
-                hint.color
+            hint.kind,
+            safeConvertToPlotCoord(hint.coord)!!,
+            convertToPlotDistance(hint.objectRadius),
+            hint.color
         )
     }
 

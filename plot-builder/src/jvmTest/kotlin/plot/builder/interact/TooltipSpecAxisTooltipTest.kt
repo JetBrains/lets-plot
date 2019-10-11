@@ -1,10 +1,10 @@
 package jetbrains.datalore.plot.builder.interact
 
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.X_AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory.Companion.AXIS_TOOLTIP_COLOR
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint.Kind.X_AXIS_TOOLTIP
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -45,7 +45,8 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
         val yMapping = addMappedData(v.mapping(Aes.Y))
 
         createTooltipSpecs(geomTargetBuilder.withPathHitShape()
-                .withLayoutHint(Aes.FILL, TipLayoutHint.verticalTooltip(
+                .withLayoutHint(
+                    Aes.FILL, TipLayoutHint.verticalTooltip(
                     jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD,
                     jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.OBJECT_RADIUS,
                     jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.FILL_COLOR

@@ -1,7 +1,7 @@
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.plot.builder.layout.GeometryUtil.round
-import jetbrains.datalore.visualization.base.canvas.Canvas
+import jetbrains.datalore.base.math.round
+import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem

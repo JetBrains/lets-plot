@@ -1,9 +1,9 @@
 package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.interact.TipLayoutHint
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 

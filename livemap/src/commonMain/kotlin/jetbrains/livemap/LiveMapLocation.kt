@@ -24,15 +24,19 @@ class LiveMapLocation(private val myViewProjection: ViewProjection, private val 
         val shift: LonLatPoint
         val worldSize = myMapProjection.mapRect.dimension
 
-        if (worldCoord.x > worldSize.x) {
-            shift = explicitVec<LonLat>(FULL_LONGITUDE, 0.0)
-            coord = worldCoord.transform(fx = { it - worldSize.scalarX })
-        } else if (worldCoord.x < 0) {
-            shift = explicitVec<LonLat>(-FULL_LONGITUDE, 0.0)
-            coord = worldSize.transform(fx = { it + worldSize.scalarX })
-        } else {
-            shift = explicitVec<LonLat>(0.0, 0.0)
-            coord = worldCoord
+        when {
+            worldCoord.x > worldSize.x -> {
+                shift = explicitVec<LonLat>(FULL_LONGITUDE, 0.0)
+                coord = worldCoord.transform(fx = { it - worldSize.scalarX })
+            }
+            worldCoord.x < 0 -> {
+                shift = explicitVec<LonLat>(-FULL_LONGITUDE, 0.0)
+                coord = worldSize.transform(fx = { it + worldSize.scalarX })
+            }
+            else -> {
+                shift = explicitVec<LonLat>(0.0, 0.0)
+                coord = worldCoord
+            }
         }
 
         return shift + myMapProjection.invert(coord)

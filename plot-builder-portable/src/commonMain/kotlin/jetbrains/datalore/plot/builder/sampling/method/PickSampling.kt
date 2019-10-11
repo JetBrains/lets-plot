@@ -1,10 +1,10 @@
 package jetbrains.datalore.plot.builder.sampling.method
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.sampling.PointSampling
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.xVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.visualization.plot.base.DataFrame
 
 /**
  * Picks first N data points with unique X-values. In addition scoops all data-points with X-values

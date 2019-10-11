@@ -1,5 +1,28 @@
 package jetbrains.datalore.plot.builder.scale
 
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
+import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
+import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
+import jetbrains.datalore.plot.base.Aes.Companion.FILL
+import jetbrains.datalore.plot.base.Aes.Companion.FLOW
+import jetbrains.datalore.plot.base.Aes.Companion.FONTFACE
+import jetbrains.datalore.plot.base.Aes.Companion.FRAME
+import jetbrains.datalore.plot.base.Aes.Companion.HEIGHT
+import jetbrains.datalore.plot.base.Aes.Companion.HJUST
+import jetbrains.datalore.plot.base.Aes.Companion.LABEL
+import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
+import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
+import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
+import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.VJUST
+import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
+import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
+import jetbrains.datalore.plot.base.Aes.Companion.Z
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColor
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createStringIdentity
@@ -9,29 +32,6 @@ import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.AlphaMapperProvider
 import jetbrains.datalore.plot.builder.scale.provider.SizeMapperProvider
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.ALPHA
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.ANGLE
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.COLOR
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.FAMILY
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.FILL
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.FLOW
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.FONTFACE
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.FRAME
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.HEIGHT
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.HJUST
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.LABEL
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.LINETYPE
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.MAP_ID
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.SHAPE
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.SIZE
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.SPEED
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.VJUST
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.WEIGHT
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.WIDTH
-import jetbrains.datalore.visualization.plot.base.Aes.Companion.Z
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.Transform
 
 object DefaultMapperProvider {
 

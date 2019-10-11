@@ -1,9 +1,9 @@
 package jetbrains.datalore.plot.builder.interact
 
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.interact.MappedDataAccess.MappedData
 import jetbrains.datalore.plot.builder.interact.mockito.eq
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess.MappedData
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock

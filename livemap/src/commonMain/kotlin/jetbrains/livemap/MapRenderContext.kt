@@ -1,8 +1,8 @@
 package jetbrains.livemap
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.canvas.CanvasProvider
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.CanvasProvider
+import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.rendering.primitives.RenderObject
 import jetbrains.livemap.projections.ClientPoint
 import jetbrains.livemap.projections.ViewProjection

@@ -12,22 +12,22 @@ import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
+import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.visualization.base.canvasFigure.CanvasFigure
-import jetbrains.datalore.visualization.base.svg.SvgElement
-import jetbrains.datalore.visualization.base.svg.SvgGElement
-import jetbrains.datalore.visualization.base.svg.SvgNode
-import jetbrains.datalore.visualization.base.svg.SvgRectElement
-import jetbrains.datalore.visualization.base.svg.event.SvgEventHandler
-import jetbrains.datalore.visualization.base.svg.event.SvgEventSpec
-import jetbrains.datalore.visualization.plot.base.CoordinateSystem
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.HorizontalAnchor
-import jetbrains.datalore.visualization.plot.base.render.svg.TextLabel.VerticalAnchor
+import jetbrains.datalore.vis.canvasFigure.CanvasFigure
+import jetbrains.datalore.vis.svg.SvgElement
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgNode
+import jetbrains.datalore.vis.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.event.SvgEventHandler
+import jetbrains.datalore.vis.svg.event.SvgEventSpec
 import mu.KotlinLogging
 
 abstract class Plot(private val theme: Theme) : SvgComponent() {
@@ -35,7 +35,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     private val myPreferredSize = ValueProperty(jetbrains.datalore.plot.builder.Plot.Companion.DEF_PLOT_SIZE)
     private val myLaidOutSize = ValueProperty(DoubleVector.ZERO)
     private val myTooltipHelper = jetbrains.datalore.plot.builder.PlotTooltipHelper()
-    private val myCanvasFigures = ArrayList<CanvasFigure>()
+    private val myLiveMapFigures = ArrayList<CanvasFigure>()
 
     internal val mouseEventPeer = jetbrains.datalore.plot.builder.event.MouseEventPeer()
 
@@ -57,10 +57,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     abstract val isInteractionsEnabled: Boolean
 
-    protected abstract val isCanvasEnabled: Boolean
-
-    internal val tileCanvasFigures: List<CanvasFigure>
-        get() = myCanvasFigures
+    internal val liveMapFigures: List<CanvasFigure>
+        get() = myLiveMapFigures
 
     internal fun preferredSize(): WritableProperty<DoubleVector> {
         return myPreferredSize
@@ -120,7 +118,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         reg(object : Registration() {
             override fun doRemove() {
                 myTooltipHelper.removeAllTileInfos()
-                myCanvasFigures.clear()
+                myLiveMapFigures.clear()
             }
         })
     }
@@ -161,7 +159,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             jetbrains.datalore.plot.builder.PlotTile(tileLayers, xScale, yScale, tilesOrigin, tileInfo, coord, theme)
         tile.setShowAxis(isAxisEnabled)
         tile.debugDrawing().set(jetbrains.datalore.plot.builder.Plot.Companion.DEBUG_DRAWING)
-        tile.setUseCanvas(isCanvasEnabled)
 
         return tile
     }
@@ -207,7 +204,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     }
 
     private fun onMouseMove(e: SvgElement, message: String) {
-        e.addEventHandler(SvgEventSpec.MOUSE_MOVE, object : SvgEventHandler<Event> {
+        e.addEventHandler(SvgEventSpec.MOUSE_MOVE, object :
+            SvgEventHandler<Event> {
             override fun handle(node: SvgNode, e: Event) {
                 println(message)
             }
@@ -320,7 +318,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
             add(tile)
 
-            myCanvasFigures.addAll(tile.canvasFigures)
+            tile.liveMapFigure?.let(myLiveMapFigures::add)
 
             val realGeomBounds = tileInfo.geomBounds.add(tilesOrigin.add(tileInfo.plotOffset))
             myTooltipHelper.addTileInfo(realGeomBounds, tile.targetLocators)

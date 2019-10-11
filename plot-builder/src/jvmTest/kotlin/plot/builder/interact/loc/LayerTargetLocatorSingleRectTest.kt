@@ -1,6 +1,9 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.inside
@@ -8,9 +11,6 @@ import jetbrains.datalore.plot.builder.interact.TestUtil.outsideX
 import jetbrains.datalore.plot.builder.interact.TestUtil.outsideXY
 import jetbrains.datalore.plot.builder.interact.TestUtil.outsideY
 import jetbrains.datalore.plot.builder.interact.TestUtil.rectTarget
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupStrategy
 import kotlin.test.Test
 
 

@@ -1,0 +1,22 @@
+package jetbrains.datalore.plotDemo.plotConfig
+
+import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
+import jetbrains.datalore.plotDemo.model.plotConfig.BarAndLine
+import jetbrains.datalore.vis.demoUtils.jfx.SceneMapperDemoFactory
+
+object BarAndLineSceneMapper {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        with(BarAndLine()) {
+            @Suppress("UNCHECKED_CAST")
+            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
+            PlotConfigDemoUtil.show(
+                "Bar & Line plot",
+                plotSpecList,
+                SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
+                demoComponentSize
+            )
+        }
+    }
+}
+

@@ -2,19 +2,20 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.GeomTarget
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.interact.HitShape.Kind.*
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker
-import jetbrains.datalore.visualization.plot.base.GeomKind
-import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
-import jetbrains.datalore.visualization.plot.base.interact.GeomTarget
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.visualization.plot.base.interact.HitShape.Kind.*
 import kotlin.math.max
 
 internal class LayerTargetLocator(
-        private val geomKind: GeomKind,
-        lookupSpec: GeomTargetLocator.LookupSpec,
-        private val contextualMapping: ContextualMapping,
-        targetPrototypes: List<jetbrains.datalore.plot.builder.interact.loc.TargetPrototype>) : GeomTargetLocator {
+    private val geomKind: GeomKind,
+    lookupSpec: GeomTargetLocator.LookupSpec,
+    private val contextualMapping: ContextualMapping,
+    targetPrototypes: List<jetbrains.datalore.plot.builder.interact.loc.TargetPrototype>) :
+    GeomTargetLocator {
 
     private val myTargets = ArrayList<jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Target>()
     private val myTargetDetector: jetbrains.datalore.plot.builder.interact.loc.TargetDetector =

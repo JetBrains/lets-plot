@@ -1,12 +1,12 @@
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.visualization.plot.base.*
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.base.geom.LiveMapProvider
-import jetbrains.datalore.visualization.plot.base.interact.ContextualMapping
-import jetbrains.datalore.visualization.plot.base.interact.GeomTargetLocator.LookupSpec
-import jetbrains.datalore.visualization.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.visualization.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.base.geom.LiveMapProvider
+import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 
 interface GeomLayer {
     val dataFrame: DataFrame
@@ -23,7 +23,7 @@ interface GeomLayer {
 
     val aestheticsDefaults: AestheticsDefaults
 
-    val isLivemap: Boolean
+    val isLiveMap: Boolean
 
     val isLegendDisabled: Boolean
 

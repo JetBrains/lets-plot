@@ -1,12 +1,12 @@
 package jetbrains.datalore.plot.builder.assemble.geom
 
-import jetbrains.datalore.visualization.plot.base.Aes
-import jetbrains.datalore.visualization.plot.base.Geom
-import jetbrains.datalore.visualization.plot.base.GeomKind
-import jetbrains.datalore.visualization.plot.base.GeomMeta
-import jetbrains.datalore.visualization.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.visualization.plot.base.geom.*
-import jetbrains.datalore.visualization.plot.base.livemap.LivemapConstants
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Geom
+import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomMeta
+import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.base.geom.*
+import jetbrains.datalore.plot.config.LiveMapOptions
 
 abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 
@@ -83,8 +83,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 //            return this
 //        }
 
-        internal fun build(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return object : jetbrains.datalore.plot.builder.assemble.geom.GeomProvider(myKind) {
+        internal fun build(): GeomProvider {
+            return object : GeomProvider(myKind) {
 
 //                override val autoMappedAes: List<Aes<*>>
 //                    get() = myAutoMappedAes ?: super.autoMappedAes
@@ -129,12 +129,12 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 
     companion object {
 
-        fun point(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.Companion.point { PointGeom() }
+        fun point(): GeomProvider {
+            return point { PointGeom() }
         }
 
-        fun point(supplier: () -> Geom): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun point(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.POINT,
 //                PointGeom.RENDERS,
                 AestheticsDefaults.point(),
@@ -146,12 +146,12 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun path(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.Companion.path { PathGeom() }
+        fun path(): GeomProvider {
+            return path { PathGeom() }
         }
 
-        fun path(supplier: () -> Geom): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun path(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.PATH,
 //                PathGeom.RENDERS,
                 AestheticsDefaults.path(),
@@ -163,8 +163,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun line(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun line(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.LINE,
 //                LineGeom.RENDERS,
                 AestheticsDefaults.line(),
@@ -175,8 +175,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun smooth(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun smooth(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.SMOOTH,
 //                SmoothGeom.RENDERS,
                 AestheticsDefaults.smooth(),
@@ -187,8 +187,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun bar(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun bar(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.BAR,
 //                BarGeom.RENDERS,
                 AestheticsDefaults.bar(),
@@ -200,8 +200,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun histogram(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun histogram(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.HISTOGRAM,
 //                HistogramGeom.RENDERS,
                 AestheticsDefaults.histogram(),
@@ -212,8 +212,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun tile(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun tile(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.TILE,
 //                TileGeom.RENDERS,
                 AestheticsDefaults.tile(),
@@ -225,8 +225,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun errorBar(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun errorBar(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.ERROR_BAR,
 //                ErrorBarGeom.RENDERS,
                 AestheticsDefaults.errorBar(),
@@ -236,8 +236,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun contour(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun contour(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.CONTOUR,
 //                ContourGeom.RENDERS,
                 AestheticsDefaults.contour(),
@@ -248,8 +248,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun contourf(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun contourf(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.CONTOURF,
 //                ContourfGeom.RENDERS,
                 AestheticsDefaults.contourf(),
@@ -260,8 +260,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun polygon(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun polygon(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.POLYGON,
 //                PolygonGeom.RENDERS,
                 AestheticsDefaults.polygon(),
@@ -271,8 +271,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun map(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun map(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.MAP,
 //                MapGeom.RENDERS,
                 AestheticsDefaults.map(),
@@ -283,8 +283,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun abline(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun abline(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.AB_LINE,
 //                ABLineGeom.RENDERS,
                 AestheticsDefaults.abline(),
@@ -294,8 +294,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun hline(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun hline(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.H_LINE,
 //                HLineGeom.RENDERS,
                 AestheticsDefaults.hline(),
@@ -305,8 +305,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun vline(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun vline(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.V_LINE,
 //                VLineGeom.RENDERS,
                 AestheticsDefaults.vline(),
@@ -316,8 +316,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun boxplot(supplier: () -> Geom): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun boxplot(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.BOX_PLOT,
 //                BoxplotGeom.RENDERS,
                 AestheticsDefaults.boxplot(),
@@ -328,19 +328,20 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun livemap(supplier: () -> Geom, displayMode: LivemapConstants.DisplayMode, scaled: Boolean): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun livemap(
+            options: LiveMapOptions
+        ): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.LIVE_MAP,
 //                LivemapGeom.RENDERS,
-                AestheticsDefaults.livemap(displayMode, scaled),
+                AestheticsDefaults.livemap(options.displayMode, options.scaled),
                 LiveMapGeom.HANDLES_GROUPS,
-                supplier
-            )
-                .build()
+                myGeomSupplier = { LiveMapGeom(options.displayMode) }
+            ).build()
         }
 
-        fun ribbon(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun ribbon(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.RIBBON,
 //                RibbonGeom.RENDERS,
                 AestheticsDefaults.ribbon(),
@@ -350,8 +351,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun area(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun area(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.AREA,
 //                AreaGeom.RENDERS,
                 AestheticsDefaults.area(),
@@ -361,8 +362,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun density(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun density(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.DENSITY,
 //                DensityGeom.RENDERS,
                 AestheticsDefaults.density(),
@@ -372,8 +373,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun density2d(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun density2d(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.DENSITY2D,
 //                Density2dGeom.RENDERS,
                 AestheticsDefaults.density2d(),
@@ -384,8 +385,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun density2df(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun density2df(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.DENSITY2DF,
 //                Density2dfGeom.RENDERS,
                 AestheticsDefaults.density2df(),
@@ -397,8 +398,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
         }
 
         //        fun jitter(pos: PosProvider): GeomProvider {
-        fun jitter(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun jitter(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.JITTER,
 //                JitterGeom.RENDERS,
                 AestheticsDefaults.jitter(),
@@ -409,8 +410,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun freqpoly(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun freqpoly(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.FREQPOLY,
 //                FreqpolyGeom.RENDERS,
                 AestheticsDefaults.freqpoly(),
@@ -420,8 +421,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun step(supplier: () -> Geom): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun step(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.STEP,
 //                StepGeom.RENDERS,
                 AestheticsDefaults.step(),
@@ -432,8 +433,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun rect(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun rect(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.RECT,
 //                RectGeom.RENDERS,
                 AestheticsDefaults.rect(),
@@ -444,8 +445,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun segment(supplier: () -> Geom): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun segment(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.SEGMENT,
 //                SegmentGeom.RENDERS,
                 AestheticsDefaults.segment(),
@@ -456,8 +457,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun text(supplier: () -> Geom): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun text(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.TEXT,
 //                TextGeom.RENDERS,
                 AestheticsDefaults.text(),
@@ -468,8 +469,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun raster(): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun raster(): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.RASTER,
 //                RasterGeom.RENDERS,
                 AestheticsDefaults.raster(),
@@ -479,8 +480,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 .build()
         }
 
-        fun image(supplier: () -> Geom): jetbrains.datalore.plot.builder.assemble.geom.GeomProvider {
-            return jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.GeomProviderBuilder(
+        fun image(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
                 GeomKind.IMAGE,
 //                ImageGeom.RENDERS,
                 AestheticsDefaults.image(),

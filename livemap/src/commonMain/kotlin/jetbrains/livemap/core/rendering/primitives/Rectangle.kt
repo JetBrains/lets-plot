@@ -2,7 +2,7 @@ package jetbrains.livemap.core.rendering.primitives
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Context2d
 
 class Rectangle : RenderBox {
     override val origin get() = rect.origin

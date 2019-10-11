@@ -2,10 +2,10 @@ package jetbrains.datalore.plot.builder.layout.axis
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.visualization.plot.base.scale.Mappers
 
 abstract class AxisLayouter protected constructor(val orientation: jetbrains.datalore.plot.builder.guide.Orientation, val domainRange: ClosedRange<Double>, val labelsLayout: AxisLabelsLayout) {
 

@@ -2,11 +2,11 @@ package jetbrains.livemap.canvascontrols
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.visualization.base.canvas.AnimationProvider.AnimationEventHandler
-import jetbrains.datalore.visualization.base.canvas.CanvasControl
-import jetbrains.datalore.visualization.base.canvas.CanvasControlUtil.setAnimationHandler
-import jetbrains.datalore.visualization.base.canvas.Context2d
-import jetbrains.datalore.visualization.base.canvas.SingleCanvasControl
+import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
+import jetbrains.datalore.vis.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
+import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.SingleCanvasControl
 import kotlin.math.PI
 
 internal class SpinnerContent : CanvasContent {

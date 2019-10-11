@@ -1,10 +1,10 @@
 package jetbrains.datalore.plot.config.transform.encode
 
-import jetbrains.datalore.visualization.plot.base.DataFrame
-import jetbrains.datalore.visualization.plot.base.DataFrame.Variable
-import jetbrains.datalore.visualization.plot.base.data.DataFrameUtil
-import jetbrains.datalore.visualization.plot.base.data.TransformVar
-import jetbrains.datalore.visualization.plot.base.stat.Stats
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.data.TransformVar
+import jetbrains.datalore.plot.base.stat.Stats
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

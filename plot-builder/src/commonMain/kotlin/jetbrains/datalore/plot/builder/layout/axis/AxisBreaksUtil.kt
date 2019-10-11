@@ -1,10 +1,10 @@
 package jetbrains.datalore.plot.builder.layout.axis
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.visualization.plot.base.Scale
-import jetbrains.datalore.visualization.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.visualization.plot.base.scale.ScaleUtil
-import jetbrains.datalore.visualization.plot.base.scale.transform.LinearBreaksGen
+import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.BreaksGenerator
+import jetbrains.datalore.plot.base.scale.ScaleUtil
+import jetbrains.datalore.plot.base.scale.transform.LinearBreaksGen
 
 object AxisBreaksUtil {
     fun createAxisBreaksProvider(scale: Scale<Double>, axisDomain: ClosedRange<Double>): AxisBreaksProvider {

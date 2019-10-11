@@ -2,8 +2,8 @@ package jetbrains.livemap.entities.rendering
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.visualization.base.canvas.Canvas
-import jetbrains.datalore.visualization.base.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.projections.ClientPoint
 import jetbrains.livemap.projections.ClientRectangle
 
