@@ -6,7 +6,7 @@ import kotlin.math.*
 
 
 object GeoUtils {
-    internal val EARTH_RADIUS = 6378137.0
+
     internal val MIN_LONGITUDE = -180.0
     internal val MAX_LONGITUDE = 180.0
     val FULL_LONGITUDE = MAX_LONGITUDE - MIN_LONGITUDE
@@ -21,8 +21,8 @@ object GeoUtils {
 
     fun toDegrees(radians: Double): Double = radians * 180.0 / PI
 
-    fun limitLon(lat: Double): Double {
-        return max(MIN_LONGITUDE, min(lat, MAX_LONGITUDE))
+    fun limitLon(lon: Double): Double {
+        return max(MIN_LONGITUDE, min(lon, MAX_LONGITUDE))
     }
 
     fun limitLat(lat: Double): Double {

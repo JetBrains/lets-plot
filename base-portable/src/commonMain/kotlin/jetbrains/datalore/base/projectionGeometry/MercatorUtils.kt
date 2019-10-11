@@ -2,14 +2,14 @@ package jetbrains.datalore.base.projectionGeometry
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.EARTH_RADIUS
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
 import kotlin.math.*
 
 object MercatorUtils {
-    val MAX_LONGITUDE = 180.0
-    val MAX_LATITUDE = 85.0511287798
+    private const val EARTH_RADIUS = 6378137.0
+    private const val MAX_LONGITUDE = 180.0
+    private const val MAX_LATITUDE = 85.0511287798
     val VALID_LONGITUDE_RANGE = ClosedRange.closed(-MAX_LONGITUDE, MAX_LONGITUDE)
     val VALID_LATITUDE_RANGE = ClosedRange.closed(-MAX_LATITUDE, MAX_LATITUDE)
 

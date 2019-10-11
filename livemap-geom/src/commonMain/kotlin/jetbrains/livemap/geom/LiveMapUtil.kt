@@ -18,6 +18,7 @@ import jetbrains.livemap.LiveMapFactory
 object LiveMapUtil {
 
     fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
+        println("initLiveMapProvider")
         val liveMapProvider = MyLiveMapProvider(liveMapOptions)
         plotTiles
             .flatten()

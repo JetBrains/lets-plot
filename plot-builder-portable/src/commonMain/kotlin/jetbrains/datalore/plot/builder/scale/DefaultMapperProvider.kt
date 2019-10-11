@@ -11,15 +11,30 @@ import jetbrains.datalore.plot.base.Aes.Companion.FONTFACE
 import jetbrains.datalore.plot.base.Aes.Companion.FRAME
 import jetbrains.datalore.plot.base.Aes.Companion.HEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.HJUST
+import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
+import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
+import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
+import jetbrains.datalore.plot.base.Aes.Companion.X
+import jetbrains.datalore.plot.base.Aes.Companion.XEND
+import jetbrains.datalore.plot.base.Aes.Companion.XINTERCEPT
+import jetbrains.datalore.plot.base.Aes.Companion.XMAX
+import jetbrains.datalore.plot.base.Aes.Companion.XMIN
+import jetbrains.datalore.plot.base.Aes.Companion.Y
+import jetbrains.datalore.plot.base.Aes.Companion.YEND
+import jetbrains.datalore.plot.base.Aes.Companion.YINTERCEPT
+import jetbrains.datalore.plot.base.Aes.Companion.YMAX
+import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
@@ -59,14 +74,14 @@ object DefaultMapperProvider {
                 )
             }
 
-//            this.put(X, NUMERIC_IDENTITY)
-//            this.put(Y, NUMERIC_IDENTITY)
+            this.put(X, NUMERIC_IDENTITY)
+            this.put(Y, NUMERIC_IDENTITY)
 
             this.put(Z,
                 NUMERIC_IDENTITY
             )
-//            this.put(YMIN, NUMERIC_IDENTITY)
-//            this.put(YMAX, NUMERIC_IDENTITY)
+            this.put(YMIN, NUMERIC_IDENTITY)
+            this.put(YMAX, NUMERIC_IDENTITY)
             this.put(COLOR, createColor())
             this.put(FILL, createColor())
             this.put(ALPHA, AlphaMapperProvider.DEFAULT)
@@ -83,13 +98,13 @@ object DefaultMapperProvider {
             this.put(WEIGHT,
                 NUMERIC_IDENTITY
             )
-//            this.put(INTERCEPT, NUMERIC_IDENTITY)
-//            this.put(SLOPE, NUMERIC_IDENTITY)
-//            this.put(XINTERCEPT, NUMERIC_IDENTITY)
-//            this.put(YINTERCEPT, NUMERIC_IDENTITY)
-//            this.put(LOWER, NUMERIC_IDENTITY)
-//            this.put(MIDDLE, NUMERIC_IDENTITY)
-//            this.put(UPPER, NUMERIC_IDENTITY)
+            this.put(INTERCEPT, NUMERIC_IDENTITY)
+            this.put(SLOPE, NUMERIC_IDENTITY)
+            this.put(XINTERCEPT, NUMERIC_IDENTITY)
+            this.put(YINTERCEPT, NUMERIC_IDENTITY)
+            this.put(LOWER, NUMERIC_IDENTITY)
+            this.put(MIDDLE, NUMERIC_IDENTITY)
+            this.put(UPPER, NUMERIC_IDENTITY)
 
             this.put(MAP_ID, createObjectIdentityDiscrete(MAP_ID))
             this.put(FRAME, createStringIdentity(FRAME))
@@ -101,10 +116,10 @@ object DefaultMapperProvider {
                 NUMERIC_IDENTITY
             )
 
-//            this.put(XMIN, NUMERIC_IDENTITY)
-//            this.put(XMAX, NUMERIC_IDENTITY)
-//            this.put(XEND, NUMERIC_IDENTITY)
-//            this.put(YEND, NUMERIC_IDENTITY)
+            this.put(XMIN, NUMERIC_IDENTITY)
+            this.put(XMAX, NUMERIC_IDENTITY)
+            this.put(XEND, NUMERIC_IDENTITY)
+            this.put(YEND, NUMERIC_IDENTITY)
 
             this.put(LABEL, createStringIdentity(LABEL))
             this.put(FAMILY, createStringIdentity(FAMILY))
