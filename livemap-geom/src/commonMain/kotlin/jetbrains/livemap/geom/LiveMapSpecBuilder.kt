@@ -124,7 +124,7 @@ internal class LiveMapSpecBuilder {
         val mapLayers = ArrayList<MapLayer>()
         val layerProcessor = LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions.geodesic)
 
-        for (layerData in myLayers!!) {
+        for (layerData in myLayers) {
             val mapLayer = layerProcessor.createMapLayer(layerData)
             if (mapLayer != null) {
                 mapLayers.add(mapLayer)
