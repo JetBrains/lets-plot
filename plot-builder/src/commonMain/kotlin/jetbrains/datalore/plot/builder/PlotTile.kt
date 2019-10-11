@@ -9,11 +9,11 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.builder.LayerRendererUtil.createLiveMapFigure
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -63,8 +63,8 @@ internal class PlotTile(
         val geomBounds = myLayoutInfo.geomBounds
         addFacetLabels(geomBounds)
 
-        val isLiveMap = myLayers.any(GeomLayer::isLiveMap)
-        if (!isLiveMap && myShowAxis) {
+        val liveMapGeomLayer = myLayers.firstOrNull { it.isLiveMap }
+        if (liveMapGeomLayer != null && myShowAxis) {
             addAxis(geomBounds)
         }
 
@@ -96,9 +96,8 @@ internal class PlotTile(
 
         // render geoms
 
-        if (isLiveMap) {
-            // 'live map' requires all positions to be passed "as is", without mapping
-            liveMapFigure = createLiveMapFigure(myLayers, geomBounds.dimension)
+        if (liveMapGeomLayer != null) {
+            liveMapFigure = liveMapGeomLayer.createCanvasFigure(geomBounds.dimension)
 
             val rectElement = SvgRectElement(geomBounds).apply {
                 addClass(Style.PLOT_GLASS_PANE)
@@ -122,9 +121,8 @@ internal class PlotTile(
             overallNumericDomains[Aes.X] = xAxisInfo!!.axisDomain!!
             overallNumericDomains[Aes.Y] = yAxisInfo!!.axisDomain!!
 
-            val geomLayerRenderers = buildGeoms(sharedNumericMappers, overallNumericDomains, myCoord)
-            for (layerRenderer in geomLayerRenderers) {
-                val layerComponent = layerRenderer as SvgComponent
+            val geomLayerComponents = buildGeoms(sharedNumericMappers, overallNumericDomains, myCoord)
+            for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
                 add(layerComponent)
             }
@@ -198,9 +196,9 @@ internal class PlotTile(
         sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
         overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>,
         coord: CoordinateSystem
-    ): List<SvgLayerRenderer> {
+    ): List<SvgComponent> {
 
-        val layerRenderers = ArrayList<SvgLayerRenderer>()
+        val layerRenderers = ArrayList<SvgComponent>()
         for (layer in myLayers) {
             val rendererData = LayerRendererUtil.createLayerRendererData(
                 layer,
@@ -241,6 +239,10 @@ internal class PlotTile(
     }
 
     companion object {
-        private val FACET_LABEL_HEIGHT = 30.0
+        private const val FACET_LABEL_HEIGHT = 30.0
     }
+}
+
+private fun GeomLayer.createCanvasFigure(dimension: DoubleVector): CanvasFigure {
+    return (geom as LiveMapGeom).createCanvasFigure(dimension)
 }

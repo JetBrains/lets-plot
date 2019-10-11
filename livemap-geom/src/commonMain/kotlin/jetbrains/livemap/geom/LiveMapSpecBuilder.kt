@@ -6,7 +6,6 @@ import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.BBOX_CALCULATOR
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.convertToGeoRectangle
 import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.geom.LiveMapLayerData
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.POINT_X
@@ -135,14 +134,14 @@ internal class LiveMapSpecBuilder {
     }
 
     companion object {
-        private val REGION_TYPE = "type"
-        private val REGION_DATA = "data"
-        private val REGION_TYPE_NAME = "region_name"
-        private val REGION_TYPE_IDS = "region_ids"
-        private val REGION_TYPE_COORDINATES = "coordinates"
-        private val REGION_TYPE_DATAFRAME = "data_frame"
-        private val DEFAULT_SHOW_TILES = true
-        private val DEFAULT_LOOP_Y = false
+        private const val REGION_TYPE = "type"
+        private const val REGION_DATA = "data"
+        private const val REGION_TYPE_NAME = "region_name"
+        private const val REGION_TYPE_IDS = "region_ids"
+        private const val REGION_TYPE_COORDINATES = "coordinates"
+        private const val REGION_TYPE_DATAFRAME = "data_frame"
+        private const val DEFAULT_SHOW_TILES = true
+        private const val DEFAULT_LOOP_Y = false
         private val CYLINDRICAL_PROJECTIONS = setOf(
             ProjectionType.GEOGRAPHIC,
             ProjectionType.MERCATOR

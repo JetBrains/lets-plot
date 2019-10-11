@@ -1,4 +1,4 @@
-package jetbrains.datalore.plot.base.geom
+package jetbrains.livemap.geom
 
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.Geom

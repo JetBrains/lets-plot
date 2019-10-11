@@ -1,46 +1,10 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.LiveMapGeom
-import jetbrains.datalore.plot.base.geom.LiveMapLayerData
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 
-internal object LayerRendererUtil {
-    fun createLiveMapFigure(
-        layers: List<GeomLayer>,
-        dimension: DoubleVector
-    ): CanvasFigure {
-
-        require(layers.isNotEmpty())
-        require(layers.first().isLiveMap) { "geom_livemap have to be the very first geom after ggplot()"}
-
-        // liveMap uses raw positions, so no mappings needed
-        val newLiveMapLayerRendererData = { layer: GeomLayer -> createLayerRendererData(layer, emptyMap(), emptyMap()) }
-
-        val liveMapRendererData = newLiveMapLayerRendererData(layers.first())
-        val layersRendererData = layers
-            .drop(1) // skip geom_livemap
-            .map(newLiveMapLayerRendererData)
-            .map { with(it) {
-                LiveMapLayerData(
-                    geom,
-                    geomKind,
-                    aesthetics,
-                    dataAccess
-                )
-            } }
-
-
-        return (liveMapRendererData.geom as LiveMapGeom).createCanvasFigure(
-            liveMapRendererData.aesthetics,
-            liveMapRendererData.dataAccess,
-            dimension,
-            layersRendererData
-        )
-    }
+object LayerRendererUtil {
 
     fun createLayerRendererData(layer: GeomLayer,
                                 sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>,
@@ -65,7 +29,7 @@ internal object LayerRendererUtil {
         )
     }
 
-    internal class LayerRendererData(
+    class LayerRendererData(
         val geom: Geom,
         val geomKind: GeomKind,
         val aesthetics: Aesthetics,
