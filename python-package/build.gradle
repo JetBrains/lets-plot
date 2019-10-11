@@ -23,7 +23,7 @@ if (project.properties['python_include_path'] != null) {
         task localInstallPythonPackage(type:Exec) {
             workingDir "${project.buildDir}/dist"
 
-            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/pip3", 'install', '--no-index', '--find-links=./', 'datalore-plot'
+            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/pip", 'install', '--no-index', '--find-links=./', 'datalore-plot'
         }
 
         updateJs.dependsOn(':js-package:build')
