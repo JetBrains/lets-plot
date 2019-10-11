@@ -7,6 +7,7 @@ import jetbrains.datalore.base.projectionGeometry.GeoUtils.BBOX_CALCULATOR
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.convertToGeoRectangle
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y
@@ -14,7 +15,6 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMAX
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMIN
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMAX
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
-import jetbrains.datalore.plot.config.LiveMapOptions
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService

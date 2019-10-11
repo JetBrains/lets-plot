@@ -5,9 +5,9 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
+import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil
-import jetbrains.datalore.plot.config.LiveMapOptions
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapCanvasFigure

@@ -2,15 +2,15 @@ package jetbrains.livemap.geom
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.livemap.geom.MultiDataPointHelper.MultiDataPoint
-import jetbrains.livemap.geom.MultiDataPointHelper.SortingMode
-import jetbrains.datalore.plot.config.LiveMapOptions
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
+import jetbrains.livemap.geom.MultiDataPointHelper.MultiDataPoint
+import jetbrains.livemap.geom.MultiDataPointHelper.SortingMode
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.mapobjects.MapObject
