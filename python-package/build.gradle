@@ -5,8 +5,8 @@ plugins {
 def PYTHON_BIN_PATH_PROPERTY = "python_bin_path"
 def PYTHON_REPOSITORY_URL_PROPERTY = "python_repository_url"
 
-if (project.properties['python_include_path'] != null) {
-    if (project.properties[PYTHON_BIN_PATH_PROPERTY] != null) {
+if (hasProperty('python_include_path')) {
+    if (hasProperty(PYTHON_BIN_PATH_PROPERTY)) {
 
 
         task updateJs(type:Exec) {
@@ -37,7 +37,7 @@ if (project.properties['python_include_path'] != null) {
         task publishPythonPackage(type:Exec) {
             workingDir "${project.buildDir}/dist"
 
-            if (project.properties[PYTHON_REPOSITORY_URL_PROPERTY] != null) {
+            if (hasProperty(PYTHON_REPOSITORY_URL_PROPERTY)) {
                 commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/twine",
                         "upload",
                         "--repository-url",
