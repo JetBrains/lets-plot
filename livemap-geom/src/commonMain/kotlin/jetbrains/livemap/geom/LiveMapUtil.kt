@@ -16,7 +16,6 @@ import jetbrains.livemap.LiveMapFactory
 object LiveMapUtil {
 
     fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
-        plotTiles.map {  }
         plotTiles.forEach { tileLayers ->
             tileLayers
                 .firstOrNull { it.isLiveMap }
