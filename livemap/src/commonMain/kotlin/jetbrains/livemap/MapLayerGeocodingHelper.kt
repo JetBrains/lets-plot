@@ -46,15 +46,6 @@ internal class MapLayerGeocodingHelper(
         return mapObject.mapId != null
     }
 
-    private fun isMapIdWithOsmId(mapObject: MapObject): Boolean {
-        return try {
-            mapObject.mapId?.toInt() ?: error("")
-            true
-        } catch (e: NumberFormatException) {
-            false
-        }
-    }
-
     private fun <T> getGeocodingDataMap(
         features: List<GeocodedFeature>,
         getData: (GeocodedFeature) -> T
@@ -79,12 +70,16 @@ internal class MapLayerGeocodingHelper(
     }
 
     init {
-        myNeedLocation = needLocations && isMapLayerKindEnableLocation(myMapLayer.kind)
+        require(myMapLayer.mapObjects.isNotEmpty())
 
-        myMapIdSpecified = allMapObjectMatch(::isMapIdSet)
-        myOsmIdInsideMapIdSpecified = allMapObjectMatch(::isMapIdWithOsmId)
-        myPointSpecified = allMapObjectMatch(::isMapPointObject)
-        myGeometrySpecified = allMapObjectMatch(::isMapObjectContainsGeometry)
+        with(myMapLayer) {
+            myNeedLocation = needLocations && isMapLayerKindEnableLocation(kind)
+
+            myMapIdSpecified = mapObjects.all(::isMapIdSet)
+            myOsmIdInsideMapIdSpecified = mapObjects.all { !isMapIdWithOsmId(it.mapId) }
+            myPointSpecified = mapObjects.all(::isMapPointObject)
+            myGeometrySpecified = mapObjects.all(::isMapObjectContainsGeometry)
+        }
     }
 
     fun geocodeLayerData(): Async<List<Rect<World>>> {
@@ -272,5 +267,22 @@ internal class MapLayerGeocodingHelper(
 
     private fun calculatePointBBoxes(v: MapPointGeometry): List<Rect<World>> {
         return listOf(Rect(myMapProjection.project(v.point), Vec(0,0)))
+    }
+
+    companion object {
+        fun isMapIdWithOsmId(mapId: String?): Boolean {
+            return try {
+                mapId?.toInt() != null
+
+//                if (mapId == null) {
+//                    false
+//                } else {
+//                    mapId.toInt()
+//                    true
+//                }
+            } catch (e: NumberFormatException) {
+                false
+            }
+        }
     }
 }
