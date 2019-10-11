@@ -1,9 +1,9 @@
 package jetbrains.livemap.demo
 
-import jetbrains.datalore.vis.canvas.CanvasControl
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.LiveMapSpec
 
-class EmptyLiveMapDemoModel(canvasControl: CanvasControl): DemoModelBase(canvasControl) {
+class EmptyLiveMapDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapSpec {
         return basicLiveMap {  }
     }

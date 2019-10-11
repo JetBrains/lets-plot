@@ -73,6 +73,10 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
         myRoot.children.remove((canvas as JavafxCanvas).nativeCanvas)
     }
 
+    override fun <T> schedule(f: () -> T) {
+        JavafxCanvasUtil.runInJavafxThread(f)
+    }
+
     private class JavafxEventPeer(node: Node) : EventPeer<MouseEventSpec, JfxMouseEvent>(MouseEventSpec::class) {
 
         init {

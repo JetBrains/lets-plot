@@ -1,16 +1,16 @@
 package jetbrains.livemap.demo
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import kotlin.browser.document
 
-class DemoBaseJs(private val demoModelProvider: (CanvasControl) -> DemoModelBase) {
+class DemoBaseJs(private val demoModelProvider: (DoubleVector) -> DemoModelBase) {
     val size: Vector get() = Vector(800, 600)
 
     fun show() {
         val canvasControl = DomCanvasControl(size)
-        demoModelProvider(canvasControl).show()
+        demoModelProvider(size.toDoubleVector()).show(canvasControl)
 
         document.getElementById(parentNodeId)
             ?.appendChild(canvasControl.rootElement)

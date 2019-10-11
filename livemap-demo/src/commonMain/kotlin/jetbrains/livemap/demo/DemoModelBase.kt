@@ -1,5 +1,6 @@
 package jetbrains.livemap.demo
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.gis.tileprotocol.TileService
@@ -10,8 +11,8 @@ import jetbrains.livemap.api.*
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.projections.ProjectionType
 
-abstract class DemoModelBase(private val canvasControl: CanvasControl) {
-    fun show(): Registration {
+abstract class DemoModelBase(private val dimension: DoubleVector) {
+    fun show(canvasControl: CanvasControl): Registration {
         val liveMap = LiveMapFactory(createLiveMapSpec()).createLiveMap()
         val liveMapPresenter = LiveMapPresenter()
 
@@ -23,7 +24,7 @@ abstract class DemoModelBase(private val canvasControl: CanvasControl) {
 
     internal fun basicLiveMap(block: LiveMapBuilder.() -> Unit): LiveMapSpec {
         return liveMapConfig {
-            size = canvasControl.size.toDoubleVector()
+            size = dimension
 
             tileService = internalTiles {
                 theme = TileService.Theme.COLOR

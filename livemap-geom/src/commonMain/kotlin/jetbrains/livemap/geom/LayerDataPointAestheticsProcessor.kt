@@ -1,8 +1,8 @@
 package jetbrains.livemap.geom
 
+import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
-import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.projections.MapProjection
 

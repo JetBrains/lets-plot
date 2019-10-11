@@ -20,8 +20,7 @@ internal object JavafxCanvasUtil {
     fun takeSnapshotImage(canvas: Node): WritableImage {
         val params = SnapshotParameters()
         params.fill = Color.TRANSPARENT
-        return canvas.snapshot(params,
-                null)
+        return canvas.snapshot(params, null)
     }
 
     fun asyncTakeSnapshotImage(canvas: Canvas): Async<WritableImage> {
@@ -42,11 +41,15 @@ internal object JavafxCanvasUtil {
         return async
     }
 
-    private fun runInJavafxThread(runnable: Runnable) {
+    internal fun runInJavafxThread(runnable: Runnable) {
+        runInJavafxThread { runnable.run() }
+    }
+
+    internal fun <T> runInJavafxThread(runnable: () -> T) {
         if (Platform.isFxApplicationThread()) {
-            runnable.run()
+            runnable()
         } else {
-            Platform.runLater(runnable)
+            Platform.runLater{ runnable() }
         }
     }
 

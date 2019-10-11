@@ -78,6 +78,10 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         rootElement.removeChild((canvas as DomCanvas).canvasElement)
     }
 
+    override fun <T> schedule(f: () -> T) {
+        f()
+    }
+
     private class DomEventPeer (private val myRootElement: Node) :
         EventPeer<MouseEventSpec, W3cMouseEvent>(MouseEventSpec::class) {
         private var myButtonPressed = false

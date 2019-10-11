@@ -1,7 +1,7 @@
 package jetbrains.livemap.demo
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.api.layers
 import jetbrains.livemap.api.point
@@ -12,7 +12,7 @@ import jetbrains.livemap.demo.model.Cities.NEW_YORK
 import jetbrains.livemap.demo.model.Cities.SPB
 import jetbrains.livemap.model.coord
 
-class PointsDemoModel(canvasControl: CanvasControl) : DemoModelBase(canvasControl) {
+class PointsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
     override fun createLiveMapSpec(): LiveMapSpec {
         return basicLiveMap {

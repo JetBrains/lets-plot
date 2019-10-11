@@ -7,19 +7,20 @@ import javafx.stage.Stage
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 
-class SimpleRawJfxDemo : Application() {
+class FeaturesRawJfxDemo : Application() {
 
     override fun start(theStage: Stage) {
-        val javafxCanvasControl = JavafxCanvasControl(Vector(800, 600), 1.0)
-        EmptyLiveMapDemoModel(javafxCanvasControl).show()
+        val dim = Vector(800, 600)
+        val javafxCanvasControl = JavafxCanvasControl(dim, 1.0)
+        FeaturesDemoModel(dim.toDoubleVector()).show(javafxCanvasControl)
 
         theStage.title = "Javafx Livemap Demo"
         theStage.scene = Scene(
             Group().apply {
                 children.add(javafxCanvasControl.javafxRoot)
             },
-            800.0,
-            600.0
+            dim.x.toDouble(),
+            dim.y.toDouble()
         )
         theStage.show()
     }
@@ -27,7 +28,7 @@ class SimpleRawJfxDemo : Application() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            launch(SimpleRawJfxDemo::class.java, *args)
+            launch(FeaturesRawJfxDemo::class.java, *args)
         }
     }
 }

@@ -20,6 +20,7 @@ import java.awt.event.MouseListener
 import java.awt.event.MouseMotionListener
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 import java.awt.event.MouseEvent as AwtMouseEvent
 
 class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactory, size: Vector) :
@@ -69,6 +70,14 @@ class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactor
 
     override fun removeChild(canvas: Canvas) {
         myGraphicsCanvasControl.removeChild(canvas)
+    }
+
+    override fun <T> schedule(f: () -> T) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            f()
+        } else {
+            SwingUtilities.invokeLater { f() }
+        }
     }
 
     private class AwtEventPeer(component: Component) :
