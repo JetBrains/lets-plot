@@ -1,6 +1,5 @@
 package jetbrains.livemap.geom
 
-import jetbrains.datalore.plot.base.geom.LiveMapLayerData
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.datalore.plot.base.GeomKind.*

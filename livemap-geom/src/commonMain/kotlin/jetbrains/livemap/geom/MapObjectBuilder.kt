@@ -2,27 +2,25 @@ package jetbrains.livemap.geom
 
 import jetbrains.datalore.base.gcommon.collect.Lists.transform
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.limitLat
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.limitLon
-import jetbrains.datalore.base.projectionGeometry.LonLat
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes.Companion.COLOR
-import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
-import jetbrains.gis.geoprotocol.Geometry
-import jetbrains.livemap.mapobjects.MapLayerKind
+import jetbrains.datalore.plot.builder.scale.DefaultNaValue
+import jetbrains.gis.geoprotocol.TypedGeometry
+import jetbrains.livemap.MapWidgetUtil
+import jetbrains.livemap.mapobjects.*
 import jetbrains.livemap.mapobjects.MapLayerKind.*
-import jetbrains.livemap.mapobjects.MapObject
-import jetbrains.livemap.mapobjects.MapPoint
 import jetbrains.livemap.projections.MapProjection
 import kotlin.math.ceil
 
@@ -35,7 +33,7 @@ internal class MapObjectBuilder {
     private var myValueArray: List<Double> = emptyList()
     private var myColorArray: List<Color> = emptyList()
     private var myStrokeWidth: Double? = null
-    var geometry: Geometry? = null
+    var geometry: TypedGeometry<LonLat>? = null
         private set
     var point: Vec<LonLat>? = null
         private set
@@ -184,10 +182,10 @@ internal class MapObjectBuilder {
 
     fun build(consumer: (MapObject) -> Unit) {
         when (myLayerKind) {
-            //POLYGON -> consumer(MapJsObjectUtil.createJsPolygon(this))
-            //PATH -> consumer(MapJsObjectUtil.createJsPath(this))
+            POLYGON -> consumer(createPolygon())
+            PATH -> consumer(createPath())
             POINT -> consumer(createPoint())
-            //PIE -> MapJsObjectUtil.splitMapPieChart(this).forEach(consumer)
+            //PIE -> splitMapPieChart(createChartSource()).forEach(consumer)
             //BAR -> MapJsObjectUtil.splitMapBarChart(this, myMaxAbsValue).forEach(consumer)
             //HEATMAP -> consumer(MapJsObjectUtil.createJsHeatmap(this))
             //TEXT -> consumer(MapJsObjectUtil.createJsText(this))
@@ -211,6 +209,53 @@ internal class MapObjectBuilder {
             strokeWidth
         )
     }
+
+    private fun createPolygon(): MapPolygon {
+        return MapPolygon(
+            index,
+            mapId,
+            regionId,
+            lineDash,
+            strokeColor,
+            strokeWidth,
+            fillColor,
+            geometry
+        )
+    }
+
+    private fun createPath(): MapPath {
+        return MapPath(
+            index,
+            mapId,
+            regionId,
+
+            geometry!!,
+
+            animation,
+            speed,
+
+            flow,
+            lineDash,
+            strokeColor,
+            strokeWidth
+        )
+    }
+
+//    private fun createChartSource(): ChartSource {
+//        return ChartSource().apply {
+//            lon = point!!.x
+//            lat = point!!.y
+//
+//            radius = this@MapObjectBuilder.radius
+//
+//            strokeColor = this@MapObjectBuilder.strokeColor
+//            strokeWidth = this@MapObjectBuilder.strokeWidth
+//
+//            indices = this@MapObjectBuilder.indicies
+//            values = this@MapObjectBuilder.myValueArray
+//            colors = this@MapObjectBuilder.colorArray
+//        }
+//    }
 
     private fun hjust(hjust: Any): Double {
         return when (GeomHelper.textLabelAnchor(hjust, GeomHelper.HJUST_MAP, MIDDLE)) {
@@ -240,24 +285,27 @@ internal class MapObjectBuilder {
         return this
     }
 
-//    fun setGeometryData(points: List<DoubleVector>, isPolygon: Boolean, isGeodesic: Boolean): MapObjectBuilder {
-//        val coordinates = points.map { limitCoord(it) }
-//
-//        val multipolygon: MultiPolygon<LonLat>
-//        if (isPolygon) {
-//            multipolygon = GeomUtil.createMultiPolygon(coordinates)
-//        } else {
-//            val polygons = ArrayList<Polygon<*>>()
-//            MapWidgetUtil
-//                .splitPathByAntiMeridian(if (isGeodesic) MapWidgetUtil.createArcPath(coordinates) else coordinates)
-//                .forEach { path -> polygons.add(Polygon.create(Ring(path))) }
-//            multipolygon = MultiPolygon(polygons)
-//        }
-//        geometry = Geometry.create(transformMultipolygon(multipolygon, myMapProjection::project))
-//        return this
-//    }
+    fun setGeometryData(points: List<DoubleVector>, isPolygon: Boolean, isGeodesic: Boolean): MapObjectBuilder {
+        val coordinates = points.map { limitCoord(it) }
 
-    fun setArrowSpec(arrowSpec: ArrowSpec): MapObjectBuilder {
+        val multipolygon = if (isPolygon) {
+            GeomUtil.createMultiPolygon(coordinates)
+        } else {
+            MapWidgetUtil
+                .splitPathByAntiMeridian(if (isGeodesic) MapWidgetUtil.createArcPath(coordinates) else coordinates)
+                .map { path -> Polygon(listOf(Ring(path.map { it.toVec<Generic>() }))) }
+                .run(::MultiPolygon)
+        }
+
+        geometry = TypedGeometry.create(multipolygon.reinterpret())
+        return this
+    }
+
+    private fun <T> DoubleVector.toVec(): Vec<T> {
+        return explicitVec(x, y)
+    }
+
+    fun setArrowSpec(arrowSpec: ArrowSpec?): MapObjectBuilder {
         myArrowSpec = arrowSpec
         return this
     }

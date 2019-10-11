@@ -1,9 +1,7 @@
 package jetbrains.livemap.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.LonLat
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.Geom
@@ -126,11 +124,12 @@ internal class DataPointsConverter(
             consumer: (MapObject) -> Unit
         ) {
             log(p)
-//            MapObjectBuilder(p, getRender(isPolygon), myMapProjection)
-//                .setGeometryData(points, isPolygon, myGeodesic)
-//                .setArrowSpec(myArrowSpec)
-//                .setAnimation(myAnimation)
-//                .build(consumer)
+
+            MapObjectBuilder(p, getRender(isPolygon), myMapProjection)
+                .setGeometryData(points, isPolygon, myGeodesic)
+                .setArrowSpec(myArrowSpec)
+                .setAnimation(myAnimation)
+                .build(consumer)
         }
 
         private fun getRender(isPolygon: Boolean): MapLayerKind {
