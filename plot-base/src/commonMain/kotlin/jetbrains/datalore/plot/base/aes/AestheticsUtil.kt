@@ -45,10 +45,10 @@ object AestheticsUtil {
         // else, override with color's alpha
     }
 
-//    fun strokeWidth(p: DataPointAesthetics): Double {
-//        // aes Units -> px
-//        return p.size()!! * 2.0
-//    }
+    fun strokeWidth(p: DataPointAesthetics): Double {
+        // aes Units -> px
+        return p.size()!! * 2.0
+    }
 //
 //    fun circleDiameter(p: DataPointAesthetics): Double {
 //        // aes Units -> px
@@ -65,11 +65,11 @@ object AestheticsUtil {
 //        return diameter / 2.2
 //    }
 //
-//    fun textSize(p: DataPointAesthetics): Double {
-//        // aes Units -> px
-//        return p.size()!! * 2
-//    }
-//
+    fun textSize(p: DataPointAesthetics): Double {
+        // aes Units -> px
+        return p.size()!! * 2
+    }
+
     fun updateStroke(shape: SvgShape, p: DataPointAesthetics) {
         shape.strokeColor().set(p.color())
         if (solid(p.color()!!) && ALPHA_CONTROLS_BOTH) {

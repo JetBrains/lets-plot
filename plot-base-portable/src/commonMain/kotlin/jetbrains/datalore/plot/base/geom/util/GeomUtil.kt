@@ -152,7 +152,7 @@ object GeomUtil {
         return pointsByGroup
     }
 
-    fun createMultipolygon(points: List<DoubleVector>): MultiPolygon<Generic> {
+    fun createMultiPolygon(points: List<DoubleVector>): MultiPolygon<Generic> {
         if (points.isEmpty()) {
             return MultiPolygon<Generic>(emptyList())
         }
@@ -176,9 +176,7 @@ object GeomUtil {
     }
 
     private fun isClockwise(ring: List<DoubleVector>): Boolean {
-        if (ring.isEmpty()) {
-            throw IllegalStateException("Ring shouldn't be empty to calculate clockwise")
-        }
+        check(ring.isNotEmpty()) { "Ring shouldn't be empty to calculate clockwise" }
 
         var sum = 0.0
         var prev = ring[ring.size - 1]

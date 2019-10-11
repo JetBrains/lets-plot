@@ -1,7 +1,8 @@
-package jetbrains.datalore.plot
+package jetbrains.livemap.geom
 
 import jetbrains.datalore.base.projectionGeometry.explicitVec
-import org.junit.Test
+import kotlin.test.Test
+
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

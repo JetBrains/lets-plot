@@ -26,7 +26,8 @@ object BrowserDemoUtil {
         "datalore-plot-base-portable.js",
         "datalore-plot-base.js",
         "mapper-core.js",
-        "vis-svg.js"
+        "vis-svg.js",
+        "vis-canvas.js"
     )
 
     val PLOT_LIBS = listOf(

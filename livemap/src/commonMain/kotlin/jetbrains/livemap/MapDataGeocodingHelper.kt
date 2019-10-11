@@ -47,6 +47,8 @@ internal class MapDataGeocodingHelper(
         val locationBBoxes = ArrayList<Rect<World>>()
 
         for (mapLayer in myMapLayers) {
+            if (mapLayer.mapObjects.isEmpty()) continue
+
             MapLayerGeocodingHelper(
                 mapLayer,
                 myGeocodingService,

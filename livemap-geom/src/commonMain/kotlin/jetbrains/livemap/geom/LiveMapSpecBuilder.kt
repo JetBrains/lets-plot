@@ -83,10 +83,10 @@ internal class LiveMapSpecBuilder {
         val mapRect = WorldRectangle(0.0, 0.0, ProjectionUtil.TILE_PIXEL_SIZE, ProjectionUtil.TILE_PIXEL_SIZE)
         val mapProjection = createMapProjection(projectionType, mapRect)
 
-        //val liveMapProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myDataAccess, myLiveMapOptions, mapProjection)
+        val liveMapProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myDataAccess, myLiveMapOptions, mapProjection)
 
         val mapLayers = ArrayList<MapLayer>()
-        //mapLayers.add(liveMapProcessor.createMapLayer())
+        mapLayers.add(liveMapProcessor.createMapLayer())
         mapLayers.addAll(createMapLayers(mapProjection))
         mapLayers.removeAll { layer -> layer.mapObjects.isEmpty() }
 
@@ -123,14 +123,14 @@ internal class LiveMapSpecBuilder {
 
     private fun createMapLayers(mapProjection: MapProjection): List<MapLayer> {
         val mapLayers = ArrayList<MapLayer>()
-//        val layerProcessor = LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions.geodesic)
-//
-//        for (layerData in myLayers!!) {
-//            val mapLayer = layerProcessor.createMapLayer(layerData)
-//            if (mapLayer != null) {
-//                mapLayers.add(mapLayer)
-//            }
-//        }
+        val layerProcessor = LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions.geodesic)
+
+        for (layerData in myLayers!!) {
+            val mapLayer = layerProcessor.createMapLayer(layerData)
+            if (mapLayer != null) {
+                mapLayers.add(mapLayer)
+            }
+        }
         return mapLayers
     }
 

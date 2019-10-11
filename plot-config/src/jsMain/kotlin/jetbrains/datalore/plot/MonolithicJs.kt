@@ -88,11 +88,11 @@ object MonolithicJs {
 
 
     private fun createPlot(
-        plotSpec: MutableMap<String, Any>,
+        intPlotSpec: MutableMap<String, Any>,
         computationMessagesHandler: ((List<String>) -> Unit)?
     ): jetbrains.datalore.plot.builder.Plot {
-        @Suppress("NAME_SHADOWING")
-        var plotSpec = plotSpec
+
+        var plotSpec = intPlotSpec
         plotSpec = PlotConfigClientSide.processTransform(plotSpec)
         if (computationMessagesHandler != null) {
             val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
