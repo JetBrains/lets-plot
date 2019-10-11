@@ -64,7 +64,7 @@ internal class PlotTile(
         addFacetLabels(geomBounds)
 
         val liveMapGeomLayer = myLayers.firstOrNull { it.isLiveMap }
-        if (liveMapGeomLayer != null && myShowAxis) {
+        if (liveMapGeomLayer == null && myShowAxis) {
             addAxis(geomBounds)
         }
 
