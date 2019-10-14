@@ -30,75 +30,103 @@ class EcsComponentManager {
         return ids.asSequence()
             .map { myEntitiesIndex[it] }
             .filterNotNull()
-            .filter { o -> !o.hasRemoveFlag() }
+            .filter { !it.hasRemoveFlag() }
             .asIterable()
     }
 
     fun getEntities(componentType: KClass<out EcsComponent>): Iterable<EcsEntity> =
-        EcsIterator((myComponents[componentType] ?: HashSet()).iterator()).asSequence().asIterable()
+        EcsIterator((myComponents[componentType] ?: emptySet<EcsEntity>()).iterator()).asSequence().asIterable()
 
 
     fun getEntities(componentTypes: List<KClass<out EcsComponent>>): Iterable<EcsEntity> {
         return Iterables.filter(getEntities(componentTypes[0])) { componentTypes in it }
     }
 
+    /**
+     * Returns first of all entities, containing [componentType].
+     * Order is undefined.
+     */
     fun getEntity(componentType: KClass<out EcsComponent>): EcsEntity {
         val iterator = getEntities(componentType).iterator()
 
-        if (!iterator.hasNext()) {
-            throw IllegalStateException("Entity with specified component does not exist: $componentType")
-        }
+        check(iterator.hasNext()) { "Entity with specified component does not exist: $componentType" }
 
         return iterator.next()
     }
+
 
     fun getSingletonEntity(componentType: KClass<out EcsComponent>): EcsEntity {
         return getSingletonEntity(listOf(componentType))
     }
 
+    /**
+     * Returns single entity, containing [componentTypes].
+     * Throws exception if exists more than one entity.
+     */
     fun getSingletonEntity(componentTypes: List<KClass<out EcsComponent>>): EcsEntity {
         val iterator =
             Iterables.filter(getEntities(componentTypes[0])) { componentTypes in it }.iterator()
 
-        if (!iterator.hasNext()) {
-            throw IllegalStateException("Entity with specified components does not exist: $componentTypes")
-        }
+        check(iterator.hasNext()) { "Entity with specified components does not exist: $componentTypes" }
 
         val singleton = iterator.next()
 
-        if (iterator.hasNext()) {
-            throw IllegalStateException("Entity with specified components is not singleton: $componentTypes")
-        }
+        check(!iterator.hasNext()) { "Entity with specified components is not singleton: $componentTypes" }
 
         return singleton
     }
 
+
+    /**
+     * Return single component of type [ComponentT].
+     * Throws exception if exists more than one component instance.
+     */
     inline fun <reified ComponentT : EcsComponent> getSingletonComponent(): ComponentT {
         return getEntity(ComponentT::class).getComponent()
     }
 
+    /**
+     * Add [component] to [entity].
+     * Throws exception if component of this type is already added to the [entitiy]
+     */
     internal fun <T : EcsComponent> addComponent(entity: EcsEntity, component: T) {
         val components = myEntities[entity] ?: throw IllegalStateException("No entity with the given id")
 
-        if (components.put(component::class, component) != null) {
-            throw IllegalStateException("Entity already has component with the type " + component::class)
-        }
+        check(components.put(component::class, component) == null) { "Entity already has component with the type " + component::class }
 
         myComponents.getOrPut(component::class, ::HashSet).add(entity)
     }
 
-    fun getComponents(entity: EcsEntity): MutableMap<KClass<out EcsComponent>, out EcsComponent> {
-        return myEntities.getOrElse(entity, ::HashMap)
+    /**
+     * Return all components of the [entity] if it is not marked as removed
+     */
+    fun getComponents(entity: EcsEntity): Map<KClass<out EcsComponent>, EcsComponent> {
+        return getComponentsInternal(entity) ?: emptyMap()
     }
 
+    /**
+     * Mark [entity] as removed. This method can be safely used while iterating entites via [getEntities].
+     */
     internal fun removeEntity(entity: EcsEntity) {
         entity.setRemoveFlag()
         myRemovedEntities.add(entity)
     }
 
+    /**
+     * Remove component with type [componentType] from [entity].
+     * This method can't be used while iterating over entities via [getEntities]. It's required
+     * to make a defensive copy of such entities and then remove components from them.
+     */
     internal fun removeComponent(entity: EcsEntity, componentType: KClass<out EcsComponent>) {
         removeEntityFromComponents(entity, componentType)
-        getComponents(entity).remove(componentType)
+        getComponentsInternal(entity)?.remove(componentType)
+    }
+
+    private fun getComponentsInternal(entity: EcsEntity): MutableMap<KClass<out EcsComponent>, out EcsComponent>? {
+        if (entity.hasRemoveFlag()) {
+            return null
+        }
+        return myEntities.get(entity)
     }
 
     internal fun doRemove() {
@@ -110,12 +138,22 @@ class EcsComponentManager {
         myRemovedEntities.clear()
     }
 
+    /**
+     * Count number of components of type [componentType]. Components from removed entities are not counted.
+     */
     fun getComponentsCount(componentType: KClass<out EcsComponent>): Int {
-        return myComponents.getOrElse(componentType, ::HashSet).size
+        return myComponents.get(componentType)?.count { !it.hasRemoveFlag() } ?: 0
     }
 
     fun containsSingletonEntity(componentType: KClass<out EcsComponent>): Boolean {
         return myComponents.containsKey(componentType)
+    }
+
+    /**
+     * Returns true if [entity] exists and not removed.
+     */
+    fun containsEntity(entity: EcsEntity): Boolean {
+        return !entity.hasRemoveFlag() && myEntities.containsKey(entity)
     }
 
     private fun removeEntityFromComponents(entity: EcsEntity, componentType: KClass<out EcsComponent>) {
@@ -125,10 +163,6 @@ class EcsComponentManager {
                 myComponents.remove(componentType)
             }
         }
-    }
-
-    fun containsEntity(entity: EcsEntity): Boolean {
-        return myEntities.containsKey(entity)
     }
 
     private class EcsIterator<T : EcsRemovable> (private val myIterator: Iterator<T>) : AbstractIterator<T>() {

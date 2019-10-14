@@ -52,6 +52,9 @@ class EcsEntity internal constructor(
     fun removeComponent(componentType: KClass<out EcsComponent>) =
         apply { componentManager.removeComponent(this, componentType) }
 
+    /**
+     * Mark [entity] as removed. This method can be safely used while iterating entites.
+     */
     fun remove() = componentManager.removeEntity(this)
 
     operator fun contains(componentType: KClass<out EcsComponent>): Boolean {
