@@ -326,15 +326,20 @@ class ChartSource {
 class Location {
     var name: String? = null
         set(v) {
-            field = v; mapRegion = v?.let { MapRegion.withName(it) }
+            field = v; mapLocation = v?.let { MapLocation.create(MapRegion.withName(it)) }
         }
     var osmId: String? = null
         set(v) {
-            field = v; mapRegion = v?.let { MapRegion.withId(it) }
+            field = v; mapLocation = v?.let { MapLocation.create(MapRegion.withId(it)) }
         }
 
-    var mapRegion: MapRegion? = null
-    var hint: GeocodingHint? = null
+    var coordinate: Vec<LonLat>? = null
+        set(v) {
+            field = v; mapLocation = v?.let { MapLocation.create(GeoRectangle(it.x, it.y, it.x, it.y)) }
+        }
+
+    internal var mapLocation: MapLocation? = null
+    internal var hint: GeocodingHint? = null
 }
 
 @LiveMapDsl
@@ -420,7 +425,7 @@ fun LiveMapBuilder.location(block: Location.() -> Unit) {
     Location().apply(block).let { location ->
         level = location.hint?.level
         parent = location.hint?.parent
-        mapLocation = location.mapRegion?.run(MapLocation.Companion::create)
+        mapLocation = location.mapLocation
     }
 }
 

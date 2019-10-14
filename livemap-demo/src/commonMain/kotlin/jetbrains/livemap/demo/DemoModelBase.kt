@@ -6,23 +6,24 @@ import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapFactory
-import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.api.*
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.projections.ProjectionType
 
 abstract class DemoModelBase(private val dimension: DoubleVector) {
-    fun show(canvasControl: CanvasControl): Registration {
-        val liveMap = LiveMapFactory(createLiveMapSpec()).createLiveMap()
-        val liveMapPresenter = LiveMapPresenter()
+    fun show(canvasControl: CanvasControl, block: LiveMapBuilder.() -> Unit = {}): Registration {
+        val liveMap = createLiveMapSpec()
+            .apply(block)
+            .run(LiveMapBuilder::build)
+            .run(::LiveMapFactory)
+            .run(LiveMapFactory::createLiveMap)
 
-        liveMapPresenter.render(canvasControl, liveMap)
-
-        return Registration.from(liveMapPresenter)
-
+        return Registration.from(
+            LiveMapPresenter().apply { render(canvasControl, liveMap) }
+        )
     }
 
-    internal fun basicLiveMap(block: LiveMapBuilder.() -> Unit): LiveMapSpec {
+    internal fun basicLiveMap(block: LiveMapBuilder.() -> Unit): LiveMapBuilder {
         return liveMapConfig {
             size = dimension
 
@@ -52,8 +53,7 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
             )
         }
             .apply(block)
-            .build()
     }
 
-    abstract fun createLiveMapSpec(): LiveMapSpec
+    abstract fun createLiveMapSpec(): LiveMapBuilder
 }
