@@ -7,7 +7,7 @@ import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
+import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.core.animation.Animation.Direction

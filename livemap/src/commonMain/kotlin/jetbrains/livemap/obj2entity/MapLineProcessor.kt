@@ -1,8 +1,8 @@
 package jetbrains.livemap.obj2entity
 
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.maps.livemap.entities.geometry.Renderers.PathRenderer
-import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
+import jetbrains.livemap.entities.geometry.Renderers.PathRenderer
+import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity

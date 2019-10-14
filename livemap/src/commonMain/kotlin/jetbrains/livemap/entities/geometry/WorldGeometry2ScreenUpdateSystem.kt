@@ -1,8 +1,6 @@
 package jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.projectionGeometry.minus
-import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
-import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.ZoomChangedComponent

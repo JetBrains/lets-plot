@@ -1,7 +1,7 @@
 package jetbrains.livemap.obj2entity
 
-import jetbrains.datalore.maps.livemap.entities.geometry.Renderers.PolygonRenderer
-import jetbrains.datalore.maps.livemap.entities.geometry.WorldGeometryComponent
+import jetbrains.livemap.entities.geometry.Renderers.PolygonRenderer
+import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager

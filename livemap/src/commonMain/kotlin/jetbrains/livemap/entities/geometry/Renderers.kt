@@ -1,13 +1,10 @@
-package jetbrains.datalore.maps.livemap.entities.geometry
+package jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.maps.livemap.entities.rendering.Common
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Context2d.LineJoin
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.geometry.ClientGeometry
-import jetbrains.livemap.entities.geometry.PieSectorComponent
-import jetbrains.livemap.entities.geometry.TextComponent
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.StyleComponent
