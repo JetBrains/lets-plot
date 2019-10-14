@@ -314,8 +314,8 @@ class ChartSource {
     var lat: Double = 0.0
     var radius: Double = 0.0
 
-    val strokeColor: Color = Color.BLACK
-    val strokeWidth: Double = 0.0
+    var strokeColor: Color = Color.BLACK
+    var strokeWidth: Double = 0.0
 
     var indices: List<Int> = emptyList()
     var values: List<Double> = emptyList()
