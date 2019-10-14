@@ -189,7 +189,7 @@ internal class MapObjectBuilder {
             //BAR -> MapJsObjectUtil.splitMapBarChart(this, myMaxAbsValue).forEach(consumer)
             //HEATMAP -> consumer(MapJsObjectUtil.createJsHeatmap(this))
             //TEXT -> consumer(MapJsObjectUtil.createJsText(this))
-            //H_LINE, V_LINE -> consumer(MapJsObjectUtil.createJsLine(this))
+            H_LINE, V_LINE -> consumer(createLine())
             else -> throw IllegalArgumentException("Unknown map layer kind: $myLayerKind")
         }
     }
@@ -235,6 +235,18 @@ internal class MapObjectBuilder {
             speed,
 
             flow,
+            lineDash,
+            strokeColor,
+            strokeWidth
+        )
+    }
+
+    private fun createLine(): MapLine {
+        return MapLine(
+            index,
+            mapId,
+            regionId,
+            point!!,
             lineDash,
             strokeColor,
             strokeWidth
