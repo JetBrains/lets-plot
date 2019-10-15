@@ -76,17 +76,16 @@ object MonolithicJs {
         val assembler = createPlotAssembler(plotSpec, null)
 
         // Figure out plot size
-        val plotSize: DoubleVector
-        if (width > 0 && height > 0) {
-            plotSize = DoubleVector(width, height)
+        val plotSize = if (width > 0 && height > 0) {
+            DoubleVector(width, height)
         } else {
             val maxWidth = if (width > 0) width else parentElement.offsetWidth.toDouble()
             val defaultSize = defaultPlotSize(plotSpec, assembler)
             if (defaultSize.x > maxWidth) {
                 val scaler = maxWidth / defaultSize.x
-                plotSize = DoubleVector(maxWidth, defaultSize.y * scaler)
+                DoubleVector(maxWidth, defaultSize.y * scaler)
             } else {
-                plotSize = defaultSize
+                defaultSize
             }
         }
 
@@ -184,7 +183,6 @@ object MonolithicJs {
         @Suppress("NAME_SHADOWING")
         val e = Throwables.getRootCause(e)
         val errorMessage: String
-        val writeToLog: Boolean
         if (!e.message.isNullOrBlank() && (
                     e is IllegalStateException ||
                             e is IllegalArgumentException)
