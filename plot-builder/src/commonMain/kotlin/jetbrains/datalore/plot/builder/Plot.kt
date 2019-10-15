@@ -10,7 +10,6 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
@@ -74,7 +73,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     protected abstract fun hasAxisTitleBottom(): Boolean
 
-    protected abstract fun tileLayers(tileIndex: Int): List<jetbrains.datalore.plot.builder.GeomLayer>
+    protected abstract fun tileLayers(tileIndex: Int): List<GeomLayer>
 
     protected abstract fun plotLayout(): PlotLayout
 
@@ -82,14 +81,16 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         try {
             buildPlot()
         } catch (e: RuntimeException) {
-            jetbrains.datalore.plot.builder.Plot.Companion.LOG.error(e) { "buildPlot" }
-            ThrowableHandlers.instance.handle(e)
+            LOG.error(e) { "buildPlot" }
+//            ThrowableHandlers.instance.handle(e)
 
             val rootCause = Throwables.getRootCause(e)
-            val messages = arrayOf("Error building plot: " + rootCause::class.simpleName, if (rootCause.message != null)
-                "'" + rootCause.message + "'"
-            else
-                "<no message>")
+            val messages = arrayOf(
+                "Error building plot: " + rootCause::class.simpleName, if (rootCause.message != null)
+                    "'" + rootCause.message + "'"
+                else
+                    "<no message>"
+            )
             var y = myPreferredSize.get().y / 2 - 8
             for (s in messages) {
                 val errorLabel = TextLabel(s)
@@ -100,7 +101,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
                 y += 16.0
             }
         }
-
     }
 
     private fun buildPlot() {
@@ -130,9 +130,10 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
 
     private fun createTile(
-            tilesOrigin: DoubleVector,
-            tileInfo: TileLayoutInfo,
-            tileLayers: List<jetbrains.datalore.plot.builder.GeomLayer>): jetbrains.datalore.plot.builder.PlotTile {
+        tilesOrigin: DoubleVector,
+        tileInfo: TileLayoutInfo,
+        tileLayers: List<GeomLayer>
+    ): jetbrains.datalore.plot.builder.PlotTile {
 
         val xScale: Scale<Double>
         val yScale: Scale<Double>
@@ -163,7 +164,12 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         return tile
     }
 
-    private fun createAxisTitle(text: String, orientation: jetbrains.datalore.plot.builder.guide.Orientation, plotBounds: DoubleRectangle, geomBounds: DoubleRectangle) {
+    private fun createAxisTitle(
+        text: String,
+        orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+        plotBounds: DoubleRectangle,
+        geomBounds: DoubleRectangle
+    ) {
         val horizontalAnchor = HorizontalAnchor.MIDDLE
         val verticalAnchor: VerticalAnchor = when (orientation) {
             jetbrains.datalore.plot.builder.guide.Orientation.LEFT, jetbrains.datalore.plot.builder.guide.Orientation.RIGHT, jetbrains.datalore.plot.builder.guide.Orientation.TOP -> VerticalAnchor.TOP
@@ -174,15 +180,19 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         var rotation = 0.0
         when (orientation) {
             jetbrains.datalore.plot.builder.guide.Orientation.LEFT -> {
-                titleLocation = DoubleVector(plotBounds.left + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN, geomBounds.center.y)
+                titleLocation =
+                    DoubleVector(plotBounds.left + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN, geomBounds.center.y)
                 rotation = -90.0
             }
             jetbrains.datalore.plot.builder.guide.Orientation.RIGHT -> {
-                titleLocation = DoubleVector(plotBounds.right - PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN, geomBounds.center.y)
+                titleLocation =
+                    DoubleVector(plotBounds.right - PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN, geomBounds.center.y)
                 rotation = 90.0
             }
-            jetbrains.datalore.plot.builder.guide.Orientation.TOP -> titleLocation = DoubleVector(geomBounds.center.x, plotBounds.top + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN)
-            jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM -> titleLocation = DoubleVector(geomBounds.center.x, plotBounds.bottom - PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN)
+            jetbrains.datalore.plot.builder.guide.Orientation.TOP -> titleLocation =
+                DoubleVector(geomBounds.center.x, plotBounds.top + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN)
+            jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM -> titleLocation =
+                DoubleVector(geomBounds.center.x, plotBounds.bottom - PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN)
         }
 
         val titleLabel = TextLabel(text)
@@ -270,19 +280,23 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         if (isAxisEnabled) {
             if (hasAxisTitleLeft()) {
                 val titleSize = PlotLayoutUtil.axisTitleDimensions(axisTitleLeft)
-                val thickness = titleSize.y + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
+                val thickness =
+                    titleSize.y + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
                 geomAndAxis = DoubleRectangle(
-                        geomAndAxis.left + thickness, geomAndAxis.top,
-                        geomAndAxis.width - thickness, geomAndAxis.height)
+                    geomAndAxis.left + thickness, geomAndAxis.top,
+                    geomAndAxis.width - thickness, geomAndAxis.height
+                )
             }
 
             // subtract bottom axis title height
             if (hasAxisTitleBottom()) {
                 val titleSize = PlotLayoutUtil.axisTitleDimensions(axisTitleBottom)
-                val thickness = titleSize.y + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
+                val thickness =
+                    titleSize.y + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
                 geomAndAxis = DoubleRectangle(
-                        geomAndAxis.left, geomAndAxis.top,
-                        geomAndAxis.width, geomAndAxis.height - thickness)
+                    geomAndAxis.left, geomAndAxis.top,
+                    geomAndAxis.width, geomAndAxis.height - thickness
+                )
             }
         }
 
@@ -349,10 +363,20 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
         if (isAxisEnabled) {
             if (hasAxisTitleLeft()) {
-                createAxisTitle(axisTitleLeft, jetbrains.datalore.plot.builder.guide.Orientation.LEFT, withoutTitleAndLegends, geomAreaBounds)
+                createAxisTitle(
+                    axisTitleLeft,
+                    jetbrains.datalore.plot.builder.guide.Orientation.LEFT,
+                    withoutTitleAndLegends,
+                    geomAreaBounds
+                )
             }
             if (hasAxisTitleBottom()) {
-                createAxisTitle(axisTitleBottom, jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM, withoutTitleAndLegends, geomAreaBounds)
+                createAxisTitle(
+                    axisTitleBottom,
+                    jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM,
+                    withoutTitleAndLegends,
+                    geomAreaBounds
+                )
             }
         }
 

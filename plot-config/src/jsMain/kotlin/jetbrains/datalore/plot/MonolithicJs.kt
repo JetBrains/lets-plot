@@ -2,6 +2,7 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.dom.DomEventUtil
+import jetbrains.datalore.base.gcommon.base.Throwables
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.dom.DomEventType
@@ -18,7 +19,9 @@ import jetbrains.datalore.plot.config.PlotConfigUtil
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
+import mu.KotlinLogging
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
@@ -27,6 +30,8 @@ import org.w3c.dom.svg.SVGSVGElement
 
 @Suppress("unused")
 object MonolithicJs {
+    private val LOG = KotlinLogging.logger {}
+
     private val DEF_PLOT_SIZE = DoubleVector(500.0, 400.0)
     private val DEF_LIVE_MAP_SIZE = DoubleVector(800.0, 600.0)
 
@@ -46,6 +51,26 @@ object MonolithicJs {
     @Suppress("unused")
     @JsName("buildPlotFromProcessedSpecs")
     fun buildPlotFromProcessedSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
+        try {
+            buildPlotFromProcessedSpecsIntern(plotSpecJs, width, height, parentElement)
+        } catch (e: RuntimeException) {
+            handleException(e, parentElement)
+        }
+    }
+
+    private fun buildPlotFromProcessedSpecsIntern(
+        plotSpecJs: dynamic,
+        width: Double,
+        height: Double,
+        parentElement: HTMLElement
+    ) {
+        // test errors
+//        throw RuntimeException()
+//        throw RuntimeException("My sudden crush")
+//        throw IllegalArgumentException("User configuration error")
+//        throw IllegalStateException("User configuration error")
+//        throw IllegalStateException()   // Huh?
+
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         // ToDo: computationMessagesHandler
         val assembler = createPlotAssembler(plotSpec, null)
@@ -153,5 +178,27 @@ object MonolithicJs {
 
     private fun DoubleVector.toVector(): Vector {
         return Vector(x.toInt(), y.toInt())
+    }
+
+    private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
+        @Suppress("NAME_SHADOWING")
+        val e = Throwables.getRootCause(e)
+        val errorMessage: String
+        val writeToLog: Boolean
+        if (!e.message.isNullOrBlank() && (
+                    e is IllegalStateException ||
+                            e is IllegalArgumentException)
+        ) {
+            // Not a bug - likely user configuration error like `No layers in plot`
+            errorMessage = e.message!!
+        } else {
+            errorMessage = "Internal error occurred in datalore plot: ${e::class.js} : ${e.message}"
+            LOG.error(e) {}
+        }
+
+        val paragraphElement = parentElement.ownerDocument!!.createElement("p") as HTMLParagraphElement
+        paragraphElement.setAttribute("style", "color:darkred;")
+        paragraphElement.textContent = errorMessage
+        parentElement.appendChild(paragraphElement)
     }
 }

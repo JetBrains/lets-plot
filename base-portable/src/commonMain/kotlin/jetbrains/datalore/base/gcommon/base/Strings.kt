@@ -15,7 +15,7 @@ package jetbrains.datalore.base.gcommon.base
 
 object Strings {
 
-    // ToDo: use Kotlin `isNullOrEmpty`
+    // ToDo: use Kotlin `isNullOrEmpty` or `isNullOrBlank`
     fun isNullOrEmpty(s: String?): Boolean {
         return s == null || s.isEmpty()
     }
