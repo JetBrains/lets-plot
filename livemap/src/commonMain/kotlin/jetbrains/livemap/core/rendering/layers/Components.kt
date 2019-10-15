@@ -17,3 +17,5 @@ class ParentLayerComponent(val layerId: Int) : EcsComponent {
         }
     }
 }
+fun parentLayer(layerId: Int) = ParentLayerComponent(layerId)
+

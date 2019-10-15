@@ -52,7 +52,7 @@ class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
     }
 
     companion object {
-        fun getLayerEntities(entity: EcsEntity): Iterable<EcsEntity> {
+        fun getLayerEntities(entity: EcsEntity): Sequence<EcsEntity> {
             return entity.componentManager.getEntitiesById(entity.get<LayerEntitiesComponent>().entities)
         }
 

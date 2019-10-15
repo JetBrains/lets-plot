@@ -2,6 +2,7 @@ package jetbrains.livemap.ui
 
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.input.ClickableComponent
 import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.MouseInputComponent
@@ -17,16 +18,21 @@ class UiService(private val myComponentManager: EcsComponentManager, val resourc
 
     private fun addParentLayerComponent(entity: EcsEntity, renderBox: RenderBox): EcsEntity {
         return entity
-            .addComponent(ParentLayerComponent(myComponentManager.getEntity(UiLayerComponent::class).id))
-            .addComponent(UiRenderComponent(renderBox))
+            .addComponents {
+                + ParentLayerComponent(myComponentManager.getEntity(UiLayerComponent::class).id)
+                + UiRenderComponent(renderBox)
+            }
     }
 
     fun addButton(renderBox: RenderBox): EcsEntity {
         return addParentLayerComponent(
-            myComponentManager.createEntity("ui_button")
-                .addComponent(ClickableComponent(renderBox))
-                .addComponent(MouseInputComponent())
-                .addComponent(EventListenerComponent()),
+            myComponentManager
+                .createEntity("ui_button")
+                .addComponents {
+                    + ClickableComponent(renderBox)
+                    + MouseInputComponent()
+                    + EventListenerComponent()
+                },
             renderBox
         )
     }

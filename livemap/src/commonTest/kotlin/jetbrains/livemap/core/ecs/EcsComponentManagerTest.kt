@@ -56,12 +56,12 @@ class EcsComponentManagerTest {
     @Test
     fun getEntities() {
         // Same components order
-        assertEquals(fooBar, man.getEntities(listOf(Foo::class, Bar::class)).first())
-        assertEquals(barBaz, man.getEntities(listOf(Bar::class, Baz::class)).first())
+        assertEquals(setOf(fooBar), man.getEntities(listOf(Foo::class, Bar::class)).toSet())
+        assertEquals(setOf(barBaz), man.getEntities(listOf(Bar::class, Baz::class)).toSet())
 
         // Starts with same component
-        assertEquals(fooBar, man.getEntities(listOf(Bar::class, Foo::class)).first())
-        assertEquals(barBaz, man.getEntities(listOf(Bar::class, Baz::class)).first())
+        assertEquals(setOf(fooBar), man.getEntities(listOf(Bar::class, Foo::class)).toSet())
+        assertEquals(setOf(barBaz), man.getEntities(listOf(Bar::class, Baz::class)).toSet())
 
         // Partial match
         assertEquals(0, man.getEntities(listOf(Foo::class, Qux::class)).count())
@@ -70,10 +70,10 @@ class EcsComponentManagerTest {
 
     @Test
     fun getEntities_WithRemoved() {
-        fooBar.removeComponent(Bar::class)
+        man.removeComponent(fooBar, Foo::class)
 
         assertEquals(0, man.getEntities(listOf(Foo::class, Bar::class)).count())
-        assertEquals(fooBaz, man.getEntities(listOf(Foo::class)).first())
+        assertEquals(setOf(foo, fooBaz), man.getEntities(listOf(Foo::class)).toSet())
     }
 
     @Test
@@ -86,21 +86,31 @@ class EcsComponentManagerTest {
     }
 
     @Test
-    fun getEntitiesById_IfNotExist_ShouldSkip() {
+    fun getEntitiesById_ShouldSkipRemoved() {
         man.removeEntity(foo)
         man.removeEntity(baz)
 
-        assertEquals(listOf(bar), man.getEntitiesById(listOf(foo.id, bar.id, baz.id)).toList())
+        assertEquals(setOf(bar), man.getEntitiesById(listOf(foo.id, bar.id, baz.id)).toSet())
+    }
+
+    @Test
+    fun getEntitiesById_ShouldSkipNonExisting() {
+        assertEquals(setOf(bar, baz), man.getEntitiesById(listOf(bar.id, baz.id, 777, 888)).toSet())
     }
 
     @Test
     fun getEntity_Foo_ReturnsFirstEntity_ContainingFoo() {
-        assertTrue(listOf(foo, fooBar, fooBaz).contains(man.getEntity(Foo::class)))
+        assertTrue(setOf(foo, fooBar, fooBaz).contains(man.getEntity(Foo::class)))
     }
 
     @Test
     fun getSingletonEntity_ForMultiplyEntities_ThrowsException() {
         assertFailsWith(IllegalStateException::class) { man.getSingletonEntity(Foo::class) }
+    }
+
+    @Test
+    fun getSingletonEntity_() {
+        assertEquals(fooBar, man.getSingletonEntity(listOf(Foo::class, Bar::class)))
     }
 
     @Test
@@ -119,7 +129,7 @@ class EcsComponentManagerTest {
 
     @Test
     fun getComponents() {
-        assertEquals(2, man.getComponents(fooBar).count())
+        assertEquals(setOf(Foo::class, Bar::class), man.getComponents(fooBar).keys)
         man.removeEntity(fooBar)
         assertEquals(0, man.getComponents(fooBar).count())
     }

@@ -144,7 +144,7 @@ class TileLoadingSystem(
         }
     }
 
-    private fun getTileLayerEntities(cellKey: CellKey): Iterable<EcsEntity> {
+    private fun getTileLayerEntities(cellKey: CellKey): Sequence<EcsEntity> {
         return getEntities(CELL_COMPONENT_LIST)
             .filter { it.get<CellComponent>().cellKey == cellKey && it.get<KindComponent>().layerKind != CellLayerKind.DEBUG }
     }

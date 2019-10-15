@@ -26,15 +26,15 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
 
     protected open fun updateImpl(context: T, dt: Double) {}
 
-    inline fun <reified T: EcsComponent> getEntities(): Iterable<EcsEntity> {
+    inline fun <reified T: EcsComponent> getEntities(): Sequence<EcsEntity> {
         return componentManager.getEntities(T::class)
     }
 
-    fun getEntities(componentType: KClass<out EcsComponent>): Iterable<EcsEntity> {
+    fun getEntities(componentType: KClass<out EcsComponent>): Sequence<EcsEntity> {
         return componentManager.getEntities(componentType)
     }
 
-    fun getEntities(componentTypes: List<KClass<out EcsComponent>>): Iterable<EcsEntity> {
+    fun getEntities(componentTypes: List<KClass<out EcsComponent>>): Sequence<EcsEntity> {
         return componentManager.getEntities(componentTypes)
     }
 
@@ -42,7 +42,7 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
         return componentManager.getEntityById(entityId)
     }
 
-    fun getEntitiesById(entitiesId: Collection<Int>): Iterable<EcsEntity> {
+    fun getEntitiesById(entitiesId: Collection<Int>): Sequence<EcsEntity> {
         return componentManager.getEntitiesById(entitiesId)
     }
 
