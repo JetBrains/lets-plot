@@ -73,4 +73,31 @@ class PlotBuilderTest {
             )
         )).rootGroup
     }
+
+    @Test
+    fun missingChart() {
+        createPlot(dict(
+            "data" to
+                    dict(
+                        "order" to list(1,2,3,1,2,3),
+                        "val" to list(300, 110, 200, 234, 500, -100),
+                        "map_id" to list("-100,34", "-100,34", "-100,34", "-91,38", "-91,38", "-91,38")
+                    ),
+            "kind" to "plot",
+            "scales" to list(),
+            "layers" to list(
+                dict(
+                    "data" to dict(),
+                    "geom" to "livemap",
+                    "display_mode" to "pie",
+                    "mapping" to dict(
+                        "x" to "order",
+                        "y" to "val",
+                        "map_id" to "map_id",
+                        "fill" to "order"
+                    )
+                )
+            )
+        )).rootGroup
+    }
 }

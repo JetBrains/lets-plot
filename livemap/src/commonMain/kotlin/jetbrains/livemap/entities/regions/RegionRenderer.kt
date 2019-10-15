@@ -1,7 +1,7 @@
 package jetbrains.livemap.entities.regions
 
-import jetbrains.datalore.maps.livemap.entities.geometry.Renderers
-import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
+import jetbrains.livemap.entities.geometry.Renderers
+import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.maps.livemap.entities.rendering.Common
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity

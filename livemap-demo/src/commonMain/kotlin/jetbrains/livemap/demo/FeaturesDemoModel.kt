@@ -66,7 +66,6 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     line {
                         lon = MOSCOW.lon
                         lat = MOSCOW.lat
-                        lineDash = listOf(8.0, 8.0)
                     }
                 }
 
@@ -74,7 +73,6 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     line {
                         lon = BOSTON.lon
                         lat = BOSTON.lat
-                        lineDash = listOf(8.0, 8.0)
                     }
                 }
 
