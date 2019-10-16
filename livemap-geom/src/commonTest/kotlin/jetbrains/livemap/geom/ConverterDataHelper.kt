@@ -90,17 +90,17 @@ internal object ConverterDataHelper {
         return rings
     }
 
-    fun multipolygonToXYGeometry(multiPolygon: MultiPolygon<LonLat>): TypedGeometry<World> {
-        return Geometry.create(transformMultiPolygon(multiPolygon, MAP_PROJECTION::project))
-    }
+//    fun multipolygonToXYGeometry(multiPolygon: MultiPolygon<LonLat>): TypedGeometry<World> {
+//        return Geometry.create(transformMultiPolygon(multiPolygon, MAP_PROJECTION::project))
+//    }
 
     fun createDefaultMatcher(): MapObjectMatcher {
         return MapObjectMatcher()
     }
 
-    fun convertLonLatToXY(lonLat: Vec<LonLat>?): Vec<World>? {
-        return if (lonLat == null) null else MAP_PROJECTION.project(lonLat)
-    }
+//    fun convertLonLatToXY(lonLat: Vec<LonLat>?): Vec<World>? {
+//        return if (lonLat == null) null else MAP_PROJECTION.project(lonLat)
+//    }
 
 //    fun dataPointEq(value: Int): DataPointAesthetics {
 //        return argThat(DataPointIndexMatcher(value))

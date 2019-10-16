@@ -68,7 +68,7 @@ internal class MapObjectMatcher {
 
     private fun matchBar(bar: MapBar) {
         locationBoundingBoxes.assertExpectation(calculateBBoxes(bar))
-        regionId.assertExpectation(bar.regionId!!)
+        regionId.assertExpectation(bar.regionId)
         index.assertExpectation(bar.index)
         fillColor.assertExpectation(bar.fillColor)
         strokeColor.assertExpectation(bar.strokeColor)
@@ -80,7 +80,7 @@ internal class MapObjectMatcher {
 
     private fun matchHeatmap(heatmap: MapHeatmap) {
         locationBoundingBoxes.assertExpectation(calculateBBoxes(heatmap))
-        regionId.assertExpectation(heatmap.regionId!!)
+        regionId.assertExpectation(heatmap.regionId)
         index.assertExpectation(heatmap.index)
         // radius.assertExpectation(heatmap.getRadius())
         // frame.assertExpectation(heatmap.getFrame())
@@ -89,7 +89,7 @@ internal class MapObjectMatcher {
 
     private fun matchLine(line: MapLine) {
         locationBoundingBoxes.assertExpectation(calculateBBoxes(line))
-        regionId.assertExpectation(line.regionId!!)
+        regionId.assertExpectation(line.regionId)
         index.assertExpectation(line.index)
         lineDash.assertExpectation(line.lineDash)
         strokeColor.assertExpectation(line.strokeColor)
@@ -99,7 +99,7 @@ internal class MapObjectMatcher {
 
     private fun matchPath(path: MapPath) {
         locationBoundingBoxes.assertExpectation(calculateBBoxes(path))
-        regionId.assertExpectation(path.regionId!!)
+        regionId.assertExpectation(path.regionId)
         index.assertExpectation(path.index)
         lineDash.assertExpectation(path.lineDash)
         strokeColor.assertExpectation(path.strokeColor)
@@ -127,7 +127,7 @@ internal class MapObjectMatcher {
 
     private fun matchPolygon(polygon: MapPolygon) {
         locationBoundingBoxes.assertExpectation(calculateBBoxes(polygon))
-        regionId.assertExpectation(polygon.regionId!!)
+        regionId.assertExpectation(polygon.regionId)
         index.assertExpectation(polygon.index)
         lineDash.assertExpectation(polygon.lineDash)
         fillColor.assertExpectation(polygon.fillColor)
@@ -138,7 +138,7 @@ internal class MapObjectMatcher {
 
     private fun matchText(text: MapText) {
         locationBoundingBoxes.assertExpectation(calculateBBoxes(text))
-        regionId.assertExpectation(text.regionId!!)
+        regionId.assertExpectation(text.regionId)
         index.assertExpectation(text.index)
         fillColor.assertExpectation(text.fillColor)
         strokeColor.assertExpectation(text.strokeColor)
@@ -342,7 +342,7 @@ internal class MapObjectMatcher {
                 return Expectation(v, { expected, actual -> assertDoubleArrayEquals(expected, actual, eps) })
             }
 
-            internal fun geometryEquality(v: Geometry, eps: Double): Expectation<Geometry> {
+            internal fun geometryEquality(v: TypedGeometry<*>, eps: Double): Expectation<TypedGeometry<*>> {
                 return Expectation(
                     v,
                     { expected, actual ->
@@ -389,7 +389,7 @@ internal class MapObjectMatcher {
             return Expectation.doubleArrayEquality(v, EPS)
         }
 
-        fun geometryEq(v: Geometry): Expectation<Geometry> {
+        fun geometryEq(v: TypedGeometry<*>): Expectation<TypedGeometry<*>> {
             return Expectation.geometryEquality(v, EPS)
         }
 
