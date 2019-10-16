@@ -1,14 +1,36 @@
+buildscript {
+    dependencies {
+        classpath("org.yaml:snakeyaml:1.25")
+    }
+}
+
 plugins {
     id 'kotlin-multiplatform'
     id 'org.jetbrains.gradle.plugin.idea-ext'
 }
 
+
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.yaml.snakeyaml.Yaml
+
+// Draft: reading build properties from YAML
+def devSettings = new File(rootDir, "build_settings.yml")
+if (!devSettings.canRead()) {
+    throw new GradleException("No build_settings.yml")
+}
+def cfg = new Yaml().load(devSettings.newInputStream())
+
+task testBuildSettingsYml() {
+    doLast {
+        println cfg.python_bin_path
+        println cfg.python_include_path
+    }
+}
 
 def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
 kotlin {
-    if (project.properties['python_include_path'] != null) {
+    if (cfg.python_include_path != null) {
         if (currentOs.isMacOsX()) {
             macosX64() {
                 binaries {
@@ -19,7 +41,7 @@ kotlin {
 
                 compilations.main.cinterops {
                     python {
-                        compilerOpts "-I${project.properties['python_include_path']}"
+                        compilerOpts "-I${cfg.python_include_path}"
                     }
                 }
             }
@@ -35,7 +57,7 @@ kotlin {
 
                 compilations.main.cinterops {
                     python {
-                        compilerOpts "-I${project.properties['python_include_path']}"
+                        compilerOpts "-I${cfg.python_include_path}"
                     }
                 }
             }
@@ -43,7 +65,7 @@ kotlin {
     } else {
         throw new GradleException('''
 ------------------------------------------------------------------------------------------------------
-Python package build unavailable. Please set "python_include_path" property in gradle.properties file.
+Python package build unavailable. Please set "python_include_path" property in build_settings.yml file.
 ------------------------------------------------------------------------------------------------------
 ''')
     }
