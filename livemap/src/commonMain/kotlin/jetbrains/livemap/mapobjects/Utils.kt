@@ -1,8 +1,10 @@
 package jetbrains.livemap.mapobjects
 
-import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.livemap.api.ChartSource
+import jetbrains.livemap.entities.geometry.toWorldGeometry
 import jetbrains.livemap.projections.Client
+import jetbrains.livemap.projections.World
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -92,5 +94,24 @@ object Utils {
             return percent
         }
         return if (percent >= 0) MIN_PERCENT else -MIN_PERCENT
+    }
+
+    fun calculateBBoxes(v: MapObject): List<Rect<LonLat>> {
+        return when (v) {
+            is MapGeometry -> calculateGeometryBBoxes(v)
+            is MapPointGeometry -> calculatePointBBoxes(v)
+            else -> throw IllegalStateException("Unsupported MapObject type: ${v::class}")
+        }
+    }
+
+    private fun calculateGeometryBBoxes(v: MapGeometry): List<Rect<LonLat>> {
+        return v.geometry
+            ?.run { asMultipolygon().limit() }
+            ?: emptyList()
+
+    }
+
+    private fun calculatePointBBoxes(v: MapPointGeometry): List<Rect<LonLat>> {
+        return listOf(Rect(v.point, Vec(0,0)))
     }
 }
