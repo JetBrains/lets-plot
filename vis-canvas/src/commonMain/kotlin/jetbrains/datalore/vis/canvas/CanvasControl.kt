@@ -3,7 +3,7 @@ package jetbrains.datalore.vis.canvas
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.geometry.Vector
 
-interface CanvasControl : AnimationProvider, CanvasProvider, MouseEventSource {
+interface CanvasControl : AnimationProvider, CanvasProvider, MouseEventSource, Dispatcher {
 
     val size: Vector
 

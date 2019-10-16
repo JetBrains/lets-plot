@@ -6,7 +6,7 @@ import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.geom.*
-import jetbrains.datalore.plot.config.LiveMapOptions
+import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 
 abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 

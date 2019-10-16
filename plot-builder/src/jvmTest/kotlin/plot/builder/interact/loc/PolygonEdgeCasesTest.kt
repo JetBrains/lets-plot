@@ -254,7 +254,7 @@ class PolygonEdgeCasesTest {
                 )
         )
 
-        val multipolygon = GeomUtil.createMultipolygon(lonLatPoints)
+        val multipolygon = GeomUtil.createMultiPolygon(lonLatPoints)
 
         assertEquals(2, multipolygon.size)
         assertEquals(1, multipolygon[0].size)

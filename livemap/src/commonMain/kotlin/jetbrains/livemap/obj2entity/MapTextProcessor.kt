@@ -1,7 +1,7 @@
 package jetbrains.livemap.obj2entity
 
 import jetbrains.datalore.base.projectionGeometry.times
-import jetbrains.datalore.maps.livemap.entities.geometry.Renderers.TextRenderer
+import jetbrains.livemap.entities.geometry.Renderers.TextRenderer
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.LayerManager

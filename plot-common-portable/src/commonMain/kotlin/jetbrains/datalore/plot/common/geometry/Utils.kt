@@ -20,7 +20,7 @@ object Utils {
         return abs(area / 2)
     }
 
-    fun isClosed(list: List<DoubleVector>): Boolean {
+    fun isClosed(list: List<Any>): Boolean {
         if (list.size < 2) {
             return true
         }

@@ -1,4 +1,4 @@
-package jetbrains.datalore.plot.config
+package jetbrains.datalore.plot.base.livemap
 
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.*
 

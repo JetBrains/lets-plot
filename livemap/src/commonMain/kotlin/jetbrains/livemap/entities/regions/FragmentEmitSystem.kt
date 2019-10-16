@@ -2,7 +2,7 @@ package jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.maps.livemap.entities.geometry.ScreenGeometryComponent
+import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.gis.geoprotocol.GeometryUtil.bbox
 import jetbrains.livemap.LiveMapContext

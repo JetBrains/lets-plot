@@ -25,7 +25,8 @@ class LayerConfig constructor(
     statProto: StatProto,
     scaleProviderByAes: TypedScaleProviderMap,
     private val myClientSide: Boolean
-) : OptionsAccessor(layerOptions,
+) : OptionsAccessor(
+    layerOptions,
     initDefaultOptions(layerOptions, geomProto, statProto)
 ) {
 
@@ -35,7 +36,7 @@ class LayerConfig constructor(
     val posProvider: PosProvider
     private val myCombinedData: DataFrame
     val varBindings: List<VarBinding>
-    val constantsMap: Map<Aes<*>, *>
+    val constantsMap: Map<Aes<*>, Any>
     val statKind: StatKind
     private val mySamplings: List<Sampling>?
 
@@ -62,10 +63,6 @@ class LayerConfig constructor(
 
     init {
 
-//        val geomName = getString(GEOM)!!
-//        val geomKind = Option.GeomName.toGeomKind(geomName)
-//        val geomProvider = geomProto.geomProvider(geomName, this)
-
         // mapping (inherit from plot)
         val mappingOptions = HashMap(plotMapping)
         // update with 'layer' mapping
@@ -85,7 +82,6 @@ class LayerConfig constructor(
         if (GeoPositionsDataUtil.hasGeoPositionsData(this) && myClientSide) {
             // join dataset and geo-positions data
             val dataAndMapping = GeoPositionsDataUtil.initDataAndMappingForGeoPositions(
-//                geomProvider.geomKind,
                 geomProto.geomKind,
                 combinedData,
                 GeoPositionsDataUtil.getGeoPositionsData(this),
@@ -99,7 +95,6 @@ class LayerConfig constructor(
 
         // auto-map variables if necessary
         if (aesMapping.isEmpty()) {
-//            aesMapping = geomProvider.createAesAutoMapper().createMapping(combinedData)
             aesMapping = DefaultAesAutoMapper.forGeom(geomProto.geomKind).createMapping(combinedData)
             if (!myClientSide) {
                 // store used mapping options to pass to client.
@@ -125,17 +120,14 @@ class LayerConfig constructor(
         // grouping
         explicitGroupingVarName = initGroupingVarName(combinedData, mappingOptions)
 
-//        this.geomProvider = geomProvider
         statKind = StatKind.safeValueOf(getString(STAT)!!)
         stat = statProto.createStat(statKind, mergedOptions)
-//        posProvider = LayerConfigUtil.initPositionAdjustments(this, geomProvider.preferredPos)
         posProvider = LayerConfigUtil.initPositionAdjustments(
             this,
             geomProto.preferredPositionAdjustments(this)
         )
         constantsMap = constants
 
-//        val consumedAesSet = HashSet(geomProvider.renders())
         val consumedAesSet = HashSet(geomProto.renders())
         if (!myClientSide) {
             consumedAesSet.addAll(stat.requires())
@@ -155,7 +147,6 @@ class LayerConfig constructor(
         mySamplings = if (myClientSide)
             null
         else
-//            LayerConfigUtil.initSampling(this, geomProvider.preferredSampling)
             LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
     }
 
@@ -209,11 +200,7 @@ class LayerConfig constructor(
             )
 
             val defaults = HashMap<String, Any>()
-//            if (layerOptions.containsKey(GEOM)) {
-//                val name = layerOptions[GEOM] as String
-//                defaults.putAll(geomProto.defaultOptions(name))
             defaults.putAll(geomProto.defaultOptions())
-//            }
 
             var statName: String? = layerOptions[STAT] as String?
             if (statName == null) {

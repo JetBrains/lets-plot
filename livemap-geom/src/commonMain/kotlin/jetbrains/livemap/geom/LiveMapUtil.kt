@@ -2,14 +2,12 @@ package jetbrains.livemap.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
-import jetbrains.datalore.plot.base.geom.LiveMapLayerData
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.config.LiveMapOptions
+import jetbrains.datalore.plot.builder.LayerRendererUtil
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapCanvasFigure
@@ -18,11 +16,11 @@ import jetbrains.livemap.LiveMapFactory
 object LiveMapUtil {
 
     fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
-        val liveMapProvider = MyLiveMapProvider(liveMapOptions)
-        plotTiles
-            .flatten()
-            .filter(GeomLayer::isLiveMap)
-            .forEach { it.setLiveMapProvider(liveMapProvider) }
+        plotTiles.forEach { tileLayers ->
+            tileLayers
+                .firstOrNull { it.isLiveMap }
+                ?.setLiveMapProvider(MyLiveMapProvider(tileLayers, liveMapOptions))
+        }
     }
 
 //    internal fun createTooltipAesSpec(geomKind: GeomKind, dataAccess: MappedDataAccess): TooltipAesSpec {
@@ -51,39 +49,66 @@ object LiveMapUtil {
 
             SEGMENT -> hiddenAes.addAll(listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND))
 
-            else -> {}
+            else -> {
+            }
         }
 
         return hiddenAes
     }
 
-    private class MyLiveMapProvider internal constructor(private val myLiveMapOptions: LiveMapOptions) :
-        LiveMapProvider {
+    private class MyLiveMapProvider internal constructor(
+        geomLayers: List<GeomLayer>,
+        private val myLiveMapOptions: LiveMapOptions
+    ) : LiveMapProvider {
 
-        override fun createLiveMap(
-            aesthetics: Aesthetics,
-            dataAccess: MappedDataAccess,
-            dimension: DoubleVector,
-            layers: List<LiveMapLayerData>
-        ): CanvasFigure {
+        private val liveMapSpecBuilder: LiveMapSpecBuilder
 
-            val liveMapSpec = LiveMapSpecBuilder()
-                .livemapOptions(myLiveMapOptions)
-                .aesthetics(aesthetics)
-                .dataAccess(dataAccess)
-                .size(dimension)
-                .layers(layers)
-                .devParams(DevParams(myLiveMapOptions.devParams))
-                .mapLocationConsumer { locationRect ->
-                    //LiveMapClipboardProvider().get().copy(LiveMapLocation.getLocationString(locationRect))
+        init {
+            require(geomLayers.isNotEmpty())
+            require(geomLayers.first().isLiveMap) { "geom_livemap have to be the very first geom after ggplot()" }
+
+            // liveMap uses raw positions, so no mappings needed
+            val newLiveMapRendererData = { layer: GeomLayer ->
+                LayerRendererUtil.createLayerRendererData(
+                    layer,
+                    emptyMap(),
+                    emptyMap()
+                )
+            }
+
+            // feature geom layers
+            val layers = geomLayers
+                .drop(1) // skip geom_livemap
+                .map(newLiveMapRendererData)
+                .map {
+                    with(it) {
+                        LiveMapLayerData(
+                            geom,
+                            geomKind,
+                            aesthetics,
+                            dataAccess
+                        )
+                    }
                 }
-                .build()
 
-            val liveMapFactory = LiveMapFactory(liveMapSpec)
-            val liveMapCanvasFigure = LiveMapCanvasFigure(liveMapFactory.createLiveMap())
-            liveMapCanvasFigure.setDimension(dimension)
+            // LiveMap geom layer
+            newLiveMapRendererData(geomLayers.first()).let {
+                liveMapSpecBuilder = LiveMapSpecBuilder()
+                    .livemapOptions(myLiveMapOptions)
+                    .aesthetics(it.aesthetics)
+                    .dataAccess(it.dataAccess)
+                    .layers(layers)
+                    .devParams(DevParams(myLiveMapOptions.devParams))
+                    .mapLocationConsumer { _ ->
+                        //LiveMapClipboardProvider().get().copy(LiveMapLocation.getLocationString(locationRect))
+                    }
+            }
+        }
 
-            return liveMapCanvasFigure
+        override fun createLiveMap(dimension: DoubleVector): CanvasFigure {
+            return liveMapSpecBuilder.size(dimension).build()
+                .let { liveMapSpec -> LiveMapFactory(liveMapSpec).createLiveMap() }
+                .let { liveMapAsync -> LiveMapCanvasFigure(liveMapAsync).apply { setDimension(dimension) } }
         }
     }
 }

@@ -6,17 +6,15 @@ import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.BBOX_CALCULATOR
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.convertToGeoRectangle
 import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.geom.LiveMapLayerData
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.POINT_X
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.POINT_Y
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_XMAX
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_XMIN
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_YMAX
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.RECT_YMIN
-import jetbrains.datalore.plot.config.LiveMapOptions
-import jetbrains.datalore.plot.config.Option
+import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X
+import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y
+import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMAX
+import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMIN
+import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMAX
+import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
@@ -83,10 +81,10 @@ internal class LiveMapSpecBuilder {
         val mapRect = WorldRectangle(0.0, 0.0, ProjectionUtil.TILE_PIXEL_SIZE, ProjectionUtil.TILE_PIXEL_SIZE)
         val mapProjection = createMapProjection(projectionType, mapRect)
 
-        //val liveMapProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myDataAccess, myLiveMapOptions, mapProjection)
+        val liveMapProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myDataAccess, myLiveMapOptions, mapProjection)
 
         val mapLayers = ArrayList<MapLayer>()
-        //mapLayers.add(liveMapProcessor.createMapLayer())
+        mapLayers.add(liveMapProcessor.createMapLayer())
         mapLayers.addAll(createMapLayers(mapProjection))
         mapLayers.removeAll { layer -> layer.mapObjects.isEmpty() }
 
@@ -123,26 +121,26 @@ internal class LiveMapSpecBuilder {
 
     private fun createMapLayers(mapProjection: MapProjection): List<MapLayer> {
         val mapLayers = ArrayList<MapLayer>()
-//        val layerProcessor = LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions.geodesic)
-//
-//        for (layerData in myLayers!!) {
-//            val mapLayer = layerProcessor.createMapLayer(layerData)
-//            if (mapLayer != null) {
-//                mapLayers.add(mapLayer)
-//            }
-//        }
+        val layerProcessor = LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions.geodesic)
+
+        for (layerData in myLayers) {
+            val mapLayer = layerProcessor.createMapLayer(layerData)
+            if (mapLayer != null) {
+                mapLayers.add(mapLayer)
+            }
+        }
         return mapLayers
     }
 
     companion object {
-        private val REGION_TYPE = "type"
-        private val REGION_DATA = "data"
-        private val REGION_TYPE_NAME = "region_name"
-        private val REGION_TYPE_IDS = "region_ids"
-        private val REGION_TYPE_COORDINATES = "coordinates"
-        private val REGION_TYPE_DATAFRAME = "data_frame"
-        private val DEFAULT_SHOW_TILES = true
-        private val DEFAULT_LOOP_Y = false
+        private const val REGION_TYPE = "type"
+        private const val REGION_DATA = "data"
+        private const val REGION_TYPE_NAME = "region_name"
+        private const val REGION_TYPE_IDS = "region_ids"
+        private const val REGION_TYPE_COORDINATES = "coordinates"
+        private const val REGION_TYPE_DATAFRAME = "data_frame"
+        private const val DEFAULT_SHOW_TILES = true
+        private const val DEFAULT_LOOP_Y = false
         private val CYLINDRICAL_PROJECTIONS = setOf(
             ProjectionType.GEOGRAPHIC,
             ProjectionType.MERCATOR
@@ -162,6 +160,7 @@ internal class LiveMapSpecBuilder {
         }
 
         private fun getWithIdList(data: Any): MapRegion {
+            @Suppress("UNCHECKED_CAST")
             val list = data as List<String>
             return MapRegion.withIdList(list)
         }
@@ -169,7 +168,7 @@ internal class LiveMapSpecBuilder {
         private fun calculateGeoRectangle(lonLatList: List<*>): GeoRectangle {
             if (lonLatList.isNotEmpty() && lonLatList.size % 2 != 0) {
                 throw IllegalArgumentException(
-                    "Expected: " + Option.Geom.LiveMap.LOCATION
+                    "Expected: location"
                             + " = [double lon1, double lat1, double lon2, double lat2, ... , double lonN, double latN]"
                 )
             }
@@ -200,7 +199,7 @@ internal class LiveMapSpecBuilder {
             }
 
             throw IllegalArgumentException(
-                ("Expected: " + Option.Geom.LiveMap.LOCATION + " = DataFrame with "
+                ("Expected: location" + " = DataFrame with "
                         + "['" + POINT_X + "', '" + POINT_Y + "'] or "
                         + "['" + RECT_XMIN + "', '" + RECT_YMIN + "', '" + RECT_XMAX + "', '" + RECT_YMAX + "'] columns")
             )
@@ -223,7 +222,7 @@ internal class LiveMapSpecBuilder {
             try {
                 return FeatureLevel.valueOf(level.toUpperCase())
             } catch (ignored: Exception) {
-                throw IllegalArgumentException(Option.Geom.LiveMap.FEATURE_LEVEL + FeatureLevel.values())
+                throw IllegalArgumentException("FeatureLevel: " + FeatureLevel.values())
             }
 
         }
@@ -237,7 +236,7 @@ internal class LiveMapSpecBuilder {
                 handlerMap[REGION_TYPE_IDS] = { getWithIdList(it) }
                 return handleRegionObject((region as Map<*, *>?)!!, handlerMap)
             } else {
-                throw IllegalArgumentException("Expected: " + Option.Geom.LiveMap.PARENT + " = [String]")
+                throw IllegalArgumentException("Expected: parent" + " = [String]")
             }
         }
 
@@ -254,7 +253,7 @@ internal class LiveMapSpecBuilder {
                     { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
                 return handleRegionObject((location as Map<*, *>?)!!, handlerMap)
             } else {
-                throw IllegalArgumentException("Expected: " + Option.Geom.LiveMap.LOCATION + " = [String|Array|DataFrame]")
+                throw IllegalArgumentException("Expected: locatiobn" + " = [String|Array|DataFrame]")
             }
         }
 

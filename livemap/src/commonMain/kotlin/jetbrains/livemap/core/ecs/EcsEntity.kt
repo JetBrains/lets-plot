@@ -5,10 +5,10 @@ import kotlin.reflect.KClass
 class EcsEntity internal constructor(
     internal val id: Int,
     val name: String,
-    val componentManager: EcsComponentManager,
-    componentsMap: Map<KClass<out EcsComponent>, EcsComponent>
+    val componentManager: EcsComponentManager
 ) : EcsRemovable() {
-    private val components: Collection<EcsComponent> = componentsMap.values // for debug
+    internal val componentsMap = HashMap<KClass<out EcsComponent>, EcsComponent>()
+    private val components: Collection<EcsComponent> get() = componentsMap.values // for debug
 
     override fun toString(): String {
         return name
@@ -19,18 +19,17 @@ class EcsEntity internal constructor(
     }
 
     inline fun <reified T : EcsComponent>tryGet(): T? {
-        if (!contains(T::class)) {
-            return null
+        return when {
+            contains(T::class) -> get()
+            else -> null
         }
-        return get()
     }
 
     inline fun <reified T : EcsComponent> provide(byDefault: () -> T): T {
-        if (!contains(T::class)) {
-            return byDefault().also { addComponent(it) }
+        return when {
+            contains(T::class) -> get()
+            else -> byDefault().also { addComponent(it) }
         }
-
-        return get()
     }
 
     fun <T : EcsComponent> addComponent(component: T): EcsEntity {
@@ -49,41 +48,41 @@ class EcsEntity internal constructor(
     }
     
 
-    fun removeComponent(componentType: KClass<out EcsComponent>) =
-        apply { componentManager.removeComponent(this, componentType) }
+    fun removeComponent(componentType: KClass<out EcsComponent>) = apply {
+        componentManager.removeComponent(this, componentType)
+    }
 
+    /**
+     * Mark [entity] as removed. This method can be safely used while iterating entites.
+     */
     fun remove() = componentManager.removeEntity(this)
 
-    operator fun contains(componentType: KClass<out EcsComponent>): Boolean {
-        return componentManager.getComponents(this).containsKey(componentType)
-    }
+    operator fun contains(componentType: KClass<out EcsComponent>): Boolean =
+        componentManager.getComponents(this).containsKey(componentType)
 
-
-    operator fun contains(componentTypes: Array<KClass<out EcsComponent>>): Boolean {
-        val entityComponents = componentManager.getComponents(this)
-        for (component in componentTypes) {
-            if (!entityComponents.containsKey(component)) {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    operator fun contains(components: List<KClass<out EcsComponent>>): Boolean {
-        val entityComponents = componentManager.getComponents(this)
-        for (component in components) {
-            if (!entityComponents.containsKey(component)) {
-                return false
-            }
-        }
-
-        return true
-    }
+    operator fun contains(components: Collection<KClass<out EcsComponent>>): Boolean  =
+        componentManager.getComponents(this).keys.containsAll(components)
 
     inline fun <reified T : EcsComponent> getComponent(): T  = get()
     inline fun <reified T: EcsComponent> contains() = contains(T::class)
     inline fun <reified T: EcsComponent> remove() = apply { removeComponent(T::class) }
     inline fun <reified T : EcsComponent> tag(supplier: () -> T) = provide(supplier)
     inline fun <reified T : EcsComponent> untag() = removeComponent(T::class)
+}
+
+
+class ComponentsList {
+    val components = ArrayList<EcsComponent>()
+    operator fun EcsComponent.unaryPlus() {
+        components.add(this)
+    }
+}
+
+fun EcsEntity.addComponents(block: ComponentsList.() -> Unit): EcsEntity {
+    ComponentsList()
+        .apply(block)
+        .components
+        .forEach { this.componentManager.addComponent(this, it) }
+
+    return this
 }

@@ -1,146 +1,167 @@
 package jetbrains.livemap.core.ecs
 
-import jetbrains.datalore.base.gcommon.collect.Iterables
+import jetbrains.livemap.containers.singletonCollection
 import kotlin.reflect.KClass
 
 class EcsComponentManager {
 
-    private val myEntitiesIndex = HashMap<Int, EcsEntity>()
-    private val myEntities = HashMap<EcsEntity, MutableMap<KClass<out EcsComponent>, EcsComponent>>()
-    private val myComponents = HashMap<KClass<out EcsComponent>, MutableSet<EcsEntity>>()
+    private val myEntityById = HashMap<Int, EcsEntity>()
+    private val myComponentsByEntity = HashMap<EcsEntity, MutableMap<KClass<out EcsComponent>, EcsComponent>>()
+    private val myEntitiesBytComponent = HashMap<KClass<out EcsComponent>, MutableSet<EcsEntity>>()
     private val myRemovedEntities = ArrayList<EcsEntity>()
     private var myIdGenerator = 0
 
-    internal val entities = myEntities.keys
-    val entitiesCount = myEntities.size
+    internal val entities = myComponentsByEntity.keys
+    val entitiesCount = myComponentsByEntity.size
 
     fun createEntity(name: String): EcsEntity {
-        val entityComponents = HashMap<KClass<out EcsComponent>, EcsComponent>()
-        val entity = EcsEntity(myIdGenerator++, name, this, entityComponents)
-        myEntities[entity] = entityComponents
-        myEntitiesIndex[entity.id] = entity
-        return entity
-    }
-
-    fun getEntityById(entityId: Int): EcsEntity {
-        return myEntitiesIndex[entityId]?.takeIf { !it.hasRemoveFlag() }!!
-    }
-
-    fun getEntitiesById(ids: Collection<Int>): Iterable<EcsEntity> {
-        return ids.asSequence()
-            .map { myEntitiesIndex[it] }
-            .filterNotNull()
-            .filter { o -> !o.hasRemoveFlag() }
-            .asIterable()
-    }
-
-    fun getEntities(componentType: KClass<out EcsComponent>): Iterable<EcsEntity> =
-        EcsIterator((myComponents[componentType] ?: HashSet()).iterator()).asSequence().asIterable()
-
-
-    fun getEntities(componentTypes: List<KClass<out EcsComponent>>): Iterable<EcsEntity> {
-        return Iterables.filter(getEntities(componentTypes[0])) { componentTypes in it }
-    }
-
-    fun getEntity(componentType: KClass<out EcsComponent>): EcsEntity {
-        val iterator = getEntities(componentType).iterator()
-
-        if (!iterator.hasNext()) {
-            throw IllegalStateException("Entity with specified component does not exist: $componentType")
+        return EcsEntity(myIdGenerator++, name, this).also { entity ->
+            myComponentsByEntity[entity] = entity.componentsMap
+            myEntityById[entity.id] = entity
         }
-
-        return iterator.next()
     }
 
-    fun getSingletonEntity(componentType: KClass<out EcsComponent>): EcsEntity {
-        return getSingletonEntity(listOf(componentType))
+    fun getEntityById(entityId: Int): EcsEntity =
+         myEntityById[entityId]?.takeIf { !it.hasRemoveFlag() }!!
+
+    fun getEntitiesById(ids: Collection<Int>): Sequence<EcsEntity> {
+        return ids
+            .asSequence()
+            .mapNotNull { myEntityById[it] }
+            .notRemoved()
     }
 
-    fun getSingletonEntity(componentTypes: List<KClass<out EcsComponent>>): EcsEntity {
-        val iterator =
-            Iterables.filter(getEntities(componentTypes[0])) { componentTypes in it }.iterator()
+    /**
+     * Returns entities containing component with [componentType] or empty sequence
+     */
+    fun getEntities(componentType: KClass<out EcsComponent>): Sequence<EcsEntity> =
+        (myEntitiesBytComponent[componentType] ?: emptySet<EcsEntity>()).notRemoved()
 
-        if (!iterator.hasNext()) {
-            throw IllegalStateException("Entity with specified components does not exist: $componentTypes")
-        }
+    /**
+     * Add [component] to [entity].
+     * Throws exception if component of this type is already added to the [entitiy]
+     */
+    internal fun <T : EcsComponent> addComponent(entity: EcsEntity, component: T) {
+        val entityComponents = myComponentsByEntity[entity]
+        require(entityComponents != null) { "addComponent to non existing entity" }
+        require(component::class !in entityComponents) { "Entity already has component with the type " + component::class }
 
-        val singleton = iterator.next()
+        entityComponents[component::class] = component
+        myEntitiesBytComponent.getOrPut(component::class, ::HashSet).add(entity)
+    }
 
-        if (iterator.hasNext()) {
-            throw IllegalStateException("Entity with specified components is not singleton: $componentTypes")
-        }
+    /**
+     * Return all components of the [entity] if it is not marked as removed
+     */
+    fun getComponents(entity: EcsEntity): Map<KClass<out EcsComponent>, EcsComponent> =
+        getComponentsInternal(entity) ?: emptyMap()
+
+    /**
+     * Count number of components of type [componentType]. Components from removed entities are not counted.
+     */
+    fun getComponentsCount(componentType: KClass<out EcsComponent>): Int =
+        myEntitiesBytComponent.get(componentType)?.notRemoved()?.count() ?: 0
+
+    fun containsSingletonEntity(componentType: KClass<out EcsComponent>): Boolean =
+        myEntitiesBytComponent.containsKey(componentType)
+
+    /**
+     * Returns true if [entity] exists and not removed.
+     */
+    fun containsEntity(entity: EcsEntity): Boolean =
+        !entity.hasRemoveFlag() && myComponentsByEntity.containsKey(entity)
+
+    /**
+     * Return entities conatining all components with [componentTypes] or empty sequence
+     */
+    fun getEntities(componentTypes: Collection<KClass<out EcsComponent>>): Sequence<EcsEntity> =
+        getEntities(componentTypes.first()).filter { entity -> entity.contains(componentTypes) }
+
+    /**
+     * Returns single entity containing all [componentTypes].
+     * Throws exception if number of such entities is not one.
+     */
+    fun getSingletonEntity(componentTypes: Collection<KClass<out EcsComponent>>): EcsEntity {
+        val entities = getEntities(componentTypes)
+        val singleton = entities.firstOrNull()
+
+        check(singleton != null){ "Entity with specified components does not exist: $componentTypes" }
+        check(entities.count() == 1) { "Entity with specified components is not singleton: $componentTypes" }
 
         return singleton
     }
 
-    inline fun <reified ComponentT : EcsComponent> getSingletonComponent(): ComponentT {
-        return getEntity(ComponentT::class).getComponent()
-    }
+    /**
+     * Return single entity containing [componentType].
+     * Throws exception if number of such entities is not one.
+     */
+    fun getSingletonEntity(componentType: KClass<out EcsComponent>): EcsEntity =
+        getSingletonEntity(singletonCollection(componentType))
 
-    internal fun <T : EcsComponent> addComponent(entity: EcsEntity, component: T) {
-        val components = myEntities[entity] ?: throw IllegalStateException("No entity with the given id")
 
-        if (components.put(component::class, component) != null) {
-            throw IllegalStateException("Entity already has component with the type " + component::class)
-        }
+    /**
+     * Returns first entity, containing [componentType].
+     * Order is undefined.
+     * If no entity with given [componentType] found exception will be thrown.
+     */
+    fun getEntity(componentType: KClass<out EcsComponent>): EcsEntity =
+        getEntities(componentType).firstOrNull() ?: error("Entity with specified component does not exist: $componentType")
 
-        myComponents.getOrPut(component::class, ::HashSet).add(entity)
-    }
+    /**
+     * Return single component of type [ComponentT].
+     * Throws exception if exists more than one component instance.
+     */
+    inline fun <reified ComponentT : EcsComponent> getSingletonComponent(): ComponentT =
+        getEntity(ComponentT::class).getComponent()
 
-    fun getComponents(entity: EcsEntity): MutableMap<KClass<out EcsComponent>, out EcsComponent> {
-        return myEntities.getOrElse(entity, ::HashMap)
-    }
 
+    /**
+     * Mark [entity] as removed. This method can be safely used while iterating entites via [getEntities].
+     */
     internal fun removeEntity(entity: EcsEntity) {
-        entity.setRemoveFlag()
-        myRemovedEntities.add(entity)
+        myRemovedEntities.add(entity.also { it.setRemoveFlag() })
     }
 
+    /**
+     * Remove component with type [componentType] from [entity].
+     * This method can't be used while iterating over entities via [getEntities]. It's required
+     * to make a defensive copy of such entities and then remove components from them.
+     */
     internal fun removeComponent(entity: EcsEntity, componentType: KClass<out EcsComponent>) {
         removeEntityFromComponents(entity, componentType)
-        getComponents(entity).remove(componentType)
+        getComponentsInternal(entity)?.remove(componentType)
+    }
+
+    private fun getComponentsInternal(entity: EcsEntity): MutableMap<KClass<out EcsComponent>, out EcsComponent>? {
+        if (entity.hasRemoveFlag()) {
+            return null
+        }
+        return myComponentsByEntity.get(entity)
     }
 
     internal fun doRemove() {
         myRemovedEntities.forEach { entity ->
             getComponents(entity).keys.forEach { componentType -> removeEntityFromComponents(entity, componentType) }
-            myEntities.remove(entity)
-            myEntitiesIndex.remove(entity.id)
+            myComponentsByEntity.remove(entity)
+            myEntityById.remove(entity.id)
         }
         myRemovedEntities.clear()
     }
 
-    fun getComponentsCount(componentType: KClass<out EcsComponent>): Int {
-        return myComponents.getOrElse(componentType, ::HashSet).size
-    }
-
-    fun containsSingletonEntity(componentType: KClass<out EcsComponent>): Boolean {
-        return myComponents.containsKey(componentType)
-    }
-
     private fun removeEntityFromComponents(entity: EcsEntity, componentType: KClass<out EcsComponent>) {
-        myComponents[componentType]?.let { entities ->
-            entities.remove(entity)
-            if (entities.isEmpty()) {
-                myComponents.remove(componentType)
+        myEntitiesBytComponent[componentType]?.let { componentEntities ->
+            componentEntities.remove(entity)
+            if (componentEntities.isEmpty()) {
+                myEntitiesBytComponent.remove(componentType)
             }
         }
     }
 
-    fun containsEntity(entity: EcsEntity): Boolean {
-        return myEntities.containsKey(entity)
+    private fun Collection<EcsEntity>.notRemoved(): Sequence<EcsEntity> {
+        return asSequence().filterNot(EcsEntity::hasRemoveFlag)
     }
 
-    private class EcsIterator<T : EcsRemovable> (private val myIterator: Iterator<T>) : AbstractIterator<T>() {
-
-        override fun computeNext() {
-            while (myIterator.hasNext()) {
-                val entity = myIterator.next()
-                if (!entity.hasRemoveFlag()) {
-                    return setNext(entity)
-                }
-            }
-            return done()
-        }
+    private fun Sequence<EcsEntity>.notRemoved(): Sequence<EcsEntity> {
+        return filterNot { it.hasRemoveFlag() }
     }
 }

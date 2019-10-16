@@ -17,12 +17,11 @@ import java.awt.image.BufferedImage
 internal class JavafxGraphicsCanvasControl(
         size: Vector,
         private val myRepaint: Runnable,
-        pixelRatio: Double) :
+        pixelRatio: Double
+) :
     GraphicsCanvasControl {
 
-    private val myJavafxCanvasControl: JavafxCanvasControl =
-        JavafxCanvasControl(size, pixelRatio)
-
+    private val myJavafxCanvasControl = JavafxCanvasControl(size, pixelRatio)
     override var image: BufferedImage? = null
 
     override val size: Vector
@@ -64,4 +63,9 @@ internal class JavafxGraphicsCanvasControl(
     override fun removeChild(canvas: Canvas) {
         myJavafxCanvasControl.removeChild(canvas)
     }
+
+    override fun <T> schedule(f: () -> T) {
+        myJavafxCanvasControl.schedule(f)
+    }
+
 }

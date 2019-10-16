@@ -1,5 +1,6 @@
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.*
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap
 

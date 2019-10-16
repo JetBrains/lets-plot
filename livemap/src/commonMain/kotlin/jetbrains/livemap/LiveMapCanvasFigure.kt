@@ -25,10 +25,7 @@ class LiveMapCanvasFigure (private val liveMap: Async<BaseLiveMap>) : CanvasFigu
     }
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        myLiveMapPresenter.render(
-            canvasControl,
-            liveMap
-        )
+        myLiveMapPresenter.render(canvasControl, liveMap)
 
         return Registration.from(myLiveMapPresenter)
     }

@@ -23,7 +23,7 @@ internal object LayerConfigUtil {
         return defaultPos
     }
 
-    fun initConstants(layerConfig: OptionsAccessor): Map<Aes<*>, *> {
+    fun initConstants(layerConfig: OptionsAccessor): Map<Aes<*>, Any> {
         val result = HashMap<Aes<*>, Any>()
         for (option in Option.Mapping.REAL_AES_OPTION_NAMES) {
             val optionValue = layerConfig[option]
@@ -39,7 +39,8 @@ internal object LayerConfigUtil {
 
     fun createBindings(
         data: DataFrame, mapping: Map<Aes<*>, Variable>?,
-        scaleProviders: TypedScaleProviderMap, consumedAesSet: Set<Aes<*>>): List<VarBinding> {
+        scaleProviders: TypedScaleProviderMap, consumedAesSet: Set<Aes<*>>
+    ): List<VarBinding> {
 
         val result = ArrayList<VarBinding>()
         if (mapping != null) {

@@ -7,6 +7,7 @@ import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.scheduleAsync
 import jetbrains.livemap.BaseLiveMap
 
 class LiveMapPresenter : Disposable {
@@ -32,7 +33,7 @@ class LiveMapPresenter : Disposable {
         contentPresenter.canvasControl = canvasControl
 
         showSpinner()
-        liveMap.onResult(::showLiveMap, ::showError)
+        canvasControl.scheduleAsync(liveMap).onResult(::showLiveMap, ::showError)
     }
 
     private fun showLiveMap(liveMap: BaseLiveMap) {

@@ -127,7 +127,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
     }
 
     companion object {
-        private val HJUST_MAP: Map<Any, TextLabel.HorizontalAnchor> = mapOf(
+        val HJUST_MAP: Map<Any, TextLabel.HorizontalAnchor> = mapOf(
             "right" to TextLabel.HorizontalAnchor.RIGHT,
             "middle" to TextLabel.HorizontalAnchor.MIDDLE,
             "left" to TextLabel.HorizontalAnchor.LEFT,
@@ -135,7 +135,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             0.5 to TextLabel.HorizontalAnchor.MIDDLE,
             1.0 to TextLabel.HorizontalAnchor.LEFT
         )
-        private val VJUST_MAP: Map<Any, TextLabel.VerticalAnchor> = mapOf(
+        val VJUST_MAP: Map<Any, TextLabel.VerticalAnchor> = mapOf(
             "bottom" to TextLabel.VerticalAnchor.BOTTOM,
             "center" to TextLabel.VerticalAnchor.CENTER,
             "top" to TextLabel.VerticalAnchor.TOP,
@@ -209,7 +209,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             }
         }
 
-        private fun <T> textLabelAnchor(o: Any, conversionMap: Map<Any, T>, def: T): T {
+        fun <T> textLabelAnchor(o: Any, conversionMap: Map<Any, T>, def: T): T {
             return conversionMap.getOrElse(o, { def })
         }
 
