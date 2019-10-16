@@ -1,7 +1,7 @@
 {
-  "name": "demoweb",
+  "name": "datalore-plot-bundling",
   "version": "1.0.0",
-  "description": "",
+  "description": "file for setup js part bundling environment",
   "main": "plot-demo.js",
   "directories": {
     "lib": "lib"
@@ -11,8 +11,8 @@
     "webpack-build-dev": "webpack --config webpack.dev.config.js",
     "webpack-build-prod": "webpack --config webpack.prod.config.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "JetBrains",
+  "license": "MIT",
   "devDependencies": {
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"
