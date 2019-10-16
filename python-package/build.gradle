@@ -2,7 +2,8 @@ plugins {
     id 'kotlin-multiplatform'
 }
 
-def PYTHON_BIN_PATH_PROPERTY = "python_bin_path"
+def PYTHON_BIN_PATH_PROPERTY = 'python_bin_path'
+def PYTHON_REPOSITORY_URL_PROPERTY = 'python_repository_url'
 
 if (hasProperty('python_include_path')) {
     if (hasProperty(PYTHON_BIN_PATH_PROPERTY)) {
@@ -36,7 +37,7 @@ if (hasProperty('python_include_path')) {
         task publishPythonPackage(type:Exec) {
             workingDir "${project.buildDir}/dist"
 
-            if (project.properties["python_repository_url"] != null) {
+            if (project.properties[PYTHON_REPOSITORY_URL_PROPERTY] != null) {
                 commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/twine",
                         "upload",
                         "--repository-url",
@@ -49,6 +50,10 @@ if (hasProperty('python_include_path')) {
             } else {
                 commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/twine",
                         "upload",
+                        "-u",
+                        project.properties["pypi_username"],
+                        "-p",
+                        project.properties["pypi_password"],
                         "./*"
             }
         }
@@ -62,7 +67,7 @@ if (hasProperty('python_include_path')) {
         build.dependsOn(buildPythonPackage)
 
         localInstallPythonPackage.dependsOn(buildPythonPackage)
-        publishPythonPackage.dependsOn(buildPythonPackage)
+        //publishPythonPackage.dependsOn(buildPythonPackage)
 
 
     } else {
