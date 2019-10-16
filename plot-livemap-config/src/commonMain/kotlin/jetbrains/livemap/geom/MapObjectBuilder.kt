@@ -159,10 +159,10 @@ internal class MapObjectBuilder {
     constructor(p: MultiDataPointHelper.MultiDataPoint, layerKind: MapLayerKind, mapProjection: MapProjection) {
         myLayerKind = layerKind
         myMapProjection = mapProjection
-        myP = p.aes()
-        indicies = p.indices()
-        myValueArray = p.values()
-        myColorArray = p.colors()
+        myP = p.aes
+        indicies = p.indices
+        myValueArray = p.values
+        myColorArray = p.colors
     }
 
     private fun colorWithAlpha(color: Color): Color {

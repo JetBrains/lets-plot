@@ -62,7 +62,7 @@ internal class LiveMapDataPointAestheticsProcessor(
     private fun getMaxAbsValue(multiDataPoints: List<MultiDataPoint>): Double {
         var maxAbsValue = 0.0
         for (multiDataPoint in multiDataPoints) {
-            for (value in multiDataPoint.values()) {
+            for (value in multiDataPoint.values) {
                 maxAbsValue = max(abs(value), maxAbsValue)
             }
         }
@@ -111,7 +111,7 @@ internal class LiveMapDataPointAestheticsProcessor(
     }
 
     private fun multiDataPointToMapObject(multiDataPoint: MultiDataPoint, consumer: (MapObject) -> Unit) {
-        createMapObject(multiDataPoint.aes(), MapObjectBuilder(multiDataPoint, myLayerKind, myMapProjection), consumer)
+        createMapObject(multiDataPoint.aes, MapObjectBuilder(multiDataPoint, myLayerKind, myMapProjection), consumer)
     }
 
     private fun createMapObject(

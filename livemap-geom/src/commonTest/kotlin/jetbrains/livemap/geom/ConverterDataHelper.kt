@@ -127,7 +127,7 @@ internal object ConverterDataHelper {
         override fun matches(actual: MultiDataPoint?): Boolean {
             return if (actual == null) {
                 false
-            } else actual.aes().index() == expected
+            } else actual.aes.index() == expected
 
         }
     }
