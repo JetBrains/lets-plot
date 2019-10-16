@@ -37,6 +37,7 @@ kotlin {
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
+                implementation project(':plot-app')
             }
         }
 
@@ -119,6 +120,7 @@ dependencies {
     projectDependenciesJs project(':plot-builder')
     projectDependenciesJs project(':plot-config-portable')
     projectDependenciesJs project(':plot-config')
+    projectDependenciesJs project(':plot-app')
 }
 
 // ---------------------------------

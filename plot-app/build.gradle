@@ -15,6 +15,9 @@ kotlin {
 
                 implementation project(':base-portable')
                 implementation project(':base')
+                implementation project(':gis')
+                implementation project(':livemap')
+                implementation project(':livemap-geom')
                 implementation project(':vis-svg')
                 implementation project(':vis-canvas')
                 implementation project(':plot-base-portable')
@@ -24,6 +27,7 @@ kotlin {
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
+                implementation project(':plot-config')
             }
         }
         commonTest {
@@ -57,7 +61,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-js')
                 implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-                
+
                 implementation project(':mapper-core')
                 implementation project(':vis-svg-mapper')
             }

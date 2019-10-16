@@ -6,7 +6,7 @@ const libPath = path.resolve(buildPath, 'js');
 const distPath = path.resolve(buildPath, 'dist');
 
 module.exports = {
-    entry: `${libPath}/plot-config.js`,
+    entry: `${libPath}/plot-app.js`,
     output: {
         library: 'DatalorePlot',
         path: distPath,

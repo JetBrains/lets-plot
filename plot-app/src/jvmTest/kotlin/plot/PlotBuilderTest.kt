@@ -1,6 +1,9 @@
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.config.LiveMapOptionsParser
+import jetbrains.datalore.plot.config.OptionsAccessor
+import jetbrains.datalore.plot.config.PlotConfigClientSide
+import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import kotlin.test.Test
 
 // {data={
