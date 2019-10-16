@@ -3,39 +3,49 @@ plugins {
     id 'org.jetbrains.gradle.plugin.idea-ext'
 }
 
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
+def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+
 kotlin {
     if (project.properties['python_include_path'] != null) {
-        macosX64() {
-            binaries {
-                staticLib {
-                    baseName = "datalore-plot-${project.name}"
+        if (currentOs.isMacOsX()) {
+            macosX64() {
+                binaries {
+                    staticLib {
+                        baseName = "datalore-plot-${project.name}"
+                    }
                 }
-            }
 
-            compilations.main.cinterops {
-                python {
-                    compilerOpts "-I${project.properties['python_include_path']}"
+                compilations.main.cinterops {
+                    python {
+                        compilerOpts "-I${project.properties['python_include_path']}"
+                    }
                 }
             }
         }
 
-        linuxX64() {
-            binaries {
-                sharedLib {
-                    baseName = "datalore-plot-${project.name}"
+        if (currentOs.isLinux()) {
+            linuxX64() {
+                binaries {
+                    sharedLib {
+                        baseName = "datalore-plot-${project.name}"
+                    }
                 }
-            }
 
-            compilations.main.cinterops {
-                python {
-                    compilerOpts "-I${project.properties['python_include_path']}"
+                compilations.main.cinterops {
+                    python {
+                        compilerOpts "-I${project.properties['python_include_path']}"
+                    }
                 }
             }
         }
     } else {
-        println("------------------------------------------------------------------------------------------------")
-        println("Python package build unavailable. Please set \"python_include_path\" property in gradle.properties file.")
-        println("------------------------------------------------------------------------------------------------")
+        throw new GradleException('''
+------------------------------------------------------------------------------------------------------
+Python package build unavailable. Please set "python_include_path" property in gradle.properties file.
+------------------------------------------------------------------------------------------------------
+''')
     }
 
 
