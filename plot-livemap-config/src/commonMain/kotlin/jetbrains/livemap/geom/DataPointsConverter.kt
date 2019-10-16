@@ -1,7 +1,9 @@
 package jetbrains.livemap.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.Geom
@@ -103,12 +105,10 @@ internal class DataPointsConverter(
         private var myArrowSpec: ArrowSpec? = null
         private var myAnimation: Int? = null
         private fun parsePathAnimation(animation: Any?): Int? {
-            if (animation == null) {
-                return null
-            } else if (animation is Number) {
-                return (animation as Number).toInt()
-            } else if (animation is String) {
-                when (animation as String?) {
+            when (animation) {
+                null -> return null
+                is Number -> return animation.toInt()
+                is String -> when (animation) {
                     "dash" -> return 1
                     "plane" -> return 2
                     "circle" -> return 3
@@ -286,12 +286,10 @@ internal class DataPointsConverter(
     private inner class PointFeatureConverter(private val myAesthetics: Aesthetics) {
         private var myAnimation: Int? = null
         private fun parsePointAnimation(animation: Any?): Int? {
-            if (animation == null) {
-                return null
-            } else if (animation is Number) {
-                return (animation as Number).toInt()
-            } else if (animation is String) {
-                when (animation as String?) {
+            when (animation) {
+                null -> return null
+                is Number -> return animation.toInt()
+                is String -> when (animation) {
                     "ripple" -> return 1
                 }
             }
