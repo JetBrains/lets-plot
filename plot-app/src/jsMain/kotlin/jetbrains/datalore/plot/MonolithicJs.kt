@@ -2,7 +2,6 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.dom.DomEventUtil
-import jetbrains.datalore.base.gcommon.base.Throwables
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.dom.DomEventType
@@ -11,11 +10,9 @@ import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
+import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromPlotOptions
-import jetbrains.datalore.plot.config.OptionsAccessor
-import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
-import jetbrains.datalore.plot.config.PlotConfigUtil
+import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
@@ -40,9 +37,21 @@ object MonolithicJs {
      */
     @Suppress("unused")
     @JsName("buildPlotFromRawSpecs")
-    fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: Node) {
-        // First apply 'server-side' transforms - stat, sampling etc.
-        TODO("Not implemented: 'server-side' transforms")
+    fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
+        try {
+            val plotSpec = dynamicObjectToMap(plotSpecJs)
+            PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+            val processedSpec = if (PlotConfig.isFailure(plotSpec)) {
+                plotSpec
+            } else {
+                PlotConfigServerSide.processTransform(plotSpec)
+            }
+
+            buildPlotFromProcessedSpecsIntern(plotSpec, width, height, parentElement)
+        } catch (e: RuntimeException) {
+            handleException(e, parentElement)
+        }
+
     }
 
     /**
@@ -52,26 +61,33 @@ object MonolithicJs {
     @JsName("buildPlotFromProcessedSpecs")
     fun buildPlotFromProcessedSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
         try {
-            buildPlotFromProcessedSpecsIntern(plotSpecJs, width, height, parentElement)
+            val plotSpec = dynamicObjectToMap(plotSpecJs)
+            buildPlotFromProcessedSpecsIntern(plotSpec, width, height, parentElement)
         } catch (e: RuntimeException) {
             handleException(e, parentElement)
         }
     }
 
     private fun buildPlotFromProcessedSpecsIntern(
-        plotSpecJs: dynamic,
+        plotSpec: MutableMap<String, Any>,
         width: Double,
         height: Double,
         parentElement: HTMLElement
     ) {
-        // test errors
+        // testing errors
 //        throw RuntimeException()
 //        throw RuntimeException("My sudden crush")
 //        throw IllegalArgumentException("User configuration error")
 //        throw IllegalStateException("User configuration error")
 //        throw IllegalStateException()   // Huh?
 
-        val plotSpec = dynamicObjectToMap(plotSpecJs)
+        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+        if (PlotConfig.isFailure(plotSpec)) {
+            val errorMessage = PlotConfig.getErrorMessage(plotSpec)
+            showError(errorMessage, parentElement)
+            return
+        }
+
         // ToDo: computationMessagesHandler
         val assembler = createPlotAssembler(plotSpec, null)
 
@@ -91,7 +107,12 @@ object MonolithicJs {
 
         // Inject LiveMap
         parseFromPlotOptions(OptionsAccessor(plotSpec))
-            ?.let { jetbrains.livemap.geom.LiveMapUtil.injectLiveMapProvider(assembler.layersByTile, it) } // LIVEMAP_SWITCH
+            ?.let {
+                jetbrains.livemap.geom.LiveMapUtil.injectLiveMapProvider(
+                    assembler.layersByTile,
+                    it
+                )
+            } // LIVEMAP_SWITCH
 
         val plot = assembler.createPlot()
         val svg = buildPlotSvg(plot, plotSize, parentElement)
@@ -180,20 +201,14 @@ object MonolithicJs {
     }
 
     private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
-        @Suppress("NAME_SHADOWING")
-        val e = Throwables.getRootCause(e)
-        val errorMessage: String
-        if (!e.message.isNullOrBlank() && (
-                    e is IllegalStateException ||
-                            e is IllegalArgumentException)
-        ) {
-            // Not a bug - likely user configuration error like `No layers in plot`
-            errorMessage = e.message!!
-        } else {
-            errorMessage = "Internal error occurred in datalore plot: ${e::class.js} : ${e.message}"
+        val failureInfo = FailureHandler.failureInfo(e)
+        showError(failureInfo.message, parentElement)
+        if (failureInfo.isInternalError) {
             LOG.error(e) {}
         }
+    }
 
+    private fun showError(errorMessage: String, parentElement: HTMLElement) {
         val paragraphElement = parentElement.ownerDocument!!.createElement("p") as HTMLParagraphElement
         paragraphElement.setAttribute("style", "color:darkred;")
         paragraphElement.textContent = errorMessage

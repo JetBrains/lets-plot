@@ -2,7 +2,6 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
-import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
@@ -19,7 +18,8 @@ import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.Plot.TITLE
 import jetbrains.datalore.plot.config.Option.Plot.TITLE_TEXT
 
-abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(opts,
+abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(
+    opts,
     DEF_OPTIONS
 ) {
 
@@ -126,10 +126,8 @@ abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(opts,
         )
         internal const val PLOT_COMPUTATION_MESSAGES = "computation_messages"
 
-        fun failure(e: Exception): Map<String, Any> {
-            val message = e.message
-            val errorMessage = if (Strings.isNullOrEmpty(message)) e::class.simpleName!! else "Error: $message"
-            return mapOf(ERROR_MESSAGE to errorMessage)
+        fun failure(message: String): Map<String, Any> {
+            return mapOf(ERROR_MESSAGE to message)
         }
 
         fun assertPlotSpecOrErrorMessage(opts: Map<String, Any>) {
@@ -169,7 +167,7 @@ abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(opts,
         }
 
         fun specKind(opts: Map<*, *>): Any? {
-            return opts.get(Meta.KIND)
+            return opts[Meta.KIND]
         }
     }
 }

@@ -12,6 +12,8 @@ import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
 
+//import mu.KotlinLogging
+
 open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
     override fun createLayerConfig(
@@ -261,7 +263,6 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
     }
 
     private fun createSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
-//        val geomKind = layerConfig.geomProvider.geomKind
         val geomKind = layerConfig.geomProto.geomKind
 
         var stat: String = layerConfig.stat::class.simpleName!!
@@ -272,12 +273,45 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
     }
 
     companion object {
+//        private val LOG = KotlinLogging.logger {}
 
         fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
+            return try {
+                processTransformIntern(plotSpecRaw)
+            } catch (e: RuntimeException) {
+                val failureInfo = FailureHandler.failureInfo(e)
+                if (failureInfo.isInternalError) {
+                    // ToDo: print to STDERR
+//                    LOG.error(e) {}
+                    println(e)
+                }
+                HashMap(failure(failureInfo.message))
+            }
+        }
+
+        private fun processTransformIntern(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
+            // testing of error handling
+//            throwTestingException(plotSpecRaw)
+
             var plotSpec = migrationTransform().apply(plotSpecRaw)
             plotSpec = entryTransform().apply(plotSpec)
             PlotConfigServerSide(plotSpec).updatePlotSpec()
             return plotSpec
+        }
+
+        @Suppress("unused")
+        private fun throwTestingException(plotSpec: Map<String, Any>) {
+            if (plotSpec.containsKey(Option.Plot.TITLE)) {
+                @Suppress("UNCHECKED_CAST")
+                val title = (plotSpec[Option.Plot.TITLE] as Map<String, Any>)[Option.Plot.TITLE_TEXT]!!
+                if ("Throw testing exception" == title) {
+//                    throw RuntimeException()
+//                    throw RuntimeException("My sudden crush")
+                    throw IllegalArgumentException("User configuration error")
+//                    throw IllegalStateException("User configuration error")
+//                    throw IllegalStateException()   // Huh?
+                }
+            }
         }
     }
 }
