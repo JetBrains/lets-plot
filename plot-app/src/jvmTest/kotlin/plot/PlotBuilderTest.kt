@@ -36,7 +36,7 @@ class PlotBuilderTest {
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
 
         LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(plotSpec))
-            ?.let { jetbrains.livemap.geom.LiveMapUtil.injectLiveMapProvider(assembler.layersByTile, it) }
+            ?.let { jetbrains.livemap.geom.LiveMapUtil.injectLiveMapProvider(assembler.layersByTile, it) } // LIVEMAP_SWITCH
 
         return assembler.createPlot()
     }

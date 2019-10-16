@@ -91,7 +91,7 @@ object MonolithicJs {
 
         // Inject LiveMap
         parseFromPlotOptions(OptionsAccessor(plotSpec))
-            ?.let { jetbrains.livemap.geom.LiveMapUtil.injectLiveMapProvider(assembler.layersByTile, it) }
+            ?.let { jetbrains.livemap.geom.LiveMapUtil.injectLiveMapProvider(assembler.layersByTile, it) } // LIVEMAP_SWITCH
 
         val plot = assembler.createPlot()
         val svg = buildPlotSvg(plot, plotSize, parentElement)
