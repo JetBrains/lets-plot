@@ -1,6 +1,8 @@
 plugins {
     id 'kotlin-multiplatform'
     id "com.moowork.node"
+    // publishing to bintray
+    id "com.jfrog.bintray"
 }
 repositories {
     mavenCentral()
@@ -50,6 +52,30 @@ node {
     version = '10.16.3'
     npmVersion = '6.9.0'
     download = true
+}
+
+if (hasProperty('bintray_user') && hasProperty('bintray_key')) {
+    bintray {
+        user = bintray_user
+        key = bintray_key
+
+        filesSpec {
+            from 'build/dist'
+            into '.'
+        }
+
+        publish = true
+
+        pkg {
+            repo = 'datalore-plot'
+            name = 'datalore-plot-js'
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/JetBrains/datalore-plot'
+            version {
+                name = '0.0.dev1'
+            }
+        }
+    }
 }
 
 repositories.whenObjectAdded {
