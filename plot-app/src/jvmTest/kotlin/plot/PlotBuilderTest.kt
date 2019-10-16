@@ -4,6 +4,7 @@ import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
+import jetbrains.livemap.geom.LiveMapUtil
 import kotlin.test.Test
 
 // {data={
@@ -36,7 +37,7 @@ class PlotBuilderTest {
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
 
         LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(plotSpec))
-            ?.let { jetbrains.livemap.geom.LiveMapUtil.injectLiveMapProvider(assembler.layersByTile, it) } // LIVEMAP_SWITCH
+            ?.let { LiveMapUtil.injectLiveMapProvider(assembler.layersByTile, it) } // LIVEMAP_SWITCH
 
         return assembler.createPlot()
     }
