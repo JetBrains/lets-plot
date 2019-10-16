@@ -1,0 +1,83 @@
+plugins {
+    id 'kotlin-multiplatform'
+}
+
+def PYTHON_BIN_PATH_PROPERTY = 'python_bin_path'
+def PYTHON_REPOSITORY_URL_PROPERTY = 'python_repository_url'
+
+if (hasProperty('python_include_path')) {
+    if (hasProperty(PYTHON_BIN_PATH_PROPERTY)) {
+
+
+        task updateJs(type:Exec) {
+            workingDir project.projectDir
+
+            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/python3", 'setup.py', 'update_js'
+        }
+
+        task buildPythonPackage(type:Exec) {
+            workingDir project.projectDir
+
+            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/python3",
+                    'setup.py',
+                    'bdist_wheel',
+                    "--dist-dir=${project.buildDir}/dist"
+        }
+
+        task localInstallPythonPackage(type:Exec) {
+            workingDir "${project.buildDir}/dist"
+
+            commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/pip",
+                    'install',
+                    '--no-index',
+                    '--find-links=./',
+                    'datalore-plot'
+        }
+
+        task publishPythonPackage(type:Exec) {
+            workingDir "${project.buildDir}/dist"
+
+            if (project.properties[PYTHON_REPOSITORY_URL_PROPERTY] != null) {
+                commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/twine",
+                        "upload",
+                        "--repository-url",
+                        project.properties[PYTHON_REPOSITORY_URL_PROPERTY],
+                        "-u",
+                        project.properties["pypi_username"],
+                        "-p",
+                        project.properties["pypi_password"],
+                        "./*"
+            } else {
+                commandLine "${project.properties[PYTHON_BIN_PATH_PROPERTY]}/twine",
+                        "upload",
+                        "-u",
+                        project.properties["pypi_username"],
+                        "-p",
+                        project.properties["pypi_password"],
+                        "./*"
+            }
+        }
+
+        updateJs.dependsOn(':js-package:build')
+
+        buildPythonPackage.dependsOn(':python-extension:build')
+
+        buildPythonPackage.dependsOn(updateJs)
+
+        build.dependsOn(buildPythonPackage)
+
+        localInstallPythonPackage.dependsOn(buildPythonPackage)
+        //publishPythonPackage.dependsOn(buildPythonPackage)
+
+
+    } else {
+        println("------------------------------------------------------------------------------------------------")
+        println("Python package build unavailable. Please set \"python_bin\" property in gradle.properties file.")
+        println("------------------------------------------------------------------------------------------------")
+    }
+
+} else {
+    println("------------------------------------------------------------------------------------------------")
+    println("Python package build unavailable. Please set \"python_include_path\" property in gradle.properties file.")
+    println("------------------------------------------------------------------------------------------------")
+}

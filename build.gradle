@@ -4,18 +4,14 @@ plugins {
     id 'org.jetbrains.gradle.plugin.idea-ext' version '0.5' apply false
     // executing node scripts (adds support for Yarn. Also - NPM, Grunt and Gulp)
     id 'com.moowork.node' version '1.3.1' apply false
+    // publishing to bintray
+    id "com.jfrog.bintray" version "1.8.4" apply false
 }
 
 
 allprojects {
 //    println "--- project ---: $project.name $project.depth ${if(project.depth > 0) project.parent.rootDir else ''}"
 //    println "--- project ---: $project.name $project.rootDir"
-}
-
-task printProps {
-    doLast {
-        println System.env.PYTHON_INCLUDE
-    }
 }
 
 def publishedProjects = [
