@@ -78,7 +78,7 @@ internal class MapLayerGeocodingHelper(
             myNeedLocation = needLocations && isMapLayerKindEnableLocation(kind)
 
             myMapIdSpecified = mapObjects.all(::isMapIdSet)
-            myOsmIdInsideMapIdSpecified = mapObjects.all { !isMapIdWithOsmId(it.mapId) }
+            myOsmIdInsideMapIdSpecified = mapObjects.all { isMapIdWithOsmId(it.mapId) }
             myPointSpecified = mapObjects.all(::isMapPointObject)
             myGeometrySpecified = mapObjects.all(::isMapObjectContainsGeometry)
         }
@@ -256,18 +256,7 @@ internal class MapLayerGeocodingHelper(
 
     companion object {
         fun isMapIdWithOsmId(mapId: String?): Boolean {
-            return try {
-                mapId?.toInt() != null
-
-//                if (mapId == null) {
-//                    false
-//                } else {
-//                    mapId.toInt()
-//                    true
-//                }
-            } catch (e: NumberFormatException) {
-                false
-            }
+            return mapId?.toIntOrNull() != null
         }
     }
 }

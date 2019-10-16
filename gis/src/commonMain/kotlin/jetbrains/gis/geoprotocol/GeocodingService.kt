@@ -11,12 +11,11 @@ import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 class GeocodingService(private val myTransport: GeoTransport) {
 
     fun execute(request: GeoRequest): Async<List<GeocodedFeature>> {
-        val queries: List<String>
-        queries = when (request) {
+        val queries: List<String> = when (request) {
             is ExplicitSearchRequest -> request.ids
             is GeocodingSearchRequest -> request.queries.flatMap { regionQuery -> regionQuery.names }
             is ReverseGeocodingSearchRequest -> emptyList()
-            else -> return Asyncs.failure(IllegalStateException("Unkown request type: $request"))
+            else -> return Asyncs.failure(IllegalStateException("Unknown request type: $request"))
         }
 
         val featureSelector: (SuccessGeoResponse) -> List<GeocodedFeature> =
