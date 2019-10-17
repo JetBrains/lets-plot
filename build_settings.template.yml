@@ -8,7 +8,9 @@ python:
   include_path: /anaconda3/include/python3.7m
 
 
-# PyPI credentials
+# -------------------------------------------------------------------
+# PyPI settings
+# -------------------------------------------------------------------
 pypi:
   # credentials on test.pypi.org
   test:
@@ -24,6 +26,5 @@ pypi:
 # Bintray settings
 # -------------------------------------------------------------------
 bintray:
-  # Bintray credentials
   user:
   key:
