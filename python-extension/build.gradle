@@ -8,15 +8,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 def cfg = project.buildSettings
 
-def PYTHON_INCLUDE_PATH = cfg.python.python_include_path
-def PYTHON_BIN_PATH = cfg.python.python_bin_path
-
-task testBuildSettingsYml() {
-    doLast {
-        println PYTHON_BIN_PATH
-        println PYTHON_INCLUDE_PATH
-    }
-}
+def PYTHON_INCLUDE_PATH = cfg.python.include_path
 
 def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 

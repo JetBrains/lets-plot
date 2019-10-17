@@ -90,8 +90,8 @@ subprojects {
 // Building and publishing Python package
 // ----------------------------------------
 
-def PYTHON_BIN_PATH = project.buildSettings.python.python_bin_path
-def PYTHON_INCLUDE_PATH = project.buildSettings.python.python_include_path
+def PYTHON_BIN_PATH = project.buildSettings.python.bin_path
+def PYTHON_INCLUDE_PATH = project.buildSettings.python.include_path
 def task_group = 'datalore plot'
 
 if (PYTHON_INCLUDE_PATH != null) {
@@ -131,7 +131,7 @@ if (PYTHON_INCLUDE_PATH != null) {
         }
 
 
-        def PROD_CREDENTIALS = project.buildSettings.python.pypi_creds.prod
+        def PROD_CREDENTIALS = project.buildSettings.pypi.prod
         if (PROD_CREDENTIALS.username != null && PROD_CREDENTIALS.password != null) {
             task publishProdPythonPackage(type: Exec) {
                 workingDir python_build_dist_dir
@@ -146,7 +146,7 @@ if (PYTHON_INCLUDE_PATH != null) {
             }
         }
 
-        def TEST_CREDENTIALS = project.buildSettings.python.pypi_creds.test
+        def TEST_CREDENTIALS = project.buildSettings.pypi.test
         if (TEST_CREDENTIALS.username != null && TEST_CREDENTIALS.password != null) {
             task publishTestPythonPackage(type: Exec) {
                 workingDir python_build_dist_dir

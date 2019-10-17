@@ -4,19 +4,20 @@
 # Python settings
 # -------------------------------------------------------------------
 python:
-  python_bin_path: /anaconda3/bin
-  python_include_path: /anaconda3/include/python3.7m
+  bin_path: /anaconda3/bin
+  include_path: /anaconda3/include/python3.7m
 
-  # PyPI credentials
-  pypi_creds:
-    # credentials on test.pypi.org
-    test:
-      username:
-      password:
-    # credentials on pypi.org
-    prod:
-      username:
-      password:
+
+# PyPI credentials
+pypi:
+  # credentials on test.pypi.org
+  test:
+    username:
+    password:
+  # credentials on pypi.org
+  prod:
+    username:
+    password:
 
 
 # -------------------------------------------------------------------
