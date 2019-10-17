@@ -1,9 +1,3 @@
-buildscript {
-    dependencies {
-        classpath("org.yaml:snakeyaml:1.25")
-    }
-}
-
 plugins {
     id 'kotlin-multiplatform'
     id 'org.jetbrains.gradle.plugin.idea-ext'
@@ -11,14 +5,8 @@ plugins {
 
 
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
-import org.yaml.snakeyaml.Yaml
 
-// Draft: reading build properties from YAML
-def devSettings = new File(rootDir, "build_settings.yml")
-if (!devSettings.canRead()) {
-    throw new GradleException("No build_settings.yml")
-}
-def cfg = new Yaml().load(devSettings.newInputStream())
+def cfg = project.buildSettings
 
 task testBuildSettingsYml() {
     doLast {
