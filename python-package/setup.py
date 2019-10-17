@@ -18,7 +18,7 @@ LIB_NAME = "libdatalore_plot_python_extension"
 LINUX_LIB_NAME = LIB_NAME + ".so"
 
 build_paths = {
-    "Linux": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'linuxX64', 'debugShared'),
+    "Linux": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'linuxX64', 'debugStatic'),
     "Darwin": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
 }
 
@@ -83,14 +83,14 @@ setup(name='datalore-plot',
           ],
       },
 
-      data_files=[("datalore/plot", [BUILD_PATH + "/" + LINUX_LIB_NAME])] if platform.system() == 'Linux' else [],
+      #data_files=[("datalore/plot", [BUILD_PATH + "/" + LINUX_LIB_NAME])] if platform.system() == 'Linux' else [],
 
       ext_modules=[
           Extension('datalore_plot_kotlin_bridge',
                     include_dirs=[BUILD_PATH],
-                    libraries=['datalore_plot_python_extension'],
+                    libraries=['datalore_plot_python_extension', 'stdc++'],
                     library_dirs=[BUILD_PATH, 'datalore/plot'],
-                    runtime_library_dirs=[BUILD_PATH, 'datalore/plot'],
+                    runtime_library_dirs=['datalore/plot'],
                     depends=['libdatalore_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],
                     )

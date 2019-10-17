@@ -41,7 +41,7 @@ kotlin {
         if (currentOs.isLinux()) {
             linuxX64() {
                 binaries {
-                    sharedLib {
+                    staticLib {
                         baseName = "datalore-plot-${project.name}"
                     }
                 }
