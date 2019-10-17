@@ -20,13 +20,11 @@ plugins {
 // Build settings loading
 import org.yaml.snakeyaml.Yaml
 
-def devSettings = new File(rootDir, "build_settings.yml")
-if (!devSettings.canRead()) {
-    throw new GradleException("No build_settings.yml")
+def buildSettings = new File(rootDir, "build_settings.yml")
+if (!buildSettings.canRead()) {
+    throw new GradleException("Couldn't read build_settings.yml")
 }
-def cfg = new Yaml().load(devSettings.newInputStream())
-
-project.ext.buildSettings = cfg
+project.ext.buildSettings = new Yaml().load(buildSettings.newInputStream())
 
 
 allprojects {
