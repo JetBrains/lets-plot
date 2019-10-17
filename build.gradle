@@ -90,30 +90,29 @@ subprojects {
 // Building and publishing Python package
 // ----------------------------------------
 
-def PYTHON_BIN_PATH = project.buildSettings.python.bin_path
-def PYTHON_INCLUDE_PATH = project.buildSettings.python.include_path
+def python_bin_path = project.buildSettings.python.bin_path
+def python_include_path = project.buildSettings.python.include_path
 def task_group = 'datalore plot'
 
-if (PYTHON_INCLUDE_PATH != null) {
-    if (PYTHON_BIN_PATH != null) {
+if (python_include_path != null) {
+    if (python_bin_path != null) {
 
-        def PYTHON_PACKAGE_DIR = "${project.projectDir}/python-package"
-        def PYTHON_PACKAGE_BUILD_DIR = "${PYTHON_PACKAGE_DIR}/build"
-
-        def python_build_dist_dir = "${PYTHON_PACKAGE_DIR}/dist"
+        def python_package_dir = "${projectDir}/python-package"
+        def python_package_build_dir = "${python_package_dir}/build"
+        def python_build_dist_dir = "${python_package_dir}/dist"
 
         clean {
-            delete PYTHON_PACKAGE_BUILD_DIR
-            delete "${PYTHON_PACKAGE_DIR}/datalore/package_data"
-            delete "${PYTHON_PACKAGE_DIR}/datalore_plot.egg-info"
+            delete python_package_build_dir
+            delete "${python_package_dir}/datalore/package_data"
+            delete "${python_package_dir}/datalore_plot.egg-info"
         }
 
         task buildPythonPackage(type: Exec) {
-            workingDir PYTHON_PACKAGE_DIR
+            workingDir python_package_dir
             group = task_group
             description = 'Builds datalore-plot wheel distribution (python)'
 
-            commandLine "${PYTHON_BIN_PATH}/python3",
+            commandLine "${python_bin_path}/python3",
                     'setup.py',
                     'update_js',
                     'bdist_wheel',
@@ -123,7 +122,7 @@ if (PYTHON_INCLUDE_PATH != null) {
         task localInstallPythonPackage(type: Exec) {
             workingDir python_build_dist_dir
 
-            commandLine "${PYTHON_BIN_PATH}/pip",
+            commandLine "${python_bin_path}/pip",
                     'install',
                     '--no-index',
                     '--find-links=./',
@@ -131,34 +130,34 @@ if (PYTHON_INCLUDE_PATH != null) {
         }
 
 
-        def PROD_CREDENTIALS = project.buildSettings.pypi.prod
-        if (PROD_CREDENTIALS.username != null && PROD_CREDENTIALS.password != null) {
+        def pypi_prod = project.buildSettings.pypi.prod
+        if (pypi_prod.username != null && pypi_prod.password != null) {
             task publishProdPythonPackage(type: Exec) {
                 workingDir python_build_dist_dir
 
-                commandLine "${PYTHON_BIN_PATH}/twine",
+                commandLine "${python_bin_path}/twine",
                         "upload",
                         "-u",
-                        PROD_CREDENTIALS.username,
+                        pypi_prod.username,
                         "-p",
-                        PROD_CREDENTIALS.password,
+                        pypi_prod.password,
                         "./*"
             }
         }
 
-        def TEST_CREDENTIALS = project.buildSettings.pypi.test
-        if (TEST_CREDENTIALS.username != null && TEST_CREDENTIALS.password != null) {
+        def pipy_test = project.buildSettings.pypi.test
+        if (pipy_test.username != null && pipy_test.password != null) {
             task publishTestPythonPackage(type: Exec) {
                 workingDir python_build_dist_dir
 
-                commandLine "${PYTHON_BIN_PATH}/twine",
+                commandLine "${python_bin_path}/twine",
                         "upload",
                         "--repository-url",
                         "https://test.pypi.org/legacy/",
                         "-u",
-                        TEST_CREDENTIALS.username,
+                        pipy_test.username,
                         "-p",
-                        TEST_CREDENTIALS.password,
+                        pipy_test.password,
                         "./*"
             }
         }
