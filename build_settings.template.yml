@@ -4,8 +4,8 @@
 # Python settings
 # -------------------------------------------------------------------
 python:
-  python_bin_path: /home/iryabov/.datalore/anaconda/bin
-  python_include_path: /home/iryabov/.datalore/anaconda/include/python3.7m
+  python_bin_path: /anaconda3/bin
+  python_include_path: /anaconda3/include/python3.7m
 
   # PyPI credentials
   pypi_creds:
