@@ -1,20 +1,15 @@
 package jetbrains.livemap.geom
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
-import jetbrains.gis.geoprotocol.Geometry
-import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.geom.MultiDataPointHelper.MultiDataPoint
 import jetbrains.livemap.projections.Coordinates.Companion.ZERO_WORLD_POINT
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
 import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
-import jetbrains.livemap.projections.ProjectionUtil.transformMultiPolygon
-import jetbrains.livemap.projections.World
 
 
 internal object ConverterDataHelper {
@@ -24,63 +19,55 @@ internal object ConverterDataHelper {
             Rect(ZERO_WORLD_POINT, explicitVec(TILE_PIXEL_SIZE, TILE_PIXEL_SIZE))
         )
 
-    val GENERIC_POINT = listOf(
-        DoubleVector(0.0, 5.0)
+    val GENERIC_POINT: List<Vec<LonLat>> = listOf(
+        explicitVec(0.0, 5.0)
     )
 
-    val GENERIC_POINTS = listOf(
-        DoubleVector(0.0, 5.0),
-        DoubleVector(5.0, 5.0)
+    val GENERIC_POINTS: List<Vec<LonLat>> = listOf(
+        explicitVec(0.0, 5.0),
+        explicitVec(5.0, 5.0)
     )
 
-    val PATH = MultiPolygon<LonLat>(
-        listOf(
-            Polygon(
-                listOf(
-                    Ring(
-                        listOf(
-                            explicitVec(0.0, 5.0),
-                            explicitVec(1.0, 5.003032951),
-                            explicitVec(2.0, 5.004549647),
-                            explicitVec(3.0, 5.004549647),
-                            explicitVec(4.0, 5.003032951),
-                            explicitVec(5.0, 5.0)
-                        )
-                    )
-                )
-
+    val PATH = multiPolygon<LonLat>(
+        polygon(
+            ring(
+                explicitVec(0.0, 5.0),
+                explicitVec(1.0, 5.003032951),
+                explicitVec(2.0, 5.004549647),
+                explicitVec(3.0, 5.004549647),
+                explicitVec(4.0, 5.003032951),
+                explicitVec(5.0, 5.0)
             )
         )
-
     )
 
-    private val FIRST_RING = Ring<LonLat>(
+    val FIRST_RING = Ring<LonLat>(
         listOf(
             explicitVec(0.0, 5.0),
             explicitVec(0.0, 1.0),
             explicitVec(0.0, 5.0)
         )
-
     )
 
-    private val SECOND_RING = Ring<LonLat>(
-        listOf(
-            explicitVec(5.0, 5.0),
-            explicitVec(5.0, 1.0),
-            explicitVec(5.0, 5.0)
-        )
+    val SECOND_RING = ring<LonLat>(
+        explicitVec(5.0, 5.0),
+        explicitVec(5.0, 1.0),
+        explicitVec(5.0, 5.0)
     )
 
-    val MULTIPOLYGON = MultiPolygon(
-        listOf(
-            Polygon(
-                listOf(
-                    FIRST_RING, SECOND_RING
-                )
-            )
-        )
+    val MULTIPOLYGON = multiPolygon(polygon(FIRST_RING, SECOND_RING))
 
-    )
+    fun <T> multiPolygon(vararg polygons: Polygon<T>): MultiPolygon<T> {
+        return MultiPolygon(polygons.asList())
+    }
+
+    fun <T> polygon(vararg rings: Ring<T>): Polygon<T> {
+        return Polygon(rings.asList())
+    }
+
+    fun <T> ring(vararg points: Vec<T>): Ring<T> {
+        return Ring(points.asList())
+    }
 
     fun rings(): List<Vec<LonLat>> {
         val rings = ArrayList<Vec<LonLat>>()
@@ -186,7 +173,7 @@ internal object ConverterDataHelper {
             return aesGroup
         }
 
-        fun addGroup(points: List<DoubleVector>): AesGroup {
+        fun addGroup(points: List<Vec<LonLat>>): AesGroup {
             val x = ArrayList<Double>()
             val y = ArrayList<Double>()
 
