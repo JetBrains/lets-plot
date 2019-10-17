@@ -6,14 +6,12 @@ plugins {
 
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
-def cfg = project.buildSettings
-
-def PYTHON_INCLUDE_PATH = cfg.python.include_path
-
 def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
 kotlin {
-    if (PYTHON_INCLUDE_PATH != null) {
+    if (project.buildSettings.build_python_extension) {
+        def python_include_path = project.buildSettings.python.include_path
+
         if (currentOs.isMacOsX()) {
             macosX64() {
                 binaries {
@@ -24,7 +22,7 @@ kotlin {
 
                 compilations.main.cinterops {
                     python {
-                        compilerOpts "-I${PYTHON_INCLUDE_PATH}"
+                        compilerOpts "-I${python_include_path}"
                     }
                 }
             }
@@ -40,19 +38,12 @@ kotlin {
 
                 compilations.main.cinterops {
                     python {
-                        compilerOpts "-I${PYTHON_INCLUDE_PATH}"
+                        compilerOpts "-I${python_include_path}"
                     }
                 }
             }
         }
-    } else {
-        throw new GradleException('''
-------------------------------------------------------------------------------------------------------
-Python package build unavailable. Please set "python_include_path" property in build_settings.yml file.
-------------------------------------------------------------------------------------------------------
-''')
     }
-
 
     sourceSets {
         commonMain {
