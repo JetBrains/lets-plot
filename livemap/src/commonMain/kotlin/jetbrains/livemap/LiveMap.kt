@@ -64,6 +64,7 @@ import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.tiles.components.CellLayerComponent
 import jetbrains.livemap.tiles.components.CellLayerKind
 import jetbrains.livemap.tiles.components.DebugCellLayerComponent
+import jetbrains.livemap.tiles.http.HttpTileComponent
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
@@ -224,9 +225,9 @@ class LiveMap(
         val listeners = EventListenerComponent()
 
         val camera = componentManager.getSingletonEntity(CameraComponent::class)
-            .addComponent(MouseInputComponent())
-            .addComponent(
-                ClickableComponent(
+            .addComponents {
+                + MouseInputComponent()
+                + ClickableComponent(
                     Rectangle().apply {
                         rect = newDoubleRectangle(
                             Coordinates.ZERO_CLIENT_POINT,
@@ -234,8 +235,8 @@ class LiveMap(
                         )
                     }
                 )
-            )
-            .addComponent(listeners)
+                + listeners
+            }
 
         listeners.addDoubleClickListener { event ->
             if (camera.contains(CameraScale.CameraScaleEffectComponent::class) || camera.getComponent<CameraComponent>().zoom == MAX_ZOOM.toDouble()) {
@@ -264,13 +265,23 @@ class LiveMap(
 
         componentManager
             .createEntity("layers_order")
-            .addComponent(layerManager.createLayersOrderComponent())
+            .addComponents { + layerManager.createLayersOrderComponent() }
+
+        componentManager
+            .createEntity("http_tile_layer")
+            .addComponents {
+                + HttpTileComponent()
+                + LayerEntitiesComponent()
+                + layerManager.createRenderLayerComponent("http_ground")
+            }
 
         componentManager
             .createEntity("cell_layer_ground")
-            .addComponent(CellLayerComponent(CellLayerKind.WORLD))
-            .addComponent(LayerEntitiesComponent())
-            .addComponent(layerManager.createRenderLayerComponent("ground"))
+            .addComponents {
+                + CellLayerComponent(CellLayerKind.WORLD)
+                + LayerEntitiesComponent()
+                + layerManager.createRenderLayerComponent("ground")
+            }
 
         val mapObject2Entity = MapObject2Entity(componentManager, layerManager, myDevParams, myMapProjection)
         for (mapLayer in myMapLayers) {
@@ -295,23 +306,29 @@ class LiveMap(
 
         componentManager
             .createEntity("cell_layer_labels")
-            .addComponent(CellLayerComponent(CellLayerKind.LABEL))
-            .addComponent(LayerEntitiesComponent())
-            .addComponent(layerManager.createRenderLayerComponent("labels"))
+            .addComponents {
+                + CellLayerComponent(CellLayerKind.LABEL)
+                + LayerEntitiesComponent()
+                + layerManager.createRenderLayerComponent("labels")
+            }
 
         if (myDevParams.isSet(DEBUG_GRID)) {
             componentManager
                 .createEntity("cell_layer_debug")
-                .addComponent(CellLayerComponent(CellLayerKind.DEBUG))
-                .addComponent(DebugCellLayerComponent())
-                .addComponent(LayerEntitiesComponent())
-                .addComponent(layerManager.createRenderLayerComponent("debug"))
+                .addComponents {
+                    + CellLayerComponent(CellLayerKind.DEBUG)
+                    + DebugCellLayerComponent()
+                    + LayerEntitiesComponent()
+                    + layerManager.createRenderLayerComponent("debug")
+                }
         }
 
         componentManager
             .createEntity("layer_ui")
-            .addComponent(UiRenderingTaskSystem.UiLayerComponent())
-            .addComponent(layerManager.createRenderLayerComponent("ui"))
+            .addComponents {
+                + UiRenderingTaskSystem.UiLayerComponent()
+                + layerManager.createRenderLayerComponent("ui")
+            }
     }
 
     override fun dispose() {
