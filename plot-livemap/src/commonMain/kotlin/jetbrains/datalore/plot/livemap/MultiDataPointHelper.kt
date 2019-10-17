@@ -1,4 +1,4 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aesthetics
@@ -32,7 +32,12 @@ internal class MultiDataPointHelper private constructor(
     }
 
     private fun createOrGetBuilderFor(p: DataPointAesthetics): MultiDataPointBuilder {
-        return myMultiDataPointBuilders.getOrPut(p.mapId(), { MultiDataPointBuilder(p, mySortingMode) })
+        return myMultiDataPointBuilders.getOrPut(p.mapId(), {
+            MultiDataPointBuilder(
+                p,
+                mySortingMode
+            )
+        })
     }
 
     private class MultiDataPointBuilder(
@@ -66,7 +71,12 @@ internal class MultiDataPointHelper private constructor(
                 colorList.add(p.fill()!!)
             }
 
-            return MultiDataPoint(myAes, keyList, valueList, colorList)
+            return MultiDataPoint(
+                myAes,
+                keyList,
+                valueList,
+                colorList
+            )
         }
 
         private fun <T> MutableList<T>.sort(

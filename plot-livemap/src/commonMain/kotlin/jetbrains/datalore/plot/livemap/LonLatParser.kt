@@ -1,4 +1,4 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.MercatorUtils.checkLat

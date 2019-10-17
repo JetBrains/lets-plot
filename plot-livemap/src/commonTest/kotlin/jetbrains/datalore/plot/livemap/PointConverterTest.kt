@@ -1,14 +1,14 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.plot.base.geom.PointGeom
 import jetbrains.datalore.plot.base.render.point.NamedShape
-import jetbrains.livemap.geom.ConverterDataHelper.AestheticsDataHelper
-import jetbrains.livemap.geom.ConverterDataHelper.GENERIC_POINTS
-import jetbrains.livemap.geom.ConverterDataHelper.createDefaultMatcher
-import jetbrains.livemap.geom.MapObjectMatcher.Companion.eq
-import jetbrains.livemap.geom.MapObjectMatcher.Companion.sizeEq
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.AestheticsDataHelper
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.GENERIC_POINTS
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
+import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.eq
+import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.sizeEq
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

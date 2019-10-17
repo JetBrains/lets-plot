@@ -1,4 +1,4 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.livemap.mapobjects.MapLayer
@@ -20,7 +20,8 @@ internal class LayerDataPointAestheticsProcessor(
 
         val aesthetics = layerData.aesthetics
 
-        val dataPointsConverter = DataPointsConverter(aesthetics, myMapProjection, myGeodesic)
+        val dataPointsConverter =
+            DataPointsConverter(aesthetics, myMapProjection, myGeodesic)
 
         val mapObjects: List<MapObject>
         val layerKind: MapLayerKind

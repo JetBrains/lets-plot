@@ -1,4 +1,4 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
@@ -9,8 +9,8 @@ import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
-import jetbrains.livemap.geom.MultiDataPointHelper.MultiDataPoint
-import jetbrains.livemap.geom.MultiDataPointHelper.SortingMode
+import jetbrains.datalore.plot.livemap.MultiDataPointHelper.MultiDataPoint
+import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.mapobjects.MapObject
@@ -94,7 +94,10 @@ internal class LiveMapDataPointAestheticsProcessor(
     }
 
     private fun processMultiDataPoints(): List<MapObject> {
-        val multiDataPoints = MultiDataPointHelper.getPoints(myAesthetics, getSortingMode(myLayerKind))
+        val multiDataPoints = MultiDataPointHelper.getPoints(
+            myAesthetics,
+            getSortingMode(myLayerKind)
+        )
         if (myLayerKind === MapLayerKind.BAR) {
             myMaxAbsValue = getMaxAbsValue(multiDataPoints)
         }
@@ -111,7 +114,8 @@ internal class LiveMapDataPointAestheticsProcessor(
     }
 
     private fun multiDataPointToMapObject(multiDataPoint: MultiDataPoint, consumer: (MapObject) -> Unit) {
-        createMapObject(multiDataPoint.aes, MapObjectBuilder(multiDataPoint, myLayerKind, myMapProjection), consumer)
+        createMapObject(multiDataPoint.aes,
+            MapObjectBuilder(multiDataPoint, myLayerKind, myMapProjection), consumer)
     }
 
     private fun createMapObject(

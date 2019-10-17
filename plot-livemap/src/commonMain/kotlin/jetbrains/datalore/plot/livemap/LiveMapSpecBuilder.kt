@@ -1,4 +1,4 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -77,11 +77,17 @@ internal class LiveMapSpecBuilder {
     }
 
     fun build(): LiveMapSpec {
-        val projectionType = convertProjectionType(myLiveMapOptions.projection)
+        val projectionType =
+            convertProjectionType(myLiveMapOptions.projection)
         val mapRect = WorldRectangle(0.0, 0.0, ProjectionUtil.TILE_PIXEL_SIZE, ProjectionUtil.TILE_PIXEL_SIZE)
         val mapProjection = createMapProjection(projectionType, mapRect)
 
-        val liveMapProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myDataAccess, myLiveMapOptions, mapProjection)
+        val liveMapProcessor = LiveMapDataPointAestheticsProcessor(
+            myAesthetics,
+            myDataAccess,
+            myLiveMapOptions,
+            mapProjection
+        )
 
         val mapLayers = ArrayList<MapLayer>()
         mapLayers.add(liveMapProcessor.createMapLayer())
@@ -121,7 +127,8 @@ internal class LiveMapSpecBuilder {
 
     private fun createMapLayers(mapProjection: MapProjection): List<MapLayer> {
         val mapLayers = ArrayList<MapLayer>()
-        val layerProcessor = LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions.geodesic)
+        val layerProcessor =
+            LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions.geodesic)
 
         for (layerData in myLayers) {
             val mapLayer = layerProcessor.createMapLayer(layerData)
@@ -233,8 +240,15 @@ internal class LiveMapSpecBuilder {
             } else if (region is Map<*, *>) {
                 val handlerMap = HashMap<String, (Any) -> MapRegion>()
                 handlerMap[REGION_TYPE_NAME] = { data -> MapRegion.withName(data as String) }
-                handlerMap[REGION_TYPE_IDS] = { getWithIdList(it) }
-                return handleRegionObject((region as Map<*, *>?)!!, handlerMap)
+                handlerMap[REGION_TYPE_IDS] = {
+                    getWithIdList(
+                        it
+                    )
+                }
+                return handleRegionObject(
+                    (region as Map<*, *>?)!!,
+                    handlerMap
+                )
             } else {
                 throw IllegalArgumentException("Expected: parent" + " = [String]")
             }
@@ -246,12 +260,25 @@ internal class LiveMapSpecBuilder {
             } else if (location is Map<*, *>) {
                 val handlerMap = HashMap<String, (Any) -> MapLocation>()
                 handlerMap[REGION_TYPE_NAME] = { data -> MapLocation.create(MapRegion.withName(data as String)) }
-                handlerMap[REGION_TYPE_IDS] = { data -> MapLocation.create(getWithIdList(data)) }
+                handlerMap[REGION_TYPE_IDS] = { data -> MapLocation.create(
+                    getWithIdList(data)
+                ) }
                 handlerMap[REGION_TYPE_COORDINATES] =
-                    { data -> MapLocation.create(calculateGeoRectangle(data as List<*>)) }
+                    { data -> MapLocation.create(
+                        calculateGeoRectangle(
+                            data as List<*>
+                        )
+                    ) }
                 handlerMap[REGION_TYPE_DATAFRAME] =
-                    { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
-                return handleRegionObject((location as Map<*, *>?)!!, handlerMap)
+                    { data -> MapLocation.create(
+                        calculateGeoRectangle(
+                            data as Map<*, *>
+                        )
+                    ) }
+                return handleRegionObject(
+                    (location as Map<*, *>?)!!,
+                    handlerMap
+                )
             } else {
                 throw IllegalArgumentException("Expected: locatiobn" + " = [String|Array|DataFrame]")
             }

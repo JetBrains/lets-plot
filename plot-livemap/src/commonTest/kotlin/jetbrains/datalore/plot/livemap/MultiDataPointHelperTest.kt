@@ -1,13 +1,13 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
-import jetbrains.livemap.geom.MultiDataPointHelper.MultiDataPoint
-import jetbrains.livemap.geom.MultiDataPointHelper.SortingMode
-import jetbrains.livemap.geom.MultiDataPointHelper.SortingMode.BAR
-import jetbrains.livemap.geom.MultiDataPointHelper.SortingMode.PIE_CHART
-import jetbrains.livemap.geom.MultiDataPointHelperTest.MultiDataBuilder.DataPointBuilder
+import jetbrains.datalore.plot.livemap.MultiDataPointHelper.MultiDataPoint
+import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
+import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode.BAR
+import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode.PIE_CHART
+import jetbrains.datalore.plot.livemap.MultiDataPointHelperTest.MultiDataBuilder.DataPointBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,7 +24,12 @@ class MultiDataPointHelperTest {
             point().value(10.0).order(2.0)
         )
 
-        assertPointsOrder(PIE_CHART, dataPointBuilders, POINT_2, POINT_1, POINT_3, POINT_0)
+        assertPointsOrder(PIE_CHART, dataPointBuilders,
+            POINT_2,
+            POINT_1,
+            POINT_3,
+            POINT_0
+        )
     }
 
     @Test
@@ -32,7 +37,10 @@ class MultiDataPointHelperTest {
         assertPointsOrder(
             PIE_CHART,
             pointsWithValue(2.0, 7.0, 3.0, 10.0),
-            POINT_3, POINT_0, POINT_2, POINT_1
+            POINT_3,
+            POINT_0,
+            POINT_2,
+            POINT_1
         )
     }
 
@@ -41,7 +49,10 @@ class MultiDataPointHelperTest {
         assertPointsOrder(
             BAR,
             pointsWithOrder(0.0, 1.0, 2.0, 3.0),
-            POINT_0, POINT_1, POINT_2, POINT_3
+            POINT_0,
+            POINT_1,
+            POINT_2,
+            POINT_3
         )
     }
 
@@ -50,7 +61,10 @@ class MultiDataPointHelperTest {
         assertPointsOrder(
             BAR,
             pointsWithOrder(1.0, 3.0, 2.0, 0.0),
-            POINT_3, POINT_0, POINT_2, POINT_1
+            POINT_3,
+            POINT_0,
+            POINT_2,
+            POINT_1
         )
     }
 
@@ -82,7 +96,10 @@ class MultiDataPointHelperTest {
             .multiData("TX", dataPointBuilders)
             .points
 
-        assertPointsOrder(points[0], *expectedPointIndices)
+        assertPointsOrder(
+            points[0],
+            *expectedPointIndices
+        )
     }
 
     internal class MultiDataBuilder {

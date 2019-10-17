@@ -1,4 +1,4 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.plot.base.Aesthetics
@@ -49,7 +49,12 @@ internal object ConverterDataHelper {
         explicitVec(5.0, 5.0)
     )
 
-    val MULTIPOLYGON = multiPolygon(polygon(FIRST_RING, SECOND_RING))
+    val MULTIPOLYGON = multiPolygon(
+        polygon(
+            FIRST_RING,
+            SECOND_RING
+        )
+    )
 
     fun <T> multiPolygon(vararg polygons: Polygon<T>): MultiPolygon<T> {
         return MultiPolygon(polygons.asList())
@@ -83,7 +88,11 @@ internal object ConverterDataHelper {
 
         fun buildConverter(): DataPointsConverter {
             val aesthetics = build()
-            return DataPointsConverter(aesthetics, MAP_PROJECTION, true)
+            return DataPointsConverter(
+                aesthetics,
+                MAP_PROJECTION,
+                true
+            )
         }
 
         private fun build(): Aesthetics {

@@ -4,7 +4,7 @@ import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
-import jetbrains.livemap.geom.LiveMapUtil
+import jetbrains.datalore.plot.livemap.LiveMapUtil
 import kotlin.test.Test
 
 // {data={

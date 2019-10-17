@@ -1,4 +1,4 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.values.Color
@@ -27,8 +27,10 @@ internal class MapObjectMatcher {
     private var barRadius = Expectation.any<Vec<*>>()
     private var centerOffset = Expectation.any<Vec<*>>()
     private var point = Expectation.any<Vec<*>>()
-    private var geometry = Expectation.any<TypedGeometry<*>>()
-    private var locationBoundingBoxes = Expectation.any<List<Rect<*>>>()
+    private var geometry =
+        Expectation.any<TypedGeometry<*>>()
+    private var locationBoundingBoxes =
+        Expectation.any<List<Rect<*>>>()
     private var label = Expectation.any<String>()
     private var family = Expectation.any<String>()
     private var fontface = Expectation.any<String>()
@@ -303,15 +305,24 @@ internal class MapObjectMatcher {
             }
 
             internal fun <T> equality(v: T?): Expectation<T> {
-                return Expectation(v, { expected, actual -> assertEquals(expected, actual) })
+                return Expectation(
+                    v,
+                    { expected, actual -> assertEquals(expected, actual) })
             }
 
             internal fun <T> sizeEquality(v: Int): Expectation<List<T>> {
-                return Expectation { _, t2 -> assertEquals(v, t2.size) }
+                return Expectation { _, t2 ->
+                    assertEquals(
+                        v,
+                        t2.size
+                    )
+                }
             }
 
             internal fun <T> arrayEquality(v: Array<T>): Expectation<Array<T>> {
-                return Expectation(v, { expecteds, actuals -> assertEquals(expecteds, actuals) })
+                return Expectation(
+                    v,
+                    { expecteds, actuals -> assertEquals(expecteds, actuals) })
             }
 
             internal fun mappingEquality(v: List<List<String>>): Expectation<List<List<String>>> {
@@ -330,15 +341,39 @@ internal class MapObjectMatcher {
             }
 
             internal fun doubleEquality(v: Double, eps: Double): Expectation<Double> {
-                return Expectation(v, { expected, actual -> assertDoubleEquals(expected, actual, eps) })
+                return Expectation(
+                    v,
+                    { expected, actual ->
+                        assertDoubleEquals(
+                            expected,
+                            actual,
+                            eps
+                        )
+                    })
             }
 
             internal fun pointEquality(v: Vec<*>, eps: Double): Expectation<Vec<*>> {
-                return Expectation(v, { expected, actual -> assertPointEquals(expected, actual, eps) })
+                return Expectation(
+                    v,
+                    { expected, actual ->
+                        assertPointEquals(
+                            expected,
+                            actual,
+                            eps
+                        )
+                    })
             }
 
             internal fun doubleArrayEquality(v: List<Double>, eps: Double): Expectation<List<Double>> {
-                return Expectation(v, { expected, actual -> assertDoubleArrayEquals(expected, actual, eps) })
+                return Expectation(
+                    v,
+                    { expected, actual ->
+                        assertDoubleArrayEquals(
+                            expected,
+                            actual,
+                            eps
+                        )
+                    })
             }
 
             internal fun geometryEquality(v: TypedGeometry<*>, eps: Double): Expectation<TypedGeometry<*>> {
@@ -365,7 +400,10 @@ internal class MapObjectMatcher {
         }
 
         fun eq(v: Double): Expectation<Double> {
-            return Expectation.doubleEquality(v, EPS)
+            return Expectation.doubleEquality(
+                v,
+                EPS
+            )
         }
 
         fun eq(v: Int): Expectation<Int> {
@@ -373,7 +411,10 @@ internal class MapObjectMatcher {
         }
 
         fun eq(v: Vec<*>): Expectation<Vec<*>> {
-            return Expectation.pointEquality(v, EPS)
+            return Expectation.pointEquality(
+                v,
+                EPS
+            )
         }
 
         fun <T> eq(v: T?): Expectation<T> {
@@ -385,11 +426,17 @@ internal class MapObjectMatcher {
         }
 
         fun vectorEq(v: List<Double>): Expectation<List<Double>> {
-            return Expectation.doubleArrayEquality(v, EPS)
+            return Expectation.doubleArrayEquality(
+                v,
+                EPS
+            )
         }
 
         fun geometryEq(v: TypedGeometry<*>): Expectation<TypedGeometry<*>> {
-            return Expectation.geometryEquality(v, EPS)
+            return Expectation.geometryEquality(
+                v,
+                EPS
+            )
         }
 
         private fun assertPointEquals(expected: Vec<*>?, actual: Vec<*>?, eps: Double) {
@@ -405,14 +452,22 @@ internal class MapObjectMatcher {
         private fun assertDoubleArrayEquals(expected: List<Double>, actual: List<Double>, eps: Double) {
             assertEquals(expected.size.toLong(), actual.size.toLong())
             for (i in expected.indices) {
-                assertDoubleEquals(expected[i], actual[i], eps)
+                assertDoubleEquals(
+                    expected[i],
+                    actual[i],
+                    eps
+                )
             }
         }
 
         private fun assertRingEquals(expected: Ring<*>, actual: Ring<*>, eps: Double) {
             assertEquals(expected.size, actual.size)
             for (i in 0 until expected.size) {
-                assertPointEquals(expected[i], actual[i], eps)
+                assertPointEquals(
+                    expected[i],
+                    actual[i],
+                    eps
+                )
             }
         }
 
@@ -426,7 +481,11 @@ internal class MapObjectMatcher {
         private fun assertMultipolygonEquals(expected: MultiPolygon<*>, actual: MultiPolygon<*>, eps: Double) {
             assertEquals(expected.size, actual.size)
             for (i in 0 until expected.size) {
-                assertPolygonEquals(expected[i], actual[i], eps)
+                assertPolygonEquals(
+                    expected[i],
+                    actual[i],
+                    eps
+                )
             }
         }
 

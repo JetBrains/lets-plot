@@ -1,4 +1,4 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
@@ -19,7 +19,12 @@ object LiveMapUtil {
         plotTiles.forEach { tileLayers ->
             tileLayers
                 .firstOrNull { it.isLiveMap }
-                ?.setLiveMapProvider(MyLiveMapProvider(tileLayers, liveMapOptions))
+                ?.setLiveMapProvider(
+                    MyLiveMapProvider(
+                        tileLayers,
+                        liveMapOptions
+                    )
+                )
         }
     }
 

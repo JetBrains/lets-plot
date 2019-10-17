@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromPlotOptions
+import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.svg.SvgNodeContainer
@@ -108,7 +109,7 @@ object MonolithicJs {
         // Inject LiveMap
         parseFromPlotOptions(OptionsAccessor(plotSpec))
             ?.let {
-                jetbrains.livemap.geom.LiveMapUtil.injectLiveMapProvider(
+                LiveMapUtil.injectLiveMapProvider(
                     assembler.layersByTile,
                     it
                 )

@@ -1,4 +1,4 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
@@ -15,9 +15,9 @@ import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode.POINT
 import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromLayerOptions
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DISPLAY_MODE
 import jetbrains.datalore.plot.config.OptionsAccessor
-import jetbrains.livemap.geom.ConverterDataHelper.MAP_PROJECTION
-import jetbrains.livemap.geom.ConverterDataHelper.createDefaultMatcher
-import jetbrains.livemap.geom.MapObjectMatcher.Companion.eq
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.MAP_PROJECTION
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
+import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.eq
 import jetbrains.livemap.mapobjects.MapObject
 import kotlin.test.Test
 
@@ -98,7 +98,10 @@ class MapIdAndGeoPointDataProcessingTest {
             .point(eq(myExpectedPoint))
 
         internal fun doAssert() {
-            createMapObject(myDataPointKind, myMapIdDataKind)?.let {
+            createMapObject(
+                myDataPointKind,
+                myMapIdDataKind
+            )?.let {
                 myMapObjectMatcher.match(it)
             } ?: if (myExpectedPoint != null) throw AssertionError("Expect:<$myExpectedPoint> but mapObject not created")
         }
@@ -171,7 +174,10 @@ class MapIdAndGeoPointDataProcessingTest {
         private val LONLAT_MERCATOR_GEO_COORD = explicitVec<LonLat>(0.0, 0.0)
 
         private fun createMapObject(dataPointKind: DataPointKind, mapIdDataKind: MapIdDataKind): MapObject? {
-            val mapObjects = createProcessorBuilder(dataPointKind, mapIdDataKind)
+            val mapObjects = createProcessorBuilder(
+                dataPointKind,
+                mapIdDataKind
+            )
                 .build()
                 .createMapLayer()
                 .mapObjects
@@ -182,7 +188,10 @@ class MapIdAndGeoPointDataProcessingTest {
         private fun createProcessorBuilder(
             dataPointKind: DataPointKind, mapIdDataKind: MapIdDataKind
         ): LiveMapDataPointAestheticsProcessorBuilder {
-            return LiveMapDataPointAestheticsProcessorBuilder(mapIdDataKind, dataPointKind)
+            return LiveMapDataPointAestheticsProcessorBuilder(
+                mapIdDataKind,
+                dataPointKind
+            )
         }
     }
 }

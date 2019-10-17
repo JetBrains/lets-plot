@@ -1,14 +1,14 @@
-package jetbrains.livemap.geom
+package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.AestheticsDataHelper
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.FIRST_RING
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.SECOND_RING
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.multiPolygon
+import jetbrains.datalore.plot.livemap.ConverterDataHelper.polygon
+import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.geometryEq
+import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.sizeEq
 import jetbrains.gis.geoprotocol.Geometry
-import jetbrains.livemap.geom.ConverterDataHelper.AestheticsDataHelper
-import jetbrains.livemap.geom.ConverterDataHelper.FIRST_RING
-import jetbrains.livemap.geom.ConverterDataHelper.SECOND_RING
-import jetbrains.livemap.geom.ConverterDataHelper.createDefaultMatcher
-import jetbrains.livemap.geom.ConverterDataHelper.multiPolygon
-import jetbrains.livemap.geom.ConverterDataHelper.polygon
-import jetbrains.livemap.geom.MapObjectMatcher.Companion.geometryEq
-import jetbrains.livemap.geom.MapObjectMatcher.Companion.sizeEq
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
