@@ -87,16 +87,14 @@ subprojects {
 // Building and publishing Python package
 // ----------------------------------------
 
-def PYTHON_BIN_PATH = project.buildSettings.python_bin_path
-def PYTHON_INCLUDE_PATH = project.buildSettings.python_include_path
-def PYTHON_REPOSITORY_URL = project.buildSettings.python_repository_url
-
-def PYTHON_PACKAGE_DIR = "${project.projectDir}/python-package"
-def PYTHON_PACKAGE_BUILD_DIR = "${PYTHON_PACKAGE_DIR}/build"
+def PYTHON_BIN_PATH = project.buildSettings.python.python_bin_path
+def PYTHON_INCLUDE_PATH = project.buildSettings.python.python_include_path
 
 if (PYTHON_INCLUDE_PATH != null) {
     if (PYTHON_BIN_PATH != null) {
 
+        def PYTHON_PACKAGE_DIR = "${project.projectDir}/python-package"
+        def PYTHON_PACKAGE_BUILD_DIR = "${PYTHON_PACKAGE_DIR}/build"
 
         task updateJs(type:Exec) {
             workingDir PYTHON_PACKAGE_DIR
@@ -123,26 +121,35 @@ if (PYTHON_INCLUDE_PATH != null) {
                     'datalore-plot'
         }
 
-        task publishPythonPackage(type:Exec) {
-            workingDir "${PYTHON_PACKAGE_BUILD_DIR}/dist"
 
-            if (PYTHON_REPOSITORY_URL != null) {
+        def PROD_CREDENTIALS = project.buildSettings.python.pypi_creds.prod
+        if (PROD_CREDENTIALS.username != null && PROD_CREDENTIALS.password != null) {
+            task publishProdPythonPackage(type:Exec) {
+                workingDir "${PYTHON_PACKAGE_BUILD_DIR}/dist"
+
+                commandLine "${PYTHON_BIN_PATH}/twine",
+                        "upload",
+                        "-u",
+                        PROD_CREDENTIALS.username,
+                        "-p",
+                        PROD_CREDENTIALS.password,
+                        "./*"
+            }
+        }
+
+        def TEST_CREDENTIALS = project.buildSettings.python.pypi_creds.test
+        if (TEST_CREDENTIALS.username != null && TEST_CREDENTIALS.password != null) {
+            task publishTestPythonPackage(type: Exec) {
+                workingDir "${PYTHON_PACKAGE_BUILD_DIR}/dist"
+
                 commandLine "${PYTHON_BIN_PATH}/twine",
                         "upload",
                         "--repository-url",
-                        PYTHON_REPOSITORY_URL,
+                        "https://test.pypi.org/legacy/",
                         "-u",
-                        project.properties["pypi_username"],
+                        TEST_CREDENTIALS.username,
                         "-p",
-                        project.properties["pypi_password"],
-                        "./*"
-            } else {
-                commandLine "${PYTHON_BIN_PATH}/twine",
-                        "upload",
-                        "-u",
-                        project.properties["pypi_username"],
-                        "-p",
-                        project.properties["pypi_password"],
+                        TEST_CREDENTIALS.password,
                         "./*"
             }
         }

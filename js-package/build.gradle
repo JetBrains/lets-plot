@@ -55,10 +55,13 @@ node {
     download = true
 }
 
-if (hasProperty('bintray_user') && hasProperty('bintray_key')) {
+def BINTRAY_USER = project.buildSettings.bintray.user
+def BINTRAY_KEY = project.buildSettings.bintray.key
+
+if (BINTRAY_USER != null && BINTRAY_KEY != null) {
     bintray {
-        user = bintray_user
-        key = bintray_key
+        user = BINTRAY_USER
+        key = BINTRAY_KEY
 
         filesSpec {
             from 'build/dist'

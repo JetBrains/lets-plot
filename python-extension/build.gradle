@@ -8,17 +8,20 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 def cfg = project.buildSettings
 
+def PYTHON_INCLUDE_PATH = cfg.python.python_include_path
+def PYTHON_BIN_PATH = cfg.python.python_bin_path
+
 task testBuildSettingsYml() {
     doLast {
-        println cfg.python_bin_path
-        println cfg.python_include_path
+        println PYTHON_BIN_PATH
+        println PYTHON_INCLUDE_PATH
     }
 }
 
 def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
 kotlin {
-    if (cfg.python_include_path != null) {
+    if (PYTHON_INCLUDE_PATH != null) {
         if (currentOs.isMacOsX()) {
             macosX64() {
                 binaries {
@@ -29,7 +32,7 @@ kotlin {
 
                 compilations.main.cinterops {
                     python {
-                        compilerOpts "-I${cfg.python_include_path}"
+                        compilerOpts "-I${PYTHON_INCLUDE_PATH}"
                     }
                 }
             }
@@ -45,7 +48,7 @@ kotlin {
 
                 compilations.main.cinterops {
                     python {
-                        compilerOpts "-I${cfg.python_include_path}"
+                        compilerOpts "-I${PYTHON_INCLUDE_PATH}"
                     }
                 }
             }

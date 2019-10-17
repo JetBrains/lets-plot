@@ -1,25 +1,28 @@
 ---
+
 # -------------------------------------------------------------------
 # Python settings
 # -------------------------------------------------------------------
+python:
+  python_bin_path: /home/iryabov/.datalore/anaconda/bin
+  python_include_path: /home/iryabov/.datalore/anaconda/include/python3.7m
 
-# Python bin path (for building datalore-plot python package)
-python_bin_path: /anaconda3/bin
-# Python include path (for building datalore-plot python package)
-python_include_path: /anaconda3/include/python3.7m
-
-# PyPI repository url
-python_repository_url:
-
-# PyPI credentials for publishing
-pypi_username:
-pypi_password:
+  # PyPI credentials
+  pypi_creds:
+    # credentials on test.pypi.org
+    test:
+      username:
+      password:
+    # credentials on pypi.org
+    prod:
+      username:
+      password:
 
 
 # -------------------------------------------------------------------
 # Bintray settings
 # -------------------------------------------------------------------
-
-# Bintray credentials
-bintray_user:
-bintray_key:
+bintray:
+  # Bintray credentials
+  user:
+  key:
