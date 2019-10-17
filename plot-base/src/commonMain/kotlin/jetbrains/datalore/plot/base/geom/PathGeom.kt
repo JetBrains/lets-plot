@@ -29,8 +29,7 @@ open class PathGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
         val linesHelper = LinesHelper(pos, coord, ctx)
 
-        val geomConstructor =
-            LinePathConstructor(targetCollector, dataPoints, linesHelper, false)
+        val geomConstructor = LinePathConstructor(targetCollector, dataPoints, linesHelper, false)
         appendNodes(geomConstructor.construct(), root)
     }
 

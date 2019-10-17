@@ -18,7 +18,9 @@ import jetbrains.livemap.entities.geometry.toWorldGeometry
 import jetbrains.livemap.mapobjects.*
 import jetbrains.livemap.mapobjects.MapLayerKind.H_LINE
 import jetbrains.livemap.mapobjects.MapLayerKind.V_LINE
+import jetbrains.livemap.mapobjects.Utils.calculateBBoxes
 import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.ProjectionUtil
 import jetbrains.livemap.projections.World
 
 internal class MapLayerGeocodingHelper(
@@ -76,7 +78,7 @@ internal class MapLayerGeocodingHelper(
             myNeedLocation = needLocations && isMapLayerKindEnableLocation(kind)
 
             myMapIdSpecified = mapObjects.all(::isMapIdSet)
-            myOsmIdInsideMapIdSpecified = mapObjects.all { !isMapIdWithOsmId(it.mapId) }
+            myOsmIdInsideMapIdSpecified = mapObjects.all { isMapIdWithOsmId(it.mapId) }
             myPointSpecified = mapObjects.all(::isMapPointObject)
             myGeometrySpecified = mapObjects.all(::isMapObjectContainsGeometry)
         }
@@ -234,7 +236,9 @@ internal class MapLayerGeocodingHelper(
     private fun calculateMapObjectBBoxes(mapObject: MapObject): List<Rect<World>> {
         return myOsmIdLocationMap[mapObject.regionId]
             ?.convertToWorldRects(myMapProjection)
-            ?: calculateBBoxes(mapObject)
+            ?: calculateBBoxes(mapObject).map { rect ->
+                ProjectionUtil.transformBBox(rect) { myMapProjection.project(it) }
+            }
     }
 
     private fun allMapObjectMatch(matcher: (MapObject) -> Boolean): Boolean {
@@ -250,39 +254,9 @@ internal class MapLayerGeocodingHelper(
         return true
     }
 
-    private fun calculateBBoxes(v: MapObject): List<Rect<World>> {
-        return when (v) {
-            is MapGeometry -> calculateGeometryBBoxes(v)
-            is MapPointGeometry -> calculatePointBBoxes(v)
-            else -> throw IllegalStateException("Unsupported MapObject type: ${v::class}")
-        }
-    }
-
-    private fun calculateGeometryBBoxes(v: MapGeometry): List<Rect<World>> {
-        return v.geometry
-            ?.run { toWorldGeometry(myMapProjection).asMultipolygon().limit() }
-            ?: emptyList()
-
-    }
-
-    private fun calculatePointBBoxes(v: MapPointGeometry): List<Rect<World>> {
-        return listOf(Rect(myMapProjection.project(v.point), Vec(0,0)))
-    }
-
     companion object {
         fun isMapIdWithOsmId(mapId: String?): Boolean {
-            return try {
-                mapId?.toInt() != null
-
-//                if (mapId == null) {
-//                    false
-//                } else {
-//                    mapId.toInt()
-//                    true
-//                }
-            } catch (e: NumberFormatException) {
-                false
-            }
+            return mapId?.toIntOrNull() != null
         }
     }
 }

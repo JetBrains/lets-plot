@@ -159,10 +159,10 @@ internal class MapObjectBuilder {
     constructor(p: MultiDataPointHelper.MultiDataPoint, layerKind: MapLayerKind, mapProjection: MapProjection) {
         myLayerKind = layerKind
         myMapProjection = mapProjection
-        myP = p.aes()
-        indicies = p.indices()
-        myValueArray = p.values()
-        myColorArray = p.colors()
+        myP = p.aes
+        indicies = p.indices
+        myValueArray = p.values
+        myColorArray = p.colors
     }
 
     private fun colorWithAlpha(color: Color): Color {
@@ -170,33 +170,35 @@ internal class MapObjectBuilder {
     }
 
     fun build(consumer: (MapObject) -> Unit) {
-        when (myLayerKind) {
+         when (myLayerKind) {
             POLYGON -> consumer(createPolygon())
             PATH -> consumer(createPath())
-            POINT -> consumer(createPoint())
-            PIE -> splitMapPieChart(createChartSource()).forEach(consumer)
-            BAR -> splitMapBarChart(createChartSource(), myMaxAbsValue!!).forEach(consumer)
+            POINT -> createPoint()?.run(consumer)
+            PIE -> createChartSource()?.run { splitMapPieChart(this).forEach(consumer) }
+            BAR -> createChartSource()?.run { splitMapBarChart(this, myMaxAbsValue!!).forEach(consumer) }
             //HEATMAP -> consumer(MapJsObjectUtil.createJsHeatmap(this))
-            TEXT -> consumer(createText())
-            H_LINE, V_LINE -> consumer(createLine())
+            TEXT -> createText()?.run(consumer)
+            H_LINE, V_LINE -> createLine()?.run(consumer)
             else -> throw IllegalArgumentException("Unknown map layer kind: $myLayerKind")
         }
     }
 
-    private fun createPoint(): MapPoint {
-        return MapPoint(
-            index,
-            mapId,
-            regionId,
-            point!!,
-            label,
-            animation,
-            shape,
-            radius,
-            fillColor,
-            strokeColor,
-            strokeWidth
-        )
+    private fun createPoint(): MapPoint? {
+        return point?.let { p ->
+            MapPoint(
+                index,
+                mapId,
+                regionId,
+                p,
+                label,
+                animation,
+                shape,
+                radius,
+                fillColor,
+                strokeColor,
+                strokeWidth
+            )
+        }
     }
 
     private fun createPolygon(): MapPolygon {
@@ -230,51 +232,57 @@ internal class MapObjectBuilder {
         )
     }
 
-    private fun createLine(): MapLine {
-        return MapLine(
-            index,
-            mapId,
-            regionId,
-            point!!,
-            lineDash,
-            strokeColor,
-            strokeWidth
-        )
-    }
-
-    private fun createChartSource(): ChartSource {
-        return ChartSource().apply {
-            lon = point!!.x
-            lat = point!!.y
-
-            radius = this@MapObjectBuilder.radius
-
-            strokeColor = this@MapObjectBuilder.strokeColor
-            strokeWidth = this@MapObjectBuilder.strokeWidth
-
-            indices = this@MapObjectBuilder.indicies
-            values = this@MapObjectBuilder.myValueArray
-            colors = this@MapObjectBuilder.colorArray
+    private fun createLine(): MapLine? {
+        return point?.let {
+            MapLine(
+                index,
+                mapId,
+                regionId,
+                it,
+                lineDash,
+                strokeColor,
+                strokeWidth
+            )
         }
     }
 
-    private fun createText(): MapText {
-        return MapText(
-            index,
-            mapId,
-            regionId,
-            point!!,
-            fillColor,
-            strokeColor,
-            strokeWidth,
-            label,
-            size,
-            family,
-            fontface,
-            hjust,
-            vjust,
-            angle
-        )
+    private fun createChartSource(): ChartSource? {
+        return point?.let {
+            ChartSource().apply {
+                lon = it.x
+                lat = it.y
+
+                radius = this@MapObjectBuilder.radius
+
+                strokeColor = this@MapObjectBuilder.strokeColor
+                strokeWidth = this@MapObjectBuilder.strokeWidth
+
+                indices = this@MapObjectBuilder.indicies
+                values = this@MapObjectBuilder.myValueArray
+                colors = this@MapObjectBuilder.colorArray
+            }
+        }
+    }
+
+    private fun createText(): MapText? {
+        return point?.let {
+            MapText(
+                index,
+                mapId,
+                regionId,
+                it,
+                fillColor,
+                strokeColor,
+                strokeWidth,
+                label,
+                size,
+                family,
+                fontface,
+                hjust,
+                vjust,
+                angle
+            )
+        }
     }
 
     private fun hjust(hjust: Any): Double {

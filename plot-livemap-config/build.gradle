@@ -37,6 +37,8 @@ kotlin {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation project(':plot-config')
+                implementation project(':plot-config-portable')
             }
         }
         jvmMain {

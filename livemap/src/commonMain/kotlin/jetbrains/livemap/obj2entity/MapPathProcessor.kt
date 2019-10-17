@@ -23,7 +23,7 @@ import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.mapobjects.MapObject
 import jetbrains.livemap.mapobjects.MapPath
 import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.ProjectionUtil.transformMultipolygon
+import jetbrains.livemap.projections.ProjectionUtil.transformMultiPolygon
 
 
 internal class MapPathProcessor(
@@ -45,7 +45,7 @@ internal class MapPathProcessor(
         myFactory = Entities.MapEntityFactory(layerEntity)
         toMapProjection = { geometry ->
             geometry.asMultipolygon()
-                .run { transformMultipolygon(this, myMapProjection::project) }
+                .run { transformMultiPolygon(this, myMapProjection::project) }
                 .run { WorldGeometry.create(this) }
         }
     }

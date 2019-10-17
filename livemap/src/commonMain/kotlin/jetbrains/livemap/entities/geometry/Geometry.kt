@@ -30,6 +30,6 @@ typealias ClientGeometry = TypedGeometry<Client>
 
 fun LonLatGeometry.toWorldGeometry(mapProjection: MapProjection): WorldGeometry {
     return asMultipolygon()
-        .run { ProjectionUtil.transformMultipolygon(this, mapProjection::project) }
+        .run { ProjectionUtil.transformMultiPolygon(this, mapProjection::project) }
         .run { WorldGeometry.create(this) }
 }

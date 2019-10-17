@@ -4,7 +4,7 @@ import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.livemap.entities.geometry.GeometryTransform
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
-import jetbrains.livemap.projections.ProjectionUtil.transformMultipolygon
+import jetbrains.livemap.projections.ProjectionUtil.transformMultiPolygon
 import jetbrains.livemap.projections.World
 import org.junit.Test
 import java.util.*
@@ -149,7 +149,7 @@ class MultiPolygonTransformTest {
         }
 
         val xyMultipolygon = ArrayList<Polygon<World>>()
-        val xyBoundary = transformMultipolygon(input, mapProjection::project)
+        val xyBoundary = transformMultiPolygon(input, mapProjection::project)
         for (xyPolygon in xyBoundary) {
             if (!xyPolygon.isEmpty()) {
                 xyMultipolygon.add(xyPolygon)

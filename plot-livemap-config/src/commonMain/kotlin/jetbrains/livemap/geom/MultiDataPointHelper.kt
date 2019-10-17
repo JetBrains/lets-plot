@@ -51,10 +51,10 @@ internal class MultiDataPointHelper private constructor(
         }
 
         internal fun build(): MultiDataPoint {
-            sort(myPoints, if (myUsesOrder) BY_ORDER else BY_VALUE)
+            myPoints.sort(if (myUsesOrder) BY_ORDER else BY_VALUE)
 
             if (mySortingMode == SortingMode.PIE_CHART && !myUsesOrder) {
-                move(myPoints, lastIndex(myPoints), 0)
+                myPoints.move(lastIndex(myPoints), 0)
             }
             val keyList = ArrayList<Int>()
             val valueList = ArrayList<Double>()
@@ -69,12 +69,21 @@ internal class MultiDataPointHelper private constructor(
             return MultiDataPoint(myAes, keyList, valueList, colorList)
         }
 
-        private fun <T> move(list: MutableList<T>, from: Int, to: Int) {
-            val p = list[from]
+        private fun <T> MutableList<T>.sort(
+            sorting: (T) -> Double
+        ) {
+            sortedBy(sorting).also {
+                clear()
+                addAll(it)
+            }
+        }
+
+        private fun <T> MutableList<T>.move(from: Int, to: Int) {
+            val p = this[from]
 
             val delta = if (to <= from) 0 else -1
-            list.removeAt(from)
-            list.add(to + delta, p)
+            removeAt(from)
+            add(to + delta, p)
         }
 
         private fun <T> lastIndex(list: List<T>): Int {
@@ -84,16 +93,14 @@ internal class MultiDataPointHelper private constructor(
         companion object {
             private val BY_ORDER: (DataPointAesthetics) -> Double = { it.x()!! }
             private val BY_VALUE: (DataPointAesthetics) -> Double = { it.y()!! }
-
-            private fun sort(list: List<DataPointAesthetics>, sorting: (DataPointAesthetics) -> Double) {
-                list.sortedBy(sorting)
-            }
         }
     }
 
-    internal class MultiDataPoint(
-        private val myAes: DataPointAesthetics, private val myIndices: List<Int>, private val myValues: List<Double>,
-        private val myColors: List<Color>
+    internal data class MultiDataPoint(
+        val aes: DataPointAesthetics,
+        val indices: List<Int>,
+        val values: List<Double>,
+        val colors: List<Color>
     ) {
 
 //        init {
@@ -106,22 +113,6 @@ internal class MultiDataPointHelper private constructor(
 //                )
 //            }
 //        }
-
-        fun aes(): DataPointAesthetics {
-            return myAes
-        }
-
-        fun indices(): List<Int> {
-            return myIndices
-        }
-
-        fun values(): List<Double> {
-            return myValues
-        }
-
-        fun colors(): List<Color> {
-            return myColors
-        }
     }
 
     companion object {

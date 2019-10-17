@@ -167,7 +167,7 @@ object ProjectionUtil {
             .let { DoubleRectangles.boundingBox(it) }
     }
 
-    fun <InT, OutT> transformMultipolygon(
+    fun <InT, OutT> transformMultiPolygon(
         multiPolygon: MultiPolygon<InT>,
         transform: (Vec<InT>) -> Vec<OutT>
     ): MultiPolygon<OutT> {
