@@ -2,10 +2,8 @@ package jetbrains.livemap.geom
 
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
-import jetbrains.livemap.geom.MultiDataPointHelper.MultiDataPoint
 import jetbrains.livemap.projections.Coordinates.Companion.ZERO_WORLD_POINT
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
@@ -18,10 +16,6 @@ internal object ConverterDataHelper {
             ProjectionType.MERCATOR,
             Rect(ZERO_WORLD_POINT, explicitVec(TILE_PIXEL_SIZE, TILE_PIXEL_SIZE))
         )
-
-    val GENERIC_POINT: List<Vec<LonLat>> = listOf(
-        explicitVec(0.0, 5.0)
-    )
 
     val GENERIC_POINTS: List<Vec<LonLat>> = listOf(
         explicitVec(0.0, 5.0),
@@ -65,7 +59,7 @@ internal object ConverterDataHelper {
         return Polygon(rings.asList())
     }
 
-    fun <T> ring(vararg points: Vec<T>): Ring<T> {
+    private fun <T> ring(vararg points: Vec<T>): Ring<T> {
         return Ring(points.asList())
     }
 
@@ -77,50 +71,8 @@ internal object ConverterDataHelper {
         return rings
     }
 
-//    fun multipolygonToXYGeometry(multiPolygon: MultiPolygon<LonLat>): TypedGeometry<World> {
-//        return Geometry.create(transformMultiPolygon(multiPolygon, MAP_PROJECTION::project))
-//    }
-
     fun createDefaultMatcher(): MapObjectMatcher {
         return MapObjectMatcher()
-    }
-
-//    fun convertLonLatToXY(lonLat: Vec<LonLat>?): Vec<World>? {
-//        return if (lonLat == null) null else MAP_PROJECTION.project(lonLat)
-//    }
-
-//    fun dataPointEq(value: Int): DataPointAesthetics {
-//        return argThat(DataPointIndexMatcher(value))
-//    }
-//
-//    fun multiDataPointEq(value: Int): MultiDataPoint {
-//        return argThat(MultiDataPointIndexMatcher(value))
-//    }
-
-    private class DataPointIndexMatcher internal constructor(private val expected: Int) :
-        ArgumentMatcher<DataPointAesthetics> {
-
-        override fun matches(actual: DataPointAesthetics?): Boolean {
-            return if (actual == null) {
-                false
-            } else actual.index() == expected
-
-        }
-    }
-
-    private class MultiDataPointIndexMatcher internal constructor(private val expected: Int) :
-        ArgumentMatcher<MultiDataPoint> {
-
-        override fun matches(actual: MultiDataPoint?): Boolean {
-            return if (actual == null) {
-                false
-            } else actual.aes.index() == expected
-
-        }
-    }
-
-    interface ArgumentMatcher<T> {
-        fun matches(actual: T?): Boolean
     }
 
     internal class AestheticsDataHelper private constructor() {
@@ -128,16 +80,6 @@ internal object ConverterDataHelper {
         private val myGroups = ArrayList<AesGroup>()
         private lateinit var myAes: Aesthetics
         private val myAesBuilder: AestheticsBuilder = AestheticsBuilder()
-
-        private val nextGroupDataPointIndex: Int
-            get() {
-                var groupIndex = 0
-                for (group in myGroups) {
-                    groupIndex += group.size
-                }
-
-                return groupIndex
-            }
 
         fun buildConverter(): DataPointsConverter {
             val aesthetics = build()
@@ -168,7 +110,7 @@ internal object ConverterDataHelper {
         }
 
         private fun addGroup(x: List<Double>, y: List<Double>): AesGroup {
-            val aesGroup = AesGroup(myGroups.size, nextGroupDataPointIndex, x, y)
+            val aesGroup = AesGroup(myGroups.size, x, y)
             myGroups.add(aesGroup)
             return aesGroup
         }
@@ -198,7 +140,6 @@ internal object ConverterDataHelper {
 
     class AesGroup internal constructor(
         internal val index: Int,
-        private val dataPointIndex: Int,
         internal val x: List<Double>,
         internal val y: List<Double>
     ) {
