@@ -108,10 +108,10 @@ if (python_include_path != null) {
         }
 
         task buildPythonPackage(type: Exec) {
-            workingDir python_package_dir
             group = task_group
             description = 'Builds datalore-plot wheel distribution (python)'
 
+            workingDir python_package_dir
             commandLine "${python_bin_path}/python3",
                     'setup.py',
                     'update_js',
@@ -120,8 +120,10 @@ if (python_include_path != null) {
         }
 
         task localInstallPythonPackage(type: Exec) {
-            workingDir python_build_dist_dir
+            group = task_group
+            description = 'Installs datalore-plot python package to local environment'
 
+            workingDir python_build_dist_dir
             commandLine "${python_bin_path}/pip",
                     'install',
                     '--no-index',
@@ -133,8 +135,10 @@ if (python_include_path != null) {
         def pypi_prod = project.buildSettings.pypi.prod
         if (pypi_prod.username != null && pypi_prod.password != null) {
             task publishProdPythonPackage(type: Exec) {
-                workingDir python_build_dist_dir
+                group = task_group
+                description = 'Publishes datalore-plot python package to pypi.org'
 
+                workingDir python_build_dist_dir
                 commandLine "${python_bin_path}/twine",
                         "upload",
                         "-u",
@@ -148,8 +152,10 @@ if (python_include_path != null) {
         def pipy_test = project.buildSettings.pypi.test
         if (pipy_test.username != null && pipy_test.password != null) {
             task publishTestPythonPackage(type: Exec) {
-                workingDir python_build_dist_dir
+                group = task_group
+                description = 'Publishes datalore-plot python package to test.pypi.org'
 
+                workingDir python_build_dist_dir
                 commandLine "${python_bin_path}/twine",
                         "upload",
                         "--repository-url",
