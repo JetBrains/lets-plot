@@ -17,7 +17,7 @@ kotlin {
                 implementation project(':base')
                 implementation project(':gis') // LIVEMAP_SWITCH
                 implementation project(':livemap') // LIVEMAP_SWITCH
-                implementation project(':plot-livemap-config') // LIVEMAP_SWITCH
+                implementation project(':plot-livemap') // LIVEMAP_SWITCH
                 implementation project(':vis-svg')
                 implementation project(':vis-canvas')
                 implementation project(':plot-base-portable')

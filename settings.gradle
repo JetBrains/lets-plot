@@ -16,7 +16,7 @@ include 'base-portable',
         'gis', // LIVEMAP_SWITCH
         'livemap', // LIVEMAP_SWITCH
         'livemap-demo', // LIVEMAP_SWITCH
-        'plot-livemap-config', // LIVEMAP_SWITCH
+        'plot-livemap', // LIVEMAP_SWITCH
         'mapper-core',
         'vis-svg',
         'vis-svg-mapper',
