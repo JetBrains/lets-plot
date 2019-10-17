@@ -1,10 +1,7 @@
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.plot.config.LiveMapOptionsParser
-import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
-import jetbrains.datalore.plot.livemap.LiveMapUtil // LIVEMAP_SWITCH
 import kotlin.test.Test
 
 // {data={
@@ -33,11 +30,9 @@ class PlotBuilderTest {
         initPlotSpec: MutableMap<String, Any>
     ): jetbrains.datalore.plot.builder.Plot {
         val plotSpec = PlotConfigClientSide.processTransform(initPlotSpec)
-
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
 
-        LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(plotSpec))
-            ?.let { LiveMapUtil.injectLiveMapProvider(assembler.layersByTile, it) } // LIVEMAP_SWITCH
+        injectLiveMap(plotSpec, assembler)
 
         return assembler.createPlot()
     }

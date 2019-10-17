@@ -11,8 +11,6 @@ import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromPlotOptions
-import jetbrains.datalore.plot.livemap.LiveMapUtil // LIVEMAP_SWITCH
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.svg.SvgNodeContainer
@@ -106,14 +104,7 @@ object MonolithicJs {
             }
         }
 
-        // Inject LiveMap
-        parseFromPlotOptions(OptionsAccessor(plotSpec))
-            ?.let { // LIVEMAP_SWITCH
-                LiveMapUtil.injectLiveMapProvider( // LIVEMAP_SWITCH
-                    assembler.layersByTile, // LIVEMAP_SWITCH
-                    it // LIVEMAP_SWITCH
-                ) // LIVEMAP_SWITCH
-            } // LIVEMAP_SWITCH
+        injectLiveMap(plotSpec, assembler)
 
         val plot = assembler.createPlot()
         val svg = buildPlotSvg(plot, plotSize, parentElement)
