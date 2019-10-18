@@ -76,7 +76,7 @@ if (BINTRAY_USER != null && BINTRAY_KEY != null) {
             licenses = ['MIT']
             vcsUrl = 'https://github.com/JetBrains/datalore-plot'
             version {
-                name = '0.0.dev1'
+                name = project.buildSettings.version
             }
         }
     }
@@ -129,6 +129,8 @@ dependencies {
 // ---------------------------------
 def OUTPUT_DIR_JS_LIB = "${project.buildDir}/js"
 
+def task_group = 'datalore plot'
+
 task copyLibraryDependenciesJs(type: Copy) {
     configurations.libraryDependenciesJs.each {
         println "library dependency: ${it.absolutePath}"
@@ -146,12 +148,36 @@ task copyProjectDependenciesJs(type: Copy) {
     into OUTPUT_DIR_JS_LIB
 }
 
-task webpackBuildProd(type: NpmTask) {
-    args = ['run', 'webpack-build-prod']
+task webpackBuildProdVersion(type: NpmTask) {
+    group = task_group
+    args = ['run', 'webpack-build-prod', '--', "--output-filename=datalore-plot-${project.buildSettings.version}.min.js"]
 }
 
-task webpackBuildDev(type: NpmTask) {
-    args = ['run', 'webpack-build-dev']
+task webpackBuildProdLatest(type: NpmTask) {
+    group = task_group
+    args = ['run', 'webpack-build-prod', '--', "--output-filename=datalore-plot-latest.min.js"]
+}
+
+task webpackBuildDevVersion(type: NpmTask) {
+    group = task_group
+    args = ['run', 'webpack-build-dev', '--', "--output-filename=datalore-plot-${project.buildSettings.version}.js"]
+}
+
+task webpackBuildDevLatest(type: NpmTask) {
+    group = task_group
+    args = ['run', 'webpack-build-dev', '--', "--output-filename=datalore-plot-latest.js"]
+}
+
+task webpackBuildDev {
+    group = task_group
+    dependsOn webpackBuildDevVersion
+    dependsOn webpackBuildDevLatest
+}
+
+task webpackBuildProd {
+    group = task_group
+    dependsOn webpackBuildProdVersion
+    dependsOn webpackBuildProdLatest
 }
 
 webpackBuildProd.dependsOn += copyLibraryDependenciesJs
@@ -161,5 +187,5 @@ webpackBuildDev.dependsOn += copyLibraryDependenciesJs
 webpackBuildDev.dependsOn += copyProjectDependenciesJs
 webpackBuildDev.dependsOn += npmInstall
 
-assemble.dependsOn += webpackBuildProd
 assemble.dependsOn += webpackBuildDev
+assemble.dependsOn += webpackBuildProd

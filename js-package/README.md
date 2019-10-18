@@ -9,6 +9,6 @@
 
 ## Publishing in Bintray CDN
 
-* set `bintray_user` and `bintray_api_key` in `gradle.properties` with your Bintray credentials
+* set `bintray.user` and `bintray.key` in `build_settings.yml` with your Bintray credentials
 
 * run `:js-package:bintrayUpload` gradle task (`./gradlew :js-package:bintrayUpload`) 
