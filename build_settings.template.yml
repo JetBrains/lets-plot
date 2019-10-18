@@ -1,6 +1,6 @@
 ---
 
-version: 0.0.dev1
+js_artifact_version: 0.0.dev1
 
 # option to exclude python extension from build
 build_python_extension: no

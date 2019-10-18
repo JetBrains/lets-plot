@@ -4,9 +4,6 @@ plugins {
     // publishing to bintray
     id "com.jfrog.bintray"
 }
-repositories {
-    mavenCentral()
-}
 
 kotlin {
     js() {
@@ -42,7 +39,8 @@ kotlin {
                     implementation project(':plot-livemap')
                 } else {
                     implementation project(':plot-livemap-stub')
-                }            }
+                }
+            }
         }
 
         jsMain {
@@ -59,6 +57,7 @@ node {
     download = true
 }
 
+def artifact_version = project.buildSettings.js_artifact_version
 def BINTRAY_USER = project.buildSettings.bintray.user
 def BINTRAY_KEY = project.buildSettings.bintray.key
 
@@ -80,7 +79,7 @@ if (BINTRAY_USER != null && BINTRAY_KEY != null) {
             licenses = ['MIT']
             vcsUrl = 'https://github.com/JetBrains/datalore-plot'
             version {
-                name = project.buildSettings.version
+                name = artifact_version
             }
         }
     }
@@ -159,7 +158,7 @@ task copyProjectDependenciesJs(type: Copy) {
 
 task webpackBuildProdVersion(type: NpmTask) {
     group = task_group
-    args = ['run', 'webpack-build-prod', '--', "--output-filename=datalore-plot-${project.buildSettings.version}.min.js"]
+    args = ['run', 'webpack-build-prod', '--', "--output-filename=datalore-plot-${artifact_version}.min.js"]
 }
 
 task webpackBuildProdLatest(type: NpmTask) {
@@ -169,7 +168,7 @@ task webpackBuildProdLatest(type: NpmTask) {
 
 task webpackBuildDevVersion(type: NpmTask) {
     group = task_group
-    args = ['run', 'webpack-build-dev', '--', "--output-filename=datalore-plot-${project.buildSettings.version}.js"]
+    args = ['run', 'webpack-build-dev', '--', "--output-filename=datalore-plot-${artifact_version}.js"]
 }
 
 task webpackBuildDevLatest(type: NpmTask) {
