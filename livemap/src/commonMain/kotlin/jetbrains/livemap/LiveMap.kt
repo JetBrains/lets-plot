@@ -57,14 +57,11 @@ import jetbrains.livemap.obj2entity.MapObject2Entity
 import jetbrains.livemap.obj2entity.TextMeasurer
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.tilegeometry.TileGeometryProvider
-import jetbrains.livemap.tiles.CellStateUpdateSystem
-import jetbrains.livemap.tiles.DebugDataSystem
-import jetbrains.livemap.tiles.TileLoadingSystem
-import jetbrains.livemap.tiles.TileRemovingSystem
+import jetbrains.livemap.tiles.*
 import jetbrains.livemap.tiles.components.CellLayerComponent
 import jetbrains.livemap.tiles.components.CellLayerKind
 import jetbrains.livemap.tiles.components.DebugCellLayerComponent
-import jetbrains.livemap.tiles.http.HttpTileComponent
+import jetbrains.livemap.tiles.http.HttpTileLoadingSystem
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
@@ -180,7 +177,11 @@ class LiveMap(
                 LiveMapUiSystem(uiService, componentManager, myMapLocationConsumer),
 
                 CellStateUpdateSystem(componentManager),
+                TileRequestSystem(componentManager),
+
                 tileLoadingSystem,
+                HttpTileLoadingSystem(componentManager),
+
                 TileRemovingSystem(myDevParams.read(TILE_CACHE_LIMIT), componentManager),
                 DebugDataSystem(componentManager),
 
@@ -270,7 +271,7 @@ class LiveMap(
         componentManager
             .createEntity("http_tile_layer")
             .addComponents {
-                + HttpTileComponent()
+                + CellLayerComponent(CellLayerKind.HTTP)
                 + LayerEntitiesComponent()
                 + layerManager.createRenderLayerComponent("http_ground")
             }

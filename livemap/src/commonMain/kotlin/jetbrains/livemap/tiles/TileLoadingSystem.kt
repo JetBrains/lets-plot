@@ -7,6 +7,7 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.multitasking.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities.mapEntity
@@ -31,7 +32,6 @@ class TileLoadingSystem(
     private lateinit var myTileDataFetcher: TileDataFetcher
     private lateinit var myTileDataParser: TileDataParser
     private lateinit var myTileDataRenderer: TileDataRenderer
-    private lateinit var myDonorTileCalculators: Map<CellLayerKind, DonorTileCalculator>
 
     override fun initImpl(context: LiveMapContext) {
         myMapRect = context.mapProjection.mapRect
@@ -52,26 +52,15 @@ class TileLoadingSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        myDonorTileCalculators = createDonorTileCalculators()
 
-        val requestTiles = HashSet(
-            getSingletonComponent<CellStateComponent>().requestCells
-        )
-
-        getEntities(CellComponent::class).forEach { cellEntity ->
-            requestTiles.remove(
-                cellEntity.get<CellComponent>().cellKey
-            )
-        }
-
-        requestTiles.forEach { cellKey ->
+        getSingletonComponent<RequestTilesComponent>().requestTiles.forEach { cellKey ->
             val tileResponseComponent = TileResponseComponent()
 
             createEntity("tile_$cellKey")
-                .addComponent(CellComponent(cellKey))
-                .addComponent(tileResponseComponent)
-
-            createTileLayerEntities(cellKey)
+                .addComponents {
+                    + CellComponent(cellKey)
+                    + tileResponseComponent
+                }
 
             myTileDataFetcher.fetch(cellKey).onResult(
                 { tileResponseComponent.tileData = it },
@@ -87,89 +76,39 @@ class TileLoadingSystem(
             val cellKey = entity.get<CellComponent>().cellKey
             val tileLayerEntities = getTileLayerEntities(cellKey)
 
-            val microThreadComponent = MicroThreadComponent(
-                myTileDataParser
-                    .parse(cellKey, tileData)
-                    .flatMap { tileFeatures ->
-                        val microThreads = ArrayList<MicroTask<Unit>>()
-                        tileLayerEntities.forEach { tileLayerEntity ->
-                            microThreads.add(
-                                myTileDataRenderer
-                                    .render(myCanvasSupplier(), tileFeatures, cellKey, tileLayerEntity.get<KindComponent>().layerKind)
-                                    .map { snapshotAsync ->
-                                        snapshotAsync.onSuccess { snapshot ->
-                                            runLaterBySystem(tileLayerEntity) { theEntity ->
-                                                theEntity.get<TileComponent>().tile = SnapshotTile(snapshot)
-                                                ParentLayerComponent.tagDirtyParentLayer(theEntity)
-                                            }
+            entity.setMicroThread(myQuantumIterations, myTileDataParser
+                .parse(cellKey, tileData)
+                .flatMap { tileFeatures ->
+                    val microThreads = ArrayList<MicroTask<Unit>>()
+                    tileLayerEntities.forEach { tileLayerEntity ->
+                        microThreads.add(
+                            myTileDataRenderer
+                                .render(myCanvasSupplier(), tileFeatures, cellKey, tileLayerEntity.get<KindComponent>().layerKind)
+                                .map { snapshotAsync ->
+                                    snapshotAsync.onSuccess { snapshot ->
+                                        runLaterBySystem(tileLayerEntity) { theEntity ->
+                                            theEntity.get<TileComponent>().tile = SnapshotTile(snapshot)
+                                            ParentLayerComponent.tagDirtyParentLayer(theEntity)
                                         }
-                                        return@map
                                     }
-                            )
-                        }
-                        MicroTaskUtil.join(microThreads)
-                    },
-                myQuantumIterations
-            )
-
-            entity.addComponent(microThreadComponent)
+                                    return@map
+                                }
+                        )
+                    }
+                    MicroTaskUtil.join(microThreads)
+                })
         }
 
         downloadedEntities.forEach { it.remove<TileResponseComponent>() }
     }
 
-    private fun createTileLayerEntities(cellKey: CellKey) {
-        val zoom = cellKey.length
-        val tileRect = getTileRect(myMapRect, cellKey.toString())
-
-        for (layer in getEntities(CellLayerComponent::class)) {
-            val layerKind = layer.get<CellLayerComponent>().layerKind
-
-            val parentLayerComponent = ParentLayerComponent(layer.id)
-            val name = "tile_${layerKind}_$cellKey"
-            val tileLayerEntity =
-                mapEntity(componentManager, tileRect.origin, parentLayerComponent, NULL_RENDERER, name)
-                    .addComponent(ScreenDimensionComponent().apply { dimension = world2Screen(tileRect.dimension, zoom) })
-                    .addComponent(CellComponent(cellKey))
-                    .addComponent(KindComponent(layerKind))
-                    .addComponent(RendererCacheComponent().apply { renderer = getRenderer(layer) })
-                    .addComponent(
-                        when {
-                            layer.contains<DebugCellLayerComponent>() -> DebugDataComponent()
-                            else -> TileComponent().apply { tile = calculateDonorTile(layerKind, cellKey) }
-                        }
-                    )
-
-            layer.get<LayerEntitiesComponent>().add(tileLayerEntity.id)
-        }
-    }
-
     private fun getTileLayerEntities(cellKey: CellKey): Sequence<EcsEntity> {
         return getEntities(CELL_COMPONENT_LIST)
-            .filter { it.get<CellComponent>().cellKey == cellKey && it.get<KindComponent>().layerKind != CellLayerKind.DEBUG }
-    }
-
-    private fun getRenderer(layer: EcsEntity): Renderer = when {
-        layer.contains(DebugCellLayerComponent::class) -> DebugCellRenderer()
-        else -> TileRenderer()
-    }
-
-    private fun calculateDonorTile(layerKind: CellLayerKind, cellKey: CellKey): Tile? {
-        return myDonorTileCalculators[layerKind]?.createDonorTile(cellKey)
-    }
-
-    private fun createDonorTileCalculators(): Map<CellLayerKind, DonorTileCalculator> {
-        val layerTileMap = HashMap<CellLayerKind, MutableMap<CellKey, Tile>>()
-
-        for (entity in getEntities(TILE_COMPONENT_LIST)) {
-            val tile = entity.get<TileComponent>().tile ?: continue
-
-            val layerKind = entity.get<KindComponent>().layerKind
-
-            layerTileMap.getOrPut(layerKind, ::HashMap)[entity.get<CellComponent>().cellKey] = tile
-        }
-
-        return layerTileMap.mapValues {(_, tilesMap) -> DonorTileCalculator(tilesMap) }
+            .filter {
+                it.get<CellComponent>().cellKey == cellKey
+                        && it.get<KindComponent>().layerKind != CellLayerKind.DEBUG
+                        && it.get<KindComponent>().layerKind != CellLayerKind.HTTP
+            }
     }
 
     companion object {
