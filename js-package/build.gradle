@@ -58,13 +58,13 @@ node {
 }
 
 def artifact_version = project.buildSettings.js_artifact_version
-def BINTRAY_USER = project.buildSettings.bintray.user
-def BINTRAY_KEY = project.buildSettings.bintray.key
+def bintray_user = project.buildSettings.bintray.user
+def bintray_key = project.buildSettings.bintray.key
 
-if (BINTRAY_USER != null && BINTRAY_KEY != null) {
+if (bintray_user != null && bintray_key != null) {
     bintray {
-        user = BINTRAY_USER
-        key = BINTRAY_KEY
+        user = bintray_user
+        key = bintray_key
 
         filesSpec {
             from 'build/dist'
@@ -135,7 +135,7 @@ dependencies {
 }
 
 // ---------------------------------
-def OUTPUT_DIR_JS_LIB = "${project.buildDir}/js"
+def js_package_libs_dir = "${project.buildDir}/js"
 
 def task_group = 'datalore plot'
 
@@ -144,7 +144,7 @@ task copyLibraryDependenciesJs(type: Copy) {
         println "library dependency: ${it.absolutePath}"
         from zipTree(it.absolutePath).matching { include '*.js' }
     }
-    into OUTPUT_DIR_JS_LIB
+    into js_package_libs_dir
 }
 
 task copyProjectDependenciesJs(type: Copy) {
@@ -153,7 +153,7 @@ task copyProjectDependenciesJs(type: Copy) {
         println "project dependency: $jarJs"
         from zipTree(jarJs).matching { include '*.js' }
     }
-    into OUTPUT_DIR_JS_LIB
+    into js_package_libs_dir
 }
 
 task webpackBuildProdVersion(type: NpmTask) {
