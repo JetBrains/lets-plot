@@ -13,10 +13,11 @@ pluginManagement {
 
 include 'base-portable',
         'base',
-        'gis', // LIVEMAP_SWITCH
-        'livemap', // LIVEMAP_SWITCH
-        'livemap-demo', // LIVEMAP_SWITCH
-        'plot-livemap', // LIVEMAP_SWITCH
+        'gis',
+        'livemap',
+        'livemap-demo',
+        'plot-livemap',
+        'plot-livemap-stub',
         'mapper-core',
         'vis-svg',
         'vis-svg-mapper',

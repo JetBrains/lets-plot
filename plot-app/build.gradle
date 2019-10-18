@@ -15,9 +15,6 @@ kotlin {
 
                 implementation project(':base-portable')
                 implementation project(':base')
-                implementation project(':gis') // LIVEMAP_SWITCH
-                implementation project(':livemap') // LIVEMAP_SWITCH
-                implementation project(':plot-livemap') // LIVEMAP_SWITCH
                 implementation project(':vis-svg')
                 implementation project(':vis-canvas')
                 implementation project(':plot-base-portable')
@@ -28,6 +25,14 @@ kotlin {
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
+
+                if (project.buildSettings.enable_livemap) {
+                    implementation project(':gis')
+                    implementation project(':livemap')
+                    implementation project(':plot-livemap')
+                } else {
+                    implementation project(':plot-livemap-stub')
+                }
             }
         }
         commonTest {

@@ -8,6 +8,8 @@ build_python_extension: no
 # enable tasks responsible for building and publishing of datalore-plot python package
 enable_python_package: no
 
+# enable geom_livemap
+enable_livemap: yes
 
 # -------------------------------------------------------------------
 # Python settings
@@ -35,5 +37,6 @@ pypi:
 # Bintray settings
 # -------------------------------------------------------------------
 bintray:
+  # Bintray credentials
   user:
   key:

@@ -24,8 +24,6 @@ kotlin {
 
                 implementation project(':base-portable')
                 implementation project(':base')
-                implementation project(':gis') // LIVEMAP_SWITCH
-                implementation project(':plot-livemap') // LIVEMAP_SWITCH
                 implementation project(':mapper-core')
                 implementation project(':vis-svg')
                 implementation project(':vis-svg-mapper')
@@ -38,7 +36,13 @@ kotlin {
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
                 implementation project(':plot-app')
-            }
+
+                if (project.buildSettings.enable_livemap) {
+                    implementation project(':gis')
+                    implementation project(':plot-livemap')
+                } else {
+                    implementation project(':plot-livemap-stub')
+                }            }
         }
 
         jsMain {
@@ -106,12 +110,17 @@ dependencies {
 
     projectDependenciesJs project(':base-portable')
     projectDependenciesJs project(':base')
-    projectDependenciesJs project(':gis') // LIVEMAP_SWITCH
-    projectDependenciesJs project(':livemap') // LIVEMAP_SWITCH
-    projectDependenciesJs project(':plot-livemap') // LIVEMAP_SWITCH
     projectDependenciesJs project(':mapper-core')
     projectDependenciesJs project(':vis-svg')
     projectDependenciesJs project(':vis-svg-mapper')
+
+    if (project.buildSettings.enable_livemap) {
+        projectDependenciesJs project(':gis')
+        projectDependenciesJs project(':livemap')
+        projectDependenciesJs project(':plot-livemap')
+    } else {
+        projectDependenciesJs project(':plot-livemap-stub')
+    }
 
     projectDependenciesJs project(':vis-canvas')         // required by plot-builder (get rid?)
 
