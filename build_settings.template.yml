@@ -9,7 +9,7 @@ build_python_extension: no
 enable_python_package: no
 
 # enable geom_livemap
-enable_livemap: yes
+enable_livemap: no
 
 # -------------------------------------------------------------------
 # Python settings
@@ -37,6 +37,5 @@ pypi:
 # Bintray settings
 # -------------------------------------------------------------------
 bintray:
-  # Bintray credentials
   user:
   key:
