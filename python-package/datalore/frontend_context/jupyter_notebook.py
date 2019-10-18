@@ -28,13 +28,13 @@ class JupyterNotebookContext(FrontendContext):
     def _configure_connected_script(self) -> str:
         # ToDo: CDN
         base_url = "http://0.0.0.0:8080"
-        url = "{base_url}/datalore-plot.min.js".format(base_url=base_url)
+        url = "{base_url}/datalore-plot-latest.min.js".format(base_url=base_url)
         return """\
                 <script type="text/javascript" src="{script_src}"/>
             """.format(script_src=url)
 
     def _configure_embedded_script(self) -> str:
-        path = os.path.join("package_data", "datalore-plot.min.js")
+        path = os.path.join("package_data", "datalore-plot-latest.min.js")
         js_code = pkgutil.get_data("datalore", path).decode("utf-8")
         lib_js = """
                 console.log('Embedding: datalore-plot.min.js');

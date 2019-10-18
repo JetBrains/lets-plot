@@ -28,7 +28,7 @@ BUILD_PATH = build_paths.get(platform.system(), None)
 def update_js():
     js_relative_path = ['js-package', 'build', 'dist']
     js_libs = [
-        'datalore-plot.min',
+        'datalore-plot-latest.min',
     ]
 
     from shutil import copy
