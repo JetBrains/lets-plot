@@ -1,0 +1,92 @@
+plugins {
+    id 'kotlin-multiplatform'
+}
+
+// ----------------------------------------
+// Building and publishing Python package
+// ----------------------------------------
+
+if (project.buildSettings.enable_python_package) {
+
+    def python_bin_path = project.buildSettings.python.bin_path
+    def task_group = 'datalore plot'
+
+    def python_package_dir = "${rootDir}/python-package"
+    def python_package_build_dir = "${python_package_dir}/build"
+    def python_build_dist_dir = "${python_package_dir}/dist"
+
+    clean {
+        delete python_package_build_dir
+        delete "${python_package_dir}/datalore/package_data"
+        delete "${python_package_dir}/datalore_plot.egg-info"
+    }
+
+    task buildPythonPackage(type: Exec) {
+        group = task_group
+        description = 'Builds datalore-plot wheel distribution (python)'
+
+        workingDir python_package_dir
+        commandLine "${python_bin_path}/python3",
+                'setup.py',
+                'update_js',
+                'bdist_wheel',
+                "--dist-dir=${python_build_dist_dir}"
+    }
+
+    task localInstallPythonPackage(type: Exec) {
+        group = task_group
+        description = 'Installs datalore-plot python package to local environment'
+
+        workingDir python_build_dist_dir
+        commandLine "${python_bin_path}/pip",
+                'install',
+                '--no-index',
+                '--find-links=./',
+                'datalore-plot'
+    }
+
+
+    def pypi_prod = project.buildSettings.pypi.prod
+    if (pypi_prod.username != null && pypi_prod.password != null) {
+        task publishProdPythonPackage(type: Exec) {
+            group = task_group
+            description = 'Publishes datalore-plot python package to pypi.org'
+
+            workingDir python_build_dist_dir
+            commandLine "${python_bin_path}/twine",
+                    "upload",
+                    "-u",
+                    pypi_prod.username,
+                    "-p",
+                    pypi_prod.password,
+                    "./*"
+        }
+    }
+
+    def pipy_test = project.buildSettings.pypi.test
+    if (pipy_test.username != null && pipy_test.password != null) {
+        task publishTestPythonPackage(type: Exec) {
+            group = task_group
+            description = 'Publishes datalore-plot python package to test.pypi.org'
+
+            workingDir python_build_dist_dir
+            commandLine "${python_bin_path}/twine",
+                    "upload",
+                    "--repository-url",
+                    "https://test.pypi.org/legacy/",
+                    "-u",
+                    pipy_test.username,
+                    "-p",
+                    pipy_test.password,
+                    "./*"
+        }
+    }
+
+    buildPythonPackage.dependsOn(':js-package:build')
+    buildPythonPackage.dependsOn(':python-extension:build')
+
+    build.dependsOn(buildPythonPackage)
+
+    localInstallPythonPackage.dependsOn(buildPythonPackage)
+    //publishPythonPackage.dependsOn(buildPythonPackage)
+}

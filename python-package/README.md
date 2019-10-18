@@ -1,15 +1,20 @@
 # datalore-plot Python package
 
+## Enabling
+
+* set `build_python_extension` and `enable_python_package` in `build_settings.yml` to `yes`
+
+
 ## Building
 
 * install `python-dev` package (if you use Anaconda it's already installed)
 
 * install python `setuptools` (run `pip install setuptools`)
 
-* set `python_include_path` in `gradle.properties`. 
+* set `python.include_path` in `build_settings.yml`. 
 For getting this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['include'])"`.
  
-* check if `python_bin_path` in `gradle.properties` contents true path to your python bin path (default is `/usr/bin`). 
+* check if `python.bin_path` in `build_settings.yml` contents true path to your python bin path (default is `/usr/bin`). 
 For getting this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['scripts'])"`.
 
 * build project with Gradle (run `./gradlew build`)
@@ -19,15 +24,22 @@ For getting this path you can run `python -c "from sysconfig import get_paths as
 
 * build package
 
-* run `:python-package:localInstallPythonPackage` gradle task (`./gradlew :python-package:localInstallPythonPackage`)
+* run `:python-package-build:localInstallPythonPackage` gradle task (`./gradlew :python-package:localInstallPythonPackage`)
 
 
-## Publishing
+## Test publishing to test.pypi.org
 
 * build package
 
-* set `pypi_username` and `pypi_password` in `gradle.properties` with your PyPI credentials
+* set `pypi.test.username` and `pypi.test.password` in `build_settings.yml` with your PyPI credentials 
 
-* set `python_repository_url` in `gradle.properties` if you need publish to not standard PyPI repository (i.e. `https://test.pypi.org/legacy/` for testing publishing). 
+* run `:python-package-build:publishTestPythonPackage`
 
-* run `:python-package:publishPythonPackage` 
+
+## Publishing to pypi.org
+
+* build package
+
+* set `pypi.prod.username` and `pypi.prod.password` in `build_settings.yml` with your PyPI credentials 
+
+* run `:python-package-build:publishProdPythonPackage` 
