@@ -27,7 +27,7 @@ def as_annotated_data(raw_data: Any) -> Tuple:
 
 def is_data_pub_stream(data: Any) -> bool:
     try:
-        from datalore.display import DataPubStream
+        from dlrplot.display import DataPubStream
         return isinstance(data, DataPubStream)
     except ImportError:
         return False  # no pub-sub in standalone deployment
@@ -45,7 +45,7 @@ def as_annotated_map_data(raw_map: Any) -> dict:
 
 def is_geo_data_regions(data: Any) -> bool:
     try:
-        from datalore.geo_data import Regions
+        from dlrplot.geo_data import Regions
         return isinstance(data, Regions)
     except ImportError:
         return False  # no geo_data in standalone deployment

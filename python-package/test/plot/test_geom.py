@@ -1,8 +1,8 @@
 import pytest
 
-import datalore.plot as gg
-from datalore.plot.geom import _geom
-from datalore.plot.geom_extras import arrow
+import dlrplot.plot as gg
+from dlrplot.plot.geom import _geom
+from dlrplot.plot.geom_extras import arrow
 
 
 class TestWithListAndDictArgs:

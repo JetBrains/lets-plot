@@ -14,8 +14,6 @@ class JupyterNotebookContext(FrontendContext):
         self.connected = connected
 
     def as_str(self, plot_spec: Dict) -> str:
-        # from datalore.plot import libdatalore_plot_python_extension
-        # return libdatalore_plot_python_extension.generate_html(plot_spec)
         import datalore_plot_kotlin_bridge
         return datalore_plot_kotlin_bridge.generate_html(plot_spec)
 
@@ -34,13 +32,14 @@ class JupyterNotebookContext(FrontendContext):
             """.format(script_src=url)
 
     def _configure_embedded_script(self) -> str:
-        path = os.path.join("package_data", "datalore-plot-latest.min.js")
-        js_code = pkgutil.get_data("datalore", path).decode("utf-8")
+        js_name = "datalore-plot-latest.min.js"
+        path = os.path.join("package_data", js_name)
+        js_code = pkgutil.get_data("dlrplot", path).decode("utf-8")
         lib_js = """
-                console.log('Embedding: datalore-plot.min.js');
+                console.log('Embedding: {js_name}');
                 
                 {js_code}
-            """.format(js_code=js_code)
+            """.format(js_code=js_code, js_name=js_name)
         return self._wrap_in_script_element(lib_js)
 
     def _undef_modules_script(self) -> str:

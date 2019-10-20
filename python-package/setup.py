@@ -7,16 +7,14 @@ from setuptools import Command, Extension
 from setuptools import setup, find_packages
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
-kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'datalore_plot_kotlin_bridge.c')
-
 root_dir = os.path.dirname(this_dir)
-# kotlin_binaries_macosX64 = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
-
+kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'datalore_plot_kotlin_bridge.c')
 
 LIB_NAME = "libdatalore_plot_python_extension"
 # MACOS_LIB_NAME = LIB_NAME + ".dylib"
 LINUX_LIB_NAME = LIB_NAME + ".so"
 
+# ToDo: option: debug / release
 build_paths = {
     "Linux": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'linuxX64', 'debugStatic'),
     "Darwin": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
@@ -36,11 +34,11 @@ def update_js():
     for lib in js_libs:
         js_path = os.path.join(root_dir, *js_relative_path, lib + '.js')
 
-        dst_dir = os.path.join(this_dir, 'datalore', 'package_data')
+        dst_dir = os.path.join(this_dir, 'dlrplot', 'package_data')
         if not os.path.isdir(dst_dir):
             os.mkdir(dst_dir)
 
-        copy(js_path, os.path.join(this_dir, 'datalore', 'package_data'))
+        copy(js_path, os.path.join(this_dir, 'dlrplot', 'package_data'))
 
 
 class UpdateJsCommand(Command):
@@ -58,39 +56,33 @@ class UpdateJsCommand(Command):
 
 
 version_locals = {}
-with open(os.path.join(this_dir, 'datalore', '_version.py')) as f:
+with open(os.path.join(this_dir, 'dlrplot', '_version.py')) as f:
     exec(f.read(), {}, version_locals)
 
 setup(name='datalore-plot',
       version=version_locals['__version__'],
       maintainer='JetBrains',
-      maintainer_email='info@jetbrains.com',
+      maintainer_email='datalore-plot@jetbrains.com',
       author='JetBrains',
-      author_email='info@jetbrains.com',
+      author_email='datalore-plot@jetbrains.com',
       description='Graphing library for Python',
       long_description='Graphing library for Python',
 
-      # package_dir={'': 'src'},
-      # packages=[
-      #     "datalore",
-      #     "datalore.plot",
-      # ],
       packages=find_packages(exclude=('test',)),
 
       package_data={
-          "datalore": [
+          "dlrplot": [
               "package_data/*",
           ],
       },
-
-      #data_files=[("datalore/plot", [BUILD_PATH + "/" + LINUX_LIB_NAME])] if platform.system() == 'Linux' else [],
 
       ext_modules=[
           Extension('datalore_plot_kotlin_bridge',
                     include_dirs=[BUILD_PATH],
                     libraries=['datalore_plot_python_extension', 'stdc++'],
-                    library_dirs=[BUILD_PATH, 'datalore/plot'],
-                    runtime_library_dirs=['datalore/plot'],
+                    library_dirs=[BUILD_PATH],
+                    # library_dirs=[BUILD_PATH, 'datalore/plot'],
+                    # runtime_library_dirs=['datalore/plot'],
                     depends=['libdatalore_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],
                     )

@@ -1,9 +1,9 @@
 import numbers
 from typing import Dict, Tuple
 
-from datalore.plot.core import FeatureSpec
-from datalore.plot.core import PlotSpec
-from datalore.plot.util import as_annotated_data
+from dlrplot.plot.core import FeatureSpec
+from dlrplot.plot.core import PlotSpec
+from dlrplot.plot.util import as_annotated_data
 from .response_util import _to_response_data_object
 
 __all__ = ['ggplot', 'ggsize', 'GGBunch']
@@ -49,7 +49,7 @@ def ggplot(data=None, mapping=None):
     ---------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from datalore.plot import *
+    >>> from dlrplot.plot import *
     >>> x = np.random.uniform(-1, 1, size=100)
     >>> y = np.random.normal(size=100)
     >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
@@ -88,7 +88,7 @@ def ggsize(width, height):
     ---------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from datalore.plot import *
+    >>> from dlrplot.plot import *
     >>> x = np.arange(100)
     >>> y = np.random.normal(size=100)
     >>> dat = pd.DataFrame({'x':x, 'y':y})
@@ -109,7 +109,7 @@ class GGBunch(FeatureSpec):
     ---------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from datalore.plot import *
+    >>> from dlrplot.plot import *
     >>> x = np.arange(100)
     >>> y = np.random.normal(size=100)
     >>> dat = pd.DataFrame({'x':x, 'y':y})

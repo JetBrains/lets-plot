@@ -1,7 +1,7 @@
 import pytest
 
-from datalore.plot.core import FeatureSpecArray, DummySpec
-from datalore.plot.scale_convenience import *
+from dlrplot.plot.core import FeatureSpecArray, DummySpec
+from dlrplot.plot.scale_convenience import *
 
 
 @pytest.mark.parametrize('scale_spec, expected', [

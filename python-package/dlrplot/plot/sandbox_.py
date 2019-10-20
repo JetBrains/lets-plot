@@ -1,6 +1,6 @@
 # import numpy as np
 #
-# from datalore.plot.geom_image_ import geom_image
+# from dlrplot.geom_image_ import geom_image
 #
 # print("1")
 # img = np.array([

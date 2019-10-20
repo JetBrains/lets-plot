@@ -34,7 +34,7 @@ def gg_image_matrix(image_data_array, *, norm: bool = None, scale=1) -> None:
     Examples
     --------
     >>> import numpy as np
-    >>> from datalore.plot import *
+    >>> from dlrplot.plot import *
     >>> image = np.random.choice([0.0, 1.0], [64, 64, 3])
     >>> X = np.empty([4, 6], dtype=object)
     >>> X.fill(image)

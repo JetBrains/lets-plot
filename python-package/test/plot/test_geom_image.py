@@ -3,7 +3,7 @@ from typing import NamedTuple
 import numpy as np
 import pytest
 
-from datalore.plot.geom_image_ import geom_image
+from dlrplot.plot.geom_image_ import geom_image
 
 
 def _image_spec(width, height, type, bytes):

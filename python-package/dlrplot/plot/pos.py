@@ -119,7 +119,7 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
      Examples
     ---------
     >>> import pandas as pd
-    >>> from datalore.plot import *
+    >>> from dlrplot.plot import *
     >>> mpg_url = 'https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/mpg.csv'
     >>> mpg = pd.read_csv(mpg_url)
     >>> p = ggplot(mpg, aes('cyl', 'hwy',group='drv',fill='drv'))

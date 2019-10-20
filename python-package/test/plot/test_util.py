@@ -1,6 +1,6 @@
 import pytest
 
-from datalore.plot import util
+from dlrplot.plot import util
 
 
 @pytest.mark.parametrize('val,default,expected', [

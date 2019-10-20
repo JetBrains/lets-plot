@@ -1,27 +1,32 @@
-- Jupyter must be installed in Python environment (IPython.display is required)
+- set `python.include_path` and `python.bin_path` properties in build_settings.yml file.
 
-- set `python_include_path` and `python_bin_path` properties in gradle.properties file.
-
-- build project (gradle)
-
-- uninstall datalore-plot with `pip uninstall datalore-plot` if needed
-
-- run localInstallPythonPackage gradle task from python-package module (./gradlew :python-package:localInstallPythonPackage)
+Your working dir is here (datalore-plot/python-package).
 
 
-Start local web-server to serve our js scripts (from /datalore-plot/plot-demo/build/demoWeb/lib):
+- build package:
+
+$ (cd .. && ./gradlew :python-package-build:build)
+or
+$ python setup.py update_js bdist_wheel
+
+
+- install `datalore-plot` package to currently active python environment:
+
+$ pip uninstall datalore-plot
+$ pip install --no-index --find-links=dist/ datalore-plot
+
+
+To test plot in Jupyter in `connected` mode:
+--------------------------------------------
+Start local web-server to serve our js scripts:
     - cd to datalore-plot/js-package/build/dist
     - python -m http.server 8080
-Note: this step is not necessary is our JS is injected into notebook from the package resources (the default currently)
 
 
-View a plot:
-    - in Jupyter notebook try code:
-
-from datalore.plot import *
+Sample bar plot:
+----------------
+from dlrplot import *
 data = dict(time=['Lunch', 'Lunch', 'Dinner', 'Dinner', 'Dinner'])
 p = ggplot(data) + geom_bar(aes(x='time', fill='..count..'))
 p += scale_fill_hue()
 p
-
-Bar plot should show up.

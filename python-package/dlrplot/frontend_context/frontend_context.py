@@ -47,7 +47,7 @@ def display_plot(plot_spec: PlotSpec):
     :param plot_spec: PlotSpec or GGBunch object
     """
     try:
-        from datalore.display import display
+        from dlrplot.display import display
         display(plot_spec)
         return
     except ImportError:
