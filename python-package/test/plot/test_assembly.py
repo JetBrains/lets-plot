@@ -1,4 +1,4 @@
-import dlrplot.plot as gg
+import dlrplot as gg
 from dlrplot.plot.core import DummySpec, FeatureSpecArray
 from dlrplot.plot.core import FeatureSpec
 from dlrplot.plot.core import LayerSpec

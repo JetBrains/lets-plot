@@ -1,6 +1,6 @@
 import pytest
 
-import dlrplot.plot as gg
+import dlrplot as gg
 
 
 class TestWithListArgs:

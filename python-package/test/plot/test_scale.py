@@ -1,6 +1,6 @@
 import pytest
 
-import dlrplot.plot as gg
+import dlrplot as gg
 from dlrplot.plot.core import FeatureSpec
 from dlrplot.plot.core import FeatureSpecArray
 from dlrplot.plot.scale import _scale

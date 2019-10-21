@@ -1,6 +1,6 @@
 import pytest
 
-import dlrplot.plot as gg
+import dlrplot as gg
 from dlrplot.plot.geom import _geom
 from dlrplot.plot.geom_extras import arrow
 
