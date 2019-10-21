@@ -18,11 +18,6 @@ For getting this path you can run `python -c "from sysconfig import get_paths as
 For getting this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['scripts'])"`.
 
 
-## Enabling
-
-* set `build_python_extension` and `enable_python_package` in `build_settings.yml` to `yes`
-
-
 ## Building
 
 For building python wheel package you can run `:python-package-build:buildPythonPackage` gradle task
