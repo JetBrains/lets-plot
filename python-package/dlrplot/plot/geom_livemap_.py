@@ -93,7 +93,7 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
 
     Examples
     --------
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> data = {'state': ['Nevada', 'TEXAS', 'FL'], 'val': [2000, 2200, 1800]}
     >>> p = ggplot(data) + geom_livemap(aes(map_id='state', fill='val'), within='USA')
     >>> p += scale_fill_gradient(low='red')

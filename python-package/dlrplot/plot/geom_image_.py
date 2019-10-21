@@ -62,7 +62,7 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     Examples
     --------
     >>> import numpy as np
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> image = np.random.choice([0.0, 1.0], [10, 100, 3])
     >>> ggplot() + geom_image(image)
     """

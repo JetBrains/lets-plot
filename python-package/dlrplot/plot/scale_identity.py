@@ -49,7 +49,7 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, expan
      Examples
     ---------
     >>> import pandas as pd
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> x = [0, 1, 2]
     >>> y = x
     >>> c = ['red', 'green', 'blue']
@@ -95,7 +95,7 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, expand
      Examples
     ---------
     >>> import pandas as pd
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> x = [0, 1, 2]
     >>> y = x
     >>> c = ['red', 'green', 'blue']
@@ -138,7 +138,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, expan
      Examples
     ---------
     >>> import pandas as pd
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> x = range(7)
     >>> y = x
     >>> s = range(7)
@@ -182,7 +182,7 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, ex
      Examples
     ---------
     >>> import pandas as pd
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> x = range(6)
     >>> xend = [v + 2 for v in x]
     >>> y = x
@@ -226,7 +226,7 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, expan
      Examples
     ---------
     >>> import pandas as pd
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> x = [0,1,2]
     >>> y = x
     >>> a = [.3, .5, 0.8]
@@ -269,7 +269,7 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, expand
      Examples
     ---------
     >>> import pandas as pd
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> x = [0,1,2]
     >>> y = x
     >>> s = [3, 9, 18]

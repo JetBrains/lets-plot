@@ -49,7 +49,7 @@ def ggplot(data=None, mapping=None):
     ---------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> x = np.random.uniform(-1, 1, size=100)
     >>> y = np.random.normal(size=100)
     >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
@@ -88,7 +88,7 @@ def ggsize(width, height):
     ---------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> x = np.arange(100)
     >>> y = np.random.normal(size=100)
     >>> dat = pd.DataFrame({'x':x, 'y':y})
@@ -109,7 +109,7 @@ class GGBunch(FeatureSpec):
     ---------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from dlrplot.plot import *
+    >>> from dlrplot import *
     >>> x = np.arange(100)
     >>> y = np.random.normal(size=100)
     >>> dat = pd.DataFrame({'x':x, 'y':y})
