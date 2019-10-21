@@ -1,5 +1,23 @@
 # datalore-plot Python package
 
+## Requirements
+
+* `python >= 3.5` (with dev headers)
+* `setuptools` (`pip install setuptools`)
+
+
+## Configuration
+
+All configuration are in `build_settings.yml` in the project root.
+
+* `build_python_extension` - set to `yes` for building native python extension from `python-extension`
+* `enable_python_package` - set to `yes` for working with python package
+* `python.include_path` - path to python include path where Python.h located. 
+For getting this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['include'])"`.
+* `python.bin_path` - path to path to your python bin path. 
+For getting this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['scripts'])"`.
+
+
 ## Enabling
 
 * set `build_python_extension` and `enable_python_package` in `build_settings.yml` to `yes`
@@ -7,17 +25,7 @@
 
 ## Building
 
-* install `python-dev` package (if you use Anaconda it's already installed)
-
-* install python `setuptools` (run `pip install setuptools`)
-
-* set `python.include_path` in `build_settings.yml`. 
-For getting this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['include'])"`.
- 
-* check if `python.bin_path` in `build_settings.yml` contents true path to your python bin path (default is `/usr/bin`). 
-For getting this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['scripts'])"`.
-
-* build project with Gradle (run `./gradlew build`)
+For building python wheel package you can run `:python-package-build:buildPythonPackage` gradle task
 
 
 ## Local installing
@@ -25,21 +33,3 @@ For getting this path you can run `python -c "from sysconfig import get_paths as
 * build package
 
 * run `:python-package-build:localInstallPythonPackage` gradle task (`./gradlew :python-package:localInstallPythonPackage`)
-
-
-## Test publishing to test.pypi.org
-
-* build package
-
-* set `pypi.test.username` and `pypi.test.password` in `build_settings.yml` with your PyPI credentials 
-
-* run `:python-package-build:publishTestPythonPackage`
-
-
-## Publishing to pypi.org
-
-* build package
-
-* set `pypi.prod.username` and `pypi.prod.password` in `build_settings.yml` with your PyPI credentials 
-
-* run `:python-package-build:publishProdPythonPackage` 

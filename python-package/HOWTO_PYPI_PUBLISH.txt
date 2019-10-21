@@ -1,9 +1,0 @@
-- twine must be installed (pip install twine)
-
-- set `pypi_username` and `pypi_password` properties in gradle.properties file.
-
-- if needed set `python_repository_url` property in gradle.properties file.
-
-- build project (gradle)
-
-- run publishPythonPackage gradle task from python-package module (./gradlew :python-package:publishPythonPackage)
