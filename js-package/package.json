@@ -1,15 +1,10 @@
 {
   "name": "datalore-plot-bundling",
-  "version": "1.0.0",
   "description": "file for setup js part bundling environment",
-  "main": "plot-demo.js",
-  "directories": {
-    "lib": "lib"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "webpack-build-dev": "webpack --config webpack.dev.config.js",
-    "webpack-build-prod": "webpack --config webpack.prod.config.js"
+    "webpack-build-debug": "webpack --config webpack.dev.config.js",
+    "webpack-build-release": "webpack --config webpack.prod.config.js"
   },
   "author": "JetBrains",
   "license": "MIT",

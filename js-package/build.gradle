@@ -156,44 +156,44 @@ task copyProjectDependenciesJs(type: Copy) {
     into js_package_libs_dir
 }
 
-task webpackBuildProdVersion(type: NpmTask) {
+task webpackBuildReleaseVersion(type: NpmTask) {
     group = task_group
-    args = ['run', 'webpack-build-prod', '--', "--output-filename=datalore-plot-${artifact_version}.min.js"]
+    args = ['run', 'webpack-build-release', '--', "--output-filename=datalore-plot-${artifact_version}.min.js"]
 }
 
-task webpackBuildProdLatest(type: NpmTask) {
+task webpackBuildReleaseLatest(type: NpmTask) {
     group = task_group
-    args = ['run', 'webpack-build-prod', '--', "--output-filename=datalore-plot-latest.min.js"]
+    args = ['run', 'webpack-build-release', '--', "--output-filename=datalore-plot-latest.min.js"]
 }
 
-task webpackBuildDevVersion(type: NpmTask) {
+task webpackBuildDebugVersion(type: NpmTask) {
     group = task_group
-    args = ['run', 'webpack-build-dev', '--', "--output-filename=datalore-plot-${artifact_version}.js"]
+    args = ['run', 'webpack-build-debug', '--', "--output-filename=datalore-plot-${artifact_version}.js"]
 }
 
-task webpackBuildDevLatest(type: NpmTask) {
+task webpackBuildDebugLatest(type: NpmTask) {
     group = task_group
-    args = ['run', 'webpack-build-dev', '--', "--output-filename=datalore-plot-latest.js"]
+    args = ['run', 'webpack-build-debug', '--', "--output-filename=datalore-plot-latest.js"]
 }
 
-task webpackBuildDev {
+task webpackBuildDebug {
     group = task_group
-    dependsOn webpackBuildDevVersion
-    dependsOn webpackBuildDevLatest
+    dependsOn webpackBuildDebugVersion
+    dependsOn webpackBuildDebugLatest
 }
 
-task webpackBuildProd {
+task webpackBuildRelease {
     group = task_group
-    dependsOn webpackBuildProdVersion
-    dependsOn webpackBuildProdLatest
+    dependsOn webpackBuildReleaseVersion
+    dependsOn webpackBuildReleaseLatest
 }
 
-webpackBuildProd.dependsOn += copyLibraryDependenciesJs
-webpackBuildProd.dependsOn += copyProjectDependenciesJs
-webpackBuildProd.dependsOn += npmInstall
-webpackBuildDev.dependsOn += copyLibraryDependenciesJs
-webpackBuildDev.dependsOn += copyProjectDependenciesJs
-webpackBuildDev.dependsOn += npmInstall
+webpackBuildRelease.dependsOn += copyLibraryDependenciesJs
+webpackBuildRelease.dependsOn += copyProjectDependenciesJs
+webpackBuildRelease.dependsOn += npmInstall
+webpackBuildDebug.dependsOn += copyLibraryDependenciesJs
+webpackBuildDebug.dependsOn += copyProjectDependenciesJs
+webpackBuildDebug.dependsOn += npmInstall
 
-assemble.dependsOn += webpackBuildDev
-assemble.dependsOn += webpackBuildProd
+assemble.dependsOn += webpackBuildDebug
+assemble.dependsOn += webpackBuildRelease
