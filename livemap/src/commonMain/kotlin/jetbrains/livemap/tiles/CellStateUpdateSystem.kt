@@ -24,7 +24,7 @@ class CellStateUpdateSystem(componentManager: EcsComponentManager) : AbstractSys
         val stateEntity = getSingletonEntity(CELL_STATE_REQUIRED_COMPONENTS)
         val cellState: CellStateComponent = stateEntity.get()
 
-        cellState.update(context.mapRenderContext.viewProjection.visibleCells)
+        cellState.update(context.mapRenderContext.viewport.visibleCells)
 
         syncQuads(
             cellState,

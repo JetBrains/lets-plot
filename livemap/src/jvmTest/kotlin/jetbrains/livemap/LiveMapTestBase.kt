@@ -4,16 +4,13 @@ import jetbrains.datalore.jetbrains.livemap.core.ecs.ComponentManagerUtil
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.MapRenderContext
 import jetbrains.livemap.camera.CameraComponent
+import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.SystemTime
-import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.core.ecs.EcsSystem
+import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.core.multitasking.SyncMicroTaskExecutor
 import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.projections.Coordinates
-import jetbrains.livemap.projections.ViewProjection
 import jetbrains.livemap.projections.WorldPoint
 import org.junit.Before
 import org.mockito.Mockito.`when`
@@ -55,10 +52,10 @@ abstract class LiveMapTestBase {
             )
         )
 
-        val viewProjection = mock(ViewProjection::class.java)
+        val viewport = mock(Viewport::class.java)
 
-        `when`(viewProjection.center).thenReturn(Coordinates.ZERO_WORLD_POINT)
-        `when`(mapRenderContext.viewProjection).thenReturn(viewProjection)
+        `when`(viewport.position).thenReturn(Coordinates.ZERO_WORLD_POINT)
+        `when`(mapRenderContext.viewport).thenReturn(viewport)
     }
 
    inline fun <reified ComponentT : EcsComponent> getSingletonComponent(): ComponentT {
@@ -67,7 +64,7 @@ abstract class LiveMapTestBase {
 
     protected fun createEntity(name: String, vararg components: EcsComponent): EcsEntity {
         return componentManager.createEntity(name).apply {
-            listOf(*components).forEach { addComponent(it) }
+            listOf(*components).forEach { addComponents { + it } }
         }
     }
 
@@ -75,7 +72,7 @@ abstract class LiveMapTestBase {
         val entity = componentManager.createEntity(name)
         componentTypes.forEach { aType ->
             try {
-                entity.addComponent(aType.newInstance())
+                entity.addComponents{ + aType.newInstance() }
             } catch (e: InstantiationException) {
                 throw IllegalStateException(e)
             } catch (e: IllegalAccessException) {

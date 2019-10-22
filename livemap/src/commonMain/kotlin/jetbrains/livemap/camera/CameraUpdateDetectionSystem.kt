@@ -13,13 +13,13 @@ class CameraUpdateDetectionSystem(componentManager: EcsComponentManager) :
     private var myPreviousCameraCenter: WorldPoint = Coordinates.ZERO_WORLD_POINT
 
     override fun initImpl(context: LiveMapContext) {
-        val viewProjection = context.mapRenderContext.viewProjection
+        val viewport = context.mapRenderContext.viewport
         createEntity("camera")
             .addComponent(CameraUpdateComponent())
             .addComponent(
                 CameraComponent(
-                    viewProjection.zoom.toDouble(),
-                    viewProjection.center
+                    viewport.zoom.toDouble(),
+                    viewport.position
                 )
             )
     }

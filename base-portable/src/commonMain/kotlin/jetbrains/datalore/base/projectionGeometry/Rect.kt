@@ -1,6 +1,6 @@
 package jetbrains.datalore.base.projectionGeometry
 
-class Rect<TypeT>(
+data class Rect<TypeT>(
     val origin: Vec<TypeT>,
     val dimension: Vec<TypeT>
 ) {

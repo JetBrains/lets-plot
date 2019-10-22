@@ -15,13 +15,13 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         val cameraEntity = getSingletonEntity(CameraComponent::class)
         val camera = cameraEntity.get<CameraComponent>()
         val mouseInput = cameraEntity.get<MouseInputComponent>()
-        val viewProjection = context.mapRenderContext.viewProjection
+        val viewport = context.mapRenderContext.viewport
 
         val dragDistance = mouseInput.dragDistance
 
         if (dragDistance != null && dragDistance != Vector.ZERO) {
-            camera.center = viewProjection.getMapCoord(
-                viewProjection.viewSize / 2.0 - dragDistance.toClientPoint()
+            camera.center = viewport.getMapCoord(
+                viewport.size / 2.0 - dragDistance.toClientPoint()
             )
         }
     }

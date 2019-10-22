@@ -119,7 +119,7 @@ class CellStateUpdateSystemTest : LiveMapTestBase() {
         var visibleCells: List<CellKey> = emptyList()
 
         override fun apply() {
-            `when`(testBase.liveMapContext.mapRenderContext.viewProjection.visibleCells)
+            `when`(testBase.liveMapContext.mapRenderContext.viewport.visibleCells)
                 .thenReturn(HashSet(visibleCells))
         }
     }

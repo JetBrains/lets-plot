@@ -12,14 +12,14 @@ class ViewProjectionUpdateSystem(componentManager: EcsComponentManager) :
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val cameraEntity = getSingletonEntity(CameraComponent::class)
         val camera = cameraEntity.getComponent<CameraComponent>()
-        val viewProjection = context.mapRenderContext.viewProjection
+        val viewport = context.mapRenderContext.viewport
 
-        if (viewProjection.center != camera.center) {
-            viewProjection.center = camera.center
+        if (viewport.position != camera.center) {
+            viewport.position = camera.center
         }
 
         if (cameraEntity.contains(UpdateViewProjectionComponent::class)) {
-            viewProjection.zoom = camera.zoom.roundToInt()
+            viewport.zoom = camera.zoom.roundToInt()
             cameraEntity.removeComponent(UpdateViewProjectionComponent::class)
         }
     }

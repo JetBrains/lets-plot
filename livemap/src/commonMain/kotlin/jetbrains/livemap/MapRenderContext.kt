@@ -3,12 +3,12 @@ package jetbrains.livemap
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.canvas.CanvasProvider
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.rendering.primitives.RenderObject
 import jetbrains.livemap.projections.ClientPoint
-import jetbrains.livemap.projections.ViewProjection
 
 open class MapRenderContext internal constructor(
-    open val viewProjection: ViewProjection,
+    open val viewport: Viewport,
     val canvasProvider: CanvasProvider
 ) {
 

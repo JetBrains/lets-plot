@@ -128,8 +128,20 @@ object ProjectionUtil {
         }
     }
 
-    fun zoom(zoom: Int): Projection<Double> {
-        return scale((1 shl zoom).toDouble())
+    fun zoom(zoom: () -> Int): Projection<Double> {
+        return scale { (1 shl zoom()).toDouble() }
+    }
+
+    internal fun scale(scale: () -> Double): Projection<Double> {
+        return object : Projection<Double> {
+            override fun project(v: Double): Double {
+                return v * scale()
+            }
+
+            override fun invert(v: Double): Double {
+                return v / scale()
+            }
+        }
     }
 
     internal fun linear(offset: Double, scale: Double): Projection<Double> {
@@ -148,16 +160,12 @@ object ProjectionUtil {
         }
     }
 
-    internal fun scale(scale: Double): Projection<Double> {
-        return object : Projection<Double> {
-            override fun project(v: Double): Double {
-                return v * scale
-            }
+    fun zoom(zoom: Int): Projection<Double> {
+        return zoom { zoom }
+    }
 
-            override fun invert(v: Double): Double {
-                return v / scale
-            }
-        }
+    internal fun scale(scale: Double): Projection<Double> {
+        return scale { scale }
     }
 
     fun <InT, OutT> transformBBox(bbox: Rect<InT>, transform: (Vec<InT>) -> Vec<OutT>): Rect<OutT> {

@@ -10,7 +10,7 @@ import jetbrains.livemap.projections.Coordinates.Companion.ZERO_CLIENT_POINT
 class ScreenLoopsUpdateSystem(componentManager: EcsComponentManager) : LiveMapSystem(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val viewProjection = context.mapRenderContext.viewProjection
+        val viewport = context.mapRenderContext.viewport
 
         getEntities(COMPONENT_TYPES).forEach { entity ->
             val origin = entity
@@ -19,7 +19,7 @@ class ScreenLoopsUpdateSystem(componentManager: EcsComponentManager) : LiveMapSy
 
             val dimension = entity.get<ScreenDimensionComponent>().dimension
 
-            entity.get<ScreenLoopComponent>().origins = viewProjection.getOrigins(origin, dimension)
+            entity.get<ScreenLoopComponent>().origins = viewport.getOrigins(origin, dimension)
         }
     }
 

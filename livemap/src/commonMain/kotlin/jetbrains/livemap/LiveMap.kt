@@ -25,11 +25,8 @@ import jetbrains.livemap.DevParams.Companion.UPDATE_TIME_MULTIPLIER
 import jetbrains.livemap.DevParams.MicroTaskExecutor.*
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.MapWidgetUtil.MAX_ZOOM
-import jetbrains.livemap.camera.CameraComponent
-import jetbrains.livemap.camera.CameraInputSystem
-import jetbrains.livemap.camera.CameraScale
+import jetbrains.livemap.camera.*
 import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
-import jetbrains.livemap.camera.CameraUpdateDetectionSystem
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.input.*
 import jetbrains.livemap.core.multitasking.AsyncMicroTaskExecutorFactory
@@ -56,7 +53,10 @@ import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.obj2entity.MapObject2Entity
 import jetbrains.livemap.obj2entity.TextMeasurer
-import jetbrains.livemap.projections.*
+import jetbrains.livemap.projections.ClientPoint
+import jetbrains.livemap.projections.Coordinates
+import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.newDoubleRectangle
 import jetbrains.livemap.tiles.CellStateUpdateSystem
 import jetbrains.livemap.tiles.TileLoadingSystemFactory
 import jetbrains.livemap.tiles.TileRemovingSystem
@@ -73,7 +73,7 @@ import jetbrains.livemap.ui.UiService
 
 class LiveMap(
     private val myMapProjection: MapProjection,
-    private val myViewProjection: ViewProjection,
+    private val viewport: Viewport,
     private val myMapLayers: List<MapLayer>,
     private val myTileLoadingSystemBuilder: TileLoadingSystemFactory,
     private val myFragmentProvider: FragmentProvider,
@@ -98,7 +98,7 @@ class LiveMap(
         myContext = LiveMapContext(
             myMapProjection,
             canvasControl,
-            MapRenderContext(myViewProjection, canvasControl)
+            MapRenderContext(viewport, canvasControl)
         )
 
         myUiService = UiService(componentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
@@ -229,7 +229,7 @@ class LiveMap(
                     Rectangle().apply {
                         rect = newDoubleRectangle(
                             Coordinates.ZERO_CLIENT_POINT,
-                            myViewProjection.viewSize
+                            viewport.size
                         )
                     }
                 )
@@ -242,12 +242,12 @@ class LiveMap(
             }
 
             val origin = event.location!!.let { ClientPoint(it.x, it.y) }
-            val currentMapCenter = myViewProjection.getMapCoord(myViewProjection.viewSize / 2.0)
+            val currentMapCenter = viewport.getMapCoord(viewport.size / 2.0)
 
             CameraScale.setAnimation(
                 camera,
                 origin,
-                myViewProjection.getMapCoord(origin)
+                viewport.getMapCoord(origin)
                     .run { this - currentMapCenter }
                     .run { this / 2.0 }
                     .run { this + currentMapCenter},

@@ -3,15 +3,19 @@ package jetbrains.livemap
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.FULL_LONGITUDE
-import jetbrains.livemap.projections.*
+import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.projections.LonLatPoint
+import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.World
+import jetbrains.livemap.projections.WorldPoint
 import kotlin.math.pow
 import kotlin.math.round
 
-class LiveMapLocation(private val myViewProjection: ViewProjection, private val myMapProjection: MapProjection) {
+class LiveMapLocation(private val myViewport: Viewport, private val myMapProjection: MapProjection) {
 
     val viewLonLatRect: DoubleRectangle
         get() {
-            val viewRect = myViewProjection.viewRect
+            val viewRect = myViewport.window
 
             val nw = worldToLonLat(viewRect.origin)
             val se = worldToLonLat(viewRect.origin + viewRect.dimension)

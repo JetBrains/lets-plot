@@ -3,6 +3,8 @@ package jetbrains.livemap
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.center
+import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.camera.ViewportHelper
 import jetbrains.livemap.entities.regions.EmptinessChecker
 import jetbrains.livemap.fragments.FragmentProvider
 import jetbrains.livemap.projections.*
@@ -12,15 +14,15 @@ import jetbrains.livemap.tiles.TileLoadingSystemFactory.Companion.createTileLoad
 
 class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactory {
     private val myMapProjection: MapProjection
-    private val myViewProjection: ViewProjection
+    private val myViewport: Viewport
     private val myMapRuler: MapRuler<World>
 
     init {
         val mapRect = WorldRectangle(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
         myMapProjection = createMapProjection(myLiveMapSpec.projectionType, mapRect)
-        val multiMapHelper = MultiMapHelper(mapRect, myLiveMapSpec.isLoopX, myLiveMapSpec.isLoopY)
+        val multiMapHelper = ViewportHelper(mapRect, myLiveMapSpec.isLoopX, myLiveMapSpec.isLoopY)
         myMapRuler = multiMapHelper
-        myViewProjection = ViewProjection.create(
+        myViewport = Viewport.create(
             multiMapHelper,
             myLiveMapSpec.size.toClientPoint(),
             mapRect.center
@@ -50,12 +52,12 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
     }
 
     private fun createLiveMap(zoom: Int, center: WorldPoint, regionBBoxes: Map<String, GeoRectangle>): BaseLiveMap {
-        myViewProjection.zoom = zoom
-        myViewProjection.center = center
+        myViewport.zoom = zoom
+        myViewport.position = center
 
         return LiveMap(
             myMapProjection,
-            myViewProjection,
+            myViewport,
             myLiveMapSpec.layers,
             createTileLoadingFactory(myLiveMapSpec.devParams),
             FragmentProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
