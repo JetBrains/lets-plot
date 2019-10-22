@@ -19,9 +19,9 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.Companion.DEVICE_PIXEL_RATIO
-import jetbrains.datalore.vis.canvas.dom.DomCanvasUtil.imagePngBase64ToImage
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.Image
 import org.w3c.dom.Node
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
@@ -61,7 +61,9 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
     override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
         val async = SimpleAsync<Canvas.Snapshot>()
 
-        imagePngBase64ToImage(dataUrl).onSuccess { image ->
+        val image = Image()
+
+        image.onload = {
             val domCanvas =
                 DomCanvas.create(Vector(image.width, image.height), 1.0)
             val ctx = domCanvas.canvasElement.getContext("2d") as CanvasRenderingContext2D
@@ -69,6 +71,8 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
 
             domCanvas.takeSnapshot().onSuccess { async.success(it) }
         }
+
+        image.src = dataUrl
 
         return async
     }
