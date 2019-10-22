@@ -10,11 +10,11 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.Utils.diff
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.tilegeometry.TileGeometryProvider
+import jetbrains.livemap.fragments.FragmentProvider
 
 class FragmentDownloadingSystem(
     private val myMaxActiveDownloads: Int,
-    private val myFragmentGeometryProvider: TileGeometryProvider,
+    private val myFragmentGeometryProvider: FragmentProvider,
     componentManager: EcsComponentManager
 ) : LiveMapSystem(componentManager) {
     private val myRegionTiles = HashMap<String, MutableList<GeoTile>>()

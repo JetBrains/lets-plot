@@ -4,10 +4,10 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.center
 import jetbrains.livemap.entities.regions.EmptinessChecker
+import jetbrains.livemap.fragments.FragmentProvider
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
 import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
-import jetbrains.livemap.tilegeometry.TileGeometryProvider
 
 class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactory {
     private val myMapProjection: MapProjection
@@ -57,7 +57,7 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
             myViewProjection,
             myLiveMapSpec.layers,
             myLiveMapSpec.tileService,
-            TileGeometryProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
+            FragmentProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
             myLiveMapSpec.devParams,
             EmptinessChecker.BBoxEmptinessChecker(regionBBoxes),
             myLiveMapSpec.mapLocationConsumer

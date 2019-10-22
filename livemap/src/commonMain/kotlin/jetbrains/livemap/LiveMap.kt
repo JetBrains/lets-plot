@@ -51,18 +51,17 @@ import jetbrains.livemap.entities.regions.*
 import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
+import jetbrains.livemap.fragments.FragmentProvider
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.obj2entity.MapObject2Entity
 import jetbrains.livemap.obj2entity.TextMeasurer
 import jetbrains.livemap.projections.*
-import jetbrains.livemap.tilegeometry.TileGeometryProvider
 import jetbrains.livemap.tiles.*
 import jetbrains.livemap.tiles.components.CellLayerComponent
 import jetbrains.livemap.tiles.components.CellLayerKind
 import jetbrains.livemap.tiles.components.DebugCellLayerComponent
 import jetbrains.livemap.tiles.http.HttpTileLayerComponent
-import jetbrains.livemap.tiles.http.HttpTileLoadingSystem
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
@@ -73,7 +72,7 @@ class LiveMap(
     private val viewProjection: ViewProjection,
     private val myMapLayers: List<MapLayer>,
     private val myTileService: TileService,
-    private val myTileGeometryProvider: TileGeometryProvider,
+    private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
     private val myEmptinessChecker: EmptinessChecker,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit
@@ -190,7 +189,7 @@ class LiveMap(
                 FragmentUpdateSystem(componentManager, myEmptinessChecker),
                 FragmentDownloadingSystem(
                     myDevParams.read(FRAGMENT_ACTIVE_DOWNLOADS_LIMIT),
-                    myTileGeometryProvider,
+                    myFragmentProvider,
                     componentManager
                 ),
                 FragmentEmitSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),

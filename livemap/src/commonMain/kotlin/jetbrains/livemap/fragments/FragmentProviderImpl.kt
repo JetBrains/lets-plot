@@ -1,4 +1,4 @@
-package jetbrains.livemap.tilegeometry
+package jetbrains.livemap.fragments
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
@@ -8,10 +8,10 @@ import jetbrains.gis.geoprotocol.GeoRequestBuilder
 import jetbrains.gis.geoprotocol.GeoTile
 import jetbrains.gis.geoprotocol.GeocodingService
 
-internal class TileGeometryProviderImpl(
-    private val tileGeometryCache: TileGeometryCache,
+internal class FragmentProviderImpl(
+    private val fragmentCache: FragmentCache,
     private val geocodingService: GeocodingService
-) : TileGeometryProvider {
+) : FragmentProvider {
 
     override fun getGeometries(mapObjectIds: List<String>, tileIds: Collection<QuadKey>): Async<Map<String, List<GeoTile>>> {
         val objectsWithMissingTiles = HashMap<String, List<QuadKey>>()
@@ -20,7 +20,7 @@ internal class TileGeometryProviderImpl(
         for (mapObjectId in mapObjectIds) {
             val missingTiles = ArrayList<QuadKey>()
             for (tileId in tileIds) {
-                if (!tileGeometryCache.contains(mapObjectId, tileId)) {
+                if (!fragmentCache.contains(mapObjectId, tileId)) {
                     missingTiles.add(tileId)
                     isMissing = true
                 }
@@ -45,15 +45,15 @@ internal class TileGeometryProviderImpl(
             .map { features ->
                 tileIds.forEach { tileId ->
                     mapObjectIds.forEach { mapObjectId ->
-                        if (!tileGeometryCache.contains(mapObjectId, tileId)) {
-                            tileGeometryCache.putEmpty(mapObjectId, tileId)
+                        if (!fragmentCache.contains(mapObjectId, tileId)) {
+                            fragmentCache.putEmpty(mapObjectId, tileId)
                         }
                     }
                 }
 
                 features.forEach { geocodedFeature ->
                     geocodedFeature.tiles?.forEach {
-                        tileGeometryCache.put(geocodedFeature.id, it.key, it)
+                        fragmentCache.put(geocodedFeature.id, it.key, it)
                     }
                 }
                 getCachedGeometries(mapObjectIds, tileIds)
@@ -69,7 +69,7 @@ internal class TileGeometryProviderImpl(
         mapObjectIds.forEach { mapObjectId ->
             val tiles = ArrayList<GeoTile>()
             tileIds.forEach { tileId ->
-                tileGeometryCache[mapObjectId, tileId]?.let(tiles::add)
+                fragmentCache[mapObjectId, tileId]?.let(tiles::add)
             }
             result[mapObjectId] = tiles
         }

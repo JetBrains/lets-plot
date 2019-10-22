@@ -1,4 +1,4 @@
-package jetbrains.livemap.tilegeometry
+package jetbrains.livemap.fragments
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.QuadKey
@@ -6,7 +6,7 @@ import jetbrains.gis.geoprotocol.GeoTile
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
 
-internal open class TileGeometryCache(mapSize: DoubleVector) {
+internal open class FragmentCache(mapSize: DoubleVector) {
 
     private val limit = CACHED_ZOOM_COUNT * calculateCachedSideTileCount(mapSize.x) * calculateCachedSideTileCount(mapSize.y)
     private val cache: LruCache<QuadKey, MutableMap<String, GeoTile?>> = LruCache(limit)
