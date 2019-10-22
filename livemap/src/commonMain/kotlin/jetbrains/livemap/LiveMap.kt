@@ -29,6 +29,7 @@ import jetbrains.livemap.MapWidgetUtil.MAX_ZOOM
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraInputSystem
 import jetbrains.livemap.camera.CameraScale
+import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.camera.CameraUpdateDetectionSystem
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.input.*
@@ -62,7 +63,6 @@ import jetbrains.livemap.tiles.components.CellLayerComponent
 import jetbrains.livemap.tiles.components.CellLayerKind
 import jetbrains.livemap.tiles.components.DebugCellLayerComponent
 import jetbrains.livemap.tiles.http.HttpTileLayerComponent
-import jetbrains.livemap.tiles.http.HttpTileLoadingSystem
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
@@ -85,7 +85,7 @@ class LiveMap(
     private lateinit var layerRenderingSystem: LayersRenderingSystem
     private lateinit var layersOrder: List<RenderLayer>
     private var myInitialized: Boolean = false
-    private var myLayerManager: LayerManager? = null
+    private lateinit var myLayerManager: LayerManager
     private lateinit var myDiagnostics: Diagnostics
     private lateinit var schedulerSystem: SchedulerSystem
     private lateinit var uiService: UiService
@@ -95,8 +95,7 @@ class LiveMap(
         context = LiveMapContext(
             myMapProjection,
             canvasControl,
-            MapRenderContext(viewProjection, canvasControl),
-            null
+            MapRenderContext(viewProjection, canvasControl)
         )
 
         uiService = UiService(componentManager, ResourceManager(context.mapRenderContext.canvasProvider))
@@ -117,23 +116,7 @@ class LiveMap(
 
     private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {
         if (!myInitialized) {
-            initLayers(myLayerManager!!, componentManager)
-            initSystems(componentManager)
-            initCamera(componentManager)
-            myDiagnostics = if (myDevParams.isSet(PERF_STATS)) {
-                LiveMapDiagnostics(
-                    isLoading,
-                    layersOrder,
-                    layerRenderingSystem,
-                    schedulerSystem,
-                    context.metricsService,
-                    uiService,
-                    componentManager
-                )
-            } else {
-                Diagnostics()
-            }
-
+            init(componentManager)
             myInitialized = true
         }
 
@@ -142,6 +125,25 @@ class LiveMap(
         myDiagnostics.update(dt)
 
         return true
+    }
+
+    private fun init(componentManager: EcsComponentManager) {
+        initLayers(myLayerManager, componentManager)
+        initSystems(componentManager)
+        initCamera(componentManager)
+        myDiagnostics = if (myDevParams.isSet(PERF_STATS)) {
+            LiveMapDiagnostics(
+                isLoading,
+                layersOrder,
+                layerRenderingSystem,
+                schedulerSystem,
+                context.metricsService,
+                uiService,
+                componentManager
+            )
+        } else {
+            Diagnostics()
+        }
     }
 
     private fun initSystems(componentManager: EcsComponentManager) {
@@ -241,7 +243,7 @@ class LiveMap(
             }
 
         listeners.addDoubleClickListener { event ->
-            if (camera.contains(CameraScale.CameraScaleEffectComponent::class) || camera.getComponent<CameraComponent>().zoom == MAX_ZOOM.toDouble()) {
+            if (camera.contains<CameraScaleEffectComponent>() || camera.getComponent<CameraComponent>().zoom == MAX_ZOOM.toDouble()) {
                 return@addDoubleClickListener
             }
 
