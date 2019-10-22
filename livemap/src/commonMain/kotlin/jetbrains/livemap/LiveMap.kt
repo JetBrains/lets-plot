@@ -181,7 +181,7 @@ class LiveMap(
                 TileRequestSystem(componentManager),
 
                 tileLoadingSystem,
-                HttpTileLoadingSystem(componentManager),
+                // HttpTileLoadingSystem(componentManager),
 
                 TileRemovingSystem(myDevParams.read(TILE_CACHE_LIMIT), componentManager),
                 DebugDataSystem(componentManager),

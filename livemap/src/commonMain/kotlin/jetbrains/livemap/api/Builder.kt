@@ -358,9 +358,9 @@ class Projection {
 
 @LiveMapDsl
 class LiveMapTileServiceBuilder {
-    var theme = TileService.Theme.COLOR
     var host = "localhost"
     var port: Int? = null
+    var theme = TileService.Theme.COLOR
 
     fun build(): TileService {
         return TileService(TileWebSocketBuilder(host, port), theme)

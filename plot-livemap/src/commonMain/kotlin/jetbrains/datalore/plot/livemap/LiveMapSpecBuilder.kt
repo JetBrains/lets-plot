@@ -100,7 +100,7 @@ internal class LiveMapSpecBuilder {
                 port = null
             },
             internalTiles {
-                theme = TileService.Theme.COLOR
+                theme = TileService.Theme.valueOf(myLiveMapOptions.theme.name.toUpperCase())
                 host = "tiles.datalore.io"
                 port = null
             },
