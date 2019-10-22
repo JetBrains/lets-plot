@@ -86,20 +86,6 @@ class RendererCacheComponent : EcsComponent {
     }
 }
 
-class TileResponseComponent : EcsComponent {
-
-    private val myLock = Lock()
-    private var myTileData: List<TileLayer>? = null
-
-    var tileData: List<TileLayer>?
-        get() = myLock.execute {
-            return myTileData
-        }
-        set(tileData) = myLock.execute {
-            myTileData = tileData
-        }
-}
-
 class TileComponent : EcsComponent {
     var tile: Tile? = null
 }

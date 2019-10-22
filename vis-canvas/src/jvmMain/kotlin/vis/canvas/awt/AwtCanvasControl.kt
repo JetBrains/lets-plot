@@ -64,6 +64,10 @@ class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactor
         return myGraphicsCanvasControl.createSnapshot(dataUrl)
     }
 
+    override fun createSnapshot(bytes: ByteArray): Async<Snapshot> {
+        return myGraphicsCanvasControl.createSnapshot(bytes)
+    }
+
     override fun addChild(canvas: Canvas) {
         myGraphicsCanvasControl.addChild(canvas)
     }

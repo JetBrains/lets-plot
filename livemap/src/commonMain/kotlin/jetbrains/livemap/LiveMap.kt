@@ -61,6 +61,7 @@ import jetbrains.livemap.tiles.*
 import jetbrains.livemap.tiles.components.CellLayerComponent
 import jetbrains.livemap.tiles.components.CellLayerKind
 import jetbrains.livemap.tiles.components.DebugCellLayerComponent
+import jetbrains.livemap.tiles.http.HttpTileLayerComponent
 import jetbrains.livemap.tiles.http.HttpTileLoadingSystem
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
@@ -269,19 +270,20 @@ class LiveMap(
             .addComponents { + layerManager.createLayersOrderComponent() }
 
         componentManager
-            .createEntity("http_tile_layer")
-            .addComponents {
-                + CellLayerComponent(CellLayerKind.HTTP)
-                + LayerEntitiesComponent()
-                + layerManager.createRenderLayerComponent("http_ground")
-            }
-
-        componentManager
             .createEntity("cell_layer_ground")
             .addComponents {
                 + CellLayerComponent(CellLayerKind.WORLD)
                 + LayerEntitiesComponent()
                 + layerManager.createRenderLayerComponent("ground")
+            }
+
+        componentManager
+            .createEntity("http_tile_layer")
+            .addComponents {
+                + CellLayerComponent(CellLayerKind.HTTP)
+                + HttpTileLayerComponent()
+                + LayerEntitiesComponent()
+                + layerManager.createRenderLayerComponent("http_ground")
             }
 
         val mapObject2Entity = MapObject2Entity(componentManager, layerManager, myDevParams, myMapProjection)

@@ -59,6 +59,10 @@ object MicroTaskUtil {
         }
     }
 
+    fun create(task: () -> Unit): MicroTask<Unit> {
+        return CompositeMicroThread(listOf(task))
+    }
+
     fun create(tasks: Iterable<() -> Unit>): MicroTask<Unit> {
         return CompositeMicroThread(tasks)
     }

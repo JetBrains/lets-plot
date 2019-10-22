@@ -1,26 +1,20 @@
 package jetbrains.livemap.tiles
 
+import jetbrains.datalore.base.concurrent.Lock
+import jetbrains.datalore.base.concurrent.execute
 import jetbrains.datalore.base.math.round
 import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.core.ecs.AbstractSystem
-import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.entities.Entities.mapEntity
-import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem.Companion.world2Screen
-import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
-import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.WorldRectangle
 import jetbrains.livemap.tiles.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
 import jetbrains.livemap.tiles.Tile.SnapshotTile
 import jetbrains.livemap.tiles.components.*
-import jetbrains.livemap.tiles.components.RendererCacheComponent.Companion.NULL_RENDERER
 
 class TileLoadingSystem(
     private val myQuantumIterations: Int,
@@ -69,18 +63,18 @@ class TileLoadingSystem(
         }
 
         val downloadedEntities = ArrayList<EcsEntity>()
-        for (entity in getEntities(TileResponseComponent::class)) {
+        for (entity in getEntities<TileResponseComponent>()) {
             val tileData = entity.get<TileResponseComponent>().tileData ?: continue
             downloadedEntities.add(entity)
 
             val cellKey = entity.get<CellComponent>().cellKey
-            val tileLayerEntities = getTileLayerEntities(cellKey)
+            val tileEntities = getTileLayerEntities(cellKey)
 
             entity.setMicroThread(myQuantumIterations, myTileDataParser
                 .parse(cellKey, tileData)
                 .flatMap { tileFeatures ->
                     val microThreads = ArrayList<MicroTask<Unit>>()
-                    tileLayerEntities.forEach { tileLayerEntity ->
+                    tileEntities.forEach { tileLayerEntity ->
                         microThreads.add(
                             myTileDataRenderer
                                 .render(myCanvasSupplier(), tileFeatures, cellKey, tileLayerEntity.get<KindComponent>().layerKind)
@@ -106,8 +100,7 @@ class TileLoadingSystem(
         return getEntities(CELL_COMPONENT_LIST)
             .filter {
                 it.get<CellComponent>().cellKey == cellKey
-                        && it.get<KindComponent>().layerKind != CellLayerKind.DEBUG
-                        && it.get<KindComponent>().layerKind != CellLayerKind.HTTP
+                        && it.get<KindComponent>().layerKind in setOf(CellLayerKind.WORLD, CellLayerKind.LABEL)
             }
     }
 
@@ -122,5 +115,19 @@ class TileLoadingSystem(
             KindComponent::class,
             TileComponent::class
         )
+    }
+
+    private class TileResponseComponent : EcsComponent {
+
+        private val myLock = Lock()
+        private var myTileData: List<TileLayer>? = null
+
+        var tileData: List<TileLayer>?
+            get() = myLock.execute {
+                return myTileData
+            }
+            set(tileData) = myLock.execute {
+                myTileData = tileData
+            }
     }
 }

@@ -19,6 +19,7 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasUtil.imagePngBase64ToImage
+import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasUtil.imagePngByteArrayToImage
 import javafx.event.EventHandler as jfxHandler
 import javafx.scene.input.MouseEvent as JfxMouseEvent
 
@@ -60,6 +61,16 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
             JavafxCanvas.JavafxSnapshot(
                 imagePngBase64ToImage(
                     dataUrl
+                )
+            )
+        )
+    }
+
+    override fun createSnapshot(bytes: ByteArray): Async<Canvas.Snapshot> {
+        return Asyncs.constant(
+            JavafxCanvas.JavafxSnapshot(
+                imagePngByteArrayToImage(
+                    bytes
                 )
             )
         )
