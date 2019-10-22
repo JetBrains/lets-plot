@@ -32,6 +32,7 @@ class EcsEntity internal constructor(
         }
     }
 
+    @Deprecated("Use <addComponents { + component }>")
     fun <T : EcsComponent> addComponent(component: T): EcsEntity {
         componentManager.addComponent(this, component)
         return this

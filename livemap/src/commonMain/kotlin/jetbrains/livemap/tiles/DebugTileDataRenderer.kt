@@ -7,6 +7,8 @@ import jetbrains.livemap.core.multitasking.DebugMicroTask
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.components.CellLayerKind
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.HTTP_TILE_RENDER_TIME
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.HTTP_TILE_SNAPSHOT_TIME
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LABEL_RENDER_TIME
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LABEL_SNAPSHOT_TIME
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.WORLD_RENDER_TIME
@@ -37,6 +39,10 @@ internal class DebugTileDataRenderer(
             CellLayerKind.LABEL -> {
                 renderKey = LABEL_RENDER_TIME
                 snapshotKey = LABEL_SNAPSHOT_TIME
+            }
+            CellLayerKind.HTTP -> {
+                renderKey = HTTP_TILE_RENDER_TIME
+                snapshotKey = HTTP_TILE_SNAPSHOT_TIME
             }
             CellLayerKind.DEBUG -> return microTask
         }

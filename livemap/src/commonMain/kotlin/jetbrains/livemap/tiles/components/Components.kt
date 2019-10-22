@@ -59,8 +59,10 @@ class DebugDataComponent : EcsComponent {
         const val PARSING_TIME = "Parsing time: "
         val WORLD_RENDER_TIME = "Render time ${CellLayerKind.WORLD}: "
         val LABEL_RENDER_TIME = "Render time ${CellLayerKind.LABEL}: "
+        val HTTP_TILE_RENDER_TIME = "Render time ${CellLayerKind.HTTP}: "
         val WORLD_SNAPSHOT_TIME = "Snapshot time ${CellLayerKind.WORLD}: "
         val LABEL_SNAPSHOT_TIME = "Snapshot time ${CellLayerKind.LABEL}: "
+        val HTTP_TILE_SNAPSHOT_TIME = "Snapshot time ${CellLayerKind.HTTP}: "
         const val LOADING_TIME = "Loading time: "
         const val CELL_DATA_SIZE = "Cell data size: "
         const val BIGGEST_LAYER = "BL: "
@@ -84,29 +86,19 @@ class RendererCacheComponent : EcsComponent {
     }
 }
 
-class TileResponseComponent : EcsComponent {
-
-    private val myLock = Lock()
-    private var myTileData: List<TileLayer>? = null
-
-    var tileData: List<TileLayer>?
-        get() = myLock.execute {
-            return myTileData
-        }
-        set(tileData) = myLock.execute {
-            myTileData = tileData
-        }
+class TileComponent : EcsComponent {
+    var tile: Tile? = null
 }
 
-class TileComponent : EcsComponent {
-
-    var tile: Tile? = null
+class RequestTilesComponent : EcsComponent {
+    var requestTiles = HashSet<CellKey>()
 }
 
 enum class CellLayerKind constructor(private val myValue: String) {
     WORLD("world"),
     LABEL("label"),
-    DEBUG("debug");
+    DEBUG("debug"),
+    HTTP("http_tile");
 
     override fun toString(): String {
         return myValue

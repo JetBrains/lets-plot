@@ -23,6 +23,9 @@ import jetbrains.datalore.vis.canvas.dom.DomCanvasUtil.imagePngBase64ToImage
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
+import org.w3c.dom.url.URL
+import org.w3c.files.Blob
+import org.w3c.files.BlobPropertyBag
 import kotlin.browser.document
 import org.w3c.dom.events.MouseEvent as W3cMouseEvent
 
@@ -68,6 +71,12 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         }
 
         return async
+    }
+
+    override fun createSnapshot(bytes: ByteArray): Async<Canvas.Snapshot> {
+        return Blob(arrayOf(bytes), BlobPropertyBag("image/png"))
+            .let { URL.createObjectURL(it) }
+            .let(::createSnapshot)
     }
 
     override fun addChild(canvas: Canvas) {

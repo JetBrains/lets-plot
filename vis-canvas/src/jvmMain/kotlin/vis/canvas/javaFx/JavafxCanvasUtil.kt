@@ -61,9 +61,13 @@ internal object JavafxCanvasUtil {
         val byteArrayInputStream = ByteArrayInputStream(bytes)
 
         try {
-            Base64.getDecoder().wrap(byteArrayInputStream).use { wrap -> return Image(wrap) }
+            return Base64.getDecoder().wrap(byteArrayInputStream).let(::Image)
         } catch (e: IOException) {
             throw IllegalStateException(e)
         }
+    }
+
+    fun imagePngByteArrayToImage(bytes: ByteArray): Image {
+        return Image(ByteArrayInputStream(bytes))
     }
 }
