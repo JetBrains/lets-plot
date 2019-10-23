@@ -9,8 +9,10 @@ class CellKeyToZXYTest {
 
     @Test
     fun foo() {
-        assertEquals("/1/0/0.png", getZXY(CellKey("0")))
-        assertEquals("/2/0/0.png", getZXY(CellKey("00")))
-        assertEquals("/2/2/2.png", getZXY(CellKey("30")))
+        val format = "/\${z}/\${x}/\${y}.png"
+
+        assertEquals("/1/0/0.png", getZXY(CellKey("0"), format))
+        assertEquals("/2/0/0.png", getZXY(CellKey("00"), format))
+        assertEquals("/2/2/2.png", getZXY(CellKey("30"), format))
     }
 }

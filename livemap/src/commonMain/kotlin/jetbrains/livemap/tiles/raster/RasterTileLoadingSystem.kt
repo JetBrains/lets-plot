@@ -32,7 +32,7 @@ class RasterTileLoadingSystem(
                     + tileResponseComponent
                 }
 
-            myTileTransport.get(getZXY(cellKey)).onResult(
+            myTileTransport.get(getZXY(cellKey, myRequestFormat)).onResult(
                 { tileResponseComponent.imageData = it },
                 { tileResponseComponent.imageData = ByteArray(0) }
             )
@@ -77,11 +77,16 @@ class RasterTileLoadingSystem(
     }
 
     companion object {
-        fun getZXY(cellKey: CellKey): String {
+        fun getZXY(cellKey: CellKey, format: String): String {
             return 2.0.pow(cellKey.length)
                 .let { Rect<Generic>(0.0, 0.0, it, it) }
                 .let { GeoUtils.getTileOrigin(it, cellKey.key) }
-                .let { "/${cellKey.length}/${it.x.roundToInt()}/${it.y.roundToInt()}.png" }
+                .let {
+                    format
+                        .replace("\${z}", cellKey.length.toString(), false)
+                        .replace("\${x}", it.x.roundToInt().toString(), false)
+                        .replace("\${y}", it.y.roundToInt().toString(), false)
+                }
         }
     }
 
