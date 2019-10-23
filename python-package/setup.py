@@ -34,11 +34,11 @@ def update_js():
     for lib in js_libs:
         js_path = os.path.join(root_dir, *js_relative_path, lib + '.js')
 
-        dst_dir = os.path.join(this_dir, 'dlrplot', 'package_data')
+        dst_dir = os.path.join(this_dir, 'datalore_plot', 'package_data')
         if not os.path.isdir(dst_dir):
             os.mkdir(dst_dir)
 
-        copy(js_path, os.path.join(this_dir, 'dlrplot', 'package_data'))
+        copy(js_path, os.path.join(this_dir, 'datalore_plot', 'package_data'))
 
 
 class UpdateJsCommand(Command):
@@ -56,7 +56,7 @@ class UpdateJsCommand(Command):
 
 
 version_locals = {}
-with open(os.path.join(this_dir, 'dlrplot', '_version.py')) as f:
+with open(os.path.join(this_dir, 'datalore_plot', '_version.py')) as f:
     exec(f.read(), {}, version_locals)
 
 setup(name='datalore-plot',
@@ -71,7 +71,7 @@ setup(name='datalore-plot',
       packages=find_packages(exclude=('test',)),
 
       package_data={
-          "dlrplot": [
+          "datalore_plot": [
               "package_data/*",
           ],
       },

@@ -1,9 +1,9 @@
-import dlrplot as gg
-from dlrplot.plot.core import DummySpec, FeatureSpecArray
-from dlrplot.plot.core import FeatureSpec
-from dlrplot.plot.core import LayerSpec
-from dlrplot.plot.geom import _geom
-from dlrplot.plot.scale import _scale
+import datalore_plot as gg
+from datalore_plot.plot.core import DummySpec, FeatureSpecArray
+from datalore_plot.plot.core import FeatureSpec
+from datalore_plot.plot.core import LayerSpec
+from datalore_plot.plot.geom import _geom
+from datalore_plot.plot.scale import _scale
 
 
 def test_plot_geom_geom():

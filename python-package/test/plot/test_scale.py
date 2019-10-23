@@ -1,9 +1,9 @@
 import pytest
 
-import dlrplot as gg
-from dlrplot.plot.core import FeatureSpec
-from dlrplot.plot.core import FeatureSpecArray
-from dlrplot.plot.scale import _scale
+import datalore_plot as gg
+from datalore_plot.plot.core import FeatureSpec
+from datalore_plot.plot.core import FeatureSpecArray
+from datalore_plot.plot.scale import _scale
 
 
 def gen_scale_args():

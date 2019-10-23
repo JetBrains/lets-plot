@@ -1,6 +1,6 @@
 import pytest
 
-import dlrplot as gg
+import datalore_plot as gg
 
 data = [1, 2]
 mapping_empty = gg.aes()

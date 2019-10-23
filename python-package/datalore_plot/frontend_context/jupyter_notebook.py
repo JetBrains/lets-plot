@@ -34,7 +34,7 @@ class JupyterNotebookContext(FrontendContext):
     def _configure_embedded_script(self) -> str:
         js_name = "datalore-plot-latest.min.js"
         path = os.path.join("package_data", js_name)
-        js_code = pkgutil.get_data("dlrplot", path).decode("utf-8")
+        js_code = pkgutil.get_data("datalore_plot", path).decode("utf-8")
         lib_js = """
                 console.log('Embedding: {js_name}');
                 

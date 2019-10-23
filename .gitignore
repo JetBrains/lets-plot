@@ -11,7 +11,7 @@ node_modules/
 *.egg-info
 **/dist
 venv
-python-package/dlrplot/package_data
+python-package/datalore_plot/package_data
 __pycache__/
 /python-package/*.ipynb
 

@@ -19,7 +19,7 @@ if (project.buildSettings.enable_python_package) {
     clean {
         delete python_package_build_dir
         delete python_package_dist_dir
-        delete "${python_package_dir}/dlrplot/package_data"
+        delete "${python_package_dir}/datalore_plot/package_data"
         delete "${python_package_dir}/datalore_plot.egg-info"
     }
 

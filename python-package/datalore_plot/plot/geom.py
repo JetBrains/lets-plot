@@ -77,7 +77,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
     --------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> x = np.random.uniform(-1, 1, size=100)
     >>> y = np.random.normal(size=100)
     >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
@@ -142,7 +142,7 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
     ---------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> T = 1
     >>> N = 1000
     >>> t = np.linspace(0, T, N)
@@ -217,7 +217,7 @@ def geom_line(mapping=None, data=None, stat=None, position=None, show_legend=Non
     ---------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> T = 1
     >>> N = 1000
     >>> t = np.linspace(0, T, N)
@@ -296,7 +296,7 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
     >>> import numpy as np
     >>> import pandas as pd
     >>> from scipy.stats import multivariate_normal
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> N = 100
     >>> t = np.linspace(1, N, N)
     >>> a = 1
@@ -367,7 +367,7 @@ def geom_bar(mapping=None, data=None, stat=None, position=None, show_legend=None
     >>> import numpy as np
     >>> import pandas as pd
     >>> from scipy.stats import multivariate_normal
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> N = 100
     >>> M = 3
     >>> mean = np.zeros(M)
@@ -441,7 +441,7 @@ def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legen
     >>> import numpy as np
     >>> import pandas as pd
     >>> from scipy.stats import multivariate_normal
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> N = 100
     >>> M = 3
     >>> mean = np.arange(M) * 5
@@ -500,7 +500,7 @@ def geom_tile(mapping=None, data=None, stat=None, position=None, show_legend=Non
     ---------
     >>> import numpy as np
     >>> import matplotlib.mlab as mlab
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> delta = 0.5
     >>> x = np.arange(-5.0, 5.0, delta)
     >>> y = np.arange(-5.0, 5.0, delta)
@@ -556,7 +556,7 @@ def geom_raster(mapping=None, data=None, stat=None, position=None, show_legend=N
     ---------
     >>> import numpy as np
     >>> import matplotlib.mlab as mlab
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> delta = 0.5
     >>> x = np.arange(-5.0, 5.0, delta)
     >>> y = np.arange(-5.0, 5.0, delta)
@@ -620,7 +620,7 @@ def geom_errorbar(mapping=None, data=None, stat=None, position=None, show_legend
     Examples
     ---------
     >>> import numpy as np
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> N = 10
     >>> M = 10
     >>> m = np.random.random(M) * 5.0
@@ -691,7 +691,7 @@ def geom_contour(mapping=None, data=None, stat=None, position=None, show_legend=
     >>> import numpy as np
     >>> import pandas as pd
     >>> import matplotlib.mlab as mlab
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> delta = 0.5
     >>> x = np.arange(-5.0, 5.0, delta)
     >>> y = np.arange(-5.0, 5.0, delta)
@@ -828,7 +828,7 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
     ---------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> id = ["A", "B", "C", "D", "E", "F"]
     >>> val = np.random.uniform(3, 3.5, 6)
     >>> x = np.random.uniform(1, 3, 24)
@@ -895,8 +895,8 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
     --------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from dlrplot import *
-    >>> import dlrplot.geo_data as gd
+    >>> from datalore_plot import *
+    >>> import datalore_plot.geo_data as gd
     >>> boundaries = gd.regions_state(request=['Texas', 'Iowa', 'Arizona'], within='US-48').boundaries()
     >>> regions = np.unique(boundaries['name'])
     >>> num_of_regions = len(regions)
@@ -970,7 +970,7 @@ def geom_abline(mapping=None, data=None, stat=None, position=None, show_legend=N
     Examples
     --------
     >>> import pandas as pd
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> ggplot() + geom_abline(intercept=1, slope=3, color='red', linetype='dashed', size=3, alpha=0.5)
     """
     return _geom('abline', mapping, data, stat, position, show_legend, sampling=sampling, slope=slope, intercept=intercept, **other_args)
@@ -1022,7 +1022,7 @@ def geom_hline(mapping=None, data=None, stat=None, position=None, show_legend=No
     Examples
     --------
     >>> import pandas as pd
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> ggplot() + geom_hline(yintercept=1, color='red', linetype='dashed', size=3, alpha=0.5)
     """
     return _geom('hline', mapping, data, stat, position, show_legend, sampling=sampling, yintercept=yintercept, **other_args)
@@ -1074,7 +1074,7 @@ def geom_vline(mapping=None, data=None, stat=None, position=None, show_legend=No
     Examples
     --------
     >>> import pandas as pd
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> ggplot() + geom_vline(xintercept=1, color='red', linetype='dashed', size=3, alpha=0.5)
     """
     return _geom('vline', mapping, data, stat, position, show_legend, sampling=sampling, xintercept=xintercept, **other_args)
@@ -1140,7 +1140,7 @@ def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=
     >>> import pandas as pd
     >>> import numpy as np
     >>> from scipy.stats import norm
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> y = norm.rvs(size=100)
     >>> df = {'x': [1], \
     >>>   'lower': np.percentile(y, 5), \
@@ -1541,7 +1541,7 @@ def geom_jitter(mapping=None, data=None, stat=None, position=None, show_legend=N
     --------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> x = np.random.randint(3, size=100)
     >>> y = np.random.normal(size=100)
     >>> dat = pd.DataFrame({'x': x, 'y': y})
@@ -1661,7 +1661,7 @@ def geom_step(mapping=None, data=None, stat=None, position=None, show_legend=Non
     ---------
     >>> import numpy as np
     >>> import pandas as pd
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> T = 1
     >>> N = 1000
     >>> t = np.linspace(0, T, N)
@@ -1733,7 +1733,7 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
 
     Examples
     ---------
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> ggplot() + geom_rect(aes(xmin=[3], xmax=[4], ymin=[6], ymax=[10]))
 
     """
@@ -1795,7 +1795,7 @@ def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=
 
     Examples
     ---------
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> ggplot() + geom_segment(aes(x=[3], y=[6], xend=[4], yend=[10]))
     """
     return _geom('segment', mapping, data, stat, position, show_legend, sampling=sampling, arrow=arrow, animation=animation, **other_args)
@@ -1853,7 +1853,7 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
 
     Examples
     ---------
-    >>> from dlrplot import *
+    >>> from datalore_plot import *
     >>> ggplot() + geom_text(aes(x=[1], y=[1], label=['Text'], angle=[30], family=['mono']), size = 10)
     """
     return _geom('text', mapping, data, stat, position, show_legend, sampling=sampling, **other_args)
