@@ -3,7 +3,7 @@ package jetbrains.livemap.tiles.raster
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.GeoUtils
 import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.gis.tileprotocol.http.TileTransport
+import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.MicroTask
@@ -18,7 +18,7 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 
 class HttpTileLoadingSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
-    private val myTileTransport: TileTransport = TileTransport("localhost", null, "")
+    private val myTileTransport: HttpTileTransport = HttpTileTransport("localhost", null, "")
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         getSingletonComponent<RequestTilesComponent>().requestTiles.forEach { cellKey ->
