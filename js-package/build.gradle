@@ -156,23 +156,30 @@ task copyProjectDependenciesJs(type: Copy) {
     into js_package_libs_dir
 }
 
+def outputDir = "${project.buildDir}/dist/"
+def inputDir = "${project.buildDir}/js/"
+
 task webpackBuildReleaseVersion(type: NpmTask) {
-    group = task_group
+    inputs.dir(inputDir)
+    outputs.files("datalore-plot-${artifact_version}.min.js")
     args = ['run', 'webpack-build-release', '--', "--output-filename=datalore-plot-${artifact_version}.min.js"]
 }
 
 task webpackBuildReleaseLatest(type: NpmTask) {
-    group = task_group
+    inputs.dir(inputDir)
+    outputs.files("${outputDir}datalore-plot-latest.min.js")
     args = ['run', 'webpack-build-release', '--', "--output-filename=datalore-plot-latest.min.js"]
 }
 
 task webpackBuildDebugVersion(type: NpmTask) {
-    group = task_group
+    inputs.dir(inputDir)
+    outputs.files("${outputDir}datalore-plot-${artifact_version}.js")
     args = ['run', 'webpack-build-debug', '--', "--output-filename=datalore-plot-${artifact_version}.js"]
 }
 
 task webpackBuildDebugLatest(type: NpmTask) {
-    group = task_group
+    inputs.dir(inputDir)
+    outputs.files("${outputDir}datalore-plot-latest.js")
     args = ['run', 'webpack-build-debug', '--', "--output-filename=datalore-plot-latest.js"]
 }
 
@@ -195,5 +202,5 @@ webpackBuildDebug.dependsOn += copyLibraryDependenciesJs
 webpackBuildDebug.dependsOn += copyProjectDependenciesJs
 webpackBuildDebug.dependsOn += npmInstall
 
-assemble.dependsOn += webpackBuildDebug
-assemble.dependsOn += webpackBuildRelease
+build.dependsOn += webpackBuildDebug
+build.dependsOn += webpackBuildRelease
