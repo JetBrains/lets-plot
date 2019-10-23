@@ -20,11 +20,13 @@ For getting this path you can run `python -c "from sysconfig import get_paths as
 
 ## Building
 
-For building python wheel package you can run `:python-package-build:buildPythonPackage` gradle task
+`:python-package-build:build` gradle task defined in the sibling project `python-package-build`
 
+or just run shell command:
+
+`python setup.py update_js bdist_wheel`
 
 ## Local installing
 
-* build package
+TBD
 
-* run `:python-package-build:localInstallPythonPackage` gradle task (`./gradlew :python-package:localInstallPythonPackage`)
