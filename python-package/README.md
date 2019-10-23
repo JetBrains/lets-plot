@@ -28,5 +28,14 @@ or just run shell command:
 
 ## Local installing
 
+* create / activate python environment (if needed)
+* run shell commands: 
+
+`pip uninstall datalore-plot`
+
+`pip install --no-index --find-links=dist/ datalore-plot`
+ 
+## Jupyther
+
 TBD
 
