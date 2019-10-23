@@ -14,6 +14,9 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4" apply false
 }
 
+group 'org.jetbrains.datalore-plot'
+version = "0.0.1-SNAPSHOT"
+
 import org.yaml.snakeyaml.Yaml
 
 def build_settings_file = new File(rootDir, "build_settings.yml")
@@ -61,8 +64,8 @@ def publishedProjects = [
 ]
 
 subprojects {
-    group 'org.jetbrains.datalore-plot'
-    version = "1.0-SNAPSHOT"
+    group = rootProject.group
+    version = rootProject.version
 
     repositories {
         mavenCentral()
