@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'org.jetbrains.datalore-plot'
-version = "0.0.1-SNAPSHOT"
+version "0.0.1-SNAPSHOT"
 
 import org.yaml.snakeyaml.Yaml
 
@@ -42,7 +42,28 @@ allprojects {
 //    println "--- project ---: $project.name $project.rootDir"
 }
 
-def publishedProjects = [
+//def publishedProjects = [
+//        'base-portable',
+//        'base',
+//        'mapper-core',
+//        'vis-canvas',
+//        'vis-svg',
+//        'vis-svg-mapper',
+//        'vis-svg-mapper-jfx',
+//        'plot-base-portable',
+//        'plot-base',
+//        'plot-common-portable',
+//        'plot-common',
+//        'plot-builder-portable',
+//        'plot-builder',
+//        'plot-config-portable',
+//        'plot-config',
+//        'vis-demo-common',
+//        'vis-demo-common-jfx',
+//        'jvm-jfx-package',
+//]
+
+def include_sources_datalorePlotJvmJfx = [
         'base-portable',
         'base',
         'mapper-core',
@@ -60,8 +81,11 @@ def publishedProjects = [
         'plot-config',
         'vis-demo-common',
         'vis-demo-common-jfx',
-        'jvm-jfx-package',
 ]
+
+configurations {
+    datalorePlotJvmJfxSources
+}
 
 subprojects {
     group = rootProject.group
@@ -81,14 +105,19 @@ subprojects {
 //        }
     }
 
-    if (name in publishedProjects) {
-        apply plugin: 'maven-publish'
-        publishing {
-            repositories {
-                maven {
-                    url = uri("$rootDir/.maven-publish-dev-repo")
-                }
-            }
-        }
+//    if (name in publishedProjects) {
+//        apply plugin: 'maven-publish'
+//        publishing {
+//            repositories {
+//                maven {
+//                    url = uri("$rootDir/.maven-publish-dev-repo")
+//                }
+//            }
+//        }
+//    }
+
+    if (name in include_sources_datalorePlotJvmJfx) {
+        // ToDo: add source dependency to datalorePlotJvmJfxSources
+//        rootProject
     }
 }
