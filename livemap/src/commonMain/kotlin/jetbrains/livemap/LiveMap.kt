@@ -10,11 +10,9 @@ import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
-import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams.Companion.COMPUTATION_FRAME_TIME
 import jetbrains.livemap.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
 import jetbrains.livemap.DevParams.Companion.DEBUG_GRID
-import jetbrains.livemap.DevParams.Companion.DEBUG_TILES
 import jetbrains.livemap.DevParams.Companion.FRAGMENT_ACTIVE_DOWNLOADS_LIMIT
 import jetbrains.livemap.DevParams.Companion.FRAGMENT_CACHE_LIMIT
 import jetbrains.livemap.DevParams.Companion.MICRO_TASK_EXECUTOR
@@ -58,13 +56,15 @@ import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.obj2entity.MapObject2Entity
 import jetbrains.livemap.obj2entity.TextMeasurer
 import jetbrains.livemap.projections.*
-import jetbrains.livemap.tiles.*
+import jetbrains.livemap.tiles.CellStateUpdateSystem
+import jetbrains.livemap.tiles.TileLoadingSystemBuilder
+import jetbrains.livemap.tiles.TileRemovingSystem
+import jetbrains.livemap.tiles.TileRequestSystem
 import jetbrains.livemap.tiles.components.CellLayerComponent
 import jetbrains.livemap.tiles.components.CellLayerKind
 import jetbrains.livemap.tiles.components.DebugCellLayerComponent
 import jetbrains.livemap.tiles.debug.DebugDataSystem
-import jetbrains.livemap.tiles.raster.HttpTileLayerComponent
-import jetbrains.livemap.tiles.vector.TileLoadingSystem
+import jetbrains.livemap.tiles.raster.RasterTileLayerComponent
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem
@@ -74,7 +74,7 @@ class LiveMap(
     private val myMapProjection: MapProjection,
     private val myViewProjection: ViewProjection,
     private val myMapLayers: List<MapLayer>,
-    private val myTileService: TileService,
+    private val myTileLoadingSystemBuilder: TileLoadingSystemBuilder,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
     private val myEmptinessChecker: EmptinessChecker,
@@ -149,13 +149,6 @@ class LiveMap(
     }
 
     private fun initSystems(componentManager: EcsComponentManager) {
-        val tileLoadingSystem =
-            if (myDevParams.isSet(DEBUG_TILES))
-                object : AbstractSystem<LiveMapContext>(componentManager) {}
-            else
-                TileLoadingSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), myTileService, componentManager)
-
-
         val microTaskExecutor: MicroTaskExecutor = when (myDevParams.read(MICRO_TASK_EXECUTOR)) {
             UI_THREAD -> SyncMicroTaskExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
             AUTO, BACKGROUND -> AsyncMicroTaskExecutorFactory.create()
@@ -183,9 +176,7 @@ class LiveMap(
 
                 CellStateUpdateSystem(componentManager),
                 TileRequestSystem(componentManager),
-
-                tileLoadingSystem,
-                // HttpTileLoadingSystem(componentManager),
+                myTileLoadingSystemBuilder.build(componentManager),
 
                 TileRemovingSystem(myDevParams.read(TILE_CACHE_LIMIT), componentManager),
                 DebugDataSystem(componentManager),
@@ -285,7 +276,7 @@ class LiveMap(
             .createEntity("http_tile_layer")
             .addComponents {
                 + CellLayerComponent(CellLayerKind.HTTP)
-                + HttpTileLayerComponent()
+                + RasterTileLayerComponent()
                 + LayerEntitiesComponent()
                 + layerManager.createRenderLayerComponent("http_ground")
             }

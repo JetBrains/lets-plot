@@ -2,4 +2,4 @@ package jetbrains.livemap.tiles.raster
 
 import jetbrains.livemap.core.ecs.EcsComponent
 
-class HttpTileLayerComponent : EcsComponent
+class RasterTileLayerComponent : EcsComponent

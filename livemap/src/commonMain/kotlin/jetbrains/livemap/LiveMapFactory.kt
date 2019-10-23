@@ -3,11 +3,21 @@ package jetbrains.livemap
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.center
+import jetbrains.gis.tileprotocol.http.HttpTileTransport
+import jetbrains.livemap.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
+import jetbrains.livemap.DevParams.Companion.DEBUG_TILES
+import jetbrains.livemap.DevParams.Companion.RASTER_TILES
+import jetbrains.livemap.DevParams.Companion.VECTOR_TILES
+import jetbrains.livemap.api.internalTiles
 import jetbrains.livemap.entities.regions.EmptinessChecker
 import jetbrains.livemap.fragments.FragmentProvider
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
 import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
+import jetbrains.livemap.tiles.TileLoadingSystemBuilder
+import jetbrains.livemap.tiles.TileLoadingSystemBuilder.DummyTileLoadingSystemBuilder
+import jetbrains.livemap.tiles.raster.RasterTileLoadingSystemBuilder
+import jetbrains.livemap.tiles.vector.VectorTileLoadingSystemBuilder
 
 class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactory {
     private val myMapProjection: MapProjection
@@ -48,6 +58,28 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
             }
     }
 
+    private fun createTileLoadingBuilder(): TileLoadingSystemBuilder {
+        if (myLiveMapSpec.devParams.isSet(DEBUG_TILES))
+            return DummyTileLoadingSystemBuilder()
+
+        val rasterTiles = myLiveMapSpec.devParams.read(RASTER_TILES)
+        if (rasterTiles != null)
+            return RasterTileLoadingSystemBuilder(
+                HttpTileTransport(rasterTiles.host, rasterTiles.port, ""),
+                rasterTiles.format
+            )
+
+        val vectorTiles = myLiveMapSpec.devParams.read(VECTOR_TILES)
+        return VectorTileLoadingSystemBuilder(
+            myLiveMapSpec.devParams.read(COMPUTATION_PROJECTION_QUANT),
+            internalTiles {
+                host = vectorTiles.host
+                port = vectorTiles.port
+                theme = vectorTiles.theme
+            }
+        )
+    }
+
     private fun createLiveMap(zoom: Int, center: WorldPoint, regionBBoxes: Map<String, GeoRectangle>): BaseLiveMap {
         myViewProjection.zoom = zoom
         myViewProjection.center = center
@@ -56,7 +88,7 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
             myMapProjection,
             myViewProjection,
             myLiveMapSpec.layers,
-            myLiveMapSpec.tileService,
+            createTileLoadingBuilder(),
             FragmentProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
             myLiveMapSpec.devParams,
             EmptinessChecker.BBoxEmptinessChecker(regionBBoxes),

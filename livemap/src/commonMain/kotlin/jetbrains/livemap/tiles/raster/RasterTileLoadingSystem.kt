@@ -17,8 +17,10 @@ import jetbrains.livemap.tiles.components.*
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-class HttpTileLoadingSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
-    private val myTileTransport: HttpTileTransport = HttpTileTransport("localhost", null, "")
+class RasterTileLoadingSystem(
+    private val myTileTransport: HttpTileTransport,
+    private val myRequestFormat: String,
+    componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         getSingletonComponent<RequestTilesComponent>().requestTiles.forEach { cellKey ->
