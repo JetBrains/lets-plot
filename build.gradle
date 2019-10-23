@@ -32,7 +32,7 @@ if (settings.enable_python_package) {
     assert settings.python.bin_path != null
 }
 
-settings.putIfAbsent("enable_livemap", true)
+settings.putIfAbsent("enable_livemap", false)
 
 project.ext.buildSettings = settings
 
