@@ -62,7 +62,9 @@ import jetbrains.livemap.tiles.*
 import jetbrains.livemap.tiles.components.CellLayerComponent
 import jetbrains.livemap.tiles.components.CellLayerKind
 import jetbrains.livemap.tiles.components.DebugCellLayerComponent
-import jetbrains.livemap.tiles.http.HttpTileLayerComponent
+import jetbrains.livemap.tiles.debug.DebugDataSystem
+import jetbrains.livemap.tiles.raster.HttpTileLayerComponent
+import jetbrains.livemap.tiles.vector.TileLoadingSystem
 import jetbrains.livemap.ui.LiveMapUiSystem
 import jetbrains.livemap.ui.ResourceManager
 import jetbrains.livemap.ui.UiRenderingTaskSystem

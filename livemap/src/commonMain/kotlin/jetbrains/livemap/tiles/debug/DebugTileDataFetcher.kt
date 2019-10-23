@@ -1,4 +1,4 @@
-package jetbrains.livemap.tiles
+package jetbrains.livemap.tiles.debug
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.gis.tileprotocol.TileLayer
@@ -8,6 +8,7 @@ import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.BIGGEST_L
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.CELL_DATA_SIZE
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LOADING_TIME
 import jetbrains.livemap.tiles.components.StatisticsComponent
+import jetbrains.livemap.tiles.vector.TileDataFetcher
 
 internal class DebugTileDataFetcher(
     private val myStats: StatisticsComponent,

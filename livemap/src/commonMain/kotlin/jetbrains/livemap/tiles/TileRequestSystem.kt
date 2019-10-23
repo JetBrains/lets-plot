@@ -11,6 +11,8 @@ import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.WorldRectangle
 import jetbrains.livemap.tiles.components.*
+import jetbrains.livemap.tiles.debug.DebugCellRenderer
+import jetbrains.livemap.tiles.vector.TileLoadingSystem
 
 class TileRequestSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myMapRect: WorldRectangle

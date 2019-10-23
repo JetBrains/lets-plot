@@ -1,4 +1,4 @@
-package jetbrains.livemap.tiles.http
+package jetbrains.livemap.tiles.raster
 
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.GeoUtils
@@ -12,7 +12,7 @@ import jetbrains.livemap.core.multitasking.setMicroThread
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.Tile
-import jetbrains.livemap.tiles.TileLoadingSystem
+import jetbrains.livemap.tiles.vector.TileLoadingSystem
 import jetbrains.livemap.tiles.components.*
 import kotlin.math.pow
 import kotlin.math.roundToInt

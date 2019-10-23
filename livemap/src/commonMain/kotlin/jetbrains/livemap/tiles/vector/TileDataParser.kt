@@ -1,4 +1,4 @@
-package jetbrains.livemap.tiles
+package jetbrains.livemap.tiles.vector
 
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.multitasking.MicroTask

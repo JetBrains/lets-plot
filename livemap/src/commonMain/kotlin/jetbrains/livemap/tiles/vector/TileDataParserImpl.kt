@@ -1,4 +1,4 @@
-package jetbrains.livemap.tiles
+package jetbrains.livemap.tiles.vector
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.TileGeometry
@@ -15,6 +15,7 @@ import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.WorldProjection
+import jetbrains.livemap.tiles.getTileRect
 
 internal class TileDataParserImpl(private val myMapProjection: MapProjection) : TileDataParser {
 

@@ -1,4 +1,4 @@
-package jetbrains.livemap.tiles
+package jetbrains.livemap.tiles.debug
 
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.SystemTime
@@ -7,6 +7,8 @@ import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.PARSING_TIME
 import jetbrains.livemap.tiles.components.StatisticsComponent
+import jetbrains.livemap.tiles.vector.TileDataParser
+import jetbrains.livemap.tiles.vector.TileFeature
 
 internal class DebugTileDataParser(
     private val myStats: StatisticsComponent,

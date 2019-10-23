@@ -1,4 +1,4 @@
-package jetbrains.livemap.tiles
+package jetbrains.livemap.tiles.vector
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.BBOX_CALCULATOR

@@ -1,7 +1,7 @@
-package jetbrains.livemap.tiles.http
+package jetbrains.livemap.tiles.raster
 
 import jetbrains.livemap.projections.CellKey
-import jetbrains.livemap.tiles.http.HttpTileLoadingSystem.Companion.getZXY
+import jetbrains.livemap.tiles.raster.HttpTileLoadingSystem.Companion.getZXY
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
