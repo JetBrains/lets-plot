@@ -15,6 +15,10 @@ class DevParams(private val devParams: Map<*, *>) {
         return param.isSet(this)
     }
 
+    fun isNotSet(param: RasterParam): Boolean {
+        return !param.isSet(this)
+    }
+
     fun read(param: IntParam): Int {
         return param.read(this)
     }
@@ -100,6 +104,10 @@ class DevParams(private val devParams: Map<*, *>) {
                 else -> throw IllegalArgumentException()
             }
         }
+
+        fun isSet(params: DevParams): Boolean {
+            return params[key] != null
+        }
     }
 
     class RasterTiles {
@@ -144,7 +152,7 @@ class DevParams(private val devParams: Map<*, *>) {
         private val valuesMap: List<Pair<String, ValueT>>
     ) {
 
-        internal fun fromString(o: String): ValueT {
+        private fun fromString(o: String): ValueT {
             valuesMap.forEach { (first, second) ->
                 if (first.equals(o, ignoreCase = true)) {
                     return second

@@ -17,6 +17,7 @@ import jetbrains.livemap.DevParams.Companion.FRAGMENT_ACTIVE_DOWNLOADS_LIMIT
 import jetbrains.livemap.DevParams.Companion.FRAGMENT_CACHE_LIMIT
 import jetbrains.livemap.DevParams.Companion.MICRO_TASK_EXECUTOR
 import jetbrains.livemap.DevParams.Companion.PERF_STATS
+import jetbrains.livemap.DevParams.Companion.RASTER_TILES
 import jetbrains.livemap.DevParams.Companion.RENDER_TARGET
 import jetbrains.livemap.DevParams.Companion.TILE_CACHE_LIMIT
 import jetbrains.livemap.DevParams.Companion.UPDATE_PAUSE_MS
@@ -264,22 +265,24 @@ class LiveMap(
             .createEntity("layers_order")
             .addComponents { + layerManager.createLayersOrderComponent() }
 
-        componentManager
-            .createEntity("cell_layer_ground")
-            .addComponents {
-                + CellLayerComponent(CellLayerKind.WORLD)
-                + LayerEntitiesComponent()
-                + layerManager.createRenderLayerComponent("ground")
-            }
-
-        componentManager
-            .createEntity("http_tile_layer")
-            .addComponents {
-                + CellLayerComponent(CellLayerKind.HTTP)
-                + RasterTileLayerComponent()
-                + LayerEntitiesComponent()
-                + layerManager.createRenderLayerComponent("http_ground")
-            }
+        if (myDevParams.isNotSet(RASTER_TILES)) {
+            componentManager
+                .createEntity("vector_layer_ground")
+                .addComponents {
+                    + CellLayerComponent(CellLayerKind.WORLD)
+                    + LayerEntitiesComponent()
+                    + layerManager.createRenderLayerComponent("ground")
+                }
+        } else {
+            componentManager
+                .createEntity("raster_layer_ground")
+                .addComponents {
+                    + CellLayerComponent(CellLayerKind.RASTER)
+                    + RasterTileLayerComponent()
+                    + LayerEntitiesComponent()
+                    + layerManager.createRenderLayerComponent("http_ground")
+                }
+        }
 
         val mapObject2Entity = MapObject2Entity(componentManager, layerManager, myDevParams, myMapProjection)
         for (mapLayer in myMapLayers) {
@@ -302,13 +305,15 @@ class LiveMap(
             }
         }
 
-        componentManager
-            .createEntity("cell_layer_labels")
-            .addComponents {
-                + CellLayerComponent(CellLayerKind.LABEL)
-                + LayerEntitiesComponent()
-                + layerManager.createRenderLayerComponent("labels")
-            }
+        if (myDevParams.isNotSet(RASTER_TILES)) {
+            componentManager
+                .createEntity("vector_layer_labels")
+                .addComponents {
+                    + CellLayerComponent(CellLayerKind.LABEL)
+                    + LayerEntitiesComponent()
+                    + layerManager.createRenderLayerComponent("labels")
+                }
+        }
 
         if (myDevParams.isSet(DEBUG_GRID)) {
             componentManager

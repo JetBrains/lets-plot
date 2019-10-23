@@ -72,7 +72,7 @@ class RasterTileLoadingSystem(
         return getEntities(TileLoadingSystem.CELL_COMPONENT_LIST)
             .filter {
                 it.get<CellComponent>().cellKey == cellKey
-                        && it.get<KindComponent>().layerKind == CellLayerKind.HTTP
+                        && it.get<KindComponent>().layerKind == CellLayerKind.RASTER
             }
     }
 

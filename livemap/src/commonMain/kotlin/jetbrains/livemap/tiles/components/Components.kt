@@ -101,17 +101,9 @@ enum class CellLayerKind constructor(private val myValue: String) {
     WORLD("world"),
     LABEL("label"),
     DEBUG("debug"),
-    HTTP("http_tile");
+    RASTER("raster_tile");
 
     override fun toString(): String {
         return myValue
     }
-}
-
-internal enum class CellStatus {
-    EMPTY,
-    LOADING,
-    LOADED,
-    RENDERING,
-    READY
 }
