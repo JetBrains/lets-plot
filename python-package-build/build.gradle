@@ -35,18 +35,6 @@ if (project.buildSettings.enable_python_package) {
                 "--dist-dir=${python_package_dist_dir}"
     }
 
-    task localInstallPythonPackage(type: Exec) {
-        group = task_group
-        description = 'Installs datalore-plot python package to local environment'
-
-        workingDir python_package_dist_dir
-        commandLine "${python_bin_path}/pip",
-                'install',
-                '--no-index',
-                '--find-links=./',
-                'datalore-plot'
-    }
-
     task buildManylinuxWheels(type: Exec) {
         group = task_group
         description = 'Builds datalore-plot wheel distribution with Manylinux platform for publication(python)'
@@ -97,6 +85,5 @@ if (project.buildSettings.enable_python_package) {
 
     build.dependsOn(buildPythonPackage)
 
-    localInstallPythonPackage.dependsOn(buildPythonPackage)
     //publishPythonPackage.dependsOn(buildPythonPackage)
 }
