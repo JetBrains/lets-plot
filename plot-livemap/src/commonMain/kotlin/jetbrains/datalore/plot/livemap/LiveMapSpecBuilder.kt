@@ -51,8 +51,8 @@ internal class LiveMapSpecBuilder {
         return this
     }
 
-    fun livemapOptions(livemapOptions: LiveMapOptions): LiveMapSpecBuilder {
-        myLiveMapOptions = livemapOptions
+    fun liveMapOptions(liveMapOptions: LiveMapOptions): LiveMapSpecBuilder {
+        myLiveMapOptions = liveMapOptions
         return this
     }
 

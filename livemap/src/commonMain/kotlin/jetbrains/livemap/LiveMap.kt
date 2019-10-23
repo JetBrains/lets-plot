@@ -29,6 +29,7 @@ import jetbrains.livemap.MapWidgetUtil.MAX_ZOOM
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraInputSystem
 import jetbrains.livemap.camera.CameraScale
+import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.camera.CameraUpdateDetectionSystem
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.input.*
@@ -69,7 +70,7 @@ import jetbrains.livemap.ui.UiService
 
 class LiveMap(
     private val myMapProjection: MapProjection,
-    private val viewProjection: ViewProjection,
+    private val myViewProjection: ViewProjection,
     private val myMapLayers: List<MapLayer>,
     private val myTileService: TileService,
     private val myFragmentProvider: FragmentProvider,
@@ -77,30 +78,29 @@ class LiveMap(
     private val myEmptinessChecker: EmptinessChecker,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit
 ) : BaseLiveMap() {
-    private val renderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
-    private var ecsController: EcsController? = null
+    private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
-    private lateinit var context: LiveMapContext
-    private lateinit var layerRenderingSystem: LayersRenderingSystem
-    private lateinit var layersOrder: List<RenderLayer>
     private var myInitialized: Boolean = false
-    private var myLayerManager: LayerManager? = null
+    private lateinit var myEcsController: EcsController
+    private lateinit var myContext: LiveMapContext
+    private lateinit var myLayerRenderingSystem: LayersRenderingSystem
+    private lateinit var myLayersOrder: List<RenderLayer>
+    private lateinit var myLayerManager: LayerManager
     private lateinit var myDiagnostics: Diagnostics
-    private lateinit var schedulerSystem: SchedulerSystem
-    private lateinit var uiService: UiService
+    private lateinit var mySchedulerSystem: SchedulerSystem
+    private lateinit var myUiService: UiService
 
     override fun draw(canvasControl: CanvasControl) {
         val componentManager = EcsComponentManager()
-        context = LiveMapContext(
+        myContext = LiveMapContext(
             myMapProjection,
             canvasControl,
-            MapRenderContext(viewProjection, canvasControl),
-            null
+            MapRenderContext(myViewProjection, canvasControl)
         )
 
-        uiService = UiService(componentManager, ResourceManager(context.mapRenderContext.canvasProvider))
+        myUiService = UiService(componentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
 
-        myLayerManager = createLayerManager(componentManager, renderTarget, canvasControl)
+        myLayerManager = createLayerManager(componentManager, myRenderTarget, canvasControl)
 
         val updateController = UpdateController(
             { dt -> animationHandler(componentManager, dt) },
@@ -116,31 +116,34 @@ class LiveMap(
 
     private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {
         if (!myInitialized) {
-            initLayers(myLayerManager!!, componentManager)
-            initSystems(componentManager)
-            initCamera(componentManager)
-            myDiagnostics = if (myDevParams.isSet(PERF_STATS)) {
-                LiveMapDiagnostics(
-                    isLoading,
-                    layersOrder,
-                    layerRenderingSystem,
-                    schedulerSystem,
-                    context.metricsService,
-                    uiService,
-                    componentManager
-                )
-            } else {
-                Diagnostics()
-            }
-
+            init(componentManager)
             myInitialized = true
         }
 
-        ecsController?.update(dt.toDouble())
+        myEcsController.update(dt.toDouble())
 
         myDiagnostics.update(dt)
 
         return true
+    }
+
+    private fun init(componentManager: EcsComponentManager) {
+        initLayers(myLayerManager, componentManager)
+        initSystems(componentManager)
+        initCamera(componentManager)
+        myDiagnostics = if (myDevParams.isSet(PERF_STATS)) {
+            LiveMapDiagnostics(
+                isLoading,
+                myLayersOrder,
+                myLayerRenderingSystem,
+                mySchedulerSystem,
+                myContext.metricsService,
+                myUiService,
+                componentManager
+            )
+        } else {
+            Diagnostics()
+        }
     }
 
     private fun initSystems(componentManager: EcsComponentManager) {
@@ -152,15 +155,15 @@ class LiveMap(
 
 
         val microTaskExecutor: MicroTaskExecutor = when (myDevParams.read(MICRO_TASK_EXECUTOR)) {
-            UI_THREAD -> SyncMicroTaskExecutor(context, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
+            UI_THREAD -> SyncMicroTaskExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
             AUTO, BACKGROUND -> AsyncMicroTaskExecutorFactory.create()
-        } ?: SyncMicroTaskExecutor(context, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
+        } ?: SyncMicroTaskExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
 
 
-        schedulerSystem = SchedulerSystem(microTaskExecutor, componentManager)
-        ecsController = EcsController(
+        mySchedulerSystem = SchedulerSystem(microTaskExecutor, componentManager)
+        myEcsController = EcsController(
             componentManager,
-            context,
+            myContext,
             listOf(
                 // Input systems
                 MouseInputSystem(componentManager),
@@ -174,7 +177,7 @@ class LiveMap(
                 AnimationObjectSystem(componentManager),
                 AnimationSystem(componentManager),
                 ViewProjectionUpdateSystem(componentManager),
-                LiveMapUiSystem(uiService, componentManager, myMapLocationConsumer),
+                LiveMapUiSystem(myUiService, componentManager, myMapLocationConsumer),
 
                 CellStateUpdateSystem(componentManager),
                 TileRequestSystem(componentManager),
@@ -206,8 +209,8 @@ class LiveMap(
                 EntitiesRenderingTaskSystem(componentManager),
 
                 UiRenderingTaskSystem(componentManager),
-                layerRenderingSystem,
-                schedulerSystem,
+                myLayerRenderingSystem,
+                mySchedulerSystem,
 
                 // Effects
                 GrowingPath.GrowingPathEffectSystem(componentManager),
@@ -232,7 +235,7 @@ class LiveMap(
                     Rectangle().apply {
                         rect = newDoubleRectangle(
                             Coordinates.ZERO_CLIENT_POINT,
-                            viewProjection.viewSize
+                            myViewProjection.viewSize
                         )
                     }
                 )
@@ -240,17 +243,17 @@ class LiveMap(
             }
 
         listeners.addDoubleClickListener { event ->
-            if (camera.contains(CameraScale.CameraScaleEffectComponent::class) || camera.getComponent<CameraComponent>().zoom == MAX_ZOOM.toDouble()) {
+            if (camera.contains<CameraScaleEffectComponent>() || camera.getComponent<CameraComponent>().zoom == MAX_ZOOM.toDouble()) {
                 return@addDoubleClickListener
             }
 
             val origin = event.location!!.let { ClientPoint(it.x, it.y) }
-            val currentMapCenter = viewProjection.getMapCoord(viewProjection.viewSize / 2.0)
+            val currentMapCenter = myViewProjection.getMapCoord(myViewProjection.viewSize / 2.0)
 
             CameraScale.setAnimation(
                 camera,
                 origin,
-                viewProjection.getMapCoord(origin)
+                myViewProjection.getMapCoord(origin)
                     .run { this - currentMapCenter }
                     .run { this / 2.0 }
                     .run { this + currentMapCenter},
@@ -261,8 +264,8 @@ class LiveMap(
 
     private fun initLayers(layerManager: LayerManager, componentManager: EcsComponentManager) {
         // layers
-        layersOrder = layerManager.createLayersOrderComponent().renderLayers
-        layerRenderingSystem = layerManager.createLayerRenderingSystem()
+        myLayersOrder = layerManager.createLayersOrderComponent().renderLayers
+        myLayerRenderingSystem = layerManager.createLayerRenderingSystem()
 
         componentManager
             .createEntity("layers_order")
@@ -300,7 +303,7 @@ class LiveMap(
                 MapLayerKind.V_LINE -> mapObject2Entity.processLine(mapObjects, false)
                 MapLayerKind.TEXT -> mapObject2Entity.processText(
                     mapObjects,
-                    TextMeasurer(context.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
+                    TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
                 )
                 else -> error("")
             }
@@ -335,7 +338,7 @@ class LiveMap(
 
     override fun dispose() {
         myTimerReg.dispose()
-        ecsController?.dispose()
+        myEcsController.dispose()
     }
 
     private class UpdateController(

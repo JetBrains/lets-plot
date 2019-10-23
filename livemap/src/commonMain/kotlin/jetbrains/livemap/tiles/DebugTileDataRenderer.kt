@@ -7,12 +7,8 @@ import jetbrains.livemap.core.multitasking.DebugMicroTask
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.components.CellLayerKind
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.HTTP_TILE_RENDER_TIME
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.HTTP_TILE_SNAPSHOT_TIME
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LABEL_RENDER_TIME
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LABEL_SNAPSHOT_TIME
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.WORLD_RENDER_TIME
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.WORLD_SNAPSHOT_TIME
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.renderTimeKey
+import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.snapshotTimeKey
 import jetbrains.livemap.tiles.components.StatisticsComponent
 
 internal class DebugTileDataRenderer(
@@ -29,23 +25,10 @@ internal class DebugTileDataRenderer(
     ): MicroTask<Async<Canvas.Snapshot>> {
         val microTask = myTileDataRenderer.render(canvas, tileFeatures, cellKey, layerKind)
 
-        val renderKey: String
-        val snapshotKey: String
-        when (layerKind) {
-            CellLayerKind.WORLD -> {
-                renderKey = WORLD_RENDER_TIME
-                snapshotKey = WORLD_SNAPSHOT_TIME
-            }
-            CellLayerKind.LABEL -> {
-                renderKey = LABEL_RENDER_TIME
-                snapshotKey = LABEL_SNAPSHOT_TIME
-            }
-            CellLayerKind.HTTP -> {
-                renderKey = HTTP_TILE_RENDER_TIME
-                snapshotKey = HTTP_TILE_SNAPSHOT_TIME
-            }
-            CellLayerKind.DEBUG -> return microTask
-        }
+        if (layerKind == CellLayerKind.DEBUG) return microTask
+
+        val renderKey = renderTimeKey(layerKind)
+        val snapshotKey = snapshotTimeKey(layerKind)
 
         val debugMicroTask = DebugMicroTask(mySystemTime, microTask)
         debugMicroTask.addFinishHandler {

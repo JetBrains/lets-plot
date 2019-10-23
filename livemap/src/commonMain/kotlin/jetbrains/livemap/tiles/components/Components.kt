@@ -1,10 +1,7 @@
 package jetbrains.livemap.tiles.components
 
-import jetbrains.datalore.base.concurrent.Lock
-import jetbrains.datalore.base.concurrent.execute
 import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.Utils
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -47,25 +44,31 @@ class CellComponent(val cellKey: CellKey) : EcsComponent
 class DebugDataComponent : EcsComponent {
     private val myData = HashMap<String, String>()
 
-    fun getLine(key: String): String {
-        return key + myData[key]
-    }
+    fun get(key: String) = myData[key]
 
     internal fun addData(data: Map<String, String>) {
         myData.putAll(data)
     }
 
     companion object {
-        const val PARSING_TIME = "Parsing time: "
-        val WORLD_RENDER_TIME = "Render time ${CellLayerKind.WORLD}: "
-        val LABEL_RENDER_TIME = "Render time ${CellLayerKind.LABEL}: "
-        val HTTP_TILE_RENDER_TIME = "Render time ${CellLayerKind.HTTP}: "
-        val WORLD_SNAPSHOT_TIME = "Snapshot time ${CellLayerKind.WORLD}: "
-        val LABEL_SNAPSHOT_TIME = "Snapshot time ${CellLayerKind.LABEL}: "
-        val HTTP_TILE_SNAPSHOT_TIME = "Snapshot time ${CellLayerKind.HTTP}: "
-        const val LOADING_TIME = "Loading time: "
-        const val CELL_DATA_SIZE = "Cell data size: "
-        const val BIGGEST_LAYER = "BL: "
+        fun renderTimeKey(layerKind: CellLayerKind) = "Render time $layerKind"
+        fun snapshotTimeKey(layerKind: CellLayerKind) = "Snapshot time $layerKind"
+
+        const val PARSING_TIME = "Parsing time"
+        const val LOADING_TIME = "Loading time"
+        const val CELL_DATA_SIZE = "Cell data size"
+        const val BIGGEST_LAYER = "BL"
+
+        val LINES_ORDER = listOf(
+            CELL_DATA_SIZE,
+            LOADING_TIME,
+            PARSING_TIME,
+            BIGGEST_LAYER,
+            renderTimeKey(CellLayerKind.WORLD),
+            snapshotTimeKey(CellLayerKind.WORLD),
+            renderTimeKey(CellLayerKind.LABEL),
+            snapshotTimeKey(CellLayerKind.LABEL)
+        )
     }
 }
 

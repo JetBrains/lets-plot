@@ -6,8 +6,8 @@ import jetbrains.datalore.vis.canvas.CanvasProvider
 class ResourceManager(private val canvasProvider: CanvasProvider) {
     private val snapshotMap: MutableMap<String, Canvas.Snapshot> = HashMap()
 
-    fun add(key: String, base64Image: String): ResourceManager {
-        canvasProvider.createSnapshot(base64Image).onResult(
+    fun add(key: String, dataUrl: String): ResourceManager {
+        canvasProvider.createSnapshot(dataUrl).onResult(
             { snapshot -> snapshotMap[key] = snapshot },
             { message -> error(message) })
         return this
@@ -20,13 +20,6 @@ class ResourceManager(private val canvasProvider: CanvasProvider) {
     fun isReady(vararg keys: String): Boolean = isReady(listOf(*keys))
 
     private fun isReady(keys: Collection<String>): Boolean {
-
-        keys.forEach {
-            if (!snapshotMap.containsKey(it)) {
-                return false
-            }
-        }
-
-        return true
+        return keys.all { snapshotMap.containsKey(it) }
     }
 }

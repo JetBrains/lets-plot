@@ -99,7 +99,7 @@ object LiveMapUtil {
             // LiveMap geom layer
             newLiveMapRendererData(geomLayers.first()).let {
                 liveMapSpecBuilder = LiveMapSpecBuilder()
-                    .livemapOptions(myLiveMapOptions)
+                    .liveMapOptions(myLiveMapOptions)
                     .aesthetics(it.aesthetics)
                     .dataAccess(it.dataAccess)
                     .layers(layers)
