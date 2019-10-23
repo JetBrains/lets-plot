@@ -10,17 +10,16 @@ this_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(this_dir)
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'datalore_plot_kotlin_bridge.c')
 
-LIB_NAME = "libdatalore_plot_python_extension"
-# MACOS_LIB_NAME = LIB_NAME + ".dylib"
-LINUX_LIB_NAME = LIB_NAME + ".so"
-
 # ToDo: option: debug / release
-build_paths = {
-    "Linux": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'linuxX64', 'debugStatic'),
-    "Darwin": os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
-}
+this_system = platform.system()
+if this_system == "Linux":
+    binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'linuxX64', 'debugStatic')
+elif this_system == "Darwin":
+    binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
+else:
+    raise RuntimeError("Unsupported platform {}".format(this_system))
 
-BUILD_PATH = build_paths.get(platform.system(), None)
+python_package = "datalore_plot"
 
 
 def update_js():
@@ -34,11 +33,11 @@ def update_js():
     for lib in js_libs:
         js_path = os.path.join(root_dir, *js_relative_path, lib + '.js')
 
-        dst_dir = os.path.join(this_dir, 'datalore_plot', 'package_data')
+        dst_dir = os.path.join(this_dir, python_package, 'package_data')
         if not os.path.isdir(dst_dir):
             os.mkdir(dst_dir)
 
-        copy(js_path, os.path.join(this_dir, 'datalore_plot', 'package_data'))
+        copy(js_path, os.path.join(this_dir, python_package, 'package_data'))
 
 
 class UpdateJsCommand(Command):
@@ -56,7 +55,7 @@ class UpdateJsCommand(Command):
 
 
 version_locals = {}
-with open(os.path.join(this_dir, 'datalore_plot', '_version.py')) as f:
+with open(os.path.join(this_dir, python_package, '_version.py')) as f:
     exec(f.read(), {}, version_locals)
 
 setup(name='datalore-plot',
@@ -71,18 +70,16 @@ setup(name='datalore-plot',
       packages=find_packages(exclude=('test',)),
 
       package_data={
-          "datalore_plot": [
+          python_package: [
               "package_data/*",
           ],
       },
 
       ext_modules=[
           Extension('datalore_plot_kotlin_bridge',
-                    include_dirs=[BUILD_PATH],
+                    include_dirs=[binaries_build_path],
                     libraries=['datalore_plot_python_extension', 'stdc++'],
-                    library_dirs=[BUILD_PATH],
-                    # library_dirs=[BUILD_PATH, 'datalore/plot'],
-                    # runtime_library_dirs=['datalore/plot'],
+                    library_dirs=[binaries_build_path],
                     depends=['libdatalore_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],
                     )
