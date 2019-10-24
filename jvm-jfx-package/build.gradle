@@ -86,6 +86,25 @@ publishing {
 
             artifact jarDatalorePlotJvmJfxClasses
             artifact jarDatalorePlotJvmJfxSources
+
+            pom {
+                name = "Datalore Plot for JavaFX"
+                description = "Datalore Plot JVM package with JavaFX rendering"
+                url = "https://github.com/JetBrains/datalore-plot"
+                licenses {
+                    license {
+                        name = "MIT"
+                        url = "https://opensource.org/licenses/MIT"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "jetbrains"
+                        name = "JetBrains s.r.o"
+                        email = "datalore-plot@jetbrains.com"
+                    }
+                }
+            }
         }
     }
     repositories {
