@@ -10,8 +10,8 @@ plugins {
     id 'org.jetbrains.gradle.plugin.idea-ext' version '0.5' apply false
     // executing node scripts (adds support for Yarn. Also - NPM, Grunt and Gulp)
     id 'com.moowork.node' version '1.3.1' apply false
-    // publishing to bintray
-    id "com.jfrog.bintray" version "1.8.4" apply false
+    id "com.jfrog.bintray" version '1.8.4' apply false
+    id 'com.github.johnrengelman.shadow' version '5.1.0' apply false
 }
 
 group 'org.jetbrains.datalore-plot'
@@ -41,27 +41,6 @@ allprojects {
 //    println "--- project ---: $project.name $project.depth ${if(project.depth > 0) project.parent.rootDir else ''}"
 //    println "--- project ---: $project.name $project.rootDir"
 }
-
-//def publishedProjects = [
-//        'base-portable',
-//        'base',
-//        'mapper-core',
-//        'vis-canvas',
-//        'vis-svg',
-//        'vis-svg-mapper',
-//        'vis-svg-mapper-jfx',
-//        'plot-base-portable',
-//        'plot-base',
-//        'plot-common-portable',
-//        'plot-common',
-//        'plot-builder-portable',
-//        'plot-builder',
-//        'plot-config-portable',
-//        'plot-config',
-//        'vis-demo-common',
-//        'vis-demo-common-jfx',
-//        'jvm-jfx-package',
-//]
 
 def include_sources_datalorePlotJvmJfx = [
         'base-portable',
@@ -105,19 +84,18 @@ subprojects {
 //        }
     }
 
-//    if (name in publishedProjects) {
-//        apply plugin: 'maven-publish'
-//        publishing {
-//            repositories {
-//                maven {
-//                    url = uri("$rootDir/.maven-publish-dev-repo")
-//                }
-//            }
-//        }
-//    }
-
+    // jar jvm sources
     if (name in include_sources_datalorePlotJvmJfx) {
-        // ToDo: add source dependency to datalorePlotJvmJfxSources
-//        rootProject
+        apply plugin: 'kotlin-multiplatform'
+        kotlin.jvm {}   // for `jvmSourcesJar` task
+        build.dependsOn += jvmSourcesJar
+    }
+
+    // build configuration dependent on all jars with sources
+    if (name in include_sources_datalorePlotJvmJfx) {
+        def sources_jar_path = "${buildDir}/libs/${name}-jvm-${version}-sources.jar"
+        rootProject.dependencies {
+            datalorePlotJvmJfxSources files(sources_jar_path)
+        }
     }
 }

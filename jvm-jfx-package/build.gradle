@@ -1,8 +1,7 @@
 plugins {
     id 'kotlin-multiplatform'
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '5.1.0'
-//    id 'java'
+    id 'com.github.johnrengelman.shadow'
 }
 
 kotlin {
@@ -70,6 +69,7 @@ task jarDatalorePlotJvmJfxClasses(type: ShadowJar) {
 }
 
 task jarDatalorePlotJvmJfxSources(type: ShadowJar) {
+    group task_group
     baseName artifactBaseName
     version artifactVersion
     classifier 'sources'
@@ -85,6 +85,7 @@ publishing {
             version artifactVersion
 
             artifact jarDatalorePlotJvmJfxClasses
+            artifact jarDatalorePlotJvmJfxSources
         }
     }
     repositories {
@@ -94,12 +95,3 @@ publishing {
         }
     }
 }
-
-
-//publishing {
-//    publications {
-//        forEach {
-//            it.artifactId = it.artifactId.replace(project.name, 'datalore-plot') + '-jfx'
-//        }
-//    }
-//}
