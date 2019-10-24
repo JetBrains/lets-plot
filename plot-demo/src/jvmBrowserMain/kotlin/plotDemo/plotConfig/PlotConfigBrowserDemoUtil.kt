@@ -1,9 +1,5 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
-//import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.BASE_MAPPER_LIBS
-//import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.DEMO_COMMON_LIBS
-//import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.KOTLIN_LIBS
-//import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.PLOT_LIBS
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.jsObject.mapToJsObjectInitializer
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
@@ -31,7 +27,11 @@ object PlotConfigDemoUtil {
         }
     }
 
-    private fun getPlotLibPath() = "${BrowserDemoUtil.getRootPath()}/$JS_DIST_PATH/$PLOT_LIB"
+    private fun getPlotLibPath(): String {
+        val settings = BrowserDemoUtil.getBuildSettings()
+        val name = "datalore-plot-${settings.js_artifact_version}.js"
+        return "${BrowserDemoUtil.getRootPath()}/$JS_DIST_PATH/$name"
+    }
 
     private fun getHtml(
         title: String,

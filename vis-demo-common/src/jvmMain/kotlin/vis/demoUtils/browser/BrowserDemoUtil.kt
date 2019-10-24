@@ -77,8 +77,12 @@ object BrowserDemoUtil {
         return projectRoot
     }
 
+    fun getBuildSettings(): BuildSettings {
+        val settingsFileName = "${getRootPath()}/build_settings.yml"
+        return BuildSettings.fromFile(settingsFileName)
+    }
+
     fun mapperDemoHtml(demoProject: String, callFun: String, libs: List<String>, title: String): String {
-//        val mainScript = "$demoProject.js"
         val mainScript = "${getRootPath()}/$demoProject/build/classes/kotlin/js/main/$demoProject.js"
         val writer = StringWriter().appendHTML().html {
             lang = "en"
@@ -89,7 +93,6 @@ object BrowserDemoUtil {
                 for (lib in libs) {
                     script {
                         type = "text/javascript"
-//                        src = "lib/$lib"
                         src = "${getRootPath()}/$JS_PATH/$lib"
                     }
                 }
