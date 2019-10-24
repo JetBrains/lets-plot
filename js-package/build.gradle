@@ -74,7 +74,7 @@ if (bintray_user != null && bintray_key != null) {
         publish = true
 
         pkg {
-            repo = 'datalore-plot-generic'
+            repo = 'datalore-plot'
             name = 'datalore-plot-js'
             userOrg = 'jetbrains'
             licenses = ['MIT']
