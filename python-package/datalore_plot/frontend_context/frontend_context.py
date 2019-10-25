@@ -1,5 +1,6 @@
 from typing import Dict, Any
 
+from .._global_settings import _get_global_bool
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
 from ..type_utils.type_utils import is_dict_or_dataframe, standardize_dict
@@ -33,7 +34,7 @@ def as_html(plot_spec: Dict) -> str:
     plot_spec = standardize_plot_spec(plot_spec)
 
     if 'html' not in _default_frontend_contexts:
-        connected = False
+        connected = not _get_global_bool('offline')
         from .jupyter_notebook import JupyterNotebookContext
         ctx = JupyterNotebookContext(connected)
         ctx.configure()

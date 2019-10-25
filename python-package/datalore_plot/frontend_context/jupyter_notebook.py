@@ -5,11 +5,13 @@ from typing import Dict
 from IPython.display import display_html
 
 from .frontend_context import FrontendContext
+from .._global_settings import _get_global_str, _has_global_value, _is_production
+from .._version import __version__
 
 
 class JupyterNotebookContext(FrontendContext):
 
-    def __init__(self, connected: bool = False) -> None:
+    def __init__(self, connected: bool) -> None:
         super().__init__()
         self.connected = connected
 
@@ -19,17 +21,26 @@ class JupyterNotebookContext(FrontendContext):
 
     def configure(self):
         if self.connected:
+            # noinspection PyTypeChecker
             display_html(self._configure_connected_script(), raw=True)
         else:
+            # noinspection PyTypeChecker
             display_html(self._configure_embedded_script(), raw=True)
 
+    # noinspection PyMethodMayBeStatic
     def _configure_connected_script(self) -> str:
-        # ToDo: CDN
-        base_url = "http://0.0.0.0:8080"
-        url = "{base_url}/datalore-plot-latest.min.js".format(base_url=base_url)
+        # base_url = "http://0.0.0.0:8080"
+        base_url = _get_global_str("js_base_url")
+        if _has_global_value('js_name'):
+            name = _get_global_str('js_name')
+        else:
+            suffix = ".min.js" if _is_production() else ".js"
+            name = "datalore-plot-{version}{suffix}".format(version=__version__, suffix=suffix)
+
+        url = "{base_url}/{name}".format(base_url=base_url, name=name)
         return """\
-                <script type="text/javascript" src="{script_src}"/>
-            """.format(script_src=url)
+                <script type="text/javascript" src="{url}"/>
+            """.format(url=url)
 
     def _configure_embedded_script(self) -> str:
         js_name = "datalore-plot-latest.min.js"

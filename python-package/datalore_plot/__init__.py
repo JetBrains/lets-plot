@@ -4,9 +4,7 @@ from pkgutil import extend_path
 __path__ = extend_path(__path__, __name__)
 
 from ._version import __version__
-
-# __version__ = __version__   # only to get rid of 'unused import' warning
-
 from .plot import *
+from ._global_settings import DatalorePlotSettings
 
-__all__ = plot.__all__
+__all__ = plot.__all__ + ['DatalorePlotSettings']
