@@ -46,6 +46,7 @@ open class Histogram : PlotConfigDemoBase() {
 
         fun basic(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'mapping': {" +
                     "             'x': 'x'" +
                     "           }," +
@@ -64,6 +65,7 @@ open class Histogram : PlotConfigDemoBase() {
 
         fun withConstantWeight(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'mapping': {" +
                     "             'x': 'x'" +
                     "           }," +
@@ -84,6 +86,7 @@ open class Histogram : PlotConfigDemoBase() {
 
         fun withWeights(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'mapping': {" +
                     "             'x': 'x'," +
                     "             'weight': 'weight'" +

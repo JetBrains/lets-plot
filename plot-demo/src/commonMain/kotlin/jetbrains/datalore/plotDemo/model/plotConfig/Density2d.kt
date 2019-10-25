@@ -13,6 +13,7 @@ class Density2d : PlotConfigDemoBase() {
 
     private fun sepanLength(): Map<String, Any> {
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'mapping': {" +
                 "             'x': 'sepal length (cm)'," +
                 "             'y': 'sepal width (cm)'," +

@@ -51,6 +51,7 @@ open class BoxPlot : PlotConfigDemoBase() {
 
         fun basic(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'mapping': {" +
                     "             'x': 'cond'," +
                     "             'y': 'rating'" +
@@ -70,6 +71,7 @@ open class BoxPlot : PlotConfigDemoBase() {
 
         fun withVarWidth(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'mapping': {" +
                     "             'x': 'cond'," +
                     "             'y': 'rating'" +
@@ -90,6 +92,7 @@ open class BoxPlot : PlotConfigDemoBase() {
 
         fun withCondColored(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'mapping': {" +
                     "             'x': 'cond'," +
                     "             'y': 'rating'," +
@@ -110,6 +113,7 @@ open class BoxPlot : PlotConfigDemoBase() {
 
         fun withOutlierOverride(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'mapping': {" +
                     "             'x': 'cond'," +
                     "             'y': 'rating'" +
@@ -132,6 +136,7 @@ open class BoxPlot : PlotConfigDemoBase() {
 
         fun withGrouping(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'mapping': {" +
                     "             'x': 'cond'," +
                     "             'y': 'rating'," +
@@ -152,6 +157,7 @@ open class BoxPlot : PlotConfigDemoBase() {
 
         fun withGroupingAndVarWidth(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'mapping': {" +
                     "             'x': 'cond'," +
                     "             'y': 'rating'," +

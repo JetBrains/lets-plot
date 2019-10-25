@@ -15,6 +15,7 @@ class EdgeCasesTest {
                 "}"
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'data': " + data +
                 "           ," +
                 "   'layers': [" +
@@ -42,6 +43,7 @@ class EdgeCasesTest {
                 "}"
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'data': " + data +
                 "           ," +
                 "   'layers': [" +
@@ -74,6 +76,7 @@ class EdgeCasesTest {
 
     private fun checkWithNaNInXYSeries(geom: String) {
         val spec = "{" +
+                "   'kind': 'plot'," +
                 //"   'data': " + data +
                 //"           ," +
                 "   'layers': [" +

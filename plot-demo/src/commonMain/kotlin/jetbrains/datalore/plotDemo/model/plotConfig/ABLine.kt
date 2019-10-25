@@ -19,6 +19,7 @@ open class ABLine : PlotConfigDemoBase() {
     companion object {
         private fun lineDefaultAlone(): Map<String, Any> {
             val spec = "    {" +
+                    "   'kind': 'plot'," +
                     "   'layers': [" +
                     "           {" +
                     "             'geom': 'abline'," +

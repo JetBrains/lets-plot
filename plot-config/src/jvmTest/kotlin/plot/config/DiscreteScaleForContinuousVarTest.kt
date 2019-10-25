@@ -18,6 +18,7 @@ class DiscreteScaleForContinuousVarTest {
                 "}"
 
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'data': " + data +
                 "           ," +
                 "   'mapping': {" +

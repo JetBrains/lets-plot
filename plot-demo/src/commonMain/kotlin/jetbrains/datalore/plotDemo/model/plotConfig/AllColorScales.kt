@@ -98,6 +98,7 @@ open class AllColorScales : PlotConfigDemoBase(DoubleVector(600.0, 100.0)) {
 
         private fun specWithColorScale(data: List<*>, scaleParams: Map<String, Any>): String {
             return "{" +
+                    "   'kind': 'plot'," +
                     "   'data': {'x':" + toJsonValue(
                 data
             ) + "}," +

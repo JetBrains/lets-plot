@@ -10,6 +10,7 @@ class PlotConfigTest {
     @Test
     fun scaleOptionsAreMergedForTheSameAes() {
         val spec = "{" +
+                "   'kind': 'plot'," +
                 "   'scales': [" +
                 "               {" +
                 "                  'aesthetic': 'x'," +

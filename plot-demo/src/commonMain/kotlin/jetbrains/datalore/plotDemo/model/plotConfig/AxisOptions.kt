@@ -52,6 +52,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
 
         fun defaultAxis(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     layerMapping() +
                     "," +
                     title("Default") +
@@ -64,6 +65,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
 
         fun noXTitle(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     layerMapping() +
                     "," +
                     title("No X title") +
@@ -81,6 +83,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
 
         fun noYTitle(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     layerMapping() +
                     "," +
                     title("No Y title") +
@@ -98,6 +101,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
 
         fun noXTickLabels(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     layerMapping() +
                     "," +
                     title("No X tick labels") +
@@ -115,6 +119,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
 
         fun noYTickLabels(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     layerMapping() +
                     "," +
                     title("No Y tick labels") +
@@ -132,6 +137,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
 
         fun noTickMarks(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     layerMapping() +
                     "," +
                     title("No tick marks") +
@@ -149,6 +155,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
 
         fun noTickMarksOrLabels(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     layerMapping() +
                     "," +
                     title("No tick marks or labels") +
@@ -167,6 +174,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
 
         fun noTitlesOrLabels(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     layerMapping() +
                     "," +
                     title("No titles or labels") +
@@ -185,6 +193,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
 
         fun onlyLines(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     layerMapping() +
                     "," +
                     title("No titles, labels or tick marks") +
@@ -204,6 +213,7 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
 
         fun noLinesOrTitles(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     layerMapping() +
                     "," +
                     title("No titles, no lines") +

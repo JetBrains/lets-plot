@@ -63,6 +63,7 @@ open class LegendShowByGeom : PlotConfigDemoBase() {
 
         fun defaultLegend(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "'layers': [" +
                     linesLayer(false) +
                     "," +
@@ -75,6 +76,7 @@ open class LegendShowByGeom : PlotConfigDemoBase() {
 
         fun noLinesLegend(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "'layers': [" +
                     linesLayer(true) +
                     "," +
@@ -87,6 +89,7 @@ open class LegendShowByGeom : PlotConfigDemoBase() {
 
         fun noBothLegends(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "'layers': [" +
                     linesLayer(true) +
                     "," +

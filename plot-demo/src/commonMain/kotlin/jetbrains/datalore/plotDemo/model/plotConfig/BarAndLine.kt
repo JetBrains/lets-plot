@@ -28,6 +28,7 @@ open class BarAndLine : PlotConfigDemoBase() {
 
         fun defaultBarDiscreteX(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
                     "           ," +
                     "   'mapping': {" +
@@ -47,6 +48,7 @@ open class BarAndLine : PlotConfigDemoBase() {
 
         fun barDiscreteXFill(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
                     "           ," +
                     "   'mapping': {" +
@@ -68,6 +70,7 @@ open class BarAndLine : PlotConfigDemoBase() {
         fun barDiscreteXFillMappedInGeom(): Map<String, Any> {
             // Must be same result as in the method above
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
                     "           ," +
                     "   'mapping': {" +
@@ -90,6 +93,7 @@ open class BarAndLine : PlotConfigDemoBase() {
 
         fun barDiscreteXFillAndBlackOutline(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
                     "           ," +
                     "   'mapping': {" +
@@ -111,6 +115,7 @@ open class BarAndLine : PlotConfigDemoBase() {
 
         fun barDiscreteXTitleAxisLabelsNarrowWidth(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
                     "           ," +
                     "   'mapping': {" +

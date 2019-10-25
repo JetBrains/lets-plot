@@ -17,6 +17,7 @@ class ImageLayerTransformTest {
         // 1 x 1 image
         val encoded = Base64.getEncoder().encodeToString(byteArrayOf(255.toByte()))
         val input = "{" +
+                "   'kind': 'plot'," +
                 "  'layers': [" +
                 "              {" +
                 "                  'geom': 'image'," +

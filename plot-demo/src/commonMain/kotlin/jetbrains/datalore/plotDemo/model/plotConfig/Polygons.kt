@@ -14,6 +14,7 @@ open class Polygons : PlotConfigDemoBase() {
     companion object {
         fun basic(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     //        "   'data': " + ourData +
                     //        "           ," +
                     "   'mapping': {" +

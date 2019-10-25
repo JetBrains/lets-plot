@@ -20,6 +20,7 @@ open class BarPlot : PlotConfigDemoBase() {
 
         fun basic(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
                     "           ," +
                     "   'mapping': {" +
@@ -37,6 +38,7 @@ open class BarPlot : PlotConfigDemoBase() {
 
         fun fancy(): Map<String, Any> {
             val spec = "{" +
+                    "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
                     "           ," +
                     "   'mapping': {" +
