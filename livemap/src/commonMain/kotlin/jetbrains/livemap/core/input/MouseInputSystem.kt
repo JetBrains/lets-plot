@@ -41,9 +41,9 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
             entity.getComponent<MouseInputComponent>().apply {
                 location = myLocation
                 dragDistance = myDragDelta
-                press = InputMouseEvent(myPressLocation)
-                click = InputMouseEvent(myClickLocation)
-                doubleClick = InputMouseEvent(myDoubleClickLocation)
+                press = myPressLocation?.let{ InputMouseEvent(it) }
+                click = myClickLocation?.let{ InputMouseEvent(it) }
+                doubleClick = myDoubleClickLocation?.let{ InputMouseEvent(it) }
             }
         }
 

@@ -1,5 +1,6 @@
 package jetbrains.livemap.entities.rendering
 
+import jetbrains.datalore.base.projectionGeometry.unaryMinus
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraComponent
@@ -25,9 +26,9 @@ class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
                 layerCtx.save()
 
                 scaleEffect?.apply {
-                    layerCtx.translate(scaleOrigin.x, scaleOrigin.y)
+                    layerCtx.translate(scaleOrigin)
                     layerCtx.scale(currentScale, currentScale)
-                    layerCtx.translate(-scaleOrigin.x, -scaleOrigin.y)
+                    layerCtx.translate(-scaleOrigin)
                 }
                     ?: layerCtx.scale(1.0, 1.0)
 

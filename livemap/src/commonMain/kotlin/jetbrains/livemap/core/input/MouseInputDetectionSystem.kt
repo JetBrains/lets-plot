@@ -1,7 +1,10 @@
 package jetbrains.livemap.core.input
 
 import jetbrains.livemap.camera.CameraComponent
-import jetbrains.livemap.core.ecs.*
+import jetbrains.livemap.core.ecs.AbstractSystem
+import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.ecs.EcsContext
+import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.rendering.layers.RenderLayer
@@ -87,10 +90,12 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
         }
 
         fun needToAdd(type: MouseEventType): Boolean {
-            val location = myInput.getEvent(type)?.location
-            return (location != null
-                    && myListeners.getListeners(type).isNotEmpty()
-                    && myClickable.rect.contains(location.toDoubleVector()))
+            return myInput
+                .getEvent(type)
+                .let { it != null
+                        && myListeners.contains(type)
+                        && myClickable.rect.contains(it.location.toDoubleVector())
+                }
         }
 
         fun addTo(map: HashMap<Int, ArrayList<EcsEntity>>, zIndex: Int) {

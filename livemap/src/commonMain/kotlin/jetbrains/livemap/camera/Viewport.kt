@@ -15,7 +15,7 @@ open class Viewport internal constructor(
 ) {
 
     private val zoomTransform = ProjectionUtil.square<World, Client>(ProjectionUtil.zoom { zoom })
-    private val center: ClientPoint = size / 2.0
+    val center: ClientPoint = size / 2.0
     private val viewportTransform = viewportTransform(zoomTransform, { position }, { center })
     private var windowSize = Coordinates.ZERO_WORLD_POINT
     private var windowOrigin = Coordinates.ZERO_WORLD_POINT

@@ -1,7 +1,6 @@
 package jetbrains.livemap.camera
 
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.projectionGeometry.div
 import jetbrains.datalore.base.projectionGeometry.minus
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
@@ -20,8 +19,8 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         val dragDistance = mouseInput.dragDistance
 
         if (dragDistance != null && dragDistance != Vector.ZERO) {
-            camera.center = viewport.getMapCoord(
-                viewport.size / 2.0 - dragDistance.toClientPoint()
+            camera.position = viewport.getMapCoord(
+                viewport.center - dragDistance.toClientPoint()
             )
         }
     }

@@ -3,7 +3,6 @@ package jetbrains.livemap
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.projectionGeometry.div
-import jetbrains.datalore.base.projectionGeometry.minus
 import jetbrains.datalore.base.projectionGeometry.plus
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
@@ -53,10 +52,10 @@ import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.obj2entity.MapObject2Entity
 import jetbrains.livemap.obj2entity.TextMeasurer
-import jetbrains.livemap.projections.ClientPoint
 import jetbrains.livemap.projections.Coordinates
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.newDoubleRectangle
+import jetbrains.livemap.projections.toClientPoint
 import jetbrains.livemap.tiles.CellStateUpdateSystem
 import jetbrains.livemap.tiles.TileLoadingSystemFactory
 import jetbrains.livemap.tiles.TileRemovingSystem
@@ -236,23 +235,14 @@ class LiveMap(
                 + listeners
             }
 
-        listeners.addDoubleClickListener { event ->
+        listeners.addDoubleClickListener { clickEvent ->
             if (camera.contains<CameraScaleEffectComponent>() || camera.getComponent<CameraComponent>().zoom == MAX_ZOOM.toDouble()) {
                 return@addDoubleClickListener
             }
 
-            val origin = event.location!!.let { ClientPoint(it.x, it.y) }
-            val currentMapCenter = viewport.getMapCoord(viewport.size / 2.0)
-
-            CameraScale.setAnimation(
-                camera,
-                origin,
-                viewport.getMapCoord(origin)
-                    .run { this - currentMapCenter }
-                    .run { this / 2.0 }
-                    .run { this + currentMapCenter},
-                1.0
-            )
+            val location = clickEvent.location.toClientPoint()
+            val newViewportPosition = viewport.getMapCoord((location + viewport.center) / 2.0)
+            CameraScale.setAnimation(camera, location, newViewportPosition, 1.0)
         }
     }
 

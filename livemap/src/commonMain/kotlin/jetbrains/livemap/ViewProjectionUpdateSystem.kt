@@ -14,8 +14,8 @@ class ViewProjectionUpdateSystem(componentManager: EcsComponentManager) :
         val camera = cameraEntity.getComponent<CameraComponent>()
         val viewport = context.mapRenderContext.viewport
 
-        if (viewport.position != camera.center) {
-            viewport.position = camera.center
+        if (viewport.position != camera.position) {
+            viewport.position = camera.position
         }
 
         if (cameraEntity.contains(UpdateViewProjectionComponent::class)) {

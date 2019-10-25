@@ -32,10 +32,10 @@ class CameraUpdateDetectionSystem(componentManager: EcsComponentManager) :
         removeChangedComponents()
 
         cameraUpdate.isZoomChanged = myPreviousCameraZoom != camera.zoom
-        cameraUpdate.isMoved = myPreviousCameraCenter != camera.center
+        cameraUpdate.isMoved = myPreviousCameraCenter != camera.position
 
         myPreviousCameraZoom = camera.zoom
-        myPreviousCameraCenter = camera.center
+        myPreviousCameraCenter = camera.position
 
         if (cameraUpdate.isZoomChanged || cameraUpdate.isMoved) {
             updateAll(cameraUpdate.isZoomChanged, cameraUpdate.isMoved)

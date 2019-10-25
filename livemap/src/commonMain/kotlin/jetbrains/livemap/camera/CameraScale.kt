@@ -10,7 +10,7 @@ import kotlin.math.sign
 
 object CameraScale {
 
-    fun setAnimation(cameraEntity: EcsEntity, origin: ClientPoint, center: WorldPoint, delta: Double) {
+    fun setAnimation(cameraEntity: EcsEntity, scaleOrigin: ClientPoint, viewportPosition: WorldPoint, delta: Double) {
         val camera = cameraEntity.get<CameraComponent>()
 
         if (camera.zoom % 1 != 0.0) {
@@ -32,8 +32,8 @@ object CameraScale {
             .setComponent(
                 CameraScaleEffectComponent(
                     animation.id,
-                    origin,
-                    center,
+                    scaleOrigin,
+                    viewportPosition,
                     delta,
                     camera.zoom
                 )
@@ -61,7 +61,7 @@ object CameraScale {
                 camera.zoom = scaleEffect.startZoom + deltaZoom
 
                 if (progress == 1.0) {
-                    camera.center = scaleEffect.newCenter
+                    camera.position = scaleEffect.viewportPosition
                     cameraEntity.remove<CameraScaleEffectComponent>()
                     cameraEntity.tag(::UpdateViewProjectionComponent)
                 }
@@ -72,7 +72,7 @@ object CameraScale {
     class CameraScaleEffectComponent(
         val animationId: Int,
         val scaleOrigin: ClientPoint,
-        val newCenter: WorldPoint,
+        val viewportPosition: WorldPoint,
         val delta: Double,
         val startZoom: Double
     ) : EcsComponent {

@@ -9,6 +9,7 @@ import jetbrains.livemap.projections.ProjectionType.*
 import jetbrains.livemap.tiles.getTileRect
 import kotlin.math.PI
 import kotlin.math.atan2
+import kotlin.math.pow
 
 object ProjectionUtil {
     const val TILE_PIXEL_SIZE = 256.0
@@ -129,7 +130,7 @@ object ProjectionUtil {
     }
 
     fun zoom(zoom: () -> Int): Projection<Double> {
-        return scale { (1 shl zoom()).toDouble() }
+        return scale { (2.0.pow(zoom())) }
     }
 
     internal fun scale(scale: () -> Double): Projection<Double> {

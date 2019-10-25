@@ -16,6 +16,10 @@ class EventListenerComponent : EcsComponent {
         }
     }
 
+    fun contains(type: MouseEventType): Boolean {
+        return getListeners(type).isNotEmpty()
+    }
+
     fun addPressListener(onPress: (InputMouseEvent) -> Unit) {
         pressListeners.add(onPress)
     }
