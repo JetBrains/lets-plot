@@ -9,7 +9,7 @@ import kotlinx.html.stream.appendHTML
 import java.io.StringWriter
 
 private const val DEMO_PROJECT = "plot-demo"
-private const val CALL_FUN = "MonolithicJs.buildPlotFromProcessedSpecs"
+private const val CALL_FUN = "buildPlotFromProcessedSpecs"  // MonolithicJs
 
 private const val ROOT_ELEMENT_ID = "root"
 

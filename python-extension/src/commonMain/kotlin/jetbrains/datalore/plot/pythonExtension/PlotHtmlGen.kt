@@ -22,7 +22,7 @@ internal object PlotHtmlGen {
                 var plotSpec=$plotSpecJs
 
                 var plotContainer = document.getElementById("$plotOutputId");
-                DatalorePlot.MonolithicJs.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer);
+                DatalorePlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer);
             </script>
         """
     }
