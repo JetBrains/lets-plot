@@ -14,7 +14,6 @@ private const val CALL_FUN = "jetbrains.datalore.plot.MonolithicJs.buildPlotFrom
 private const val ROOT_ELEMENT_ID = "root"
 
 private const val JS_DIST_PATH = "js-package/build/dist"
-private const val PLOT_LIB = "datalore-plot.js"
 
 object PlotConfigDemoUtil {
     fun show(title: String, plotSpecList: List<MutableMap<String, Any>>, plotSize: DoubleVector) {
