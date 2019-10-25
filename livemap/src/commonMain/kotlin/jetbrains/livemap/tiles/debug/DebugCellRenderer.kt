@@ -1,4 +1,4 @@
-package jetbrains.livemap.tiles
+package jetbrains.livemap.tiles.debug
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d

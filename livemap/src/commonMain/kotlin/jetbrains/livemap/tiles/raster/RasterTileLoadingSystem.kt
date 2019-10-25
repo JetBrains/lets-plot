@@ -1,9 +1,9 @@
-package jetbrains.livemap.tiles.http
+package jetbrains.livemap.tiles.raster
 
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.GeoUtils
 import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.gis.tileprotocol.http.TileTransport
+import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.MicroTask
@@ -12,13 +12,15 @@ import jetbrains.livemap.core.multitasking.setMicroThread
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.Tile
-import jetbrains.livemap.tiles.TileLoadingSystem
 import jetbrains.livemap.tiles.components.*
+import jetbrains.livemap.tiles.vector.TileLoadingSystem
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-class HttpTileLoadingSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
-    private val myTileTransport: TileTransport = TileTransport("localhost", null, "")
+class RasterTileLoadingSystem(
+    private val myTileTransport: HttpTileTransport,
+    private val myRequestFormat: String,
+    componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         getSingletonComponent<RequestTilesComponent>().requestTiles.forEach { cellKey ->
@@ -30,7 +32,7 @@ class HttpTileLoadingSystem(componentManager: EcsComponentManager) : AbstractSys
                     + tileResponseComponent
                 }
 
-            myTileTransport.get(getZXY(cellKey)).onResult(
+            myTileTransport.get(getZXY(cellKey, myRequestFormat)).onResult(
                 { tileResponseComponent.imageData = it },
                 { tileResponseComponent.imageData = ByteArray(0) }
             )
@@ -51,7 +53,6 @@ class HttpTileLoadingSystem(componentManager: EcsComponentManager) : AbstractSys
                             runLaterBySystem(httpTileEntity) { theEntity ->
                                 theEntity.get<TileComponent>().tile = Tile.SnapshotTile(snapshot)
                                 ParentLayerComponent.tagDirtyParentLayer(theEntity)
-                                println(cellKey)
                             }
                         }
                     }
@@ -70,16 +71,21 @@ class HttpTileLoadingSystem(componentManager: EcsComponentManager) : AbstractSys
         return getEntities(TileLoadingSystem.CELL_COMPONENT_LIST)
             .filter {
                 it.get<CellComponent>().cellKey == cellKey
-                        && it.get<KindComponent>().layerKind == CellLayerKind.HTTP
+                        && it.get<KindComponent>().layerKind == CellLayerKind.RASTER
             }
     }
 
     companion object {
-        fun getZXY(cellKey: CellKey): String {
+        fun getZXY(cellKey: CellKey, format: String): String {
             return 2.0.pow(cellKey.length)
                 .let { Rect<Generic>(0.0, 0.0, it, it) }
                 .let { GeoUtils.getTileOrigin(it, cellKey.key) }
-                .let { "/${cellKey.length}/${it.x.roundToInt()}/${it.y.roundToInt()}.png" }
+                .let {
+                    format
+                        .replace("\${z}", cellKey.length.toString(), false)
+                        .replace("\${x}", it.x.roundToInt().toString(), false)
+                        .replace("\${y}", it.y.roundToInt().toString(), false)
+                }
         }
     }
 

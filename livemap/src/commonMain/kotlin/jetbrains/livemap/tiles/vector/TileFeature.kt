@@ -1,10 +1,10 @@
-package jetbrains.livemap.tiles
+package jetbrains.livemap.tiles.vector
 
 import jetbrains.datalore.base.projectionGeometry.TileGeometry
 import jetbrains.gis.tileprotocol.mapConfig.TilePredicate
 import jetbrains.livemap.projections.Client
-import jetbrains.livemap.tiles.TileFeature.FieldName.CLASS
-import jetbrains.livemap.tiles.TileFeature.FieldName.SUB
+import jetbrains.livemap.tiles.vector.TileFeature.FieldName.CLASS
+import jetbrains.livemap.tiles.vector.TileFeature.FieldName.SUB
 
 
 class TileFeature(

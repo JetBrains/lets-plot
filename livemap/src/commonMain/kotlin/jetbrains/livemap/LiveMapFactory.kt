@@ -8,6 +8,7 @@ import jetbrains.livemap.fragments.FragmentProvider
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
 import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
+import jetbrains.livemap.tiles.TileLoadingSystemFactory.Companion.createTileLoadingFactory
 
 class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactory {
     private val myMapProjection: MapProjection
@@ -56,7 +57,7 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
             myMapProjection,
             myViewProjection,
             myLiveMapSpec.layers,
-            myLiveMapSpec.tileService,
+            createTileLoadingFactory(myLiveMapSpec.devParams),
             FragmentProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
             myLiveMapSpec.devParams,
             EmptinessChecker.BBoxEmptinessChecker(regionBBoxes),

@@ -15,6 +15,10 @@ class DevParams(private val devParams: Map<*, *>) {
         return param.isSet(this)
     }
 
+    fun isNotSet(param: RasterParam): Boolean {
+        return !param.isSet(this)
+    }
+
     fun read(param: IntParam): Int {
         return param.read(this)
     }
@@ -27,7 +31,7 @@ class DevParams(private val devParams: Map<*, *>) {
         return param.read(this)
     }
 
-    fun read(param: RasterParam): RasterTiles {
+    fun read(param: RasterParam): RasterTiles? {
         return param.read(this)
     }
 
@@ -88,12 +92,11 @@ class DevParams(private val devParams: Map<*, *>) {
     }
 
     class RasterParam(val key: String) {
-        fun read(params: DevParams): RasterTiles {
-            val raster = RasterTiles()
+        fun read(params: DevParams): RasterTiles? {
 
             return when(val v = params[key]) {
-                null -> raster
-                is Map<*, *> -> raster.apply {
+                null -> null
+                is Map<*, *> -> RasterTiles().apply {
                     v["host"]?.let { if (it is String) host = it }
                     v["port"]?.let { if (it is Int) port = it }
                     v["format"]?.let { if (it is String) format = it }
@@ -101,10 +104,14 @@ class DevParams(private val devParams: Map<*, *>) {
                 else -> throw IllegalArgumentException()
             }
         }
+
+        fun isSet(params: DevParams): Boolean {
+            return params[key] != null
+        }
     }
 
     class RasterTiles {
-        var host: String? = null
+        var host: String = "localhost"
         var port: Int? = null
         var format: String = "/\${z}/\${x}/\${y}.png"
     }
@@ -134,7 +141,7 @@ class DevParams(private val devParams: Map<*, *>) {
     }
 
     class VectorTiles {
-        var host: String? = null
+        var host: String = "tiles.datalore.io"
         var port: Int? = null
         var theme: Theme = Theme.COLOR
     }
@@ -145,7 +152,7 @@ class DevParams(private val devParams: Map<*, *>) {
         private val valuesMap: List<Pair<String, ValueT>>
     ) {
 
-        internal fun fromString(o: String): ValueT {
+        private fun fromString(o: String): ValueT {
             valuesMap.forEach { (first, second) ->
                 if (first.equals(o, ignoreCase = true)) {
                     return second

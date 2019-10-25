@@ -1,4 +1,4 @@
-package jetbrains.livemap.tiles
+package jetbrains.livemap.tiles.debug
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.vis.canvas.Canvas
@@ -10,6 +10,8 @@ import jetbrains.livemap.tiles.components.CellLayerKind
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.renderTimeKey
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.snapshotTimeKey
 import jetbrains.livemap.tiles.components.StatisticsComponent
+import jetbrains.livemap.tiles.vector.TileDataRenderer
+import jetbrains.livemap.tiles.vector.TileFeature
 
 internal class DebugTileDataRenderer(
     private val myStats: StatisticsComponent,

@@ -119,8 +119,6 @@ class LinkedListTest {
 
     @Test
     fun emptyForEachTest() {
-        val list = listOf(1,2,3,4,5)
-
         val linked = LinkedList<Int>()
         linked.removeAll { true }
 

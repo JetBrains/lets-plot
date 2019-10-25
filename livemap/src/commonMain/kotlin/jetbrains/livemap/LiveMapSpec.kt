@@ -5,13 +5,11 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
-import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.projections.ProjectionType
 
 class LiveMapSpec(
     val geocodingService: GeocodingService,
-    val tileService: TileService,
     val size: DoubleVector,
     val isScaled: Boolean,
     val isInteractive: Boolean,

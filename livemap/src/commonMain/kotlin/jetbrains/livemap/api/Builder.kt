@@ -67,8 +67,6 @@ class LiveMapBuilder {
             isLoopX = isLoopX,
             isLoopY = isLoopY,
 
-            tileService = tileService,
-
             geocodingService = geocodingService,
 
             mapLocationConsumer = mapLocationConsumer,
