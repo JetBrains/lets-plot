@@ -1,6 +1,5 @@
 plugins {
     id 'kotlin-multiplatform'
-    id 'org.jetbrains.kotlin.plugin.serialization'
     id 'org.jetbrains.gradle.plugin.idea-ext'
 }
 repositories {
@@ -17,8 +16,6 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':vis-svg')
-
-                api "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerialization_version"
             }
         }
         jvmMain {
@@ -26,10 +23,6 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinx_html_version}"
-
-                api "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerialization_version"
-                api "com.charleskorn.kaml:kaml:$kaml_version"
-                api "org.snakeyaml:snakeyaml-engine:1.0"
             }
         }
         jsMain {

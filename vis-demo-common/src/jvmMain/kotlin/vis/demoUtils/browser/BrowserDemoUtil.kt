@@ -77,11 +77,6 @@ object BrowserDemoUtil {
         return projectRoot
     }
 
-    fun getBuildSettings(): BuildSettings {
-        val settingsFileName = "${getRootPath()}/build_settings.yml"
-        return BuildSettings.fromFile(settingsFileName)
-    }
-
     fun mapperDemoHtml(demoProject: String, callFun: String, libs: List<String>, title: String): String {
         val mainScript = "${getRootPath()}/$demoProject/build/classes/kotlin/js/main/$demoProject.js"
         val writer = StringWriter().appendHTML().html {

@@ -27,8 +27,7 @@ object PlotConfigDemoUtil {
     }
 
     private fun getPlotLibPath(): String {
-        val settings = BrowserDemoUtil.getBuildSettings()
-        val name = "datalore-plot-${settings.js_artifact_version}.js"
+        val name = "datalore-plot-latest.js"
         return "${BrowserDemoUtil.getRootPath()}/$JS_DIST_PATH/$name"
     }
 
