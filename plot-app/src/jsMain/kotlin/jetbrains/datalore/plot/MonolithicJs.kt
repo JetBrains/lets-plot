@@ -1,4 +1,4 @@
-package jetbrains.datalore.plot
+
 
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.dom.DomEventUtil
@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.injectLiveMap
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.svg.SvgNodeContainer
