@@ -55,12 +55,12 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     }
                 }
 
-                polygons {
-                    polygon {
-                        mapId = "texas"
-                        fillColor = Color.GREEN
-                    }
-                }
+                //polygons {
+                //    polygon {
+                //        mapId = "texas"
+                //        fillColor = Color.GREEN
+                //    }
+                //}
 
                 hLines {
                     line {

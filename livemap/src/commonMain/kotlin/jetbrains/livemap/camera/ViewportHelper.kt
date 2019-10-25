@@ -1,20 +1,21 @@
-package jetbrains.livemap.projections
+package jetbrains.livemap.camera
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.deltaOnLoop
+import jetbrains.livemap.projections.*
 import jetbrains.livemap.projections.ProjectionUtil.calculateCellKeys
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-class MultiMapHelper<TypeT>(
+class ViewportHelper<TypeT>(
     private val myMapRect: Rect<TypeT>,
     private val myLoopX: Boolean,
     private val myLoopY: Boolean
-) : ViewProjectionHelper, MapRuler<TypeT> {
+) : ViewportMath, MapRuler<TypeT> {
     private fun splitRange(
         range: ClosedRange<Double>,
         mapRange: ClosedRange<Double>,

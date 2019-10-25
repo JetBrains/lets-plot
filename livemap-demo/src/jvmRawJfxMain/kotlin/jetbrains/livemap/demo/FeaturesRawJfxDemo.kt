@@ -15,7 +15,7 @@ class FeaturesRawJfxDemo : Application() {
         val dim = Vector(800, 600)
         val javafxCanvasControl = JavafxCanvasControl(dim, 1.0)
         FeaturesDemoModel(dim.toDoubleVector()).show(javafxCanvasControl) {
-            zoom = 15
+            zoom = 7
             location {
                 coordinate = explicitVec(-28.040425552368188, 19.495652295894907)
             }

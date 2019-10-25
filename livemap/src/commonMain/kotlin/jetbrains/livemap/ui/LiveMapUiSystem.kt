@@ -12,6 +12,7 @@ import jetbrains.livemap.MapWidgetUtil.MAX_ZOOM
 import jetbrains.livemap.MapWidgetUtil.MIN_ZOOM
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraScale
+import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.input.EventListenerComponent
@@ -19,7 +20,6 @@ import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.MutableImage
 import jetbrains.livemap.core.rendering.primitives.Text
-import jetbrains.livemap.projections.ViewProjection
 
 class LiveMapUiSystem(
     private val myUiService: UiService,
@@ -30,7 +30,7 @@ class LiveMapUiSystem(
     private lateinit var myZoomPlus: MutableImage
     private lateinit var myZoomMinus: MutableImage
     private lateinit var myGetCenter: MutableImage
-    private lateinit var myViewProjection: ViewProjection
+    private lateinit var myViewport: Viewport
     private var myUiState: UiState = ResourcesLoading()
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -38,9 +38,9 @@ class LiveMapUiSystem(
     }
 
     override fun initImpl(context: LiveMapContext) {
-        myViewProjection = context.mapRenderContext.viewProjection
+        myViewport = context.mapRenderContext.viewport
 
-        myLiveMapLocation = LiveMapLocation(myViewProjection, context.mapProjection)
+        myLiveMapLocation = LiveMapLocation(myViewport, context.mapProjection)
 
         myUiService.resourceManager
             .add(KEY_PLUS, BUTTON_PLUS)
@@ -81,7 +81,7 @@ class LiveMapUiSystem(
             text = listOf(LINK_TO_OSM_CONTRIBUTORS)
         }
 
-        val contributors = Label(DoubleVector(myViewProjection.viewSize.x, 0.0), osm).apply {
+        val contributors = Label(DoubleVector(myViewport.size.x, 0.0), osm).apply {
             background = Color(200, 200, 200, 179)
             this.padding = 2.0
             position = Label.LabelPosition.LEFT
@@ -109,8 +109,8 @@ class LiveMapUiSystem(
 
             CameraScale.setAnimation(
                 camera,
-                myViewProjection.viewSize / 2.0,
-                myViewProjection.center,
+                myViewport.size / 2.0,
+                myViewport.position,
                 animationDelta
             )
         }

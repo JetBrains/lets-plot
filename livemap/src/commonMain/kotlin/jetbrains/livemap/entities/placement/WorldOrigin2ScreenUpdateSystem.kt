@@ -9,12 +9,12 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 class WorldOrigin2ScreenUpdateSystem(componentManager: EcsComponentManager) : LiveMapSystem(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val viewProjection = context.mapRenderContext.viewProjection
+        val viewport = context.mapRenderContext.viewport
 
         for (entity in getEntities(COMPONENT_TYPES)) {
             entity.get<WorldOriginComponent>()
                 .origin
-                .let(viewProjection::getViewCoord)
+                .let(viewport::getViewCoord)
                 .let { entity.provide(::ScreenOriginComponent).origin = it }
 
             ParentLayerComponent.tagDirtyParentLayer(entity)

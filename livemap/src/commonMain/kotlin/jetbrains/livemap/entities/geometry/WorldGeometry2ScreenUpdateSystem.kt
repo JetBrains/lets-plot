@@ -52,13 +52,13 @@ class WorldGeometry2ScreenUpdateSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val viewProjection = context.mapRenderContext.viewProjection
+        val viewport = context.mapRenderContext.viewport
 
         if (camera().isIntegerZoom) {
             getEntities(COMPONENT_TYPES).forEach {
                 it.setComponent(
                     MicroThreadComponent(
-                        createScalingTask(it, viewProjection.zoom),
+                        createScalingTask(it, viewport.zoom),
                         myQuantIterations
                     )
                 )

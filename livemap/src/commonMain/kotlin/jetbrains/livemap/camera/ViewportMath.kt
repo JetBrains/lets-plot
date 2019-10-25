@@ -1,0 +1,17 @@
+package jetbrains.livemap.camera
+
+import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projections.WorldRectangle
+
+interface ViewportMath {
+    fun normalizeX(x: Double): Double
+    fun normalizeY(y: Double): Double
+
+    fun <T> normalize(v: Vec<T>): Vec<T> = explicitVec<T>(normalizeX(v.x), normalizeY(v.y))
+
+    fun getOrigins(objRect: WorldRectangle, viewRect: WorldRectangle): List<WorldPoint>
+    fun getCells(viewRect: WorldRectangle, cellLevel: Int): Set<CellKey>
+}
