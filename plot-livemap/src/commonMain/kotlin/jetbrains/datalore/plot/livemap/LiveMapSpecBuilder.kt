@@ -17,11 +17,9 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMAX
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
-import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
-import jetbrains.livemap.api.internalTiles
 import jetbrains.livemap.api.liveMapGeocoding
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.projections.MapProjection
@@ -97,11 +95,6 @@ internal class LiveMapSpecBuilder {
         return LiveMapSpec(
             liveMapGeocoding {
                 host = "geo.datalore.io"
-                port = null
-            },
-            internalTiles {
-                theme = TileService.Theme.valueOf(myLiveMapOptions.theme.name.toUpperCase())
-                host = "tiles.datalore.io"
                 port = null
             },
             mySize,

@@ -12,8 +12,8 @@ import jetbrains.livemap.core.multitasking.setMicroThread
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.Tile
-import jetbrains.livemap.tiles.vector.TileLoadingSystem
 import jetbrains.livemap.tiles.components.*
+import jetbrains.livemap.tiles.vector.TileLoadingSystem
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -53,7 +53,6 @@ class RasterTileLoadingSystem(
                             runLaterBySystem(httpTileEntity) { theEntity ->
                                 theEntity.get<TileComponent>().tile = Tile.SnapshotTile(snapshot)
                                 ParentLayerComponent.tagDirtyParentLayer(theEntity)
-                                println(cellKey)
                             }
                         }
                     }

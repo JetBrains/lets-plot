@@ -58,7 +58,7 @@ import jetbrains.livemap.obj2entity.MapObject2Entity
 import jetbrains.livemap.obj2entity.TextMeasurer
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.tiles.CellStateUpdateSystem
-import jetbrains.livemap.tiles.TileLoadingSystemBuilder
+import jetbrains.livemap.tiles.TileLoadingSystemFactory
 import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.tiles.TileRequestSystem
 import jetbrains.livemap.tiles.components.CellLayerComponent
@@ -75,7 +75,7 @@ class LiveMap(
     private val myMapProjection: MapProjection,
     private val myViewProjection: ViewProjection,
     private val myMapLayers: List<MapLayer>,
-    private val myTileLoadingSystemBuilder: TileLoadingSystemBuilder,
+    private val myTileLoadingSystemBuilder: TileLoadingSystemFactory,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
     private val myEmptinessChecker: EmptinessChecker,
