@@ -1,7 +1,4 @@
 import json
-from typing import Dict, Tuple
-
-from .response_util import _to_response_data_object
 
 __all__ = ['aes', 'layer']
 
@@ -231,12 +228,6 @@ class PlotSpec(FeatureSpec):
 
         result.append('')  # for trailing \n
         return '\n'.join(result)
-
-    def _repr_display_(self) -> Tuple[str, Dict]:
-        """
-        Special method discovered and invoked by datalore.display.display()
-        """
-        return _to_response_data_object(self.as_dict())
 
     def _repr_html_(self):
         """

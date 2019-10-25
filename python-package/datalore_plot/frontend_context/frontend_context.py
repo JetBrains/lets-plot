@@ -1,6 +1,7 @@
-from typing import Dict
+from typing import Dict, Any
 
 from ..plot.core import PlotSpec
+from ..plot.plot import GGBunch
 from ..type_utils.type_utils import is_dict_or_dataframe, standardize_dict
 
 
@@ -41,17 +42,13 @@ def as_html(plot_spec: Dict) -> str:
     return _default_frontend_contexts['html'].as_str(plot_spec)
 
 
-def display_plot(plot_spec: PlotSpec):
+def display_plot(plot_spec: Any):
     """
     Draw plot or `bunch` of plots in the current frontend context
     :param plot_spec: PlotSpec or GGBunch object
     """
-    try:
-        from datalore_plot.display import display
-        display(plot_spec)
-        return
-    except ImportError:
-        pass
+    if not (isinstance(plot_spec, PlotSpec) or isinstance(plot_spec, GGBunch)):
+        raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot_spec)))
 
     try:
         from IPython.display import display_html

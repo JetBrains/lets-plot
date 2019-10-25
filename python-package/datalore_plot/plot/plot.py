@@ -1,10 +1,8 @@
 import numbers
-from typing import Dict, Tuple
 
 from datalore_plot.plot.core import FeatureSpec
 from datalore_plot.plot.core import PlotSpec
 from datalore_plot.plot.util import as_annotated_data
-from .response_util import _to_response_data_object
 
 __all__ = ['ggplot', 'ggsize', 'GGBunch']
 
@@ -167,12 +165,6 @@ class GGBunch(FeatureSpec):
 
         d['items'] = [item_as_dict(item) for item in self.items]
         return d
-
-    def _repr_display_(self) -> Tuple[str, Dict]:
-        """
-        Special method discovered and invoked by datalore.display.display()
-        """
-        return _to_response_data_object(self.as_dict())
 
     def _repr_html_(self):
         """

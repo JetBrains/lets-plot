@@ -26,11 +26,12 @@ def as_annotated_data(raw_data: Any) -> Tuple:
 
 
 def is_data_pub_stream(data: Any) -> bool:
-    try:
-        from datalore_plot.display import DataPubStream
-        return isinstance(data, DataPubStream)
-    except ImportError:
-        return False  # no pub-sub in standalone deployment
+    # try:
+    #     from datalore_plot.display import DataPubStream
+    #     return isinstance(data, DataPubStream)
+    # except ImportError:
+    #     return False  # no pub-sub in standalone deployment
+    return False
 
 
 def as_annotated_map_data(raw_map: Any) -> dict:
