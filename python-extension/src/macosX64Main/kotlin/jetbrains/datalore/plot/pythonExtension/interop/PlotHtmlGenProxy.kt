@@ -10,7 +10,7 @@ object PlotHtmlGenProxy {
     fun applyToRawSpecs(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
         val plotSpecMap = pyDictToMap(plotSpecDict)
 
-        println(plotSpecMap)
+//        println(plotSpecMap)
 
         val html = PlotHtmlGen.applyToRawSpecs(plotSpecMap as MutableMap<String, Any>)
 

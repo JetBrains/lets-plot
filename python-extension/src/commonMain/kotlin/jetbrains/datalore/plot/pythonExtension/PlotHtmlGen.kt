@@ -1,6 +1,6 @@
 package jetbrains.datalore.plot.pythonExtension
 
-import jetbrains.datalore.base.jsObject.mapToJsObjectInitializer
+import jetbrains.datalore.base.jsObject.JsObjectSupport.mapToJsObjectInitializer
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
 internal object PlotHtmlGen {

@@ -1,7 +1,7 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.jsObject.mapToJsObjectInitializer
+import jetbrains.datalore.base.jsObject.JsObjectSupport.mapToJsObjectInitializer
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*

@@ -1,5 +1,6 @@
 package jetbrains.datalore.base.jsObject
 
+import jetbrains.datalore.base.jsObject.JsObjectSupport.mapToJsObjectInitializer
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.Test
