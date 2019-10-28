@@ -7,11 +7,11 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class Density2d : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            sepanLength()
+            sepalLength()
         )
     }
 
-    private fun sepanLength(): Map<String, Any> {
+    private fun sepalLength(): Map<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'mapping': {" +
