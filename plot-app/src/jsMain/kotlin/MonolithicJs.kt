@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.injectLiveMap
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
@@ -39,13 +38,6 @@ private val DEF_LIVE_MAP_SIZE = DoubleVector(800.0, 600.0)
 fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
-        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
-        val processedSpec = if (PlotConfig.isFailure(plotSpec)) {
-            plotSpec
-        } else {
-            PlotConfigServerSide.processTransform(plotSpec)
-        }
-
         buildPlotFromProcessedSpecsIntern(plotSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
@@ -88,8 +80,11 @@ private fun buildPlotFromProcessedSpecsIntern(
         return
     }
 
-    // ToDo: computationMessagesHandler
-    val assembler = createPlotAssembler(plotSpec, null)
+    val assembler = createPlotAssembler(plotSpec) { messages ->
+        messages.forEach {
+            showInfo(it, parentElement)
+        }
+    }
 
     // Figure out plot size
     val plotSize = if (width > 0 && height > 0) {
@@ -156,7 +151,6 @@ private fun buildPlotSvg(
     eventTarget: Node
 ): SVGSVGElement {
 
-    // ToDo: computationMessagesHandler
     val plotContainer = PlotContainer(plot, ValueProperty(plotSize))
 
     eventTarget.addEventListener(DomEventType.MOUSE_MOVE.name, { e: Event ->
@@ -201,9 +195,19 @@ private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
     }
 }
 
-private fun showError(errorMessage: String, parentElement: HTMLElement) {
+private fun showError(message: String, parentElement: HTMLElement) {
+    showText(message, "color:darkred;", parentElement)
+}
+
+private fun showInfo(message: String, parentElement: HTMLElement) {
+    showText(message, "color:darkblue;", parentElement)
+}
+
+private fun showText(message: String, style: String, parentElement: HTMLElement) {
     val paragraphElement = parentElement.ownerDocument!!.createElement("p") as HTMLParagraphElement
-    paragraphElement.setAttribute("style", "color:darkred;")
-    paragraphElement.textContent = errorMessage
+    if (style.isNotBlank()) {
+        paragraphElement.setAttribute("style", style)
+    }
+    paragraphElement.textContent = message
     parentElement.appendChild(paragraphElement)
 }

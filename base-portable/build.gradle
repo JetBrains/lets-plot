@@ -55,9 +55,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-js')
                 implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-
-//                // ToDo: get rid of this dependency
-//                compileOnly kotlin('test-js')   // for Assertions.kt
             }
         }
         jsTest {
