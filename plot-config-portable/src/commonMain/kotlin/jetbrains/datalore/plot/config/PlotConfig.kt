@@ -136,17 +136,14 @@ abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(
                     isGGBunchSpec(opts)
 
             if (!identified) {
-                throw RuntimeException("Expected plot or error message spec: [" + opts.keys + "]")
+                throw IllegalArgumentException("Invalid root feature kind: absent or unsupported  `kind` key")
             }
         }
 
         fun assertPlotSpec(opts: Map<String, Any>) {
-            val identified = isPlotSpec(opts) || isGGBunchSpec(
-                opts
-            )
-
+            val identified = isPlotSpec(opts) || isGGBunchSpec(opts)
             if (!identified) {
-                throw RuntimeException("Expected plot spec: [" + opts.keys + "]")
+                throw IllegalArgumentException("Invalid root feature kind: absent or unsupported  `kind` key")
             }
         }
 

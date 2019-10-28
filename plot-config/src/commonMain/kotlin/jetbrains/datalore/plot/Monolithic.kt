@@ -1,15 +1,22 @@
 package jetbrains.datalore.plot
 
+import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.config.PlotConfigUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
 object Monolithic {
-    fun createPlot(plotSpec: MutableMap<String, Any>, computationMessagesHandler: ((List<String>) -> Unit)?): jetbrains.datalore.plot.builder.Plot {
+    fun createPlot(
+        plotSpec: MutableMap<String, Any>,
+        computationMessagesHandler: ((List<String>) -> Unit)?
+    ): Plot {
+
+        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+
         @Suppress("NAME_SHADOWING")
-        var plotSpec = plotSpec
-        plotSpec = transformPlotSpec(plotSpec)
+        val plotSpec = transformPlotSpec(plotSpec)
         if (computationMessagesHandler != null) {
             val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
             if (!computationMessages.isEmpty()) {
