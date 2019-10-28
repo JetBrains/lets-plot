@@ -19,7 +19,7 @@ internal object PlotHtmlGen {
         return """
             <div id="$plotOutputId"></div>
             <script type="text/javascript">
-                var plotSpec=$plotSpecJs
+                var plotSpec=$plotSpecJs;
 
                 var plotContainer = document.getElementById("$plotOutputId");
                 DatalorePlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer);

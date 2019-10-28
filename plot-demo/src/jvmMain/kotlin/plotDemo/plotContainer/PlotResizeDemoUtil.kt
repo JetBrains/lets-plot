@@ -43,17 +43,27 @@ object PlotResizeDemoUtil {
         containerSize.height.toDouble() - 2 * PADDING
     )
 
-    fun show(demoModel: BarPlotResizeDemo, factory: SwingDemoFactory) {
-        factory.createDemoFrame("Fit in frame (try to resize)").show(false) {
+    fun show(demoModel: BarPlotResizeDemo, swingFactory: SwingDemoFactory) {
+        swingFactory.createDemoFrame("Fit in frame (try to resize)").show(false) {
 
             setupContainer(this)
             this.addComponentListener(object : ComponentAdapter() {
                 private val eventCount: AtomicInteger = AtomicInteger(0)
                 private var plotCreated = false
                 private val plotSizeProp = ValueProperty(DoubleVector.ZERO)
+
                 override fun componentResized(e: ComponentEvent) {
                     eventCount.incrementAndGet()
-                    SwingUtilities.invokeLater {
+
+                    val executor: (() -> Unit) -> Unit = if (plotCreated) {
+                        // Only needed for JavaFX
+                        // Supposedly, Java FX has already been initialized at this time
+                        swingFactory.createPlotEdtExecutor()
+                    } else {
+                        { runnable: () -> Unit -> SwingUtilities.invokeLater(runnable) }
+                    }
+
+                    executor {
                         if (eventCount.decrementAndGet() == 0) {
                             val container = e.component as JComponent
                             container.invalidate()
@@ -68,7 +78,7 @@ object PlotResizeDemoUtil {
                                     demoModel,
                                     plotSizeProp,
                                     container,
-                                    factory
+                                    swingFactory
                                 )
                             }
 

@@ -18,18 +18,13 @@ class SceneMapperJfxPanel(
     stylesheets: List<String>
 ) : AbstractJfxPanel(stylesheets) {
 
-    private lateinit var mySceneRoot: Parent
-
     init {
         runOnFxThread {
             //            border = BorderFactory.createLineBorder(Color.BLUE, 3)  //- not working
-//            foreground = Color.BLUE
+            //            foreground = Color.BLUE
 
             Preconditions.checkArgument(!svg.isAttached(), "SvgSvgElement must be unattached")
             SvgNodeContainer(svg)  // attach root
-            val rootMapper = SvgSvgElementMapper(svg, SvgJfxPeer())
-            rootMapper.attachRoot(MappingContext())
-            mySceneRoot = rootMapper.target
         }
 
         svg.addListener(object : SvgElementListener {
@@ -44,7 +39,9 @@ class SceneMapperJfxPanel(
     }
 
     override fun createSceneParent(): Parent {
-        return mySceneRoot
+        val rootMapper = SvgSvgElementMapper(svg, SvgJfxPeer())
+        rootMapper.attachRoot(MappingContext())
+        return rootMapper.target
     }
 
     override fun getPreferredSize(): Dimension {

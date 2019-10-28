@@ -46,7 +46,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation "com.google.code.gson:gson:$gson_version"
-                implementation "org.slf4j:slf4j-simple:$slf4j_version"
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
             }

@@ -51,11 +51,11 @@ object BrowserDemoUtil {
     private const val JS_PATH = "js-package/build/js"
     private const val ROOT_ELEMENT_ID = "root"
 
-    fun openInBrowser(demoProject: String, html: () -> String) {
+    fun openInBrowser(demoProjectRelativePath: String, html: () -> String) {
 
         val rootPath = getRootPath()
         println("Project root: $rootPath")
-        val tmpDir = File(rootPath, "$demoProject/build/tmp")
+        val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
         val file = File.createTempFile("index", ".html", tmpDir)
         println(file.canonicalFile)
 

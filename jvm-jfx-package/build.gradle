@@ -35,6 +35,8 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
+                // Enable logging to console (make sure it is jared)
+                implementation "org.slf4j:slf4j-simple:$slf4j_version"
             }
         }
     }
