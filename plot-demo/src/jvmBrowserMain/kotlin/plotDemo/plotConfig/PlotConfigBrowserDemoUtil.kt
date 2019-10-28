@@ -9,19 +9,22 @@ import kotlinx.html.stream.appendHTML
 import java.io.StringWriter
 
 private const val DEMO_PROJECT = "plot-demo"
-private const val CALL_FUN = "buildPlotFromProcessedSpecs"  // MonolithicJs
-
 private const val ROOT_ELEMENT_ID = "root"
-
 private const val JS_DIST_PATH = "js-package/build/dist"
 
 object PlotConfigDemoUtil {
-    fun show(title: String, plotSpecList: List<MutableMap<String, Any>>, plotSize: DoubleVector) {
+    fun show(
+        title: String,
+        plotSpecList: List<MutableMap<String, Any>>,
+        plotSize: DoubleVector,
+        applyBackendTransform: Boolean = true
+    ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
             getHtml(
                 title,
                 plotSpecList,
-                plotSize
+                plotSize,
+                applyBackendTransform
             )
         }
     }
@@ -34,15 +37,26 @@ object PlotConfigDemoUtil {
     private fun getHtml(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
-        plotSize: DoubleVector
+        plotSize: DoubleVector,
+        applyBackendTransform: Boolean
     ): String {
+
+        val plotFun = if (applyBackendTransform) {  // see: MonolithicJs
+            "buildPlotFromProcessedSpecs"
+        } else {
+            "buildPlotFromRawSpecs"
+        }
 
         val plotSpecListJs = StringBuilder("[\n")
         @Suppress("UNCHECKED_CAST")
         var first = true
         for (spec in plotSpecList) {
             @Suppress("NAME_SHADOWING")
-            val spec = PlotConfigServerSide.processTransform(spec)
+            val spec = if (applyBackendTransform) {
+                PlotConfigServerSide.processTransform(spec)
+            } else {
+                spec  // raw: JS is going to apply transform on the client side
+            }
             if (!first) plotSpecListJs.append(',') else first = false
             plotSpecListJs.append(mapToJsObjectInitializer(spec))
         }
@@ -70,7 +84,7 @@ object PlotConfigDemoUtil {
                         |
                         |   var parentElement = document.createElement('div');
                         |   document.getElementById("root").appendChild(parentElement);
-                        |   DatalorePlot.$CALL_FUN(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
+                        |   DatalorePlot.$plotFun(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
                         |});
                     """.trimMargin()
 

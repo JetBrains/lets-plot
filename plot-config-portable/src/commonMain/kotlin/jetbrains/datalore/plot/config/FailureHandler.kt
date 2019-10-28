@@ -3,7 +3,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.gcommon.base.Throwables
 
 object FailureHandler {
-    fun failureInfo(e: RuntimeException): FailureInfo {
+    fun failureInfo(e: Throwable): FailureInfo {
         @Suppress("NAME_SHADOWING")
         val e = Throwables.getRootCause(e)
         return if (!e.message.isNullOrBlank() && (

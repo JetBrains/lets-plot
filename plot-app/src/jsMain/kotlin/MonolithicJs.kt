@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.injectLiveMap
+import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
@@ -38,11 +39,18 @@ private val DEF_LIVE_MAP_SIZE = DoubleVector(800.0, 600.0)
 fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
-        buildPlotFromProcessedSpecsIntern(plotSpec, width, height, parentElement)
+        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+        val processedSpec = if (PlotConfig.isFailure(plotSpec)) {
+            plotSpec
+        } else {
+            PlotConfigServerSide.processTransform(plotSpec)
+        }
+        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
+    } catch (e: NotImplementedError) {
+        handleException(e, parentElement)
     }
-
 }
 
 /**
@@ -56,6 +64,8 @@ fun buildPlotFromProcessedSpecs(plotSpecJs: dynamic, width: Double, height: Doub
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         buildPlotFromProcessedSpecsIntern(plotSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
+        handleException(e, parentElement)
+    } catch (e: NotImplementedError) {
         handleException(e, parentElement)
     }
 }
@@ -187,7 +197,7 @@ private fun DoubleVector.toVector(): Vector {
     return Vector(x.toInt(), y.toInt())
 }
 
-private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
+private fun handleException(e: Throwable, parentElement: HTMLElement) {
     val failureInfo = FailureHandler.failureInfo(e)
     showError(failureInfo.message, parentElement)
     if (failureInfo.isInternalError) {
