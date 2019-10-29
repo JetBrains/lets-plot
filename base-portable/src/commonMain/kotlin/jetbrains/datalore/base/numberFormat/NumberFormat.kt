@@ -80,7 +80,7 @@ class NumberFormat(private val spec: Spec) {
                         .toRegex()
                         .find(num.toDouble().absoluteValue.toString().toLowerCase())
                         ?.destructured
-                        ?: error("Wrong number")
+                        ?: error("Wrong number: ${num}")
 
                 val exponent: Int = exponentString.toIntOrNull() ?: 0
 

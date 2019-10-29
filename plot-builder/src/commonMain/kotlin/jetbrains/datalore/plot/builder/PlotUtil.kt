@@ -24,14 +24,17 @@ object PlotUtil {
                 get() = aes
 
             override val groupCount: Int
-                get() {
-                    val set = Sets.newHashSet(aes.groups())
-                    return set.size
-                }
+                    by lazy {
+                        val set = Sets.newHashSet(aes.groups())
+                        set.size
+                    }
         })
     }
 
-    fun computeLayerDryRunXYRanges(layer: GeomLayer, aes: Aesthetics): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
+    fun computeLayerDryRunXYRanges(
+        layer: GeomLayer,
+        aes: Aesthetics
+    ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val geomCtx = GeomContextBuilder().aesthetics(aes).build()
 
         val rangesAfterPosAdjustment =
@@ -222,7 +225,8 @@ object PlotUtil {
 
     internal fun prepareLayerAestheticMappers(
         layer: GeomLayer,
-        sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>): Map<Aes<*>, (Double?) -> Any?> {
+        sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>
+    ): Map<Aes<*>, (Double?) -> Any?> {
 
         val mappers = HashMap<Aes<*>, (Double?) -> Any?>(sharedNumericMappers)
         for (aes in layer.renderedAes()) {
@@ -246,15 +250,20 @@ object PlotUtil {
         return mappers
     }
 
-    internal fun createLayerAesthetics(layer: GeomLayer,
-                                       sharedMappers: Map<Aes<*>, (Double?) -> Any?>,
-                                       overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>): Aesthetics {
+    internal fun createLayerAesthetics(
+        layer: GeomLayer,
+        sharedMappers: Map<Aes<*>, (Double?) -> Any?>,
+        overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>
+    ): Aesthetics {
 
         val aesBuilder = AestheticsBuilder()
         aesBuilder.group(layer.group)
         for ((aes, domain) in overallNumericDomains) {
             sharedMappers[aes]?.let { mapper ->
-                val range = ClosedRange.closed(mapper(domain.lowerEndpoint()) as Double, mapper(domain.upperEndpoint()) as Double)
+                val range = ClosedRange.closed(
+                    mapper(domain.lowerEndpoint()) as Double,
+                    mapper(domain.upperEndpoint()) as Double
+                )
                 aesBuilder.overallRange(aes, range)
             }
         }
@@ -292,8 +301,8 @@ object PlotUtil {
                         dataPointCount = numericValues.size
                     } else {
                         checkState(
-                                dataPointCount == numericValues.size,
-                                "" + aes + " expected data size=" + dataPointCount + " was size=" + numericValues.size
+                            dataPointCount == numericValues.size,
+                            "" + aes + " expected data size=" + dataPointCount + " was size=" + numericValues.size
                         )
                     }
 
@@ -307,7 +316,8 @@ object PlotUtil {
                 } else {
                     // apply default
                     val v = layer.getDefault(aes)
-                    aesBuilder.constantAes(aes,
+                    aesBuilder.constantAes(
+                        aes,
                         asAesValue(aes, v, mapperOption)
                     )
                 }
@@ -327,7 +337,7 @@ object PlotUtil {
     private fun <T> asAesValue(aes: Aes<*>, dataValue: T, mapperOption: ((Double?) -> T?)?): T {
         return if (aes.isNumeric && mapperOption != null) {
             mapperOption(dataValue as? Double)
-                    ?: throw IllegalArgumentException("Can't map $dataValue to aesthetic $aes")
+                ?: throw IllegalArgumentException("Can't map $dataValue to aesthetic $aes")
         } else dataValue
     }
 
@@ -347,8 +357,9 @@ object PlotUtil {
         if (layer.rangeIncludesZero(aes)) {
             // zero-based plots (like bar) - do not 'expand' on the zero-end
             if (lowerEndpoint == 0.0 ||
-                    upperEndpoint == 0.0 ||
-                    sign(lowerEndpoint) == sign(upperEndpoint)) {
+                upperEndpoint == 0.0 ||
+                sign(lowerEndpoint) == sign(upperEndpoint)
+            ) {
                 if (lowerEndpoint >= 0) {
                     lowerExpand = 0.0
                 } else {
