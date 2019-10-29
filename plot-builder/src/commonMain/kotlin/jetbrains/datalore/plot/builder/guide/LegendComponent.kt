@@ -6,10 +6,10 @@ import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.vis.svg.*
 
-class LegendComponent(legendSpec: jetbrains.datalore.plot.builder.guide.LegendComponentSpec) : jetbrains.datalore.plot.builder.guide.LegendBox(legendSpec) {
+class LegendComponent(legendSpec: LegendComponentSpec) : LegendBox(legendSpec) {
 
-    override val spec: jetbrains.datalore.plot.builder.guide.LegendComponentSpec
-        get() = super.spec as jetbrains.datalore.plot.builder.guide.LegendComponentSpec
+    override val spec: LegendComponentSpec
+        get() = super.spec as LegendComponentSpec
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
         val l = spec.layout
@@ -25,7 +25,12 @@ class LegendComponent(legendSpec: jetbrains.datalore.plot.builder.guide.LegendCo
         return l.size
     }
 
-    private fun createBreakElement(br: jetbrains.datalore.plot.builder.guide.LegendBreak, keySize: DoubleVector, keyLabelBox: DoubleRectangle, labelBox: DoubleRectangle): SvgElement {
+    private fun createBreakElement(
+        br: LegendBreak,
+        keySize: DoubleVector,
+        keyLabelBox: DoubleRectangle,
+        labelBox: DoubleRectangle
+    ): SvgElement {
         val breakComponent = GroupComponent()
 
         // key element
@@ -42,7 +47,7 @@ class LegendComponent(legendSpec: jetbrains.datalore.plot.builder.guide.LegendCo
         return breakComponent.rootGroup
     }
 
-    private fun createKeyElement(legendBreak: jetbrains.datalore.plot.builder.guide.LegendBreak, size: DoubleVector): SvgGElement {
+    private fun createKeyElement(legendBreak: LegendBreak, size: DoubleVector): SvgGElement {
         val g = SvgGElement()
 
         val innerSize = DoubleVector(size.x - 2, size.y - 2)

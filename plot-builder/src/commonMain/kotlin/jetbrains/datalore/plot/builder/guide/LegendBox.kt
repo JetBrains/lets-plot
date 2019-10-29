@@ -5,14 +5,13 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Legend.OUTLINE_COLOR
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 
 abstract class LegendBox internal constructor(
-    protected open val spec: jetbrains.datalore.plot.builder.guide.LegendBoxSpec
+    protected open val spec: LegendBoxSpec
 ) : SvgComponent() {
 
     var debug: Boolean = false
@@ -23,7 +22,7 @@ abstract class LegendBox internal constructor(
     val size: DoubleVector
         get() = spec.size
 
-    internal fun hasTitle(): Boolean {
+    private fun hasTitle(): Boolean {
         return spec.hasTitle()
     }
 
@@ -32,7 +31,7 @@ abstract class LegendBox internal constructor(
 
         val outerBounds = DoubleRectangle(DoubleVector.ZERO, spec.size)
         addRectangle(spec.innerBounds, spec.theme.backgroundFill())
-        addBorder(spec.innerBounds, OUTLINE_COLOR, 1.0)
+//        addBorder(spec.innerBounds, OUTLINE_COLOR, 1.0)
 
         val innerGroup = SvgGElement()
         innerGroup.transform().set(buildTransform(spec.contentOrigin, 0.0))
@@ -79,11 +78,11 @@ abstract class LegendBox internal constructor(
     }
 
     protected fun addBorder(bounds: DoubleRectangle, strokeColor: Color, strokeWidth: Double) {
-        add(jetbrains.datalore.plot.builder.guide.LegendBox.Companion.createBorder(bounds, strokeColor, strokeWidth))
+        add(createBorder(bounds, strokeColor, strokeWidth))
     }
 
     protected fun addRectangle(bounds: DoubleRectangle, fillColor: Color) {
-        add(jetbrains.datalore.plot.builder.guide.LegendBox.Companion.createRectangle(bounds, fillColor))
+        add(createRectangle(bounds, fillColor))
     }
 
     protected abstract fun appendGuideContent(contentRoot: SvgNode): DoubleVector

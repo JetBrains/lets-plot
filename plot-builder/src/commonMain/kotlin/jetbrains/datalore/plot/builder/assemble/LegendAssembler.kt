@@ -11,26 +11,31 @@ import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
+import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
 
-class LegendAssembler(private val legendTitle: String,
-                      private val guideOptionsMap: Map<Aes<*>, GuideOptions>,
-                      private val theme: LegendTheme) {
+class LegendAssembler(
+    private val legendTitle: String,
+    private val guideOptionsMap: Map<Aes<*>, GuideOptions>,
+    private val theme: LegendTheme
+) {
 
-    private val myLegendLayers = ArrayList<jetbrains.datalore.plot.builder.assemble.LegendAssembler.LegendLayer>()
+    private val myLegendLayers = ArrayList<LegendLayer>()
 
-    fun addLayer(keyFactory: LegendKeyElementFactory,
-                 varBindings: List<VarBinding>,
-                 constantByAes: Map<Aes<*>, Any>,
-                 aestheticsDefaults: AestheticsDefaults,
-                 dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>) {
+    fun addLayer(
+        keyFactory: LegendKeyElementFactory,
+        varBindings: List<VarBinding>,
+        constantByAes: Map<Aes<*>, Any>,
+        aestheticsDefaults: AestheticsDefaults,
+        dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
+    ) {
 
         myLegendLayers.add(
-            jetbrains.datalore.plot.builder.assemble.LegendAssembler.LegendLayer(
+            LegendLayer(
                 keyFactory,
                 varBindings,
                 constantByAes,
@@ -41,19 +46,19 @@ class LegendAssembler(private val legendTitle: String,
     }
 
     fun createLegend(): LegendBoxInfo {
-        val legendBreaksByLabel = LinkedHashMap<String, jetbrains.datalore.plot.builder.guide.LegendBreak>()
+        val legendBreaksByLabel = LinkedHashMap<String, LegendBreak>()
         for (legendLayer in myLegendLayers) {
             val keyElementFactory = legendLayer.keyElementFactory
             val dataPoints = legendLayer.keyAesthetics!!.dataPoints().iterator()
             for (label in legendLayer.keyLabels!!) {
                 if (!legendBreaksByLabel.containsKey(label)) {
-                    legendBreaksByLabel[label] = jetbrains.datalore.plot.builder.guide.LegendBreak(label)
+                    legendBreaksByLabel[label] = LegendBreak(label)
                 }
                 legendBreaksByLabel[label]!!.addLayer(dataPoints.next(), keyElementFactory)
             }
         }
 
-        val legendBreaks = ArrayList<jetbrains.datalore.plot.builder.guide.LegendBreak>()
+        val legendBreaks = ArrayList<LegendBreak>()
         for (legendBreak in legendBreaksByLabel.values) {
             if (legendBreak.isEmpty) {
                 continue
@@ -77,18 +82,15 @@ class LegendAssembler(private val legendTitle: String,
             }
         }
 
-//        val spec = LegendComponentSpec(legendTitle, legendBreaks, theme, layout)
-//        spec.setLegendOptions(LegendOptions.combine(legendOptionsList))
-
-        val spec = jetbrains.datalore.plot.builder.assemble.LegendAssembler.Companion.createLegendSpec(
+        val spec = createLegendSpec(
             legendTitle, legendBreaks, theme,
             LegendOptions.combine(legendOptionsList)
         )
 
         return object : LegendBoxInfo(spec.size) {
-            override fun createLegendBox(): jetbrains.datalore.plot.builder.guide.LegendBox {
-                val c = jetbrains.datalore.plot.builder.guide.LegendComponent(spec)
-                c.debug = jetbrains.datalore.plot.builder.assemble.LegendAssembler.Companion.DEBUG_DRAWING
+            override fun createLegendBox(): LegendBox {
+                val c = LegendComponent(spec)
+                c.debug = DEBUG_DRAWING
                 return c
             }
         }
@@ -100,7 +102,8 @@ class LegendAssembler(private val legendTitle: String,
         private val varBindings: List<VarBinding>,
         private val constantByAes: Map<Aes<*>, Any>,
         private val aestheticsDefaults: AestheticsDefaults,
-        dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>) {
+        dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>
+    ) {
 
         internal var keyAesthetics: Aesthetics? = null
         internal var keyLabels: List<String>? = null
@@ -155,20 +158,21 @@ class LegendAssembler(private val legendTitle: String,
     companion object {
         private const val DEBUG_DRAWING = jetbrains.datalore.plot.FeatureSwitch.LEGEND_DEBUG_DRAWING
 
-        fun createLegendSpec(title: String,
-                             breaks: List<jetbrains.datalore.plot.builder.guide.LegendBreak>,
-                             theme: LegendTheme,
-                             options: LegendOptions = LegendOptions()
-        ): jetbrains.datalore.plot.builder.guide.LegendComponentSpec {
+        fun createLegendSpec(
+            title: String,
+            breaks: List<LegendBreak>,
+            theme: LegendTheme,
+            options: LegendOptions = LegendOptions()
+        ): LegendComponentSpec {
 
-            val legendDirection = jetbrains.datalore.plot.builder.assemble.LegendAssemblerUtil.legendDirection(theme)
+            val legendDirection = LegendAssemblerUtil.legendDirection(theme)
 
             // key size
             fun pretty(v: DoubleVector): DoubleVector {
                 val margin = 1.0
                 return DoubleVector(
-                        floor(v.x / 2) * 2 + 1.0 + margin,
-                        floor(v.y / 2) * 2 + 1.0 + margin
+                    floor(v.x / 2) * 2 + 1.0 + margin,
+                    floor(v.y / 2) * 2 + 1.0 + margin
                 )
             }
 
@@ -186,7 +190,7 @@ class LegendAssembler(private val legendTitle: String,
                 colCount = when {
                     options.hasColCount() -> min(options.colCount, breakCount)
                     options.hasRowCount() -> ceil(breakCount / options.rowCount.toDouble()).toInt()
-                    legendDirection === jetbrains.datalore.plot.builder.guide.LegendDirection.HORIZONTAL -> breakCount
+                    legendDirection === LegendDirection.HORIZONTAL -> breakCount
                     else -> 1
                 }
                 rowCount = ceil(breakCount / colCount.toDouble()).toInt()
@@ -195,29 +199,34 @@ class LegendAssembler(private val legendTitle: String,
                 rowCount = when {
                     options.hasRowCount() -> min(options.rowCount, breakCount)
                     options.hasColCount() -> ceil(breakCount / options.colCount.toDouble()).toInt()
-                    legendDirection !== jetbrains.datalore.plot.builder.guide.LegendDirection.HORIZONTAL -> breakCount
+                    legendDirection !== LegendDirection.HORIZONTAL -> breakCount
                     else -> 1
                 }
                 colCount = ceil(breakCount / rowCount.toDouble()).toInt()
             }
 
-            val layout: jetbrains.datalore.plot.builder.guide.LegendComponentLayout
+            val layout: LegendComponentLayout
             @Suppress("LiftReturnOrAssignment")
-            if (legendDirection === jetbrains.datalore.plot.builder.guide.LegendDirection.HORIZONTAL) {
+            if (legendDirection === LegendDirection.HORIZONTAL) {
                 if (options.hasRowCount() || options.hasColCount() && options.colCount < breakCount) {
-                    layout = jetbrains.datalore.plot.builder.guide.LegendComponentLayout.horizontalMultiRow(title, breaks, keySize)
+                    layout = LegendComponentLayout.horizontalMultiRow(
+                        title,
+                        breaks,
+                        keySize
+                    )
                 } else {
-                    layout = jetbrains.datalore.plot.builder.guide.LegendComponentLayout.horizontal(title, breaks, keySize)
+                    layout =
+                        LegendComponentLayout.horizontal(title, breaks, keySize)
                 }
             } else {
-                layout = jetbrains.datalore.plot.builder.guide.LegendComponentLayout.vertical(title, breaks, keySize)
+                layout = LegendComponentLayout.vertical(title, breaks, keySize)
             }
 
             layout.colCount = colCount
             layout.rowCount = rowCount
             layout.isFillByRow = options.isByRow
 
-            return jetbrains.datalore.plot.builder.guide.LegendComponentSpec(title, breaks, theme, layout)
+            return LegendComponentSpec(title, breaks, theme, layout)
         }
     }
 }

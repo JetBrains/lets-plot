@@ -14,11 +14,11 @@ import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 import kotlin.math.max
 
-class ColorBarComponent(spec: jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec) : jetbrains.datalore.plot.builder.guide.LegendBox(spec) {
+class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
 
-    override val spec: jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec
+    override val spec: ColorBarComponentSpec
         get() {
-            return super.spec as jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec
+            return super.spec as ColorBarComponentSpec
         }
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
@@ -72,7 +72,7 @@ class ColorBarComponent(spec: jetbrains.datalore.plot.builder.guide.ColorBarComp
 
         // add white frame
         guideBarGroup.children().add(
-            jetbrains.datalore.plot.builder.guide.LegendBox.Companion.createBorder(
+            createBorder(
                 barBounds,
                 spec.theme.backgroundFill(),
                 1.0
@@ -83,7 +83,7 @@ class ColorBarComponent(spec: jetbrains.datalore.plot.builder.guide.ColorBarComp
             // frame bar and labels
             val graphBounds = DoubleRectangle(DoubleVector.ZERO, l.graphSize)
             guideBarGroup.children().add(
-                jetbrains.datalore.plot.builder.guide.LegendBox.Companion.createBorder(
+                createBorder(
                     graphBounds,
                     Color.DARK_BLUE,
                     1.0
@@ -102,7 +102,8 @@ class ColorBarComponent(spec: jetbrains.datalore.plot.builder.guide.ColorBarComp
         numBins: Int,
         barBounds: DoubleRectangle,
         barLengthExpand: Double,
-        horizontal: Boolean) {
+        horizontal: Boolean
+    ) {
 
         val domainSpan = SeriesUtil.span(domain)
         val stepCount = max(2, numBins)
@@ -159,8 +160,7 @@ class ColorBarComponent(spec: jetbrains.datalore.plot.builder.guide.ColorBarComp
     private fun addTickMark(g: SvgGElement, p0: DoubleVector, p1: DoubleVector) {
         val line = SvgLineElement(p0.x, p0.y, p1.x, p1.y)
         line.strokeWidth().set(1.0)
-        //line.strokeColor().set(getSpec().getTheme().backgroundFill());
-        line.strokeColor().set(Color.BLACK)
+        line.strokeColor().set(spec.theme.backgroundFill());
         g.children().add(line)
     }
 }
