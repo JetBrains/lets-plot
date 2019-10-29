@@ -193,7 +193,7 @@ private fun DoubleVector.toVector(): Vector {
     return Vector(x.toInt(), y.toInt())
 }
 
-private fun handleException(e: Throwable, parentElement: HTMLElement) {
+private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
     val failureInfo = FailureHandler.failureInfo(e)
     showError(failureInfo.message, parentElement)
     if (failureInfo.isInternalError) {
