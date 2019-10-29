@@ -10,37 +10,24 @@ def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
 kotlin {
     if (project.buildSettings.build_python_extension) {
-        def python_include_path = project.buildSettings.python.include_path
-
+        def target
         if (currentOs.isMacOsX()) {
-            macosX64() {
-                binaries {
-                    staticLib {
-                        baseName = "datalore-plot-${project.name}"
-                    }
-                }
+            target = macosX64("native")
+        } else if (currentOs.isLinux()) {
+            target = linuxX64("native")
+        } else {
+            throw "Unsupported platform " + currentOs.displayName
+        }
 
-                compilations.main.cinterops {
-                    python {
-                        compilerOpts "-I${python_include_path}"
-                    }
-                }
+        target.binaries {
+            staticLib {
+                baseName = "datalore-plot-${project.name}"
             }
         }
 
-        if (currentOs.isLinux()) {
-            linuxX64() {
-                binaries {
-                    staticLib {
-                        baseName = "datalore-plot-${project.name}"
-                    }
-                }
-
-                compilations.main.cinterops {
-                    python {
-                        compilerOpts "-I${python_include_path}"
-                    }
-                }
+        target.compilations.main.cinterops {
+            python {
+                compilerOpts "-I${project.buildSettings.python.include_path}"
             }
         }
     }

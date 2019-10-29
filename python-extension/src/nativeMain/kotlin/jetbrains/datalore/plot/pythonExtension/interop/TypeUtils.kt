@@ -64,7 +64,7 @@ internal object TypeUtils {
         for (i in 0 until keysLen) {
             val key = PyList_GetItem(keys, i)
             val keyType = getPyObjectType(key)
-            assert(keyType != null && keyType == PythonTypes.STR)
+            assert(keyType != null && keyType == STR)
             val keyStr = pyStrToString(key!!)!!
 
             val value = PyDict_GetItem(dict, key)
