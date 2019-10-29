@@ -29,12 +29,12 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
     }
 
     private val mySocket = socketBuilder.build(SafeSocketHandler(TileSocketHandler(), ThrowableHandlers.instance))
-    private val myMessageQueue = ArrayList<String>()
+    private val myMessageQueue = ThreadSafeMessageQueue<String>()
     private val pendingRequests = RequestMap()
     var mapConfig: MapConfig? = null
         private set
     private var myIncrement: Int = 0
-    private var mySocketStatus = NOT_CONNECTED
+    private var myStatus = NOT_CONNECTED
 
     open fun getTileData(bbox: Rect<LonLat>, zoom: Int): Async<List<TileLayer>> {
         val key = myIncrement++.toString()
@@ -55,15 +55,15 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
         return async
     }
 
-    private fun sendGeometryRequest(messageString: String) {
-        when (mySocketStatus) {
+    private fun sendGeometryRequest(message: String) {
+        when (myStatus) {
             NOT_CONNECTED -> {
-                myMessageQueue.add(messageString)
-                mySocketStatus = CONNECTING
+                myMessageQueue.add(message)
+                myStatus = CONNECTING
                 mySocket.connect()
             }
-            OPEN -> mySocket.send(messageString)
-            CONNECTING -> myMessageQueue.add(messageString)
+            CONFIGURED -> mySocket.send(message)
+            CONNECTING -> myMessageQueue.add(message)
             ERROR -> throw IllegalStateException("Socket error")
         }
     }
@@ -77,27 +77,27 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
 
     private enum class SocketStatus {
         NOT_CONNECTED,
-        OPEN,
+        CONFIGURED,
         CONNECTING,
         ERROR
     }
 
     inner class TileSocketHandler : SocketHandler {
-        override fun onOpen() { mySocketStatus = OPEN; sendInitMessage() }
+        override fun onOpen() { sendInitMessage() }
         override fun onClose(message: String) {
             myMessageQueue.add(message)
-            if (mySocketStatus == OPEN) {
-                mySocketStatus = CONNECTING
+            if (myStatus == CONFIGURED) {
+                myStatus = CONNECTING
                 mySocket.connect()
             }
         }
-        override fun onError(cause: Throwable) { mySocketStatus = ERROR; failPending(cause) }
+        override fun onError(cause: Throwable) { myStatus = ERROR; failPending(cause) }
 
         override fun onTextMessage(message: String) {
             if (mapConfig == null) {
                 mapConfig = MapStyleJsonParser.parse(JsonSupport.parseJson(message))
             }
-
+            myStatus = CONFIGURED
             myMessageQueue.run { forEach(mySocket::send); clear() }
         }
 
@@ -127,6 +127,29 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
 
         fun poll(key: String): ThreadSafeAsync<List<TileLayer>> = lock.execute{
             return myAsyncMap.remove(key)!!
+        }
+    }
+
+    class ThreadSafeMessageQueue<T> {
+        private val myList = ArrayList<T>()
+        private val myLock = Lock()
+
+        fun add(v: T) {
+            myLock.execute {
+                myList.add(v)
+            }
+        }
+
+        fun forEach(f: (T) -> Unit) {
+            myLock.execute {
+                myList.forEach(f)
+            }
+        }
+
+        fun clear() {
+            myLock.execute {
+                myList.clear()
+            }
         }
     }
 }
