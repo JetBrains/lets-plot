@@ -12,12 +12,7 @@ kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'datalore_plot_kotli
 
 # ToDo: option: debug / release
 this_system = platform.system()
-if this_system == "Linux":
-    binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'linuxX64', 'debugStatic')
-elif this_system == "Darwin":
-    binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'macosX64', 'debugStatic')
-else:
-    raise RuntimeError("Unsupported platform {}".format(this_system))
+binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'native', 'debugStatic')
 
 python_package = "datalore_plot"
 
