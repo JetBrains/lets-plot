@@ -9,12 +9,15 @@ import jetbrains.datalore.plot.base.geom.util.RectanglesHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-/**
- * TODO: position adjustment (identity, dodge, stack, fill)
- */
 open class BarGeom : GeomBase() {
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx)
         val rectangles = helper.createRectangles(
             rectangleByDataPoint(
@@ -28,7 +31,7 @@ open class BarGeom : GeomBase() {
             helper,
             rectangleByDataPoint(ctx),
             { HintColorUtil.fromFill(it) })
-                .collectTo(ctx.targetCollector)
+            .collectTo(ctx.targetCollector)
     }
 
     companion object {

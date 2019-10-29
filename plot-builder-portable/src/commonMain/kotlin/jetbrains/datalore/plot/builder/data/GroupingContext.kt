@@ -6,7 +6,13 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.DataProcessing.findOptionalVariable
 
-class GroupingContext(private val myData: DataFrame, bindings: List<VarBinding>, groupingVarName: String?, private val myExpectMultiple: Boolean) {
+class GroupingContext(
+    private val myData: DataFrame,
+    bindings: List<VarBinding>,
+    groupingVarName: String?,
+    private val myExpectMultiple: Boolean
+) {
+
     private val myBindings: List<VarBinding>
     internal val optionalGroupingVar: Variable?
 

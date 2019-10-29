@@ -52,7 +52,7 @@ import kotlin.jvm.JvmOverloads
 class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: Int = 0) {
 
     private val myIndexFunctionMap: MutableMap<Aes<*>, (Int) -> Any?>
-    private var group = constant(0)
+    private var myGroup = constant(0)
     private val myConstantAes = Sets.newHashSet(Aes.values())  // initially contains all Aes;
     private val myOverallRangeByNumericAes = HashMap<Aes<Double>, ClosedRange<Double>>()
 
@@ -133,7 +133,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
     }
 
     fun group(v: (Int) -> Int): AestheticsBuilder {
-        group = v
+        myGroup = v
         return this
     }
 
@@ -197,7 +197,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
     private class MyAesthetics internal constructor(b: AestheticsBuilder) : Aesthetics {
         private val myDataPointCount: Int = b.myDataPointCount
         private val myIndexFunctionMap = TypedIndexFunctionMap(b.myIndexFunctionMap)
-        val group = b.group
+        val group = b.myGroup
         private val myConstantAes: Set<Aes<*>>
         private val myOverallRangeByNumericAes: Map<Aes<Double>, ClosedRange<Double>>
 
@@ -259,13 +259,13 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         override fun resolution(aes: Aes<Double>, naValue: Double): Double {
             if (!myResolutionByAes.containsKey(aes)) {
                 val resolution: Double =
-                        when {
-                            myConstantAes.contains(aes) -> 0.0
-                            else -> {
-                                val values = numericValues(aes)
-                                SeriesUtil.resolution(values, naValue)
-                            }
+                    when {
+                        myConstantAes.contains(aes) -> 0.0
+                        else -> {
+                            val values = numericValues(aes)
+                            SeriesUtil.resolution(values, naValue)
                         }
+                    }
                 myResolutionByAes[aes] = resolution
             }
 
@@ -290,7 +290,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         }
     }
 
-    private class MyDataPointsIterator internal constructor(private val myLength: Int, private val myAesthetics: MyAesthetics) : Iterator<DataPointAesthetics> {
+    private class MyDataPointsIterator internal constructor(
+        private val myLength: Int,
+        private val myAesthetics: MyAesthetics
+    ) : Iterator<DataPointAesthetics> {
         private var myIndex = 0
 
         override fun hasNext(): Boolean {
@@ -305,7 +308,8 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         }
     }
 
-    private class AesIterator<T> internal constructor(private val myLength: Int, private val myAes: (Int) -> T) : Iterator<T> {
+    private class AesIterator<T> internal constructor(private val myLength: Int, private val myAes: (Int) -> T) :
+        Iterator<T> {
         private var myIndex = 0
 
         override fun hasNext(): Boolean {
@@ -322,8 +326,8 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
 
     private class MyDataPointAesthetics(
-            private val myIndex: Int?,
-            private val myAesthetics: MyAesthetics
+        private val myIndex: Int?,
+        private val myAesthetics: MyAesthetics
     ) : DataPointAesthetics {
 
         override fun index(): Int {
@@ -490,7 +494,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         }
     }
 
-    private class MapperAes<ValueT> internal constructor(private val myL: List<Double>, private val myF: ((Double) -> ValueT)) : Function<Int, ValueT> {
+    private class MapperAes<ValueT> internal constructor(
+        private val myL: List<Double>,
+        private val myF: ((Double) -> ValueT)
+    ) : Function<Int, ValueT> {
         override fun apply(value: Int): ValueT {
             return myF(myL[value])
         }

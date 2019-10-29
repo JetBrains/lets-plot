@@ -7,7 +7,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-class GeomContextBuilder : jetbrains.datalore.plot.builder.assemble.ImmutableGeomContext.Builder {
+class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var myAesthetics: Aesthetics? = null
     private var myAestheticMappers: Map<Aes<*>, (Double?) -> Any?>? = null
     private var myGeomTargetCollector: GeomTargetCollector =
@@ -15,33 +15,32 @@ class GeomContextBuilder : jetbrains.datalore.plot.builder.assemble.ImmutableGeo
 
     constructor()
 
-    private constructor(ctx: jetbrains.datalore.plot.builder.assemble.GeomContextBuilder.MyGeomContext) {
+    private constructor(ctx: MyGeomContext) {
         myAesthetics = ctx.myAesthetics
         myAestheticMappers = ctx.myAestheticMappers
     }
 
-    override fun aesthetics(aesthetics: Aesthetics?): jetbrains.datalore.plot.builder.assemble.ImmutableGeomContext.Builder {
+    override fun aesthetics(aesthetics: Aesthetics?): ImmutableGeomContext.Builder {
         myAesthetics = aesthetics
         return this
     }
 
-    override fun aestheticMappers(aestheticMappers: Map<Aes<*>, (Double?) -> Any?>?): jetbrains.datalore.plot.builder.assemble.ImmutableGeomContext.Builder {
+    override fun aestheticMappers(aestheticMappers: Map<Aes<*>, (Double?) -> Any?>?): ImmutableGeomContext.Builder {
         myAestheticMappers = aestheticMappers
         return this
     }
 
-    override fun geomTargetCollector(geomTargetCollector: GeomTargetCollector): jetbrains.datalore.plot.builder.assemble.ImmutableGeomContext.Builder {
+    override fun geomTargetCollector(geomTargetCollector: GeomTargetCollector): ImmutableGeomContext.Builder {
         myGeomTargetCollector = geomTargetCollector
         return this
     }
 
-    override fun build(): jetbrains.datalore.plot.builder.assemble.ImmutableGeomContext {
-        return jetbrains.datalore.plot.builder.assemble.GeomContextBuilder.MyGeomContext(this)
+    override fun build(): ImmutableGeomContext {
+        return MyGeomContext(this)
     }
 
 
-    private class MyGeomContext(b: jetbrains.datalore.plot.builder.assemble.GeomContextBuilder) :
-        jetbrains.datalore.plot.builder.assemble.ImmutableGeomContext {
+    private class MyGeomContext(b: GeomContextBuilder) : ImmutableGeomContext {
         val myAesthetics = b.myAesthetics
         val myAestheticMappers = b.myAestheticMappers
         override val targetCollector = b.myGeomTargetCollector
@@ -69,15 +68,15 @@ class GeomContextBuilder : jetbrains.datalore.plot.builder.assemble.ImmutableGeo
         }
 
         override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {
-            return jetbrains.datalore.plot.builder.assemble.GeomContextBuilder()
-                    .aesthetics(myAesthetics)
-                    .aestheticMappers(myAestheticMappers)
-                    .geomTargetCollector(targetCollector)
-                    .build()
+            return GeomContextBuilder()
+                .aesthetics(myAesthetics)
+                .aestheticMappers(myAestheticMappers)
+                .geomTargetCollector(targetCollector)
+                .build()
         }
 
-        override fun with(): jetbrains.datalore.plot.builder.assemble.ImmutableGeomContext.Builder {
-            return jetbrains.datalore.plot.builder.assemble.GeomContextBuilder(this)
+        override fun with(): ImmutableGeomContext.Builder {
+            return GeomContextBuilder(this)
         }
     }
 }

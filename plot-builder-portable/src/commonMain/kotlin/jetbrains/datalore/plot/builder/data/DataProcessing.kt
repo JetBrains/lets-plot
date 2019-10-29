@@ -1,7 +1,5 @@
 package jetbrains.datalore.plot.builder.data
 
-//import jetbrains.datalore.plot.builder.assemble.PosProvider
-//import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.Iterables
@@ -35,10 +33,6 @@ object DataProcessing {
 
         return data
     }
-
-//    fun groupsHandled(geomProvider: GeomProvider, posProvider: PosProvider): Boolean {
-//        return geomProvider.handlesGroups() || posProvider.handlesGroups()
-//    }
 
     fun buildStatData(
         data: DataFrame, stat: Stat, bindings: List<VarBinding>, groupingContext: GroupingContext,
@@ -325,8 +319,7 @@ object DataProcessing {
     }
 
     internal fun computeGroups(data: DataFrame, bindings: List<VarBinding>, groupingVar: Variable?): (Int) -> Int {
-        val groupingVariables =
-            getGroupingVariables(data, bindings, groupingVar)
+        val groupingVariables = getGroupingVariables(data, bindings, groupingVar)
 
         var currentGroups: List<Int>? = null
         if (groupingVar != null) {
@@ -334,7 +327,6 @@ object DataProcessing {
         }
 
         for (`var` in groupingVariables) {
-            //List<Double> values = data.getNumeric(var);
             val values = data[`var`]
             val groups = computeGroups(values)
             if (currentGroups == null) {
@@ -393,20 +385,26 @@ object DataProcessing {
         explicitGroupingVar: Variable?
     ): Iterable<Variable> {
 
-        // all 'origin' discrete vars + explicitGroupingVar
+        // all 'origin' discrete vars (but not positional) + explicitGroupingVar
         val result = LinkedHashSet<Variable>()
         for (binding in bindings) {
-            val `var` = binding.variable
-            if (!result.contains(`var`)) {
-                if (`var`.isOrigin) {
-                    if (!data.isNumeric(`var`) || `var` == explicitGroupingVar) {
-                        result.add(`var`)
+            val variable = binding.variable
+            if (!result.contains(variable)) {
+                if (variable.isOrigin) {
+                    if (variable == explicitGroupingVar || isDefaultGroupingVariable(data, binding.aes, variable)) {
+                        result.add(variable)
                     }
                 }
             }
         }
         return result
     }
+
+    private fun isDefaultGroupingVariable(
+        data: DataFrame,
+        aes: Aes<*>,
+        variable: Variable
+    ) = !(Aes.isPositional(aes) || data.isNumeric(variable))
 
     class DataAndGroupingContext internal constructor(val data: DataFrame, val groupingContext: GroupingContext)
 

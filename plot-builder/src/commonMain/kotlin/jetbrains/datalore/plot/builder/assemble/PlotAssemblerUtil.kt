@@ -7,6 +7,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.ScaleUtil
+import jetbrains.datalore.plot.builder.PlotUtil.computeLayerDryRunXYRanges
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.createColorBarAssembler
@@ -62,7 +63,7 @@ internal object PlotAssemblerUtil {
             planeCount = layersByPanel[0].size
         }
 
-        val stitchedLayersList = ArrayList<jetbrains.datalore.plot.builder.assemble.StitchedPlotLayers>()
+        val stitchedLayersList = ArrayList<StitchedPlotLayers>()
         for (i in 0 until planeCount) {
             val layersOnPlane = ArrayList<jetbrains.datalore.plot.builder.GeomLayer>()
 
@@ -71,7 +72,7 @@ internal object PlotAssemblerUtil {
                 layersOnPlane.add(panelLayers[i])
             }
 
-            stitchedLayersList.add(jetbrains.datalore.plot.builder.assemble.StitchedPlotLayers(layersOnPlane))
+            stitchedLayersList.add(StitchedPlotLayers(layersOnPlane))
         }
 
         val dataRangeByAes = HashMap<Aes<*>, ClosedRange<Double>>()
@@ -79,11 +80,11 @@ internal object PlotAssemblerUtil {
             val layerDataRangeByAes = guideDataRangeByAes(stitchedPlotLayers, guideOptionsMap)
             for (aes in layerDataRangeByAes.keys) {
                 val range = layerDataRangeByAes[aes]
-                jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil.updateAesRangeMap(aes, range, dataRangeByAes)
+                updateAesRangeMap(aes, range, dataRangeByAes)
             }
         }
 
-        return jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil.createLegends(
+        return createLegends(
             stitchedLayersList,
             dataRangeByAes,
             guideOptionsMap,
@@ -91,13 +92,13 @@ internal object PlotAssemblerUtil {
         )
     }
 
-    private fun createLegends(stitchedLayersList: List<jetbrains.datalore.plot.builder.assemble.StitchedPlotLayers>,
+    private fun createLegends(stitchedLayersList: List<StitchedPlotLayers>,
                               dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
                               guideOptionsMap: Map<Aes<*>, GuideOptions>,
                               theme: LegendTheme): List<LegendBoxInfo> {
 
-        val legendAssemblerByTitle = LinkedHashMap<String, jetbrains.datalore.plot.builder.assemble.LegendAssembler>()
-        val colorBarAssemblerByTitle = LinkedHashMap<String, jetbrains.datalore.plot.builder.assemble.ColorBarAssembler>()
+        val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
+        val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
         for (stitchedLayers in stitchedLayersList) {
             val layerConstantByAes = HashMap<Aes<*>, Any>()
@@ -141,7 +142,7 @@ internal object PlotAssemblerUtil {
             for (scaleName in layerBindingsByScaleName.keys) {
                 if (!legendAssemblerByTitle.containsKey(scaleName)) {
                     legendAssemblerByTitle[scaleName] =
-                        jetbrains.datalore.plot.builder.assemble.LegendAssembler(scaleName, guideOptionsMap, theme)
+                        LegendAssembler(scaleName, guideOptionsMap, theme)
                 }
 
                 val varBindings = layerBindingsByScaleName[scaleName]!!
@@ -212,9 +213,9 @@ internal object PlotAssemblerUtil {
                 // use dry-run aesthetics to estimate ranges
                 val aesthetics = dryRunAestheticsByTileLayer[layer]!!
                 // adjust X/Y range with 'pos adjustment' and 'expands'
-                val xyRanges = jetbrains.datalore.plot.builder.PlotUtil.computeLayerDryRunXYRanges(layer, aesthetics)
+                val xyRanges = computeLayerDryRunXYRanges(layer, aesthetics)
 
-                //flags
+                // flags
                 var isXCalculated = false
                 var isYCalculated = false
 
@@ -226,13 +227,13 @@ internal object PlotAssemblerUtil {
                     if (layer.hasBinding(aes)) {
                         val scale = layer.getBinding(aes).scale
                         if (scale!!.isContinuousDomain) {
-                            layerAesRange = jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil.updateRange(
+                            layerAesRange = updateRange(
                                 ScaleUtil.transformedDefinedLimits(scale), layerAesRange
                             )
                         }
 
                         if (scale.hasBreaks()) {
-                            layerAesRange = jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil.updateRange(
+                            layerAesRange = updateRange(
                                 ScaleUtil.breaksTransformed(scale), layerAesRange
                             )
                         }
@@ -247,7 +248,7 @@ internal object PlotAssemblerUtil {
                         isXCalculated = true
                         realAes = Aes.X
                         val xRange = xyRanges.first
-                        layerAesRange = jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil.updateRange(
+                        layerAesRange = updateRange(
                             xRange,
                             layerAesRange
                         )
@@ -259,14 +260,14 @@ internal object PlotAssemblerUtil {
                         isYCalculated = true
                         realAes = Aes.Y
                         val yRange = xyRanges.second
-                        layerAesRange = jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil.updateRange(
+                        layerAesRange = updateRange(
                             yRange,
                             layerAesRange
                         )
                         layerAesRange = jetbrains.datalore.plot.builder.PlotUtil.rangeWithExpand(layer, aes, layerAesRange)
                     } else {
                         realAes = aes
-                        layerAesRange = jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil.updateRange(
+                        layerAesRange = updateRange(
                             aesthetics.range(aes),
                             layerAesRange
                         )
@@ -274,13 +275,13 @@ internal object PlotAssemblerUtil {
 
                     // include zero if necessary
                     if (layer.rangeIncludesZero(aes)) {
-                        layerAesRange = jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil.updateRange(
+                        layerAesRange = updateRange(
                             ClosedRange.singleton(0.0), layerAesRange
                         )
                     }
 
                     // update range map
-                    jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil.updateAesRangeMap(
+                    updateAesRangeMap(
                         realAes,
                         layerAesRange,
                         rangeByAes

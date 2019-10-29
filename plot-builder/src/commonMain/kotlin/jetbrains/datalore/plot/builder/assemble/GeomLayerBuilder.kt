@@ -14,8 +14,11 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PosProviderContext
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
@@ -25,7 +28,7 @@ class GeomLayerBuilder {
     private val myConstantByAes = TypedKeyHashMap()
     private lateinit var myStat: Stat
     private lateinit var myPosProvider: PosProvider
-    private lateinit var myGeomProvider: jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+    private lateinit var myGeomProvider: GeomProvider
     private var myGroupingVarName: String? = null
     private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
 
@@ -45,7 +48,7 @@ class GeomLayerBuilder {
         return this
     }
 
-    fun geom(v: jetbrains.datalore.plot.builder.assemble.geom.GeomProvider): GeomLayerBuilder {
+    fun geom(v: GeomProvider): GeomLayerBuilder {
         myGeomProvider = v
         return this
     }
@@ -90,7 +93,7 @@ class GeomLayerBuilder {
         return this
     }
 
-    fun build(data: DataFrame): jetbrains.datalore.plot.builder.GeomLayer {
+    fun build(data: DataFrame): GeomLayer {
         @Suppress("NAME_SHADOWING")
         var data = data
         if (myDataPreprocessor != null) {
@@ -130,7 +133,7 @@ class GeomLayerBuilder {
         // (!) Positional aes scales have undefined `mapper` at this time because
         // dimensions of plot are not yet known.
         // Data Access shouldn't use aes mapper (!)
-        val dataAccess = jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess(data, replacementBindings)
+        val dataAccess = PointDataAccess(data, replacementBindings)
 
         return MyGeomLayer(
             data,
@@ -160,7 +163,7 @@ class GeomLayerBuilder {
 
     private class MyGeomLayer(
         override val dataFrame: DataFrame,
-        geomProvider: jetbrains.datalore.plot.builder.assemble.geom.GeomProvider,
+        geomProvider: GeomProvider,
         private val myPosProvider: PosProvider,
         handledAes: List<Aes<*>>,
         renderedAes: List<Aes<*>>,
@@ -171,7 +174,7 @@ class GeomLayerBuilder {
         override val locatorLookupSpec: LookupSpec,
         override val contextualMapping: ContextualMapping,
         override val isLegendDisabled: Boolean
-    ) : jetbrains.datalore.plot.builder.GeomLayer {
+    ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()
         override val geomKind: GeomKind = geomProvider.geomKind

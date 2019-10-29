@@ -11,13 +11,14 @@ import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.Mappers
+import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
 
 object PlotUtil {
-    internal fun createLayerPos(layer: jetbrains.datalore.plot.builder.GeomLayer, aes: Aesthetics): PositionAdjustment {
+    internal fun createLayerPos(layer: GeomLayer, aes: Aesthetics): PositionAdjustment {
         return layer.createPos(object : PosProviderContext {
             override val aesthetics: Aesthetics
                 get() = aes
@@ -30,13 +31,13 @@ object PlotUtil {
         })
     }
 
-    fun computeLayerDryRunXYRanges(layer: jetbrains.datalore.plot.builder.GeomLayer, aes: Aesthetics): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
-        val geomCtx = jetbrains.datalore.plot.builder.assemble.GeomContextBuilder().aesthetics(aes).build()
+    fun computeLayerDryRunXYRanges(layer: GeomLayer, aes: Aesthetics): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
+        val geomCtx = GeomContextBuilder().aesthetics(aes).build()
 
         val rangesAfterPosAdjustment =
-            jetbrains.datalore.plot.builder.PlotUtil.computeLayerDryRunXYRangesAfterPosAdjustment(layer, aes, geomCtx)
+            computeLayerDryRunXYRangesAfterPosAdjustment(layer, aes, geomCtx)
         val rangesAfterSizeExpand =
-            jetbrains.datalore.plot.builder.PlotUtil.computeLayerDryRunXYRangesAfterSizeExpand(layer, aes, geomCtx)
+            computeLayerDryRunXYRangesAfterSizeExpand(layer, aes, geomCtx)
 
         var rangeX = rangesAfterPosAdjustment.first
         if (rangeX == null) {
@@ -67,16 +68,16 @@ object PlotUtil {
     }
 
     private fun computeLayerDryRunXYRangesAfterPosAdjustment(
-        layer: jetbrains.datalore.plot.builder.GeomLayer, aes: Aesthetics, geomCtx: GeomContext
+        layer: GeomLayer, aes: Aesthetics, geomCtx: GeomContext
     ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
         val posAesX = Iterables.toList(Aes.affectingScaleX(layer.renderedAes()))
         val posAesY = Iterables.toList(Aes.affectingScaleY(layer.renderedAes()))
 
-        val pos = jetbrains.datalore.plot.builder.PlotUtil.createLayerPos(layer, aes)
+        val pos = createLayerPos(layer, aes)
         if (pos.isIdentity) {
             // simplified ranges
-            val rangeX = jetbrains.datalore.plot.builder.PlotUtil.combineRanges(posAesX, aes)
-            val rangeY = jetbrains.datalore.plot.builder.PlotUtil.combineRanges(posAesY, aes)
+            val rangeX = combineRanges(posAesX, aes)
+            val rangeY = combineRanges(posAesY, aes)
             return Pair(rangeX, rangeY)
         }
 
@@ -141,7 +142,7 @@ object PlotUtil {
     }
 
     private fun computeLayerDryRunXYRangesAfterSizeExpand(
-        layer: jetbrains.datalore.plot.builder.GeomLayer,
+        layer: GeomLayer,
         aesthetics: Aesthetics,
         geomCtx: GeomContext
     ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
@@ -149,7 +150,7 @@ object PlotUtil {
         val computeExpandX = renderedAes.contains(Aes.WIDTH)
         val computeExpandY = renderedAes.contains(Aes.HEIGHT)
         val rangeX = if (computeExpandX)
-            jetbrains.datalore.plot.builder.PlotUtil.computeLayerDryRunRangeAfterSizeExpand(
+            computeLayerDryRunRangeAfterSizeExpand(
                 Aes.X,
                 Aes.WIDTH,
                 aesthetics,
@@ -158,7 +159,7 @@ object PlotUtil {
         else
             null
         val rangeY = if (computeExpandY)
-            jetbrains.datalore.plot.builder.PlotUtil.computeLayerDryRunRangeAfterSizeExpand(
+            computeLayerDryRunRangeAfterSizeExpand(
                 Aes.Y,
                 Aes.HEIGHT,
                 aesthetics,
@@ -190,7 +191,7 @@ object PlotUtil {
             val size = sizes.next()
             if (isFinite(loc) && isFinite(size)) {
                 val expand = resolution * (size / 2)
-                jetbrains.datalore.plot.builder.PlotUtil.updateExpandedMinMax(loc, expand, minMax)
+                updateExpandedMinMax(loc, expand, minMax)
             }
         }
 
@@ -205,7 +206,7 @@ object PlotUtil {
         expandedMinMax[1] = max(value + expand, expandedMinMax[1])
     }
 
-    fun createLayerDryRunAesthetics(layer: jetbrains.datalore.plot.builder.GeomLayer): Aesthetics {
+    fun createLayerDryRunAesthetics(layer: GeomLayer): Aesthetics {
         val dryRunMapperByAes = HashMap<Aes<Double>, (Double?) -> Double?>()
         for (aes in layer.renderedAes()) {
             if (aes.isNumeric) {
@@ -215,12 +216,12 @@ object PlotUtil {
             }
         }
 
-        val mappers = jetbrains.datalore.plot.builder.PlotUtil.prepareLayerAestheticMappers(layer, dryRunMapperByAes)
-        return jetbrains.datalore.plot.builder.PlotUtil.createLayerAesthetics(layer, mappers, emptyMap())
+        val mappers = prepareLayerAestheticMappers(layer, dryRunMapperByAes)
+        return createLayerAesthetics(layer, mappers, emptyMap())
     }
 
     internal fun prepareLayerAestheticMappers(
-        layer: jetbrains.datalore.plot.builder.GeomLayer,
+        layer: GeomLayer,
         sharedNumericMappers: Map<Aes<Double>, (Double?) -> Double?>): Map<Aes<*>, (Double?) -> Any?> {
 
         val mappers = HashMap<Aes<*>, (Double?) -> Any?>(sharedNumericMappers)
@@ -245,7 +246,7 @@ object PlotUtil {
         return mappers
     }
 
-    internal fun createLayerAesthetics(layer: jetbrains.datalore.plot.builder.GeomLayer,
+    internal fun createLayerAesthetics(layer: GeomLayer,
                                        sharedMappers: Map<Aes<*>, (Double?) -> Any?>,
                                        overallNumericDomains: Map<Aes<Double>, ClosedRange<Double>>): Aesthetics {
 
@@ -276,7 +277,7 @@ object PlotUtil {
             if (layer.hasConstant(aes)) {
                 // Constant overrides binding
                 val v = layer.getConstant(aes)
-                aesBuilder.constantAes(aes, jetbrains.datalore.plot.builder.PlotUtil.asAesValue(aes, v, mapperOption))
+                aesBuilder.constantAes(aes, asAesValue(aes, v, mapperOption))
             } else {
                 // No constant - look-up aes mapping
                 if (layer.hasBinding(aes)) {
@@ -307,7 +308,7 @@ object PlotUtil {
                     // apply default
                     val v = layer.getDefault(aes)
                     aesBuilder.constantAes(aes,
-                        jetbrains.datalore.plot.builder.PlotUtil.asAesValue(aes, v, mapperOption)
+                        asAesValue(aes, v, mapperOption)
                     )
                 }
             }
@@ -330,13 +331,13 @@ object PlotUtil {
         } else dataValue
     }
 
-    fun rangeWithExpand(layer: jetbrains.datalore.plot.builder.GeomLayer, aes: Aes<Double>, range: ClosedRange<Double>?): ClosedRange<Double>? {
+    fun rangeWithExpand(layer: GeomLayer, aes: Aes<Double>, range: ClosedRange<Double>?): ClosedRange<Double>? {
         if (range == null) return null
 
         // expand X-range to ensure that the data is placed some distance away from the axes.
         // see: http://docs.ggplot2.org/current/scale_continuous.html - expand
-        val mulExp = jetbrains.datalore.plot.builder.PlotUtil.getMultiplicativeExpand(layer, aes)
-        val addExp = jetbrains.datalore.plot.builder.PlotUtil.getAdditiveExpand(layer, aes)
+        val mulExp = getMultiplicativeExpand(layer, aes)
+        val addExp = getAdditiveExpand(layer, aes)
         val lowerEndpoint = range.lowerEndpoint()
         val upperEndpoint = range.upperEndpoint()
 
@@ -359,17 +360,17 @@ object PlotUtil {
         return ClosedRange.closed(lowerEndpoint - lowerExpand, upperEndpoint + upperExpand)
     }
 
-    private fun getMultiplicativeExpand(layer: jetbrains.datalore.plot.builder.GeomLayer, aes: Aes<Double>): Double {
-        val scale = jetbrains.datalore.plot.builder.PlotUtil.findBoundScale(layer, aes)
+    private fun getMultiplicativeExpand(layer: GeomLayer, aes: Aes<Double>): Double {
+        val scale = findBoundScale(layer, aes)
         return scale?.multiplicativeExpand ?: 0.0
     }
 
-    private fun getAdditiveExpand(layer: jetbrains.datalore.plot.builder.GeomLayer, aes: Aes<Double>): Double {
-        val scale = jetbrains.datalore.plot.builder.PlotUtil.findBoundScale(layer, aes)
+    private fun getAdditiveExpand(layer: GeomLayer, aes: Aes<Double>): Double {
+        val scale = findBoundScale(layer, aes)
         return scale?.additiveExpand ?: 0.0
     }
 
-    private fun findBoundScale(layer: jetbrains.datalore.plot.builder.GeomLayer, aes: Aes<*>): Scale<*>? {
+    private fun findBoundScale(layer: GeomLayer, aes: Aes<*>): Scale<*>? {
         if (layer.hasBinding(aes)) {
             return layer.getBinding(aes).scale
         }
