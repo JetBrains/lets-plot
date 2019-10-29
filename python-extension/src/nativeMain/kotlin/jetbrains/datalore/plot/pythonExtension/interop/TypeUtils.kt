@@ -23,7 +23,6 @@ internal object TypeUtils {
         val objType = getPyObjectType(obj)
 
         return when (objType) {
-            // ToDo: tuple ?
             STR -> pyStrToString(obj)
             INT -> pyIntToLong(obj)
             FLOAT -> pyFloatToDouble(obj)
