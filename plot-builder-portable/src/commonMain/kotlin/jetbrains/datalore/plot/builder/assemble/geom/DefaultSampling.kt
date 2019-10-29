@@ -6,6 +6,12 @@ import jetbrains.datalore.plot.builder.sampling.Samplings.systematic
 import jetbrains.datalore.plot.builder.sampling.Samplings.systematicGroup
 import jetbrains.datalore.plot.builder.sampling.Samplings.vertexDp
 
+/*
+ None:
+      livemap
+      raster
+      image
+ */
 object DefaultSampling {
     val SAFETY_SAMPLING = random(200000, 1L)
 
@@ -45,7 +51,4 @@ object DefaultSampling {
     val CONTOURF = systematicGroup(200)
     val DENSITY2D = systematicGroup(200)
     val DENSITY2DF = systematicGroup(200)
-}// None:
-// livemap
-// raster
-// image
+}

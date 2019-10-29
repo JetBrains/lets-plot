@@ -6,22 +6,22 @@ plugins {
 // Building and publishing Python package
 // ----------------------------------------
 
+def task_group = 'datalore plot'
+def tools_dir = "${rootDir}/tools"
+def python_package_dir = "${rootDir}/python-package"
+def python_package_build_dir = "${python_package_dir}/build"
+def python_package_dist_dir = "${python_package_dir}/dist"
+
+clean {
+    delete python_package_build_dir
+    delete python_package_dist_dir
+    delete "${python_package_dir}/datalore_plot/package_data"
+    delete "${python_package_dir}/datalore_plot.egg-info"
+}
+
 if (project.buildSettings.enable_python_package) {
 
     def python_bin_path = project.buildSettings.python.bin_path
-    def task_group = 'datalore plot'
-    def tools_dir = "${rootDir}/tools"
-
-    def python_package_dir = "${rootDir}/python-package"
-    def python_package_build_dir = "${python_package_dir}/build"
-    def python_package_dist_dir = "${python_package_dir}/dist"
-
-    clean {
-        delete python_package_build_dir
-        delete python_package_dist_dir
-        delete "${python_package_dir}/datalore_plot/package_data"
-        delete "${python_package_dir}/datalore_plot.egg-info"
-    }
 
     task buildPythonPackage(type: Exec) {
         group = task_group
