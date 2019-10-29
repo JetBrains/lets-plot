@@ -8,4 +8,5 @@ internal object PythonTypes {
     const val NONE = "NoneType"
     const val LIST = "list"
     const val DICT = "dict"
+    const val TUPLE = "tuple"
 }
