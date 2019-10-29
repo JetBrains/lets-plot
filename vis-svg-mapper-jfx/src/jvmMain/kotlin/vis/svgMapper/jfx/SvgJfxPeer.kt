@@ -3,6 +3,7 @@ package jetbrains.datalore.vis.svgMapper.jfx
 import javafx.scene.Node
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.vis.svg.SvgLocatable
 import jetbrains.datalore.vis.svg.SvgNode
@@ -58,11 +59,12 @@ class SvgJfxPeer : SvgPlatformPeer {
     }
 
     override fun getComputedTextLength(node: SvgTextContent): Double {
-        TODO()
+        UNSUPPORTED("getComputedTextLength")
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun transformCoordinates(relative: SvgLocatable, point: DoubleVector, inverse: Boolean): DoubleVector {
-        TODO()
+        UNSUPPORTED("getComputedTextLength")
     }
 
     override fun invertTransform(relative: SvgLocatable, point: DoubleVector): DoubleVector {

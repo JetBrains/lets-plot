@@ -1,6 +1,7 @@
 package jetbrains.datalore.vis.svgToScene
 
 import javafx.scene.transform.*
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.vis.svg.SvgTransform
 import kotlin.math.sin
 
@@ -60,7 +61,7 @@ fun parseSvgTransform(svgTransform: String): List<Transform> {
                     Translate(dX, dY)
                 }
 
-                SvgTransform.MATRIX -> TODO("We don't use MATRIX")
+                SvgTransform.MATRIX -> UNSUPPORTED("We don't use MATRIX")
 
                 else -> throw IllegalArgumentException("Unknown transform: " + res.name)
             }

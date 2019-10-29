@@ -1,11 +1,12 @@
 package jetbrains.datalore.plot.common.base64
 
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import org.khronos.webgl.*
 import kotlin.browser.window
 
 actual object BinaryUtil {
     actual fun encodeList(l: List<Double?>): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        UNSUPPORTED("BinaryUtil.encodeList()")
     }
 
     actual fun decodeList(s: String): List<Double> {
@@ -63,15 +64,15 @@ actual object BinaryUtil {
     }
 
     private fun decodeDouble(
-            b0: Byte,
-            b1: Byte,
-            b2: Byte,
-            b3: Byte,
-            b4: Byte,
-            b5: Byte,
-            b6: Byte,
-            b7: Byte,
-            byteView: Uint8Array
+        b0: Byte,
+        b1: Byte,
+        b2: Byte,
+        b3: Byte,
+        b4: Byte,
+        b5: Byte,
+        b6: Byte,
+        b7: Byte,
+        byteView: Uint8Array
     ) {
         byteView[0] = b0
         byteView[1] = b1

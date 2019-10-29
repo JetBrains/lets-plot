@@ -6,8 +6,8 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.core.animation.Animation.Direction
@@ -20,6 +20,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectSystem
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
+import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.rendering.setFillColor
 import jetbrains.livemap.entities.rendering.setStrokeColor
@@ -64,7 +65,7 @@ class GrowingPathTest {
                 eventSpec: MouseEventSpec,
                 eventHandler: EventHandler<MouseEvent>
             ): Registration {
-                TODO("not implemented")
+                UNSUPPORTED()
             }
         })
 
@@ -93,7 +94,6 @@ class GrowingPathTest {
             )
         )
     }
-
 
 
     private fun doAnimationSequence(progress: List<Double>) {

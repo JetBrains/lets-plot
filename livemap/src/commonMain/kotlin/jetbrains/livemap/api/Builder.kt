@@ -5,6 +5,7 @@ import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.tileprotocol.TileLayer
@@ -188,7 +189,6 @@ class PathBuilder {
         )
     }
 }
-
 
 
 @LiveMapDsl
@@ -460,14 +460,14 @@ fun liveMapGeocoding(block: LiveMapGeocodingServiceBuilder.() -> Unit): Geocodin
 val dummyGeocodingService: GeocodingService = GeocodingService(
     object : GeoTransport {
         override fun send(request: GeoRequest): Async<GeoResponse> {
-            TODO("not implemented")
+            UNSUPPORTED("dummyGeocodingService.send")
         }
     }
 )
 
 val dummyTileService: TileService = object : TileService(DummySocketBuilder(), Theme.COLOR) {
     override fun getTileData(bbox: Rect<LonLat>, zoom: Int): Async<List<TileLayer>> {
-        return constant(emptyList<TileLayer>())
+        return constant(emptyList())
     }
 }
 
@@ -476,17 +476,16 @@ internal class DummySocketBuilder : SocketBuilder {
     override fun build(handler: SocketHandler): Socket {
         return object : Socket {
             override fun connect() {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                UNSUPPORTED("DummySocketBuilder.connect")
             }
 
             override fun close() {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                UNSUPPORTED("DummySocketBuilder.close")
             }
 
             override fun send(msg: String) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                UNSUPPORTED("DummySocketBuilder.send")
             }
-
         }
     }
 }

@@ -48,8 +48,6 @@ fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, pa
         buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
-    } catch (e: NotImplementedError) {
-        handleException(e, parentElement)
     }
 }
 
@@ -64,8 +62,6 @@ fun buildPlotFromProcessedSpecs(plotSpecJs: dynamic, width: Double, height: Doub
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         buildPlotFromProcessedSpecsIntern(plotSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
-        handleException(e, parentElement)
-    } catch (e: NotImplementedError) {
         handleException(e, parentElement)
     }
 }

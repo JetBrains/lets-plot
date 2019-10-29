@@ -3,6 +3,7 @@ package jetbrains.datalore.plot.builder.tooltip
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
@@ -56,12 +57,20 @@ class TooltipBoxTest {
     fun verticalDirectionCases() {
         tooltipBox.apply {
             setPosition(ZERO, wordSize.add(p(0.0, 10.0)), VERTICAL)
-            assertEquals(pointerDirection, TooltipBox.PointerDirection.DOWN, "Pointer above tooltip - PointerDirection.DOWN")
+            assertEquals(
+                pointerDirection,
+                TooltipBox.PointerDirection.DOWN,
+                "Pointer above tooltip - PointerDirection.DOWN"
+            )
         }
 
         tooltipBox.apply {
             setPosition(ZERO, p(0.0, -10.0), VERTICAL)
-            assertEquals(pointerDirection, TooltipBox.PointerDirection.UP, "Pointer under tooltip - PointerDirection.UP")
+            assertEquals(
+                pointerDirection,
+                TooltipBox.PointerDirection.UP,
+                "Pointer under tooltip - PointerDirection.UP"
+            )
         }
     }
 
@@ -69,12 +78,20 @@ class TooltipBoxTest {
     fun horizontalDirectionCases() {
         tooltipBox.apply {
             setPosition(ZERO, wordSize.add(p(10.0, 0.0)), HORIZONTAL)
-            assertEquals(pointerDirection, TooltipBox.PointerDirection.RIGHT, "Pointer right from tooltip - PointerDirection.LEFT")
+            assertEquals(
+                pointerDirection,
+                TooltipBox.PointerDirection.RIGHT,
+                "Pointer right from tooltip - PointerDirection.LEFT"
+            )
         }
 
         tooltipBox.apply {
             setPosition(ZERO, p(-10.0, 0.0), HORIZONTAL)
-            assertEquals(pointerDirection, TooltipBox.PointerDirection.LEFT, "Pointer left from tooltip - PointerDirection.RIGHT")
+            assertEquals(
+                pointerDirection,
+                TooltipBox.PointerDirection.LEFT,
+                "Pointer left from tooltip - PointerDirection.RIGHT"
+            )
         }
     }
 
@@ -84,15 +101,15 @@ class TooltipBoxTest {
     class MockSvgPlatformPeer : SvgPlatformPeer {
         private val myLabelBboxes = mutableMapOf<String, DoubleVector>()
         override fun getComputedTextLength(node: SvgTextContent): Double {
-            TODO("not implemented")
+            UNSUPPORTED()
         }
 
         override fun invertTransform(relative: SvgLocatable, point: DoubleVector): DoubleVector {
-            TODO("not implemented")
+            UNSUPPORTED()
         }
 
         override fun applyTransform(relative: SvgLocatable, point: DoubleVector): DoubleVector {
-            TODO("not implemented")
+            UNSUPPORTED()
         }
 
         override fun getBBox(element: SvgLocatable): DoubleRectangle {
@@ -104,11 +121,13 @@ class TooltipBoxTest {
                     .run { (this as SvgTextNode).textContent().get() }
                     .run { myLabelBboxes[this]!! }
                     .run { DoubleRectangle(0.0, -this.y, this.x, 0.0) }
-            } catch (e: Throwable) { }
+            } catch (e: Throwable) {
+            }
 
             // another type
             try {
-            } catch (e: Throwable) {}
+            } catch (e: Throwable) {
+            }
 
             if (element is SvgElement) {
                 error("Unknown element: ${SvgNodeBufferUtil.generateSvgNodeBuffer(element)}")

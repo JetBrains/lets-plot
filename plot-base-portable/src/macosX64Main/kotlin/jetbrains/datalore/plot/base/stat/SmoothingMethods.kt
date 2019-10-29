@@ -1,5 +1,6 @@
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.base.stat.regression.RegressionEvaluator
 import jetbrains.datalore.plot.base.stat.regression.SimpleRegression
 
@@ -9,6 +10,6 @@ actual object SmoothingMethods {
     }
 
     actual fun loess(valuesX: List<Double?>, valuesY: List<Double?>, confidenceLevel: Double): RegressionEvaluator {
-        TODO("not implemented")
+        UNSUPPORTED("loess")
     }
 }
