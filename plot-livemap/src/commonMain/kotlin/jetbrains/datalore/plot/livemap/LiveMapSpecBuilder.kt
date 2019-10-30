@@ -86,7 +86,6 @@ internal class LiveMapSpecBuilder {
 
         val liveMapProcessor = LiveMapDataPointAestheticsProcessor(
             myAesthetics,
-            myDataAccess,
             myLiveMapOptions,
             mapProjection
         )

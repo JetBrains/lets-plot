@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesInitValue
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.MultiDataPoint
@@ -25,7 +24,6 @@ import kotlin.math.max
 
 internal class LiveMapDataPointAestheticsProcessor(
     private val myAesthetics: Aesthetics,
-    private val myMappedDataAccess: MappedDataAccess,
     liveMapOptions: LiveMapOptions,
     private val myMapProjection: MapProjection
 ) {
@@ -75,9 +73,7 @@ internal class LiveMapDataPointAestheticsProcessor(
     }
 
     init {
-
         myLayerKind = getLayerKind(liveMapOptions.displayMode)
-
         myFrameSpecified = allAesMatch(myAesthetics, ::isFrameSet)
         myLonLatInsideMapIdSpecified = allAesMatch(myAesthetics, ::isLiveMapWithLonLat)
     }
@@ -87,7 +83,7 @@ internal class LiveMapDataPointAestheticsProcessor(
     }
 
     fun createMapLayer(): MapLayer {
-        return MapLayer(myLayerKind, mapObjects/*, createTooltipAesSpec(GeomKind.LIVE_MAP, myMappedDataAccess)*/)
+        return MapLayer(myLayerKind, mapObjects)
     }
 
     private fun processDataPoints(): List<MapObject> {

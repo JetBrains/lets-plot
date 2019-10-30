@@ -53,21 +53,7 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
 }
 
 fun Paths.path(block: PathBuilder.() -> Unit) {
-    PathBuilder().apply {
-        index = 0
-        mapId = ""
-        regionId = ""
-
-        lineDash = emptyList()
-        strokeColor = Color.BLACK
-        strokeWidth = 1.0
-        coordinates = emptyList()
-
-        animation = 0
-        speed = 0.0
-        flow = 0.0
-
-    }
+    PathBuilder()
         .apply(block)
         .build(factory, toMapProjection)
         ?.let { pathEntity ->
@@ -77,26 +63,26 @@ fun Paths.path(block: PathBuilder.() -> Unit) {
 
 @LiveMapDsl
 class PathBuilder {
-    var index: Int? = null
-    var mapId: String? = null
-    var regionId: String? = null
+    var index: Int = 0
+    var mapId: String = ""
+    var regionId: String = ""
 
-    var lineDash: List<Double>? = null
-    var strokeColor: Color? = null
-    var strokeWidth: Double? = null
-    var coordinates: List<Vec<LonLat>>? = null
+    var lineDash: List<Double> = emptyList()
+    var strokeColor: Color = Color.BLACK
+    var strokeWidth: Double = 1.0
+    var coordinates: List<Vec<LonLat>> = emptyList()
 
-    var animation: Int? = null
-    var speed: Double? = null
-    var flow: Double? = null
+    var animation: Int = 0
+    var speed: Double = 0.0
+    var flow: Double = 0.0
 
-    var geodesic: Boolean? = null
+    var geodesic: Boolean = false
 
     fun build(
         factory: Entities.MapEntityFactory,
         toMapProjection: (LonLatGeometry) -> WorldGeometry
     ): EcsEntity? {
-        val coord = (coordinates.takeIf { !geodesic!! } ?: createArcPath(coordinates!!))
+        val coord = (coordinates.takeIf { !geodesic } ?: createArcPath(coordinates))
                 .run { LonLatRing(this) }
                 .run { LonLatPolygon(listOf(this)) }
                 .run { LonLatMultiPolygon(listOf(this)) }
@@ -115,9 +101,9 @@ class PathBuilder {
                         }
                         + WorldDimensionComponent(bbox.dimension)
                         + StyleComponent().apply {
-                            setStrokeColor(this@PathBuilder.strokeColor!!)
-                            strokeWidth = this@PathBuilder.strokeWidth!!
-                            lineDash = this@PathBuilder.lineDash!!.toDoubleArray()
+                            setStrokeColor(this@PathBuilder.strokeColor)
+                            strokeWidth = this@PathBuilder.strokeWidth
+                            lineDash = this@PathBuilder.lineDash.toDoubleArray()
                         }
                     }
 

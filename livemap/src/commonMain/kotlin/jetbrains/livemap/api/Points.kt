@@ -59,46 +59,32 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
         .setComponent(
             AnimationObjectComponent(animationBuilder.build())
         )
-
-    //items.add(MapLayer(POINT, Points().apply(block).items))
 }
 
 fun Points.point(block: PointBuilder.() -> Unit) {
-    val entity = PointBuilder().apply {
-        animation = 0
-        index = 0
-        mapId = ""
-        regionId = ""
-        label = ""
-
-        strokeWidth = 1.0
-        strokeColor = Color.BLACK
-
-        fillColor = Color.WHITE
-
-        radius = 4.0
-        shape = 1
-    }
+    PointBuilder()
         .apply(block)
         .build(factory, mapProjection, devParams, animationBuilder)
-
-    layerEntitiesComponent.add(entity.id)
+        .let { entity -> layerEntitiesComponent.add(entity.id) }
 }
 
 @LiveMapDsl
 class PointBuilder {
-    var animation: Int? = null
-    var label: String? = null
-    var shape: Int? = null
+    var index: Int = 0
+    var mapId: String = ""
+    var regionId: String = ""
+
     var lat: Double? = null
     var lon: Double? = null
-    var radius: Double? = null
-    var fillColor: Color? = null
-    var strokeColor: Color? = null
-    var strokeWidth: Double? = null
-    var index: Int? = null
-    var mapId: String? = null
-    var regionId: String? = null
+
+    var radius: Double = 4.0
+    var fillColor: Color = Color.WHITE
+    var strokeColor: Color = Color.BLACK
+    var strokeWidth: Double = 1.0
+
+    var animation: Int = 0
+    var label: String = ""
+    var shape: Int = 1
 
     fun build(
         factory: Entities.MapEntityFactory,
@@ -106,12 +92,12 @@ class PointBuilder {
         devParams: DevParams,
         animationBuilder: Animations.AnimationBuilder
     ): EcsEntity {
-        val size = radius!! * 2.0
+        val size = radius * 2.0
 
         val entity = factory
             .createMapEntity(mapProjection.project(explicitVec<LonLat>(lon!!, lat!!)), PointRenderer(), "map_ent_point")
             .addComponents {
-                + PointComponent().apply { shape = this@PointBuilder.shape!! }
+                + PointComponent().apply { shape = this@PointBuilder.shape }
                 + createStyle()
                 + if (devParams.isSet(DevParams.POINT_SCALING)) {
                     WorldDimensionComponent(explicitVec<World>(size, size))
@@ -138,10 +124,10 @@ class PointBuilder {
 
     private fun createStyle(): StyleComponent {
         return when(shape) {
-            in 1..14 -> StyleComponent().apply { setStrokeColor(this@PointBuilder.strokeColor!!); strokeWidth = this@PointBuilder.strokeWidth!! }
-            in 15..18, 20 -> StyleComponent().apply { setFillColor(this@PointBuilder.strokeColor!!); strokeWidth = Double.NaN }
-            19 -> StyleComponent().apply { setFillColor(this@PointBuilder.strokeColor!!); setStrokeColor(this@PointBuilder.strokeColor!!); strokeWidth = this@PointBuilder.strokeWidth!! }
-            in 21..25 -> StyleComponent().apply { setFillColor(this@PointBuilder.fillColor!!); setStrokeColor(this@PointBuilder.strokeColor!!); strokeWidth = this@PointBuilder.strokeWidth!! }
+            in 1..14 -> StyleComponent().apply { setStrokeColor(this@PointBuilder.strokeColor); strokeWidth = this@PointBuilder.strokeWidth }
+            in 15..18, 20 -> StyleComponent().apply { setFillColor(this@PointBuilder.strokeColor); strokeWidth = Double.NaN }
+            19 -> StyleComponent().apply { setFillColor(this@PointBuilder.strokeColor); setStrokeColor(this@PointBuilder.strokeColor); strokeWidth = this@PointBuilder.strokeWidth }
+            in 21..25 -> StyleComponent().apply { setFillColor(this@PointBuilder.fillColor); setStrokeColor(this@PointBuilder.strokeColor); strokeWidth = this@PointBuilder.strokeWidth }
             else -> error("Not supported shape: ${this@PointBuilder.shape}")
         }
     }
