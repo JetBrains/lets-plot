@@ -20,14 +20,16 @@ import jetbrains.gis.tileprotocol.socket.SocketBuilder
 import jetbrains.gis.tileprotocol.socket.SocketHandler
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
 import jetbrains.livemap.DevParams
+import jetbrains.livemap.LayerProvider
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
-import jetbrains.livemap.entities.geometry.LonLatGeometry
+import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.mapobjects.*
-import jetbrains.livemap.mapobjects.MapLayerKind.*
 import jetbrains.livemap.mapobjects.Utils.splitMapBarChart
 import jetbrains.livemap.mapobjects.Utils.splitMapPieChart
-import jetbrains.livemap.projections.*
+import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.ProjectionType
 import kotlin.math.abs
 
 @DslMarker
@@ -38,24 +40,24 @@ class LiveMapBuilder {
     lateinit var size: DoubleVector
     lateinit var geocodingService: GeocodingService
     lateinit var tileService: TileService
+    lateinit var layerProvider: LayerProvider
 
     var zoom: Int? = null
     var interactive: Boolean = true
     var mapLocation: MapLocation? = null
     var level: FeatureLevel? = null
     var parent: MapRegion? = null
-    var layers: MutableList<MapLayer> = ArrayList()
 
     var projectionType: ProjectionType = ProjectionType.MERCATOR
     var isLoopX: Boolean = true
     var isLoopY: Boolean = false
 
     var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit }
-    var devParams: Map<String, Any> = HashMap()
+    var devParams: DevParams = DevParams(HashMap<String, Any>())
 
 
     fun params(vararg values: Pair<String, Any>) {
-        devParams = mapOf(*values)
+        devParams = DevParams(mapOf(*values))
     }
 
     fun build(): LiveMapSpec {
@@ -63,7 +65,7 @@ class LiveMapBuilder {
             size = size,
             zoom = zoom,
             isInteractive = interactive,
-            layers = layers,
+            layerProvider = layerProvider,
 
             level = level,
             location = mapLocation,
@@ -77,7 +79,7 @@ class LiveMapBuilder {
 
             mapLocationConsumer = mapLocationConsumer,
 
-            devParams = DevParams(devParams),
+            devParams = devParams,
 
             // deprecated
             isClustering = false,
@@ -91,19 +93,12 @@ class LiveMapBuilder {
 }
 
 @LiveMapDsl
-class LayersBuilder {
-    val items = ArrayList<MapLayer>()
-}
-
-@LiveMapDsl
-class Points {
-    val items = ArrayList<MapPoint>()
-}
-
-@LiveMapDsl
-class Paths {
-    val items = ArrayList<MapPath>()
-}
+class LayersBuilder(
+    val myComponentManager: EcsComponentManager,
+    val layerManager: LayerManager,
+    val mapProjection: MapProjection,
+    val devParams: DevParams
+)
 
 @LiveMapDsl
 class Polygons {
@@ -129,72 +124,6 @@ class Pies {
 class Texts {
     val items = ArrayList<MapText>()
 }
-
-@LiveMapDsl
-class PointBuilder {
-    var animation: Int? = null
-    var label: String? = null
-    var shape: Int? = null
-    var lat: Double? = null
-    var lon: Double? = null
-    var radius: Double? = null
-    var fillColor: Color? = null
-    var strokeColor: Color? = null
-    var strokeWidth: Double? = null
-    var index: Int? = null
-    var mapId: String? = null
-    var regionId: String? = null
-    fun build(): MapPoint {
-        return MapPoint(
-            index!!,
-            mapId,
-            regionId,
-            explicitVec<LonLat>(lon!!, lat!!),
-            label!!,
-            animation!!,
-            shape!!,
-            radius!!,
-            fillColor!!,
-            strokeColor!!,
-            strokeWidth!!
-        )
-    }
-}
-
-@LiveMapDsl
-class PathBuilder {
-    var index: Int? = null
-    var mapId: String? = null
-    var regionId: String? = null
-
-    var lineDash: List<Double>? = null
-    var strokeColor: Color? = null
-    var strokeWidth: Double? = null
-    var coordinates: List<Vec<LonLat>>? = null
-
-    var animation: Int? = null
-    var speed: Double? = null
-    var flow: Double? = null
-
-    var geodesic: Boolean? = null
-
-    fun build(): MapPath {
-        val coord = coordinates.takeIf { !geodesic!! } ?: createArcPath(coordinates!!)
-
-        return MapPath(
-            index!!, mapId, regionId,
-            coord
-                .run { LonLatRing(this) }
-                .run { LonLatPolygon(listOf(this)) }
-                .run { LonLatMultiPolygon(listOf(this)) }
-                .run { LonLatGeometry.create(this) },
-            animation!!, speed!!,
-            flow!!, lineDash!!, strokeColor!!,
-            strokeWidth!!
-        )
-    }
-}
-
 
 @LiveMapDsl
 class PolygonsBuilder {
@@ -385,44 +314,32 @@ class LiveMapGeocodingServiceBuilder {
 fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
 
 fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
-    layers.addAll(LayersBuilder().apply(block).items)
+    layerProvider = DemoLayerProvider(devParams, block)
 }
 
-fun LayersBuilder.points(block: Points.() -> Unit) {
-    items.add(MapLayer(POINT, Points().apply(block).items))
-}
-
-fun LayersBuilder.paths(block: Paths.() -> Unit) {
-    items.add(MapLayer(PATH, Paths().apply(block).items))
-}
-
-fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
-    items.add(MapLayer(POLYGON, Polygons().apply(block).items))
-}
-
-fun LayersBuilder.hLines(block: Lines.() -> Unit) {
-    items.add(MapLayer(H_LINE, Lines().apply(block).items))
-}
-
-fun LayersBuilder.vLines(block: Lines.() -> Unit) {
-    items.add(MapLayer(V_LINE, Lines().apply(block).items))
-}
-
-fun LayersBuilder.bars(block: Bars.() -> Unit) {
-    items.add(MapLayer(BAR, Bars().apply(block).factory.produce()))
-}
-
-fun LayersBuilder.pies(block: Pies.() -> Unit) {
-    items.add(MapLayer(PIE, Pies().apply(block).factory.produce()))
-}
-
-fun LayersBuilder.texts(block: Texts.() -> Unit) {
-    items.add(MapLayer(TEXT, Texts().apply(block).items))
-}
-
-fun point(block: PointBuilder.() -> Unit) = PointBuilder().apply(block)
-
-fun path(block: PathBuilder.() -> Unit) = PathBuilder().apply(block)
+//fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
+//    items.add(MapLayer(POLYGON, Polygons().apply(block).items))
+//}
+//
+//fun LayersBuilder.hLines(block: Lines.() -> Unit) {
+//    items.add(MapLayer(H_LINE, Lines().apply(block).items))
+//}
+//
+//fun LayersBuilder.vLines(block: Lines.() -> Unit) {
+//    items.add(MapLayer(V_LINE, Lines().apply(block).items))
+//}
+//
+//fun LayersBuilder.bars(block: Bars.() -> Unit) {
+//    items.add(MapLayer(BAR, Bars().apply(block).factory.produce()))
+//}
+//
+//fun LayersBuilder.pies(block: Pies.() -> Unit) {
+//    items.add(MapLayer(PIE, Pies().apply(block).factory.produce()))
+//}
+//
+//fun LayersBuilder.texts(block: Texts.() -> Unit) {
+//    items.add(MapLayer(TEXT, Texts().apply(block).items))
+//}
 
 fun LiveMapBuilder.location(block: Location.() -> Unit) {
     Location().apply(block).let { location ->

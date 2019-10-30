@@ -42,6 +42,7 @@ class PointsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                 }
                 points {
                     point {
+                        animation = 2
                         lon = 0.0
                         lat = 0.0
                         shape = 21

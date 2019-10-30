@@ -38,7 +38,7 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
         val mapDataGeocodingHelper = MapDataGeocodingHelper(
             myLiveMapSpec.size,
             myLiveMapSpec.geocodingService,
-            myLiveMapSpec.layers,
+            myLiveMapSpec.layerProvider.layers,
             myLiveMapSpec.level,
             myLiveMapSpec.parent,
             myLiveMapSpec.location,
@@ -63,7 +63,7 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
         return LiveMap(
             myMapProjection,
             myViewport,
-            myLiveMapSpec.layers,
+            myLiveMapSpec.layerProvider,
             createTileLoadingFactory(myLiveMapSpec.devParams),
             FragmentProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
             myLiveMapSpec.devParams,

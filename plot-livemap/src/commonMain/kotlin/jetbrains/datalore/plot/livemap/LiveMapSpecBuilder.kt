@@ -80,8 +80,7 @@ internal class LiveMapSpecBuilder {
     }
 
     fun build(): LiveMapSpec {
-        val projectionType =
-            convertProjectionType(myLiveMapOptions.projection)
+        val projectionType = convertProjectionType(myLiveMapOptions.projection)
         val mapRect = WorldRectangle(0.0, 0.0, ProjectionUtil.TILE_PIXEL_SIZE, ProjectionUtil.TILE_PIXEL_SIZE)
         val mapProjection = createMapProjection(projectionType, mapRect)
 
@@ -115,7 +114,7 @@ internal class LiveMapSpecBuilder {
             myLiveMapOptions.zoom,
             getFeatureLevel(myLiveMapOptions.featureLevel),
             createMapRegion(myLiveMapOptions.parent),
-            mapLayers,
+            PlotLayerProvider(mapLayers, myDevParams),
             CYLINDRICAL_PROJECTIONS.contains(projectionType),
             DEFAULT_LOOP_Y,
             myMapLocationConsumer,

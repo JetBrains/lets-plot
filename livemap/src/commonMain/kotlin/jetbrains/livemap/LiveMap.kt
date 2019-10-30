@@ -53,10 +53,6 @@ import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
 import jetbrains.livemap.fragments.FragmentProvider
-import jetbrains.livemap.mapobjects.MapLayer
-import jetbrains.livemap.mapobjects.MapLayerKind
-import jetbrains.livemap.obj2entity.MapObject2Entity
-import jetbrains.livemap.obj2entity.TextMeasurer
 import jetbrains.livemap.projections.Coordinates
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.newDoubleRectangle
@@ -78,7 +74,8 @@ import jetbrains.livemap.ui.UiService
 class LiveMap(
     private val myMapProjection: MapProjection,
     private val viewport: Viewport,
-    private val myMapLayers: List<MapLayer>,
+    private val myLayerProvider: LayerProvider,
+    // private val myMapLayers: List<MapLayer>,
     private val myTileLoadingSystemBuilder: TileLoadingSystemFactory,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
@@ -279,26 +276,12 @@ class LiveMap(
                 }
         }
 
-        val mapObject2Entity = MapObject2Entity(componentManager, layerManager, myDevParams, myMapProjection)
-        for (mapLayer in myMapLayers) {
-            val kind = mapLayer.kind
-            val mapObjects = mapLayer.mapObjects
-
-            when(kind) {
-                MapLayerKind.POINT -> mapObject2Entity.processPoint(mapObjects)
-                MapLayerKind.PATH -> mapObject2Entity.processPath(mapObjects)
-                MapLayerKind.POLYGON -> mapObject2Entity.processPolygon(mapObjects)
-                MapLayerKind.BAR -> mapObject2Entity.processBar(mapObjects)
-                MapLayerKind.PIE -> mapObject2Entity.processPie(mapObjects)
-                MapLayerKind.H_LINE -> mapObject2Entity.processLine(mapObjects, true)
-                MapLayerKind.V_LINE -> mapObject2Entity.processLine(mapObjects, false)
-                MapLayerKind.TEXT -> mapObject2Entity.processText(
-                    mapObjects,
-                    TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
-                )
-                else -> error("")
-            }
-        }
+        myLayerProvider.provide(
+            componentManager,
+            layerManager,
+            myMapProjection,
+            myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d
+        )
 
         if (myDevParams.isNotSet(RASTER_TILES)) {
             componentManager

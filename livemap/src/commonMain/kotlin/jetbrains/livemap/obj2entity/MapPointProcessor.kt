@@ -16,6 +16,7 @@ import jetbrains.livemap.core.animation.Animations.DoubleAnimator
 import jetbrains.livemap.core.ecs.AnimationObjectComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.DirtyRenderLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayerManager
@@ -47,8 +48,10 @@ internal class MapPointProcessor(
     init {
         myLayerEntity = myComponentManager
             .createEntity("map_layer_point")
-            .addComponent(layerManager.createRenderLayerComponent("geom_point"))
-            .addComponent(myLayerEntitiesComponent)
+            .addComponents {
+                + layerManager.createRenderLayerComponent("geom_point")
+                + myLayerEntitiesComponent
+            }
         myFactory = MapEntityFactory(myLayerEntity)
     }
 
@@ -68,17 +71,17 @@ internal class MapPointProcessor(
 
         return myFactory
             .createMapEntity(myMapProjection.project(mapPoint.point), PointRenderer(), "map_ent_point")
-            .addComponent(PointComponent().apply { shape = mapPoint.shape })
-            .addComponent(createStyle(mapPoint))
-            .addComponent(
-                if (myDevParams.isSet(POINT_SCALING)) {
+            .addComponents {
+                + PointComponent().apply { shape = mapPoint.shape }
+                + createStyle(mapPoint)
+                + if (myDevParams.isSet(POINT_SCALING)) {
                     WorldDimensionComponent(explicitVec<World>(size, size))
                 } else {
                     ScreenDimensionComponent().apply {
                         dimension = explicitVec<Client>(size, size)
                     }
                 }
-            )
+            }
     }
 
     private fun processAnimation() {
@@ -95,7 +98,7 @@ internal class MapPointProcessor(
                 }
 
                 animation.addAnimator(scaleAnimator)
-                entity.addComponent(transformComponent)
+                entity.addComponents{ + transformComponent }
             }
         }
 
