@@ -80,7 +80,7 @@ class NumberFormat(private val spec: Spec) {
                         .toRegex()
                         .find(num.toDouble().absoluteValue.toString().toLowerCase())
                         ?.destructured
-                        ?: error("Wrong number: ${num}")
+                        ?: error("Wrong number: $num")
 
                 val exponent: Int = exponentString.toIntOrNull() ?: 0
 
@@ -151,6 +151,11 @@ class NumberFormat(private val spec: Spec) {
     }
 
     fun apply(num: Number): String {
+        val nonNumberString = handleNonNumbers(num)
+        if (nonNumberString != null) {
+            return nonNumberString
+        }
+
         val numberInfo = createNumberInfo(num)
         var output = Output()
 
@@ -173,6 +178,21 @@ class NumberFormat(private val spec: Spec) {
 
         return getAlignedString(output)
     }
+
+    private fun handleNonNumbers(num: Number): String? {
+        val number = num.toDouble()
+
+        if (number.isNaN()) {
+            return "NaN"
+        }
+
+        return when (num.toDouble()) {
+            Double.NEGATIVE_INFINITY -> "-Infinity"
+            Double.POSITIVE_INFINITY -> "+Infinity"
+            else -> null
+        }
+    }
+
 
     private fun getAlignedString(output: Output): String {
         with(output) {
