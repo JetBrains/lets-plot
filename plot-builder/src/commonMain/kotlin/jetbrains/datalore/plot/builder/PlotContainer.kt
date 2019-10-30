@@ -20,7 +20,7 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
 import kotlin.math.max
 
 class PlotContainer(
-    private val plot: jetbrains.datalore.plot.builder.Plot,
+    private val plot: Plot,
     private val preferredSize: ReadableProperty<DoubleVector>
 ) {
 
@@ -46,7 +46,7 @@ class PlotContainer(
 
         setSvgSize(preferredSize.get())
 
-        plot.laidOutSize().addHandler(jetbrains.datalore.plot.builder.PlotContainer.Companion.sizePropHandler { laidOutSize ->
+        plot.laidOutSize().addHandler(sizePropHandler { laidOutSize ->
             val newSvgSize = DoubleVector(
                 max(preferredSize.get().x, laidOutSize.x),
                 max(preferredSize.get().y, laidOutSize.y)
@@ -54,7 +54,7 @@ class PlotContainer(
             setSvgSize(newSvgSize)
         })
 
-        preferredSize.addHandler(jetbrains.datalore.plot.builder.PlotContainer.Companion.sizePropHandler { newPreferredSize ->
+        preferredSize.addHandler(sizePropHandler { newPreferredSize ->
             if (newPreferredSize.x > 0 && newPreferredSize.y > 0) {
                 revalidateContent()
             }

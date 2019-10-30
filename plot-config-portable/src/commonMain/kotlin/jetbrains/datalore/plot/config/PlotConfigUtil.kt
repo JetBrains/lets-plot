@@ -57,7 +57,7 @@ object PlotConfigUtil {
         return layersDataByTile
     }
 
-    // S
+    // backend
     fun addComputationMessage(accessor: OptionsAccessor, message: String?) {
         checkArgument(message != null)
         val computationMessages = ArrayList(
@@ -69,7 +69,7 @@ object PlotConfigUtil {
         accessor.update(PLOT_COMPUTATION_MESSAGES, computationMessages)
     }
 
-    // J
+    // frontend
     fun findComputationMessages(spec: Map<*, *>): List<String> {
         val result: List<String>
         if (PlotConfig.isPlotSpec(spec)) {

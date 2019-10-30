@@ -5,6 +5,8 @@ import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_MOVED
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ValueProperty
+import jetbrains.datalore.plot.DemoAndTest
+import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
 import java.awt.Color
 import java.awt.Component
@@ -62,8 +64,8 @@ object PlotConfigDemoUtil {
         factory: SwingDemoFactory,
         plotSize: DoubleVector
     ): JComponent {
-        val plot = jetbrains.datalore.plot.DemoAndTest.createPlot(plotSpec, false)
-        val plotContainer = jetbrains.datalore.plot.builder.PlotContainer(plot, ValueProperty(plotSize))
+        val plot = DemoAndTest.createPlot(plotSpec, false)
+        val plotContainer = PlotContainer(plot, ValueProperty(plotSize))
         plotContainer.ensureContentBuilt()
 
         val component = factory.createSvgComponent(plotContainer.svg)
