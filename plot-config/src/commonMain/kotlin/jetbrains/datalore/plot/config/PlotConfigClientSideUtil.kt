@@ -204,7 +204,7 @@ object PlotConfigClientSideUtil {
                 LookupStrategy.HOVER
             )
 
-            GeomKind.BAR, GeomKind.ERROR_BAR -> return builder.univariateFunction(LookupStrategy.NEAREST)
+            GeomKind.BAR, GeomKind.ERROR_BAR -> return builder.univariateFunction(LookupStrategy.HOVER)
 
             GeomKind.SMOOTH, GeomKind.POINT, GeomKind.CONTOUR, GeomKind.RIBBON, GeomKind.DENSITY2D, GeomKind.TILE -> {
                 if (geomKind === GeomKind.SMOOTH) {
