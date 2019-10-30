@@ -12,7 +12,7 @@ abstract class LegendBoxSpec(val title: String, val theme: LegendTheme) {
     private val myInnerOrigin: DoubleVector
     private val myInnerContentExtend: DoubleVector
 
-    internal abstract val layout: jetbrains.datalore.plot.builder.guide.LegendBoxLayout
+    internal abstract val layout: LegendBoxLayout
 
     private val contentSize: DoubleVector
         get() = layout.size
