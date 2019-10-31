@@ -41,14 +41,14 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         Codes and names: 0 = "none" (default), 1 = "ripple".
     map : dictionary, pandas DataFrame or GeocodedRegion object
         Using with aesthetic param 'map_id'.
-        Data (Dictionary or DataFrame object) is containing region boundaries (coordinates of polygon vertexes on map).
+        Data (Dictionary or DataFrame object) contains region boundaries (coordinates of polygon vertices on the map).
         Dictionary and DataFrame object must contain keys/columns:
         1. 'x' or 'lon' or 'long'
         2. 'y' or 'lat'
         3. 'region' or 'id'
         GeocodedRegion object is produced only by regions() or regions_xxx() functions and does not have any special requirements.
     other_args :
-        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
+        Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
         paired geom/stat.
     Returns
@@ -64,12 +64,12 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
     - map_id : name used to join data with map coordinates
     - x : x-axis value
     - y : y-axis value
-    - alpha : transparency level of a point
+    - alpha : transparency level of the point
         Understands numbers between 0 and 1.
-    - color (colour) : color of a geometry
+    - color (colour) : color of the geometry
         Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color to paint shape's inner points
-        Is applied only to the points with shapes having inner points.
+        Is applied only to the points of shapes having inner points.
     - shape : shape of the point
     - size : size of the point
 
@@ -793,7 +793,7 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         position adjustment function.
     map : dictionary, pandas DataFrame or GeocodedRegion object
         Using with aesthetic param 'map_id'.
-        Data (Dictionary or DataFrame object) is containing region boundaries (coordinates of polygon vertexes on map).
+        Data (Dictionary or DataFrame object) is containing region boundaries (coordinates of polygon vertices on map).
         Dictionary and DataFrame object must contain keys/columns:
         1. 'x' or 'lon' or 'long'
         2. 'y' or 'lat'
@@ -859,7 +859,7 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
     map : dictionary or pandas DataFrame
-        Data containing region boundaries (coordinates of polygon vertexes on map).
+        Data containing region boundaries (coordinates of polygon vertices on map).
         It must contain columns:
          1. 'x' or 'lon' or 'long'
          2. 'y' or 'lat'
@@ -1533,7 +1533,7 @@ def geom_jitter(mapping=None, data=None, stat=None, position=None, show_legend=N
     - color (colour) : color of a geometry
         Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color to paint shape's inner points
-        Is applied only to the points with shapes having inner points.
+        Is applied only to the points of shapes having inner points.
     - shape : shape of the point
     - size : size of the point
 
@@ -1841,9 +1841,9 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
     - color (colour) : color of a geometry
         Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : font size
-    - family : ['sans' \ 'serif' | 'mono' | any other like: "Times New Roman"]
+    - family : ['sans' | 'serif' | 'mono' | any other like: "Times New Roman"]
         Font family. The default is 'sans'
-    - fontface : ['plain' \ 'bold' | 'italic' | 'bold italic']
+    - fontface : ['plain' | 'bold' | 'italic' | 'bold italic']
         Font style and weight . The default is 'plain'
     - hjust : ['left', 'middle', 'right'] or number between 0 ('right') and 1 ('left')
         Horizontal text alignment

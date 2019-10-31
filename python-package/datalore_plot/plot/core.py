@@ -19,9 +19,9 @@ def aes(x=None, y=None, **other):
     Notes
     -----
         Generates aesthetic mappings that describe how variables in the data are projected to visual properties
-        (aesthetics) of geometries. This function also standardise aesthetic names by, for example, converting
+        (aesthetics) of geometries. This function also standardizes aesthetic names by, for example, converting
          colour to color.
-         Aesthetic mappings are not to be confused with aesthetic settings, the latter are used to set aesthetics to
+         Aesthetic mappings are not to be confused with aesthetic settings; the latter are used to set aesthetics to
          some constant values, e.g. make all points red in the plot. If one wants to make the color of a point
          depend on the value of a variable, he/she should project this variable to the color aesthetic via
          aesthetic mapping.
@@ -54,7 +54,7 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
     data : dictionary or pandas DataFrame, optional
-        The data to be displayed in this layer. If None, the default,  the data
+        The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     mapping : dictionary, optional
         Set of aesthetic mappings created by aes. Aesthetic mappings describe the way that variables in the data are
@@ -73,7 +73,7 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
     Notes
     -----
         A layer is a combination of data, stat and geom with a potential position adjustment. Usually layers are created
-        using geom_* or stat_* calls but it can be created directly using this function.
+        using geom_* or stat_* calls but they can be created directly using this function.
      Examples
     ---------
     >>> import numpy as np

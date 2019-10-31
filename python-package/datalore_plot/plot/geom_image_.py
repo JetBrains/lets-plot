@@ -26,23 +26,23 @@ def _scaler_0_255_byte(v):
 def geom_image(image_data, norm=None, vmin=None, vmax=None):
     """
     Displays image specified by ndarray with shape (n, m) or (n, m, 3) or (n, m, 4).
-    This geom in not as flexible as geom_raster or geom_tile but vastly superior in the terms of
+    This geom is not as flexible as geom_raster or geom_tile but vastly superior in the terms of
     rendering efficiency.
 
-    This geom doesn't understands any aesthetics.
+    This geom doesn't understand any aesthetics.
     It doesn't support color scales either.
 
-    The following imgaes will be rendered depending on shape of input array:
+    The following images will be rendered depending on the input array:
     N x M       - gray-scale
     N x M x 3   - RGB
     N x M x 4   - RGBA
 
-    Type of values in array can be int, uint or float of any size.
-    The value for each component of integer arrays should be in the range [0,255]
+    The type of values in array can be int, uint or float of any size.
+    The value for each component of integer arrays should be in the range [0,255].
     The value for each component of float arrays should be in the range [0,1] for RGB or RGBA images.
 
-    If gray-scale is encoded as float array than values will be normalized. If arguments vmin/vmax are specified
-    then they will be used in normalization. Otherwise min/max value will be computed from the image data.     
+    If gray-scale is encoded as float array then the values will be normalized. If arguments vmin/vmax are specified,
+    they will be used in normalization. Otherwise, min/max value will be computed from the image data.     
 
     Parameters
     ----------
@@ -53,7 +53,7 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
         False - disables default scaling of a 2-D float (luminance) input to the (0, 1) range.
 
     vmin, vmax : scalar, optional, default: None
-        Used normalize luminance data. Only applied to gray-scale images encoded as float array.
+        Uses normalized luminance data. Only applied to gray-scale images encoded as float array.
 
     Returns
     -------
@@ -67,10 +67,10 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     >>> ggplot() + geom_image(image)
     """
     if not is_ndarray(image_data):
-        raise Exception("Invalid image_data: ndarray is expacted but was {}".format(type(image_data)))
+        raise Exception("Invalid image_data: ndarray is expected but was {}".format(type(image_data)))
 
     if image_data.ndim not in (2, 3):
-        raise Exception("Invalid image_data: 2d or 3d array is expacted but was {}-dimentional".format(image_data.ndim))
+        raise Exception("Invalid image_data: 2d or 3d array is expected but was {}-dimensional".format(image_data.ndim))
 
     vmin = float(vmin) if vmin else None
     vmax = float(vmax) if vmax else None
@@ -121,7 +121,7 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
         # do not normalize values (ints)
         scaler = _scaler_0_255_byte
     else:
-        raise Exception("Invalid image_data: floating point or integer dtype is expacted but was '{}'".format(image_data.dtype))
+        raise Exception("Invalid image_data: floating point or integer dtype is expected but was '{}'".format(image_data.dtype))
 
     flat_bytes = bytearray()
     for v in image_data.ravel():
