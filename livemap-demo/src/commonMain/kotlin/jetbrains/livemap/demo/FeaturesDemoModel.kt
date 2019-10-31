@@ -10,6 +10,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
 import jetbrains.livemap.demo.model.Cities.BOSTON
 import jetbrains.livemap.demo.model.Cities.FRISCO
+import jetbrains.livemap.demo.model.Cities.MOSCOW
 import jetbrains.livemap.demo.model.Cities.SPB
 import jetbrains.livemap.demo.model.GeoObject
 
@@ -50,20 +51,20 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                         animation = 2
                     }
                 }
-//
-//                polygons {
-//                    polygon {
-//                        coordinates = listOf(BOSTON, SPB, MOSCOW).map(GeoObject::geoCoord)
-//                        fillColor = Color.LIGHT_CYAN
-//                    }
-//                }
 
-                //polygons {
-                //    polygon {
-                //        mapId = "texas"
-                //        fillColor = Color.GREEN
-                //    }
-                //}
+                polygons {
+                    polygon {
+                        coordinates = listOf(BOSTON, SPB, MOSCOW).map(GeoObject::geoCoord)
+                        fillColor = Color.LIGHT_CYAN
+                    }
+                }
+
+                polygons {
+                    polygon {
+                        mapId = "texas"
+                        fillColor = Color.GREEN
+                    }
+                }
 
 //                hLines {
 //                    line {

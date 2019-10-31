@@ -43,7 +43,7 @@ internal class MapObjectBuilder {
     private var myStrokeWidth: Double? = null
     private var geometry: TypedGeometry<LonLat>? = null
     private var point: Vec<LonLat>? = null
-    private var indicies = emptyList<Int>()
+    private var indices = emptyList<Int>()
     private var myArrowSpec: ArrowSpec? = null
     private var animation = 0
     private var myMaxAbsValue: Double? = null
@@ -165,7 +165,7 @@ internal class MapObjectBuilder {
         myLayerKind = layerKind
         myMapProjection = mapProjection
         myP = p.aes
-        indicies = p.indices
+        indices = p.indices
         myValueArray = p.values
         myColorArray = p.colors
     }
@@ -262,7 +262,7 @@ internal class MapObjectBuilder {
                 strokeColor = this@MapObjectBuilder.strokeColor
                 strokeWidth = this@MapObjectBuilder.strokeWidth
 
-                indices = this@MapObjectBuilder.indicies
+                indices = this@MapObjectBuilder.indices
                 values = this@MapObjectBuilder.myValueArray
                 colors = this@MapObjectBuilder.colorArray
             }

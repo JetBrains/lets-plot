@@ -25,7 +25,10 @@ import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.mapobjects.*
+import jetbrains.livemap.mapobjects.MapBar
+import jetbrains.livemap.mapobjects.MapLine
+import jetbrains.livemap.mapobjects.MapPieSector
+import jetbrains.livemap.mapobjects.MapText
 import jetbrains.livemap.mapobjects.Utils.splitMapBarChart
 import jetbrains.livemap.mapobjects.Utils.splitMapPieChart
 import jetbrains.livemap.projections.MapProjection
@@ -100,10 +103,6 @@ class LayersBuilder(
     val devParams: DevParams
 )
 
-@LiveMapDsl
-class Polygons {
-    val items = ArrayList<MapPolygon>()
-}
 
 @LiveMapDsl
 class Lines {
@@ -125,33 +124,7 @@ class Texts {
     val items = ArrayList<MapText>()
 }
 
-@LiveMapDsl
-class PolygonsBuilder {
-    var index: Int? = null
-    var mapId: String? = null
-    var regionId: String? = null
 
-    var lineDash: List<Double>? = null
-    var strokeColor: Color? = null
-    var strokeWidth: Double? = null
-    var fillColor: Color? = null
-    var coordinates: List<Vec<LonLat>>? = null
-
-    fun build(): MapPolygon {
-
-        return MapPolygon(
-            index!!, mapId, regionId,
-            lineDash!!, strokeColor!!, strokeWidth!!,
-            fillColor!!,
-            coordinates
-                ?.run { listOf(Ring(this)) }
-                ?.run { listOf(Polygon(this)) }
-                ?.run { MultiPolygon(this) }
-                ?.run(TypedGeometry.Companion::create)
-
-        )
-    }
-}
 
 @LiveMapDsl
 class LineBuilder {
@@ -317,10 +290,8 @@ fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
     layerProvider = DemoLayerProvider(devParams, block)
 }
 
-//fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
-//    items.add(MapLayer(POLYGON, Polygons().apply(block).items))
-//}
-//
+
+
 //fun LayersBuilder.hLines(block: Lines.() -> Unit) {
 //    items.add(MapLayer(H_LINE, Lines().apply(block).items))
 //}

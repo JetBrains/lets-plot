@@ -7,24 +7,6 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.values.Color
 
-fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
-    items.add(
-        PolygonsBuilder().apply {
-            index = 0
-            mapId = ""
-            regionId = ""
-
-            lineDash = emptyList()
-            strokeColor = Color.BLACK
-            strokeWidth = 0.0
-            fillColor = Color.GREEN
-            coordinates = null
-        }
-            .apply(block)
-            .build()
-    )
-}
-
 fun Lines.line(block: LineBuilder.() -> Unit) {
     items.add(
         LineBuilder()

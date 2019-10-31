@@ -36,6 +36,12 @@ internal class LiveMapDataPointAestheticsProcessor(
     private val mapObjects: List<MapObject>
         get() = if (useMultiDataPoint()) processMultiDataPoints() else processDataPoints()
 
+    init {
+        myLayerKind = getLayerKind(liveMapOptions.displayMode)
+        myFrameSpecified = allAesMatch(myAesthetics, ::isFrameSet)
+        myLonLatInsideMapIdSpecified = allAesMatch(myAesthetics, ::isLiveMapWithLonLat)
+    }
+
     private fun isFrameSet(p: DataPointAesthetics): Boolean {
         return p.frame() != AesInitValue[Aes.FRAME]
     }
@@ -70,12 +76,6 @@ internal class LiveMapDataPointAestheticsProcessor(
             }
         }
         return maxAbsValue
-    }
-
-    init {
-        myLayerKind = getLayerKind(liveMapOptions.displayMode)
-        myFrameSpecified = allAesMatch(myAesthetics, ::isFrameSet)
-        myLonLatInsideMapIdSpecified = allAesMatch(myAesthetics, ::isLiveMapWithLonLat)
     }
 
     fun heatMapWithFrame(): Boolean {
