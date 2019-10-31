@@ -8,11 +8,11 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
-import jetbrains.livemap.demo.model.Cities.BOSTON
-import jetbrains.livemap.demo.model.Cities.FRISCO
-import jetbrains.livemap.demo.model.Cities.MOSCOW
-import jetbrains.livemap.demo.model.Cities.SPB
-import jetbrains.livemap.demo.model.GeoObject
+import jetbrains.livemap.model.Cities.BOSTON
+import jetbrains.livemap.model.Cities.FRISCO
+import jetbrains.livemap.model.Cities.MOSCOW
+import jetbrains.livemap.model.Cities.SPB
+import jetbrains.livemap.model.GeoObject
 
 class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
@@ -66,19 +66,19 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     }
                 }
 
-//                hLines {
-//                    line {
-//                        lon = MOSCOW.lon
-//                        lat = MOSCOW.lat
-//                    }
-//                }
-//
-//                vLines {
-//                    line {
-//                        lon = BOSTON.lon
-//                        lat = BOSTON.lat
-//                    }
-//                }
+                hLines {
+                    line {
+                        lon = MOSCOW.lon
+                        lat = MOSCOW.lat
+                    }
+                }
+
+                vLines {
+                    line {
+                        lon = BOSTON.lon
+                        lat = BOSTON.lat
+                    }
+                }
 //
 //                bars {
 //                    bar {

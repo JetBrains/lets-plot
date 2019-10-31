@@ -26,7 +26,6 @@ import jetbrains.livemap.MapLocation
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.mapobjects.MapBar
-import jetbrains.livemap.mapobjects.MapLine
 import jetbrains.livemap.mapobjects.MapPieSector
 import jetbrains.livemap.mapobjects.MapText
 import jetbrains.livemap.mapobjects.Utils.splitMapBarChart
@@ -103,12 +102,6 @@ class LayersBuilder(
     val devParams: DevParams
 )
 
-
-@LiveMapDsl
-class Lines {
-    val items = ArrayList<MapLine>()
-}
-
 @LiveMapDsl
 class Bars {
     val factory = BarsFactory()
@@ -126,28 +119,6 @@ class Texts {
 
 
 
-@LiveMapDsl
-class LineBuilder {
-    var index: Int? = null
-    var mapId: String? = null
-    var regionId: String? = null
-
-    var lon: Double? = null
-    var lat: Double? = null
-    var lineDash: List<Double>? = null
-    var strokeColor: Color? = null
-    var strokeWidth: Double? = null
-
-
-    fun build(): MapLine {
-
-        return MapLine(
-            index!!, mapId, regionId,
-            explicitVec(lon!!, lat!!), lineDash!!, strokeColor!!,
-            strokeWidth!!
-        )
-    }
-}
 
 @LiveMapDsl
 class TextBuilder {
@@ -290,16 +261,6 @@ fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
     layerProvider = DemoLayerProvider(devParams, block)
 }
 
-
-
-//fun LayersBuilder.hLines(block: Lines.() -> Unit) {
-//    items.add(MapLayer(H_LINE, Lines().apply(block).items))
-//}
-//
-//fun LayersBuilder.vLines(block: Lines.() -> Unit) {
-//    items.add(MapLayer(V_LINE, Lines().apply(block).items))
-//}
-//
 //fun LayersBuilder.bars(block: Bars.() -> Unit) {
 //    items.add(MapLayer(BAR, Bars().apply(block).factory.produce()))
 //}

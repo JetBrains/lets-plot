@@ -5,26 +5,6 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.values.Color
-
-fun Lines.line(block: LineBuilder.() -> Unit) {
-    items.add(
-        LineBuilder()
-            .apply {
-                index = 0
-                mapId = ""
-                regionId = ""
-
-                lineDash = emptyList()
-                strokeColor = Color.BLACK
-                strokeWidth = 1.0
-
-            }
-            .apply(block)
-            .build()
-    )
-}
-
 fun Bars.bar(block: ChartSource.() -> Unit) {
     factory.add(ChartSource().apply(block))
 }
