@@ -11,6 +11,7 @@ import jetbrains.livemap.api.*
 import jetbrains.livemap.model.Cities.BOSTON
 import jetbrains.livemap.model.Cities.FRISCO
 import jetbrains.livemap.model.Cities.MOSCOW
+import jetbrains.livemap.model.Cities.NEW_YORK
 import jetbrains.livemap.model.Cities.SPB
 import jetbrains.livemap.model.GeoObject
 
@@ -99,17 +100,17 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
                     }
                 }
-//
-//                pies {
-//                    pie {
-//                        indices = listOf(0, 1, 2)
-//                        lon = NEW_YORK.lon
-//                        lat = NEW_YORK.lat
-//                        radius = 20.0
-//                        values = listOf(3.0, 1.0, 2.0)
-//                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-//                    }
-//                }
+
+                pies {
+                    pie {
+                        indices = listOf(0, 1, 2)
+                        lon = NEW_YORK.lon
+                        lat = NEW_YORK.lat
+                        radius = 20.0
+                        values = listOf(3.0, 1.0, 2.0)
+                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
+                    }
+                }
 //
 //                texts {
 //                    text {

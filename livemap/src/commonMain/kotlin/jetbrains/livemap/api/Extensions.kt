@@ -7,9 +7,6 @@ package jetbrains.livemap.api
 
 
 
-fun Pies.pie(block: ChartSource.() -> Unit) {
-    factory.add(ChartSource().apply(block))
-}
 
 fun Texts.text(block: TextBuilder.() -> Unit) {
     items.add(
