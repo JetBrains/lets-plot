@@ -49,7 +49,7 @@ class MapTextProcessor(
     }
 
     private fun createEntity(mapText: MapText): EcsEntity {
-        val textSpec = TextSpec(mapText, myTextMeasurer)
+        val textSpec = createTextSpec(mapText, myTextMeasurer)
 
         return myFactory
             .createMapEntity(myMapProjection.project(mapText.point), TextRenderer(), "map_ent_text")
@@ -73,5 +73,18 @@ class MapTextProcessor(
                     setStrokeWidth(mapText.strokeWidth)
                 }
             )
+    }
+
+    private fun createTextSpec(mapText: MapText, textMeasurer: TextMeasurer): TextSpec {
+        return TextSpec(
+            mapText.label,
+            mapText.fontface,
+            mapText.size.toInt(),
+            mapText.family,
+            mapText.angle,
+            mapText.hjust,
+            mapText.vjust,
+            textMeasurer
+        )
     }
 }

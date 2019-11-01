@@ -13,7 +13,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.entities.Entities
+import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
@@ -26,7 +26,7 @@ import jetbrains.livemap.projections.World
 
 @LiveMapDsl
 class Points(
-    val factory: Entities.MapEntityFactory,
+    val factory: MapEntityFactory,
     val layerEntitiesComponent: LayerEntitiesComponent,
     val mapProjection: MapProjection,
     val devParams: DevParams,
@@ -47,7 +47,7 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
         .setLoop(Animation.Loop.SWITCH_DIRECTION)
 
     Points(
-        Entities.MapEntityFactory(layerEntity),
+        MapEntityFactory(layerEntity),
         layerEntitiesComponent,
         mapProjection,
         devParams,
@@ -87,7 +87,7 @@ class PointBuilder {
     var shape: Int = 1
 
     fun build(
-        factory: Entities.MapEntityFactory,
+        factory: MapEntityFactory,
         mapProjection: MapProjection,
         devParams: DevParams,
         animationBuilder: Animations.AnimationBuilder

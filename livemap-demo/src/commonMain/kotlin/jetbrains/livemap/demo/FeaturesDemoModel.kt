@@ -111,15 +111,15 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
                     }
                 }
-//
-//                texts {
-//                    text {
-//                        label = "KIRIBATI"
-//                        lon = -157.3662
-//                        lat = 1.8351
-//                        size = 50.0
-//                    }
-//                }
+
+                texts {
+                    text {
+                        label = "KIRIBATI"
+                        lon = -157.3662
+                        lat = 1.8351
+                        size = 50.0
+                    }
+                }
             }
         }
     }

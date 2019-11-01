@@ -9,6 +9,10 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.GeoRectangle
+import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.Rect
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
@@ -25,7 +29,7 @@ import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.mapobjects.MapText
+import jetbrains.livemap.obj2entity.TextMeasurer
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionType
 
@@ -94,50 +98,9 @@ class LayersBuilder(
     val myComponentManager: EcsComponentManager,
     val layerManager: LayerManager,
     val mapProjection: MapProjection,
-    val devParams: DevParams
+    val devParams: DevParams,
+    val textMeasurer: TextMeasurer
 )
-
-
-
-@LiveMapDsl
-class Texts {
-    val items = ArrayList<MapText>()
-}
-
-@LiveMapDsl
-class TextBuilder {
-    var index: Int = 0
-    var mapId: String = ""
-    var regionId: String = ""
-
-    var lon: Double = 0.0
-    var lat: Double = 0.0
-
-    var fillColor: Color = Color.BLACK
-    var strokeColor: Color = Color.TRANSPARENT
-    var strokeWidth: Double = 0.0
-
-    var label: String = ""
-    var size: Double = 10.0
-    var family: String = "Arial"
-    var fontface: String = ""
-    var hjust: Double = 0.0
-    var vjust: Double = 0.0
-    var angle: Double = 0.0
-
-    fun build(): MapText {
-        return MapText(
-            index, mapId, regionId,
-            explicitVec(lon, lat),
-            fillColor, strokeColor, strokeWidth,
-            label, size, family, fontface, hjust, vjust, angle
-        )
-    }
-}
-
-
-
-
 
 @LiveMapDsl
 class ChartSource {
@@ -215,10 +178,6 @@ fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(blo
 fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
     layerProvider = DemoLayerProvider(devParams, block)
 }
-
-//fun LayersBuilder.texts(block: Texts.() -> Unit) {
-//    items.add(MapLayer(TEXT, Texts().apply(block).items))
-//}
 
 fun LiveMapBuilder.location(block: Location.() -> Unit) {
     Location().apply(block).let { location ->

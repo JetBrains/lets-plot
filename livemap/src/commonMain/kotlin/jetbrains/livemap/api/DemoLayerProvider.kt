@@ -6,6 +6,7 @@ import jetbrains.livemap.LayerProvider
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.mapobjects.MapLayer
+import jetbrains.livemap.obj2entity.TextMeasurer
 import jetbrains.livemap.projections.MapProjection
 
 class DemoLayerProvider(
@@ -19,7 +20,7 @@ class DemoLayerProvider(
         mapProjection: MapProjection,
         context2d: Context2d
     ) {
-        LayersBuilder(componentManager, layerManager, mapProjection, myDevParams).apply(myBlock)
+        LayersBuilder(componentManager, layerManager, mapProjection, myDevParams, TextMeasurer(context2d)).apply(myBlock)
     }
 
     override val layers: List<MapLayer> = emptyList()
