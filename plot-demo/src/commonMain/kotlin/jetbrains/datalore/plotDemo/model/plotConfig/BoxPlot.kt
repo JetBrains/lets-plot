@@ -18,7 +18,8 @@ open class BoxPlot : PlotConfigDemoBase() {
             withCondColored(),
             withOutlierOverride(),
             withGrouping(),
-            withGroupingAndVarWidth()
+            withGroupingAndVarWidth(),
+            withMiddlePoint()
         )
     }
 
@@ -35,13 +36,13 @@ open class BoxPlot : PlotConfigDemoBase() {
             val ratingB = gauss(count2, 24, 0.0, 1.0)
             val rating = zip(ratingA, ratingB)
             val cond = zip(fill("a", count1), fill("b", count2))
-            val group = ArrayList(fill("G1", count1))
-            group.addAll(fill("G2", count2))
+//            val group = ArrayList(fill("G1", count1))
+//            group.addAll(fill("G2", count2))
 
             val map = HashMap<String, List<*>>()
             map["cond"] = cond
             map["rating"] = rating
-            map["group"] = group
+//            map["group"] = group
             return map
         }
 
@@ -140,7 +141,7 @@ open class BoxPlot : PlotConfigDemoBase() {
                     "   'mapping': {" +
                     "             'x': 'cond'," +
                     "             'y': 'rating'," +
-                    "             'color': 'group'" +
+                    "             'color': 'cond'" +
                     "           }," +
 
                     "   'layers': [" +
@@ -161,7 +162,7 @@ open class BoxPlot : PlotConfigDemoBase() {
                     "   'mapping': {" +
                     "             'x': 'cond'," +
                     "             'y': 'rating'," +
-                    "             'color': 'group'" +
+                    "             'color': 'cond'" +
                     "           }," +
 
                     "   'layers': [" +
@@ -171,6 +172,35 @@ open class BoxPlot : PlotConfigDemoBase() {
                     "               }" +
                     "           ]" +
                     "}"
+
+            val plotSpec = HashMap(parsePlotSpec(spec))
+            plotSpec["data"] = DATA
+            return plotSpec
+        }
+
+        fun withMiddlePoint(): Map<String, Any> {
+            val spec = """
+                |   {
+                |      'kind': 'plot',
+                |      'mapping': {
+                |                'x': 'cond',
+                |                'y': 'rating'
+                |              },
+                |      'layers': [
+                |                  {
+                |                     'geom': 'point',
+                |                     'stat': 'boxplot',
+                |                     'mapping': {'y': '..middle..'},
+                |                     'size': 7,
+                |                     'color': 'red'
+                |                  }
+                |              ]
+                |   }
+                    """.trimMargin()
+
+//                |                  {
+//                |                     'geom': 'boxplot'
+//                |                  },
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA

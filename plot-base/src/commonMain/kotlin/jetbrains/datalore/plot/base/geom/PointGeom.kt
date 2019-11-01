@@ -45,7 +45,6 @@ open class PointGeom : GeomBase() {
 
                 val shape = p.shape()!!
                 targetCollector.addPoint(i, location, shape.size(p) / 2, getTooltipParams(p))
-//                val o = shape.create(location, p)
                 val o = PointShapeSvg.create(shape, location, p)
                 o.appendTo(slimGroup)
             }
@@ -66,18 +65,6 @@ open class PointGeom : GeomBase() {
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.Y,
-//                Aes.SIZE,
-//                Aes.COLOR,
-//                Aes.FILL,
-//                Aes.ALPHA,
-//                Aes.SHAPE,
-//                Aes.MAP_ID
-//                // strokeWidth
-//        )
-
         const val HANDLES_GROUPS = false
     }
 }

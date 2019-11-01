@@ -63,8 +63,6 @@ class BoxplotStat : BaseStat(DEF_MAPPING) {
         }
 
         val xs = data.getNumeric(TransformVar.X)
-
-
         val ys = data.getNumeric(TransformVar.Y)
         val collector = HashMap<DataFrame.Variable, MutableList<Double>>()
 
@@ -94,11 +92,11 @@ class BoxplotStat : BaseStat(DEF_MAPPING) {
     }
 
     companion object {
-        val DEF_WHISKER_IQR_RATIO = 1.5
-        val DEF_COMPUTE_WIDTH = false
+        const val DEF_WHISKER_IQR_RATIO = 1.5
+        const val DEF_COMPUTE_WIDTH = false
 
-        val P_COEF = "coef"
-        val P_VARWIDTH = "varwidth"
+        const val P_COEF = "coef"
+        const val P_VARWIDTH = "varwidth"
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
                 Aes.X to Stats.X,
