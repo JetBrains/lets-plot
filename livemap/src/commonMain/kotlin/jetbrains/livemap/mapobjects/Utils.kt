@@ -7,13 +7,14 @@ package jetbrains.livemap.mapobjects
 
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.livemap.api.ChartSource
+import jetbrains.livemap.api.transformValues2Angles
+import jetbrains.livemap.api.transformValues2Percents
 import jetbrains.livemap.projections.Client
 import kotlin.math.PI
 import kotlin.math.abs
 
 object Utils {
-    private const val ONE_HUNDRED_PERCENTS = 1.0
-    private const val MIN_PERCENT = 0.05
+
 
     fun splitMapPieChart(source: ChartSource): List<MapPieSector> {
         val result = ArrayList<MapPieSector>()
@@ -74,29 +75,6 @@ object Utils {
             )
         }
         return result
-    }
-
-    private fun transformValues2Percents(values: List<Double>, maxAbsValue: Double): List<Double> {
-        return values.map { calculatePercent(it, maxAbsValue) }
-    }
-
-    private fun transformValues2Angles(values: List<Double>): List<Double> {
-        val sum = values.map { abs(it) }.sum()
-
-        return if (sum == 0.0) {
-            MutableList(values.size) { 2 * PI / values.size }
-        } else {
-            values.map { 2 * PI * abs(it) / sum }
-        }
-    }
-
-    private fun calculatePercent(value: Double, maxAbsValue: Double): Double {
-        val percent = if (maxAbsValue == 0.0) 0.0 else ONE_HUNDRED_PERCENTS * value / maxAbsValue
-
-        if (abs(percent) >= MIN_PERCENT) {
-            return percent
-        }
-        return if (percent >= 0) MIN_PERCENT else -MIN_PERCENT
     }
 
     fun calculateBBoxes(v: MapObject): List<Rect<LonLat>> {

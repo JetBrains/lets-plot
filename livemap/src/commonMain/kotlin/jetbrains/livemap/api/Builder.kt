@@ -25,14 +25,11 @@ import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.mapobjects.MapBar
 import jetbrains.livemap.mapobjects.MapPieSector
 import jetbrains.livemap.mapobjects.MapText
-import jetbrains.livemap.mapobjects.Utils.splitMapBarChart
 import jetbrains.livemap.mapobjects.Utils.splitMapPieChart
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionType
-import kotlin.math.abs
 
 @DslMarker
 annotation class LiveMapDsl {}
@@ -103,11 +100,6 @@ class LayersBuilder(
 )
 
 @LiveMapDsl
-class Bars {
-    val factory = BarsFactory()
-}
-
-@LiveMapDsl
 class Pies {
     val factory = PiesFactory()
 }
@@ -116,9 +108,6 @@ class Pies {
 class Texts {
     val items = ArrayList<MapText>()
 }
-
-
-
 
 @LiveMapDsl
 class TextBuilder {
@@ -151,25 +140,7 @@ class TextBuilder {
     }
 }
 
-@LiveMapDsl
-class BarsFactory {
-    private val myItems = ArrayList<ChartSource>()
 
-    fun add(source: ChartSource) {
-        myItems.add(source)
-    }
-
-    fun produce(): List<MapBar> {
-        val maxAbsValue = myItems
-            .asSequence()
-            .mapNotNull { it.values }
-            .flatten()
-            .maxBy { abs(it) }
-            ?: error("")
-
-        return myItems.flatMap { splitMapBarChart(it, abs(maxAbsValue)) }
-    }
-}
 
 @LiveMapDsl
 class PiesFactory {
@@ -261,10 +232,6 @@ fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
     layerProvider = DemoLayerProvider(devParams, block)
 }
 
-//fun LayersBuilder.bars(block: Bars.() -> Unit) {
-//    items.add(MapLayer(BAR, Bars().apply(block).factory.produce()))
-//}
-//
 //fun LayersBuilder.pies(block: Pies.() -> Unit) {
 //    items.add(MapLayer(PIE, Pies().apply(block).factory.produce()))
 //}

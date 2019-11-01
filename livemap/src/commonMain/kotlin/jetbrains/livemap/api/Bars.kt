@@ -1,0 +1,102 @@
+package jetbrains.livemap.api
+
+import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geometry.Renderers
+import jetbrains.livemap.entities.placement.ScreenDimensionComponent
+import jetbrains.livemap.entities.placement.ScreenOffsetComponent
+import jetbrains.livemap.entities.rendering.*
+import jetbrains.livemap.projections.Client
+import jetbrains.livemap.projections.MapProjection
+import kotlin.math.abs
+
+@LiveMapDsl
+class Bars(
+    factory: MapEntityFactory,
+    mapProjection: MapProjection
+) {
+    val barsFactory = BarsFactory(factory, mapProjection)
+}
+
+fun LayersBuilder.bars(block: Bars.() -> Unit) {
+    val layerEntitiesComponent = LayerEntitiesComponent()
+    val layerEntity = myComponentManager
+        .createEntity("map_layer_bar")
+        .addComponents {
+            + layerManager.createRenderLayerComponent("livemap_bar")
+            + layerEntitiesComponent
+        }
+
+    Bars(
+        MapEntityFactory(layerEntity),
+        mapProjection
+    ).apply {
+        block()
+        barsFactory
+            .produce()
+            .forEach {
+                layerEntitiesComponent.add(it.id)
+            }
+    }
+}
+
+fun Bars.bar(block: ChartSource.() -> Unit) {
+    barsFactory.add(ChartSource().apply(block))
+}
+
+@LiveMapDsl
+class BarsFactory(
+    private val myEntityFactory: MapEntityFactory,
+    private val myMapProjection: MapProjection
+) {
+    private val myItems = ArrayList<ChartSource>()
+
+    fun add(source: ChartSource) {
+        myItems.add(source)
+    }
+
+    fun produce(): List<EcsEntity> {
+        val maxAbsValue = myItems
+            .asSequence()
+            .mapNotNull { it.values }
+            .flatten()
+            .maxBy { abs(it) }
+            ?: error("")
+
+        return myItems.flatMap { splitMapBarChart(it, abs(maxAbsValue)) }
+    }
+
+    private fun splitMapBarChart(source: ChartSource, maxAbsValue: Double): List<EcsEntity> {
+        val result = ArrayList<EcsEntity>()
+        val percents = transformValues2Percents(source.values, maxAbsValue)
+
+        val radius = source.radius
+        val barCount = percents.size
+        val spacing = 0.1 * radius
+        val barWidth = (2 * radius - (barCount - 1) * spacing) / barCount
+
+        for (i in percents.indices) {
+            val barDimension =  explicitVec<Client>(barWidth, radius * abs(percents[i]))
+            val barOffset = explicitVec<Client>(
+                (barWidth + spacing) * i - radius,
+                if (percents[i] > 0) -barDimension.y else 0.0
+            )
+            result.add(
+                myEntityFactory
+                    .createMapEntity(myMapProjection.project(explicitVec(source.lon, source.lat)), Renderers.BarRenderer(), "map_ent_bar")
+                    .addComponents {
+                        + ScreenOffsetComponent().apply { offset = barOffset}
+                        + ScreenDimensionComponent().apply { dimension = barDimension }
+                        + StyleComponent().apply {
+                            setFillColor(source.colors[i])
+                            setStrokeColor(source.strokeColor)
+                            setStrokeWidth(source.strokeWidth)
+                        }
+                    }
+            )
+        }
+        return result
+    }
+}

@@ -5,9 +5,7 @@
 
 package jetbrains.livemap.api
 
-fun Bars.bar(block: ChartSource.() -> Unit) {
-    factory.add(ChartSource().apply(block))
-}
+
 
 fun Pies.pie(block: ChartSource.() -> Unit) {
     factory.add(ChartSource().apply(block))

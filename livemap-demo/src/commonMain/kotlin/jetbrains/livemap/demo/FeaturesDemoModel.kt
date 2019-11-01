@@ -79,26 +79,26 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                         lat = BOSTON.lat
                     }
                 }
-//
-//                bars {
-//                    bar {
-//                        indices = listOf(0, 1, 2)
-//                        lon = BOSTON.lon
-//                        lat = BOSTON.lat
-//                        radius = 50.0
-//                        values = listOf(3.0, 0.0, 2.0)
-//                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-//                    }
-//
-//                    bar {
-//                        indices = listOf(3, 4, 5)
-//                        lon = SPB.lon
-//                        lat = SPB.lat
-//                        radius = 50.0
-//                        values = listOf(-2.0, -1.0, 4.0)
-//                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-//                    }
-//                }
+
+                bars {
+                    bar {
+                        indices = listOf(0, 1, 2)
+                        lon = BOSTON.lon
+                        lat = BOSTON.lat
+                        radius = 50.0
+                        values = listOf(3.0, 0.0, 2.0)
+                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
+                    }
+
+                    bar {
+                        indices = listOf(3, 4, 5)
+                        lon = SPB.lon
+                        lat = SPB.lat
+                        radius = 50.0
+                        values = listOf(-2.0, -1.0, 4.0)
+                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
+                    }
+                }
 //
 //                pies {
 //                    pie {
