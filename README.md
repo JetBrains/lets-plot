@@ -1,20 +1,42 @@
 # Datalore Plot
 
+<table>
+    <tr>
+        <td>Latest Release</td>
+        <td>
+            <a href="https://pypi.org/project/datalore-plot/"/>
+            <img src="https://badge.fury.io/py/datalore-plot.svg"/>
+        </td>
+    </tr>
+    <tr>
+        <td>License</td>
+        <td>
+            <a href="https://opensource.org/licenses/MIT"/>
+            <img src="https://img.shields.io/badge/License-MIT-yellow.svg"/>
+        </td>
+    </tr>
+</table>
+
+
 ## Quickstart
 
-`pip install datalore-plot`
+```shell script
+pip install datalore-plot`
+```
 
 ```python
 import numpy as np
 from datalore_plot import *
 
-np.random.seed(123)
-X = np.concatenate((np.random.normal(0, 0.5, 100), np.random.normal(5, 1.5, 100)))
-Y = np.concatenate((np.random.normal(4, 1.5, 100), np.random.normal(6, 2.0, 100)))
-data = dict(x=X,y=Y)
+np.random.seed(12)
+data = dict(
+    cond=np.repeat(['A','B'], 200),
+    rating=np.concatenate((np.random.normal(0, 1, 200), np.random.normal(1, 1.5, 200)))
+)
 
-ggplot(data, aes('x','y')) \
-+ geom_point(color='black', alpha=0.5, size=10) \
-+ geom_density2d(aes(color='..level..'),size=3) \
-+ scale_color_hue()
+ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
++ geom_density(color='dark_green', alpha=.7) + scale_fill_brewer(type='seq') \
++ theme(axis_line_y='blank')
 ````
+
+![](docs/examples/images/quickstart.png =505x256)
