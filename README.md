@@ -39,4 +39,4 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 + theme(axis_line_y='blank')
 ````
 
-![](docs/examples/images/quickstart.png =505x256)
+![](docs/examples/images/quickstart.png)
