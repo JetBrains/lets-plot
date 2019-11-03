@@ -53,7 +53,7 @@ TBD: image URL
 
 ### Overview
 
-Datalore plot Python extension includes native backend and a Python API which was mostly borrowed from [`ggplot2`](https://ggplot2.tidyverse.org/) package well known to data-scientists who use R.
+Datalore Plot python extension includes native backend and a Python API which was mostly borrowed from [`ggplot2`](https://ggplot2.tidyverse.org/) package well known to data-scientists who use R.
 
 R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who wants to learn grammar of graphics. 
 
@@ -88,7 +88,7 @@ Unfamiliar functions used in the examples:
 
 
 [quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb)
-: see top of the README.
+: see top of this README.
 
 [distributions.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/distributions.ipynb)
 : histogram, density plot, box plot and facets. 
