@@ -40,3 +40,5 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 ````
 
 ![](docs/examples/images/quickstart.png)
+
+[on NBViewer](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb)
