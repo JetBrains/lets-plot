@@ -73,7 +73,7 @@ The advantage of [Datalore](https://datalore.io) as a learning tool in compariso
 
 ### Examples
 
-Unfamiliar functions used in the examples:
+#### Unfamiliar functions used in the examples
 * `ggsize()` - sets size of the plot. Used in many examples starting from `quickstart`
 * `geom_density2df()` - fills space between equal density lines on 2D density plot. Similar to `geom_density2d` but supports `fill` aesthetic.
 
