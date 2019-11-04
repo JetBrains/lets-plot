@@ -1,17 +1,17 @@
 # Sampling in Datalore Plot
 
-`Sampling` is a special kind of data transformation which is built in to Datalore Plot and is applied after `stat` transformation.
+Sampling is a special kind of data transformation which is built in to Datalore Plot and is applied after `stat` transformation.
 
-`Sampling` helps when dealing with large datasets when unintentional attempt to plot excessively large number of geometries can lead to UI freeze and even out-of-memory crash.
+Sampling helps when dealing with large datasets when unintentional attempt to plot excessively large number of geometries can lead to UI freeze and even out-of-memory crash.
 
-`Sampling` is also one of the ways of dealing with over-plotting.
+Sampling is also one of the ways of dealing with over-plotting.
 
 ### How it works
 
-`Sampling` kicks-in automatically when the data volume exceeds a configured threshold and also 
-can be configured for individual geometry layer using `sampling` argument of `geom_xxx()` function. 
+By default, sampling kicks-in automatically when the data volume exceeds a certain threshold. 
+Sampling type and parameters can also be configured manually per geometry layer using `sampling` argument of `geom_xxx()` function. 
 
-Value `"none"` will disable any samplings for given layer.
+Value `"none"` will disable any sampling for the given layer.
 
 There are several sampling methods implemented in Datalore Plot. 
 The sampling methods can be chained together using `+` operator.
