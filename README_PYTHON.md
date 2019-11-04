@@ -86,26 +86,27 @@ The advantage of [Datalore](https://datalore.io) as a learning tool in compariso
 
 #### Index of example notebooks 
 
+TBD: replace temporary URLs ---> permanent 
 
-[quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb)
+[quickstart.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/quickstart.ipynb)
 : see top of this README.
 
-[distributions.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/distributions.ipynb)
+[distributions.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/distributions.ipynb)
 : histogram, density plot, box plot and facets. 
     
-[error_bars.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/error_bars.ipynb)
+[error_bars.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/error_bars.ipynb)
 : error-bars, points, lines, bars, dodge position. 
 
-[scatter_plot.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/scatter_plot.ipynb)
+[scatter_plot.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/scatter_plot.ipynb)
 : points, point shapes, linear regression, jitter position. 
 
-[density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/density_2d.ipynb)
+[density_2d.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/density_2d.ipynb)
 : points, density2d, polygons, density2df. 
 
-[contours.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/contours.ipynb)
+[contours.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/contours.ipynb)
 : tiles, contours, polygons, contourf. 
 
-[legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
+[legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/legend_and_axis.ipynb)
 : various presentation options. 
 
 
