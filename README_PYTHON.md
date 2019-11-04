@@ -26,11 +26,13 @@
 </table>
 
 ### Installation
+
 ```shell script
 pip install datalore-plot`
 ```
 
 ### Quickstart in Jupyter
+
 ```python
 import numpy as np
 from datalore_plot import *
@@ -60,7 +62,8 @@ R `ggplot2` has extensive documentation and a multitude of examples and therefor
 Please keep in mind however, that Python API being very similar yet is different in details from R. 
 
 Also, please keep in mind, that despite our best efforts we did not implemented the entire `ggplot2` API in our Python package. 
-On the other hand and we have added few [new functions] (#unfamiliar_functions_used_in_examples) to our Python API.
+
+On the other hand we have added few [new functions](#unfamiliar_functions_used_in_examples) and [built-in sampling](#sampling) to our Python API.
 
 Thankfully, there is a resource where you can try Datalore Plot live: [Datalore](https://datalore.io).
 
@@ -71,32 +74,30 @@ One important difference is that the python package in `Datalore` is named `data
 The advantage of [Datalore](https://datalore.io) as a learning tool in comparison to Jupyther is that it is equipped with very friendly Python editor which has auto-completion, intentions (suggestions) and other useful features.
 
 
-
 ### Examples
 
 TBD: replace temporary URLs ---> permanent 
 
-[quickstart.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/quickstart.ipynb)
-: see top of this README.
+Quickstart in Jupyter: [quickstart.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/quickstart.ipynb)
 
-[distributions.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/distributions.ipynb)
-: histogram, density plot, box plot and facets. 
-    
+Histogram, density plot, box plot and facets:
+[distributions.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/distributions.ipynb) 
+
+Error-bars, points, lines, bars, dodge position:
 [error_bars.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/error_bars.ipynb)
-: error-bars, points, lines, bars, dodge position. 
-
+ 
+Points, point shapes, linear regression, jitter position:
 [scatter_plot.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/scatter_plot.ipynb)
-: points, point shapes, linear regression, jitter position. 
-
+ 
+Points, density2d, polygons, density2df:
 [density_2d.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/density_2d.ipynb)
-: points, density2d, polygons, density2df. 
-
+ 
+Tiles, contours, polygons, contourf:
 [contours.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/contours.ipynb)
-: tiles, contours, polygons, contourf. 
-
+ 
+Various presentation options:
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/legend_and_axis.ipynb)
-: various presentation options. 
-
+ 
 
 ### Unfamiliar functions used in examples
 
@@ -117,6 +118,11 @@ Sampling is a special kind of data transformation which helps dealing with large
 [Learn more](docs/sampling_python.md) about sampling in Datalore Plot. 
 
 
+### License
+
+Code and documentation released under the [MIT license](https://github.com/JetBrains/datalore-plot/blob/master/LICENSE).
+Copyright 2019, JetBrains s.r.o.
+    
 
 
 

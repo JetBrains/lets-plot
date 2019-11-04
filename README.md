@@ -5,7 +5,7 @@
 </a>
 
 ###
-Datalore Plot is a library for statistical graphics written in `Kotlin` programming language.
+Datalore Plot is an open source library for statistical graphics written in `Kotlin` programming language.
 
 The design of Datalore Plot library is heavily influenced by Leland Wilkinson work [The Grammar of Graphics](https://www.goodreads.com/book/show/2549408.The_Grammar_of_Graphics) describing the deep features that underlie all statistical graphics.
 
