@@ -1,7 +1,3 @@
-# from .._version import __version__
-#
-# __version__ = __version__   # only to get rid of 'unused import' warning
-
 from .coord import *
 from .core import *
 from .facet import *
