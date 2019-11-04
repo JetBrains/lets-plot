@@ -10,7 +10,6 @@ this_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(this_dir)
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'datalore_plot_kotlin_bridge.c')
 
-# ToDo: option: debug / release
 this_system = platform.system()
 binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'native', 'debugStatic')
 
@@ -54,13 +53,27 @@ with open(os.path.join(this_dir, python_package, '_version.py')) as f:
     exec(f.read(), {}, version_locals)
 
 setup(name='datalore-plot',
+      license="MIT",
       version=version_locals['__version__'],
       maintainer='JetBrains',
       maintainer_email='datalore-plot@jetbrains.com',
       author='JetBrains',
       author_email='datalore-plot@jetbrains.com',
-      description='Graphing library for Python',
-      long_description='Graphing library for Python',
+      project_urls={"Github": "https://github.com/JetBrains/datalore-plot"},
+      description='An open source library for statistical plotting',
+      classifiers=[
+          "License :: OSI Approved :: MIT License",
+          "Development Status :: 4 - Beta Copy",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Framework :: Jupyter",
+          "Operating System :: MacOS",
+          "Operating System :: POSIX :: Linux",
+          "Programming Language :: Python :: Implementation :: CPython",
+          "Topic :: Scientific/Engineering :: Visualization",
+          "Intended Audience :: Science/Research",
+          "Intended Audience :: Developers",
+      ],
 
       packages=find_packages(exclude=('test',)),
 
