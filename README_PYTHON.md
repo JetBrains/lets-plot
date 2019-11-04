@@ -59,7 +59,8 @@ R `ggplot2` has extensive documentation and a multitude of examples and therefor
 
 Please keep in mind however, that Python API being very similar yet is different in details from R. 
 
-Also, please keep in mind, that despite our best efforts we did not ported 100% of R `ggplot2` API to Python on the one hand and we have added some [extras](#examples) to the API on the other.
+Also, please keep in mind, that despite our best efforts we did not implemented the entire `ggplot2` API in our Python package. 
+On the other hand and we have added few [new functions] (#unfamiliar_functions_used_in_examples) to our Python API.
 
 Thankfully, there is a resource where you can try Datalore Plot live: [Datalore](https://datalore.io).
 
@@ -72,19 +73,6 @@ The advantage of [Datalore](https://datalore.io) as a learning tool in compariso
 
 
 ### Examples
-
-#### Unfamiliar functions used in examples
-* `ggsize()` - sets size of the plot. Used in many examples starting from `quickstart`
-* `geom_density2df()` - fills space between equal density lines on 2D density plot. Similar to `geom_density2d` but supports `fill` aesthetic.
-
-    Example: [density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/density_2d.ipynb) 
-
-* `geom_contourf()` - fills space between lines of equal level of bivariate function. Similar to `geom_contour` but supports `fill` aesthetic.
-
-    Example: [contours.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/contours.ipynb) 
-
-
-#### Index of example notebooks 
 
 TBD: replace temporary URLs ---> permanent 
 
@@ -108,6 +96,26 @@ TBD: replace temporary URLs ---> permanent
 
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/legend_and_axis.ipynb)
 : various presentation options. 
+
+
+### Unfamiliar functions used in examples
+
+* `ggsize()` - sets size of the plot. Used in many examples starting from `quickstart`
+* `geom_density2df()` - fills space between equal density lines on 2D density plot. Similar to `geom_density2d` but supports `fill` aesthetic.
+
+    Example: [density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/density_2d.ipynb) 
+
+* `geom_contourf()` - fills space between lines of equal level of bivariate function. Similar to `geom_contour` but supports `fill` aesthetic.
+
+    Example: [contours.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/contours.ipynb) 
+
+
+### Sampling 
+
+Sampling is a special kind of data transformation which helps dealing with large datasets and overplotting.
+
+[Learn more](docs/sampling_python.md) about sampling in Datalore Plot. 
+
 
 
 
