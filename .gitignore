@@ -1,4 +1,7 @@
-.idea
+.idea/*
+# share copyright profiles
+!.idea/copyright
+
 *.iml
 .gradle
 .DS_Store
