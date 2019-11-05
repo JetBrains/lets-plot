@@ -20,9 +20,9 @@ For getting this path you can run `python -c "from sysconfig import get_paths as
 
 ## Building
 
-`:python-package-build:build` gradle task defined in the sibling project `python-package-build`
+Gradle `build` in the sibling project **python-package-build**
 
-or just run shell command:
+or just run shell command (if the changes are only in the python code):
 
 `python setup.py update_js bdist_wheel`
 
@@ -35,7 +35,26 @@ or just run shell command:
 
 `pip install --no-index --find-links=dist/ datalore-plot`
  
-## Jupyther
+## Test in Jupyther
 
-TBD
+When "dev" version, `datalore-plot` embeds current "dev" js into Jupyter notebook.
 
+If necessary, this default can be temporarily overwritten by editing `dev_xxx` settings in `_global_settings.py`
+
+The "dev" version of js library can be served from `dist` folder of **js-package** project like:
+
+```shell script
+# Start local web-server to serve dev js script:
+$ cd datalore-plot/js-package/build/dist
+$ python -m http.server 8080
+```
+ 
+## Example code
+
+```python
+from datalore_plot import *
+data = dict(time=['Lunch', 'Lunch', 'Dinner', 'Dinner', 'Dinner'])
+p = ggplot(data) + geom_bar(aes(x='time', fill='..count..'))
+p += scale_fill_hue()
+p
+```
