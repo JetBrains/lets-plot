@@ -17,6 +17,11 @@ plugins {
 group 'org.jetbrains.datalore-plot'
 version "0.0.1-SNAPSHOT"
 
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 import org.yaml.snakeyaml.Yaml
 
 def build_settings_file = new File(rootDir, "build_settings.yml")

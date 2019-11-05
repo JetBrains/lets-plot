@@ -49,6 +49,11 @@ def artifactVersion = project.version
 
 def task_group = 'datalore plot'
 
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 // https://discuss.kotlinlang.org/t/how-to-publish-fat-jar-from-kotlin-multi-project-mpp/14520

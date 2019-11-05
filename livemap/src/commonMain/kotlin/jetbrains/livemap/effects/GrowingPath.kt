@@ -1,15 +1,20 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package jetbrains.livemap.effects
 
 import jetbrains.datalore.base.projectionGeometry.AnyLineString
 import jetbrains.datalore.base.projectionGeometry.AnyPoint
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
-import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.geoprotocol.GeometryUtil.asLineString
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
+import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.projections.Client

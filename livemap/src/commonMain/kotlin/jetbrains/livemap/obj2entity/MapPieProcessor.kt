@@ -1,11 +1,16 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package jetbrains.livemap.obj2entity
 
-import jetbrains.livemap.entities.geometry.Renderers.PieSectorRenderer
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.PieSectorComponent
+import jetbrains.livemap.entities.geometry.Renderers.PieSectorRenderer
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.mapobjects.MapObject

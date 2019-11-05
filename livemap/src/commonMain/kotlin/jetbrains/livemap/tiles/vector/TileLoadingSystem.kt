@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package jetbrains.livemap.tiles.vector
 
 import jetbrains.datalore.base.concurrent.Lock
@@ -13,11 +18,11 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.WorldRectangle
 import jetbrains.livemap.tiles.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
+import jetbrains.livemap.tiles.Tile.SnapshotTile
+import jetbrains.livemap.tiles.components.*
 import jetbrains.livemap.tiles.debug.DebugTileDataFetcher
 import jetbrains.livemap.tiles.debug.DebugTileDataParser
 import jetbrains.livemap.tiles.debug.DebugTileDataRenderer
-import jetbrains.livemap.tiles.Tile.SnapshotTile
-import jetbrains.livemap.tiles.components.*
 
 class TileLoadingSystem(
     private val myQuantumIterations: Int,

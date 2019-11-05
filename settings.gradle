@@ -44,5 +44,10 @@ include 'base-portable',
         'test-common'
 
 
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 // publishing
 enableFeaturePreview('GRADLE_METADATA')

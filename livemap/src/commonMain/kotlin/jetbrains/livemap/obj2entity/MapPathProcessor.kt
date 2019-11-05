@@ -1,8 +1,11 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package jetbrains.livemap.obj2entity
 
 
-import jetbrains.livemap.entities.geometry.Renderers.PathRenderer
-import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.animation.Animations
@@ -14,7 +17,9 @@ import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.LonLatGeometry
+import jetbrains.livemap.entities.geometry.Renderers.PathRenderer
 import jetbrains.livemap.entities.geometry.WorldGeometry
+import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.RendererComponent

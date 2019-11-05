@@ -1,8 +1,12 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.gis.geoprotocol.GeometryUtil.bbox
 import jetbrains.livemap.LiveMapContext
@@ -18,6 +22,7 @@ import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.geometry.GeometryTransform
+import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent

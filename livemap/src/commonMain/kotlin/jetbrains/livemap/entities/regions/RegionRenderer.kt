@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package jetbrains.livemap.entities.regions
 
-import jetbrains.livemap.entities.geometry.Renderers
-import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.datalore.maps.livemap.entities.rendering.Common
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.entities.geometry.Renderers
+import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.StyleComponent

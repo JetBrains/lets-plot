@@ -1,10 +1,13 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package jetbrains.livemap.mapobjects
 
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.livemap.api.ChartSource
-import jetbrains.livemap.entities.geometry.toWorldGeometry
 import jetbrains.livemap.projections.Client
-import jetbrains.livemap.projections.World
 import kotlin.math.PI
 import kotlin.math.abs
 

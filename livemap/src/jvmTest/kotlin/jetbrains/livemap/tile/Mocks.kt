@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package jetbrains.datalore.jetbrains.livemap.tile
 
 import jetbrains.datalore.base.projectionGeometry.QuadKey
@@ -5,12 +10,8 @@ import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.livemap.tiles.components.CellStateComponent
 import java.util.*
 import kotlin.collections.HashSet
-import kotlin.collections.MutableMap
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.emptySet
-import kotlin.collections.forEach
-import kotlin.collections.listOf
 import kotlin.collections.set
 
 object Mocks {

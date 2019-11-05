@@ -76,6 +76,11 @@ idea {
 }
 
 
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 // Workaround for Idea/Gradle bug: https://youtrack.jetbrains.com/issue/KT-24463
 // MPP: Run does not add resource directory to classpath [Cannot get resource when using common module]
 task copyProcessedResources(type: Copy) {
