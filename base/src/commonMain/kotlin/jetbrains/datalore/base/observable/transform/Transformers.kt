@@ -179,12 +179,14 @@ object Transformers {
 //    }
 
     fun <SpecItemT, ItemT : SpecItemT, ValueT : Comparable<ValueT>, CollectionT : ObservableCollection<ItemT>> sortBy(
-            propSpec: (SpecItemT) -> ReadableProperty<out ValueT>): Transformer<CollectionT, ObservableList<ItemT>> {
+        propSpec: (SpecItemT) -> ReadableProperty<out ValueT>
+    ): Transformer<CollectionT, ObservableList<ItemT>> {
         return sortBy(propSpec, Order.ASCENDING)
     }
 
     fun <SpecItemT, ItemT : SpecItemT, ValueT : Comparable<ValueT>, CollectionT : ObservableCollection<ItemT>> sortBy(
-            propSpec: (SpecItemT) -> ReadableProperty<out ValueT>, order: Order): Transformer<CollectionT, ObservableList<ItemT>> {
+        propSpec: (SpecItemT) -> ReadableProperty<out ValueT>, order: Order
+    ): Transformer<CollectionT, ObservableList<ItemT>> {
         return sortBy(propSpec, object : Comparator<ValueT> {
             override fun compare(a: ValueT, b: ValueT): Int {
                 return if (order === Order.DESCENDING) {
@@ -195,7 +197,8 @@ object Transformers {
     }
 
     fun <SpecItemT, ItemT : SpecItemT, ValueT, CollectionT : ObservableCollection<ItemT>> sortBy(
-            propSpec: (SpecItemT) -> ReadableProperty<out ValueT>, cmp: Comparator<ValueT>): Transformer<CollectionT, ObservableList<ItemT>> {
+        propSpec: (SpecItemT) -> ReadableProperty<out ValueT>, cmp: Comparator<ValueT>
+    ): Transformer<CollectionT, ObservableList<ItemT>> {
         val comparator = object : Comparator<ItemT> {
             override fun compare(a: ItemT, b: ItemT): Int {
                 val p1 = propSpec(a)
@@ -214,14 +217,16 @@ object Transformers {
         return object : BaseTransformer<CollectionT, ObservableList<ItemT>>() {
 
             override fun transform(
-                    from: CollectionT):
+                from: CollectionT
+            ):
                     Transformation<CollectionT, ObservableList<ItemT>> {
                 return transform(from, ObservableArrayList())
             }
 
             override fun transform(
-                    from: CollectionT,
-                    to: ObservableList<ItemT>):
+                from: CollectionT,
+                to: ObservableList<ItemT>
+            ):
                     Transformation<CollectionT, ObservableList<ItemT>> {
 
                 return object : Transformation<CollectionT, ObservableList<ItemT>>() {
@@ -296,7 +301,14 @@ object Transformers {
                                     }
                                 }
                                 if (needMove) {
-                                    myCollectionListener.onItemSet(CollectionItemEvent(item, item, -1, CollectionItemEvent.EventType.SET))
+                                    myCollectionListener.onItemSet(
+                                        CollectionItemEvent(
+                                            item,
+                                            item,
+                                            -1,
+                                            CollectionItemEvent.EventType.SET
+                                        )
+                                    )
                                 }
                             }
                         })
@@ -965,13 +977,15 @@ object Transformers {
         return object : BaseTransformer<ObservableList<ItemT>, ObservableList<ItemT>>() {
 
             override fun transform(
-                    from: ObservableList<ItemT>): Transformation<ObservableList<ItemT>, ObservableList<ItemT>> {
+                from: ObservableList<ItemT>
+            ): Transformation<ObservableList<ItemT>, ObservableList<ItemT>> {
                 return transform(from, ObservableArrayList())
             }
 
             override fun transform(
-                    from: ObservableList<ItemT>,
-                    to: ObservableList<ItemT>): Transformation<ObservableList<ItemT>, ObservableList<ItemT>> {
+                from: ObservableList<ItemT>,
+                to: ObservableList<ItemT>
+            ): Transformation<ObservableList<ItemT>, ObservableList<ItemT>> {
 
                 val registration = from.addListener(object : CollectionAdapter<ItemT>() {
                     override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {

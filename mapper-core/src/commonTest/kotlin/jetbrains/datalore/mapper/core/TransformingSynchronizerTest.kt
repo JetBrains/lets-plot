@@ -7,6 +7,8 @@ package jetbrains.datalore.mapper.core
 
 import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
 import jetbrains.datalore.base.observable.collections.list.ObservableList
+import jetbrains.datalore.base.observable.property.Properties
+import jetbrains.datalore.base.observable.transform.Transformers
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -51,14 +53,18 @@ class TransformingSynchronizerTest {
         assertEquals(listOf(*items), target)
     }
 
-    internal class MyMapper(source: ObservableList<String>) : Mapper<ObservableList<String>, ObservableList<String>>(source, ObservableArrayList()) {
+    internal class MyMapper(source: ObservableList<String>) :
+        Mapper<ObservableList<String>, ObservableList<String>>(source, ObservableArrayList()) {
 
         override fun registerSynchronizers(conf: SynchronizersConfiguration) {
             super.registerSynchronizers(conf)
 
-            conf.add(TransformingObservableCollectionRoleSynchronizer(this,
+            val selector = { value: String -> Properties.constant(value) }
+            val sortBy = Transformers.sortBy(selector)
+            conf.add(
+                TransformingObservableCollectionRoleSynchronizer(this,
                     source,
-                    Transformers.sortBy { value: String -> Properties.constant(value) },
+                    sortBy,
                     target,
                     object : MapperFactory<String, String> {
                         override fun createMapper(source: String): Mapper<out String, out String> {
@@ -66,7 +72,8 @@ class TransformingSynchronizerTest {
 
                             }
                         }
-                    }))
+                    })
+            )
         }
     }
 }
