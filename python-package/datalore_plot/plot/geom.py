@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2019. JetBrains s.r.o.
+# Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+#
 from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, geo_data_frame_to_lon_lat
 

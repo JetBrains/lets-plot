@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2019. JetBrains s.r.o.
+# Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+#
 from typing import Any
 
 from .geom_image_ import geom_image

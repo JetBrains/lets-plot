@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2019. JetBrains s.r.o.
+# Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+#
 from pkgutil import extend_path
 
 # To handle the situation when 'datalore' package is shared my modules in different locations.
