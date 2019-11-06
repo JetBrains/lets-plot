@@ -5,8 +5,11 @@
 
 package jetbrains.datalore.plot
 
+import jetbrains.datalore.plot.config.LiveMapOptionsParser
+import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
+import jetbrains.datalore.plot.livemap.LiveMapUtil
 import kotlin.test.Test
 
 // {data={
@@ -37,7 +40,13 @@ class PlotBuilderTest {
         val plotSpec = PlotConfigClientSide.processTransform(initPlotSpec)
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
 
-        injectLiveMap(plotSpec, assembler)
+        LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(plotSpec))
+            ?.let {
+                LiveMapUtil.injectLiveMapProvider(
+                    assembler.layersByTile,
+                    it
+                )
+            }
 
         return assembler.createPlot()
     }
