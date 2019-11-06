@@ -20,7 +20,13 @@ class DemoLayerProvider(
         mapProjection: MapProjection,
         context2d: Context2d
     ) {
-        LayersBuilder(componentManager, layerManager, mapProjection, myDevParams, TextMeasurer(context2d)).apply(myBlock)
+        LayersBuilder(
+            componentManager,
+            layerManager,
+            mapProjection,
+            myDevParams,
+            TextMeasurer(context2d)
+        ).apply(myBlock)
     }
 
     override val layers: List<MapLayer> = emptyList()

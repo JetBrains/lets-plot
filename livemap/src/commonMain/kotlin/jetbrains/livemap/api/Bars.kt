@@ -63,7 +63,7 @@ class BarsFactory(
             .mapNotNull { it.values }
             .flatten()
             .maxBy { abs(it) }
-            ?: error("")
+            ?: error("Failed to calculate maxAbsValue.")
 
         return myItems.flatMap { splitMapBarChart(it, abs(maxAbsValue)) }
     }
@@ -85,7 +85,7 @@ class BarsFactory(
             )
             result.add(
                 myEntityFactory
-                    .createMapEntity(myMapProjection.project(explicitVec(source.lon, source.lat)), Renderers.BarRenderer(), "map_ent_bar")
+                    .createMapEntity(myMapProjection.project(explicitVec(source.lon!!, source.lat!!)), Renderers.BarRenderer(), "map_ent_bar")
                     .addComponents {
                         + ScreenOffsetComponent().apply { offset = barOffset}
                         + ScreenDimensionComponent().apply { dimension = barDimension }

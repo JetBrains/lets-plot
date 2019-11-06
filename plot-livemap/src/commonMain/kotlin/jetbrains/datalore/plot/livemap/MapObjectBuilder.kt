@@ -24,29 +24,29 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.MapWidgetUtil
-import jetbrains.livemap.api.ChartSource
+import jetbrains.livemap.api.*
 import jetbrains.livemap.mapobjects.*
 import jetbrains.livemap.mapobjects.MapLayerKind.*
 import jetbrains.livemap.mapobjects.Utils.splitMapBarChart
 import jetbrains.livemap.mapobjects.Utils.splitMapPieChart
-import jetbrains.livemap.projections.MapProjection
 import kotlin.math.ceil
 
 internal class MapObjectBuilder {
 
     private val myLayerKind: MapLayerKind
-    private val myMapProjection: MapProjection
     private val myP: DataPointAesthetics
 
     private var myValueArray: List<Double> = emptyList()
     private var myColorArray: List<Color> = emptyList()
     private var myStrokeWidth: Double? = null
     private var geometry: TypedGeometry<LonLat>? = null
+    private var coordinates: List<Vec<LonLat>>? = null
     private var point: Vec<LonLat>? = null
     private var indices = emptyList<Int>()
     private var myArrowSpec: ArrowSpec? = null
     private var animation = 0
     private var myMaxAbsValue: Double? = null
+    var geodesic: Boolean = false
 
     private val index: Int
         get() = myP.index()
@@ -155,15 +155,13 @@ internal class MapObjectBuilder {
         return explicitVec(limitLon(point.x), limitLat(point.y))
     }
 
-    constructor(p: DataPointAesthetics, layerKind: MapLayerKind, mapProjection: MapProjection) {
+    constructor(p: DataPointAesthetics, layerKind: MapLayerKind) {
         myLayerKind = layerKind
-        myMapProjection = mapProjection
         myP = p
     }
 
-    constructor(p: MultiDataPointHelper.MultiDataPoint, layerKind: MapLayerKind, mapProjection: MapProjection) {
+    constructor(p: MultiDataPointHelper.MultiDataPoint, layerKind: MapLayerKind) {
         myLayerKind = layerKind
-        myMapProjection = mapProjection
         myP = p.aes
         indices = p.indices
         myValueArray = p.values
@@ -185,6 +183,116 @@ internal class MapObjectBuilder {
             TEXT -> createText()?.run(consumer)
             H_LINE, V_LINE -> createLine()?.run(consumer)
             else -> throw IllegalArgumentException("Unknown map layer kind: $myLayerKind")
+        }
+    }
+
+    fun createPointBlock(): (PointBuilder.() -> Unit)? {
+        return point?.let{
+            {
+                index = this@MapObjectBuilder.index
+                this@MapObjectBuilder.mapId?.let { mapId = it }
+                this@MapObjectBuilder.regionId?.let { regionId = it }
+                lon = it.x
+                lat = it.y
+                label = this@MapObjectBuilder.label
+                animation = this@MapObjectBuilder.animation
+                shape = this@MapObjectBuilder.shape
+                radius = this@MapObjectBuilder.radius
+                fillColor = this@MapObjectBuilder.fillColor
+                strokeColor = this@MapObjectBuilder.strokeColor
+                strokeWidth = this@MapObjectBuilder.strokeWidth
+            }
+        }
+    }
+
+    fun createPolygonBlock(): PolygonsBuilder.() -> Unit {
+        return {
+            index = this@MapObjectBuilder.index
+            this@MapObjectBuilder.mapId?.let { mapId = it }
+            this@MapObjectBuilder.regionId?.let { regionId = it }
+
+            coordinates = this@MapObjectBuilder.coordinates
+
+            lineDash = this@MapObjectBuilder.lineDash
+            fillColor = this@MapObjectBuilder.fillColor
+            strokeColor = this@MapObjectBuilder.strokeColor
+            strokeWidth = this@MapObjectBuilder.strokeWidth
+        }
+    }
+
+    fun createPathBlock(): (PathBuilder.() -> Unit)? {
+        return coordinates?.let {
+            {
+                index = this@MapObjectBuilder.index
+                this@MapObjectBuilder.mapId?.let { mapId = it }
+                this@MapObjectBuilder.regionId?.let { regionId = it }
+
+                coordinates = it
+
+                lineDash = this@MapObjectBuilder.lineDash
+                strokeColor = this@MapObjectBuilder.strokeColor
+                strokeWidth = this@MapObjectBuilder.strokeWidth
+
+                animation = this@MapObjectBuilder.animation
+                speed = this@MapObjectBuilder.speed
+                flow = this@MapObjectBuilder.flow
+                geodesic = this@MapObjectBuilder.geodesic
+            }
+        }
+    }
+
+    fun createLineBlock(): (LineBuilder.() -> Unit)? {
+        return point?.let{
+            {
+                index = this@MapObjectBuilder.index
+                this@MapObjectBuilder.mapId?.let { mapId = it }
+                this@MapObjectBuilder.regionId?.let { regionId = it }
+                lon = it.x
+                lat = it.y
+                lineDash = this@MapObjectBuilder.lineDash
+                strokeColor = this@MapObjectBuilder.strokeColor
+                strokeWidth = this@MapObjectBuilder.strokeWidth
+            }
+        }
+    }
+
+    fun createChartBlock(): (ChartSource.() -> Unit)? {
+        return point?.let {
+            {
+                lon = it.x
+                lat = it.y
+
+                radius = this@MapObjectBuilder.radius
+
+                strokeColor = this@MapObjectBuilder.strokeColor
+                strokeWidth = this@MapObjectBuilder.strokeWidth
+
+                indices = this@MapObjectBuilder.indices
+                values = this@MapObjectBuilder.myValueArray
+                colors = this@MapObjectBuilder.colorArray
+            }
+        }
+    }
+
+    fun createTextBlock(): (TextBuilder.() -> Unit)? {
+        return point?.let {
+            {
+                index = this@MapObjectBuilder.index
+                this@MapObjectBuilder.mapId?.let { mapId = it }
+                this@MapObjectBuilder.regionId?.let { regionId = it }
+                lon = it.x
+                lat = it.y
+                fillColor = this@MapObjectBuilder.fillColor
+                strokeColor = this@MapObjectBuilder.strokeColor
+                strokeWidth = this@MapObjectBuilder.strokeWidth
+                label = this@MapObjectBuilder.label
+                size = this@MapObjectBuilder.size
+                family = this@MapObjectBuilder.family
+                fontface = this@MapObjectBuilder.fontface
+                hjust = this@MapObjectBuilder.hjust
+                vjust = this@MapObjectBuilder.vjust
+                angle = this@MapObjectBuilder.angle
+            }
         }
     }
 
@@ -319,13 +427,14 @@ internal class MapObjectBuilder {
     }
 
     fun setGeometryData(points: List<DoubleVector>, isPolygon: Boolean, isGeodesic: Boolean): MapObjectBuilder {
-        val coordinates = points.map { limitCoord(it) }
+        val coord = points.map { limitCoord(it) }
+        coordinates = coord.map { explicitVec<LonLat>(it.x, it.y) }
 
         val multipolygon = if (isPolygon) {
-            GeomUtil.createMultiPolygon(coordinates)
+            GeomUtil.createMultiPolygon(coord)
         } else {
             MapWidgetUtil
-                .splitPathByAntiMeridian(if (isGeodesic) MapWidgetUtil.createArcPath(coordinates) else coordinates)
+                .splitPathByAntiMeridian(if (isGeodesic) MapWidgetUtil.createArcPath(coord) else coord)
                 .map { path -> Polygon(listOf(Ring(path.map { it.toVec<Generic>() }))) }
                 .run(::MultiPolygon)
         }

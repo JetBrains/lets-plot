@@ -20,7 +20,6 @@ import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode.POINT
 import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromLayerOptions
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DISPLAY_MODE
 import jetbrains.datalore.plot.config.OptionsAccessor
-import jetbrains.datalore.plot.livemap.ConverterDataHelper.MAP_PROJECTION
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.eq
 import jetbrains.livemap.mapobjects.MapObject
@@ -165,9 +164,7 @@ class MapIdAndGeoPointDataProcessingTest {
         fun build(): LiveMapDataPointAestheticsProcessor {
             return LiveMapDataPointAestheticsProcessor(
                 myAes,
-                myMappedDataAccess,
-                parseFromLayerOptions(OptionsAccessor(myOptions)),
-                MAP_PROJECTION
+                parseFromLayerOptions(OptionsAccessor(myOptions))
             )
         }
     }

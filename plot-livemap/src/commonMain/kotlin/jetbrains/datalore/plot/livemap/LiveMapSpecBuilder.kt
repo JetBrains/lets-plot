@@ -25,13 +25,11 @@ import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
+import jetbrains.livemap.api.DemoLayerProvider
+import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.api.liveMapGeocoding
 import jetbrains.livemap.mapobjects.MapLayer
-import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionType
-import jetbrains.livemap.projections.ProjectionUtil
-import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
-import jetbrains.livemap.projections.WorldRectangle
 
 
 internal class LiveMapSpecBuilder {
@@ -81,19 +79,27 @@ internal class LiveMapSpecBuilder {
 
     fun build(): LiveMapSpec {
         val projectionType = convertProjectionType(myLiveMapOptions.projection)
-        val mapRect = WorldRectangle(0.0, 0.0, ProjectionUtil.TILE_PIXEL_SIZE, ProjectionUtil.TILE_PIXEL_SIZE)
-        val mapProjection = createMapProjection(projectionType, mapRect)
 
-        val liveMapProcessor = LiveMapDataPointAestheticsProcessor(
-            myAesthetics,
-            myLiveMapOptions,
-            mapProjection
-        )
+        val liveMapProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myLiveMapOptions)
+
+        val layerProcessor = LayerDataPointAestheticsProcessor(myLiveMapOptions.geodesic)
 
         val mapLayers = ArrayList<MapLayer>()
         mapLayers.add(liveMapProcessor.createMapLayer())
-        mapLayers.addAll(createMapLayers(mapProjection))
+        mapLayers.addAll(createMapLayers())
         mapLayers.removeAll { layer -> layer.mapObjects.isEmpty() }
+
+        val layersBuilderBlocks: ArrayList<LayersBuilder.() -> Unit> = ArrayList()
+        layersBuilderBlocks.add(liveMapProcessor.createBlock())
+
+        for (layerData in myLayers) {
+            layersBuilderBlocks.add(layerProcessor.createBlock(layerData))
+        }
+
+
+        DemoLayerProvider(myDevParams) {
+            layersBuilderBlocks.forEach { block -> block() }
+        }
 
         return LiveMapSpec(
             liveMapGeocoding {
@@ -113,7 +119,10 @@ internal class LiveMapSpecBuilder {
             myLiveMapOptions.zoom,
             getFeatureLevel(myLiveMapOptions.featureLevel),
             createMapRegion(myLiveMapOptions.parent),
-            PlotLayerProvider(mapLayers, myDevParams),
+            // PlotLayerProvider(mapLayers, myDevParams),
+            DemoLayerProvider(myDevParams) {
+                layersBuilderBlocks.forEach { block -> block() }
+            },
             CYLINDRICAL_PROJECTIONS.contains(projectionType),
             DEFAULT_LOOP_Y,
             myMapLocationConsumer,
@@ -121,10 +130,9 @@ internal class LiveMapSpecBuilder {
         )
     }
 
-    private fun createMapLayers(mapProjection: MapProjection): List<MapLayer> {
+    private fun createMapLayers(): List<MapLayer> {
         val mapLayers = ArrayList<MapLayer>()
-        val layerProcessor =
-            LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions.geodesic)
+        val layerProcessor = LayerDataPointAestheticsProcessor(myLiveMapOptions.geodesic)
 
         for (layerData in myLayers) {
             val mapLayer = layerProcessor.createMapLayer(layerData)

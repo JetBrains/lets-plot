@@ -104,8 +104,8 @@ class LayersBuilder(
 
 @LiveMapDsl
 class ChartSource {
-    var lon: Double = 0.0
-    var lat: Double = 0.0
+    var lon: Double? = null
+    var lat: Double? = null
     var radius: Double = 0.0
 
     var strokeColor: Color = Color.BLACK

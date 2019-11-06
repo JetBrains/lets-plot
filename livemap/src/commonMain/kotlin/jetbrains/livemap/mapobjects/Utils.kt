@@ -29,7 +29,7 @@ object Utils {
                     "",
                     "",
 
-                    explicitVec(source.lon, source.lat),
+                    explicitVec(source.lon!!, source.lat!!),
                     source.radius,
                     startAngle,
                     endAngle,
@@ -65,7 +65,7 @@ object Utils {
                     source.indices[i],
                     "",
                     "",
-                    explicitVec(source.lon, source.lat),
+                    explicitVec(source.lon!!, source.lat!!),
                     source.colors[i],
                     source.strokeColor,
                     source.strokeWidth,

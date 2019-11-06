@@ -13,34 +13,33 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
+import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayersBuilderBlock
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.MultiDataPoint
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
+import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
+import jetbrains.livemap.mapobjects.MapLayerKind.POINT
 import jetbrains.livemap.mapobjects.MapObject
-import jetbrains.livemap.projections.MapProjection
 import kotlin.math.abs
 import kotlin.math.max
 
 internal class LiveMapDataPointAestheticsProcessor(
     private val myAesthetics: Aesthetics,
-    liveMapOptions: LiveMapOptions,
-    private val myMapProjection: MapProjection
+    liveMapOptions: LiveMapOptions
 ) {
     private val myStrokeWidth: Double? = liveMapOptions.stroke
-    private val myLayerKind: MapLayerKind
-    private val myFrameSpecified: Boolean
-    private val myLonLatInsideMapIdSpecified: Boolean
+    private val myLayerKind: MapLayerKind = getLayerKind(liveMapOptions.displayMode)
+    private val myGeodesic: Boolean = liveMapOptions.geodesic
+    private val myFrameSpecified: Boolean = allAesMatch(myAesthetics, ::isFrameSet)
+    private val myLonLatInsideMapIdSpecified: Boolean = allAesMatch(myAesthetics, ::isLiveMapWithLonLat)
     private var myMaxAbsValue: Double? = null
 
     private val mapObjects: List<MapObject>
         get() = if (useMultiDataPoint()) processMultiDataPoints() else processDataPoints()
 
-    init {
-        myLayerKind = getLayerKind(liveMapOptions.displayMode)
-        myFrameSpecified = allAesMatch(myAesthetics, ::isFrameSet)
-        myLonLatInsideMapIdSpecified = allAesMatch(myAesthetics, ::isLiveMapWithLonLat)
-    }
+    private val mapObjectBuilders: List<MapObjectBuilder>
+        get() = if (useMultiDataPoint()) processMultiDataPoints2() else processDataPoints2()
 
     private fun isFrameSet(p: DataPointAesthetics): Boolean {
         return p.frame() != AesInitValue[Aes.FRAME]
@@ -53,7 +52,7 @@ internal class LiveMapDataPointAestheticsProcessor(
     private fun getLayerKind(displayMode: LivemapConstants.DisplayMode): MapLayerKind {
         return when (displayMode) {
             LivemapConstants.DisplayMode.POLYGON -> MapLayerKind.POLYGON
-            LivemapConstants.DisplayMode.POINT -> MapLayerKind.POINT
+            LivemapConstants.DisplayMode.POINT -> POINT
             LivemapConstants.DisplayMode.PIE -> MapLayerKind.PIE
             LivemapConstants.DisplayMode.HEATMAP -> MapLayerKind.HEATMAP
             LivemapConstants.DisplayMode.BAR -> MapLayerKind.BAR
@@ -86,6 +85,10 @@ internal class LiveMapDataPointAestheticsProcessor(
         return MapLayer(myLayerKind, mapObjects)
     }
 
+    fun createBlock(): LayersBuilder.() -> Unit {
+        return createLayersBuilderBlock(myLayerKind, mapObjectBuilders)
+    }
+
     private fun processDataPoints(): List<MapObject> {
         val mapObjects = ArrayList<MapObject>(myAesthetics.dataPointCount())
         for (p in myAesthetics.dataPoints()) {
@@ -110,13 +113,37 @@ internal class LiveMapDataPointAestheticsProcessor(
         return mapObjects
     }
 
+    private fun processDataPoints2(): List<MapObjectBuilder> {
+        val mapObjects = ArrayList<MapObjectBuilder>(myAesthetics.dataPointCount())
+        for (p in myAesthetics.dataPoints()) {
+            mapObjects.add(MapObjectBuilder(p, myLayerKind).apply { setIfNeeded(p) })
+        }
+        return mapObjects
+    }
+
+    private fun processMultiDataPoints2(): List<MapObjectBuilder> {
+        val multiDataPoints = MultiDataPointHelper.getPoints(
+            myAesthetics,
+            getSortingMode(myLayerKind)
+        )
+        if (myLayerKind === MapLayerKind.BAR) {
+            myMaxAbsValue = getMaxAbsValue(multiDataPoints)
+        }
+
+        val mapObjects = ArrayList<MapObjectBuilder>(multiDataPoints.size)
+        for (multiDataPoint in multiDataPoints) {
+            mapObjects.add(MapObjectBuilder(multiDataPoint, myLayerKind).apply { setIfNeeded(multiDataPoint.aes) })
+        }
+        return mapObjects
+    }
+
     private fun dataPointToMapObject(p: DataPointAesthetics, consumer: (MapObject) -> Unit) {
-        createMapObject(p, MapObjectBuilder(p, myLayerKind, myMapProjection), consumer)
+        createMapObject(p, MapObjectBuilder(p, myLayerKind), consumer)
     }
 
     private fun multiDataPointToMapObject(multiDataPoint: MultiDataPoint, consumer: (MapObject) -> Unit) {
         createMapObject(multiDataPoint.aes,
-            MapObjectBuilder(multiDataPoint, myLayerKind, myMapProjection), consumer)
+            MapObjectBuilder(multiDataPoint, myLayerKind), consumer)
     }
 
     private fun createMapObject(
@@ -129,6 +156,15 @@ internal class LiveMapDataPointAestheticsProcessor(
         setMaxAbsValueIfNeeded(mapObjectBuilder)
 
         mapObjectBuilder.build(consumer)
+    }
+
+    private fun MapObjectBuilder.setIfNeeded(
+        p: DataPointAesthetics
+    ) {
+        setGeometryPointIfNeeded(p, this)
+        // setStrokeWidthIfNeeded(this)
+        // setMaxAbsValueIfNeeded(this)
+        setGeodesicIfNeeded(this)
     }
 
     private fun setGeometryPointIfNeeded(p: DataPointAesthetics, mapObjectBuilder: MapObjectBuilder) {
@@ -159,8 +195,14 @@ internal class LiveMapDataPointAestheticsProcessor(
             return
         }
 
-        if (myLayerKind === MapLayerKind.POINT || myLayerKind === MapLayerKind.PIE || myLayerKind === MapLayerKind.BAR) {
+        if (myLayerKind === POINT || myLayerKind === MapLayerKind.PIE || myLayerKind === MapLayerKind.BAR) {
             mapObjectBuilder.setStrokeWidth(myStrokeWidth)
+        }
+    }
+
+    private fun setGeodesicIfNeeded(mapObjectBuilder: MapObjectBuilder) {
+        if (myLayerKind == MapLayerKind.PATH) {
+            mapObjectBuilder.geodesic = myGeodesic
         }
     }
 

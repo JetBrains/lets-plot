@@ -68,7 +68,10 @@ class PiesFactory(
             val endAngle = startAngle + angles[i]
             result.add(
                 myEntityFactory
-                    .createMapEntity(myMapProjection.project(explicitVec(source.lon, source.lat)), Renderers.PieSectorRenderer(), "map_ent_pie_sector")
+                    .createMapEntity(
+                        myMapProjection.project(explicitVec(source.lon!!, source.lat!!)),
+                        Renderers.PieSectorRenderer(), "map_ent_pie_sector"
+                    )
                     .addComponents {
                         + PieSectorComponent().apply {
                             this.radius = source.radius

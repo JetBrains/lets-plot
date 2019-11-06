@@ -95,7 +95,6 @@ internal object ConverterDataHelper {
             val aesthetics = build()
             return DataPointsConverter(
                 aesthetics,
-                MAP_PROJECTION,
                 true
             )
         }
