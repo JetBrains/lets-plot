@@ -57,16 +57,88 @@ node {
     download = true
 }
 
-//publishing {
-//
-//}
+def artifact_version = project.buildSettings.js_artifact_version
+def bintray_user = project.buildSettings.bintray.user
+def bintray_key = project.buildSettings.bintray.key
 
 if (bintray_user != null && bintray_key != null) {
+    bintray {
+        user = bintray_user
+        key = bintray_key
+
+        filesSpec {
+            from 'build/dist'
+            into '.'
+        }
+
+        publish = true
+
+        pkg {
+            repo = 'datalore-plot'
+            name = 'datalore-plot-js'
+            userOrg = 'jetbrains'
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/JetBrains/datalore-plot'
+            version {
+                name = artifact_version
+            }
+        }
+    }
+
+    tasks.create("versionFiles", com.jfrog.bintray.gradle.tasks.RecordingCopyTask) {
+        from('build/dist')
+        into('.')
+        exclude('*latest*')
+        outputs.upToDateWhen { false }
+    }
+
+    task publishVersion(type: com.jfrog.bintray.gradle.tasks.BintrayUploadTask) {
+        apiUrl bintray.apiUrl
+        user bintray.user
+        apiKey bintray.key
+
+        publish bintray.publish
+        override false
+
+        repoName bintray.pkg.repo
+        packageName bintray.pkg.name
+
+        versionName artifact_version
+
+        dependsOn(versionFiles)
+    }
+    tasks.getByName("publishVersion").project = project
+
+    tasks.create("latestFiles", com.jfrog.bintray.gradle.tasks.RecordingCopyTask) {
+        from('build/dist') {
+            include '*latest*'
+        }
+        into('.')
+        outputs.upToDateWhen { false }
+    }
+
+    task publishLatest(type: com.jfrog.bintray.gradle.tasks.BintrayUploadTask) {
+        apiUrl bintray.apiUrl
+        user bintray.user
+        apiKey bintray.key
+
+        publish bintray.publish
+        override true
+
+        repoName bintray.pkg.repo
+        packageName bintray.pkg.name
+
+        versionName 'latest'
+
+        dependsOn(latestFiles)
+    }
+    tasks.getByName("publishLatest").project = project
+
     task publishJS {
         group("publishing")
 
-        dependsOn(":js-package:js-publish-version:bintrayUpload")
-        dependsOn(":js-package:js-publish-latest:bintrayUpload")
+        dependsOn(publishVersion)
+        dependsOn(publishLatest)
     }
 }
 
