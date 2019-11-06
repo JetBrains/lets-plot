@@ -68,7 +68,7 @@ setup(name='datalore-plot',
       long_description_content_type='text/markdown',
       classifiers=[
           "License :: OSI Approved :: MIT License",
-          "Development Status :: 4 - Beta Copy",
+          "Development Status :: 4 - Beta",
           "Programming Language :: Python :: 3.7",
           "Programming Language :: Python :: 3.8",
           "Framework :: Jupyter",
