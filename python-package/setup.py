@@ -52,6 +52,9 @@ version_locals = {}
 with open(os.path.join(this_dir, python_package, '_version.py')) as f:
     exec(f.read(), {}, version_locals)
 
+with open(os.path.join(root_dir, 'README_PYTHON.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
 setup(name='datalore-plot',
       license="MIT",
       version=version_locals['__version__'],
@@ -61,6 +64,8 @@ setup(name='datalore-plot',
       author_email='datalore-plot@jetbrains.com',
       project_urls={"Github": "https://github.com/JetBrains/datalore-plot"},
       description='An open source library for statistical plotting',
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       classifiers=[
           "License :: OSI Approved :: MIT License",
           "Development Status :: 4 - Beta Copy",
