@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+plugins {
+    // publishing to bintray
+    id "com.jfrog.bintray"
+}
+
+def bintray_user = project.buildSettings.bintray.user
+def bintray_key = project.buildSettings.bintray.key
+
+if (bintray_user != null && bintray_key != null) {
+    bintray {
+        user = bintray_user
+        key = bintray_key
+
+        filesSpec {
+            from('../build/dist') {
+                include '*latest*'
+            }
+            into('.')
+        }
+
+        publish = true
+        override = true
+
+        pkg {
+            repo = 'datalore-plot'
+            name = 'datalore-plot-js'
+            userOrg = 'jetbrains'
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/JetBrains/datalore-plot'
+            version {
+                name = 'latest'
+            }
+        }
+    }
+}
