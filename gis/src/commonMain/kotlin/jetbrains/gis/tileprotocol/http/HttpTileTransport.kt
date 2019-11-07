@@ -13,7 +13,7 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.ThreadSafeAsync
 import kotlinx.coroutines.launch
 
-class HttpTileTransport(private val myHost: String, private val myPort: Int?, private val myRoute: String) {
+class HttpTileTransport(private val myProtocol: String, private val myHost: String, private val myPort: Int?, private val myRoute: String) {
     private val myClient = HttpClient()
 
     fun get(request: String): Async<ByteArray> {
@@ -23,7 +23,7 @@ class HttpTileTransport(private val myHost: String, private val myPort: Int?, pr
             try {
                 val response= myClient.get<ByteArray> {
                     url {
-                        protocol = URLProtocol.HTTPS
+                        protocol = URLProtocol.byName[myProtocol] ?: URLProtocol.HTTPS
                         host = myHost
                         port = myPort ?: DEFAULT_PORT
                         encodedPath = myRoute + request

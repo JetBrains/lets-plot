@@ -102,6 +102,7 @@ class DevParams(private val devParams: Map<*, *>) {
             return when(val v = params[key]) {
                 null -> null
                 is Map<*, *> -> RasterTiles().apply {
+                    v["protocol"]?.let { if (it is String) protocol = it }
                     v["host"]?.let { if (it is String) host = it }
                     v["port"]?.let { if (it is Int) port = it }
                     v["format"]?.let { if (it is String) format = it }
@@ -116,6 +117,7 @@ class DevParams(private val devParams: Map<*, *>) {
     }
 
     class RasterTiles {
+        var protocol: String = "https"
         var host: String = "localhost"
         var port: Int? = null
         var format: String = "/\${z}/\${x}/\${y}.png"

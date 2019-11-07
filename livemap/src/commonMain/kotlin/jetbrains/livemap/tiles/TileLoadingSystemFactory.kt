@@ -58,7 +58,7 @@ interface TileLoadingSystemFactory {
             val rasterTiles = devParams.read(RASTER_TILES)
             if (rasterTiles != null)
                 return RasterTileLoadingSystemFactory(
-                    HttpTileTransport(rasterTiles.host, rasterTiles.port, ""),
+                    HttpTileTransport(rasterTiles.protocol, rasterTiles.host, rasterTiles.port, ""),
                     rasterTiles.format
                 )
 
