@@ -24,6 +24,16 @@ _frontend_contexts: Dict[str, FrontendContext] = {}
 
 
 def load_datalore_plot_js(embed: bool = None):
+    """
+    Loads Datalore Plot javascript library into current frontend context.
+
+    Parameters
+    ----------
+    embed : bool, optional
+        True - embed JS which is bundled with Datalore Plot PyPI package. This is useful for off-line notebooks.
+        False - load JS from CDN.
+        default - load JS from CDN.
+    """
     if not (isinstance(embed, bool) or embed is None):
         raise ValueError("'embed' argument is not boolean: {}".format(type(embed)))
 
