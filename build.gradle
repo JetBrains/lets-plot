@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'org.jetbrains.datalore-plot'
-version "0.0.1rc2"
+version "0.0.3-SNAPSHOT"
 
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
