@@ -25,14 +25,31 @@
     </tr>
 </table>
 
+### Implementation Overview
+
+The Datalore Plot python extension includes native backend and a Python API, which was mostly based on the [`ggplot2`](https://ggplot2.tidyverse.org/) package well-known to data scientists who use R.
+
+R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who want to learn the grammar of graphics. 
+
+Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new functions](#unfamiliar_functions_used_in_the_examples) and [built-in sampling](#sampling) to our Python API.
+
+You can try the Datalore Plot library in [Datalore](https://datalore.io). Datalore Plot is available in Datalore out-of-the-box and is almost identical to the one we ship as PyPI package. This is because Datalore Plot is an offshoot of the Datalore project from which it was extracted to a separate plotting library.
+
+One important difference is that the python package in Datalore is named **datalore.plot** and the package you install from PyPI has name **datalore_plot**.
+
+The advantage of [Datalore](https://datalore.io) as a learning tool in comparison to Jupyther is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
+
+
 ### Installation
 
+To install the Datalore Plot library, run the following command:
 ```shell script
 pip install datalore-plot`
 ```
 
 ### Quickstart in Jupyter
 
+To evaluate the plotting capabilities of Datalore Plot, add the following code to a Jupyter notebook:
 ```python
 import numpy as np
 from datalore_plot import *
@@ -53,28 +70,9 @@ TBD: image URL
 ![](docs/examples/images/quickstart.png)
 
 
-### Overview
-
-Datalore Plot python extension includes native backend and a Python API which was mostly borrowed from [`ggplot2`](https://ggplot2.tidyverse.org/) package well known to data-scientists who use R.
-
-R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who wants to learn grammar of graphics. 
-
-Please keep in mind however, that Python API being very similar yet is different in details from R. 
-
-Also, please keep in mind, that despite our best efforts we did not implemented the entire `ggplot2` API in our Python package. 
-
-On the other hand we have added few [new functions](#unfamiliar_functions_used_in_examples) and [built-in sampling](#sampling) to our Python API.
-
-Thankfully, there is a resource where you can try Datalore Plot live: [Datalore](https://datalore.io).
-
-Datalore Plot is available in `Datalore` out-of-the-box and is almost identical to the one we ship as PyPI package. This is because Datalore Plot is an offshoot of the Datalore project from which it was extracted to a separate plotting library.
-
-One important difference is that the python package in `Datalore` is named `datalore.plot` and the package you install from PyPI has name `datalore_plot`.
-
-The advantage of [Datalore](https://datalore.io) as a learning tool in comparison to Jupyther is that it is equipped with very friendly Python editor which has auto-completion, intentions (suggestions) and other useful features.
-
-
 ### Examples
+
+Try the following examples to study more features of the Datalore Plot library.
 
 TBD: replace temporary URLs ---> permanent 
 
@@ -99,7 +97,7 @@ Various presentation options:
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/legend_and_axis.ipynb)
  
 
-### Unfamiliar functions used in examples
+### Unfamiliar functions used in the examples
 
 * `ggsize()` - sets size of the plot. Used in many examples starting from `quickstart`
 * `geom_density2df()` - fills space between equal density lines on 2D density plot. Similar to `geom_density2d` but supports `fill` aesthetic.
@@ -113,7 +111,7 @@ Various presentation options:
 
 ### Sampling 
 
-Sampling is a special kind of data transformation which helps dealing with large datasets and overplotting.
+Sampling is a special technique of data transformation, which helps dealing with large datasets and overplotting.
 
 [Learn more](docs/sampling_python.md) about sampling in Datalore Plot. 
 
