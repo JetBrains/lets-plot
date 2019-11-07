@@ -39,6 +39,8 @@ include 'base-portable',
         'python-extension',
         'python-package-build',
         'js-package',
+        'js-package:js-publish-latest',
+        'js-package:js-publish-version',
         'jvm-jfx-package',
         'test-common'
 
