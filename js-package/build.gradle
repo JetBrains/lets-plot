@@ -23,6 +23,7 @@ kotlin {
                 implementation project(':base')
                 implementation project(':mapper-core')
                 implementation project(':vis-svg')
+                implementation project(':vis-canvas')
                 implementation project(':vis-svg-mapper')
                 implementation project(':plot-base-portable')
                 implementation project(':plot-base')
@@ -32,7 +33,6 @@ kotlin {
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
-                implementation project(':plot-app')
 
                 if (project.buildSettings.enable_livemap) {
                     implementation project(':gis')
@@ -46,6 +46,15 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
+                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+
+                implementation project(':mapper-core')
+                implementation project(':vis-svg-mapper')
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation kotlin('test-js')
             }
         }
     }
@@ -193,7 +202,6 @@ dependencies {
     projectDependenciesJs project(':plot-builder')
     projectDependenciesJs project(':plot-config-portable')
     projectDependenciesJs project(':plot-config')
-    projectDependenciesJs project(':plot-app')
 }
 
 // ---------------------------------

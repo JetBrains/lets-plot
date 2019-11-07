@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.injectLiveMap
+import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.svg.SvgNodeContainer
@@ -111,7 +111,13 @@ private fun buildPlotFromProcessedSpecsIntern(
         }
     }
 
-    injectLiveMap(plotSpec, assembler)
+    LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(plotSpec))
+        ?.let {
+            LiveMapUtil.injectLiveMapProvider(
+                assembler.layersByTile,
+                it
+            )
+        }
 
     val plot = assembler.createPlot()
     val svg = buildPlotSvg(plot, plotSize, parentElement)
