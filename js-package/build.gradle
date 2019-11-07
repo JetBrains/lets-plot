@@ -33,7 +33,6 @@ kotlin {
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
-                implementation project(':plot-app')
 
                 if (project.buildSettings.enable_livemap) {
                     implementation project(':gis')
