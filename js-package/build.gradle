@@ -203,7 +203,6 @@ dependencies {
     projectDependenciesJs project(':plot-builder')
     projectDependenciesJs project(':plot-config-portable')
     projectDependenciesJs project(':plot-config')
-    projectDependenciesJs project(':plot-app')
 }
 
 // ---------------------------------

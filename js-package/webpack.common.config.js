@@ -8,10 +8,11 @@ const webpack = require('webpack');
 
 const buildPath = path.resolve(__dirname, 'build');
 const libPath = path.resolve(buildPath, 'js');
+const jsPackagePath = path.resolve(buildPath, 'classes', 'kotlin', 'js', 'main');
 const distPath = path.resolve(buildPath, 'dist');
 
 module.exports = {
-    entry: `${libPath}/plot-app.js`,
+    entry: `${jsPackagePath}/js-package.js`,
     output: {
         library: 'DatalorePlot',
         path: distPath,
@@ -19,7 +20,7 @@ module.exports = {
         globalObject: 'window'
     },
     resolve: {
-        modules: [libPath, 'node_modules']
+        modules: [libPath, jsPackagePath, 'node_modules']
     },
     plugins: [
         new webpack.IgnorePlugin(/^(ws|text-encoding)$/)
