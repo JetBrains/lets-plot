@@ -25,30 +25,26 @@ import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.MapWidgetUtil
 import jetbrains.livemap.api.*
-import jetbrains.livemap.mapobjects.*
+import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.mapobjects.MapLayerKind.*
-import jetbrains.livemap.mapobjects.Utils.splitMapBarChart
-import jetbrains.livemap.mapobjects.Utils.splitMapPieChart
 import kotlin.math.ceil
 
 internal class MapObjectBuilder {
 
-    private val myLayerKind: MapLayerKind
+    val myLayerKind: MapLayerKind
     private val myP: DataPointAesthetics
 
     private var myValueArray: List<Double> = emptyList()
     private var myColorArray: List<Color> = emptyList()
-    private var myStrokeWidth: Double? = null
-    private var geometry: TypedGeometry<LonLat>? = null
+    var geometry: TypedGeometry<LonLat>? = null
     private var coordinates: List<Vec<LonLat>>? = null
-    private var point: Vec<LonLat>? = null
+    var point: Vec<LonLat>? = null
     private var indices = emptyList<Int>()
     private var myArrowSpec: ArrowSpec? = null
-    private var animation = 0
-    private var myMaxAbsValue: Double? = null
+    var animation = 0
     var geodesic: Boolean = false
 
-    private val index: Int
+    val index: Int
         get() = myP.index()
 
     private val mapId: String?
@@ -57,13 +53,13 @@ internal class MapObjectBuilder {
             return if (mapId == AesInitValue[Aes.MAP_ID]) null else mapId.toString()
         }
 
-    private val regionId: String?
+    val regionId: String?
         get() = null
 
-    private val shape: Int
+    val shape: Int
         get() = myP.shape()!!.code
 
-    private val radius: Double
+    val radius: Double
         get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE, POINT, PIE, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
             HEATMAP -> myP.size()!!
@@ -74,9 +70,9 @@ internal class MapObjectBuilder {
     val size: Double
         get() = AestheticsUtil.textSize(myP)
 
-    private val strokeWidth: Double
+    val strokeWidth: Double
         get() {
-            return myStrokeWidth ?: when (myLayerKind) {
+            return when (myLayerKind) {
                 POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
                 POINT, PIE, BAR -> 1.0
                 TEXT, HEATMAP -> 0.0
@@ -87,19 +83,19 @@ internal class MapObjectBuilder {
 //    val frame: String
 //        get() = myP.frame()
 
-    private val speed: Double
+    val speed: Double
         get() = myP.speed()!!
 
-    private val flow: Double
+    val flow: Double
         get() = myP.flow()!!
 
-    private val fillColor: Color
+    val fillColor: Color
         get() = colorWithAlpha(myP.fill()!!)
 
-    private val strokeColor: Color
+    val strokeColor: Color
         get() = colorWithAlpha(myP.color()!!)
 
-    private val lineDash: List<Double>
+    val lineDash: List<Double>
         get() {
             val lineType = myP.lineType()
 
@@ -111,25 +107,25 @@ internal class MapObjectBuilder {
             return ArrayList(transform(lineType.dashArray) { length -> length * width })
         }
 
-    private val label: String
+    val label: String
         get() = myP.label()
 
-    private val family: String
+    val family: String
         get() = myP.family()
 
-    private val fontface: String
+    val fontface: String
         get() {
             val fontface = myP.fontface()
             return if (fontface == AesInitValue[Aes.FONTFACE]) "" else fontface
         }
 
-    private val hjust: Double
+    val hjust: Double
         get() = hjust(myP.hjust())
 
-    private val vjust: Double
+    val vjust: Double
         get() = vjust(myP.vjust())
 
-    private val angle: Double
+    val angle: Double
         get() = myP.angle()!!
 
     private val colorArray: List<Color>
@@ -170,20 +166,6 @@ internal class MapObjectBuilder {
 
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
-    }
-
-    fun build(consumer: (MapObject) -> Unit) {
-         when (myLayerKind) {
-            POLYGON -> consumer(createPolygon())
-            PATH -> consumer(createPath())
-            POINT -> createPoint()?.run(consumer)
-            PIE -> createChartSource()?.run { splitMapPieChart(this).forEach(consumer) }
-            BAR -> createChartSource()?.run { splitMapBarChart(this, myMaxAbsValue!!).forEach(consumer) }
-            //HEATMAP -> consumer(MapJsObjectUtil.createJsHeatmap(this))
-            TEXT -> createText()?.run(consumer)
-            H_LINE, V_LINE -> createLine()?.run(consumer)
-            else -> throw IllegalArgumentException("Unknown map layer kind: $myLayerKind")
-        }
     }
 
     fun createPointBlock(): (PointBuilder.() -> Unit)? {
@@ -296,108 +278,6 @@ internal class MapObjectBuilder {
         }
     }
 
-    private fun createPoint(): MapPoint? {
-        return point?.let { p ->
-            MapPoint(
-                index,
-                mapId,
-                regionId,
-                p,
-                label,
-                animation,
-                shape,
-                radius,
-                fillColor,
-                strokeColor,
-                strokeWidth
-            )
-        }
-    }
-
-    private fun createPolygon(): MapPolygon {
-        return MapPolygon(
-            index,
-            mapId,
-            regionId,
-            lineDash,
-            strokeColor,
-            strokeWidth,
-            fillColor,
-            geometry
-        )
-    }
-
-    private fun createPath(): MapPath {
-        return MapPath(
-            index,
-            mapId,
-            regionId,
-
-            geometry!!,
-
-            animation,
-            speed,
-
-            flow,
-            lineDash,
-            strokeColor,
-            strokeWidth
-        )
-    }
-
-    private fun createLine(): MapLine? {
-        return point?.let {
-            MapLine(
-                index,
-                mapId,
-                regionId,
-                it,
-                lineDash,
-                strokeColor,
-                strokeWidth
-            )
-        }
-    }
-
-    private fun createChartSource(): ChartSource? {
-        return point?.let {
-            ChartSource().apply {
-                lon = it.x
-                lat = it.y
-
-                radius = this@MapObjectBuilder.radius
-
-                strokeColor = this@MapObjectBuilder.strokeColor
-                strokeWidth = this@MapObjectBuilder.strokeWidth
-
-                indices = this@MapObjectBuilder.indices
-                values = this@MapObjectBuilder.myValueArray
-                colors = this@MapObjectBuilder.colorArray
-            }
-        }
-    }
-
-    private fun createText(): MapText? {
-        return point?.let {
-            MapText(
-                index,
-                mapId,
-                regionId,
-                it,
-                fillColor,
-                strokeColor,
-                strokeWidth,
-                label,
-                size,
-                family,
-                fontface,
-                hjust,
-                vjust,
-                angle
-            )
-        }
-    }
-
     private fun hjust(hjust: Any): Double {
         return when (GeomHelper.textLabelAnchor(hjust, GeomHelper.HJUST_MAP, MIDDLE)) {
             LEFT -> 0.0
@@ -414,11 +294,6 @@ internal class MapObjectBuilder {
             CENTER -> 0.5
             else -> throw IllegalArgumentException("Unknown vjust: $vjust")
         }
-    }
-
-    fun setStrokeWidth(strokeWidth: Double?): MapObjectBuilder {
-        myStrokeWidth = strokeWidth
-        return this
     }
 
     fun setGeometryPoint(lonlat: Vec<LonLat>): MapObjectBuilder {
@@ -456,11 +331,6 @@ internal class MapObjectBuilder {
         if (animation != null) {
             this.animation = animation
         }
-        return this
-    }
-
-    fun setMaxAbsValue(maxAbsValue: Double?): MapObjectBuilder {
-        myMaxAbsValue = maxAbsValue
         return this
     }
 }
