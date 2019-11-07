@@ -4,6 +4,8 @@
 #
 import os
 import pkgutil
+import random
+import string
 from typing import Dict
 
 from IPython.display import display_html
@@ -23,7 +25,7 @@ class JupyterNotebookContext(FrontendContext):
         import datalore_plot_kotlin_bridge
         return datalore_plot_kotlin_bridge.generate_html(plot_spec)
 
-    def configure(self):
+    def configure(self, verbose: bool):
         if self.connected:
             # noinspection PyTypeChecker
             display_html(self._configure_connected_script(), raw=True)
@@ -31,9 +33,12 @@ class JupyterNotebookContext(FrontendContext):
             # noinspection PyTypeChecker
             display_html(self._configure_embedded_script(), raw=True)
 
+        if verbose:
+            # noinspection PyTypeChecker
+            display_html(self._check_js_loaded_script(), raw=True)
+
     # noinspection PyMethodMayBeStatic
     def _configure_connected_script(self) -> str:
-        # base_url = "http://0.0.0.0:8080"
         base_url = _get_global_str("js_base_url")
         if _has_global_value('js_name'):
             name = _get_global_str('js_name')
@@ -60,9 +65,28 @@ class JupyterNotebookContext(FrontendContext):
     def _undef_modules_script(self) -> str:
         pass
 
-    def _wrap_in_script_element(self, script: str) -> str:
+    @staticmethod
+    def _wrap_in_script_element(script: str) -> str:
         return """\
                     <script type="text/javascript">
                         {script}
                     </script>
                 """.format(script=script)
+
+    def _check_js_loaded_script(self) -> str:
+        alphabet = string.ascii_letters + string.digits
+        # noinspection PyShadowingBuiltins
+        id = ''.join([random.choice(alphabet) for _ in range(6)])
+        return """\
+            <div id="{id}"></div>
+            <script type="text/javascript">
+                var e = document.getElementById("{id}");
+                if(typeof DatalorePlot === 'undefined') {{
+                    e.style.color = 'darkred';
+                    e.textContent = 'Datalore Plot JS{embedded} was not loaded!';
+                }} else {{
+                    e.style.color = 'darkblue';
+                    e.textContent = 'Datalore Plot JS{embedded} successfully loaded.';
+                }}
+            </script>
+                """.format(id=id, embedded="" if self.connected else " (embedded)")

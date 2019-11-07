@@ -237,15 +237,15 @@ class PlotSpec(FeatureSpec):
         """
         Special method discovered and invoked by IPython.display.display
         """
-        from ..frontend_context.frontend_context import as_html
-        return as_html(self.as_dict())
+        from ..frontend_context.frontend_context import _as_html
+        return _as_html(self.as_dict())
 
     def show(self):
         """
         Draw plot
         """
-        from ..frontend_context.frontend_context import display_plot
-        display_plot(self)
+        from ..frontend_context.frontend_context import _display_plot
+        _display_plot(self)
 
 
 class LayerSpec(FeatureSpec):

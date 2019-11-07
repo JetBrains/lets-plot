@@ -10,5 +10,8 @@ __path__ = extend_path(__path__, __name__)
 from ._version import __version__
 from .plot import *
 from ._global_settings import DatalorePlotSettings
+from .frontend_context import *
 
-__all__ = plot.__all__ + ['DatalorePlotSettings']
+__all__ = (plot.__all__ +
+           frontend_context.__all__ +
+           ['DatalorePlotSettings'])
