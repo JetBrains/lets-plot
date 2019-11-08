@@ -21,5 +21,5 @@ Due to the unique multi-platform nature of Kotlin programming language, you can 
 TBD: img tag with size 
 ![](docs/examples/images/quickstart.png)
 <p>
-<img src="https://github.com/alshan/jupyter-examples/blob/master/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
+<img src="https://github.com/alshan/jupyter-examples/blob/master/images/quickstart.png" alt="Couldn't load quickstart.png" style="display: block; margin: auto; width:40%;"/>
 </p>
