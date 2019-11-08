@@ -46,7 +46,6 @@ internal class LiveMapDataPointAestheticsProcessor(
             LivemapConstants.DisplayMode.PIE -> MapLayerKind.PIE
             LivemapConstants.DisplayMode.HEATMAP -> MapLayerKind.HEATMAP
             LivemapConstants.DisplayMode.BAR -> MapLayerKind.BAR
-            else -> throw IllegalArgumentException("Unknown display mode: $displayMode")
         }
     }
 

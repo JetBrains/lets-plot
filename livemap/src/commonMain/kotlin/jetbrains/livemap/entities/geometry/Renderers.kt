@@ -6,6 +6,7 @@
 package jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.function.Consumer
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.maps.livemap.entities.rendering.Common
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Context2d.LineJoin
@@ -16,11 +17,12 @@ import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.rendering.lineTo
 import jetbrains.livemap.entities.rendering.moveTo
 import jetbrains.livemap.entities.scaling.ScaleComponent
+import jetbrains.livemap.projections.Client
 
 object Renderers {
 
-    fun drawLines(geometry: ClientBoundary, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
-        for (polygon in geometry.asMultipolygon()) {
+    fun drawLines(geometry: MultiPolygon<Client>, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
+        for (polygon in geometry) {
             for (ring in polygon) {
                 ring[0].let { ctx.moveTo(it) }
                 ring.drop(1).forEach { ctx.lineTo(it) }

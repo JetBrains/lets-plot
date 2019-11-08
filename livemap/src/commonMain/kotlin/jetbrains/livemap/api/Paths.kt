@@ -6,6 +6,7 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
@@ -17,9 +18,7 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
-import jetbrains.livemap.entities.geometry.LonLatBoundary
 import jetbrains.livemap.entities.geometry.Renderers
-import jetbrains.livemap.entities.geometry.WorldBoundary
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
@@ -32,7 +31,7 @@ import jetbrains.livemap.projections.*
 class Paths(
     val factory: Entities.MapEntityFactory,
     val layerEntitiesComponent: LayerEntitiesComponent,
-    val toMapProjection: (LonLatBoundary) -> WorldBoundary
+    val toMapProjection: (MultiPolygon<LonLat>) -> MultiPolygon<World>
 )
 
 fun LayersBuilder.paths(block: Paths.() -> Unit) {
@@ -44,10 +43,8 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
             + layerEntitiesComponent
         }
 
-    val toMapProjection = { geometry: LonLatBoundary ->
-        geometry.asMultipolygon()
-            .run { ProjectionUtil.transformMultiPolygon(this, mapProjection::project) }
-            .run { WorldBoundary.create(this) }
+    val toMapProjection = { geometry: MultiPolygon<LonLat> ->
+        ProjectionUtil.transformMultiPolygon(geometry, mapProjection::project)
     }
 
     Paths(
@@ -85,17 +82,15 @@ class PathBuilder {
 
     fun build(
         factory: Entities.MapEntityFactory,
-        toMapProjection: (LonLatBoundary) -> WorldBoundary
+        toMapProjection: (MultiPolygon<LonLat>) -> MultiPolygon<World>
     ): EcsEntity? {
         val coord = (coordinates.takeIf { !geodesic } ?: createArcPath(coordinates))
                 .run { LonLatRing(this) }
                 .run { LonLatPolygon(listOf(this)) }
                 .run { LonLatMultiPolygon(listOf(this)) }
-                .run { LonLatBoundary.create(this) }
                 .run { toMapProjection(this) }
 
         return coord
-            .run { asMultipolygon() }
             .run { GeometryUtil.bbox(this) }
             ?.let { bbox ->
                 val entity = factory

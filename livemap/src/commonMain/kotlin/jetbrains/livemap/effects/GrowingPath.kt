@@ -140,7 +140,7 @@ object GrowingPath {
             ctx.setLineWidth(styleComponent.strokeWidth)
             ctx.beginPath()
 
-            for (polygon in geometry.asMultipolygon()) {
+            for (polygon in geometry) {
                 val ring = polygon[0]
                 var viewCoord: Vec<Client> = ring[0]
                 ctx.moveTo(viewCoord.x, viewCoord.y)

@@ -5,8 +5,9 @@
 
 package jetbrains.livemap.mapobjects
 
+import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.entities.geometry.LonLatBoundary
+import jetbrains.gis.geoprotocol.Boundary
 
 class MapPolygon(
     index: Int,
@@ -17,6 +18,6 @@ class MapPolygon(
     val strokeColor: Color,
     val strokeWidth: Double,
     val fillColor: Color,
-    override val geometry: LonLatBoundary?
+    override val geometry: Boundary<LonLat>?
 
 ) : MapObject(index, mapId, regionId), MapGeometry

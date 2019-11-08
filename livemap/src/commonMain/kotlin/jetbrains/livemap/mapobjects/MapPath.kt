@@ -5,15 +5,16 @@
 
 package jetbrains.livemap.mapobjects
 
+import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.entities.geometry.LonLatBoundary
+import jetbrains.gis.geoprotocol.Boundary
 
 class MapPath(
     index: Int,
     mapId: String?,
     regionId: String?,
 
-    override val geometry: LonLatBoundary,
+    override val geometry: Boundary<LonLat>,
 
     val animation: Int,
     val speed: Double,

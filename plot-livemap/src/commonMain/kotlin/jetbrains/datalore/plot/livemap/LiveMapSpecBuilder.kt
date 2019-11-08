@@ -193,7 +193,6 @@ internal class LiveMapSpecBuilder {
                 LivemapConstants.Projection.EPSG4326 -> ProjectionType.GEOGRAPHIC
                 LivemapConstants.Projection.AZIMUTHAL -> ProjectionType.AZIMUTHAL_EQUAL_AREA
                 LivemapConstants.Projection.CONIC -> ProjectionType.CONIC_EQUAL_AREA
-                else -> throw IllegalArgumentException("Unknown projection value: $projection")
             }
         }
 

@@ -40,7 +40,7 @@ interface Symbolizer {
 
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             val tasks = ArrayList<() -> Unit>()
-            feature.tileGeometry.multiPolygon?.let {
+            feature.tileGeometry.multiPolygon.let {
                 tasks.add { ctx.drawMultiPolygon(it) }
                 tasks.add(ctx::fill)
             }
@@ -62,7 +62,7 @@ interface Symbolizer {
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             val tasks = ArrayList<() -> Unit>()
 
-            feature.tileGeometry.multiLineString?.let {
+            feature.tileGeometry.multiLineString.let {
                 tasks.add { ctx.drawMultiLine(it) }
                 tasks.add(ctx::stroke)
             }
@@ -87,7 +87,7 @@ interface Symbolizer {
 
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             val tasks = ArrayList<() -> Unit>()
-            feature.tileGeometry.multiPoint?.let { multiPoint ->
+            feature.tileGeometry.multiPoint.let { multiPoint ->
                 getLabel(feature)?.let { label ->
                     tasks.add {
 

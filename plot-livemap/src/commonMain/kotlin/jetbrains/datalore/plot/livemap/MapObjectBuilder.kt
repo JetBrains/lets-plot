@@ -64,7 +64,6 @@ internal class MapObjectBuilder {
             POLYGON, PATH, H_LINE, V_LINE, POINT, PIE, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
             HEATMAP -> myP.size()!!
             TEXT -> 0.0
-            else -> 0.0
         }
 
     val size: Double
@@ -76,7 +75,6 @@ internal class MapObjectBuilder {
                 POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
                 POINT, PIE, BAR -> 1.0
                 TEXT, HEATMAP -> 0.0
-                else -> 0.0
             }
         }
 
@@ -283,7 +281,6 @@ internal class MapObjectBuilder {
             LEFT -> 0.0
             RIGHT -> 1.0
             MIDDLE -> 0.5
-            else -> throw IllegalArgumentException("Unknown hjust: $hjust")
         }
     }
 
@@ -292,7 +289,6 @@ internal class MapObjectBuilder {
             TOP -> 0.0
             BOTTOM -> 1.0
             CENTER -> 0.5
-            else -> throw IllegalArgumentException("Unknown vjust: $vjust")
         }
     }
 

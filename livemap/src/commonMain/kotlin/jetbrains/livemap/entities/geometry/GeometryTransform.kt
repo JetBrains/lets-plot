@@ -58,11 +58,11 @@ object GeometryTransform {
     ): MicroTask<Geometry<OutT>> {
         return when (geometry.type) {
             MULTI_POLYGON ->
-                MultiPolygonTransform(geometry.multiPolygon!!.reinterpret(), transform).map(::createMultiPolygon)
+                MultiPolygonTransform(geometry.multiPolygon.reinterpret(), transform).map(::createMultiPolygon)
             MULTI_LINESTRING ->
-                MultiLineStringTransform(geometry.multiLineString!!.reinterpret(), transform).map(::createMultiLineString)
+                MultiLineStringTransform(geometry.multiLineString.reinterpret(), transform).map(::createMultiLineString)
             MULTI_POINT ->
-                MultiPointTransform(geometry.multiPoint!!.reinterpret(), transform).map(::createMultiPoint)
+                MultiPointTransform(geometry.multiPoint.reinterpret(), transform).map(::createMultiPoint)
             else ->
                 throw IllegalArgumentException("Unsupported geometry type: ${geometry.type}")
         }

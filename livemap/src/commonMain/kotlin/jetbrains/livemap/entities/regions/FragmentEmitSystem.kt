@@ -7,7 +7,6 @@ package jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.gis.geoprotocol.GeometryUtil.bbox
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraListenerComponent
@@ -132,7 +131,6 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
                     theEntity
                         .addComponent(WorldDimensionComponent(bbox.dimension))
                         .addComponent(WorldOriginComponent(bbox.origin))
-                        .addComponent(FragmentGeometryComponent().apply { geometry = Boundary.create(worldMultiPolygon) })
                 }
                 GeometryTransform.simple(worldMultiPolygon) { p -> zoomProjection.project(p - bbox.origin) }
             }
@@ -147,7 +145,7 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
                         .addComponent(ScaleComponent().apply { zoom = zoom(fragmentKey) })
                         .addComponent(FragmentComponent(fragmentKey))
                         .addComponent(ScreenLoopComponent())
-                        .addComponent(ScreenGeometryComponent().apply { geometry = Boundary.create(screenMultiPolygon) })
+                        .addComponent(ScreenGeometryComponent().apply { geometry = screenMultiPolygon })
                         .addComponent(myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>())
                 }
                 return@map

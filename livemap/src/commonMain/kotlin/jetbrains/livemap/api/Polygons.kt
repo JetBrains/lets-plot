@@ -12,10 +12,8 @@ import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geometry.LonLatBoundary
 import jetbrains.livemap.entities.geometry.Renderers
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
-import jetbrains.livemap.entities.geometry.toWorldBoundary
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.regions.RegionComponent
@@ -87,10 +85,9 @@ class PolygonsBuilder {
             .run { LonLatRing(this) }
             .run { LonLatPolygon(listOf(this)) }
             .run { LonLatMultiPolygon(listOf(this)) }
-            .run { LonLatBoundary.create(this) }
-            .toWorldBoundary(mapProjection)
+            .run { ProjectionUtil.transformMultiPolygon(this, mapProjection::project) }
 
-        val bbox = GeometryUtil.bbox(geometry.asMultipolygon()) ?: error("")
+        val bbox = GeometryUtil.bbox(geometry) ?: error("")
 
         return factory
             .createMapEntity(bbox.origin, Renderers.PolygonRenderer(), "map_ent_s_polygon")

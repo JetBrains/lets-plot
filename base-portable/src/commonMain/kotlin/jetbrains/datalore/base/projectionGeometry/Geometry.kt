@@ -13,10 +13,17 @@ enum class GeometryType {
 
 class Geometry<TypeT> private constructor(
     val type: GeometryType,
-    val multiPoint: MultiPoint<TypeT>?,
-    val multiLineString: MultiLineString<TypeT>?,
-    val multiPolygon: MultiPolygon<TypeT>?
+    private val myMultiPoint: MultiPoint<TypeT>?,
+    private val myMultiLineString: MultiLineString<TypeT>?,
+    private val myMultiPolygon: MultiPolygon<TypeT>?
 ) {
+    val multiPoint: MultiPoint<TypeT>
+        get() = myMultiPoint ?: error("$type is not a MultiPoint")
+    val multiLineString: MultiLineString<TypeT>
+        get() = myMultiLineString ?: error("$type is not a MultiLineString")
+    val multiPolygon: MultiPolygon<TypeT>
+        get() = myMultiPolygon ?: error("$type is not a MultiPolygon")
+
     companion object {
         fun <TypeT> createMultiPoint(multiPoint: MultiPoint<TypeT>): Geometry<TypeT> {
             return Geometry(
