@@ -9,6 +9,6 @@ import jetbrains.livemap.core.ecs.EcsComponent
 
 
 class ScreenGeometryComponent : EcsComponent {
-    lateinit var geometry: ClientGeometry
+    lateinit var geometry: ClientBoundary
     var zoom: Int = 0
 }

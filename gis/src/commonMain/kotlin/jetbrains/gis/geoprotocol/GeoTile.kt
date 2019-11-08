@@ -11,7 +11,7 @@ import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.datalore.base.projectionGeometry.QuadKey
 
 
-class GeoTile(val key: QuadKey, val geometries: List<Geometry>) {
+class GeoTile(val key: QuadKey, val geometries: List<Boundary<Generic>>) {
     val multiPolygon: MultiPolygon<Generic>
 
     init {

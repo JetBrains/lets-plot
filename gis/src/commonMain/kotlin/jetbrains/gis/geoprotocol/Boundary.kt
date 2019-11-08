@@ -5,16 +5,15 @@
 
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 
-interface TypedGeometry<TypeT> {
+interface Boundary<TypeT> {
 
     fun asMultipolygon(): MultiPolygon<TypeT>
 
     companion object {
-        fun <TypeT> create(points: MultiPolygon<TypeT>): TypedGeometry<TypeT> {
-            return object : TypedGeometry<TypeT> {
+        fun <TypeT> create(points: MultiPolygon<TypeT>): Boundary<TypeT> {
+            return object : Boundary<TypeT> {
                 override fun asMultipolygon(): MultiPolygon<TypeT> {
                     return points
                 }
@@ -22,5 +21,3 @@ interface TypedGeometry<TypeT> {
         }
     }
 }
-
-typealias Geometry = TypedGeometry<Generic>

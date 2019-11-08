@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.livemap.ConverterDataHelper.multiPolygon
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.polygon
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.geometryEq
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.sizeEq
-import jetbrains.gis.geoprotocol.Geometry
+import jetbrains.gis.geoprotocol.Boundary
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,10 +30,10 @@ class PolygonWithGroupsConverterTest {
 
     @Test
     fun shouldProperlyConvertMultiPath() {
-        matcher.geometry(geometryEq(Geometry.create(multiPolygon(polygon(FIRST_RING)))))
+        matcher.geometry(geometryEq(Boundary.create(multiPolygon(polygon(FIRST_RING)))))
         assertMapObject(0)
 
-        matcher.geometry(geometryEq(Geometry.create(multiPolygon(polygon(SECOND_RING)))))
+        matcher.geometry(geometryEq(Boundary.create(multiPolygon(polygon(SECOND_RING)))))
         assertMapObject(1)
     }
 

@@ -22,7 +22,7 @@ import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
-import jetbrains.gis.geoprotocol.TypedGeometry
+import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.MapWidgetUtil
 import jetbrains.livemap.api.*
 import jetbrains.livemap.mapobjects.MapLayerKind
@@ -36,7 +36,7 @@ internal class MapObjectBuilder {
 
     private var myValueArray: List<Double> = emptyList()
     private var myColorArray: List<Color> = emptyList()
-    var geometry: TypedGeometry<LonLat>? = null
+    var geometry: Boundary<LonLat>? = null
     private var coordinates: List<Vec<LonLat>>? = null
     var point: Vec<LonLat>? = null
     private var indices = emptyList<Int>()
@@ -314,7 +314,7 @@ internal class MapObjectBuilder {
                 .run(::MultiPolygon)
         }
 
-        geometry = TypedGeometry.create(multipolygon.reinterpret())
+        geometry = Boundary.create(multipolygon.reinterpret())
         return this
     }
 

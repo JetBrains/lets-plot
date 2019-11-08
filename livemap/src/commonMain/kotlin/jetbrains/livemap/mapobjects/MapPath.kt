@@ -6,14 +6,14 @@
 package jetbrains.livemap.mapobjects
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.entities.geometry.LonLatGeometry
+import jetbrains.livemap.entities.geometry.LonLatBoundary
 
 class MapPath(
     index: Int,
     mapId: String?,
     regionId: String?,
 
-    override val geometry: LonLatGeometry,
+    override val geometry: LonLatBoundary,
 
     val animation: Int,
     val speed: Double,

@@ -5,13 +5,14 @@
 
 package jetbrains.gis.geoprotocol.json
 
+import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.Point
 import jetbrains.gis.common.json.*
+import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.gis.geoprotocol.GeoResponse
 import jetbrains.gis.geoprotocol.GeoResponse.*
 import jetbrains.gis.geoprotocol.GeoTile
-import jetbrains.gis.geoprotocol.Geometry
 import jetbrains.gis.geoprotocol.json.ResponseKeys.BOUNDARY
 import jetbrains.gis.geoprotocol.json.ResponseKeys.CENTROID
 import jetbrains.gis.geoprotocol.json.ResponseKeys.DATA
@@ -129,11 +130,11 @@ object ResponseJsonFormatter {
         }
     }
 
-    private fun formatGeometry(geometry: Geometry?): FluentPrimitive? {
+    private fun formatGeometry(geometry: Boundary<Generic>?): FluentPrimitive? {
         return geometry?.let { FluentPrimitive(geometryToString(it)) }
     }
 
-    private fun geometryToString(geometry: Geometry): String {
+    private fun geometryToString(geometry: Boundary<Generic>): String {
         return StringGeometries.getRawData(geometry)
     }
 

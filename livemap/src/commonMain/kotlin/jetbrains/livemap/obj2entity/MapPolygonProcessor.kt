@@ -11,7 +11,7 @@ import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.Renderers.PolygonRenderer
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
-import jetbrains.livemap.entities.geometry.toWorldGeometry
+import jetbrains.livemap.entities.geometry.toWorldBoundary
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.regions.RegionComponent
@@ -54,7 +54,7 @@ internal class MapPolygonProcessor(
     }
 
     private fun createStaticEntity(mapPolygon: MapPolygon) {
-        val geometry = mapPolygon.geometry!!.toWorldGeometry(myMapProjection)
+        val geometry = mapPolygon.geometry!!.toWorldBoundary(myMapProjection)
         val bbox = GeometryUtil.bbox(geometry.asMultipolygon()) ?: error("")
 
         val geometryEntity = myFactory

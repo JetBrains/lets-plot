@@ -5,6 +5,7 @@
 
 package jetbrains.gis.geoprotocol
 
+import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.Point
 
@@ -22,7 +23,7 @@ interface GeoResponse {
             val centroid: Point?,
             val position: GeoRectangle?,
             val limit: GeoRectangle?,
-            val boundary: Geometry?,
+            val boundary: Boundary<Generic>?,
             val highlights: List<String>?,
             val tiles: List<GeoTile>?
         )

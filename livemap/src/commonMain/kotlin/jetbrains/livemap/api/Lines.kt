@@ -7,12 +7,12 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.values.Color
-import jetbrains.gis.geoprotocol.TypedGeometry
+import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.Renderers
-import jetbrains.livemap.entities.geometry.WorldGeometry
+import jetbrains.livemap.entities.geometry.WorldBoundary
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.*
@@ -96,7 +96,7 @@ class LineBuilder(
             }
     }
 
-    private fun createLineGeometry(point: WorldPoint, horizontal: Boolean): WorldGeometry {
+    private fun createLineGeometry(point: WorldPoint, horizontal: Boolean): WorldBoundary {
         val mapRect = myMapProjection.mapRect
 
         return if (horizontal) {
@@ -122,7 +122,7 @@ class LineBuilder(
             .run { listOf(Ring(this)) }
             .run { listOf(Polygon(this)) }
             .run { MultiPolygon(this) }
-            .run(TypedGeometry.Companion::create) // World
+            .run(Boundary.Companion::create) // World
     }
 
     private fun createLineBBox(

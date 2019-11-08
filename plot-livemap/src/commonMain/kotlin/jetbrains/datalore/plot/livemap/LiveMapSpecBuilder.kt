@@ -23,9 +23,9 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.DevParams
+import jetbrains.livemap.LayerProvider.LayerProviderImpl
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
-import jetbrains.livemap.api.DemoLayerProvider
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.api.liveMapGeocoding
 import jetbrains.livemap.projections.ProjectionType
@@ -108,7 +108,7 @@ internal class LiveMapSpecBuilder {
             myLiveMapOptions.zoom,
             getFeatureLevel(myLiveMapOptions.featureLevel),
             createMapRegion(myLiveMapOptions.parent),
-            DemoLayerProvider(myDevParams) {
+            LayerProviderImpl(myDevParams) {
                 layersBuilderBlocks.forEach { block -> block() }
             },
             CYLINDRICAL_PROJECTIONS.contains(projectionType),

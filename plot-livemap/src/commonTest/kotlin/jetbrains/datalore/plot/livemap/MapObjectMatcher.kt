@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.livemap
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
-import jetbrains.gis.geoprotocol.TypedGeometry
+import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.mapobjects.MapLayerKind.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -32,7 +32,7 @@ internal class MapObjectMatcher {
     private var centerOffset = Expectation.any<Vec<*>>()
     private var point = Expectation.any<Vec<*>?>()
     private var geometry =
-        Expectation.any<TypedGeometry<*>>()
+        Expectation.any<Boundary<*>>()
     private var locationBoundingBoxes =
         Expectation.any<List<Rect<*>>>()
     private var label = Expectation.any<String>()
@@ -230,7 +230,7 @@ internal class MapObjectMatcher {
         return this
     }
 
-    fun geometry(expectation: Expectation<TypedGeometry<*>>): MapObjectMatcher {
+    fun geometry(expectation: Expectation<Boundary<*>>): MapObjectMatcher {
         geometry = expectation
         return this
     }
@@ -389,7 +389,7 @@ internal class MapObjectMatcher {
                     })
             }
 
-            internal fun geometryEquality(v: TypedGeometry<*>, eps: Double): Expectation<TypedGeometry<*>> {
+            internal fun geometryEquality(v: Boundary<*>, eps: Double): Expectation<Boundary<*>> {
                 return Expectation(
                     v,
                     { expected, actual ->
@@ -447,7 +447,7 @@ internal class MapObjectMatcher {
             )
         }
 
-        fun geometryEq(v: TypedGeometry<*>): Expectation<TypedGeometry<*>> {
+        fun geometryEq(v: Boundary<*>): Expectation<Boundary<*>> {
             return Expectation.geometryEquality(
                 v,
                 EPS

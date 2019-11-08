@@ -112,11 +112,11 @@ object ResponseJsonParser {
         )
     }
 
-    private fun readGeometry(geoJson: String): Geometry {
+    private fun readGeometry(geoJson: String): Boundary<Generic> {
         return StringGeometries.fromGeoJson(geoJson)
     }
 
-    private fun readTile(geometry: String): Geometry {
+    private fun readTile(geometry: String): Boundary<Generic> {
         return StringGeometries.fromTwkb(geometry)
     }
 

@@ -10,19 +10,19 @@ import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Polygon
 import jetbrains.gis.common.twkb.Twkb
-import jetbrains.gis.geoprotocol.Geometry
+import jetbrains.gis.geoprotocol.Boundary
 
 object StringGeometries {
-    fun fromTwkb(geometry: String): Geometry {
-        return TinyGeometry(geometry)
+    fun fromTwkb(geometry: String): Boundary<Generic> {
+        return TinyBoundary(geometry)
     }
 
-    fun fromGeoJson(geometry: String): Geometry {
-        return GeoJsonGeometry(geometry)
+    fun fromGeoJson(geometry: String): Boundary<Generic> {
+        return GeoJsonBoundary(geometry)
     }
 
-    internal fun getRawData(geometry: Geometry): String {
-        return (geometry as StringGeometry).rawData
+    internal fun getRawData(geometry: Boundary<Generic>): String {
+        return (geometry as StringBoundary).rawData
     }
 
     // Used internally by GIS server for optimization.
@@ -33,7 +33,7 @@ object StringGeometries {
     // just keep encoded data with help of StringGeometry type.
     // Only GeometryStorageClient(PostreSQL user) and JsonFormatters/JsonParsers(client/server communication)
     // should know about this optimization.
-    private abstract class StringGeometry internal constructor(internal val rawData: String) : Geometry {
+    private abstract class StringBoundary internal constructor(internal val rawData: String) : Boundary<Generic> {
         private val myMultipolygon: MultiPolygon<Generic> by lazy { parse(rawData) }
 
         override fun asMultipolygon(): MultiPolygon<Generic> {
@@ -45,7 +45,7 @@ object StringGeometries {
             if (this === other) return true
             if (other == null || this::class != other::class) return false
 
-            other as StringGeometry
+            other as StringBoundary
 
             if (rawData != other.rawData) return false
 
@@ -57,7 +57,7 @@ object StringGeometries {
         }
     }
 
-    private class TinyGeometry internal constructor(geometry: String) : StringGeometry(geometry) {
+    private class TinyBoundary internal constructor(geometry: String) : StringBoundary(geometry) {
 
         override fun parse(geometry: String): MultiPolygon<Generic> {
             val polygons = ArrayList<Polygon<Generic>>()
@@ -77,7 +77,7 @@ object StringGeometries {
         }
     }
 
-    private class GeoJsonGeometry internal constructor(private val myGeometry: String) : StringGeometry(myGeometry) {
+    private class GeoJsonBoundary internal constructor(private val myGeometry: String) : StringBoundary(myGeometry) {
 
         override fun parse(geometry: String): MultiPolygon<Generic> {
             return GeoJsonParser.parse(myGeometry)

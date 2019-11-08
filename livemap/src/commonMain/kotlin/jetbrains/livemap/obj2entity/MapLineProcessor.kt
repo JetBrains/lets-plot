@@ -6,13 +6,13 @@
 package jetbrains.livemap.obj2entity
 
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.gis.geoprotocol.TypedGeometry
+import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.Renderers.PathRenderer
-import jetbrains.livemap.entities.geometry.WorldGeometry
+import jetbrains.livemap.entities.geometry.WorldBoundary
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.*
@@ -64,7 +64,7 @@ class MapLineProcessor(
             )
     }
 
-    private fun createLineGeometry(point: WorldPoint, horizontal: Boolean): WorldGeometry {
+    private fun createLineGeometry(point: WorldPoint, horizontal: Boolean): WorldBoundary {
         val mapRect = myMapProjection.mapRect
 
         return if (horizontal) {
@@ -90,7 +90,7 @@ class MapLineProcessor(
             .run { listOf(Ring(this)) }
             .run { listOf(Polygon(this)) }
             .run { MultiPolygon(this) }
-            .run(TypedGeometry.Companion::create) // World
+            .run(Boundary.Companion::create) // World
     }
 
     private fun createLineBBox(

@@ -6,7 +6,7 @@
 package jetbrains.livemap.tiles.vector
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
-import jetbrains.datalore.base.projectionGeometry.TileGeometry
+import jetbrains.datalore.base.projectionGeometry.Geometry
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.minus
 import jetbrains.gis.tileprotocol.TileGeometryParser
@@ -58,7 +58,7 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
                     val geometry = tileGeometries[it]
                     microThreads.add(
                         GeometryTransform.resampling(geometry, transform)
-                            .map { worldMultiPolygon: TileGeometry<Client> ->
+                            .map { worldMultiPolygon: Geometry<Client> ->
                                 tileFeatures.add(
                                     TileFeature(
                                         worldMultiPolygon,
@@ -78,11 +78,11 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
             }
     }
 
-    private fun createMicroThread(tileGeometryParser: TileGeometryParser): MicroTask<List<TileGeometry<LonLat>>> {
-        return object : MicroTask<List<TileGeometry<LonLat>>> {
+    private fun createMicroThread(tileGeometryParser: TileGeometryParser): MicroTask<List<Geometry<LonLat>>> {
+        return object : MicroTask<List<Geometry<LonLat>>> {
             private var myDone = false
 
-            override fun getResult(): List<TileGeometry<LonLat>> = tileGeometryParser.geometries
+            override fun getResult(): List<Geometry<LonLat>> = tileGeometryParser.geometries
 
             override fun resume() {
                 if (!tileGeometryParser.resume()) {

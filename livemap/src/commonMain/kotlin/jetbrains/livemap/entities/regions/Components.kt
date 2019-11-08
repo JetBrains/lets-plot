@@ -11,7 +11,7 @@ import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.geometry.WorldGeometry
+import jetbrains.livemap.entities.geometry.WorldBoundary
 
 class CachedFragmentsComponent : EcsComponent {
     private val myCache = HashMap<FragmentKey, EcsEntity>()
@@ -205,5 +205,5 @@ class StreamingFragmentsComponent : EcsComponent {
 }
 
 class FragmentGeometryComponent : EcsComponent {
-    lateinit var geometry: WorldGeometry
+    lateinit var geometry: WorldBoundary
 }

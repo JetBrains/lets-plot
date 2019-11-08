@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.eq
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.geometryEq
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.sizeEq
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.vectorEq
-import jetbrains.gis.geoprotocol.Geometry
+import jetbrains.gis.geoprotocol.Boundary
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -30,7 +30,7 @@ class PathConverterTest {
         aesData!!.addGroup(GENERIC_POINTS)
 
         matcher = createDefaultMatcher()
-            .geometry(geometryEq(Geometry.create(PATH)))
+            .geometry(geometryEq(Boundary.create(PATH)))
     }
 
     @Test

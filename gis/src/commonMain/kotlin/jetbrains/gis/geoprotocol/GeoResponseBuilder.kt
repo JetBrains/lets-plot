@@ -5,6 +5,7 @@
 
 package jetbrains.gis.geoprotocol
 
+import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.Point
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse
@@ -40,14 +41,14 @@ object GeoResponseBuilder {
         private var centroid: Point? = null
         private var limit: GeoRectangle? = null
         private var position: GeoRectangle? = null
-        private var boundary: Geometry? = null
+        private var boundary: Boundary<Generic>? = null
         private var highlights: MutableList<String> = ArrayList()
         private var tileGeometries: ArrayList<GeoTile> = ArrayList()
 
         fun setQuery(v: String) = apply { query = v }
         fun setId(v: String) = apply { id = v }
         fun setName(v: String) = apply { name = v }
-        fun setBoundary(v: Geometry) = apply { boundary = v }
+        fun setBoundary(v: Boundary<Generic>) = apply { boundary = v }
         fun setCentroid(v: Point) = apply { centroid = v }
         fun setLimit(v: GeoRectangle) = apply { limit = v }
         fun setPosition(v: GeoRectangle) = apply { position = v }

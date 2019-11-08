@@ -44,7 +44,7 @@ class WorldGeometry2ScreenUpdateSystem(
                 runLaterBySystem(entity) { theEntity ->
                     tagDirtyParentLayer(theEntity)
                     theEntity.provide(::ScreenGeometryComponent).apply {
-                        geometry = ClientGeometry.create(screenMultipolygon)
+                        geometry = ClientBoundary.create(screenMultipolygon)
                         this.zoom = zoom
                     }
                     

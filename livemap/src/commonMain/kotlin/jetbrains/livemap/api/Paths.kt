@@ -17,9 +17,9 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
-import jetbrains.livemap.entities.geometry.LonLatGeometry
+import jetbrains.livemap.entities.geometry.LonLatBoundary
 import jetbrains.livemap.entities.geometry.Renderers
-import jetbrains.livemap.entities.geometry.WorldGeometry
+import jetbrains.livemap.entities.geometry.WorldBoundary
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
@@ -32,7 +32,7 @@ import jetbrains.livemap.projections.*
 class Paths(
     val factory: Entities.MapEntityFactory,
     val layerEntitiesComponent: LayerEntitiesComponent,
-    val toMapProjection: (LonLatGeometry) -> WorldGeometry
+    val toMapProjection: (LonLatBoundary) -> WorldBoundary
 )
 
 fun LayersBuilder.paths(block: Paths.() -> Unit) {
@@ -44,10 +44,10 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
             + layerEntitiesComponent
         }
 
-    val toMapProjection = { geometry: LonLatGeometry ->
+    val toMapProjection = { geometry: LonLatBoundary ->
         geometry.asMultipolygon()
             .run { ProjectionUtil.transformMultiPolygon(this, mapProjection::project) }
-            .run { WorldGeometry.create(this) }
+            .run { WorldBoundary.create(this) }
     }
 
     Paths(
@@ -85,13 +85,13 @@ class PathBuilder {
 
     fun build(
         factory: Entities.MapEntityFactory,
-        toMapProjection: (LonLatGeometry) -> WorldGeometry
+        toMapProjection: (LonLatBoundary) -> WorldBoundary
     ): EcsEntity? {
         val coord = (coordinates.takeIf { !geodesic } ?: createArcPath(coordinates))
                 .run { LonLatRing(this) }
                 .run { LonLatPolygon(listOf(this)) }
                 .run { LonLatMultiPolygon(listOf(this)) }
-                .run { LonLatGeometry.create(this) }
+                .run { LonLatBoundary.create(this) }
                 .run { toMapProjection(this) }
 
         return coord

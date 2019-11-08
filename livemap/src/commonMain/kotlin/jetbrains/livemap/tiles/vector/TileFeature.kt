@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.tiles.vector
 
-import jetbrains.datalore.base.projectionGeometry.TileGeometry
+import jetbrains.datalore.base.projectionGeometry.Geometry
 import jetbrains.gis.tileprotocol.mapConfig.TilePredicate
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.tiles.vector.TileFeature.FieldName.CLASS
@@ -13,7 +13,7 @@ import jetbrains.livemap.tiles.vector.TileFeature.FieldName.SUB
 
 
 class TileFeature(
-    val tileGeometry: TileGeometry<Client>,
+    val tileGeometry: Geometry<Client>,
     private val myKind: Int?,
     private val mySub: Int?,
     val label: String?,

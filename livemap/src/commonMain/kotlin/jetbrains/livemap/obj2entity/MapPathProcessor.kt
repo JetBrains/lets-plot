@@ -16,9 +16,9 @@ import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
-import jetbrains.livemap.entities.geometry.LonLatGeometry
+import jetbrains.livemap.entities.geometry.LonLatBoundary
 import jetbrains.livemap.entities.geometry.Renderers.PathRenderer
-import jetbrains.livemap.entities.geometry.WorldGeometry
+import jetbrains.livemap.entities.geometry.WorldBoundary
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
@@ -39,7 +39,7 @@ internal class MapPathProcessor(
     private val myLayerEntitiesComponent = LayerEntitiesComponent()
     private val myObjectsMap = HashMap<MapPath, EcsEntity>()
     private val myFactory: Entities.MapEntityFactory
-    private val toMapProjection: (LonLatGeometry) -> WorldGeometry
+    private val toMapProjection: (LonLatBoundary) -> WorldBoundary
 
     init {
 
@@ -51,7 +51,7 @@ internal class MapPathProcessor(
         toMapProjection = { geometry ->
             geometry.asMultipolygon()
                 .run { transformMultiPolygon(this, myMapProjection::project) }
-                .run { WorldGeometry.create(this) }
+                .run { WorldBoundary.create(this) }
         }
     }
 

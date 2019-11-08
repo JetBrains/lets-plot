@@ -7,10 +7,10 @@ package jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.projectionGeometry.GeometryType.*
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.TileGeometry
-import jetbrains.datalore.base.projectionGeometry.TileGeometry.Companion.createMultiLineString
-import jetbrains.datalore.base.projectionGeometry.TileGeometry.Companion.createMultiPoint
-import jetbrains.datalore.base.projectionGeometry.TileGeometry.Companion.createMultiPolygon
+import jetbrains.datalore.base.projectionGeometry.Geometry
+import jetbrains.datalore.base.projectionGeometry.Geometry.Companion.createMultiLineString
+import jetbrains.datalore.base.projectionGeometry.Geometry.Companion.createMultiPoint
+import jetbrains.datalore.base.projectionGeometry.Geometry.Companion.createMultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.reinterpret
 import jetbrains.livemap.core.multitasking.MicroTask
@@ -20,9 +20,9 @@ import jetbrains.livemap.projections.ProjectionUtil.SAMPLING_EPSILON
 
 object GeometryTransform {
     fun <InT, OutT> resampling(
-        geometry: TileGeometry<InT>,
+        geometry: Geometry<InT>,
         transform: (Vec<InT>) -> Vec<OutT>
-    ): MicroTask<TileGeometry<OutT>> {
+    ): MicroTask<Geometry<OutT>> {
         return createTransformer(geometry, resampling(transform))
     }
 
@@ -53,9 +53,9 @@ object GeometryTransform {
     }
 
     private fun <InT, OutT> createTransformer(
-        geometry: TileGeometry<InT>,
+        geometry: Geometry<InT>,
         transform: (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit
-    ): MicroTask<TileGeometry<OutT>> {
+    ): MicroTask<Geometry<OutT>> {
         return when (geometry.type) {
             MULTI_POLYGON ->
                 MultiPolygonTransform(geometry.multiPolygon!!.reinterpret(), transform).map(::createMultiPolygon)

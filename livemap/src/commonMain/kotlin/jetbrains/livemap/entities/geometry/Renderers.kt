@@ -19,7 +19,7 @@ import jetbrains.livemap.entities.scaling.ScaleComponent
 
 object Renderers {
 
-    fun drawLines(geometry: ClientGeometry, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
+    fun drawLines(geometry: ClientBoundary, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
         for (polygon in geometry.asMultipolygon()) {
             for (ring in polygon) {
                 ring[0].let { ctx.moveTo(it) }

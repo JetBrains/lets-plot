@@ -24,6 +24,7 @@ import jetbrains.gis.tileprotocol.socket.SocketHandler
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LayerProvider
+import jetbrains.livemap.LayerProvider.LayerProviderImpl
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -175,7 +176,7 @@ class LiveMapGeocodingServiceBuilder {
 fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
 
 fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
-    layerProvider = DemoLayerProvider(devParams, block)
+    layerProvider = LayerProviderImpl(devParams, block)
 }
 
 fun LiveMapBuilder.location(block: Location.() -> Unit) {

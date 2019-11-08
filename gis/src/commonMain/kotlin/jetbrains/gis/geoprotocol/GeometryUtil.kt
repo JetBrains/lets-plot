@@ -21,7 +21,7 @@ object GeometryUtil {
         )
     }
 
-    fun <TypeT> asLineString(geometry: TypedGeometry<TypeT>): LineString<TypeT> {
+    fun <TypeT> asLineString(geometry: Boundary<TypeT>): LineString<TypeT> {
         return LineString(geometry.asMultipolygon()[0][0])
     }
 }
