@@ -37,5 +37,6 @@ docker run --rm \
   -v $python_extension_path:/tmp/python-extension \
   -v ${root_path}/tools/$build_script:/tmp/$build_script \
   -v ${root_path}/LICENSE:/tmp/LICENSE \
+  -v ${root_path}/README_PYTHON.md:/tmp/README_PYTHON.md \
   $docker_image \
   /tmp/$build_script
