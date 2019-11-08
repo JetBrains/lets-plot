@@ -44,7 +44,7 @@ The advantage of [Datalore](https://datalore.io) as a learning tool in compariso
 
 To install the Datalore Plot library, run the following command:
 ```shell script
-pip install datalore-plot`
+pip install datalore-plot
 ```
 
 ### Quickstart in Jupyter

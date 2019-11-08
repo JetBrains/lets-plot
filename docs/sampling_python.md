@@ -38,7 +38,7 @@ For this case there is always a 'safety' sampling (**random** N=200_000) ready t
 
 TBD: replace temporary URLs ---> permanent
 
-Random sampling on a scatter plot: 
+Random sampling on a scatter plot (might take some time to load): 
 [sampling_random.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/sampling_random.ipynb)
 
 Pick sampling on a Bars chart: 
