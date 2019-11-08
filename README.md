@@ -18,8 +18,11 @@ Due to the unique multi-platform nature of Kotlin programming language, you can 
 
 [Learn](README_PYTHON.md) how to create plots in Jupyter using the Datalore Plot python package.
 
-TBD: img tag with size 
+TBD: img tag with size
+ 
 ![](docs/examples/images/quickstart.png)
-<p>
-<img src="https://github.com/alshan/jupyter-examples/blob/master/images/quickstart.png" alt="Couldn't load quickstart.png" style="display: block; margin: auto; width:40%;"/>
-</p>
+<div>
+<div style="display: block; margin-left: auto; margin-right: auto;">
+<img src="https://github.com/alshan/jupyter-examples/blob/master/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
+</div>
+</div>
