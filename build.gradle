@@ -16,7 +16,7 @@ plugins {
 
 group 'org.jetbrains.datalore-plot'
 version "0.0.3-SNAPSHOT"
-project.ext.js_artifact_version = "0.0.dev2"
+project.ext.js_artifact_version = "0.0.dev3"
 
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
