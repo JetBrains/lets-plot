@@ -6,22 +6,22 @@
 
 ##### 1. Edit CHANGELOG.md file.
 
-##### 2. Edit the files: 
+##### 2. Set a new version in the properties (_"-SNAPSHOT"_ and _"dev"_ must be removed): 
 
- - remove `-SNAPSHOT` from version in `build.gradle`
- - remove `dev` from version in `python-package/datalore_plot/_version.py`
+ - `version` and `js_artifact_version` in `build.gradle` 
+ - `__version__` in `python-package/datalore_plot/_version.py`
   
 ##### 3. Push the version changes and git tag:
          
  - `git add --all && git commit -m "Updated version vX.X.X" && git push`
  - `git tag vX.X.X && git push --tags`
 
-##### 4. Change `version` to a new one in the files:
+##### 4. Change versions back to dev (add _"-SNAPSHOT"_ and _"dev"_):
 
- - `build.gradle` and add `-SNAPSHOT` to the new version
- - `python-package/datalore_plot/_version.py` and add `dev` to the new version
+ - `version` and `js_artifact_version` in `build.gradle` 
+ - `__version__` in `python-package/datalore_plot/_version.py`
 
-##### 5. Push the new version to GitHub.
+##### 5. Push new dev version to GitHub.
 
 
  
@@ -37,7 +37,6 @@
 
 ##### 3. Edit `build_settings.yml`:
 
- - set `js_artifact_version` to the actual vesrion
  - set both `build_python_extension` and `enable_python_package` options to `yes`
  - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.7
  - check and set credentials in the `PyPI settings` and `Bintray settings` sections
