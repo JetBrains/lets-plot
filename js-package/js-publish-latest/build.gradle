@@ -13,6 +13,7 @@ def bintray_key = project.buildSettings?.bintray?.key
 
 if (bintray_user != null && bintray_key != null) {
     bintray {
+
         user = bintray_user
         key = bintray_key
 
@@ -23,15 +24,15 @@ if (bintray_user != null && bintray_key != null) {
             into('.')
         }
 
-        publish = true
+        publish = project.bintraySettings.publish
         override = true
 
         pkg {
-            repo = 'datalore-plot'
-            name = 'datalore-plot-js'
-            userOrg = 'JetBrains'
-            licenses = ['MIT']
-            vcsUrl = 'https://github.com/JetBrains/datalore-plot'
+            repo = project.bintraySettings.repo
+            name = project.bintraySettings.pkg_name
+            userOrg = project.bintraySettings.userOrg
+            licenses = project.bintraySettings.licenses
+            vcsUrl = project.bintraySettings.vcsUrl
             version {
                 name = 'latest'
             }

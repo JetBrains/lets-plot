@@ -8,33 +8,33 @@ plugins {
     id "com.jfrog.bintray"
 }
 
-def artifact_version = project.buildSettings.js_artifact_version
 def bintray_user = project.buildSettings?.bintray?.user
 def bintray_key = project.buildSettings?.bintray?.key
 
 if (bintray_user != null && bintray_key != null) {
     bintray {
+
         user = bintray_user
         key = bintray_key
 
         filesSpec {
             from('../build/dist') {
-                include "*$artifact_version*"
+                include "*$project.bintraySettings.artifact_version*"
             }
-            into '.'
+            into('.')
         }
 
-        publish = true
+        publish = project.bintraySettings.publish
         override = false
 
         pkg {
-            repo = 'datalore-plot'
-            name = 'datalore-plot-js'
-            userOrg = 'JetBrains'
-            licenses = ['MIT']
-            vcsUrl = 'https://github.com/JetBrains/datalore-plot'
+            repo = project.bintraySettings.repo
+            name = project.bintraySettings.pkg_name
+            userOrg = project.bintraySettings.userOrg
+            licenses = project.bintraySettings.licenses
+            vcsUrl = project.bintraySettings.vcsUrl
             version {
-                name = artifact_version
+                name = project.bintraySettings.artifact_version
             }
         }
     }

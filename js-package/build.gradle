@@ -65,8 +65,30 @@ node {
 }
 
 
-def artifact_version = project.buildSettings.js_artifact_version
+def artifact_version = project.js_artifact_version
+def bintray_user = project.buildSettings?.bintray?.user
+def bintray_key = project.buildSettings?.bintray?.key
 
+
+if (bintray_user != null && bintray_key != null) {
+    task publishJS {
+        group("publishing")
+
+        dependsOn(":js-package:js-publish-version:bintrayUpload")
+        dependsOn(":js-package:js-publish-latest:bintrayUpload")
+    }
+    project.ext["bintraySettings"] = [
+        user: bintray_user,
+        key: bintray_key,
+        artifact_version: artifact_version,
+        publish: true,
+        repo: "datalore-plot",
+        pkg_name: 'datalore-plot-js',
+        userOrg: 'jetbrains',
+        licenses: ['MIT'],
+        vcsUrl: 'https://github.com/JetBrains/datalore-plot'
+    ]
+}
 
 repositories.whenObjectAdded {
     if (it instanceof IvyArtifactRepository) {
