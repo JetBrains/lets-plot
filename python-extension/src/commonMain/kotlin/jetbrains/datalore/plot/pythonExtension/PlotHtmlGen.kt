@@ -24,10 +24,22 @@ internal object PlotHtmlGen {
         return """
             <div id="$plotOutputId"></div>
             <script type="text/javascript">
-                var plotSpec=$plotSpecJs;
-
-                var plotContainer = document.getElementById("$plotOutputId");
-                DatalorePlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer);
+                (function() {
+                    var plotSpec=$plotSpecJs;
+                    var plotContainer = document.getElementById("$plotOutputId");
+                    if (!window.DatalorePlot) {
+                        console.log("Waiting for DatalorePlot...");
+                        if (!window.datalorePlotGraphics) {
+                            window.datalorePlotGraphics = [];
+                        }
+                        window.datalorePlotGraphics.push({
+                            spec: plotSpec,
+                            container: plotContainer
+                        });
+                    } else {
+                        DatalorePlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer);
+                    }
+                })()
             </script>
         """
     }

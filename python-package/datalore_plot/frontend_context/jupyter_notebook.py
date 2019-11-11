@@ -48,7 +48,23 @@ class JupyterNotebookContext(FrontendContext):
 
         url = "{base_url}/{name}".format(base_url=base_url, name=name)
         return """\
-                <script type="text/javascript" src="{url}"/>
+                <script type="text/javascript">
+                    (function() {{
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "{url}";
+                        script.onload = function() {{
+                            console.log("DatalorePlot loaded");
+                            if(window.datalorePlotGraphics) {{
+                                window.datalorePlotGraphics.forEach(function(el) {{
+                                    DatalorePlot.buildPlotFromProcessedSpecs(el.spec, -1, -1, el.container);
+                                }})
+                                window.datalorePlotGraphics = null;
+                            }}
+                        }}
+                        document.head.appendChild(script)
+                    }})()
+                </script>
             """.format(url=url)
 
     def _configure_embedded_script(self) -> str:
