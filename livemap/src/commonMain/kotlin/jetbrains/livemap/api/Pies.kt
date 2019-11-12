@@ -5,7 +5,6 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.Entities.MapEntityFactory
@@ -74,7 +73,7 @@ class PiesFactory(
             result.add(
                 myEntityFactory
                     .createMapEntity(
-                        myMapProjection.project(explicitVec(source.lon!!, source.lat!!)),
+                        myMapProjection.project(source.point),
                         Renderers.PieSectorRenderer(), "map_ent_pie_sector"
                     )
                     .addComponents {

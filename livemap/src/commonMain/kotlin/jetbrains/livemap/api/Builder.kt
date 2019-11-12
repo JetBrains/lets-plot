@@ -9,10 +9,8 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoRectangle
-import jetbrains.datalore.base.projectionGeometry.LonLat
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.createMultiPolygon
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.*
@@ -22,16 +20,15 @@ import jetbrains.gis.tileprotocol.socket.Socket
 import jetbrains.gis.tileprotocol.socket.SocketBuilder
 import jetbrains.gis.tileprotocol.socket.SocketHandler
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
-import jetbrains.livemap.DevParams
-import jetbrains.livemap.LayerProvider
+import jetbrains.livemap.*
 import jetbrains.livemap.LayerProvider.LayerProviderImpl
-import jetbrains.livemap.LiveMapSpec
-import jetbrains.livemap.MapLocation
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.obj2entity.TextMeasurer
+import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionType
+import jetbrains.livemap.projections.createArcPath
 
 @DslMarker
 annotation class LiveMapDsl {}
@@ -104,8 +101,8 @@ class LayersBuilder(
 
 @LiveMapDsl
 class ChartSource {
-    var lon: Double? = null
-    var lat: Double? = null
+    lateinit var point: Vec<LonLat>
+
     var radius: Double = 0.0
 
     var strokeColor: Color = Color.BLACK
@@ -114,6 +111,25 @@ class ChartSource {
     var indices: List<Int> = emptyList()
     var values: List<Double> = emptyList()
     var colors: List<Color> = emptyList()
+}
+
+fun geometry(points: List<LonLatPoint>, isGeodesic: Boolean, isClosed: Boolean): MultiPolygon<LonLat> {
+    val coord = points
+        .map { limitCoord(it) }
+        .let { if (isGeodesic) createArcPath(it) else it }
+
+    return if (isClosed) {
+        createMultiPolygon(coord) { it }
+    } else {
+        MapWidgetUtil
+            .splitPathByAntiMeridian(coord)
+            .map { path -> Polygon(listOf(Ring(path))) }
+            .run(::MultiPolygon)
+    }
+}
+
+fun limitCoord(point: Vec<LonLat>): Vec<LonLat> {
+    return explicitVec(GeoUtils.limitLon(point.x), GeoUtils.limitLat(point.y))
 }
 
 @LiveMapDsl

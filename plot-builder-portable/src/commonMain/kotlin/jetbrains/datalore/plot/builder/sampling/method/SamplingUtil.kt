@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.sampling.method
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.calculateArea
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
@@ -14,7 +15,6 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.base.util.MutableDouble
 import jetbrains.datalore.plot.base.util.MutableInteger
 import jetbrains.datalore.plot.builder.sampling.method.VertexSampling.DoubleVectorComponentsList
-import jetbrains.datalore.plot.common.geometry.Utils.calculateArea
 import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -114,29 +114,31 @@ internal object SamplingUtil {
         val areaProceed = MutableDouble(0.0)
         val pointsProceed = MutableInteger(0)
 
-        return (0 until rings.size)
-                .map { Pair(it, calculateArea(rings[it])) }
-                .sortedWith(compareBy<Pair<*, Double>> {
-                    getRingArea(
-                        it
-                    )
-                }.reversed())
-                .map { p ->
-                    var limit = min((p.second / (totalArea - areaProceed.get()) * (totalPointsLimit - pointsProceed.get())).roundToInt(),
-                            rings[getRingIndex(p)].size
-                    )
+        return rings.indices
+            .asSequence()
+            .map { Pair(it, calculateArea(rings[it])) }
+            .sortedWith(compareBy<Pair<*, Double>> {
+                getRingArea(
+                    it
+                )
+            }.reversed())
+            .map { p ->
+                var limit = min((p.second / (totalArea - areaProceed.get()) * (totalPointsLimit - pointsProceed.get())).roundToInt(),
+                    rings[getRingIndex(p)].size
+                )
 
-                    if (limit >= 4) {
-                        areaProceed.getAndAdd(getRingArea(p))
-                        pointsProceed.getAndAdd(limit)
-                    } else {
-                        limit = 0
-                    }
-
-                    Pair(getRingIndex(p), limit)
+                if (limit >= 4) {
+                    areaProceed.getAndAdd(getRingArea(p))
+                    pointsProceed.getAndAdd(limit)
+                } else {
+                    limit = 0
                 }
-                .sortedWith(compareBy { getRingIndex(it) })
-                .map { getRingLimit(it) }
+
+                Pair(getRingIndex(p), limit)
+            }
+            .sortedWith(compareBy { getRingIndex(it) })
+            .map { getRingLimit(it) }
+            .toList()
     }
 
     fun getRingIndex(pair: Pair<Int, *>): Int {

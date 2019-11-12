@@ -69,8 +69,8 @@ class LineBuilder(
     var mapId: String = ""
     var regionId: String = ""
 
-    var lon: Double? = null
-    var lat: Double? = null
+    lateinit var point: Vec<LonLat>
+
     var lineDash: List<Double> = emptyList()
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 1.0
@@ -78,7 +78,7 @@ class LineBuilder(
     fun build(
         horizontal: Boolean
     ): EcsEntity {
-        val worldPoint = myMapProjection.project(explicitVec(lon!!, lat!!))
+        val worldPoint = myMapProjection.project(point)
         val line = createLineGeometry(worldPoint, horizontal)
         val bbox = createLineBBox(worldPoint, strokeWidth, horizontal)
 

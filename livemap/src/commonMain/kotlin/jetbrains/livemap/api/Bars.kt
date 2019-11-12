@@ -1,6 +1,8 @@
 package jetbrains.livemap.api
 
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.Entities.MapEntityFactory
@@ -65,38 +67,40 @@ class BarsFactory(
             .maxBy { abs(it) }
             ?: error("Failed to calculate maxAbsValue.")
 
-        return myItems.flatMap { splitMapBarChart(it, abs(maxAbsValue)) }
-    }
-
-    private fun splitMapBarChart(source: ChartSource, maxAbsValue: Double): List<EcsEntity> {
-        val result = ArrayList<EcsEntity>()
-        val percents = transformValues2Percents(source.values, maxAbsValue)
-
-        val radius = source.radius
-        val barCount = percents.size
-        val spacing = 0.1 * radius
-        val barWidth = (2 * radius - (barCount - 1) * spacing) / barCount
-
-        for (i in percents.indices) {
-            val barDimension =  explicitVec<Client>(barWidth, radius * abs(percents[i]))
-            val barOffset = explicitVec<Client>(
-                (barWidth + spacing) * i - radius,
-                if (percents[i] > 0) -barDimension.y else 0.0
-            )
-            result.add(
+        return myItems.flatMap { source ->
+            splitMapBarChart(source, abs(maxAbsValue)) { barOffset, barDimension, color->
                 myEntityFactory
-                    .createMapEntity(myMapProjection.project(explicitVec(source.lon!!, source.lat!!)), Renderers.BarRenderer(), "map_ent_bar")
+                    .createMapEntity(myMapProjection.project(source.point), Renderers.BarRenderer(), "map_ent_bar")
                     .addComponents {
                         + ScreenOffsetComponent().apply { offset = barOffset}
                         + ScreenDimensionComponent().apply { dimension = barDimension }
                         + StyleComponent().apply {
-                            setFillColor(source.colors[i])
+                            setFillColor(color)
                             setStrokeColor(source.strokeColor)
                             setStrokeWidth(source.strokeWidth)
                         }
                     }
-            )
+            }
         }
-        return result
     }
+}
+
+fun splitMapBarChart(source: ChartSource, maxAbsValue: Double, consumer: (Vec<Client>, Vec<Client>, Color) -> Unit): List<EcsEntity> {
+    val result = ArrayList<EcsEntity>()
+    val percents = transformValues2Percents(source.values, maxAbsValue)
+
+    val radius = source.radius
+    val barCount = percents.size
+    val spacing = 0.1 * radius
+    val barWidth = (2 * radius - (barCount - 1) * spacing) / barCount
+
+    for (i in percents.indices) {
+        val barDimension =  explicitVec<Client>(barWidth, radius * abs(percents[i]))
+        val barOffset = explicitVec<Client>(
+            (barWidth + spacing) * i - radius,
+            if (percents[i] > 0) -barDimension.y else 0.0
+        )
+        consumer(barOffset, barDimension, source.colors[i])
+    }
+    return result
 }

@@ -6,7 +6,7 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
-import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.times
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -59,8 +59,7 @@ class TextBuilder {
     var mapId: String = ""
     var regionId: String = ""
 
-    var lon: Double? = null
-    var lat: Double? = null
+    lateinit var point: Vec<LonLat>
 
     var fillColor: Color = Color.BLACK
     var strokeColor: Color = Color.TRANSPARENT
@@ -82,7 +81,7 @@ class TextBuilder {
         val textSpec = createTextSpec(textMeasurer)
 
         return factory
-            .createMapEntity(mapProjection.project(explicitVec<LonLat>(lon!!, lat!!)), Renderers.TextRenderer(), "map_ent_text")
+            .createMapEntity(mapProjection.project(point), Renderers.TextRenderer(), "map_ent_text")
             .addComponents {
                 + ScreenOffsetComponent().apply {
                     offset = textSpec.dimension * -0.5

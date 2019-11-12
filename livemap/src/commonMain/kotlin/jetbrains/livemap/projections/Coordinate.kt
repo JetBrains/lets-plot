@@ -42,7 +42,7 @@ class Coordinates {
 
 }
 
-fun newDoubleRectangle(origin: AnyPoint, dimension: AnyPoint): DoubleRectangle {
+fun newDoubleRectangle(origin: Vec<*>, dimension: Vec<*>): DoubleRectangle {
     return DoubleRectangle(origin.x, origin.y, dimension.x, dimension.y)
 }
 

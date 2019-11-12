@@ -122,13 +122,13 @@ internal class DataPointsConverter(
 
         internal fun pathToBuilder(
             p: DataPointAesthetics,
-            points: List<DoubleVector>,
-            isPolygon: Boolean
+            points: List<Vec<LonLat>>,
+            isClosed: Boolean
         ): MapObjectBuilder {
             log(p)
 
-            return MapObjectBuilder(p, getRender(isPolygon))
-                .setGeometryData(points, isPolygon, myGeodesic)
+            return MapObjectBuilder(p, getRender(isClosed))
+                .setGeometryData(points, isClosed, myGeodesic)
                 .setArrowSpec(myArrowSpec)
                 .setAnimation(myAnimation)
         }
@@ -152,28 +152,32 @@ internal class DataPointsConverter(
         internal fun path(geom: Geom): List<MapObjectBuilder> {
             setAnimation(if (geom is PathGeom) geom.animation else null)
 
-            return createMapObjectBuilders(multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)), false)
+            return process(multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)), false)
         }
 
         internal fun polygon(): List<MapObjectBuilder> {
-            return createMapObjectBuilders(multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)), true)
+            return process(multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)), true)
         }
 
         internal fun rect(): List<MapObjectBuilder> {
-            return createMapObjectBuilders(multiPointDataByGroup(multiPointAppender(GeomUtil.TO_RECTANGLE)), true)
+            return process(multiPointDataByGroup(multiPointAppender(GeomUtil.TO_RECTANGLE)), true)
         }
 
         private fun multiPointDataByGroup(coordinateAppender: (DataPointAesthetics, (DoubleVector?) -> Unit) -> Unit): List<MultiPointData> {
             return createMultiPointDataByGroup(aesthetics.dataPoints(), coordinateAppender, collector())
         }
 
-        private fun createMapObjectBuilders(multiPointDataList: List<MultiPointData>, isPolygon: Boolean): List<MapObjectBuilder> {
+        private fun process(
+            multiPointDataList: List<MultiPointData>,
+            isClosed: Boolean
+        ): List<MapObjectBuilder> {
             val mapObjects = ArrayList<MapObjectBuilder>()
+
             for (multiPointData in multiPointDataList) {
                 pathToBuilder(
                     multiPointData.aes,
-                    multiPointData.points,
-                    isPolygon
+                    multiPointData.points.toVecs(),
+                    isClosed
                 ).let(mapObjects::add)
             }
             return mapObjects
@@ -195,7 +199,7 @@ internal class DataPointsConverter(
         }
 
         private fun process(
-            isPolygon: Boolean,
+            isClosed: Boolean,
             dataPointToGeometry: (DataPointAesthetics) -> List<DoubleVector>
         ): List<MapObjectBuilder> {
             val mapObjects = ArrayList<MapObjectBuilder>(aesthetics.dataPointCount())
@@ -205,7 +209,7 @@ internal class DataPointsConverter(
                 if (points.isEmpty()) {
                     continue
                 }
-                pathToBuilder(p, points, isPolygon).let(mapObjects::add)
+                pathToBuilder(p, points.toVecs(), isClosed).let(mapObjects::add)
             }
             mapObjects.trimToSize()
             return mapObjects
@@ -357,4 +361,8 @@ internal class DataPointsConverter(
             } else null
         }
     }
+}
+
+private fun <T> List<DoubleVector>.toVecs(): List<Vec<T>> {
+    return map { explicitVec<T>(it.x, it.y)}
 }

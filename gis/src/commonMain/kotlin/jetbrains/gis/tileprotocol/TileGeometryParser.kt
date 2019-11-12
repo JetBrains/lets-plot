@@ -33,7 +33,7 @@ class TileGeometryParser(geometryCollection: GeometryCollection) {
         val tileGeometries: List<Geometry<LonLat>>
             get() = myTileGeometries
 
-        override fun onPoint(point: Point) {
+        override fun onPoint(point: Vec<Generic>) {
             myTileGeometries.add(
                 Geometry.createMultiPoint(
                 MultiPoint(

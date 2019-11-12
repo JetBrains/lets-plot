@@ -6,6 +6,7 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.maps.livemap.entities.point.PointComponent
@@ -79,8 +80,7 @@ class PointBuilder {
     var mapId: String = ""
     var regionId: String = ""
 
-    var lat: Double? = null
-    var lon: Double? = null
+    lateinit var point: Vec<LonLat>
 
     var radius: Double = 4.0
     var fillColor: Color = Color.WHITE
@@ -100,7 +100,7 @@ class PointBuilder {
         val size = radius * 2.0
 
         val entity = factory
-            .createMapEntity(mapProjection.project(explicitVec<LonLat>(lon!!, lat!!)), PointRenderer(), "map_ent_point")
+            .createMapEntity(mapProjection.project(point), PointRenderer(), "map_ent_point")
             .addComponents {
                 + PointComponent().apply { shape = this@PointBuilder.shape }
                 + createStyle()

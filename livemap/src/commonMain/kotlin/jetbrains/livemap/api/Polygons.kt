@@ -6,7 +6,7 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -20,7 +20,10 @@ import jetbrains.livemap.entities.regions.RegionComponent
 import jetbrains.livemap.entities.regions.RegionRenderer
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.scaling.ScaleComponent
-import jetbrains.livemap.projections.*
+import jetbrains.livemap.projections.Coordinates
+import jetbrains.livemap.projections.LonLatPoint
+import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.ProjectionUtil
 
 
 @LiveMapDsl
@@ -66,7 +69,8 @@ class PolygonsBuilder {
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 0.0
     var fillColor: Color = Color.GREEN
-    var coordinates: List<Vec<LonLat>>? = null
+
+    var multiPolygon: MultiPolygon<LonLat>? = null
 
     fun build(
         factory: MapEntityFactory,
@@ -74,17 +78,14 @@ class PolygonsBuilder {
     ): EcsEntity? {
 
         return when {
-            coordinates != null -> createStaticEntity(factory, mapProjection)
+            multiPolygon != null -> createStaticEntity(factory, mapProjection)
             regionId != null -> createDynamicEntity(factory)
             else -> null
         }
     }
 
     private fun createStaticEntity(factory: MapEntityFactory, mapProjection: MapProjection): EcsEntity {
-        val geometry = coordinates!!
-            .run { LonLatRing(this) }
-            .run { LonLatPolygon(listOf(this)) }
-            .run { LonLatMultiPolygon(listOf(this)) }
+        val geometry = multiPolygon!!
             .run { ProjectionUtil.transformMultiPolygon(this, mapProjection::project) }
 
         val bbox = GeometryUtil.bbox(geometry) ?: error("")
@@ -117,4 +118,8 @@ class PolygonsBuilder {
                 get<ScreenLoopComponent>().origins = listOf(Coordinates.ZERO_CLIENT_POINT)
             }
     }
+}
+
+fun PolygonsBuilder.geometry(points: List<LonLatPoint>, isGeodesic: Boolean) {
+    multiPolygon = geometry(points, isGeodesic, isClosed = true)
 }

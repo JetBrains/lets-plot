@@ -111,7 +111,7 @@ internal class MapObjectMatcher {
         strokeWidth.assertExpectation(path.strokeWidth)
         speed.assertExpectation(path.speed)
         flow.assertExpectation(path.flow)
-        geometry.assertExpectation(path.geometry!!)
+        //geometry.assertExpectation(path.geometry!!)
         //arrowSpec.assertExpectation(path.getArrowSpec())
         animation.assertExpectation(path.animation)
     }
@@ -138,7 +138,7 @@ internal class MapObjectMatcher {
         fillColor.assertExpectation(polygon.fillColor)
         strokeColor.assertExpectation(polygon.strokeColor)
         strokeWidth.assertExpectation(polygon.strokeWidth)
-        geometry.assertExpectation(polygon.geometry!!)
+        //geometry.assertExpectation(polygon.geometry!!)
     }
 
     private fun matchText(text: MapObjectBuilder) {

@@ -5,14 +5,13 @@
 
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.projectionGeometry.GeometryType.*
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Geometry
 import jetbrains.datalore.base.projectionGeometry.Geometry.Companion.createMultiLineString
 import jetbrains.datalore.base.projectionGeometry.Geometry.Companion.createMultiPoint
 import jetbrains.datalore.base.projectionGeometry.Geometry.Companion.createMultiPolygon
+import jetbrains.datalore.base.projectionGeometry.GeometryType.*
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.projectionGeometry.reinterpret
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.projections.AdaptiveResampling
@@ -58,11 +57,11 @@ object GeometryTransform {
     ): MicroTask<Geometry<OutT>> {
         return when (geometry.type) {
             MULTI_POLYGON ->
-                MultiPolygonTransform(geometry.multiPolygon.reinterpret(), transform).map(::createMultiPolygon)
+                MultiPolygonTransform(geometry.multiPolygon, transform).map(::createMultiPolygon)
             MULTI_LINESTRING ->
-                MultiLineStringTransform(geometry.multiLineString.reinterpret(), transform).map(::createMultiLineString)
+                MultiLineStringTransform(geometry.multiLineString, transform).map(::createMultiLineString)
             MULTI_POINT ->
-                MultiPointTransform(geometry.multiPoint.reinterpret(), transform).map(::createMultiPoint)
+                MultiPointTransform(geometry.multiPoint, transform).map(::createMultiPoint)
             else ->
                 throw IllegalArgumentException("Unsupported geometry type: ${geometry.type}")
         }

@@ -6,10 +6,9 @@
 package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.gcommon.collect.Lists.transform
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.limitLat
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.limitLon
+import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
@@ -18,12 +17,9 @@ import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
-import jetbrains.gis.geoprotocol.Boundary
-import jetbrains.livemap.MapWidgetUtil
 import jetbrains.livemap.api.*
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.mapobjects.MapLayerKind.*
@@ -36,8 +32,7 @@ internal class MapObjectBuilder {
 
     private var myValueArray: List<Double> = emptyList()
     private var myColorArray: List<Color> = emptyList()
-    var geometry: Boundary<LonLat>? = null
-    private var coordinates: List<Vec<LonLat>>? = null
+    var geometry: MultiPolygon<LonLat>? = null
     var point: Vec<LonLat>? = null
     private var indices = emptyList<Int>()
     private var myArrowSpec: ArrowSpec? = null
@@ -141,14 +136,6 @@ internal class MapObjectBuilder {
         return List(size) { DefaultNaValue[COLOR] }
     }
 
-    private fun limitCoord(point: DoubleVector): DoubleVector {
-        return DoubleVector(limitLon(point.x), limitLat(point.y))
-    }
-
-    private fun limitCoord(point: Vec<LonLat>): Vec<LonLat> {
-        return explicitVec(limitLon(point.x), limitLat(point.y))
-    }
-
     constructor(p: DataPointAesthetics, layerKind: MapLayerKind) {
         myLayerKind = layerKind
         myP = p
@@ -172,8 +159,7 @@ internal class MapObjectBuilder {
                 index = this@MapObjectBuilder.index
                 this@MapObjectBuilder.mapId?.let { mapId = it }
                 this@MapObjectBuilder.regionId?.let { regionId = it }
-                lon = it.x
-                lat = it.y
+                point = it
                 label = this@MapObjectBuilder.label
                 animation = this@MapObjectBuilder.animation
                 shape = this@MapObjectBuilder.shape
@@ -191,7 +177,7 @@ internal class MapObjectBuilder {
             this@MapObjectBuilder.mapId?.let { mapId = it }
             this@MapObjectBuilder.regionId?.let { regionId = it }
 
-            coordinates = this@MapObjectBuilder.coordinates
+            multiPolygon = this@MapObjectBuilder.geometry
 
             lineDash = this@MapObjectBuilder.lineDash
             fillColor = this@MapObjectBuilder.fillColor
@@ -201,13 +187,13 @@ internal class MapObjectBuilder {
     }
 
     fun createPathBlock(): (PathBuilder.() -> Unit)? {
-        return coordinates?.let {
+        return geometry?.let {
             {
                 index = this@MapObjectBuilder.index
                 this@MapObjectBuilder.mapId?.let { mapId = it }
                 this@MapObjectBuilder.regionId?.let { regionId = it }
 
-                coordinates = it
+                multiPolygon = it
 
                 lineDash = this@MapObjectBuilder.lineDash
                 strokeColor = this@MapObjectBuilder.strokeColor
@@ -216,7 +202,6 @@ internal class MapObjectBuilder {
                 animation = this@MapObjectBuilder.animation
                 speed = this@MapObjectBuilder.speed
                 flow = this@MapObjectBuilder.flow
-                geodesic = this@MapObjectBuilder.geodesic
             }
         }
     }
@@ -227,8 +212,7 @@ internal class MapObjectBuilder {
                 index = this@MapObjectBuilder.index
                 this@MapObjectBuilder.mapId?.let { mapId = it }
                 this@MapObjectBuilder.regionId?.let { regionId = it }
-                lon = it.x
-                lat = it.y
+                point = it
                 lineDash = this@MapObjectBuilder.lineDash
                 strokeColor = this@MapObjectBuilder.strokeColor
                 strokeWidth = this@MapObjectBuilder.strokeWidth
@@ -239,8 +223,7 @@ internal class MapObjectBuilder {
     fun createChartBlock(): (ChartSource.() -> Unit)? {
         return point?.let {
             {
-                lon = it.x
-                lat = it.y
+                point = it
 
                 radius = this@MapObjectBuilder.radius
 
@@ -260,8 +243,7 @@ internal class MapObjectBuilder {
                 index = this@MapObjectBuilder.index
                 this@MapObjectBuilder.mapId?.let { mapId = it }
                 this@MapObjectBuilder.regionId?.let { regionId = it }
-                lon = it.x
-                lat = it.y
+                point = it
                 fillColor = this@MapObjectBuilder.fillColor
                 strokeColor = this@MapObjectBuilder.strokeColor
                 strokeWidth = this@MapObjectBuilder.strokeWidth
@@ -297,25 +279,10 @@ internal class MapObjectBuilder {
         return this
     }
 
-    fun setGeometryData(points: List<DoubleVector>, isPolygon: Boolean, isGeodesic: Boolean): MapObjectBuilder {
-        val coord = points.map { limitCoord(it) }
-        coordinates = coord.map { explicitVec<LonLat>(it.x, it.y) }
+    fun setGeometryData(points: List<Vec<LonLat>>, isClosed: Boolean, isGeodesic: Boolean): MapObjectBuilder {
+        geometry = geometry(points, isClosed, isGeodesic)
 
-        val multipolygon = if (isPolygon) {
-            GeomUtil.createMultiPolygon(coord)
-        } else {
-            MapWidgetUtil
-                .splitPathByAntiMeridian(if (isGeodesic) MapWidgetUtil.createArcPath(coord) else coord)
-                .map { path -> Polygon(listOf(Ring(path.map { it.toVec<Generic>() }))) }
-                .run(::MultiPolygon)
-        }
-
-        geometry = Boundary.create(multipolygon.reinterpret())
         return this
-    }
-
-    private fun <T> DoubleVector.toVec(): Vec<T> {
-        return explicitVec(x, y)
     }
 
     fun setArrowSpec(arrowSpec: ArrowSpec?): MapObjectBuilder {

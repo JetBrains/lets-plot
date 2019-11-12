@@ -176,4 +176,125 @@ object GeoUtils {
         return 1 shl zoom
     }
 
+    fun createMultiPolygon(points: List<DoubleVector>): MultiPolygon<Generic> {
+        return createMultiPolygon(points) { explicitVec<Generic>(it.x, it.y) }
+    }
+
+    fun <E, T> createMultiPolygon(points: List<E>, point: (E) -> Vec<T>): MultiPolygon<T> {
+        if (points.isEmpty()) {
+            return MultiPolygon(emptyList())
+        }
+
+        val polygons = ArrayList<Polygon<T>>()
+        var rings = ArrayList<Ring<T>>()
+
+        for (ring in createRingsFromPoints(points)) {
+            val vecRing = ring.map { point(it) }
+
+            if (rings.isNotEmpty() && isClockwise(vecRing)) {
+                polygons.add(Polygon(rings))
+                rings = ArrayList()
+            }
+            rings.add(Ring(vecRing))
+        }
+
+        if (rings.isNotEmpty()) {
+            polygons.add(Polygon(rings))
+        }
+
+        return MultiPolygon(polygons)
+    }
+
+    private fun <T> isClockwise(ring: List<Vec<T>>): Boolean {
+        return isClockwise(ring, {p -> p.x}, {p -> p.y})
+    }
+
+    private fun <T> isClockwise(ring: List<T>, x: (T) -> Double, y: (T) -> Double): Boolean {
+        check(ring.isNotEmpty()) { "Ring shouldn't be empty to calculate clockwise" }
+
+        var sum = 0.0
+        var prev = ring[ring.size - 1]
+        for (point in ring) {
+            sum += x(prev) * y(point) - x(point) * y(prev)
+            prev = point
+        }
+        return sum < 0.0
+    }
+
+    fun <T> createRingsFromPoints(points: List<T>): List<List<T>> {
+        val ringIntervals = findRingIntervals(points)
+
+        val rings = ArrayList<List<T>>(ringIntervals.size)
+        ringIntervals.forEach { ringInterval -> rings.add(
+            sublist(
+                points,
+                ringInterval
+            )
+        ) }
+
+        if (!rings.isEmpty()) {
+            val lastRing = rings[rings.size - 1]
+            if (!isClosed(lastRing)) {
+                rings.removeAt(rings.size - 1)
+                rings.add(makeClosed(lastRing))
+            }
+        }
+
+        return rings
+    }
+
+    private fun <T> makeClosed(path: List<T>): List<T> {
+        val closedList = ArrayList(path)
+        closedList.add(closedList[0])
+        return closedList
+    }
+
+    private fun <T> findRingIntervals(path: List<T>): List<ClosedRange<Int>> {
+        val intervals = ArrayList<ClosedRange<Int>>()
+        var startIndex = 0
+
+        var i = 0
+        val n = path.size
+        while (i < n) {
+            if (startIndex != i && path[startIndex] == path[i]) {
+                intervals.add(ClosedRange.closed(startIndex, i + 1))
+                startIndex = i + 1
+            }
+            i++
+        }
+
+        if (startIndex != path.size) {
+            intervals.add(ClosedRange.closed(startIndex, path.size))
+        }
+        return intervals
+    }
+
+    private fun <T> sublist(list: List<T>, range: ClosedRange<Int>): List<T> {
+        return list.subList(range.lowerEndpoint(), range.upperEndpoint())
+    }
+
+    fun <T> isClosed(list: List<T>): Boolean {
+        if (list.size < 2) {
+            return true
+        }
+
+        val endIndex = list.size - 1
+        return list[0] == list[endIndex]
+    }
+
+    fun calculateArea(ring: List<DoubleVector>): Double {
+        var area = 0.0
+
+        var j = ring.size - 1
+
+        for (i in ring.indices) {
+            val p1 = ring[i]
+            val p2 = ring[j]
+
+            area += (p2.x + p1.x) * (p2.y - p1.y)
+            j = i
+        }
+
+        return abs(area / 2)
+    }
 }

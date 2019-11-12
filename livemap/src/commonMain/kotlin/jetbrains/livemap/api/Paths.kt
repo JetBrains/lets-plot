@@ -7,7 +7,6 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.animation.Animation
@@ -72,7 +71,8 @@ class PathBuilder {
     var lineDash: List<Double> = emptyList()
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 1.0
-    var coordinates: List<Vec<LonLat>> = emptyList()
+
+    lateinit var multiPolygon: MultiPolygon<LonLat>
 
     var animation: Int = 0
     var speed: Double = 0.0
@@ -84,11 +84,7 @@ class PathBuilder {
         factory: Entities.MapEntityFactory,
         toMapProjection: (MultiPolygon<LonLat>) -> MultiPolygon<World>
     ): EcsEntity? {
-        val coord = (coordinates.takeIf { !geodesic } ?: createArcPath(coordinates))
-                .run { LonLatRing(this) }
-                .run { LonLatPolygon(listOf(this)) }
-                .run { LonLatMultiPolygon(listOf(this)) }
-                .run { toMapProjection(this) }
+        val coord = toMapProjection(multiPolygon)
 
         return coord
             .run { GeometryUtil.bbox(this) }
@@ -135,4 +131,8 @@ class PathBuilder {
         this.componentManager.addComponent(this, GrowingPathEffectComponent().apply(block))
         return this
     }
+}
+
+fun PathBuilder.geometry(points: List<LonLatPoint>, isGeodesic: Boolean) {
+    multiPolygon = geometry(points, isGeodesic, isClosed = false)
 }

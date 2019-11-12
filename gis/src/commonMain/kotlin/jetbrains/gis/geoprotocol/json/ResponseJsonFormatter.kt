@@ -7,7 +7,7 @@ package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
-import jetbrains.datalore.base.projectionGeometry.Point
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.gis.common.json.*
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.gis.geoprotocol.GeoResponse
@@ -123,7 +123,7 @@ object ResponseJsonFormatter {
         }
     }
 
-    private fun formatPoint(v: Point?): FluentValue? {
+    private fun formatPoint(v: Vec<Generic>?): FluentValue? {
         return v?.let { FluentObject()
             .put(LON, it.x)
             .put(LAT, it.y)

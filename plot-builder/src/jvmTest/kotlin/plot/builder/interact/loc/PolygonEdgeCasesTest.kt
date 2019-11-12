@@ -7,6 +7,8 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.createMultiPolygon
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.createRingsFromPoints
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
@@ -126,7 +128,7 @@ class PolygonEdgeCasesTest {
 
         val list = multipolygon(ring1, ring2, ring3)
 
-        val rings = GeomUtil.createRingsFromPoints(list)
+        val rings = createRingsFromPoints(list)
 
         assertEquals(3, rings.size)
         assertEquals(ring1, rings[0])
@@ -142,7 +144,7 @@ class PolygonEdgeCasesTest {
                 point(7.0, 7.0)
         )
 
-        val rings = GeomUtil.createRingsFromPoints(openRing)
+        val rings = createRingsFromPoints(openRing)
 
         val expectedRing = ArrayList(openRing)
         expectedRing.add(openRing[0])
@@ -153,7 +155,7 @@ class PolygonEdgeCasesTest {
 
     @Test
     fun geomUtilSplitRingsFromPath_WhenPathIsEmpty_ShouldReturnEmptyList() {
-        val rings = GeomUtil.createRingsFromPoints(emptyList())
+        val rings = createRingsFromPoints(emptyList<Any>())
 
         assertTrue(rings.isEmpty())
     }
@@ -190,7 +192,7 @@ class PolygonEdgeCasesTest {
                 singlePointAppender(GeomUtil.TO_LOCATION_X_Y),
                 reducer(1.0, true)
         )
-        val rings = GeomUtil.createRingsFromPoints(multiPointDataList[0].points)
+        val rings = createRingsFromPoints(multiPointDataList[0].points)
 
         assertEquals(3, rings.size)
         assertRing(rings[0], startRing1)
@@ -224,7 +226,7 @@ class PolygonEdgeCasesTest {
 
         assertEquals(2, multiPointDataList.size)
 
-        val rings = GeomUtil.createRingsFromPoints(multiPointDataList[0].points)
+        val rings = createRingsFromPoints(multiPointDataList[0].points)
         assertEquals(2, rings.size)
         assertEquals(
             jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.polygonFromRect(
@@ -259,7 +261,7 @@ class PolygonEdgeCasesTest {
                 )
         )
 
-        val multipolygon = GeomUtil.createMultiPolygon(lonLatPoints)
+        val multipolygon = createMultiPolygon(lonLatPoints)
 
         assertEquals(2, multipolygon.size)
         assertEquals(1, multipolygon[0].size)

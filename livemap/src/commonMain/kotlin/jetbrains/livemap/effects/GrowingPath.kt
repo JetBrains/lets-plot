@@ -5,8 +5,7 @@
 
 package jetbrains.livemap.effects
 
-import jetbrains.datalore.base.projectionGeometry.AnyLineString
-import jetbrains.datalore.base.projectionGeometry.AnyPoint
+import jetbrains.datalore.base.projectionGeometry.LineString
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.vis.canvas.Context2d
@@ -23,7 +22,7 @@ import kotlin.math.sqrt
 
 object GrowingPath {
 
-    private fun length(p1: AnyPoint, p2: AnyPoint): Double {
+    private fun length(p1: Vec<*>, p2: Vec<*>): Double {
         val x = p2.x - p1.x
         val y = p2.y - p1.y
         return sqrt(x * x + y * y)
@@ -49,7 +48,7 @@ object GrowingPath {
             }
         }
 
-        private fun GrowingPathEffectComponent.init(path: AnyLineString) {
+        private fun GrowingPathEffectComponent.init(path: LineString<*>) {
             var l = 0.0
             lengthIndex = ArrayList<Double>(path.size).apply {
                 add(0.0)
@@ -65,7 +64,7 @@ object GrowingPath {
 
         private fun calculateEffectState(
             effectComponent: GrowingPathEffectComponent,
-            path: AnyLineString,
+            path: LineString<*>,
             progress: Double
         ) {
             val lengthIndex = effectComponent.lengthIndex

@@ -11,17 +11,12 @@ import jetbrains.datalore.base.geometry.DoubleRectangles
 class Generic
 class LonLat
 
-typealias Point = Vec<Generic>
-
-typealias AnyPoint = Vec<*>
-typealias AnyLineString = LineString<*>
-
-fun <TypeT> Vec<*>.reinterpret(): Vec<TypeT> = this as Vec<TypeT>
-fun <TypeT> MultiPoint<*>.reinterpret(): MultiPoint<TypeT> = this as MultiPoint<TypeT>
-fun <TypeT> LineString<*>.reinterpret(): LineString<TypeT> = this as LineString<TypeT>
-fun <TypeT> MultiLineString<*>.reinterpret(): MultiLineString<TypeT> = this as MultiLineString<TypeT>
-fun <TypeT> Polygon<*>.reinterpret(): Polygon<TypeT> = this as Polygon<TypeT>
-fun <TypeT> MultiPolygon<*>.reinterpret(): MultiPolygon<TypeT> = this as MultiPolygon<TypeT>
+fun <TypeT> Vec<Generic>.reinterpret(): Vec<TypeT> = this as Vec<TypeT>
+fun <TypeT> MultiPoint<Generic>.reinterpret(): MultiPoint<TypeT> = this as MultiPoint<TypeT>
+fun <TypeT> LineString<Generic>.reinterpret(): LineString<TypeT> = this as LineString<TypeT>
+fun <TypeT> MultiLineString<Generic>.reinterpret(): MultiLineString<TypeT> = this as MultiLineString<TypeT>
+fun <TypeT> Polygon<Generic>.reinterpret(): Polygon<TypeT> = this as Polygon<TypeT>
+fun <TypeT> MultiPolygon<Generic>.reinterpret(): MultiPolygon<TypeT> = this as MultiPolygon<TypeT>
 
 val Rect<*>.bottom: Double get() = origin.y + dimension.y
 val Rect<*>.right: Double get() = origin.x + dimension.x

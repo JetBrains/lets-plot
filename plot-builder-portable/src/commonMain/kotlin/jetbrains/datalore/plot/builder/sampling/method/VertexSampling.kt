@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.sampling.method
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.isClosed
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.util.MutableInteger
@@ -17,7 +18,6 @@ import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.getRingLimit
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.splitRings
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.geometry.PolylineSimplifier
-import jetbrains.datalore.plot.common.geometry.Utils.isClosed
 
 internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSize),
     PointSampling {
@@ -99,14 +99,8 @@ internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSiz
 
     companion object {
         private fun createPoint(x: Any, y: Any): DoubleVector {
-            if (x is String || y is String) {
-                throw IllegalArgumentException("String coords are not supported yet")
-            }
-
-            if (!SeriesUtil.allFinite(x as Double, y as Double)) {
-                throw IllegalArgumentException("Invalid coord")
-            }
-
+            require(!(x is String || y is String)) { "String coords are not supported yet" }
+            require(SeriesUtil.allFinite(x as Double, y as Double)) { "Invalid coord" }
             return DoubleVector(x, y)
         }
     }

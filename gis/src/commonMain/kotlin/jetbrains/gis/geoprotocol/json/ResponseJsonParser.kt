@@ -105,7 +105,7 @@ object ResponseJsonParser {
         return ErrorGeoResponse(responseJson.getString(MESSAGE))
     }
 
-    private fun parseCentroid(centroid: FluentObject): Point {
+    private fun parseCentroid(centroid: FluentObject): Vec<Generic> {
         return explicitVec<Generic>(
             centroid.getDouble(LON),
             centroid.getDouble(LAT)

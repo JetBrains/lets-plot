@@ -14,7 +14,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ParserTest {
-    private fun p(x: Double, y: Double): Point {
+    private fun p(x: Double, y: Double): Vec<Generic> {
         return explicitVec(x, y)
     }
     
@@ -184,7 +184,7 @@ class ParserTest {
         val c = SimpleGeometryConsumer()
         Twkb.parse(data, c)
 
-        assertEquals<List<List<List<Point>?>?>?>(
+        assertEquals<List<List<List<Vec<Generic>>?>?>?>(
             optionalListOf( // polygons
                 optionalListOf( // polygon
                     optionalListOf( // ring
@@ -327,7 +327,7 @@ class ParserTest {
         val c = CollectedGeometryConsumer()
         Twkb.parse(data, c)
 
-        assertEquals<List<List<List<Point>?>?>?>(
+        assertEquals<List<List<List<Vec<Generic>>?>?>?>(
             optionalListOf( // polygons
                 optionalListOf( // 1 ring
                     optionalListOf(
@@ -397,7 +397,7 @@ class ParserTest {
         val c = CollectedGeometryConsumer()
         Twkb.parse(data, c)
 
-        assertEquals<List<List<List<Point>?>?>?>(
+        assertEquals<List<List<List<Vec<Generic>>?>?>?>(
             optionalListOf( // multi lines
                 optionalListOf( // lines
                     optionalListOf(
@@ -436,7 +436,7 @@ class ParserTest {
         val c = CollectedGeometryConsumer()
         Twkb.parse(data, c)
 
-        assertEquals<List<List<List<List<Point>?>?>?>?>(
+        assertEquals<List<List<List<List<Vec<Generic>>?>?>?>?>(
             optionalListOf( //
                 optionalListOf( // multi1
                     optionalListOf( // poly1
@@ -495,14 +495,14 @@ class ParserTest {
 
 
     internal class CollectedGeometryConsumer : GeometryConsumer {
-        private val myPoints = ArrayList<Point>()
+        private val myPoints = ArrayList<Vec<Generic>>()
         private val myLineStrings = ArrayList<LineString<Generic>>()
         private val myPolygons = ArrayList<Polygon<Generic>>()
         private val myMultiPoints = ArrayList<MultiPoint<Generic>>()
         private val myMultiLineStrings = ArrayList<MultiLineString<Generic>>()
         private val myMultiPolygons = ArrayList<MultiPolygon<Generic>>()
 
-        val points: List<Point>
+        val points: List<Vec<Generic>>
             get() = myPoints
 
         val lineStrings: List<LineString<Generic>>
@@ -520,7 +520,7 @@ class ParserTest {
         val multiPolygons: List<MultiPolygon<Generic>>
             get() = myMultiPolygons
 
-        override fun onPoint(point: Point) {
+        override fun onPoint(point: Vec<Generic>) {
             myPoints.add(point)
         }
 
@@ -558,7 +558,7 @@ class ParserTest {
     }
 
     internal class SimpleGeometryConsumer : GeometryConsumer {
-        var point: Point? = null
+        var point: Vec<Generic>? = null
             private set
         var lineString: LineString<Generic>? = null
             private set
@@ -571,7 +571,7 @@ class ParserTest {
         var multiPolygon: MultiPolygon<Generic>? = null
             private set
 
-        override fun onPoint(point: Point) {
+        override fun onPoint(point: Vec<Generic>) {
             this.point = point
         }
 
