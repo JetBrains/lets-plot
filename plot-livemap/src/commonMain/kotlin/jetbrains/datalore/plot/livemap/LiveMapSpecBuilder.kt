@@ -23,15 +23,12 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.DevParams
+import jetbrains.livemap.LayerProvider.LayerProviderImpl
 import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
+import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.api.liveMapGeocoding
-import jetbrains.livemap.mapobjects.MapLayer
-import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionType
-import jetbrains.livemap.projections.ProjectionUtil
-import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
-import jetbrains.livemap.projections.WorldRectangle
 
 
 internal class LiveMapSpecBuilder {
@@ -80,22 +77,18 @@ internal class LiveMapSpecBuilder {
     }
 
     fun build(): LiveMapSpec {
-        val projectionType =
-            convertProjectionType(myLiveMapOptions.projection)
-        val mapRect = WorldRectangle(0.0, 0.0, ProjectionUtil.TILE_PIXEL_SIZE, ProjectionUtil.TILE_PIXEL_SIZE)
-        val mapProjection = createMapProjection(projectionType, mapRect)
+        val projectionType = convertProjectionType(myLiveMapOptions.projection)
 
-        val liveMapProcessor = LiveMapDataPointAestheticsProcessor(
-            myAesthetics,
-            myDataAccess,
-            myLiveMapOptions,
-            mapProjection
-        )
+        val liveMapProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myLiveMapOptions)
 
-        val mapLayers = ArrayList<MapLayer>()
-        mapLayers.add(liveMapProcessor.createMapLayer())
-        mapLayers.addAll(createMapLayers(mapProjection))
-        mapLayers.removeAll { layer -> layer.mapObjects.isEmpty() }
+        val layerProcessor = LayerDataPointAestheticsProcessor(myLiveMapOptions.geodesic)
+
+        val layersBuilderBlocks: ArrayList<LayersBuilder.() -> Unit> = ArrayList()
+        layersBuilderBlocks.add(liveMapProcessor.createBlock())
+
+        for (layerData in myLayers) {
+            layersBuilderBlocks.add(layerProcessor.createBlock(layerData))
+        }
 
         return LiveMapSpec(
             liveMapGeocoding {
@@ -115,26 +108,14 @@ internal class LiveMapSpecBuilder {
             myLiveMapOptions.zoom,
             getFeatureLevel(myLiveMapOptions.featureLevel),
             createMapRegion(myLiveMapOptions.parent),
-            mapLayers,
+            LayerProviderImpl(myDevParams) {
+                layersBuilderBlocks.forEach { block -> block() }
+            },
             CYLINDRICAL_PROJECTIONS.contains(projectionType),
             DEFAULT_LOOP_Y,
             myMapLocationConsumer,
             myDevParams
         )
-    }
-
-    private fun createMapLayers(mapProjection: MapProjection): List<MapLayer> {
-        val mapLayers = ArrayList<MapLayer>()
-        val layerProcessor =
-            LayerDataPointAestheticsProcessor(mapProjection, myLiveMapOptions.geodesic)
-
-        for (layerData in myLayers) {
-            val mapLayer = layerProcessor.createMapLayer(layerData)
-            if (mapLayer != null) {
-                mapLayers.add(mapLayer)
-            }
-        }
-        return mapLayers
     }
 
     companion object {
@@ -171,12 +152,8 @@ internal class LiveMapSpecBuilder {
         }
 
         private fun calculateGeoRectangle(lonLatList: List<*>): GeoRectangle {
-            if (lonLatList.isNotEmpty() && lonLatList.size % 2 != 0) {
-                throw IllegalArgumentException(
-                    "Expected: location"
-                            + " = [double lon1, double lat1, double lon2, double lat2, ... , double lonN, double latN]"
-                )
-            }
+            require(!(lonLatList.isNotEmpty() && lonLatList.size % 2 != 0)) { ("Expected: location"
+            + " = [double lon1, double lat1, double lon2, double lat2, ... , double lonN, double latN]") }
             return convertToGeoRectangle(BBOX_CALCULATOR.calculateBoundingBox(lonLatList.toDoubleList()))
         }
 
@@ -216,7 +193,6 @@ internal class LiveMapSpecBuilder {
                 LivemapConstants.Projection.EPSG4326 -> ProjectionType.GEOGRAPHIC
                 LivemapConstants.Projection.AZIMUTHAL -> ProjectionType.AZIMUTHAL_EQUAL_AREA
                 LivemapConstants.Projection.CONIC -> ProjectionType.CONIC_EQUAL_AREA
-                else -> throw IllegalArgumentException("Unknown projection value: $projection")
             }
         }
 
@@ -233,52 +209,52 @@ internal class LiveMapSpecBuilder {
         }
 
         private fun createMapRegion(region: Any?): MapRegion? {
-            if (region == null) {
-                return null
-            } else if (region is Map<*, *>) {
-                val handlerMap = HashMap<String, (Any) -> MapRegion>()
-                handlerMap[REGION_TYPE_NAME] = { data -> MapRegion.withName(data as String) }
-                handlerMap[REGION_TYPE_IDS] = {
-                    getWithIdList(
-                        it
+            when (region) {
+                null -> return null
+                is Map<*, *> -> {
+                    val handlerMap = HashMap<String, (Any) -> MapRegion>()
+                    handlerMap[REGION_TYPE_NAME] = { data -> MapRegion.withName(data as String) }
+                    handlerMap[REGION_TYPE_IDS] = {
+                        getWithIdList(
+                            it
+                        )
+                    }
+                    return handleRegionObject(
+                        (region as Map<*, *>?)!!,
+                        handlerMap
                     )
                 }
-                return handleRegionObject(
-                    (region as Map<*, *>?)!!,
-                    handlerMap
-                )
-            } else {
-                throw IllegalArgumentException("Expected: parent" + " = [String]")
+                else -> throw IllegalArgumentException("Expected: parent" + " = [String]")
             }
         }
 
         private fun createMapLocation(location: Any?): MapLocation? {
-            if (location == null) {
-                return null
-            } else if (location is Map<*, *>) {
-                val handlerMap = HashMap<String, (Any) -> MapLocation>()
-                handlerMap[REGION_TYPE_NAME] = { data -> MapLocation.create(MapRegion.withName(data as String)) }
-                handlerMap[REGION_TYPE_IDS] = { data -> MapLocation.create(
-                    getWithIdList(data)
-                ) }
-                handlerMap[REGION_TYPE_COORDINATES] =
-                    { data -> MapLocation.create(
-                        calculateGeoRectangle(
-                            data as List<*>
-                        )
+            when (location) {
+                null -> return null
+                is Map<*, *> -> {
+                    val handlerMap = HashMap<String, (Any) -> MapLocation>()
+                    handlerMap[REGION_TYPE_NAME] = { data -> MapLocation.create(MapRegion.withName(data as String)) }
+                    handlerMap[REGION_TYPE_IDS] = { data -> MapLocation.create(
+                        getWithIdList(data)
                     ) }
-                handlerMap[REGION_TYPE_DATAFRAME] =
-                    { data -> MapLocation.create(
-                        calculateGeoRectangle(
-                            data as Map<*, *>
-                        )
-                    ) }
-                return handleRegionObject(
-                    (location as Map<*, *>?)!!,
-                    handlerMap
-                )
-            } else {
-                throw IllegalArgumentException("Expected: locatiobn" + " = [String|Array|DataFrame]")
+                    handlerMap[REGION_TYPE_COORDINATES] =
+                        { data -> MapLocation.create(
+                            calculateGeoRectangle(
+                                data as List<*>
+                            )
+                        ) }
+                    handlerMap[REGION_TYPE_DATAFRAME] =
+                        { data -> MapLocation.create(
+                            calculateGeoRectangle(
+                                data as Map<*, *>
+                            )
+                        ) }
+                    return handleRegionObject(
+                        (location as Map<*, *>?)!!,
+                        handlerMap
+                    )
+                }
+                else -> throw IllegalArgumentException("Expected: locatiobn" + " = [String|Array|DataFrame]")
             }
         }
 

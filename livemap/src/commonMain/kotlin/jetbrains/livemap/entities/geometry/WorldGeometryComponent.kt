@@ -5,8 +5,10 @@
 
 package jetbrains.livemap.entities.geometry
 
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.livemap.core.ecs.EcsComponent
+import jetbrains.livemap.projections.World
 
 class WorldGeometryComponent : EcsComponent {
-    var geometry: WorldGeometry? = null
+    var geometry: MultiPolygon<World>? = null
 }

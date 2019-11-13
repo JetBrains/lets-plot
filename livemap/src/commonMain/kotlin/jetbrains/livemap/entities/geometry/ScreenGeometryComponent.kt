@@ -5,10 +5,12 @@
 
 package jetbrains.livemap.entities.geometry
 
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.livemap.core.ecs.EcsComponent
+import jetbrains.livemap.projections.Client
 
 
 class ScreenGeometryComponent : EcsComponent {
-    lateinit var geometry: ClientGeometry
+    lateinit var geometry: MultiPolygon<Client>
     var zoom: Int = 0
 }

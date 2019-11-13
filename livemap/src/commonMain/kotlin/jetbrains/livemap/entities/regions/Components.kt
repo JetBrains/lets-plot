@@ -11,7 +11,6 @@ import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.geometry.WorldGeometry
 
 class CachedFragmentsComponent : EcsComponent {
     private val myCache = HashMap<FragmentKey, EcsEntity>()
@@ -142,15 +141,6 @@ class RegionComponent : EcsComponent {
         }
 }
 
-//    object RegionEntityView {
-//        val COMPONENTS: List<KClass<out EcsComponent>> = listOf(
-//            RegionComponent::class,
-//            RendererComponent::class,
-//            StyleComponent::class,
-//            ParentLayerComponent::class
-//        )
-//    }
-
 class EmittedFragmentsComponent : EcsComponent {
     private val myEmitted = HashSet<FragmentKey>()
 
@@ -192,7 +182,7 @@ class StreamingFragmentsComponent : EcsComponent {
     }
 
     internal operator fun set(key: FragmentKey, entity: EcsEntity) {
-        fetching.put(key, entity)
+        fetching[key] = entity
     }
 
     internal fun getEntity(fragmentKey: FragmentKey): EcsEntity? {
@@ -202,8 +192,4 @@ class StreamingFragmentsComponent : EcsComponent {
     internal fun remove(key: FragmentKey) {
         fetching.remove(key)
     }
-}
-
-class FragmentGeometryComponent : EcsComponent {
-    lateinit var geometry: WorldGeometry
 }

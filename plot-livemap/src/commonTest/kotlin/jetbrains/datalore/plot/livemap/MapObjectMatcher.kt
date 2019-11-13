@@ -8,9 +8,8 @@ package jetbrains.datalore.plot.livemap
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
-import jetbrains.gis.geoprotocol.TypedGeometry
-import jetbrains.livemap.mapobjects.*
-import jetbrains.livemap.mapobjects.Utils.calculateBBoxes
+import jetbrains.gis.geoprotocol.Boundary
+import jetbrains.livemap.mapobjects.MapLayerKind.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -31,9 +30,9 @@ internal class MapObjectMatcher {
     private var endAngle = Expectation.any<Double>()
     private var barRadius = Expectation.any<Vec<*>>()
     private var centerOffset = Expectation.any<Vec<*>>()
-    private var point = Expectation.any<Vec<*>>()
+    private var point = Expectation.any<Vec<*>?>()
     private var geometry =
-        Expectation.any<TypedGeometry<*>>()
+        Expectation.any<Boundary<*>>()
     private var locationBoundingBoxes =
         Expectation.any<List<Rect<*>>>()
     private var label = Expectation.any<String>()
@@ -45,47 +44,47 @@ internal class MapObjectMatcher {
     private var arrowSpec = Expectation.any<ArrowSpec>()
     private var animation = Expectation.any<Int>()
 
-    fun match(mapObject: MapObject) {
-        when (mapObject) {
-            is MapPieSector -> matchPieSector(mapObject)
-            is MapBar -> matchBar(mapObject)
-            is MapHeatmap -> matchHeatmap(mapObject)
-            is MapLine -> matchLine(mapObject)
-            is MapPath -> matchPath(mapObject)
-            is MapPoint -> matchPoint(mapObject)
-            is MapPolygon -> matchPolygon(mapObject)
-            is MapText -> matchText(mapObject)
+    fun match(mapObject: MapObjectBuilder) {
+        when (mapObject.myLayerKind) {
+            PIE -> matchPieSector(mapObject)
+            BAR -> matchBar(mapObject)
+            // HEATMAP -> matchHeatmap(mapObject)
+            V_LINE, H_LINE -> matchLine(mapObject)
+            PATH -> matchPath(mapObject)
+            POINT -> matchPoint(mapObject)
+            POLYGON -> matchPolygon(mapObject)
+            TEXT -> matchText(mapObject)
             else -> throw IllegalStateException("Unknown map object type: ${mapObject::class.simpleName}" )
         }
     }
 
-    private fun matchPieSector(pieSector: MapPieSector) {
-        locationBoundingBoxes.assertExpectation(calculateBBoxes(pieSector))
+    private fun matchPieSector(pieSector: MapObjectBuilder) {
+        // locationBoundingBoxes.assertExpectation(calculateBBoxes(pieSector))
         regionId.assertExpectation(pieSector.regionId)
         index.assertExpectation(pieSector.index)
         fillColor.assertExpectation(pieSector.fillColor)
         strokeColor.assertExpectation(pieSector.strokeColor)
         strokeWidth.assertExpectation(pieSector.strokeWidth)
         radius.assertExpectation(pieSector.radius)
-        startAngle.assertExpectation(pieSector.startAngle)
-        endAngle.assertExpectation(pieSector.endAngle)
+        // startAngle.assertExpectation(pieSector.startAngle)
+        // endAngle.assertExpectation(pieSector.endAngle)
         point.assertExpectation(pieSector.point)
     }
 
-    private fun matchBar(bar: MapBar) {
-        locationBoundingBoxes.assertExpectation(calculateBBoxes(bar))
+    private fun matchBar(bar: MapObjectBuilder) {
+        // locationBoundingBoxes.assertExpectation(calculateBBoxes(bar))
         regionId.assertExpectation(bar.regionId)
         index.assertExpectation(bar.index)
         fillColor.assertExpectation(bar.fillColor)
         strokeColor.assertExpectation(bar.strokeColor)
         strokeWidth.assertExpectation(bar.strokeWidth)
-        barRadius.assertExpectation(bar.dimension)
-        centerOffset.assertExpectation(bar.offset)
+        // barRadius.assertExpectation(bar.dimension)
+        // centerOffset.assertExpectation(bar.offset)
         point.assertExpectation(bar.point)
     }
 
-    private fun matchHeatmap(heatmap: MapHeatmap) {
-        locationBoundingBoxes.assertExpectation(calculateBBoxes(heatmap))
+    private fun matchHeatmap(heatmap: MapObjectBuilder) {
+        // locationBoundingBoxes.assertExpectation(calculateBBoxes(heatmap))
         regionId.assertExpectation(heatmap.regionId)
         index.assertExpectation(heatmap.index)
         // radius.assertExpectation(heatmap.getRadius())
@@ -93,8 +92,8 @@ internal class MapObjectMatcher {
         point.assertExpectation(heatmap.point)
     }
 
-    private fun matchLine(line: MapLine) {
-        locationBoundingBoxes.assertExpectation(calculateBBoxes(line))
+    private fun matchLine(line: MapObjectBuilder) {
+        // locationBoundingBoxes.assertExpectation(calculateBBoxes(line))
         regionId.assertExpectation(line.regionId)
         index.assertExpectation(line.index)
         lineDash.assertExpectation(line.lineDash)
@@ -103,8 +102,8 @@ internal class MapObjectMatcher {
         point.assertExpectation(line.point)
     }
 
-    private fun matchPath(path: MapPath) {
-        locationBoundingBoxes.assertExpectation(calculateBBoxes(path))
+    private fun matchPath(path: MapObjectBuilder) {
+        // locationBoundingBoxes.assertExpectation(calculateBBoxes(path))
         regionId.assertExpectation(path.regionId)
         index.assertExpectation(path.index)
         lineDash.assertExpectation(path.lineDash)
@@ -112,13 +111,13 @@ internal class MapObjectMatcher {
         strokeWidth.assertExpectation(path.strokeWidth)
         speed.assertExpectation(path.speed)
         flow.assertExpectation(path.flow)
-        geometry.assertExpectation(path.geometry)
+        //geometry.assertExpectation(path.geometry!!)
         //arrowSpec.assertExpectation(path.getArrowSpec())
         animation.assertExpectation(path.animation)
     }
 
-    private fun matchPoint(mapPoint: MapPoint) {
-        locationBoundingBoxes.assertExpectation(calculateBBoxes(mapPoint))
+    private fun matchPoint(mapPoint: MapObjectBuilder) {
+        //locationBoundingBoxes.assertExpectation(calculateBBoxes(mapPoint))
         regionId.assertExpectation(mapPoint.regionId)
         index.assertExpectation(mapPoint.index)
         shape.assertExpectation(mapPoint.shape)
@@ -131,26 +130,28 @@ internal class MapObjectMatcher {
         animation.assertExpectation(mapPoint.animation)
     }
 
-    private fun matchPolygon(polygon: MapPolygon) {
-        locationBoundingBoxes.assertExpectation(calculateBBoxes(polygon))
+    private fun matchPolygon(polygon: MapObjectBuilder) {
+        // locationBoundingBoxes.assertExpectation(calculateBBoxes(polygon))
         regionId.assertExpectation(polygon.regionId)
         index.assertExpectation(polygon.index)
         lineDash.assertExpectation(polygon.lineDash)
         fillColor.assertExpectation(polygon.fillColor)
         strokeColor.assertExpectation(polygon.strokeColor)
         strokeWidth.assertExpectation(polygon.strokeWidth)
-        geometry.assertExpectation(polygon.geometry!!)
+        //geometry.assertExpectation(polygon.geometry!!)
     }
 
-    private fun matchText(text: MapText) {
-        locationBoundingBoxes.assertExpectation(calculateBBoxes(text))
+    private fun matchText(text: MapObjectBuilder) {
+        // locationBoundingBoxes.assertExpectation(calculateBBoxes(text))
         regionId.assertExpectation(text.regionId)
         index.assertExpectation(text.index)
         fillColor.assertExpectation(text.fillColor)
         strokeColor.assertExpectation(text.strokeColor)
         strokeWidth.assertExpectation(text.strokeWidth)
         radius.assertExpectation(text.size)
-        point.assertExpectation(text.point)
+
+
+        text.point?.let { point.assertExpectation(it) }
         label.assertExpectation(text.label)
         family.assertExpectation(text.family)
         fontface.assertExpectation(text.fontface)
@@ -224,12 +225,12 @@ internal class MapObjectMatcher {
         return this
     }
 
-    fun point(expectation: Expectation<Vec<*>>): MapObjectMatcher {
+    fun point(expectation: Expectation<Vec<*>?>): MapObjectMatcher {
         point = expectation
         return this
     }
 
-    fun geometry(expectation: Expectation<TypedGeometry<*>>): MapObjectMatcher {
+    fun geometry(expectation: Expectation<Boundary<*>>): MapObjectMatcher {
         geometry = expectation
         return this
     }
@@ -281,9 +282,10 @@ internal class MapObjectMatcher {
 
     class Expectation<T>  {
         private val expected: T?
-        private val comparer: (T, T) -> Unit
+        private val comparer: (T?, T?) -> Unit
 
-        constructor(e: T?, c: (T, T) -> Unit) {
+
+        constructor(e: T?, c: (T?, T?) -> Unit) {
             expected = e
             comparer = c
         }
@@ -293,7 +295,7 @@ internal class MapObjectMatcher {
             comparer = alwaysMatchingComparer()
         }
 
-        constructor(c: (T, T) -> Unit) {
+        constructor(c: (T?, T?) -> Unit) {
             expected = null
             comparer = c
         }
@@ -319,7 +321,7 @@ internal class MapObjectMatcher {
                 return Expectation { _, t2 ->
                     assertEquals(
                         v,
-                        t2.size
+                        t2!!.size
                     )
                 }
             }
@@ -332,7 +334,9 @@ internal class MapObjectMatcher {
 
             internal fun mappingEquality(v: List<List<String>>): Expectation<List<List<String>>> {
                 return Expectation(v, { expected, actual ->
-                    assertEquals(expected.size, actual.size)
+                    if (expected == null && actual == null) return@Expectation
+
+                    assertEquals(expected!!.size, actual!!.size)
                     var i = 0
                     val n = expected.size
                     while (i < n) {
@@ -349,15 +353,17 @@ internal class MapObjectMatcher {
                 return Expectation(
                     v,
                     { expected, actual ->
+                        if (expected == null && actual == null) return@Expectation
+
                         assertDoubleEquals(
-                            expected,
-                            actual,
+                            expected!!,
+                            actual!!,
                             eps
                         )
                     })
             }
 
-            internal fun pointEquality(v: Vec<*>, eps: Double): Expectation<Vec<*>> {
+            internal fun pointEquality(v: Vec<*>, eps: Double): Expectation<Vec<*>?> {
                 return Expectation(
                     v,
                     { expected, actual ->
@@ -373,21 +379,25 @@ internal class MapObjectMatcher {
                 return Expectation(
                     v,
                     { expected, actual ->
+                        if (expected == null && actual == null) return@Expectation
+
                         assertDoubleArrayEquals(
-                            expected,
-                            actual,
+                            expected!!,
+                            actual!!,
                             eps
                         )
                     })
             }
 
-            internal fun geometryEquality(v: TypedGeometry<*>, eps: Double): Expectation<TypedGeometry<*>> {
+            internal fun geometryEquality(v: Boundary<*>, eps: Double): Expectation<Boundary<*>> {
                 return Expectation(
                     v,
                     { expected, actual ->
+                        if (expected == null && actual == null) return@Expectation
+
                         assertMultipolygonEquals(
-                            expected.asMultipolygon(),
-                            actual.asMultipolygon(),
+                            expected!!.asMultipolygon(),
+                            actual!!.asMultipolygon(),
                             eps
                         )
                     })
@@ -415,7 +425,7 @@ internal class MapObjectMatcher {
             return Expectation.equality(v)
         }
 
-        fun eq(v: Vec<*>): Expectation<Vec<*>> {
+        fun eq(v: Vec<*>): Expectation<Vec<*>?> {
             return Expectation.pointEquality(
                 v,
                 EPS
@@ -437,7 +447,7 @@ internal class MapObjectMatcher {
             )
         }
 
-        fun geometryEq(v: TypedGeometry<*>): Expectation<TypedGeometry<*>> {
+        fun geometryEq(v: Boundary<*>): Expectation<Boundary<*>> {
             return Expectation.geometryEquality(
                 v,
                 EPS

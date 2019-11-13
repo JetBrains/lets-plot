@@ -9,21 +9,17 @@ package jetbrains.datalore.plot.livemap
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
-import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode.PIE
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode.POINT
 import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromLayerOptions
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DISPLAY_MODE
 import jetbrains.datalore.plot.config.OptionsAccessor
-import jetbrains.datalore.plot.livemap.ConverterDataHelper.MAP_PROJECTION
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.eq
-import jetbrains.livemap.mapobjects.MapObject
 import kotlin.test.Test
 
 
@@ -117,18 +113,6 @@ class MapIdAndGeoPointDataProcessingTest {
         dataPointKind: DataPointKind
     ) {
         private val myOptions = HashMap<String, Any>()
-        private val myMappedDataAccess = object: MappedDataAccess {
-            override val mappedAes: Set<Aes<*>> = HashSet()
-
-            override fun isMapped(aes: Aes<*>): Boolean {
-                return true
-            }
-
-            override fun <T> getMappedData(aes: Aes<T>, index: Int): MappedDataAccess.MappedData<T> {
-                return MappedDataAccess.MappedData("", "s", false)
-            }
-
-        }
         private val myAes: Aesthetics
 
         init {
@@ -165,9 +149,7 @@ class MapIdAndGeoPointDataProcessingTest {
         fun build(): LiveMapDataPointAestheticsProcessor {
             return LiveMapDataPointAestheticsProcessor(
                 myAes,
-                myMappedDataAccess,
-                parseFromLayerOptions(OptionsAccessor(myOptions)),
-                MAP_PROJECTION
+                parseFromLayerOptions(OptionsAccessor(myOptions))
             )
         }
     }
@@ -178,14 +160,13 @@ class MapIdAndGeoPointDataProcessingTest {
         private const val OSM_ID_STRING = "123456"
         private val LONLAT_MERCATOR_GEO_COORD = explicitVec<LonLat>(0.0, 0.0)
 
-        private fun createMapObject(dataPointKind: DataPointKind, mapIdDataKind: MapIdDataKind): MapObject? {
+        private fun createMapObject(dataPointKind: DataPointKind, mapIdDataKind: MapIdDataKind): MapObjectBuilder? {
             val mapObjects = createProcessorBuilder(
                 dataPointKind,
                 mapIdDataKind
             )
                 .build()
-                .createMapLayer()
-                .mapObjects
+                .mapObjectBuilders
 
             return if (mapObjects.isNotEmpty()) mapObjects[0] else null
         }

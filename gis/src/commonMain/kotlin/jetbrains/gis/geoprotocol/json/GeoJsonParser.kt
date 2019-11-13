@@ -49,7 +49,7 @@ internal class GeoJsonParser private constructor() {
         return Ring(parseJsonArrayOfArray(jsonRing) { this.parsePoint(FluentArray(it)) })
     }
 
-    private fun parsePoint(jsonPoint: FluentArray): Point {
+    private fun parsePoint(jsonPoint: FluentArray): Vec<Generic> {
         return explicitVec<Generic>(
             jsonPoint.getDouble(GEOMETRY_LON_INDEX),
             jsonPoint.getDouble(GEOMETRY_LAT_INDEX)

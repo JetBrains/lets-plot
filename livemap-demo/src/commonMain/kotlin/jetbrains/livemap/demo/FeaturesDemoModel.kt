@@ -8,12 +8,13 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
-import jetbrains.livemap.demo.model.Cities.BOSTON
-import jetbrains.livemap.demo.model.Cities.FRISCO
-import jetbrains.livemap.demo.model.Cities.MOSCOW
-import jetbrains.livemap.demo.model.Cities.NEW_YORK
-import jetbrains.livemap.demo.model.Cities.SPB
-import jetbrains.livemap.demo.model.GeoObject
+import jetbrains.livemap.model.Cities.BOSTON
+import jetbrains.livemap.model.Cities.FRISCO
+import jetbrains.livemap.model.Cities.MOSCOW
+import jetbrains.livemap.model.Cities.NEW_YORK
+import jetbrains.livemap.model.Cities.SPB
+import jetbrains.livemap.model.GeoObject
+import jetbrains.livemap.model.coord
 
 class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
@@ -21,16 +22,16 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
             layers {
                 points {
                     point {
-                        lon = 10.0
-                        lat = 10.0
+                        coord(10.0, 10.0)
+
                         shape = 21
                         radius = 10.0
                         fillColor = Color.LIGHT_CYAN
                     }
 
                     point {
-                        lon = 0.0
-                        lat = 0.0
+                        coord(0.0, 0.0)
+
                         shape = 21
                         radius = 10.0
                         fillColor = Color.MAGENTA
@@ -41,13 +42,15 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                 paths {
                     path {
                         geodesic = true
-                        coordinates = listOf(BOSTON, SPB).map(GeoObject::geoCoord)
+                        geometry(listOf(BOSTON, SPB).map(GeoObject::geoCoord), isGeodesic = false)
+
                         strokeWidth = 1.0
                     }
 
                     path {
                         geodesic = true
-                        coordinates = listOf(BOSTON, FRISCO).map(GeoObject::geoCoord)
+                        geometry(listOf(BOSTON, FRISCO).map(GeoObject::geoCoord), isGeodesic = true)
+
                         strokeWidth = 1.0
                         animation = 2
                     }
@@ -55,37 +58,36 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
 
                 polygons {
                     polygon {
-                        coordinates = listOf(BOSTON, SPB, MOSCOW).map(GeoObject::geoCoord)
+                        geometry(listOf(BOSTON, SPB, MOSCOW).map(GeoObject::geoCoord), isGeodesic = false)
+
                         fillColor = Color.LIGHT_CYAN
                     }
                 }
 
-                //polygons {
-                //    polygon {
-                //        mapId = "texas"
-                //        fillColor = Color.GREEN
-                //    }
-                //}
+                polygons {
+                    polygon {
+                        mapId = "texas"
+                        fillColor = Color.GREEN
+                    }
+                }
 
                 hLines {
                     line {
-                        lon = MOSCOW.lon
-                        lat = MOSCOW.lat
+                        coord(MOSCOW)
                     }
                 }
 
                 vLines {
                     line {
-                        lon = BOSTON.lon
-                        lat = BOSTON.lat
+                        coord(BOSTON)
                     }
                 }
 
                 bars {
                     bar {
                         indices = listOf(0, 1, 2)
-                        lon = BOSTON.lon
-                        lat = BOSTON.lat
+                        coord(BOSTON)
+
                         radius = 50.0
                         values = listOf(3.0, 0.0, 2.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
@@ -93,8 +95,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
 
                     bar {
                         indices = listOf(3, 4, 5)
-                        lon = SPB.lon
-                        lat = SPB.lat
+                        coord(SPB)
                         radius = 50.0
                         values = listOf(-2.0, -1.0, 4.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
@@ -104,8 +105,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                 pies {
                     pie {
                         indices = listOf(0, 1, 2)
-                        lon = NEW_YORK.lon
-                        lat = NEW_YORK.lat
+                        coord(NEW_YORK)
                         radius = 20.0
                         values = listOf(3.0, 1.0, 2.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
@@ -115,8 +115,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                 texts {
                     text {
                         label = "KIRIBATI"
-                        lon = -157.3662
-                        lat = 1.8351
+                        coord(-157.3662, 1.8351)
                         size = 50.0
                     }
                 }

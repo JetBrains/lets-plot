@@ -11,31 +11,24 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesInitValue
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
-import jetbrains.datalore.plot.livemap.MultiDataPointHelper.MultiDataPoint
+import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayersBuilderBlock
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
-import jetbrains.livemap.mapobjects.MapLayer
+import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.mapobjects.MapLayerKind
-import jetbrains.livemap.mapobjects.MapObject
-import jetbrains.livemap.projections.MapProjection
-import kotlin.math.abs
-import kotlin.math.max
+import jetbrains.livemap.mapobjects.MapLayerKind.POINT
 
 internal class LiveMapDataPointAestheticsProcessor(
     private val myAesthetics: Aesthetics,
-    private val myMappedDataAccess: MappedDataAccess,
-    liveMapOptions: LiveMapOptions,
-    private val myMapProjection: MapProjection
+    liveMapOptions: LiveMapOptions
 ) {
-    private val myStrokeWidth: Double? = liveMapOptions.stroke
-    private val myLayerKind: MapLayerKind
-    private val myFrameSpecified: Boolean
-    private val myLonLatInsideMapIdSpecified: Boolean
-    private var myMaxAbsValue: Double? = null
+    private val myLayerKind: MapLayerKind = getLayerKind(liveMapOptions.displayMode)
+    private val myGeodesic: Boolean = liveMapOptions.geodesic
+    private val myFrameSpecified: Boolean = allAesMatch(myAesthetics, ::isFrameSet)
+    private val myLonLatInsideMapIdSpecified: Boolean = allAesMatch(myAesthetics, ::isLiveMapWithLonLat)
 
-    private val mapObjects: List<MapObject>
+    val mapObjectBuilders: List<MapObjectBuilder>
         get() = if (useMultiDataPoint()) processMultiDataPoints() else processDataPoints()
 
     private fun isFrameSet(p: DataPointAesthetics): Boolean {
@@ -49,11 +42,10 @@ internal class LiveMapDataPointAestheticsProcessor(
     private fun getLayerKind(displayMode: LivemapConstants.DisplayMode): MapLayerKind {
         return when (displayMode) {
             LivemapConstants.DisplayMode.POLYGON -> MapLayerKind.POLYGON
-            LivemapConstants.DisplayMode.POINT -> MapLayerKind.POINT
+            LivemapConstants.DisplayMode.POINT -> POINT
             LivemapConstants.DisplayMode.PIE -> MapLayerKind.PIE
             LivemapConstants.DisplayMode.HEATMAP -> MapLayerKind.HEATMAP
             LivemapConstants.DisplayMode.BAR -> MapLayerKind.BAR
-            else -> throw IllegalArgumentException("Unknown display mode: $displayMode")
         }
     }
 
@@ -64,75 +56,44 @@ internal class LiveMapDataPointAestheticsProcessor(
             SortingMode.BAR
     }
 
-    private fun getMaxAbsValue(multiDataPoints: List<MultiDataPoint>): Double {
-        var maxAbsValue = 0.0
-        for (multiDataPoint in multiDataPoints) {
-            for (value in multiDataPoint.values) {
-                maxAbsValue = max(abs(value), maxAbsValue)
-            }
-        }
-        return maxAbsValue
-    }
-
-    init {
-
-        myLayerKind = getLayerKind(liveMapOptions.displayMode)
-
-        myFrameSpecified = allAesMatch(myAesthetics, ::isFrameSet)
-        myLonLatInsideMapIdSpecified = allAesMatch(myAesthetics, ::isLiveMapWithLonLat)
-    }
-
     fun heatMapWithFrame(): Boolean {
         return myLayerKind === MapLayerKind.HEATMAP && myFrameSpecified
     }
 
-    fun createMapLayer(): MapLayer {
-        return MapLayer(myLayerKind, mapObjects/*, createTooltipAesSpec(GeomKind.LIVE_MAP, myMappedDataAccess)*/)
+    fun createBlock(): LayersBuilder.() -> Unit {
+        return createLayersBuilderBlock(myLayerKind, mapObjectBuilders)
     }
 
-    private fun processDataPoints(): List<MapObject> {
-        val mapObjects = ArrayList<MapObject>(myAesthetics.dataPointCount())
+    private fun processDataPoints(): List<MapObjectBuilder> {
+        val mapObjects = ArrayList<MapObjectBuilder>(myAesthetics.dataPointCount())
         for (p in myAesthetics.dataPoints()) {
-            dataPointToMapObject(p) { mapObjects.add(it) }
+            mapObjects.add(MapObjectBuilder(p, myLayerKind).apply { setIfNeeded(p) })
         }
         return mapObjects
     }
 
-    private fun processMultiDataPoints(): List<MapObject> {
+    private fun processMultiDataPoints(): List<MapObjectBuilder> {
         val multiDataPoints = MultiDataPointHelper.getPoints(
             myAesthetics,
             getSortingMode(myLayerKind)
         )
-        if (myLayerKind === MapLayerKind.BAR) {
-            myMaxAbsValue = getMaxAbsValue(multiDataPoints)
-        }
 
-        val mapObjects = ArrayList<MapObject>(multiDataPoints.size)
+        val mapObjects = ArrayList<MapObjectBuilder>(multiDataPoints.size)
         for (multiDataPoint in multiDataPoints) {
-            multiDataPointToMapObject(multiDataPoint) { mapObjects.add(it) }
+            mapObjects.add(MapObjectBuilder(multiDataPoint, myLayerKind).apply { setIfNeeded(multiDataPoint.aes) })
         }
         return mapObjects
     }
 
-    private fun dataPointToMapObject(p: DataPointAesthetics, consumer: (MapObject) -> Unit) {
-        createMapObject(p, MapObjectBuilder(p, myLayerKind, myMapProjection), consumer)
+    private fun useMultiDataPoint(): Boolean {
+        return myLayerKind === MapLayerKind.PIE || myLayerKind === MapLayerKind.BAR
     }
 
-    private fun multiDataPointToMapObject(multiDataPoint: MultiDataPoint, consumer: (MapObject) -> Unit) {
-        createMapObject(multiDataPoint.aes,
-            MapObjectBuilder(multiDataPoint, myLayerKind, myMapProjection), consumer)
-    }
-
-    private fun createMapObject(
-        p: DataPointAesthetics,
-        mapObjectBuilder: MapObjectBuilder,
-        consumer: (MapObject) -> Unit
+    private fun MapObjectBuilder.setIfNeeded(
+        p: DataPointAesthetics
     ) {
-        setGeometryPointIfNeeded(p, mapObjectBuilder)
-        setStrokeWidthIfNeeded(mapObjectBuilder)
-        setMaxAbsValueIfNeeded(mapObjectBuilder)
-
-        mapObjectBuilder.build(consumer)
+        setGeometryPointIfNeeded(p, this)
+        setGeodesicIfNeeded(this)
     }
 
     private fun setGeometryPointIfNeeded(p: DataPointAesthetics, mapObjectBuilder: MapObjectBuilder) {
@@ -146,25 +107,9 @@ internal class LiveMapDataPointAestheticsProcessor(
         }
     }
 
-    private fun setMaxAbsValueIfNeeded(mapObjectBuilder: MapObjectBuilder) {
-        if (myMaxAbsValue == null) {
-            return
-        }
-
-        mapObjectBuilder.setMaxAbsValue(myMaxAbsValue)
-    }
-
-    private fun useMultiDataPoint(): Boolean {
-        return myLayerKind === MapLayerKind.PIE || myLayerKind === MapLayerKind.BAR
-    }
-
-    private fun setStrokeWidthIfNeeded(mapObjectBuilder: MapObjectBuilder) {
-        if (myStrokeWidth == null) {
-            return
-        }
-
-        if (myLayerKind === MapLayerKind.POINT || myLayerKind === MapLayerKind.PIE || myLayerKind === MapLayerKind.BAR) {
-            mapObjectBuilder.setStrokeWidth(myStrokeWidth)
+    private fun setGeodesicIfNeeded(mapObjectBuilder: MapObjectBuilder) {
+        if (myLayerKind == MapLayerKind.PATH) {
+            mapObjectBuilder.geodesic = myGeodesic
         }
     }
 

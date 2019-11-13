@@ -10,7 +10,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
-import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.projections.ProjectionType
 
 class LiveMapSpec(
@@ -28,7 +27,7 @@ class LiveMapSpec(
     val zoom: Int?,
     val level: FeatureLevel?,
     val parent: MapRegion?,
-    val layers: List<MapLayer>,
+    val layerProvider: LayerProvider,
     val isLoopX: Boolean,
     val isLoopY: Boolean,
     val mapLocationConsumer: (DoubleRectangle) -> Unit,

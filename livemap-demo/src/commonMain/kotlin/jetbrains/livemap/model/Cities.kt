@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.demo.model
+package jetbrains.livemap.model
 
 object Cities {
     val SPB = GeoObject(lon = 30.1751, lat = 59.5439)

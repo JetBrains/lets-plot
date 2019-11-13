@@ -14,7 +14,6 @@ import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.gis.geoprotocol.TypedGeometry
 import jetbrains.livemap.core.animation.Animation.Direction
 import jetbrains.livemap.core.animation.Animation.Loop
 import jetbrains.livemap.core.animation.Animations
@@ -116,15 +115,13 @@ class GrowingPathTest {
         return progress
     }
 
-    private fun createGeometry(vararg points: Vec<Client>): TypedGeometry<Client> {
-        return TypedGeometry.create(
-            MultiPolygon(
-                listOf(
-                    Polygon(
-                        listOf(
-                            Ring(
-                                listOf(*points)
-                            )
+    private fun createGeometry(vararg points: Vec<Client>): MultiPolygon<Client> {
+        return MultiPolygon(
+            listOf(
+                Polygon(
+                    listOf(
+                        Ring(
+                            listOf(*points)
                         )
                     )
                 )

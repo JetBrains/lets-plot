@@ -105,18 +105,18 @@ object ResponseJsonParser {
         return ErrorGeoResponse(responseJson.getString(MESSAGE))
     }
 
-    private fun parseCentroid(centroid: FluentObject): Point {
+    private fun parseCentroid(centroid: FluentObject): Vec<Generic> {
         return explicitVec<Generic>(
             centroid.getDouble(LON),
             centroid.getDouble(LAT)
         )
     }
 
-    private fun readGeometry(geoJson: String): Geometry {
+    private fun readGeometry(geoJson: String): Boundary<Generic> {
         return StringGeometries.fromGeoJson(geoJson)
     }
 
-    private fun readTile(geometry: String): Geometry {
+    private fun readTile(geometry: String): Boundary<Generic> {
         return StringGeometries.fromTwkb(geometry)
     }
 

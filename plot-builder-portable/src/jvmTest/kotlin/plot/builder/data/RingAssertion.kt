@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.data
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.common.geometry.Utils
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.calculateArea
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
 
@@ -28,7 +28,7 @@ class RingAssertion internal constructor(ring: List<DoubleVector>) : AbstractAss
     }
 
     private fun hasArea(expected: Double, epsilon: Double): RingAssertion {
-        Assertions.assertThat(Utils.calculateArea(actual)).isEqualTo(expected, Assertions.offset(epsilon))
+        Assertions.assertThat(calculateArea(actual)).isEqualTo(expected, Assertions.offset(epsilon))
         return this
     }
 

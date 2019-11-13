@@ -6,17 +6,15 @@
 package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.plot.base.GeomKind.*
-import jetbrains.livemap.mapobjects.MapLayer
+import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayersBuilderBlock
+import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.mapobjects.MapLayerKind
-import jetbrains.livemap.mapobjects.MapObject
-import jetbrains.livemap.projections.MapProjection
 
 internal class LayerDataPointAestheticsProcessor(
-    private val myMapProjection: MapProjection,
     private val myGeodesic: Boolean
 ) {
 
-    fun createMapLayer(layerData: LiveMapLayerData): MapLayer? {
+    internal fun createBlock(layerData: LiveMapLayerData): LayersBuilder.() -> Unit {
         val geomKind = layerData.geomKind
 
 //        if (isDebugLogEnabled()) {
@@ -25,63 +23,59 @@ internal class LayerDataPointAestheticsProcessor(
 
         val aesthetics = layerData.aesthetics
 
-        val dataPointsConverter =
-            DataPointsConverter(aesthetics, myMapProjection, myGeodesic)
+        val dataPointsConverter = DataPointsConverter(aesthetics, myGeodesic)
 
-        val mapObjects: List<MapObject>
+        val mapObjectBuilders: List<MapObjectBuilder>
         val layerKind: MapLayerKind
         when (geomKind) {
             POINT -> {
-                mapObjects = dataPointsConverter.toPoint(layerData.geom)
+                mapObjectBuilders = dataPointsConverter.toPoint(layerData.geom)
                 layerKind = MapLayerKind.POINT
             }
 
             H_LINE -> {
-                mapObjects = dataPointsConverter.toHorizontalLine()
+                mapObjectBuilders = dataPointsConverter.toHorizontalLine()
                 layerKind = MapLayerKind.H_LINE
             }
 
             V_LINE -> {
-                mapObjects = dataPointsConverter.toVerticalLine()
+                mapObjectBuilders = dataPointsConverter.toVerticalLine()
                 layerKind = MapLayerKind.V_LINE
             }
 
             SEGMENT -> {
-                mapObjects = dataPointsConverter.toSegment(layerData.geom)
+                mapObjectBuilders = dataPointsConverter.toSegment(layerData.geom)
                 layerKind = MapLayerKind.PATH
             }
 
             RECT -> {
-                mapObjects = dataPointsConverter.toRect()
+                mapObjectBuilders = dataPointsConverter.toRect()
                 layerKind = MapLayerKind.POLYGON
             }
 
             TILE -> {
-                mapObjects = dataPointsConverter.toTile()
+                mapObjectBuilders = dataPointsConverter.toTile()
                 layerKind = MapLayerKind.POLYGON
             }
 
             DENSITY2D, CONTOUR, PATH -> {
-                mapObjects = dataPointsConverter.toPath(layerData.geom)
+                mapObjectBuilders = dataPointsConverter.toPath(layerData.geom)
                 layerKind = MapLayerKind.PATH
             }
 
             TEXT -> {
-                mapObjects = dataPointsConverter.toText()
+                mapObjectBuilders = dataPointsConverter.toText()
                 layerKind = MapLayerKind.TEXT
             }
 
             DENSITY2DF, CONTOURF, POLYGON -> {
-                mapObjects = dataPointsConverter.toPolygon()
+                mapObjectBuilders = dataPointsConverter.toPolygon()
                 layerKind = MapLayerKind.POLYGON
             }
 
             else -> throw IllegalArgumentException("Layer '" + geomKind.name + "' is not supported on Live Map.")
         }
 
-        return if (aesthetics.dataPointCount() == 0) {
-            null
-        } else MapLayer(layerKind, mapObjects/*, createTooltipAesSpec(geomKind, layerData.getDataAccess())*/)
-
+        return createLayersBuilderBlock(layerKind, mapObjectBuilders)
     }
 }

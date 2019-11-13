@@ -3,31 +3,35 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.obj2entity
+package jetbrains.livemap.entities.rendering
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
-import jetbrains.livemap.mapobjects.MapText
 import jetbrains.livemap.projections.Client
 import kotlin.math.abs
 import kotlin.math.max
 
-class TextSpec(text: MapText, textMeasurer: TextMeasurer) {
-
-    val label = text.label
-    val font = "${text.fontface} ${text.size.toInt()}px ${text.family}"
+class TextSpec(
+    val label: String,
+    fontface: String,
+    size: Int,
+    family: String,
+    degreeAngle: Double,
+    hjust: Double,
+    vjust: Double,
+    textMeasurer: TextMeasurer
+) {
+    val font = "$fontface ${size}px $family"
     val dimension: Vec<Client>
     val alignment: Vec<Client>
-    val angle: Double = toRadians(-text.angle)
+    val angle: Double = toRadians(-degreeAngle)
 
     init {
         val textSize = textMeasurer.measure(label, font)
 
-        val hjust = 1.0 - text.hjust
-        val vjust = 1.0 - text.vjust
-        alignment = explicitVec(textSize.x * hjust, textSize.y * vjust)
+        alignment = explicitVec(textSize.x * (1.0 - hjust), textSize.y * (1.0 - vjust))
 
         dimension = rotateTextSize(textSize.mul(2.0), angle)
     }

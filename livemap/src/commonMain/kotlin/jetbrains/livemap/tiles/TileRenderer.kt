@@ -11,7 +11,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.projections.Client
-import jetbrains.livemap.projections.Coordinates.Companion.ZERO_CLIENT_POINT
+import jetbrains.livemap.projections.Coordinates.ZERO_CLIENT_POINT
 import jetbrains.livemap.tiles.Tile.*
 import jetbrains.livemap.tiles.components.TileComponent
 

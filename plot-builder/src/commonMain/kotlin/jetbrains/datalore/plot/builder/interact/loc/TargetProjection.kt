@@ -8,12 +8,12 @@ package jetbrains.datalore.plot.builder.interact.loc
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles.boundingBox
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.calculateArea
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.createRingsFromPoints
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace.*
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.common.geometry.PolylineSimplifier
-import jetbrains.datalore.plot.common.geometry.Utils.calculateArea
 import kotlin.math.max
 import kotlin.math.min
 
@@ -80,7 +80,7 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
         private const val MAX_TOLERANCE = 40.0
 
         fun create(points: List<DoubleVector>, lookupSpace: LookupSpace): PolygonTargetProjection {
-            val rings = GeomUtil.createRingsFromPoints(points)
+            val rings = createRingsFromPoints(points)
 
             return when (lookupSpace) {
                 X -> PolygonTargetProjection(mapToX(rings))

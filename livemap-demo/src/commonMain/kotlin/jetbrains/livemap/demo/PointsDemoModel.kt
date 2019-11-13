@@ -7,14 +7,11 @@ package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.api.LiveMapBuilder
-import jetbrains.livemap.api.layers
-import jetbrains.livemap.api.point
-import jetbrains.livemap.api.points
-import jetbrains.livemap.demo.model.Cities.BOSTON
-import jetbrains.livemap.demo.model.Cities.MOSCOW
-import jetbrains.livemap.demo.model.Cities.NEW_YORK
-import jetbrains.livemap.demo.model.Cities.SPB
+import jetbrains.livemap.api.*
+import jetbrains.livemap.model.Cities.BOSTON
+import jetbrains.livemap.model.Cities.MOSCOW
+import jetbrains.livemap.model.Cities.NEW_YORK
+import jetbrains.livemap.model.Cities.SPB
 import jetbrains.livemap.model.coord
 
 class PointsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
@@ -42,8 +39,9 @@ class PointsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                 }
                 points {
                     point {
-                        lon = 0.0
-                        lat = 0.0
+                        coord(0.0, 0.0)
+
+                        animation = 2
                         shape = 21
                         radius = 10.0
                         fillColor = Color.MAGENTA

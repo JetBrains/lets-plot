@@ -17,6 +17,8 @@ import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapCanvasFigure
 import jetbrains.livemap.LiveMapFactory
+import jetbrains.livemap.api.*
+import jetbrains.livemap.mapobjects.MapLayerKind
 
 object LiveMapUtil {
 
@@ -38,6 +40,64 @@ object LiveMapUtil {
 //        aesList.removeAll(getHiddenAes(geomKind))
 //        return TooltipAesSpec.create(aesList, emptyList<T>(), dataAccess)
 //    }
+
+    internal fun createLayersBuilderBlock(layerKind: MapLayerKind, mapObjectBuilders: List<MapObjectBuilder>): LayersBuilder.() -> Unit {
+        return {
+            when(layerKind) {
+                MapLayerKind.POINT -> points {
+                    for (builder in mapObjectBuilders) {
+                        builder
+                            .createPointBlock()
+                            ?.run(::point)
+                    }
+                }
+                MapLayerKind.POLYGON -> polygons {
+                    for (builder in mapObjectBuilders) {
+                        polygon(
+                            builder.createPolygonBlock()
+                        )
+                    }
+                }
+                MapLayerKind.PATH -> paths {
+                    for (builder in mapObjectBuilders) {
+                        builder.createPathBlock()?.let(::path)
+                    }
+                }
+
+                MapLayerKind.V_LINE -> vLines {
+                    for (builder in mapObjectBuilders) {
+                        builder.createLineBlock()?.let(::line)
+                    }
+                }
+
+                MapLayerKind.H_LINE -> hLines {
+                    for (builder in mapObjectBuilders) {
+                        builder.createLineBlock()?.let(::line)
+                    }
+                }
+
+                MapLayerKind.TEXT -> texts {
+                    for (builder in mapObjectBuilders) {
+                        builder.createTextBlock()?.let(::text)
+                    }
+                }
+
+                MapLayerKind.PIE -> pies {
+                    for (builder in mapObjectBuilders) {
+                        builder.createChartBlock()?.let(::pie)
+                    }
+                }
+
+                MapLayerKind.BAR -> bars {
+                    for (builder in mapObjectBuilders) {
+                        builder.createChartBlock()?.let(::bar)
+                    }
+                }
+
+                else -> error("Unsupported layer kind: $layerKind")
+            }
+        }
+    }
 
     private fun getHiddenAes(geomKind: GeomKind): List<Aes<*>> {
         val hiddenAes = ArrayList<Aes<*>>()

@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.plot.FeatureSwitch.isDebugLogEnabled
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.Geom
@@ -24,14 +25,11 @@ import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.multiPoi
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.livemap.mapobjects.MapLayerKind
-import jetbrains.livemap.mapobjects.MapObject
-import jetbrains.livemap.projections.MapProjection
 import kotlin.math.abs
 import kotlin.math.min
 
 internal class DataPointsConverter(
     aesthetics: Aesthetics,
-    private val myMapProjection: MapProjection,
     geodesic: Boolean
 ) {
 
@@ -39,26 +37,26 @@ internal class DataPointsConverter(
     private val mySinglePathFeatureConverter: SinglePathFeatureConverter
     private val myMultiPathFeatureConverter: MultiPathFeatureConverter
     private fun log(p: DataPointAesthetics) {
-        //        if (isDebugLogEnabled()) {
-//            debugLog(
-//                "DataPointAesthetics:"
-//                        + "\n\tgroup: " + p.group()
-//                        + "\n\tmapId: " + p.mapId()
-//                        + "\n\tsize: " + p.size()
-//                        + "\n\tcolor: " + p.color()
-//                        + "\n\tfill: " + p.fill()
-//                        + "\n\tshape: " + p.shape().getCode()
-//                        + "\n\tshape.strokeWidth: " + p.shape().strokeWidth(p)
-//                        + "\n\tshape.size: " + p.shape().size(p)
-//                        + "\n\tlineType: " + p.lineType()
-//                        + "\n\tlabel: " + p.label()
-//                        + "\n\tfamily: " + p.family()
-//                        + "\n\tfontface: " + p.fontface()
-//                        + "\n\thjus: " + p.hjust()
-//                        + "\n\tvjus: " + p.vjust()
-//                        + "\n\tangle: " + p.angle()
-//            )
-//        }
+        if (isDebugLogEnabled()) {
+            println(
+                "DataPointAesthetics:"
+                        + "\n\tgroup: " + p.group()
+                        + "\n\tmapId: " + p.mapId()
+                        + "\n\tsize: " + p.size()
+                        + "\n\tcolor: " + p.color()
+                        + "\n\tfill: " + p.fill()
+                        + "\n\tshape: " + p.shape()?.code
+                        + "\n\tshape.strokeWidth: " + p.shape()?.strokeWidth(p)
+                        + "\n\tshape.size: " + p.shape()?.size(p)
+                        + "\n\tlineType: " + p.lineType()
+                        + "\n\tlabel: " + p.label()
+                        + "\n\tfamily: " + p.family()
+                        + "\n\tfontface: " + p.fontface()
+                        + "\n\thjus: " + p.hjust()
+                        + "\n\tvjus: " + p.vjust()
+                        + "\n\tangle: " + p.angle()
+            )
+        }
     }
 
     init {
@@ -67,39 +65,39 @@ internal class DataPointsConverter(
         myMultiPathFeatureConverter = MultiPathFeatureConverter(aesthetics, geodesic)
     }
 
-    fun toPoint(geom: Geom): List<MapObject> {
+    fun toPoint(geom: Geom): List<MapObjectBuilder> {
         return myPointFeatureConverter.point(geom)
     }
 
-    fun toHorizontalLine(): List<MapObject> {
+    fun toHorizontalLine(): List<MapObjectBuilder> {
         return myPointFeatureConverter.hLine()
     }
 
-    fun toVerticalLine(): List<MapObject> {
+    fun toVerticalLine(): List<MapObjectBuilder> {
         return myPointFeatureConverter.vLine()
     }
 
-    fun toSegment(geom: Geom): List<MapObject> {
+    fun toSegment(geom: Geom): List<MapObjectBuilder> {
         return mySinglePathFeatureConverter.segment(geom)
     }
 
-    fun toRect(): List<MapObject> {
+    fun toRect(): List<MapObjectBuilder> {
         return myMultiPathFeatureConverter.rect()
     }
 
-    fun toTile(): List<MapObject> {
+    fun toTile(): List<MapObjectBuilder> {
         return mySinglePathFeatureConverter.tile()
     }
 
-    fun toPath(geom: Geom): List<MapObject> {
+    fun toPath(geom: Geom): List<MapObjectBuilder> {
         return myMultiPathFeatureConverter.path(geom)
     }
 
-    fun toPolygon(): List<MapObject> {
+    fun toPolygon(): List<MapObjectBuilder> {
         return myMultiPathFeatureConverter.polygon()
     }
 
-    fun toText(): List<MapObject> {
+    fun toText(): List<MapObjectBuilder> {
         return myPointFeatureConverter.text()
     }
 
@@ -122,19 +120,17 @@ internal class DataPointsConverter(
             throw IllegalArgumentException("Unknown path animation: '$animation'")
         }
 
-        internal fun pathToMapObject(
+        internal fun pathToBuilder(
             p: DataPointAesthetics,
-            points: List<DoubleVector>,
-            isPolygon: Boolean,
-            consumer: (MapObject) -> Unit
-        ) {
+            points: List<Vec<LonLat>>,
+            isClosed: Boolean
+        ): MapObjectBuilder {
             log(p)
 
-            MapObjectBuilder(p, getRender(isPolygon), myMapProjection)
-                .setGeometryData(points, isPolygon, myGeodesic)
+            return MapObjectBuilder(p, getRender(isClosed))
+                .setGeometryData(points, isClosed, myGeodesic)
                 .setArrowSpec(myArrowSpec)
                 .setAnimation(myAnimation)
-                .build(consumer)
         }
 
         private fun getRender(isPolygon: Boolean): MapLayerKind {
@@ -153,32 +149,36 @@ internal class DataPointsConverter(
     private inner class MultiPathFeatureConverter(aes: Aesthetics, geodesic: Boolean) :
         PathFeatureConverterBase(aes, geodesic) {
 
-        internal fun path(geom: Geom): List<MapObject> {
+        internal fun path(geom: Geom): List<MapObjectBuilder> {
             setAnimation(if (geom is PathGeom) geom.animation else null)
 
-            return createMapObjects(multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)), false)
+            return process(multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)), false)
         }
 
-        internal fun polygon(): List<MapObject> {
-            return createMapObjects(multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)), true)
+        internal fun polygon(): List<MapObjectBuilder> {
+            return process(multiPointDataByGroup(singlePointAppender(GeomUtil.TO_LOCATION_X_Y)), true)
         }
 
-        internal fun rect(): List<MapObject> {
-            return createMapObjects(multiPointDataByGroup(multiPointAppender(GeomUtil.TO_RECTANGLE)), true)
+        internal fun rect(): List<MapObjectBuilder> {
+            return process(multiPointDataByGroup(multiPointAppender(GeomUtil.TO_RECTANGLE)), true)
         }
 
         private fun multiPointDataByGroup(coordinateAppender: (DataPointAesthetics, (DoubleVector?) -> Unit) -> Unit): List<MultiPointData> {
             return createMultiPointDataByGroup(aesthetics.dataPoints(), coordinateAppender, collector())
         }
 
-        private fun createMapObjects(multiPointDataList: List<MultiPointData>, isPolygon: Boolean): List<MapObject> {
-            val mapObjects = ArrayList<MapObject>()
+        private fun process(
+            multiPointDataList: List<MultiPointData>,
+            isClosed: Boolean
+        ): List<MapObjectBuilder> {
+            val mapObjects = ArrayList<MapObjectBuilder>()
+
             for (multiPointData in multiPointDataList) {
-                pathToMapObject(
+                pathToBuilder(
                     multiPointData.aes,
-                    multiPointData.points,
-                    isPolygon
-                ) { mapObjects.add(it) }
+                    multiPointData.points.toVecs(),
+                    isClosed
+                ).let(mapObjects::add)
             }
             return mapObjects
         }
@@ -187,11 +187,11 @@ internal class DataPointsConverter(
     private inner class SinglePathFeatureConverter(aesthetics: Aesthetics, geodesic: Boolean) :
         PathFeatureConverterBase(aesthetics, geodesic) {
 
-        internal fun tile(): List<MapObject> {
+        internal fun tile(): List<MapObjectBuilder> {
             return process(true, tileGeometryGenerator())
         }
 
-        internal fun segment(geom: Geom): List<MapObject> {
+        internal fun segment(geom: Geom): List<MapObjectBuilder> {
             setArrowSpec(if (geom is SegmentGeom) geom.arrowSpec else null)
             setAnimation(if (geom is SegmentGeom) geom.animation else null)
 
@@ -199,17 +199,17 @@ internal class DataPointsConverter(
         }
 
         private fun process(
-            isPolygon: Boolean,
+            isClosed: Boolean,
             dataPointToGeometry: (DataPointAesthetics) -> List<DoubleVector>
-        ): List<MapObject> {
-            val mapObjects = ArrayList<MapObject>(aesthetics.dataPointCount())
+        ): List<MapObjectBuilder> {
+            val mapObjects = ArrayList<MapObjectBuilder>(aesthetics.dataPointCount())
 
             for (p in aesthetics.dataPoints()) {
                 val points = dataPointToGeometry(p)
                 if (points.isEmpty()) {
                     continue
                 }
-                pathToMapObject(p, points, isPolygon) { mapObjects.add(it) }
+                pathToBuilder(p, points.toVecs(), isClosed).let(mapObjects::add)
             }
             mapObjects.trimToSize()
             return mapObjects
@@ -263,8 +263,8 @@ internal class DataPointsConverter(
                 var j = i + 1
                 val k = dataPoints.size
                 while (j < k) {
-                    val p1 = dataPoints.get(i)
-                    val p2 = dataPoints.get(j)
+                    val p1 = dataPoints[i]
+                    val p2 = dataPoints[j]
 
                     minDx = minNonZeroDistance(p1.x()!!, p2.x()!!, minDx)
                     minDy = minNonZeroDistance(p1.y()!!, p2.y()!!, minDy)
@@ -301,49 +301,47 @@ internal class DataPointsConverter(
             throw IllegalArgumentException("Unknown point animation: '$animation'")
         }
 
-        internal fun point(geom: Geom): List<MapObject> {
+        internal fun point(geom: Geom): List<MapObjectBuilder> {
             myAnimation = parsePointAnimation(if (geom is PointGeom) geom.animation else null)
 
             return process(MapLayerKind.POINT, ::pointToVector)
         }
 
-        internal fun hLine(): List<MapObject> {
+        internal fun hLine(): List<MapObjectBuilder> {
             return process(MapLayerKind.H_LINE, ::pointToHorizontalLine)
         }
 
-        internal fun vLine(): List<MapObject> {
+        internal fun vLine(): List<MapObjectBuilder> {
             return process(MapLayerKind.V_LINE, ::pointToVerticalLine)
         }
 
-        internal fun text(): List<MapObject> {
+        internal fun text(): List<MapObjectBuilder> {
             return process(MapLayerKind.TEXT, ::pointToVector)
         }
 
         private fun process(
             layerKind: MapLayerKind,
             dataPointToGeometry: (DataPointAesthetics) -> Vec<LonLat>?
-        ): List<MapObject> {
-            val mapObjects = ArrayList<MapObject>(myAesthetics.dataPointCount())
+        ): List<MapObjectBuilder> {
+            val mapObjects = ArrayList<MapObjectBuilder>(myAesthetics.dataPointCount())
             for (p in myAesthetics.dataPoints()) {
-                pointToMapObject(p, layerKind, dataPointToGeometry, { mapObjects.add(it) })
+                pointToBuilder(p, layerKind, dataPointToGeometry)?.let(mapObjects::add)
             }
 
             return mapObjects
         }
 
-        private fun pointToMapObject(
+        private fun pointToBuilder(
             p: DataPointAesthetics,
             layerKind: MapLayerKind,
-            dataPointToGeometry: (DataPointAesthetics) -> Vec<LonLat>?,
-            consumer: (MapObject) -> Unit
-        ) {
+            dataPointToGeometry: (DataPointAesthetics) -> Vec<LonLat>?
+        ): MapObjectBuilder? {
             log(p)
 
-            dataPointToGeometry(p)?.let { v ->
-                MapObjectBuilder(p, layerKind, myMapProjection)
+            return dataPointToGeometry(p)?.let { v ->
+                MapObjectBuilder(p, layerKind)
                     .setGeometryPoint(v)
                     .setAnimation(myAnimation)
-                    .build(consumer)
             }
         }
 
@@ -363,4 +361,8 @@ internal class DataPointsConverter(
             } else null
         }
     }
+}
+
+private fun <T> List<DoubleVector>.toVecs(): List<Vec<T>> {
+    return map { explicitVec<T>(it.x, it.y)}
 }

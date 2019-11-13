@@ -42,7 +42,6 @@ internal class MapDataGeocodingHelper(
         } catch (e: RuntimeException) {
             Asyncs.failure(e)
         }
-
     }
 
     private fun geocodeLayersData(): Async<List<Rect<World>>> {

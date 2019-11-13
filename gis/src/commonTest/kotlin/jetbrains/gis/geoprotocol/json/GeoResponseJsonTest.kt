@@ -6,8 +6,9 @@
 package jetbrains.gis.geoprotocol.json
 
 
+import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.GeoRectangle
-import jetbrains.datalore.base.projectionGeometry.Point
+import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.FeatureLevel.STATE
@@ -107,7 +108,7 @@ class GeoResponseJsonTest {
             .setTotalNamesakeCount(0)
             .build()
 
-        private fun point(lon: Double, lat: Double): Point {
+        private fun point(lon: Double, lat: Double): Vec<Generic> {
             return explicitVec(lon, lat)
         }
 

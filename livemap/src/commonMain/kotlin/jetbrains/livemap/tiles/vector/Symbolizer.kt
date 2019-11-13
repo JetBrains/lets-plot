@@ -40,7 +40,7 @@ interface Symbolizer {
 
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             val tasks = ArrayList<() -> Unit>()
-            feature.tileGeometry.multiPolygon?.let {
+            feature.tileGeometry.multiPolygon.let {
                 tasks.add { ctx.drawMultiPolygon(it) }
                 tasks.add(ctx::fill)
             }
@@ -62,7 +62,7 @@ interface Symbolizer {
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             val tasks = ArrayList<() -> Unit>()
 
-            feature.tileGeometry.multiLineString?.let {
+            feature.tileGeometry.multiLineString.let {
                 tasks.add { ctx.drawMultiLine(it) }
                 tasks.add(ctx::stroke)
             }
@@ -87,7 +87,7 @@ interface Symbolizer {
 
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             val tasks = ArrayList<() -> Unit>()
-            feature.tileGeometry.multiPoint?.let { multiPoint ->
+            feature.tileGeometry.multiPoint.let { multiPoint ->
                 getLabel(feature)?.let { label ->
                     tasks.add {
 
@@ -104,7 +104,7 @@ interface Symbolizer {
             return tasks
         }
 
-        private fun bboxFromPoint(point: AnyPoint, width: Double, height: Double): DoubleRectangle {
+        private fun bboxFromPoint(point: Vec<*>, width: Double, height: Double): DoubleRectangle {
             return DoubleRectangle.span(
                 DoubleVector(
                     point.x - width / 2,
@@ -117,7 +117,7 @@ interface Symbolizer {
             )
         }
 
-        private fun Context2d.drawTextFast(multiPoint: List<AnyPoint>, label: String) {
+        private fun Context2d.drawTextFast(multiPoint: List<Vec<*>>, label: String) {
             val width = measureText(label)
             val height = myStyle.size ?: 10.0
 
@@ -133,7 +133,7 @@ interface Symbolizer {
             }
         }
 
-        private fun Context2d.drawWrapText(multiPoint: List<AnyPoint>, label: String, wrapWidth: Double) {
+        private fun Context2d.drawWrapText(multiPoint: List<Vec<*>>, label: String, wrapWidth: Double) {
             var width = wrapWidth
             var words = splitLabel(label)
             var next = ArrayList<String>()

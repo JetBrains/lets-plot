@@ -5,8 +5,9 @@
 
 package jetbrains.livemap.mapobjects
 
-import jetbrains.livemap.entities.geometry.LonLatGeometry
+import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.gis.geoprotocol.Boundary
 
 interface MapGeometry {
-    val geometry: LonLatGeometry?
+    val geometry: Boundary<LonLat>?
 }

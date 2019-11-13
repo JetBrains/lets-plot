@@ -5,16 +5,13 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.common.geometry.Utils.isClosed
 import kotlin.math.max
 
 
@@ -155,93 +152,6 @@ object GeomUtil {
         }
 
         return pointsByGroup
-    }
-
-    fun createMultiPolygon(points: List<DoubleVector>): MultiPolygon<Generic> {
-        if (points.isEmpty()) {
-            return MultiPolygon<Generic>(emptyList())
-        }
-
-        val polygons = ArrayList<Polygon<Generic>>()
-        var rings: MutableList<Ring<Generic>> = ArrayList<Ring<Generic>>()
-
-        for (ring in createRingsFromPoints(points)) {
-            if (rings.isNotEmpty() && isClockwise(ring)) {
-                polygons.add(Polygon<Generic>(rings))
-                rings = ArrayList<Ring<Generic>>()
-            }
-            rings.add(Ring(ring.map { explicitVec<Generic>(it.x, it.y) }))
-        }
-
-        if (!rings.isEmpty()) {
-            polygons.add(Polygon<Generic>(rings))
-        }
-
-        return MultiPolygon<Generic>(polygons)
-    }
-
-    private fun isClockwise(ring: List<DoubleVector>): Boolean {
-        check(ring.isNotEmpty()) { "Ring shouldn't be empty to calculate clockwise" }
-
-        var sum = 0.0
-        var prev = ring[ring.size - 1]
-        for (point in ring) {
-            sum += prev.x * point.y - point.x * prev.y
-            prev = point
-        }
-        return sum < 0.0
-    }
-
-    fun createRingsFromPoints(points: List<DoubleVector>): List<List<DoubleVector>> {
-        val ringIntervals = findRingIntervals(points)
-
-        val rings = ArrayList<List<DoubleVector>>(ringIntervals.size)
-        ringIntervals.forEach { ringInterval -> rings.add(
-            sublist(
-                points,
-                ringInterval
-            )
-        ) }
-
-        if (!rings.isEmpty()) {
-            val lastRing = rings[rings.size - 1]
-            if (!isClosed(lastRing)) {
-                rings.removeAt(rings.size - 1)
-                rings.add(makeClosed(lastRing))
-            }
-        }
-
-        return rings
-    }
-
-    private fun makeClosed(path: List<DoubleVector>): List<DoubleVector> {
-        val closedList = ArrayList(path)
-        closedList.add(closedList[0])
-        return closedList
-    }
-
-    private fun findRingIntervals(path: List<DoubleVector>): List<ClosedRange<Int>> {
-        val intervals = ArrayList<ClosedRange<Int>>()
-        var startIndex = 0
-
-        var i = 0
-        val n = path.size
-        while (i < n) {
-            if (startIndex != i && path[startIndex] == path[i]) {
-                intervals.add(ClosedRange.closed(startIndex, i + 1))
-                startIndex = i + 1
-            }
-            i++
-        }
-
-        if (startIndex != path.size) {
-            intervals.add(ClosedRange.closed(startIndex, path.size))
-        }
-        return intervals
-    }
-
-    fun <T> sublist(list: List<T>, range: ClosedRange<Int>): List<T> {
-        return list.subList(range.lowerEndpoint(), range.upperEndpoint())
     }
 
     fun rectToGeometry(minX: Double, minY: Double, maxX: Double, maxY: Double): List<DoubleVector> {

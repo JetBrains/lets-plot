@@ -5,7 +5,6 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.AnyPoint
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.div
 import jetbrains.datalore.base.projectionGeometry.plus
@@ -68,13 +67,13 @@ class AdaptiveResampling<InT, OutT>(private val transform: (Vec<InT>) -> Vec<Out
     }
 
 
-    private fun length(p1: AnyPoint, p2: AnyPoint): Double {
+    private fun length(p1: Vec<*>, p2: Vec<*>): Double {
         val x = p2.x - p1.x
         val y = p2.y - p1.y
         return sqrt(x * x + y * y)
     }
 
-    private fun distance(p: AnyPoint, l1: AnyPoint, l2: AnyPoint): Double {
+    private fun distance(p: Vec<*>, l1: Vec<*>, l2: Vec<*>): Double {
         val ortX = l2.x - l1.x
         val ortY = -(l2.y - l1.y)
 

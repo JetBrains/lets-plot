@@ -10,6 +10,7 @@ import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.projectionGeometry.GeoUtils.createMultiPolygon
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.*
@@ -19,16 +20,15 @@ import jetbrains.gis.tileprotocol.socket.Socket
 import jetbrains.gis.tileprotocol.socket.SocketBuilder
 import jetbrains.gis.tileprotocol.socket.SocketHandler
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
-import jetbrains.livemap.DevParams
-import jetbrains.livemap.LiveMapSpec
-import jetbrains.livemap.MapLocation
-import jetbrains.livemap.entities.geometry.LonLatGeometry
-import jetbrains.livemap.mapobjects.*
-import jetbrains.livemap.mapobjects.MapLayerKind.*
-import jetbrains.livemap.mapobjects.Utils.splitMapBarChart
-import jetbrains.livemap.mapobjects.Utils.splitMapPieChart
-import jetbrains.livemap.projections.*
-import kotlin.math.abs
+import jetbrains.livemap.*
+import jetbrains.livemap.LayerProvider.LayerProviderImpl
+import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.rendering.layers.LayerManager
+import jetbrains.livemap.entities.rendering.TextMeasurer
+import jetbrains.livemap.projections.LonLatPoint
+import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.ProjectionType
+import jetbrains.livemap.projections.createArcPath
 
 @DslMarker
 annotation class LiveMapDsl {}
@@ -38,24 +38,24 @@ class LiveMapBuilder {
     lateinit var size: DoubleVector
     lateinit var geocodingService: GeocodingService
     lateinit var tileService: TileService
+    lateinit var layerProvider: LayerProvider
 
     var zoom: Int? = null
     var interactive: Boolean = true
     var mapLocation: MapLocation? = null
     var level: FeatureLevel? = null
     var parent: MapRegion? = null
-    var layers: MutableList<MapLayer> = ArrayList()
 
     var projectionType: ProjectionType = ProjectionType.MERCATOR
     var isLoopX: Boolean = true
     var isLoopY: Boolean = false
 
     var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit }
-    var devParams: Map<String, Any> = HashMap()
+    var devParams: DevParams = DevParams(HashMap<String, Any>())
 
 
     fun params(vararg values: Pair<String, Any>) {
-        devParams = mapOf(*values)
+        devParams = DevParams(mapOf(*values))
     }
 
     fun build(): LiveMapSpec {
@@ -63,7 +63,7 @@ class LiveMapBuilder {
             size = size,
             zoom = zoom,
             isInteractive = interactive,
-            layers = layers,
+            layerProvider = layerProvider,
 
             level = level,
             location = mapLocation,
@@ -77,7 +77,7 @@ class LiveMapBuilder {
 
             mapLocationConsumer = mapLocationConsumer,
 
-            devParams = DevParams(devParams),
+            devParams = devParams,
 
             // deprecated
             isClustering = false,
@@ -91,230 +91,18 @@ class LiveMapBuilder {
 }
 
 @LiveMapDsl
-class LayersBuilder {
-    val items = ArrayList<MapLayer>()
-}
-
-@LiveMapDsl
-class Points {
-    val items = ArrayList<MapPoint>()
-}
-
-@LiveMapDsl
-class Paths {
-    val items = ArrayList<MapPath>()
-}
-
-@LiveMapDsl
-class Polygons {
-    val items = ArrayList<MapPolygon>()
-}
-
-@LiveMapDsl
-class Lines {
-    val items = ArrayList<MapLine>()
-}
-
-@LiveMapDsl
-class Bars {
-    val factory = BarsFactory()
-}
-
-@LiveMapDsl
-class Pies {
-    val factory = PiesFactory()
-}
-
-@LiveMapDsl
-class Texts {
-    val items = ArrayList<MapText>()
-}
-
-@LiveMapDsl
-class PointBuilder {
-    var animation: Int? = null
-    var label: String? = null
-    var shape: Int? = null
-    var lat: Double? = null
-    var lon: Double? = null
-    var radius: Double? = null
-    var fillColor: Color? = null
-    var strokeColor: Color? = null
-    var strokeWidth: Double? = null
-    var index: Int? = null
-    var mapId: String? = null
-    var regionId: String? = null
-    fun build(): MapPoint {
-        return MapPoint(
-            index!!,
-            mapId,
-            regionId,
-            explicitVec<LonLat>(lon!!, lat!!),
-            label!!,
-            animation!!,
-            shape!!,
-            radius!!,
-            fillColor!!,
-            strokeColor!!,
-            strokeWidth!!
-        )
-    }
-}
-
-@LiveMapDsl
-class PathBuilder {
-    var index: Int? = null
-    var mapId: String? = null
-    var regionId: String? = null
-
-    var lineDash: List<Double>? = null
-    var strokeColor: Color? = null
-    var strokeWidth: Double? = null
-    var coordinates: List<Vec<LonLat>>? = null
-
-    var animation: Int? = null
-    var speed: Double? = null
-    var flow: Double? = null
-
-    var geodesic: Boolean? = null
-
-    fun build(): MapPath {
-        val coord = coordinates.takeIf { !geodesic!! } ?: createArcPath(coordinates!!)
-
-        return MapPath(
-            index!!, mapId, regionId,
-            coord
-                .run { LonLatRing(this) }
-                .run { LonLatPolygon(listOf(this)) }
-                .run { LonLatMultiPolygon(listOf(this)) }
-                .run { LonLatGeometry.create(this) },
-            animation!!, speed!!,
-            flow!!, lineDash!!, strokeColor!!,
-            strokeWidth!!
-        )
-    }
-}
-
-
-@LiveMapDsl
-class PolygonsBuilder {
-    var index: Int? = null
-    var mapId: String? = null
-    var regionId: String? = null
-
-    var lineDash: List<Double>? = null
-    var strokeColor: Color? = null
-    var strokeWidth: Double? = null
-    var fillColor: Color? = null
-    var coordinates: List<Vec<LonLat>>? = null
-
-    fun build(): MapPolygon {
-
-        return MapPolygon(
-            index!!, mapId, regionId,
-            lineDash!!, strokeColor!!, strokeWidth!!,
-            fillColor!!,
-            coordinates
-                ?.run { listOf(Ring(this)) }
-                ?.run { listOf(Polygon(this)) }
-                ?.run { MultiPolygon(this) }
-                ?.run(TypedGeometry.Companion::create)
-
-        )
-    }
-}
-
-@LiveMapDsl
-class LineBuilder {
-    var index: Int? = null
-    var mapId: String? = null
-    var regionId: String? = null
-
-    var lon: Double? = null
-    var lat: Double? = null
-    var lineDash: List<Double>? = null
-    var strokeColor: Color? = null
-    var strokeWidth: Double? = null
-
-
-    fun build(): MapLine {
-
-        return MapLine(
-            index!!, mapId, regionId,
-            explicitVec(lon!!, lat!!), lineDash!!, strokeColor!!,
-            strokeWidth!!
-        )
-    }
-}
-
-@LiveMapDsl
-class TextBuilder {
-    var index: Int = 0
-    var mapId: String = ""
-    var regionId: String = ""
-
-    var lon: Double = 0.0
-    var lat: Double = 0.0
-
-    var fillColor: Color = Color.BLACK
-    var strokeColor: Color = Color.TRANSPARENT
-    var strokeWidth: Double = 0.0
-
-    var label: String = ""
-    var size: Double = 10.0
-    var family: String = "Arial"
-    var fontface: String = ""
-    var hjust: Double = 0.0
-    var vjust: Double = 0.0
-    var angle: Double = 0.0
-
-    fun build(): MapText {
-        return MapText(
-            index, mapId, regionId,
-            explicitVec(lon, lat),
-            fillColor, strokeColor, strokeWidth,
-            label, size, family, fontface, hjust, vjust, angle
-        )
-    }
-}
-
-@LiveMapDsl
-class BarsFactory {
-    private val myItems = ArrayList<ChartSource>()
-
-    fun add(source: ChartSource) {
-        myItems.add(source)
-    }
-
-    fun produce(): List<MapBar> {
-        val maxAbsValue = myItems
-            .asSequence()
-            .mapNotNull { it.values }
-            .flatten()
-            .maxBy { abs(it) }
-            ?: error("")
-
-        return myItems.flatMap { splitMapBarChart(it, abs(maxAbsValue)) }
-    }
-}
-
-@LiveMapDsl
-class PiesFactory {
-    private val myItems = ArrayList<ChartSource>()
-
-    fun add(source: ChartSource) {
-        myItems.add(source)
-    }
-
-    fun produce(): List<MapPieSector> {
-        return myItems.flatMap { splitMapPieChart(it) }
-    }
-}
+class LayersBuilder(
+    val myComponentManager: EcsComponentManager,
+    val layerManager: LayerManager,
+    val mapProjection: MapProjection,
+    val devParams: DevParams,
+    val textMeasurer: TextMeasurer
+)
 
 @LiveMapDsl
 class ChartSource {
-    var lon: Double = 0.0
-    var lat: Double = 0.0
+    lateinit var point: Vec<LonLat>
+
     var radius: Double = 0.0
 
     var strokeColor: Color = Color.BLACK
@@ -323,6 +111,25 @@ class ChartSource {
     var indices: List<Int> = emptyList()
     var values: List<Double> = emptyList()
     var colors: List<Color> = emptyList()
+}
+
+fun geometry(points: List<LonLatPoint>, isGeodesic: Boolean, isClosed: Boolean): MultiPolygon<LonLat> {
+    val coord = points
+        .map { limitCoord(it) }
+        .let { if (isGeodesic) createArcPath(it) else it }
+
+    return if (isClosed) {
+        createMultiPolygon(coord) { it }
+    } else {
+        MapWidgetUtil
+            .splitPathByAntiMeridian(coord)
+            .map { path -> Polygon(listOf(Ring(path))) }
+            .run(::MultiPolygon)
+    }
+}
+
+fun limitCoord(point: Vec<LonLat>): Vec<LonLat> {
+    return explicitVec(GeoUtils.limitLon(point.x), GeoUtils.limitLat(point.y))
 }
 
 @LiveMapDsl
@@ -385,44 +192,8 @@ class LiveMapGeocodingServiceBuilder {
 fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
 
 fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
-    layers.addAll(LayersBuilder().apply(block).items)
+    layerProvider = LayerProviderImpl(devParams, block)
 }
-
-fun LayersBuilder.points(block: Points.() -> Unit) {
-    items.add(MapLayer(POINT, Points().apply(block).items))
-}
-
-fun LayersBuilder.paths(block: Paths.() -> Unit) {
-    items.add(MapLayer(PATH, Paths().apply(block).items))
-}
-
-fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
-    items.add(MapLayer(POLYGON, Polygons().apply(block).items))
-}
-
-fun LayersBuilder.hLines(block: Lines.() -> Unit) {
-    items.add(MapLayer(H_LINE, Lines().apply(block).items))
-}
-
-fun LayersBuilder.vLines(block: Lines.() -> Unit) {
-    items.add(MapLayer(V_LINE, Lines().apply(block).items))
-}
-
-fun LayersBuilder.bars(block: Bars.() -> Unit) {
-    items.add(MapLayer(BAR, Bars().apply(block).factory.produce()))
-}
-
-fun LayersBuilder.pies(block: Pies.() -> Unit) {
-    items.add(MapLayer(PIE, Pies().apply(block).factory.produce()))
-}
-
-fun LayersBuilder.texts(block: Texts.() -> Unit) {
-    items.add(MapLayer(TEXT, Texts().apply(block).items))
-}
-
-fun point(block: PointBuilder.() -> Unit) = PointBuilder().apply(block)
-
-fun path(block: PathBuilder.() -> Unit) = PathBuilder().apply(block)
 
 fun LiveMapBuilder.location(block: Location.() -> Unit) {
     Location().apply(block).let { location ->

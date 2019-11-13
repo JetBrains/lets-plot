@@ -3,13 +3,20 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.maps.livemap.entities.point
+package jetbrains.livemap.entities.rendering
 
 import jetbrains.datalore.vis.canvas.Context2d
 import kotlin.math.PI
 import kotlin.math.sqrt
 
-object RendererUtils {
+object Utils {
+
+    fun apply(styleComponent: StyleComponent, ctx: Context2d) {
+        ctx.setFillStyle(styleComponent.fillColor)
+        ctx.setStrokeStyle(styleComponent.strokeColor)
+        ctx.setLineWidth(styleComponent.strokeWidth)
+    }
+
     internal fun drawPath(ctx: Context2d, radius: Double, shape: Int) {
         when (shape) {
             0 -> square(ctx, radius)

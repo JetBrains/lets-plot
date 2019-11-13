@@ -33,16 +33,13 @@ typealias WorldPoint = Vec<World>
 typealias WorldRectangle = Rect<World>
 
 
-class Coordinates {
-    companion object {
-        val ZERO_LONLAT_POINT = explicitVec<LonLat>(0.0, 0.0)
-        val ZERO_WORLD_POINT = explicitVec<World>(0.0, 0.0)
-        val ZERO_CLIENT_POINT = explicitVec<Client>(0.0, 0.0)
-    }
-
+object Coordinates {
+    val ZERO_LONLAT_POINT = explicitVec<LonLat>(0.0, 0.0)
+    val ZERO_WORLD_POINT = explicitVec<World>(0.0, 0.0)
+    val ZERO_CLIENT_POINT = explicitVec<Client>(0.0, 0.0)
 }
 
-fun newDoubleRectangle(origin: AnyPoint, dimension: AnyPoint): DoubleRectangle {
+fun newDoubleRectangle(origin: Vec<*>, dimension: Vec<*>): DoubleRectangle {
     return DoubleRectangle(origin.x, origin.y, dimension.x, dimension.y)
 }
 

@@ -2,7 +2,15 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+from enum import Enum
+from typing import Union, Optional, List
+
 from .geom import _geom
+
+try:
+    import pandas
+except ImportError:
+    pandas = None
 
 # from ..geo_data.livemap_helper import _prepare_location
 # from ..geo_data.livemap_helper import _prepare_parent
@@ -10,7 +18,8 @@ from .geom import _geom
 __all__ = ['geom_livemap']
 
 
-def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None, sampling=None, level=None, interactive=None, location=None,
+def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None, sampling=None, level=None,
+                 interactive=None, location=None,
                  zoom=None, within=None, magnifier=None, clustering=None, scaled=None, labels=None, theme=None,
                  projection=None, geodesic=None, **other_args):
     """
@@ -105,9 +114,9 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
     """
     # if within is not None:
     #     within = _prepare_parent(within)
-    #
-    # if location is not None:
-    #     location = _prepare_location(location)
+
+    if location is not None:
+        location = _prepare_location(location)
 
     _display_mode = 'display_mode'
 
@@ -119,3 +128,46 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
                  within=within, interactive=interactive, location=location, zoom=zoom, magnifier=magnifier,
                  clustering=clustering, scaled=scaled, labels=labels, theme=theme, projection=projection,
                  geodesic=geodesic, **other_args)
+
+
+LOCATION_COORDINATE_COLUMNS = {'lon', 'lat'}
+LOCATION_RECTANGLE_COLUMNS = {'lonmin', 'latmin', 'lonmax', 'latmax'}
+LOCATION_LIST_ERROR_MESSAGE = "Expected: location = [double lon1, double lat1, ... , double lonN, double latN]"
+LOCATION_DATAFRAME_ERROR_MESSAGE = "Expected: location = DataFrame with [{}] or [{}] columns" \
+    .format(', '.join(LOCATION_COORDINATE_COLUMNS), ', '.join(LOCATION_RECTANGLE_COLUMNS))
+
+
+class RegionKind(Enum):
+    region_ids = 'region_ids'
+    region_name = 'region_name'
+    coordinates = 'coordinates'
+    data_frame = 'data_frame'
+
+
+def _prepare_location(location: Union[str, List[float]]) -> Optional[dict]:
+    if location is None:
+        return None
+
+    value = location
+    # if isinstance(location, Regions):
+    #     kind = RegionKind.region_ids
+    #     value = location.unique_ids()
+
+    if isinstance(location, str):
+        kind = RegionKind.region_name
+
+    elif isinstance(location, list):
+        if len(location) == 0 or len(location) % 2 != 0:
+            raise ValueError(LOCATION_LIST_ERROR_MESSAGE)
+        kind = RegionKind.coordinates
+
+    elif pandas and isinstance(location, pandas.DataFrame):
+        if not LOCATION_COORDINATE_COLUMNS.issubset(location.columns) and not LOCATION_RECTANGLE_COLUMNS.issubset(
+                location.columns):
+            raise ValueError(LOCATION_DATAFRAME_ERROR_MESSAGE)
+        kind = RegionKind.data_frame
+
+    else:
+        raise ValueError('Wrong location type: ' + location.__str__())
+
+    return {'type': kind.value, 'data': value}

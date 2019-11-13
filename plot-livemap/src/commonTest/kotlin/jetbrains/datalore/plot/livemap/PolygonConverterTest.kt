@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.rings
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.geometryEq
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.sizeEq
-import jetbrains.gis.geoprotocol.Geometry
+import jetbrains.gis.geoprotocol.Boundary
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,7 +29,7 @@ class PolygonConverterTest {
     @Test
     fun multiPathShouldBeConvertedProperlyIntoMercator() {
 
-        matcher.geometry(geometryEq(Geometry.create(MULTIPOLYGON)))
+        matcher.geometry(geometryEq(Boundary.create(MULTIPOLYGON)))
 
         assertMapObject()
     }
@@ -38,7 +38,7 @@ class PolygonConverterTest {
     fun withMapIdAndGeometry_ShouldUseGeometry() {
         aesData.builder().mapId(constant("New York City"))
 
-        matcher.geometry(geometryEq(Geometry.create(MULTIPOLYGON)))
+        matcher.geometry(geometryEq(Boundary.create(MULTIPOLYGON)))
 
         assertMapObject()
     }
