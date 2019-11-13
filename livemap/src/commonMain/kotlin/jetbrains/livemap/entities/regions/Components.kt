@@ -141,15 +141,6 @@ class RegionComponent : EcsComponent {
         }
 }
 
-//    object RegionEntityView {
-//        val COMPONENTS: List<KClass<out EcsComponent>> = listOf(
-//            RegionComponent::class,
-//            RendererComponent::class,
-//            StyleComponent::class,
-//            ParentLayerComponent::class
-//        )
-//    }
-
 class EmittedFragmentsComponent : EcsComponent {
     private val myEmitted = HashSet<FragmentKey>()
 

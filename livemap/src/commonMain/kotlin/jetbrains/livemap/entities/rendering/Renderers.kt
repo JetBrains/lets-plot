@@ -3,19 +3,17 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.entities.geometry
+package jetbrains.livemap.entities.rendering
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.maps.livemap.entities.rendering.Common
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Context2d.LineJoin
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.rendering.TransformComponent
+import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.rendering.Renderer
-import jetbrains.livemap.entities.rendering.StyleComponent
-import jetbrains.livemap.entities.rendering.lineTo
-import jetbrains.livemap.entities.rendering.moveTo
+import jetbrains.livemap.entities.rendering.Utils.drawPath
 import jetbrains.livemap.entities.scaling.ScaleComponent
 import jetbrains.livemap.projections.Client
 
@@ -29,6 +27,35 @@ object Renderers {
             }
         }
         afterPolygon(ctx)
+    }
+
+    class PointRenderer : Renderer {
+        private fun renderFeature(style: StyleComponent, ctx: Context2d, radius: Double, shape: Int) {
+            ctx.translate(radius, radius)
+            ctx.beginPath()
+            drawPath(ctx, radius, shape)
+
+            if (style.fillColor != null) {
+                ctx.setFillStyle(style.fillColor)
+                ctx.fill()
+            }
+
+            if (style.strokeColor != null && !style.strokeWidth.isNaN()) {
+                ctx.setStrokeStyle(style.strokeColor)
+                ctx.setLineWidth(style.strokeWidth)
+                ctx.stroke()
+            }
+        }
+
+        override fun render(entity: EcsEntity, ctx: Context2d) {
+            val radius = entity.get<ScreenDimensionComponent>()
+                .run { dimension.x }
+                .run { div(2) }
+                .run { times(entity.tryGet<TransformComponent>()?.scale ?: 1.0) }
+
+            ctx.translate(-radius, -radius)
+            renderFeature(entity.get(), ctx, radius, entity.get<PointComponent>().shape)
+        }
     }
 
     class PolygonRenderer : Renderer {
@@ -46,7 +73,7 @@ object Renderers {
                 }
             }
 
-            Common.apply(entity.get<StyleComponent>(), ctx)
+            Utils.apply(entity.get<StyleComponent>(), ctx)
             ctx.setLineJoin(LineJoin.ROUND)
 
             ctx.beginPath()

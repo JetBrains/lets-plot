@@ -12,13 +12,10 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geometry.Renderers
-import jetbrains.livemap.entities.geometry.TextComponent
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.ScreenOffsetComponent
 import jetbrains.livemap.entities.rendering.*
-import jetbrains.livemap.obj2entity.TextMeasurer
-import jetbrains.livemap.obj2entity.TextSpec
+import jetbrains.livemap.entities.rendering.Renderers.TextRenderer
 import jetbrains.livemap.projections.MapProjection
 
 @LiveMapDsl
@@ -81,7 +78,7 @@ class TextBuilder {
         val textSpec = createTextSpec(textMeasurer)
 
         return factory
-            .createMapEntity(mapProjection.project(point), Renderers.TextRenderer(), "map_ent_text")
+            .createMapEntity(mapProjection.project(point), TextRenderer(), "map_ent_text")
             .addComponents {
                 + ScreenOffsetComponent().apply {
                     offset = textSpec.dimension * -0.5

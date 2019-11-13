@@ -75,7 +75,6 @@ class LiveMap(
     private val myMapProjection: MapProjection,
     private val viewport: Viewport,
     private val myLayerProvider: LayerProvider,
-    // private val myMapLayers: List<MapLayer>,
     private val myTileLoadingSystemBuilder: TileLoadingSystemFactory,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,

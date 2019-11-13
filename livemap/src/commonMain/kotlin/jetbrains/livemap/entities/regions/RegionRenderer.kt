@@ -5,14 +5,13 @@
 
 package jetbrains.livemap.entities.regions
 
-import jetbrains.datalore.maps.livemap.entities.rendering.Common
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.geometry.Renderers
 import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.rendering.Renderer
-import jetbrains.livemap.entities.rendering.StyleComponent
+import jetbrains.livemap.entities.rendering.Renderers
+import jetbrains.livemap.entities.rendering.Utils
 import jetbrains.livemap.entities.scaling.ScaleComponent
 
 class RegionRenderer : Renderer {
@@ -29,7 +28,7 @@ class RegionRenderer : Renderer {
             }
         }
 
-        Common.apply(entity.get<StyleComponent>(), ctx)
+        Utils.apply(entity.get(), ctx)
 
         ctx.beginPath()
 
@@ -46,7 +45,7 @@ class RegionRenderer : Renderer {
                 Renderers.drawLines(
                     screenGeometry.geometry,
                     ctx
-                ) { context2d: Context2d -> nop(context2d) }
+                ) { nop() }
                 ctx.restore()
             }
         }
@@ -54,7 +53,5 @@ class RegionRenderer : Renderer {
         ctx.fill()
     }
 
-    private fun nop(context2d: Context2d) {
-
-    }
+    private fun nop() {}
 }

@@ -4,8 +4,8 @@ import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
+import jetbrains.livemap.entities.rendering.TextMeasurer
 import jetbrains.livemap.mapobjects.MapLayer
-import jetbrains.livemap.obj2entity.TextMeasurer
 import jetbrains.livemap.projections.MapProjection
 
 

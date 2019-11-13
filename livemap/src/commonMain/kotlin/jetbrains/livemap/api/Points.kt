@@ -9,8 +9,6 @@ import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.maps.livemap.entities.point.PointComponent
-import jetbrains.datalore.maps.livemap.entities.point.PointRenderer
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.animation.Animations
@@ -22,10 +20,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
-import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
-import jetbrains.livemap.entities.rendering.StyleComponent
-import jetbrains.livemap.entities.rendering.setFillColor
-import jetbrains.livemap.entities.rendering.setStrokeColor
+import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.World
@@ -100,7 +95,7 @@ class PointBuilder {
         val size = radius * 2.0
 
         val entity = factory
-            .createMapEntity(mapProjection.project(point), PointRenderer(), "map_ent_point")
+            .createMapEntity(mapProjection.project(point), Renderers.PointRenderer(), "map_ent_point")
             .addComponents {
                 + PointComponent().apply { shape = this@PointBuilder.shape }
                 + createStyle()

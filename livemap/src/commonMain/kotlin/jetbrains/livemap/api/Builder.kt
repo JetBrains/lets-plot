@@ -24,7 +24,7 @@ import jetbrains.livemap.*
 import jetbrains.livemap.LayerProvider.LayerProviderImpl
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.obj2entity.TextMeasurer
+import jetbrains.livemap.entities.rendering.TextMeasurer
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionType

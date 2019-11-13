@@ -17,14 +17,12 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
-import jetbrains.livemap.entities.geometry.Renderers
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
-import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
-import jetbrains.livemap.entities.rendering.RendererComponent
-import jetbrains.livemap.entities.rendering.StyleComponent
-import jetbrains.livemap.entities.rendering.setStrokeColor
-import jetbrains.livemap.projections.*
+import jetbrains.livemap.entities.rendering.*
+import jetbrains.livemap.projections.LonLatPoint
+import jetbrains.livemap.projections.ProjectionUtil
+import jetbrains.livemap.projections.World
 
 @LiveMapDsl
 class Paths(

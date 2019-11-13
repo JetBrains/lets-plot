@@ -9,9 +9,9 @@ import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.normalizeLon
 import kotlin.math.*
 
-private val LONGITUDE_EPS = 1.0
-private val FULL_ANGLE = 360.0
-private val STRAIGHT_ANGLE = 180.0
+private const val LONGITUDE_EPS = 1.0
+private const val FULL_ANGLE = 360.0
+private const val STRAIGHT_ANGLE = 180.0
 
 fun createArcPath(path: List<LonLatPoint>): List<LonLatPoint> {
     val arcPath = ArrayList<LonLatPoint>()

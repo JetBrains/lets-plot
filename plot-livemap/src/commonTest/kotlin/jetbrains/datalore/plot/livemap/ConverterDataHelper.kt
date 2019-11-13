@@ -9,7 +9,7 @@ import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
-import jetbrains.livemap.projections.Coordinates.Companion.ZERO_WORLD_POINT
+import jetbrains.livemap.projections.Coordinates.ZERO_WORLD_POINT
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
 import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
