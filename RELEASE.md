@@ -6,7 +6,7 @@
 
 ##### 1. Edit CHANGELOG.md file.
 
-##### 2. Set a new version in the properties (_"-SNAPSHOT"_ and _"dev"_ must be removed): 
+##### 2. Set production version in the properties (remove _"-SNAPSHOT"_ and _"dev"_): 
 
  - `version` and `js_artifact_version` in `build.gradle` 
  - `__version__` in `python-package/datalore_plot/_version.py`
@@ -16,7 +16,7 @@
  - `git add --all && git commit -m "Updated version vX.X.X" && git push`
  - `git tag vX.X.X && git push --tags`
 
-##### 4. Change versions back to dev (add _"-SNAPSHOT"_ and _"dev"_):
+##### 4. Prepare to the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev"_:
 
  - `version` and `js_artifact_version` in `build.gradle` 
  - `__version__` in `python-package/datalore_plot/_version.py`
