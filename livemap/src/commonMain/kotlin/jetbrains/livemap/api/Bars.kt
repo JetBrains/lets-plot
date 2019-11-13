@@ -66,26 +66,31 @@ class BarsFactory(
             .maxBy { abs(it) }
             ?: error("Failed to calculate maxAbsValue.")
 
-        return myItems.flatMap { source ->
+        val result = ArrayList<EcsEntity>()
+
+        myItems.forEach { source ->
             splitMapBarChart(source, abs(maxAbsValue)) { barOffset, barDimension, color->
-                myEntityFactory
-                    .createMapEntity(myMapProjection.project(source.point), Renderers.BarRenderer(), "map_ent_bar")
-                    .addComponents {
-                        + ScreenOffsetComponent().apply { offset = barOffset}
-                        + ScreenDimensionComponent().apply { dimension = barDimension }
-                        + StyleComponent().apply {
-                            setFillColor(color)
-                            setStrokeColor(source.strokeColor)
-                            setStrokeWidth(source.strokeWidth)
+                result.add(
+                    myEntityFactory
+                        .createMapEntity(myMapProjection.project(source.point), Renderers.BarRenderer(), "map_ent_bar")
+                        .addComponents {
+                            + ScreenOffsetComponent().apply { offset = barOffset}
+                            + ScreenDimensionComponent().apply { dimension = barDimension }
+                            + StyleComponent().apply {
+                                setFillColor(color)
+                                setStrokeColor(source.strokeColor)
+                                setStrokeWidth(source.strokeWidth)
+                            }
                         }
-                    }
+                )
             }
         }
+
+        return result
     }
 }
 
-fun splitMapBarChart(source: ChartSource, maxAbsValue: Double, consumer: (Vec<Client>, Vec<Client>, Color) -> Unit): List<EcsEntity> {
-    val result = ArrayList<EcsEntity>()
+fun splitMapBarChart(source: ChartSource, maxAbsValue: Double, consumer: (Vec<Client>, Vec<Client>, Color) -> Unit) {
     val percents = transformValues2Percents(source.values, maxAbsValue)
 
     val radius = source.radius
@@ -101,5 +106,4 @@ fun splitMapBarChart(source: ChartSource, maxAbsValue: Double, consumer: (Vec<Cl
         )
         consumer(barOffset, barDimension, source.colors[i])
     }
-    return result
 }
