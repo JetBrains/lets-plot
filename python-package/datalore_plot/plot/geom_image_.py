@@ -3,11 +3,19 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 import base64
+import io
+
+import numpy as np
 
 from .core import aes
 from .geom import _geom
 from .util import as_boolean
 from .util import is_ndarray
+
+try:
+    import png
+except ImportError:
+    png = None
 
 __all__ = ['geom_image']
 
@@ -27,7 +35,7 @@ def _scaler_0_255_byte(v):
     return int(v) % 256
 
 
-def geom_image(image_data, norm=None, vmin=None, vmax=None):
+def geom_image(image_data, norm=None, vmin=None, vmax=None, to_png=False):
     """
     Displays image specified by ndarray with shape (n, m) or (n, m, 3) or (n, m, 4).
     This geom is not as flexible as geom_raster or geom_tile but vastly superior in the terms of
@@ -70,6 +78,9 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     >>> image = np.random.choice([0.0, 1.0], [10, 100, 3])
     >>> ggplot() + geom_image(image)
     """
+    if to_png and png == None:
+        raise Exception("pypng is not installed")
+
     if not is_ndarray(image_data):
         raise Exception("Invalid image_data: ndarray is expected but was {}".format(type(image_data)))
 
@@ -85,6 +96,7 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     if image_data.ndim == 2:
         height, width = image_data.shape
         image_type = 'gray'
+        nchannels = 1
     else:
         height, width, nchannels = image_data.shape
         if nchannels == 3:
@@ -127,19 +139,6 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     else:
         raise Exception("Invalid image_data: floating point or integer dtype is expected but was '{}'".format(image_data.dtype))
 
-    flat_bytes = bytearray()
-    for v in image_data.ravel():
-        flat_bytes.append(scaler(v))
-
-    # Transform nd array to flat array containing ARGB values packed in one integer (32)
-    image_bytes = base64.standard_b64encode(flat_bytes)
-    image_bytes = image_bytes.decode('utf-8')
-    image_spec = dict(
-        width=width,
-        height=height,
-        type=image_type,
-        bytes=image_bytes
-    )
 
     # image bounds (including 1/2 pixel expand in all directions)
     xmin = [-0.5]
@@ -148,4 +147,32 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     ymax = [height - 1 + 0.5]
     mapping = aes(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
 
-    return _geom('image', mapping=mapping, image_spec=image_spec)
+    if to_png:
+        image_2d = np.reshape(image_data, (-1, width * nchannels)) # to [[R, G, B, R, G, B],..], or pypng will fail
+        image_2d = np.vectorize(scaler)(image_2d)
+        image_2d = image_2d.astype(np.int8, copy=False) # non int8 dtype causes pypng to produce broken colors
+
+        greyscale = image_type == 'gray'
+        alpha = image_type == 'rgba'
+        png_bytes = io.BytesIO()
+        png_writer = png.Writer(width, height, greyscale=greyscale, alpha=alpha, bitdepth=8)
+        png_writer.write(png_bytes, image_2d)
+        href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')
+        return _geom('image', mapping=mapping, href=href)
+    else:
+        flat_bytes = bytearray()
+        for v in image_data.ravel():
+            flat_bytes.append(scaler(v))
+
+        # Transform nd array to flat array containing ARGB values packed in one integer (32)
+        image_bytes = base64.standard_b64encode(flat_bytes)
+        image_bytes = image_bytes.decode('utf-8')
+
+        image_spec = dict(
+            width=width,
+            height=height,
+            type=image_type,
+            bytes=image_bytes
+        )
+
+        return _geom('image', mapping=mapping, image_spec=image_spec)
