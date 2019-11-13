@@ -33,11 +33,11 @@ R `ggplot2` has extensive documentation and a multitude of examples and therefor
 
 Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new functions](#unfamiliar_functions_used_in_the_examples) and [built-in sampling](#sampling) to our Python API.
 
-You can try the Datalore Plot library in [Datalore](https://datalore.io). Datalore Plot is available in Datalore out-of-the-box and is almost identical to the one we ship as PyPI package. This is because Datalore Plot is an offshoot of the Datalore project from which it was extracted to a separate plotting library.
+You can try the Datalore Plot library in [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/). Datalore Plot is available in Datalore out-of-the-box and is almost identical to the one we ship as PyPI package. This is because Datalore Plot is an offshoot of the Datalore project from which it was extracted to a separate plotting library.
 
 One important difference is that the python package in Datalore is named **datalore.plot** and the package you install from PyPI has name **datalore_plot**.
 
-The advantage of [Datalore](https://datalore.io) as a learning tool in comparison to Jupyther is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
+The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/) as a learning tool in comparison to Jupyther is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
 
 
 ### Installation
