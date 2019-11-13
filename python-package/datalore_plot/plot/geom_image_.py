@@ -148,15 +148,20 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None, to_png=False):
     mapping = aes(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
 
     if to_png:
-        image_2d = np.reshape(image_data, (-1, width * nchannels)) # to [[R, G, B, R, G, B],..], or pypng will fail
-        image_2d = np.vectorize(scaler)(image_2d)
-        image_2d = image_2d.astype(np.int8, copy=False) # non int8 dtype causes pypng to produce broken colors
+        # set output type to int8 - pypng produces broken colors with other types
+        scale = np.vectorize(scaler, otypes=[np.int8])
+        # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..], or pypng will fail
+        image_2d = scale(image_data).reshape(-1, width * nchannels)
 
-        greyscale = image_type == 'gray'
-        alpha = image_type == 'rgba'
         png_bytes = io.BytesIO()
-        png_writer = png.Writer(width, height, greyscale=greyscale, alpha=alpha, bitdepth=8)
-        png_writer.write(png_bytes, image_2d)
+        png.Writer(
+            width=width,
+            height=height,
+            greyscale=(image_type == 'gray'),
+            alpha=(image_type == 'rgba'),
+            bitdepth=8
+        ).write(png_bytes, image_2d)
+
         href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')
         return _geom('image', mapping=mapping, href=href)
     else:
