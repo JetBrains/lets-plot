@@ -19,27 +19,18 @@ internal object PlotHtmlGen {
     private fun applyToProcessedSpecs(plotSpec: MutableMap<String, Any>): String {
         val alphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
         val randomString: String = List(6) { alphabet.random() }.joinToString("")
-        val plotOutputId = "plot_output_$randomString"
+        val outputId = "plot_output_$randomString"
         val plotSpecJs = mapToJsObjectInitializer(plotSpec)
         return """
-            <div id="$plotOutputId"></div>
+            <div id="$outputId"></div>
             <script type="text/javascript">
                 (function() {
                     var plotSpec=$plotSpecJs;
-                    var plotContainer = document.getElementById("$plotOutputId");
-                    if (!window.DatalorePlot) {
-                        console.log("Waiting for DatalorePlot...");
-                        if (!window.datalorePlotGraphics) {
-                            window.datalorePlotGraphics = [];
-                        }
-                        window.datalorePlotGraphics.push({
-                            spec: plotSpec,
-                            container: plotContainer
-                        });
-                    } else {
+                    var plotContainer = document.getElementById("$outputId");
+                    window.datalorePlotCall(function() {{
                         DatalorePlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer);
-                    }
-                })()
+                    }});
+                })();    
             </script>
         """
     }

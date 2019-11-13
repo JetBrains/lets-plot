@@ -26,7 +26,7 @@ or just run shell command (if the changes are only in the python code):
 
 `python setup.py update_js bdist_wheel`
 
-## Local installing
+## Installing locally
 
 * create / activate python environment (if needed)
 * run shell commands: 

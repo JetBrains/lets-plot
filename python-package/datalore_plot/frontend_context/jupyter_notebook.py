@@ -8,6 +8,7 @@ import random
 import string
 from typing import Dict
 
+# noinspection PyPackageRequirements
 from IPython.display import display_html
 
 from .frontend_context import FrontendContext
@@ -22,23 +23,23 @@ class JupyterNotebookContext(FrontendContext):
         self.connected = connected
 
     def as_str(self, plot_spec: Dict) -> str:
+        # noinspection PyUnresolvedReferences
         import datalore_plot_kotlin_bridge
         return datalore_plot_kotlin_bridge.generate_html(plot_spec)
+
+    def _undef_modules_script(self) -> str:
+        pass
 
     def configure(self, verbose: bool):
         if self.connected:
             # noinspection PyTypeChecker
-            display_html(self._configure_connected_script(), raw=True)
+            display_html(self._configure_connected_script(verbose), raw=True)
         else:
             # noinspection PyTypeChecker
-            display_html(self._configure_embedded_script(), raw=True)
+            display_html(self._configure_embedded_script(verbose), raw=True)
 
-        if verbose:
-            # noinspection PyTypeChecker
-            display_html(self._check_js_loaded_script(), raw=True)
-
-    # noinspection PyMethodMayBeStatic
-    def _configure_connected_script(self) -> str:
+    @staticmethod
+    def _configure_connected_script(verbose: bool) -> str:
         base_url = _get_global_str("js_base_url")
         if _has_global_value('js_name'):
             name = _get_global_str('js_name')
@@ -47,62 +48,66 @@ class JupyterNotebookContext(FrontendContext):
             name = "datalore-plot-{version}{suffix}".format(version=__version__, suffix=suffix)
 
         url = "{base_url}/{name}".format(base_url=base_url, name=name)
-        return """\
-                <script type="text/javascript">
-                    (function() {{
-                        var script = document.createElement("script");
-                        script.type = "text/javascript";
-                        script.src = "{url}";
-                        script.onload = function() {{
-                            console.log("DatalorePlot loaded");
-                            if(window.datalorePlotGraphics) {{
-                                window.datalorePlotGraphics.forEach(function(el) {{
-                                    DatalorePlot.buildPlotFromProcessedSpecs(el.spec, -1, -1, el.container);
-                                }})
-                                window.datalorePlotGraphics = null;
-                            }}
-                        }}
-                        document.head.appendChild(script)
-                    }})()
-                </script>
-            """.format(url=url)
+        output_id = JupyterNotebookContext._rand_string()
+        success_message = """
+            var div = document.createElement("div");
+            div.style.color = 'darkblue';
+            div.textContent = 'Datalore Plot JS successfully loaded.';
+            document.getElementById("{id}").appendChild(div);
+        """.format(id=output_id) if verbose else ""
 
-    def _configure_embedded_script(self) -> str:
+        return """
+            <div id="{id}"></div>
+            <script type="text/javascript">
+                if(!window.datalorePlotCallQueue) {{
+                    window.datalorePlotCallQueue = [];
+                }}; 
+                window.datalorePlotCall = function(f) {{
+                    window.datalorePlotCallQueue.push(f);
+                }};
+                (function() {{
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "{url}";
+                    script.onload = function() {{
+                        window.datalorePlotCall = function(f) {{f();}};
+                        window.datalorePlotCallQueue.forEach(function(f) {{f();}});
+                        window.datalorePlotCallQueue = [];
+                        {success_message}
+                    }};
+                    script.onerror = function(event) {{
+                        window.datalorePlotCall = function(f) {{}};    // noop
+                        window.datalorePlotCallQueue = [];
+                        var div = document.createElement("div");
+                        div.style.color = 'darkred';
+                        div.textContent = 'Error loading Datalore Plot JS';
+                        document.getElementById("{id}").appendChild(div);
+                    }};
+                    var e = document.getElementById("{id}");
+                    e.appendChild(script);
+                }})()
+            </script>
+            """.format(id=output_id, url=url, success_message=success_message)
+
+    @staticmethod
+    def _configure_embedded_script(verbose: bool) -> str:
         js_name = "datalore-plot-latest.min.js"
         path = os.path.join("package_data", js_name)
         js_code = pkgutil.get_data("datalore_plot", path).decode("utf-8")
-        lib_js = """
+        success_message = '<div style="color:darkblue;">Datalore Plot JS is embedded.</div>' if verbose else ""
+
+        return """
+            <script type="text/javascript">
+                window.datalorePlotCall = function(f) {{f();}};
                 console.log('Embedding: {js_name}');
                 
                 {js_code}
-            """.format(js_code=js_code, js_name=js_name)
-        return self._wrap_in_script_element(lib_js)
-
-    def _undef_modules_script(self) -> str:
-        pass
+            </script>
+            {success_message}
+            """.format(js_code=js_code, js_name=js_name, success_message=success_message)
 
     @staticmethod
-    def _wrap_in_script_element(script: str) -> str:
-        return """\
-                    <script type="text/javascript">
-                        {script}
-                    </script>
-                """.format(script=script)
-
-    def _check_js_loaded_script(self) -> str:
+    def _rand_string(size=6) -> str:
         alphabet = string.ascii_letters + string.digits
         # noinspection PyShadowingBuiltins
-        id = ''.join([random.choice(alphabet) for _ in range(6)])
-        return """\
-            <div id="{id}"></div>
-            <script type="text/javascript">
-                var e = document.getElementById("{id}");
-                if(typeof DatalorePlot === 'undefined') {{
-                    e.style.color = 'darkred';
-                    e.textContent = 'Datalore Plot JS{embedded} was not loaded!';
-                }} else {{
-                    e.style.color = 'darkblue';
-                    e.textContent = 'Datalore Plot JS{embedded} successfully loaded.';
-                }}
-            </script>
-                """.format(id=id, embedded="" if self.connected else " (embedded)")
+        return ''.join([random.choice(alphabet) for _ in range(size)])
