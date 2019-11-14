@@ -16,6 +16,11 @@
  - `git add --all && git commit -m "Updated version vX.X.X" && git push`
  - `git tag vX.X.X && git push --tags`
 
+##### 4. Add the [GitHub](https://github.com/JetBrains/datalore-plot/releases/new) release:
+
+* Fill `Tag version` and `Release title` with current version `vX.X.X`
+* Fill a description field with new changes from the CHANGELOG.md
+
 ##### 4. Prepare to the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev"_:
 
  - `version` and `js_artifact_version` in `build.gradle` 
