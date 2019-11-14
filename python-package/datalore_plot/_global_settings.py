@@ -8,7 +8,7 @@ from ._version import __version__
 
 _settings = {
     'offline': False,  # default: download from CDN
-    'js_base_url': 'http://dl.bintray.com/jetbrains/datalore-plot',
+    'js_base_url': 'https://dl.bintray.com/jetbrains/datalore-plot',
     'js_name': '',  # default: datalore-plot-<version>.min.js
 
     'dev_offline': True,  # default: embed js into the notebook
