@@ -160,13 +160,13 @@ class MapIdAndGeoPointDataProcessingTest {
         private const val OSM_ID_STRING = "123456"
         private val LONLAT_MERCATOR_GEO_COORD = explicitVec<LonLat>(0.0, 0.0)
 
-        private fun createMapObject(dataPointKind: DataPointKind, mapIdDataKind: MapIdDataKind): MapObjectBuilder? {
+        private fun createMapObject(dataPointKind: DataPointKind, mapIdDataKind: MapIdDataKind): MapEntityBuilder? {
             val mapObjects = createProcessorBuilder(
                 dataPointKind,
                 mapIdDataKind
             )
                 .build()
-                .mapObjectBuilders
+                .mapEntityBuilders
 
             return if (mapObjects.isNotEmpty()) mapObjects[0] else null
         }

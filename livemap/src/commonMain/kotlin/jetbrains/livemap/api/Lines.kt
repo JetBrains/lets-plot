@@ -100,20 +100,20 @@ class LineBuilder(
         return if (horizontal) {
             listOf(
                 point.transform(
-                    fx = { mapRect.scalarLeft }
+                    newX = { mapRect.scalarLeft }
                 ),
                 point.transform(
-                    fx = { mapRect.scalarRight }
+                    newX = { mapRect.scalarRight }
                 )
 
             )
         } else {
             listOf(
                 point.transform(
-                    fy = { mapRect.scalarTop }
+                    newY = { mapRect.scalarTop }
                 ),
                 point.transform(
-                    fy = { mapRect.scalarBottom }
+                    newY = { mapRect.scalarBottom }
                 )
             )
         }

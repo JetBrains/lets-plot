@@ -47,9 +47,9 @@ operator fun <TypeT> Vec<TypeT>.div(scale: Double): Vec<TypeT> = Vec(x / scale, 
 operator fun <TypeT> Vec<TypeT>.unaryMinus(): Vec<TypeT> = Vec(-x, -y)
 
 fun <TypeT> Vec<TypeT>.transform(
-    fx: (Scalar<TypeT>) -> Scalar<TypeT> = { it },
-    fy: (Scalar<TypeT>) -> Scalar<TypeT> = { it }
-) = Vec<TypeT>(fx(scalarX).value, fy(scalarY).value)
+    newX: (Scalar<TypeT>) -> Scalar<TypeT> = { it },
+    newY: (Scalar<TypeT>) -> Scalar<TypeT> = { it }
+) = Vec<TypeT>(newX(scalarX).value, newY(scalarY).value)
 
 operator fun <T> Scalar<T>.plus(other: Scalar<T>): Scalar<T> = Scalar(value + other.value)
 operator fun <T> Scalar<T>.minus(other: Scalar<T>): Scalar<T> = Scalar(value - other.value)

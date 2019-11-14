@@ -44,21 +44,21 @@ internal class MapObjectMatcher {
     private var arrowSpec = Expectation.any<ArrowSpec>()
     private var animation = Expectation.any<Int>()
 
-    fun match(mapObject: MapObjectBuilder) {
-        when (mapObject.myLayerKind) {
-            PIE -> matchPieSector(mapObject)
-            BAR -> matchBar(mapObject)
+    fun match(mapEntity: MapEntityBuilder) {
+        when (mapEntity.myLayerKind) {
+            PIE -> matchPieSector(mapEntity)
+            BAR -> matchBar(mapEntity)
             // HEATMAP -> matchHeatmap(mapObject)
-            V_LINE, H_LINE -> matchLine(mapObject)
-            PATH -> matchPath(mapObject)
-            POINT -> matchPoint(mapObject)
-            POLYGON -> matchPolygon(mapObject)
-            TEXT -> matchText(mapObject)
-            else -> throw IllegalStateException("Unknown map object type: ${mapObject::class.simpleName}" )
+            V_LINE, H_LINE -> matchLine(mapEntity)
+            PATH -> matchPath(mapEntity)
+            POINT -> matchPoint(mapEntity)
+            POLYGON -> matchPolygon(mapEntity)
+            TEXT -> matchText(mapEntity)
+            else -> throw IllegalStateException("Unknown map object type: ${mapEntity::class.simpleName}" )
         }
     }
 
-    private fun matchPieSector(pieSector: MapObjectBuilder) {
+    private fun matchPieSector(pieSector: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(pieSector))
         regionId.assertExpectation(pieSector.regionId)
         index.assertExpectation(pieSector.index)
@@ -71,7 +71,7 @@ internal class MapObjectMatcher {
         point.assertExpectation(pieSector.point)
     }
 
-    private fun matchBar(bar: MapObjectBuilder) {
+    private fun matchBar(bar: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(bar))
         regionId.assertExpectation(bar.regionId)
         index.assertExpectation(bar.index)
@@ -83,7 +83,7 @@ internal class MapObjectMatcher {
         point.assertExpectation(bar.point)
     }
 
-    private fun matchHeatmap(heatmap: MapObjectBuilder) {
+    private fun matchHeatmap(heatmap: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(heatmap))
         regionId.assertExpectation(heatmap.regionId)
         index.assertExpectation(heatmap.index)
@@ -92,7 +92,7 @@ internal class MapObjectMatcher {
         point.assertExpectation(heatmap.point)
     }
 
-    private fun matchLine(line: MapObjectBuilder) {
+    private fun matchLine(line: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(line))
         regionId.assertExpectation(line.regionId)
         index.assertExpectation(line.index)
@@ -102,7 +102,7 @@ internal class MapObjectMatcher {
         point.assertExpectation(line.point)
     }
 
-    private fun matchPath(path: MapObjectBuilder) {
+    private fun matchPath(path: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(path))
         regionId.assertExpectation(path.regionId)
         index.assertExpectation(path.index)
@@ -116,7 +116,7 @@ internal class MapObjectMatcher {
         animation.assertExpectation(path.animation)
     }
 
-    private fun matchPoint(mapPoint: MapObjectBuilder) {
+    private fun matchPoint(mapPoint: MapEntityBuilder) {
         //locationBoundingBoxes.assertExpectation(calculateBBoxes(mapPoint))
         regionId.assertExpectation(mapPoint.regionId)
         index.assertExpectation(mapPoint.index)
@@ -130,7 +130,7 @@ internal class MapObjectMatcher {
         animation.assertExpectation(mapPoint.animation)
     }
 
-    private fun matchPolygon(polygon: MapObjectBuilder) {
+    private fun matchPolygon(polygon: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(polygon))
         regionId.assertExpectation(polygon.regionId)
         index.assertExpectation(polygon.index)
@@ -141,7 +141,7 @@ internal class MapObjectMatcher {
         //geometry.assertExpectation(polygon.geometry!!)
     }
 
-    private fun matchText(text: MapObjectBuilder) {
+    private fun matchText(text: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(text))
         regionId.assertExpectation(text.regionId)
         index.assertExpectation(text.index)

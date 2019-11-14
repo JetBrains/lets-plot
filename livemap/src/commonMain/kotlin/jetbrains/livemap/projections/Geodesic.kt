@@ -39,8 +39,8 @@ private fun addArcPointsToPath(path: MutableList<LonLatPoint>, start: LonLatPoin
         //the shortest path through North/South pole
         val sign = if (start.scalarY + finish.scalarY >= 0) +1.0 else -1.0
         val latitude = sign * STRAIGHT_ANGLE / 2.0
-        path.add(start.transform(fy = { Scalar(latitude) }))
-        path.add(finish.transform(fy = { Scalar(latitude) }))
+        path.add(start.transform(newY = { Scalar(latitude) }))
+        path.add(finish.transform(newY = { Scalar(latitude) }))
         return
     }
 

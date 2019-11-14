@@ -36,11 +36,11 @@ class LiveMapLocation(private val myViewport: Viewport, private val myMapProject
         when {
             worldCoord.x > worldSize.x -> {
                 shift = explicitVec<LonLat>(FULL_LONGITUDE, 0.0)
-                coord = worldCoord.transform(fx = { it - worldSize.scalarX })
+                coord = worldCoord.transform(newX = { it - worldSize.scalarX })
             }
             worldCoord.x < 0 -> {
                 shift = explicitVec<LonLat>(-FULL_LONGITUDE, 0.0)
-                coord = worldSize.transform(fx = { it + worldSize.scalarX })
+                coord = worldSize.transform(newX = { it + worldSize.scalarX })
             }
             else -> {
                 shift = explicitVec<LonLat>(0.0, 0.0)

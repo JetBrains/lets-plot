@@ -105,7 +105,7 @@ object GeoUtils {
         val dimension = EARTH_RECT.dimension * (1.0 / getTileCount(quadKey.string.length))
 
         val flipY = EARTH_RECT.scalarBottom - (origin.scalarY + dimension.scalarY - EARTH_RECT.scalarTop)
-        return Rect(origin.transform(fy = { flipY }), dimension)
+        return Rect(origin.transform(newY = { flipY }), dimension)
     }
 
     fun <TypeT> getTileOrigin(mapRect: Rect<TypeT>, tileKey: String): Vec<TypeT> {

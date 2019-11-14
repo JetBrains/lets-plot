@@ -79,42 +79,37 @@ internal class LiveMapSpecBuilder {
     fun build(): LiveMapSpec {
         val projectionType = convertProjectionType(myLiveMapOptions.projection)
 
-        val liveMapProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myLiveMapOptions)
 
-        val layerProcessor = LayerDataPointAestheticsProcessor(myLiveMapOptions.geodesic)
+        val liveMapLayerProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myLiveMapOptions)
+        val geomLayersProcessor = LayerDataPointAestheticsProcessor(myLiveMapOptions.geodesic)
 
-        val layersBuilderBlocks: ArrayList<LayersBuilder.() -> Unit> = ArrayList()
-        layersBuilderBlocks.add(liveMapProcessor.createBlock())
-
-        for (layerData in myLayers) {
-            layersBuilderBlocks.add(layerProcessor.createBlock(layerData))
-        }
+        val layersConfigurators: ArrayList<LayersBuilder.() -> Unit> = ArrayList()
+        layersConfigurators.add(liveMapLayerProcessor.createConfigurator())
+        layersConfigurators.addAll(myLayers.map(geomLayersProcessor::createConfigurator))
 
         return LiveMapSpec(
-            liveMapGeocoding {
+            geocodingService = liveMapGeocoding {
                 host = "geo.datalore.io"
                 port = null
             },
-            mySize,
-            myLiveMapOptions.scaled,
-            myLiveMapOptions.interactive,
-            myLiveMapOptions.magnifier,
-            myLiveMapOptions.clustering,
-            myLiveMapOptions.labels,
-            DEFAULT_SHOW_TILES,
-            false, //liveMapProcessor.heatMapWithFrame(),
-            projectionType,
-            createMapLocation(myLiveMapOptions.location),
-            myLiveMapOptions.zoom,
-            getFeatureLevel(myLiveMapOptions.featureLevel),
-            createMapRegion(myLiveMapOptions.parent),
-            LayerProviderImpl(myDevParams) {
-                layersBuilderBlocks.forEach { block -> block() }
-            },
-            CYLINDRICAL_PROJECTIONS.contains(projectionType),
-            DEFAULT_LOOP_Y,
-            myMapLocationConsumer,
-            myDevParams
+            size = mySize,
+            isScaled = myLiveMapOptions.scaled,
+            isInteractive = myLiveMapOptions.interactive,
+            isEnableMagnifier = myLiveMapOptions.magnifier,
+            isClustering = myLiveMapOptions.clustering,
+            isLabels = myLiveMapOptions.labels,
+            isTiles = DEFAULT_SHOW_TILES,
+            isUseFrame = false, //liveMapProcessor.heatMapWithFrame(),
+            projectionType = projectionType,
+            location = createMapLocation(myLiveMapOptions.location),
+            zoom = myLiveMapOptions.zoom,
+            level = getFeatureLevel(myLiveMapOptions.featureLevel),
+            parent = createMapRegion(myLiveMapOptions.parent),
+            layerProvider = LayerProviderImpl(myDevParams) { layersConfigurators.forEach { it() } },
+            isLoopX = CYLINDRICAL_PROJECTIONS.contains(projectionType),
+            isLoopY = DEFAULT_LOOP_Y,
+            mapLocationConsumer = myMapLocationConsumer,
+            devParams = myDevParams
         )
     }
 
@@ -209,50 +204,28 @@ internal class LiveMapSpecBuilder {
         }
 
         private fun createMapRegion(region: Any?): MapRegion? {
-            when (region) {
-                null -> return null
+            return when (region) {
+                null -> null
                 is Map<*, *> -> {
                     val handlerMap = HashMap<String, (Any) -> MapRegion>()
                     handlerMap[REGION_TYPE_NAME] = { data -> MapRegion.withName(data as String) }
-                    handlerMap[REGION_TYPE_IDS] = {
-                        getWithIdList(
-                            it
-                        )
-                    }
-                    return handleRegionObject(
-                        (region as Map<*, *>?)!!,
-                        handlerMap
-                    )
+                    handlerMap[REGION_TYPE_IDS] = { getWithIdList(it) }
+                    handleRegionObject((region as Map<*, *>?)!!, handlerMap)
                 }
                 else -> throw IllegalArgumentException("Expected: parent" + " = [String]")
             }
         }
 
         private fun createMapLocation(location: Any?): MapLocation? {
-            when (location) {
-                null -> return null
+            return when (location) {
+                null -> null
                 is Map<*, *> -> {
                     val handlerMap = HashMap<String, (Any) -> MapLocation>()
                     handlerMap[REGION_TYPE_NAME] = { data -> MapLocation.create(MapRegion.withName(data as String)) }
-                    handlerMap[REGION_TYPE_IDS] = { data -> MapLocation.create(
-                        getWithIdList(data)
-                    ) }
-                    handlerMap[REGION_TYPE_COORDINATES] =
-                        { data -> MapLocation.create(
-                            calculateGeoRectangle(
-                                data as List<*>
-                            )
-                        ) }
-                    handlerMap[REGION_TYPE_DATAFRAME] =
-                        { data -> MapLocation.create(
-                            calculateGeoRectangle(
-                                data as Map<*, *>
-                            )
-                        ) }
-                    return handleRegionObject(
-                        (location as Map<*, *>?)!!,
-                        handlerMap
-                    )
+                    handlerMap[REGION_TYPE_IDS] = { data -> MapLocation.create(getWithIdList(data)) }
+                    handlerMap[REGION_TYPE_COORDINATES] = { data -> MapLocation.create(calculateGeoRectangle(data as List<*>)) }
+                    handlerMap[REGION_TYPE_DATAFRAME] = { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
+                    handleRegionObject((location as Map<*, *>?)!!, handlerMap)
                 }
                 else -> throw IllegalArgumentException("Expected: locatiobn" + " = [String|Array|DataFrame]")
             }

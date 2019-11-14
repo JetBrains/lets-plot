@@ -41,61 +41,42 @@ object LiveMapUtil {
 //        return TooltipAesSpec.create(aesList, emptyList<T>(), dataAccess)
 //    }
 
-    internal fun createLayersBuilderBlock(layerKind: MapLayerKind, mapObjectBuilders: List<MapObjectBuilder>): LayersBuilder.() -> Unit {
-        return {
-            when(layerKind) {
-                MapLayerKind.POINT -> points {
-                    for (builder in mapObjectBuilders) {
-                        builder
-                            .createPointBlock()
-                            ?.run(::point)
-                    }
-                }
-                MapLayerKind.POLYGON -> polygons {
-                    for (builder in mapObjectBuilders) {
-                        polygon(
-                            builder.createPolygonBlock()
-                        )
-                    }
-                }
-                MapLayerKind.PATH -> paths {
-                    for (builder in mapObjectBuilders) {
-                        builder.createPathBlock()?.let(::path)
-                    }
-                }
-
-                MapLayerKind.V_LINE -> vLines {
-                    for (builder in mapObjectBuilders) {
-                        builder.createLineBlock()?.let(::line)
-                    }
-                }
-
-                MapLayerKind.H_LINE -> hLines {
-                    for (builder in mapObjectBuilders) {
-                        builder.createLineBlock()?.let(::line)
-                    }
-                }
-
-                MapLayerKind.TEXT -> texts {
-                    for (builder in mapObjectBuilders) {
-                        builder.createTextBlock()?.let(::text)
-                    }
-                }
-
-                MapLayerKind.PIE -> pies {
-                    for (builder in mapObjectBuilders) {
-                        builder.createChartBlock()?.let(::pie)
-                    }
-                }
-
-                MapLayerKind.BAR -> bars {
-                    for (builder in mapObjectBuilders) {
-                        builder.createChartBlock()?.let(::bar)
-                    }
-                }
-
-                else -> error("Unsupported layer kind: $layerKind")
+    internal fun createLayersConfigurator(
+        layerKind: MapLayerKind,
+        entityBuilders: List<MapEntityBuilder>
+    ): LayersBuilder.() -> Unit = {
+        when (layerKind) {
+            MapLayerKind.POINT -> points {
+                entityBuilders.forEach { it.toPointBuilder()?.run(::point) }
             }
+            MapLayerKind.POLYGON -> polygons {
+                entityBuilders.forEach { polygon(it.createPolygonConfigurator()) }
+            }
+            MapLayerKind.PATH -> paths {
+                entityBuilders.forEach { it.toPathBuilder()?.let(::path) }
+            }
+
+            MapLayerKind.V_LINE -> vLines {
+                entityBuilders.forEach { it.toLineBuilder()?.let(::line) }
+            }
+
+            MapLayerKind.H_LINE -> hLines {
+                entityBuilders.forEach { it.toLineBuilder()?.let(::line) }
+            }
+
+            MapLayerKind.TEXT -> texts {
+                entityBuilders.forEach { it.toTextBuilder()?.let(::text) }
+            }
+
+            MapLayerKind.PIE -> pies {
+                entityBuilders.forEach { it.toChartBuilder()?.let(::pie) }
+            }
+
+            MapLayerKind.BAR -> bars {
+                entityBuilders.forEach { it.toChartBuilder()?.let(::bar) }
+            }
+
+            else -> error("Unsupported layer kind: $layerKind")
         }
     }
 

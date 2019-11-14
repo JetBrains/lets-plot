@@ -81,9 +81,9 @@ object ProjectionUtil {
     private fun <TypeT> rectToPolygon(rect: Rect<TypeT>): List<Vec<TypeT>> {
         val points = ArrayList<Vec<TypeT>>()
         points.add(rect.origin)
-        points.add(rect.origin.transform(fx = { it + rect.scalarWidth }))
+        points.add(rect.origin.transform(newX = { it + rect.scalarWidth }))
         points.add(rect.origin + rect.dimension)
-        points.add(rect.origin.transform(fy = { it + rect.scalarHeight }))
+        points.add(rect.origin.transform(newY = { it + rect.scalarHeight }))
         points.add(rect.origin)
         return points
     }
