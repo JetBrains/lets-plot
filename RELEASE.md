@@ -88,5 +88,4 @@ run `./gradlew js-package:publishJS`
 
 ### After release
 
- - test published artifacts
  - remove build directory `datalore-plot-release`
