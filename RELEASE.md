@@ -16,17 +16,12 @@
  - `git add --all && git commit -m "Updated version vX.X.X" && git push`
  - `git tag vX.X.X && git push --tags`
 
-##### 4. Add the [GitHub](https://github.com/JetBrains/datalore-plot/releases/new) release:
-
-* Fill `Tag version` and `Release title` with current version `vX.X.X`
-* Fill a description field with new changes from the CHANGELOG.md
-
-##### 5. Prepare to the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev"_:
+##### 4. Prepare to the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev"_:
 
  - `version` and `js_artifact_version` in `build.gradle` 
  - `__version__` in `python-package/datalore_plot/_version.py`
 
-##### 6. Push new dev version to GitHub.
+##### 5. Push new dev version to GitHub.
 
 
  
@@ -80,6 +75,15 @@ run `./gradlew js-package:publishJS`
  - for production (pypi.org):
  
  `./gradlew python-package-build:publishProdPythonPackage`
+ 
+ 
+### Add the GitHub release:
+ 
+ * Open the link: https://github.com/JetBrains/datalore-plot/releases/new
+ * Fill `Tag version` and `Release title` with released version `vX.X.X`
+ * Fill a description field with the new changes from the CHANGELOG.md
+ 
+
 
 
 ### After release
