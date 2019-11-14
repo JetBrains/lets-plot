@@ -21,12 +21,12 @@
 * Fill `Tag version` and `Release title` with current version `vX.X.X`
 * Fill a description field with new changes from the CHANGELOG.md
 
-##### 4. Prepare to the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev"_:
+##### 5. Prepare to the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev"_:
 
  - `version` and `js_artifact_version` in `build.gradle` 
  - `__version__` in `python-package/datalore_plot/_version.py`
 
-##### 5. Push new dev version to GitHub.
+##### 6. Push new dev version to GitHub.
 
 
  
