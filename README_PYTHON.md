@@ -65,7 +65,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 + theme(axis_line_y='blank')
 ````
 
-<img src="https://github.com/alshan/jupyter-examples/blob/master/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
+<img src="https://raw.githubusercontent.com/alshan/jupyter-examples/master/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
 
 
 ### Examples
