@@ -5,8 +5,6 @@
 import base64
 import io
 
-import numpy as np
-
 from .core import aes
 from .geom import _geom
 from .util import as_boolean
@@ -16,6 +14,12 @@ try:
     import png
 except ImportError:
     png = None
+
+try:
+    import numpy
+except ImportError:
+    numpy = None
+
 
 __all__ = ['geom_image']
 
@@ -149,7 +153,7 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None, to_png=False):
 
     if to_png:
         # set output type to int8 - pypng produces broken colors with other types
-        scale = np.vectorize(scaler, otypes=[np.int8])
+        scale = numpy.vectorize(scaler, otypes=[numpy.int8])
         # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..], or pypng will fail
         image_2d = scale(image_data).reshape(-1, width * nchannels)
 
