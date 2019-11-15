@@ -16,6 +16,7 @@ import jetbrains.livemap.core.ecs.AnimationObjectComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.TransformComponent
+import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
@@ -39,7 +40,7 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_point")
         .addComponents {
-            + layerManager.createRenderLayerComponent("geom_point")
+            + layerManager.createRenderLayerComponent("geom_point", LayerGroup.FEATURES)
             + layerEntitiesComponent
         }
 

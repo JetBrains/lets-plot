@@ -46,7 +46,6 @@ internal class MapLayerGeocodingHelper(
     private val myOsmIdLocationMap = HashMap<String, GeoRectangle>()
     private val myOsmIdBBoxMap = HashMap<String, GeoRectangle>()
 
-
     val osmIdBBoxMap: Map<String, GeoRectangle>
         get() = myOsmIdBBoxMap
 

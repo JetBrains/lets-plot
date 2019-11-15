@@ -10,8 +10,10 @@ import javafx.scene.Group
 import javafx.scene.Scene
 import javafx.stage.Stage
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
+import jetbrains.gis.geoprotocol.FeatureLevel
+import jetbrains.gis.geoprotocol.MapRegion
+import jetbrains.livemap.api.geocodingHint
 import jetbrains.livemap.api.location
 
 class FeaturesRawJfxDemo : Application() {
@@ -22,7 +24,11 @@ class FeaturesRawJfxDemo : Application() {
         FeaturesDemoModel(dim.toDoubleVector()).show(javafxCanvasControl) {
             zoom = 7
             location {
-                coordinate = explicitVec(-28.040425552368188, 19.495652295894907)
+                geocodingHint {
+                    parent = MapRegion.withName("Russia")
+                    level = FeatureLevel.CITY
+                }
+                name = "Moscow"
             }
         }
 

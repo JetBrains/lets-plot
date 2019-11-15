@@ -37,10 +37,10 @@ import jetbrains.livemap.core.multitasking.AsyncMicroTaskExecutorFactory
 import jetbrains.livemap.core.multitasking.MicroTaskExecutor
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.core.multitasking.SyncMicroTaskExecutor
+import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.layers.LayerManagers.createLayerManager
 import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
-import jetbrains.livemap.core.rendering.layers.RenderLayer
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.effects.GrowingPath
@@ -87,7 +87,6 @@ class LiveMap(
     private lateinit var myEcsController: EcsController
     private lateinit var myContext: LiveMapContext
     private lateinit var myLayerRenderingSystem: LayersRenderingSystem
-    private lateinit var myLayersOrder: List<RenderLayer>
     private lateinit var myLayerManager: LayerManager
     private lateinit var myDiagnostics: Diagnostics
     private lateinit var mySchedulerSystem: SchedulerSystem
@@ -131,13 +130,12 @@ class LiveMap(
     }
 
     private fun init(componentManager: EcsComponentManager) {
-        initLayers(myLayerManager, componentManager)
+        initLayers(componentManager)
         initSystems(componentManager)
         initCamera(componentManager)
         myDiagnostics = if (myDevParams.isSet(PERF_STATS)) {
             LiveMapDiagnostics(
                 isLoading,
-                myLayersOrder,
                 myLayerRenderingSystem,
                 mySchedulerSystem,
                 myContext.metricsService,
@@ -155,7 +153,7 @@ class LiveMap(
             AUTO, BACKGROUND -> AsyncMicroTaskExecutorFactory.create()
         } ?: SyncMicroTaskExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
 
-
+        myLayerRenderingSystem = myLayerManager.createLayerRenderingSystem()
         mySchedulerSystem = SchedulerSystem(microTaskExecutor, componentManager)
         myEcsController = EcsController(
             componentManager,
@@ -247,14 +245,11 @@ class LiveMap(
         }
     }
 
-    private fun initLayers(layerManager: LayerManager, componentManager: EcsComponentManager) {
-        // layers
-        myLayersOrder = layerManager.createLayersOrderComponent().renderLayers
-        myLayerRenderingSystem = layerManager.createLayerRenderingSystem()
+    private fun initLayers(componentManager: EcsComponentManager) {
 
         componentManager
             .createEntity("layers_order")
-            .addComponents { + layerManager.createLayersOrderComponent() }
+            .addComponents { + myLayerManager.createLayersOrderComponent() }
 
         if (myDevParams.isNotSet(RASTER_TILES)) {
             componentManager
@@ -262,7 +257,7 @@ class LiveMap(
                 .addComponents {
                     + CellLayerComponent(CellLayerKind.WORLD)
                     + LayerEntitiesComponent()
-                    + layerManager.createRenderLayerComponent("ground")
+                    + myLayerManager.createRenderLayerComponent("ground", LayerGroup.BACKGROUND)
                 }
         } else {
             componentManager
@@ -271,13 +266,13 @@ class LiveMap(
                     + CellLayerComponent(CellLayerKind.RASTER)
                     + RasterTileLayerComponent()
                     + LayerEntitiesComponent()
-                    + layerManager.createRenderLayerComponent("http_ground")
+                    + myLayerManager.createRenderLayerComponent("http_ground", LayerGroup.BACKGROUND)
                 }
         }
 
         myLayerProvider.provide(
             componentManager,
-            layerManager,
+            myLayerManager,
             myMapProjection,
             myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d
         )
@@ -288,7 +283,7 @@ class LiveMap(
                 .addComponents {
                     + CellLayerComponent(CellLayerKind.LABEL)
                     + LayerEntitiesComponent()
-                    + layerManager.createRenderLayerComponent("labels")
+                    + myLayerManager.createRenderLayerComponent("labels", LayerGroup.FOREGROUND)
                 }
         }
 
@@ -299,7 +294,7 @@ class LiveMap(
                     + CellLayerComponent(CellLayerKind.DEBUG)
                     + DebugCellLayerComponent()
                     + LayerEntitiesComponent()
-                    + layerManager.createRenderLayerComponent("debug")
+                    + myLayerManager.createRenderLayerComponent("debug", LayerGroup.FOREGROUND)
                 }
         }
 
@@ -307,7 +302,7 @@ class LiveMap(
             .createEntity("layer_ui")
             .addComponents {
                 + UiRenderingTaskSystem.UiLayerComponent()
-                + layerManager.createRenderLayerComponent("ui")
+                + myLayerManager.createRenderLayerComponent("ui", LayerGroup.UI)
             }
     }
 

@@ -7,6 +7,6 @@ package jetbrains.livemap.core.rendering.layers
 
 interface LayerManager {
     fun createLayerRenderingSystem(): LayersRenderingSystem
-    fun createRenderLayerComponent(name: String): RenderLayerComponent
+    fun createRenderLayerComponent(name: String, group: LayerGroup): RenderLayerComponent
     fun createLayersOrderComponent(): LayersOrderComponent
 }

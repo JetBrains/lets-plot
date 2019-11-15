@@ -68,7 +68,7 @@ object Mocks {
 
         override fun apply() {
             val changedFragmentsComponent =
-                componentManager.getSingletonComponent<ChangedFragmentsComponent>()
+                componentManager.getSingleton<ChangedFragmentsComponent>()
             changedFragmentsComponent.setToAdd(myRequested)
             changedFragmentsComponent.setToRemove(myObsolete)
         }
@@ -101,7 +101,7 @@ object Mocks {
         }
 
         override fun apply() {
-            val component = componentManager.getSingletonComponent<EmptyFragmentsComponent>()
+            val component = componentManager.getSingleton<EmptyFragmentsComponent>()
             component.addAll(myEmptyFragments)
         }
     }
@@ -111,7 +111,7 @@ object Mocks {
         private val myRemovedFragments = HashSet<FragmentKey>()
 
         override fun apply() {
-            val cachedFragmentsComponent = componentManager.getSingletonComponent<CachedFragmentsComponent>()
+            val cachedFragmentsComponent = componentManager.getSingleton<CachedFragmentsComponent>()
             myAddedFragments.forEach(cachedFragmentsComponent::store)
             myRemovedFragments.forEach(cachedFragmentsComponent::dispose)
         }
@@ -131,7 +131,7 @@ object Mocks {
         }
 
         fun none(): MockSpec {
-            myRemovedFragments.addAll(componentManager.getSingletonComponent<CachedFragmentsComponent>().keys())
+            myRemovedFragments.addAll(componentManager.getSingleton<CachedFragmentsComponent>().keys())
             return this
         }
     }
@@ -152,7 +152,7 @@ object Mocks {
 
         override fun apply() {
             val emittedFragmentsComponent =
-                componentManager.getSingletonComponent<EmittedFragmentsComponent>()
+                componentManager.getSingleton<EmittedFragmentsComponent>()
             emittedFragmentsComponent.setEmitted(myReceivedFragments)
         }
     }
@@ -172,7 +172,7 @@ object Mocks {
         }
 
         override fun apply() {
-            val component = componentManager.getSingletonComponent<CameraUpdateComponent>()
+            val component = componentManager.getSingleton<CameraUpdateComponent>()
             if (myNone) {
                 myNone = false
                 component.nothing()
@@ -191,7 +191,7 @@ object Mocks {
         }
 
         override fun apply() {
-            val cameraComponent = componentManager.getSingletonComponent<CameraComponent>()
+            val cameraComponent = componentManager.getSingleton<CameraComponent>()
             myZoom?.let { cameraComponent.zoom = it }
         }
     }
@@ -209,7 +209,7 @@ object Mocks {
         }
 
         override fun apply() {
-            val component = componentManager.getSingletonComponent<DownloadingFragmentsComponent>()
+            val component = componentManager.getSingleton<DownloadingFragmentsComponent>()
             component.downloaded = myDownloaded
         }
 

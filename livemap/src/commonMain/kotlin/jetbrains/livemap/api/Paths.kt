@@ -14,6 +14,7 @@ import jetbrains.livemap.core.animation.Animations
 import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
@@ -36,7 +37,7 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_path")
         .addComponents {
-            + layerManager.createRenderLayerComponent("geom_path")
+            + layerManager.createRenderLayerComponent("geom_path", LayerGroup.FEATURES)
             + layerEntitiesComponent
         }
 

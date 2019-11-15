@@ -36,7 +36,7 @@ object LayerManagers {
         val singleCanvasControl = SingleCanvasControl(canvasControl)
         val rect = DoubleRectangle(DoubleVector.ZERO, canvasControl.size.toDoubleVector())
         return object : LayerManager {
-            private val myOrderedLayers = ArrayList<RenderLayer>()
+            private val myGroupedLayers = GroupedLayers()
 
             override fun createLayerRenderingSystem(): LayersRenderingSystem {
                 return LayersRenderingSystem(
@@ -57,14 +57,14 @@ object LayerManagers {
                 )
             }
 
-            override fun createRenderLayerComponent(name: String): RenderLayerComponent {
+            override fun createRenderLayerComponent(name: String, group: LayerGroup): RenderLayerComponent {
                 val renderLayer = RenderLayer(singleCanvasControl.canvas, name)
-                myOrderedLayers.add(renderLayer)
+                myGroupedLayers.add(group, renderLayer)
                 return RenderLayerComponent(renderLayer)
             }
 
             override fun createLayersOrderComponent(): LayersOrderComponent {
-                return LayersOrderComponent(myOrderedLayers)
+                return LayersOrderComponent(myGroupedLayers)
             }
         }
     }
@@ -74,7 +74,7 @@ object LayerManagers {
         val rect = DoubleRectangle(DoubleVector.ZERO, canvasControl.size.toDoubleVector())
 
         return object : LayerManager {
-            private val myOrderedLayers = ArrayList<RenderLayer>()
+            private val myGroupedLayers = GroupedLayers()
 
             override fun createLayerRenderingSystem(): LayersRenderingSystem {
                 return LayersRenderingSystem(
@@ -101,21 +101,21 @@ object LayerManagers {
                 )
             }
 
-            override fun createRenderLayerComponent(name: String): RenderLayerComponent {
+            override fun createRenderLayerComponent(name: String, group: LayerGroup): RenderLayerComponent {
                 val renderLayer = RenderLayer(singleCanvasControl.createCanvas(), name)
-                myOrderedLayers.add(renderLayer)
+                myGroupedLayers.add(group, renderLayer)
                 return RenderLayerComponent(renderLayer)
             }
 
             override fun createLayersOrderComponent(): LayersOrderComponent {
-                return LayersOrderComponent(myOrderedLayers)
+                return LayersOrderComponent(myGroupedLayers)
             }
         }
     }
 
     private fun screenLayers(canvasControl: CanvasControl, componentManager: EcsComponentManager): LayerManager {
         return object : LayerManager {
-            private val myOrderedLayers = ArrayList<RenderLayer>()
+            private val myGroupedLayers = GroupedLayers()
 
             override fun createLayerRenderingSystem(): LayersRenderingSystem {
                 return LayersRenderingSystem(
@@ -135,17 +135,17 @@ object LayerManagers {
                 )
             }
 
-            override fun createRenderLayerComponent(name: String): RenderLayerComponent {
+            override fun createRenderLayerComponent(name: String, group: LayerGroup): RenderLayerComponent {
                 val canvas = canvasControl.createCanvas(canvasControl.size)
                 canvasControl.addChild(canvas)
 
                 val renderLayer = RenderLayer(canvas, name)
-                myOrderedLayers.add(renderLayer)
+                myGroupedLayers.add(group, renderLayer)
                 return RenderLayerComponent(renderLayer)
             }
 
             override fun createLayersOrderComponent(): LayersOrderComponent {
-                return LayersOrderComponent(myOrderedLayers)
+                return LayersOrderComponent(myGroupedLayers)
             }
         }
     }

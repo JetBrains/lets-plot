@@ -116,7 +116,7 @@ class EcsComponentManager {
      * Return single component of type [ComponentT].
      * Throws exception if exists more than one component instance.
      */
-    inline fun <reified ComponentT : EcsComponent> getSingletonComponent(): ComponentT =
+    inline fun <reified ComponentT : EcsComponent> getSingleton(): ComponentT =
         getEntity(ComponentT::class).getComponent()
 
 
@@ -141,7 +141,7 @@ class EcsComponentManager {
         if (entity.hasRemoveFlag()) {
             return null
         }
-        return myComponentsByEntity.get(entity)
+        return myComponentsByEntity[entity]
     }
 
     internal fun doRemove() {

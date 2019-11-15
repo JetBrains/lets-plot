@@ -9,6 +9,7 @@ import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
@@ -32,7 +33,7 @@ private fun LayersBuilder.lines(horizontal: Boolean, block: Lines.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_line")
         .addComponents {
-            + layerManager.createRenderLayerComponent("geom_line")
+            + layerManager.createRenderLayerComponent("geom_line", LayerGroup.FEATURES)
             + layerEntitiesComponent
         }
 

@@ -43,7 +43,7 @@ object Mocks {
         }
 
         override fun apply() {
-            val component = componentManager.getSingletonComponent<CellStateComponent>()
+            val component = componentManager.getSingleton<CellStateComponent>()
             component.quadsToAdd = myToAdd
             component.quadsToRemove = myToRemove
             myVisibleQuads.forEach { (key, counter) -> component.quadsRefCounter[key] = counter }

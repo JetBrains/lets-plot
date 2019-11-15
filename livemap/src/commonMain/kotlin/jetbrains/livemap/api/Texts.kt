@@ -11,6 +11,7 @@ import jetbrains.datalore.base.projectionGeometry.times
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.ScreenOffsetComponent
@@ -31,7 +32,7 @@ fun LayersBuilder.texts(block: Texts.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_text")
         .addComponents {
-            + layerManager.createRenderLayerComponent("livemap_text")
+            + layerManager.createRenderLayerComponent("livemap_text", LayerGroup.FEATURES)
             + layerEntitiesComponent
         }
 

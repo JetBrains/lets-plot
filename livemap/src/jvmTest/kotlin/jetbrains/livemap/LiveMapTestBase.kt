@@ -64,7 +64,7 @@ abstract class LiveMapTestBase {
     }
 
    inline fun <reified ComponentT : EcsComponent> getSingletonComponent(): ComponentT {
-       return componentManager.getSingletonComponent()
+       return componentManager.getSingleton()
    }
 
     protected fun createEntity(name: String, vararg components: EcsComponent): EcsEntity {

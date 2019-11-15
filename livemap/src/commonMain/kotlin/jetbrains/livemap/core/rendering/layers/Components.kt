@@ -9,7 +9,11 @@ import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 
 class DirtyRenderLayerComponent : EcsComponent
-class LayersOrderComponent(val renderLayers: List<RenderLayer>) : EcsComponent
+
+class LayersOrderComponent(private val myGroupedLayers: GroupedLayers ) : EcsComponent {
+    val renderLayers: List<RenderLayer>
+        get() = myGroupedLayers.orderedLayers
+}
 class RenderLayerComponent(val renderLayer: RenderLayer) : EcsComponent
 class ParentLayerComponent(val layerId: Int) : EcsComponent {
 
@@ -22,5 +26,3 @@ class ParentLayerComponent(val layerId: Int) : EcsComponent {
         }
     }
 }
-fun parentLayer(layerId: Int) = ParentLayerComponent(layerId)
-

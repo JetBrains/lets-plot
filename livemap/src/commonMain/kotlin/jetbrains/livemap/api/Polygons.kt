@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
@@ -18,6 +19,7 @@ import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.regions.RegionComponent
 import jetbrains.livemap.entities.regions.RegionRenderer
 import jetbrains.livemap.entities.rendering.*
+import jetbrains.livemap.entities.rendering.Renderers.PolygonRenderer
 import jetbrains.livemap.entities.scaling.ScaleComponent
 import jetbrains.livemap.projections.Coordinates
 import jetbrains.livemap.projections.LonLatPoint
@@ -38,7 +40,7 @@ fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
     val layerEntity =  myComponentManager
         .createEntity("map_layer_polygon")
         .addComponents {
-            + layerManager.createRenderLayerComponent("geom_polygon")
+            + layerManager.createRenderLayerComponent("geom_polygon", LayerGroup.FEATURES)
             + layerEntitiesComponent
         }
 
@@ -90,7 +92,7 @@ class PolygonsBuilder {
         val bbox = GeometryUtil.bbox(geometry) ?: error("")
 
         return factory
-            .createMapEntity(bbox.origin, Renderers.PolygonRenderer(), "map_ent_s_polygon")
+            .createMapEntity(bbox.origin, PolygonRenderer(), "map_ent_s_polygon")
             .addComponents {
                 + WorldGeometryComponent().apply { this.geometry = geometry }
                 + WorldDimensionComponent(bbox.dimension)
