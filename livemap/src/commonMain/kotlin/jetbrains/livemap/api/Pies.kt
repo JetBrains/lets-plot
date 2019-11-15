@@ -26,7 +26,7 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_pie")
         .addComponents {
-            + layerManager.createRenderLayerComponent("livemap_pie", LayerGroup.FEATURES)
+            + layerManager.addLayer("livemap_pie", LayerGroup.FEATURES)
             + layerEntitiesComponent
         }
 

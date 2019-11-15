@@ -32,7 +32,7 @@ fun LayersBuilder.texts(block: Texts.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_text")
         .addComponents {
-            + layerManager.createRenderLayerComponent("livemap_text", LayerGroup.FEATURES)
+            + layerManager.addLayer("livemap_text", LayerGroup.FEATURES)
             + layerEntitiesComponent
         }
 

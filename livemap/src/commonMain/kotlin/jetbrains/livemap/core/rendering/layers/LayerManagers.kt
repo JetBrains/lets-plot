@@ -101,7 +101,7 @@ object LayerManagers {
                 )
             }
 
-            override fun createRenderLayerComponent(name: String, group: LayerGroup): RenderLayerComponent {
+            override fun addLayer(name: String, group: LayerGroup): RenderLayerComponent {
                 val renderLayer = RenderLayer(singleCanvasControl.createCanvas(), name)
                 myGroupedLayers.add(group, renderLayer)
                 return RenderLayerComponent(renderLayer)

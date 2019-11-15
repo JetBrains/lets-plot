@@ -33,7 +33,7 @@ private fun LayersBuilder.lines(horizontal: Boolean, block: Lines.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_line")
         .addComponents {
-            + layerManager.createRenderLayerComponent("geom_line", LayerGroup.FEATURES)
+            + layerManager.addLayer("geom_line", LayerGroup.FEATURES)
             + layerEntitiesComponent
         }
 

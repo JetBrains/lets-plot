@@ -21,7 +21,7 @@ class SchedulerSystem(
     }
 
     override fun updateImpl(context: EcsContext, dt: Double) {
-        if (componentManager.getComponentsCount(MicroThreadComponent::class) > 0) {
+        if (componentManager.count(MicroThreadComponent::class) > 0) {
             val microThreadEntities = getEntities(MicroThreadComponent::class).toList().asSequence()
 
             val finishedTasks = microThreadEntities

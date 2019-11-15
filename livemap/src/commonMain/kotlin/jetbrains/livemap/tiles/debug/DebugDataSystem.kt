@@ -18,7 +18,7 @@ import jetbrains.livemap.tiles.components.StatisticsComponent
 class DebugDataSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        if (!containsSingletonEntity(DebugCellLayerComponent::class)) {
+        if (!containsEntity(DebugCellLayerComponent::class)) {
             return
         }
 

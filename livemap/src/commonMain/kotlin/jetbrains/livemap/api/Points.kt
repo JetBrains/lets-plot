@@ -40,7 +40,7 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_point")
         .addComponents {
-            + layerManager.createRenderLayerComponent("geom_point", LayerGroup.FEATURES)
+            + layerManager.addLayer("geom_point", LayerGroup.FEATURES)
             + layerEntitiesComponent
         }
 

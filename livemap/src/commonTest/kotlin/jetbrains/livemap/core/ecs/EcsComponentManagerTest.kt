@@ -120,9 +120,9 @@ class EcsComponentManagerTest {
 
     @Test
     fun countComponents_WithRemovedEntities() {
-        assertEquals(3, man.getComponentsCount(Foo::class))
+        assertEquals(3, man.count(Foo::class))
         man.removeEntity(foo)
-        assertEquals(2, man.getComponentsCount(Foo::class))
+        assertEquals(2, man.count(Foo::class))
     }
 
     @Test

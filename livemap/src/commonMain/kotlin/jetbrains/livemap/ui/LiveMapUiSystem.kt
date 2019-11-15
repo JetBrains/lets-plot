@@ -30,7 +30,7 @@ class LiveMapUiSystem(
     componentManager: EcsComponentManager,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit
 ) : LiveMapSystem(componentManager) {
-    private var myLiveMapLocation: LiveMapLocation? = null
+    private lateinit var myLiveMapLocation: LiveMapLocation
     private lateinit var myZoomPlus: MutableImage
     private lateinit var myZoomMinus: MutableImage
     private lateinit var myGetCenter: MutableImage
@@ -97,7 +97,7 @@ class LiveMapUiSystem(
     private fun addListenersToGetCenterButton(button: EcsEntity) {
         val listeners = button.getComponent<EventListenerComponent>()
 
-        listeners.addClickListener { myMapLocationConsumer(myLiveMapLocation!!.viewLonLatRect) }
+        listeners.addClickListener { myMapLocationConsumer(myLiveMapLocation.viewLonLatRect) }
 
         listeners.addDoubleClickListener(InputMouseEvent::stopPropagation)
     }

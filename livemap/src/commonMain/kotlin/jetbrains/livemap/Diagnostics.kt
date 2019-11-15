@@ -14,8 +14,6 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
-import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
-import jetbrains.livemap.core.rendering.layers.RenderLayer
 import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.Text
@@ -30,12 +28,11 @@ open class Diagnostics {
 
     class LiveMapDiagnostics(
         isLoading: Property<Boolean>,
-        // private val layersOrder: List<RenderLayer>,
-        private val layerRenderingSystem: LayersRenderingSystem,
+        private val dirtyLayers: List<Int>,
         private val schedulerSystem: SchedulerSystem,
         private val debugService: MetricsService,
         uiService: UiService,
-        private val componentManager: EcsComponentManager
+        private val registry: EcsComponentManager
     ) : Diagnostics() {
 
         private val diagnostics = ArrayList<Diagnostic>()
@@ -100,9 +97,9 @@ open class Diagnostics {
                 SYSTEMS_UPDATE_TIME,
                 "Systems update: ${formatDouble(debugService.totalUpdateTime, 1)}"
             )
-            debugService.setValue(ENTITIES_COUNT, "Entities count: ${componentManager.entitiesCount}")
+            debugService.setValue(ENTITIES_COUNT, "Entities count: ${registry.entitiesCount}")
 
-            diagnostics.forEach { it.update() }
+            diagnostics.forEach(Diagnostic::update)
 
             metrics.text = debugService.values
         }
@@ -135,23 +132,14 @@ open class Diagnostics {
 
         internal inner class DirtyLayersDiagnostic : Diagnostic {
             override fun update() {
-                val dirtyLayers = ArrayList<RenderLayer>()
-                for (dirtyLayerEntity in componentManager.getEntitiesById(layerRenderingSystem.dirtyLayers)) {
-                    dirtyLayers.add(dirtyLayerEntity.get<RenderLayerComponent>().renderLayer)
-                }
+                val dirtyLayers = registry
+                    .getEntitiesById(dirtyLayers)
+                    .map { it.get<RenderLayerComponent>().renderLayer }
+                    .toSet()
+                    .intersect(registry.getSingleton<LayersOrderComponent>().renderLayers)
+                    .joinToString { it.name }
 
-                val layersOrder = componentManager.getSingleton<LayersOrderComponent>().renderLayers
-                val dirtyLayersString = StringBuilder()
-                for (renderLayer in layersOrder) {
-                    if (dirtyLayers.contains(renderLayer)) {
-                        if (dirtyLayersString.isNotEmpty()) {
-                            dirtyLayersString.append(", ")
-                        }
-                        dirtyLayersString.append(renderLayer.name)
-                    }
-                }
-
-                debugService.setValue(DIRTY_LAYERS, "Dirty layers: $dirtyLayersString")
+                debugService.setValue(DIRTY_LAYERS, "Dirty layers: $dirtyLayers")
             }
         }
 
@@ -172,7 +160,7 @@ open class Diagnostics {
         internal inner class SchedulerSystemDiagnostic : Diagnostic {
 
             override fun update() {
-                val tasksCount = componentManager.getComponentsCount(MicroThreadComponent::class)
+                val tasksCount = registry.count<MicroThreadComponent>()
                 debugService.setValue(SCHEDULER_SYSTEM, "Micro threads: $tasksCount, ${schedulerSystem.loading}")
             }
         }
@@ -180,11 +168,7 @@ open class Diagnostics {
         internal inner class FragmentsCacheDiagnostic : Diagnostic {
 
             override fun update() {
-                val size =
-                    if (componentManager.containsSingletonEntity(CachedFragmentsComponent::class))
-                        componentManager.getSingleton<CachedFragmentsComponent>().keys().size
-                    else
-                        0
+                val size = registry.tryGetSingleton<CachedFragmentsComponent>()?.keys()?.size ?: 0
 
                 debugService.setValue(FRAGMENTS_CACHE, "Fragments cache: $size")
             }
@@ -193,11 +177,7 @@ open class Diagnostics {
         internal inner class StreamingFragmentsDiagnostic : Diagnostic {
 
             override fun update() {
-                val size =
-                    if (componentManager.containsSingletonEntity(StreamingFragmentsComponent::class))
-                        componentManager.getSingleton<StreamingFragmentsComponent>().keys().size
-                    else
-                        0
+                val size = registry.tryGetSingleton<StreamingFragmentsComponent>()?.keys()?.size ?: 0
                 debugService.setValue(STREAMING_FRAGMENTS, "Streaming fragments: $size")
             }
         }
@@ -205,21 +185,11 @@ open class Diagnostics {
         internal inner class DownloadingFragmentsDiagnostic : Diagnostic {
 
             override fun update() {
-                val downloading: Int
-                val queued: Int
+                val counts = registry.tryGetSingleton<DownloadingFragmentsComponent>()
+                    ?.let { "D: ${it.downloading.size} Q: ${it.queue.values.sumBy { queue -> queue.size }}" }
+                    ?: "D: 0 Q: 0"
 
-                if (componentManager.containsSingletonEntity(DownloadingFragmentsComponent::class)) {
-                    componentManager.getSingleton<DownloadingFragmentsComponent>().let {
-                        downloading = it.downloading.size
-                        queued = it.queue.values.sumBy { queue -> queue.size }
-                    }
-
-                } else {
-                    downloading = 0
-                    queued = 0
-                }
-
-                debugService.setValue(DOWNLOADING_FRAGMENTS, "Downloading fragments: D: $downloading Q: $queued")
+                debugService.setValue(DOWNLOADING_FRAGMENTS, "Downloading fragments: $counts")
             }
         }
 

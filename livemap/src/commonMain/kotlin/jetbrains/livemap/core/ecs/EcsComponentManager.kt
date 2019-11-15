@@ -64,10 +64,10 @@ class EcsComponentManager {
     /**
      * Count number of components of type [componentType]. Components from removed entities are not counted.
      */
-    fun getComponentsCount(componentType: KClass<out EcsComponent>): Int =
+    fun count(componentType: KClass<out EcsComponent>): Int =
         myEntitiesBytComponent.get(componentType)?.notRemoved()?.count() ?: 0
 
-    fun containsSingletonEntity(componentType: KClass<out EcsComponent>): Boolean =
+    fun containsEntity(componentType: KClass<out EcsComponent>): Boolean =
         myEntitiesBytComponent.containsKey(componentType)
 
     /**
@@ -91,7 +91,7 @@ class EcsComponentManager {
         val singleton = entities.firstOrNull()
 
         check(singleton != null){ "Entity with specified components does not exist: $componentTypes" }
-        check(entities.count() == 1) { "Entity with specified components is not singleton: $componentTypes" }
+        check(entities.count() == 1) { "Entity with specified components is not a singleton: $componentTypes" }
 
         return singleton
     }
@@ -117,7 +117,16 @@ class EcsComponentManager {
      * Throws exception if exists more than one component instance.
      */
     inline fun <reified ComponentT : EcsComponent> getSingleton(): ComponentT =
-        getEntity(ComponentT::class).getComponent()
+        getSingletonEntity(ComponentT::class).getComponent()
+
+    inline fun <reified ComponentT : EcsComponent> tryGetSingleton(): ComponentT? {
+        if (containsEntity(ComponentT::class)) {
+            return getSingleton<ComponentT>()
+        }
+        return null
+    }
+
+    inline fun <reified ComponentT : EcsComponent> count(): Int = count(ComponentT::class)
 
 
     /**
@@ -169,4 +178,5 @@ class EcsComponentManager {
     private fun Sequence<EcsEntity>.notRemoved(): Sequence<EcsEntity> {
         return filterNot { it.hasRemoveFlag() }
     }
+
 }

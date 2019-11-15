@@ -136,7 +136,7 @@ class LiveMap(
         myDiagnostics = if (myDevParams.isSet(PERF_STATS)) {
             LiveMapDiagnostics(
                 isLoading,
-                myLayerRenderingSystem,
+                myLayerRenderingSystem.dirtyLayers,
                 mySchedulerSystem,
                 myContext.metricsService,
                 myUiService,
@@ -257,7 +257,7 @@ class LiveMap(
                 .addComponents {
                     + CellLayerComponent(CellLayerKind.WORLD)
                     + LayerEntitiesComponent()
-                    + myLayerManager.createRenderLayerComponent("ground", LayerGroup.BACKGROUND)
+                    + myLayerManager.addLayer("ground", LayerGroup.BACKGROUND)
                 }
         } else {
             componentManager
@@ -266,7 +266,7 @@ class LiveMap(
                     + CellLayerComponent(CellLayerKind.RASTER)
                     + RasterTileLayerComponent()
                     + LayerEntitiesComponent()
-                    + myLayerManager.createRenderLayerComponent("http_ground", LayerGroup.BACKGROUND)
+                    + myLayerManager.addLayer("http_ground", LayerGroup.BACKGROUND)
                 }
         }
 
@@ -283,7 +283,7 @@ class LiveMap(
                 .addComponents {
                     + CellLayerComponent(CellLayerKind.LABEL)
                     + LayerEntitiesComponent()
-                    + myLayerManager.createRenderLayerComponent("labels", LayerGroup.FOREGROUND)
+                    + myLayerManager.addLayer("labels", LayerGroup.FOREGROUND)
                 }
         }
 
@@ -294,7 +294,7 @@ class LiveMap(
                     + CellLayerComponent(CellLayerKind.DEBUG)
                     + DebugCellLayerComponent()
                     + LayerEntitiesComponent()
-                    + myLayerManager.createRenderLayerComponent("debug", LayerGroup.FOREGROUND)
+                    + myLayerManager.addLayer("debug", LayerGroup.FOREGROUND)
                 }
         }
 
@@ -302,7 +302,7 @@ class LiveMap(
             .createEntity("layer_ui")
             .addComponents {
                 + UiRenderingTaskSystem.UiLayerComponent()
-                + myLayerManager.createRenderLayerComponent("ui", LayerGroup.UI)
+                + myLayerManager.addLayer("ui", LayerGroup.UI)
             }
     }
 
