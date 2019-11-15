@@ -37,7 +37,7 @@ You can try the Datalore Plot library in [Datalore](https://blog.jetbrains.com/b
 
 One important difference is that the python package in Datalore is named **datalore.plot** and the package you install from PyPI has name **datalore_plot**.
 
-The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/) as a learning tool in comparison to Jupyther is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
+The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/) as a learning tool in comparison to Jupyter is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
 
 
 ### Installation
