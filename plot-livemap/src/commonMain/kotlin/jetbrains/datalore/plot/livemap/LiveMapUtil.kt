@@ -17,8 +17,10 @@ import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapCanvasFigure
 import jetbrains.livemap.LiveMapFactory
+import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.*
 import jetbrains.livemap.mapobjects.MapLayerKind
+import jetbrains.livemap.ui.Clipboard
 
 object LiveMapUtil {
 
@@ -150,8 +152,8 @@ object LiveMapUtil {
                     .dataAccess(it.dataAccess)
                     .layers(layers)
                     .devParams(DevParams(myLiveMapOptions.devParams))
-                    .mapLocationConsumer { _ ->
-                        //LiveMapClipboardProvider().get().copy(LiveMapLocation.getLocationString(locationRect))
+                    .mapLocationConsumer { locationRect ->
+                        Clipboard.copy(LiveMapLocation.getLocationString(locationRect))
                     }
             }
         }

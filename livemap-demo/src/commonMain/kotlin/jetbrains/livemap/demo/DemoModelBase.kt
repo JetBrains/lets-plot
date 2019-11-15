@@ -11,9 +11,11 @@ import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapFactory
+import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.*
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.projections.ProjectionType
+import jetbrains.livemap.ui.Clipboard
 
 abstract class DemoModelBase(private val dimension: DoubleVector) {
     fun show(canvasControl: CanvasControl, block: LiveMapBuilder.() -> Unit = {}): Registration {
@@ -56,6 +58,8 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
                 DevParams.MICRO_TASK_EXECUTOR.key to "ui_thread",
                 DevParams.PERF_STATS.key to true
             )
+
+            mapLocationConsumer = { Clipboard.copy(LiveMapLocation.getLocationString(it)) }
         }
             .apply(block)
     }
