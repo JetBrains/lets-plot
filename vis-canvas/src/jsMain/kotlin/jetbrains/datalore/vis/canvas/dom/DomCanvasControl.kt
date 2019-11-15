@@ -9,6 +9,7 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.SimpleAsync
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
+import jetbrains.datalore.base.event.dom.DomEventUtil.translateInPageCoord
 import jetbrains.datalore.base.event.dom.DomEventUtil.translateInTargetCoord
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
@@ -51,9 +52,14 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
+        val translator = when (eventSpec) {
+            MouseEventSpec.MOUSE_PRESSED, MouseEventSpec.MOUSE_DRAGGED -> ::translateInPageCoord
+            else -> ::translateInTargetCoord
+        }
+
         return eventPeer.addEventHandler(
             eventSpec,
-            handler { eventHandler.onEvent(translateInTargetCoord(it)) }
+            handler { eventHandler.onEvent(translator(it)) }
         )
     }
 
@@ -133,10 +139,15 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         }
 
         private fun handle(eventSpec: DomEventType<W3cMouseEvent>, handler: (W3cMouseEvent) -> Unit) {
-            myRootElement.addEventListener(eventSpec.name, DomEventListener<W3cMouseEvent> {
+            targetNode(eventSpec).addEventListener(eventSpec.name, DomEventListener<W3cMouseEvent> {
                 handler(it)
                 false
             })
+        }
+
+        private fun targetNode(eventSpec: DomEventType<W3cMouseEvent>): Node = when (eventSpec) {
+            DomEventType.MOUSE_MOVE, DomEventType.MOUSE_UP -> document
+            else -> myRootElement
         }
 
         override fun onSpecAdded(spec: MouseEventSpec) {}

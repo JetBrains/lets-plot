@@ -97,6 +97,10 @@ object DomEventUtil {
         return KeyModifiers(ctrlKey, altKey, shiftKey, metaKey)
     }
 
+    fun translateInPageCoord(e: DomMouseEvent): MouseEvent {
+        return MouseEvent(e.pageX.toInt(), e.pageY.toInt(), getButton(e), getModifiers(e))
+    }
+
     fun translateInClientCoord(e: DomMouseEvent): MouseEvent {
         return MouseEvent(e.clientX, e.clientY, getButton(e), getModifiers(e))
     }
