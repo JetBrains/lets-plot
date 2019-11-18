@@ -20,14 +20,10 @@ class TileFeature(
     val short: String?
 ) : TilePredicate {
 
-    override fun getFieldValue(key: String): Int {
-        if (SUB.field.equals(key, ignoreCase = true)) {
-            return mySub ?: throw IllegalStateException("sub is empty")
-        } else if (CLASS.field.equals(key, ignoreCase = true)) {
-            return myKind ?: throw IllegalStateException("kind is empty")
-        }
-
-        throw IllegalArgumentException("Unknown myKey kind: $key")
+    override fun getFieldValue(key: String): Int = when {
+        SUB.field.equals(key, ignoreCase = true) -> mySub ?: error("sub is empty")
+        CLASS.field.equals(key, ignoreCase = true) -> myKind ?: error("kind is empty")
+        else -> error("Unknown myKey kind: $key")
     }
 
     enum class FieldName (val field: String) {

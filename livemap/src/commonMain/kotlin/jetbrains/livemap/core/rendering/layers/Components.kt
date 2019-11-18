@@ -8,13 +8,13 @@ package jetbrains.livemap.core.rendering.layers
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 
-class DirtyRenderLayerComponent : EcsComponent
+class DirtyCanvasLayerComponent : EcsComponent
 
 class LayersOrderComponent(private val myGroupedLayers: GroupedLayers ) : EcsComponent {
-    val renderLayers: List<RenderLayer>
+    val canvasLayers: List<CanvasLayer>
         get() = myGroupedLayers.orderedLayers
 }
-class RenderLayerComponent(val renderLayer: RenderLayer) : EcsComponent
+class CanvasLayerComponent(val canvasLayer: CanvasLayer) : EcsComponent
 class ParentLayerComponent(val layerId: Int) : EcsComponent {
 
     companion object {
@@ -22,7 +22,7 @@ class ParentLayerComponent(val layerId: Int) : EcsComponent {
         fun tagDirtyParentLayer(entity: EcsEntity) {
             val parentLayer = entity.get<ParentLayerComponent>()
             val layer = entity.componentManager.getEntityById(parentLayer.layerId)
-            layer.tag(::DirtyRenderLayerComponent)
+            layer.tag(::DirtyCanvasLayerComponent)
         }
     }
 }

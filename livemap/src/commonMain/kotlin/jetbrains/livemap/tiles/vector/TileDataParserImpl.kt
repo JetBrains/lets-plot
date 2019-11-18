@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.tiles.vector
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Geometry
+import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.minus
 import jetbrains.gis.tileprotocol.TileGeometryParser
@@ -16,10 +16,10 @@ import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.entities.geometry.GeometryTransform
-import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.WorldProjection
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.getTileRect
 
 internal class TileDataParserImpl(private val myMapProjection: MapProjection) : TileDataParser {

@@ -10,9 +10,7 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.ProjectionUtil.convertCellKeyToQuadKeys
 import jetbrains.livemap.tiles.components.CellStateComponent
 import jetbrains.livemap.tiles.components.StatisticsComponent
 import kotlin.reflect.KClass

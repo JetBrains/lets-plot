@@ -30,10 +30,10 @@ class FragmentDownloadingSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val downloadingFragments = getSingletonComponent<DownloadingFragmentsComponent>()
-        val changedFragments = getSingletonComponent<ChangedFragmentsComponent>()
-        val streamingFragments = getSingletonComponent<StreamingFragmentsComponent>()
-        val cachedFragments = getSingletonComponent<CachedFragmentsComponent>()
+        val downloadingFragments = getSingleton<DownloadingFragmentsComponent>()
+        val changedFragments = getSingleton<ChangedFragmentsComponent>()
+        val streamingFragments = getSingleton<StreamingFragmentsComponent>()
+        val cachedFragments = getSingleton<CachedFragmentsComponent>()
 
         downloadingFragments.reduceQueue(changedFragments.obsolete)
         downloadingFragments.extendQueue(
@@ -103,7 +103,7 @@ class FragmentDownloadingSystem(
 
     private fun downloadGeometries(fragmentsToFetch: Collection<FragmentKey>) {
         val regionRequest = HashMap<String, MutableSet<QuadKey>>()
-        val fetchingFragments = getSingletonComponent<StreamingFragmentsComponent>()
+        val fetchingFragments = getSingleton<StreamingFragmentsComponent>()
 
         for (newFragment in fragmentsToFetch) {
             regionRequest.getOrPut(newFragment.regionId, ::HashSet).add(newFragment.quadKey)

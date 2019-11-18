@@ -9,8 +9,12 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.deltaOnLoop
-import jetbrains.livemap.projections.*
-import jetbrains.livemap.projections.ProjectionUtil.calculateCellKeys
+import jetbrains.livemap.projections.MapRuler
+import jetbrains.livemap.projections.World
+import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projections.WorldRectangle
+import jetbrains.livemap.tiles.CellKey
+import jetbrains.livemap.tiles.calculateCellKeys
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max

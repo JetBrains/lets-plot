@@ -6,13 +6,13 @@
 package jetbrains.livemap.core.rendering.layers
 
 class GroupedLayers {
-    private val myGroupedLayers = HashMap<LayerGroup, MutableList<RenderLayer>>()
+    private val myGroupedLayers = HashMap<LayerGroup, MutableList<CanvasLayer>>()
 
-    var orderedLayers: List<RenderLayer> = emptyList()
+    var orderedLayers: List<CanvasLayer> = emptyList()
 
-    fun add(group: LayerGroup, layer: RenderLayer) {
+    fun add(group: LayerGroup, layer: CanvasLayer) {
         myGroupedLayers.getOrPut(group, ::ArrayList).add(layer)
-        orderedLayers = LayerGroup.values().flatMap { myGroupedLayers[it] ?: emptyList<RenderLayer>() }
+        orderedLayers = LayerGroup.values().flatMap { myGroupedLayers[it] ?: emptyList<CanvasLayer>() }
     }
 }
 

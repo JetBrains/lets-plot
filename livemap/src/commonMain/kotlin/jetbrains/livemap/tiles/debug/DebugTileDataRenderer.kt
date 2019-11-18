@@ -10,7 +10,7 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.multitasking.DebugMicroTask
 import jetbrains.livemap.core.multitasking.MicroTask
-import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.components.CellLayerKind
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.renderTimeKey
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.snapshotTimeKey

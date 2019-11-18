@@ -59,8 +59,12 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
         return componentManager.containsEntity(componentType)
     }
 
-    inline fun <reified ComponentT : EcsComponent> getSingletonComponent(): ComponentT {
+    inline fun <reified ComponentT : EcsComponent> getSingleton(): ComponentT {
         return componentManager.getSingleton()
+    }
+
+    inline fun <reified ComponentT : EcsComponent> getSingletonEntity(): EcsEntity {
+        return componentManager.getSingletonEntity(ComponentT::class)
     }
 
     fun getSingletonEntity(componentTypes: List<KClass<out EcsComponent>>): EcsEntity {

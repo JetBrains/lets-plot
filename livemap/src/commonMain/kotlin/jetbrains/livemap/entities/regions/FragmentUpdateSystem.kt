@@ -20,9 +20,9 @@ class FragmentUpdateSystem(componentManager: EcsComponentManager, private val my
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val cellStateComponent = getSingletonComponent<CellStateComponent>()
-        val changedFragmentsComponent = getSingletonComponent<ChangedFragmentsComponent>()
-        val emptyFragments = getSingletonComponent<EmptyFragmentsComponent>()
+        val cellStateComponent = getSingleton<CellStateComponent>()
+        val changedFragmentsComponent = getSingleton<ChangedFragmentsComponent>()
+        val emptyFragments = getSingleton<EmptyFragmentsComponent>()
 
         val quadsToAdd = cellStateComponent.quadsToAdd
         val quadsToRemove = cellStateComponent.quadsToRemove

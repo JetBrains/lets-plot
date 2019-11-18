@@ -10,10 +10,10 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsContext
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.rendering.layers.CanvasLayer
+import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.core.rendering.layers.RenderLayer
-import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
 
 class MouseInputDetectionSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {
 
@@ -25,10 +25,7 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
 
     override fun updateImpl(context: EcsContext, dt: Double) {
         val entitiesByEventTypeAndZIndex = HashMap<MouseEventType, HashMap<Int, ArrayList<EcsEntity>>>()
-        val renderLayers = componentManager
-            .getSingletonEntity(LayersOrderComponent::class)
-            .getComponent<LayersOrderComponent>()
-            .renderLayers
+        val canvasLayers = getSingleton<LayersOrderComponent>().canvasLayers
 
         getEntities(COMPONENTS).forEach { entity ->
             myInteractiveEntityView.setEntity(entity)
@@ -38,7 +35,7 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
                     myInteractiveEntityView
                         .addTo(
                             entitiesByEventTypeAndZIndex.getOrPut(type, { HashMap() }),
-                            getZIndex(entity, renderLayers)
+                            getZIndex(entity, canvasLayers)
                         )
                 }
             }
@@ -47,7 +44,7 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
         for (type in MouseEventType.values()) {
             val entitiesByZIndex = entitiesByEventTypeAndZIndex[type] ?: continue
 
-            for (i in renderLayers.size downTo 0) {
+            for (i in canvasLayers.size downTo 0) {
                 entitiesByZIndex[i]?.let { acceptListeners(type, it) }
             }
         }
@@ -68,15 +65,15 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
         }
     }
 
-    private fun getZIndex(entity: EcsEntity, renderLayers: List<RenderLayer>): Int {
-        return if (entity.contains(CameraComponent::class)) 0 // if UI
+    private fun getZIndex(entity: EcsEntity, canvasLayers: List<CanvasLayer>): Int {
+        return if (entity.contains<CameraComponent>()) 0 // if UI
         else {
-            val renderLayer = entity.componentManager
-                .getEntityById(entity.getComponent<ParentLayerComponent>().layerId)
-                .getComponent<RenderLayerComponent>()
-                .renderLayer
+            val canvasLayer = entity.componentManager
+                .getEntityById(entity.get<ParentLayerComponent>().layerId)
+                .get<CanvasLayerComponent>()
+                .canvasLayer
 
-            renderLayers.indexOf(renderLayer) + 1
+            canvasLayers.indexOf(canvasLayer) + 1
         }
     }
 

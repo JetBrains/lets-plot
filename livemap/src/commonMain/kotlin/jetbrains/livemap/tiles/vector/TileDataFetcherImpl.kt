@@ -14,9 +14,9 @@ import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService
-import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.ProjectionUtil.convertCellKeyToQuadKeys
+import jetbrains.livemap.tiles.CellKey
+import jetbrains.livemap.tiles.convertCellKeyToQuadKeys
 
 internal class TileDataFetcherImpl(private val myMapProjection: MapProjection, private val myTileService: TileService) :
     TileDataFetcher {

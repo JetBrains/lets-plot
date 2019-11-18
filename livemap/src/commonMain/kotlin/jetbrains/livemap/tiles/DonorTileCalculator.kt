@@ -6,7 +6,6 @@
 package jetbrains.livemap.tiles
 
 import jetbrains.livemap.containers.LinkedList
-import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.tiles.Tile.CompositeTile
 import jetbrains.livemap.tiles.Tile.EmptyTile.Companion.EMPTY_TILE
 import jetbrains.livemap.tiles.Tile.SubTile
@@ -18,17 +17,14 @@ internal class DonorTileCalculator(private val myExistedTiles: Map<CellKey, Tile
         val upDonor = findUpDonorTile(cellKey)
         val downDonor = findDownDonorTile(cellKey)
 
-        return if (upDonor !== EMPTY_TILE && downDonor !== EMPTY_TILE) {
-            CompositeTile().apply {
+        return when {
+            upDonor !== EMPTY_TILE && downDonor !== EMPTY_TILE -> CompositeTile().apply {
                 add(upDonor, "")
                 add(downDonor, "")
             }
-        } else if (upDonor !== EMPTY_TILE) {
-            upDonor
-        } else if (downDonor !== EMPTY_TILE) {
-            downDonor
-        } else {
-            EMPTY_TILE
+            upDonor !== EMPTY_TILE -> upDonor
+            downDonor !== EMPTY_TILE -> downDonor
+            else -> EMPTY_TILE
         }
     }
 

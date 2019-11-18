@@ -9,8 +9,8 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.rendering.layers.DirtyRenderLayerComponent
-import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
+import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
+import jetbrains.livemap.core.rendering.layers.DirtyCanvasLayerComponent
 
 class UiRenderingTaskSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
@@ -18,8 +18,8 @@ class UiRenderingTaskSystem(componentManager: EcsComponentManager) : AbstractSys
         val uiLayer = getSingletonEntity(UiLayerComponent::class)
 
         uiLayer
-            .get<RenderLayerComponent>()
-            .renderLayer
+            .get<CanvasLayerComponent>()
+            .canvasLayer
             .addRenderTask { context2d ->
                 getEntities(UiRenderComponent::class).forEach {
                     val renderObject = it.get<UiRenderComponent>().renderBox
@@ -27,7 +27,7 @@ class UiRenderingTaskSystem(componentManager: EcsComponentManager) : AbstractSys
                 }
             }
 
-        uiLayer.tag(::DirtyRenderLayerComponent)
+        uiLayer.tag(::DirtyCanvasLayerComponent)
     }
 
     class UiLayerComponent : EcsComponent

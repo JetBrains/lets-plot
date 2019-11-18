@@ -15,11 +15,13 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.WorldRectangle
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
 import jetbrains.livemap.tiles.Tile.SnapshotTile
 import jetbrains.livemap.tiles.components.*
+import jetbrains.livemap.tiles.components.CellLayerKind.LABEL
+import jetbrains.livemap.tiles.components.CellLayerKind.WORLD
 import jetbrains.livemap.tiles.debug.DebugTileDataFetcher
 import jetbrains.livemap.tiles.debug.DebugTileDataParser
 import jetbrains.livemap.tiles.debug.DebugTileDataRenderer
@@ -55,7 +57,7 @@ class TileLoadingSystem(
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
 
-        getSingletonComponent<RequestTilesComponent>().requestTiles.forEach { cellKey ->
+        getSingleton<RequestTilesComponent>().requestTiles.forEach { cellKey ->
             val tileResponseComponent = TileResponseComponent()
 
             createEntity("tile_$cellKey")
@@ -108,7 +110,7 @@ class TileLoadingSystem(
         return getEntities(CELL_COMPONENT_LIST)
             .filter {
                 it.get<CellComponent>().cellKey == cellKey
-                        && it.get<KindComponent>().layerKind in setOf(CellLayerKind.WORLD, CellLayerKind.LABEL)
+                        && it.get<KindComponent>().layerKind in setOf(WORLD, LABEL)
             }
     }
 

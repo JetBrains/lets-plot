@@ -11,6 +11,7 @@ import jetbrains.datalore.base.projectionGeometry.minus
 import jetbrains.datalore.base.projectionGeometry.plus
 import jetbrains.livemap.MapWidgetUtil
 import jetbrains.livemap.projections.*
+import jetbrains.livemap.tiles.CellKey
 import kotlin.math.max
 import kotlin.math.min
 
@@ -64,17 +65,17 @@ open class Viewport internal constructor(
     }
 
     private fun viewportTransform(
-        zoomTransform: Transform<WorldPoint, ClientPoint>,
+        zoomProjection: Projection<WorldPoint, ClientPoint>,
         position: () -> WorldPoint,
         center: () -> ClientPoint
-    ): Transform<WorldPoint, ClientPoint> {
-        return object : Transform<WorldPoint, ClientPoint> {
+    ): Projection<WorldPoint, ClientPoint> {
+        return object : Projection<WorldPoint, ClientPoint> {
             override fun project(v: WorldPoint): ClientPoint {
-                return zoomTransform.project(v - position()) + center()
+                return zoomProjection.project(v - position()) + center()
             }
 
             override fun invert(v: ClientPoint): WorldPoint {
-                return zoomTransform.invert(v - center()) + position()
+                return zoomProjection.invert(v - center()) + position()
             }
         }
     }

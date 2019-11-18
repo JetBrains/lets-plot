@@ -13,6 +13,6 @@ interface Geographic
 
 typealias GeographicPoint = Vec<Geographic>
 
-internal interface GeoProjection : Transform<LonLatPoint, GeographicPoint> {
+internal interface GeoProjection : Projection<LonLatPoint, GeographicPoint> {
     fun validRect(): Rect<LonLat>
 }

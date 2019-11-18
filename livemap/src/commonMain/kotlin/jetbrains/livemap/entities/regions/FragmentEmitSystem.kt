@@ -48,11 +48,11 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val downloaded = getSingletonComponent<DownloadingFragmentsComponent>().downloaded
+        val downloaded = getSingleton<DownloadingFragmentsComponent>().downloaded
 
         val emptyFragments = HashSet<FragmentKey>()
         if (downloaded.isNotEmpty()) {
-            val visibleQuads = getSingletonComponent<CellStateComponent>().visibleQuads
+            val visibleQuads = getSingleton<CellStateComponent>().visibleQuads
 
             val processing = HashSet<QuadKey>()
             val obsolete = HashSet<QuadKey>()
@@ -60,7 +60,7 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
             downloaded.forEach { (fragmentKey, geometry) ->
                 if (!visibleQuads.contains(fragmentKey.quadKey)) {
                     // too slow. received geometry is already obsolete. Do not create entity and geometry processing.
-                    getSingletonComponent<StreamingFragmentsComponent>().remove(fragmentKey)
+                    getSingleton<StreamingFragmentsComponent>().remove(fragmentKey)
                     obsolete.add(fragmentKey.quadKey)
                 } else if (!geometry.isEmpty()) {
                     processing.add(fragmentKey.quadKey)
@@ -71,15 +71,15 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
                 } else {
                     // No geometry - stop waiting for this fragment
                     emptyFragments.add(fragmentKey)
-                    getSingletonComponent<StreamingFragmentsComponent>().remove(fragmentKey)
+                    getSingleton<StreamingFragmentsComponent>().remove(fragmentKey)
                 }
             }
         }
 
         val transformedFragments = findTransformedFragments()
         transformedFragments.forEach { (fragmentKey, fragmentEntity) ->
-            getSingletonComponent<StreamingFragmentsComponent>().remove(fragmentKey)
-            getSingletonComponent<CachedFragmentsComponent>().store(fragmentKey, fragmentEntity)
+            getSingleton<StreamingFragmentsComponent>().remove(fragmentKey)
+            getSingleton<CachedFragmentsComponent>().store(fragmentKey, fragmentEntity)
         }
 
         val emittedFragments = HashSet<FragmentKey>()
@@ -87,13 +87,13 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
         emittedFragments.addAll(transformedFragments.keys)
         emittedFragments.addAll(
             common(
-                getSingletonComponent<ChangedFragmentsComponent>().requested,
-                getSingletonComponent<CachedFragmentsComponent>().keys()
+                getSingleton<ChangedFragmentsComponent>().requested,
+                getSingleton<CachedFragmentsComponent>().keys()
             )
         )
 
-        getSingletonComponent<EmptyFragmentsComponent>().addAll(emptyFragments)
-        getSingletonComponent<EmittedFragmentsComponent>().setEmitted(emittedFragments)
+        getSingleton<EmptyFragmentsComponent>().addAll(emptyFragments)
+        getSingleton<EmittedFragmentsComponent>().setEmitted(emittedFragments)
     }
 
     private fun findTransformedFragments(): Map<FragmentKey, EcsEntity> {
@@ -152,7 +152,7 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
             }
 
         fragmentEntity.addComponent(MicroThreadComponent(projector, myProjectionQuant))
-        getSingletonComponent<StreamingFragmentsComponent>()[fragmentKey] = fragmentEntity
+        getSingleton<StreamingFragmentsComponent>()[fragmentKey] = fragmentEntity
         return fragmentEntity
     }
 }

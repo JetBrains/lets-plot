@@ -16,7 +16,7 @@ import jetbrains.gis.tileprotocol.mapConfig.Rule
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.map
-import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.components.CellLayerKind
 
 internal class TileDataRendererImpl(

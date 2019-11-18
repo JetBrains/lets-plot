@@ -5,14 +5,30 @@
 
 package jetbrains.livemap.tiles
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.projectionGeometry.GeoUtils
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileCount
 import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileOrigin
+import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.projectionGeometry.times
+import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.ProjectionUtil
 
 fun <TypeT> getTileRect(mapRect: Rect<TypeT>, tileKey: String): Rect<TypeT> {
     val origin = getTileOrigin(mapRect, tileKey)
     val dimension = mapRect.dimension * (1.0 / getTileCount(tileKey.length))
 
     return Rect(origin, dimension)
+}
+
+
+fun convertCellKeyToQuadKeys(mapProjection: MapProjection, cellKey: CellKey): Set<QuadKey> {
+    val cellRect = getTileRect(mapProjection.mapRect, cellKey.key)
+    val geoRect = ProjectionUtil.transformBBox(cellRect, mapProjection::invert)
+    return GeoUtils.calculateQuadKeys(geoRect, cellKey.length)
+}
+
+internal fun calculateCellKeys(mapRect: Rect<*>, rect: DoubleRectangle, zoom: Int): Set<CellKey> {
+    return ProjectionUtil.calculateTileKeys(mapRect, rect, zoom, ::CellKey)
 }

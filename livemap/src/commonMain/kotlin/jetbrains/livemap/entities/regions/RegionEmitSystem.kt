@@ -29,11 +29,11 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : LiveMapSystem(co
             }
         }
 
-        getSingletonComponent<ChangedFragmentsComponent>().requested.forEach(::wait)
-        getSingletonComponent<ChangedFragmentsComponent>().obsolete.forEach(::remove)
-        getSingletonComponent<EmittedFragmentsComponent>().keys().forEach(::accept)
+        getSingleton<ChangedFragmentsComponent>().requested.forEach(::wait)
+        getSingleton<ChangedFragmentsComponent>().obsolete.forEach(::remove)
+        getSingleton<EmittedFragmentsComponent>().keys().forEach(::accept)
 
-        val emittedRegionsComponent = getSingletonComponent<EmittedRegionsComponent>()
+        val emittedRegionsComponent = getSingleton<EmittedRegionsComponent>()
         emittedRegionsComponent.keys().clear()
 
         for (readyRegion in checkReadyRegions()) {
@@ -45,7 +45,7 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : LiveMapSystem(co
     private fun renderRegion(regionId: String) {
         val region = myRegionIndex.find(regionId)
 
-        val fragmentsCache = getSingletonComponent<CachedFragmentsComponent>()
+        val fragmentsCache = getSingleton<CachedFragmentsComponent>()
 
         region.get<RegionComponent>().run {
             fragments = myPendingFragments[regionId]!!

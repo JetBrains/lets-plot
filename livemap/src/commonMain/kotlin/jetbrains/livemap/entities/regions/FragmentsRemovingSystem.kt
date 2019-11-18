@@ -16,15 +16,15 @@ class FragmentsRemovingSystem(private val myCacheSize: Int, componentManager: Ec
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
 
-        if (!getSingletonComponent<ChangedFragmentsComponent>().anyChanges()) {
+        if (!getSingleton<ChangedFragmentsComponent>().anyChanges()) {
             return
         }
 
-        val requestedFragments = getSingletonComponent<ChangedFragmentsComponent>().requested
+        val requestedFragments = getSingleton<ChangedFragmentsComponent>().requested
 
         val keepStreaming = HashSet<FragmentKey>()
         run {
-            val streamingFragments = getSingletonComponent<StreamingFragmentsComponent>()
+            val streamingFragments = getSingleton<StreamingFragmentsComponent>()
             val dropStreaming = HashSet<FragmentKey>()
             if (requestedFragments.isNotEmpty()) {
                 val requestedZoom = zoom(requestedFragments.first())
@@ -53,11 +53,11 @@ class FragmentsRemovingSystem(private val myCacheSize: Int, componentManager: Ec
             )
         }
 
-        val fragmentsCache = getSingletonComponent<CachedFragmentsComponent>()
-        val visibleQuads = getSingletonComponent<CellStateComponent>().visibleQuads
+        val fragmentsCache = getSingleton<CachedFragmentsComponent>()
+        val visibleQuads = getSingleton<CellStateComponent>().visibleQuads
 
         val fragmentsToRemove = HashSet(fragmentsCache.keys())
-        fragmentsToRemove.addAll(getSingletonComponent<ChangedFragmentsComponent>().obsolete)
+        fragmentsToRemove.addAll(getSingleton<ChangedFragmentsComponent>().obsolete)
         fragmentsToRemove.removeAll(requestedFragments)
         fragmentsToRemove.removeAll(activeFragments) // currently used by region, including scaled fragments from previous zoom
         fragmentsToRemove.removeAll(keepStreaming) // not visible, but soon will be

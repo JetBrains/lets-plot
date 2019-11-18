@@ -11,7 +11,7 @@ import jetbrains.livemap.core.Utils
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.rendering.Renderer
-import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.Tile
 
 class CellStateComponent : EcsComponent {

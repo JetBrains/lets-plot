@@ -15,7 +15,7 @@ import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.setMicroThread
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.Tile
 import jetbrains.livemap.tiles.components.*
 import jetbrains.livemap.tiles.vector.TileLoadingSystem
@@ -28,7 +28,7 @@ class RasterTileLoadingSystem(
     componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        getSingletonComponent<RequestTilesComponent>().requestTiles.forEach { cellKey ->
+        getSingleton<RequestTilesComponent>().requestTiles.forEach { cellKey ->
             val tileResponseComponent = HttpTileResponseComponent()
 
             createEntity("http_tile_$cellKey")

@@ -13,8 +13,8 @@ import jetbrains.livemap.core.Utils.formatDouble
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
+import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
-import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.Text
 import jetbrains.livemap.entities.regions.CachedFragmentsComponent
@@ -134,9 +134,9 @@ open class Diagnostics {
             override fun update() {
                 val dirtyLayers = registry
                     .getEntitiesById(dirtyLayers)
-                    .map { it.get<RenderLayerComponent>().renderLayer }
+                    .map { it.get<CanvasLayerComponent>().canvasLayer }
                     .toSet()
-                    .intersect(registry.getSingleton<LayersOrderComponent>().renderLayers)
+                    .intersect(registry.getSingleton<LayersOrderComponent>().canvasLayers)
                     .joinToString { it.name }
 
                 debugService.setValue(DIRTY_LAYERS, "Dirty layers: $dirtyLayers")

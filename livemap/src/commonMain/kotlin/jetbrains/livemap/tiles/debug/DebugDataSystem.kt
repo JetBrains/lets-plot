@@ -8,7 +8,7 @@ package jetbrains.livemap.tiles.debug
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.rendering.layers.DirtyRenderLayerComponent
+import jetbrains.livemap.core.rendering.layers.DirtyCanvasLayerComponent
 import jetbrains.livemap.tiles.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
 import jetbrains.livemap.tiles.components.CellComponent
 import jetbrains.livemap.tiles.components.DebugCellLayerComponent
@@ -31,7 +31,7 @@ class DebugDataSystem(componentManager: EcsComponentManager) : AbstractSystem<Li
 
             statistics.stats.remove(cellKey)?.let {
                 debug.addData(it)
-                debugLayer.tag(::DirtyRenderLayerComponent)
+                debugLayer.tag(::DirtyCanvasLayerComponent)
             }
         }
     }

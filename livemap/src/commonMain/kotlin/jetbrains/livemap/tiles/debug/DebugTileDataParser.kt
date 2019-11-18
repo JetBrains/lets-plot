@@ -9,7 +9,7 @@ import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.multitasking.DebugMicroTask
 import jetbrains.livemap.core.multitasking.MicroTask
-import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.PARSING_TIME
 import jetbrains.livemap.tiles.components.StatisticsComponent
 import jetbrains.livemap.tiles.vector.TileDataParser
