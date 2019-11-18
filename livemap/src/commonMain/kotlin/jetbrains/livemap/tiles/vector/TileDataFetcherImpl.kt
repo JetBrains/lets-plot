@@ -9,9 +9,9 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.spatial.GeoUtils.BBOX_CALCULATOR
 import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
-import jetbrains.datalore.base.spatial.GeoUtils.getQuadKeyRect
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.projections.MapProjection
@@ -32,6 +32,6 @@ internal class TileDataFetcherImpl(private val myMapProjection: MapProjection, p
     private fun calculateBBox(quadKeys: Set<QuadKey>): Rect<LonLat> = // TODO: add tests for antimeridians
         BBOX_CALCULATOR
             .calculateBoundingBoxFromGeoRectangles(
-                quadKeys.map { convertToGeoRectangle(getQuadKeyRect(it)) }
+                quadKeys.map { convertToGeoRectangle(it.computeRect()) }
             )
 }

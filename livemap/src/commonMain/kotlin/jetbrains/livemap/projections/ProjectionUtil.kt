@@ -5,11 +5,9 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.spatial.GeoUtils
 import jetbrains.livemap.projections.ProjectionType.*
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -30,29 +28,6 @@ object ProjectionUtil {
 
     private fun getTileCount(zoom: Int): Int {
         return 1 shl zoom
-    }
-
-    fun <T> calculateTileKeys(
-        mapRect: Rect<*>,
-        viewRect: DoubleRectangle,
-        zoom: Int?,
-        constructor: (String) -> T
-    ): Set<T> {
-        val tileKeys = HashSet<T>()
-        val tileCount = getTileCount(zoom!!)
-
-        val xmin = GeoUtils.calcTileNum(viewRect.left, mapRect.xRange(), tileCount)
-        val xmax = GeoUtils.calcTileNum(viewRect.right, mapRect.xRange(), tileCount)
-        val ymin = GeoUtils.calcTileNum(viewRect.top, mapRect.yRange(), tileCount)
-        val ymax = GeoUtils.calcTileNum(viewRect.bottom, mapRect.yRange(), tileCount)
-
-        for (x in xmin..xmax) {
-            for (y in ymin..ymax) {
-                tileKeys.add(constructor(GeoUtils.tileXYToTileID(x, y, zoom)))
-            }
-        }
-
-        return tileKeys
     }
 
     internal fun createGeoProjection(projectionType: ProjectionType): GeoProjection {

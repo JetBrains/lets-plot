@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.data
 
+import jetbrains.datalore.base.algorithms.calculateArea
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoUtils.calculateArea
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
 

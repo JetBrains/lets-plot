@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
+import jetbrains.datalore.base.algorithms.calculateArea
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoUtils.calculateArea
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable

@@ -7,9 +7,6 @@ package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertRectangleEquals
-import jetbrains.datalore.base.spatial.GeoUtils.EARTH_RECT
-import jetbrains.datalore.base.spatial.GeoUtils.calculateQuadKeys
-import jetbrains.datalore.base.spatial.GeoUtils.getQuadKeyRect
 import jetbrains.datalore.base.spatial.GeoUtils.tileXYToTileID
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,7 +29,7 @@ class GeoUtilsTest {
 
     @Test
     fun calculateZeroTileBBox() {
-        val rect = getQuadKeyRect(QuadKey("0"))
+        val rect = QuadKey("0").computeRect()
         val expectedRect = Rect<Generic>(
                 EARTH_RECT.left,
                 EARTH_RECT.center.x,

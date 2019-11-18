@@ -5,6 +5,9 @@
 
 package jetbrains.datalore.base.spatial
 
+import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.spatial.GeoUtils.getQuadOrigin
+
 class QuadKey(val string: String) {
     fun zoom(): Int {
         return ((string.length - 1) / 3 + 1) * 3
@@ -25,3 +28,13 @@ class QuadKey(val string: String) {
         return string
     }
 }
+
+
+fun QuadKey.computeRect(): Rect<LonLat> {
+    val origin = getQuadOrigin(EARTH_RECT, string)
+    val dimension = EARTH_RECT.dimension * (1.0 / GeoUtils.getTileCount(string.length))
+
+    val flippedY = EARTH_RECT.scalarBottom - (origin.scalarY + dimension.scalarY - EARTH_RECT.scalarTop)
+    return Rect(origin.transform(newY = { flippedY }), dimension)
+}
+

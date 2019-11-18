@@ -5,10 +5,13 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
+import jetbrains.datalore.base.algorithms.createMultiPolygon
+import jetbrains.datalore.base.algorithms.splitRings
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoUtils.createMultiPolygon
-import jetbrains.datalore.base.spatial.GeoUtils.createRingsFromPoints
+import jetbrains.datalore.base.projectionGeometry.Generic
+import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
@@ -128,7 +131,7 @@ class PolygonEdgeCasesTest {
 
         val list = multipolygon(ring1, ring2, ring3)
 
-        val rings = createRingsFromPoints(list)
+        val rings = splitRings(list)
 
         assertEquals(3, rings.size)
         assertEquals(ring1, rings[0])
@@ -144,7 +147,7 @@ class PolygonEdgeCasesTest {
                 point(7.0, 7.0)
         )
 
-        val rings = createRingsFromPoints(openRing)
+        val rings = splitRings(openRing)
 
         val expectedRing = ArrayList(openRing)
         expectedRing.add(openRing[0])
@@ -155,7 +158,7 @@ class PolygonEdgeCasesTest {
 
     @Test
     fun geomUtilSplitRingsFromPath_WhenPathIsEmpty_ShouldReturnEmptyList() {
-        val rings = createRingsFromPoints(emptyList<Any>())
+        val rings = splitRings(emptyList<Any>())
 
         assertTrue(rings.isEmpty())
     }
@@ -192,7 +195,7 @@ class PolygonEdgeCasesTest {
                 singlePointAppender(GeomUtil.TO_LOCATION_X_Y),
                 reducer(1.0, true)
         )
-        val rings = createRingsFromPoints(multiPointDataList[0].points)
+        val rings = splitRings(multiPointDataList[0].points)
 
         assertEquals(3, rings.size)
         assertRing(rings[0], startRing1)
@@ -226,7 +229,7 @@ class PolygonEdgeCasesTest {
 
         assertEquals(2, multiPointDataList.size)
 
-        val rings = createRingsFromPoints(multiPointDataList[0].points)
+        val rings = splitRings(multiPointDataList[0].points)
         assertEquals(2, rings.size)
         assertEquals(
             polygonFromRect(
@@ -240,28 +243,40 @@ class PolygonEdgeCasesTest {
 
     @Test
     fun geomUtilCreateMultipolygon_fromThreeRing() {
-        val lonLatPoints = multipolygon(
-                polygon(
-                        point(0.0, 0.0),
-                        point(0.0, 50.0),
-                        point(50.0, 50.0),
-                        point(50.0, 0.0)
-                ),
-                polygon(
-                        point(100.0, 0.0),
-                        point(100.0, 50.0),
-                        point(150.0, 50.0),
-                        point(150.0, 0.0)
-                ),
-                polygon(
-                        point(110.0, 10.0),
-                        point(140.0, 10.0),
-                        point(140.0, 40.0),
-                        point(110.0, 40.0)
-                )
+        fun vec(x: Double, y: Double) = explicitVec<Generic>(x, y)
+
+        val points = ArrayList<Vec<Generic>>()
+        points.addAll(
+            listOf(
+                vec(0.0, 0.0),
+                vec(0.0, 50.0),
+                vec(50.0, 50.0),
+                vec(50.0, 0.0),
+                vec(0.0, 0.0)
+            )
         )
 
-        val multipolygon = createMultiPolygon(lonLatPoints)
+        points.addAll(
+            listOf(
+                vec(100.0, 0.0),
+                vec(100.0, 50.0),
+                vec(150.0, 50.0),
+                vec(150.0, 0.0),
+                vec(100.0, 0.0)
+            )
+        )
+
+        points.addAll(
+            listOf(
+                vec(110.0, 10.0),
+                vec(140.0, 10.0),
+                vec(140.0, 40.0),
+                vec(110.0, 40.0),
+                vec(110.0, 10.0)
+            )
+        )
+
+        val multipolygon = createMultiPolygon(points)
 
         assertEquals(2, multipolygon.size)
         assertEquals(1, multipolygon[0].size)

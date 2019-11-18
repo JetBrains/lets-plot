@@ -84,7 +84,7 @@ class RasterTileLoadingSystem(
         fun getZXY(cellKey: CellKey, format: String): String {
             return 2.0.pow(cellKey.length)
                 .let { Rect<Generic>(0.0, 0.0, it, it) }
-                .let { GeoUtils.getTileOrigin(it, cellKey.key) }
+                .let { GeoUtils.getQuadOrigin(it, cellKey.key) }
                 .let {
                     format
                         .replace("\${z}", cellKey.length.toString(), false)

@@ -7,8 +7,8 @@ package jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.projectionGeometry.intersects
 import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.GeoUtils.getQuadKeyRect
 import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.spatial.computeRect
 
 interface EmptinessChecker {
     fun test(regionId: String, quadKey: QuadKey): Boolean
@@ -22,7 +22,7 @@ interface EmptinessChecker {
     class BBoxEmptinessChecker(private val regionBBoxes: Map<String, GeoRectangle>) : EmptinessChecker {
 
         override fun test(regionId: String, quadKey: QuadKey): Boolean {
-            val quadKeyRect = getQuadKeyRect(quadKey)
+            val quadKeyRect = quadKey.computeRect()
 
             regionBBoxes[regionId]?.let {
                 it.splitByAntiMeridian().forEach { bbox ->

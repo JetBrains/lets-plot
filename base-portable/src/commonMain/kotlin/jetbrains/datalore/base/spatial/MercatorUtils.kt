@@ -6,9 +6,9 @@
 package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.math.toDegrees
+import jetbrains.datalore.base.math.toRadians
 
-import jetbrains.datalore.base.spatial.GeoUtils.toDegrees
-import jetbrains.datalore.base.spatial.GeoUtils.toRadians
 import kotlin.math.*
 
 object MercatorUtils {

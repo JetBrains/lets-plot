@@ -5,15 +5,16 @@
 
 package jetbrains.livemap.api
 
+import jetbrains.datalore.base.algorithms.createMultiPolygon
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.GeoUtils
-import jetbrains.datalore.base.spatial.GeoUtils.createMultiPolygon
 import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.limitLat
+import jetbrains.datalore.base.spatial.limitLon
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.*
@@ -122,7 +123,7 @@ fun geometry(points: List<LonLatPoint>, isGeodesic: Boolean, isClosed: Boolean):
         .let { if (isGeodesic) createArcPath(it) else it }
 
     return if (isClosed) {
-        createMultiPolygon(coord) { it }
+        createMultiPolygon(coord)
     } else {
         MapWidgetUtil
             .splitPathByAntiMeridian(coord)
@@ -132,7 +133,7 @@ fun geometry(points: List<LonLatPoint>, isGeodesic: Boolean, isClosed: Boolean):
 }
 
 fun limitCoord(point: Vec<LonLat>): Vec<LonLat> {
-    return explicitVec(GeoUtils.limitLon(point.x), GeoUtils.limitLat(point.y))
+    return explicitVec(limitLon(point.x), limitLat(point.y))
 }
 
 @LiveMapDsl

@@ -6,10 +6,8 @@
 package jetbrains.livemap.camera
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator
-import jetbrains.datalore.base.spatial.GeoUtils.deltaOnLoop
 import jetbrains.livemap.projections.MapRuler
 import jetbrains.livemap.projections.World
 import jetbrains.livemap.projections.WorldPoint
@@ -152,15 +150,15 @@ class ViewportHelper<TypeT>(
             }
         }
 
-    private fun splitRect(rect: WorldRectangle): List<DoubleRectangle> {
+    private fun splitRect(rect: WorldRectangle): List<Rect<TypeT>> {
         val xRanges = splitRange(rect.xRange(), myMapRect.xRange(), myLoopX)
         val yRanges = splitRange(rect.yRange(), myMapRect.yRange(), myLoopY)
 
-        val rects = ArrayList<DoubleRectangle>()
+        val rects = ArrayList<Rect<TypeT>>()
         xRanges.forEach { xRange ->
             yRanges.forEach { yRange ->
                 rects.add(
-                    DoubleRectangle(
+                    Rect<TypeT>(
                         xRange.lowerEndpoint(),
                         yRange.lowerEndpoint(),
                         length(xRange),
@@ -171,4 +169,22 @@ class ViewportHelper<TypeT>(
         }
         return rects
     }
+
+    private fun deltaOnLoop(x1: Double, x2: Double, length: Double): Double {
+        val dist = abs(x2 - x1)
+
+        if (dist <= length - dist) {
+            return x2 - x1
+        }
+
+        var closestX2 = x2
+        if (x2 < x1) {
+            closestX2 += length
+        } else {
+            closestX2 -= length
+        }
+        return closestX2 - x1
+    }
+
+
 }

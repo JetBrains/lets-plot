@@ -6,10 +6,6 @@
 package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.spatial.GeoUtils.FULL_LONGITUDE
-import jetbrains.datalore.base.spatial.GeoUtils.MAX_LONGITUDE
-import jetbrains.datalore.base.spatial.GeoUtils.MIN_LONGITUDE
-import jetbrains.datalore.base.spatial.GeoUtils.limitLon
 
 
 internal class LongitudeRange(lower: Double, upper: Double) {

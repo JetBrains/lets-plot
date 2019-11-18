@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
+import jetbrains.datalore.base.algorithms.calculateArea
+import jetbrains.datalore.base.algorithms.splitRings
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles.boundingBox
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoUtils.calculateArea
-import jetbrains.datalore.base.spatial.GeoUtils.createRingsFromPoints
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace.*
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
@@ -80,7 +80,7 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
         private const val MAX_TOLERANCE = 40.0
 
         fun create(points: List<DoubleVector>, lookupSpace: LookupSpace): PolygonTargetProjection {
-            val rings = createRingsFromPoints(points)
+            val rings = splitRings(points)
 
             return when (lookupSpace) {
                 X -> PolygonTargetProjection(mapToX(rings))

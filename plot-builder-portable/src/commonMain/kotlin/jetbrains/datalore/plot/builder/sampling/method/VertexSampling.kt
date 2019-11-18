@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
+import jetbrains.datalore.base.algorithms.isClosed
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoUtils.isClosed
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.util.MutableInteger
@@ -36,7 +36,7 @@ internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSiz
         checkArgument(isApplicable(population))
 
         val rings = splitRings(population)
-        val limits = if (rings.size == 1 && !isClosed(rings[0]))
+        val limits = if (rings.size == 1 && !rings[0].isClosed())
             listOf(sampleSize)
         else
             calculateRingLimits(rings, sampleSize)

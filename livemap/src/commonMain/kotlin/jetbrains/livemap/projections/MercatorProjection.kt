@@ -5,13 +5,15 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.spatial.GeoUtils.limitLat
-import jetbrains.datalore.base.spatial.GeoUtils.limitLon
+import jetbrains.datalore.base.projectionGeometry.Rect
+import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.MercatorUtils
 import jetbrains.datalore.base.spatial.MercatorUtils.VALID_LATITUDE_RANGE
 import jetbrains.datalore.base.spatial.MercatorUtils.VALID_LONGITUDE_RANGE
+import jetbrains.datalore.base.spatial.limitLat
+import jetbrains.datalore.base.spatial.limitLon
 
 internal class MercatorProjection : GeoProjection {
 
