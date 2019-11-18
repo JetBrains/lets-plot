@@ -8,12 +8,8 @@ package jetbrains.datalore.jetbrains.livemap.tile
 import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.Client
-import jetbrains.livemap.tiles.DonorTileCalculator
-import jetbrains.livemap.tiles.Tile
-import jetbrains.livemap.tiles.TileRenderer
-import jetbrains.livemap.tiles.getTileRect
+import jetbrains.livemap.tiles.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
