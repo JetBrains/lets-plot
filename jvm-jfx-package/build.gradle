@@ -2,6 +2,7 @@ plugins {
     id 'kotlin-multiplatform'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow'
+    id "com.jfrog.bintray"
 }
 
 kotlin {
@@ -107,17 +108,45 @@ publishing {
                 developers {
                     developer {
                         id = "jetbrains"
-                        name = "JetBrains s.r.o"
+                        name = "JetBrains"
                         email = "datalore-plot@jetbrains.com"
                     }
+                }
+                scm {
+                    url = "https://github.com/JetBrains/datalore-plot"
                 }
             }
         }
     }
     repositories {
         maven {
-            // ToDo: url --> build_settings
-            url = uri("$rootDir/.maven-publish-dev-repo")
+//            url = uri("$rootDir/.maven-publish-dev-repo")
+            url = uri("https://jetbrains.bintray.com/datalore-plot-maven")
+        }
+    }
+}
+
+// Provide Bintray-specific Information
+def bintray_user = project.buildSettings?.bintray?.user
+def bintray_key = project.buildSettings?.bintray?.key
+
+if (bintray_user != null && bintray_key != null) {
+    bintray {
+        user = bintray_user
+        key = bintray_key
+        publications = ['datalorePlotJvmJfx']
+        publish = true
+        override = true
+        
+        pkg {
+            repo = 'datalore-plot-maven'
+            name = 'datalore-plot-jars'
+            userOrg = 'jetbrains'
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/JetBrains/datalore-plot'
+            version {
+                name = artifactVersion
+            }
         }
     }
 }
