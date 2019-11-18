@@ -7,6 +7,7 @@ package jetbrains.livemap.fragments
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder
@@ -18,12 +19,12 @@ internal class FragmentProviderImpl(
     private val geocodingService: GeocodingService
 ) : FragmentProvider {
 
-    override fun getGeometries(mapObjectIds: List<String>, tileIds: Collection<QuadKey>): Async<Map<String, List<GeoTile>>> {
-        val objectsWithMissingTiles = HashMap<String, List<QuadKey>>()
+    override fun getGeometries(mapObjectIds: List<String>, tileIds: Collection<QuadKey<LonLat>>): Async<Map<String, List<GeoTile>>> {
+        val objectsWithMissingTiles = HashMap<String, List<QuadKey<LonLat>>>()
 
         var isMissing = false
         for (mapObjectId in mapObjectIds) {
-            val missingTiles = ArrayList<QuadKey>()
+            val missingTiles = ArrayList<QuadKey<LonLat>>()
             for (tileId in tileIds) {
                 if (!fragmentCache.contains(mapObjectId, tileId)) {
                     missingTiles.add(tileId)
@@ -67,7 +68,7 @@ internal class FragmentProviderImpl(
 
     private fun getCachedGeometries(
         mapObjectIds: List<String>,
-        tileIds: Collection<QuadKey>
+        tileIds: Collection<QuadKey<LonLat>>
     ): Map<String, List<GeoTile>> {
         val result = HashMap<String, List<GeoTile>>()
 

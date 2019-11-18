@@ -7,6 +7,7 @@ package jetbrains.datalore.jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.projectionGeometry.Generic
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -18,9 +19,9 @@ class FragmentSpec (private var myKey: FragmentKey) {
     private var myGeometries: Boundary<Generic>? = null
     private var myEntity: EcsEntity? = null
 
-    internal constructor(regionId: String, quad: QuadKey) : this(FragmentKey(regionId, quad))
+    internal constructor(regionId: String, quad: QuadKey<LonLat>) : this(FragmentKey(regionId, quad))
 
-    fun quad(): QuadKey {
+    fun quad(): QuadKey<LonLat> {
         return myKey.quadKey
     }
 
@@ -57,7 +58,7 @@ class FragmentSpec (private var myKey: FragmentKey) {
     }
 
     companion object {
-        fun quads(vararg specs: FragmentSpec): Array<QuadKey> {
+        fun quads(vararg specs: FragmentSpec): Array<QuadKey<LonLat>> {
             return listOf(*specs).map { it.quad() }.toTypedArray()
         }
     }

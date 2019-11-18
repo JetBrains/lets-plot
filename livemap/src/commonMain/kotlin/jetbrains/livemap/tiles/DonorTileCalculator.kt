@@ -19,8 +19,8 @@ internal class DonorTileCalculator(private val myExistedTiles: Map<CellKey, Tile
 
         return when {
             upDonor !== EMPTY_TILE && downDonor !== EMPTY_TILE -> CompositeTile().apply {
-                add(upDonor, "")
-                add(downDonor, "")
+                add(upDonor, CellKey(""))
+                add(downDonor, CellKey(""))
             }
             upDonor !== EMPTY_TILE -> upDonor
             downDonor !== EMPTY_TILE -> downDonor
@@ -43,7 +43,7 @@ internal class DonorTileCalculator(private val myExistedTiles: Map<CellKey, Tile
         return if (downDonors.isNotEmpty()) {
             CompositeTile().apply {
                 downDonors.forEach { (tileKey, tile) ->
-                    add(tile, tileKey.subKey(cellKey.length))
+                    add(tile, tileKey.subKey(cellKey))
                 }
             }
         } else {
@@ -55,11 +55,11 @@ internal class DonorTileCalculator(private val myExistedTiles: Map<CellKey, Tile
         return myExistedTiles
             .filter { cellKey.startsWith(it.key) }
             .maxBy { it.key.length }
-            ?.let { SubTile(it.value, cellKey.subKey(it.key.length)) }
+            ?.let { SubTile(it.value, cellKey.subKey(it.key)) }
             ?: EMPTY_TILE
     }
 
     private fun CellKey.startsWith(other: CellKey): Boolean = this.key.startsWith(other.key)
 
-    private fun CellKey.subKey(length: Int): String = this.key.substring(length)
+    private fun CellKey.subKey(other: CellKey): CellKey = CellKey(this.key.substring(other.length))
 }

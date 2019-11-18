@@ -7,6 +7,7 @@ package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.common.json.*
 import jetbrains.gis.geoprotocol.GeoRequest
@@ -112,12 +113,12 @@ object RequestJsonFormatter {
         FluentObject()
             .put(VERSION, PROTOCOL_VERSION)
             .put(MODE, mode)
-            .put(RESOLUTION, request.levelOfDetails?.let { v -> v.toResolution() })
+            .put(RESOLUTION, request.levelOfDetails?.toResolution())
             .put(FEATURE_OPTIONS, request.features.map { formatEnum(it) })
             .putRemovable(TILES, request.tiles?.let {
                     val obj = FluentObject()
                     it.map { (region, quads) ->
-                        obj.put(region, quads.map(QuadKey::string))
+                        obj.put(region, quads.map(QuadKey<LonLat>::key))
                     }
                     obj
                 }

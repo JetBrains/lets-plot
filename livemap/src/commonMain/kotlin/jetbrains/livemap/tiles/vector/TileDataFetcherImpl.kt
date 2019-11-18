@@ -29,7 +29,7 @@ internal class TileDataFetcherImpl(private val myMapProjection: MapProjection, p
         return myTileService.getTileData(bbox, zoom)
     }
 
-    private fun calculateBBox(quadKeys: Set<QuadKey>): Rect<LonLat> = // TODO: add tests for antimeridians
+    private fun calculateBBox(quadKeys: Set<QuadKey<LonLat>>): Rect<LonLat> = // TODO: add tests for antimeridians
         BBOX_CALCULATOR
             .calculateBoundingBoxFromGeoRectangles(
                 quadKeys.map { convertToGeoRectangle(it.computeRect()) }

@@ -5,9 +5,11 @@
 
 package jetbrains.livemap.entities.regions
 
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.spatial.zoom
 
 
-data class FragmentKey(val regionId: String, val quadKey: QuadKey) {
+data class FragmentKey(val regionId: String, val quadKey: QuadKey<LonLat>) {
     fun zoom() = quadKey.zoom()
 }

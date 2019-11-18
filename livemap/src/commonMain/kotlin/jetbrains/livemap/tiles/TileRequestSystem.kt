@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.tiles
 
+import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -67,7 +68,7 @@ class TileRequestSystem(componentManager: EcsComponentManager) : AbstractSystem<
 
     private fun createTileLayerEntities(cellKey: CellKey) {
         val zoom = cellKey.length
-        val tileRect = getTileRect(myMapRect, cellKey.toString())
+        val tileRect = cellKey.computeRect(myMapRect)
 
         for (layer in getEntities(CellLayerComponent::class)) {
             val layerKind = layer.get<CellLayerComponent>().layerKind

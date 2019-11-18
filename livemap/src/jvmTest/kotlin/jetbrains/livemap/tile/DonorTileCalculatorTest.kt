@@ -6,10 +6,14 @@
 package jetbrains.datalore.jetbrains.livemap.tile
 
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.spatial.projectRect
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.projections.Client
-import jetbrains.livemap.tiles.*
+import jetbrains.livemap.tiles.CellKey
+import jetbrains.livemap.tiles.DonorTileCalculator
+import jetbrains.livemap.tiles.Tile
+import jetbrains.livemap.tiles.TileRenderer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -109,8 +113,8 @@ class DonorTileCalculatorTest {
 
     private fun verifyDrawImage(snapshotKey: String, srcSubKey: String, dstSubKey: String) {
         val tile = mySnapshotMap[snapshotKey] as Tile.SnapshotTile
-        val srcRect = getTileRect(myCellRect, srcSubKey)
-        val dstRect = getTileRect(myCellRect, dstSubKey)
+        val srcRect = CellKey(srcSubKey).projectRect(myCellRect)
+        val dstRect = CellKey(dstSubKey).projectRect(myCellRect)
         verify(myContext2d).drawImage(
             tile.snapshot,
             srcRect.left,

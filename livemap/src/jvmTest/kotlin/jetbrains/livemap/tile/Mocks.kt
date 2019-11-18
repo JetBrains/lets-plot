@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.jetbrains.livemap.tile
 
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.livemap.tiles.components.CellStateComponent
@@ -20,21 +21,21 @@ object Mocks {
     }
 
     class CellStateSpec(testBase: LiveMapTestBase) : LiveMapTestBase.MockSpec(testBase) {
-        private var myToAdd = emptySet<QuadKey>()
-        private var myToRemove = emptySet<QuadKey>()
-        private var myVisibleQuads: MutableMap<QuadKey, Int> = HashMap()
+        private var myToAdd = emptySet<QuadKey<LonLat>>()
+        private var myToRemove = emptySet<QuadKey<LonLat>>()
+        private var myVisibleQuads: MutableMap<QuadKey<LonLat>, Int> = HashMap()
 
-        fun quadsToAdd(vararg ts: QuadKey): CellStateSpec {
-            myToAdd = HashSet<QuadKey>(listOf(*ts))
+        fun quadsToAdd(vararg ts: QuadKey<LonLat>): CellStateSpec {
+            myToAdd = HashSet<QuadKey<LonLat>>(listOf(*ts))
             return this
         }
 
-        fun quadsToRemove(vararg ts: QuadKey): CellStateSpec {
-            myToRemove = HashSet<QuadKey>(listOf(*ts))
+        fun quadsToRemove(vararg ts: QuadKey<LonLat>): CellStateSpec {
+            myToRemove = HashSet<QuadKey<LonLat>>(listOf(*ts))
             return this
         }
 
-        fun visibleQuads(vararg quads: QuadKey): CellStateSpec {
+        fun visibleQuads(vararg quads: QuadKey<LonLat>): CellStateSpec {
             myVisibleQuads = HashMap()
             for (quad in quads) {
                 myVisibleQuads[quad] = 1

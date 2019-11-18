@@ -9,6 +9,7 @@ import jetbrains.datalore.base.projectionGeometry.Geometry
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.minus
 import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.gis.tileprotocol.TileGeometryParser
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.multitasking.MicroTask
@@ -20,7 +21,6 @@ import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.WorldProjection
 import jetbrains.livemap.tiles.CellKey
-import jetbrains.livemap.tiles.getTileRect
 
 internal class TileDataParserImpl(private val myMapProjection: MapProjection) : TileDataParser {
 
@@ -39,7 +39,7 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
 
     private fun calculateTransform(cellKey: CellKey): (Vec<LonLat>) -> Vec<Client> {
         val zoomProjection = WorldProjection(cellKey.length)
-        val cellMapRect = getTileRect(myMapProjection.mapRect, cellKey.toString())
+        val cellMapRect = cellKey.computeRect(myMapProjection.mapRect)
         val cellViewOrigin = zoomProjection.project(cellMapRect.origin)
 
         return { zoomProjection.project(myMapProjection.project(it)) - cellViewOrigin }

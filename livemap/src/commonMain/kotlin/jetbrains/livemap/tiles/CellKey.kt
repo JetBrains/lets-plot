@@ -5,8 +5,7 @@
 
 package jetbrains.livemap.tiles
 
-data class CellKey(val key: String) {
-    val length: Int get() = key.length
+import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.livemap.projections.World
 
-    override fun toString(): String = key
-}
+typealias CellKey = QuadKey<World>

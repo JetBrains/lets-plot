@@ -7,7 +7,7 @@ package jetbrains.livemap.tiles.raster
 
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.spatial.GeoUtils
+import jetbrains.datalore.base.spatial.projectOrigin
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.*
@@ -84,7 +84,7 @@ class RasterTileLoadingSystem(
         fun getZXY(cellKey: CellKey, format: String): String {
             return 2.0.pow(cellKey.length)
                 .let { Rect<Generic>(0.0, 0.0, it, it) }
-                .let { GeoUtils.getQuadOrigin(it, cellKey.key) }
+                .let { cellKey.projectOrigin(it) }
                 .let {
                     format
                         .replace("\${z}", cellKey.length.toString(), false)

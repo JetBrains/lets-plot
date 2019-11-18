@@ -6,6 +6,7 @@
 package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeoRequest
@@ -50,7 +51,7 @@ internal object RequestAssertions {
             return mySelf
         }
 
-        fun hasTiles(expected: Map<String, List<QuadKey>>): TAssertion {
+        fun hasTiles(expected: Map<String, List<QuadKey<LonLat>>>): TAssertion {
             assertEquals(expected, actual.tiles)
             return mySelf
         }

@@ -12,10 +12,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class GeoUtilsTest {
-    private fun quadKeys(vararg keys: String): Set<QuadKey> {
-        val quadKeys = HashSet<QuadKey>()
+    private fun quadKeys(vararg keys: String): Set<QuadKey<LonLat>> {
+        val quadKeys = HashSet<QuadKey<LonLat>>()
         for (key in keys) {
-            quadKeys.add(QuadKey(key))
+            quadKeys.add(QuadKey<LonLat>(key))
         }
         return quadKeys
     }
@@ -29,7 +29,7 @@ class GeoUtilsTest {
 
     @Test
     fun calculateZeroTileBBox() {
-        val rect = QuadKey("0").computeRect()
+        val rect = QuadKey<LonLat>("0").computeRect()
         val expectedRect = Rect<Generic>(
                 EARTH_RECT.left,
                 EARTH_RECT.center.x,

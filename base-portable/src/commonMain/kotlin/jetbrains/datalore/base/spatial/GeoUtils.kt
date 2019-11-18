@@ -28,25 +28,6 @@ object GeoUtils {
         return GeoRectangle(left, limitLat(rect.top), right, limitLat(rect.bottom))
     }
 
-    fun <TypeT> getQuadOrigin(mapRect: Rect<TypeT>, quadKey: String): Vec<TypeT> {
-        var left = mapRect.scalarLeft
-        var top = mapRect.scalarTop
-        var width = mapRect.scalarWidth
-        var height = mapRect.scalarHeight
-
-        for (quadrant in quadKey) {
-            width /= 2.0
-            height /= 2.0
-
-            if (quadrant == '1' || quadrant == '3') {
-                left += width
-            }
-            if (quadrant == '2' || quadrant == '3') {
-                top += height
-            }
-        }
-        return newVec(left, top)
-    }
 
 
     fun tileXYToTileID(tileX: Int, tileY: Int, zoom: Int): String {

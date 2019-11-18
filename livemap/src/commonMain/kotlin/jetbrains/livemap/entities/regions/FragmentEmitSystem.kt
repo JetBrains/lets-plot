@@ -6,7 +6,9 @@
 package jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.projectionGeometry.minus
+import jetbrains.datalore.base.projectionGeometry.reinterpret
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeometryUtil.bbox
@@ -56,8 +58,8 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
         if (downloaded.isNotEmpty()) {
             val visibleQuads = getSingleton<CellStateComponent>().visibleQuads
 
-            val processing = HashSet<QuadKey>()
-            val obsolete = HashSet<QuadKey>()
+            val processing = HashSet<QuadKey<LonLat>>()
+            val obsolete = HashSet<QuadKey<LonLat>>()
 
             downloaded.forEach { (fragmentKey, geometry) ->
                 if (!visibleQuads.contains(fragmentKey.quadKey)) {

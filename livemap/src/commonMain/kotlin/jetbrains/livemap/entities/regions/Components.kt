@@ -7,7 +7,9 @@ package jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.spatial.zoom
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -39,9 +41,9 @@ class CachedFragmentsComponent : EcsComponent {
 
 class EmptyFragmentsComponent : EcsComponent {
 
-    private val myCache: LruCache<String, LruCache<QuadKey, Boolean>> = LruCache(REGIONS_CACHE_LIMIT)
+    private val myCache: LruCache<String, LruCache<QuadKey<LonLat>, Boolean>> = LruCache(REGIONS_CACHE_LIMIT)
 
-    fun createCache(): LruCache<QuadKey, Boolean> {
+    fun createCache(): LruCache<QuadKey<LonLat>, Boolean> {
         return LruCache(EMPTY_FRAGMENTS_CACHE_LIMIT)
     }
 
@@ -49,7 +51,7 @@ class EmptyFragmentsComponent : EcsComponent {
         myCache.getOrPut(fragmentKey.regionId, ::createCache).put(fragmentKey.quadKey, true)
     }
 
-    internal fun contains(regionId: String, quadKey: QuadKey): Boolean {
+    internal fun contains(regionId: String, quadKey: QuadKey<LonLat>): Boolean {
         val emptyQuads = myCache[regionId]
         return emptyQuads != null && emptyQuads.containsKey(quadKey)
     }
@@ -126,7 +128,7 @@ class DownloadingFragmentsComponent : EcsComponent {
 }
 
 class FragmentComponent(val fragmentKey: FragmentKey) : EcsComponent {
-    val quad: QuadKey get() = fragmentKey.quadKey
+    val quad: QuadKey<LonLat> get() = fragmentKey.quadKey
 }
 
 class RegionComponent : EcsComponent {

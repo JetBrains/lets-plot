@@ -9,6 +9,7 @@ import jetbrains.datalore.base.concurrent.Lock
 import jetbrains.datalore.base.concurrent.execute
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeoTile
 import jetbrains.livemap.LiveMapContext
@@ -102,7 +103,7 @@ class FragmentDownloadingSystem(
     }
 
     private fun downloadGeometries(fragmentsToFetch: Collection<FragmentKey>) {
-        val regionRequest = HashMap<String, MutableSet<QuadKey>>()
+        val regionRequest = HashMap<String, MutableSet<QuadKey<LonLat>>>()
         val fetchingFragments = getSingleton<StreamingFragmentsComponent>()
 
         for (newFragment in fragmentsToFetch) {

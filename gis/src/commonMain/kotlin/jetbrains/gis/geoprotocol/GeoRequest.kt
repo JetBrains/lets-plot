@@ -8,13 +8,14 @@ package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 
 
 interface GeoRequest {
 
     val features: Set<FeatureOption>
-    val tiles: Map<String, List<QuadKey>>?
+    val tiles: Map<String, List<QuadKey<LonLat>>>?
     val levelOfDetails: LevelOfDetails?
 
     enum class FeatureOption private constructor(private val myValue: String) {

@@ -148,7 +148,7 @@ object ResponseJsonFormatter {
                     geometries.add(geometryToString(boundary))
                 }
 
-                obj.put(tile.key.string, geometries)
+                obj.put(tile.key.key, geometries)
             }
 
             return obj

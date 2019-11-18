@@ -38,7 +38,7 @@ fun <GeometryT, QuadT> calculateQuadKeys(
     return quadKeys
 }
 
-fun calculateQuadKeys(rect: Rect<LonLat>, zoom: Int): Set<QuadKey> {
+fun calculateQuadKeys(rect: Rect<LonLat>, zoom: Int): Set<QuadKey<LonLat>> {
     val flippedRect = Rect<LonLat>(
         rect.left,
         -rect.bottom,

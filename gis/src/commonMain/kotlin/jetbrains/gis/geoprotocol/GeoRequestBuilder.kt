@@ -7,6 +7,7 @@ package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeoRequest.*
 import jetbrains.gis.geoprotocol.GeoRequest.GeocodingSearchRequest.AmbiguityResolver
@@ -25,7 +26,7 @@ object GeoRequestBuilder {
         abstract val mode: GeocodingMode
         protected val features: MutableSet<FeatureOption> = HashSet<FeatureOption>()
 
-        protected var tiles: MutableMap<String, List<QuadKey>>? = null
+        protected var tiles: MutableMap<String, List<QuadKey<LonLat>>>? = null
             private set
 
         protected var levelOfDetails: LevelOfDetails? = null
@@ -43,14 +44,14 @@ object GeoRequestBuilder {
             return mySelf
         }
 
-        fun setTiles(keys: Map<String, List<QuadKey>>?): T {
+        fun setTiles(keys: Map<String, List<QuadKey<LonLat>>>?): T {
             this.tiles = keys?.let { HashMap(it) }
             return mySelf
         }
 
-        fun addTiles(id: String, keys: List<QuadKey>): T {
+        fun addTiles(id: String, keys: List<QuadKey<LonLat>>): T {
             if (tiles == null) {
-                tiles = hashMapOf<String, List<QuadKey>>()
+                tiles = hashMapOf<String, List<QuadKey<LonLat>>>()
             }
             this.tiles!!.set(id, keys)
             return mySelf
@@ -96,7 +97,7 @@ object GeoRequestBuilder {
 
         internal class MyReverseGeocodingSearchRequest(
             features: Set<FeatureOption>,
-            tiles: Map<String, List<QuadKey>>?,
+            tiles: Map<String, List<QuadKey<LonLat>>>?,
             levelOfDetails: LevelOfDetails?,
             override val coordinates: List<DoubleVector>,
             override val level: FeatureLevel,
@@ -139,7 +140,7 @@ object GeoRequestBuilder {
             override val level: FeatureLevel?,
             override val namesakeExampleLimit: Int,
             features: Set<FeatureOption>,
-            tiles: Map<String, List<QuadKey>>?,
+            tiles: Map<String, List<QuadKey<LonLat>>>?,
             levelOfDetails: LevelOfDetails?
         ) : MyGeoRequestBase(features, tiles, levelOfDetails), GeocodingSearchRequest
 
@@ -174,7 +175,7 @@ object GeoRequestBuilder {
         internal class MyExplicitSearchRequest(
             override val ids: List<String>,
             features: Set<FeatureOption>,
-            tiles: Map<String, List<QuadKey>>?,
+            tiles: Map<String, List<QuadKey<LonLat>>>?,
             levelOfDetails: LevelOfDetails?
         ) : MyGeoRequestBase(features, tiles, levelOfDetails), ExplicitSearchRequest
     }
@@ -182,7 +183,7 @@ object GeoRequestBuilder {
 
     internal open class MyGeoRequestBase(
         override val features: Set<FeatureOption>,
-        override val tiles: Map<String, List<QuadKey>>?,
+        override val tiles: Map<String, List<QuadKey<LonLat>>>?,
         override val levelOfDetails: LevelOfDetails?
     ) : GeoRequest
 
