@@ -7,7 +7,7 @@ package jetbrains.livemap.fragments
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder
 import jetbrains.gis.geoprotocol.GeoTile

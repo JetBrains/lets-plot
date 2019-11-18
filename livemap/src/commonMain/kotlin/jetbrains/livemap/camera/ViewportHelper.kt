@@ -8,7 +8,8 @@ package jetbrains.livemap.camera
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.deltaOnLoop
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator
+import jetbrains.datalore.base.spatial.GeoUtils.deltaOnLoop
 import jetbrains.livemap.projections.MapRuler
 import jetbrains.livemap.projections.World
 import jetbrains.livemap.projections.WorldPoint

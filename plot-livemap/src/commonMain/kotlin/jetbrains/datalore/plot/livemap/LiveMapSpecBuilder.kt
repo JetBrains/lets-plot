@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoRectangle
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.BBOX_CALCULATOR
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.convertToGeoRectangle
+import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.spatial.GeoUtils.BBOX_CALCULATOR
+import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions

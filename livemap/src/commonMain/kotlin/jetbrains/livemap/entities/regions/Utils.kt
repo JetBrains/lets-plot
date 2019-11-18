@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.entities.regions
 
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity

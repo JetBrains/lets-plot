@@ -6,7 +6,7 @@
 package jetbrains.livemap.fragments
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeoTile
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE

@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.spatial.GeoUtils
 import jetbrains.livemap.projections.ProjectionType.*
 import kotlin.math.PI
 import kotlin.math.atan2

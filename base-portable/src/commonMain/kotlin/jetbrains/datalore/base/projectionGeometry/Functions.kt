@@ -9,7 +9,6 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangles
 
 class Generic
-class LonLat
 
 fun <TypeT> Vec<Generic>.reinterpret(): Vec<TypeT> = this as Vec<TypeT>
 fun <TypeT> MultiPoint<Generic>.reinterpret(): MultiPoint<TypeT> = this as MultiPoint<TypeT>

@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.core.animation.Animation

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.concurrent.Lock
 import jetbrains.datalore.base.concurrent.execute
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeoTile
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem

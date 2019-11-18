@@ -5,12 +5,12 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
+import jetbrains.datalore.base.spatial.GeoUtils.toDegrees
+import jetbrains.datalore.base.spatial.GeoUtils.toRadians
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.livemap.projections.ProjectionUtil.safePoint
 import kotlin.math.*
 

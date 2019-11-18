@@ -15,7 +15,7 @@ import javafx.scene.text.Text
 import javafx.scene.text.TextAlignment
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
+import jetbrains.datalore.base.spatial.GeoUtils.toDegrees
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.CssFontParser

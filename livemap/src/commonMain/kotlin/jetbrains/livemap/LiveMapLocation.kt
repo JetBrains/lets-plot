@@ -7,7 +7,8 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.FULL_LONGITUDE
+import jetbrains.datalore.base.spatial.GeoUtils.FULL_LONGITUDE
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection

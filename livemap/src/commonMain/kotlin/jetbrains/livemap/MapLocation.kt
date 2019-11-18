@@ -7,8 +7,8 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
-import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.Rect
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.projections.World
 

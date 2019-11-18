@@ -3,12 +3,13 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.projectionGeometry
+package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.projectionGeometry.LongitudeRange.Companion.splitRange
+import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.spatial.LongitudeRange.Companion.splitRange
 import kotlin.math.max
 import kotlin.math.min
 

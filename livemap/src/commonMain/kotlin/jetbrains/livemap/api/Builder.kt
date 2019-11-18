@@ -10,7 +10,10 @@ import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.createMultiPolygon
+import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.spatial.GeoUtils
+import jetbrains.datalore.base.spatial.GeoUtils.createMultiPolygon
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.*

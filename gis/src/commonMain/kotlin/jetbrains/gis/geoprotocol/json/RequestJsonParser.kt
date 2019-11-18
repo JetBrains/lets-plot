@@ -7,7 +7,7 @@ package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.common.json.Arr
 import jetbrains.gis.common.json.FluentObject
 import jetbrains.gis.common.json.Obj

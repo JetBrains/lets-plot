@@ -8,7 +8,7 @@ package jetbrains.gis.geoprotocol
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 
 
 class GeoTile(val key: QuadKey, val geometries: List<Boundary<Generic>>) {

@@ -8,9 +8,9 @@ package jetbrains.livemap
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.projectionGeometry.reinterpret
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.*

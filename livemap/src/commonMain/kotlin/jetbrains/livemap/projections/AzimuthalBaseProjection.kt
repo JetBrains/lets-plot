@@ -6,8 +6,9 @@
 package jetbrains.livemap.projections
 
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.toDegrees
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
+import jetbrains.datalore.base.spatial.GeoUtils.toDegrees
+import jetbrains.datalore.base.spatial.GeoUtils.toRadians
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.livemap.projections.ProjectionUtil.safePoint
 import kotlin.math.*
 

@@ -7,6 +7,8 @@ package jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeometryUtil.bbox
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraListenerComponent

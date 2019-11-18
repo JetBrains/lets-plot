@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.createRingsFromPoints
+import jetbrains.datalore.base.spatial.GeoUtils.createRingsFromPoints
 import jetbrains.datalore.base.values.Colors.withOpacity
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.DataPointAesthetics

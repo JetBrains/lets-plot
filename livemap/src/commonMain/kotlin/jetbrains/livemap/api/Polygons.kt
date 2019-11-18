@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsEntity

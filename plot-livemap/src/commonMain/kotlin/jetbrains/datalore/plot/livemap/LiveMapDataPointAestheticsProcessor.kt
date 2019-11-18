@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics

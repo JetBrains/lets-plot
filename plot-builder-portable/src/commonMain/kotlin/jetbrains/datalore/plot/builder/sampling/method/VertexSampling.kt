@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.sampling.method
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.isClosed
+import jetbrains.datalore.base.spatial.GeoUtils.isClosed
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.util.MutableInteger

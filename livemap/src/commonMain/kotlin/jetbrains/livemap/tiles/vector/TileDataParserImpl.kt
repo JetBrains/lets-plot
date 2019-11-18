@@ -6,9 +6,9 @@
 package jetbrains.livemap.tiles.vector
 
 import jetbrains.datalore.base.projectionGeometry.Geometry
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.minus
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.gis.tileprotocol.TileGeometryParser
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.multitasking.MicroTask

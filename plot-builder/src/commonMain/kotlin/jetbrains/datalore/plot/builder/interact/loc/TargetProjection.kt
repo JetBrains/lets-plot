@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.builder.interact.loc
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles.boundingBox
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.calculateArea
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.createRingsFromPoints
+import jetbrains.datalore.base.spatial.GeoUtils.calculateArea
+import jetbrains.datalore.base.spatial.GeoUtils.createRingsFromPoints
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace.*
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange

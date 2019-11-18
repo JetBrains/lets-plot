@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder.coord.map
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.projectionGeometry.MercatorUtils.VALID_LATITUDE_RANGE
-import jetbrains.datalore.base.projectionGeometry.MercatorUtils.getMercatorY
+import jetbrains.datalore.base.spatial.MercatorUtils.VALID_LATITUDE_RANGE
+import jetbrains.datalore.base.spatial.MercatorUtils.getMercatorY
 import jetbrains.datalore.plot.base.coord.Projection
 
 class MercatorProjectionY : Projection {

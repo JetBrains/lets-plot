@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.mapobjects
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.spatial.LonLat
 
 interface MapPointGeometry {
     val point: Vec<LonLat>

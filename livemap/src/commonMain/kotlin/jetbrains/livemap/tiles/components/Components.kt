@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.tiles.components
 
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.Utils
 import jetbrains.livemap.core.ecs.EcsComponent

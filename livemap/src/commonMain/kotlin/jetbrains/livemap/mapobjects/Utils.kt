@@ -5,10 +5,10 @@
 
 package jetbrains.livemap.mapobjects
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.limit
+import jetbrains.datalore.base.spatial.LonLat
 
 object Utils {
     fun calculateBBoxes(v: MapObject): List<Rect<LonLat>> {

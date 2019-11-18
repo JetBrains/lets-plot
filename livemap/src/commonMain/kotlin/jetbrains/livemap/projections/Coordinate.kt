@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.spatial.LonLat
 
 /**
  * Coordinates in [0.0.. 256.0]

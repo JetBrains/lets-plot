@@ -6,12 +6,12 @@
 package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.projectionGeometry.GeoUtils
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileCount
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.getTileOrigin
-import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.projectionGeometry.times
+import jetbrains.datalore.base.spatial.GeoUtils
+import jetbrains.datalore.base.spatial.GeoUtils.getTileCount
+import jetbrains.datalore.base.spatial.GeoUtils.getTileOrigin
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil
 

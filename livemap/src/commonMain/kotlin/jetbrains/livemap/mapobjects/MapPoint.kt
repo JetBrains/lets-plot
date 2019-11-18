@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.mapobjects
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.values.Color
 
 class MapPoint(

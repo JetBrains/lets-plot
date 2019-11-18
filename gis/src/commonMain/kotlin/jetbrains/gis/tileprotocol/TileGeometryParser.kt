@@ -6,6 +6,7 @@
 package jetbrains.gis.tileprotocol
 
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.spatial.LonLat
 
 import jetbrains.gis.common.twkb.Parser
 import jetbrains.gis.common.twkb.Twkb
