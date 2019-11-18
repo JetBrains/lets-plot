@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.jetbrains.livemap.tile
 
-import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.livemap.core.Utils.common
 import jetbrains.livemap.core.ecs.EcsSystem

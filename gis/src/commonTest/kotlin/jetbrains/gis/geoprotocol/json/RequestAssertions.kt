@@ -6,7 +6,7 @@
 package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequest.*

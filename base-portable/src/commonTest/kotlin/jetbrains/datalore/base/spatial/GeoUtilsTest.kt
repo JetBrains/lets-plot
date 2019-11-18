@@ -3,13 +3,14 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.projectionGeometry
+package jetbrains.datalore.base.spatial
 
-import jetbrains.datalore.base.projectionGeometry.GeoRectangleTestHelper.assertRectangleEquals
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.EARTH_RECT
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.calculateQuadKeys
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.getQuadKeyRect
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.tileXYToTileID
+import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertRectangleEquals
+import jetbrains.datalore.base.spatial.GeoUtils.EARTH_RECT
+import jetbrains.datalore.base.spatial.GeoUtils.calculateQuadKeys
+import jetbrains.datalore.base.spatial.GeoUtils.getQuadKeyRect
+import jetbrains.datalore.base.spatial.GeoUtils.tileXYToTileID
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

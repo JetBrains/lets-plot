@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.jetbrains.livemap.tile
 
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.livemap.tiles.components.CellStateComponent
 import java.util.*

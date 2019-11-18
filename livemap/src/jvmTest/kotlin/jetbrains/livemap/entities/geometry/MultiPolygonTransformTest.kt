@@ -6,6 +6,7 @@
 package jetbrains.datalore.jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.livemap.entities.geometry.GeometryTransform
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.ProjectionUtil.createMapProjection

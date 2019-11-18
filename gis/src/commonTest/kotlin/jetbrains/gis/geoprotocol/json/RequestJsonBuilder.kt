@@ -5,7 +5,7 @@
 
 package jetbrains.gis.geoprotocol.json
 
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.common.json.Obj
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption

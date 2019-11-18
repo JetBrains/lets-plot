@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.createMultiPolygon
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.createRingsFromPoints
+import jetbrains.datalore.base.spatial.GeoUtils.createMultiPolygon
+import jetbrains.datalore.base.spatial.GeoUtils.createRingsFromPoints
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
@@ -40,7 +40,7 @@ class PolygonEdgeCasesTest {
 
     private val polygonLocator: GeomTargetLocator
         get() = createLocator(LookupStrategy.HOVER, LookupSpace.XY,
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.TARGET
+            TARGET
         )
 
     @Test
@@ -48,8 +48,8 @@ class PolygonEdgeCasesTest {
 
         val locator = polygonLocator
 
-        assertObjects(locator, point(jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.X_INSIDE, jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.JOINT.y),
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.POLYGON_KEY
+        assertObjects(locator, point(X_INSIDE, JOINT.y),
+            POLYGON_KEY
         )
     }
 
@@ -57,15 +57,15 @@ class PolygonEdgeCasesTest {
     fun whenOutside_AndControlSegmentGoesThroughSegmentJoints_ShouldNotFindPolygon() {
         val locator = polygonLocator
 
-        assertEmpty(locator, point(jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.X_OUTSIDE_RIGHT, jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.JOINT.y))
+        assertEmpty(locator, point(X_OUTSIDE_RIGHT, JOINT.y))
     }
 
     @Test
     fun whenOnTheLeftSide_AndControlSegmentGoesThroughSegmentJoint_ShouldFindPolygon() {
         val locator = polygonLocator
 
-        assertObjects(locator, point(jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.LEFT_COORD, jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.JOINT.y),
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.POLYGON_KEY
+        assertObjects(locator, point(LEFT_COORD, JOINT.y),
+            POLYGON_KEY
         )
     }
 
@@ -73,7 +73,7 @@ class PolygonEdgeCasesTest {
     fun whenOnTheRightSide_AndControlSegmentGoesThroughSegmentJoints_ShouldNotFindPolygon() {
         val locator = polygonLocator
 
-        assertEmpty(locator, point(jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.RIGHT_COORD, jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.JOINT.y))
+        assertEmpty(locator, point(RIGHT_COORD, JOINT.y))
     }
 
     @Test
@@ -81,12 +81,12 @@ class PolygonEdgeCasesTest {
         val locator = polygonLocator
 
         assertEmpty(locator, point(
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.X_OUTSIDE_RIGHT,
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.BOTTOM_COORD
+            X_OUTSIDE_RIGHT,
+            BOTTOM_COORD
         ))
         assertEmpty(locator, point(
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.X_OUTSIDE_RIGHT,
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.TOP_COORD
+            X_OUTSIDE_RIGHT,
+            TOP_COORD
         ))
     }
 
@@ -98,10 +98,10 @@ class PolygonEdgeCasesTest {
                 point(100.0, 100.0)
         )
 
-        val locator = createLocator(LookupStrategy.HOVER, LookupSpace.XY, polygonTarget(jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.POLYGON_KEY, points))
+        val locator = createLocator(LookupStrategy.HOVER, LookupSpace.XY, polygonTarget(POLYGON_KEY, points))
         assertEmpty(locator, point(55.0, 50.0))
         assertObjects(locator, point(40.0, 50.0),
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.POLYGON_KEY
+            POLYGON_KEY
         )
     }
 
@@ -229,11 +229,11 @@ class PolygonEdgeCasesTest {
         val rings = createRingsFromPoints(multiPointDataList[0].points)
         assertEquals(2, rings.size)
         assertEquals(
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.polygonFromRect(
+            polygonFromRect(
                 leftFromAntiMeridian
             ), rings[0])
         assertEquals(
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.polygonFromRect(
+            polygonFromRect(
                 rightFromAntiMeridian
             ), rings[1])
     }
@@ -295,30 +295,30 @@ class PolygonEdgeCasesTest {
 
         private val POLYGON = polygon(
                 point(
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.LEFT_COORD,
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.BOTTOM_COORD
+                    LEFT_COORD,
+                    BOTTOM_COORD
                 ),
-                point(jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.LEFT_COORD, jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.JOINT.y),
+                point(LEFT_COORD, JOINT.y),
                 point(
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.LEFT_COORD,
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.TOP_COORD
+                    LEFT_COORD,
+                    TOP_COORD
                 ),
                 point(
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.RIGHT_COORD,
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.TOP_COORD
+                    RIGHT_COORD,
+                    TOP_COORD
                 ),
-                point(jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.RIGHT_COORD, jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.JOINT.y),
+                point(RIGHT_COORD, JOINT.y),
                 point(
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.RIGHT_COORD,
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.BOTTOM_COORD
+                    RIGHT_COORD,
+                    BOTTOM_COORD
                 )
         )
 
 
         private const val POLYGON_KEY = 1
         private val TARGET = polygonTarget(
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.POLYGON_KEY,
-            jetbrains.datalore.plot.builder.interact.loc.PolygonEdgeCasesTest.Companion.POLYGON
+            POLYGON_KEY,
+            POLYGON
         )
 
         private fun polygonFromRect(rect: DoubleRectangle): List<DoubleVector> {
