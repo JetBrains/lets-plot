@@ -11,33 +11,21 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api kotlin('stdlib-common')
-                api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                compileOnly kotlin('stdlib-common')
+                compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-                api project(':base-portable')
-                api project(':base')
+                compileOnly project(':jvm-package:jvm-publish-common')
                 api project(':mapper-core')
-                api project(':vis-canvas')
-                api project(':vis-svg')
                 api project(':vis-svg-mapper')
                 api project(':vis-svg-mapper-jfx')
-                api project(':plot-base-portable')
-                api project(':plot-base')
-                api project(':plot-common-portable')
-                api project(':plot-common')
-                api project(':plot-builder-portable')
-                api project(':plot-builder')
-                api project(':plot-config-portable')
-                api project(':plot-config')
                 api project(':vis-demo-common')
                 api project(':vis-demo-common-jfx')
             }
         }
         jvmMain {
             dependencies {
-                implementation kotlin('stdlib-jdk8')
-                // Enable logging to console (make sure it is jared)
-                implementation "org.slf4j:slf4j-simple:$slf4j_version"
+                compileOnly kotlin('stdlib-jdk8')
+                compileOnly "org.slf4j:slf4j-simple:$slf4j_version"
             }
         }
     }
@@ -69,6 +57,15 @@ task jarDatalorePlotJvmJfxClasses(type: ShadowJar) {
     exclude '**/*.kotlin_metadata'
     exclude '**/*.kotlin_module'
     exclude '**/*.kotlin_builtins'
+
+    // exclude classes that duplicates `datalore-plot-common.jar`
+    exclude 'com/google/**/*'
+    exclude 'kotlin/**/*'
+//    exclude 'kotlinx/**/*'
+    exclude 'mu/**/*'
+    exclude 'org/intellij/**/*'
+    exclude 'org/jetbrains/annotations/**/*'
+    exclude 'org/slf4j/**/*'
 
 //    relocate 'com', 'shade.com'
 //    relocate 'org', 'shade.org'

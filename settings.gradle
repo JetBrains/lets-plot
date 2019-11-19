@@ -41,7 +41,8 @@ include 'base-portable',
         'js-package',
         'js-package:js-publish-latest',
         'js-package:js-publish-version',
-        'jvm-jfx-package',
+        'jvm-package:jvm-publish-common',
+        'jvm-package:jvm-publish-jfx',
         'test-common'
 
 

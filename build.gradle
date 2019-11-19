@@ -48,14 +48,14 @@ allprojects {
 //    println "--- project ---: $project.name $project.rootDir"
 }
 
-def include_sources_datalorePlotJvmJfx = [
+def include_sources_datalorePlotJvmCommon = [
         'base-portable',
         'base',
-        'mapper-core',
+//        'mapper-core',
         'vis-canvas',
         'vis-svg',
-        'vis-svg-mapper',
-        'vis-svg-mapper-jfx',
+//        'vis-svg-mapper',
+//        'vis-svg-mapper-jfx',
         'plot-base-portable',
         'plot-base',
         'plot-common-portable',
@@ -64,11 +64,20 @@ def include_sources_datalorePlotJvmJfx = [
         'plot-builder',
         'plot-config-portable',
         'plot-config',
+//        'vis-demo-common',
+//        'vis-demo-common-jfx',
+]
+
+def include_sources_datalorePlotJvmJfx = [
+        'mapper-core',
+        'vis-svg-mapper',
+        'vis-svg-mapper-jfx',
         'vis-demo-common',
         'vis-demo-common-jfx',
 ]
 
 configurations {
+    datalorePlotJvmCommonSources
     datalorePlotJvmJfxSources
 }
 
@@ -90,16 +99,21 @@ subprojects {
 //        }
     }
 
-    // jar jvm sources
-    if (name in include_sources_datalorePlotJvmJfx) {
+    // jar jvm sources of this project
+    if (name in include_sources_datalorePlotJvmCommon || name in include_sources_datalorePlotJvmJfx) {
         apply plugin: 'kotlin-multiplatform'
         kotlin.jvm {}   // for `jvmSourcesJar` task
         build.dependsOn += jvmSourcesJar
     }
 
-    // build configuration dependent on all jars with sources
+    // make build configuration depend on sources jars
+    def sources_jar_path = "${buildDir}/libs/${name}-jvm-${version}-sources.jar"
+    if (name in include_sources_datalorePlotJvmCommon) {
+        rootProject.dependencies {
+            datalorePlotJvmCommonSources files(sources_jar_path)
+        }
+    }
     if (name in include_sources_datalorePlotJvmJfx) {
-        def sources_jar_path = "${buildDir}/libs/${name}-jvm-${version}-sources.jar"
         rootProject.dependencies {
             datalorePlotJvmJfxSources files(sources_jar_path)
         }
