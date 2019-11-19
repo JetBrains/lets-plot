@@ -73,6 +73,7 @@ def ggplot(data=None, mapping=None):
     return PlotSpec(data, mapping, scales=[], layers=[], **data_meta)
 
 
+# noinspection SpellCheckingInspection
 def ggsize(width, height):
     """
     Specifies overall size of plot
