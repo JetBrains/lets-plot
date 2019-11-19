@@ -17,7 +17,8 @@ class EcsComponentManager {
     private var myIdGenerator = 0
 
     internal val entities = myComponentsByEntity.keys
-    val entitiesCount = myComponentsByEntity.size
+    val entitiesCount
+        get() = myComponentsByEntity.size
 
     fun createEntity(name: String): EcsEntity {
         return EcsEntity(myIdGenerator++, name, this).also { entity ->
@@ -44,7 +45,7 @@ class EcsComponentManager {
 
     /**
      * Add [component] to [entity].
-     * Throws exception if component of this type is already added to the [entitiy]
+     * Throws exception if component of this type is already added to the [entity]
      */
     internal fun <T : EcsComponent> addComponent(entity: EcsEntity, component: T) {
         val entityComponents = myComponentsByEntity[entity]
@@ -58,14 +59,18 @@ class EcsComponentManager {
     /**
      * Return all components of the [entity] if it is not marked as removed
      */
-    fun getComponents(entity: EcsEntity): Map<KClass<out EcsComponent>, EcsComponent> =
-        getComponentsInternal(entity) ?: emptyMap()
+    fun getComponents(entity: EcsEntity): Map<KClass<out EcsComponent>, EcsComponent> {
+        if (entity.hasRemoveFlag()) {
+            return emptyMap()
+        }
+        return myComponentsByEntity[entity] ?: emptyMap()
+    }
 
     /**
      * Count number of components of type [componentType]. Components from removed entities are not counted.
      */
     fun count(componentType: KClass<out EcsComponent>): Int =
-        myEntitiesBytComponent.get(componentType)?.notRemoved()?.count() ?: 0
+        myEntitiesBytComponent[componentType]?.notRemoved()?.count() ?: 0
 
     fun containsEntity(componentType: KClass<out EcsComponent>): Boolean =
         myEntitiesBytComponent.containsKey(componentType)
@@ -121,7 +126,7 @@ class EcsComponentManager {
 
     inline fun <reified ComponentT : EcsComponent> tryGetSingleton(): ComponentT? {
         if (containsEntity(ComponentT::class)) {
-            return getSingleton<ComponentT>()
+            return getSingleton()
         }
         return null
     }
@@ -143,19 +148,18 @@ class EcsComponentManager {
      */
     internal fun removeComponent(entity: EcsEntity, componentType: KClass<out EcsComponent>) {
         removeEntityFromComponents(entity, componentType)
-        getComponentsInternal(entity)?.remove(componentType)
+        getComponentsWithRemoved(entity)?.remove(componentType)
     }
 
-    private fun getComponentsInternal(entity: EcsEntity): MutableMap<KClass<out EcsComponent>, out EcsComponent>? {
-        if (entity.hasRemoveFlag()) {
-            return null
-        }
+    private fun getComponentsWithRemoved(entity: EcsEntity): MutableMap<KClass<out EcsComponent>, out EcsComponent>? {
         return myComponentsByEntity[entity]
     }
 
     internal fun doRemove() {
         myRemovedEntities.forEach { entity ->
-            getComponents(entity).keys.forEach { componentType -> removeEntityFromComponents(entity, componentType) }
+            getComponentsWithRemoved(entity)?.forEach { (componentType, _) ->
+                removeEntityFromComponents(entity, componentType)
+            }
             myComponentsByEntity.remove(entity)
             myEntityById.remove(entity.id)
         }

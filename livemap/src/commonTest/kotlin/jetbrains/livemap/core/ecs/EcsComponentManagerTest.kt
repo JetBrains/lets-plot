@@ -15,47 +15,48 @@ class EcsComponentManagerTest {
     class Baz: EcsComponent
     class Qux: EcsComponent
 
-    lateinit var man: EcsComponentManager
-    lateinit var foo: EcsEntity
-    lateinit var bar: EcsEntity
-    lateinit var baz: EcsEntity
-    lateinit var fooBar: EcsEntity
-    lateinit var fooBaz: EcsEntity
-    lateinit var barBaz: EcsEntity
+    private lateinit var man: EcsComponentManager
+    private lateinit var foo: EcsEntity
+    private lateinit var bar: EcsEntity
+    private lateinit var baz: EcsEntity
+    private lateinit var fooBar: EcsEntity
+    private lateinit var fooBaz: EcsEntity
+    private lateinit var barBaz: EcsEntity
 
 
     @BeforeTest
     fun setUp() {
         man = EcsComponentManager()
-        foo = man.createEntity("foo").addComponent(Foo())
-        bar = man.createEntity("bar").addComponent(Bar())
-        baz = man.createEntity("baz").addComponent(Baz())
-        fooBar = man.createEntity("fooBar").addComponent(Foo()).addComponent(Bar())
-        fooBaz = man.createEntity("fooBaz").addComponent(Foo()).addComponent(Baz())
-        barBaz = man.createEntity("barBaz").addComponent(Bar()).addComponent(Baz())
+        foo = man.createEntity("foo").addComponents { + Foo() }
+        bar = man.createEntity("bar").addComponents { + Bar() }
+        baz = man.createEntity("baz").addComponents { + Baz() }
+        fooBar = man.createEntity("fooBar").addComponents { + Foo(); + Bar() }
+        fooBaz = man.createEntity("fooBaz").addComponents { + Foo(); + Baz() }
+        barBaz = man.createEntity("barBaz").addComponents { + Bar(); + Baz() }
     }
 
     @Test
     fun entity_Remove_WorksViaIterator_ShouldWork() {
-        man.createEntity("").addComponent(Foo())
-        man.createEntity("").addComponent(Foo())
-        man.createEntity("").addComponent(Foo())
-        man.createEntity("").addComponent(Foo())
+        man.createEntity("").addComponents { + Foo() }
+        man.createEntity("").addComponents { + Foo() }
+        man.createEntity("").addComponents { + Foo() }
+        man.createEntity("").addComponents { + Foo() }
 
         man.getEntities(Foo::class).forEach(EcsEntity::remove)
-        assertEquals(0, man.entitiesCount)
+        man.doRemove()
+        assertEquals(3, man.entitiesCount)
     }
 
     @Test
-    fun entity_RemoveComponent_WorksViaCopy_ShouldWorkd() {
-        man.createEntity("").addComponent(Foo())
-        man.createEntity("").addComponent(Foo())
-        man.createEntity("").addComponent(Foo())
-        man.createEntity("").addComponent(Foo())
+    fun entity_RemoveComponent_WorksViaCopy_ShouldWork() {
+        man.createEntity("").addComponents { + Foo() }
+        man.createEntity("").addComponents { + Foo() }
+        man.createEntity("").addComponents { + Foo() }
+        man.createEntity("").addComponents { + Foo() }
         man.getEntities(Foo::class).toList().forEach {
             it.removeComponent(Foo::class)
         }
-        assertEquals(0, man.entitiesCount)
+        assertEquals(0, man.getEntities(Foo::class).count())
     }
 
     @Test
