@@ -21,17 +21,17 @@ internal class DurationInterval(private val myDuration: Duration, count: Int) : 
         get() {
             val duration = myDuration.duration
             if (duration < Duration.SECOND.duration) {
-                return "S"
+                return "%S"
             } else if (duration < Duration.MINUTE.duration) {
-                return "ss"
+                return "%S"
             } else if (duration < Duration.HOUR.duration) {
-                return "mm"
+                return "%M"
             } else if (duration < Duration.DAY.duration) {
-                return "H:mm"
+                return "%H:%M"
             } else if (duration < Duration.WEEK.duration) {
-                return "MMM d"
+                return "%b %e"
             }
-            return "MMM d"
+            return "%b %e"
         }
 
     init {

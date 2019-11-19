@@ -20,34 +20,19 @@ class DateTimeFormatUtilTest {
 
         val m = DateTimeFormatUtil.formatDateUTC(
             baseInstant,
-            "M"
+            "%m"
         )
-        assertEquals("8", m)
-        val mm = DateTimeFormatUtil.formatDateUTC(
+        assertEquals("08", m)
+        val b = DateTimeFormatUtil.formatDateUTC(
             baseInstant,
-            "MM"
+            "%b"
         )
-        assertEquals("08", mm)
-        val mmm = DateTimeFormatUtil.formatDateUTC(
+        assertEquals("Aug", b)
+        val B = DateTimeFormatUtil.formatDateUTC(
             baseInstant,
-            "MMM"
+            "%B"
         )
-        assertEquals("Aug", mmm)
-        val mmmm = DateTimeFormatUtil.formatDateUTC(
-            baseInstant,
-            "MMMM"
-        )
-        assertEquals("August", mmmm)
-        val mmmmm = DateTimeFormatUtil.formatDateUTC(
-            baseInstant,
-            "MMMMM"
-        )
-        assertEquals("August", mmmmm)   // ?
-        val mmmmmm = DateTimeFormatUtil.formatDateUTC(
-            baseInstant,
-            "MMMMMM"
-        )
-        assertEquals("August", mmmmmm)   // ?
+        assertEquals("August", B)
     }
 
     companion object {

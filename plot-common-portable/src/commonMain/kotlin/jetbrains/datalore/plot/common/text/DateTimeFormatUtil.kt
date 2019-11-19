@@ -5,6 +5,16 @@
 
 package jetbrains.datalore.plot.common.text
 
-expect object DateTimeFormatUtil {
-    fun formatDateUTC(instant: Number, pattern: String): String
+import jetbrains.datalore.base.dateFormat.Format
+import jetbrains.datalore.base.datetime.Instant
+import jetbrains.datalore.base.datetime.tz.TimeZone
+
+object DateTimeFormatUtil {
+    fun formatDateUTC(instant: Number, pattern: String): String {
+        val format = Format(pattern)
+        return instant.toLong()
+            .let(::Instant)
+            .let(TimeZone.UTC::toDateTime)
+            .let(format::apply)
+    }
 }

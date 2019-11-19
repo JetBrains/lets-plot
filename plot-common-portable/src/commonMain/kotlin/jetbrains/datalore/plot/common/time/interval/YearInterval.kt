@@ -31,7 +31,7 @@ class YearInterval internal constructor(count: Int) : MeasuredInDays(count) {
     }
 
     companion object {
-        const val TICK_FORMAT = "yyyy"
+        const val TICK_FORMAT = "%Y"
         const val MS = 31536e6
         val TICK_FORMATTER = Formatter.time(TICK_FORMAT)
     }

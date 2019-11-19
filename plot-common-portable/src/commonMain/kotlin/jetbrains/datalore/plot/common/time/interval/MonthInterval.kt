@@ -12,7 +12,7 @@ import jetbrains.datalore.base.datetime.Month
 internal class MonthInterval(count: Int) : MeasuredInDays(count) {
 
     override val tickFormatPattern: String
-        get() = "MMM"
+        get() = "%b"
 
     override fun getFirstDayContaining(instant: DateTime): Date {
         var firstDay = instant.date

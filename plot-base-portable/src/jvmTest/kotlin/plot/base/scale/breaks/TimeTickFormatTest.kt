@@ -5,7 +5,10 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.base.datetime.*
+import jetbrains.datalore.base.datetime.Date
+import jetbrains.datalore.base.datetime.DateTime
+import jetbrains.datalore.base.datetime.Month
+import jetbrains.datalore.base.datetime.Time
 import jetbrains.datalore.base.datetime.tz.TimeZone
 import jetbrains.datalore.plot.common.text.DateTimeFormatUtil
 import jetbrains.datalore.plot.common.time.interval.TimeInterval
@@ -29,7 +32,7 @@ class TimeTickFormatTest {
     @Test
     fun intervalHoursDefault() {
         val hour = format(BASE_DATE_TIME, TimeInterval.hours(1).tickFormatPattern)
-        assertEquals("7:07", hour)
+        assertEquals("07:07", hour)
     }
 
     @Test
@@ -57,7 +60,7 @@ class TimeTickFormatTest {
     }
 
     private fun format(dateTime: DateTime, pattern: String): String {
-        return DateTimeFormatUtil.formatDate(JvmDateTimeUtil.toJavaDate(dateTime)!!, pattern)
+        return DateTimeFormatUtil.formatDateUTC(TimeZone.UTC.toInstant(dateTime).timeSinceEpoch, pattern)
     }
 
     companion object {

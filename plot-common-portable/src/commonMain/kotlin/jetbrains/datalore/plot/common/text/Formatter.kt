@@ -10,11 +10,11 @@ import jetbrains.datalore.plot.common.data.DataType
 import jetbrains.datalore.plot.common.time.interval.TimeInterval
 
 object Formatter {
-    private const val YEAR = "MMM y"
-    private const val YEAR_QUARTER = "Q y"
-    private const val YEAR_MONTH = "MMMM y"
-    private const val DATE_MEDIUM = "EEE, MMM d, y"
-    private const val DATE_MEDIUM_TIME_SHORT = "EEE, MMM d, y h:mm a"
+    private const val YEAR = "%b %Y"
+    private const val YEAR_QUARTER = "Q %y"
+    private const val YEAR_MONTH = "%B %Y"
+    private const val DATE_MEDIUM = "%a, %b %e, %Y"
+    private const val DATE_MEDIUM_TIME_SHORT = "%a, %b %e, %Y %l:%M %p"
 
     private val DEF_NUMBER_FORMAT = NumberFormat(",g")
 
@@ -22,13 +22,11 @@ object Formatter {
         DEF_NUMBER_FORMAT.apply(input as Number)
     }
 
-    fun time(pattern: String): (Any) -> String {
-        return { input ->
-            DateTimeFormatUtil.formatDateUTC(
-                input as Number,
-                pattern
-            )
-        }
+    fun time(pattern: String): (Any) -> String = { input ->
+        DateTimeFormatUtil.formatDateUTC(
+            input as Number,
+            pattern
+        )
     }
 
 //    @JvmOverloads
@@ -92,9 +90,7 @@ object Formatter {
         when (dataType) {
             DataType.NUMBER -> return DEF_NUMBER_FORMATTER
             DataType.STRING -> return { it.toString() } // no formatting really (toSting)
-            DataType.INSTANT -> return time(
-                "EEE, MMM d, ''yy"
-            )
+            DataType.INSTANT -> return time("%a, %b %e, '%y")
             else -> if (dataType.isTimeInterval) {
                 val timeInterval = TimeInterval.fromIntervalDataType(dataType)
                 return timeInterval.tickFormatter

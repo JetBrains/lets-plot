@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.base.dateFormat
 
+import jetbrains.datalore.base.dateFormat.Pattern.Companion.Kind
 import jetbrains.datalore.base.datetime.Date
 import jetbrains.datalore.base.datetime.DateTime
 import jetbrains.datalore.base.datetime.Time
@@ -31,7 +32,7 @@ class Format(private val spec: List<SpecPart>) {
         spec
             .filter {
                 when {
-                    (it is PatternSpecPart && it.pattern.type == Pattern.DATE_TYPE) -> true
+                    (it is PatternSpecPart && it.pattern.kind == Kind.DATE) -> true
                     it !is PatternSpecPart -> true
                     else -> false
                 }
@@ -42,7 +43,7 @@ class Format(private val spec: List<SpecPart>) {
         spec
             .filter {
                 when {
-                    (it is PatternSpecPart && it.pattern.type == Pattern.TIME_TYPE) -> true
+                    (it is PatternSpecPart && it.pattern.kind == Kind.TIME) -> true
                     it !is PatternSpecPart -> true
                     else -> false
                 }
