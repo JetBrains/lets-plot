@@ -16,6 +16,14 @@ open class FunTransform(
         private val myInverse: (Double?) -> Double?) :
         Transform, BreaksGenerator {
 
+
+    private val myLinearBreaksGen = LinearBreaksGen()
+
+    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        val domainBeforeTransform = MapperUtil.map(domainAfterTransform) { myInverse(it) }
+        return myLinearBreaksGen.labelFormatter(domainBeforeTransform, targetCount)
+    }
+
     override fun apply(rawData: List<*>): List<Double?> {
         return rawData.map { myFun(it as Double) }
     }
@@ -24,10 +32,10 @@ open class FunTransform(
         return myInverse(v)
     }
 
+
     override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
         val domainBeforeTransform = MapperUtil.map(domainAfterTransform) { myInverse(it) }
-        val originalBreaks = LinearBreaksGen()
-            .generateBreaks(domainBeforeTransform, targetCount)
+        val originalBreaks = myLinearBreaksGen.generateBreaks(domainBeforeTransform, targetCount)
         val domainValues = originalBreaks.domainValues
         val transformValues = ArrayList<Double>()
         for (domainValue in domainValues) {

@@ -17,6 +17,9 @@ internal class IdentityTransform @JvmOverloads constructor(
         private val myBreaksGenerator: BreaksGenerator = LinearBreaksGen()
 ) :
         Transform, BreaksGenerator {
+    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        return myBreaksGenerator.labelFormatter(domainAfterTransform, targetCount)
+    }
 
     override fun apply(rawData: List<*>): List<Double?> {
         val checkedDoubles = SeriesUtil.checkedDoubles(rawData)

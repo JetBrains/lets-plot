@@ -14,9 +14,10 @@ import jetbrains.datalore.plot.base.scale.breaks.QuantitativeTickFormatterFactor
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-internal class PointDataAccess(private val data: DataFrame,
-                               bindings: Map<Aes<*>, VarBinding>) :
-    MappedDataAccess {
+internal class PointDataAccess(
+    private val data: DataFrame,
+    bindings: Map<Aes<*>, VarBinding>
+) : MappedDataAccess {
 
     override val mappedAes: Set<Aes<*>> = HashSet(bindings.keys)
 
@@ -36,11 +37,9 @@ internal class PointDataAccess(private val data: DataFrame,
         val scale = myBindings[aes]!!.scale as Scale<T>
 
         val original = scale.transform.applyInverse(value)
-        val s: String
-        s = if (original is Number) {
-            formatter(aes)(original)
-        } else {
-            original.toString()
+        val s = when (original) {
+            is Number -> formatter(aes, scale)(original)
+            else -> original.toString()
         }
 
         val continuous = scale.isContinuous
@@ -57,19 +56,29 @@ internal class PointDataAccess(private val data: DataFrame,
         return data.getNumeric(variable)[index]
     }
 
-    private fun formatter(aes: Aes<*>): (Any) -> String {
+    private fun formatter(
+        aes: Aes<*>,
+        scale: Scale<*>
+    ): (Any) -> String {
         if (!myFormatters.containsKey(aes)) {
-            myFormatters[aes] = createFormatter(aes)
+            myFormatters[aes] = createFormatter(aes, scale)
         }
         return myFormatters[aes]!!
     }
 
-    private fun createFormatter(aes: Aes<*>): (Any) -> String {
-        val varBinding = myBindings[aes]
+    private fun createFormatter(
+        aes: Aes<*>,
+        scale: Scale<*>
+    ): (Any) -> String {
+
+        val binding = myBindings.getValue(aes)
         // only 'stat' or 'transform' vars here
-        val `var` = varBinding!!.variable
-        var domain = data.range(`var`)
-        domain = SeriesUtil.ensureNotZeroRange(domain)
+        val domain = SeriesUtil.ensureNotZeroRange(data.range(binding.variable))
+        if (scale.hasBreaksGenerator()) {
+            // targetCount should have pretty low value. data.rowCount() can give e-notation where it is not needed
+            return scale.breaksGenerator.labelFormatter(domain, 100)
+        }
+
         return QuantitativeTickFormatterFactory.forLinearScale().getFormatter(domain, SeriesUtil.span(domain) / 100.0)
     }
 }
