@@ -136,8 +136,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
                     { v -> myMapperProvider!!.createDiscreteMapper(data, variable).apply(v) }
                 }
 
-                @Suppress("UNCHECKED_CAST")
-                val domainValues = DataFrameUtil.distinctValues(data, variable).filter { it != null } as List<Any>
+                val domainValues = DataFrameUtil.distinctValues(data, variable).filterNotNull()
                 scale = Scales.discreteDomain(
                         name,
                         domainValues,

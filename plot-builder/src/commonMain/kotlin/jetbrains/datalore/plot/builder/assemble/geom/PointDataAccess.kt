@@ -10,9 +10,10 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.scale.breaks.QuantitativeTickFormatterFactory
+import jetbrains.datalore.plot.base.scale.ScaleUtil.getBreaksGenerator
+import jetbrains.datalore.plot.base.scale.ScaleUtil.labelByBreak
 import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil.ensureNotZeroRange
 
 internal class PointDataAccess(
     private val data: DataFrame,
@@ -20,65 +21,48 @@ internal class PointDataAccess(
 ) : MappedDataAccess {
 
     override val mappedAes: Set<Aes<*>> = HashSet(bindings.keys)
-
     private val myBindings: Map<Aes<*>, VarBinding> = bindings.toMap()
+    private val myFormatters = HashMap<Aes<*>, (Any?) -> String>()
 
-    private val myFormatters = HashMap<Aes<*>, (Any) -> String>()
-
-    override fun isMapped(aes: Aes<*>): Boolean {
-        return myBindings.containsKey(aes)
-    }
+    override fun isMapped(aes: Aes<*>) = myBindings.containsKey(aes)
 
     override fun <T> getMappedData(aes: Aes<T>, index: Int): MappedDataAccess.MappedData<T> {
         checkArgument(isMapped(aes), "Not mapped: $aes")
 
-        val value = valueAfterTransform(aes, index)!!
-        @Suppress("UNCHECKED_CAST")
-        val scale = myBindings[aes]!!.scale as Scale<T>
-
-        val original = scale.transform.applyInverse(value)
-        val s = when (original) {
-            is Number -> formatter(aes, scale)(original)
-            else -> original.toString()
-        }
-
-        val continuous = scale.isContinuous
-
-        return MappedDataAccess.MappedData(label(aes), s, continuous)
-    }
-
-    private fun label(aes: Aes<*>): String {
-        return myBindings[aes]!!.scale!!.name
-    }
-
-    private fun valueAfterTransform(aes: Aes<*>, index: Int): Double? {
-        val variable = myBindings[aes]!!.variable
-        return data.getNumeric(variable)[index]
-    }
-
-    private fun formatter(
-        aes: Aes<*>,
-        scale: Scale<*>
-    ): (Any) -> String {
-        if (!myFormatters.containsKey(aes)) {
-            myFormatters[aes] = createFormatter(aes, scale)
-        }
-        return myFormatters[aes]!!
-    }
-
-    private fun createFormatter(
-        aes: Aes<*>,
-        scale: Scale<*>
-    ): (Any) -> String {
-
         val binding = myBindings.getValue(aes)
-        // only 'stat' or 'transform' vars here
-        val domain = SeriesUtil.ensureNotZeroRange(data.range(binding.variable))
-        if (scale.hasBreaksGenerator()) {
-            // targetCount should have pretty low value. data.rowCount() can give e-notation where it is not needed
-            return scale.breaksGenerator.labelFormatter(domain, 100)
-        }
+        val scale = binding.scale!!
 
-        return QuantitativeTickFormatterFactory.forLinearScale().getFormatter(domain, SeriesUtil.span(domain) / 100.0)
+        val transformedValue = binding.variable.run(data::getNumeric)[index]
+        val originalValue = scale.transform.applyInverse(transformedValue)
+
+        return MappedDataAccess.MappedData(
+            label = scale.name,
+            value = formatter(aes).invoke(originalValue),
+            isContinuous = scale.isContinuous
+        )
+    }
+
+    private fun <T> formatter(aes: Aes<T>): (Any?) -> String {
+        val scale = myBindings.getValue(aes).scale
+        return myFormatters.getOrPut(aes, defaultValue = { createFormatter(aes, scale!!) })
+    }
+
+    private fun createFormatter(aes: Aes<*>, scale: Scale<*>): (Any?) -> String {
+        if (scale.isContinuousDomain) {
+            // only 'stat' or 'transform' vars here
+            val domain = myBindings
+                .getValue(aes)
+                .variable
+                .run(data::range)
+                .run(::ensureNotZeroRange)
+
+            val formatter = getBreaksGenerator(scale).labelFormatter(domain, 100)
+            return { value -> value?.let { formatter.invoke(it) } ?: "NULL" }
+        } else if (scale.hasBreaks() && scale.hasLabels()) {
+            val labelsMap = labelByBreak(scale)
+            return { value -> value?.let { labelsMap.getValue(it) } ?: "NULL" }
+        } else {
+            return { value -> value.toString() }
+        }
     }
 }
