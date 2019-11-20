@@ -69,7 +69,7 @@ object BrowserDemoUtil {
         }
 
         val desktop = Desktop.getDesktop()
-        desktop.browse(file.toURI());
+        desktop.browse(file.toURI())
     }
 
     fun getRootPath(): String {
