@@ -99,7 +99,7 @@ class LayersBuilder(
     val myComponentManager: EcsComponentManager,
     val layerManager: LayerManager,
     val mapProjection: MapProjection,
-    val devParams: DevParams,
+    val pointScaling: Boolean,
     val textMeasurer: TextMeasurer
 )
 

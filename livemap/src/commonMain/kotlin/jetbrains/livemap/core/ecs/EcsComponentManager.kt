@@ -12,7 +12,7 @@ class EcsComponentManager {
 
     private val myEntityById = HashMap<Int, EcsEntity>()
     private val myComponentsByEntity = HashMap<EcsEntity, MutableMap<KClass<out EcsComponent>, EcsComponent>>()
-    private val myEntitiesBytComponent = HashMap<KClass<out EcsComponent>, MutableSet<EcsEntity>>()
+    private val myEntitiesByComponent = HashMap<KClass<out EcsComponent>, MutableSet<EcsEntity>>()
     private val myRemovedEntities = ArrayList<EcsEntity>()
     private var myIdGenerator = 0
 
@@ -41,7 +41,7 @@ class EcsComponentManager {
      * Returns entities containing component with [componentType] or empty sequence
      */
     fun getEntities(componentType: KClass<out EcsComponent>): Sequence<EcsEntity> =
-        (myEntitiesBytComponent[componentType] ?: emptySet<EcsEntity>()).notRemoved()
+        (myEntitiesByComponent[componentType] ?: emptySet<EcsEntity>()).notRemoved()
 
     /**
      * Add [component] to [entity].
@@ -53,7 +53,7 @@ class EcsComponentManager {
         require(component::class !in entityComponents) { "Entity already has component with the type " + component::class }
 
         entityComponents[component::class] = component
-        myEntitiesBytComponent.getOrPut(component::class, ::HashSet).add(entity)
+        myEntitiesByComponent.getOrPut(component::class, ::HashSet).add(entity)
     }
 
     /**
@@ -70,10 +70,11 @@ class EcsComponentManager {
      * Count number of components of type [componentType]. Components from removed entities are not counted.
      */
     fun count(componentType: KClass<out EcsComponent>): Int =
-        myEntitiesBytComponent[componentType]?.notRemoved()?.count() ?: 0
+        myEntitiesByComponent[componentType]?.notRemoved()?.count() ?: 0
 
     fun containsEntity(componentType: KClass<out EcsComponent>): Boolean =
-        myEntitiesBytComponent.containsKey(componentType)
+        myEntitiesByComponent.containsKey(componentType)
+
 
     /**
      * Returns true if [entity] exists and not removed.
@@ -82,21 +83,31 @@ class EcsComponentManager {
         !entity.hasRemoveFlag() && myComponentsByEntity.containsKey(entity)
 
     /**
-     * Return entities conatining all components with [componentTypes] or empty sequence
+     * Return entities containing all components with [componentTypes] or empty sequence
      */
     fun getEntities(componentTypes: Collection<KClass<out EcsComponent>>): Sequence<EcsEntity> =
         getEntities(componentTypes.first()).filter { entity -> entity.contains(componentTypes) }
+
+    /**
+     * Returns single entity containing all [componentTypes] or null.
+     * Throws exception if number of such entities is not one.
+     */
+    fun tryGetSingletonEntity(componentTypes: Collection<KClass<out EcsComponent>>): EcsEntity? {
+        val entities = getEntities(componentTypes)
+
+        check(entities.count() == 1) { "Entity with specified components is not a singleton: $componentTypes" }
+
+        return entities.firstOrNull()
+    }
 
     /**
      * Returns single entity containing all [componentTypes].
      * Throws exception if number of such entities is not one.
      */
     fun getSingletonEntity(componentTypes: Collection<KClass<out EcsComponent>>): EcsEntity {
-        val entities = getEntities(componentTypes)
-        val singleton = entities.firstOrNull()
+        val singleton = tryGetSingletonEntity(componentTypes)
 
-        check(singleton != null){ "Entity with specified components does not exist: $componentTypes" }
-        check(entities.count() == 1) { "Entity with specified components is not a singleton: $componentTypes" }
+        check(singleton != null) { "Entity with specified components does not exist: $componentTypes" }
 
         return singleton
     }
@@ -167,10 +178,10 @@ class EcsComponentManager {
     }
 
     private fun removeEntityFromComponents(entity: EcsEntity, componentType: KClass<out EcsComponent>) {
-        myEntitiesBytComponent[componentType]?.let { componentEntities ->
+        myEntitiesByComponent[componentType]?.let { componentEntities ->
             componentEntities.remove(entity)
             if (componentEntities.isEmpty()) {
-                myEntitiesBytComponent.remove(componentType)
+                myEntitiesByComponent.remove(componentType)
             }
         }
     }

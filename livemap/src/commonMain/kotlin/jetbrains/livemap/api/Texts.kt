@@ -22,37 +22,36 @@ import jetbrains.livemap.projections.MapProjection
 @LiveMapDsl
 class Texts(
     val factory: MapEntityFactory,
-    val layerEntitiesComponent: LayerEntitiesComponent,
     val mapProjection: MapProjection,
     val textMeasurer: TextMeasurer
 )
 
 fun LayersBuilder.texts(block: Texts.() -> Unit) {
-    val layerEntitiesComponent = LayerEntitiesComponent()
     val layerEntity = myComponentManager
         .createEntity("map_layer_text")
         .addComponents {
             + layerManager.addLayer("livemap_text", LayerGroup.FEATURES)
-            + layerEntitiesComponent
+            + LayerEntitiesComponent()
         }
 
     Texts(
         MapEntityFactory(layerEntity),
-        layerEntitiesComponent,
         mapProjection,
         textMeasurer
     ).apply(block)
 }
 
 fun Texts.text(block: TextBuilder.() -> Unit) {
-    TextBuilder()
+    TextBuilder(factory, mapProjection)
         .apply(block)
-        .build(factory, mapProjection, textMeasurer)
-        .let { entity -> layerEntitiesComponent.add(entity.id) }
+        .build(textMeasurer)
 }
 
 @LiveMapDsl
-class TextBuilder {
+class TextBuilder(
+    private val myFactory: MapEntityFactory,
+    private val myMapProjection: MapProjection
+) {
     var index: Int = 0
     var mapId: String = ""
     var regionId: String = ""
@@ -72,14 +71,12 @@ class TextBuilder {
     var angle: Double = 0.0
 
     fun build(
-        factory: MapEntityFactory,
-        mapProjection: MapProjection,
         textMeasurer: TextMeasurer
     ): EcsEntity {
         val textSpec = createTextSpec(textMeasurer)
 
-        return factory
-            .createMapEntity(mapProjection.project(point), TextRenderer(), "map_ent_text")
+        return myFactory
+            .createMapEntity(myMapProjection.project(point), TextRenderer(), "map_ent_text")
             .addComponents {
                 + ScreenOffsetComponent().apply {
                     offset = textSpec.dimension * -0.5

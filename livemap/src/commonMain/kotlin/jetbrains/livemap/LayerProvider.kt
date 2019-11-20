@@ -34,7 +34,7 @@ interface LayerProvider {
                 componentManager,
                 layerManager,
                 mapProjection,
-                myDevParams,
+                myDevParams.isSet(DevParams.POINT_SCALING),
                 TextMeasurer(context2d)
             ).apply(myLayerConfigurator)
         }

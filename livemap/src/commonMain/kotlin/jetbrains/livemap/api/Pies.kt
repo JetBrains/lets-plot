@@ -22,12 +22,11 @@ class Pies(
 }
 
 fun LayersBuilder.pies(block: Pies.() -> Unit) {
-    val layerEntitiesComponent = LayerEntitiesComponent()
     val layerEntity = myComponentManager
         .createEntity("map_layer_pie")
         .addComponents {
             + layerManager.addLayer("livemap_pie", LayerGroup.FEATURES)
-            + layerEntitiesComponent
+            + LayerEntitiesComponent()
         }
 
     Pies(
@@ -35,11 +34,7 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
         mapProjection
     ).apply {
         block()
-        piesFactory
-            .produce()
-            .forEach {
-                layerEntitiesComponent.add(it.id)
-            }
+        piesFactory.produce()
     }
 }
 

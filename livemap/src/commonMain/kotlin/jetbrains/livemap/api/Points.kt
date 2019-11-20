@@ -9,9 +9,9 @@ import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.DevParams
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.animation.Animations
+import jetbrains.livemap.core.animation.Animations.AnimationBuilder
 import jetbrains.livemap.core.ecs.AnimationObjectComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -22,6 +22,7 @@ import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.*
+import jetbrains.livemap.entities.rendering.Renderers.PointRenderer
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.World
@@ -29,30 +30,27 @@ import jetbrains.livemap.projections.World
 @LiveMapDsl
 class Points(
     val factory: MapEntityFactory,
-    val layerEntitiesComponent: LayerEntitiesComponent,
     val mapProjection: MapProjection,
-    val devParams: DevParams,
-    val animationBuilder: Animations.AnimationBuilder
+    val pointScaling: Boolean,
+    val animationBuilder: AnimationBuilder
 )
 
 fun LayersBuilder.points(block: Points.() -> Unit) {
-    val layerEntitiesComponent = LayerEntitiesComponent()
     val layerEntity = myComponentManager
         .createEntity("map_layer_point")
         .addComponents {
             + layerManager.addLayer("geom_point", LayerGroup.FEATURES)
-            + layerEntitiesComponent
+            + LayerEntitiesComponent()
         }
 
-    val animationBuilder = Animations.AnimationBuilder(500.0)
+    val animationBuilder = AnimationBuilder(500.0)
         .setDirection(Animation.Direction.FORWARD)
         .setLoop(Animation.Loop.SWITCH_DIRECTION)
 
     Points(
         MapEntityFactory(layerEntity),
-        layerEntitiesComponent,
         mapProjection,
-        devParams,
+        pointScaling,
         animationBuilder
     ).apply(block)
 
@@ -64,14 +62,16 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
 }
 
 fun Points.point(block: PointBuilder.() -> Unit) {
-    PointBuilder()
+    PointBuilder(factory, mapProjection)
         .apply(block)
-        .build(factory, mapProjection, devParams, animationBuilder)
-        .let { entity -> layerEntitiesComponent.add(entity.id) }
+        .build(pointScaling, animationBuilder)
 }
 
 @LiveMapDsl
-class PointBuilder {
+class PointBuilder(
+    private val myFactory: MapEntityFactory,
+    private val myMapProjection: MapProjection
+    ) {
     var index: Int = 0
     var mapId: String = ""
     var regionId: String = ""
@@ -88,19 +88,17 @@ class PointBuilder {
     var shape: Int = 1
 
     fun build(
-        factory: MapEntityFactory,
-        mapProjection: MapProjection,
-        devParams: DevParams,
-        animationBuilder: Animations.AnimationBuilder
+        pointScaling: Boolean,
+        animationBuilder: AnimationBuilder
     ): EcsEntity {
         val size = radius * 2.0
 
-        val entity = factory
-            .createMapEntity(mapProjection.project(point), Renderers.PointRenderer(), "map_ent_point")
+        val entity = myFactory
+            .createMapEntity(myMapProjection.project(point), PointRenderer(), "map_ent_point")
             .addComponents {
                 + PointComponent().apply { shape = this@PointBuilder.shape }
                 + createStyle()
-                + if (devParams.isSet(DevParams.POINT_SCALING)) {
+                + if (pointScaling) {
                     WorldDimensionComponent(explicitVec<World>(size, size))
                 } else {
                     ScreenDimensionComponent().apply {

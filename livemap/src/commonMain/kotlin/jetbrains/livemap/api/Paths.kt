@@ -28,17 +28,15 @@ import jetbrains.livemap.projections.World
 @LiveMapDsl
 class Paths(
     val factory: Entities.MapEntityFactory,
-    val layerEntitiesComponent: LayerEntitiesComponent,
     val toMapProjection: (MultiPolygon<LonLat>) -> MultiPolygon<World>
 )
 
 fun LayersBuilder.paths(block: Paths.() -> Unit) {
-    val layerEntitiesComponent = LayerEntitiesComponent()
     val layerEntity = myComponentManager
         .createEntity("map_layer_path")
         .addComponents {
             + layerManager.addLayer("geom_path", LayerGroup.FEATURES)
-            + layerEntitiesComponent
+            + LayerEntitiesComponent()
         }
 
     val toMapProjection = { geometry: MultiPolygon<LonLat> ->
@@ -47,22 +45,21 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
 
     Paths(
         Entities.MapEntityFactory(layerEntity),
-        layerEntitiesComponent,
         toMapProjection
     ).apply(block)
 }
 
 fun Paths.path(block: PathBuilder.() -> Unit) {
-    PathBuilder()
+    PathBuilder(factory, toMapProjection)
         .apply(block)
-        .build(factory, toMapProjection)
-        ?.let { pathEntity ->
-            layerEntitiesComponent.add(pathEntity.id)
-        }
+        .build()
 }
 
 @LiveMapDsl
-class PathBuilder {
+class PathBuilder(
+    private val myFactory: Entities.MapEntityFactory,
+    private val myToMapProjection: (MultiPolygon<LonLat>) -> MultiPolygon<World>
+) {
     var index: Int = 0
     var mapId: String = ""
     var regionId: String = ""
@@ -79,16 +76,13 @@ class PathBuilder {
 
     var geodesic: Boolean = false
 
-    fun build(
-        factory: Entities.MapEntityFactory,
-        toMapProjection: (MultiPolygon<LonLat>) -> MultiPolygon<World>
-    ): EcsEntity? {
-        val coord = toMapProjection(multiPolygon)
+    fun build(): EcsEntity? {
+        val coord = myToMapProjection(multiPolygon)
 
         return coord
             .run { GeometryUtil.bbox(this) }
             ?.let { bbox ->
-                val entity = factory
+                val entity = myFactory
                     .createMapEntity(bbox.origin, Renderers.PathRenderer(), "map_ent_path")
                     .addComponents {
                         + WorldGeometryComponent().apply {

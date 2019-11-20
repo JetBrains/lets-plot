@@ -12,6 +12,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities
+import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.*
@@ -22,25 +23,21 @@ import jetbrains.livemap.projections.WorldRectangle
 
 @LiveMapDsl
 class Lines(
-    val factory: Entities.MapEntityFactory,
-    val layerEntitiesComponent: LayerEntitiesComponent,
+    val factory: MapEntityFactory,
     val mapProjection: MapProjection,
     val horizontal: Boolean
 )
 
 private fun LayersBuilder.lines(horizontal: Boolean, block: Lines.() -> Unit) {
-    val layerEntitiesComponent = LayerEntitiesComponent()
-
     val layerEntity = myComponentManager
         .createEntity("map_layer_line")
         .addComponents {
             + layerManager.addLayer("geom_line", LayerGroup.FEATURES)
-            + layerEntitiesComponent
+            + LayerEntitiesComponent()
         }
 
     Lines(
-        Entities.MapEntityFactory(layerEntity),
-        layerEntitiesComponent,
+        MapEntityFactory(layerEntity),
         mapProjection,
         horizontal
     ).apply(block)
@@ -58,12 +55,11 @@ fun Lines.line(block: LineBuilder.() -> Unit) {
     LineBuilder(factory, mapProjection)
         .apply(block)
         .build(horizontal)
-        .let { entity -> layerEntitiesComponent.add(entity.id) }
 }
 
 @LiveMapDsl
 class LineBuilder(
-    private val myFactory: Entities.MapEntityFactory,
+    private val myFactory: MapEntityFactory,
     private val myMapProjection: MapProjection
 ) {
     var index: Int = 0

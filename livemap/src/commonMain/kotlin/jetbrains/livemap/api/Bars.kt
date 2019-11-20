@@ -23,12 +23,11 @@ class Bars(
 }
 
 fun LayersBuilder.bars(block: Bars.() -> Unit) {
-    val layerEntitiesComponent = LayerEntitiesComponent()
     val layerEntity = myComponentManager
         .createEntity("map_layer_bar")
         .addComponents {
             + layerManager.addLayer("livemap_bar", LayerGroup.FEATURES)
-            + layerEntitiesComponent
+            + LayerEntitiesComponent()
         }
 
     Bars(
@@ -36,11 +35,7 @@ fun LayersBuilder.bars(block: Bars.() -> Unit) {
         mapProjection
     ).apply {
         block()
-        barsFactory
-            .produce()
-            .forEach {
-                layerEntitiesComponent.add(it.id)
-            }
+        barsFactory.produce()
     }
 }
 
