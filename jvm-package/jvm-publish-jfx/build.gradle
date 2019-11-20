@@ -129,18 +129,19 @@ def bintray_key = project.buildSettings?.bintray?.key
 
 if (bintray_user != null && bintray_key != null) {
     bintray {
+        publications = ['datalorePlotJvmJfx']
+        override = true
+
         user = bintray_user
         key = bintray_key
-        publications = ['datalorePlotJvmJfx']
-        publish = true
-        override = true
-        
+        publish = project.bintraySettings.publish
+
         pkg {
-            repo = 'datalore-plot-maven'
-            name = 'datalore-plot-jars'
-            userOrg = 'jetbrains'
-            licenses = ['MIT']
-            vcsUrl = 'https://github.com/JetBrains/datalore-plot'
+            repo = project.bintraySettings.mvn_repo
+            name = project.bintraySettings.mvn_pkg_name
+            userOrg = project.bintraySettings.userOrg
+            licenses = project.bintraySettings.licenses
+            vcsUrl = project.bintraySettings.vcsUrl
             version {
                 name = artifactVersion
             }

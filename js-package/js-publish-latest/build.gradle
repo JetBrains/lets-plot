@@ -13,10 +13,6 @@ def bintray_key = project.buildSettings?.bintray?.key
 
 if (bintray_user != null && bintray_key != null) {
     bintray {
-
-        user = bintray_user
-        key = bintray_key
-
         filesSpec {
             from('../build/dist') {
                 include '*latest*'
@@ -24,12 +20,15 @@ if (bintray_user != null && bintray_key != null) {
             into('.')
         }
 
-        publish = project.bintraySettings.publish
         override = true
 
+        user = bintray_user
+        key = bintray_key
+        publish = project.bintraySettings.publish
+
         pkg {
-            repo = project.bintraySettings.repo
-            name = project.bintraySettings.pkg_name
+            repo = project.bintraySettings.js_repo
+            name = project.bintraySettings.js_pkg_name
             userOrg = project.bintraySettings.userOrg
             licenses = project.bintraySettings.licenses
             vcsUrl = project.bintraySettings.vcsUrl

@@ -77,17 +77,6 @@ if (bintray_user != null && bintray_key != null) {
         dependsOn(":js-package:js-publish-version:bintrayUpload")
         dependsOn(":js-package:js-publish-latest:bintrayUpload")
     }
-    project.ext["bintraySettings"] = [
-        user: bintray_user,
-        key: bintray_key,
-        artifact_version: artifact_version,
-        publish: true,
-        repo: "datalore-plot",
-        pkg_name: 'datalore-plot-js',
-        userOrg: 'jetbrains',
-        licenses: ['MIT'],
-        vcsUrl: 'https://github.com/JetBrains/datalore-plot'
-    ]
 }
 
 repositories.whenObjectAdded {
