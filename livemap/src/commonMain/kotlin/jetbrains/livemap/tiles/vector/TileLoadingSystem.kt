@@ -127,7 +127,7 @@ class TileLoadingSystem(
         )
     }
 
-    private class TileResponseComponent : EcsComponent {
+    class TileResponseComponent : EcsComponent {
 
         private val myLock = Lock()
         private var myTileData: List<TileLayer>? = null

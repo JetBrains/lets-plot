@@ -94,7 +94,7 @@ class RasterTileLoadingSystem(
         }
     }
 
-    private class HttpTileResponseComponent: EcsComponent {
+    class HttpTileResponseComponent: EcsComponent {
         var imageData: ByteArray? = null
     }
 }

@@ -20,6 +20,8 @@ import jetbrains.livemap.core.rendering.primitives.Text
 import jetbrains.livemap.entities.regions.CachedFragmentsComponent
 import jetbrains.livemap.entities.regions.DownloadingFragmentsComponent
 import jetbrains.livemap.entities.regions.StreamingFragmentsComponent
+import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem.HttpTileResponseComponent
+import jetbrains.livemap.tiles.vector.TileLoadingSystem.TileResponseComponent
 import jetbrains.livemap.ui.UiService
 
 open class Diagnostics {
@@ -56,6 +58,7 @@ open class Diagnostics {
                     FragmentsCacheDiagnostic(),
                     StreamingFragmentsDiagnostic(),
                     DownloadingFragmentsDiagnostic(),
+                    DownloadingTilesDiagnostic(),
                     IsLoadingDiagnostic(isLoading)
                 )
             )
@@ -72,6 +75,7 @@ open class Diagnostics {
                     STREAMING_FRAGMENTS,
                     DOWNLOADING_FRAGMENTS,
                     FRAGMENTS_CACHE,
+                    DOWNLOADING_TILES,
                     IS_LOADING
                 )
             )
@@ -114,7 +118,7 @@ open class Diagnostics {
                 if (slowestSystemTime > 16.0) {
                     if (slowestSystemTime > freezeTime) {
                         timeToShowLeft = timeToShow.toLong()
-                        message = "Freezed by: ${formatDouble(slowestSystemTime, 1)} ${slowestSystemType}"
+                        message = "Freezed by: ${formatDouble(slowestSystemTime, 1)} $slowestSystemType"
                         freezeTime = slowestSystemTime
                     }
                 } else {
@@ -193,6 +197,23 @@ open class Diagnostics {
             }
         }
 
+        internal inner class DownloadingTilesDiagnostic : Diagnostic {
+
+            override fun update() {
+                val vector = registry
+                    .getEntities(TileResponseComponent::class)
+                    .filter { it.get<TileResponseComponent>().tileData == null }
+                    .count()
+
+                val raster = registry
+                    .getEntities(HttpTileResponseComponent::class)
+                    .filter { it.get<HttpTileResponseComponent>().imageData == null }
+                    .count()
+
+                debugService.setValue(DOWNLOADING_TILES, "Downloading tiles: V: $vector, R: $raster")
+            }
+        }
+
         internal inner class IsLoadingDiagnostic(private val isLoading: Property<Boolean>) : Diagnostic {
 
             override fun update() {
@@ -215,6 +236,7 @@ open class Diagnostics {
             private const val DIRTY_LAYERS = "dirty_layers"
             private const val STREAMING_FRAGMENTS = "streaming_fragments"
             private const val DOWNLOADING_FRAGMENTS = "downloading_fragments"
+            private const val DOWNLOADING_TILES = "downloading_tiles"
             private const val FRAGMENTS_CACHE = "fragments_cache"
             private const val IS_LOADING = "is_loading"
         }
