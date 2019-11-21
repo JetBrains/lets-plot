@@ -32,6 +32,7 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
         myRegs.add(context.eventSource.addEventHandler(MOUSE_RELEASED, handler(this::onMouseReleased)))
         myRegs.add(context.eventSource.addEventHandler(MOUSE_DRAGGED, handler(this::onMouseDragged)))
         myRegs.add(context.eventSource.addEventHandler(MOUSE_MOVED, handler( this::onMouseMoved )))
+        myRegs.add(context.eventSource.addEventHandler(MOUSE_CLICKED, handler( this::onMouseClicked )))
     }
 
     override fun update(context: EcsContext, dt: Double) {
@@ -61,6 +62,16 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
         myRegs.dispose()
     }
 
+    private fun onMouseClicked(mouseEvent: MouseEvent) {
+        if (mouseEvent.button === Button.LEFT) {
+            myClickLocation = mouseEvent.location
+            myPressLocation = null
+            myDragDelta = null
+            myDragCurrentLocation = null
+            myDragStartLocation = null
+        }
+    }
+
     private fun onMousePressed(mouseEvent: MouseEvent) {
         if (mouseEvent.button === Button.LEFT) {
             myPressLocation = mouseEvent.location
@@ -71,7 +82,7 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
 
     private fun onMouseReleased(mouseEvent: MouseEvent) {
         if (mouseEvent.button === Button.LEFT) {
-            myClickLocation = mouseEvent.location
+            myClickLocation = null
             myPressLocation = null
             myDragDelta = null
             myDragCurrentLocation = null
