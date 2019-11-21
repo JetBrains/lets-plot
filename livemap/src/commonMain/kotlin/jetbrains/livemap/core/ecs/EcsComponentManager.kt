@@ -95,7 +95,7 @@ class EcsComponentManager {
     fun tryGetSingletonEntity(componentTypes: Collection<KClass<out EcsComponent>>): EcsEntity? {
         val entities = getEntities(componentTypes)
 
-        check(entities.count() == 1) { "Entity with specified components is not a singleton: $componentTypes" }
+        check(entities.count() <= 1) { "Entity with specified components is not a singleton: $componentTypes" }
 
         return entities.firstOrNull()
     }

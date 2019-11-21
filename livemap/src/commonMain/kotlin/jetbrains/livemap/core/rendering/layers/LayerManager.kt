@@ -8,5 +8,6 @@ package jetbrains.livemap.core.rendering.layers
 interface LayerManager {
     fun createLayerRenderingSystem(): LayersRenderingSystem
     fun addLayer(name: String, group: LayerGroup): CanvasLayerComponent
+    fun removeLayer(group: LayerGroup, canvasLayer: CanvasLayer)
     fun createLayersOrderComponent(): LayersOrderComponent
 }

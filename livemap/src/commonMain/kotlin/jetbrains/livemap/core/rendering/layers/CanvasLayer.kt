@@ -9,6 +9,7 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.Context2d
 
 class CanvasLayer(private val myCanvas: Canvas, val name: String) {
@@ -34,5 +35,9 @@ class CanvasLayer(private val myCanvas: Canvas, val name: String) {
 
     fun clear() {
         myCanvas.context2d.clearRect(myRect)
+    }
+
+    fun removeFrom(canvasControl: CanvasControl) {
+        canvasControl.removeChild(myCanvas)
     }
 }

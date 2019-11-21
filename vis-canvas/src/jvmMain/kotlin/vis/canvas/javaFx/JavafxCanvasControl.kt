@@ -85,6 +85,10 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
         myRoot.children.add((canvas as JavafxCanvas).nativeCanvas)
     }
 
+    override fun addChild(index: Int, canvas: Canvas) {
+        myRoot.children.add(index, (canvas as JavafxCanvas).nativeCanvas)
+    }
+
     override fun removeChild(canvas: Canvas) {
         myRoot.children.remove((canvas as JavafxCanvas).nativeCanvas)
     }

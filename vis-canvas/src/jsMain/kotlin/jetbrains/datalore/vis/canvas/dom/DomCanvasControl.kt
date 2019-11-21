@@ -25,10 +25,7 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.Companion.DEVICE_PIXEL_RATIO
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.Image
-import org.w3c.dom.Node
+import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
@@ -96,6 +93,10 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
 
     override fun addChild(canvas: Canvas) {
         rootElement.appendChild((canvas as DomCanvas).canvasElement)
+    }
+
+    override fun addChild(index: Int, canvas: Canvas) {
+        rootElement.insertBefore((canvas as DomCanvas).canvasElement, rootElement.childNodes[index])
     }
 
     override fun removeChild(canvas: Canvas) {

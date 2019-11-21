@@ -14,6 +14,10 @@ class GroupedLayers {
         myGroupedLayers.getOrPut(group, ::ArrayList).add(layer)
         orderedLayers = LayerGroup.values().flatMap { myGroupedLayers[it] ?: emptyList<CanvasLayer>() }
     }
+
+    fun remove(group: LayerGroup, layer: CanvasLayer) {
+        myGroupedLayers[group]?.remove(layer)
+    }
 }
 
 enum class LayerGroup {

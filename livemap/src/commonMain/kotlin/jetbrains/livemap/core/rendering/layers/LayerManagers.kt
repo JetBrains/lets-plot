@@ -63,6 +63,10 @@ object LayerManagers {
                 return CanvasLayerComponent(canvasLayer)
             }
 
+            override fun removeLayer(group: LayerGroup, canvasLayer: CanvasLayer) {
+                myGroupedLayers.remove(group, canvasLayer)
+            }
+
             override fun createLayersOrderComponent(): LayersOrderComponent {
                 return LayersOrderComponent(myGroupedLayers)
             }
@@ -107,6 +111,10 @@ object LayerManagers {
                 return CanvasLayerComponent(canvasLayer)
             }
 
+            override fun removeLayer(group: LayerGroup, canvasLayer: CanvasLayer) {
+                myGroupedLayers.remove(group, canvasLayer)
+            }
+
             override fun createLayersOrderComponent(): LayersOrderComponent {
                 return LayersOrderComponent(myGroupedLayers)
             }
@@ -137,11 +145,19 @@ object LayerManagers {
 
             override fun addLayer(name: String, group: LayerGroup): CanvasLayerComponent {
                 val canvas = canvasControl.createCanvas(canvasControl.size)
-                canvasControl.addChild(canvas)
+
 
                 val canvasLayer = CanvasLayer(canvas, name)
                 myGroupedLayers.add(group, canvasLayer)
+
+                canvasControl.addChild(myGroupedLayers.orderedLayers.indexOf(canvasLayer), canvas)
+
                 return CanvasLayerComponent(canvasLayer)
+            }
+
+            override fun removeLayer(group: LayerGroup, canvasLayer: CanvasLayer) {
+                canvasLayer.removeFrom(canvasControl)
+                myGroupedLayers.remove(group, canvasLayer)
             }
 
             override fun createLayersOrderComponent(): LayersOrderComponent {

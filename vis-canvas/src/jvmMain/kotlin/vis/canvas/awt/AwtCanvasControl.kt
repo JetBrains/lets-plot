@@ -77,6 +77,10 @@ class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactor
         myGraphicsCanvasControl.addChild(canvas)
     }
 
+    override fun addChild(index: Int, canvas: Canvas) {
+        myGraphicsCanvasControl.addChild(index, canvas)
+    }
+
     override fun removeChild(canvas: Canvas) {
         myGraphicsCanvasControl.removeChild(canvas)
     }
