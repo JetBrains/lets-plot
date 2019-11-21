@@ -110,13 +110,19 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
     private class DomEventPeer (private val myRootElement: Node) :
         EventPeer<MouseEventSpec, W3cMouseEvent>(MouseEventSpec::class) {
         private var myButtonPressed = false
+        private var myWasDragged = false
 
         init {
             handle(DomEventType.MOUSE_ENTER) { dispatch(MouseEventSpec.MOUSE_ENTERED, it) }
 
             handle(DomEventType.MOUSE_LEAVE) { dispatch(MouseEventSpec.MOUSE_LEFT, it) }
 
-            handle(DomEventType.CLICK) { dispatch(MouseEventSpec.MOUSE_CLICKED, it) }
+            handle(DomEventType.CLICK) {
+                if (!myWasDragged) {
+                    dispatch(MouseEventSpec.MOUSE_CLICKED, it)
+                }
+                myWasDragged = false
+            }
 
             handle(DomEventType.DOUBLE_CLICK) { dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, it) }
 
@@ -132,6 +138,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
 
             handle(DomEventType.MOUSE_MOVE) {
                 if (myButtonPressed) {
+                    myWasDragged = true
                     dispatch(MouseEventSpec.MOUSE_DRAGGED, it)
                 } else {
                     dispatch(MouseEventSpec.MOUSE_MOVED, it)

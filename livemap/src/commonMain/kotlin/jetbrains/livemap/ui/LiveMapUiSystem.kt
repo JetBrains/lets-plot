@@ -7,8 +7,6 @@ package jetbrains.livemap.ui
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapLocation
@@ -111,7 +109,10 @@ class LiveMapUiSystem(
     private fun addListenersToGetCenterButton(button: EcsEntity) {
         val listeners = button.getComponent<EventListenerComponent>()
 
-        listeners.addClickListener { myMapLocationConsumer(myLiveMapLocation.viewLonLatRect) }
+        listeners.addClickListener {
+            it.stopPropagation()
+            myMapLocationConsumer(myLiveMapLocation.viewLonLatRect)
+        }
 
         listeners.addDoubleClickListener(InputMouseEvent::stopPropagation)
     }
@@ -121,6 +122,7 @@ class LiveMapUiSystem(
         val listeners = button.getComponent<EventListenerComponent>()
 
         listeners.addClickListener {
+            it.stopPropagation()
             if (camera.contains(CameraScale.CameraScaleEffectComponent::class) || camera.getComponent<CameraComponent>().zoom == disablingZoom.toDouble()) {
                 return@addClickListener
             }
@@ -140,8 +142,10 @@ class LiveMapUiSystem(
         val listeners = button.getComponent<EventListenerComponent>()
 
         listeners.addClickListener {
+            it.stopPropagation()
             if (containsEntity(MakeGeometryWidgetComponent::class)) finishDrawing() else activateCreateWidget()
         }
+
         listeners.addDoubleClickListener(InputMouseEvent::stopPropagation)
     }
 

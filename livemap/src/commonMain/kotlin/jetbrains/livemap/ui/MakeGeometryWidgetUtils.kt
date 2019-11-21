@@ -25,10 +25,7 @@ fun createFormattedGeometryString(points: List<Vec<LonLat>>): String {
         latString += "${it.y.trim()}, "
     }
 
-    lonString.dropLast(2)
-    latString.dropLast(2)
-
-    return "geometry = {\n    'lon': [${lonString}], \n    'lat': [${latString}]\n}"
+    return "geometry = {\n    'lon': [${lonString.dropLast(2)}], \n    'lat': [${latString.dropLast(2)}]\n}"
 }
 
 private fun Double.trim(): String {

@@ -17,11 +17,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 
 class MouseInputDetectionSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {
 
-    private val myInteractiveEntityView: InteractiveEntityView
-
-    init {
-        myInteractiveEntityView = InteractiveEntityView()
-    }
+    private val myInteractiveEntityView: InteractiveEntityView = InteractiveEntityView()
 
     override fun updateImpl(context: EcsContext, dt: Double) {
         val entitiesByEventTypeAndZIndex = HashMap<MouseEventType, HashMap<Int, ArrayList<EcsEntity>>>()
@@ -34,7 +30,7 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
                 if (myInteractiveEntityView.needToAdd(type)) {
                     myInteractiveEntityView
                         .addTo(
-                            entitiesByEventTypeAndZIndex.getOrPut(type, { HashMap() }),
+                            entitiesByEventTypeAndZIndex.getOrPut(type, ::HashMap),
                             getZIndex(entity, canvasLayers)
                         )
                 }
@@ -86,15 +82,16 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
 
         internal fun setEntity(entity: EcsEntity) {
             myEntity = entity
-            myInput = entity.getComponent()
-            myClickable = entity.getComponent()
-            myListeners = entity.getComponent()
+            myInput = entity.get()
+            myClickable = entity.get()
+            myListeners = entity.get()
         }
 
         fun needToAdd(type: MouseEventType): Boolean {
             return myInput
                 .getEvent(type)
-                .let { it != null
+                .let {
+                    it != null
                         && myListeners.contains(type)
                         && myClickable.rect.contains(it.location.toDoubleVector())
                 }
