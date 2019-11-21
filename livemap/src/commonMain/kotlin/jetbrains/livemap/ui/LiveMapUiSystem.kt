@@ -7,7 +7,8 @@ package jetbrains.livemap.ui
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapLocation
@@ -19,21 +20,29 @@ import jetbrains.livemap.camera.CameraScale
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.InputMouseEvent
+import jetbrains.livemap.core.input.MouseInputComponent
+import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
+import jetbrains.livemap.core.rendering.layers.LayerGroup
+import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.MutableImage
 import jetbrains.livemap.core.rendering.primitives.Text
+import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 
 class LiveMapUiSystem(
     private val myUiService: UiService,
     componentManager: EcsComponentManager,
-    private val myMapLocationConsumer: (DoubleRectangle) -> Unit
+    private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
+    private val myLayerManager: LayerManager
 ) : LiveMapSystem(componentManager) {
     private lateinit var myLiveMapLocation: LiveMapLocation
     private lateinit var myZoomPlus: MutableImage
     private lateinit var myZoomMinus: MutableImage
     private lateinit var myGetCenter: MutableImage
+    private lateinit var myMakeGeometry: MutableImage
     private lateinit var myViewport: Viewport
     private var myUiState: UiState = ResourcesLoading()
 
@@ -52,31 +61,36 @@ class LiveMapUiSystem(
             .add(KEY_MINUS, BUTTON_MINUS)
             .add(KEY_MINUS_DISABLED, BUTTON_MINUS_DISABLED)
             .add(KEY_GET_CENTER, BUTTON_GET_CENTER)
+            .add(KEY_MAKE_GEOMETRY, BUTTON_MAKE_GEOMETRY)
+            .add(KEY_MAKE_GEOMETRY_ACTIVE, BUTTON_MAKE_GEOMETRY_ACTIVE)
 
         initUi()
     }
 
     private fun initUi() {
         val padding = 13.0
-        val side = 26
-        val size = Vector(side, side)
+        val side = 26.0
+        val size = DoubleVector(side, side)
         val plusOrigin = DoubleVector(padding, padding)
         val minusOrigin = plusOrigin.add(DoubleVector(0.0, side + padding))
         val getCenterOrigin = minusOrigin.add(DoubleVector(0.0, side + padding))
+        val getMakeGeometryOrigin = getCenterOrigin.add(DoubleVector(0.0, side + padding))
 
-        myZoomPlus = MutableImage(plusOrigin, size.toDoubleVector())
-
+        myZoomPlus = MutableImage(plusOrigin, size)
         val buttonPlus = myUiService.addButton(myZoomPlus)
         addListenersToZoomButton(buttonPlus, MAX_ZOOM, 1.0)
 
-        myZoomMinus = MutableImage(minusOrigin, size.toDoubleVector())
-
+        myZoomMinus = MutableImage(minusOrigin, size)
         val buttonMinus = myUiService.addButton(myZoomMinus)
         addListenersToZoomButton(buttonMinus, MIN_ZOOM, -1.0)
 
-        myGetCenter = MutableImage(getCenterOrigin, size.toDoubleVector())
+        myGetCenter = MutableImage(getCenterOrigin, size)
         val buttonGetCenter = myUiService.addButton(myGetCenter)
         addListenersToGetCenterButton(buttonGetCenter)
+
+        myMakeGeometry = MutableImage(getMakeGeometryOrigin, size)
+        val buttonMakeGeometry = myUiService.addButton(myMakeGeometry)
+        addListenersToMakeGeometryButton(buttonMakeGeometry)
 
         val osm = Text().apply {
             color = Color.BLACK
@@ -122,6 +136,39 @@ class LiveMapUiSystem(
         listeners.addDoubleClickListener(InputMouseEvent::stopPropagation)
     }
 
+    private fun addListenersToMakeGeometryButton(button: EcsEntity) {
+        val listeners = button.getComponent<EventListenerComponent>()
+
+        listeners.addClickListener {
+            if (containsEntity(MakeGeometryWidgetComponent::class)) finishDrawing() else activateCreateWidget()
+        }
+        listeners.addDoubleClickListener(InputMouseEvent::stopPropagation)
+    }
+
+    private fun finishDrawing() {
+        val widget = getSingletonEntity(MakeGeometryWidgetComponent::class)
+
+        Clipboard.copy(createFormattedGeometryString(widget.get<MakeGeometryWidgetComponent>().points))
+
+        widget.get<LayerEntitiesComponent>().entities
+            .run(::getEntitiesById)
+            .forEach(EcsEntity::remove)
+
+        myLayerManager.removeLayer(LayerGroup.FEATURES, widget.get<CanvasLayerComponent>().canvasLayer)
+
+        widget.remove()
+    }
+
+    private fun activateCreateWidget() {
+        createEntity("make_geometry_widget")
+            .addComponents {
+                + myLayerManager.addLayer("make_geometry_layer", LayerGroup.FEATURES)
+                + LayerEntitiesComponent()
+                + MouseInputComponent()
+                + MakeGeometryWidgetComponent()
+            }
+    }
+
     internal abstract class UiState {
         internal abstract fun update()
     }
@@ -133,7 +180,9 @@ class LiveMapUiSystem(
                     KEY_MINUS,
                     KEY_PLUS_DISABLED,
                     KEY_MINUS_DISABLED,
-                    KEY_GET_CENTER
+                    KEY_GET_CENTER,
+                    KEY_MAKE_GEOMETRY,
+                    KEY_MAKE_GEOMETRY_ACTIVE
                 )
             ) {
                 myUiState = Processing()
@@ -146,11 +195,22 @@ class LiveMapUiSystem(
             val res = myUiService.resourceManager
 
             myGetCenter.snapshot = res[KEY_GET_CENTER]
+            updateMakeGeometryButton()
             updateZoomButtons(camera().zoom)
         }
 
         override fun update() {
+            updateMakeGeometryButton()
             camera().ifZoomChanged { updateZoomButtons(camera().zoom) }
+        }
+
+        internal fun updateMakeGeometryButton() {
+            val res = myUiService.resourceManager
+            myMakeGeometry.snapshot = if (containsEntity(MakeGeometryWidgetComponent::class)) {
+                res[KEY_MAKE_GEOMETRY_ACTIVE]
+            } else {
+                res[KEY_MAKE_GEOMETRY]
+            }
         }
 
         internal fun updateZoomButtons(zoom: Double) {
@@ -167,6 +227,8 @@ class LiveMapUiSystem(
         private const val KEY_MINUS = "img_minus"
         private const val KEY_MINUS_DISABLED = "img_minus_disable"
         private const val KEY_GET_CENTER = "img_get_center"
+        private const val KEY_MAKE_GEOMETRY = "img_create_geometry"
+        private const val KEY_MAKE_GEOMETRY_ACTIVE = "img_create_geometry_active"
 
         private const val BUTTON_PLUS =
             ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAMAAADypuvZAAAAUVBMVEUAAADf39/f39/n5+fk5OTk5OTl5e"
@@ -208,5 +270,21 @@ class LiveMapUiSystem(
         private const val LINK_TO_OSM_CONTRIBUTORS = "Map data \u00a9 OpenStreetMap contributors"
         private const val CONTRIBUTORS_FONT_FAMILY =
             "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, " + "\"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\""
+
+        private const val BUTTON_MAKE_GEOMETRY =
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAMAAADypuvZAAAAQlBMVEUAAADf39/n5+fm5ubm5ubm5ubm5u" +
+                    "YAAABvb29wcHB/f3+AgICPj4+/v7/f39/m5ubv7+/w8PD8/Pz9/f3+/v7////uOQjKAAAAB3RSTlMAICCvw/H3O5ZWYwAAAK" +
+                    "ZJREFUeAHt1sEOgyAQhGEURMWFsdR9/1ctddPepwlJD/z3LyRzIOvcHCKY/NTMArJlch6PS4nqieCAqlRPxIaUDOiPBhooix" +
+                    "QWpbWVOFTWu0whMST90WaoMCiZOZRAb7OLZCVQ+jxCIDMcMsMhMwTKItttCPQdmkDFzK4MEkPSH2VDhUJ62Awc0iKS//Q3Gm" +
+                    "igiIsztaGAszLmOuF/OxLd7CkSw+RetQbMcCdSSXgAAAAASUVORK5CYII="
+
+        private const val BUTTON_MAKE_GEOMETRY_ACTIVE =
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAMAAADypuvZAAAAflBMVEUAAACfv9+fv+eiv+aiwOajwOajv+" +
+                    "ajwOaiv+ajv+akwOakweaiv+aoxu+ox++ox/Cx0fyy0vyz0/2z0/601P+92f++2v/G3v/H3v/H3//U5v/V5//Z6f/Z6v/a6f" +
+                    "/a6v/d7P/f7f/n8f/o8f/o8v/s9P/6/P/7/P/7/f////8N3bWvAAAADHRSTlMAICCvr6/Dw/Hx9/cE8gnKAAABCUlEQVR42t" +
+                    "XW2U7DMBAFUIcC6TJ0i20oDnRNyvz/DzJtJCJxkUdTqUK5T7Gs82JfTezcQzkjS54KMRMyZly4R1pU3pDVnEpHtPKmrGkqyB" +
+                    "tDNBgUmy9mrrtFLZ+/VoeIKArJIm4joBNriBtArKP2T+QzYck/olqSMf2+frmblKK1EVuWfNpQ5GveTCh16P3+aN+hAChz5N" +
+                    "u+S/0+XC6aXUqvSiPA1JYaodERGh2h0ZH0bQ9GaXl/0ErLsW87w9yD6twRbbBvOvIfeAw68uGnb5BbBsvQhuVZ/wEganR0AB" +
+                    "TOGmoDIB+OWdQ2YUhPAjuaUWUzS0ElzZcWU73Q6IZH4uTytByZyPS5cN9XNuQXxwNiAAAAAABJRU5ErkJggg=="
     }
 }

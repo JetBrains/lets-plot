@@ -22,13 +22,13 @@ import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.ProjectionUtil
-import jetbrains.livemap.projections.World
+import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.ProjectionUtil.transformMultiPolygon
 
 @LiveMapDsl
 class Paths(
     val factory: Entities.MapEntityFactory,
-    val toMapProjection: (MultiPolygon<LonLat>) -> MultiPolygon<World>
+    val mapProjection: MapProjection
 )
 
 fun LayersBuilder.paths(block: Paths.() -> Unit) {
@@ -39,18 +39,14 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
             + LayerEntitiesComponent()
         }
 
-    val toMapProjection = { geometry: MultiPolygon<LonLat> ->
-        ProjectionUtil.transformMultiPolygon(geometry, mapProjection::project)
-    }
-
     Paths(
         Entities.MapEntityFactory(layerEntity),
-        toMapProjection
+        mapProjection
     ).apply(block)
 }
 
 fun Paths.path(block: PathBuilder.() -> Unit) {
-    PathBuilder(factory, toMapProjection)
+    PathBuilder(factory, mapProjection)
         .apply(block)
         .build()
 }
@@ -58,7 +54,7 @@ fun Paths.path(block: PathBuilder.() -> Unit) {
 @LiveMapDsl
 class PathBuilder(
     private val myFactory: Entities.MapEntityFactory,
-    private val myToMapProjection: (MultiPolygon<LonLat>) -> MultiPolygon<World>
+    private val myMapProjection: MapProjection
 ) {
     var index: Int = 0
     var mapId: String = ""
@@ -77,7 +73,7 @@ class PathBuilder(
     var geodesic: Boolean = false
 
     fun build(): EcsEntity? {
-        val coord = myToMapProjection(multiPolygon)
+        val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
 
         return coord
             .run { GeometryUtil.bbox(this) }

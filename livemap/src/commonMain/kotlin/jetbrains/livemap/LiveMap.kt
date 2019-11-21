@@ -66,10 +66,7 @@ import jetbrains.livemap.tiles.components.CellLayerKind
 import jetbrains.livemap.tiles.components.DebugCellLayerComponent
 import jetbrains.livemap.tiles.debug.DebugDataSystem
 import jetbrains.livemap.tiles.raster.RasterTileLayerComponent
-import jetbrains.livemap.ui.LiveMapUiSystem
-import jetbrains.livemap.ui.ResourceManager
-import jetbrains.livemap.ui.UiRenderingTaskSystem
-import jetbrains.livemap.ui.UiService
+import jetbrains.livemap.ui.*
 
 class LiveMap(
     private val myMapProjection: MapProjection,
@@ -171,7 +168,9 @@ class LiveMap(
                 AnimationObjectSystem(componentManager),
                 AnimationSystem(componentManager),
                 ViewProjectionUpdateSystem(componentManager),
-                LiveMapUiSystem(myUiService, componentManager, myMapLocationConsumer),
+                LiveMapUiSystem(myUiService, componentManager, myMapLocationConsumer, myLayerManager),
+
+                MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
 
                 CellStateUpdateSystem(componentManager),
                 TileRequestSystem(componentManager),
