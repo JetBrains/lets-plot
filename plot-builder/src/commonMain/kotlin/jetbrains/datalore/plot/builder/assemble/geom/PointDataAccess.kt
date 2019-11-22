@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.scale.ScaleUtil.getBreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleUtil.labelByBreak
+import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureNotZeroRange
 
@@ -32,8 +33,10 @@ internal class PointDataAccess(
         val binding = myBindings.getValue(aes)
         val scale = binding.scale!!
 
-        val transformedValue = binding.variable.run(data::getNumeric)[index]
-        val originalValue = scale.transform.applyInverse(transformedValue)
+        val originalValue = binding
+            .variable
+            .run(data::getNumeric)[index]
+            .run(scale.transform::applyInverse)
 
         return MappedDataAccess.MappedData(
             label = scale.name,
@@ -56,13 +59,20 @@ internal class PointDataAccess(
                 .run(data::range)
                 .run(::ensureNotZeroRange)
 
-            val formatter = getBreaksGenerator(scale).labelFormatter(domain, 100)
+            val breaksGenerator = getBreaksGenerator(scale)
+
+            // hack: fix invalid labels for DateTime scale.
+            // Large targetCount value for DateTime scale will break label format - instead of 'day'
+            // format will be generated 'time' format and all points will have same label '24:00'.
+            // Value of 10 still can fail (axis breaks count > 100, or data is very close to interval limit)
+            // Proper fix - use the same targetCount value that was used for the axis breaks.
+            val targetCount = 10.takeIf { breaksGenerator is DateTimeBreaksGen} ?: 100
+
+            val formatter = breaksGenerator.labelFormatter(domain, targetCount)
             return { value -> value?.let { formatter.invoke(it) } ?: "NULL" }
-        } else if (scale.hasBreaks() && scale.hasLabels()) {
+        } else {
             val labelsMap = labelByBreak(scale)
             return { value -> value?.let { labelsMap.getValue(it) } ?: "NULL" }
-        } else {
-            return { value -> value.toString() }
         }
     }
 }
