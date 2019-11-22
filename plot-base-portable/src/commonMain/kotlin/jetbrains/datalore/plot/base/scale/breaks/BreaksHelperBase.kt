@@ -7,7 +7,14 @@ package jetbrains.datalore.plot.base.scale.breaks
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 
-abstract class BreaksHelperBase protected constructor(start: Double, end: Double, targetCount: Int) {
+abstract class BreaksHelperBase protected constructor(
+    start: Double,
+    end: Double,
+    targetCount: Int
+) {
+    abstract val breaks: List<Double>
+    abstract val labelFormatter: (Any) -> String
+
     protected val normalStart: Double
     protected val normalEnd: Double
     protected val span: Double

@@ -12,11 +12,7 @@ import jetbrains.datalore.plot.base.scale.breaks.LinearBreaksHelper
 
 class LinearBreaksGen : BreaksGenerator {
     override fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
-        val helper = LinearBreaksHelper(
-            domainAfterTransform.lowerEndpoint(),
-            domainAfterTransform.upperEndpoint(),
-            targetCount
-        )
+        val helper = breaksHelper(domainAfterTransform, targetCount)
         val ticks = helper.breaks
         val labelFormatter = helper.labelFormatter
         val labels = ArrayList<String>()
@@ -24,5 +20,21 @@ class LinearBreaksGen : BreaksGenerator {
             labels.add(labelFormatter(tick))
         }
         return ScaleBreaks(ticks, ticks, labels)
+    }
+
+    private fun breaksHelper(
+        domainAfterTransform: ClosedRange<Double>,
+        targetCount: Int
+    ): LinearBreaksHelper {
+        val helper = LinearBreaksHelper(
+            domainAfterTransform.lowerEndpoint(),
+            domainAfterTransform.upperEndpoint(),
+            targetCount
+        )
+        return helper
+    }
+
+    override fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        return breaksHelper(domainAfterTransform, targetCount).labelFormatter
     }
 }

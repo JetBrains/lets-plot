@@ -12,8 +12,8 @@ import jetbrains.datalore.plot.common.time.interval.TimeInterval
 import jetbrains.datalore.plot.common.time.interval.YearInterval
 
 internal class TimeScaleTickFormatterFactory(
-        private val myMinInterval: TimeInterval?) :
-        QuantitativeTickFormatterFactory() {
+    private val myMinInterval: TimeInterval?
+) : QuantitativeTickFormatterFactory() {
 
     override fun getFormatter(range: ClosedRange<Double>, step: Double): (Any) -> String {
         return Formatter.time(formatPattern(step))

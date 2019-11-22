@@ -11,6 +11,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.transform.LinearBreaksGen
 
 object ScaleUtil {
 
@@ -165,5 +166,10 @@ object ScaleUtil {
             result.add(domainLimits.upperEndpoint())
         }
         return result
+    }
+
+    fun getBreaksGenerator(scale: Scale<*>) =  when {
+        scale.hasBreaksGenerator() -> scale.breaksGenerator
+        else -> LinearBreaksGen()
     }
 }

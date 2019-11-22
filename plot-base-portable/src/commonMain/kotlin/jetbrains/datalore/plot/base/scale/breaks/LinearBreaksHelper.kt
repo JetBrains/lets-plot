@@ -8,9 +8,13 @@ package jetbrains.datalore.plot.base.scale.breaks
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import kotlin.math.*
 
-class LinearBreaksHelper(rangeStart: Double, rangeEnd: Double, count: Int) : BreaksHelperBase(rangeStart, rangeEnd, count) {
-    val breaks: List<Double>
-    val labelFormatter: (Any) -> String
+class LinearBreaksHelper(
+    rangeStart: Double,
+    rangeEnd: Double,
+    count: Int
+) : BreaksHelperBase(rangeStart, rangeEnd, count) {
+    override val breaks: List<Double>
+    override val labelFormatter: (Any) -> String
 
     init {
 
@@ -23,12 +27,10 @@ class LinearBreaksHelper(rangeStart: Double, rangeEnd: Double, count: Int) : Bre
             val step10Power = floor(log10(step))
             step = 10.0.pow(step10Power)
             val error = step * count / span
-            if (error <= 0.15) {
-                step *= 10.0
-            } else if (error <= 0.35) {
-                step *= 5.0
-            } else if (error <= 0.75) {
-                step *= 2.0
+            when {
+                error <= 0.15 -> step *= 10.0
+                error <= 0.35 -> step *= 5.0
+                error <= 0.75 -> step *= 2.0
             }
 
             // extend range to allow for FP errors

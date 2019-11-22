@@ -11,11 +11,12 @@ import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.max
 
-/*package*/ internal class LinearScaleTickFormatterFactory
 /**
  * @param useMetricPrefix see: https://en.wikipedia.org/wiki/Metric_prefix
  */
-(private val useMetricPrefix: Boolean) : QuantitativeTickFormatterFactory() {
+/*package*/ internal class LinearScaleTickFormatterFactory(
+    private val useMetricPrefix: Boolean
+) : QuantitativeTickFormatterFactory() {
 
     override fun getFormatter(range: ClosedRange<Double>, step: Double): (Any) -> String {
         // avoid 0 values because log10(0) = - Infinity
@@ -23,12 +24,12 @@ import kotlin.math.max
         if (referenceValue == 0.0) {
             referenceValue = 1.0
         }
-
-        return { it -> NumericBreakFormatter(
+        val formatter = NumericBreakFormatter(
             referenceValue,
             step,
             useMetricPrefix
-        ).apply(it) }
+        )
+        return formatter::apply
     }
 
     companion object {

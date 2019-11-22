@@ -15,11 +15,11 @@ class DateTimeBreaksHelper(
         rangeStart: Double,
         rangeEnd: Double,
         count: Int,
-        minInterval: TimeInterval?) :
-        BreaksHelperBase(rangeStart, rangeEnd, count) {
+        minInterval: TimeInterval?
+) : BreaksHelperBase(rangeStart, rangeEnd, count) {
 
-    var breaks: List<Double>
-    var labelFormatter: (Any) -> String
+    override val breaks: List<Double>
+    override val labelFormatter: (Any) -> String
 
     constructor(rangeStart: Double, rangeEnd: Double, count: Int) : this(rangeStart, rangeEnd, count, null)
 
@@ -31,8 +31,7 @@ class DateTimeBreaksHelper(
                 minInterval
             ).getFormatter(step)
             // compute step so that it is multiple of automatic time steps
-            val helper = LinearBreaksHelper(rangeStart, rangeEnd, count)
-            breaks = helper.breaks
+            breaks = LinearBreaksHelper(rangeStart, rangeEnd, count).breaks
 
         } else {
 

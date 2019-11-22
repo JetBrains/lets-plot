@@ -9,4 +9,5 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
 interface BreaksGenerator {
     fun generateBreaks(domainAfterTransform: ClosedRange<Double>, targetCount: Int): ScaleBreaks
+    fun labelFormatter(domainAfterTransform: ClosedRange<Double>, targetCount: Int): (Any) -> String
 }
