@@ -16,7 +16,8 @@ import kotlin.random.Random
 open class DateTimeScaleX : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            days()
+            plot("hours", hour),
+            plot("days", day)
         )
     }
 
@@ -27,11 +28,11 @@ open class DateTimeScaleX : PlotConfigDemoBase() {
         private const val day = 24.0 * hour
         private val instant = UTC.toInstant(DateTime(Date(1, Month.FEBRUARY, 2003)))
 
-        fun days(): Map<String, Any> {
+        fun plot(title: String, timeScale: Double): Map<String, Any> {
             val n = 30
 
             val rnd = Random(0)
-            val time = (0..n).map { instant.timeSinceEpoch + it * day }.joinToString()
+            val time = (0..n).map { instant.timeSinceEpoch + it * timeScale }.joinToString()
             val values = (0..n).map { rnd.nextDouble(0.0, 20.0) }.joinToString()
             val data = "   {" +
                     "      'time': [$time]," +
@@ -43,7 +44,7 @@ open class DateTimeScaleX : PlotConfigDemoBase() {
                     "           ," +
                     "   'scales': [" +
                     "               {" +
-                    "                 'name': 'Time(day)'," +
+                    "                 'name': 'Time($title)'," +
                     "                 'aesthetic': 'x'," +
                     "                 'datetime': true" +
                     "               }" +
