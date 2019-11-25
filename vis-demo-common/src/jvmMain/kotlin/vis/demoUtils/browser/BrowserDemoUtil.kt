@@ -52,7 +52,7 @@ object BrowserDemoUtil {
         "vis-demo-common.js"
     )
 
-    private const val ROOT_PROJECT = "datalore-plot"
+    private const val ROOT_PROJECT = "lets-plot"
     private const val JS_PATH = "js-package/build/js"
     private const val ROOT_ELEMENT_ID = "root"
 
