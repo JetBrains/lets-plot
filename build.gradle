@@ -14,9 +14,9 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.1.0' apply false
 }
 
-group 'org.jetbrains.datalore-plot'
-version "0.0.5-SNAPSHOT"
-project.ext.js_artifact_version = "0.0.dev5"
+group 'org.jetbrains.lets-plot'
+version "1.0.0-SNAPSHOT"
+project.ext.js_artifact_version = "1.0.dev0"
 
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
@@ -126,14 +126,14 @@ subprojects {
 project.ext["bintraySettings"] = [
         userOrg: 'jetbrains',
         licenses: ['MIT'],
-        vcsUrl: 'https://github.com/JetBrains/datalore-plot',
+        vcsUrl: 'https://github.com/JetBrains/lets-plot',
         publish: true,
 
         js_repo: "datalore-plot",
         js_pkg_name: 'datalore-plot-js',
         js_artifact_version: js_artifact_version,
 
-        mvn_repo: 'datalore-plot-maven',
-        mvn_pkg_name: 'datalore-plot-jars',
+        mvn_repo: 'lets-plot-maven',
+        mvn_pkg_name: 'lets-plot-jars',
 ]
 

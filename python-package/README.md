@@ -1,4 +1,4 @@
-# datalore-plot Python package
+# lets-plot Python package
 
 ## Requirements
 
@@ -31,13 +31,13 @@ or just run shell command (if the changes are only in the python code):
 * create / activate python environment (if needed)
 * run shell commands: 
 
-`pip uninstall datalore-plot`
+`pip uninstall lets-plot`
 
-`pip install --no-index --find-links=dist/ datalore-plot`
+`pip install --no-index --find-links=dist/ lets-plot`
  
 ## Test in Jupyther
 
-When "dev" version, `datalore-plot` embeds current "dev" js into Jupyter notebook.
+When "dev" version, `lets-plot` embeds current "dev" js into Jupyter notebook.
 
 If necessary, this default can be temporarily overwritten by editing `dev_xxx` settings in `_global_settings.py`
 
@@ -45,7 +45,7 @@ The "dev" version of js library can be served from `dist` folder of **js-package
 
 ```shell script
 # Start local web-server to serve dev js script:
-$ cd datalore-plot/js-package/build/dist
+$ cd lets-plot/js-package/build/dist
 $ python -m http.server 8080
 ```
  

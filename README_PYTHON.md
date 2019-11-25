@@ -4,8 +4,8 @@
     <tr>
         <td>Latest Release</td>
         <td>
-            <a href="https://pypi.org/project/datalore-plot/"/>
-            <img src="https://badge.fury.io/py/datalore-plot.svg"/>
+            <a href="https://pypi.org/project/lets-plot/"/>
+            <img src="https://badge.fury.io/py/lets-plot.svg"/>
         </td>
     </tr>
     <tr>
@@ -44,7 +44,7 @@ The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-
 
 To install the Datalore Plot library, run the following command:
 ```shell script
-pip install datalore-plot
+pip install lets-plot
 ```
 
 ### Quickstart in Jupyter
@@ -116,7 +116,7 @@ Sampling is a special technique of data transformation, which helps dealing with
 
 ### License
 
-Code and documentation released under the [MIT license](https://github.com/JetBrains/datalore-plot/blob/master/LICENSE).
+Code and documentation released under the [MIT license](https://github.com/JetBrains/lets-plot/blob/master/LICENSE).
 Copyright 2019, JetBrains s.r.o.
     
 

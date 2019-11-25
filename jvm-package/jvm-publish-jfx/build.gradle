@@ -32,11 +32,11 @@ kotlin {
 }
 
 
-def artifactBaseName = 'datalore-plot-jfx'
+def artifactBaseName = 'lets-plot-jfx'
 def artifactGroupId = project.group
 def artifactVersion = project.version
 
-def task_group = 'datalore plot'
+def task_group = 'lets plot'
 
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
@@ -58,7 +58,7 @@ task jarDatalorePlotJvmJfxClasses(type: ShadowJar) {
     exclude '**/*.kotlin_module'
     exclude '**/*.kotlin_builtins'
 
-    // exclude classes that duplicates `datalore-plot-common.jar`
+    // exclude classes that duplicates `lets-plot-common.jar`
     exclude 'com/google/**/*'
     exclude 'kotlin/**/*'
 //    exclude 'kotlinx/**/*'
@@ -93,9 +93,9 @@ publishing {
             artifact jarDatalorePlotJvmJfxSources
 
             pom {
-                name = "Datalore Plot for JavaFX"
-                description = "Datalore Plot JVM package with JavaFX rendering"
-                url = "https://github.com/JetBrains/datalore-plot"
+                name = "Lets-Plot for JavaFX"
+                description = "Lets-Plot JVM package with JavaFX rendering"
+                url = "https://github.com/JetBrains/lets-plot"
                 licenses {
                     license {
                         name = "MIT"
@@ -106,11 +106,11 @@ publishing {
                     developer {
                         id = "jetbrains"
                         name = "JetBrains"
-                        email = "datalore-plot@jetbrains.com"
+                        email = "lets-plot@jetbrains.com"
                     }
                 }
                 scm {
-                    url = "https://github.com/JetBrains/datalore-plot"
+                    url = "https://github.com/JetBrains/lets-plot"
                 }
             }
         }
@@ -118,7 +118,7 @@ publishing {
     repositories {
         maven {
 //            url = uri("$rootDir/.maven-publish-dev-repo")
-            url = uri("https://jetbrains.bintray.com/datalore-plot-maven")
+            url = uri("https://jetbrains.bintray.com/lets-plot-maven")
         }
     }
 }

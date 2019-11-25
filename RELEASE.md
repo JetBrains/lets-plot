@@ -31,7 +31,7 @@
 
 ##### 1. Checkout repository in a new directory: 
 
- `git clone --branch vX.X.X git@github.com:JetBrains/datalore-plot datalore-plot-release`
+ `git clone --branch vX.X.X git@github.com:JetBrains/lets-plot lets-plot-release`
 
 ##### 2. Put `build_settings.yml` in the project root. See `build_settings.template.yml` for an example.
 
@@ -79,7 +79,7 @@ run `./gradlew js-package:publishJS`
  
 ### Add the GitHub release:
  
- * Open the link: https://github.com/JetBrains/datalore-plot/releases/new
+ * Open the link: https://github.com/JetBrains/lets-plot/releases/new
  * Fill `Tag version` and `Release title` with released version `vX.X.X`
  * Fill a description field with the new changes from the CHANGELOG.md
  
@@ -88,4 +88,4 @@ run `./gradlew js-package:publishJS`
 
 ### After release
 
- - remove build directory `datalore-plot-release`
+ - remove build directory `lets-plot-release`
