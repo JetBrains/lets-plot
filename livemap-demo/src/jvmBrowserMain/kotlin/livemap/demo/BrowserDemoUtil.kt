@@ -52,7 +52,7 @@ object BrowserDemoUtil {
         "package jetbrains.datalore.vis.js"
     )
 
-    private const val ROOT_PROJECT = "datalore-plot"
+    private const val ROOT_PROJECT = "lets-plot"
 
     fun openInBrowser(demoProject: String, html: () -> String) {
         val outputDir = "$demoProject/build/demoWeb"

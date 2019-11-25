@@ -48,7 +48,7 @@ allprojects {
 //    println "--- project ---: $project.name $project.rootDir"
 }
 
-def include_sources_datalorePlotJvmCommon = [
+def include_sources_letsPlotJvmCommon = [
         'base-portable',
         'base',
 //        'mapper-core',
@@ -68,7 +68,7 @@ def include_sources_datalorePlotJvmCommon = [
 //        'vis-demo-common-jfx',
 ]
 
-def include_sources_datalorePlotJvmJfx = [
+def include_sources_letsPlotJvmJfx = [
         'mapper-core',
         'vis-svg-mapper',
         'vis-svg-mapper-jfx',
@@ -77,8 +77,8 @@ def include_sources_datalorePlotJvmJfx = [
 ]
 
 configurations {
-    datalorePlotJvmCommonSources
-    datalorePlotJvmJfxSources
+    letsPlotJvmCommonSources
+    letsPlotJvmJfxSources
 }
 
 subprojects {
@@ -100,7 +100,7 @@ subprojects {
     }
 
     // jar jvm sources of this project
-    if (name in include_sources_datalorePlotJvmCommon || name in include_sources_datalorePlotJvmJfx) {
+    if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx) {
         apply plugin: 'kotlin-multiplatform'
         kotlin.jvm {}   // for `jvmSourcesJar` task
         build.dependsOn += jvmSourcesJar
@@ -108,14 +108,14 @@ subprojects {
 
     // make build configuration depend on sources jars
     def sources_jar_path = "${buildDir}/libs/${name}-jvm-${version}-sources.jar"
-    if (name in include_sources_datalorePlotJvmCommon) {
+    if (name in include_sources_letsPlotJvmCommon) {
         rootProject.dependencies {
-            datalorePlotJvmCommonSources files(sources_jar_path)
+            letsPlotJvmCommonSources files(sources_jar_path)
         }
     }
-    if (name in include_sources_datalorePlotJvmJfx) {
+    if (name in include_sources_letsPlotJvmJfx) {
         rootProject.dependencies {
-            datalorePlotJvmJfxSources files(sources_jar_path)
+            letsPlotJvmJfxSources files(sources_jar_path)
         }
     }
 }

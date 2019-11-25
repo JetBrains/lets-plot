@@ -160,29 +160,29 @@ def input_dir = "${project.buildDir}/js/"
 task webpackBuildReleaseVersion(type: NpmTask) {
     inputs.dir(input_dir)
     inputs.property("artifact_version", artifact_version)
-    outputs.files("${output_dir}datalore-plot-${artifact_version}.min.js")
-    args = ['run', 'webpack-build-release', '--', "--output-filename=datalore-plot-${artifact_version}.min.js"]
+    outputs.files("${output_dir}lets-plot-${artifact_version}.min.js")
+    args = ['run', 'webpack-build-release', '--', "--output-filename=lets-plot-${artifact_version}.min.js"]
 }
 
 task webpackBuildReleaseLatest(type: NpmTask) {
     inputs.dir(input_dir)
     inputs.property("artifact_version", artifact_version)
-    outputs.files("${output_dir}datalore-plot-latest.min.js")
-    args = ['run', 'webpack-build-release', '--', "--output-filename=datalore-plot-latest.min.js"]
+    outputs.files("${output_dir}lets-plot-latest.min.js")
+    args = ['run', 'webpack-build-release', '--', "--output-filename=lets-plot-latest.min.js"]
 }
 
 task webpackBuildDebugVersion(type: NpmTask) {
     inputs.dir(input_dir)
     inputs.property("artifact_version", artifact_version)
-    outputs.files("${output_dir}datalore-plot-${artifact_version}.js")
-    args = ['run', 'webpack-build-debug', '--', "--output-filename=datalore-plot-${artifact_version}.js"]
+    outputs.files("${output_dir}lets-plot-${artifact_version}.js")
+    args = ['run', 'webpack-build-debug', '--', "--output-filename=lets-plot-${artifact_version}.js"]
 }
 
 task webpackBuildDebugLatest(type: NpmTask) {
     inputs.dir(input_dir)
     inputs.property("artifact_version", artifact_version)
-    outputs.files("${output_dir}datalore-plot-latest.js")
-    args = ['run', 'webpack-build-debug', '--', "--output-filename=datalore-plot-latest.js"]
+    outputs.files("${output_dir}lets-plot-latest.js")
+    args = ['run', 'webpack-build-debug', '--', "--output-filename=lets-plot-latest.js"]
 }
 
 task webpackBuildDebug {

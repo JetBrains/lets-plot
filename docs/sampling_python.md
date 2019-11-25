@@ -1,6 +1,6 @@
-# Sampling in Datalore Plot
+# Sampling in Lets-Plot
 
-Sampling is a special technique of data transformation, which is built into Datalore Plot and is applied after `stat` transformation.
+Sampling is a special technique of data transformation, which is built into Lets-Plot and is applied after `stat` transformation.
 
 Sampling helps dealing with large datasets when unintentional attempt to plot an excessively large number of geometries can lead to UI freezes and even to out-of-memory crashes. 
 
@@ -13,7 +13,7 @@ Sampling type and parameters can also be configured manually per geometry layer 
 
 Value `"none"` will disable any sampling for the given layer.
 
-There are several sampling methods implemented in Datalore Plot. The sampling methods can be chained together using the `+` operator.
+There are several sampling methods implemented in Lets-Plot. The sampling methods can be chained together using the `+` operator.
 
 ### Sampling methods
 

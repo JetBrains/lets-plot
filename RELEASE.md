@@ -9,7 +9,7 @@
 ##### 2. Set production version in the properties (remove _"-SNAPSHOT"_ and _"dev"_): 
 
  - `version` and `js_artifact_version` in `build.gradle` 
- - `__version__` in `python-package/datalore_plot/_version.py`
+ - `__version__` in `python-package/lets_plot/_version.py`
   
 ##### 3. Push the version changes and git tag:
          
@@ -19,7 +19,7 @@
 ##### 4. Prepare to the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev"_:
 
  - `version` and `js_artifact_version` in `build.gradle` 
- - `__version__` in `python-package/datalore_plot/_version.py`
+ - `__version__` in `python-package/lets_plot/_version.py`
 
 ##### 5. Push new dev version to GitHub.
 

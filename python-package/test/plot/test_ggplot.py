@@ -4,7 +4,7 @@
 #
 import pytest
 
-import datalore_plot as gg
+import lets_plot as gg
 
 data = [1, 2]
 mapping_empty = gg.aes()

@@ -1,4 +1,4 @@
-# Datalore.plot vs. ggplot2
+# lets-plot vs. ggplot2
 
 - Simplified argument structure for some of the functions
 - GGBunch module for facetting 

@@ -35,7 +35,7 @@ object PlotConfigDemoUtil {
     }
 
     private fun getPlotLibPath(): String {
-        val name = "datalore-plot-latest.js"
+        val name = "lets-plot-latest.js"
         return "${BrowserDemoUtil.getRootPath()}/$JS_DIST_PATH/$name"
     }
 
@@ -89,7 +89,7 @@ object PlotConfigDemoUtil {
                         |
                         |   var parentElement = document.createElement('div');
                         |   document.getElementById("root").appendChild(parentElement);
-                        |   DatalorePlot.$plotFun(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
+                        |   LetsPlot.$plotFun(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
                         |});
                     """.trimMargin()
 

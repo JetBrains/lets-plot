@@ -8,18 +8,18 @@ from setuptools import setup, find_packages
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(this_dir)
-kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'datalore_plot_kotlin_bridge.c')
+kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_bridge.c')
 
 this_system = platform.system()
 binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'native', 'debugStatic')
 
-python_package = "datalore_plot"
+python_package = "lets_plot"
 
 
 def update_js():
     js_relative_path = ['js-package', 'build', 'dist']
     js_libs = [
-        'datalore-plot-latest.min',
+        'lets-plot-latest.min',
     ]
 
     from shutil import copy
@@ -55,14 +55,14 @@ with open(os.path.join(this_dir, python_package, '_version.py')) as f:
 with open(os.path.join(root_dir, 'README_PYTHON.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-setup(name='datalore-plot',
+setup(name='lets-plot',
       license="MIT",
       version=version_locals['__version__'],
       maintainer='JetBrains',
-      maintainer_email='datalore-plot@jetbrains.com',
+      maintainer_email='lets-plot@jetbrains.com',
       author='JetBrains',
-      author_email='datalore-plot@jetbrains.com',
-      project_urls={"Github": "https://github.com/JetBrains/datalore-plot"},
+      author_email='lets-plot@jetbrains.com',
+      project_urls={"Github": "https://github.com/JetBrains/lets-plot"},
       description='An open source library for statistical plotting',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -89,11 +89,11 @@ setup(name='datalore-plot',
       },
 
       ext_modules=[
-          Extension('datalore_plot_kotlin_bridge',
+          Extension('lets_plot_kotlin_bridge',
                     include_dirs=[binaries_build_path],
-                    libraries=['datalore_plot_python_extension', 'stdc++'],
+                    libraries=['lets_plot_python_extension', 'stdc++'],
                     library_dirs=[binaries_build_path],
-                    depends=['libdatalore_plot_python_extension_api.h'],
+                    depends=['liblets_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],
                     )
       ],

@@ -4,9 +4,9 @@
 #
 import pytest
 
-import datalore_plot as gg
-from datalore_plot.plot.geom import _geom
-from datalore_plot.plot.geom_extras import arrow
+import lets_plot as gg
+from lets_plot.plot.geom import _geom
+from lets_plot.plot.geom_extras import arrow
 
 
 class TestWithListAndDictArgs:

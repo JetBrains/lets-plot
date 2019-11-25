@@ -11,7 +11,7 @@ plugins {
 // Building and publishing Python package
 // ----------------------------------------
 
-def task_group = 'datalore plot'
+def task_group = 'lets plot'
 def tools_dir = "${rootDir}/tools"
 def python_package_dir = "${rootDir}/python-package"
 def python_package_build_dir = "${python_package_dir}/build"
@@ -20,8 +20,8 @@ def python_package_dist_dir = "${python_package_dir}/dist"
 clean {
     delete python_package_build_dir
     delete python_package_dist_dir
-    delete "${python_package_dir}/datalore_plot/package_data"
-    delete "${python_package_dir}/datalore_plot.egg-info"
+    delete "${python_package_dir}/lets_plot/package_data"
+    delete "${python_package_dir}/lets_plot.egg-info"
 }
 
 if (project.buildSettings.enable_python_package) {
@@ -30,7 +30,7 @@ if (project.buildSettings.enable_python_package) {
 
     task buildPythonPackage(type: Exec) {
         group = task_group
-        description = 'Builds datalore-plot wheel distribution (python)'
+        description = 'Builds lets-plot wheel distribution (python)'
 
         workingDir python_package_dir
         commandLine "${python_bin_path}/python3",
@@ -42,7 +42,7 @@ if (project.buildSettings.enable_python_package) {
 
     task buildManylinuxWheels(type: Exec) {
         group = task_group
-        description = 'Builds datalore-plot wheel distribution with Manylinux platform for publication(python)'
+        description = 'Builds lets-plot wheel distribution with Manylinux platform for publication(python)'
 
         workingDir tools_dir
         commandLine "./run_manylinux_docker.sh", "${rootDir}"
@@ -53,7 +53,7 @@ if (project.buildSettings.enable_python_package) {
     if (pypi_prod.username != null && pypi_prod.password != null) {
         task publishProdPythonPackage(type: Exec) {
             group = task_group
-            description = 'Publishes datalore-plot python package to pypi.org'
+            description = 'Publishes lets-plot python package to pypi.org'
 
             workingDir python_package_dist_dir
             commandLine "${python_bin_path}/twine",
@@ -70,7 +70,7 @@ if (project.buildSettings.enable_python_package) {
     if (pipy_test.username != null && pipy_test.password != null) {
         task publishTestPythonPackage(type: Exec) {
             group = task_group
-            description = 'Publishes datalore-plot python package to test.pypi.org'
+            description = 'Publishes lets-plot python package to test.pypi.org'
 
             workingDir python_package_dist_dir
             commandLine "${python_bin_path}/twine",

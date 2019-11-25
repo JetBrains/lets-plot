@@ -1,4 +1,4 @@
-# Datalore-plot changelog
+# lets-plot changelog
 
 All notable changes to this project will be documented in this file.
 

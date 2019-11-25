@@ -4,8 +4,8 @@
 #
 import pytest
 
-from datalore_plot.plot.core import FeatureSpecArray, DummySpec
-from datalore_plot.plot.scale_convenience import *
+from lets_plot.plot.core import FeatureSpecArray, DummySpec
+from lets_plot.plot.scale_convenience import *
 
 
 @pytest.mark.parametrize('scale_spec, expected', [

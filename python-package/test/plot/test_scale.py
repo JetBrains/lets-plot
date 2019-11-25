@@ -4,10 +4,10 @@
 #
 import pytest
 
-import datalore_plot as gg
-from datalore_plot.plot.core import FeatureSpec
-from datalore_plot.plot.core import FeatureSpecArray
-from datalore_plot.plot.scale import _scale
+import lets_plot as gg
+from lets_plot.plot.core import FeatureSpec
+from lets_plot.plot.core import FeatureSpecArray
+from lets_plot.plot.scale import _scale
 
 
 def gen_scale_args():

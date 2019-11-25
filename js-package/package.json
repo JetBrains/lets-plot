@@ -1,5 +1,5 @@
 {
-  "name": "datalore-plot-bundling",
+  "name": "lets-plot-bundling",
   "description": "file for setup js part bundling environment",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

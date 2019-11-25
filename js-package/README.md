@@ -1,4 +1,4 @@
-# datalorePlot JS library.
+# lets-plot JS library.
 
 ## Building
 

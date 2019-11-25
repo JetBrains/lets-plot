@@ -52,7 +52,7 @@ $ python -m http.server 8080
 ## Example code
 
 ```python
-from datalore_plot import *
+from lets_plot import *
 data = dict(time=['Lunch', 'Lunch', 'Dinner', 'Dinner', 'Dinner'])
 p = ggplot(data) + geom_bar(aes(x='time', fill='..count..'))
 p += scale_fill_hue()

@@ -4,7 +4,7 @@
 #
 import pytest
 
-from datalore_plot.plot import util
+from lets_plot.plot import util
 
 
 @pytest.mark.parametrize('val,default,expected', [

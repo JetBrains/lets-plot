@@ -14,7 +14,7 @@ const distPath = path.resolve(buildPath, 'dist');
 module.exports = {
     entry: `${jsPackagePath}/js-package.js`,
     output: {
-        library: 'DatalorePlot',
+        library: 'LetsPlot',
         path: distPath,
         libraryTarget: 'window',
         globalObject: 'window'

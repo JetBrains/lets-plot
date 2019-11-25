@@ -60,7 +60,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 // https://discuss.kotlinlang.org/t/how-to-publish-fat-jar-from-kotlin-multi-project-mpp/14520
 // https://youtrack.jetbrains.com/issue/KT-25709
 // https://discuss.kotlinlang.org/t/kotlin-1-3-m2-new-multiplatform-projects-model/9264/107
-task jarDatalorePlotJvmCommonClasses(type: ShadowJar) {
+task jarLetsPlotJvmCommonClasses(type: ShadowJar) {
     group task_group
     baseName artifactBaseName
     version artifactVersion
@@ -76,24 +76,24 @@ task jarDatalorePlotJvmCommonClasses(type: ShadowJar) {
 //    relocate 'mu', 'shade.mu'
 }
 
-task jarDatalorePlotJvmCommonSources(type: ShadowJar) {
+task jarLetsPlotJvmCommonSources(type: ShadowJar) {
     group task_group
     baseName artifactBaseName
     version artifactVersion
     classifier 'sources'
-    configurations = [rootProject.configurations.datalorePlotJvmCommonSources]
+    configurations = [rootProject.configurations.letsPlotJvmCommonSources]
 }
 
 
 publishing {
     publications {
-        datalorePlotJvmCommon(MavenPublication) {
+        letsPlotJvmCommon(MavenPublication) {
             groupId artifactGroupId
             artifactId artifactBaseName
             version artifactVersion
 
-            artifact jarDatalorePlotJvmCommonClasses
-            artifact jarDatalorePlotJvmCommonSources
+            artifact jarLetsPlotJvmCommonClasses
+            artifact jarLetsPlotJvmCommonSources
 
             pom {
                 name = "Lets-Plot common classes"
@@ -132,7 +132,7 @@ def bintray_key = project.buildSettings?.bintray?.key
 
 if (bintray_user != null && bintray_key != null) {
     bintray {
-        publications = ['datalorePlotJvmCommon']
+        publications = ['letsPlotJvmCommon']
         override = true
 
         user = bintray_user

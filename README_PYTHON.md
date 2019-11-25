@@ -1,4 +1,4 @@
-# Datalore Plot for Python
+# Lets-Plot for Python
 
 <table>
     <tr>
@@ -27,32 +27,32 @@
 
 ### Implementation Overview
 
-The Datalore Plot python extension includes native backend and a Python API, which was mostly based on the [`ggplot2`](https://ggplot2.tidyverse.org/) package well-known to data scientists who use R.
+The Lets-Plot python extension includes native backend and a Python API, which was mostly based on the [`ggplot2`](https://ggplot2.tidyverse.org/) package well-known to data scientists who use R.
 
 R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who want to learn the grammar of graphics. 
 
 Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new functions](#unfamiliar_functions_used_in_the_examples) and [built-in sampling](#sampling) to our Python API.
 
-You can try the Datalore Plot library in [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/). Datalore Plot is available in Datalore out-of-the-box and is almost identical to the one we ship as PyPI package. This is because Datalore Plot is an offshoot of the Datalore project from which it was extracted to a separate plotting library.
+You can try the Lets-Plot library in [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/). Datalore Plot is available in Datalore out-of-the-box and is almost identical to the one we ship as PyPI package. This is because Datalore Plot is an offshoot of the Datalore project from which it was extracted to a separate plotting library.
 
-One important difference is that the python package in Datalore is named **datalore.plot** and the package you install from PyPI has name **datalore_plot**.
+One important difference is that the python package in Datalore is named **datalore.plot** and the package you install from PyPI has name **lets_plot**.
 
 The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/) as a learning tool in comparison to Jupyter is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
 
 
 ### Installation
 
-To install the Datalore Plot library, run the following command:
+To install the Lets-Plot library, run the following command:
 ```shell script
 pip install lets-plot
 ```
 
 ### Quickstart in Jupyter
 
-To evaluate the plotting capabilities of Datalore Plot, add the following code to a Jupyter notebook:
+To evaluate the plotting capabilities of Lets-Plot, add the following code to a Jupyter notebook:
 ```python
 import numpy as np
-from datalore_plot import *
+from lets_plot import *
 
 np.random.seed(12)
 data = dict(
@@ -70,7 +70,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 
 ### Examples
 
-Try the following examples to study more features of the Datalore Plot library.
+Try the following examples to study more features of the Lets-Plot library.
 
 TBD: replace temporary URLs ---> permanent 
 
@@ -100,18 +100,18 @@ Various presentation options:
 * `ggsize()` - sets size of the plot. Used in many examples starting from `quickstart`
 * `geom_density2df()` - fills space between equal density lines on 2D density plot. Similar to `geom_density2d` but supports `fill` aesthetic.
 
-    Example: [density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/density_2d.ipynb) 
+    Example: [density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/density_2d.ipynb) 
 
 * `geom_contourf()` - fills space between lines of equal level of bivariate function. Similar to `geom_contour` but supports `fill` aesthetic.
 
-    Example: [contours.ipynb](https://nbviewer.jupyter.org/github/JetBrains/datalore-plot/blob/master/docs/examples/jupyter-notebooks/contours.ipynb) 
+    Example: [contours.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/contours.ipynb) 
 
 
 ### Sampling 
 
 Sampling is a special technique of data transformation, which helps dealing with large datasets and overplotting.
 
-[Learn more](docs/sampling_python.md) about sampling in Datalore Plot. 
+[Learn more](docs/sampling_python.md) about sampling in Lets-Plot. 
 
 
 ### License

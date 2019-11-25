@@ -4,7 +4,7 @@
 #
 import pytest
 
-import datalore_plot as gg
+import lets_plot as gg
 
 
 class TestWithListArgs:

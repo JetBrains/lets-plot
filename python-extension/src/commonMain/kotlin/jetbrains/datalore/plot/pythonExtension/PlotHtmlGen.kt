@@ -27,8 +27,8 @@ internal object PlotHtmlGen {
                 (function() {
                     var plotSpec=$plotSpecJs;
                     var plotContainer = document.getElementById("$outputId");
-                    window.datalorePlotCall(function() {{
-                        DatalorePlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer);
+                    window.letsPlotCall(function() {{
+                        LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer);
                     }});
                 })();    
             </script>

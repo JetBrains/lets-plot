@@ -14,10 +14,10 @@ kotlin {
         // browser {}
         // /\
         // ||
-        // ERROR in ./kotlin/datalore-plot-livemap.js
-        // Module not found: Error: Can't resolve 'vis-canvas' in '/Users/ikupriyanov/Projects/datalore-plot/build/js/packages/datalore-plot-livemap/kotlin'
-        // @ ./kotlin/datalore-plot-livemap.js 3:4-120
-        // @ multi ./kotlin/datalore-plot-livemap.js source-map-support/browser-source-map-support.js
+        // ERROR in ./kotlin/lets-plot-livemap.js
+        // Module not found: Error: Can't resolve 'vis-canvas' in '/Users/ikupriyanov/Projects/lets-plot/build/js/packages/lets-plot-livemap/kotlin'
+        // @ ./kotlin/lets-plot-livemap.js 3:4-120
+        // @ multi ./kotlin/lets-plot-livemap.js source-map-support/browser-source-map-support.js
     }
 
     sourceSets {

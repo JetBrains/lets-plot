@@ -7,7 +7,7 @@ from typing import NamedTuple
 import numpy as np
 import pytest
 
-from datalore_plot.plot.geom_image_ import geom_image
+from lets_plot.plot.geom_image_ import geom_image
 
 
 def _image_spec(width, height, type, bytes):

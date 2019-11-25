@@ -8,7 +8,7 @@ const commonConfig = require('./webpack.common.config');
 module.exports = {
     entry: commonConfig.entry,
     output: Object.assign(commonConfig.output, {
-        filename: 'datalore-plot.js'
+        filename: 'lets-plot.js'
     }),
     resolve: commonConfig.resolve,
     mode: 'development',

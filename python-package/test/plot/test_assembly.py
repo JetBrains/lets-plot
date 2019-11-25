@@ -2,12 +2,12 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-import datalore_plot as gg
-from datalore_plot.plot.core import DummySpec, FeatureSpecArray
-from datalore_plot.plot.core import FeatureSpec
-from datalore_plot.plot.core import LayerSpec
-from datalore_plot.plot.geom import _geom
-from datalore_plot.plot.scale import _scale
+import lets_plot as gg
+from lets_plot.plot.core import DummySpec, FeatureSpecArray
+from lets_plot.plot.core import FeatureSpec
+from lets_plot.plot.core import LayerSpec
+from lets_plot.plot.geom import _geom
+from lets_plot.plot.scale import _scale
 
 
 def test_plot_geom_geom():
