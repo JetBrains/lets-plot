@@ -9,6 +9,7 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.SimpleAsync
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
+import jetbrains.datalore.base.event.dom.DomEventUtil.translateInPageCoord
 import jetbrains.datalore.base.event.dom.DomEventUtil.translateInTargetCoord
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
@@ -24,10 +25,7 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.Companion.DEVICE_PIXEL_RATIO
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.Image
-import org.w3c.dom.Node
+import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
@@ -51,9 +49,14 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
+        val translator = when (eventSpec) {
+            MouseEventSpec.MOUSE_PRESSED, MouseEventSpec.MOUSE_DRAGGED -> ::translateInPageCoord
+            else -> ::translateInTargetCoord
+        }
+
         return eventPeer.addEventHandler(
             eventSpec,
-            handler { eventHandler.onEvent(translateInTargetCoord(it)) }
+            handler { eventHandler.onEvent(translator(it)) }
         )
     }
 
@@ -92,6 +95,10 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         rootElement.appendChild((canvas as DomCanvas).canvasElement)
     }
 
+    override fun addChild(index: Int, canvas: Canvas) {
+        rootElement.insertBefore((canvas as DomCanvas).canvasElement, rootElement.childNodes[index])
+    }
+
     override fun removeChild(canvas: Canvas) {
         rootElement.removeChild((canvas as DomCanvas).canvasElement)
     }
@@ -103,13 +110,19 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
     private class DomEventPeer (private val myRootElement: Node) :
         EventPeer<MouseEventSpec, W3cMouseEvent>(MouseEventSpec::class) {
         private var myButtonPressed = false
+        private var myWasDragged = false
 
         init {
             handle(DomEventType.MOUSE_ENTER) { dispatch(MouseEventSpec.MOUSE_ENTERED, it) }
 
             handle(DomEventType.MOUSE_LEAVE) { dispatch(MouseEventSpec.MOUSE_LEFT, it) }
 
-            handle(DomEventType.CLICK) { dispatch(MouseEventSpec.MOUSE_CLICKED, it) }
+            handle(DomEventType.CLICK) {
+                if (!myWasDragged) {
+                    dispatch(MouseEventSpec.MOUSE_CLICKED, it)
+                }
+                myWasDragged = false
+            }
 
             handle(DomEventType.DOUBLE_CLICK) { dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, it) }
 
@@ -125,6 +138,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
 
             handle(DomEventType.MOUSE_MOVE) {
                 if (myButtonPressed) {
+                    myWasDragged = true
                     dispatch(MouseEventSpec.MOUSE_DRAGGED, it)
                 } else {
                     dispatch(MouseEventSpec.MOUSE_MOVED, it)
@@ -133,10 +147,15 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         }
 
         private fun handle(eventSpec: DomEventType<W3cMouseEvent>, handler: (W3cMouseEvent) -> Unit) {
-            myRootElement.addEventListener(eventSpec.name, DomEventListener<W3cMouseEvent> {
+            targetNode(eventSpec).addEventListener(eventSpec.name, DomEventListener<W3cMouseEvent> {
                 handler(it)
                 false
             })
+        }
+
+        private fun targetNode(eventSpec: DomEventType<W3cMouseEvent>): Node = when (eventSpec) {
+            DomEventType.MOUSE_MOVE, DomEventType.MOUSE_UP -> document
+            else -> myRootElement
         }
 
         override fun onSpecAdded(spec: MouseEventSpec) {}

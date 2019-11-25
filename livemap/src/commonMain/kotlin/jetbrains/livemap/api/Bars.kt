@@ -5,6 +5,7 @@ import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.ScreenOffsetComponent
@@ -22,12 +23,11 @@ class Bars(
 }
 
 fun LayersBuilder.bars(block: Bars.() -> Unit) {
-    val layerEntitiesComponent = LayerEntitiesComponent()
     val layerEntity = myComponentManager
         .createEntity("map_layer_bar")
         .addComponents {
-            + layerManager.createRenderLayerComponent("livemap_bar")
-            + layerEntitiesComponent
+            + layerManager.addLayer("livemap_bar", LayerGroup.FEATURES)
+            + LayerEntitiesComponent()
         }
 
     Bars(
@@ -35,11 +35,7 @@ fun LayersBuilder.bars(block: Bars.() -> Unit) {
         mapProjection
     ).apply {
         block()
-        barsFactory
-            .produce()
-            .forEach {
-                layerEntitiesComponent.add(it.id)
-            }
+        barsFactory.produce()
     }
 }
 

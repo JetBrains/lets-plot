@@ -36,35 +36,39 @@ object LayerManagers {
         val singleCanvasControl = SingleCanvasControl(canvasControl)
         val rect = DoubleRectangle(DoubleVector.ZERO, canvasControl.size.toDoubleVector())
         return object : LayerManager {
-            private val myOrderedLayers = ArrayList<RenderLayer>()
+            private val myGroupedLayers = GroupedLayers()
 
             override fun createLayerRenderingSystem(): LayersRenderingSystem {
                 return LayersRenderingSystem(
                     componentManager,
                     object : RenderingStrategy {
                         override fun render(
-                            renderingOrder: List<RenderLayer>,
+                            renderingOrder: List<CanvasLayer>,
                             layerEntities: Iterable<EcsEntity>,
                             dirtyLayerEntities: Iterable<EcsEntity>
                         ) {
                             singleCanvasControl.context.clearRect(rect)
-                            renderingOrder.forEach(RenderLayer::render)
+                            renderingOrder.forEach(CanvasLayer::render)
                             // Force render tasks to be added
-                            layerEntities.forEach { it.tag(::DirtyRenderLayerComponent) }
+                            layerEntities.forEach { it.tag(::DirtyCanvasLayerComponent) }
                         }
 
                     }
                 )
             }
 
-            override fun createRenderLayerComponent(name: String): RenderLayerComponent {
-                val renderLayer = RenderLayer(singleCanvasControl.canvas, name)
-                myOrderedLayers.add(renderLayer)
-                return RenderLayerComponent(renderLayer)
+            override fun addLayer(name: String, group: LayerGroup): CanvasLayerComponent {
+                val canvasLayer = CanvasLayer(singleCanvasControl.canvas, name)
+                myGroupedLayers.add(group, canvasLayer)
+                return CanvasLayerComponent(canvasLayer)
+            }
+
+            override fun removeLayer(group: LayerGroup, canvasLayer: CanvasLayer) {
+                myGroupedLayers.remove(group, canvasLayer)
             }
 
             override fun createLayersOrderComponent(): LayersOrderComponent {
-                return LayersOrderComponent(myOrderedLayers)
+                return LayersOrderComponent(myGroupedLayers)
             }
         }
     }
@@ -74,24 +78,24 @@ object LayerManagers {
         val rect = DoubleRectangle(DoubleVector.ZERO, canvasControl.size.toDoubleVector())
 
         return object : LayerManager {
-            private val myOrderedLayers = ArrayList<RenderLayer>()
+            private val myGroupedLayers = GroupedLayers()
 
             override fun createLayerRenderingSystem(): LayersRenderingSystem {
                 return LayersRenderingSystem(
                     componentManager,
                     object : RenderingStrategy {
                         override fun render(
-                            renderingOrder: List<RenderLayer>,
+                            renderingOrder: List<CanvasLayer>,
                             layerEntities: Iterable<EcsEntity>,
                             dirtyLayerEntities: Iterable<EcsEntity>
                         ) {
                             dirtyLayerEntities.forEach {
-                                it.get<RenderLayerComponent>().renderLayer.apply { clear(); render(); }
-                                it.untag<DirtyRenderLayerComponent>()
+                                it.get<CanvasLayerComponent>().canvasLayer.apply { clear(); render(); }
+                                it.untag<DirtyCanvasLayerComponent>()
                             }
 
                             PlatformAsyncs
-                                .composite(renderingOrder.map(RenderLayer::takeSnapshot))
+                                .composite(renderingOrder.map(CanvasLayer::takeSnapshot))
                                 .onSuccess { snapshots ->
                                     singleCanvasControl.context.clearRect(rect)
                                     snapshots.forEach { singleCanvasControl.context.drawImage(it, 0.0, 0.0) }
@@ -101,51 +105,63 @@ object LayerManagers {
                 )
             }
 
-            override fun createRenderLayerComponent(name: String): RenderLayerComponent {
-                val renderLayer = RenderLayer(singleCanvasControl.createCanvas(), name)
-                myOrderedLayers.add(renderLayer)
-                return RenderLayerComponent(renderLayer)
+            override fun addLayer(name: String, group: LayerGroup): CanvasLayerComponent {
+                val canvasLayer = CanvasLayer(singleCanvasControl.createCanvas(), name)
+                myGroupedLayers.add(group, canvasLayer)
+                return CanvasLayerComponent(canvasLayer)
+            }
+
+            override fun removeLayer(group: LayerGroup, canvasLayer: CanvasLayer) {
+                myGroupedLayers.remove(group, canvasLayer)
             }
 
             override fun createLayersOrderComponent(): LayersOrderComponent {
-                return LayersOrderComponent(myOrderedLayers)
+                return LayersOrderComponent(myGroupedLayers)
             }
         }
     }
 
     private fun screenLayers(canvasControl: CanvasControl, componentManager: EcsComponentManager): LayerManager {
         return object : LayerManager {
-            private val myOrderedLayers = ArrayList<RenderLayer>()
+            private val myGroupedLayers = GroupedLayers()
 
             override fun createLayerRenderingSystem(): LayersRenderingSystem {
                 return LayersRenderingSystem(
                     componentManager,
                     object : RenderingStrategy {
                         override fun render(
-                            renderingOrder: List<RenderLayer>,
+                            renderingOrder: List<CanvasLayer>,
                             layerEntities: Iterable<EcsEntity>,
                             dirtyLayerEntities: Iterable<EcsEntity>
                         ) {
                             dirtyLayerEntities.forEach {
-                                it.get<RenderLayerComponent>().renderLayer.apply { clear(); render(); }
-                                it.untag<DirtyRenderLayerComponent>()
+                                it.get<CanvasLayerComponent>().canvasLayer.apply { clear(); render(); }
+                                it.untag<DirtyCanvasLayerComponent>()
                             }
                         }
                     }
                 )
             }
 
-            override fun createRenderLayerComponent(name: String): RenderLayerComponent {
+            override fun addLayer(name: String, group: LayerGroup): CanvasLayerComponent {
                 val canvas = canvasControl.createCanvas(canvasControl.size)
-                canvasControl.addChild(canvas)
 
-                val renderLayer = RenderLayer(canvas, name)
-                myOrderedLayers.add(renderLayer)
-                return RenderLayerComponent(renderLayer)
+
+                val canvasLayer = CanvasLayer(canvas, name)
+                myGroupedLayers.add(group, canvasLayer)
+
+                canvasControl.addChild(myGroupedLayers.orderedLayers.indexOf(canvasLayer), canvas)
+
+                return CanvasLayerComponent(canvasLayer)
+            }
+
+            override fun removeLayer(group: LayerGroup, canvasLayer: CanvasLayer) {
+                canvasLayer.removeFrom(canvasControl)
+                myGroupedLayers.remove(group, canvasLayer)
             }
 
             override fun createLayersOrderComponent(): LayersOrderComponent {
-                return LayersOrderComponent(myOrderedLayers)
+                return LayersOrderComponent(myGroupedLayers)
             }
         }
     }

@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.tiles
 
+import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -16,7 +17,6 @@ import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.Renderer
-import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.WorldRectangle
 import jetbrains.livemap.tiles.components.*
 import jetbrains.livemap.tiles.debug.DebugCellRenderer
@@ -38,7 +38,7 @@ class TileRequestSystem(componentManager: EcsComponentManager) : AbstractSystem<
         myDonorTileCalculators = createDonorTileCalculators()
 
         val requestTiles = HashSet(
-            getSingletonComponent<CellStateComponent>().requestCells
+            getSingleton<CellStateComponent>().requestCells
         )
 
         getEntities(CellComponent::class).forEach { cellEntity ->
@@ -49,7 +49,7 @@ class TileRequestSystem(componentManager: EcsComponentManager) : AbstractSystem<
 
         requestTiles.forEach(::createTileLayerEntities)
 
-        getSingletonComponent<RequestTilesComponent>().requestTiles = requestTiles
+        getSingleton<RequestTilesComponent>().requestTiles = requestTiles
     }
 
     private fun createDonorTileCalculators(): Map<CellLayerKind, DonorTileCalculator> {
@@ -68,7 +68,7 @@ class TileRequestSystem(componentManager: EcsComponentManager) : AbstractSystem<
 
     private fun createTileLayerEntities(cellKey: CellKey) {
         val zoom = cellKey.length
-        val tileRect = getTileRect(myMapRect, cellKey.toString())
+        val tileRect = cellKey.computeRect(myMapRect)
 
         for (layer in getEntities(CellLayerComponent::class)) {
             val layerKind = layer.get<CellLayerComponent>().layerKind

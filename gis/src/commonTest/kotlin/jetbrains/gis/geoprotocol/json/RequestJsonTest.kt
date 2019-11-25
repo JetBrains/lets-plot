@@ -7,7 +7,8 @@ package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.geoprotocol.json.RequestAssertions.assertThatExplicitRequest
 import jetbrains.gis.geoprotocol.json.RequestAssertions.assertThatGeocodingRequest
@@ -28,7 +29,7 @@ class RequestJsonTest {
     fun explicitWithAllParameters() {
 
         val tiles = mapOf(
-            "asd" to listOf(
+            "asd" to listOf<QuadKey<LonLat>>(
                 QuadKey("032"),
                 QuadKey("033"),
                 QuadKey("210"),

@@ -13,8 +13,8 @@ import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.core.rendering.layers.DirtyRenderLayerComponent
-import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
+import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
+import jetbrains.livemap.core.rendering.layers.DirtyCanvasLayerComponent
 import jetbrains.livemap.core.rendering.primitives.RenderObject
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 
@@ -22,12 +22,10 @@ class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val scaleEffect =
-            getSingletonEntity(CameraComponent::class)
-                .tryGet<CameraScaleEffectComponent>()
+        val scaleEffect = getSingletonEntity<CameraComponent>().tryGet<CameraScaleEffectComponent>()
 
         for (layer in getEntities(DIRTY_LAYERS)) {
-            layer.get<RenderLayerComponent>().renderLayer.addRenderTask { layerCtx ->
+            layer.get<CanvasLayerComponent>().canvasLayer.addRenderTask { layerCtx ->
                 layerCtx.save()
 
                 scaleEffect?.apply {
@@ -63,9 +61,9 @@ class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
         }
 
         private val DIRTY_LAYERS = listOf(
-            DirtyRenderLayerComponent::class,
+            DirtyCanvasLayerComponent::class,
             LayerEntitiesComponent::class,
-            RenderLayerComponent::class
+            CanvasLayerComponent::class
         )
     }
 }

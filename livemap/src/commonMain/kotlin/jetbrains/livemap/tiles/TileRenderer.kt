@@ -6,6 +6,7 @@
 package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.spatial.projectRect
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
@@ -31,10 +32,10 @@ class TileRenderer : Renderer {
     internal fun render(tile: Tile, cellRect: Rect<Client>, ctx: Context2d) {
         myCellRect = cellRect
         myCtx = ctx
-        renderTile(tile, "", "")
+        renderTile(tile, CellKey(""), CellKey(""))
     }
 
-    private fun renderTile(tile: Tile, srcKey: String, dstKey: String) {
+    private fun renderTile(tile: Tile, srcKey: CellKey, dstKey: CellKey) {
         when (tile) {
             is SnapshotTile -> renderSnapshotTile(tile, srcKey, dstKey)
             is SubTile -> renderSubTile(tile, srcKey, dstKey)
@@ -44,9 +45,9 @@ class TileRenderer : Renderer {
         }
     }
 
-    private fun renderSnapshotTile(tile: SnapshotTile, srcKey: String, dstKey: String) {
-        val srcRect = getTileRect(myCellRect, srcKey)
-        val dstRect = getTileRect(myCellRect, dstKey)
+    private fun renderSnapshotTile(tile: SnapshotTile, srcKey: CellKey, dstKey: CellKey) {
+        val srcRect = srcKey.projectRect(myCellRect)
+        val dstRect = dstKey.projectRect(myCellRect)
         myCtx.drawImage(
             tile.snapshot,
             srcRect.left,
@@ -60,11 +61,11 @@ class TileRenderer : Renderer {
         )
     }
 
-    private fun renderSubTile(tile: SubTile, srcKey: String, dstKey: String) {
+    private fun renderSubTile(tile: SubTile, srcKey: CellKey, dstKey: CellKey) {
         renderTile(tile.tile, tile.subKey + srcKey, dstKey)
     }
 
-    private fun renderCompositeTile(tile: CompositeTile, srcKey: String, dstKey: String) {
+    private fun renderCompositeTile(tile: CompositeTile, srcKey: CellKey, dstKey: CellKey) {
         tile.tiles.forEach { (tile, key) -> renderTile(tile, srcKey, dstKey + key) }
     }
 }

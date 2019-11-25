@@ -7,6 +7,7 @@ package jetbrains.livemap.api
 
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.*
@@ -21,12 +22,11 @@ class Pies(
 }
 
 fun LayersBuilder.pies(block: Pies.() -> Unit) {
-    val layerEntitiesComponent = LayerEntitiesComponent()
     val layerEntity = myComponentManager
         .createEntity("map_layer_pie")
         .addComponents {
-            + layerManager.createRenderLayerComponent("livemap_pie")
-            + layerEntitiesComponent
+            + layerManager.addLayer("livemap_pie", LayerGroup.FEATURES)
+            + LayerEntitiesComponent()
         }
 
     Pies(
@@ -34,11 +34,7 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
         mapProjection
     ).apply {
         block()
-        piesFactory
-            .produce()
-            .forEach {
-                layerEntitiesComponent.add(it.id)
-            }
+        piesFactory.produce()
     }
 }
 

@@ -9,7 +9,6 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangles
 
 class Generic
-class LonLat
 
 fun <TypeT> Vec<Generic>.reinterpret(): Vec<TypeT> = this as Vec<TypeT>
 fun <TypeT> MultiPoint<Generic>.reinterpret(): MultiPoint<TypeT> = this as MultiPoint<TypeT>
@@ -47,9 +46,9 @@ operator fun <TypeT> Vec<TypeT>.div(scale: Double): Vec<TypeT> = Vec(x / scale, 
 operator fun <TypeT> Vec<TypeT>.unaryMinus(): Vec<TypeT> = Vec(-x, -y)
 
 fun <TypeT> Vec<TypeT>.transform(
-    fx: (Scalar<TypeT>) -> Scalar<TypeT> = { it },
-    fy: (Scalar<TypeT>) -> Scalar<TypeT> = { it }
-) = Vec<TypeT>(fx(scalarX).value, fy(scalarY).value)
+    newX: (Scalar<TypeT>) -> Scalar<TypeT> = { it },
+    newY: (Scalar<TypeT>) -> Scalar<TypeT> = { it }
+) = Vec<TypeT>(newX(scalarX).value, newY(scalarY).value)
 
 operator fun <T> Scalar<T>.plus(other: Scalar<T>): Scalar<T> = Scalar(value + other.value)
 operator fun <T> Scalar<T>.minus(other: Scalar<T>): Scalar<T> = Scalar(value - other.value)

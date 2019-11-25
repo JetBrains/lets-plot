@@ -19,12 +19,12 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
 
     private val myRegs = CompositeRegistration()
     private var myLocation: Vector? = null
-    private var myPressLocation: Vector? = null
-    private var myClickLocation: Vector? = null
-    private var myDoubleClickLocation: Vector? = null
     private var myDragStartLocation: Vector? = null
     private var myDragCurrentLocation: Vector? = null
     private var myDragDelta: Vector? = null
+    private var myPressEvent: InputMouseEvent? = null
+    private var myClickEvent: InputMouseEvent? = null
+    private var myDoubleClickEvent: InputMouseEvent? = null
 
     override fun init(context: EcsContext) {
         myRegs.add(context.eventSource.addEventHandler(MOUSE_DOUBLE_CLICKED, handler(this::onMouseDoubleClicked)))
@@ -32,6 +32,7 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
         myRegs.add(context.eventSource.addEventHandler(MOUSE_RELEASED, handler(this::onMouseReleased)))
         myRegs.add(context.eventSource.addEventHandler(MOUSE_DRAGGED, handler(this::onMouseDragged)))
         myRegs.add(context.eventSource.addEventHandler(MOUSE_MOVED, handler( this::onMouseMoved )))
+        myRegs.add(context.eventSource.addEventHandler(MOUSE_CLICKED, handler( this::onMouseClicked )))
     }
 
     override fun update(context: EcsContext, dt: Double) {
@@ -44,16 +45,16 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
 
         for (entity in getEntities(MouseInputComponent::class)) {
             entity.getComponent<MouseInputComponent>().apply {
-                location = myLocation
                 dragDistance = myDragDelta
-                press = myPressLocation?.let{ InputMouseEvent(it) }
-                click = myClickLocation?.let{ InputMouseEvent(it) }
-                doubleClick = myDoubleClickLocation?.let{ InputMouseEvent(it) }
+                press = myPressEvent
+                click = myClickEvent
+                doubleClick = myDoubleClickEvent
             }
         }
 
-        myClickLocation = null
-        myDoubleClickLocation = null
+        myPressEvent = null
+        myClickEvent = null
+        myDoubleClickEvent = null
         myDragDelta = null
     }
 
@@ -61,19 +62,23 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
         myRegs.dispose()
     }
 
+    private fun onMouseClicked(mouseEvent: MouseEvent) {
+        if (mouseEvent.button === Button.LEFT) {
+            myClickEvent = InputMouseEvent(mouseEvent.location)
+            myDragCurrentLocation = null
+            myDragStartLocation = null
+        }
+    }
+
     private fun onMousePressed(mouseEvent: MouseEvent) {
         if (mouseEvent.button === Button.LEFT) {
-            myPressLocation = mouseEvent.location
+            myPressEvent = InputMouseEvent(mouseEvent.location)
             myDragStartLocation = mouseEvent.location
-            myClickLocation = null
         }
     }
 
     private fun onMouseReleased(mouseEvent: MouseEvent) {
         if (mouseEvent.button === Button.LEFT) {
-            myClickLocation = mouseEvent.location
-            myPressLocation = null
-            myDragDelta = null
             myDragCurrentLocation = null
             myDragStartLocation = null
         }
@@ -87,12 +92,11 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
 
     private fun onMouseDoubleClicked(mouseEvent: MouseEvent) {
         if (mouseEvent.button === Button.LEFT) {
-            myDoubleClickLocation = mouseEvent.location
+            myDoubleClickEvent = InputMouseEvent(mouseEvent.location)
         }
     }
 
     private fun onMouseMoved(mouseEvent: MouseEvent) {
         myLocation = mouseEvent.location
-        myPressLocation = null
     }
 }

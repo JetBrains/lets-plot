@@ -3,23 +3,22 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.projectionGeometry
+package jetbrains.datalore.base.spatial
 
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator.Companion.MAX_LATITUDE_GETTER
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator.Companion.MAX_LONGITUDE_GETTER
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator.Companion.MIN_LATITUDE_GETTER
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator.Companion.MIN_LONGITUDE_GETTER
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator.CoordinateHelper
-import jetbrains.datalore.base.projectionGeometry.GeoRectangleTestHelper.assertDoubleEquals
-import jetbrains.datalore.base.projectionGeometry.GeoRectangleTestHelper.point
-import jetbrains.datalore.base.projectionGeometry.GeoRectangleTestHelper.rectangle
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.BBOX_CALCULATOR
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.convertToGeoRectangle
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MAX_LATITUDE_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MAX_LONGITUDE_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MIN_LATITUDE_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MIN_LONGITUDE_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
+import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertDoubleEquals
+import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.point
+import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.rectangle
+import jetbrains.datalore.base.spatial.GeoUtils.BBOX_CALCULATOR
+import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -235,8 +234,8 @@ class GeoBoundingBoxCalculatorTest {
         locationChecker(calculateLocationFromBoundingBoxArrays(*rectangles))
     }
 
-    private fun createCoordinateHelper(ranges: List<ClosedRange<Double>>): CoordinateHelper {
-        return object : CoordinateHelper {
+    private fun createCoordinateHelper(ranges: List<ClosedRange<Double>>): GeoBoundingBoxCalculator.CoordinateHelper {
+        return object : GeoBoundingBoxCalculator.CoordinateHelper {
             override fun minCoord(index: Int): Double {
                 return ranges[index].lowerEndpoint()
             }

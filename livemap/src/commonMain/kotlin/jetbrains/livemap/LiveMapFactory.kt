@@ -6,8 +6,8 @@
 package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.center
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.camera.ViewportHelper
 import jetbrains.livemap.entities.regions.EmptinessChecker

@@ -29,29 +29,29 @@ object TestUtil {
     private const val VARIABLE_VALUE = "value"
 
     internal fun <T> continuous(aes: Aes<T>): Mapping<T> {
-        return jetbrains.datalore.plot.builder.interact.TestUtil.mappedData(aes, true)
+        return mappedData(aes, true)
     }
 
     internal fun <T> discrete(aes: Aes<T>): Mapping<T> {
-        return jetbrains.datalore.plot.builder.interact.TestUtil.mappedData(aes, false)
+        return mappedData(aes, false)
     }
 
     private fun <T> mappedData(aes: Aes<T>, isContinuous: Boolean): Mapping<T> {
-        return variable().name(jetbrains.datalore.plot.builder.interact.TestUtil.VARIABLE_NAME).value(jetbrains.datalore.plot.builder.interact.TestUtil.VARIABLE_VALUE).isContinuous(isContinuous).mapping(aes)
+        return variable().name(VARIABLE_NAME).value(VARIABLE_VALUE).isContinuous(isContinuous).mapping(aes)
     }
 
-    internal fun assertText(tooltipSpecs: List<jetbrains.datalore.plot.builder.interact.TooltipSpec>, vararg expectedTooltipText: String) {
-        jetbrains.datalore.plot.builder.interact.TestUtil.assertText(tooltipSpecs, listOf(*expectedTooltipText))
+    internal fun assertText(tooltipSpecs: List<TooltipSpec>, vararg expectedTooltipText: String) {
+        assertText(tooltipSpecs, listOf(*expectedTooltipText))
     }
 
     @SafeVarargs
-    internal fun assertText(tooltipSpecs: List<jetbrains.datalore.plot.builder.interact.TooltipSpec>, vararg expectedTooltips: List<String>) {
+    internal fun assertText(tooltipSpecs: List<TooltipSpec>, vararg expectedTooltips: List<String>) {
         assertEquals(expectedTooltips.size.toLong(), tooltipSpecs.size.toLong())
         var i = 0
         val n = tooltipSpecs.size
         while (i < n) {
             val tooltipText = tooltipSpecs[i].lines
-            jetbrains.datalore.plot.builder.interact.TestUtil.assertListsEqual(expectedTooltips[i], tooltipText)
+            assertListsEqual(expectedTooltips[i], tooltipText)
             ++i
         }
     }
@@ -66,7 +66,7 @@ object TestUtil {
         }
     }
 
-    internal fun assertNoTooltips(tooltipSpecs: List<jetbrains.datalore.plot.builder.interact.TooltipSpec>) {
+    internal fun assertNoTooltips(tooltipSpecs: List<TooltipSpec>) {
         assertTrue(tooltipSpecs.isEmpty())
     }
 
@@ -107,47 +107,47 @@ object TestUtil {
 
     internal fun outsideX(rect: DoubleRectangle): DoubleVector {
         return rect.center.add(
-            jetbrains.datalore.plot.builder.interact.TestUtil.point(
-                rect.width / 2 + jetbrains.datalore.plot.builder.interact.TestUtil.OUTSIDE_DELTA,
+            point(
+                rect.width / 2 + OUTSIDE_DELTA,
                 0.0
             )
         )
     }
 
     internal fun outsideX(rect: DoubleRectangle, delta: Double): DoubleVector {
-        return rect.origin.add(jetbrains.datalore.plot.builder.interact.TestUtil.point(rect.right + delta, 0.0))
+        return rect.origin.add(point(rect.right + delta, 0.0))
     }
 
     internal fun outsideY(rect: DoubleRectangle): DoubleVector {
         return rect.center.add(
-            jetbrains.datalore.plot.builder.interact.TestUtil.point(
+            point(
                 0.0,
-                rect.height / 2 + jetbrains.datalore.plot.builder.interact.TestUtil.OUTSIDE_DELTA
+                rect.height / 2 + OUTSIDE_DELTA
             )
         )
     }
 
     internal fun outsideXY(rect: DoubleRectangle): DoubleVector {
         return rect.center.add(
-            jetbrains.datalore.plot.builder.interact.TestUtil.point(
-                rect.width + jetbrains.datalore.plot.builder.interact.TestUtil.OUTSIDE_DELTA,
-                rect.height / 2 + jetbrains.datalore.plot.builder.interact.TestUtil.OUTSIDE_DELTA
+            point(
+                rect.width + OUTSIDE_DELTA,
+                rect.height / 2 + OUTSIDE_DELTA
             )
         )
     }
 
     private fun betweenX(rect1: DoubleRectangle, rect2: DoubleRectangle): Double {
-        return jetbrains.datalore.plot.builder.interact.TestUtil.between(rect1.left, rect2.left)
+        return between(rect1.left, rect2.left)
     }
 
     private fun betweenY(rect1: DoubleRectangle, rect2: DoubleRectangle): Double {
-        return jetbrains.datalore.plot.builder.interact.TestUtil.between(rect1.top, rect2.top)
+        return between(rect1.top, rect2.top)
     }
 
     internal fun between(rect1: DoubleRectangle, rect2: DoubleRectangle): DoubleVector {
         return DoubleVector(
-            jetbrains.datalore.plot.builder.interact.TestUtil.betweenX(rect1, rect2),
-            jetbrains.datalore.plot.builder.interact.TestUtil.betweenY(rect1, rect2)
+            betweenX(rect1, rect2),
+            betweenY(rect1, rect2)
         )
     }
 
@@ -170,31 +170,31 @@ object TestUtil {
 
     internal fun offsetX(p: DoubleVector): DoubleVector {
         return p.add(
-            jetbrains.datalore.plot.builder.interact.TestUtil.point(
-                jetbrains.datalore.plot.builder.interact.TestUtil.OUTSIDE_DELTA,
+            point(
+                OUTSIDE_DELTA,
                 0.0
             )
         )
     }
 
     internal fun offsetX(p: DoubleVector, delta: Double): DoubleVector {
-        return p.add(jetbrains.datalore.plot.builder.interact.TestUtil.point(delta, 0.0))
+        return p.add(point(delta, 0.0))
     }
 
     internal fun offsetY(p: DoubleVector): DoubleVector {
         return p.add(
-            jetbrains.datalore.plot.builder.interact.TestUtil.point(
+            point(
                 0.0,
-                jetbrains.datalore.plot.builder.interact.TestUtil.OUTSIDE_DELTA
+                OUTSIDE_DELTA
             )
         )
     }
 
     internal fun offsetXY(p: DoubleVector): DoubleVector {
         return p.add(
-            jetbrains.datalore.plot.builder.interact.TestUtil.point(
-                jetbrains.datalore.plot.builder.interact.TestUtil.OUTSIDE_DELTA,
-                jetbrains.datalore.plot.builder.interact.TestUtil.OUTSIDE_DELTA
+            point(
+                OUTSIDE_DELTA,
+                OUTSIDE_DELTA
             )
         )
     }
@@ -218,21 +218,21 @@ object TestUtil {
     }
 
     internal fun findTargets(locator: GeomTargetLocator, p: DoubleVector): List<GeomTarget> {
-        return jetbrains.datalore.plot.builder.interact.TestUtil.getGeomTargets(locator.search(p))
+        return getGeomTargets(locator.search(p))
     }
 
     internal fun assertEncodedObjects(locator: GeomTargetLocator, coord: DoubleVector, vararg key: Any) {
-        jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects(true, locator, coord, *key)
+        assertObjects(true, locator, coord, *key)
     }
 
     internal fun assertObjects(locator: GeomTargetLocator, coord: DoubleVector, vararg key: Any) {
-        jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects(false, locator, coord, *key)
+        assertObjects(false, locator, coord, *key)
     }
 
     private fun assertObjects(encoded: Boolean, locator: GeomTargetLocator, coord: DoubleVector, vararg key: Any) {
-        val decode = if (encoded) { it -> jetbrains.datalore.plot.builder.interact.TestUtil.decodeKey(it) } else identity<Int>()
+        val decode = if (encoded) { it -> decodeKey(it) } else identity<Int>()
 
-        val located = jetbrains.datalore.plot.builder.interact.TestUtil.getGeomTargets(locator.search(coord))
+        val located = getGeomTargets(locator.search(coord))
 
         assertEquals(key.size, located.size)
 
@@ -250,7 +250,7 @@ object TestUtil {
     }
 
     internal fun assertEmpty(locator: GeomTargetLocator, coord: DoubleVector) {
-        val located = jetbrains.datalore.plot.builder.interact.TestUtil.getGeomTargets(locator.search(coord))
+        val located = getGeomTargets(locator.search(coord))
         assertTrue(located.isEmpty())
     }
 
@@ -267,7 +267,7 @@ object TestUtil {
     internal fun pathTarget(key: Int, points: List<DoubleVector>): TargetPrototype {
         val pathShape = HitShape.path(points, false)
         return TargetPrototype(pathShape, { hitIndex ->
-            jetbrains.datalore.plot.builder.interact.TestUtil.encodeIndex(
+            encodeIndex(
                 key,
                 hitIndex
             )
@@ -280,15 +280,15 @@ object TestUtil {
     }
 
     private fun encodeIndex(key: Int, integer: Int?): Int {
-        return key * jetbrains.datalore.plot.builder.interact.TestUtil.PATH_POINTS_COUNT_PER_KEY + integer!!
+        return key * PATH_POINTS_COUNT_PER_KEY + integer!!
     }
 
     private fun decodeKey(index: Int?): Int {
-        return index!! / jetbrains.datalore.plot.builder.interact.TestUtil.PATH_POINTS_COUNT_PER_KEY
+        return index!! / PATH_POINTS_COUNT_PER_KEY
     }
 
     private fun decodeIndex(index: Int?): Int {
-        return index!! % jetbrains.datalore.plot.builder.interact.TestUtil.PATH_POINTS_COUNT_PER_KEY
+        return index!! % PATH_POINTS_COUNT_PER_KEY
     }
 
     internal fun pathTarget(points: List<DoubleVector>, indexMapper: (Int) -> Int): TargetPrototype {
@@ -315,15 +315,15 @@ object TestUtil {
     internal fun multipolygon(vararg pointsArray: MutableList<DoubleVector>): List<DoubleVector> {
         val pointsList = ArrayList<DoubleVector>()
         for (points in pointsArray) {
-            jetbrains.datalore.plot.builder.interact.TestUtil.closePathIfNeeded(points)
+            closePathIfNeeded(points)
             pointsList.addAll(points)
         }
         return pointsList
     }
 
     internal fun polygon(vararg points: DoubleVector): MutableList<DoubleVector> {
-        val pointsList = jetbrains.datalore.plot.builder.interact.TestUtil.path(*points)
-        jetbrains.datalore.plot.builder.interact.TestUtil.closePathIfNeeded(pointsList)
+        val pointsList = path(*points)
+        closePathIfNeeded(pointsList)
         return pointsList
     }
 
@@ -343,12 +343,12 @@ object TestUtil {
     }
 
     internal fun horizontalPathTarget(key: Int, y: Double, xList: DoubleArray): TargetPrototype {
-        val pathPoints = jetbrains.datalore.plot.builder.interact.TestUtil.horizontalPath(y, *xList)
-        return jetbrains.datalore.plot.builder.interact.TestUtil.pathTarget(key, pathPoints)
+        val pathPoints = horizontalPath(y, *xList)
+        return pathTarget(key, pathPoints)
     }
 
-    internal fun pathTarget(key: Int, vararg points: jetbrains.datalore.plot.builder.interact.TestUtil.PathPoint): TargetPrototype {
-        return jetbrains.datalore.plot.builder.interact.TestUtil.pathTarget(key, points.map { it.coord })
+    internal fun pathTarget(key: Int, vararg points: PathPoint): TargetPrototype {
+        return pathTarget(key, points.map { it.coord })
     }
 
     internal class PathPoint(val coord: DoubleVector, val hitIndex: Int) {
@@ -365,26 +365,26 @@ object TestUtil {
         private var defaultY: Double? = null
         private var counter = 0
 
-        fun defaultX(x: Double): jetbrains.datalore.plot.builder.interact.TestUtil.PathPointsBuilder {
+        fun defaultX(x: Double): PathPointsBuilder {
             defaultX = x
             return this
         }
 
-        fun defaultY(y: Double): jetbrains.datalore.plot.builder.interact.TestUtil.PathPointsBuilder {
+        fun defaultY(y: Double): PathPointsBuilder {
             defaultY = y
             return this
         }
 
-        fun x(x: Double): jetbrains.datalore.plot.builder.interact.TestUtil.PathPoint {
-            return jetbrains.datalore.plot.builder.interact.TestUtil.PathPoint(DoubleVector(x, defaultY!!), counter++)
+        fun x(x: Double): PathPoint {
+            return PathPoint(DoubleVector(x, defaultY!!), counter++)
         }
 
-        fun y(y: Double): jetbrains.datalore.plot.builder.interact.TestUtil.PathPoint {
-            return jetbrains.datalore.plot.builder.interact.TestUtil.PathPoint(DoubleVector(defaultX!!, y), counter++)
+        fun y(y: Double): PathPoint {
+            return PathPoint(DoubleVector(defaultX!!, y), counter++)
         }
 
-        fun xy(x: Double, y: Double): jetbrains.datalore.plot.builder.interact.TestUtil.PathPoint {
-            return jetbrains.datalore.plot.builder.interact.TestUtil.PathPoint(DoubleVector(x, y), counter++)
+        fun xy(x: Double, y: Double): PathPoint {
+            return PathPoint(DoubleVector(x, y), counter++)
         }
     }
 
@@ -392,12 +392,12 @@ object TestUtil {
 
         override fun matches(geomTarget: GeomTarget): Boolean {
             val hitIndex = geomTarget.hitIndex
-            return myExpected == jetbrains.datalore.plot.builder.interact.TestUtil.decodeIndex(hitIndex)
+            return myExpected == decodeIndex(hitIndex)
         }
 
         companion object {
-            fun equalTo(expected: Int): jetbrains.datalore.plot.builder.interact.TestUtil.HitIndex {
-                return jetbrains.datalore.plot.builder.interact.TestUtil.HitIndex(expected)
+            fun equalTo(expected: Int): HitIndex {
+                return HitIndex(expected)
             }
         }
 

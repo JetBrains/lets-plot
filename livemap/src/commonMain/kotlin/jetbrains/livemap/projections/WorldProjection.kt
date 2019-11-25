@@ -7,7 +7,7 @@ package jetbrains.livemap.projections
 
 class WorldProjection(
     zoom: Int
-) : Transform<WorldPoint, ClientPoint> {
+) : Projection<WorldPoint, ClientPoint> {
     override fun project(v: WorldPoint): ClientPoint {
         return projector.project(v)
     }
@@ -16,6 +16,6 @@ class WorldProjection(
         return projector.invert(v)
     }
 
-    private val projector: Transform<WorldPoint, ClientPoint> =
+    private val projector: Projection<WorldPoint, ClientPoint> =
         ProjectionUtil.square(ProjectionUtil.zoom(zoom))
 }

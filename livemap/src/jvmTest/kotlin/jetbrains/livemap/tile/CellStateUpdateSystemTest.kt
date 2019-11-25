@@ -5,16 +5,17 @@
 
 package jetbrains.datalore.jetbrains.livemap.tile
 
-import jetbrains.datalore.base.projectionGeometry.QuadKey
 import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.livemap.core.Utils.common
 import jetbrains.livemap.core.ecs.EcsSystem
-import jetbrains.livemap.projections.CellKey
 import jetbrains.livemap.projections.Coordinates.ZERO_WORLD_POINT
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.ProjectionUtil
 import jetbrains.livemap.projections.WorldRectangle
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.CellStateUpdateSystem
 import jetbrains.livemap.tiles.components.CellStateComponent
 import org.junit.Before
@@ -118,7 +119,7 @@ class CellStateUpdateSystemTest : LiveMapTestBase() {
         assertTrue { state.quadsToRemove.containsExactlyInAnyOrders(quads("1")) }
     }
 
-    fun quads(vararg keys: String): List<QuadKey> = listOf(*keys).map(::QuadKey)
+    fun quads(vararg keys: String): List<QuadKey<LonLat>> = listOf(*keys).map(::QuadKey)
 
     class StateSpec internal constructor(testBase: LiveMapTestBase) : MockSpec(testBase) {
         var visibleCells: List<CellKey> = emptyList()
@@ -130,8 +131,8 @@ class CellStateUpdateSystemTest : LiveMapTestBase() {
     }
 
     inner class QuadsUpdate(private val myState: CellStateComponent) {
-        private var myToRequest: List<QuadKey> = emptyList()
-        private var myToRemove: List<QuadKey> = emptyList()
+        private var myToRequest: List<QuadKey<LonLat>> = emptyList()
+        private var myToRemove: List<QuadKey<LonLat>> = emptyList()
 
         fun request(vararg quadStrings: String): QuadsUpdate {
             myToRequest = quads(*quadStrings)

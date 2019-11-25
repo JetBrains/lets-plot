@@ -9,9 +9,10 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.Context2d
 
-class RenderLayer(private val myCanvas: Canvas, val name: String) {
+class CanvasLayer(private val myCanvas: Canvas, val name: String) {
     private val myRect = DoubleRectangle(0.0, 0.0, myCanvas.size.x.toDouble(), myCanvas.size.y.toDouble())
     private val myRenderTaskList = ArrayList<(Context2d) -> Unit>()
 
@@ -34,5 +35,9 @@ class RenderLayer(private val myCanvas: Canvas, val name: String) {
 
     fun clear() {
         myCanvas.context2d.clearRect(myRect)
+    }
+
+    fun removeFrom(canvasControl: CanvasControl) {
+        canvasControl.removeChild(myCanvas)
     }
 }

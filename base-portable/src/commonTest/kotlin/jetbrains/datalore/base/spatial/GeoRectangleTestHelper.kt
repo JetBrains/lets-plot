@@ -3,13 +3,14 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.projectionGeometry
+package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator.Companion.BOTTOM_RECT_GETTER
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator.Companion.LEFT_RECT_GETTER
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator.Companion.RIGHT_RECT_GETTER
-import jetbrains.datalore.base.projectionGeometry.GeoBoundingBoxCalculator.Companion.TOP_RECT_GETTER
+import jetbrains.datalore.base.projectionGeometry.Rect
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.BOTTOM_RECT_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.LEFT_RECT_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.RIGHT_RECT_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.TOP_RECT_GETTER
 import kotlin.test.assertEquals
 
 internal object GeoRectangleTestHelper {

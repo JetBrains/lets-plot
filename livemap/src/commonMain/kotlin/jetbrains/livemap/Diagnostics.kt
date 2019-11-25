@@ -13,14 +13,15 @@ import jetbrains.livemap.core.Utils.formatDouble
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
-import jetbrains.livemap.core.rendering.layers.RenderLayer
-import jetbrains.livemap.core.rendering.layers.RenderLayerComponent
+import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
+import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.Text
 import jetbrains.livemap.entities.regions.CachedFragmentsComponent
 import jetbrains.livemap.entities.regions.DownloadingFragmentsComponent
 import jetbrains.livemap.entities.regions.StreamingFragmentsComponent
+import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem.HttpTileResponseComponent
+import jetbrains.livemap.tiles.vector.TileLoadingSystem.TileResponseComponent
 import jetbrains.livemap.ui.UiService
 
 open class Diagnostics {
@@ -29,12 +30,11 @@ open class Diagnostics {
 
     class LiveMapDiagnostics(
         isLoading: Property<Boolean>,
-        private val layersOrder: List<RenderLayer>,
-        private val layerRenderingSystem: LayersRenderingSystem,
+        private val dirtyLayers: List<Int>,
         private val schedulerSystem: SchedulerSystem,
         private val debugService: MetricsService,
         uiService: UiService,
-        private val componentManager: EcsComponentManager
+        private val registry: EcsComponentManager
     ) : Diagnostics() {
 
         private val diagnostics = ArrayList<Diagnostic>()
@@ -58,6 +58,7 @@ open class Diagnostics {
                     FragmentsCacheDiagnostic(),
                     StreamingFragmentsDiagnostic(),
                     DownloadingFragmentsDiagnostic(),
+                    DownloadingTilesDiagnostic(),
                     IsLoadingDiagnostic(isLoading)
                 )
             )
@@ -74,6 +75,7 @@ open class Diagnostics {
                     STREAMING_FRAGMENTS,
                     DOWNLOADING_FRAGMENTS,
                     FRAGMENTS_CACHE,
+                    DOWNLOADING_TILES,
                     IS_LOADING
                 )
             )
@@ -99,9 +101,9 @@ open class Diagnostics {
                 SYSTEMS_UPDATE_TIME,
                 "Systems update: ${formatDouble(debugService.totalUpdateTime, 1)}"
             )
-            debugService.setValue(ENTITIES_COUNT, "Entities count: ${componentManager.entitiesCount}")
+            debugService.setValue(ENTITIES_COUNT, "Entities count: ${registry.entitiesCount}")
 
-            diagnostics.forEach { it.update() }
+            diagnostics.forEach(Diagnostic::update)
 
             metrics.text = debugService.values
         }
@@ -116,7 +118,7 @@ open class Diagnostics {
                 if (slowestSystemTime > 16.0) {
                     if (slowestSystemTime > freezeTime) {
                         timeToShowLeft = timeToShow.toLong()
-                        message = "Freezed by: ${formatDouble(slowestSystemTime, 1)} ${slowestSystemType}"
+                        message = "Freezed by: ${formatDouble(slowestSystemTime, 1)} $slowestSystemType"
                         freezeTime = slowestSystemTime
                     }
                 } else {
@@ -134,22 +136,14 @@ open class Diagnostics {
 
         internal inner class DirtyLayersDiagnostic : Diagnostic {
             override fun update() {
-                val dirtyLayers = ArrayList<RenderLayer>()
-                for (dirtyLayerEntity in componentManager.getEntitiesById(layerRenderingSystem.dirtyLayers)) {
-                    dirtyLayers.add(dirtyLayerEntity.get<RenderLayerComponent>().renderLayer)
-                }
+                val dirtyLayers = registry
+                    .getEntitiesById(dirtyLayers)
+                    .map { it.get<CanvasLayerComponent>().canvasLayer }
+                    .toSet()
+                    .intersect(registry.getSingleton<LayersOrderComponent>().canvasLayers)
+                    .joinToString { it.name }
 
-                val dirtyLayersString = StringBuilder()
-                for (renderLayer in layersOrder) {
-                    if (dirtyLayers.contains(renderLayer)) {
-                        if (dirtyLayersString.isNotEmpty()) {
-                            dirtyLayersString.append(", ")
-                        }
-                        dirtyLayersString.append(renderLayer.name)
-                    }
-                }
-
-                debugService.setValue(DIRTY_LAYERS, "Dirty layers: $dirtyLayersString")
+                debugService.setValue(DIRTY_LAYERS, "Dirty layers: $dirtyLayers")
             }
         }
 
@@ -170,7 +164,7 @@ open class Diagnostics {
         internal inner class SchedulerSystemDiagnostic : Diagnostic {
 
             override fun update() {
-                val tasksCount = componentManager.getComponentsCount(MicroThreadComponent::class)
+                val tasksCount = registry.count<MicroThreadComponent>()
                 debugService.setValue(SCHEDULER_SYSTEM, "Micro threads: $tasksCount, ${schedulerSystem.loading}")
             }
         }
@@ -178,11 +172,7 @@ open class Diagnostics {
         internal inner class FragmentsCacheDiagnostic : Diagnostic {
 
             override fun update() {
-                val size =
-                    if (componentManager.containsSingletonEntity(CachedFragmentsComponent::class))
-                        componentManager.getSingletonComponent<CachedFragmentsComponent>().keys().size
-                    else
-                        0
+                val size = registry.tryGetSingleton<CachedFragmentsComponent>()?.keys()?.size ?: 0
 
                 debugService.setValue(FRAGMENTS_CACHE, "Fragments cache: $size")
             }
@@ -191,11 +181,7 @@ open class Diagnostics {
         internal inner class StreamingFragmentsDiagnostic : Diagnostic {
 
             override fun update() {
-                val size =
-                    if (componentManager.containsSingletonEntity(StreamingFragmentsComponent::class))
-                        componentManager.getSingletonComponent<StreamingFragmentsComponent>().keys().size
-                    else
-                        0
+                val size = registry.tryGetSingleton<StreamingFragmentsComponent>()?.keys()?.size ?: 0
                 debugService.setValue(STREAMING_FRAGMENTS, "Streaming fragments: $size")
             }
         }
@@ -203,21 +189,28 @@ open class Diagnostics {
         internal inner class DownloadingFragmentsDiagnostic : Diagnostic {
 
             override fun update() {
-                val downloading: Int
-                val queued: Int
+                val counts = registry.tryGetSingleton<DownloadingFragmentsComponent>()
+                    ?.let { "D: ${it.downloading.size} Q: ${it.queue.values.sumBy { queue -> queue.size }}" }
+                    ?: "D: 0 Q: 0"
 
-                if (componentManager.containsSingletonEntity(DownloadingFragmentsComponent::class)) {
-                    componentManager.getSingletonComponent<DownloadingFragmentsComponent>().let {
-                        downloading = it.downloading.size
-                        queued = it.queue.values.sumBy { queue -> queue.size }
-                    }
+                debugService.setValue(DOWNLOADING_FRAGMENTS, "Downloading fragments: $counts")
+            }
+        }
 
-                } else {
-                    downloading = 0
-                    queued = 0
-                }
+        internal inner class DownloadingTilesDiagnostic : Diagnostic {
 
-                debugService.setValue(DOWNLOADING_FRAGMENTS, "Downloading fragments: D: $downloading Q: $queued")
+            override fun update() {
+                val vector = registry
+                    .getEntities(TileResponseComponent::class)
+                    .filter { it.get<TileResponseComponent>().tileData == null }
+                    .count()
+
+                val raster = registry
+                    .getEntities(HttpTileResponseComponent::class)
+                    .filter { it.get<HttpTileResponseComponent>().imageData == null }
+                    .count()
+
+                debugService.setValue(DOWNLOADING_TILES, "Downloading tiles: V: $vector, R: $raster")
             }
         }
 
@@ -243,6 +236,7 @@ open class Diagnostics {
             private const val DIRTY_LAYERS = "dirty_layers"
             private const val STREAMING_FRAGMENTS = "streaming_fragments"
             private const val DOWNLOADING_FRAGMENTS = "downloading_fragments"
+            private const val DOWNLOADING_TILES = "downloading_tiles"
             private const val FRAGMENTS_CACHE = "fragments_cache"
             private const val IS_LOADING = "is_loading"
         }

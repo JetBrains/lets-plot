@@ -7,7 +7,8 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.FULL_LONGITUDE
+import jetbrains.datalore.base.spatial.FULL_LONGITUDE
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection
@@ -36,11 +37,11 @@ class LiveMapLocation(private val myViewport: Viewport, private val myMapProject
         when {
             worldCoord.x > worldSize.x -> {
                 shift = explicitVec<LonLat>(FULL_LONGITUDE, 0.0)
-                coord = worldCoord.transform(fx = { it - worldSize.scalarX })
+                coord = worldCoord.transform(newX = { it - worldSize.scalarX })
             }
             worldCoord.x < 0 -> {
                 shift = explicitVec<LonLat>(-FULL_LONGITUDE, 0.0)
-                coord = worldSize.transform(fx = { it + worldSize.scalarX })
+                coord = worldSize.transform(newX = { it + worldSize.scalarX })
             }
             else -> {
                 shift = explicitVec<LonLat>(0.0, 0.0)

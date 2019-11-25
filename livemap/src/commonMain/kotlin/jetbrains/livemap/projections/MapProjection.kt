@@ -5,6 +5,6 @@
 
 package jetbrains.livemap.projections
 
-interface MapProjection : Transform<LonLatPoint, WorldPoint> {
+interface MapProjection : Projection<LonLatPoint, WorldPoint> {
     val mapRect: WorldRectangle
 }

@@ -9,7 +9,8 @@ import jetbrains.datalore.base.concurrent.Lock
 import jetbrains.datalore.base.concurrent.execute
 import jetbrains.datalore.base.projectionGeometry.Generic
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeoTile
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
@@ -30,10 +31,10 @@ class FragmentDownloadingSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val downloadingFragments = getSingletonComponent<DownloadingFragmentsComponent>()
-        val changedFragments = getSingletonComponent<ChangedFragmentsComponent>()
-        val streamingFragments = getSingletonComponent<StreamingFragmentsComponent>()
-        val cachedFragments = getSingletonComponent<CachedFragmentsComponent>()
+        val downloadingFragments = getSingleton<DownloadingFragmentsComponent>()
+        val changedFragments = getSingleton<ChangedFragmentsComponent>()
+        val streamingFragments = getSingleton<StreamingFragmentsComponent>()
+        val cachedFragments = getSingleton<CachedFragmentsComponent>()
 
         downloadingFragments.reduceQueue(changedFragments.obsolete)
         downloadingFragments.extendQueue(
@@ -102,8 +103,8 @@ class FragmentDownloadingSystem(
     }
 
     private fun downloadGeometries(fragmentsToFetch: Collection<FragmentKey>) {
-        val regionRequest = HashMap<String, MutableSet<QuadKey>>()
-        val fetchingFragments = getSingletonComponent<StreamingFragmentsComponent>()
+        val regionRequest = HashMap<String, MutableSet<QuadKey<LonLat>>>()
+        val fetchingFragments = getSingleton<StreamingFragmentsComponent>()
 
         for (newFragment in fragmentsToFetch) {
             regionRequest.getOrPut(newFragment.regionId, ::HashSet).add(newFragment.quadKey)

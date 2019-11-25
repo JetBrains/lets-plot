@@ -6,8 +6,8 @@
 package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.projectionGeometry.Generic
-import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.spatial.GeoRectangle
 
 interface GeoResponse {
 

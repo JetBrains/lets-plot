@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapobjects
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.gis.geoprotocol.Boundary
 
 interface MapGeometry {

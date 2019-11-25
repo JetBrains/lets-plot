@@ -11,12 +11,12 @@ import jetbrains.livemap.containers.LinkedList
 interface Tile {
     class SnapshotTile(val snapshot: Canvas.Snapshot) : Tile
 
-    class SubTile(val tile: Tile, val subKey: String) : Tile
+    class SubTile(val tile: Tile, val subKey: CellKey) : Tile
 
     class CompositeTile : Tile {
-        val tiles = LinkedList<Pair<Tile, String>>()
+        val tiles = LinkedList<Pair<Tile, CellKey>>()
 
-        fun add(tile: Tile, subKey: String) {
+        fun add(tile: Tile, subKey: CellKey) {
             tiles.append(Pair(tile, subKey))
         }
     }

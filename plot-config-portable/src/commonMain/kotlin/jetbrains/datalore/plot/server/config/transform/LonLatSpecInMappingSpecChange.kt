@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.server.config.transform
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.projectionGeometry.MercatorUtils.checkLat
-import jetbrains.datalore.base.projectionGeometry.MercatorUtils.checkLon
+import jetbrains.datalore.base.spatial.MercatorUtils.checkLat
+import jetbrains.datalore.base.spatial.MercatorUtils.checkLon
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.Layer.DATA
 import jetbrains.datalore.plot.config.Option.Layer.GEOM

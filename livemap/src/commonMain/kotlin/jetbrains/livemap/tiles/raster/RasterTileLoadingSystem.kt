@@ -6,8 +6,8 @@
 package jetbrains.livemap.tiles.raster
 
 import jetbrains.datalore.base.projectionGeometry.Generic
-import jetbrains.datalore.base.projectionGeometry.GeoUtils
 import jetbrains.datalore.base.projectionGeometry.Rect
+import jetbrains.datalore.base.spatial.projectOrigin
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.*
@@ -15,7 +15,7 @@ import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.setMicroThread
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.Tile
 import jetbrains.livemap.tiles.components.*
 import jetbrains.livemap.tiles.vector.TileLoadingSystem
@@ -28,7 +28,7 @@ class RasterTileLoadingSystem(
     componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        getSingletonComponent<RequestTilesComponent>().requestTiles.forEach { cellKey ->
+        getSingleton<RequestTilesComponent>().requestTiles.forEach { cellKey ->
             val tileResponseComponent = HttpTileResponseComponent()
 
             createEntity("http_tile_$cellKey")
@@ -84,7 +84,7 @@ class RasterTileLoadingSystem(
         fun getZXY(cellKey: CellKey, format: String): String {
             return 2.0.pow(cellKey.length)
                 .let { Rect<Generic>(0.0, 0.0, it, it) }
-                .let { GeoUtils.getTileOrigin(it, cellKey.key) }
+                .let { cellKey.projectOrigin(it) }
                 .let {
                     format
                         .replace("\${z}", cellKey.length.toString(), false)
@@ -94,7 +94,7 @@ class RasterTileLoadingSystem(
         }
     }
 
-    private class HttpTileResponseComponent: EcsComponent {
+    class HttpTileResponseComponent: EcsComponent {
         var imageData: ByteArray? = null
     }
 }

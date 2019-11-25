@@ -21,7 +21,7 @@ interface LayerProvider {
 
     class LayerProviderImpl(
         private val myDevParams: DevParams,
-        private val myBlock: LayersBuilder.() -> Unit
+        private val myLayerConfigurator: LayersBuilder.() -> Unit
     ) : LayerProvider {
 
         override fun provide(
@@ -34,9 +34,9 @@ interface LayerProvider {
                 componentManager,
                 layerManager,
                 mapProjection,
-                myDevParams,
+                myDevParams.isSet(DevParams.POINT_SCALING),
                 TextMeasurer(context2d)
-            ).apply(myBlock)
+            ).apply(myLayerConfigurator)
         }
 
         override val layers: List<MapLayer> = emptyList()

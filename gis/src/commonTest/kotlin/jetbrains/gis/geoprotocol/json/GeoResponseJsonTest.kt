@@ -7,9 +7,9 @@ package jetbrains.gis.geoprotocol.json
 
 
 import jetbrains.datalore.base.projectionGeometry.Generic
-import jetbrains.datalore.base.projectionGeometry.GeoRectangle
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.FeatureLevel.STATE
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse

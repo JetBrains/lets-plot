@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.animation.Animation
@@ -14,6 +14,7 @@ import jetbrains.livemap.core.animation.Animations
 import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
@@ -21,47 +22,40 @@ import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.ProjectionUtil
-import jetbrains.livemap.projections.World
+import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.ProjectionUtil.transformMultiPolygon
 
 @LiveMapDsl
 class Paths(
     val factory: Entities.MapEntityFactory,
-    val layerEntitiesComponent: LayerEntitiesComponent,
-    val toMapProjection: (MultiPolygon<LonLat>) -> MultiPolygon<World>
+    val mapProjection: MapProjection
 )
 
 fun LayersBuilder.paths(block: Paths.() -> Unit) {
-    val layerEntitiesComponent = LayerEntitiesComponent()
     val layerEntity = myComponentManager
         .createEntity("map_layer_path")
         .addComponents {
-            + layerManager.createRenderLayerComponent("geom_path")
-            + layerEntitiesComponent
+            + layerManager.addLayer("geom_path", LayerGroup.FEATURES)
+            + LayerEntitiesComponent()
         }
-
-    val toMapProjection = { geometry: MultiPolygon<LonLat> ->
-        ProjectionUtil.transformMultiPolygon(geometry, mapProjection::project)
-    }
 
     Paths(
         Entities.MapEntityFactory(layerEntity),
-        layerEntitiesComponent,
-        toMapProjection
+        mapProjection
     ).apply(block)
 }
 
 fun Paths.path(block: PathBuilder.() -> Unit) {
-    PathBuilder()
+    PathBuilder(factory, mapProjection)
         .apply(block)
-        .build(factory, toMapProjection)
-        ?.let { pathEntity ->
-            layerEntitiesComponent.add(pathEntity.id)
-        }
+        .build()
 }
 
 @LiveMapDsl
-class PathBuilder {
+class PathBuilder(
+    private val myFactory: Entities.MapEntityFactory,
+    private val myMapProjection: MapProjection
+) {
     var index: Int = 0
     var mapId: String = ""
     var regionId: String = ""
@@ -78,16 +72,13 @@ class PathBuilder {
 
     var geodesic: Boolean = false
 
-    fun build(
-        factory: Entities.MapEntityFactory,
-        toMapProjection: (MultiPolygon<LonLat>) -> MultiPolygon<World>
-    ): EcsEntity? {
-        val coord = toMapProjection(multiPolygon)
+    fun build(): EcsEntity? {
+        val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
 
         return coord
             .run { GeometryUtil.bbox(this) }
             ?.let { bbox ->
-                val entity = factory
+                val entity = myFactory
                     .createMapEntity(bbox.origin, Renderers.PathRenderer(), "map_ent_path")
                     .addComponents {
                         + WorldGeometryComponent().apply {

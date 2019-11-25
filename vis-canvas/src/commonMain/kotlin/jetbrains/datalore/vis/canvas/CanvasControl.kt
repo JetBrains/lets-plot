@@ -14,5 +14,7 @@ interface CanvasControl : AnimationProvider, CanvasProvider, MouseEventSource, D
 
     fun addChild(canvas: Canvas)
 
+    fun addChild(index: Int, canvas: Canvas)
+
     fun removeChild(canvas: Canvas)
 }

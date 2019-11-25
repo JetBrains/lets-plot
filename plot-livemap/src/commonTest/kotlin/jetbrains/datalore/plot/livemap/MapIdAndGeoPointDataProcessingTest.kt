@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.livemap
 
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
@@ -160,13 +160,13 @@ class MapIdAndGeoPointDataProcessingTest {
         private const val OSM_ID_STRING = "123456"
         private val LONLAT_MERCATOR_GEO_COORD = explicitVec<LonLat>(0.0, 0.0)
 
-        private fun createMapObject(dataPointKind: DataPointKind, mapIdDataKind: MapIdDataKind): MapObjectBuilder? {
+        private fun createMapObject(dataPointKind: DataPointKind, mapIdDataKind: MapIdDataKind): MapEntityBuilder? {
             val mapObjects = createProcessorBuilder(
                 dataPointKind,
                 mapIdDataKind
             )
                 .build()
-                .mapObjectBuilders
+                .mapEntityBuilders
 
             return if (mapObjects.isNotEmpty()) mapObjects[0] else null
         }

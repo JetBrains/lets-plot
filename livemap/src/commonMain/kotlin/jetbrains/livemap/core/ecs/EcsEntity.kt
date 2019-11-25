@@ -15,26 +15,21 @@ class EcsEntity internal constructor(
     internal val componentsMap = HashMap<KClass<out EcsComponent>, EcsComponent>()
     private val components: Collection<EcsComponent> get() = componentsMap.values // for debug
 
-    override fun toString(): String {
-        return name
+    override fun toString() = name
+
+    inline fun <reified T : EcsComponent>get(): T =
+        componentManager.getComponents(this)[T::class] as T?
+            ?: throw IllegalStateException("Component " + T::class.simpleName + " is not found")
+
+
+    inline fun <reified T : EcsComponent>tryGet(): T?  = when {
+        contains(T::class) -> get()
+        else -> null
     }
 
-    inline fun <reified T : EcsComponent>get(): T {
-        return componentManager.getComponents(this)[T::class] as T? ?: throw IllegalStateException("Component " + T::class.simpleName + " is not found")
-    }
-
-    inline fun <reified T : EcsComponent>tryGet(): T? {
-        return when {
-            contains(T::class) -> get()
-            else -> null
-        }
-    }
-
-    inline fun <reified T : EcsComponent> provide(byDefault: () -> T): T {
-        return when {
-            contains(T::class) -> get()
-            else -> byDefault().also { addComponent(it) }
-        }
+    inline fun <reified T : EcsComponent> provide(byDefault: () -> T): T = when {
+        contains(T::class) -> get()
+        else -> byDefault().also { addComponent(it) }
     }
 
     @Deprecated("Use <addComponents { + component }>")
@@ -44,11 +39,11 @@ class EcsEntity internal constructor(
     }
 
     fun <T : EcsComponent> setComponent(component: T): EcsEntity {
-        if (this.contains(component::class)) {
-            componentManager.removeComponent(this, component::class)
+        if (contains(component::class)) {
+            removeComponent(component::class)
         }
 
-        componentManager.addComponent(this, component)
+        addComponent(component)
 
         return this
     }

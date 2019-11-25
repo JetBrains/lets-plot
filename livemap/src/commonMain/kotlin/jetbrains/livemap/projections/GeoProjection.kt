@@ -5,14 +5,14 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.LonLat
 import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.spatial.LonLat
 
 interface Geographic
 
 typealias GeographicPoint = Vec<Geographic>
 
-internal interface GeoProjection : Transform<LonLatPoint, GeographicPoint> {
+internal interface GeoProjection : Projection<LonLatPoint, GeographicPoint> {
     fun validRect(): Rect<LonLat>
 }

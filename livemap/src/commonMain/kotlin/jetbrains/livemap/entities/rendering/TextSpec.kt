@@ -6,7 +6,7 @@
 package jetbrains.livemap.entities.rendering
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.GeoUtils.toRadians
+import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.projectionGeometry.explicitVec
 import jetbrains.livemap.projections.Client

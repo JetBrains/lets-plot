@@ -5,13 +5,14 @@
 
 package jetbrains.livemap.tiles.components
 
-import jetbrains.datalore.base.projectionGeometry.QuadKey
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.Utils
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.rendering.Renderer
-import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.Tile
 
 class CellStateComponent : EcsComponent {
@@ -19,11 +20,11 @@ class CellStateComponent : EcsComponent {
     var requestCells: Set<CellKey> = HashSet()
     var cellsToRemove: Set<CellKey> = HashSet()
 
-    val quadsRefCounter: HashMap<QuadKey, Int> = HashMap()
-    var quadsToAdd: Set<QuadKey> = HashSet()
-    var quadsToRemove: Set<QuadKey> = HashSet()
+    val quadsRefCounter: HashMap<QuadKey<LonLat>, Int> = HashMap()
+    var quadsToAdd: Set<QuadKey<LonLat>> = HashSet()
+    var quadsToRemove: Set<QuadKey<LonLat>> = HashSet()
 
-    val visibleQuads: Set<QuadKey>
+    val visibleQuads: Set<QuadKey<LonLat>>
         get() = quadsRefCounter.keys
 
     fun update(newVisibleCells: Set<CellKey>) {

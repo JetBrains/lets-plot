@@ -8,7 +8,7 @@ package jetbrains.livemap.tiles.debug
 import jetbrains.datalore.base.async.Async
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.SystemTime
-import jetbrains.livemap.projections.CellKey
+import jetbrains.livemap.tiles.CellKey
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.BIGGEST_LAYER
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.CELL_DATA_SIZE
 import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.LOADING_TIME
