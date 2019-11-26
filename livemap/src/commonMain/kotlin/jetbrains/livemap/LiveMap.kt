@@ -47,6 +47,7 @@ import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.effects.GrowingPath
+import jetbrains.livemap.entities.geocoding.GeometryGeocodingSystem
 import jetbrains.livemap.entities.geocoding.RegionIdGeocodingSystem
 import jetbrains.livemap.entities.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.ScreenLoopsUpdateSystem
@@ -170,6 +171,7 @@ class LiveMap(
                 CameraUpdateDetectionSystem(componentManager),
 
                 RegionIdGeocodingSystem(componentManager, myGeocodingService, myFeatureLevel, myParent),
+                GeometryGeocodingSystem(componentManager, myGeocodingService),
 
                 ScaleUpdateSystem(componentManager),
 

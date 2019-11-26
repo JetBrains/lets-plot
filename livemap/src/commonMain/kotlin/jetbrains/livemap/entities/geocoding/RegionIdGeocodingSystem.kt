@@ -55,17 +55,6 @@ class RegionIdGeocodingSystem(
         }
     }
 
-    private fun <T> getGeocodingDataMap(
-        features: List<GeocodedFeature>,
-        getData: (GeocodedFeature) -> T
-    ): MutableMap<String, T> {
-        val dataMap = HashMap<String, T>(features.size)
-        for (feature in features) {
-            dataMap[feature.request] = getData(feature)
-        }
-        return dataMap
-    }
-
     companion object {
         val GEOCODED_FEATURE_COMPONENTS = listOf(
             MapIdComponent::class,
