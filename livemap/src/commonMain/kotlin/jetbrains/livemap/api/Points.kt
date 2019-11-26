@@ -21,6 +21,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
+import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PointRenderer
 import jetbrains.livemap.projections.Client
@@ -71,12 +72,10 @@ fun Points.point(block: PointBuilder.() -> Unit) {
 class PointBuilder(
     private val myFactory: MapEntityFactory,
     private val myMapProjection: MapProjection
-    ) {
+) {
     var index: Int = 0
-    var mapId: String = ""
-    var regionId: String = ""
-
-    lateinit var point: Vec<LonLat>
+    var mapId: String? = null
+    var point: Vec<LonLat>? = null
 
     var radius: Double = 4.0
     var fillColor: Color = Color.WHITE
@@ -91,21 +90,12 @@ class PointBuilder(
         pointScaling: Boolean,
         animationBuilder: AnimationBuilder
     ): EcsEntity {
-        val size = radius * 2.0
 
-        val entity = myFactory
-            .createMapEntity(myMapProjection.project(point), PointRenderer(), "map_ent_point")
-            .addComponents {
-                + PointComponent().apply { shape = this@PointBuilder.shape }
-                + createStyle()
-                + if (pointScaling) {
-                    WorldDimensionComponent(explicitVec<World>(size, size))
-                } else {
-                    ScreenDimensionComponent().apply {
-                        dimension = explicitVec<Client>(size, size)
-                    }
-                }
-            }
+        val entity = when {
+            point != null -> createStaticEntity(pointScaling)
+            mapId != null -> createDynamicEntity(pointScaling)
+            else -> error("Can't create point entity. [point] and [mapId] is null.")
+        }
 
         if (animation == 2) {
             val transformComponent = TransformComponent()
@@ -119,6 +109,42 @@ class PointBuilder(
         }
 
         return entity
+    }
+
+    private fun createStaticEntity(pointScaling: Boolean): EcsEntity {
+
+        return myFactory
+            .createMapEntity(myMapProjection.project(point!!), PointRenderer(), "map_ent_point")
+            .addComponents(pointScaling)
+    }
+
+    private fun createDynamicEntity(pointScaling: Boolean): EcsEntity {
+
+        return myFactory
+            .createDynamicMapEntity(PointRenderer(),"map_ent_dynamic_point")
+            .addMapId(mapId!!)
+            .addComponents(pointScaling)
+    }
+
+    private fun EcsEntity.addMapId(mapId: String): EcsEntity {
+        componentManager.addComponent(this, MapIdComponent().apply { this.mapId = mapId })
+        return this
+    }
+
+    private fun EcsEntity.addComponents(pointScaling: Boolean): EcsEntity {
+        val size = radius * 2.0
+
+        return addComponents {
+            + PointComponent().apply { shape = this@PointBuilder.shape }
+            + createStyle()
+            + if (pointScaling) {
+                WorldDimensionComponent(explicitVec<World>(size, size))
+            } else {
+                ScreenDimensionComponent().apply {
+                    dimension = explicitVec<Client>(size, size)
+                }
+            }
+        }
     }
 
     private fun createStyle(): StyleComponent {

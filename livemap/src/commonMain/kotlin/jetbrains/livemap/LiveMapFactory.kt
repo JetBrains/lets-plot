@@ -68,7 +68,10 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
             FragmentProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
             myLiveMapSpec.devParams,
             EmptinessChecker.BBoxEmptinessChecker(regionBBoxes),
-            myLiveMapSpec.mapLocationConsumer
+            myLiveMapSpec.mapLocationConsumer,
+            myLiveMapSpec.level,
+            myLiveMapSpec.parent,
+            myLiveMapSpec.geocodingService
         )
     }
 }

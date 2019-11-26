@@ -25,8 +25,11 @@ import jetbrains.livemap.projections.WorldPoint
 object Entities {
 
     fun mapEntity(
-        componentManager: EcsComponentManager, worldPlacement: WorldPoint,
-        parentLayerComponent: ParentLayerComponent, renderer: Renderer, name: String
+        componentManager: EcsComponentManager,
+        worldPlacement: WorldPoint,
+        parentLayerComponent: ParentLayerComponent,
+        renderer: Renderer,
+        name: String
     ): EcsEntity {
         return componentManager
             .createEntity(name).addComponents {
@@ -42,8 +45,10 @@ object Entities {
     }
 
     fun dynamicMapEntity(
-        componentManager: EcsComponentManager, parentLayerComponent: ParentLayerComponent,
-        renderer: Renderer, name: String
+        componentManager: EcsComponentManager,
+        parentLayerComponent: ParentLayerComponent,
+        renderer: Renderer,
+        name: String
     ): EcsEntity {
         return componentManager
             .createEntity(name).addComponents {
@@ -75,7 +80,7 @@ object Entities {
                 .also { myLayerEntityComponent.add(it.id) }
         }
 
-        fun createDynamicMapEntity(name: String, renderer: Renderer): EcsEntity {
+        fun createDynamicMapEntity(renderer: Renderer, name: String): EcsEntity {
             return dynamicMapEntity(myComponentManager, myParentLayerComponent, renderer, name)
                 .also { myLayerEntityComponent.add(it.id) }
         }

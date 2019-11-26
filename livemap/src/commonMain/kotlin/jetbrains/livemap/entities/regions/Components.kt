@@ -127,8 +127,14 @@ class DownloadingFragmentsComponent : EcsComponent {
     }
 }
 
-class FragmentComponent(val fragmentKey: FragmentKey) : EcsComponent {
-    val quad: QuadKey<LonLat> get() = fragmentKey.quadKey
+class FragmentComponent(val fragmentKey: FragmentKey) : EcsComponent
+
+class MapIdComponent : EcsComponent {
+    lateinit var mapId: String
+}
+
+class RegionIdComponent : EcsComponent {
+    var regionId: String? = null
 }
 
 class RegionComponent : EcsComponent {

@@ -73,19 +73,19 @@ class PolygonsBuilder(
     fun build(): EcsEntity? {
 
         return when {
-            multiPolygon != null -> createStaticEntity(myFactory, myMapProjection)
-            regionId != null -> createDynamicEntity(myFactory)
+            multiPolygon != null -> createStaticEntity()
+            regionId != null -> createDynamicEntity()
             else -> null
         }
     }
 
-    private fun createStaticEntity(factory: MapEntityFactory, mapProjection: MapProjection): EcsEntity {
+    private fun createStaticEntity(): EcsEntity {
         val geometry = multiPolygon!!
-            .run { ProjectionUtil.transformMultiPolygon(this, mapProjection::project) }
+            .run { ProjectionUtil.transformMultiPolygon(this, myMapProjection::project) }
 
         val bbox = GeometryUtil.bbox(geometry) ?: error("")
 
-        return factory
+        return myFactory
             .createMapEntity(bbox.origin, PolygonRenderer(), "map_ent_s_polygon")
             .addComponents {
                 + WorldGeometryComponent().apply { this.geometry = geometry }
@@ -99,9 +99,9 @@ class PolygonsBuilder(
             }
     }
 
-    private fun createDynamicEntity(factory: MapEntityFactory): EcsEntity {
-        return factory
-            .createDynamicMapEntity("map_ent_d_polygon_" + this@PolygonsBuilder.regionId, RegionRenderer())
+    private fun createDynamicEntity(): EcsEntity {
+        return myFactory
+            .createDynamicMapEntity(RegionRenderer(), "map_ent_d_polygon_" + this@PolygonsBuilder.regionId)
             .addComponents {
                 + RegionComponent().apply { id = this@PolygonsBuilder.regionId }
                 + StyleComponent().apply {
