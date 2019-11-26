@@ -18,4 +18,4 @@ Due to the unique multi-platform nature of Kotlin programming language, you can 
 
 [Learn](README_PYTHON.md) how to create plots in Jupyter using the Lets-Plot python package.
 
-<img src="https://github.com/alshan/jupyter-examples/blob/master/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>

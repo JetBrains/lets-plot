@@ -39,19 +39,19 @@ For this case there is always a 'safety' sampling (**random** N=200_000) ready t
 TBD: replace temporary URLs ---> permanent
 
 Random sampling on a scatter plot (might take some time to load): 
-[sampling_random.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/sampling_random.ipynb)
+[sampling_random.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/sampling_random.ipynb)
 
 Pick sampling on a Bars chart: 
-[sampling_pick.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/sampling_pick.ipynb)
+[sampling_pick.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/sampling_pick.ipynb)
 
 Systematic and random sampling on a line plot: 
-[sampling_systematic.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/sampling_systematic.ipynb)
+[sampling_systematic.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/sampling_systematic.ipynb)
 
 Stratified sampling: 
-[sampling_stratified.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/sampling_stratified.ipynb)
+[sampling_stratified.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/sampling_stratified.ipynb)
 
 Group sampling:
-[sampling_groups.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/sampling_groups.ipynb)
+[sampling_groups.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/sampling_groups.ipynb)
 
 Vertex sampling:
-[sampling_vertex.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/sampling_vertex.ipynb)
+[sampling_vertex.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/sampling_vertex.ipynb)

@@ -65,7 +65,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 + theme(axis_line_y='blank')
 ````
 
-<img src="https://raw.githubusercontent.com/alshan/jupyter-examples/master/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
 
 
 ### Examples
@@ -74,25 +74,25 @@ Try the following examples to study more features of the Lets-Plot library.
 
 TBD: replace temporary URLs ---> permanent 
 
-Quickstart in Jupyter: [quickstart.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/quickstart.ipynb)
+Quickstart in Jupyter: [quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb)
 
 Histogram, density plot, box plot and facets:
-[distributions.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/distributions.ipynb) 
+[distributions.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/distributions.ipynb) 
 
 Error-bars, points, lines, bars, dodge position:
-[error_bars.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/error_bars.ipynb)
+[error_bars.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/error_bars.ipynb)
  
 Points, point shapes, linear regression, jitter position:
-[scatter_plot.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/scatter_plot.ipynb)
+[scatter_plot.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/scatter_plot.ipynb)
  
 Points, density2d, polygons, density2df:
-[density_2d.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/density_2d.ipynb)
+[density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/density_2d.ipynb)
  
 Tiles, contours, polygons, contourf:
-[contours.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/contours.ipynb)
+[contours.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/contours.ipynb)
  
 Various presentation options:
-[legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/alshan/jupyter-examples/blob/master/notebooks/legend_and_axis.ipynb)
+[legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
  
 
 ### Unfamiliar functions used in the examples
