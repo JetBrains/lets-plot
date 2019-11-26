@@ -31,7 +31,7 @@ The Lets-Plot python extension includes native backend and a Python API, which w
 
 R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who want to learn the grammar of graphics. 
 
-Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new functions](#unfamiliar_functions_used_in_the_examples) and [built-in sampling](#sampling) to our Python API.
+Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new functions](#unfamiliar-functions-used-in-the-examples) and [built-in sampling](#sampling) to our Python API.
 
 You can try the Lets-Plot library in [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/). Lets-Plot is available in Datalore out-of-the-box and is almost identical to the one we ship as PyPI package. This is because Lets-Plot is an offshoot of the Datalore project from which it was extracted to a separate plotting library.
 
