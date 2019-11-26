@@ -36,8 +36,6 @@ For this case there is always a 'safety' sampling (**random** N=200_000) ready t
 
 ### Examples
 
-TBD: replace temporary URLs ---> permanent
-
 Random sampling on a scatter plot (might take some time to load): 
 [sampling_random.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/sampling_random.ipynb)
 

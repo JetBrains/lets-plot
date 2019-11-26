@@ -72,8 +72,6 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 
 Try the following examples to study more features of the Lets-Plot library.
 
-TBD: replace temporary URLs ---> permanent 
-
 Quickstart in Jupyter: [quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb)
 
 Histogram, density plot, box plot and facets:
