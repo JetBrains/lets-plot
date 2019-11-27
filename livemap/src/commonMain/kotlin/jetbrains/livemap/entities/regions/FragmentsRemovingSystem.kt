@@ -45,9 +45,9 @@ class FragmentsRemovingSystem(private val myCacheSize: Int, componentManager: Ec
         }
 
         val activeFragments = HashSet<FragmentKey>()
-        for (region in getEntities(RegionComponent::class)) {
+        for (region in getEntities(RegionFragmentsComponent::class)) {
             activeFragments.addAll(
-                region.get<RegionComponent>().fragments.map {
+                region.get<RegionFragmentsComponent>().fragments.map {
                     it.get<FragmentComponent>().fragmentKey
                 }
             )

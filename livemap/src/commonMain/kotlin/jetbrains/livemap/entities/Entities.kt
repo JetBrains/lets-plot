@@ -17,6 +17,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
+import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.RendererComponent
@@ -46,19 +47,21 @@ object Entities {
 
     fun dynamicMapEntity(
         componentManager: EcsComponentManager,
+        mapId: String,
         parentLayerComponent: ParentLayerComponent,
         renderer: Renderer,
         name: String
     ): EcsEntity {
         return componentManager
             .createEntity(name).addComponents {
+                + MapIdComponent(mapId)
                 + parentLayerComponent
                 + RendererComponent(renderer)
                 + CameraListenerComponent()
                 + CenterChangedComponent()
                 + ZoomChangedComponent()
-                + ScreenLoopComponent()
-                + ScreenOriginComponent()
+                // + ScreenLoopComponent()
+                // + ScreenOriginComponent()
             }
     }
 
@@ -80,8 +83,8 @@ object Entities {
                 .also { myLayerEntityComponent.add(it.id) }
         }
 
-        fun createDynamicMapEntity(renderer: Renderer, name: String): EcsEntity {
-            return dynamicMapEntity(myComponentManager, myParentLayerComponent, renderer, name)
+        fun createDynamicMapEntity(mapId: String, renderer: Renderer, name: String): EcsEntity {
+            return dynamicMapEntity(myComponentManager, mapId, myParentLayerComponent, renderer, name)
                 .also { myLayerEntityComponent.add(it.id) }
         }
     }

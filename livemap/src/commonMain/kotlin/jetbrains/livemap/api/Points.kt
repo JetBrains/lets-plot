@@ -22,7 +22,6 @@ import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.geocoding.PointTag
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
-import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PointRenderer
 import jetbrains.livemap.projections.Client
@@ -115,21 +114,15 @@ class PointBuilder(
     private fun createStaticEntity(pointScaling: Boolean): EcsEntity {
 
         return myFactory
-            .createMapEntity(myMapProjection.project(point!!), PointRenderer(), "map_ent_point")
+            .createMapEntity(myMapProjection.project(point!!), PointRenderer(), "map_ent_s_point")
             .addComponents(pointScaling)
     }
 
     private fun createDynamicEntity(pointScaling: Boolean): EcsEntity {
 
         return myFactory
-            .createDynamicMapEntity(PointRenderer(),"map_ent_dynamic_point")
-            .addMapId(mapId!!)
+            .createDynamicMapEntity(mapId!!, PointRenderer(),"map_ent_d_point_$mapId")
             .addComponents(pointScaling)
-    }
-
-    private fun EcsEntity.addMapId(mapId: String): EcsEntity {
-        componentManager.addComponent(this, MapIdComponent().apply { this.mapId = mapId })
-        return this
     }
 
     private fun EcsEntity.addComponents(pointScaling: Boolean): EcsEntity {

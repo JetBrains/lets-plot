@@ -8,6 +8,7 @@ package jetbrains.livemap.entities.regions
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.tiles.components.CellStateComponent
 
 class FragmentUpdateSystem(componentManager: EcsComponentManager, private val myEmptinessChecker: EmptinessChecker) :
@@ -15,8 +16,10 @@ class FragmentUpdateSystem(componentManager: EcsComponentManager, private val my
 
     override fun initImpl(context: LiveMapContext) {
         createEntity("FragmentsChange")
-            .addComponent(ChangedFragmentsComponent())
-            .addComponent(EmptyFragmentsComponent())
+            .addComponents {
+                + ChangedFragmentsComponent()
+                + EmptyFragmentsComponent()
+            }
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -30,22 +33,39 @@ class FragmentUpdateSystem(componentManager: EcsComponentManager, private val my
         val fragmentsToAdd = ArrayList<FragmentKey>()
         val fragmentsToRemove = ArrayList<FragmentKey>()
 
-        for (regionEntity in getEntities(RegionComponent::class)) {
-            val regionId = regionEntity.get<RegionComponent>().id!!
-
-            for (quad in quadsToAdd) {
-                if (!emptyFragments.contains(regionId, quad) && !myEmptinessChecker.test(regionId, quad)) {
-                    fragmentsToAdd.add(FragmentKey(regionId, quad))
-                }
+        // apply geocoded regionIds to RegionFragmentsComponents
+        getEntities(REGION_COMPONENTS)
+            .filter { it.get<RegionIdComponent>().regionId != null }
+            .toList()
+            .forEach {
+                it.get<RegionFragmentsComponent>().id = it.get<RegionIdComponent>().regionId
+                it.removeComponent(RegionIdComponent::class)
             }
 
-            for (quad in quadsToRemove) {
-                if (!emptyFragments.contains(regionId, quad)) {
-                    fragmentsToRemove.add(FragmentKey(regionId, quad))
+        for (regionEntity in getEntities(RegionFragmentsComponent::class)) {
+            regionEntity.get<RegionFragmentsComponent>().id?.let { regionId ->
+                for (quad in quadsToAdd) {
+                    if (!emptyFragments.contains(regionId, quad) && !myEmptinessChecker.test(regionId, quad)) {
+                        fragmentsToAdd.add(FragmentKey(regionId, quad))
+                    }
+                }
+
+                for (quad in quadsToRemove) {
+                    if (!emptyFragments.contains(regionId, quad)) {
+                        fragmentsToRemove.add(FragmentKey(regionId, quad))
+                    }
                 }
             }
         }
+
         changedFragmentsComponent.setToAdd(fragmentsToAdd)
         changedFragmentsComponent.setToRemove(fragmentsToRemove)
+    }
+
+    companion object {
+        val REGION_COMPONENTS = listOf(
+            RegionIdComponent::class,
+            RegionFragmentsComponent::class
+        )
     }
 }

@@ -46,7 +46,7 @@ class RegionIdGeocodingSystem(
                 .execute(request)
                 .map {
                     getGeocodingDataMap(it, GeocodedFeature::id).let { regionIds ->
-                        getEntities(GEOCODED_FEATURE_COMPONENTS).forEach { entity ->
+                        getEntities(GEOCODED_FEATURE_COMPONENTS).toList().forEach { entity ->
                             entity.get<RegionIdComponent>().regionId = regionIds[entity.get<MapIdComponent>().mapId]
                             entity.removeComponent(MapIdComponent::class)
                         }

@@ -15,8 +15,9 @@ import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
+import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
-import jetbrains.livemap.entities.regions.RegionComponent
+import jetbrains.livemap.entities.regions.RegionFragmentsComponent
 import jetbrains.livemap.entities.regions.RegionRenderer
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PolygonRenderer
@@ -60,8 +61,7 @@ class PolygonsBuilder(
     private val myMapProjection: MapProjection
 ) {
     var index: Int = 0
-    var mapId: String = ""
-    var regionId: String? = null
+    var mapId: String? = null
 
     var lineDash: List<Double> = emptyList()
     var strokeColor: Color = Color.BLACK
@@ -74,7 +74,7 @@ class PolygonsBuilder(
 
         return when {
             multiPolygon != null -> createStaticEntity()
-            regionId != null -> createDynamicEntity()
+            mapId != null -> createDynamicEntity()
             else -> null
         }
     }
@@ -101,16 +101,16 @@ class PolygonsBuilder(
 
     private fun createDynamicEntity(): EcsEntity {
         return myFactory
-            .createDynamicMapEntity(RegionRenderer(), "map_ent_d_polygon_" + this@PolygonsBuilder.regionId)
+            .createDynamicMapEntity(this@PolygonsBuilder.mapId!!, RegionRenderer(), "map_ent_d_polygon_" + this@PolygonsBuilder.mapId)
             .addComponents {
-                + RegionComponent().apply { id = this@PolygonsBuilder.regionId }
+                + RegionFragmentsComponent()
                 + StyleComponent().apply {
                     setFillColor(this@PolygonsBuilder.fillColor)
                     setStrokeColor(this@PolygonsBuilder.strokeColor)
                     setStrokeWidth(this@PolygonsBuilder.strokeWidth)
                 }
-            }.apply {
-                get<ScreenLoopComponent>().origins = listOf(Coordinates.ZERO_CLIENT_POINT)
+                + ScreenLoopComponent().apply { origins = listOf(Coordinates.ZERO_CLIENT_POINT) }
+                + ScreenOriginComponent()
             }
     }
 }

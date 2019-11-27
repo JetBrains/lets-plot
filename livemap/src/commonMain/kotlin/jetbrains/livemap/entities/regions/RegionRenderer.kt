@@ -17,7 +17,7 @@ import jetbrains.livemap.entities.scaling.ScaleComponent
 class RegionRenderer : Renderer {
     override fun render(entity: EcsEntity, ctx: Context2d) {
 
-        val fragments = entity.get<RegionComponent>().fragments
+        val fragments = entity.get<RegionFragmentsComponent>().fragments
         if (fragments.isEmpty()) {
             return
         }

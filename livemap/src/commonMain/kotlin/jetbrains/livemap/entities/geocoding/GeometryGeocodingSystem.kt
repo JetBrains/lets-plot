@@ -14,6 +14,8 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.entities.placement.ScreenLoopComponent
+import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.regions.RegionIdComponent
 import jetbrains.livemap.projections.MapProjection
@@ -66,11 +68,15 @@ class GeometryGeocodingSystem(
     private fun parseCentroidMap(features: List<GeocodedFeature>) {
         val centroidsById = getGeocodingDataMap(features, GeocodedFeature::centroid)
 
-        getEntities(POINT_COMPONENTS).forEach { entity ->
+        getEntities(POINT_COMPONENTS).toList().forEach { entity ->
             entity.get<RegionIdComponent>().regionId?.let { regionId ->
                 centroidsById[regionId]?.let { coord ->
                     entity.removeComponent(RegionIdComponent::class)
-                    entity.addComponents { + WorldOriginComponent(myMapProjection.project(coord.reinterpret())) }
+                    entity.addComponents {
+                        + WorldOriginComponent(myMapProjection.project(coord.reinterpret()))
+                        + ScreenLoopComponent()
+                        + ScreenOriginComponent()
+                    }
                 }
             }
         }

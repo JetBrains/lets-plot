@@ -33,8 +33,8 @@ object Utils {
                 return myComponentManager.getEntityById(myRegionIndex[regionId] ?: error(""))
             }
 
-            for (entity in myComponentManager.getEntities(RegionComponent::class)) {
-                if (entity.get<RegionComponent>().id.equals(regionId)) {
+            for (entity in myComponentManager.getEntities(RegionFragmentsComponent::class)) {
+                if (entity.get<RegionFragmentsComponent>().id.equals(regionId)) {
                     myRegionIndex.put(regionId, entity.id)
                     return entity
                 }
