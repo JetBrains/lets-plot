@@ -44,7 +44,7 @@ The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-
 
 To install the Lets-Plot library, run the following command:
 ```shell script
-pip install -i https://test.pypi.org/simple/ lets-plot
+pip install lets-plot
 ```
 
 ### Quickstart in Jupyter
