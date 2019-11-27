@@ -8,3 +8,4 @@ package jetbrains.livemap.entities.geocoding
 import jetbrains.livemap.core.ecs.EcsComponent
 
 class PointTag : EcsComponent
+class HorizontalComponent(val horizontal: Boolean) : EcsComponent

@@ -5,6 +5,10 @@
 
 package jetbrains.livemap.api
 
+import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.livemap.projections.World
+import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projections.WorldRectangle
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -32,4 +36,49 @@ private fun calculatePercent(value: Double, maxAbsValue: Double): Double {
         return percent
     }
     return if (percent >= 0) MIN_PERCENT else -MIN_PERCENT
+}
+
+fun createLineGeometry(point: WorldPoint, horizontal: Boolean, mapRect: WorldRectangle): MultiPolygon<World> {
+    return if (horizontal) {
+        listOf(
+            point.transform(
+                newX = { mapRect.scalarLeft }
+            ),
+            point.transform(
+                newX = { mapRect.scalarRight }
+            )
+
+        )
+    } else {
+        listOf(
+            point.transform(
+                newY = { mapRect.scalarTop }
+            ),
+            point.transform(
+                newY = { mapRect.scalarBottom }
+            )
+        )
+    }
+        .run { listOf(Ring(this)) }
+        .run { listOf(Polygon(this)) }
+        .run { MultiPolygon(this) }
+}
+
+fun createLineBBox(
+    point: WorldPoint,
+    strokeWidth: Double,
+    horizontal: Boolean,
+    mapRect: WorldRectangle
+): WorldRectangle {
+    return if (horizontal) {
+        WorldRectangle(
+            explicitVec(mapRect.left, point.y - strokeWidth / 2),
+            explicitVec(mapRect.width, strokeWidth)
+        )
+    } else {
+        WorldRectangle(
+            explicitVec(point.x - strokeWidth / 2, mapRect.top),
+            explicitVec(strokeWidth, mapRect.height)
+        )
+    }
 }

@@ -70,8 +70,6 @@ class PathBuilder(
     var speed: Double = 0.0
     var flow: Double = 0.0
 
-    var geodesic: Boolean = false
-
     fun build(): EcsEntity? {
         val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
 
@@ -81,9 +79,7 @@ class PathBuilder(
                 val entity = myFactory
                     .createMapEntity(bbox.origin, Renderers.PathRenderer(), "map_ent_path")
                     .addComponents {
-                        + WorldGeometryComponent().apply {
-                            geometry = coord
-                        }
+                        + WorldGeometryComponent().apply { geometry = coord }
                         + WorldDimensionComponent(bbox.dimension)
                         + StyleComponent().apply {
                             setStrokeColor(this@PathBuilder.strokeColor)
