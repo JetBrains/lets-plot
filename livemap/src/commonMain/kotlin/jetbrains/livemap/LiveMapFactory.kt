@@ -51,12 +51,12 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
         return mapDataGeocodingHelper.geocodeMapData()
             .map { mapPosition ->
                 mapPosition
-                    ?.let { createLiveMap(it.zoom, it.coordinate, mapDataGeocodingHelper.regionBBoxes) }
+                    ?.let { createLiveMap(it.zoom, it.coordinate) }
                     ?: error("Map position must to be not null")
             }
     }
 
-    private fun createLiveMap(zoom: Int, center: WorldPoint, regionBBoxes: Map<String, GeoRectangle>): BaseLiveMap {
+    private fun createLiveMap(zoom: Int, center: WorldPoint): BaseLiveMap {
         myViewport.zoom = zoom
         myViewport.position = center
 
@@ -67,7 +67,6 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
             createTileLoadingFactory(myLiveMapSpec.devParams),
             FragmentProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
             myLiveMapSpec.devParams,
-            EmptinessChecker.BBoxEmptinessChecker(regionBBoxes),
             myLiveMapSpec.mapLocationConsumer,
             myLiveMapSpec.level,
             myLiveMapSpec.parent,

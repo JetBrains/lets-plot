@@ -33,15 +33,6 @@ class FragmentUpdateSystem(componentManager: EcsComponentManager, private val my
         val fragmentsToAdd = ArrayList<FragmentKey>()
         val fragmentsToRemove = ArrayList<FragmentKey>()
 
-        // apply geocoded regionIds to RegionFragmentsComponents
-        getEntities(REGION_COMPONENTS)
-            .filter { it.get<RegionIdComponent>().regionId != null }
-            .toList()
-            .forEach {
-                it.get<RegionFragmentsComponent>().id = it.get<RegionIdComponent>().regionId
-                it.removeComponent(RegionIdComponent::class)
-            }
-
         for (regionEntity in getEntities(RegionFragmentsComponent::class)) {
             regionEntity.get<RegionFragmentsComponent>().id?.let { regionId ->
                 for (quad in quadsToAdd) {
@@ -60,12 +51,5 @@ class FragmentUpdateSystem(componentManager: EcsComponentManager, private val my
 
         changedFragmentsComponent.setToAdd(fragmentsToAdd)
         changedFragmentsComponent.setToRemove(fragmentsToRemove)
-    }
-
-    companion object {
-        val REGION_COMPONENTS = listOf(
-            RegionIdComponent::class,
-            RegionFragmentsComponent::class
-        )
     }
 }

@@ -20,7 +20,7 @@ import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.regions.RegionIdComponent
 import jetbrains.livemap.projections.MapProjection
 
-class GeometryGeocodingSystem(
+class PointGeocodingSystem(
     componentManager: EcsComponentManager,
     private val myGeocodingService: GeocodingService
     ) : LiveMapSystem(componentManager) {
@@ -31,7 +31,7 @@ class GeometryGeocodingSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val regionIds = getEntities<RegionIdComponent>()
+        val regionIds = getEntities(POINT_COMPONENTS)
             .mapNotNull { it.get<RegionIdComponent>().regionId }
             .toSet()
             .toList()
@@ -42,26 +42,9 @@ class GeometryGeocodingSystem(
                 .setFeatures(FEATURE_OPTIONS)
                 .build()
 
-            context.mapProjection
-
             myGeocodingService
                 .execute(request)
-                .map { features ->
-                    parseCentroidMap(features)
-
-//                if (featureOptions.contains(CENTROID)) {
-//                    parseCentroidMap(features)
-//                }
-
-//                if (featureOptions.contains(POSITION)) {
-//                    parseLocationMap(features)
-//                }
-//
-//                if (featureOptions.contains(LIMIT)) {
-//                    parseBBoxMap(features)
-//                }
-                    return@map
-                }
+                .map(::parseCentroidMap)
         }
     }
 
@@ -83,7 +66,7 @@ class GeometryGeocodingSystem(
     }
 
     companion object {
-        val FEATURE_OPTIONS = listOf(CENTROID, POSITION, LIMIT)
+        val FEATURE_OPTIONS = listOf(CENTROID)
 
         val POINT_COMPONENTS = listOf(
             PointTag::class,

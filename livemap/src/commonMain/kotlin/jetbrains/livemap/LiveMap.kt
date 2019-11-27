@@ -47,13 +47,15 @@ import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.effects.GrowingPath
-import jetbrains.livemap.entities.geocoding.GeometryGeocodingSystem
+import jetbrains.livemap.entities.geocoding.BBoxGeocodingSystem
+import jetbrains.livemap.entities.geocoding.PointGeocodingSystem
 import jetbrains.livemap.entities.geocoding.RegionIdGeocodingSystem
 import jetbrains.livemap.entities.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.entities.regions.*
+import jetbrains.livemap.entities.regions.EmptinessChecker.*
 import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
@@ -80,7 +82,6 @@ class LiveMap(
     private val myTileLoadingSystemBuilder: TileLoadingSystemFactory,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
-    private val myEmptinessChecker: EmptinessChecker,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myFeatureLevel: FeatureLevel?,
     private val myParent: MapRegion?,
@@ -158,6 +159,8 @@ class LiveMap(
             AUTO, BACKGROUND -> AsyncMicroTaskExecutorFactory.create()
         } ?: SyncMicroTaskExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
 
+        val bboxEmptinessChecker = BBoxEmptinessChecker()
+
         myLayerRenderingSystem = myLayerManager.createLayerRenderingSystem()
         mySchedulerSystem = SchedulerSystem(microTaskExecutor, componentManager)
         myEcsController = EcsController(
@@ -171,7 +174,8 @@ class LiveMap(
                 CameraUpdateDetectionSystem(componentManager),
 
                 RegionIdGeocodingSystem(componentManager, myGeocodingService, myFeatureLevel, myParent),
-                GeometryGeocodingSystem(componentManager, myGeocodingService),
+                PointGeocodingSystem(componentManager, myGeocodingService),
+                BBoxGeocodingSystem(componentManager, myGeocodingService, bboxEmptinessChecker),
 
                 ScaleUpdateSystem(componentManager),
 
@@ -191,7 +195,7 @@ class LiveMap(
                 DebugDataSystem(componentManager),
 
                 //Regions
-                FragmentUpdateSystem(componentManager, myEmptinessChecker),
+                FragmentUpdateSystem(componentManager, bboxEmptinessChecker),
                 FragmentDownloadingSystem(
                     myDevParams.read(FRAGMENT_ACTIVE_DOWNLOADS_LIMIT),
                     myFragmentProvider,

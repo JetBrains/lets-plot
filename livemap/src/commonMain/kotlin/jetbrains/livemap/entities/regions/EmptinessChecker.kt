@@ -20,7 +20,13 @@ interface EmptinessChecker {
         }
     }
 
-    class BBoxEmptinessChecker(private val regionBBoxes: Map<String, GeoRectangle>) : EmptinessChecker {
+    class BBoxEmptinessChecker : EmptinessChecker {
+
+        private val regionBBoxes: MutableMap<String, GeoRectangle> = HashMap()
+
+        fun addBbox(key: String, rect: GeoRectangle) {
+            regionBBoxes[key] = rect
+        }
 
         override fun test(regionId: String, quadKey: QuadKey<LonLat>): Boolean {
             val quadKeyRect = quadKey.computeRect()
