@@ -9,8 +9,11 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geocoding.PointTag
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.*
+import jetbrains.livemap.entities.rendering.Renderers.PieSectorRenderer
+import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection
 
 @LiveMapDsl
@@ -65,28 +68,38 @@ class PiesFactory(
         for (i in angles.indices) {
             val endAngle = startAngle + angles[i]
             result.add(
-                myEntityFactory
-                    .createMapEntity(
-                        myMapProjection.project(source.point),
-                        Renderers.PieSectorRenderer(), "map_ent_pie_sector"
-                    )
-                    .addComponents {
-                        + PieSectorComponent().apply {
-                            this.radius = source.radius
-                            this.startAngle = startAngle
-                            this.endAngle = endAngle
-                        }
-                        + StyleComponent().apply {
-                            setFillColor(source.colors[i])
-                            setStrokeColor(source.strokeColor)
-                            setStrokeWidth(source.strokeWidth)
-                        }
-                        + ScreenDimensionComponent()
+                when {
+                    source.point != null -> createStaticEntity(source.point!!)
+                    source.mapId != null -> createDynamicEntity(source.mapId!!)
+                    else -> error("Can't create pieSector entity. [point] and [mapId] is null.")
+                }.addComponents {
+                    + PieSectorComponent().apply {
+                        this.radius = source.radius
+                        this.startAngle = startAngle
+                        this.endAngle = endAngle
                     }
+                    + StyleComponent().apply {
+                        setFillColor(source.colors[i])
+                        setStrokeColor(source.strokeColor)
+                        setStrokeWidth(source.strokeWidth)
+                    }
+                    + ScreenDimensionComponent()
+                }
             )
             startAngle = endAngle
         }
 
         return result
+    }
+
+    private fun createStaticEntity(point: LonLatPoint): EcsEntity {
+        return myEntityFactory
+            .createMapEntity(myMapProjection.project(point), PieSectorRenderer(), "map_ent_s_pie_sector")
+    }
+
+    private fun createDynamicEntity(mapId: String): EcsEntity {
+        return myEntityFactory
+            .createDynamicMapEntity(mapId, PieSectorRenderer(), "map_ent_d_pie_sector_$mapId")
+            .addComponents { + PointTag() }
     }
 }

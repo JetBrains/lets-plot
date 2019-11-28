@@ -29,14 +29,13 @@ class BBoxGeocodingSystem(
 
         val regionIds = geocodedRegions
             .mapNotNull { it.get<RegionIdComponent>().regionId }
-            .toSet()
-            .toList()
+            .distinct()
 
         // apply geocoded regionIds to RegionFragmentsComponents
         geocodedRegions
             .forEach {
                 it.get<RegionFragmentsComponent>().id = it.get<RegionIdComponent>().regionId
-                it.removeComponent(RegionIdComponent::class)
+                it.remove<RegionIdComponent>()
             }
 
         if (regionIds.isNotEmpty()) {

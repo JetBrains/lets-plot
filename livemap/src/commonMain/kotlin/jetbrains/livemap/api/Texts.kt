@@ -74,7 +74,7 @@ class TextBuilder(
         return when {
             point != null -> createStaticEntity(textSpec)
             mapId != null -> createDynamicEntity()
-            else -> error("Can't create line entity. [point] and [mapId] is null.")
+            else -> error("Can't create text entity. [point] and [mapId] is null.")
         }.addComponents {
             + TextComponent().apply { this.textSpec = textSpec }
             + StyleComponent().apply {

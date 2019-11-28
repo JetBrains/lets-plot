@@ -7,10 +7,13 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geocoding.PointTag
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.ScreenOffsetComponent
 import jetbrains.livemap.entities.rendering.*
+import jetbrains.livemap.entities.rendering.Renderers.BarRenderer
 import jetbrains.livemap.projections.Client
+import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection
 import kotlin.math.abs
 
@@ -67,22 +70,35 @@ class BarsFactory(
         myItems.forEach { source ->
             splitMapBarChart(source, abs(maxAbsValue)) { barOffset, barDimension, color->
                 result.add(
-                    myEntityFactory
-                        .createMapEntity(myMapProjection.project(source.point), Renderers.BarRenderer(), "map_ent_bar")
-                        .addComponents {
-                            + ScreenOffsetComponent().apply { offset = barOffset}
-                            + ScreenDimensionComponent().apply { dimension = barDimension }
-                            + StyleComponent().apply {
-                                setFillColor(color)
-                                setStrokeColor(source.strokeColor)
-                                setStrokeWidth(source.strokeWidth)
-                            }
+                    when {
+                        source.point != null -> createStaticEntity(source.point!!)
+                        source.mapId != null -> createDynamicEntity(source.mapId!!)
+                        else -> error("Can't create bar entity. [point] and [mapId] is null.")
+                    }.addComponents {
+                        + ScreenOffsetComponent().apply { offset = barOffset}
+                        + ScreenDimensionComponent().apply { dimension = barDimension }
+                        + StyleComponent().apply {
+                            setFillColor(color)
+                            setStrokeColor(source.strokeColor)
+                            setStrokeWidth(source.strokeWidth)
                         }
+                    }
                 )
             }
         }
 
         return result
+    }
+
+    private fun createStaticEntity(point: LonLatPoint): EcsEntity {
+        return myEntityFactory
+            .createMapEntity(myMapProjection.project(point), BarRenderer(), "map_ent_s_bar")
+    }
+
+    private fun createDynamicEntity(mapId: String): EcsEntity {
+        return myEntityFactory
+            .createDynamicMapEntity(mapId, BarRenderer(), "map_ent_d_bar_$mapId")
+            .addComponents { + PointTag() }
     }
 }
 

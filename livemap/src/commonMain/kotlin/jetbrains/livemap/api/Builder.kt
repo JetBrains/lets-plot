@@ -105,7 +105,8 @@ class LayersBuilder(
 
 @LiveMapDsl
 class ChartSource {
-    lateinit var point: Vec<LonLat>
+    var mapId: String? = null
+    var point: Vec<LonLat>? = null
 
     var radius: Double = 0.0
 
