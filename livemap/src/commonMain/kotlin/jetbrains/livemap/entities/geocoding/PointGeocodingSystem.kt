@@ -6,23 +6,15 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.datalore.base.projectionGeometry.reinterpret
-import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.*
+import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.CENTROID
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
-import jetbrains.livemap.api.createLineBBox
-import jetbrains.livemap.api.createLineGeometry
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.entities.geometry.WorldGeometryComponent
-import jetbrains.livemap.entities.placement.ScreenLoopComponent
-import jetbrains.livemap.entities.placement.ScreenOriginComponent
-import jetbrains.livemap.entities.placement.WorldDimensionComponent
-import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.regions.RegionIdComponent
-import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.projections.MapProjection
 
 class PointGeocodingSystem(
@@ -60,30 +52,7 @@ class PointGeocodingSystem(
             entity.get<RegionIdComponent>().regionId?.let { regionId ->
                 centroidsById[regionId]?.let { coord ->
                     entity.removeComponent(RegionIdComponent::class)
-
-                    val worldPoint = myMapProjection.project(coord.reinterpret())
-
-                    if (entity.contains(HorizontalComponent::class)) {
-                        val horizontal = entity.get<HorizontalComponent>().horizontal
-                        val strokeWidth = entity.get<StyleComponent>().strokeWidth
-                        val line = createLineGeometry(worldPoint, horizontal, myMapProjection.mapRect)
-                        val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, myMapProjection.mapRect)
-
-                        entity.addComponents {
-                            + WorldOriginComponent(bbox.origin)
-                            + WorldDimensionComponent(bbox.dimension)
-                            + WorldGeometryComponent().apply { geometry = line }
-                        }
-                    } else {
-                        entity.addComponents {
-                            + WorldOriginComponent(worldPoint)
-                        }
-                    }
-
-                    entity.addComponents {
-                        + ScreenLoopComponent()
-                        + ScreenOriginComponent()
-                    }
+                    entity.addComponents { + CentroidComponent(myMapProjection.project(coord.reinterpret())) }
                 }
             }
         }

@@ -6,6 +6,10 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.livemap.core.ecs.EcsComponent
+import jetbrains.livemap.projections.WorldPoint
 
 class PointTag : EcsComponent
+
 class HorizontalComponent(val horizontal: Boolean) : EcsComponent
+
+class CentroidComponent(val point: WorldPoint): EcsComponent

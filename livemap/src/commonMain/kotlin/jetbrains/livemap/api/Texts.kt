@@ -6,15 +6,13 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.projectionGeometry.times
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.placement.ScreenOffsetComponent
+import jetbrains.livemap.entities.geocoding.PointTag
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.TextRenderer
 import jetbrains.livemap.projections.MapProjection
@@ -53,10 +51,8 @@ class TextBuilder(
     private val myMapProjection: MapProjection
 ) {
     var index: Int = 0
-    var mapId: String = ""
-    var regionId: String = ""
-
-    lateinit var point: Vec<LonLat>
+    var mapId: String? = null
+    var point: Vec<LonLat>? = null
 
     var fillColor: Color = Color.BLACK
     var strokeColor: Color = Color.TRANSPARENT
@@ -75,21 +71,31 @@ class TextBuilder(
     ): EcsEntity {
         val textSpec = createTextSpec(textMeasurer)
 
+        return when {
+            point != null -> createStaticEntity(textSpec)
+            mapId != null -> createDynamicEntity()
+            else -> error("Can't create line entity. [point] and [mapId] is null.")
+        }.addComponents {
+            + TextComponent().apply { this.textSpec = textSpec }
+            + StyleComponent().apply {
+                setFillColor(this@TextBuilder.fillColor)
+                setStrokeColor(this@TextBuilder.strokeColor)
+                setStrokeWidth(this@TextBuilder.strokeWidth)
+            }
+        }
+    }
+
+    private fun createStaticEntity(textSpec: TextSpec): EcsEntity {
         return myFactory
-            .createMapEntity(myMapProjection.project(point), TextRenderer(), "map_ent_text")
+            .createMapEntity(myMapProjection.project(point!!), TextRenderer(), "map_ent_s_text")
+            .addScreenOffsetAndDimension(textSpec)
+    }
+
+    private fun createDynamicEntity(): EcsEntity {
+        return myFactory
+            .createDynamicMapEntity(mapId!!, TextRenderer(),"map_ent_d_text_$mapId")
             .addComponents {
-                + ScreenOffsetComponent().apply {
-                    offset = textSpec.dimension * -0.5
-                }
-                + ScreenDimensionComponent().apply {
-                    dimension = textSpec.dimension
-                }
-                + TextComponent().apply { this.textSpec = textSpec }
-                + StyleComponent().apply {
-                    setFillColor(this@TextBuilder.fillColor)
-                    setStrokeColor(this@TextBuilder.strokeColor)
-                    setStrokeWidth(this@TextBuilder.strokeWidth)
-                }
+                + PointTag()
             }
     }
 
