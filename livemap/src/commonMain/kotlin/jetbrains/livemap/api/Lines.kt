@@ -12,8 +12,8 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.HorizontalComponent
-import jetbrains.livemap.entities.geocoding.PointTag
+import jetbrains.livemap.entities.geocoding.LineOrientationComponent
+import jetbrains.livemap.entities.geocoding.CentroidTag
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.*
@@ -100,8 +100,8 @@ class LineBuilder(
         return myFactory
             .createDynamicMapEntity(mapId!!, PathRenderer(),"map_ent_d_line_$mapId")
             .addComponents {
-                + PointTag()
-                + HorizontalComponent(horizontal)
+                + CentroidTag()
+                + LineOrientationComponent(horizontal)
                 + setStyle()
             }
     }

@@ -6,6 +6,8 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.gis.geoprotocol.GeoResponse
+import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.entities.regions.RegionIdComponent
 
 fun <T> getGeocodingDataMap(
     features: List<GeoResponse.SuccessGeoResponse.GeocodedFeature>,
@@ -17,3 +19,6 @@ fun <T> getGeocodingDataMap(
     }
     return dataMap
 }
+
+val EcsEntity.regionId
+    get() = get<RegionIdComponent>().regionId

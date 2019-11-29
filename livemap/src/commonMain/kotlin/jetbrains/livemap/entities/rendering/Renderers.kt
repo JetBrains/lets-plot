@@ -54,7 +54,7 @@ object Renderers {
                 .run { times(entity.tryGet<TransformComponent>()?.scale ?: 1.0) }
 
             ctx.translate(-radius, -radius)
-            renderFeature(entity.get(), ctx, radius, entity.get<PointComponent>().shape)
+            renderFeature(entity.get(), ctx, radius, entity.get<ShapeComponent>().shape)
         }
     }
 

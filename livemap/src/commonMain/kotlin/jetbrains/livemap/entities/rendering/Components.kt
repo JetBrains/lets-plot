@@ -21,7 +21,7 @@ class LayerEntitiesComponent : EcsComponent {
     }
 }
 
-class PointComponent : EcsComponent {
+class ShapeComponent : EcsComponent {
     var shape: Int = 0
 }
 

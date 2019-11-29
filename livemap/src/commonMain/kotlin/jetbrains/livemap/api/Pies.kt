@@ -9,7 +9,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.PointTag
+import jetbrains.livemap.entities.geocoding.CentroidTag
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PieSectorRenderer
@@ -100,6 +100,6 @@ class PiesFactory(
     private fun createDynamicEntity(mapId: String): EcsEntity {
         return myEntityFactory
             .createDynamicMapEntity(mapId, PieSectorRenderer(), "map_ent_d_pie_sector_$mapId")
-            .addComponents { + PointTag() }
+            .addComponents { + CentroidTag() }
     }
 }

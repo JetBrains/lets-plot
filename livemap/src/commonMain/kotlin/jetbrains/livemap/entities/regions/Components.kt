@@ -131,12 +131,9 @@ class FragmentComponent(val fragmentKey: FragmentKey) : EcsComponent
 
 class MapIdComponent(val mapId: String) : EcsComponent
 
-class RegionIdComponent : EcsComponent {
-    var regionId: String? = null
-}
+class RegionIdComponent(var regionId: String) : EcsComponent
 
 class RegionFragmentsComponent : EcsComponent {
-    var id: String? = null
     private val myFragmentEntities = HashSet<EcsEntity>()
 
     var fragments: Collection<EcsEntity>

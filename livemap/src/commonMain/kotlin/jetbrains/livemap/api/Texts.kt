@@ -12,7 +12,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.PointTag
+import jetbrains.livemap.entities.geocoding.CentroidTag
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.TextRenderer
 import jetbrains.livemap.projections.MapProjection
@@ -72,7 +72,7 @@ class TextBuilder(
         val textSpec = createTextSpec(textMeasurer)
 
         return when {
-            point != null -> createStaticEntity(textSpec)
+            point != null -> createStaticEntity()
             mapId != null -> createDynamicEntity()
             else -> error("Can't create text entity. [point] and [mapId] is null.")
         }.addComponents {
@@ -82,21 +82,18 @@ class TextBuilder(
                 setStrokeColor(this@TextBuilder.strokeColor)
                 setStrokeWidth(this@TextBuilder.strokeWidth)
             }
-        }
+        }.addScreenOffsetAndDimension(textSpec)
     }
 
-    private fun createStaticEntity(textSpec: TextSpec): EcsEntity {
+    private fun createStaticEntity(): EcsEntity {
         return myFactory
             .createMapEntity(myMapProjection.project(point!!), TextRenderer(), "map_ent_s_text")
-            .addScreenOffsetAndDimension(textSpec)
     }
 
     private fun createDynamicEntity(): EcsEntity {
         return myFactory
             .createDynamicMapEntity(mapId!!, TextRenderer(),"map_ent_d_text_$mapId")
-            .addComponents {
-                + PointTag()
-            }
+            .add(CentroidTag())
     }
 
     private fun createTextSpec(textMeasurer: TextMeasurer): TextSpec {

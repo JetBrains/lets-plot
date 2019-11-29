@@ -7,7 +7,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.PointTag
+import jetbrains.livemap.entities.geocoding.CentroidTag
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.ScreenOffsetComponent
 import jetbrains.livemap.entities.rendering.*
@@ -98,7 +98,7 @@ class BarsFactory(
     private fun createDynamicEntity(mapId: String): EcsEntity {
         return myEntityFactory
             .createDynamicMapEntity(mapId, BarRenderer(), "map_ent_d_bar_$mapId")
-            .addComponents { + PointTag() }
+            .add(CentroidTag())
     }
 }
 

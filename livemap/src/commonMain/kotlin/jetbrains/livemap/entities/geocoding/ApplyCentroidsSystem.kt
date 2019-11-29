@@ -39,25 +39,13 @@ class ApplyCentroidsSystem(
             .forEach { entity ->
                 val point = entity.get<CentroidComponent>().point
 
-                if (entity.contains(HorizontalComponent::class)) {
-                    applyToLine(entity, point)
-                } else if(entity.contains(TextComponent::class)) {
-                    applyToText(entity, point)
-                } else {
-                    applyToPoint(entity, point)
+                when {
+                    entity.contains(LineOrientationComponent::class) -> applyToLine(entity, point)
+                    else -> applyToPoint(entity, point)
                 }
 
-                entity.removeComponent(CentroidComponent::class)
+                entity.remove<CentroidComponent>()
             }
-    }
-
-    private fun applyToText(entity: EcsEntity, point: WorldPoint) {
-
-        entity.addComponents {
-            + WorldOriginComponent(point)
-            + ScreenLoopComponent()
-            + ScreenOriginComponent()
-        }.addScreenOffsetAndDimension(entity.get<TextComponent>().textSpec)
     }
 
     private fun applyToPoint(entity: EcsEntity, point: WorldPoint) {
@@ -69,7 +57,7 @@ class ApplyCentroidsSystem(
     }
 
     private fun applyToLine(entity: EcsEntity, point: WorldPoint) {
-        val horizontal = entity.get<HorizontalComponent>().horizontal
+        val horizontal = entity.get<LineOrientationComponent>().horizontal
         val strokeWidth = entity.get<StyleComponent>().strokeWidth
         val line = createLineGeometry(point, horizontal, myMapProjection.mapRect)
         val bbox = createLineBBox(point, strokeWidth, horizontal, myMapProjection.mapRect)

@@ -193,5 +193,4 @@ class EcsComponentManager {
     private fun Sequence<EcsEntity>.notRemoved(): Sequence<EcsEntity> {
         return filterNot { it.hasRemoveFlag() }
     }
-
 }

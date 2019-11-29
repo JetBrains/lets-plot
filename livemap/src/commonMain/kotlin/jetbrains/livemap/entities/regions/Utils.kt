@@ -5,12 +5,12 @@
 
 package jetbrains.livemap.entities.regions
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.spatial.zoom
+import jetbrains.datalore.base.projectionGeometry.intersects
+import jetbrains.datalore.base.spatial.*
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.entities.geocoding.regionId
 
 object Utils {
     fun entityName(fragmentKey: FragmentKey): String {
@@ -25,6 +25,18 @@ object Utils {
         return fragmentKey.quadKey.zoom() // TODO: replace with FragmentKey::zoom and inline
     }
 
+    fun test(rect: GeoRectangle, quadKey: QuadKey<LonLat>): Boolean {
+        val quadKeyRect = quadKey.computeRect()
+
+        rect.splitByAntiMeridian().forEach { bbox ->
+            if (bbox.intersects(quadKeyRect)) {
+                return false
+            }
+        }
+
+        return true
+    }
+
     internal class RegionsIndex(private val myComponentManager: EcsComponentManager) {
         private val myRegionIndex = LruCache<String, Int>(10000)
 
@@ -33,8 +45,8 @@ object Utils {
                 return myComponentManager.getEntityById(myRegionIndex[regionId] ?: error(""))
             }
 
-            for (entity in myComponentManager.getEntities(RegionFragmentsComponent::class)) {
-                if (entity.get<RegionFragmentsComponent>().id.equals(regionId)) {
+            for (entity in myComponentManager.getEntities(RegionIdComponent::class)) {
+                if (entity.regionId == regionId) {
                     myRegionIndex.put(regionId, entity.id)
                     return entity
                 }

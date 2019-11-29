@@ -13,56 +13,51 @@ import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.regions.RegionIdComponent
-import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projections.LonLatPoint
+import jetbrains.livemap.projections.WorldPoint
 
 class PointGeocodingSystem(
     componentManager: EcsComponentManager,
     private val myGeocodingService: GeocodingService
     ) : LiveMapSystem(componentManager) {
-    private lateinit var myMapProjection: MapProjection
+    private lateinit var myProject: (LonLatPoint) -> WorldPoint
 
     override fun initImpl(context: LiveMapContext) {
-        myMapProjection = context.mapProjection
+        myProject = context.mapProjection::project
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val regionIds = getEntities(POINT_COMPONENTS)
-            .mapNotNull { it.get<RegionIdComponent>().regionId }
-            .toSet()
+            .map { it.regionId }
+            .distinct()
             .toList()
 
-        if (regionIds.isNotEmpty()) {
-            val request = ExplicitRequestBuilder()
-                .setIds(regionIds)
-                .setFeatures(FEATURE_OPTIONS)
-                .build()
+        if (regionIds.isEmpty()) return
 
-            myGeocodingService
-                .execute(request)
-                .map(::parseCentroidMap)
-        }
+        val request = ExplicitRequestBuilder()
+            .setIds(regionIds)
+            .setFeatures(listOf(CENTROID))
+            .build()
+
+        myGeocodingService
+            .execute(request)
+            .map(::parseCentroidMap)
     }
 
     private fun parseCentroidMap(features: List<GeocodedFeature>) {
         val centroidsById = getGeocodingDataMap(features, GeocodedFeature::centroid)
 
         getEntities(POINT_COMPONENTS).toList().forEach { entity ->
-            entity.get<RegionIdComponent>().regionId?.let { regionId ->
-                centroidsById[regionId]?.let { coord ->
-                    entity.removeComponent(RegionIdComponent::class)
-                    entity.addComponents { + CentroidComponent(myMapProjection.project(coord.reinterpret())) }
-                }
+            centroidsById[entity.regionId]?.let { coord ->
+                entity.add(CentroidComponent(myProject(coord.reinterpret())))
             }
         }
     }
 
     companion object {
-        val FEATURE_OPTIONS = listOf(CENTROID)
-
         val POINT_COMPONENTS = listOf(
-            PointTag::class,
+            CentroidTag::class,
             RegionIdComponent::class
         )
     }

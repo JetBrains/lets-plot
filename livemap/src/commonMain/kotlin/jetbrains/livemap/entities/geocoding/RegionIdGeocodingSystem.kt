@@ -5,9 +5,12 @@
 
 package jetbrains.livemap.entities.geocoding
 
-import jetbrains.gis.geoprotocol.*
+import jetbrains.gis.geoprotocol.FeatureLevel
+import jetbrains.gis.geoprotocol.GeoRequestBuilder
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.GeocodingRequestBuilder
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
+import jetbrains.gis.geoprotocol.GeocodingService
+import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -23,42 +26,45 @@ class RegionIdGeocodingSystem(
 ) : LiveMapSystem(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val all = getEntities<MapIdComponent>()
-        val requested = all.filter { it.tryGet<RegionIdComponent>() == null }
 
-        val names = requested.map { it.get<MapIdComponent>().mapId }.toSet().toList()
+        val requested = getEntities<MapIdComponent>()
+            .filterNot { it.contains<WaitingGeocodingComponent>() }
 
-        if (names.isNotEmpty()) {
-            // do request
-            val request = GeocodingRequestBuilder()
-                .setLevel(myFeatureLevel)
-                .addQuery(
-                    GeoRequestBuilder.RegionQueryBuilder()
-                        .setQueryNames(names)
-                        .setParent(myParent)
-                        .build()
-                )
-                .build()
+        val names = requested
+            .map { it.get<MapIdComponent>().mapId }
+            .distinct()
+            .toList()
 
-            requested.forEach { it.addComponents { + RegionIdComponent() } }
+        if (names.isEmpty()) return
 
-            myGeocodingService
-                .execute(request)
-                .map {
-                    getGeocodingDataMap(it, GeocodedFeature::id).let { regionIds ->
-                        getEntities(GEOCODED_FEATURE_COMPONENTS).toList().forEach { entity ->
-                            entity.get<RegionIdComponent>().regionId = regionIds[entity.get<MapIdComponent>().mapId]
-                            entity.removeComponent(MapIdComponent::class)
-                        }
+        val request = GeocodingRequestBuilder()
+            .setLevel(myFeatureLevel)
+            .addQuery(
+                GeoRequestBuilder.RegionQueryBuilder()
+                    .setQueryNames(names)
+                    .setParent(myParent)
+                    .build()
+            )
+            .build()
+
+        requested.forEach { it.addComponents { + WaitingGeocodingComponent() } }
+
+        myGeocodingService
+            .execute(request)
+            .map {
+                getGeocodingDataMap(it, GeocodedFeature::id).let { regionIds ->
+                    getEntities(GEOCODED_FEATURE_COMPONENTS).toList().forEach { entity ->
+                        entity.add(RegionIdComponent(regionIds[entity.get<MapIdComponent>().mapId]!!))
+                        entity.remove<MapIdComponent>()
                     }
                 }
-        }
+            }
     }
 
     companion object {
         val GEOCODED_FEATURE_COMPONENTS = listOf(
             MapIdComponent::class,
-            RegionIdComponent::class
+            WaitingGeocodingComponent::class
         )
     }
 }

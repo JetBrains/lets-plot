@@ -7,10 +7,8 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.projectionGeometry.center
-import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.camera.ViewportHelper
-import jetbrains.livemap.entities.regions.EmptinessChecker
 import jetbrains.livemap.fragments.FragmentProvider
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE

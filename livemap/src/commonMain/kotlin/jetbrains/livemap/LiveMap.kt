@@ -56,7 +56,6 @@ import jetbrains.livemap.entities.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.entities.regions.*
-import jetbrains.livemap.entities.regions.EmptinessChecker.*
 import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
@@ -160,8 +159,6 @@ class LiveMap(
             AUTO, BACKGROUND -> AsyncMicroTaskExecutorFactory.create()
         } ?: SyncMicroTaskExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
 
-        val bboxEmptinessChecker = BBoxEmptinessChecker()
-
         myLayerRenderingSystem = myLayerManager.createLayerRenderingSystem()
         mySchedulerSystem = SchedulerSystem(microTaskExecutor, componentManager)
         myEcsController = EcsController(
@@ -176,7 +173,7 @@ class LiveMap(
 
                 RegionIdGeocodingSystem(componentManager, myGeocodingService, myFeatureLevel, myParent),
                 PointGeocodingSystem(componentManager, myGeocodingService),
-                BBoxGeocodingSystem(componentManager, myGeocodingService, bboxEmptinessChecker),
+                BBoxGeocodingSystem(componentManager, myGeocodingService),
 
                 ApplyCentroidsSystem(componentManager),
 
@@ -198,7 +195,7 @@ class LiveMap(
                 DebugDataSystem(componentManager),
 
                 //Regions
-                FragmentUpdateSystem(componentManager, bboxEmptinessChecker),
+                FragmentUpdateSystem(componentManager),
                 FragmentDownloadingSystem(
                     myDevParams.read(FRAGMENT_ACTIVE_DOWNLOADS_LIMIT),
                     myFragmentProvider,

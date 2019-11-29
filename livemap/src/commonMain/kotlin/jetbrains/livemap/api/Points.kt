@@ -19,7 +19,7 @@ import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.PointTag
+import jetbrains.livemap.entities.geocoding.CentroidTag
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.rendering.*
@@ -129,8 +129,8 @@ class PointBuilder(
         val size = radius * 2.0
 
         return addComponents {
-            + PointTag()
-            + PointComponent().apply { shape = this@PointBuilder.shape }
+            + CentroidTag()
+            + ShapeComponent().apply { shape = this@PointBuilder.shape }
             + createStyle()
             + if (pointScaling) {
                 WorldDimensionComponent(explicitVec<World>(size, size))
