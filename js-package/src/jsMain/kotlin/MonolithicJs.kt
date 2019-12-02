@@ -35,6 +35,9 @@ private val LOG = KotlinLogging.logger {}
 private val DEF_PLOT_SIZE = DoubleVector(500.0, 400.0)
 private val DEF_LIVE_MAP_SIZE = DoubleVector(800.0, 600.0)
 
+private const val FIT_IN_WIDTH = true
+private const val ASPECT_RATIO = 3.0 / 2.0   // TODO: theme
+
 /**
  * The entry point to call in JS
  * `raw specs` are plot specs not processed by datalore plot backend
@@ -101,13 +104,22 @@ private fun buildPlotFromProcessedSpecsIntern(
     val plotSize = if (width > 0 && height > 0) {
         DoubleVector(width, height)
     } else {
-        val maxWidth = if (width > 0) width else parentElement.offsetWidth.toDouble()
-        val defaultSize = defaultPlotSize(plotSpec, assembler)
-        if (defaultSize.x > maxWidth) {
-            val scaler = maxWidth / defaultSize.x
-            DoubleVector(maxWidth, defaultSize.y * scaler)
+        var plotSizeSpec = PlotConfigClientSideUtil.getPlotSizeOrNull(plotSpec)
+        if (plotSizeSpec != null) {
+            plotSizeSpec
         } else {
-            defaultSize
+            val maxWidth = if (width > 0) width else parentElement.offsetWidth.toDouble()
+            if (FIT_IN_WIDTH) {
+                DoubleVector(maxWidth, maxWidth / ASPECT_RATIO)
+            } else {
+                val defaultSize = defaultPlotSize(assembler)
+                if (defaultSize.x > maxWidth) {
+                    val scaler = maxWidth / defaultSize.x
+                    DoubleVector(maxWidth, defaultSize.y * scaler)
+                } else {
+                    defaultSize
+                }
+            }
         }
     }
 
@@ -141,24 +153,20 @@ private fun createPlotAssembler(
     return PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
 }
 
-private fun defaultPlotSize(plotSpec: Map<String, Any>, assembler: PlotAssembler): DoubleVector {
-    var plotSize = PlotConfigClientSideUtil.getPlotSizeOrNull(plotSpec)
-    if (plotSize == null) {
-        plotSize = DEF_PLOT_SIZE
-        val facets = assembler.facets
-        if (facets.isDefined) {
-            val xLevels = facets.xLevels!!
-            val yLevels = facets.yLevels!!
-            val columns = if (xLevels.isEmpty()) 1 else xLevels.size
-            val rows = if (yLevels.isEmpty()) 1 else yLevels.size
-            val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / columns)
-            val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / rows)
-            plotSize = DoubleVector(panelWidth * columns, panelHeight * rows)
-        } else if (assembler.containsLiveMap) {
-            plotSize = DEF_LIVE_MAP_SIZE
-        }
+private fun defaultPlotSize(assembler: PlotAssembler): DoubleVector {
+    var plotSize = DEF_PLOT_SIZE
+    val facets = assembler.facets
+    if (facets.isDefined) {
+        val xLevels = facets.xLevels!!
+        val yLevels = facets.yLevels!!
+        val columns = if (xLevels.isEmpty()) 1 else xLevels.size
+        val rows = if (yLevels.isEmpty()) 1 else yLevels.size
+        val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / columns)
+        val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / rows)
+        plotSize = DoubleVector(panelWidth * columns, panelHeight * rows)
+    } else if (assembler.containsLiveMap) {
+        plotSize = DEF_LIVE_MAP_SIZE
     }
-
     return plotSize
 }
 

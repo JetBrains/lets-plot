@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- By default plot takes the entire available width (to be revised)
+
 ## [1.0.0] - 2019-11-27
 ### Changed
  - First public release.
