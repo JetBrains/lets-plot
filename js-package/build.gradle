@@ -154,6 +154,11 @@ task copyProjectDependenciesJs(type: Copy) {
     into js_package_libs_dir
 }
 
+task copyJsPackage(type: Copy) {
+    from "${project.buildDir}/classes/kotlin/js/main/js-package.js"
+    into js_package_libs_dir
+}
+
 def output_dir = "${project.buildDir}/dist/"
 def input_dir = "${project.buildDir}/js/"
 
@@ -199,9 +204,11 @@ task webpackBuildRelease {
 
 webpackBuildRelease.dependsOn += copyLibraryDependenciesJs
 webpackBuildRelease.dependsOn += copyProjectDependenciesJs
+webpackBuildRelease.dependsOn += copyJsPackage
 webpackBuildRelease.dependsOn += npmInstall
 webpackBuildDebug.dependsOn += copyLibraryDependenciesJs
 webpackBuildDebug.dependsOn += copyProjectDependenciesJs
+webpackBuildDebug.dependsOn += copyJsPackage
 webpackBuildDebug.dependsOn += npmInstall
 
 build.dependsOn += webpackBuildDebug

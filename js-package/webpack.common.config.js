@@ -8,11 +8,10 @@ const webpack = require('webpack');
 
 const buildPath = path.resolve(__dirname, 'build');
 const libPath = path.resolve(buildPath, 'js');
-const jsPackagePath = path.resolve(buildPath, 'classes', 'kotlin', 'js', 'main');
 const distPath = path.resolve(buildPath, 'dist');
 
 module.exports = {
-    entry: `${jsPackagePath}/js-package.js`,
+    entry: `${libPath}/js-package.js`,
     output: {
         library: 'LetsPlot',
         path: distPath,
@@ -20,7 +19,7 @@ module.exports = {
         globalObject: 'window'
     },
     resolve: {
-        modules: [libPath, jsPackagePath, 'node_modules']
+        modules: [libPath, 'node_modules']
     },
     plugins: [
         new webpack.IgnorePlugin(/^(ws|text-encoding)$/)
