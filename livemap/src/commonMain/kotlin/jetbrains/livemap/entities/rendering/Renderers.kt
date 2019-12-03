@@ -154,7 +154,7 @@ object Renderers {
 
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val style = entity.get<StyleComponent>()
-            val textSpec = entity.get<TextComponent>().textSpec
+            val textSpec = entity.get<TextSpecComponent>().textSpec
 
             ctx.save()
             ctx.rotate(textSpec.angle)

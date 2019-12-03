@@ -114,7 +114,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
                     }
                 }
-//
+
                 pies {
                     pie {
                         indices = listOf(0, 1, 2)

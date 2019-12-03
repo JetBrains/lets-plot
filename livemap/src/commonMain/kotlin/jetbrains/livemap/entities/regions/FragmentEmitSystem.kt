@@ -20,6 +20,7 @@ import jetbrains.livemap.core.Utils.common
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
@@ -46,9 +47,11 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
 
     override fun initImpl(context: LiveMapContext) {
         createEntity("FragmentsFetch")
-            .addComponent(StreamingFragmentsComponent())
-            .addComponent(EmittedFragmentsComponent())
-            .addComponent(CachedFragmentsComponent())
+            .addComponents {
+                + StreamingFragmentsComponent()
+                + EmittedFragmentsComponent()
+                + CachedFragmentsComponent()
+            }
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -68,10 +71,8 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
                     obsolete.add(fragmentKey.quadKey)
                 } else if (!geometry.isEmpty()) {
                     processing.add(fragmentKey.quadKey)
-                    myWaitingForScreenGeometry.put(
-                        fragmentKey,
+                    myWaitingForScreenGeometry[fragmentKey] =
                         createFragmentEntity(fragmentKey, geometry.reinterpret(), context.mapProjection)
-                    )
                 } else {
                     // No geometry - stop waiting for this fragment
                     emptyFragments.add(fragmentKey)
@@ -133,8 +134,10 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
                     fragmentEntity
                 ) { theEntity ->
                     theEntity
-                        .addComponent(WorldDimensionComponent(bbox.dimension))
-                        .addComponent(WorldOriginComponent(bbox.origin))
+                        .addComponents {
+                            + WorldDimensionComponent(bbox.dimension)
+                            + WorldOriginComponent(bbox.origin)
+                        }
                 }
                 GeometryTransform.simple(worldMultiPolygon) { p -> zoomProjection.project(p - bbox.origin) }
             }
@@ -143,19 +146,21 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
                     fragmentEntity
                 ) { theEntity ->
                     theEntity
-                        .addComponent(CameraListenerComponent())
-                        .addComponent(CenterChangedComponent())
-                        .addComponent(ZoomChangedComponent())
-                        .addComponent(ScaleComponent().apply { zoom = zoom(fragmentKey) })
-                        .addComponent(FragmentComponent(fragmentKey))
-                        .addComponent(ScreenLoopComponent())
-                        .addComponent(ScreenGeometryComponent().apply { geometry = screenMultiPolygon })
-                        .addComponent(myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>())
+                        .addComponents {
+                            + CameraListenerComponent()
+                            + CenterChangedComponent()
+                            + ZoomChangedComponent()
+                            + ScaleComponent().apply { zoom = zoom(fragmentKey) }
+                            + FragmentComponent(fragmentKey)
+                            + ScreenLoopComponent()
+                            + ScreenGeometryComponent().apply { geometry = screenMultiPolygon }
+                            + myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>()
+                        }
                 }
                 return@map
             }
 
-        fragmentEntity.addComponent(MicroThreadComponent(projector, myProjectionQuant))
+        fragmentEntity.add(MicroThreadComponent(projector, myProjectionQuant))
         getSingleton<StreamingFragmentsComponent>()[fragmentKey] = fragmentEntity
         return fragmentEntity
     }

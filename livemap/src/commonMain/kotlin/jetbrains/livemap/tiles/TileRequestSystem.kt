@@ -13,12 +13,13 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities
-import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
+import jetbrains.livemap.entities.placement.*
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.Renderer
+import jetbrains.livemap.entities.rendering.RendererComponent
 import jetbrains.livemap.projections.WorldRectangle
 import jetbrains.livemap.tiles.components.*
+import jetbrains.livemap.tiles.components.RendererCacheComponent.Companion.NULL_RENDERER
 import jetbrains.livemap.tiles.debug.DebugCellRenderer
 import jetbrains.livemap.tiles.vector.TileLoadingSystem
 
@@ -78,12 +79,14 @@ class TileRequestSystem(componentManager: EcsComponentManager) : AbstractSystem<
             val tileLayerEntity =
                 Entities.mapEntity(
                     componentManager,
-                    tileRect.origin,
                     parentLayerComponent,
-                    RendererCacheComponent.NULL_RENDERER,
                     name
                 )
                     .addComponents {
+                        + WorldOriginComponent(tileRect.origin)
+                        + RendererComponent(NULL_RENDERER)
+                        + ScreenLoopComponent()
+                        + ScreenOriginComponent()
                         + screenDimension {
                             dimension = WorldDimension2ScreenUpdateSystem.world2Screen(tileRect.dimension, zoom)
                         }

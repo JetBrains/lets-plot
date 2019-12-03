@@ -6,15 +6,16 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.projections.WorldPoint
 
 class CentroidTag : EcsComponent
 
-class LineOrientationComponent(val horizontal: Boolean) : EcsComponent
-
-class CentroidComponent(val point: WorldPoint): EcsComponent
+class CentroidComponent(val centroid: WorldPoint): EcsComponent
 
 class WaitingGeocodingComponent : EcsComponent
 
 class RegionBBoxComponent(val bbox: GeoRectangle) : EcsComponent
+
+class ApplyCentroidComponent(val block: ComponentsList.(worldPoint: WorldPoint) -> Unit): EcsComponent

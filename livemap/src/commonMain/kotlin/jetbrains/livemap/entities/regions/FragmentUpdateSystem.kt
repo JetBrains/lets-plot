@@ -5,13 +5,17 @@
 
 package jetbrains.livemap.entities.regions
 
+import jetbrains.datalore.base.projectionGeometry.intersects
+import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.geocoding.RegionBBoxComponent
 import jetbrains.livemap.entities.geocoding.regionId
-import jetbrains.livemap.entities.regions.Utils.test
 import jetbrains.livemap.tiles.components.CellStateComponent
 
 class FragmentUpdateSystem(
@@ -42,7 +46,7 @@ class FragmentUpdateSystem(
             val regionId = regionEntity.regionId
 
             for (quad in quadsToAdd) {
-                if (!emptyFragments.contains(regionId, quad) && test(bbox, quad)) {
+                if (!emptyFragments.contains(regionId, quad) && bbox.intersect(quad)) {
                     fragmentsToAdd.add(FragmentKey(regionId, quad))
                 }
             }
@@ -56,6 +60,18 @@ class FragmentUpdateSystem(
 
         changedFragmentsComponent.setToAdd(fragmentsToAdd)
         changedFragmentsComponent.setToRemove(fragmentsToRemove)
+    }
+
+    private fun GeoRectangle.intersect(quadKey: QuadKey<LonLat>): Boolean {
+        val quadKeyRect = quadKey.computeRect()
+
+        splitByAntiMeridian().forEach { bbox ->
+            if (bbox.intersects(quadKeyRect)) {
+                return true
+            }
+        }
+
+        return false
     }
 
     companion object {

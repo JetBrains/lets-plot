@@ -21,7 +21,7 @@ class BBoxGeocodingSystem(
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val geocodedRegions = getEntities(FRAGMENT_COMPONENTS)
+        val geocodedRegions = getEntities(BBOX_COMPONENTS)
             .toList()
 
         val regionIds = geocodedRegions
@@ -43,7 +43,7 @@ class BBoxGeocodingSystem(
     private fun parseBBoxMap(features: List<GeocodedFeature>) {
         val bboxById = getGeocodingDataMap(features, GeocodedFeature::limit)
 
-        getEntities(FRAGMENT_COMPONENTS).toList().forEach { entity ->
+        getEntities(BBOX_COMPONENTS).toList().forEach { entity ->
             bboxById[entity.regionId]?.let { bbox ->
                 entity.add(RegionBBoxComponent(bbox))
             }
@@ -51,7 +51,7 @@ class BBoxGeocodingSystem(
     }
 
     companion object {
-        val FRAGMENT_COMPONENTS = listOf(
+        val BBOX_COMPONENTS = listOf(
             RegionIdComponent::class,
             RegionFragmentsComponent::class
         )

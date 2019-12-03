@@ -20,7 +20,9 @@ import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
+import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.rendering.*
+import jetbrains.livemap.entities.rendering.Renderers.PathRenderer
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil.transformMultiPolygon
@@ -77,8 +79,10 @@ class PathBuilder(
             .run { GeometryUtil.bbox(this) }
             ?.let { bbox ->
                 val entity = myFactory
-                    .createMapEntity(bbox.origin, Renderers.PathRenderer(), "map_ent_path")
+                    .createMapEntity("map_ent_path")
                     .addComponents {
+                        + RendererComponent(PathRenderer())
+                        + WorldOriginComponent(bbox.origin)
                         + WorldGeometryComponent().apply { geometry = coord }
                         + WorldDimensionComponent(bbox.dimension)
                         + StyleComponent().apply {
@@ -108,13 +112,11 @@ class PathBuilder(
     }
 
     private fun EcsEntity.addAnimationComponent(block: AnimationComponent.() -> Unit): EcsEntity {
-        this.componentManager.addComponent(this, AnimationComponent().apply(block))
-        return this
+        return add(AnimationComponent().apply(block))
     }
 
     private  fun EcsEntity.addGrowingPathEffectComponent(block: GrowingPathEffectComponent.() -> Unit): EcsEntity {
-        this.componentManager.addComponent(this, GrowingPathEffectComponent().apply(block))
-        return this
+        return add(GrowingPathEffectComponent().apply(block))
     }
 }
 

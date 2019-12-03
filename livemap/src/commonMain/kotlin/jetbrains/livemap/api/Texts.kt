@@ -6,13 +6,17 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.projectionGeometry.times
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geocoding.CentroidComponent
 import jetbrains.livemap.entities.geocoding.CentroidTag
+import jetbrains.livemap.entities.placement.*
+import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.TextRenderer
 import jetbrains.livemap.projections.MapProjection
@@ -71,29 +75,47 @@ class TextBuilder(
     ): EcsEntity {
         val textSpec = createTextSpec(textMeasurer)
 
-        return when {
-            point != null -> createStaticEntity()
-            mapId != null -> createDynamicEntity()
-            else -> error("Can't create text entity. [point] and [mapId] is null.")
-        }.addComponents {
-            + TextComponent().apply { this.textSpec = textSpec }
-            + StyleComponent().apply {
-                setFillColor(this@TextBuilder.fillColor)
-                setStrokeColor(this@TextBuilder.strokeColor)
-                setStrokeWidth(this@TextBuilder.strokeWidth)
+        return createEntity()
+            .addComponents { worldPoint ->
+                + WorldOriginComponent(worldPoint)
+                + RendererComponent(TextRenderer())
+                + ScreenLoopComponent()
+                + ScreenOriginComponent()
+                + TextSpecComponent().apply { this.textSpec = textSpec }
+                + StyleComponent().apply {
+                    setFillColor(this@TextBuilder.fillColor)
+                    setStrokeColor(this@TextBuilder.strokeColor)
+                    setStrokeWidth(this@TextBuilder.strokeWidth)
+                }
+
+                + ScreenOffsetComponent().apply {
+                    offset = textSpec.dimension * -0.5
+                }
+                + ScreenDimensionComponent().apply {
+                    dimension = textSpec.dimension
+                }
             }
-        }.addScreenOffsetAndDimension(textSpec)
+    }
+
+    private fun createEntity() = when {
+        point != null -> createStaticEntity()
+        mapId != null -> createDynamicEntity()
+        else -> error("Can't create text entity. [point] and [mapId] is null.")
     }
 
     private fun createStaticEntity(): EcsEntity {
         return myFactory
-            .createMapEntity(myMapProjection.project(point!!), TextRenderer(), "map_ent_s_text")
+            .createMapEntity("map_ent_s_text")
+            .add(CentroidComponent(myMapProjection.project(point!!)))
     }
 
     private fun createDynamicEntity(): EcsEntity {
         return myFactory
-            .createDynamicMapEntity(mapId!!, TextRenderer(),"map_ent_d_text_$mapId")
-            .add(CentroidTag())
+            .createMapEntity("map_ent_d_text_$mapId")
+            .addComponents {
+                + CentroidTag()
+                + MapIdComponent(mapId!!)
+            }
     }
 
     private fun createTextSpec(textMeasurer: TextMeasurer): TextSpec {

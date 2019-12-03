@@ -17,10 +17,10 @@ import jetbrains.livemap.entities.regions.RegionIdComponent
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.WorldPoint
 
-class PointGeocodingSystem(
+class CentroidGeocodingSystem(
     componentManager: EcsComponentManager,
     private val myGeocodingService: GeocodingService
-    ) : LiveMapSystem(componentManager) {
+) : LiveMapSystem(componentManager) {
     private lateinit var myProject: (LonLatPoint) -> WorldPoint
 
     override fun initImpl(context: LiveMapContext) {
@@ -28,7 +28,7 @@ class PointGeocodingSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val regionIds = getEntities(POINT_COMPONENTS)
+        val regionIds = getEntities(CENTROID_COMPONENTS)
             .map { it.regionId }
             .distinct()
             .toList()
@@ -48,15 +48,16 @@ class PointGeocodingSystem(
     private fun parseCentroidMap(features: List<GeocodedFeature>) {
         val centroidsById = getGeocodingDataMap(features, GeocodedFeature::centroid)
 
-        getEntities(POINT_COMPONENTS).toList().forEach { entity ->
+        getEntities(CENTROID_COMPONENTS).toList().forEach { entity ->
             centroidsById[entity.regionId]?.let { coord ->
                 entity.add(CentroidComponent(myProject(coord.reinterpret())))
+                entity.remove<CentroidTag>()
             }
         }
     }
 
     companion object {
-        val POINT_COMPONENTS = listOf(
+        val CENTROID_COMPONENTS = listOf(
             CentroidTag::class,
             RegionIdComponent::class
         )

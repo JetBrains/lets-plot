@@ -12,10 +12,14 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.LineOrientationComponent
+import jetbrains.livemap.entities.geocoding.CentroidComponent
 import jetbrains.livemap.entities.geocoding.CentroidTag
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
+import jetbrains.livemap.entities.placement.ScreenLoopComponent
+import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
+import jetbrains.livemap.entities.placement.WorldOriginComponent
+import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PathRenderer
 import jetbrains.livemap.projections.MapProjection
@@ -73,44 +77,45 @@ class LineBuilder(
         horizontal: Boolean
     ): EcsEntity {
 
-        return when {
-            point != null -> createStaticEntity(horizontal)
-            mapId != null -> createDynamicEntity(horizontal)
-            else -> error("Can't create line entity. [point] and [mapId] is null.")
-        }
-    }
+        return createEntity()
+            .addComponents { worldPoint ->
+                val line = createLineGeometry(worldPoint, horizontal, myMapProjection.mapRect)
+                val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, myMapProjection.mapRect)
 
-    private fun createStaticEntity(horizontal: Boolean): EcsEntity {
-
-        val worldPoint = myMapProjection.project(point!!)
-        val line = createLineGeometry(worldPoint, horizontal, myMapProjection.mapRect)
-        val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, myMapProjection.mapRect)
-
-        return myFactory
-            .createMapEntity(bbox.origin, PathRenderer(), "map_ent_s_line")
-            .addComponents {
+                + RendererComponent(PathRenderer())
+                + WorldOriginComponent(bbox.origin)
                 + WorldGeometryComponent().apply { geometry = line }
                 + WorldDimensionComponent(bbox.dimension)
-                + setStyle()
+                + ScreenLoopComponent()
+                + ScreenOriginComponent()
+                + StyleComponent().apply {
+                    setStrokeColor(this@LineBuilder.strokeColor)
+                    setStrokeWidth(this@LineBuilder.strokeWidth)
+                    setLineDash(this@LineBuilder.lineDash)
+                }
             }
     }
 
-    private fun createDynamicEntity(horizontal: Boolean): EcsEntity {
+    private fun createEntity() = when {
+        point != null -> createStaticEntity()
+        mapId != null -> createDynamicEntity()
+        else -> error("Can't create line entity. [point] and [mapId] is null.")
+    }
+
+    private fun createStaticEntity(): EcsEntity {
 
         return myFactory
-            .createDynamicMapEntity(mapId!!, PathRenderer(),"map_ent_d_line_$mapId")
-            .addComponents {
-                + CentroidTag()
-                + LineOrientationComponent(horizontal)
-                + setStyle()
-            }
+            .createMapEntity("map_ent_s_line")
+            .add(CentroidComponent(myMapProjection.project(point!!)))
     }
 
-    private fun setStyle(): StyleComponent {
-        return StyleComponent().apply {
-            setStrokeColor(this@LineBuilder.strokeColor)
-            setStrokeWidth(this@LineBuilder.strokeWidth)
-            setLineDash(this@LineBuilder.lineDash)
-        }
+    private fun createDynamicEntity(): EcsEntity {
+
+        return myFactory
+            .createMapEntity("map_ent_d_line_$mapId")
+            .addComponents {
+                + CentroidTag()
+                + MapIdComponent(mapId!!)
+            }
     }
 }

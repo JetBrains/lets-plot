@@ -6,11 +6,9 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.placement.ScreenOffsetComponent
-import jetbrains.livemap.entities.rendering.TextSpec
+import jetbrains.livemap.entities.geocoding.ApplyCentroidComponent
 import jetbrains.livemap.projections.World
 import jetbrains.livemap.projections.WorldPoint
 import jetbrains.livemap.projections.WorldRectangle
@@ -88,13 +86,6 @@ fun createLineBBox(
     }
 }
 
-fun EcsEntity.addScreenOffsetAndDimension(textSpec: TextSpec): EcsEntity {
-    return addComponents {
-        + ScreenOffsetComponent().apply {
-            offset = textSpec.dimension * -0.5
-        }
-        + ScreenDimensionComponent().apply {
-            dimension = textSpec.dimension
-        }
-    }
+internal fun EcsEntity.addComponents(block: ComponentsList.(worldPoint: WorldPoint) -> Unit): EcsEntity {
+    return add(ApplyCentroidComponent(block))
 }

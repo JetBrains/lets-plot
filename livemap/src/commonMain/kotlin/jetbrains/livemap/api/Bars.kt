@@ -7,9 +7,10 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geocoding.CentroidComponent
 import jetbrains.livemap.entities.geocoding.CentroidTag
-import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.placement.ScreenOffsetComponent
+import jetbrains.livemap.entities.placement.*
+import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.BarRenderer
 import jetbrains.livemap.projections.Client
@@ -74,7 +75,11 @@ class BarsFactory(
                         source.point != null -> createStaticEntity(source.point!!)
                         source.mapId != null -> createDynamicEntity(source.mapId!!)
                         else -> error("Can't create bar entity. [point] and [mapId] is null.")
-                    }.addComponents {
+                    }.addComponents { worldPoint ->
+                        + RendererComponent(BarRenderer())
+                        + WorldOriginComponent(worldPoint)
+                        + ScreenLoopComponent()
+                        + ScreenOriginComponent()
                         + ScreenOffsetComponent().apply { offset = barOffset}
                         + ScreenDimensionComponent().apply { dimension = barDimension }
                         + StyleComponent().apply {
@@ -92,13 +97,17 @@ class BarsFactory(
 
     private fun createStaticEntity(point: LonLatPoint): EcsEntity {
         return myEntityFactory
-            .createMapEntity(myMapProjection.project(point), BarRenderer(), "map_ent_s_bar")
+            .createMapEntity("map_ent_s_bar")
+            .add(CentroidComponent(myMapProjection.project(point)))
     }
 
     private fun createDynamicEntity(mapId: String): EcsEntity {
         return myEntityFactory
-            .createDynamicMapEntity(mapId, BarRenderer(), "map_ent_d_bar_$mapId")
-            .add(CentroidTag())
+            .createMapEntity("map_ent_d_bar_$mapId")
+            .addComponents {
+                + CentroidTag()
+                + MapIdComponent(mapId)
+            }
     }
 }
 

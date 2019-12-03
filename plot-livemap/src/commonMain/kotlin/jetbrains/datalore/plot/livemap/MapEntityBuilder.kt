@@ -127,7 +127,6 @@ internal class MapEntityBuilder {
             {
                 index = this@MapEntityBuilder.index
                 this@MapEntityBuilder.mapId?.let { mapId = it }
-                this@MapEntityBuilder.regionId?.let { regionId = it }
                 point = it
                 label = this@MapEntityBuilder.label
                 animation = this@MapEntityBuilder.animation
@@ -144,7 +143,6 @@ internal class MapEntityBuilder {
         return {
             index = this@MapEntityBuilder.index
             this@MapEntityBuilder.mapId?.let { mapId = it }
-            this@MapEntityBuilder.regionId?.let { regionId = it }
 
             multiPolygon = this@MapEntityBuilder.geometry
 
@@ -160,7 +158,6 @@ internal class MapEntityBuilder {
             {
                 index = this@MapEntityBuilder.index
                 this@MapEntityBuilder.mapId?.let { mapId = it }
-                this@MapEntityBuilder.regionId?.let { regionId = it }
 
                 multiPolygon = it
 
@@ -180,7 +177,6 @@ internal class MapEntityBuilder {
             {
                 index = this@MapEntityBuilder.index
                 this@MapEntityBuilder.mapId?.let { mapId = it }
-                this@MapEntityBuilder.regionId?.let { regionId = it }
                 point = it
                 lineDash = this@MapEntityBuilder.lineDash
                 strokeColor = this@MapEntityBuilder.strokeColor
@@ -211,7 +207,6 @@ internal class MapEntityBuilder {
             {
                 index = this@MapEntityBuilder.index
                 this@MapEntityBuilder.mapId?.let { mapId = it }
-                this@MapEntityBuilder.regionId?.let { regionId = it }
                 point = it
                 fillColor = this@MapEntityBuilder.fillColor
                 strokeColor = this@MapEntityBuilder.strokeColor
