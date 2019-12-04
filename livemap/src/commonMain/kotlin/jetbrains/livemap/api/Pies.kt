@@ -9,24 +9,18 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.CentroidComponent
-import jetbrains.livemap.entities.geocoding.CentroidTag
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
-import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PieSectorRenderer
-import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.MapProjection
 
 @LiveMapDsl
 class Pies(
-    factory: MapEntityFactory,
-    mapProjection: MapProjection
+    factory: MapEntityFactory
 ) {
-    val piesFactory = PiesFactory(factory, mapProjection)
+    val piesFactory = PiesFactory(factory)
 }
 
 fun LayersBuilder.pies(block: Pies.() -> Unit) {
@@ -38,8 +32,7 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
         }
 
     Pies(
-        MapEntityFactory(layerEntity),
-        mapProjection
+        MapEntityFactory(layerEntity)
     ).apply {
         block()
         piesFactory.produce()
@@ -52,8 +45,7 @@ fun Pies.pie(block: ChartSource.() -> Unit) {
 
 @LiveMapDsl
 class PiesFactory(
-    private val myEntityFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val myFactory: MapEntityFactory
 ) {
     private val myItems = ArrayList<ChartSource>()
 
@@ -71,14 +63,18 @@ class PiesFactory(
         var currentAngle = 0.0
 
         for (i in angles.indices) {
+            // Do not inline - copy for closure.
             val startAngle = currentAngle
             val endAngle = currentAngle + angles[i]
             result.add(
                 when {
-                    source.point != null -> createStaticEntity(source.point!!)
-                    source.mapId != null -> createDynamicEntity(source.mapId!!)
-                    else -> error("Can't create pieSector entity. [point] and [mapId] is null.")
-                }.addComponents { worldPoint ->
+                    source.point != null ->
+                        myFactory.createStaticEntity("map_ent_s_pie_sector", source.point!!)
+                    source.mapId != null ->
+                        myFactory.createDynamicEntity("map_ent_d_pie_sector_${source.mapId}", source.mapId!!)
+                    else ->
+                        error("Can't create pieSector entity. [point] and [mapId] is null.")
+                }.setInitializer { worldPoint ->
                     + RendererComponent(PieSectorRenderer())
                     + WorldOriginComponent(worldPoint)
                     + PieSectorComponent().apply {
@@ -100,20 +96,5 @@ class PiesFactory(
         }
 
         return result
-    }
-
-    private fun createStaticEntity(point: LonLatPoint): EcsEntity {
-        return myEntityFactory
-            .createMapEntity("map_ent_s_pie_sector")
-            .add(CentroidComponent(myMapProjection.project(point)))
-    }
-
-    private fun createDynamicEntity(mapId: String): EcsEntity {
-        return myEntityFactory
-            .createMapEntity("map_ent_d_pie_sector_$mapId")
-            .addComponents {
-                + CentroidTag()
-                + MapIdComponent(mapId)
-            }
     }
 }

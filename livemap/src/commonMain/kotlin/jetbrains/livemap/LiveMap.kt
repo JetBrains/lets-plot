@@ -47,7 +47,7 @@ import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.effects.GrowingPath
-import jetbrains.livemap.entities.geocoding.ApplyCentroidsSystem
+import jetbrains.livemap.entities.geocoding.ApplyPointSystem
 import jetbrains.livemap.entities.geocoding.BBoxGeocodingSystem
 import jetbrains.livemap.entities.geocoding.CentroidGeocodingSystem
 import jetbrains.livemap.entities.geocoding.RegionIdGeocodingSystem
@@ -175,7 +175,7 @@ class LiveMap(
                 CentroidGeocodingSystem(componentManager, myGeocodingService),
                 BBoxGeocodingSystem(componentManager, myGeocodingService),
 
-                ApplyCentroidsSystem(componentManager),
+                ApplyPointSystem(componentManager),
 
                 ScaleUpdateSystem(componentManager),
 

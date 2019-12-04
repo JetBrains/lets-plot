@@ -8,22 +8,20 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.geocoding.CentroidComponent
-import jetbrains.livemap.entities.geocoding.CentroidTag
+import jetbrains.livemap.entities.geocoding.LonLatComponent
+import jetbrains.livemap.entities.geocoding.MapIdComponent
 import jetbrains.livemap.entities.placement.*
-import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.BarRenderer
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.MapProjection
 import kotlin.math.abs
 
 @LiveMapDsl
 class Bars(
-    factory: MapEntityFactory,
-    mapProjection: MapProjection
+    factory: MapEntityFactory
 ) {
-    val barsFactory = BarsFactory(factory, mapProjection)
+    val barsFactory = BarsFactory(factory)
 }
 
 fun LayersBuilder.bars(block: Bars.() -> Unit) {
@@ -35,8 +33,7 @@ fun LayersBuilder.bars(block: Bars.() -> Unit) {
         }
 
     Bars(
-        MapEntityFactory(layerEntity),
-        mapProjection
+        MapEntityFactory(layerEntity)
     ).apply {
         block()
         barsFactory.produce()
@@ -49,8 +46,7 @@ fun Bars.bar(block: ChartSource.() -> Unit) {
 
 @LiveMapDsl
 class BarsFactory(
-    private val myEntityFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val myFactory: MapEntityFactory
 ) {
     private val myItems = ArrayList<ChartSource>()
 
@@ -61,21 +57,25 @@ class BarsFactory(
     fun produce(): List<EcsEntity> {
         val maxAbsValue = myItems
             .asSequence()
-            .mapNotNull { it.values }
+            .mapNotNull(ChartSource::values)
             .flatten()
-            .maxBy { abs(it) }
+            .maxBy(::abs)
+            ?.run(::abs)
             ?: error("Failed to calculate maxAbsValue.")
 
         val result = ArrayList<EcsEntity>()
 
         myItems.forEach { source ->
-            splitMapBarChart(source, abs(maxAbsValue)) { barOffset, barDimension, color->
+            splitMapBarChart(source, maxAbsValue) { barOffset, barDimension, color->
                 result.add(
                     when {
-                        source.point != null -> createStaticEntity(source.point!!)
-                        source.mapId != null -> createDynamicEntity(source.mapId!!)
-                        else -> error("Can't create bar entity. [point] and [mapId] is null.")
-                    }.addComponents { worldPoint ->
+                        source.point != null ->
+                            myFactory.createStaticEntity("map_ent_s_bar", source.point!!)
+                        source.mapId != null ->
+                            myFactory.createDynamicEntity("map_ent_d_bar_${source.mapId}", source.mapId!!)
+                        else ->
+                            error("Can't create bar entity. [point] and [mapId] is null.")
+                    }.setInitializer { worldPoint ->
                         + RendererComponent(BarRenderer())
                         + WorldOriginComponent(worldPoint)
                         + ScreenLoopComponent()
@@ -93,21 +93,6 @@ class BarsFactory(
         }
 
         return result
-    }
-
-    private fun createStaticEntity(point: LonLatPoint): EcsEntity {
-        return myEntityFactory
-            .createMapEntity("map_ent_s_bar")
-            .add(CentroidComponent(myMapProjection.project(point)))
-    }
-
-    private fun createDynamicEntity(mapId: String): EcsEntity {
-        return myEntityFactory
-            .createMapEntity("map_ent_d_bar_$mapId")
-            .addComponents {
-                + CentroidTag()
-                + MapIdComponent(mapId)
-            }
     }
 }
 

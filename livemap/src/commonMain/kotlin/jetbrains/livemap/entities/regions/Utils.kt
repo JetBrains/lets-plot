@@ -11,6 +11,7 @@ import jetbrains.datalore.base.spatial.zoom
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.entities.geocoding.RegionIdComponent
 import jetbrains.livemap.entities.geocoding.regionId
 
 object Utils {

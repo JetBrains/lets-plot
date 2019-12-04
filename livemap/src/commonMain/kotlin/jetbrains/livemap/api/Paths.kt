@@ -19,6 +19,8 @@ import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
+import jetbrains.livemap.entities.placement.ScreenLoopComponent
+import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.rendering.*
@@ -85,6 +87,8 @@ class PathBuilder(
                         + WorldOriginComponent(bbox.origin)
                         + WorldGeometryComponent().apply { geometry = coord }
                         + WorldDimensionComponent(bbox.dimension)
+                        + ScreenLoopComponent()
+                        + ScreenOriginComponent()
                         + StyleComponent().apply {
                             setStrokeColor(this@PathBuilder.strokeColor)
                             strokeWidth = this@PathBuilder.strokeWidth

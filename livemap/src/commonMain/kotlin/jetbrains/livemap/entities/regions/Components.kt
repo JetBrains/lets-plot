@@ -129,10 +129,6 @@ class DownloadingFragmentsComponent : EcsComponent {
 
 class FragmentComponent(val fragmentKey: FragmentKey) : EcsComponent
 
-class MapIdComponent(val mapId: String) : EcsComponent
-
-class RegionIdComponent(var regionId: String) : EcsComponent
-
 class RegionFragmentsComponent : EcsComponent {
     private val myFragmentEntities = HashSet<EcsEntity>()
 

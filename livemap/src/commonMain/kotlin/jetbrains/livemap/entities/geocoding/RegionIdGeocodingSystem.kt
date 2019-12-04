@@ -15,8 +15,6 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.entities.regions.MapIdComponent
-import jetbrains.livemap.entities.regions.RegionIdComponent
 
 class RegionIdGeocodingSystem(
     componentManager: EcsComponentManager,
@@ -53,7 +51,7 @@ class RegionIdGeocodingSystem(
             .execute(request)
             .map {
                 getGeocodingDataMap(it, GeocodedFeature::id).let { regionIds ->
-                    getEntities(GEOCODED_FEATURE_COMPONENTS).toList().forEach { entity ->
+                    getMutableEntities(GEOCODED_FEATURE_COMPONENTS).forEach { entity ->
                         entity.add(RegionIdComponent(regionIds[entity.get<MapIdComponent>().mapId]!!))
                         entity.remove<MapIdComponent>()
                     }

@@ -13,12 +13,12 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geocoding.MapIdComponent
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
-import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.regions.RegionFragmentsComponent
 import jetbrains.livemap.entities.regions.RegionRenderer
 import jetbrains.livemap.entities.rendering.*
@@ -109,7 +109,7 @@ class PolygonsBuilder(
         return myFactory
             .createMapEntity("map_ent_d_polygon_$mapId")
             .addComponents {
-                + MapIdComponent(mapId!!)                
+                + MapIdComponent(mapId!!)
                 + RegionFragmentsComponent()
                 + StyleComponent().apply {
                     setFillColor(this@PolygonsBuilder.fillColor)

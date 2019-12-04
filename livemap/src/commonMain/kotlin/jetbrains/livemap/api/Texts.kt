@@ -13,18 +13,13 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.CentroidComponent
-import jetbrains.livemap.entities.geocoding.CentroidTag
 import jetbrains.livemap.entities.placement.*
-import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.TextRenderer
-import jetbrains.livemap.projections.MapProjection
 
 @LiveMapDsl
 class Texts(
     val factory: MapEntityFactory,
-    val mapProjection: MapProjection,
     val textMeasurer: TextMeasurer
 )
 
@@ -38,21 +33,19 @@ fun LayersBuilder.texts(block: Texts.() -> Unit) {
 
     Texts(
         MapEntityFactory(layerEntity),
-        mapProjection,
         textMeasurer
     ).apply(block)
 }
 
 fun Texts.text(block: TextBuilder.() -> Unit) {
-    TextBuilder(factory, mapProjection)
+    TextBuilder(factory)
         .apply(block)
         .build(textMeasurer)
 }
 
 @LiveMapDsl
 class TextBuilder(
-    private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val myFactory: MapEntityFactory
 ) {
     var index: Int = 0
     var mapId: String? = null
@@ -75,8 +68,15 @@ class TextBuilder(
     ): EcsEntity {
         val textSpec = createTextSpec(textMeasurer)
 
-        return createEntity()
-            .addComponents { worldPoint ->
+        return when {
+            point != null ->
+                myFactory.createStaticEntity("map_ent_s_text", point!!)
+            mapId != null ->
+                myFactory.createDynamicEntity("map_ent_d_text_$mapId", mapId!!)
+            else ->
+                error("Can't create text entity. [point] and [mapId] is null.")
+        }
+            .setInitializer { worldPoint ->
                 + WorldOriginComponent(worldPoint)
                 + RendererComponent(TextRenderer())
                 + ScreenLoopComponent()
@@ -94,27 +94,6 @@ class TextBuilder(
                 + ScreenDimensionComponent().apply {
                     dimension = textSpec.dimension
                 }
-            }
-    }
-
-    private fun createEntity() = when {
-        point != null -> createStaticEntity()
-        mapId != null -> createDynamicEntity()
-        else -> error("Can't create text entity. [point] and [mapId] is null.")
-    }
-
-    private fun createStaticEntity(): EcsEntity {
-        return myFactory
-            .createMapEntity("map_ent_s_text")
-            .add(CentroidComponent(myMapProjection.project(point!!)))
-    }
-
-    private fun createDynamicEntity(): EcsEntity {
-        return myFactory
-            .createMapEntity("map_ent_d_text_$mapId")
-            .addComponents {
-                + CentroidTag()
-                + MapIdComponent(mapId!!)
             }
     }
 

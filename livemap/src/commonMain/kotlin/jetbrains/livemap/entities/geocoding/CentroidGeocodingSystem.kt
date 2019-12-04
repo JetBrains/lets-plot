@@ -13,7 +13,6 @@ import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.entities.regions.RegionIdComponent
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.WorldPoint
 
@@ -48,17 +47,17 @@ class CentroidGeocodingSystem(
     private fun parseCentroidMap(features: List<GeocodedFeature>) {
         val centroidsById = getGeocodingDataMap(features, GeocodedFeature::centroid)
 
-        getEntities(CENTROID_COMPONENTS).toList().forEach { entity ->
+        getMutableEntities(CENTROID_COMPONENTS).forEach { entity ->
             centroidsById[entity.regionId]?.let { coord ->
-                entity.add(CentroidComponent(myProject(coord.reinterpret())))
-                entity.remove<CentroidTag>()
+                entity.add(LonLatComponent(coord.reinterpret()))
+                entity.remove<CentroidComponent>()
             }
         }
     }
 
     companion object {
         val CENTROID_COMPONENTS = listOf(
-            CentroidTag::class,
+            CentroidComponent::class,
             RegionIdComponent::class
         )
     }

@@ -19,10 +19,10 @@ import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geocoding.LonLatComponent
 import jetbrains.livemap.entities.geocoding.CentroidComponent
-import jetbrains.livemap.entities.geocoding.CentroidTag
+import jetbrains.livemap.entities.geocoding.MapIdComponent
 import jetbrains.livemap.entities.placement.*
-import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PointRenderer
 import jetbrains.livemap.projections.Client
@@ -64,15 +64,14 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
 }
 
 fun Points.point(block: PointBuilder.() -> Unit) {
-    PointBuilder(factory, mapProjection)
+    PointBuilder(factory)
         .apply(block)
         .build(pointScaling, animationBuilder)
 }
 
 @LiveMapDsl
 class PointBuilder(
-    private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val myFactory: MapEntityFactory
 ) {
     var index: Int = 0
     var mapId: String? = null
@@ -94,57 +93,42 @@ class PointBuilder(
 
         val size = radius * 2.0
 
-        return createEntity().run {
-            addComponents { worldPoint ->
-                + ShapeComponent().apply { shape = this@PointBuilder.shape }
-                + createStyle()
-                + if (pointScaling) {
-                    WorldDimensionComponent(explicitVec<World>(size, size))
-                } else {
-                    ScreenDimensionComponent().apply {
-                        dimension = explicitVec<Client>(size, size)
+        return when {
+                point != null ->
+                    myFactory.createStaticEntity("map_ent_s_point", point!!)
+                mapId != null ->
+                    myFactory.createDynamicEntity("map_ent_d_point_$mapId", mapId!!)
+                else ->
+                    error("Can't create point entity. [point] and [mapId] is null.")
+            }.run {
+                setInitializer { worldPoint ->
+                    + ShapeComponent().apply { shape = this@PointBuilder.shape }
+                    + createStyle()
+                    + if (pointScaling) {
+                        WorldDimensionComponent(explicitVec<World>(size, size))
+                    } else {
+                        ScreenDimensionComponent().apply {
+                            dimension = explicitVec<Client>(size, size)
+                        }
+                    }
+                    + WorldOriginComponent(worldPoint)
+                    + RendererComponent(PointRenderer())
+                    + ScreenLoopComponent()
+                    + ScreenOriginComponent()
+
+                    if (animation == 2) {
+                        val transformComponent = TransformComponent()
+                        val scaleAnimator = Animations.DoubleAnimator(0.0, 1.0) {
+                            transformComponent.scale = it
+                            ParentLayerComponent.tagDirtyParentLayer(this@run)
+                        }
+
+                        animationBuilder.addAnimator(scaleAnimator)
+
+                        + transformComponent
                     }
                 }
-                + WorldOriginComponent(worldPoint)
-                + RendererComponent(PointRenderer())
-                + ScreenLoopComponent()
-                + ScreenOriginComponent()
-
-                if (animation == 2) {
-                    val transformComponent = TransformComponent()
-                    val scaleAnimator = Animations.DoubleAnimator(0.0, 1.0) {
-                        transformComponent.scale = it
-                        ParentLayerComponent.tagDirtyParentLayer(this@run)
-                    }
-
-                    animationBuilder.addAnimator(scaleAnimator)
-
-                    + transformComponent
-                }
-            }
         }
-    }
-
-    private fun createEntity() = when {
-        point != null -> createStaticEntity()
-        mapId != null -> createDynamicEntity()
-        else -> error("Can't create point entity. [point] and [mapId] is null.")
-    }
-
-    private fun createStaticEntity(): EcsEntity {
-        return myFactory
-            .createMapEntity("map_ent_s_point")
-            .add(CentroidComponent(myMapProjection.project(point!!)))
-    }
-
-    private fun createDynamicEntity(): EcsEntity {
-
-        return myFactory
-            .createMapEntity("map_ent_d_point_$mapId")
-            .addComponents {
-                + CentroidTag()
-                + MapIdComponent(mapId!!)
-            }
     }
 
     private fun createStyle(): StyleComponent {

@@ -12,7 +12,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.projections.MapProjection
 
-class ApplyCentroidsSystem(
+class ApplyPointSystem(
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
@@ -23,29 +23,28 @@ class ApplyCentroidsSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        getEntities(NEED_APPLY)
-            .toList()
+        getMutableEntities(NEED_APPLY)
             .forEach { entity ->
 
                 entity.addComponents {
-                    entity.block.invoke(this, entity.centroid)
+                    entity.worldPointInitializer.invoke(this, myMapProjection.project(entity.point))
                 }
 
-                entity.remove<CentroidComponent>()
-                entity.remove<ApplyCentroidComponent>()
+                entity.remove<LonLatComponent>()
+                entity.remove<PointInitializerComponent>()
             }
     }
 
-    private val EcsEntity.centroid
-        get() = get<CentroidComponent>().centroid
+    private val EcsEntity.point
+        get() = get<LonLatComponent>().point
 
-    private val EcsEntity.block
-        get() = get<ApplyCentroidComponent>().block
+    private val EcsEntity.worldPointInitializer
+        get() = get<PointInitializerComponent>().worldPointInitializer
 
     companion object {
         val NEED_APPLY = listOf(
-            CentroidComponent::class,
-            ApplyCentroidComponent::class
+            LonLatComponent::class,
+            PointInitializerComponent::class
         )
     }
 }

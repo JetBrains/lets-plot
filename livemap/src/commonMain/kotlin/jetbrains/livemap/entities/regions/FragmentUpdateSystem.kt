@@ -15,6 +15,7 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.geocoding.RegionBBoxComponent
+import jetbrains.livemap.entities.geocoding.RegionIdComponent
 import jetbrains.livemap.entities.geocoding.regionId
 import jetbrains.livemap.tiles.components.CellStateComponent
 

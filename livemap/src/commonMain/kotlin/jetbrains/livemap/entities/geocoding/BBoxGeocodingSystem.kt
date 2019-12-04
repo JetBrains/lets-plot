@@ -13,7 +13,6 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.entities.regions.RegionFragmentsComponent
-import jetbrains.livemap.entities.regions.RegionIdComponent
 
 class BBoxGeocodingSystem(
     componentManager: EcsComponentManager,
@@ -21,8 +20,7 @@ class BBoxGeocodingSystem(
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val geocodedRegions = getEntities(BBOX_COMPONENTS)
-            .toList()
+        val geocodedRegions = getMutableEntities(BBOX_COMPONENTS)
 
         val regionIds = geocodedRegions
             .map { it.get<RegionIdComponent>().regionId }
@@ -43,7 +41,7 @@ class BBoxGeocodingSystem(
     private fun parseBBoxMap(features: List<GeocodedFeature>) {
         val bboxById = getGeocodingDataMap(features, GeocodedFeature::limit)
 
-        getEntities(BBOX_COMPONENTS).toList().forEach { entity ->
+        getMutableEntities(BBOX_COMPONENTS).forEach { entity ->
             bboxById[entity.regionId]?.let { bbox ->
                 entity.add(RegionBBoxComponent(bbox))
             }

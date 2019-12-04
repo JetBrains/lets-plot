@@ -12,14 +12,14 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geocoding.LonLatComponent
 import jetbrains.livemap.entities.geocoding.CentroidComponent
-import jetbrains.livemap.entities.geocoding.CentroidTag
+import jetbrains.livemap.entities.geocoding.MapIdComponent
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
-import jetbrains.livemap.entities.regions.MapIdComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PathRenderer
 import jetbrains.livemap.projections.MapProjection
@@ -77,8 +77,14 @@ class LineBuilder(
         horizontal: Boolean
     ): EcsEntity {
 
-        return createEntity()
-            .addComponents { worldPoint ->
+        return when {
+            point != null ->
+                myFactory.createStaticEntity("map_ent_s_line", point!!)
+            mapId != null ->
+                myFactory.createDynamicEntity("map_ent_d_line_$mapId", mapId!!)
+            else ->
+                error("Can't create line entity. [point] and [mapId] is null.")
+        }.setInitializer { worldPoint ->
                 val line = createLineGeometry(worldPoint, horizontal, myMapProjection.mapRect)
                 val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, myMapProjection.mapRect)
 
@@ -93,29 +99,6 @@ class LineBuilder(
                     setStrokeWidth(this@LineBuilder.strokeWidth)
                     setLineDash(this@LineBuilder.lineDash)
                 }
-            }
-    }
-
-    private fun createEntity() = when {
-        point != null -> createStaticEntity()
-        mapId != null -> createDynamicEntity()
-        else -> error("Can't create line entity. [point] and [mapId] is null.")
-    }
-
-    private fun createStaticEntity(): EcsEntity {
-
-        return myFactory
-            .createMapEntity("map_ent_s_line")
-            .add(CentroidComponent(myMapProjection.project(point!!)))
-    }
-
-    private fun createDynamicEntity(): EcsEntity {
-
-        return myFactory
-            .createMapEntity("map_ent_d_line_$mapId")
-            .addComponents {
-                + CentroidTag()
-                + MapIdComponent(mapId!!)
             }
     }
 }
