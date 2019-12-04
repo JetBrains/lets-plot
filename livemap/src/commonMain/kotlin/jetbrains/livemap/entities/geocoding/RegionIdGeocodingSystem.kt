@@ -5,22 +5,14 @@
 
 package jetbrains.livemap.entities.geocoding
 
-import jetbrains.gis.geoprotocol.FeatureLevel
-import jetbrains.gis.geoprotocol.GeoRequestBuilder
-import jetbrains.gis.geoprotocol.GeoRequestBuilder.GeocodingRequestBuilder
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
-import jetbrains.gis.geoprotocol.GeocodingService
-import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.ecs.addComponents
 
 class RegionIdGeocodingSystem(
     componentManager: EcsComponentManager,
-    private val myGeocodingService: GeocodingService,
-    private val myFeatureLevel: FeatureLevel?,
-    private val myParent: MapRegion?
+    private val myGeocodingProvider: GeocodingProvider
 ) : LiveMapSystem(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -35,20 +27,9 @@ class RegionIdGeocodingSystem(
 
         if (names.isEmpty()) return
 
-        val request = GeocodingRequestBuilder()
-            .setLevel(myFeatureLevel)
-            .addQuery(
-                GeoRequestBuilder.RegionQueryBuilder()
-                    .setQueryNames(names)
-                    .setParent(myParent)
-                    .build()
-            )
-            .build()
+        requested.forEach { it.add(WaitingGeocodingComponent()) }
 
-        requested.forEach { it.addComponents { + WaitingGeocodingComponent() } }
-
-        myGeocodingService
-            .execute(request)
+        myGeocodingProvider.getRegionsIdByNames(names)
             .map {
                 getGeocodingDataMap(it, GeocodedFeature::id).let { regionIds ->
                     getMutableEntities(GEOCODED_FEATURE_COMPONENTS).forEach { entity ->

@@ -9,6 +9,7 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.projectionGeometry.center
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.camera.ViewportHelper
+import jetbrains.livemap.entities.geocoding.GeocodingProvider
 import jetbrains.livemap.fragments.FragmentProvider
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
@@ -66,9 +67,11 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
             FragmentProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
             myLiveMapSpec.devParams,
             myLiveMapSpec.mapLocationConsumer,
-            myLiveMapSpec.level,
-            myLiveMapSpec.parent,
-            myLiveMapSpec.geocodingService
+            GeocodingProvider(
+                myLiveMapSpec.geocodingService,
+                myLiveMapSpec.level,
+                myLiveMapSpec.parent
+            )
         )
     }
 }

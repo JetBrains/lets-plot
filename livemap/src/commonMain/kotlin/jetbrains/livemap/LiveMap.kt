@@ -47,10 +47,7 @@ import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.effects.GrowingPath
-import jetbrains.livemap.entities.geocoding.ApplyPointSystem
-import jetbrains.livemap.entities.geocoding.BBoxGeocodingSystem
-import jetbrains.livemap.entities.geocoding.CentroidGeocodingSystem
-import jetbrains.livemap.entities.geocoding.RegionIdGeocodingSystem
+import jetbrains.livemap.entities.geocoding.*
 import jetbrains.livemap.entities.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
@@ -83,9 +80,7 @@ class LiveMap(
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
-    private val myFeatureLevel: FeatureLevel?,
-    private val myParent: MapRegion?,
-    private val myGeocodingService: GeocodingService
+    private val myGeocodingProvider: GeocodingProvider
     ) : BaseLiveMap() {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
@@ -171,9 +166,9 @@ class LiveMap(
                 CameraInputSystem(componentManager),
                 CameraUpdateDetectionSystem(componentManager),
 
-                RegionIdGeocodingSystem(componentManager, myGeocodingService, myFeatureLevel, myParent),
-                CentroidGeocodingSystem(componentManager, myGeocodingService),
-                BBoxGeocodingSystem(componentManager, myGeocodingService),
+                RegionIdGeocodingSystem(componentManager, myGeocodingProvider),
+                CentroidGeocodingSystem(componentManager, myGeocodingProvider),
+                BBoxGeocodingSystem(componentManager, myGeocodingProvider),
 
                 ApplyPointSystem(componentManager),
 

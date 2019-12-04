@@ -59,8 +59,8 @@ class BarsFactory(
             .asSequence()
             .mapNotNull(ChartSource::values)
             .flatten()
-            .maxBy(::abs)
-            ?.run(::abs)
+            .map(::abs)
+            .max()
             ?: error("Failed to calculate maxAbsValue.")
 
         val result = ArrayList<EcsEntity>()

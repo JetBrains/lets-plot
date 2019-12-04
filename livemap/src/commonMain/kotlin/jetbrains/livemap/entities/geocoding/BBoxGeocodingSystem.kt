@@ -6,9 +6,7 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.LIMIT
-import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
-import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -16,25 +14,18 @@ import jetbrains.livemap.entities.regions.RegionFragmentsComponent
 
 class BBoxGeocodingSystem(
     componentManager: EcsComponentManager,
-    private val myGeocodingService: GeocodingService
+    private val myGeocodingProvider: GeocodingProvider
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val geocodedRegions = getMutableEntities(BBOX_COMPONENTS)
-
-        val regionIds = geocodedRegions
-            .map { it.get<RegionIdComponent>().regionId }
+        val regionIds = getEntities(BBOX_COMPONENTS)
+            .map { it.regionId }
             .distinct()
+            .toList()
 
         if (regionIds.isEmpty()) return
 
-        val request = ExplicitRequestBuilder()
-            .setIds(regionIds)
-            .setFeatures(listOf(LIMIT))
-            .build()
-
-        myGeocodingService
-            .execute(request)
+        myGeocodingProvider.featuresByRegionIds(regionIds, listOf(LIMIT))
             .map(::parseBBoxMap)
     }
 
