@@ -35,7 +35,7 @@ private val LOG = KotlinLogging.logger {}
 private val DEF_PLOT_SIZE = DoubleVector(500.0, 400.0)
 private val DEF_LIVE_MAP_SIZE = DoubleVector(800.0, 600.0)
 
-private const val FIT_IN_WIDTH = true
+private const val FIT_IN_WIDTH = false
 private const val ASPECT_RATIO = 3.0 / 2.0   // TODO: theme
 
 /**
