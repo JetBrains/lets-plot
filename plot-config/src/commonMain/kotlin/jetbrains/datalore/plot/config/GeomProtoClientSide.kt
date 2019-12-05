@@ -9,19 +9,21 @@ import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromLayerOptions
 
 class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
-    private val preferredCoordinateSystem: jetbrains.datalore.plot.builder.coord.CoordProvider? = when (geomKind) {
+    private val preferredCoordinateSystem: CoordProvider? = when (geomKind) {
         GeomKind.TILE,
         GeomKind.CONTOUR,
         GeomKind.CONTOURF,
         GeomKind.DENSITY2D,
         GeomKind.DENSITY2DF,
         GeomKind.RASTER,
-        GeomKind.IMAGE -> jetbrains.datalore.plot.builder.coord.CoordProviders.fixed(1.0)
+        GeomKind.IMAGE -> CoordProviders.fixed(1.0)
 
-        GeomKind.MAP -> jetbrains.datalore.plot.builder.coord.CoordProviders.map()
+        GeomKind.MAP -> CoordProviders.map()
 
         else -> null
     }
@@ -30,7 +32,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
         return preferredCoordinateSystem != null
     }
 
-    fun preferredCoordinateSystem(): jetbrains.datalore.plot.builder.coord.CoordProvider {
+    fun preferredCoordinateSystem(): CoordProvider {
         return preferredCoordinateSystem!!
     }
 
@@ -50,15 +52,11 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom.setOutlierSize(opts.getDouble(Option.Geom.BoxplotOutlier.SIZE))
                 geom
             }
+
             GeomKind.LIVE_MAP -> {
                 return GeomProvider.livemap(parseFromLayerOptions(opts))
             }
-//            GeomKind.JITTER -> return GeomProvider.jitter(
-//                PosProvider.jitter(
-//                    opts.getDouble(Option.Geom.Jitter.WIDTH),
-//                    opts.getDouble(Option.Geom.Jitter.HEIGHT)
-//                )
-//            )
+
             GeomKind.JITTER -> return GeomProvider.jitter()
 
             GeomKind.STEP -> return GeomProvider.step {
