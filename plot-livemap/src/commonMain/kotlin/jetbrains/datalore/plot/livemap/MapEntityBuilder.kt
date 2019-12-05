@@ -123,26 +123,24 @@ internal class MapEntityBuilder {
     }
 
     fun toPointBuilder(): (PointBuilder.() -> Unit)? {
-        return point?.let {
-            {
-                index = this@MapEntityBuilder.index
-                this@MapEntityBuilder.mapId?.let { mapId = it }
-                point = it
-                label = this@MapEntityBuilder.label
-                animation = this@MapEntityBuilder.animation
-                shape = this@MapEntityBuilder.shape
-                radius = this@MapEntityBuilder.radius
-                fillColor = this@MapEntityBuilder.fillColor
-                strokeColor = this@MapEntityBuilder.strokeColor
-                strokeWidth = this@MapEntityBuilder.strokeWidth
-            }
+        return {
+            index = this@MapEntityBuilder.index
+            mapId =this@MapEntityBuilder.mapId
+            point = this@MapEntityBuilder.point
+            label = this@MapEntityBuilder.label
+            animation = this@MapEntityBuilder.animation
+            shape = this@MapEntityBuilder.shape
+            radius = this@MapEntityBuilder.radius
+            fillColor = this@MapEntityBuilder.fillColor
+            strokeColor = this@MapEntityBuilder.strokeColor
+            strokeWidth = this@MapEntityBuilder.strokeWidth
         }
     }
 
     fun createPolygonConfigurator(): PolygonsBuilder.() -> Unit {
         return {
             index = this@MapEntityBuilder.index
-            this@MapEntityBuilder.mapId?.let { mapId = it }
+            mapId = this@MapEntityBuilder.mapId
 
             multiPolygon = this@MapEntityBuilder.geometry
 
@@ -157,7 +155,6 @@ internal class MapEntityBuilder {
         return geometry?.let {
             {
                 index = this@MapEntityBuilder.index
-                this@MapEntityBuilder.mapId?.let { mapId = it }
 
                 multiPolygon = it
 
@@ -173,52 +170,47 @@ internal class MapEntityBuilder {
     }
 
     fun toLineBuilder(): (LineBuilder.() -> Unit)? {
-        return point?.let {
-            {
-                index = this@MapEntityBuilder.index
-                this@MapEntityBuilder.mapId?.let { mapId = it }
-                point = it
-                lineDash = this@MapEntityBuilder.lineDash
-                strokeColor = this@MapEntityBuilder.strokeColor
-                strokeWidth = this@MapEntityBuilder.strokeWidth
-            }
+        return {
+            index = this@MapEntityBuilder.index
+            mapId = this@MapEntityBuilder.mapId
+            point = this@MapEntityBuilder.point
+            lineDash = this@MapEntityBuilder.lineDash
+            strokeColor = this@MapEntityBuilder.strokeColor
+            strokeWidth = this@MapEntityBuilder.strokeWidth
         }
     }
 
     fun toChartBuilder(): (ChartSource.() -> Unit)? {
-        return point?.let {
-            {
-                point = it
+        return {
+            mapId = this@MapEntityBuilder.mapId
+            point = this@MapEntityBuilder.point
 
-                radius = this@MapEntityBuilder.radius
+            radius = this@MapEntityBuilder.radius
 
-                strokeColor = this@MapEntityBuilder.strokeColor
-                strokeWidth = this@MapEntityBuilder.strokeWidth
+            strokeColor = this@MapEntityBuilder.strokeColor
+            strokeWidth = this@MapEntityBuilder.strokeWidth
 
-                indices = this@MapEntityBuilder.indices
-                values = this@MapEntityBuilder.myValueArray
-                colors = this@MapEntityBuilder.colorArray
-            }
+            indices = this@MapEntityBuilder.indices
+            values = this@MapEntityBuilder.myValueArray
+            colors = this@MapEntityBuilder.colorArray
         }
     }
 
     fun toTextBuilder(): (TextBuilder.() -> Unit)? {
-        return point?.let {
-            {
-                index = this@MapEntityBuilder.index
-                this@MapEntityBuilder.mapId?.let { mapId = it }
-                point = it
-                fillColor = this@MapEntityBuilder.fillColor
-                strokeColor = this@MapEntityBuilder.strokeColor
-                strokeWidth = this@MapEntityBuilder.strokeWidth
-                label = this@MapEntityBuilder.label
-                size = this@MapEntityBuilder.size
-                family = this@MapEntityBuilder.family
-                fontface = this@MapEntityBuilder.fontface
-                hjust = this@MapEntityBuilder.hjust
-                vjust = this@MapEntityBuilder.vjust
-                angle = this@MapEntityBuilder.angle
-            }
+        return {
+            index = this@MapEntityBuilder.index
+            mapId =this@MapEntityBuilder.mapId
+            point = this@MapEntityBuilder.point
+            fillColor = this@MapEntityBuilder.fillColor
+            strokeColor = this@MapEntityBuilder.strokeColor
+            strokeWidth = this@MapEntityBuilder.strokeWidth
+            label = this@MapEntityBuilder.label
+            size = this@MapEntityBuilder.size
+            family = this@MapEntityBuilder.family
+            fontface = this@MapEntityBuilder.fontface
+            hjust = this@MapEntityBuilder.hjust
+            vjust = this@MapEntityBuilder.vjust
+            angle = this@MapEntityBuilder.angle
         }
     }
 
