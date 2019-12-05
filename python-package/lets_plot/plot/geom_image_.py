@@ -39,7 +39,7 @@ def _scaler_0_255_byte(v):
     return int(v) % 256
 
 
-def geom_image(image_data, norm=None, vmin=None, vmax=None, to_png=False):
+def geom_image(image_data, norm=None, vmin=None, vmax=None):
     """
     Displays image specified by ndarray with shape (n, m) or (n, m, 3) or (n, m, 4).
     This geom is not as flexible as geom_raster or geom_tile but vastly superior in the terms of
@@ -82,7 +82,9 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None, to_png=False):
     >>> image = np.random.choice([0.0, 1.0], [10, 100, 3])
     >>> ggplot() + geom_image(image)
     """
-    if to_png and png == None:
+
+    to_png=True # ex-parameter
+    if png == None:
         raise Exception("pypng is not installed")
 
     if not is_ndarray(image_data):
