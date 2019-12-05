@@ -12,7 +12,6 @@ import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.geocoding.RegionIdComponent
-import jetbrains.livemap.entities.geocoding.regionId
 
 object Utils {
     fun entityName(fragmentKey: FragmentKey): String {
@@ -36,7 +35,7 @@ object Utils {
             }
 
             for (entity in myComponentManager.getEntities(RegionIdComponent::class)) {
-                if (entity.regionId == regionId) {
+                if (entity.get<RegionIdComponent>().regionId == regionId) {
                     myRegionIndex.put(regionId, entity.id)
                     return entity
                 }

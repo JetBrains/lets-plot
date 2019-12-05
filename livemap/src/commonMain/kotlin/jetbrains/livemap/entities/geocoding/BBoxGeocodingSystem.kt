@@ -19,23 +19,23 @@ class BBoxGeocodingSystem(
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val regionIds = getEntities(BBOX_COMPONENTS)
-            .map { it.regionId }
+            .map { it.get<RegionIdComponent>().regionId }
             .distinct()
             .toList()
 
         if (regionIds.isEmpty()) return
 
-        myGeocodingProvider.featuresByRegionIds(regionIds, listOf(LIMIT))
+        myGeocodingProvider
+            .featuresByRegionIds(regionIds, listOf(LIMIT))
             .map(::parseBBoxMap)
     }
 
-    private fun parseBBoxMap(features: List<GeocodedFeature>) {
-        val bboxById = getGeocodingDataMap(features, GeocodedFeature::limit)
-
+    private fun parseBBoxMap(features: Map<String, GeocodedFeature>) {
         getMutableEntities(BBOX_COMPONENTS).forEach { entity ->
-            bboxById[entity.regionId]?.let { bbox ->
-                entity.add(RegionBBoxComponent(bbox))
-            }
+            features[entity.get<RegionIdComponent>().regionId]
+                ?.limit
+                ?.run(::RegionBBoxComponent)
+                ?.run(entity::add)
         }
     }
 

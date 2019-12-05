@@ -5,7 +5,6 @@
 
 package jetbrains.livemap.entities.geocoding
 
-import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -29,13 +28,11 @@ class RegionIdGeocodingSystem(
 
         requested.forEach { it.add(WaitingGeocodingComponent()) }
 
-        myGeocodingProvider.getRegionsIdByNames(names)
-            .map {
-                getGeocodingDataMap(it, GeocodedFeature::id).let { regionIds ->
-                    getMutableEntities(GEOCODED_FEATURE_COMPONENTS).forEach { entity ->
-                        entity.add(RegionIdComponent(regionIds[entity.get<MapIdComponent>().mapId]!!))
-                        entity.remove<MapIdComponent>()
-                    }
+        myGeocodingProvider.geocodeRegions(names)
+            .map { regionIdByNames  ->
+                getMutableEntities(GEOCODED_FEATURE_COMPONENTS).forEach { entity ->
+                    entity.add(RegionIdComponent(regionIdByNames.getValue(entity.get<MapIdComponent>().mapId)))
+                    entity.remove<MapIdComponent>()
                 }
             }
     }

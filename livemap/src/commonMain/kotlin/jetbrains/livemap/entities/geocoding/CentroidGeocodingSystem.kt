@@ -6,7 +6,6 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.datalore.base.projectionGeometry.reinterpret
-import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.CENTROID
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 import jetbrains.livemap.LiveMapContext
@@ -27,7 +26,7 @@ class CentroidGeocodingSystem(
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val regionIds = getEntities(CENTROID_COMPONENTS)
-            .map { it.regionId }
+            .map { it.get<RegionIdComponent>().regionId }
             .distinct()
             .toList()
 
@@ -38,14 +37,15 @@ class CentroidGeocodingSystem(
             .map(::parseCentroidMap)
     }
 
-    private fun parseCentroidMap(features: List<GeocodedFeature>) {
-        val centroidsById = getGeocodingDataMap(features, GeocodedFeature::centroid)
+    private fun parseCentroidMap(features: Map<String, GeocodedFeature>) {
 
         getMutableEntities(CENTROID_COMPONENTS).forEach { entity ->
-            centroidsById[entity.regionId]?.let { coord ->
-                entity.add(LonLatComponent(coord.reinterpret()))
-                entity.remove<CentroidComponent>()
-            }
+            features[entity.get<RegionIdComponent>().regionId]
+                ?.centroid
+                ?.let { coord ->
+                    entity.add(LonLatComponent(coord.reinterpret()))
+                    entity.remove<CentroidComponent>()
+                }
         }
     }
 

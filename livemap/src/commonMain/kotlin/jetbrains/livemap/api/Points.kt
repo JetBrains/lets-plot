@@ -19,15 +19,10 @@ import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.LonLatComponent
-import jetbrains.livemap.entities.geocoding.CentroidComponent
-import jetbrains.livemap.entities.geocoding.MapIdComponent
 import jetbrains.livemap.entities.placement.*
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PointRenderer
-import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.World
 
 @LiveMapDsl
 class Points(
@@ -105,10 +100,10 @@ class PointBuilder(
                     + ShapeComponent().apply { shape = this@PointBuilder.shape }
                     + createStyle()
                     + if (pointScaling) {
-                        WorldDimensionComponent(explicitVec<World>(size, size))
+                        WorldDimensionComponent(explicitVec(size, size))
                     } else {
                         ScreenDimensionComponent().apply {
-                            dimension = explicitVec<Client>(size, size)
+                            dimension = explicitVec(size, size)
                         }
                     }
                     + WorldOriginComponent(worldPoint)

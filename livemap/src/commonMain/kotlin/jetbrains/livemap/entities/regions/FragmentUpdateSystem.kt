@@ -16,7 +16,6 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.geocoding.RegionBBoxComponent
 import jetbrains.livemap.entities.geocoding.RegionIdComponent
-import jetbrains.livemap.entities.geocoding.regionId
 import jetbrains.livemap.tiles.components.CellStateComponent
 
 class FragmentUpdateSystem(
@@ -44,7 +43,7 @@ class FragmentUpdateSystem(
 
         for (regionEntity in getEntities(REGION_ENTITY_COMPONENTS)) {
             val bbox = regionEntity.get<RegionBBoxComponent>().bbox
-            val regionId = regionEntity.regionId
+            val regionId = regionEntity.get<RegionIdComponent>().regionId
 
             for (quad in quadsToAdd) {
                 if (!emptyFragments.contains(regionId, quad) && bbox.intersect(quad)) {

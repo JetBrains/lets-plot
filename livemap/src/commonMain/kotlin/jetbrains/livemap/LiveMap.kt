@@ -14,9 +14,6 @@ import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
-import jetbrains.gis.geoprotocol.FeatureLevel
-import jetbrains.gis.geoprotocol.GeocodingService
-import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.DevParams.Companion.COMPUTATION_FRAME_TIME
 import jetbrains.livemap.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
 import jetbrains.livemap.DevParams.Companion.DEBUG_GRID

@@ -16,7 +16,7 @@ class GeocodingProvider(
     private val myParent: MapRegion?
 ) {
 
-    fun getRegionsIdByNames(names: List<String>): Async<List<GeocodedFeature>> {
+    fun geocodeRegions(names: List<String>): Async<Map<String, String>> {
         return GeoRequestBuilder.GeocodingRequestBuilder()
             .setLevel(myFeatureLevel)
             .addQuery(
@@ -27,13 +27,15 @@ class GeocodingProvider(
             )
             .build()
             .run(myGeocodingService::execute)
+            .map { it.associateBy(GeocodedFeature::request, GeocodedFeature::id) }
     }
 
-    fun featuresByRegionIds(regionIds: List<String>, featureOptions: List<FeatureOption>): Async<List<GeocodedFeature>> {
+    fun featuresByRegionIds(regionIds: List<String>, featureOptions: List<FeatureOption>): Async<Map<String, GeocodedFeature>> {
         return GeoRequestBuilder.ExplicitRequestBuilder()
             .setIds(regionIds)
             .setFeatures(featureOptions)
             .build()
             .run(myGeocodingService::execute)
+            .map { list -> list.associateBy(GeocodedFeature::request) { it } }
     }
 }

@@ -9,7 +9,6 @@ import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.geocoding.CentroidComponent
 import jetbrains.livemap.entities.geocoding.LonLatComponent

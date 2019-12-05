@@ -7,14 +7,10 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.CentroidComponent
-import jetbrains.livemap.entities.geocoding.LonLatComponent
-import jetbrains.livemap.entities.geocoding.MapIdComponent
 import jetbrains.livemap.entities.placement.*
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.BarRenderer
 import jetbrains.livemap.projections.Client
-import jetbrains.livemap.projections.LonLatPoint
 import kotlin.math.abs
 
 @LiveMapDsl
