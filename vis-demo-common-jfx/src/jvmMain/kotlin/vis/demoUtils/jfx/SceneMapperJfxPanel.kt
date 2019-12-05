@@ -30,17 +30,17 @@ class SceneMapperJfxPanel(
 
             Preconditions.checkArgument(!svg.isAttached(), "SvgSvgElement must be unattached")
             SvgNodeContainer(svg)  // attach root
-        }
 
-        svg.addListener(object : SvgElementListener {
-            override fun onAttrSet(event: SvgAttributeEvent<*>) {
-                if (SvgConstants.HEIGHT.equals(event.attrSpec.name, ignoreCase = true) ||
-                    SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true)
-                ) {
-                    runOnFxThread { revalidateScene() }
+            svg.addListener(object : SvgElementListener {
+                override fun onAttrSet(event: SvgAttributeEvent<*>) {
+                    if (SvgConstants.HEIGHT.equals(event.attrSpec.name, ignoreCase = true) ||
+                        SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true)
+                    ) {
+                        runOnFxThread { revalidateScene() }
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     override fun createSceneParent(): Parent {
