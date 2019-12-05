@@ -101,4 +101,8 @@ setup(name='lets-plot',
       cmdclass=dict(
           update_js=UpdateJsCommand,
       ),
+
+      install_requires=[
+          'pypng',                        # needed for geom_image
+      ],
       )

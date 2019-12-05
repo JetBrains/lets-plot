@@ -33,7 +33,7 @@ or just run shell command (if the changes are only in the python code):
 
 `pip uninstall lets-plot`
 
-`pip install --no-index --find-links=dist/ lets-plot`
+`pip install --no-index --find-links=dist/ lets-plot --no-deps`
  
 ## Test in Jupyther
 
