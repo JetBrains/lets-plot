@@ -19,8 +19,12 @@ import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
+import jetbrains.livemap.entities.placement.ScreenLoopComponent
+import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
+import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.rendering.*
+import jetbrains.livemap.entities.rendering.Renderers.PathRenderer
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil.transformMultiPolygon
@@ -70,8 +74,6 @@ class PathBuilder(
     var speed: Double = 0.0
     var flow: Double = 0.0
 
-    var geodesic: Boolean = false
-
     fun build(): EcsEntity? {
         val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
 
@@ -79,12 +81,14 @@ class PathBuilder(
             .run { GeometryUtil.bbox(this) }
             ?.let { bbox ->
                 val entity = myFactory
-                    .createMapEntity(bbox.origin, Renderers.PathRenderer(), "map_ent_path")
+                    .createMapEntity("map_ent_path")
                     .addComponents {
-                        + WorldGeometryComponent().apply {
-                            geometry = coord
-                        }
+                        + RendererComponent(PathRenderer())
+                        + WorldOriginComponent(bbox.origin)
+                        + WorldGeometryComponent().apply { geometry = coord }
                         + WorldDimensionComponent(bbox.dimension)
+                        + ScreenLoopComponent()
+                        + ScreenOriginComponent()
                         + StyleComponent().apply {
                             setStrokeColor(this@PathBuilder.strokeColor)
                             strokeWidth = this@PathBuilder.strokeWidth
@@ -112,13 +116,11 @@ class PathBuilder(
     }
 
     private fun EcsEntity.addAnimationComponent(block: AnimationComponent.() -> Unit): EcsEntity {
-        this.componentManager.addComponent(this, AnimationComponent().apply(block))
-        return this
+        return add(AnimationComponent().apply(block))
     }
 
     private  fun EcsEntity.addGrowingPathEffectComponent(block: GrowingPathEffectComponent.() -> Unit): EcsEntity {
-        this.componentManager.addComponent(this, GrowingPathEffectComponent().apply(block))
-        return this
+        return add(GrowingPathEffectComponent().apply(block))
     }
 }
 

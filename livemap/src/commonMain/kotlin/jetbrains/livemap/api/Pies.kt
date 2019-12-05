@@ -10,15 +10,17 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
+import jetbrains.livemap.entities.placement.ScreenLoopComponent
+import jetbrains.livemap.entities.placement.ScreenOriginComponent
+import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.rendering.*
-import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.entities.rendering.Renderers.PieSectorRenderer
 
 @LiveMapDsl
 class Pies(
-    factory: MapEntityFactory,
-    mapProjection: MapProjection
+    factory: MapEntityFactory
 ) {
-    val piesFactory = PiesFactory(factory, mapProjection)
+    val piesFactory = PiesFactory(factory)
 }
 
 fun LayersBuilder.pies(block: Pies.() -> Unit) {
@@ -30,8 +32,7 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
         }
 
     Pies(
-        MapEntityFactory(layerEntity),
-        mapProjection
+        MapEntityFactory(layerEntity)
     ).apply {
         block()
         piesFactory.produce()
@@ -44,8 +45,7 @@ fun Pies.pie(block: ChartSource.() -> Unit) {
 
 @LiveMapDsl
 class PiesFactory(
-    private val myEntityFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val myFactory: MapEntityFactory
 ) {
     private val myItems = ArrayList<ChartSource>()
 
@@ -60,31 +60,39 @@ class PiesFactory(
     private fun splitMapPieChart(source: ChartSource): List<EcsEntity> {
         val result = ArrayList<EcsEntity>()
         val angles = transformValues2Angles(source.values)
-        var startAngle = 0.0
+        var currentAngle = 0.0
 
         for (i in angles.indices) {
-            val endAngle = startAngle + angles[i]
+            // Do not inline - copy for closure.
+            val startAngle = currentAngle
+            val endAngle = currentAngle + angles[i]
             result.add(
-                myEntityFactory
-                    .createMapEntity(
-                        myMapProjection.project(source.point),
-                        Renderers.PieSectorRenderer(), "map_ent_pie_sector"
-                    )
-                    .addComponents {
-                        + PieSectorComponent().apply {
-                            this.radius = source.radius
-                            this.startAngle = startAngle
-                            this.endAngle = endAngle
-                        }
-                        + StyleComponent().apply {
-                            setFillColor(source.colors[i])
-                            setStrokeColor(source.strokeColor)
-                            setStrokeWidth(source.strokeWidth)
-                        }
-                        + ScreenDimensionComponent()
+                when {
+                    source.point != null ->
+                        myFactory.createStaticEntity("map_ent_s_pie_sector", source.point!!)
+                    source.mapId != null ->
+                        myFactory.createDynamicEntity("map_ent_d_pie_sector_${source.mapId}", source.mapId!!)
+                    else ->
+                        error("Can't create pieSector entity. [point] and [mapId] is null.")
+                }.setInitializer { worldPoint ->
+                    + RendererComponent(PieSectorRenderer())
+                    + WorldOriginComponent(worldPoint)
+                    + PieSectorComponent().apply {
+                        this.radius = source.radius
+                        this.startAngle = startAngle
+                        this.endAngle = endAngle
                     }
+                    + StyleComponent().apply {
+                        setFillColor(source.colors[i])
+                        setStrokeColor(source.strokeColor)
+                        setStrokeWidth(source.strokeWidth)
+                    }
+                    + ScreenDimensionComponent()
+                    + ScreenLoopComponent()
+                    + ScreenOriginComponent()
+                }
             )
-            startAngle = endAngle
+            currentAngle = endAngle
         }
 
         return result

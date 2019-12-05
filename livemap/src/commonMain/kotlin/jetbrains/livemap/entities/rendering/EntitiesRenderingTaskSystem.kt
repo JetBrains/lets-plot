@@ -35,7 +35,7 @@ class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
                 }
                     ?: layerCtx.scale(1.0, 1.0)
 
-                for (layerEntity in getLayerEntities(layer)) {
+                for (layerEntity in getLayerEntities(layer).filter { it.tryGet<ScreenLoopComponent>() != null }) {
                     val renderer = layerEntity.get<RendererComponent>().renderer
                     layerEntity.get<ScreenLoopComponent>().origins.forEach { origin ->
                         context.mapRenderContext.draw(
@@ -55,10 +55,11 @@ class EntitiesRenderingTaskSystem(componentManager: EcsComponentManager) :
         }
     }
 
+    private fun getLayerEntities(entity: EcsEntity): Sequence<EcsEntity> {
+        return getEntitiesById(entity.get<LayerEntitiesComponent>().entities)
+    }
+
     companion object {
-        fun getLayerEntities(entity: EcsEntity): Sequence<EcsEntity> {
-            return entity.componentManager.getEntitiesById(entity.get<LayerEntitiesComponent>().entities)
-        }
 
         private val DIRTY_LAYERS = listOf(
             DirtyCanvasLayerComponent::class,

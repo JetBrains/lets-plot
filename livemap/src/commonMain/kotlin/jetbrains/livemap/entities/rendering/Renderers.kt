@@ -54,7 +54,7 @@ object Renderers {
                 .run { times(entity.tryGet<TransformComponent>()?.scale ?: 1.0) }
 
             ctx.translate(-radius, -radius)
-            renderFeature(entity.get(), ctx, radius, entity.get<PointComponent>().shape)
+            renderFeature(entity.get(), ctx, radius, entity.get<ShapeComponent>().shape)
         }
     }
 
@@ -154,7 +154,7 @@ object Renderers {
 
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val style = entity.get<StyleComponent>()
-            val textSpec = entity.get<TextComponent>().textSpec
+            val textSpec = entity.get<TextSpecComponent>().textSpec
 
             ctx.save()
             ctx.rotate(textSpec.angle)

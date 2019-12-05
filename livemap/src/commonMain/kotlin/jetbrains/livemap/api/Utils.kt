@@ -5,6 +5,19 @@
 
 package jetbrains.livemap.api
 
+import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.livemap.core.ecs.ComponentsList
+import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geocoding.CentroidComponent
+import jetbrains.livemap.entities.geocoding.LonLatComponent
+import jetbrains.livemap.entities.geocoding.MapIdComponent
+import jetbrains.livemap.entities.geocoding.PointInitializerComponent
+import jetbrains.livemap.projections.LonLatPoint
+import jetbrains.livemap.projections.World
+import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projections.WorldRectangle
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -32,4 +45,68 @@ private fun calculatePercent(value: Double, maxAbsValue: Double): Double {
         return percent
     }
     return if (percent >= 0) MIN_PERCENT else -MIN_PERCENT
+}
+
+fun createLineGeometry(point: WorldPoint, horizontal: Boolean, mapRect: WorldRectangle): MultiPolygon<World> {
+    return if (horizontal) {
+        listOf(
+            point.transform(
+                newX = { mapRect.scalarLeft }
+            ),
+            point.transform(
+                newX = { mapRect.scalarRight }
+            )
+
+        )
+    } else {
+        listOf(
+            point.transform(
+                newY = { mapRect.scalarTop }
+            ),
+            point.transform(
+                newY = { mapRect.scalarBottom }
+            )
+        )
+    }
+        .run { listOf(Ring(this)) }
+        .run { listOf(Polygon(this)) }
+        .run { MultiPolygon(this) }
+}
+
+fun createLineBBox(
+    point: WorldPoint,
+    strokeWidth: Double,
+    horizontal: Boolean,
+    mapRect: WorldRectangle
+): WorldRectangle {
+    return if (horizontal) {
+        WorldRectangle(
+            explicitVec(mapRect.left, point.y - strokeWidth / 2),
+            explicitVec(mapRect.width, strokeWidth)
+        )
+    } else {
+        WorldRectangle(
+            explicitVec(point.x - strokeWidth / 2, mapRect.top),
+            explicitVec(strokeWidth, mapRect.height)
+        )
+    }
+}
+
+fun MapEntityFactory.createStaticEntity(name: String, point: LonLatPoint): EcsEntity {
+
+    return createMapEntity(name)
+        .add(LonLatComponent(point))
+}
+
+fun MapEntityFactory.createDynamicEntity(name: String, mapId: String): EcsEntity {
+
+    return createMapEntity(name)
+        .addComponents {
+            + CentroidComponent()
+            + MapIdComponent(mapId)
+        }
+}
+
+internal fun EcsEntity.setInitializer(block: ComponentsList.(worldPoint: WorldPoint) -> Unit): EcsEntity {
+    return add(PointInitializerComponent(block))
 }

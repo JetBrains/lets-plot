@@ -21,11 +21,11 @@ class LayerEntitiesComponent : EcsComponent {
     }
 }
 
-class PointComponent : EcsComponent {
+class ShapeComponent : EcsComponent {
     var shape: Int = 0
 }
 
-class TextComponent : EcsComponent {
+class TextSpecComponent : EcsComponent {
     lateinit var textSpec: TextSpec
 }
 

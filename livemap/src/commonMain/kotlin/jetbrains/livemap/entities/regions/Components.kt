@@ -127,12 +127,9 @@ class DownloadingFragmentsComponent : EcsComponent {
     }
 }
 
-class FragmentComponent(val fragmentKey: FragmentKey) : EcsComponent {
-    val quad: QuadKey<LonLat> get() = fragmentKey.quadKey
-}
+class FragmentComponent(val fragmentKey: FragmentKey) : EcsComponent
 
-class RegionComponent : EcsComponent {
-    var id: String? = null
+class RegionFragmentsComponent : EcsComponent {
     private val myFragmentEntities = HashSet<EcsEntity>()
 
     var fragments: Collection<EcsEntity>

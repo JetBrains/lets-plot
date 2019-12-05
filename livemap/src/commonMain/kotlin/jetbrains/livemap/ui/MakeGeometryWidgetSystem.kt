@@ -51,7 +51,7 @@ class MakeGeometryWidgetSystem(
     private fun createVisualEntities(lonlat: LonLatPoint, widgetLayer: EcsEntity) {
         val factory = MapEntityFactory(widgetLayer)
 
-        PointBuilder(factory, myMapProjection)
+        PointBuilder(factory)
             .apply {
                 point = lonlat
                 strokeColor = DARK_ORANGE

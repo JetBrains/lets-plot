@@ -13,16 +13,13 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.placement.ScreenOffsetComponent
+import jetbrains.livemap.entities.placement.*
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.TextRenderer
-import jetbrains.livemap.projections.MapProjection
 
 @LiveMapDsl
 class Texts(
     val factory: MapEntityFactory,
-    val mapProjection: MapProjection,
     val textMeasurer: TextMeasurer
 )
 
@@ -36,27 +33,23 @@ fun LayersBuilder.texts(block: Texts.() -> Unit) {
 
     Texts(
         MapEntityFactory(layerEntity),
-        mapProjection,
         textMeasurer
     ).apply(block)
 }
 
 fun Texts.text(block: TextBuilder.() -> Unit) {
-    TextBuilder(factory, mapProjection)
+    TextBuilder(factory)
         .apply(block)
         .build(textMeasurer)
 }
 
 @LiveMapDsl
 class TextBuilder(
-    private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val myFactory: MapEntityFactory
 ) {
     var index: Int = 0
-    var mapId: String = ""
-    var regionId: String = ""
-
-    lateinit var point: Vec<LonLat>
+    var mapId: String? = null
+    var point: Vec<LonLat>? = null
 
     var fillColor: Color = Color.BLACK
     var strokeColor: Color = Color.TRANSPARENT
@@ -75,20 +68,31 @@ class TextBuilder(
     ): EcsEntity {
         val textSpec = createTextSpec(textMeasurer)
 
-        return myFactory
-            .createMapEntity(myMapProjection.project(point), TextRenderer(), "map_ent_text")
-            .addComponents {
+        return when {
+            point != null ->
+                myFactory.createStaticEntity("map_ent_s_text", point!!)
+            mapId != null ->
+                myFactory.createDynamicEntity("map_ent_d_text_$mapId", mapId!!)
+            else ->
+                error("Can't create text entity. [point] and [mapId] is null.")
+        }
+            .setInitializer { worldPoint ->
+                + WorldOriginComponent(worldPoint)
+                + RendererComponent(TextRenderer())
+                + ScreenLoopComponent()
+                + ScreenOriginComponent()
+                + TextSpecComponent().apply { this.textSpec = textSpec }
+                + StyleComponent().apply {
+                    setFillColor(this@TextBuilder.fillColor)
+                    setStrokeColor(this@TextBuilder.strokeColor)
+                    setStrokeWidth(this@TextBuilder.strokeWidth)
+                }
+
                 + ScreenOffsetComponent().apply {
                     offset = textSpec.dimension * -0.5
                 }
                 + ScreenDimensionComponent().apply {
                     dimension = textSpec.dimension
-                }
-                + TextComponent().apply { this.textSpec = textSpec }
-                + StyleComponent().apply {
-                    setFillColor(this@TextBuilder.fillColor)
-                    setStrokeColor(this@TextBuilder.strokeColor)
-                    setStrokeWidth(this@TextBuilder.strokeWidth)
                 }
             }
     }

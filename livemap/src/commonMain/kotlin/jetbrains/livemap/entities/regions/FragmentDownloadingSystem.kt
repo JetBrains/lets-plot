@@ -27,7 +27,7 @@ class FragmentDownloadingSystem(
     private val myLock = Lock()
 
     override fun initImpl(context: LiveMapContext) {
-        createEntity("DownloadingFragments").addComponent(DownloadingFragmentsComponent())
+        createEntity("DownloadingFragments").add(DownloadingFragmentsComponent())
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {

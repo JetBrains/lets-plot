@@ -44,6 +44,7 @@ import jetbrains.livemap.core.rendering.layers.LayersRenderingSystem
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.effects.GrowingPath
+import jetbrains.livemap.entities.geocoding.*
 import jetbrains.livemap.entities.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.entities.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.entities.placement.WorldDimension2ScreenUpdateSystem
@@ -75,9 +76,9 @@ class LiveMap(
     private val myTileLoadingSystemBuilder: TileLoadingSystemFactory,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
-    private val myEmptinessChecker: EmptinessChecker,
-    private val myMapLocationConsumer: (DoubleRectangle) -> Unit
-) : BaseLiveMap() {
+    private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
+    private val myGeocodingProvider: GeocodingProvider
+    ) : BaseLiveMap() {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
     private var myInitialized: Boolean = false
@@ -162,6 +163,12 @@ class LiveMap(
                 CameraInputSystem(componentManager),
                 CameraUpdateDetectionSystem(componentManager),
 
+                RegionIdGeocodingSystem(componentManager, myGeocodingProvider),
+                CentroidGeocodingSystem(componentManager, myGeocodingProvider),
+                BBoxGeocodingSystem(componentManager, myGeocodingProvider),
+
+                ApplyPointSystem(componentManager),
+
                 ScaleUpdateSystem(componentManager),
 
                 // Service systems
@@ -180,7 +187,7 @@ class LiveMap(
                 DebugDataSystem(componentManager),
 
                 //Regions
-                FragmentUpdateSystem(componentManager, myEmptinessChecker),
+                FragmentUpdateSystem(componentManager),
                 FragmentDownloadingSystem(
                     myDevParams.read(FRAGMENT_ACTIVE_DOWNLOADS_LIMIT),
                     myFragmentProvider,

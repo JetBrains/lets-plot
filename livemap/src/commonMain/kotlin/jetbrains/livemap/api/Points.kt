@@ -19,13 +19,10 @@ import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.placement.WorldDimensionComponent
+import jetbrains.livemap.entities.placement.*
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PointRenderer
-import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.World
 
 @LiveMapDsl
 class Points(
@@ -62,21 +59,18 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
 }
 
 fun Points.point(block: PointBuilder.() -> Unit) {
-    PointBuilder(factory, mapProjection)
+    PointBuilder(factory)
         .apply(block)
         .build(pointScaling, animationBuilder)
 }
 
 @LiveMapDsl
 class PointBuilder(
-    private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
-    ) {
+    private val myFactory: MapEntityFactory
+) {
     var index: Int = 0
-    var mapId: String = ""
-    var regionId: String = ""
-
-    lateinit var point: Vec<LonLat>
+    var mapId: String? = null
+    var point: Vec<LonLat>? = null
 
     var radius: Double = 4.0
     var fillColor: Color = Color.WHITE
@@ -91,34 +85,45 @@ class PointBuilder(
         pointScaling: Boolean,
         animationBuilder: AnimationBuilder
     ): EcsEntity {
+
         val size = radius * 2.0
 
-        val entity = myFactory
-            .createMapEntity(myMapProjection.project(point), PointRenderer(), "map_ent_point")
-            .addComponents {
-                + PointComponent().apply { shape = this@PointBuilder.shape }
-                + createStyle()
-                + if (pointScaling) {
-                    WorldDimensionComponent(explicitVec<World>(size, size))
-                } else {
-                    ScreenDimensionComponent().apply {
-                        dimension = explicitVec<Client>(size, size)
+        return when {
+                point != null ->
+                    myFactory.createStaticEntity("map_ent_s_point", point!!)
+                mapId != null ->
+                    myFactory.createDynamicEntity("map_ent_d_point_$mapId", mapId!!)
+                else ->
+                    error("Can't create point entity. [point] and [mapId] is null.")
+            }.run {
+                setInitializer { worldPoint ->
+                    + ShapeComponent().apply { shape = this@PointBuilder.shape }
+                    + createStyle()
+                    + if (pointScaling) {
+                        WorldDimensionComponent(explicitVec(size, size))
+                    } else {
+                        ScreenDimensionComponent().apply {
+                            dimension = explicitVec(size, size)
+                        }
+                    }
+                    + WorldOriginComponent(worldPoint)
+                    + RendererComponent(PointRenderer())
+                    + ScreenLoopComponent()
+                    + ScreenOriginComponent()
+
+                    if (animation == 2) {
+                        val transformComponent = TransformComponent()
+                        val scaleAnimator = Animations.DoubleAnimator(0.0, 1.0) {
+                            transformComponent.scale = it
+                            ParentLayerComponent.tagDirtyParentLayer(this@run)
+                        }
+
+                        animationBuilder.addAnimator(scaleAnimator)
+
+                        + transformComponent
                     }
                 }
-            }
-
-        if (animation == 2) {
-            val transformComponent = TransformComponent()
-            val scaleAnimator = Animations.DoubleAnimator(0.0, 1.0) {
-                transformComponent.scale = it
-                ParentLayerComponent.tagDirtyParentLayer(entity)
-            }
-
-            animationBuilder.addAnimator(scaleAnimator)
-            entity.addComponents{ + transformComponent }
         }
-
-        return entity
     }
 
     private fun createStyle(): StyleComponent {

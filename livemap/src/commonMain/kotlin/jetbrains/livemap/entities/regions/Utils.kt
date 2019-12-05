@@ -11,6 +11,7 @@ import jetbrains.datalore.base.spatial.zoom
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.entities.geocoding.RegionIdComponent
 
 object Utils {
     fun entityName(fragmentKey: FragmentKey): String {
@@ -33,8 +34,8 @@ object Utils {
                 return myComponentManager.getEntityById(myRegionIndex[regionId] ?: error(""))
             }
 
-            for (entity in myComponentManager.getEntities(RegionComponent::class)) {
-                if (entity.get<RegionComponent>().id.equals(regionId)) {
+            for (entity in myComponentManager.getEntities(RegionIdComponent::class)) {
+                if (entity.get<RegionIdComponent>().regionId == regionId) {
                     myRegionIndex.put(regionId, entity.id)
                     return entity
                 }

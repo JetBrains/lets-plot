@@ -13,10 +13,13 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geocoding.MapIdComponent
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
+import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
-import jetbrains.livemap.entities.regions.RegionComponent
+import jetbrains.livemap.entities.placement.WorldOriginComponent
+import jetbrains.livemap.entities.regions.RegionFragmentsComponent
 import jetbrains.livemap.entities.regions.RegionRenderer
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PolygonRenderer
@@ -60,8 +63,7 @@ class PolygonsBuilder(
     private val myMapProjection: MapProjection
 ) {
     var index: Int = 0
-    var mapId: String = ""
-    var regionId: String? = null
+    var mapId: String? = null
 
     var lineDash: List<Double> = emptyList()
     var strokeColor: Color = Color.BLACK
@@ -73,23 +75,27 @@ class PolygonsBuilder(
     fun build(): EcsEntity? {
 
         return when {
-            multiPolygon != null -> createStaticEntity(myFactory, myMapProjection)
-            regionId != null -> createDynamicEntity(myFactory)
+            multiPolygon != null -> createStaticEntity()
+            mapId != null -> createDynamicEntity()
             else -> null
         }
     }
 
-    private fun createStaticEntity(factory: MapEntityFactory, mapProjection: MapProjection): EcsEntity {
+    private fun createStaticEntity(): EcsEntity {
         val geometry = multiPolygon!!
-            .run { ProjectionUtil.transformMultiPolygon(this, mapProjection::project) }
+            .run { ProjectionUtil.transformMultiPolygon(this, myMapProjection::project) }
 
         val bbox = GeometryUtil.bbox(geometry) ?: error("")
 
-        return factory
-            .createMapEntity(bbox.origin, PolygonRenderer(), "map_ent_s_polygon")
+        return myFactory
+            .createMapEntity("map_ent_s_polygon")
             .addComponents {
+                + RendererComponent(PolygonRenderer())
+                + WorldOriginComponent(bbox.origin)
                 + WorldGeometryComponent().apply { this.geometry = geometry }
                 + WorldDimensionComponent(bbox.dimension)
+                + ScreenLoopComponent()
+                + ScreenOriginComponent()
                 + ScaleComponent()
                 + StyleComponent().apply {
                     setFillColor(this@PolygonsBuilder.fillColor)
@@ -99,18 +105,20 @@ class PolygonsBuilder(
             }
     }
 
-    private fun createDynamicEntity(factory: MapEntityFactory): EcsEntity {
-        return factory
-            .createDynamicMapEntity("map_ent_d_polygon_" + this@PolygonsBuilder.regionId, RegionRenderer())
+    private fun createDynamicEntity(): EcsEntity {
+        return myFactory
+            .createMapEntity("map_ent_d_polygon_$mapId")
             .addComponents {
-                + RegionComponent().apply { id = this@PolygonsBuilder.regionId }
+                + MapIdComponent(mapId!!)
+                + RegionFragmentsComponent()
                 + StyleComponent().apply {
                     setFillColor(this@PolygonsBuilder.fillColor)
                     setStrokeColor(this@PolygonsBuilder.strokeColor)
                     setStrokeWidth(this@PolygonsBuilder.strokeWidth)
                 }
-            }.apply {
-                get<ScreenLoopComponent>().origins = listOf(Coordinates.ZERO_CLIENT_POINT)
+                + RendererComponent(RegionRenderer())
+                + ScreenLoopComponent().apply { origins = listOf(Coordinates.ZERO_CLIENT_POINT) }
+                + ScreenOriginComponent()
             }
     }
 }

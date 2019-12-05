@@ -8,7 +8,6 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
-import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.DevParams
 import jetbrains.livemap.LiveMapFactory
 import jetbrains.livemap.LiveMapLocation
@@ -34,11 +33,7 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
         return liveMapConfig {
             size = dimension
 
-            tileService = internalTiles {
-                theme = TileService.Theme.COLOR
-                host = "tiles.datalore.io"
-                port = null
-            }
+            tileService = internalTiles {}
 
             geocodingService = liveMapGeocoding {
                 host = "geo.datalore.io"

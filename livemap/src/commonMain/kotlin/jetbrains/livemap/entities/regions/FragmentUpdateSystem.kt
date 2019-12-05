@@ -5,18 +5,29 @@
 
 package jetbrains.livemap.entities.regions
 
+import jetbrains.datalore.base.projectionGeometry.intersects
+import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.entities.geocoding.RegionBBoxComponent
+import jetbrains.livemap.entities.geocoding.RegionIdComponent
 import jetbrains.livemap.tiles.components.CellStateComponent
 
-class FragmentUpdateSystem(componentManager: EcsComponentManager, private val myEmptinessChecker: EmptinessChecker) :
-    AbstractSystem<LiveMapContext>(componentManager) {
+class FragmentUpdateSystem(
+    componentManager: EcsComponentManager
+) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun initImpl(context: LiveMapContext) {
         createEntity("FragmentsChange")
-            .addComponent(ChangedFragmentsComponent())
-            .addComponent(EmptyFragmentsComponent())
+            .addComponents {
+                + ChangedFragmentsComponent()
+                + EmptyFragmentsComponent()
+            }
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -30,11 +41,12 @@ class FragmentUpdateSystem(componentManager: EcsComponentManager, private val my
         val fragmentsToAdd = ArrayList<FragmentKey>()
         val fragmentsToRemove = ArrayList<FragmentKey>()
 
-        for (regionEntity in getEntities(RegionComponent::class)) {
-            val regionId = regionEntity.get<RegionComponent>().id!!
+        for (regionEntity in getEntities(REGION_ENTITY_COMPONENTS)) {
+            val bbox = regionEntity.get<RegionBBoxComponent>().bbox
+            val regionId = regionEntity.get<RegionIdComponent>().regionId
 
             for (quad in quadsToAdd) {
-                if (!emptyFragments.contains(regionId, quad) && !myEmptinessChecker.test(regionId, quad)) {
+                if (!emptyFragments.contains(regionId, quad) && bbox.intersect(quad)) {
                     fragmentsToAdd.add(FragmentKey(regionId, quad))
                 }
             }
@@ -45,7 +57,28 @@ class FragmentUpdateSystem(componentManager: EcsComponentManager, private val my
                 }
             }
         }
+
         changedFragmentsComponent.setToAdd(fragmentsToAdd)
         changedFragmentsComponent.setToRemove(fragmentsToRemove)
+    }
+
+    private fun GeoRectangle.intersect(quadKey: QuadKey<LonLat>): Boolean {
+        val quadKeyRect = quadKey.computeRect()
+
+        splitByAntiMeridian().forEach { bbox ->
+            if (bbox.intersects(quadKeyRect)) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    companion object {
+        val REGION_ENTITY_COMPONENTS = listOf(
+            RegionIdComponent::class,
+            RegionBBoxComponent::class,
+            RegionFragmentsComponent::class
+        )
     }
 }

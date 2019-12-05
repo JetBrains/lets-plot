@@ -47,7 +47,7 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : LiveMapSystem(co
 
         val fragmentsCache = getSingleton<CachedFragmentsComponent>()
 
-        region.get<RegionComponent>().run {
+        region.get<RegionFragmentsComponent>().run {
             fragments = myPendingFragments[regionId]!!
                 .readyFragments()
                 .mapNotNull(fragmentsCache::get)

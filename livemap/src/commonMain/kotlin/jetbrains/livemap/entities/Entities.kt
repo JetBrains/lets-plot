@@ -14,46 +14,22 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.entities.placement.ScreenLoopComponent
-import jetbrains.livemap.entities.placement.ScreenOriginComponent
-import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
-import jetbrains.livemap.entities.rendering.Renderer
-import jetbrains.livemap.entities.rendering.RendererComponent
-import jetbrains.livemap.projections.WorldPoint
 
 object Entities {
 
     fun mapEntity(
-        componentManager: EcsComponentManager, worldPlacement: WorldPoint,
-        parentLayerComponent: ParentLayerComponent, renderer: Renderer, name: String
+        componentManager: EcsComponentManager,
+        parentLayerComponent: ParentLayerComponent,
+        name: String
     ): EcsEntity {
         return componentManager
-            .createEntity(name).addComponents {
+            .createEntity(name)
+            .addComponents {
                 + parentLayerComponent
-                + RendererComponent(renderer)
-                + WorldOriginComponent(worldPlacement)
                 + CameraListenerComponent()
                 + CenterChangedComponent()
                 + ZoomChangedComponent()
-                + ScreenLoopComponent()
-                + ScreenOriginComponent()
-            }
-    }
-
-    fun dynamicMapEntity(
-        componentManager: EcsComponentManager, parentLayerComponent: ParentLayerComponent,
-        renderer: Renderer, name: String
-    ): EcsEntity {
-        return componentManager
-            .createEntity(name).addComponents {
-                + parentLayerComponent
-                + RendererComponent(renderer)
-                + CameraListenerComponent()
-                + CenterChangedComponent()
-                + ZoomChangedComponent()
-                + ScreenLoopComponent()
-                + ScreenOriginComponent()
             }
     }
 
@@ -70,13 +46,8 @@ object Entities {
         private val myParentLayerComponent: ParentLayerComponent = ParentLayerComponent(layerEntity.id)
         private val myLayerEntityComponent: LayerEntitiesComponent = layerEntity.get()
 
-        fun createMapEntity(worldPlacement: WorldPoint, renderer: Renderer, name: String): EcsEntity {
-            return mapEntity(myComponentManager, worldPlacement, myParentLayerComponent, renderer, name)
-                .also { myLayerEntityComponent.add(it.id) }
-        }
-
-        fun createDynamicMapEntity(name: String, renderer: Renderer): EcsEntity {
-            return dynamicMapEntity(myComponentManager, myParentLayerComponent, renderer, name)
+        fun createMapEntity(name: String): EcsEntity {
+            return mapEntity(myComponentManager, myParentLayerComponent, name)
                 .also { myLayerEntityComponent.add(it.id) }
         }
     }

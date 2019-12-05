@@ -7,10 +7,9 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.projectionGeometry.center
-import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.camera.ViewportHelper
-import jetbrains.livemap.entities.regions.EmptinessChecker
+import jetbrains.livemap.entities.geocoding.GeocodingProvider
 import jetbrains.livemap.fragments.FragmentProvider
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
@@ -51,12 +50,12 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
         return mapDataGeocodingHelper.geocodeMapData()
             .map { mapPosition ->
                 mapPosition
-                    ?.let { createLiveMap(it.zoom, it.coordinate, mapDataGeocodingHelper.regionBBoxes) }
+                    ?.let { createLiveMap(it.zoom, it.coordinate) }
                     ?: error("Map position must to be not null")
             }
     }
 
-    private fun createLiveMap(zoom: Int, center: WorldPoint, regionBBoxes: Map<String, GeoRectangle>): BaseLiveMap {
+    private fun createLiveMap(zoom: Int, center: WorldPoint): BaseLiveMap {
         myViewport.zoom = zoom
         myViewport.position = center
 
@@ -67,8 +66,12 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
             createTileLoadingFactory(myLiveMapSpec.devParams),
             FragmentProvider.create(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
             myLiveMapSpec.devParams,
-            EmptinessChecker.BBoxEmptinessChecker(regionBBoxes),
-            myLiveMapSpec.mapLocationConsumer
+            myLiveMapSpec.mapLocationConsumer,
+            GeocodingProvider(
+                myLiveMapSpec.geocodingService,
+                myLiveMapSpec.level,
+                myLiveMapSpec.parent
+            )
         )
     }
 }

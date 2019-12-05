@@ -35,7 +35,7 @@ import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.createArcPath
 
 @DslMarker
-annotation class LiveMapDsl {}
+annotation class LiveMapDsl
 
 @LiveMapDsl
 class LiveMapBuilder {
@@ -105,7 +105,8 @@ class LayersBuilder(
 
 @LiveMapDsl
 class ChartSource {
-    lateinit var point: Vec<LonLat>
+    var mapId: String? = null
+    var point: Vec<LonLat>? = null
 
     var radius: Double = 0.0
 
@@ -231,7 +232,8 @@ fun internalTiles(block: LiveMapTileServiceBuilder.() -> Unit): TileService {
         .apply(block).build()
 }
 
-fun liveMapTiles(block: LiveMapTileServiceBuilder.() -> Unit) = LiveMapTileServiceBuilder().apply(block).build()
+fun liveMapTiles(block: LiveMapTileServiceBuilder.() -> Unit) =
+    LiveMapTileServiceBuilder().apply(block).build()
 
 fun liveMapGeocoding(block: LiveMapGeocodingServiceBuilder.() -> Unit): GeocodingService {
     return LiveMapGeocodingServiceBuilder().apply(block).build()
@@ -250,7 +252,6 @@ val dummyTileService: TileService = object : TileService(DummySocketBuilder(), T
         return constant(emptyList())
     }
 }
-
 
 internal class DummySocketBuilder : SocketBuilder {
     override fun build(handler: SocketHandler): Socket {

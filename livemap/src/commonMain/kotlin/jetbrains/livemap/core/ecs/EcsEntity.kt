@@ -17,19 +17,22 @@ class EcsEntity internal constructor(
 
     override fun toString() = name
 
-    inline fun <reified T : EcsComponent>get(): T =
+    fun add(component: EcsComponent)
+            = apply { componentManager.addComponent(this, component) }
+
+    inline fun <reified T : EcsComponent> get(): T =
         componentManager.getComponents(this)[T::class] as T?
             ?: throw IllegalStateException("Component " + T::class.simpleName + " is not found")
 
 
-    inline fun <reified T : EcsComponent>tryGet(): T?  = when {
+    inline fun <reified T : EcsComponent> tryGet(): T?  = when {
         contains(T::class) -> get()
         else -> null
     }
 
     inline fun <reified T : EcsComponent> provide(byDefault: () -> T): T = when {
         contains(T::class) -> get()
-        else -> byDefault().also { addComponent(it) }
+        else -> byDefault().also { add(it) }
     }
 
     @Deprecated("Use <addComponents { + component }>")
@@ -40,18 +43,16 @@ class EcsEntity internal constructor(
 
     fun <T : EcsComponent> setComponent(component: T): EcsEntity {
         if (contains(component::class)) {
-            removeComponent(component::class)
+            componentManager.removeComponent(this, component::class)
         }
 
-        addComponent(component)
+        componentManager.addComponent(this, component)
 
         return this
     }
-    
 
-    fun removeComponent(componentType: KClass<out EcsComponent>) = apply {
+    fun removeComponent(componentType: KClass<out EcsComponent>) =
         componentManager.removeComponent(this, componentType)
-    }
 
     /**
      * Mark [entity] as removed. This method can be safely used while iterating entites.
