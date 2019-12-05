@@ -1034,7 +1034,7 @@ def geom_hline(mapping=None, data=None, stat=None, position=None, show_legend=No
 
 def geom_vline(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, xintercept=None, **other_args):
     """
-    Add straight horizontal lines to a plot
+    Add straight vertical lines to a plot
 
     Parameters
     ----------

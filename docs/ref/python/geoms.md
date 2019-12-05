@@ -1,3 +1,4 @@
+- geom_abline() geom_hline() geom_vline() | Reference lines: diagonal, horizontal and vertical
 - geom_area() geom_ribbon() | Area plots and ribbons
 - geom_bar() | Bar chart
 - geom_boxplot() | Tukey-styled box-and-whiskers plot
@@ -17,6 +18,68 @@
 - `geom_smooth()` | Smoothed conditional poligons
 - `geom_segment()` | 	Line segments
 - `geom_text()` | Add text
+
+
+### geom_abline() geom_vline() geom_hline()
+
+Straight lines to a plot specified by slope and intercept:
+
+`geom_abline(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, slope=None, intercept=None, **other_args)`
+
+Straight horizontal line:
+
+`geom_hline(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, yintercept=None, **other_args)`
+
+Straight vertical line:
+
+`geom_vline(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, xintercept=None, **other_args)`
+
+##### Arguments
+
+- `mapping`: set of aesthetic mappings created by `aes()`. Aesthetic mappings describe the way that variables in the data are
+        mapped to plot aesthetics.
+- `data` (dictionary or pandas DataFrame, optional): The data to be displayed in this layer. If `None` (the default), the data
+        is inherited from the plot data as specified in the call to ggplot.
+- `stat`: (string, optional): The statistical transformation to use on the data for this layer, as a string. Supported transformations:
+        `identity` (leaves the data unchanged), `count` (counts number of points with same x-axis coordinate),
+        `bin` (counts number of points with x-axis coordinate in the same bin), `smooth` (performs smoothing -
+        linear default)
+- `position` (string, optional): Position adjustment, either as a string (`identity`, `stack`, `dodge`, ...), or the result of a call to a
+        position adjustment function.
+- `show_legend` (bool, optional): Controls this layer inclusion in the legends. `None`, the default - include if any aesthetics are mapped. 
+        False - never include.
+- `sampling` (optional): Sampling transformation - the result of call to a sampling function (`sampling_random()` etc.).        
+
+`geom_abline`: 
+- `slope`: The line slope.
+- `intercept` The value of y at the point where the line crosses the y axis.
+
+`geom_hline`:
+- `yintercept`: The value of y at the point where the line crosses the y axis.
+
+`geom_vline`:
+- `xintercept`: The value of x at the point where the line crosses the x axis.
+
+- `other_args` Other arguments passed on to the layer. Usually the aesthetics settings, like `color="red"`, `fill="blue"`, `size=3` or `shape=21`. Or the parameters to the
+                     geom/stat pair.    
+
+##### Aesthetics
+
+`geom_abline()`: slope, intercept, alpha, colour, linetype, size
+
+`geom_hline()`: yintercept, alpha, colour, linetype, size
+
+`geom_vline()`: xintercept, alpha, colour, linetype, size
+
+##### Examples
+
+`ggplot()`
+
+`+ geom_abline(intercept=1, slope=3, color='red', linetype='dashed', size=3, alpha=0.5)`
+
+`+ geom_hline(yintercept=1, color='green', linetype='dashed', size=3, alpha=0.5)`
+
+`+ geom_vline(xintercept=1, color='blue', linetype='dashed', size=3, alpha=0.5)`
 
 
 ### geom_area() geom_ribbon()
