@@ -39,7 +39,11 @@ object Iris {
         "target",
         string(4)
     )
-
+    val targetSet get() = listOf(
+        "Iris-setosa",
+        "Iris-versicolor",
+        "Iris-virginica"
+    )
     val df get() = run {
         mapOf(
             sepalLength.name to sepalLength.data,

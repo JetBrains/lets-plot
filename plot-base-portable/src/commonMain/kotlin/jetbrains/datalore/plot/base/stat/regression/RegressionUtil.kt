@@ -5,13 +5,14 @@
 
 package jetbrains.datalore.plot.base.stat.regression
 
-import org.apache.commons.math3.stat.descriptive.rank.Percentile
+import jetbrains.datalore.plot.base.stat.math3.Percentile
+import kotlin.random.Random
 
 internal object RegressionUtil {
 
     // sample m data randomly
-    fun <T> sampling(data: List<T>, m: Int): ArrayList<T> {
-        val index = sampleInt(data.size, m)
+    fun <T> sampling(data: List<T>, m: Int, rnd: () -> Double): ArrayList<T> {
+        val index = sampleInt(data.size, m, rnd)
         val result = ArrayList<T>()
         for (i in index) {
             result.add(data[i])
@@ -20,9 +21,9 @@ internal object RegressionUtil {
     }
 
     // sample m int from 0..n-1
-    private fun sampleInt(n: Int, m: Int): IntArray {
+    private fun sampleInt(n: Int, m: Int, rnd: () -> Double): IntArray {
         if (n < m || m < 0) {
-            throw IllegalArgumentException("Sample $m data from $n data is impossible!")
+            error("Sample $m data from $n data is impossible!")
         }
         val perm = IntArray(n)
         for (i in 0 until n) {
@@ -31,7 +32,7 @@ internal object RegressionUtil {
 
         val result = IntArray(m)
         for (j in 0 until m) {
-            val r = j + (Math.random() * (n - j)).toInt()
+            val r = j + (rnd() * (n - j)).toInt()
             result[j] = perm[r]
             perm[r] = perm[j]
         }
@@ -39,7 +40,6 @@ internal object RegressionUtil {
     }
 
     fun percentile(data: List<Double>, p: Double): Double {
-        val per = Percentile()
-        return per.evaluate(data.toDoubleArray(), p * 100)
+        return Percentile.evaluate(data.toDoubleArray(), p * 100)
     }
 }

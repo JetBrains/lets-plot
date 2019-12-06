@@ -15,7 +15,11 @@ import jetbrains.datalore.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
+import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -50,9 +54,9 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
             .putNumeric(varOrigY, valuesY)
             .build()
 
-        val scatterLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+        val scatterLayer = GeomLayerBuilder.demoAndTest()
             .stat(Stats.IDENTITY)
-            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.point())
+            .geom(GeomProvider.point())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
@@ -83,9 +87,9 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
             .putNumeric(varTLX, valuesX)
             .putNumeric(varTLY, valuesY)
             .build()
-        val trueLineLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+        val trueLineLayer = GeomLayerBuilder.demoAndTest()
             .stat(Stats.IDENTITY)
-            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.line())
+            .geom(GeomProvider.line())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
@@ -108,9 +112,9 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         //
         // Smooth stat (regression)
         //
-        val regressionLineLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+        val regressionLineLayer = GeomLayerBuilder.demoAndTest()
             .stat(Stats.smooth())
-            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.smooth())
+            .geom(GeomProvider.smooth())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
@@ -131,9 +135,9 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         //
         // Smooth stat - standard error
         //
-        val seLineLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+        val seLineLayer = GeomLayerBuilder.demoAndTest()
             .stat(Stats.smooth())
-            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.point())
+            .geom(GeomProvider.point())
             .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
@@ -158,13 +162,13 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         //
         // Plot
         //
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(
+        val assembler = PlotAssembler.singleTile(
             listOf(
                 scatterLayer,
                 trueLineLayer,
                 regressionLineLayer,
                 seLineLayer
-            ), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme()
+            ), CoordProviders.cartesian(), DefaultTheme()
         )
         assembler.setTitle("Linear Regression")
         assembler.disableInteractions()

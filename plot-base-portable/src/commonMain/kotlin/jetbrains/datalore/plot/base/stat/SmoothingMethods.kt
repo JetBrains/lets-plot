@@ -5,9 +5,16 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.plot.base.stat.regression.LocalPolynomialRegression
 import jetbrains.datalore.plot.base.stat.regression.RegressionEvaluator
+import jetbrains.datalore.plot.base.stat.regression.SimpleRegression
 
-expect object SmoothingMethods {
-    fun lm(valuesX: List<Double?>, valuesY: List<Double?>, confidenceLevel: Double): RegressionEvaluator
-    fun loess(valuesX: List<Double?>, valuesY: List<Double?>, confidenceLevel: Double): RegressionEvaluator
+object SmoothingMethods {
+    fun lm(valuesX: List<Double?>, valuesY: List<Double?>, confidenceLevel: Double): RegressionEvaluator {
+        return SimpleRegression(valuesX, valuesY, confidenceLevel)
+    }
+
+    fun loess(valuesX: List<Double?>, valuesY: List<Double?>, confidenceLevel: Double): RegressionEvaluator {
+        return LocalPolynomialRegression(valuesX, valuesY, confidenceLevel)
+    }
 }
