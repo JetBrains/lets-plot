@@ -28,8 +28,8 @@ object BrowserDemoUtil {
 
     val BASE_MAPPER_LIBS = listOf(
 //        "base.js",
-        "datalore-plot-base-portable.js",
-        "datalore-plot-base.js",
+        "lets-plot-base-portable.js",
+        "lets-plot-base.js",
         "mapper-core.js",
         "vis-svg.js",
         "vis-canvas.js"
