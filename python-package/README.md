@@ -8,36 +8,36 @@
 
 ## Configuration
 
-All configuration are in `build_settings.yml` in the project root.
+Edit `build_settings.yml` in the project root:
 
-* `build_python_extension` - set to `yes` for building native python extension from `python-extension`
-* `enable_python_package` - set to `yes` for working with python package
-* `python.include_path` - path to python include path where Python.h located. 
-For getting this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['include'])"`.
-* `python.bin_path` - path to path to your python bin path. 
-For getting this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['scripts'])"`.
+* `build_python_extension` - set to `yes` for building native Python extension from `python-extension`.
+* `enable_python_package` - set to `yes` for working with Python package.
+* `python.include_path` - path to Python include directory where Python.h located. 
+To get this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['include'])"`.
+* `python.bin_path` - path to your Python bin directory. 
+To get this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['scripts'])"`.
 
 
 ## Building
 
 Gradle `build` in the sibling project **python-package-build**
 
-or just run shell command (if the changes are only in the python code):
+or just run shell command (if the changes are only in the Python code):
 
 `python setup.py update_js bdist_wheel`
 
 ## Installing locally
 
-* create / activate python environment (if needed)
+* create / activate Python environment (if needed)
 * run shell commands: 
 
 `pip uninstall lets-plot`
 
 `pip install --no-index --find-links=dist/ lets-plot --no-deps`
  
-## Test in Jupyther
+## Test in Jupyter
 
-When "dev" version, `lets-plot` embeds current "dev" js into Jupyter notebook.
+When the "dev" version is built, `lets-plot` embeds current "dev" js into Jupyter notebook.
 
 If necessary, this default can be temporarily overwritten by editing `dev_xxx` settings in `_global_settings.py`
 
