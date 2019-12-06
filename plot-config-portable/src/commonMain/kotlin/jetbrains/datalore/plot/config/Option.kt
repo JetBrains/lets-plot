@@ -111,20 +111,8 @@ object Option {
 
         object Image {
             const val HREF = "href"
-            const val SPEC = "image_spec"
 
-            object Spec {
-                const val WIDTH = "width"
-                const val HEIGHT = "height"
-                const val TYPE = "type"
-                const val BYTES = "bytes"
-            }
 
-            object Type {
-                const val GRAY = "gray"
-                const val RGB = "rgb"
-                const val RGBA = "rgba"
-            }
         }
 
         object LiveMap {

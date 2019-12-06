@@ -83,7 +83,6 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     >>> ggplot() + geom_image(image)
     """
 
-    to_png=True # ex-parameter
     if png == None:
         raise Exception("pypng is not installed")
 
@@ -145,45 +144,26 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     else:
         raise Exception("Invalid image_data: floating point or integer dtype is expected but was '{}'".format(image_data.dtype))
 
+    # set output type to int8 - pypng produces broken colors with other types
+    scale = numpy.vectorize(scaler, otypes=[numpy.int8])
+    # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..], or pypng will fail
+    image_2d = scale(image_data).reshape(-1, width * nchannels)
+
+    png_bytes = io.BytesIO()
+    png.Writer(
+        width=width,
+        height=height,
+        greyscale=(image_type == 'gray'),
+        alpha=(image_type == 'rgba'),
+        bitdepth=8
+    ).write(png_bytes, image_2d)
+
+    href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')
 
     # image bounds (including 1/2 pixel expand in all directions)
     xmin = [-0.5]
     ymin = [-0.5]
-    xmax = [width - 1 + 0.5]
-    ymax = [height - 1 + 0.5]
+    xmax = [width - 0.5]
+    ymax = [height - 0.5]
     mapping = aes(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
-
-    if to_png:
-        # set output type to int8 - pypng produces broken colors with other types
-        scale = numpy.vectorize(scaler, otypes=[numpy.int8])
-        # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..], or pypng will fail
-        image_2d = scale(image_data).reshape(-1, width * nchannels)
-
-        png_bytes = io.BytesIO()
-        png.Writer(
-            width=width,
-            height=height,
-            greyscale=(image_type == 'gray'),
-            alpha=(image_type == 'rgba'),
-            bitdepth=8
-        ).write(png_bytes, image_2d)
-
-        href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')
-        return _geom('image', mapping=mapping, href=href)
-    else:
-        flat_bytes = bytearray()
-        for v in image_data.ravel():
-            flat_bytes.append(scaler(v))
-
-        # Transform nd array to flat array containing ARGB values packed in one integer (32)
-        image_bytes = base64.standard_b64encode(flat_bytes)
-        image_bytes = image_bytes.decode('utf-8')
-
-        image_spec = dict(
-            width=width,
-            height=height,
-            type=image_type,
-            bytes=image_bytes
-        )
-
-        return _geom('image', mapping=mapping, image_spec=image_spec)
+    return _geom('image', mapping=mapping, href=href)
