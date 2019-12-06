@@ -45,7 +45,7 @@ open class SvgImageElement() : SvgGraphicsElement(),
 
     init {
         setAttribute(PRESERVE_ASPECT_RATIO, "none")
-        setAttribute(SVG_STYLE_ATTRIBUTE, "image-rendering: pixelated;")
+        setAttribute(SVG_STYLE_ATTRIBUTE, "image-rendering: pixelated;image-rendering: crisp-edges;")
     }
 
     constructor(x: Double, y: Double, width: Double, height: Double) : this() {
