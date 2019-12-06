@@ -64,7 +64,7 @@ run `./gradlew python-package-build:buildManylinuxWheels`
 
 ##### 1. JavaScript artifacts (Bintray):
 
-run `./gradlew js-package:publishJS`
+run `./gradlew js-package:bintrayUpload`
 
 ##### 2. Python wheels (PyPi):
 

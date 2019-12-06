@@ -5,13 +5,16 @@
 
 plugins {
     // publishing to bintray
-    id "com.jfrog.bintray"
+    id "com.jfrog.bintray" apply false
 }
 
 def bintray_user = project.buildSettings?.bintray?.user
 def bintray_key = project.buildSettings?.bintray?.key
 
 if (bintray_user != null && bintray_key != null) {
+
+    apply plugin: "com.jfrog.bintray"
+
     bintray {
         filesSpec {
             from('../build/dist') {
