@@ -16,6 +16,7 @@ import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
+import java.awt.Label
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
@@ -46,21 +47,25 @@ object PlotConfigDemoUtil {
         factory: SwingDemoFactory,
         plotSize: DoubleVector
     ) {
-        for (plotSpec in plotSpecList) {
-            val component = createPlotComponent(
-                plotSpec,
-                factory,
-                plotSize
-            )
+        try {
+            for (plotSpec in plotSpecList) {
+                val component = createPlotComponent(
+                    plotSpec,
+                    factory,
+                    plotSize
+                )
 
-            component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
+                component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
 
-            component.minimumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
-            component.maximumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
-            component.alignmentX = Component.LEFT_ALIGNMENT
+                component.minimumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
+                component.maximumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
+                component.alignmentX = Component.LEFT_ALIGNMENT
 
-            panel.add(Box.createRigidArea(Dimension(0, 5)))
-            panel.add(component)
+                panel.add(Box.createRigidArea(Dimension(0, 5)))
+                panel.add(component)
+            }
+        } catch (e: Exception) {
+            panel.add(Label().apply { text = e.message; alignment = Label.CENTER; foreground = Color.RED })
         }
     }
 
@@ -94,7 +99,7 @@ object PlotConfigDemoUtil {
             }
         })
 
-        return component;
+        return component
     }
 
 }

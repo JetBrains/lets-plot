@@ -29,6 +29,11 @@ object Monolithic {
             }
         }
 
+        if (PlotConfig.isFailure(plotSpec)) {
+            val errorMessage = PlotConfig.getErrorMessage(plotSpec)
+            throw IllegalArgumentException(errorMessage)
+        }
+
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
         return assembler.createPlot()
     }
