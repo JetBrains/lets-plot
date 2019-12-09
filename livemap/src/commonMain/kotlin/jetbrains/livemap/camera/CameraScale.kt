@@ -24,7 +24,7 @@ object CameraScale {
 
         val animation = cameraEntity.componentManager
             .createEntity("camera_scale_animation")
-            .addComponent(
+            .add(
                 AnimationComponent().apply {
                     duration = 250.0
                     easingFunction = EASE_OUT_QUAD

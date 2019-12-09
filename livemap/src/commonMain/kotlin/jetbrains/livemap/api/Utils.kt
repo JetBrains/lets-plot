@@ -10,10 +10,7 @@ import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.CentroidComponent
-import jetbrains.livemap.entities.geocoding.LonLatComponent
-import jetbrains.livemap.entities.geocoding.MapIdComponent
-import jetbrains.livemap.entities.geocoding.PointInitializerComponent
+import jetbrains.livemap.entities.geocoding.*
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.World
 import jetbrains.livemap.projections.WorldPoint
@@ -104,6 +101,7 @@ fun MapEntityFactory.createDynamicEntity(name: String, mapId: String): EcsEntity
         .addComponents {
             + CentroidComponent()
             + MapIdComponent(mapId)
+            + NeedGeocodeLocationComponent()
         }
 }
 

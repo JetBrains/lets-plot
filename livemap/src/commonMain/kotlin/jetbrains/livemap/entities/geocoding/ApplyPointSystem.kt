@@ -10,6 +10,7 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.projections.MapProjection
 
 class ApplyPointSystem(
@@ -30,6 +31,7 @@ class ApplyPointSystem(
                     entity.worldPointInitializer.invoke(this, myMapProjection.project(entity.point))
                 }
 
+                tagDirtyParentLayer(entity)
                 entity.remove<LonLatComponent>()
                 entity.remove<PointInitializerComponent>()
             }

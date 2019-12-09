@@ -14,6 +14,8 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.geocoding.MapIdComponent
+import jetbrains.livemap.entities.geocoding.NeedCalculateLocationComponent
+import jetbrains.livemap.entities.geocoding.NeedGeocodeLocationComponent
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
@@ -102,6 +104,7 @@ class PolygonsBuilder(
                     setStrokeColor(this@PolygonsBuilder.strokeColor)
                     setStrokeWidth(this@PolygonsBuilder.strokeWidth)
                 }
+                + NeedCalculateLocationComponent()
             }
     }
 
@@ -111,14 +114,15 @@ class PolygonsBuilder(
             .addComponents {
                 + MapIdComponent(mapId!!)
                 + RegionFragmentsComponent()
+                + RendererComponent(RegionRenderer())
+                + ScreenLoopComponent().apply { origins = listOf(Coordinates.ZERO_CLIENT_POINT) }
+                + ScreenOriginComponent()
                 + StyleComponent().apply {
                     setFillColor(this@PolygonsBuilder.fillColor)
                     setStrokeColor(this@PolygonsBuilder.strokeColor)
                     setStrokeWidth(this@PolygonsBuilder.strokeWidth)
                 }
-                + RendererComponent(RegionRenderer())
-                + ScreenLoopComponent().apply { origins = listOf(Coordinates.ZERO_CLIENT_POINT) }
-                + ScreenOriginComponent()
+                + NeedGeocodeLocationComponent()
             }
     }
 }
