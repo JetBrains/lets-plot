@@ -23,16 +23,17 @@ class GeoDataFrameMappingChange : SpecChange {
 
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         val dataSpec = spec[DATA] as MutableMap<String, Any>
-        val geometryColumn = ((spec[DATA_META] as Map<*, *>)[GeoDataFrame.TAG] as Map<*, *>)[GeoDataFrame.GEOMETRY] as String
+        val geometryColumn =
+            ((spec[DATA_META] as Map<*, *>)[GeoDataFrame.TAG] as Map<*, *>)[GeoDataFrame.GEOMETRY] as String
 
         val keys =
             generateKeys((dataSpec[geometryColumn] as List<*>).size)
 
         spec[GEO_POSITIONS] = HashMap(
-                mapOf(
-                        MAP_COLUMN_JOIN_KEY to keys,
-                        MAP_COLUMN_GEOJSON to dataSpec[geometryColumn]
-                )
+            mapOf(
+                MAP_COLUMN_JOIN_KEY to keys,
+                MAP_COLUMN_GEOJSON to dataSpec[geometryColumn]
+            )
         )
 
         dataSpec.remove(geometryColumn)

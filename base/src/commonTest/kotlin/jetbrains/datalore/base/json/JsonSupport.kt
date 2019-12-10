@@ -14,15 +14,19 @@ class JsonSupportTest {
     @Test
     fun runTestCases() {
         for ((index, datum) in testData.withIndex()) {
+            val actualObj: MutableMap<String, Any?>
             try {
-                val actualObj = JsonSupport.parseJson(datum.input)
+                actualObj = JsonSupport.parseJson(datum.input)
                 assertEquals(datum.expectedOutput, actualObj, "test case [$index] - parseJson")
-
-                val actualJson = JsonSupport.formatJson(actualObj)
-                assertEquals(datum.expectedOutput, JsonSupport.parseJson(actualJson), "test case [$index] - formatJson")
-
             } catch (e: Throwable) {
-                fail("test case [$index] failed with exception ${e.message}")
+                fail("test case ${datum.input} failed with exception ${e.message}")
+            }
+            try {
+                val actualJson = JsonSupport.formatJson(actualObj)
+                val parsedObject = JsonSupport.parseJson(actualJson)
+                assertEquals(datum.expectedOutput, parsedObject, "test case [$index] - formatJson")
+            } catch (e: Throwable) {
+                fail("test case ${actualObj} failed with exception ${e.message}")
             }
         }
     }
@@ -31,6 +35,18 @@ class JsonSupportTest {
 
     companion object {
         val testData: List<TestData> = listOf(
+            TestData(
+                """{"a":"\"like\" \\this\\"}""",
+                mapOf(
+                    "a" to """"like" \this\"""
+                )
+            ),
+            TestData(
+                """{"a":"str\twith special\ncharacters \"like\" \\this\\"}""",
+                mapOf(
+                    "a" to "str\twith special\ncharacters \"like\" \\this\\"
+                )
+            ),
             TestData(
                 "{}",
                 emptyMap()
@@ -50,13 +66,19 @@ class JsonSupportTest {
                 )
             ),
             TestData(
-                    """{"int":1,"double":2.2,"str":"hello","null":null,"obj":{}}""",
+                """{"int":1,"double":2.2,"str":"hello","null":null,"obj":{}}""",
                 mapOf(
                     "int" to 1.0,
                     "double" to 2.2,
                     "str" to "hello",
                     "null" to null,
                     "obj" to emptyMap<String, Any?>()
+                )
+            ),
+            TestData(
+                """{"a":["\"{\"b\":\"c\"}\"","\"{\"d\":\"e\"}\""]}""",
+                mapOf(
+                    "a" to listOf(""""{"b":"c"}"""", """"{"d":"e"}"""")
                 )
             ),
             TestData(

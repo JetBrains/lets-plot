@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.base.jsObject
 
+import jetbrains.datalore.base.json.escape
+
 object JsObjectSupport {
     fun mapToJsObjectInitializer(map: Map<String, *>): String {
         val buffer = StringBuilder()
@@ -37,7 +39,7 @@ object JsObjectSupport {
         }
         handleValue = { v: Any? ->
             when (v) {
-                is String -> buffer.append('"').append(v).append('"')
+                is String -> buffer.append('"').append(v.escape()).append('"')
                 is Boolean,
                 is Number -> buffer.append(v)
                 null -> buffer.append("null")
