@@ -37,10 +37,6 @@ object PlotConfigServerSideTransforms {
                     NumericDataVectorSpecChange()
                 ) // ToDo: remove (and tests)
                 .change(
-                    SpecSelector.of(Plot.LAYERS),
-                    ImageTranscodeSpecChange()
-                )
-                .change(
                     ReplaceDataVectorsInAesMappingChange.specSelector(),
                     ReplaceDataVectorsInAesMappingChange()
                 )
