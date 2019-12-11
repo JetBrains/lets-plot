@@ -34,7 +34,6 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         if (!hasOwn(COORD)) {
             // if coord wasn't set explicitly then geom can provide its own preferred coord system
             for (layerConfig in layerConfigs) {
-//                val geomProvider = layerConfig.geomProvider
                 val geomProtoClientSide = layerConfig.geomProto as GeomProtoClientSide
                 if (geomProtoClientSide.hasPreferredCoordinateSystem()) {
                     coordProvider = geomProtoClientSide.preferredCoordinateSystem()

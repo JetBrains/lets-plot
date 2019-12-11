@@ -7,6 +7,7 @@
 
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.dom.DomEventUtil
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.dom.DomEventType
@@ -28,6 +29,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGSVGElement
+import kotlin.dom.createElement
 
 
 private val LOG = KotlinLogging.logger {}
@@ -80,12 +82,7 @@ private fun buildPlotFromProcessedSpecsIntern(
     height: Double,
     parentElement: HTMLElement
 ) {
-    // testing errors
-//        throw RuntimeException()
-//        throw RuntimeException("My sudden crush")
-//        throw IllegalArgumentException("User configuration error")
-//        throw IllegalStateException("User configuration error")
-//        throw IllegalStateException()   // Huh?
+    throwTestingErrors()  // noop
 
     PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
     if (PlotConfig.isFailure(plotSpec)) {
@@ -93,6 +90,61 @@ private fun buildPlotFromProcessedSpecsIntern(
         showError(errorMessage, parentElement)
         return
     }
+
+    if (PlotConfig.isPlotSpec(plotSpec)) {
+        buildSinglePlotFromProcessedSpecs(plotSpec, width, height, parentElement)
+    } else if (PlotConfig.isGGBunchSpec(plotSpec)) {
+        buildGGBunchFromProcessedSpecs(plotSpec, parentElement)
+    } else {
+        throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(plotSpec));
+    }
+}
+
+private fun buildGGBunchFromProcessedSpecs(bunchSpec: MutableMap<String, Any>, parentElement: HTMLElement) {
+    val bunchConfig = BunchConfig(bunchSpec)
+    if (bunchConfig.bunchItems.isEmpty()) return
+
+    var bunchBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+    for (bunchItem in bunchConfig.bunchItems) {
+        val plotSpec = bunchItem.featureSpec as MutableMap<String, Any>
+        val assembler = createPlotAssembler(plotSpec) { messages ->
+            messages.forEach {
+                showInfo(it, parentElement)
+            }
+        }
+
+        val plotSize = if (bunchItem.hasSize()) {
+            bunchItem.size
+        } else {
+            PlotConfigClientSideUtil.getPlotSizeOrNull(plotSpec) ?: DEF_PLOT_SIZE
+        }
+
+        val itemElement = parentElement.ownerDocument!!.createElement("div") {
+            setAttribute(
+                "style",
+                "position: absolute; left: ${bunchItem.x}; top: ${bunchItem.y};"
+            )
+        } as HTMLElement
+
+        parentElement.appendChild(itemElement)
+        buildPlotComponent(plotSpec, assembler, plotSize, itemElement)
+
+        val itemBounds = DoubleRectangle(bunchItem.x, bunchItem.y, plotSize.x, plotSize.y)
+        bunchBounds = bunchBounds.union(itemBounds)
+    }
+
+    parentElement.setAttribute(
+        "style",
+        "position: relative; width: ${bunchBounds.width}; height: ${bunchBounds.height};"
+    )
+}
+
+private fun buildSinglePlotFromProcessedSpecs(
+    plotSpec: MutableMap<String, Any>,
+    width: Double,
+    height: Double,
+    parentElement: HTMLElement
+) {
 
     val assembler = createPlotAssembler(plotSpec) { messages ->
         messages.forEach {
@@ -123,6 +175,15 @@ private fun buildPlotFromProcessedSpecsIntern(
         }
     }
 
+    buildPlotComponent(plotSpec, assembler, plotSize, parentElement)
+}
+
+private fun buildPlotComponent(
+    plotSpec: MutableMap<String, Any>,
+    assembler: PlotAssembler,
+    plotSize: DoubleVector,
+    parentElement: HTMLElement
+) {
     LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(plotSpec))
         ?.let {
             LiveMapUtil.injectLiveMapProvider(
@@ -235,4 +296,13 @@ private fun showText(message: String, style: String, parentElement: HTMLElement)
     }
     paragraphElement.textContent = message
     parentElement.appendChild(paragraphElement)
+}
+
+private fun throwTestingErrors() {
+    // testing errors
+//        throw RuntimeException()
+//        throw RuntimeException("My sudden crush")
+//        throw IllegalArgumentException("User configuration error")
+//        throw IllegalStateException("User configuration error")
+//        throw IllegalStateException()   // Huh?
 }

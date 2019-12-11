@@ -18,6 +18,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
                 implementation project(':base-portable')
