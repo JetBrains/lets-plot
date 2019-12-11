@@ -87,11 +87,11 @@ Input data expected: positive numetic values to set size.
 `p = ggplot() + geom_tile(aes(x, y, fill=c))
  p + ggtitle('Disctere color scale (default)')`
 
-![](../assets/scale_all_identity_1.png)
+![](assets/scale_all_identity_1.png)
  
 `p + scale_fill_identity() + ggtitle('Identity color scale')` 
 
-![](../assets/scale_all_identity_2.png)
+![](assets/scale_all_identity_2.png)
 
 ### Scale_*_manual 
 

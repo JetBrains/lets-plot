@@ -153,19 +153,19 @@ x, y, alpha, colour, fill, linetype, size
 `p = ggplot(dat, aes('number'))
  p += geom_bar()`
  
-![](../assets/geom_bar_1.png)
+![](assets/geom_bar_1.png)
  
 `dat['number'] = ['one', 'two', 'three', 'one', 'two', 'three']
  dat['value'] = [5, 1, 4, 5, 1, 1]`
   
 `p += geom_bar(aes(weight='value'))`
  
-![](../assets/geom_bar_2.png)
+![](assets/geom_bar_2.png)
  
  `p = ggplot(dat, aes('number', 'value', fill='subgroup'))
   p += geom_bar(stat='identity', position = position_dodge())`
   
-![](../assets/geom_bar_3.png)
+![](assets/geom_bar_3.png)
 
 ### geom_boxplot()
 
@@ -251,17 +251,17 @@ For `geom_contourf()`:
  p += scale_color_gradient('green', 'red')
  p + geom_contour(aes(z='z', color='..level..'))`
  
-![](../assets/geom_contour_1.png)
+![](assets/geom_contour_1.png)
  
 `p + geom_contour(aes(z='z', color='..level..'), bins=30)`
 
-![](../assets/geom_contour_2.png)
+![](assets/geom_contour_2.png)
 
 `p = ggplot(dat, aes('x', 'y'))
  p + geom_contourf(aes(z='z', fill='..level..'), bins=15, color='black', size=1)\
           + scale_fill_gradient('green', 'red')`
           
-![](../assets/geom_contour_3.png)
+![](assets/geom_contour_3.png)
 
 ### geom_density()
 
@@ -304,16 +304,16 @@ x, y, alpha, colour, fill, linetype, size, group
 `p = ggplot(dat, aes(x, y)) 
  p += geom_density() `
  
-![](../assets/geom_density_1.png)
+![](assets/geom_density_1.png)
  
  `p = ggplot(dat, aes(x, y, color='target')) 
  p += geom_density()`
  
-![](../assets/geom_density_2.png)
+![](assets/geom_density_2.png)
  
 `p += scale_alpha([0.1, 1])` 
  
-![](../assets/geom_density_3.png)
+![](assets/geom_density_3.png)
 
 ### geom_density2d(), geom_density2df()
 
@@ -363,15 +363,15 @@ For `geom_density2df()`: `fill` aesthetic parameter controls the color of geomet
 
 `p + geom_density2d(aes('x', 'y', color='..level..')) + scale_color_hue()`
 
-![](../assets/geom_density2d_1.png)
+![](assets/geom_density2d_1.png)
 
 `p + geom_density2df(aes('x', 'y', fill='..level..')) + scale_fill_hue()`
 
-![](../assets/geom_density2d_2.png)
+![](assets/geom_density2d_2.png)
 
 `p + geom_density2df(aes('x', 'y', fill='..level..'), bins=200, sampling=sampling_group_random(100)+sampling_random(150000)) + scale_fill_hue()`
 
-![](../assets/geom_density2d_3.png)
+![](assets/geom_density2d_3.png)
 
 
 ### geom_errorbar()
@@ -415,7 +415,7 @@ x, ymin, ymax, alpha, colour, linetype, size, width, group
  p += geom_errorbar(aes(ymin = 'lower', ymax = 'upper'), width = 0.3)
 ```
 
-![](../assets/geom_errorbars_1.png)
+![](assets/geom_errorbars_1.png)
 
 ```python
  p = ggplot(dat, aes(x='trt', y='resp', fill='group', group='group'))
@@ -424,7 +424,7 @@ x, ymin, ymax, alpha, colour, linetype, size, width, group
  p
 ```
 
-![](../assets/geom_errorbars_2.png)
+![](assets/geom_errorbars_2.png)
 
 ### geom_freqpoly(), geom_histogram()
 
@@ -469,12 +469,12 @@ Histograms (`geom_histogram()`) display the counts with bars; frequency polygons
 `p = ggplot(dat, aes('x'))
 p += geom_histogram()`
 
-![](../assets/geom_histogram_1.png)
+![](assets/geom_histogram_1.png)
 
 `p = ggplot(dat, aes('x'))
 p += geom_histogram(aes(y='..density..'), bins=10)`
 
-![](../assets/geom_histogram_2.png)
+![](assets/geom_histogram_2.png)
 
 ```
  x_a = np.random.normal(0, 1, 200)
@@ -495,7 +495,7 @@ p += geom_histogram(aes(y='..density..'), bins=10)`
 `p = ggplot(dat, aes('x', fill='cat'))
  p + geom_histogram(alpha=0.5, position='identity')`
 
-![](../assets/geom_histogram_3.png)
+![](assets/geom_histogram_3.png)
  
 
 ### geom_image()
@@ -554,13 +554,13 @@ x, y, alpha, colour, fill, na.rm, shape, size, group
          + geom_point()
  p`
  
-![](../assets/geom_jitterplot_1.png)
+![](assets/geom_jitterplot_1.png)
  
  `p = ggplot(iris_df, aes(x='target', y='sepal width (cm)', color='target')) \
                + geom_jitter()
        p`
        
-![](../assets/geom_jitterplot_2.png)
+![](assets/geom_jitterplot_2.png)
 
 ### !!! `geom_livemap`
 
@@ -649,7 +649,7 @@ For `geom_step()`: x, y, alpha, colour, direction, linetype, size, group
  p += geom_line()
  p`
 
-![](../assets/geom_line_1.png)
+![](assets/geom_line_1.png)
 
 
 `p = ggplot(dat, aes('x', 'y'))
@@ -662,7 +662,7 @@ TBD
   p += geom_path()
   p`` 
 
-![](../assets/geom_line_2.png)
+![](assets/geom_line_2.png)
 
 
 ###  `geom_point()`
@@ -699,14 +699,14 @@ x, y, alpha, colour, fill, na.rm, shape, size
  p += geom_point()
  p`
 
-![](../assets/geom_point_1.png)
+![](assets/geom_point_1.png)
 
  `p = ggplot(dat, aes('x', 'y', group='cat'))
   p += geom_line(size=0.1)
   p += geom_point(aes(shape='cat'), size=5)
   p`
 
-![](../assets/geom_point_2.png)
+![](assets/geom_point_2.png)
 
 
 ###  `geom_polygon()`
@@ -788,15 +788,15 @@ For `geom_raster()`: x, y, alpha, fill
 `p = ggplot(dat, aes('x', 'y', fill='z')) + scale_fill_hue()
  p + geom_tile() + ggtitle('geom_tile')`
 
-![](../assets/geom_tile_1.png)
+![](assets/geom_tile_1.png)
  
 `p + geom_tile(aes(width = (x - x.min()) / (x.max())), color='red', size=0.2)` 
 
-![](../assets/geom_tile_2.png)
+![](assets/geom_tile_2.png)
  
  `p + geom_raster() + ggtitle('geom_raster')`
 
-![](../assets/geom_tile_3.png)
+![](assets/geom_tile_3.png)
 
 
 ###  `geom_smooth()` 
@@ -845,12 +845,12 @@ x, y, size, alpha, colour, fill, linetype, weight
   
 `p + geom_smooth(method='lm')`
 
-![](../assets/geom_smooth_1.png)
+![](assets/geom_smooth_1.png)
 
 
 `p + geom_smooth(level=0.5)`
 
-![](../assets/geom_smooth_2.png)
+![](assets/geom_smooth_2.png)
 
 ###  `geom_segment()`
 
