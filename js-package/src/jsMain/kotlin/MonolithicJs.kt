@@ -122,7 +122,7 @@ private fun buildGGBunchFromProcessedSpecs(bunchSpec: MutableMap<String, Any>, p
         val itemElement = parentElement.ownerDocument!!.createElement("div") {
             setAttribute(
                 "style",
-                "position: absolute; left: ${bunchItem.x}; top: ${bunchItem.y};"
+                "position: absolute; left: ${bunchItem.x}px; top: ${bunchItem.y}px;"
             )
         } as HTMLElement
 
@@ -135,7 +135,7 @@ private fun buildGGBunchFromProcessedSpecs(bunchSpec: MutableMap<String, Any>, p
 
     parentElement.setAttribute(
         "style",
-        "position: relative; width: ${bunchBounds.width}; height: ${bunchBounds.height};"
+        "position: relative; width: ${bunchBounds.width}px; height: ${bunchBounds.height}px;"
     )
 }
 
