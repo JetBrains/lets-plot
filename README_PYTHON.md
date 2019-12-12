@@ -31,7 +31,7 @@ The Lets-Plot python extension includes native backend and a Python API, which w
 
 R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who want to learn the grammar of graphics. 
 
-Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new functions](https://github.com/JetBrains/lets-plot/blob/master/README_PYTHON.md#unfamiliar-functions-used-in-the-examples) and [built-in sampling](https://github.com/JetBrains/lets-plot/blob/master/README_PYTHON.md#sampling) to our Python API.
+Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new features](https://github.com/JetBrains/lets-plot/blob/master/README_PYTHON.md#new_to_experienced_users) to our Python API.
 
 You can try the Lets-Plot library in [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/). Lets-Plot is available in Datalore out-of-the-box and is almost identical to the one we ship as PyPI package. This is because Lets-Plot is an offshoot of the Datalore project from which it was extracted to a separate plotting library.
 
@@ -95,8 +95,11 @@ Various presentation options:
  
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/JetBrains/lets-plot/9622ee1410133dc4513fb3a27c72057932e99a74?filepath=docs%2Fexamples%2Fjupyter-notebooks)
  
+### New to experienced users
 
-### Unfamiliar functions used in the examples
+These features of `Lets-Plot` are not present or have different implementation in other `Grammar of Graphics` libraries.
+
+#### Plotting functions
 
 * `ggsize()` - sets size of the plot. Used in many examples starting from `quickstart`
 * `geom_density2df()` - fills space between equal density lines on 2D density plot. Similar to `geom_density2d` but supports `fill` aesthetic.
@@ -107,8 +110,24 @@ Various presentation options:
 
     Example: [contours.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/contours.ipynb) 
 
+* `geom_image()` - shows image encoded as numpy 3-dimensional ndarray.
 
-### Sampling 
+    Example: [TBD]
+    
+* `gg_image_matrix()` - a utility helping to combine several images into one graphical object.     
+
+    Example: [TBD]
+
+#### GGBanch
+
+GGBunch allows to show a collection of plots on one figure. Each plot in the collection can have arbitrary location and size. Where is no automatic layot inside the bunch.
+
+Examples: 
+* [ggbunch.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks-dev/ggbunch.ipynb)
+* [scatter_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks-dev/scatter_matrix.ipynb)
+
+
+#### Data sampling 
 
 Sampling is a special technique of data transformation, which helps dealing with large datasets and overplotting.
 
@@ -117,7 +136,7 @@ Sampling is a special technique of data transformation, which helps dealing with
 
 ### Change Log
 
-See [Github](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md).
+See [Lets-Plot at Github](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md).
 
 
 ### License

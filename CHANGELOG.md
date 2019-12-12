@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - *geom_image()*. Shows image encoded as numpy 3-dimensional ndarray. 
+- *gg_image_matrix()*. A utility helping to combine several images into one graphical object.
 - *GGBunch*. Combines several different plots into one graphical object.
-- *gg_image_matrix()*. Utility helping to combine several images into one graphical object.
 - user_guide.ipynb
 - scatter_matrix.ipynb
 - ggbunch.ipynb  
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switched to Kotlin 1.3.61
 
 ### Fixed
+- *scale_datetime()*. Date-time formatting in tooltips.
 - Links in README_PYTHON.md
 
 ## [1.0.0] - 2019-11-27
