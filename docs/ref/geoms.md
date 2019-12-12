@@ -501,8 +501,9 @@ p += geom_histogram(aes(y='..density..'), bins=10)`
 ### geom_image()
 
 Displays image specified by ndarray with shape (n, m), (n, m, 3), or (n, m, 4).
-    This geom in not as flexible as `geom_raster()` or `geom_tile()` but vastly superior in the terms of
-    rendering efficiency.
+
+The `dtype` can be `int`, `uint` or `float` of any size. `int` values are considered pre-scaled and are expected to fit in [0-255] range. `float` values are expected to be in range [0-1].
+    
     
 `geom_image(image_data, norm=None, vmin=None, vmax=None)`
 
