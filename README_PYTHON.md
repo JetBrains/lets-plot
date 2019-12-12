@@ -115,6 +115,11 @@ Sampling is a special technique of data transformation, which helps dealing with
 [Learn more](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md) about sampling in Lets-Plot. 
 
 
+### Change Log
+
+See [Github](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md).
+
+
 ### License
 
 Code and documentation released under the [MIT license](https://github.com/JetBrains/lets-plot/blob/master/LICENSE).

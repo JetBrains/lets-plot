@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - user_guide.ipynb
 - scatter_matrix.ipynb  
 
+### Changed
+- Switched to Kotlin 1.3.61
+
+### Fixed
+- Links in README_PYTHON.md
+
 ## [1.0.0] - 2019-11-27
 ### Changed
  - First public release.
