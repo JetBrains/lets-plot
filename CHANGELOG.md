@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - *GGBunch*. Combines several different plots into one graphical object.
 - *gg_image_matrix()*. Utility helping to combine several images into one graphical object.
 - user_guide.ipynb
-- scatter_matrix.ipynb  
+- scatter_matrix.ipynb
+- ggbunch.ipynb  
 
 ### Changed
 - Switched to Kotlin 1.3.61
