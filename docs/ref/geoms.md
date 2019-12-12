@@ -7,7 +7,7 @@
 - geom_density2d(), geom_density2df() | Contours of a 2d density estimate
 - geom_errorbar() | Error bars
 - geom_freqpoly(), geom_histogram() | Frequency polygons and histograms
-- !!geom_image() | Insert image directly into the plot
+- geom_image() | Insert image directly into the plot
 
 - `geom_jitter()` | Jittered points
 - **`!!geom_livemap` | TBC**
