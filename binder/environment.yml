@@ -13,3 +13,4 @@ dependencies:
   - pip:                            # Packages installed from PyPI
       - lets-plot
       - pypng
+      - scikit-datasets
