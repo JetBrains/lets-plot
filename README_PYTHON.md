@@ -91,10 +91,8 @@ Tiles, contours, polygons, contourf:
  
 Various presentation options:
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
- 
- 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/JetBrains/lets-plot/9622ee1410133dc4513fb3a27c72057932e99a74?filepath=docs%2Fexamples%2Fjupyter-notebooks)
- 
+  
+
 ### New to experienced users
 
 The following features of `Lets-Plot` are not present or have different implementation in other `Grammar of Graphics` libraries.
