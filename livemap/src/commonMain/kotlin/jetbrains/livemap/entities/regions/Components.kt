@@ -5,11 +5,11 @@
 
 package jetbrains.livemap.entities.regions
 
-import jetbrains.datalore.base.projectionGeometry.Generic
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.spatial.zoom
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.geospatial.QuadKey
+import jetbrains.datalore.base.geospatial.zoom
+import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity

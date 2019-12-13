@@ -6,7 +6,7 @@
 package jetbrains.gis.common
 
 
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.gis.common.testUtils.HexParser.parseHex
 import jetbrains.gis.common.twkb.Twkb
 import jetbrains.gis.common.twkb.Twkb.GeometryConsumer
@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 
 class ParserTest {
     private fun p(x: Double, y: Double): Vec<Generic> {
-        return explicitVec(x, y)
+        return jetbrains.datalore.base.typedGeometry.explicitVec(x, y)
     }
     
     private fun <T> optionalListOf (vararg elements: T): List<T>? {

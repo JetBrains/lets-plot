@@ -11,7 +11,7 @@ import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.function.Functions
 import jetbrains.datalore.base.function.Functions.funcOf
 import jetbrains.datalore.base.gcommon.collect.Stack
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.typedGeometry.*
 
 internal class GeometryObjectParser(precision: Double, input: Input) {
     private val myGeometryStream: GeometryStream

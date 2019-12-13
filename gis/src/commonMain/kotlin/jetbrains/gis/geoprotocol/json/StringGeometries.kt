@@ -6,9 +6,9 @@
 package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.encoding.Base64
-import jetbrains.datalore.base.projectionGeometry.Generic
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
+import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Polygon
 import jetbrains.gis.common.twkb.Twkb
 import jetbrains.gis.geoprotocol.Boundary
 

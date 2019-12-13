@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.model
 
-import jetbrains.datalore.base.projectionGeometry.explicitVec
-import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.typedGeometry.explicitVec
 
 data class GeoObject(
     val lon: Double,

@@ -5,16 +5,15 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.algorithms.createMultiPolygon
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.limitLat
-import jetbrains.datalore.base.spatial.limitLon
+import jetbrains.datalore.base.geospatial.GeoRectangle
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.geospatial.limitLat
+import jetbrains.datalore.base.geospatial.limitLon
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.*
@@ -118,7 +117,7 @@ class ChartSource {
     var colors: List<Color> = emptyList()
 }
 
-fun geometry(points: List<LonLatPoint>, isGeodesic: Boolean, isClosed: Boolean): MultiPolygon<LonLat> {
+fun geometry(points: List<LonLatPoint>, isGeodesic: Boolean, isClosed: Boolean): jetbrains.datalore.base.typedGeometry.MultiPolygon<LonLat> {
     val coord = points
         .map { limitCoord(it) }
         .let { if (isGeodesic) createArcPath(it) else it }

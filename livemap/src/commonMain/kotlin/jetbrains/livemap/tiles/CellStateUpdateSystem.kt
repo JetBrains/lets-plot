@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.geospatial.QuadKey
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent

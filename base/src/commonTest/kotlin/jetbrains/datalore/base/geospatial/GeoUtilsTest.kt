@@ -3,11 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.spatial
+package jetbrains.datalore.base.geospatial
 
-import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertRectangleEquals
-import jetbrains.datalore.base.spatial.GeoUtils.tileXYToTileID
+import jetbrains.datalore.base.geospatial.GeoRectangleTestHelper.assertRectangleEquals
+import jetbrains.datalore.base.geospatial.GeoUtils.tileXYToTileID
+import jetbrains.datalore.base.typedGeometry.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

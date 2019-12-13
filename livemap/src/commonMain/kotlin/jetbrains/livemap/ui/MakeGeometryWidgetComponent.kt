@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.ui
 
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.core.ecs.EcsComponent
 
 class MakeGeometryWidgetComponent: EcsComponent {

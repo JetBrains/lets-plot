@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.projections.ProjectionUtil.transformBBox
 import kotlin.math.min
 

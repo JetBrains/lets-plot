@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.Vec
 
 interface Geographic
 

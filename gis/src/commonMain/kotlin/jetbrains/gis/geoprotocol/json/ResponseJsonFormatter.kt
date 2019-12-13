@@ -5,9 +5,9 @@
 
 package jetbrains.gis.geoprotocol.json
 
-import jetbrains.datalore.base.projectionGeometry.Generic
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.geospatial.GeoRectangle
+import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.gis.common.json.*
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.gis.geoprotocol.GeoResponse

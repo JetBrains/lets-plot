@@ -3,22 +3,22 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.spatial
+package jetbrains.datalore.base.geospatial
 
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MAX_LATITUDE_GETTER
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MAX_LONGITUDE_GETTER
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MIN_LATITUDE_GETTER
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MIN_LONGITUDE_GETTER
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
-import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertDoubleEquals
-import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.point
-import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.rectangle
-import jetbrains.datalore.base.spatial.GeoUtils.BBOX_CALCULATOR
-import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
+import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.MAX_LATITUDE_GETTER
+import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.MAX_LONGITUDE_GETTER
+import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.MIN_LATITUDE_GETTER
+import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.MIN_LONGITUDE_GETTER
+import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
+import jetbrains.datalore.base.geospatial.GeoRectangleTestHelper.assertDoubleEquals
+import jetbrains.datalore.base.geospatial.GeoRectangleTestHelper.point
+import jetbrains.datalore.base.geospatial.GeoRectangleTestHelper.rectangle
+import jetbrains.datalore.base.geospatial.GeoUtils.BBOX_CALCULATOR
+import jetbrains.datalore.base.geospatial.GeoUtils.convertToGeoRectangle
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue

@@ -6,7 +6,7 @@
 package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.projectionGeometry.center
+import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.camera.ViewportHelper
 import jetbrains.livemap.entities.geocoding.GeocodingProvider

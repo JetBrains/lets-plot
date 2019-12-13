@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.gis.geoprotocol.Boundary

@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.spatial.normalizeLon
+import jetbrains.datalore.base.geospatial.normalizeLon
+import jetbrains.datalore.base.typedGeometry.*
 import kotlin.math.*
 
 private const val LONGITUDE_EPS = 1.0

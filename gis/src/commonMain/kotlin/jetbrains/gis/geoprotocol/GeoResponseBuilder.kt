@@ -5,9 +5,9 @@
 
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.projectionGeometry.Generic
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.geospatial.GeoRectangle
+import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse.*
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse

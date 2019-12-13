@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant

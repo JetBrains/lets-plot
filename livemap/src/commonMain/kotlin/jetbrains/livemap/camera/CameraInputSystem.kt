@@ -6,7 +6,7 @@
 package jetbrains.livemap.camera
 
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.projectionGeometry.minus
+import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager

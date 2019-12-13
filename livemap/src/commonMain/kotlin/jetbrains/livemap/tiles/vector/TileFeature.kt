@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.tiles.vector
 
-import jetbrains.datalore.base.projectionGeometry.Geometry
+import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.gis.tileprotocol.mapConfig.TilePredicate
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.tiles.vector.TileFeature.FieldName.CLASS

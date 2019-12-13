@@ -5,11 +5,11 @@
 
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.projectionGeometry.Generic
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.geospatial.QuadKey
+import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Polygon
 
 
 class GeoTile(val key: QuadKey<LonLat>, val geometries: List<Boundary<Generic>>) {

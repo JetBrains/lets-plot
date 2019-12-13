@@ -6,7 +6,7 @@
 package jetbrains.livemap.entities.rendering
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Context2d.LineJoin
 import jetbrains.livemap.core.ecs.EcsEntity

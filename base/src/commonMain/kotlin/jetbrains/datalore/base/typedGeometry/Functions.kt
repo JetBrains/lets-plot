@@ -3,10 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.projectionGeometry
+package jetbrains.datalore.base.typedGeometry
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleRectangles
 
 class Generic
 
@@ -67,7 +66,7 @@ fun <TypeT> newSpanRectangle(leftTop: Vec<TypeT>, rightBottom: Vec<TypeT>): Rect
 }
 
 fun <TypeT> Polygon<TypeT>.limit(): Rect<TypeT> {
-    return DoubleRectangles.boundingBox(asSequence().flatten().asIterable())
+    return asSequence().flatten().asIterable().boundingBox()
 }
 
 fun <TypeT> Rect<TypeT>.intersects(rect: Rect<TypeT>): Boolean {

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import kotlin.test.Test
 
 import kotlin.test.assertEquals

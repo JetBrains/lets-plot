@@ -5,7 +5,7 @@
 
 package jetbrains.livemap
 
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.projections.World
 
 class MapPosition(val zoom: Int, val coordinate: Vec<World>)

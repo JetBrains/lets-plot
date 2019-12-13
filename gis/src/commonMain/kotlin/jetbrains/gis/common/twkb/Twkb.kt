@@ -5,7 +5,7 @@
 
 package jetbrains.gis.common.twkb
 
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.gis.common.twkb.VarInt.decodeZigZag
 
 object Twkb {

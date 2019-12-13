@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.entities.placement
 
-import jetbrains.datalore.base.projectionGeometry.plus
+import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.CenterChangedComponent

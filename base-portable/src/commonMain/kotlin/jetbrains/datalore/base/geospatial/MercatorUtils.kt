@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.spatial
+package jetbrains.datalore.base.geospatial
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.math.toDegrees
@@ -12,7 +12,6 @@ import jetbrains.datalore.base.math.toRadians
 import kotlin.math.*
 
 object MercatorUtils {
-    private const val EARTH_RADIUS = 6378137.0
     private const val MAX_LONGITUDE = 180.0
     private const val MAX_LATITUDE = 85.0511287798
     val VALID_LONGITUDE_RANGE = ClosedRange.closed(-MAX_LONGITUDE, MAX_LONGITUDE)

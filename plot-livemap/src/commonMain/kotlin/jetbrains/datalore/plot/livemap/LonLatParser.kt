@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.projectionGeometry.explicitVec
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.MercatorUtils.checkLat
-import jetbrains.datalore.base.spatial.MercatorUtils.checkLon
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.geospatial.MercatorUtils.checkLat
+import jetbrains.datalore.base.geospatial.MercatorUtils.checkLon
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 
 internal object LonLatParser {
     private val LON_LAT = Regex("^(-?\\d+\\.?\\d*), ?(-?\\d+\\.?\\d*)$")

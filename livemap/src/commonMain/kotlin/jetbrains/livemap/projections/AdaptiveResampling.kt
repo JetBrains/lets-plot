@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.projectionGeometry.div
-import jetbrains.datalore.base.projectionGeometry.plus
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.div
+import jetbrains.datalore.base.typedGeometry.plus
 import kotlin.math.sqrt
 
 class AdaptiveResampling<InT, OutT>(private val transform: (Vec<InT>) -> Vec<OutT>, epsilon: Double) {

@@ -5,10 +5,10 @@
 
 package jetbrains.livemap.camera
 
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.div
-import jetbrains.datalore.base.projectionGeometry.minus
-import jetbrains.datalore.base.projectionGeometry.plus
+import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.div
+import jetbrains.datalore.base.typedGeometry.minus
+import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.livemap.MapWidgetUtil
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.tiles.CellKey

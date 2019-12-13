@@ -6,7 +6,7 @@
 package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.gis.common.json.Arr
 import jetbrains.gis.common.json.FluentArray
 import jetbrains.gis.common.json.FluentObject

@@ -5,10 +5,10 @@
 
 package jetbrains.gis.tileprotocol.json
 
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.explicitVec
-import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
-import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.datalore.base.typedGeometry.newSpanRectangle
 import jetbrains.gis.common.json.FluentArray
 import jetbrains.gis.common.json.FluentObject
 import jetbrains.gis.common.json.Obj

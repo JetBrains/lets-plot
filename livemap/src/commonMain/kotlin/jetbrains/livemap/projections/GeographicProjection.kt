@@ -5,12 +5,12 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.explicitVec
-import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.limitLat
-import jetbrains.datalore.base.spatial.limitLon
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.geospatial.limitLat
+import jetbrains.datalore.base.geospatial.limitLon
+import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.datalore.base.typedGeometry.newSpanRectangle
 
 internal class GeographicProjection : GeoProjection {
 

@@ -8,8 +8,10 @@ package jetbrains.livemap.projections
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 
 /**
  * Coordinates in [0.0.. 256.0]
@@ -23,9 +25,6 @@ interface Client
 
 
 typealias LonLatPoint = Vec<LonLat>
-typealias LonLatRing = Ring<LonLat>
-typealias LonLatPolygon = Polygon<LonLat>
-typealias LonLatMultiPolygon = MultiPolygon<LonLat>
 
 typealias ClientPoint = Vec<Client>
 typealias ClientRectangle = Rect<Client>

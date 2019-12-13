@@ -3,10 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.spatial
+package jetbrains.datalore.base.geospatial
 
 
-import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.rectangle
+import jetbrains.datalore.base.geospatial.GeoRectangleTestHelper.rectangle
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse

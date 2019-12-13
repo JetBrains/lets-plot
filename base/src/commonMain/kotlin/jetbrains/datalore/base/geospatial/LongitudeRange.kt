@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.spatial
+package jetbrains.datalore.base.geospatial
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
@@ -45,7 +45,9 @@ internal class LongitudeRange(lower: Double, upper: Double) {
 
     fun splitByAntiMeridian(): List<ClosedRange<Double>> {
         val result = ArrayList<ClosedRange<Double>>()
-        splitRange(myLower, myUpper, MIN_LONGITUDE, MAX_LONGITUDE, result)
+        splitRange(myLower, myUpper,
+            MIN_LONGITUDE,
+            MAX_LONGITUDE, result)
         return result
     }
 
@@ -61,7 +63,13 @@ internal class LongitudeRange(lower: Double, upper: Double) {
     }
 
     companion object {
-        fun splitRange(lower: Double, upper: Double, min: Double, max: Double, result: MutableCollection<ClosedRange<Double>>) {
+        fun splitRange(
+            lower: Double,
+            upper: Double,
+            min: Double,
+            max: Double,
+            result: MutableCollection<ClosedRange<Double>>
+        ) {
             if (upper < lower) {
                 result.add(ClosedRange.closed(lower, max))
                 result.add(ClosedRange.closed(min, upper))
@@ -70,7 +78,10 @@ internal class LongitudeRange(lower: Double, upper: Double) {
             }
         }
 
-        private fun disjointRangesEncloseRange(ranges: List<ClosedRange<Double>>, internalRange: ClosedRange<Double>): Boolean {
+        private fun disjointRangesEncloseRange(
+            ranges: List<ClosedRange<Double>>,
+            internalRange: ClosedRange<Double>
+        ): Boolean {
             for (range in ranges) {
                 if (range.encloses(internalRange)) {
                     return true

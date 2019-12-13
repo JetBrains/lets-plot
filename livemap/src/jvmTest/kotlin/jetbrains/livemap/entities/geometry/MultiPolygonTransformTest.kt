@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.entities.geometry.GeometryTransform
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 class MultiPolygonTransformTest {
 
     private fun <TypeT> p(x: Double, y: Double): Vec<TypeT> {
-        return explicitVec(x, y)
+        return jetbrains.datalore.base.typedGeometry.explicitVec(x, y)
     }
 
     private fun <TypeT> multiPolygon(vararg polygons: Polygon<TypeT>): MultiPolygon<TypeT> {
@@ -68,7 +68,7 @@ class MultiPolygonTransformTest {
                     )
                 )
             )
-        ) { it + explicitVec(1.0, 1.0) }
+        ) { it + jetbrains.datalore.base.typedGeometry.explicitVec(1.0, 1.0) }
 
         var i = 0
         while (transform.alive()) {

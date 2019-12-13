@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.ui
 
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.typedGeometry.Vec
 
 fun createFormattedGeometryString(points: List<Vec<LonLat>>): String {
     var counter = 0

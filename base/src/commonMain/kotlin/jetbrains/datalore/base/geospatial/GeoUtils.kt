@@ -3,14 +3,14 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.spatial
+package jetbrains.datalore.base.geospatial
 
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.typedGeometry.*
 
 
 object GeoUtils {
 
-    val BBOX_CALCULATOR = GeoBoundingBoxCalculator(EARTH_RECT, true, false)
+    val BBOX_CALCULATOR = GeoBoundingBoxCalculator(EARTH_RECT, myLoopX = true, myLoopY = false)
 
 
     fun convertToGeoRectangle(rect: Rect<LonLat>): GeoRectangle {
@@ -25,9 +25,11 @@ object GeoUtils {
             right = EARTH_RECT.right
         }
 
-        return GeoRectangle(left, limitLat(rect.top), right, limitLat(rect.bottom))
+        return GeoRectangle(left,
+            limitLat(rect.top), right,
+            limitLat(rect.bottom)
+        )
     }
-
 
 
     fun tileXYToTileID(tileX: Int, tileY: Int, zoom: Int): String {

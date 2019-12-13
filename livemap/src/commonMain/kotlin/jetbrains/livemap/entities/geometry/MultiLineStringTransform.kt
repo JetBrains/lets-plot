@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.projectionGeometry.LineString
-import jetbrains.datalore.base.projectionGeometry.MultiLineString
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.LineString
+import jetbrains.datalore.base.typedGeometry.MultiLineString
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.core.multitasking.MicroTask
 
 internal class MultiLineStringTransform<InT, OutT> (

@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.camera
 
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.projections.WorldPoint
 import jetbrains.livemap.projections.WorldRectangle
 import jetbrains.livemap.tiles.CellKey

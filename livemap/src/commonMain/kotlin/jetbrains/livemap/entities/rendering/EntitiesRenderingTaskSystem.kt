@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.entities.rendering
 
-import jetbrains.datalore.base.projectionGeometry.unaryMinus
+import jetbrains.datalore.base.typedGeometry.unaryMinus
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraComponent

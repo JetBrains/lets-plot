@@ -7,10 +7,7 @@ package jetbrains.datalore.base.math
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
-import kotlin.math.PI
-import kotlin.math.ceil
-import kotlin.math.round
-import kotlin.math.sqrt
+import kotlin.math.*
 
 fun toRadians(degrees: Double): Double = degrees * PI / 180.0
 fun toDegrees(radians: Double): Double = radians * 180.0 / PI
@@ -41,3 +38,6 @@ fun distance(vector: Vector, doubleVector: DoubleVector): Double {
 }
 
 
+fun Int.ipow(e: Int): Double {
+    return this.toDouble().pow(e)
+}

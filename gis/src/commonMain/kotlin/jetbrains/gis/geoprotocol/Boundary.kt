@@ -5,7 +5,7 @@
 
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
 
 interface Boundary<TypeT> {
 

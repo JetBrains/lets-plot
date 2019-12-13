@@ -5,13 +5,13 @@
 
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.projectionGeometry.Geometry
-import jetbrains.datalore.base.projectionGeometry.Geometry.Companion.createMultiLineString
-import jetbrains.datalore.base.projectionGeometry.Geometry.Companion.createMultiPoint
-import jetbrains.datalore.base.projectionGeometry.Geometry.Companion.createMultiPolygon
-import jetbrains.datalore.base.projectionGeometry.GeometryType.*
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.Geometry
+import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiLineString
+import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiPoint
+import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiPolygon
+import jetbrains.datalore.base.typedGeometry.GeometryType.*
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.projections.AdaptiveResampling

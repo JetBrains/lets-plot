@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.model
 
-import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.api.ChartSource
 import jetbrains.livemap.api.LineBuilder
 import jetbrains.livemap.api.PointBuilder
