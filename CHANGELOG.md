@@ -7,12 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- *GGBunch*. Combines several different plots into one graphical object.
 - *geom_image()*. Shows image encoded as numpy 3-dimensional ndarray. 
 - *gg_image_matrix()*. An utility helping to combine several images into one graphical object.
-- *GGBunch*. Combines several different plots into one graphical object.
 - user_guide.ipynb
-- scatter_matrix.ipynb
 - ggbunch.ipynb  
+- scatter_matrix.ipynb
+- image_101.ipynb
+- image_fisher_boat.ipynb
+- image_matrix.ipynb
 
 ### Changed
 - Switched to Kotlin 1.3.61
