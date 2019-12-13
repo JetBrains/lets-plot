@@ -115,9 +115,9 @@ These features of `Lets-Plot` are not present or have different implementation i
     Example: [image_101.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks-dev/image_101.ipynb)
     Example: [image_fisher_boat.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks-dev/image_fisher_boat.ipynb)
     
-* `gg_image_matrix()` - a utility helping to combine several images into one graphical object.     
+* `gg_image_matrix()` - an utility helping to combine several images into one graphical object.     
 
-    Example: [TBD]
+    Example: [image_matrix](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks-dev/image_matrix.ipynb)
 
 #### GGBanch
 
