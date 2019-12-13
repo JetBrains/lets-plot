@@ -19,3 +19,11 @@ Due to the unique multi-platform nature of Kotlin programming language, you can 
 [Learn](README_PYTHON.md) how to create plots in Jupyter using the Lets-Plot python package.
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
+
+### Kotlin API
+
+[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) adds Grammar-of-Graphics plotting capabilities to Kotlin kernel for Jupyter notebooks.
+
+Besides Jupyter notebooks, **Lets-Plot Kotlin** API would allow embedding plots into a JVM-based application.
+
+**Lets-Plot Kotlin** API is a work in progress and wasn't yet publicly released.   
