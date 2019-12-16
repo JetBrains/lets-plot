@@ -16,7 +16,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 open class Viewport internal constructor(
-    private val helper: ViewportMath,
+    private val helper: ViewportHelper<World>,
     val size: ClientPoint
 ) {
 
@@ -60,6 +60,8 @@ open class Viewport internal constructor(
             .map { getViewCoord(it) }
     }
 
+    fun calculateBoundingBox(bBoxes: List<Rect<World>>) = helper.calculateBoundingBox(bBoxes)
+
     private fun updateWindow() {
         window = WorldRectangle(windowOrigin, windowSize)
     }
@@ -81,7 +83,7 @@ open class Viewport internal constructor(
     }
 
     companion object {
-        fun create(helper: ViewportMath, size: ClientPoint, position: WorldPoint): Viewport {
+        fun create(helper: ViewportHelper<World>, size: ClientPoint, position: WorldPoint): Viewport {
             return Viewport(helper, size).apply {
                 this.position = position
             }

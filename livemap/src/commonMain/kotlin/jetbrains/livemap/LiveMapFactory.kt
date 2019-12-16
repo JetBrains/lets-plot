@@ -6,6 +6,7 @@
 package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
+import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.camera.ViewportHelper
@@ -26,6 +27,7 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
         myMapProjection = createMapProjection(myLiveMapSpec.projectionType, mapRect)
         val multiMapHelper = ViewportHelper(mapRect, myLiveMapSpec.isLoopX, myLiveMapSpec.isLoopY)
         myMapRuler = multiMapHelper
+
         myViewport = Viewport.create(
             multiMapHelper,
             myLiveMapSpec.size.toClientPoint(),
@@ -34,32 +36,9 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
     }
 
     override fun createLiveMap(): Async<BaseLiveMap> {
-        val mapDataGeocodingHelper = MapDataGeocodingHelper(
-            myLiveMapSpec.size,
-            myLiveMapSpec.geocodingService,
-            myLiveMapSpec.layerProvider.layers,
-            myLiveMapSpec.level,
-            myLiveMapSpec.parent,
-            myLiveMapSpec.location,
-            myLiveMapSpec.zoom,
-            myMapRuler,
-            myMapProjection,
-            true //for BBoxEmptinessChecker
-        )
+        myViewport.zoom = 1
 
-        return mapDataGeocodingHelper.geocodeMapData()
-            .map { mapPosition ->
-                mapPosition
-                    ?.let { createLiveMap(it.zoom, it.coordinate) }
-                    ?: error("Map position must to be not null")
-            }
-    }
-
-    private fun createLiveMap(zoom: Int, center: WorldPoint): BaseLiveMap {
-        myViewport.zoom = zoom
-        myViewport.position = center
-
-        return LiveMap(
+        return Asyncs.constant(LiveMap(
             myMapProjection,
             myViewport,
             myLiveMapSpec.layerProvider,
@@ -72,6 +51,6 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
                 myLiveMapSpec.level,
                 myLiveMapSpec.parent
             )
-        )
+        ))
     }
 }

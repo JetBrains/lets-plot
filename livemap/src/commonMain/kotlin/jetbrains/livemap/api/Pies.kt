@@ -69,9 +69,9 @@ class PiesFactory(
             result.add(
                 when {
                     source.point != null ->
-                        myFactory.createStaticEntity("map_ent_s_pie_sector", source.point!!)
+                        myFactory.createStaticEntityWithLocation("map_ent_s_pie_sector", source.point!!)
                     source.mapId != null ->
-                        myFactory.createDynamicEntity("map_ent_d_pie_sector_${source.mapId}", source.mapId!!)
+                        myFactory.createDynamicEntityWithLocation("map_ent_d_pie_sector_${source.mapId}", source.mapId!!)
                     else ->
                         error("Can't create pieSector entity. [point] and [mapId] is null.")
                 }.setInitializer { worldPoint ->

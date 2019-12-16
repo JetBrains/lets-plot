@@ -12,6 +12,9 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
+import jetbrains.livemap.entities.geocoding.NeedCalculateLocationComponent
+import jetbrains.livemap.entities.geocoding.NeedGeocodeLocationComponent
+import jetbrains.livemap.entities.geocoding.NeedLocationComponent
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
@@ -81,7 +84,8 @@ class LineBuilder(
                 myFactory.createDynamicEntity("map_ent_d_line_$mapId", mapId!!)
             else ->
                 error("Can't create line entity. [point] and [mapId] is null.")
-        }.setInitializer { worldPoint ->
+        }
+            .setInitializer { worldPoint ->
                 val line = createLineGeometry(worldPoint, horizontal, myMapProjection.mapRect)
                 val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, myMapProjection.mapRect)
 
@@ -97,5 +101,8 @@ class LineBuilder(
                     setLineDash(this@LineBuilder.lineDash)
                 }
             }
+            .remove<NeedLocationComponent>()
+            .remove<NeedCalculateLocationComponent>()
+            .remove<NeedGeocodeLocationComponent>()
     }
 }

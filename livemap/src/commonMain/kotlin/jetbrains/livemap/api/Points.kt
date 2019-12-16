@@ -90,9 +90,9 @@ class PointBuilder(
 
         return when {
                 point != null ->
-                    myFactory.createStaticEntity("map_ent_s_point", point!!)
+                    myFactory.createStaticEntityWithLocation("map_ent_s_point", point!!)
                 mapId != null ->
-                    myFactory.createDynamicEntity("map_ent_d_point_$mapId", mapId!!)
+                    myFactory.createDynamicEntityWithLocation("map_ent_d_point_$mapId", mapId!!)
                 else ->
                     error("Can't create point entity. [point] and [mapId] is null.")
             }.run {

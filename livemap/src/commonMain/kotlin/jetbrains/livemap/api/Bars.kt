@@ -66,9 +66,9 @@ class BarsFactory(
                 result.add(
                     when {
                         source.point != null ->
-                            myFactory.createStaticEntity("map_ent_s_bar", source.point!!)
+                            myFactory.createStaticEntityWithLocation("map_ent_s_bar", source.point!!)
                         source.mapId != null ->
-                            myFactory.createDynamicEntity("map_ent_d_bar_${source.mapId}", source.mapId!!)
+                            myFactory.createDynamicEntityWithLocation("map_ent_d_bar_${source.mapId}", source.mapId!!)
                         else ->
                             error("Can't create bar entity. [point] and [mapId] is null.")
                     }.setInitializer { worldPoint ->

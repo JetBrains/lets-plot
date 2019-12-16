@@ -18,6 +18,8 @@ import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
+import jetbrains.livemap.entities.geocoding.NeedCalculateLocationComponent
+import jetbrains.livemap.entities.geocoding.NeedLocationComponent
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
@@ -97,6 +99,8 @@ class PathBuilder(
                             strokeWidth = this@PathBuilder.strokeWidth
                             lineDash = this@PathBuilder.lineDash.toDoubleArray()
                         }
+                        + NeedLocationComponent()
+                        + NeedCalculateLocationComponent()
                     }
 
                 if (animation == 2) {

@@ -70,9 +70,9 @@ class TextBuilder(
 
         return when {
             point != null ->
-                myFactory.createStaticEntity("map_ent_s_text", point!!)
+                myFactory.createStaticEntityWithLocation("map_ent_s_text", point!!)
             mapId != null ->
-                myFactory.createDynamicEntity("map_ent_d_text_$mapId", mapId!!)
+                myFactory.createDynamicEntityWithLocation("map_ent_d_text_$mapId", mapId!!)
             else ->
                 error("Can't create text entity. [point] and [mapId] is null.")
         }

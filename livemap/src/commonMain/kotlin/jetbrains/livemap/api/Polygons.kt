@@ -16,6 +16,7 @@ import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.geocoding.MapIdComponent
 import jetbrains.livemap.entities.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.entities.geocoding.NeedGeocodeLocationComponent
+import jetbrains.livemap.entities.geocoding.NeedLocationComponent
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
@@ -104,6 +105,7 @@ class PolygonsBuilder(
                     setStrokeColor(this@PolygonsBuilder.strokeColor)
                     setStrokeWidth(this@PolygonsBuilder.strokeWidth)
                 }
+                + NeedLocationComponent()
                 + NeedCalculateLocationComponent()
             }
     }
@@ -122,6 +124,7 @@ class PolygonsBuilder(
                     setStrokeColor(this@PolygonsBuilder.strokeColor)
                     setStrokeWidth(this@PolygonsBuilder.strokeWidth)
                 }
+                + NeedLocationComponent()
                 + NeedGeocodeLocationComponent()
             }
     }

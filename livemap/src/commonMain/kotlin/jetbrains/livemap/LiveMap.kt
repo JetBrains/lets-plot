@@ -166,8 +166,11 @@ class LiveMap(
                 RegionIdGeocodingSystem(componentManager, myGeocodingProvider),
                 CentroidGeocodingSystem(componentManager, myGeocodingProvider),
                 BBoxGeocodingSystem(componentManager, myGeocodingProvider),
-                LocationGeocodingSystem(componentManager, myGeocodingProvider, true),
-                LocationCalculateSystem(componentManager, true),
+
+                LocationCounterSystem(componentManager, true),
+                LocationGeocodingSystem(componentManager, myGeocodingProvider),
+                LocationCalculateSystem(componentManager),
+                StartMapLocationSystem(componentManager, true, null),
 
                 ApplyPointSystem(componentManager),
 

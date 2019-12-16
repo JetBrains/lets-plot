@@ -12,10 +12,10 @@ import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
+import jetbrains.livemap.projections.Coordinates.ZERO_LONLAT_POINT
 
 class LocationCalculateSystem(
-    componentManager: EcsComponentManager,
-    private val myNeedLocation: Boolean
+    componentManager: EcsComponentManager
 ) : LiveMapSystem(componentManager) {
     private lateinit var myLocation: LocationComponent
 
@@ -24,29 +24,25 @@ class LocationCalculateSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val entities = getMutableEntities(NEED_CALCULATE)
 
-        if (entities.isEmpty()) return
+        getMutableEntities(READY_CALCULATE)
+            .forEach { entity ->
+                entity.remove<NeedCalculateLocationComponent>()
 
-        if (myNeedLocation) {
-            myLocation.wait(entities.size)
-
-            entities.forEach {
                 Rect(
-                    context.mapProjection.invert(it.get<WorldOriginComponent>().origin),
-                    context.mapProjection.invert(it.get<WorldDimensionComponent>().dimension)
+                    context.mapProjection.invert(entity.get<WorldOriginComponent>().origin),
+                    entity.tryGet<WorldDimensionComponent>()?.dimension?.run(context.mapProjection::invert) ?: ZERO_LONLAT_POINT
                 )
                     .run(::convertToGeoRectangle)
                     .run(myLocation::add)
             }
-        } else {
-            entities.forEach {
-                it.remove<NeedCalculateLocationComponent>()
-            }
-        }
     }
 
     companion object {
-        val NEED_CALCULATE = listOf(NeedCalculateLocationComponent::class)
+
+        val READY_CALCULATE = listOf(
+            NeedCalculateLocationComponent::class,
+            WorldOriginComponent::class
+        )
     }
 }

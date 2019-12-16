@@ -13,14 +13,13 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 
 class LocationGeocodingSystem(
     componentManager: EcsComponentManager,
-    private val myGeocodingProvider: GeocodingProvider,
-    private val myNeedLocation: Boolean
+    private val myGeocodingProvider: GeocodingProvider
 ) : LiveMapSystem(componentManager) {
-    
-    private val myLocation = LocationComponent()
+
+    private lateinit var myLocation: LocationComponent
 
     override fun initImpl(context: LiveMapContext) {
-        createEntity("LocationSingleton").add(myLocation)
+        myLocation = getSingleton()
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -28,31 +27,28 @@ class LocationGeocodingSystem(
 
         if (entities.isEmpty()) return
 
-        if (myNeedLocation) {
-            val regionIds = entities
-                .map { it.get<RegionIdComponent>().regionId }
-                .distinct()
+        val regionIds = entities
+            .map { it.get<RegionIdComponent>().regionId }
+            .distinct()
 
-            myLocation.wait(regionIds.size)
+        myGeocodingProvider
+            .featuresByRegionIds(regionIds, listOf(POSITION))
+            .map(::parseLocationMap)
 
-            myGeocodingProvider
-                .featuresByRegionIds(regionIds, listOf(POSITION))
-                .map(::parseLocationMap)
-        } else {
-            entities.forEach {
-                it.remove<NeedGeocodeLocationComponent>()
-            }
+        entities.forEach {
+            it.add(WaitGeocodeLocationComponent())
+            it.remove<NeedGeocodeLocationComponent>()
         }
     }
 
     private fun parseLocationMap(features: Map<String, GeocodedFeature>) {
 
-        getMutableEntities(NEED_LOCATION).forEach { entity ->
+        getMutableEntities(WAIT_LOCATION).forEach { entity ->
             features[entity.get<RegionIdComponent>().regionId]
                 ?.position
                 ?.let { rect ->
                     myLocation.add(rect)
-                    entity.remove<NeedGeocodeLocationComponent>()
+                    entity.remove<WaitGeocodeLocationComponent>()
                 }
         }
     }
@@ -61,6 +57,11 @@ class LocationGeocodingSystem(
         val NEED_LOCATION = listOf(
             RegionIdComponent::class,
             NeedGeocodeLocationComponent::class
+        )
+
+        val WAIT_LOCATION = listOf(
+            RegionIdComponent::class,
+            WaitGeocodeLocationComponent::class
         )
     }
 }

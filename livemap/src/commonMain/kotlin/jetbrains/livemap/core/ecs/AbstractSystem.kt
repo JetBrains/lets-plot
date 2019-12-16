@@ -43,6 +43,10 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
         return componentManager.getEntities(componentTypes)
     }
 
+    inline fun <reified T: EcsComponent> getMutableEntities(): List<EcsEntity> {
+        return componentManager.getEntities(T::class).toList()
+    }
+
     fun getMutableEntities(componentTypes: List<KClass<out EcsComponent>>): List<EcsEntity> {
         return componentManager.getEntities(componentTypes).toList()
     }

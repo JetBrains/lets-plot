@@ -17,7 +17,9 @@ class RegionIdComponent(var regionId: String) : EcsComponent
 
 class CentroidComponent : EcsComponent
 
+class NeedLocationComponent : EcsComponent
 class NeedGeocodeLocationComponent : EcsComponent
+class WaitGeocodeLocationComponent : EcsComponent
 
 class NeedCalculateLocationComponent : EcsComponent
 
@@ -34,7 +36,7 @@ class LocationComponent: EcsComponent {
     }
 
     fun isReady(): Boolean {
-        return myWaitingCount == locations.size
+        return myWaitingCount > 0 && myWaitingCount == locations.size
     }
 }
 
