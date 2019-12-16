@@ -13,7 +13,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -70,10 +70,10 @@ object Beta {
      *
      *  *
      * [
- * Regularized Beta Function](http://mathworld.wolfram.com/RegularizedBetaFunction.html).
+ * Regularized Beta Function](mathworld.wolfram.com/RegularizedBetaFunction.html).
      *  *
      * [
- * Regularized Beta Function](http://functions.wolfram.com/06.21.10.0001.01).
+ * Regularized Beta Function](functions.wolfram.com/06.21.10.0001.01).
      *
      *
      * @param x the value.
@@ -147,7 +147,7 @@ object Beta {
      * The implementation of this method is based on:
      *
      *  * [
- * Beta Function](http://mathworld.wolfram.com/BetaFunction.html), equation (1).
+ * Beta Function](mathworld.wolfram.com/BetaFunction.html), equation (1).
      *
      *
      * @param a Parameter `a`.
@@ -187,7 +187,7 @@ object Beta {
 /**
  * Returns the
  * [
- * regularized beta function](http://mathworld.wolfram.com/RegularizedBetaFunction.html) I(x, a, b).
+ * regularized beta function](mathworld.wolfram.com/RegularizedBetaFunction.html) I(x, a, b).
  *
  * @param x Value.
  * @param a Parameter `a`.
@@ -199,7 +199,7 @@ object Beta {
 /**
  * Returns the
  * [
- * regularized beta function](http://mathworld.wolfram.com/RegularizedBetaFunction.html) I(x, a, b).
+ * regularized beta function](mathworld.wolfram.com/RegularizedBetaFunction.html) I(x, a, b).
  *
  * @param x Value.
  * @param a Parameter `a`.

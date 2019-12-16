@@ -37,7 +37,7 @@ constructor(type: String?, palette: Any?, direction: Double?, naValue: Color) : 
     override val guideBreaks: List<GuideBreak<*>>
         get() = emptyList()
 
-    // http://docs.ggplot2.org/current/scale_brewer.html
+    // https://ggplot2.tidyverse.org/current/scale_brewer.html
     private fun paletteType(name: String?): ColorPalette.Type {
         if (name == null) {
             return ColorPalette.Type.SEQUENTIAL

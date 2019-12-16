@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.common.color
 
 /**
- * source: http://colorbrewer2.org/
+ * source: colorbrewer2.org/
  */
 internal object ColorSets {
     // --------------------

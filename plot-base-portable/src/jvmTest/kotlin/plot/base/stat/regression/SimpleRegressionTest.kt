@@ -124,9 +124,9 @@ internal class SimpleRegressionTest {
             // https://www.ma.utexas.edu/users/mks/statmistakes/CIvsPI.html
             // https://onlinecourses.science.psu.edu/stat414/node/297
 
-            // http://www2.stat.duke.edu/~tjl13/s101/slides/unit6lec3H.pdf
+            // https://www2.stat.duke.edu/~tjl13/s101/slides/unit6lec3H.pdf
             // Stat symbols:
-            // http://brownmath.com/swt/symbol.htm
+            // https://brownmath.com/swt/symbol.htm
 
 
             // x deviation squared

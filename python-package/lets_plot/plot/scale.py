@@ -1278,7 +1278,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None,
         scales. It also allows to smoothly interpolate 6 colors from any palette to a continuous scale
         (6 colors per palette gives nice gradients; more results in more saturated colors which do not look as good).
         However, the original color schemes (particularly the qualitative ones) were not intended for this and the
-        perceptual result is left to the appreciation of the user. See http://colorbrewer2.org for more information.
+        perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
     Palettes
     --------
@@ -1340,7 +1340,7 @@ def scale_color_brewer(type=None, palette=None, direction=None,
         scales. It also allows to smoothly interpolate 6 colors from any palette to a continuous scale
         (6 colors per palette gives nice gradients; more results in more saturated colors which do not look as good).
         However, the original color schemes (particularly the qualitative ones) were not intended for this and the
-        perceptual result is left to the appreciation of the user. See http://colorbrewer2.org for more information.
+        perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
     Palettes
     --------

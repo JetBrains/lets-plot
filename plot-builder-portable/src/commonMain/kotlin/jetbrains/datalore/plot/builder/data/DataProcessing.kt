@@ -181,7 +181,7 @@ object DataProcessing {
         }
 
         // generate new 'input' series to match stat series
-        // see: http://docs.ggplot2.org/current/aes_group_order.html
+        // see: https://ggplot2.tidyverse.org/current/aes_group_order.html
         // "... the group is set to the interaction of all discrete variables in the plot."
 
         val inverseTransformedStatSeries =

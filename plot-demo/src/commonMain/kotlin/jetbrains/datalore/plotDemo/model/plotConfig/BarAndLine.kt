@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
 /**
- * see: http://www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/
+ * see: www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/
  */
 open class BarAndLine : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {

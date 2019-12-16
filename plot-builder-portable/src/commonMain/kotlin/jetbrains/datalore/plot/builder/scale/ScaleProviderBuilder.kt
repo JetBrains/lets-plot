@@ -15,8 +15,8 @@ import jetbrains.datalore.plot.base.scale.Scales
 
 /**
  * see ggplot2: discrete_scale(...) / continuous_scale(...)
- * http://docs.ggplot2.org/current/discrete_scale.html
- * http://docs.ggplot2.org/current/continuous_scale.html
+ * https://ggplot2.tidyverse.org/reference/discrete_scale.html
+ * https://ggplot2.tidyverse.org/current/continuous_scale.html
  */
 class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
 

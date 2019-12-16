@@ -13,7 +13,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import kotlin.math.ln
  * @see "[&apos;Student's t-distribution
  * @see "[Student's t-distribution
  * @version $Id: TDistribution.java 1244107 2012-02-14 16:17:55Z erans $
-](http://mathworld.wolfram.com/Studentst-Distribution.html)](http://en.wikipedia.org/wiki/Student&apos;s_t-distribution) */
+](mathworld.wolfram.com/Studentst-Distribution.html)](https://en.wikipedia.org/wiki/Student&apos;s_t-distribution) */
 class TDistribution
 /**
  * Create a t distribution using the given degrees of freedom and the

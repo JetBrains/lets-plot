@@ -10,15 +10,14 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
 
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
+import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_NAMESPACE_URI
+import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_PREFIX
 import jetbrains.datalore.vis.svg.SvgTransformable.Companion.TRANSFORM
 
 open class SvgImageElement() : SvgGraphicsElement(),
     SvgTransformable {
 
     companion object {
-        private const val XLINK_NAMESPACE_URI = "http://www.w3.org/1999/xlink"
-        private const val XLINK_PREFIX = "xlink"
-
         val X: SvgAttributeSpec<Double> =
             SvgAttributeSpec.createSpec("x")
         val Y: SvgAttributeSpec<Double> =

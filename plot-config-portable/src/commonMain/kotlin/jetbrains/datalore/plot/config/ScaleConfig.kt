@@ -146,7 +146,7 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
         b.discreteDomain(discreteDomain)
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
-            // ToDo: add support for 'date_breaks', 'date_labels' (see: http://docs.ggplot2.org/current/scale_date.html)
+            // ToDo: add support for 'date_breaks', 'date_labels' (see: https://ggplot2.tidyverse.org/current/scale_date.html)
             b.transform(Transforms.identityWithBreaksGen(DateTimeBreaksGen()))
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {
             val transformConfig =

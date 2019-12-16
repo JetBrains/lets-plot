@@ -45,7 +45,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
     companion object {
 
         private fun createPlot(demoVariant: DemoVariant): jetbrains.datalore.plot.builder.Plot {
-            // sample see: Cookbook for R: http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)
+            // sample see: Cookbook for R: www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)
             /*
 
     #>   supp dose  N   len       sd        se       ci

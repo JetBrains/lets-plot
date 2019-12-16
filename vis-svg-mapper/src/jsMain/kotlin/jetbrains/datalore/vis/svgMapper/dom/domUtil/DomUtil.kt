@@ -16,6 +16,7 @@ import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 import jetbrains.datalore.vis.svg.slim.SvgSlimNode
+import jetbrains.datalore.vis.svg.XmlNamespace.SVG_NAMESPACE_URI
 import jetbrains.datalore.vis.svgMapper.dom.css.CssDisplay
 import jetbrains.datalore.vis.svgMapper.dom.domExtensions.*
 import org.w3c.dom.*
@@ -256,5 +257,5 @@ object DomUtil {
     fun generateTextElement(source: SvgTextNode): Text = document.createTextNode("")
 
     private fun createSVGElement(name: String): SVGElement =
-            document.createElementNS("http://www.w3.org/2000/svg", name) as SVGElement
+            document.createElementNS(SVG_NAMESPACE_URI, name) as SVGElement
 }

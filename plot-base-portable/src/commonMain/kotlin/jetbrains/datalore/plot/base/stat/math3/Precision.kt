@@ -13,7 +13,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,7 +65,7 @@ object Precision {
      * (or fewer) floating point numbers between them, i.e. two adjacent floating
      * point numbers are considered equal.
      * Adapted from [
- * Bruce Dawson](http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm)
+ * Bruce Dawson](https://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm)
      *
      * @param x first value
      * @param y second value
@@ -133,7 +133,7 @@ object Precision {
      * (or fewer) floating point numbers between them, i.e. two adjacent floating
      * point numbers are considered equal.
      * Adapted from [
- * Bruce Dawson](http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm)
+ * Bruce Dawson](https://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm)
      *
      * @param x first value
      * @param y second value
@@ -227,7 +227,7 @@ object Precision {
      * (or fewer) floating point numbers between them, i.e. two adjacent floating
      * point numbers are considered equal.
      * Adapted from [
- * Bruce Dawson](http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm)
+ * Bruce Dawson](https://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm)
      *
      * @param x first value
      * @param y second value

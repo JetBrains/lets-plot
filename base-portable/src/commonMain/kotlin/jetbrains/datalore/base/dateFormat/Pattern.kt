@@ -7,7 +7,7 @@ package jetbrains.datalore.base.dateFormat
 
 /**
  * Pattern for "strftime" datetime formatting
- * (https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior, http://www.strfti.me/)
+ * (https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior, www.strfti.me/)
  */
 enum class Pattern(val string: String, val kind: Kind) {
     //Date

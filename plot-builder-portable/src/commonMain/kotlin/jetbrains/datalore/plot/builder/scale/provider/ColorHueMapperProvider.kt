@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.scale.GuideMapper
 import kotlin.math.max
 import kotlin.math.min
 
-// http://docs.ggplot2.org/current/scale_hue.html
+// https://ggplot2.tidyverse.org/current/scale_hue.html
 class ColorHueMapperProvider(hueRange: List<Double>?,
                              chroma: Double?,
                              luminance: Double?,

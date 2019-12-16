@@ -13,7 +13,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +29,7 @@ import kotlin.math.abs
 
 /**
  * This class implements the [
- * Brent algorithm](http://mathworld.wolfram.com/BrentsMethod.html) for finding zeros of real univariate functions.
+ * Brent algorithm](mathworld.wolfram.com/BrentsMethod.html) for finding zeros of real univariate functions.
  * The function should be continuous but not necessarily smooth.
  * The `solve` method returns a zero `x` of the function `f`
  * in the given interval `[a, b]` to within a tolerance

@@ -23,7 +23,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
         isContinuous = continuousOutput
         domainLimits = ClosedRange.closed(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
 
-        // see: http://docs.ggplot2.org/current/scale_continuous.html
+        // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for continuous scale.
         multiplicativeExpand = 0.05
         additiveExpand = 0.0

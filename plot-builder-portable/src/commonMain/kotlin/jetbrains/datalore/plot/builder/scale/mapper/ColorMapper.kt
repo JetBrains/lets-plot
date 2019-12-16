@@ -13,7 +13,7 @@ import kotlin.math.abs
 
 object ColorMapper {
     val NA_VALUE = Color.GRAY
-    // http://docs.ggplot2.org/current/scale_gradient.html
+    // https://ggplot2.tidyverse.org/current/scale_gradient.html
     val DEF_GRADIENT_LOW = Color.parseHex("#132B43")
     val DEF_GRADIENT_HIGH = Color.parseHex("#56B1F7")
 

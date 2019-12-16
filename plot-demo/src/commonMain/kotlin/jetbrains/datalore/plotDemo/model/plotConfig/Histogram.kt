@@ -12,7 +12,7 @@ import kotlin.math.abs
 
 /**
  * See 'Plotting distributions'
- * http://www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/
+ * www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/
  */
 open class Histogram : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {

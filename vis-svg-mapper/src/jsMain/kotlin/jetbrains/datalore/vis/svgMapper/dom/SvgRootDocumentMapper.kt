@@ -8,6 +8,7 @@ package jetbrains.datalore.vis.svgMapper.dom
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.vis.svg.SvgSvgElement
+import jetbrains.datalore.vis.svg.XmlNamespace.SVG_NAMESPACE_URI
 import org.w3c.dom.svg.SVGSVGElement
 import kotlin.browser.document
 
@@ -16,8 +17,6 @@ class SvgRootDocumentMapper(source: SvgSvgElement): Mapper<SvgSvgElement, SVGSVG
 ) {
 
     companion object {
-        private const val SVG_NAMESPACE_URI = "http://www.w3.org/2000/svg"
-
         private fun createDocument(): SVGSVGElement {
             return document.createElementNS(SVG_NAMESPACE_URI, "svg") as SVGSVGElement
         }

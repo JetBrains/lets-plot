@@ -13,7 +13,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,7 +37,7 @@ import kotlin.math.ln
  */
 object Gamma {
     /**
-     * [Euler-Mascheroni constant](http://en.wikipedia.org/wiki/Euler-Mascheroni_constant)
+     * [Euler-Mascheroni constant](https://en.wikipedia.org/wiki/Euler-Mascheroni_constant)
      * @since 2.0
      */
     val GAMMA = 0.577215664901532860606512090082
@@ -75,12 +75,12 @@ object Gamma {
      * The implementation of this method is based on:
      *
      *  * [
- * Gamma Function](http://mathworld.wolfram.com/GammaFunction.html), equation (28).
+ * Gamma Function](mathworld.wolfram.com/GammaFunction.html), equation (28).
      *  * [
- * Lanczos Approximation](http://mathworld.wolfram.com/LanczosApproximation.html), equations (1) through (5).
+ * Lanczos Approximation](mathworld.wolfram.com/LanczosApproximation.html), equations (1) through (5).
      *  * [Paul Godfrey, A note on
  * the computation of the convergent Lanczos complex Gamma approximation
-](http://my.fit.edu/~gabdo/gamma.txt) *
+](https://my.fit.edu/~gabdo/gamma.txt) *
      *
      *
      * @param x Value.
@@ -115,15 +115,15 @@ object Gamma {
      *
      *  *
      * [
- * Regularized Gamma Function](http://mathworld.wolfram.com/RegularizedGammaFunction.html), equation (1)
+ * Regularized Gamma Function](mathworld.wolfram.com/RegularizedGammaFunction.html), equation (1)
      *
      *  *
      * [
- * Incomplete Gamma Function](http://mathworld.wolfram.com/IncompleteGammaFunction.html), equation (4).
+ * Incomplete Gamma Function](mathworld.wolfram.com/IncompleteGammaFunction.html), equation (4).
      *
      *  *
      * [
- * Confluent Hypergeometric Function of the First Kind](http://mathworld.wolfram.com/ConfluentHypergeometricFunctionoftheFirstKind.html), equation (1).
+ * Confluent Hypergeometric Function of the First Kind](mathworld.wolfram.com/ConfluentHypergeometricFunctionoftheFirstKind.html), equation (1).
      *
      *
      *
@@ -188,12 +188,12 @@ object Gamma {
      *
      *  *
      * [
- * Regularized Gamma Function](http://mathworld.wolfram.com/RegularizedGammaFunction.html), equation (1).
+ * Regularized Gamma Function](mathworld.wolfram.com/RegularizedGammaFunction.html), equation (1).
      *
      *  *
      * [
  * Regularized incomplete gamma function: Continued fraction representations
- * (formula 06.08.10.0003)](http://functions.wolfram.com/GammaBetaErf/GammaRegularized/10/0003/)
+ * (formula 06.08.10.0003)](functions.wolfram.com/GammaBetaErf/GammaRegularized/10/0003/)
      *
      *
      *
@@ -264,9 +264,9 @@ object Gamma {
      *
      * @param x Argument.
      * @return digamma(x) to within 10-8 relative or absolute error whichever is smaller.
-     * @see [Digamma](http://en.wikipedia.org/wiki/Digamma_function)
+     * @see [Digamma](https://en.wikipedia.org/wiki/Digamma_function)
      *
-     * @see [Bernardo&apos;s original article ](http://www.uv.es/~bernardo/1976AppStatist.pdf)
+     * @see [Bernardo&apos;s original article ](https://www.uv.es/~bernardo/1976AppStatist.pdf)
      *
      * @since 2.0
      */
@@ -296,7 +296,7 @@ object Gamma {
      *
      * @param x Argument.
      * @return trigamma(x) to within 10-8 relative or absolute error whichever is smaller
-     * @see [Trigamma](http://en.wikipedia.org/wiki/Trigamma_function)
+     * @see [Trigamma](https://en.wikipedia.org/wiki/Trigamma_function)
      *
      * @see Gamma.digamma
      * @since 2.0

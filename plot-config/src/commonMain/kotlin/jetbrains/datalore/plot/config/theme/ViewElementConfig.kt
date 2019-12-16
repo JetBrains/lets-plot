@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.config.OptionsAccessor
 
 /**
  * Specify the display of how non-data components of the plot are a drawn.
- * See: http://ggplot2.tidyverse.org/reference/element.html
+ * See: https://ggplot2.tidyverse.org/reference/element.html
  */
 internal class ViewElementConfig private constructor(private val myName: String, options: Map<*, *>) : OptionsAccessor(options) {
 

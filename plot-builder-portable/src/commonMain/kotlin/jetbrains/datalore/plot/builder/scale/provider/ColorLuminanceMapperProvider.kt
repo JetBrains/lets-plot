@@ -41,7 +41,7 @@ class ColorLuminanceMapperProvider(start: Double?, end: Double?, naValue: Color)
     }
 
     companion object {
-        // http://docs.ggplot2.org/current/scale_hue.html
+        // https://ggplot2.tidyverse.org/reference/scale_hue.html
         private const val DEF_START = 20.0
         private const val DEF_END = 80.0
     }

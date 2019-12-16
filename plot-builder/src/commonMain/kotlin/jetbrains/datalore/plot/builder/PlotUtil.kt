@@ -350,7 +350,7 @@ object PlotUtil {
         if (range == null) return null
 
         // expand X-range to ensure that the data is placed some distance away from the axes.
-        // see: http://docs.ggplot2.org/current/scale_continuous.html - expand
+        // see: https://ggplot2.tidyverse.org/current/scale_continuous.html - expand
         val mulExp = getMultiplicativeExpand(layer, aes)
         val addExp = getAdditiveExpand(layer, aes)
         val lowerEndpoint = range.lowerEndpoint()

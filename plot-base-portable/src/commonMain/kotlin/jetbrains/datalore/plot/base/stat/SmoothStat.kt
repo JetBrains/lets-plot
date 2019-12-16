@@ -150,7 +150,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
 
     /* About five methods
    * Linear Regression: DONE
-   * Loess: DONE, SE used bootstrap method, but too many strikes. Refer to http://www.netlib.org/a/cloess.ps Page 45
+   * Loess: DONE, SE used bootstrap method, but too many strikes. Refer to www.netlib.org/a/cloess.ps Page 45
    * Generalized Linear Model: https://spark.apache.org/docs/latest/ml-classification-regression.html#generalized-linear-regression
    * Robust Linear Model: Unfortunately no Java Library
    * Generalized Additive Model: Unknown

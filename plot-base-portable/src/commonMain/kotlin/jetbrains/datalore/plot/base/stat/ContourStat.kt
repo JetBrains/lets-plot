@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.StatContext
  * see doc for geom_contour/stat_contour
  *
  *
- * see also examples: http://www.inside-r.org/packages/cran/ggplot2/docs/stat_contour
+ * see also examples: https://www.inside-r.org/packages/cran/ggplot2/docs/stat_contour
  *
  *
  *

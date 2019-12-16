@@ -69,7 +69,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
     constructor(name: String, domainValues: Collection<Any?>, mapper: ((Double?) -> T?)) : super(name, mapper) {
         updateDomain(domainValues, emptySet<Any>())
 
-        // see: http://docs.ggplot2.org/current/scale_continuous.html
+        // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for discrete scale.
         multiplicativeExpand = 0.0
         additiveExpand = 0.6

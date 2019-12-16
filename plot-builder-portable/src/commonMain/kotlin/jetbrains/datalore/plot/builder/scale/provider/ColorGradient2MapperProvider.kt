@@ -76,7 +76,7 @@ class ColorGradient2MapperProvider(low: Color?, mid: Color?, high: Color?, midpo
     }
 
     companion object {
-        // http://docs.ggplot2.org/current/scale_gradient.html
+        // https://ggplot2.tidyverse.org/current/scale_gradient.html
         private val DEF_GRADIENT_LOW = Color.parseHex("#964540") // muted("red")
         private val DEF_GRADIENT_MID = Color.WHITE
         private val DEF_GRADIENT_HIGH = Color.parseHex("#3B3D96") // muted("blue")
