@@ -11,7 +11,7 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class SimpleRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double)
+class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double)
     : RegressionEvaluator(xs, ys, confidenceLevel) {
 
     private val n: Int

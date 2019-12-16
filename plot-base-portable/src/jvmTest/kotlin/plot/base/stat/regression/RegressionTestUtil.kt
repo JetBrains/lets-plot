@@ -44,9 +44,26 @@ internal object RegressionTestUtil {
         val expRegr = expectedEval.evalX(x)
         val actualRegr = actualEval.evalX(x)
 
-        assertField(expRegr, actualRegr, "i: $x se", { it.se }, epsilon)
-        assertField(expRegr, actualRegr, "i: $x y", { it.y }, epsilon)
-        assertField(expRegr, actualRegr, "i: $x ymin", { it.ymin }, epsilon)
-        assertField(expRegr, actualRegr, "i: $x ymax", { it.ymax }, epsilon)
+        assertField(expRegr, actualRegr, "x: $x se", { it.se }, epsilon)
+        assertField(expRegr, actualRegr, "x: $x y", { it.y }, epsilon)
+        assertField(expRegr, actualRegr, "x: $x ymin", { it.ymin }, epsilon)
+        assertField(expRegr, actualRegr, "x: $x ymax", { it.ymax }, epsilon)
+    }
+
+    fun logRegression(inX: List<Double>, inY: List<Double>, regression: RegressionEvaluator) {
+
+        val inXLog = inX.joinToString(transform = Double::toString)
+        val inYLog = inY.joinToString(transform = Double::toString)
+
+        val step = (inX.max()!! - inX.min()!!) / inX.size * 2
+
+        val log = generateSequence(inX.min()!!) { it + step }
+            .takeWhile { it < inX.max()!! }
+            .map { Pair( it, regression.evalX(it)) }
+
+        println("val inX = listOf($inXLog)")
+        println("val inY = listOf($inYLog)")
+        println("val actX = listOf(${log.joinToString { it.first.toString() }})")
+        println("val actY = listOf(${log.joinToString { it.second.toString() }})")
     }
 }

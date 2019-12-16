@@ -8,15 +8,13 @@ package jetbrains.datalore.plot.base.stat.regression
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.stat.DensityStatUtil
 import jetbrains.datalore.plot.base.stat.math3.LoessInterpolator
-import jetbrains.datalore.plot.base.stat.math3.Percentile
 import jetbrains.datalore.plot.base.stat.math3.PolynomialSplineFunction
-import kotlin.random.Random
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class LocalPolynomialRegression(
     xs: List<Double?>,
     ys: List<Double?>,
-    confidenceLevel: Double,
-    private val rnd: () -> Double = { Random.nextDouble() }
+    confidenceLevel: Double
 )
     : RegressionEvaluator(xs, ys, confidenceLevel) {
 
@@ -26,7 +24,10 @@ class LocalPolynomialRegression(
 
     init {
         val mapX: MutableMap<Double, MutableList<Double>> = hashMapOf()
-        xs.zip(ys).forEach { (x, y) -> mapX.getOrPut(x!!) { mutableListOf() }.add(y!!) }
+
+        xs.zip(ys)
+            .filter { (x, y) -> SeriesUtil.allFinite(x, y) }
+            .forEach { (x, y) -> mapX.getOrPut(x!!) { mutableListOf() }.add(y!!) }
 
         val distinct = mapX
             .map { (x, ys) -> x to ys.average() }
@@ -40,8 +41,7 @@ class LocalPolynomialRegression(
                 getPoly(
                     RegressionUtil.sampling(
                         distinct,
-                        distinct.size / 2,
-                        rnd
+                        distinct.size / 2
                     )
                 )
         }
@@ -49,15 +49,7 @@ class LocalPolynomialRegression(
 
     override fun evalX(x: Double): EvalResult {
         val yHat = myPolynomial.value(x)!!
-        val sample = ArrayList<Double>()
-        for (poly in mySamplePolynomials) {
-            sample.add(
-                interpolateLinear(
-                    poly!!,
-                    x
-                )
-            )
-        }
+        val sample = mySamplePolynomials.map { interpolateLinear( it!!, x) }
         val yMin = RegressionUtil.percentile(sample, myAlpha)
         val yMax = RegressionUtil.percentile(sample, 1 - myAlpha)
         val se = DensityStatUtil.stdDev(sample)
@@ -76,7 +68,7 @@ class LocalPolynomialRegression(
             val listX = ArrayList<Double>()
             val listY = ArrayList<Double>()
             points
-                .sortedWith(Comparator { o1: DoubleVector, o2: DoubleVector -> o1.x.compareTo(other = o2.x) })
+                .sortedBy( DoubleVector::x )
                 .forEach { listX.add(it.x); listY.add(it.y) }
 
             return LoessInterpolator(0.5, 4).interpolate(listX.toDoubleArray(), listY.toDoubleArray())
@@ -84,12 +76,10 @@ class LocalPolynomialRegression(
 
         private fun interpolateLinear(function: PolynomialSplineFunction, x: Double): Double {
             val knots = function.knots
-            val firstKnot = knots[0]
-            val lastKnot = knots[knots.size - 1]
 
-            if (x < firstKnot) {
-                return function.polynomials[0]!!.value(x - knots[0])
-            } else if (x > lastKnot) {
+            if (x < knots.first()) {
+                return function.polynomials[0]!!.value(x - knots.first())
+            } else if (x > knots.last()) {
                 return function.polynomials[knots.size - 2]!!.value(x - knots[knots.size - 2])
             }
             return function.value(x)!!
