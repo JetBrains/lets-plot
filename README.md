@@ -22,8 +22,8 @@ Due to the unique multi-platform nature of Kotlin programming language, you can 
 
 ### Kotlin API
 
-[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) adds Grammar-of-Graphics plotting capabilities to Kotlin kernel for Jupyter notebooks.
+[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) adds Grammar-of-Graphics plotting capabilities to Kotlin kernels for Jupyter notebooks.
 
-Besides Jupyter notebooks, **Lets-Plot Kotlin** API would allow embedding plots into a JVM-based application.
+Besides Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into a JVM-based application.
 
-**Lets-Plot Kotlin** API is a work in progress and wasn't yet publicly released.   
+**Lets-Plot Kotlin** API is experimental and has not been publicly released yet.   
