@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.entities.geocoding
 
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.center
+import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.MapPosition

@@ -5,18 +5,10 @@
 
 package jetbrains.livemap
 
-import jetbrains.datalore.base.projectionGeometry.*
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.livemap.projections.*
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geospatial.GeoRectangle
 import jetbrains.datalore.base.geospatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.MapRuler
-import jetbrains.livemap.projections.ProjectionUtil
-import jetbrains.livemap.projections.World
+import jetbrains.livemap.projections.*
 import kotlin.math.abs
 import kotlin.math.ln
 import kotlin.math.max
