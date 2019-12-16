@@ -6,11 +6,11 @@
 package jetbrains.livemap.tiles.vector
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.geospatial.GeoUtils.BBOX_CALCULATOR
-import jetbrains.datalore.base.geospatial.GeoUtils.convertToGeoRectangle
-import jetbrains.datalore.base.geospatial.LonLat
-import jetbrains.datalore.base.geospatial.QuadKey
-import jetbrains.datalore.base.geospatial.computeRect
+import jetbrains.datalore.base.spatial.GeoUtils.BBOX_CALCULATOR
+import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService

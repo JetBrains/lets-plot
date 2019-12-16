@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.geospatial.normalizeLon
+import jetbrains.datalore.base.spatial.normalizeLon
 import jetbrains.datalore.base.typedGeometry.*
 import kotlin.math.*
 

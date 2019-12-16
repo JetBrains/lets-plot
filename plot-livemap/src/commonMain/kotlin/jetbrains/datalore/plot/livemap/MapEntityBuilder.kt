@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.gcommon.collect.Lists.transform
-import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color

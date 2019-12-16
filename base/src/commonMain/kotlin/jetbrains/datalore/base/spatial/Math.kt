@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.geospatial
+package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.typedGeometry.*
@@ -31,7 +31,13 @@ fun <GeometryT, QuadT> calculateQuadKeys(
 
     for (x in xmin..xmax) {
         for (y in ymin..ymax) {
-            quadKeys.add(constructor(GeoUtils.tileXYToTileID(x, y, zoom)))
+            quadKeys.add(constructor(
+                GeoUtils.tileXYToTileID(
+                    x,
+                    y,
+                    zoom
+                )
+            ))
         }
     }
 
@@ -45,6 +51,11 @@ fun calculateQuadKeys(rect: Rect<LonLat>, zoom: Int): Set<QuadKey<LonLat>> {
         rect.width,
         rect.height
     )
-    return calculateQuadKeys(EARTH_RECT, flippedRect, zoom, ::QuadKey)
+    return calculateQuadKeys(
+        EARTH_RECT,
+        flippedRect,
+        zoom,
+        ::QuadKey
+    )
 }
 

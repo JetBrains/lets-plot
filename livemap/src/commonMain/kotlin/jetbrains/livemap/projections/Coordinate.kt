@@ -8,7 +8,7 @@ package jetbrains.livemap.projections
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec

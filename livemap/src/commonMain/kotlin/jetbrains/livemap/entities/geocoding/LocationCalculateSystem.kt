@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.entities.geocoding
 
-import jetbrains.datalore.base.geospatial.GeoUtils.convertToGeoRectangle
+import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem

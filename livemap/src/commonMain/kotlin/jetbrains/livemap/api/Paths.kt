@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil

@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.base.geospatial.projectRect
+import jetbrains.datalore.base.spatial.projectRect
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity

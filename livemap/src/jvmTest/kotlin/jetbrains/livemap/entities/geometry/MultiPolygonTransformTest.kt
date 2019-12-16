@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.entities.geometry.GeometryTransform
 import jetbrains.livemap.projections.ProjectionType

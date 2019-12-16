@@ -3,10 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.geospatial
+package jetbrains.datalore.base.spatial
 
 
-import jetbrains.datalore.base.geospatial.GeoRectangleTestHelper.rectangle
+import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.rectangle
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
@@ -16,27 +16,42 @@ class GeoRectangleTest {
 
     @Test
     fun enclosesRectangleWithPositiveCoordinate() {
-        assertTrue(FIRST_RECTANGLE.encloses(SECOND_RECTANGLE))
+        assertTrue(
+            FIRST_RECTANGLE.encloses(
+                SECOND_RECTANGLE
+            ))
     }
 
     @Test
     fun enclosesRectangleCrossedAntiMeridian() {
-        assertTrue(FIRST_RECTANGLE.encloses(THIRD_RECTANGLE))
+        assertTrue(
+            FIRST_RECTANGLE.encloses(
+                THIRD_RECTANGLE
+            ))
     }
 
     @Test
     fun enclosesRectangleWithNegativeCoordinate() {
-        assertTrue(FIRST_RECTANGLE.encloses(FOURTH_RECTANGLE))
+        assertTrue(
+            FIRST_RECTANGLE.encloses(
+                FOURTH_RECTANGLE
+            ))
     }
 
     @Test
     fun enclosesRectangleWithWrongLongitude() {
-        assertFalse(FIRST_RECTANGLE.encloses(FIFTH_RECTANGLE))
+        assertFalse(
+            FIRST_RECTANGLE.encloses(
+                FIFTH_RECTANGLE
+            ))
     }
 
     @Test
     fun enclosesRectangleWithWrongLatitude() {
-        assertFalse(FIRST_RECTANGLE.encloses(SIXTH_RECTANGLE))
+        assertFalse(
+            FIRST_RECTANGLE.encloses(
+                SIXTH_RECTANGLE
+            ))
     }
 
     @Test
@@ -45,7 +60,9 @@ class GeoRectangleTest {
         val maxLat = BOTTOM_LATITUDE
 
         expectInvalidLatitudeException(minLat, maxLat) {
-            rectangle(FIRST_LONGITUDE, minLat, SECOND_LONGITUDE, maxLat)
+            rectangle(
+                FIRST_LONGITUDE, minLat,
+                SECOND_LONGITUDE, maxLat)
         }
     }
 

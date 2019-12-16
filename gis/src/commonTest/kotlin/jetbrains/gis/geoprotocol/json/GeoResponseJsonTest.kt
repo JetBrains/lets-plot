@@ -6,7 +6,7 @@
 package jetbrains.gis.geoprotocol.json
 
 
-import jetbrains.datalore.base.geospatial.GeoRectangle
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec

@@ -5,7 +5,7 @@
 
 package jetbrains.gis.geoprotocol.json
 
-import jetbrains.datalore.base.geospatial.GeoRectangle
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.gis.common.json.FluentObject
 import jetbrains.gis.common.json.Obj
 import jetbrains.gis.common.json.getDouble

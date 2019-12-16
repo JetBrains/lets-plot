@@ -3,13 +3,13 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.geospatial
+package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.BOTTOM_RECT_GETTER
-import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.LEFT_RECT_GETTER
-import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.RIGHT_RECT_GETTER
-import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.TOP_RECT_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.BOTTOM_RECT_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.LEFT_RECT_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.RIGHT_RECT_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.TOP_RECT_GETTER
 import jetbrains.datalore.base.typedGeometry.Rect
 import kotlin.test.assertEquals
 

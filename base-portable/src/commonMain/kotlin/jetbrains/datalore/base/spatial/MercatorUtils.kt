@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.geospatial
+package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.math.toDegrees
@@ -14,12 +14,20 @@ import kotlin.math.*
 object MercatorUtils {
     private const val MAX_LONGITUDE = 180.0
     private const val MAX_LATITUDE = 85.0511287798
-    val VALID_LONGITUDE_RANGE = ClosedRange.closed(-MAX_LONGITUDE, MAX_LONGITUDE)
-    val VALID_LATITUDE_RANGE = ClosedRange.closed(-MAX_LATITUDE, MAX_LATITUDE)
+    val VALID_LONGITUDE_RANGE = ClosedRange.closed(-MAX_LONGITUDE,
+        MAX_LONGITUDE
+    )
+    val VALID_LATITUDE_RANGE = ClosedRange.closed(-MAX_LATITUDE,
+        MAX_LATITUDE
+    )
 
     fun getMercatorX(lon: Double): Double = toRadians(lon) * EARTH_RADIUS
 
-    fun getMercatorY(lat: Double): Double = ln(tan(PI / 4 + toRadians(normalizeLat(lat)) / 2)) * EARTH_RADIUS
+    fun getMercatorY(lat: Double): Double = ln(tan(PI / 4 + toRadians(
+        normalizeLat(
+            lat
+        )
+    ) / 2)) * EARTH_RADIUS
 
     fun getLongitude(x: Double): Double {
         return toDegrees(x / EARTH_RADIUS)
@@ -38,6 +46,8 @@ object MercatorUtils {
     }
 
     private fun normalizeLat(lat: Double): Double {
-        return max(-MAX_LATITUDE, min(lat, MAX_LATITUDE))
+        return max(-MAX_LATITUDE, min(lat,
+            MAX_LATITUDE
+        ))
     }
 }

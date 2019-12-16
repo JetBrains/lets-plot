@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.base.geospatial.QuadKey
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.livemap.projections.World
 
 typealias CellKey = QuadKey<World>

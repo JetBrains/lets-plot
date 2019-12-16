@@ -6,8 +6,8 @@
 package jetbrains.datalore.jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.geospatial.LonLat
-import jetbrains.datalore.base.geospatial.QuadKey
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.core.ecs.EcsComponentManager

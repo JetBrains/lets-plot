@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.jetbrains.livemap.tile
 
-import jetbrains.datalore.base.geospatial.LonLat
-import jetbrains.datalore.base.geospatial.QuadKey
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.livemap.tiles.components.CellStateComponent
 import java.util.*

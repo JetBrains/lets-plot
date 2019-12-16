@@ -5,8 +5,8 @@
 
 package jetbrains.livemap
 
-import jetbrains.datalore.base.geospatial.GeoRectangle
-import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.projections.*
 import kotlin.math.abs
@@ -17,7 +17,8 @@ import kotlin.math.min
 object MapWidgetUtil {
     const val MIN_ZOOM = 1
     const val MAX_ZOOM = 15
-    val DEFAULT_LOCATION = GeoRectangle(-124.76, 25.52, -66.94, 49.39)
+    val DEFAULT_LOCATION =
+        GeoRectangle(-124.76, 25.52, -66.94, 49.39)
     private const val FULL_ANGLE = 360.0
     private const val STRAIGHT_ANGLE = 180.0
 

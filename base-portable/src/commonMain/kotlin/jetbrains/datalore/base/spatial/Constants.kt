@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.geospatial
+package jetbrains.datalore.base.spatial
 
 const val EARTH_RADIUS = 6378137.0
 const val MIN_LONGITUDE = -180.0

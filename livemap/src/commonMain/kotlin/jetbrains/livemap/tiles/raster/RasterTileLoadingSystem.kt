@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.tiles.raster
 
-import jetbrains.datalore.base.geospatial.projectOrigin
+import jetbrains.datalore.base.spatial.projectOrigin
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.gis.tileprotocol.http.HttpTileTransport

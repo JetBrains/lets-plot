@@ -5,8 +5,8 @@
 
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.geospatial.LonLat
-import jetbrains.datalore.base.geospatial.QuadKey
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Polygon

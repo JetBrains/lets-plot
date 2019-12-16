@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.geospatial
+package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.typedGeometry.*
 
@@ -20,7 +20,9 @@ data class QuadKey<T>(
 
 fun QuadKey<LonLat>.computeRect(): Rect<LonLat> {
     val origin = this.computeOrigin(EARTH_RECT)
-    val dimension = EARTH_RECT.dimension * (1.0 / GeoUtils.getTileCount(length))
+    val dimension = EARTH_RECT.dimension * (1.0 / GeoUtils.getTileCount(
+        length
+    ))
 
     val flippedY = EARTH_RECT.scalarBottom - (origin.scalarY + dimension.scalarY - EARTH_RECT.scalarTop)
     return Rect(origin.transform(newY = { flippedY }), dimension)
@@ -32,7 +34,9 @@ fun <T> QuadKey<T>.computeRect(rect: Rect<T>): Rect<T> {
 
 fun <T, OutT> QuadKey<T>.projectRect(rect: Rect<OutT>): Rect<OutT> {
     val origin = projectOrigin(rect)
-    val dimension = rect.dimension * (1.0 / GeoUtils.getTileCount(length))
+    val dimension = rect.dimension * (1.0 / GeoUtils.getTileCount(
+        length
+    ))
 
     return Rect(origin, dimension)
 }

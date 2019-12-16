@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.tiles.vector
 
-import jetbrains.datalore.base.geospatial.LonLat
-import jetbrains.datalore.base.geospatial.computeRect
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.minus

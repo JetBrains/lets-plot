@@ -6,8 +6,8 @@
 package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.geospatial.GeoRectangle
-import jetbrains.datalore.base.geospatial.LonLat
+import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.gis.geoprotocol.GeoRequest

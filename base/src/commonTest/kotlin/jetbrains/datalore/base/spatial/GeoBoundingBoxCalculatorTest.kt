@@ -3,22 +3,22 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.geospatial
+package jetbrains.datalore.base.spatial
 
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.MAX_LATITUDE_GETTER
-import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.MAX_LONGITUDE_GETTER
-import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.MIN_LATITUDE_GETTER
-import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.MIN_LONGITUDE_GETTER
-import jetbrains.datalore.base.geospatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
-import jetbrains.datalore.base.geospatial.GeoRectangleTestHelper.assertDoubleEquals
-import jetbrains.datalore.base.geospatial.GeoRectangleTestHelper.point
-import jetbrains.datalore.base.geospatial.GeoRectangleTestHelper.rectangle
-import jetbrains.datalore.base.geospatial.GeoUtils.BBOX_CALCULATOR
-import jetbrains.datalore.base.geospatial.GeoUtils.convertToGeoRectangle
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MAX_LATITUDE_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MAX_LONGITUDE_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MIN_LATITUDE_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MIN_LONGITUDE_GETTER
+import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
+import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertDoubleEquals
+import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.point
+import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.rectangle
+import jetbrains.datalore.base.spatial.GeoUtils.BBOX_CALCULATOR
+import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -29,63 +29,72 @@ class GeoBoundingBoxCalculatorTest {
     fun whenPointsCloseToAntiMeridian_ShouldBoundingBoxCrossesAntiMeridian() {
         checkLocationsWhichCalculatedFromPoints(
                 longitudeLimitEqualsChecker(FIRST_POINT, SECOND_POINT),
-                FIRST_POINT, SECOND_POINT)
+                FIRST_POINT, SECOND_POINT
+        )
     }
 
     @Test
     fun whenPointsFarFromAntiMeridian_ShouldBoundingBoxNotCrossAntiMeridian() {
         checkLocationsWhichCalculatedFromPoints(
                 longitudeLimitEqualsChecker(FOURTH_POINT, THIRD_POINT),
-                THIRD_POINT, FOURTH_POINT)
+                THIRD_POINT, FOURTH_POINT
+        )
     }
 
     @Test
     fun whenRectanglesCloseToAntiMeridian_ShouldBoundingBoxCrossesAntiMeridian() {
         checkLocationsWhichCalculatedFromRectangles(
                 longitudeLimitEqualsChecker(FIRST_RECTANGLE, SECOND_RECTANGLE),
-                FIRST_RECTANGLE, SECOND_RECTANGLE)
+                FIRST_RECTANGLE, SECOND_RECTANGLE
+        )
     }
 
     @Test
     fun whenRectangleCrossAntiMeridian_ShouldBoundingBoxCrossesAntiMeridian() {
         checkLocationsWhichCalculatedFromRectangles(
                 longitudeLimitEqualsChecker(FIRST_RECTANGLE, SECOND_RECTANGLE),
-                FIRST_RECTANGLE, SECOND_RECTANGLE, THIRD_RECTANGLE)
+                FIRST_RECTANGLE, SECOND_RECTANGLE, THIRD_RECTANGLE
+        )
     }
 
     @Test
     fun simpleCalculateLatitudesForPoints() {
         checkLocationsWhichCalculatedFromPoints(
                 latitudeLimitEqualsChecker(THIRD_POINT, FOURTH_POINT),
-                FIRST_POINT, SECOND_POINT, THIRD_POINT, FOURTH_POINT)
+                FIRST_POINT, SECOND_POINT, THIRD_POINT, FOURTH_POINT
+        )
     }
 
     @Test
     fun simpleCalculateLatitudesForRectangles() {
         checkLocationsWhichCalculatedFromRectangles(
                 latitudeLimitEqualsChecker(FIRST_RECTANGLE, THIRD_RECTANGLE),
-                FIRST_RECTANGLE, SECOND_RECTANGLE, THIRD_RECTANGLE)
+                FIRST_RECTANGLE, SECOND_RECTANGLE, THIRD_RECTANGLE
+        )
     }
 
     @Test
     fun simpleCalculateLocationForEqualPoints() {
         checkLocationsWhichCalculatedFromPoints(
                 boundingBoxEqualsChecker(FIRST_POINT),
-                FIRST_POINT, FIRST_POINT)
+                FIRST_POINT, FIRST_POINT
+        )
     }
 
     @Test
     fun simpleCalculateLocationForEqualRectangles() {
         checkLocationsWhichCalculatedFromRectangles(
                 boundingBoxEqualsChecker(FIRST_RECTANGLE),
-                FIRST_RECTANGLE, FIRST_RECTANGLE)
+                FIRST_RECTANGLE, FIRST_RECTANGLE
+        )
     }
 
     @Test
     fun simpleCalculateLocationForZeroRectangle() {
         checkLocationsWhichCalculatedFromRectangles(
                 boundingBoxEqualsChecker(SECOND_POINT),
-                emptyRectangle(SECOND_POINT))
+                emptyRectangle(SECOND_POINT)
+        )
     }
 
     @Test

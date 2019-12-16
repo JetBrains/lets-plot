@@ -7,8 +7,8 @@ package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geospatial.LonLat
-import jetbrains.datalore.base.geospatial.QuadKey
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.geoprotocol.json.RequestAssertions.assertThatExplicitRequest
 import jetbrains.gis.geoprotocol.json.RequestAssertions.assertThatGeocodingRequest

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.jetbrains.livemap.tile
 
-import jetbrains.datalore.base.geospatial.projectRect
+import jetbrains.datalore.base.spatial.projectRect
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d

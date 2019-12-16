@@ -9,10 +9,10 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geospatial.GeoRectangle
-import jetbrains.datalore.base.geospatial.LonLat
-import jetbrains.datalore.base.geospatial.limitLat
-import jetbrains.datalore.base.geospatial.limitLon
+import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.limitLat
+import jetbrains.datalore.base.spatial.limitLon
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
@@ -133,7 +133,10 @@ fun geometry(points: List<LonLatPoint>, isGeodesic: Boolean, isClosed: Boolean):
 }
 
 fun limitCoord(point: Vec<LonLat>): Vec<LonLat> {
-    return explicitVec(limitLon(point.x), limitLat(point.y))
+    return explicitVec(
+        limitLon(point.x),
+        limitLat(point.y)
+    )
 }
 
 @LiveMapDsl
@@ -149,7 +152,14 @@ class Location {
 
     var coordinate: Vec<LonLat>? = null
         set(v) {
-            field = v; mapLocation = v?.let { MapLocation.create(GeoRectangle(it.x, it.y, it.x, it.y)) }
+            field = v; mapLocation = v?.let { MapLocation.create(
+                GeoRectangle(
+                    it.x,
+                    it.y,
+                    it.x,
+                    it.y
+                )
+            ) }
         }
 
     internal var mapLocation: MapLocation? = null

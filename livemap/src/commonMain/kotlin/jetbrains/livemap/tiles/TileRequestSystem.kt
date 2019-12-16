@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.base.geospatial.computeRect
+import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager

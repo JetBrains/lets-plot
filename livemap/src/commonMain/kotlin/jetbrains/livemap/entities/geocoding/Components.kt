@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.entities.geocoding
 
-import jetbrains.datalore.base.geospatial.GeoRectangle
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.projections.LonLatPoint

@@ -3,10 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.geospatial
+package jetbrains.datalore.base.spatial
 
-import jetbrains.datalore.base.geospatial.GeoRectangleTestHelper.assertRectangleEquals
-import jetbrains.datalore.base.geospatial.GeoUtils.tileXYToTileID
+import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertRectangleEquals
+import jetbrains.datalore.base.spatial.GeoUtils.tileXYToTileID
 import jetbrains.datalore.base.typedGeometry.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,7 +15,11 @@ class GeoUtilsTest {
     private fun quadKeys(vararg keys: String): Set<QuadKey<LonLat>> {
         val quadKeys = HashSet<QuadKey<LonLat>>()
         for (key in keys) {
-            quadKeys.add(QuadKey<LonLat>(key))
+            quadKeys.add(
+                QuadKey<LonLat>(
+                    key
+                )
+            )
         }
         return quadKeys
     }
@@ -29,7 +33,9 @@ class GeoUtilsTest {
 
     @Test
     fun calculateZeroTileBBox() {
-        val rect = QuadKey<LonLat>("0").computeRect()
+        val rect = QuadKey<LonLat>(
+            "0"
+        ).computeRect()
         val expectedRect = Rect<Generic>(
                 EARTH_RECT.left,
                 EARTH_RECT.center.x,

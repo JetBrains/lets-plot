@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.geospatial
+package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
@@ -32,7 +32,11 @@ internal class LongitudeRange(lower: Double, upper: Double) {
         val internalRanges = longitudeRange.splitByAntiMeridian()
 
         for (internalRange in internalRanges) {
-            if (!disjointRangesEncloseRange(externalRanges, internalRange)) {
+            if (!disjointRangesEncloseRange(
+                    externalRanges,
+                    internalRange
+                )
+            ) {
                 return false
             }
         }
@@ -45,9 +49,11 @@ internal class LongitudeRange(lower: Double, upper: Double) {
 
     fun splitByAntiMeridian(): List<ClosedRange<Double>> {
         val result = ArrayList<ClosedRange<Double>>()
-        splitRange(myLower, myUpper,
+        splitRange(
+            myLower, myUpper,
             MIN_LONGITUDE,
-            MAX_LONGITUDE, result)
+            MAX_LONGITUDE, result
+        )
         return result
     }
 
