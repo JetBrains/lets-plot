@@ -117,16 +117,19 @@ class ChartSource {
     var colors: List<Color> = emptyList()
 }
 
-fun geometry(points: List<LonLatPoint>, isGeodesic: Boolean, isClosed: Boolean): jetbrains.datalore.base.typedGeometry.MultiPolygon<LonLat> {
-    val coord = points
-        .map { limitCoord(it) }
-        .let { if (isGeodesic) createArcPath(it) else it }
+fun geometry(
+    points: List<LonLatPoint>,
+    isClosed: Boolean,
+    isGeodesic: Boolean
+): MultiPolygon<LonLat> {
+    val coord = points.map { limitCoord(it) }
 
     return if (isClosed) {
         createMultiPolygon(coord)
     } else {
-        MapWidgetUtil
-            .splitPathByAntiMeridian(coord)
+        coord
+            .run { if (isGeodesic) createArcPath(this) else this }
+            .run(MapWidgetUtil::splitPathByAntiMeridian)
             .map { path -> Polygon(listOf(Ring(path))) }
             .run(::MultiPolygon)
     }

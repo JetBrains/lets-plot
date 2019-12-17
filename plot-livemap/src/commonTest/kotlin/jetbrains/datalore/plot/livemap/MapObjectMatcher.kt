@@ -18,7 +18,6 @@ internal class MapObjectMatcher {
     private var shape = Expectation.any<Int>()
     private var lineDash = Expectation.any<List<Double>>()
     private var index = Expectation.any<Int>()
-    private var regionId = Expectation.any<String?>()
     private var fillColor = Expectation.any<Color>()
     private var strokeColor = Expectation.any<Color>()
     private var strokeWidth = Expectation.any<Double>()
@@ -54,13 +53,12 @@ internal class MapObjectMatcher {
             POINT -> matchPoint(mapEntity)
             POLYGON -> matchPolygon(mapEntity)
             TEXT -> matchText(mapEntity)
-            else -> throw IllegalStateException("Unknown map object type: ${mapEntity::class.simpleName}" )
+            else -> throw IllegalStateException("Unknown map object layer kind: ${mapEntity.myLayerKind}" )
         }
     }
 
     private fun matchPieSector(pieSector: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(pieSector))
-        regionId.assertExpectation(pieSector.regionId)
         index.assertExpectation(pieSector.index)
         fillColor.assertExpectation(pieSector.fillColor)
         strokeColor.assertExpectation(pieSector.strokeColor)
@@ -73,7 +71,6 @@ internal class MapObjectMatcher {
 
     private fun matchBar(bar: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(bar))
-        regionId.assertExpectation(bar.regionId)
         index.assertExpectation(bar.index)
         fillColor.assertExpectation(bar.fillColor)
         strokeColor.assertExpectation(bar.strokeColor)
@@ -85,7 +82,6 @@ internal class MapObjectMatcher {
 
     private fun matchHeatmap(heatmap: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(heatmap))
-        regionId.assertExpectation(heatmap.regionId)
         index.assertExpectation(heatmap.index)
         // radius.assertExpectation(heatmap.getRadius())
         // frame.assertExpectation(heatmap.getFrame())
@@ -94,7 +90,6 @@ internal class MapObjectMatcher {
 
     private fun matchLine(line: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(line))
-        regionId.assertExpectation(line.regionId)
         index.assertExpectation(line.index)
         lineDash.assertExpectation(line.lineDash)
         strokeColor.assertExpectation(line.strokeColor)
@@ -104,7 +99,6 @@ internal class MapObjectMatcher {
 
     private fun matchPath(path: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(path))
-        regionId.assertExpectation(path.regionId)
         index.assertExpectation(path.index)
         lineDash.assertExpectation(path.lineDash)
         strokeColor.assertExpectation(path.strokeColor)
@@ -118,7 +112,6 @@ internal class MapObjectMatcher {
 
     private fun matchPoint(mapPoint: MapEntityBuilder) {
         //locationBoundingBoxes.assertExpectation(calculateBBoxes(mapPoint))
-        regionId.assertExpectation(mapPoint.regionId)
         index.assertExpectation(mapPoint.index)
         shape.assertExpectation(mapPoint.shape)
         fillColor.assertExpectation(mapPoint.fillColor)
@@ -132,7 +125,6 @@ internal class MapObjectMatcher {
 
     private fun matchPolygon(polygon: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(polygon))
-        regionId.assertExpectation(polygon.regionId)
         index.assertExpectation(polygon.index)
         lineDash.assertExpectation(polygon.lineDash)
         fillColor.assertExpectation(polygon.fillColor)
@@ -143,7 +135,6 @@ internal class MapObjectMatcher {
 
     private fun matchText(text: MapEntityBuilder) {
         // locationBoundingBoxes.assertExpectation(calculateBBoxes(text))
-        regionId.assertExpectation(text.regionId)
         index.assertExpectation(text.index)
         fillColor.assertExpectation(text.fillColor)
         strokeColor.assertExpectation(text.strokeColor)
@@ -172,11 +163,6 @@ internal class MapObjectMatcher {
 
     fun index(expectation: Expectation<Int>): MapObjectMatcher {
         index = expectation
-        return this
-    }
-
-    fun regionId(expectation: Expectation<String?>): MapObjectMatcher {
-        regionId = expectation
         return this
     }
 

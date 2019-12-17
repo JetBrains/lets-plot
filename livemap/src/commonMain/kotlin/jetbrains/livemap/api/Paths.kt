@@ -132,5 +132,5 @@ class PathBuilder(
 }
 
 fun PathBuilder.geometry(points: List<LonLatPoint>, isGeodesic: Boolean) {
-    multiPolygon = geometry(points, isGeodesic, isClosed = false)
+    multiPolygon = geometry(points, isClosed = false, isGeodesic = isGeodesic)
 }

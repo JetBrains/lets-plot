@@ -53,7 +53,6 @@ internal class MapEntityBuilder {
     var geodesic: Boolean = false
 
     val index get() = myP.index()
-    val regionId get() = null
     val shape get() = myP.shape()!!.code
     val size get() = AestheticsUtil.textSize(myP)
     val speed get() = myP.speed()!!
