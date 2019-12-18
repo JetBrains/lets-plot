@@ -73,10 +73,7 @@ internal class TileDataRendererImpl(
         layerKind: CellLayerKind,
         zoom: Int
     ): Collection<() -> Unit> {
-        val mapConfig = myMapConfigSupplier()
-        if (mapConfig == null) {
-            return emptyList()
-        }
+        val mapConfig = myMapConfigSupplier() ?: return emptyList()
 
         val tasks = ArrayList<() -> Unit>()
         val labelBounds = ArrayList<DoubleRectangle>()
