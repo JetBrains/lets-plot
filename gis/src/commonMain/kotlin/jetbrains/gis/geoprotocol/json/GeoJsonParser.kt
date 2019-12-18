@@ -5,11 +5,11 @@
 
 package jetbrains.gis.geoprotocol.json
 
+import jetbrains.datalore.base.json.Arr
+import jetbrains.datalore.base.json.FluentArray
+import jetbrains.datalore.base.json.FluentObject
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.gis.common.json.Arr
-import jetbrains.gis.common.json.FluentArray
-import jetbrains.gis.common.json.FluentObject
 
 internal class GeoJsonParser private constructor() {
 

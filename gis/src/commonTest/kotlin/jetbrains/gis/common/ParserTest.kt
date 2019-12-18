@@ -6,10 +6,10 @@
 package jetbrains.gis.common
 
 
+import jetbrains.datalore.base.spatial.SimpleFeature
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.gis.common.testUtils.HexParser.parseHex
 import jetbrains.gis.common.twkb.Twkb
-import jetbrains.gis.common.twkb.Twkb.GeometryConsumer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -494,7 +494,7 @@ class ParserTest {
     }
 
 
-    internal class CollectedGeometryConsumer : GeometryConsumer {
+    internal class CollectedGeometryConsumer : SimpleFeature.GeometryConsumer {
         private val myPoints = ArrayList<Vec<Generic>>()
         private val myLineStrings = ArrayList<LineString<Generic>>()
         private val myPolygons = ArrayList<Polygon<Generic>>()
@@ -557,7 +557,7 @@ class ParserTest {
         }
     }
 
-    internal class SimpleGeometryConsumer : GeometryConsumer {
+    internal class SimpleGeometryConsumer : SimpleFeature.GeometryConsumer {
         var point: Vec<Generic>? = null
             private set
         var lineString: LineString<Generic>? = null

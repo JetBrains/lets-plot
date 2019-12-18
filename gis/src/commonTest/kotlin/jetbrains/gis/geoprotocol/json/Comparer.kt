@@ -5,7 +5,7 @@
 
 package jetbrains.gis.geoprotocol.json
 
-import jetbrains.gis.common.json.*
+import jetbrains.datalore.base.json.*
 
 
 internal object Comparer {

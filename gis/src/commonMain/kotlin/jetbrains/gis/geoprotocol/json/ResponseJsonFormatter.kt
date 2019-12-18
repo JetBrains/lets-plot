@@ -5,10 +5,10 @@
 
 package jetbrains.gis.geoprotocol.json
 
+import jetbrains.datalore.base.json.*
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.gis.common.json.*
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.gis.geoprotocol.GeoResponse
 import jetbrains.gis.geoprotocol.GeoResponse.*

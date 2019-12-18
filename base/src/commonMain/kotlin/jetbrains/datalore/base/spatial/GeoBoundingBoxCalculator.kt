@@ -89,8 +89,7 @@ class GeoBoundingBoxCalculator<TypeT>(
     }
 
     fun calculateBoundingBoxFromRectangles(rectangles: List<Rect<TypeT>>): Rect<TypeT> {
-        val rectGetter =
-            itemGetter(rectangles)
+        val rectGetter = itemGetter(rectangles)
         return calculateBoundingBox(
             { x: Int ->
                 LEFT_RECT_GETTER(

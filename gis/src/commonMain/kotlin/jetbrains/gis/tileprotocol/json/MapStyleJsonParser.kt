@@ -6,10 +6,10 @@
 package jetbrains.gis.tileprotocol.json
 
 
+import jetbrains.datalore.base.json.FluentObject
+import jetbrains.datalore.base.json.getAsInt
+import jetbrains.datalore.base.json.getString
 import jetbrains.datalore.base.values.Color
-import jetbrains.gis.common.json.FluentObject
-import jetbrains.gis.common.json.getAsInt
-import jetbrains.gis.common.json.getString
 import jetbrains.gis.tileprotocol.mapConfig.LayerConfig
 import jetbrains.gis.tileprotocol.mapConfig.MapConfig
 import jetbrains.gis.tileprotocol.mapConfig.Rule

@@ -91,7 +91,7 @@ setup(name='lets-plot',
       ext_modules=[
           Extension('lets_plot_kotlin_bridge',
                     include_dirs=[binaries_build_path],
-                    libraries=['lets_plot_python_extension', 'stdc++'],
+                    libraries=['lets_plot_python_extension'],
                     library_dirs=[binaries_build_path],
                     depends=['liblets_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],

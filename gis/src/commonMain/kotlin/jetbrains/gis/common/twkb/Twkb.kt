@@ -5,7 +5,7 @@
 
 package jetbrains.gis.common.twkb
 
-import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.datalore.base.spatial.SimpleFeature
 import jetbrains.gis.common.twkb.VarInt.decodeZigZag
 
 object Twkb {
@@ -15,13 +15,13 @@ object Twkb {
     private const val META_SIZE_BIT: Int = 1
     private const val META_EXTRA_PRECISION_BIT: Int = 3
 
-    fun parse(data: ByteArray, geometryConsumer: GeometryConsumer) {
+    fun parse(data: ByteArray, geometryConsumer: SimpleFeature.GeometryConsumer) {
         val parser = Parser(data, geometryConsumer)
         while (parser.next()) {
         }
     }
 
-    fun parser(data: ByteArray, geometryConsumer: GeometryConsumer): Parser {
+    fun parser(data: ByteArray, geometryConsumer: SimpleFeature.GeometryConsumer): Parser {
         return Parser(data, geometryConsumer)
     }
 
@@ -90,14 +90,5 @@ object Twkb {
                 }
             }
         }
-    }
-
-    interface GeometryConsumer {
-        fun onPoint(point: Vec<Generic>): Unit = throw IllegalArgumentException("Point isn't supported")
-        fun onLineString(lineString: LineString<Generic>): Unit = throw IllegalArgumentException("LineString isn't supported")
-        fun onPolygon(polygon: Polygon<Generic>): Unit = throw IllegalArgumentException("Polygon isn't supported")
-        fun onMultiPoint(multiPoint: MultiPoint<Generic>, idList: List<Int>): Unit = throw IllegalArgumentException("MultiPoint isn't supported")
-        fun onMultiLineString(multiLineString: MultiLineString<Generic>, idList: List<Int>): Unit = throw IllegalArgumentException("MultiLineString isn't supported")
-        fun onMultiPolygon(multipolygon: MultiPolygon<Generic>, idList: List<Int>): Unit = throw IllegalArgumentException("MultiPolygon isn't supported")
     }
 }

@@ -5,14 +5,14 @@
 
 package jetbrains.gis.tileprotocol.json
 
+import jetbrains.datalore.base.json.FluentArray
+import jetbrains.datalore.base.json.FluentObject
+import jetbrains.datalore.base.json.Obj
+import jetbrains.datalore.base.json.parseEnum
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.typedGeometry.newSpanRectangle
-import jetbrains.gis.common.json.FluentArray
-import jetbrains.gis.common.json.FluentObject
-import jetbrains.gis.common.json.Obj
-import jetbrains.gis.common.json.parseEnum
 import jetbrains.gis.tileprotocol.Request
 import jetbrains.gis.tileprotocol.Request.*
 import jetbrains.gis.tileprotocol.TileCoordinates

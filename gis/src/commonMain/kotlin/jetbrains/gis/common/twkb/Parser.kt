@@ -5,7 +5,7 @@
 
 package jetbrains.gis.common.twkb
 
-import jetbrains.gis.common.twkb.Twkb.GeometryConsumer
+import jetbrains.datalore.base.spatial.SimpleFeature
 import jetbrains.gis.common.twkb.Twkb.GeometryType
 import jetbrains.gis.common.twkb.Twkb.META_EMPTY_GEOMETRY_BIT
 import jetbrains.gis.common.twkb.Twkb.META_ID_LIST_BIT
@@ -16,7 +16,10 @@ import jetbrains.gis.common.twkb.Twkb.precision
 import jetbrains.gis.common.twkb.Twkb.type
 import kotlin.math.pow
 
-class Parser internal constructor(data: ByteArray, private val myGeometryConsumer: GeometryConsumer) {
+class Parser internal constructor(
+    data: ByteArray,
+    private val myGeometryConsumer: SimpleFeature.GeometryConsumer
+) {
     private val myInput: Input = Input(data)
     private var myGeometryObjectParser: GeometryObjectParser? = null
 

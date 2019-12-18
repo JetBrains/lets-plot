@@ -53,7 +53,7 @@ object GeoPositionsDataUtil {
             GeomKind.PATH to GeoDataSupport.centroid()
     )
 
-    private fun isGeomSupported(geomKind: GeomKind): Boolean {
+    fun isGeomSupported(geomKind: GeomKind): Boolean {
         return GEOMS_SUPPORT.containsKey(geomKind)
     }
 

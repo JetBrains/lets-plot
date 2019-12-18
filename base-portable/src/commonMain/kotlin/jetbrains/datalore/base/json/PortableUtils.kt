@@ -5,6 +5,11 @@
 
 package jetbrains.datalore.base.json
 
+typealias Arr = List<*>
+typealias Obj = Map<*, *>
+
+typealias JsonObjectType = Map<*, *>
+
 fun String.escape() =
     this.replace("\\", "\\\\")
         .replace("\"", "\\\"")

@@ -5,10 +5,10 @@
 
 package jetbrains.gis.geoprotocol.json
 
+import jetbrains.datalore.base.json.FluentObject
+import jetbrains.datalore.base.json.Obj
+import jetbrains.datalore.base.json.getDouble
 import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.gis.common.json.FluentObject
-import jetbrains.gis.common.json.Obj
-import jetbrains.gis.common.json.getDouble
 
 internal object ProtocolJsonHelper {
     private const val MIN_LON = "min_lon"

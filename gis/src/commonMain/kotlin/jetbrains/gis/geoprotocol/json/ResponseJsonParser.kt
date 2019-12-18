@@ -5,13 +5,13 @@
 
 package jetbrains.gis.geoprotocol.json
 
+import jetbrains.datalore.base.json.FluentObject
+import jetbrains.datalore.base.json.Obj
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.gis.common.json.FluentObject
-import jetbrains.gis.common.json.Obj
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.geoprotocol.GeoResponse.ErrorGeoResponse
 import jetbrains.gis.geoprotocol.json.ResponseKeys.BOUNDARY

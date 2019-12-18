@@ -14,20 +14,14 @@ import jetbrains.datalore.base.gcommon.collect.Stack
 import jetbrains.datalore.base.typedGeometry.*
 
 internal class GeometryObjectParser(precision: Double, input: Input) {
-    private val myGeometryStream: GeometryStream
+    private val myGeometryStream = GeometryStream(precision, input)
     private val myParsers = Stack<GeometryParser>()
-
-    init {
-        myGeometryStream = GeometryStream(precision, input)
-    }
 
     fun parsePoint() {
         myParsers.peek()?.parsePoint()
     }
 
-    fun parsingObject(): Boolean {
-        return !myParsers.empty()
-    }
+    fun parsingObject(): Boolean  = !myParsers.empty()
 
     fun parsePoint(onParse: Consumer<Vec<Generic>>) {
         pushParser(PointParser(onParse, this))
