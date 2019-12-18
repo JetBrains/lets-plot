@@ -31,7 +31,8 @@ object GeoUtils {
 
         return GeoRectangle(
             left,
-            limitLat(rect.top), right,
+            limitLat(rect.top),
+            right,
             limitLat(rect.bottom)
         )
     }

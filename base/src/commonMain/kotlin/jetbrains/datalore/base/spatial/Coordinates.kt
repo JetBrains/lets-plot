@@ -22,6 +22,7 @@ fun limitLon(lon: Double) = max(
     MIN_LONGITUDE, min(lon,
         MAX_LONGITUDE
     ))
+
 fun limitLat(lat: Double) = max(
     MIN_LATITUDE, min(lat,
         MAX_LATITUDE
