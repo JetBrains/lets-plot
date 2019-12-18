@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 class MultiPolygonTransformTest {
 
     private fun <TypeT> p(x: Double, y: Double): Vec<TypeT> {
-        return jetbrains.datalore.base.typedGeometry.explicitVec(x, y)
+        return explicitVec(x, y)
     }
 
     private fun <TypeT> multiPolygon(vararg polygons: Polygon<TypeT>): MultiPolygon<TypeT> {
@@ -68,7 +68,7 @@ class MultiPolygonTransformTest {
                     )
                 )
             )
-        ) { it + jetbrains.datalore.base.typedGeometry.explicitVec(1.0, 1.0) }
+        ) { it + explicitVec(1.0, 1.0) }
 
         var i = 0
         while (transform.alive()) {

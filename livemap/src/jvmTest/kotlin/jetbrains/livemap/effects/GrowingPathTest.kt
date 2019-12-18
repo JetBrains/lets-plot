@@ -10,10 +10,7 @@ import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.Polygon
-import jetbrains.datalore.base.typedGeometry.Ring
-import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
@@ -49,7 +46,7 @@ class GrowingPathTest {
     private lateinit var myGrowingPathEffectComponent: GrowingPathEffectComponent
 
     private fun p(x: Double, y: Double): Vec<Client> {
-        return jetbrains.datalore.base.typedGeometry.explicitVec<Client>(x, y)
+        return explicitVec<Client>(x, y)
     }
 
     private fun index(i: Int): EffectState {
@@ -154,7 +151,7 @@ class GrowingPathTest {
             .addComponent(
                 GrowingPathEffectComponent().apply {
                     endIndex = 3
-                    interpolatedPoint = jetbrains.datalore.base.typedGeometry.explicitVec(3.5, 3.5)
+                    interpolatedPoint = explicitVec(3.5, 3.5)
                 }
 
             )
@@ -203,9 +200,9 @@ class GrowingPathTest {
         assertEquals(
             listOf(
                 index(0),
-                interpolated(0, jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 75.0)),
-                interpolated(1, jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 150.0)),
-                interpolated(1, jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 225.0)),
+                interpolated(0, explicitVec(0.0, 75.0)),
+                interpolated(1, explicitVec(0.0, 150.0)),
+                interpolated(1, explicitVec(0.0, 225.0)),
                 index(2)
             ),
             myEffectState
@@ -219,8 +216,8 @@ class GrowingPathTest {
         assertEquals(
             listOf(
                 index(0),
-                interpolated(0, jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 100.0)),
-                interpolated(0, jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 200.0)),
+                interpolated(0, explicitVec(0.0, 100.0)),
+                interpolated(0, explicitVec(0.0, 200.0)),
                 index(1)
             ),
             myEffectState
@@ -232,7 +229,7 @@ class GrowingPathTest {
 
 private fun <TypeT> Vec<TypeT>.roundDecimals(places: Int): Vec<TypeT> {
     return (10.ipow(places)).let {
-        jetbrains.datalore.base.typedGeometry.explicitVec(
+        explicitVec(
             x.roundDecimals(it),
             y.roundDecimals(it)
         )

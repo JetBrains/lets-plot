@@ -20,39 +20,39 @@ internal object ConverterDataHelper {
     val MAP_PROJECTION =
         createMapProjection(
             ProjectionType.MERCATOR,
-            Rect(ZERO_WORLD_POINT, jetbrains.datalore.base.typedGeometry.explicitVec(TILE_PIXEL_SIZE, TILE_PIXEL_SIZE))
+            Rect(ZERO_WORLD_POINT, explicitVec(TILE_PIXEL_SIZE, TILE_PIXEL_SIZE))
         )
 
     val GENERIC_POINTS: List<Vec<LonLat>> = listOf(
-        jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 5.0),
-        jetbrains.datalore.base.typedGeometry.explicitVec(5.0, 5.0)
+        explicitVec(0.0, 5.0),
+        explicitVec(5.0, 5.0)
     )
 
     val PATH = multiPolygon<LonLat>(
         polygon(
             ring(
-                jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 5.0),
-                jetbrains.datalore.base.typedGeometry.explicitVec(1.0, 5.003032951),
-                jetbrains.datalore.base.typedGeometry.explicitVec(2.0, 5.004549647),
-                jetbrains.datalore.base.typedGeometry.explicitVec(3.0, 5.004549647),
-                jetbrains.datalore.base.typedGeometry.explicitVec(4.0, 5.003032951),
-                jetbrains.datalore.base.typedGeometry.explicitVec(5.0, 5.0)
+                explicitVec(0.0, 5.0),
+                explicitVec(1.0, 5.003032951),
+                explicitVec(2.0, 5.004549647),
+                explicitVec(3.0, 5.004549647),
+                explicitVec(4.0, 5.003032951),
+                explicitVec(5.0, 5.0)
             )
         )
     )
 
     val FIRST_RING = Ring<LonLat>(
         listOf(
-            jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 5.0),
-            jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 1.0),
-            jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 5.0)
+            explicitVec(0.0, 5.0),
+            explicitVec(0.0, 1.0),
+            explicitVec(0.0, 5.0)
         )
     )
 
     val SECOND_RING = ring<LonLat>(
-        jetbrains.datalore.base.typedGeometry.explicitVec(5.0, 5.0),
-        jetbrains.datalore.base.typedGeometry.explicitVec(5.0, 1.0),
-        jetbrains.datalore.base.typedGeometry.explicitVec(5.0, 5.0)
+        explicitVec(5.0, 5.0),
+        explicitVec(5.0, 1.0),
+        explicitVec(5.0, 5.0)
     )
 
     val MULTIPOLYGON = multiPolygon(

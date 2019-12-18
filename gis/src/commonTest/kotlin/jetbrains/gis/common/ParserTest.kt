@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 
 class ParserTest {
     private fun p(x: Double, y: Double): Vec<Generic> {
-        return jetbrains.datalore.base.typedGeometry.explicitVec(x, y)
+        return explicitVec(x, y)
     }
     
     private fun <T> optionalListOf (vararg elements: T): List<T>? {

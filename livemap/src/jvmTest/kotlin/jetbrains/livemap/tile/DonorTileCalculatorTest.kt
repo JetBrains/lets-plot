@@ -23,8 +23,8 @@ import java.util.*
 
 class DonorTileCalculatorTest {
     private val myCellRect = Rect<Client>(
-        jetbrains.datalore.base.typedGeometry.explicitVec(0.0, 0.0),
-        jetbrains.datalore.base.typedGeometry.explicitVec(256.0, 256.0)
+        explicitVec(0.0, 0.0),
+        explicitVec(256.0, 256.0)
     )
     private val myContext2d = Mockito.mock(Context2d::class.java)
     private val mySnapshotMap = HashMap<String, Tile>()
