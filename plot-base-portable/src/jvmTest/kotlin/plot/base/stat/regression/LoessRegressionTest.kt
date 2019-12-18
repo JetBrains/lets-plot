@@ -12,7 +12,7 @@ internal class LoessRegressionTest {
 
     private val confidenceLevel = 0.95
 
-   // @Test
+    // @Test
     fun loessTest() {
 
       val numPoints = 20
@@ -41,87 +41,410 @@ internal class LoessRegressionTest {
             val inX = listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
             val inY = listOf(1.4058751718227287E-7, 8.773701104246433E-7, 8.740623780642785E-7, 9.612008914274215E-7, 7.442752301177566E-8, 3.102409406809993E-7, 8.033139539875544E-7, 7.275167288382123E-7, 1.1415516131617983E-7, 4.627117876192167E-7, 8.711442528382273E-7, 1.4858699158549824E-7, 1.9207199351526952E-7, 5.93483074189762E-7, 4.679757587493329E-7, 6.561719419432148E-8, 9.219390398593702E-7, 8.421737511680584E-7, 5.762930799072936E-7, 5.933886538854635E-7)
             val actX = listOf(0.0, 1.9, 3.8, 5.699999999999999, 7.6, 9.5, 11.4, 13.3, 15.200000000000001, 17.1)
-            val actY = listOf(EvalResult(y=6.068369186455293E-7, ymin=-3.3928857054009247E-7, ymax=1.2944858211639203E-6, se=4.2028956370073497E-7), EvalResult(y=6.069041984716261E-7, ymin=-8.060283868418487E-8, ymax=9.475217712179622E-7, se=2.635178381218818E-7), EvalResult(y=6.217525313656229E-7, ymin=1.1665792739203068E-7, ymax=9.876257657313861E-7, se=2.184203351148146E-7), EvalResult(y=5.196058485861371E-7, ymin=1.5590627210243598E-7, ymax=8.634191377574405E-7, se=1.8639227891285283E-7), EvalResult(y=5.020844855865593E-7, ymin=1.6017613532010193E-7, ymax=7.796622717342765E-7, se=1.6344538659519307E-7), EvalResult(y=4.463223217393347E-7, ymin=1.6314391410536208E-7, ymax=8.348465437810149E-7, se=1.7568865668854136E-7), EvalResult(y=4.126923713625932E-7, ymin=1.4542668062158126E-7, ymax=9.278809546918063E-7, se=1.8891565720960007E-7), EvalResult(y=4.315480960793399E-7, ymin=1.0276298423709809E-7, ymax=8.285716346750642E-7, se=1.759700343401685E-7), EvalResult(y=5.455934686044934E-7, ymin=7.373364793621854E-8, ymax=8.678404676219028E-7, se=1.7952494622944596E-7), EvalResult(y=6.248572475663184E-7, ymin=1.9560403488629944E-7, ymax=1.0688223617726969E-6, se=1.910648156975504E-7))
+            val actY = listOf(
+                EvalResult(
+                    y = 6.068369186455293E-7,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 6.069041984716261E-7,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 6.217525313656229E-7,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 5.196058485861371E-7,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 5.020844855865593E-7,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 4.463223217393347E-7,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 4.126923713625932E-7,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 4.315480960793399E-7,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 5.455934686044934E-7,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 6.248572475663184E-7,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                )
+            )
 
-            compareTest(inX, inY, actX, actY)
+            assertRegression(inX, inY, actX, actY)
         }
 
         run {
             val inX = listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
             val inY = listOf(1.405875171822729E-4, 8.773701104246436E-4, 8.740623780642788E-4, 9.612008914274215E-4, 7.442752301177569E-5, 3.102409406809994E-4, 8.033139539875547E-4, 7.275167288382125E-4, 1.1415516131617985E-4, 4.627117876192168E-4, 8.711442528382276E-4, 1.4858699158549826E-4, 1.9207199351526958E-4, 5.934830741897622E-4, 4.67975758749333E-4, 6.56171941943215E-5, 9.219390398593703E-4, 8.421737511680586E-4, 5.762930799072937E-4, 5.933886538854637E-4)
             val actX = listOf(0.0, 1.9, 3.8, 5.699999999999999, 7.6, 9.5, 11.4, 13.3, 15.200000000000001, 17.1)
-            val actY = listOf(EvalResult(y=6.068369186455294E-4, ymin=2.522358771115356E-6, ymax=0.0014287071472799595, se=4.992553096469941E-4), EvalResult(y=6.069041984716266E-4, ymin=9.611786930512117E-6, ymax=0.0010378346127887675, se=2.8684988353932123E-4), EvalResult(y=6.21752531365623E-4, ymin=2.944350162075111E-5, ymax=0.0010162171257016813, se=2.3678834242892783E-4), EvalResult(y=5.19605848586137E-4, ymin=9.380809162400743E-5, ymax=8.261621528588645E-4, se=2.0029212660414782E-4), EvalResult(y=5.020844855865594E-4, ymin=1.0512937147827485E-4, ymax=8.196914550276892E-4, se=1.8290991240353164E-4), EvalResult(y=4.463223217393348E-4, ymin=1.1705633371329849E-4, ymax=8.287614646697142E-4, se=1.7589790500098474E-4), EvalResult(y=4.126923713625933E-4, ymin=1.3840638548666135E-4, ymax=8.757798571115071E-4, se=1.8651455538327196E-4), EvalResult(y=4.3154809607934014E-4, ymin=5.923415355300231E-5, ymax=8.779268686822639E-4, se=1.8346797635781327E-4), EvalResult(y=5.455934686044935E-4, ymin=6.869405458765807E-5, ymax=8.983163994036576E-4, se=1.9237359098414562E-4), EvalResult(y=6.248572475663194E-4, ymin=2.1887545266132527E-4, ymax=0.0011012336261213235, se=2.0728130809907446E-4))
+            val actY = listOf(
+                EvalResult(
+                    y = 6.068369186455294E-4,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 6.069041984716266E-4,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 6.21752531365623E-4,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 5.19605848586137E-4,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 5.020844855865594E-4,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 4.463223217393348E-4,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 4.126923713625933E-4,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 4.3154809607934014E-4,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 5.455934686044935E-4,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 6.248572475663194E-4,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                )
+            )
 
-            compareTest(inX, inY, actX, actY)
+            assertRegression(inX, inY, actX, actY)
         }
 
         run {
             val inX = listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
             val inY = listOf(0.1405875171822729, 0.8773701104246435, 0.8740623780642786, 0.9612008914274214, 0.07442752301177569, 0.31024094068099933, 0.8033139539875546, 0.7275167288382125, 0.11415516131617985, 0.46271178761921666, 0.8711442528382275, 0.14858699158549826, 0.19207199351526955, 0.5934830741897621, 0.4679757587493329, 0.0656171941943215, 0.9219390398593702, 0.8421737511680585, 0.5762930799072936, 0.5933886538854636)
             val actX = listOf(0.0, 1.9, 3.8, 5.699999999999999, 7.6, 9.5, 11.4, 13.3, 15.200000000000001, 17.1)
-            val actY = listOf(EvalResult(y=0.606836918645529, ymin=0.12478490276379625, ymax=1.3901113528979705, se=0.37249754398641116), EvalResult(y=0.6069041984716265, ymin=0.16956282537801087, ymax=0.9969089849156173, se=0.22561558194662856), EvalResult(y=0.6217525313656229, ymin=0.19543809278027108, ymax=0.9629996771898715, se=0.20932448205275944), EvalResult(y=0.5196058485861371, ymin=0.13702220909458537, ymax=0.843775397979658, se=0.1887630344040208), EvalResult(y=0.5020844855865594, ymin=0.1966053249479675, ymax=0.8156864978819893, se=0.17033607349801308), EvalResult(y=0.44632232173933484, ymin=0.1269228971609843, ymax=0.8714367665366675, se=0.1933151636944541), EvalResult(y=0.41269237136259307, ymin=0.16206664011028007, ymax=0.9135694269075431, se=0.18847356197998605), EvalResult(y=0.4315480960793402, ymin=0.12669371021897238, ymax=0.9354193751046858, se=0.1777106979399582), EvalResult(y=0.5455934686044935, ymin=0.07246976039870465, ymax=0.9046842600362469, se=0.2081988862781465), EvalResult(y=0.6248572475663187, ymin=-0.008514692620062898, ymax=0.9486462382473257, se=0.21983583671049636))
+            val actY = listOf(
+                EvalResult(
+                    y = 0.606836918645529,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 0.6069041984716265,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 0.6217525313656229,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 0.5196058485861371,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 0.5020844855865594,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 0.44632232173933484,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 0.41269237136259307,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 0.4315480960793402,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 0.5455934686044935,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 0.6248572475663187,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                )
+            )
 
-            compareTest(inX, inY, actX, actY)
+            assertRegression(inX, inY, actX, actY)
         }
 
         run {
             val inX = listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
             val inY = listOf(140.5875171822729, 877.3701104246435, 874.0623780642786, 961.2008914274214, 74.42752301177568, 310.2409406809993, 803.3139539875546, 727.5167288382124, 114.15516131617984, 462.7117876192167, 871.1442528382274, 148.58699158549825, 192.07199351526955, 593.4830741897621, 467.9757587493329, 65.6171941943215, 921.9390398593703, 842.1737511680585, 576.2930799072936, 593.3886538854636)
             val actX = listOf(0.0, 1.9, 3.8, 5.699999999999999, 7.6, 9.5, 11.4, 13.3, 15.200000000000001, 17.1)
-            val actY = listOf(EvalResult(y=606.8369186455294, ymin=-466.69870899663124, ymax=1428.0996570415496, se=455.87785592957425), EvalResult(y=606.9041984716263, ymin=-161.17684142801426, ymax=1005.1110831501237, se=303.5945009569246), EvalResult(y=621.7525313656229, ymin=56.037252455511656, ymax=944.8956309415925, se=239.1452375463421), EvalResult(y=519.6058485861371, ymin=63.58409159754213, ymax=867.5743426372723, se=218.36445334511228), EvalResult(y=502.08448558655937, ymin=155.07516732410787, ymax=877.0441426718679, se=174.01943097043514), EvalResult(y=446.3223217393347, ymin=150.15785942370843, ymax=851.3701865611923, se=168.32588586362743), EvalResult(y=412.6923713625931, ymin=128.25075054352732, ymax=826.6453107827184, se=177.78971626707235), EvalResult(y=431.54809607934004, ymin=86.15169790230584, ymax=778.8826908622071, se=159.96419840225238), EvalResult(y=545.5934686044938, ymin=131.20757004750254, ymax=849.1501477424714, se=179.61250214742756), EvalResult(y=624.8572475663196, ymin=98.88745436475516, ymax=928.5084335195357, se=193.7491285324591))
+            val actY = listOf(
+                EvalResult(
+                    y = 606.8369186455294,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 606.9041984716263,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 621.7525313656229,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 519.6058485861371,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 502.08448558655937,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 446.3223217393347,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 412.6923713625931,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 431.54809607934004,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 545.5934686044938,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 624.8572475663196,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                )
+            )
 
-            compareTest(inX, inY, actX, actY)
+            assertRegression(inX, inY, actX, actY)
         }
 
         run {
             val inX = listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
             val inY = listOf(140587.5171822729, 877370.1104246435, 874062.3780642786, 961200.8914274215, 74427.52301177567, 310240.9406809993, 803313.9539875545, 727516.7288382124, 114155.16131617985, 462711.7876192167, 871144.2528382274, 148586.99158549824, 192071.99351526954, 593483.0741897621, 467975.7587493329, 65617.19419432149, 921939.0398593702, 842173.7511680585, 576293.0799072937, 593388.6538854636)
             val actX = listOf(0.0, 1.9, 3.8, 5.699999999999999, 7.6, 9.5, 11.4, 13.3, 15.200000000000001, 17.1)
-            val actY = listOf(EvalResult(y=606836.9186455292, ymin=-508195.3511312214, ymax=1388687.8494280984, se=519302.145591984), EvalResult(y=606904.1984716263, ymin=-294176.90289573994, ymax=1004612.1973180289, se=322574.75733552006), EvalResult(y=621752.5313656228, ymin=41462.478519247, ymax=930970.0039456218, se=231842.34009862758), EvalResult(y=519605.8485861372, ymin=62075.268864615435, ymax=873175.894075145, se=211981.89574719832), EvalResult(y=502084.4855865594, ymin=147824.8206963817, ymax=785265.452198116, se=172398.7174218673), EvalResult(y=446322.32173933485, ymin=97755.34981798944, ymax=807438.3248328788, se=173822.45170367727), EvalResult(y=412692.3713625932, ymin=141071.53793168964, ymax=811870.96768998, se=173710.93613785412), EvalResult(y=431548.09607934026, ymin=141161.18210078104, ymax=747660.305368946, se=185707.99646814572), EvalResult(y=545593.4686044934, ymin=129222.40470563213, ymax=856071.6792593242, se=177001.43505598707), EvalResult(y=624857.247566319, ymin=170254.12960205373, ymax=951359.491168498, se=171336.16860880557))
+            val actY = listOf(
+                EvalResult(
+                    y = 606836.9186455292,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 606904.1984716263,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 621752.5313656228,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 519605.8485861372,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 502084.4855865594,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 446322.32173933485,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 412692.3713625932,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 431548.09607934026,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 545593.4686044934,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                ),
+                EvalResult(
+                    y = 624857.247566319,
+                    ymin = Double.NaN,
+                    ymax = Double.NaN,
+                    se = Double.NaN
+                )
+            )
 
-            compareTest(inX, inY, actX, actY)
+            assertRegression(inX, inY, actX, actY)
         }
 
     }
 
-    private fun compareTest(inX: List<Double>, inY: List<Double>, actX: List<Double>, results: List<EvalResult>) {
+    private fun assertRegression(inX: List<Double>, inY: List<Double>, expectedX: List<Double>, expectedResult: List<EvalResult>) {
 
         val loessRegression = LocalPolynomialRegression(inX, inY, confidenceLevel)
 
-        // Compare Y
-        actX.zip(results).forEach { (x, r) ->
+        // Compare Y only, other properties are random
+        expectedX.zip(expectedResult).forEach { (x, r) ->
             assertEquals(r.y, loessRegression.evalX(x).y)
         }
     }
 
 
-    private val xss = listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
-    private val yss = listOf(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9)
+    private val xss: MutableList<Double?> = mutableListOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
+    private val yss: MutableList<Double?> = mutableListOf(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9)
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun testSizeDifference() {
         // Exception "X/Y must have same size" is expected
         LocalPolynomialRegression(xss.dropLast(1), yss, confidenceLevel)
     }
 
     @Test
-    fun testNaN() {
-        val xs = xss.toMutableList().map { if (it == xss.first() || it == xss.last() ) Double.NaN else it }
+    fun testXNull() {
+        val xs = xss.apply { set(lastIndex, null) }
         LocalPolynomialRegression(xs, yss, confidenceLevel)
     }
 
     @Test
-    fun testNull() {
-        val xs = xss.toMutableList().map { if (it == xss.first() || it == xss.last() ) null else it }
-        val ys = yss.toMutableList().mapIndexed{ idx, value -> if (idx == 3) null else value }
+    fun testYNull() {
+        val ys = yss.apply { set(lastIndex, null) }
+        LocalPolynomialRegression(xss, ys, confidenceLevel)
+    }
+
+    @Test
+    fun testXYNullSame() {
+        val xs = xss.apply { set(3, null) }
+        val ys = yss.apply { set(3, null) }
         LocalPolynomialRegression(xs, ys, confidenceLevel)
+    }
+
+    @Test
+    fun testXYNullDiff() {
+        val xs = xss.apply { set(lastIndex, null); set(0, null) }
+        val ys = yss.apply { set(3, null) }
+        LocalPolynomialRegression(xs, ys, confidenceLevel)
+    }
+
+    @Test
+    fun testNaN() {
+        val xs = xss.apply { set(0, Double.NaN) }
+        LocalPolynomialRegression(xs, yss, confidenceLevel)
     }
 
    @Test
     fun testInfinite() {
-        val xs = xss.toMutableList().map { if (it == xss.first() || it == xss.last() ) Double.POSITIVE_INFINITY else it }
-        val ys = yss.toMutableList().mapIndexed{ idx, value -> if (idx == 3) Double.NEGATIVE_INFINITY else value }
-        LocalPolynomialRegression(xs, ys, confidenceLevel)
+        val xs = xss.apply { set(0, Double.POSITIVE_INFINITY) }
+        LocalPolynomialRegression(xs, yss, confidenceLevel)
     }
 
 }
