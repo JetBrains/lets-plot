@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.projectionGeometry.minus
+import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.ZoomChangedComponent

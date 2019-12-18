@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.tiles
 
-import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.spatial.projectRect
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent

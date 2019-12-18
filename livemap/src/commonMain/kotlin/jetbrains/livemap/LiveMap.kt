@@ -7,9 +7,9 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.projectionGeometry.div
-import jetbrains.datalore.base.projectionGeometry.plus
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.base.typedGeometry.div
+import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
@@ -95,7 +95,8 @@ class LiveMap(
         myContext = LiveMapContext(
             myMapProjection,
             canvasControl,
-            MapRenderContext(viewport, canvasControl)
+            MapRenderContext(viewport, canvasControl),
+            ::fireThrowable
         )
 
         myUiService = UiService(componentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
@@ -163,9 +164,16 @@ class LiveMap(
                 CameraInputSystem(componentManager),
                 CameraUpdateDetectionSystem(componentManager),
 
+                MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
+
                 RegionIdGeocodingSystem(componentManager, myGeocodingProvider),
                 CentroidGeocodingSystem(componentManager, myGeocodingProvider),
                 BBoxGeocodingSystem(componentManager, myGeocodingProvider),
+
+                LocationCounterSystem(componentManager, true),
+                LocationGeocodingSystem(componentManager, myGeocodingProvider),
+                LocationCalculateSystem(componentManager),
+                StartMapLocationSystem(componentManager, true, null),
 
                 ApplyPointSystem(componentManager),
 
@@ -176,8 +184,6 @@ class LiveMap(
                 AnimationSystem(componentManager),
                 ViewProjectionUpdateSystem(componentManager),
                 LiveMapUiSystem(myUiService, componentManager, myMapLocationConsumer, myLayerManager),
-
-                MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
 
                 CellStateUpdateSystem(componentManager),
                 TileRequestSystem(componentManager),

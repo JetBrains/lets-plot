@@ -6,11 +6,11 @@
 package jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.minus
-import jetbrains.datalore.base.projectionGeometry.reinterpret
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.minus
+import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.gis.geoprotocol.GeometryUtil.bbox
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraListenerComponent

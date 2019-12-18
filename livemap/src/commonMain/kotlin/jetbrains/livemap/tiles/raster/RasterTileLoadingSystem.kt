@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.tiles.raster
 
-import jetbrains.datalore.base.projectionGeometry.Generic
-import jetbrains.datalore.base.projectionGeometry.Rect
 import jetbrains.datalore.base.spatial.projectOrigin
+import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.*

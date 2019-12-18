@@ -5,9 +5,9 @@
 
 package jetbrains.gis.geoprotocol.json
 
+import jetbrains.datalore.base.json.Obj
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.gis.common.json.Obj
 import jetbrains.gis.geoprotocol.GeoRequest.*
 import jetbrains.gis.geoprotocol.GeoRequest.GeocodingSearchRequest.AmbiguityResolver.IgnoringStrategy
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.GeocodingRequestBuilder
@@ -150,6 +150,9 @@ class JsonRequestParsingTest {
 
     companion object {
         private val RESOLUTION = 10
-        private val TILE_IDS = mapOf("RegionId123" to listOf<QuadKey<LonLat>>(QuadKey("310"), QuadKey("311")))
+        private val TILE_IDS = mapOf("RegionId123" to listOf<QuadKey<LonLat>>(
+            QuadKey("310"),
+            QuadKey("311")
+        ))
     }
 }

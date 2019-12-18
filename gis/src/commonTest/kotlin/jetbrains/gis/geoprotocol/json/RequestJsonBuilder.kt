@@ -5,9 +5,9 @@
 
 package jetbrains.gis.geoprotocol.json
 
+import jetbrains.datalore.base.json.Obj
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.gis.common.json.Obj
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder

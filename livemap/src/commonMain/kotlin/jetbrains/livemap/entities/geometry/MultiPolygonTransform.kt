@@ -5,10 +5,10 @@
 
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.Ring
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Polygon
+import jetbrains.datalore.base.typedGeometry.Ring
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.core.multitasking.MicroTask
 
 internal class MultiPolygonTransform<InT, OutT>(

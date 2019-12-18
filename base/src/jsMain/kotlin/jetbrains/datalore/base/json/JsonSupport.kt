@@ -61,7 +61,7 @@ class JsonFormatter {
     private fun formatValue(v: Any?) {
         when (v) {
             null -> append("null")
-            is String -> append("\"$v\"")
+            is String -> append("\"${v.escape()}\"")
             is Number, Boolean -> append(v.toString())
             is Array<*> -> formatList(v.asList())
             is List<*> -> formatList(v)

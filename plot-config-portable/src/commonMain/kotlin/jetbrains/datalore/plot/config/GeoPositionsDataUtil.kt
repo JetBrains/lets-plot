@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.map.GeoPositionField
+import jetbrains.datalore.plot.config.Option.Geom.Choropleth
 
 object GeoPositionsDataUtil {
     // Fixed columns in dataframe supplied by 'geo-coding'
@@ -45,11 +46,11 @@ object GeoPositionsDataUtil {
     )
 
     private val GEOMS_SUPPORT = mapOf(
-            GeomKind.MAP to GeoPositionsDataUtil.GeoDataSupport.boundary(),
-            GeomKind.POLYGON to GeoPositionsDataUtil.GeoDataSupport.boundary(),
-            GeomKind.POINT to GeoPositionsDataUtil.GeoDataSupport.centroid(),
-            GeomKind.RECT to GeoPositionsDataUtil.GeoDataSupport.limit(),
-            GeomKind.PATH to GeoPositionsDataUtil.GeoDataSupport.centroid()
+            GeomKind.MAP to GeoDataSupport.boundary(),
+            GeomKind.POLYGON to GeoDataSupport.boundary(),
+            GeomKind.POINT to GeoDataSupport.centroid(),
+            GeomKind.RECT to GeoDataSupport.limit(),
+            GeomKind.PATH to GeoDataSupport.centroid()
     )
 
     fun isGeomSupported(geomKind: GeomKind): Boolean {
@@ -61,11 +62,11 @@ object GeoPositionsDataUtil {
     }
 
     internal fun hasGeoPositionsData(layerConfig: LayerConfig): Boolean {
-        return layerConfig.has(Option.Geom.Choropleth.GEO_POSITIONS)
+        return layerConfig.has(Choropleth.GEO_POSITIONS)
     }
 
     internal fun getGeoPositionsData(layerConfig: LayerConfig): DataFrame {
-        val geoPositionsRaw = layerConfig.getMap(Option.Geom.Choropleth.GEO_POSITIONS)
+        val geoPositionsRaw = layerConfig.getMap(Choropleth.GEO_POSITIONS)
         return ConfigUtil.createDataFrame(geoPositionsRaw)
     }
 
@@ -173,7 +174,7 @@ object GeoPositionsDataUtil {
 
         companion object {
             fun boundary(): GeoDataSupport {
-                return GeoDataSupport(GeoPositionsDataUtil.GeoDataKind.BOUNDARY) {
+                return GeoDataSupport(GeoDataKind.BOUNDARY) {
                     createPointMapping(
                         it
                     )
@@ -181,7 +182,7 @@ object GeoPositionsDataUtil {
             }
 
             fun centroid(): GeoDataSupport {
-                return GeoDataSupport(GeoPositionsDataUtil.GeoDataKind.CENTROID) {
+                return GeoDataSupport(GeoDataKind.CENTROID) {
                     createPointMapping(
                         it
                     )
@@ -189,7 +190,7 @@ object GeoPositionsDataUtil {
             }
 
             fun limit(): GeoDataSupport {
-                return GeoDataSupport(GeoPositionsDataUtil.GeoDataKind.LIMIT) {
+                return GeoDataSupport(GeoDataKind.LIMIT) {
                     createRectMapping(
                         it
                     )

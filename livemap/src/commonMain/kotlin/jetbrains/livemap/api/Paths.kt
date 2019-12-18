@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
 import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.animation.Animation
@@ -18,13 +18,18 @@ import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
 import jetbrains.livemap.entities.Entities
+import jetbrains.livemap.entities.geocoding.NeedCalculateLocationComponent
+import jetbrains.livemap.entities.geocoding.NeedLocationComponent
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
-import jetbrains.livemap.entities.rendering.*
+import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
+import jetbrains.livemap.entities.rendering.RendererComponent
 import jetbrains.livemap.entities.rendering.Renderers.PathRenderer
+import jetbrains.livemap.entities.rendering.StyleComponent
+import jetbrains.livemap.entities.rendering.setStrokeColor
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionUtil.transformMultiPolygon
@@ -94,6 +99,8 @@ class PathBuilder(
                             strokeWidth = this@PathBuilder.strokeWidth
                             lineDash = this@PathBuilder.lineDash.toDoubleArray()
                         }
+                        + NeedLocationComponent()
+                        + NeedCalculateLocationComponent()
                     }
 
                 if (animation == 2) {
@@ -125,5 +132,5 @@ class PathBuilder(
 }
 
 fun PathBuilder.geometry(points: List<LonLatPoint>, isGeodesic: Boolean) {
-    multiPolygon = geometry(points, isGeodesic, isClosed = false)
+    multiPolygon = geometry(points, isClosed = false, isGeodesic = isGeodesic)
 }

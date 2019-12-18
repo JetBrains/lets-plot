@@ -29,11 +29,14 @@ class RegionIdGeocodingSystem(
         requested.forEach { it.add(WaitingGeocodingComponent()) }
 
         myGeocodingProvider.geocodeRegions(names)
-            .map { regionIdByNames  ->
-                getMutableEntities(GEOCODED_FEATURE_COMPONENTS).forEach { entity ->
-                    entity.add(RegionIdComponent(regionIdByNames.getValue(entity.get<MapIdComponent>().mapId)))
-                    entity.remove<MapIdComponent>()
+            .apply {
+                onSuccess { regionIdByNames ->
+                    getMutableEntities(GEOCODED_FEATURE_COMPONENTS).forEach { entity ->
+                        entity.add(RegionIdComponent(regionIdByNames.getValue(entity.get<MapIdComponent>().mapId)))
+                        entity.remove<MapIdComponent>()
+                    }
                 }
+                onFailure { context.showError(it) }
             }
     }
 

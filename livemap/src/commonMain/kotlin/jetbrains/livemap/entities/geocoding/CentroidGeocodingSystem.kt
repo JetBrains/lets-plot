@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.entities.geocoding
 
-import jetbrains.datalore.base.projectionGeometry.reinterpret
+import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.CENTROID
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 import jetbrains.livemap.LiveMapContext

@@ -17,6 +17,29 @@ class RegionIdComponent(var regionId: String) : EcsComponent
 
 class CentroidComponent : EcsComponent
 
+class NeedLocationComponent : EcsComponent
+class NeedGeocodeLocationComponent : EcsComponent
+class WaitGeocodeLocationComponent : EcsComponent
+
+class NeedCalculateLocationComponent : EcsComponent
+
+class LocationComponent: EcsComponent {
+    private var myWaitingCount = 0
+    val locations = ArrayList<GeoRectangle>()
+
+    fun add(rect: GeoRectangle) {
+        locations.add(rect)
+    }
+
+    fun wait(n: Int) {
+        myWaitingCount += n
+    }
+
+    fun isReady(): Boolean {
+        return myWaitingCount > 0 && myWaitingCount == locations.size
+    }
+}
+
 class LonLatComponent(val point: LonLatPoint): EcsComponent
 
 class WaitingGeocodingComponent : EcsComponent

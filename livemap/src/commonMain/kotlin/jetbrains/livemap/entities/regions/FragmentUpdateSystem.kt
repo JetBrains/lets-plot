@@ -5,11 +5,11 @@
 
 package jetbrains.livemap.entities.regions
 
-import jetbrains.datalore.base.projectionGeometry.intersects
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.spatial.computeRect
+import jetbrains.datalore.base.typedGeometry.intersects
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager

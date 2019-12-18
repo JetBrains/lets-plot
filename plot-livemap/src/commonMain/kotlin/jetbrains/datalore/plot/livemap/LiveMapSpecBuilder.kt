@@ -79,7 +79,6 @@ internal class LiveMapSpecBuilder {
     fun build(): LiveMapSpec {
         val projectionType = convertProjectionType(myLiveMapOptions.projection)
 
-
         val liveMapLayerProcessor = LiveMapDataPointAestheticsProcessor(myAesthetics, myLiveMapOptions)
         val geomLayersProcessor = LayerDataPointAestheticsProcessor(myLiveMapOptions.geodesic)
 

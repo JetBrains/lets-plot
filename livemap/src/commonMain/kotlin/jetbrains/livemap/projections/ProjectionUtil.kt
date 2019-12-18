@@ -5,9 +5,8 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.geometry.DoubleRectangles
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.projections.ProjectionType.*
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -141,7 +140,7 @@ object ProjectionUtil {
         return bbox
             .let(::rectToPolygon)
             .let { transformRing(it, transform, SAMPLING_EPSILON) }
-            .let { DoubleRectangles.boundingBox(it) }
+            .boundingBox()
     }
 
     fun <InT, OutT> transformMultiPolygon(

@@ -31,6 +31,14 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     }
 
                     point {
+                        mapId = "USA"
+
+                        shape = 21
+                        radius = 10.0
+                        fillColor = Color.GREEN
+                    }
+
+                    point {
                         coord(10.0, 10.0)
 
                         shape = 21
@@ -50,7 +58,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
 
                 paths {
                     path {
-                        geometry(listOf(BOSTON, SPB).map(GeoObject::geoCoord), isGeodesic = false)
+                        geometry(listOf(MOSCOW, SPB).map(GeoObject::geoCoord), isGeodesic = false)
 
                         strokeWidth = 1.0
                     }

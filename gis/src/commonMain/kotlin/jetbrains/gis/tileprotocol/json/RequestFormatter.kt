@@ -5,13 +5,13 @@
 
 package jetbrains.gis.tileprotocol.json
 
-import jetbrains.datalore.base.projectionGeometry.bottom
-import jetbrains.datalore.base.projectionGeometry.left
-import jetbrains.datalore.base.projectionGeometry.right
-import jetbrains.datalore.base.projectionGeometry.top
-import jetbrains.gis.common.json.FluentArray
-import jetbrains.gis.common.json.FluentObject
-import jetbrains.gis.common.json.Obj
+import jetbrains.datalore.base.json.FluentArray
+import jetbrains.datalore.base.json.FluentObject
+import jetbrains.datalore.base.json.Obj
+import jetbrains.datalore.base.typedGeometry.bottom
+import jetbrains.datalore.base.typedGeometry.left
+import jetbrains.datalore.base.typedGeometry.right
+import jetbrains.datalore.base.typedGeometry.top
 import jetbrains.gis.tileprotocol.Request
 import jetbrains.gis.tileprotocol.Request.*
 import jetbrains.gis.tileprotocol.json.RequestJsonParser.X

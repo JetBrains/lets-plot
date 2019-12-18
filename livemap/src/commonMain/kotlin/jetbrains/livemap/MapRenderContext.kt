@@ -11,6 +11,7 @@ import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.rendering.primitives.RenderObject
 import jetbrains.livemap.projections.ClientPoint
+import kotlin.math.floor
 
 open class MapRenderContext internal constructor(
     open val viewport: Viewport,
@@ -27,7 +28,7 @@ open class MapRenderContext internal constructor(
 
     fun draw(context: Context2d, x: Double, y: Double, renderObject: RenderObject) {
         context.save()
-        context.translate(x, y)
+        context.translate(floor(x), floor(y))
         renderObject.render(context)
         context.restore()
     }

@@ -5,15 +5,12 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.CentroidComponent
-import jetbrains.livemap.entities.geocoding.LonLatComponent
-import jetbrains.livemap.entities.geocoding.MapIdComponent
-import jetbrains.livemap.entities.geocoding.PointInitializerComponent
+import jetbrains.livemap.entities.geocoding.*
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.World
 import jetbrains.livemap.projections.WorldPoint
@@ -92,20 +89,30 @@ fun createLineBBox(
     }
 }
 
-fun MapEntityFactory.createStaticEntity(name: String, point: LonLatPoint): EcsEntity {
+fun MapEntityFactory.createStaticEntityWithLocation(name: String, point: LonLatPoint): EcsEntity =
+    createStaticEntity(name, point).addComponents {
+        + NeedLocationComponent()
+        + NeedCalculateLocationComponent()
+    }
 
-    return createMapEntity(name)
+fun MapEntityFactory.createDynamicEntityWithLocation(name: String, mapId: String): EcsEntity =
+    createDynamicEntity(name, mapId).addComponents {
+        + NeedLocationComponent()
+        + NeedGeocodeLocationComponent()
+    }
+
+fun MapEntityFactory.createStaticEntity(name: String, point: LonLatPoint): EcsEntity =
+    createMapEntity(name)
         .add(LonLatComponent(point))
-}
 
-fun MapEntityFactory.createDynamicEntity(name: String, mapId: String): EcsEntity {
 
-    return createMapEntity(name)
+fun MapEntityFactory.createDynamicEntity(name: String, mapId: String): EcsEntity =
+    createMapEntity(name)
         .addComponents {
             + CentroidComponent()
             + MapIdComponent(mapId)
         }
-}
+
 
 internal fun EcsEntity.setInitializer(block: ComponentsList.(worldPoint: WorldPoint) -> Unit): EcsEntity {
     return add(PointInitializerComponent(block))

@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.effects
 
-import jetbrains.datalore.base.projectionGeometry.LineString
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.projectionGeometry.explicitVec
+import jetbrains.datalore.base.typedGeometry.LineString
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.geoprotocol.GeometryUtil.asLineString
 import jetbrains.livemap.core.ecs.*

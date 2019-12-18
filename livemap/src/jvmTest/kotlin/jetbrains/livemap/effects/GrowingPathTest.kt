@@ -9,8 +9,8 @@ import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
@@ -228,7 +228,12 @@ class GrowingPathTest {
 }
 
 private fun <TypeT> Vec<TypeT>.roundDecimals(places: Int): Vec<TypeT> {
-    return (10.ipow(places)).let { explicitVec(x.roundDecimals(it), y.roundDecimals(it)) }
+    return (10.ipow(places)).let {
+        explicitVec(
+            x.roundDecimals(it),
+            y.roundDecimals(it)
+        )
+    }
 }
 
 private fun Double.roundDecimals(places: Int) = round(this * places) / places

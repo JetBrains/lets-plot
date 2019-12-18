@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.projectionGeometry.MultiPoint
-import jetbrains.datalore.base.projectionGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.MultiPoint
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.core.multitasking.MicroTask
 
 internal class MultiPointTransform<InT, OutT>(

@@ -5,19 +5,20 @@
 
 package jetbrains.livemap
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.MapRuler
-import jetbrains.livemap.projections.ProjectionUtil
-import jetbrains.livemap.projections.World
-import kotlin.math.*
+import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.livemap.projections.*
+import kotlin.math.abs
+import kotlin.math.ln
+import kotlin.math.max
+import kotlin.math.min
 
 object MapWidgetUtil {
     const val MIN_ZOOM = 1
     const val MAX_ZOOM = 15
+    val DEFAULT_LOCATION =
+        GeoRectangle(-124.76, 25.52, -66.94, 49.39)
     private const val FULL_ANGLE = 360.0
     private const val STRAIGHT_ANGLE = 180.0
 
@@ -53,7 +54,7 @@ object MapWidgetUtil {
         return pathList
     }
 
-    internal fun calculateMaxZoom(rectSize: Vec<World>, containerSize: DoubleVector): Int {
+    internal fun calculateMaxZoom(rectSize: Vec<World>, containerSize: Vec<Client>): Int {
         val xZoom = calculateMaxZoom(rectSize.x, containerSize.x)
         val yZoom = calculateMaxZoom(rectSize.y, containerSize.y)
         val zoom = min(xZoom, yZoom)

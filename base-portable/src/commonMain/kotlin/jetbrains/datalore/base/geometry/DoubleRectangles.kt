@@ -5,17 +5,12 @@
 
 package jetbrains.datalore.base.geometry
 
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.Vec
-import jetbrains.datalore.base.projectionGeometry.newSpanRectangle
 import kotlin.math.max
 import kotlin.math.min
 
 object DoubleRectangles {
     private val DOUBLE_VECTOR_GET_X = { p: DoubleVector -> p.x }
     private val DOUBLE_VECTOR_GET_Y = { p: DoubleVector -> p.y }
-    private val VEC_GET_X = { p: Vec<*> -> p.x }
-    private val VEC_GET_Y = { p: Vec<*> -> p.y }
 
     fun boundingBox(points: Iterable<DoubleVector>): DoubleRectangle {
         return calculateBoundingBox(points, DOUBLE_VECTOR_GET_X, DOUBLE_VECTOR_GET_Y)
@@ -27,17 +22,7 @@ object DoubleRectangles {
         }
     }
 
-    fun <TypeT> boundingBox(points: Iterable<Vec<TypeT>>): Rect<TypeT> {
-        return calculateBoundingBox(points, VEC_GET_X, VEC_GET_Y)
-        { minX, minY, maxX, maxY ->
-            newSpanRectangle(
-                Vec(minX, minY),
-                Vec(maxX, maxY)
-            )
-        }
-    }
-
-    private fun <PointT, BoxT> calculateBoundingBox(
+    fun <PointT, BoxT> calculateBoundingBox(
         points: Iterable<PointT>,
         getX: (PointT) -> Double,
         getY: (PointT) -> Double,

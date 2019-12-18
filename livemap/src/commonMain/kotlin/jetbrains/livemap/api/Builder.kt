@@ -5,16 +5,15 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.algorithms.createMultiPolygon
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.limitLat
 import jetbrains.datalore.base.spatial.limitLon
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.*
@@ -118,23 +117,29 @@ class ChartSource {
     var colors: List<Color> = emptyList()
 }
 
-fun geometry(points: List<LonLatPoint>, isGeodesic: Boolean, isClosed: Boolean): MultiPolygon<LonLat> {
-    val coord = points
-        .map { limitCoord(it) }
-        .let { if (isGeodesic) createArcPath(it) else it }
+fun geometry(
+    points: List<LonLatPoint>,
+    isClosed: Boolean,
+    isGeodesic: Boolean
+): MultiPolygon<LonLat> {
+    val coord = points.map { limitCoord(it) }
 
     return if (isClosed) {
         createMultiPolygon(coord)
     } else {
-        MapWidgetUtil
-            .splitPathByAntiMeridian(coord)
+        coord
+            .run { if (isGeodesic) createArcPath(this) else this }
+            .run(MapWidgetUtil::splitPathByAntiMeridian)
             .map { path -> Polygon(listOf(Ring(path))) }
             .run(::MultiPolygon)
     }
 }
 
 fun limitCoord(point: Vec<LonLat>): Vec<LonLat> {
-    return explicitVec(limitLon(point.x), limitLat(point.y))
+    return explicitVec(
+        limitLon(point.x),
+        limitLat(point.y)
+    )
 }
 
 @LiveMapDsl
@@ -150,7 +155,14 @@ class Location {
 
     var coordinate: Vec<LonLat>? = null
         set(v) {
-            field = v; mapLocation = v?.let { MapLocation.create(GeoRectangle(it.x, it.y, it.x, it.y)) }
+            field = v; mapLocation = v?.let { MapLocation.create(
+                GeoRectangle(
+                    it.x,
+                    it.y,
+                    it.x,
+                    it.y
+                )
+            ) }
         }
 
     internal var mapLocation: MapLocation? = null

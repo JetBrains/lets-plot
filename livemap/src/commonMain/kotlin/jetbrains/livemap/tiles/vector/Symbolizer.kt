@@ -7,7 +7,10 @@ package jetbrains.livemap.tiles.vector
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.*
+import jetbrains.datalore.base.typedGeometry.MultiLineString
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Ring
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.tileprotocol.mapConfig.Style
 import jetbrains.livemap.projections.Client

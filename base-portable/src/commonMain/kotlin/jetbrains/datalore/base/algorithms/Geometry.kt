@@ -7,10 +7,6 @@ package jetbrains.datalore.base.algorithms
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Polygon
-import jetbrains.datalore.base.projectionGeometry.Ring
-import jetbrains.datalore.base.projectionGeometry.Vec
 import kotlin.math.abs
 
 fun <T> splitRings(points: List<T>): List<List<T>> {
@@ -56,33 +52,6 @@ private fun <T> List<T>.sublist(range: ClosedRange<Int>): List<T> {
 
 fun calculateArea(ring: List<DoubleVector>): Double {
     return calculateArea(ring, DoubleVector::x, DoubleVector::y)
-}
-
-private fun <T> isClockwise(ring: List<Vec<T>>): Boolean {
-    return isClockwise(ring, Vec<T>::x, Vec<T>::y)
-}
-
-fun <T> createMultiPolygon(points: List<Vec<T>>): MultiPolygon<T> {
-    if (points.isEmpty()) {
-        return MultiPolygon(emptyList())
-    }
-
-    val polygons = ArrayList<Polygon<T>>()
-    var rings = ArrayList<Ring<T>>()
-
-    for (ring in splitRings(points)) {
-        if (rings.isNotEmpty() && isClockwise(ring)) {
-            polygons.add(Polygon(rings))
-            rings = ArrayList()
-        }
-        rings.add(Ring(ring))
-    }
-
-    if (rings.isNotEmpty()) {
-        polygons.add(Polygon(rings))
-    }
-
-    return MultiPolygon(polygons)
 }
 
 fun <T> isClockwise(ring: List<T>, x: (T) -> Double, y: (T) -> Double): Boolean {

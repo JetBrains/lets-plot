@@ -9,18 +9,20 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.async.PlatformAsyncs
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.center
 import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
+import jetbrains.livemap.MapWidgetUtil.DEFAULT_LOCATION
 import jetbrains.livemap.MapWidgetUtil.convertToWorldRects
 import jetbrains.livemap.mapobjects.MapLayer
 import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.MapRuler
 import jetbrains.livemap.projections.World
+import jetbrains.livemap.projections.toClientPoint
 
 internal class MapDataGeocodingHelper(
     private val mySize: DoubleVector,
@@ -110,10 +112,8 @@ internal class MapDataGeocodingHelper(
     }
 
     private fun calculateZoom(rectangle: Rect<World>): Int {
-        return MapWidgetUtil.calculateMaxZoom(rectangle.dimension, mySize)
+        return MapWidgetUtil.calculateMaxZoom(rectangle.dimension, mySize.toClientPoint())
     }
 
-    companion object {
-        private val DEFAULT_LOCATION = GeoRectangle(-124.76, 25.52, -66.94, 49.39)
-    }
+
 }

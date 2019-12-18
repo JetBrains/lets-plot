@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.jetbrains.livemap.tile
 
-import jetbrains.datalore.base.projectionGeometry.*
 import jetbrains.datalore.base.spatial.projectRect
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.projections.Client
@@ -22,7 +22,10 @@ import org.mockito.Mockito.verify
 import java.util.*
 
 class DonorTileCalculatorTest {
-    private val myCellRect = Rect<Client>(explicitVec(0.0, 0.0), explicitVec(256.0, 256.0))
+    private val myCellRect = Rect<Client>(
+        explicitVec(0.0, 0.0),
+        explicitVec(256.0, 256.0)
+    )
     private val myContext2d = Mockito.mock(Context2d::class.java)
     private val mySnapshotMap = HashMap<String, Tile>()
     private var myDrawImageCount: Int = 0

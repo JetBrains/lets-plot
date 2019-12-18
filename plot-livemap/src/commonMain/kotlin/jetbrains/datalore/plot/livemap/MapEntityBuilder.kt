@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.gcommon.collect.Lists.transform
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
-import jetbrains.datalore.base.projectionGeometry.Vec
 import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
@@ -53,7 +53,6 @@ internal class MapEntityBuilder {
     var geodesic: Boolean = false
 
     val index get() = myP.index()
-    val regionId get() = null
     val shape get() = myP.shape()!!.code
     val size get() = AestheticsUtil.textSize(myP)
     val speed get() = myP.speed()!!

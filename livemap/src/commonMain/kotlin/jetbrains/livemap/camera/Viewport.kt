@@ -5,10 +5,10 @@
 
 package jetbrains.livemap.camera
 
-import jetbrains.datalore.base.projectionGeometry.Rect
-import jetbrains.datalore.base.projectionGeometry.div
-import jetbrains.datalore.base.projectionGeometry.minus
-import jetbrains.datalore.base.projectionGeometry.plus
+import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.div
+import jetbrains.datalore.base.typedGeometry.minus
+import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.livemap.MapWidgetUtil
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.tiles.CellKey
@@ -16,7 +16,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 open class Viewport internal constructor(
-    private val helper: ViewportMath,
+    private val helper: ViewportHelper<World>,
     val size: ClientPoint
 ) {
 
@@ -60,6 +60,8 @@ open class Viewport internal constructor(
             .map { getViewCoord(it) }
     }
 
+    fun calculateBoundingBox(bBoxes: List<Rect<World>>) = helper.calculateBoundingBox(bBoxes)
+
     private fun updateWindow() {
         window = WorldRectangle(windowOrigin, windowSize)
     }
@@ -81,7 +83,7 @@ open class Viewport internal constructor(
     }
 
     companion object {
-        fun create(helper: ViewportMath, size: ClientPoint, position: WorldPoint): Viewport {
+        fun create(helper: ViewportHelper<World>, size: ClientPoint, position: WorldPoint): Viewport {
             return Viewport(helper, size).apply {
                 this.position = position
             }

@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.projections
 
-import jetbrains.datalore.base.projectionGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.Rect
 
 interface MapRuler<TypeT> {
     fun deltaX(x1: Double, x2: Double): Double

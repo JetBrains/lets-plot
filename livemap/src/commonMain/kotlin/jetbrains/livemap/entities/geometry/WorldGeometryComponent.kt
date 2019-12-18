@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.projectionGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.projections.World
 

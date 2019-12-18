@@ -75,11 +75,11 @@ class GeoDataFrameMappingChangeTest {
         private val NAMES = listOf("foo", "bar", "qwe", "tmp", "xyz")
         private val VALUES = listOf("254", "313", "142", "89", "3")
         private val GEOMETRIES = listOf(
-                "{'type: 'Point', 'coordinates':[-58, -34]}",
-                "{'type: 'Point', 'coordinates':[-47, -15]}",
-                "{'type: 'Point', 'coordinates':[-70, -33]}",
-                "{'type: 'Point', 'coordinates':[-74, -11]}",
-                "{'type: 'Point', 'coordinates':[-66, -17]}"
+                "{\"type: \"Point\", \"coordinates\":[-58, -34]}",
+                "{\"type: \"Point\", \"coordinates\":[-47, -15]}",
+                "{\"type: \"Point\", \"coordinates\":[-70, -33]}",
+                "{\"type: \"Point\", \"coordinates\":[-74, -11]}",
+                "{\"type: \"Point\", \"coordinates\":[-66, -17]}"
         )
 
         private val GEO_DATA_FRAME_WITH_IDS = mapOf(

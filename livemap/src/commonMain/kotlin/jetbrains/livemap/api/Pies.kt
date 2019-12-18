@@ -15,6 +15,7 @@ import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PieSectorRenderer
+import kotlin.math.PI
 
 @LiveMapDsl
 class Pies(
@@ -60,7 +61,7 @@ class PiesFactory(
     private fun splitMapPieChart(source: ChartSource): List<EcsEntity> {
         val result = ArrayList<EcsEntity>()
         val angles = transformValues2Angles(source.values)
-        var currentAngle = 0.0
+        var currentAngle = - PI / 2
 
         for (i in angles.indices) {
             // Do not inline - copy for closure.
@@ -69,9 +70,9 @@ class PiesFactory(
             result.add(
                 when {
                     source.point != null ->
-                        myFactory.createStaticEntity("map_ent_s_pie_sector", source.point!!)
+                        myFactory.createStaticEntityWithLocation("map_ent_s_pie_sector", source.point!!)
                     source.mapId != null ->
-                        myFactory.createDynamicEntity("map_ent_d_pie_sector_${source.mapId}", source.mapId!!)
+                        myFactory.createDynamicEntityWithLocation("map_ent_d_pie_sector_${source.mapId}", source.mapId!!)
                     else ->
                         error("Can't create pieSector entity. [point] and [mapId] is null.")
                 }.setInitializer { worldPoint ->

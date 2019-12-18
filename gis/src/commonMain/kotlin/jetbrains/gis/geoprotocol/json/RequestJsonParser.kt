@@ -7,12 +7,12 @@ package jetbrains.gis.geoprotocol.json
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.json.Arr
+import jetbrains.datalore.base.json.FluentObject
+import jetbrains.datalore.base.json.Obj
+import jetbrains.datalore.base.json.stringStreamOf
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.gis.common.json.Arr
-import jetbrains.gis.common.json.FluentObject
-import jetbrains.gis.common.json.Obj
-import jetbrains.gis.common.json.stringStreamOf
 import jetbrains.gis.geoprotocol.*
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption
 import jetbrains.gis.geoprotocol.GeoRequest.GeocodingSearchRequest.AmbiguityResolver.IgnoringStrategy
@@ -64,7 +64,11 @@ object RequestJsonParser {
             .forEnums(FEATURE_OPTIONS, { builder.addFeature(it) }, FeatureOption.values())
             .getExistingObject(TILES) { tiles -> tiles
                 .forEntries { id, quadKeys ->
-                    builder.addTiles(id, stringStreamOf(quadKeys as Arr).requireNoNulls().map { QuadKey<LonLat>(it) }.toList())
+                    builder.addTiles(id, stringStreamOf(quadKeys as Arr).requireNoNulls().map {
+                        QuadKey<LonLat>(
+                            it
+                        )
+                    }.toList())
                 }
             }
     }
