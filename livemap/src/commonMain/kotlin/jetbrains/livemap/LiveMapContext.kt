@@ -12,5 +12,6 @@ import jetbrains.livemap.projections.MapProjection
 open class LiveMapContext(
     open val mapProjection: MapProjection,
     eventSource: MouseEventSource,
-    open val mapRenderContext: MapRenderContext
+    open val mapRenderContext: MapRenderContext,
+    val showError: (Throwable) -> Unit
 ) : EcsContext(eventSource)

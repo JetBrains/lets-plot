@@ -95,7 +95,8 @@ class LiveMap(
         myContext = LiveMapContext(
             myMapProjection,
             canvasControl,
-            MapRenderContext(viewport, canvasControl)
+            MapRenderContext(viewport, canvasControl),
+            ::fireThrowable
         )
 
         myUiService = UiService(componentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
