@@ -14,8 +14,14 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
+import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.plot.builder.coord.CoordProviders
+import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
 
 class BarPlotResizeDemo private constructor(
@@ -23,7 +29,7 @@ class BarPlotResizeDemo private constructor(
     private val xScale: Scale<*>
 ) {
 
-    fun createPlot(plotSize: ReadableProperty<DoubleVector>): jetbrains.datalore.plot.builder.PlotContainer {
+    fun createPlot(plotSizeProp: ReadableProperty<DoubleVector>): PlotContainer {
         val varX = sclData.varX
         val varY = sclData.varY
         val varCat = sclData.varCat
@@ -34,36 +40,36 @@ class BarPlotResizeDemo private constructor(
         val fillScale = Scales.pureDiscrete("C", categories, colors, Color.GRAY)
 
 
-        val layerBuilder = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
-                .stat(Stats.IDENTITY)
-                .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.bar())
-                .pos(PosProvider.dodge())
-                .groupingVar(varCat)
-                .addBinding(VarBinding(varX, Aes.X, xScale))
-                .addBinding(
-                    VarBinding(
-                        varY,
-                        Aes.Y,
-                        Scales.continuousDomain("sin, cos, line", Aes.Y)
-                    )
+        val layerBuilder = GeomLayerBuilder.demoAndTest()
+            .stat(Stats.IDENTITY)
+            .geom(GeomProvider.bar())
+            .pos(PosProvider.dodge())
+            .groupingVar(varCat)
+            .addBinding(VarBinding(varX, Aes.X, xScale))
+            .addBinding(
+                VarBinding(
+                    varY,
+                    Aes.Y,
+                    Scales.continuousDomain("sin, cos, line", Aes.Y)
                 )
-                .addBinding(VarBinding(varCat, Aes.FILL, fillScale))
-                .addConstantAes(Aes.WIDTH, 0.9)
+            )
+            .addBinding(VarBinding(varCat, Aes.FILL, fillScale))
+            .addConstantAes(Aes.WIDTH, 0.9)
 
         // Add bar plot interactions
-        val geomInteraction = jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder(
+        val geomInteraction = GeomInteractionBuilder(
             listOf(
                 Aes.X,
                 Aes.Y,
                 Aes.FILL
             )
         )
-                .univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-                .build()
+            .univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+            .build()
         val layer = layerBuilder
-                .locatorLookupSpec(geomInteraction.createLookupSpec())
-                .contextualMappingProvider(geomInteraction)
-                .build(data)
+            .locatorLookupSpec(geomInteraction.createLookupSpec())
+            .contextualMappingProvider(geomInteraction)
+            .build(data)
 
 
         //Theme t = new DefaultTheme() {
@@ -77,9 +83,9 @@ class BarPlotResizeDemo private constructor(
         //    };
         //  }
         //};
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
+        val assembler = PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
 //        assembler.disableInteractions()
-        return jetbrains.datalore.plot.builder.PlotContainer(assembler.createPlot(), plotSize)
+        return PlotContainer(assembler.createPlot(), plotSizeProp)
     }
 
     companion object {

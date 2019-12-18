@@ -91,12 +91,10 @@ private fun buildPlotFromProcessedSpecsIntern(
         return
     }
 
-    if (PlotConfig.isPlotSpec(plotSpec)) {
-        buildSinglePlotFromProcessedSpecs(plotSpec, width, height, parentElement)
-    } else if (PlotConfig.isGGBunchSpec(plotSpec)) {
-        buildGGBunchFromProcessedSpecs(plotSpec, parentElement)
-    } else {
-        throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(plotSpec));
+    when {
+        PlotConfig.isPlotSpec(plotSpec) -> buildSinglePlotFromProcessedSpecs(plotSpec, width, height, parentElement)
+        PlotConfig.isGGBunchSpec(plotSpec) -> buildGGBunchFromProcessedSpecs(plotSpec, parentElement)
+        else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(plotSpec))
     }
 }
 

@@ -5,21 +5,17 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_LEFT
-import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_MOVED
-import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.plot.DemoAndTest
-import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Label
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.Box
+import javax.swing.BoxLayout
+import javax.swing.JPanel
 
 object PlotConfigDemoUtil {
     fun show(
@@ -49,10 +45,10 @@ object PlotConfigDemoUtil {
     ) {
         try {
             for (plotSpec in plotSpecList) {
-                val component = createPlotComponent(
-                    plotSpec,
-                    factory,
-                    plotSize
+                val component = MonolithicAwt.buildPlotFromRawSpecs(
+                    plotSpec, plotSize,
+                    factory::createSvgComponent,
+                    factory.createPlotEdtExecutor()
                 )
 
                 component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
@@ -68,38 +64,4 @@ object PlotConfigDemoUtil {
             panel.add(Label().apply { text = e.message; alignment = Label.CENTER; foreground = Color.RED })
         }
     }
-
-    private fun createPlotComponent(
-        plotSpec: MutableMap<String, Any>,
-        factory: SwingDemoFactory,
-        plotSize: DoubleVector
-    ): JComponent {
-        val plot = DemoAndTest.createPlot(plotSpec, false)
-        val plotContainer = PlotContainer(plot, ValueProperty(plotSize))
-        plotContainer.ensureContentBuilt()
-
-        val component = factory.createSvgComponent(plotContainer.svg)
-
-        // Bind mouse events
-        val plotEdt = factory.createPlotEdtExecutor()
-        component.addMouseListener(object : MouseAdapter() {
-            override fun mouseExited(e: MouseEvent) {
-                super.mouseExited(e)
-                plotEdt {
-                    plotContainer.mouseEventPeer.dispatch(MOUSE_LEFT, AwtEventUtil.translate(e))
-                }
-            }
-        })
-        component.addMouseMotionListener(object : MouseAdapter() {
-            override fun mouseMoved(e: MouseEvent) {
-                super.mouseMoved(e)
-                plotEdt {
-                    plotContainer.mouseEventPeer.dispatch(MOUSE_MOVED, AwtEventUtil.translate(e))
-                }
-            }
-        })
-
-        return component
-    }
-
 }
