@@ -49,7 +49,11 @@ object PlotConfigDemoUtil {
                     plotSpec, plotSize,
                     factory::createSvgComponent,
                     factory.createPlotEdtExecutor()
-                )
+                ) {
+                    for (s in it) {
+                        println("DEMO PLOT INFO: $s")
+                    }
+                }
 
                 component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
 

@@ -17,9 +17,11 @@ import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import mu.KotlinLogging
+import java.awt.Color
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
+import javax.swing.JLabel
 
 private val LOG = KotlinLogging.logger {}
 
@@ -31,16 +33,24 @@ object MonolithicAwt {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
+        executor: (() -> Unit) -> Unit,
+        computationMessagesHandler: ((List<String>) -> Unit)?
     ): JComponent {
         return try {
             PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
-            val processedSpec = if (PlotConfig.isFailure(plotSpec)) {
-                plotSpec
-            } else {
-                PlotConfigServerSide.processTransform(plotSpec)
-            }
-            buildPlotFromProcessedSpecsIntern(processedSpec, plotSize, componentFactory, executor)
+            val processedSpec =
+                if (PlotConfig.isFailure(plotSpec)) {
+                    plotSpec
+                } else {
+                    PlotConfigServerSide.processTransform(plotSpec)
+                }
+            buildPlotFromProcessedSpecsIntern(
+                processedSpec,
+                plotSize,
+                componentFactory,
+                executor,
+                computationMessagesHandler
+            )
         } catch (e: RuntimeException) {
             handleException(e)
         }
@@ -50,10 +60,17 @@ object MonolithicAwt {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
+        executor: (() -> Unit) -> Unit,
+        computationMessagesHandler: ((List<String>) -> Unit)?
     ): JComponent {
         return try {
-            buildPlotFromProcessedSpecsIntern(plotSpec, plotSize, componentFactory, executor)
+            buildPlotFromProcessedSpecsIntern(
+                plotSpec,
+                plotSize,
+                componentFactory,
+                executor,
+                computationMessagesHandler
+            )
         } catch (e: RuntimeException) {
             handleException(e)
         }
@@ -63,14 +80,15 @@ object MonolithicAwt {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
+        executor: (() -> Unit) -> Unit,
+        computationMessagesHandler: ((List<String>) -> Unit)?
     ): JComponent {
         throwTestingErrors()  // noop
 
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             val errorMessage = PlotConfig.getErrorMessage(plotSpec)
-            return showError(errorMessage)
+            return createErrorLabel(errorMessage)
         }
 
         return when {
@@ -78,7 +96,8 @@ object MonolithicAwt {
                 plotSpec,
                 plotSize,
                 componentFactory,
-                executor
+                executor,
+                computationMessagesHandler
             )
             PlotConfig.isGGBunchSpec(plotSpec) -> {
                 //            buildGGBunchFromProcessedSpecs(plotSpec, parentElement)
@@ -92,14 +111,11 @@ object MonolithicAwt {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
+        executor: (() -> Unit) -> Unit,
+        computationMessagesHandler: ((List<String>) -> Unit)?
     ): JComponent {
 
-        val assembler = createPlotAssembler(plotSpec) { messages ->
-            messages.forEach {
-                showInfo(it)
-            }
-        }
+        val assembler = createPlotAssembler(plotSpec, computationMessagesHandler)
 
         // Figure out plot size
         @Suppress("NAME_SHADOWING")
@@ -199,17 +215,14 @@ object MonolithicAwt {
         if (failureInfo.isInternalError) {
             LOG.error(e) {}
         }
-        return showError(failureInfo.message)
+        return createErrorLabel(failureInfo.message)
     }
 
-    private fun showError(message: String): JComponent {
-        UNSUPPORTED()
+    private fun createErrorLabel(s: String): JComponent {
+        val label = JLabel(s)
+        label.foreground = Color.RED
+        return label
     }
-
-    private fun showInfo(message: String): JComponent {
-        UNSUPPORTED()
-    }
-
 
     private fun throwTestingErrors() {
         // testing errors
@@ -218,5 +231,9 @@ object MonolithicAwt {
 //        throw IllegalArgumentException("User configuration error")
 //        throw IllegalStateException("User configuration error")
 //        throw IllegalStateException()   // Huh?
+    }
+
+    interface MessageHandler {
+        fun showInfo(message: String)
     }
 }
