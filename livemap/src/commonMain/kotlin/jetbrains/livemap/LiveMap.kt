@@ -164,6 +164,8 @@ class LiveMap(
                 CameraInputSystem(componentManager),
                 CameraUpdateDetectionSystem(componentManager),
 
+                MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
+
                 RegionIdGeocodingSystem(componentManager, myGeocodingProvider),
                 CentroidGeocodingSystem(componentManager, myGeocodingProvider),
                 BBoxGeocodingSystem(componentManager, myGeocodingProvider),
@@ -182,8 +184,6 @@ class LiveMap(
                 AnimationSystem(componentManager),
                 ViewProjectionUpdateSystem(componentManager),
                 LiveMapUiSystem(myUiService, componentManager, myMapLocationConsumer, myLayerManager),
-
-                MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
 
                 CellStateUpdateSystem(componentManager),
                 TileRequestSystem(componentManager),
