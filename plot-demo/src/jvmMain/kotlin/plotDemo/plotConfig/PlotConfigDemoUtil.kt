@@ -8,10 +8,7 @@ package jetbrains.datalore.plotDemo.plotConfig
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
-import java.awt.Color
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.Label
+import java.awt.*
 import javax.swing.BorderFactory
 import javax.swing.Box
 import javax.swing.BoxLayout
@@ -22,7 +19,7 @@ object PlotConfigDemoUtil {
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
         factory: SwingDemoFactory,
-        plotSize: DoubleVector
+        plotSize: DoubleVector?
     ) {
         factory.createDemoFrame(title).show {
             val panel = this
@@ -41,7 +38,7 @@ object PlotConfigDemoUtil {
         panel: JPanel,
         plotSpecList: List<MutableMap<String, Any>>,
         factory: SwingDemoFactory,
-        plotSize: DoubleVector
+        plotSize: DoubleVector?
     ) {
         try {
             for (plotSpec in plotSpecList) {
@@ -57,8 +54,10 @@ object PlotConfigDemoUtil {
 
                 component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
 
-                component.minimumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
-                component.maximumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
+                if (plotSize != null) {
+                    component.minimumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
+                    component.maximumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
+                }
                 component.alignmentX = Component.LEFT_ALIGNMENT
 
                 panel.add(Box.createRigidArea(Dimension(0, 5)))

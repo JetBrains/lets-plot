@@ -20,7 +20,7 @@ object GGBunchSceneMapper {
                 "GGBunch",
                 plotSpecList,
                 SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
-                DoubleVector(600.0, 600.0)
+                null
             )
         }
     }

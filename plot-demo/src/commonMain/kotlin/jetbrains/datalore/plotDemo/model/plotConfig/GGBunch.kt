@@ -44,7 +44,6 @@ class GGBunch : PlotConfigDemoBase() {
         |            ]
         |}
         """.trimMargin()
-        println(spec)
         return parsePlotSpec(spec)
     }
 

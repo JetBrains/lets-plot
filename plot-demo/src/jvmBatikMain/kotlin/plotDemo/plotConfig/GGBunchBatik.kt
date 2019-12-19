@@ -5,20 +5,20 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.BarPlot
+import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
 import jetbrains.datalore.vis.swing.BatikMapperDemoFactory
 
-object BarPlotBatik {
+object GGBunchBatik {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(BarPlot()) {
+        with(GGBunch()) {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             PlotConfigDemoUtil.show(
-                "Bar plot",
+                "GGBunch",
                 plotSpecList,
                 BatikMapperDemoFactory(),
-                demoComponentSize
+                null
             )
         }
     }

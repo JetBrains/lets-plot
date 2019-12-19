@@ -7,10 +7,10 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.*
@@ -18,10 +18,13 @@ import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import mu.KotlinLogging
 import java.awt.Color
+import java.awt.Dimension
+import java.awt.Rectangle
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
 import javax.swing.JLabel
+import javax.swing.JPanel
 
 private val LOG = KotlinLogging.logger {}
 
@@ -99,12 +102,67 @@ object MonolithicAwt {
                 executor,
                 computationMessagesHandler
             )
-            PlotConfig.isGGBunchSpec(plotSpec) -> {
-                //            buildGGBunchFromProcessedSpecs(plotSpec, parentElement)
-                UNSUPPORTED()
-            }
+            PlotConfig.isGGBunchSpec(plotSpec) -> buildGGBunchFromProcessedSpecs(
+                plotSpec,
+                componentFactory,
+                executor,
+                computationMessagesHandler
+            )
             else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(plotSpec))
         }
+    }
+
+    private fun buildGGBunchFromProcessedSpecs(
+        bunchSpec: MutableMap<String, Any>,
+        componentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit,
+        computationMessagesHandler: ((List<String>) -> Unit)?
+    ): JComponent {
+        val bunchConfig = BunchConfig(bunchSpec)
+        if (bunchConfig.bunchItems.isEmpty()) return createErrorLabel("No plots in the bunch")
+
+        val bunchComponent = JPanel(null)
+        bunchComponent.border = null
+        var bunchBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+        for (bunchItem in bunchConfig.bunchItems) {
+            val plotSpec = bunchItem.featureSpec as MutableMap<String, Any>
+
+            val plotSize = if (bunchItem.hasSize()) {
+                bunchItem.size
+            } else {
+                PlotConfigClientSideUtil.getPlotSizeOrNull(plotSpec) ?: DEF_PLOT_SIZE
+            }
+
+            val itemComponent = buildSinglePlotFromProcessedSpecs(
+                plotSpec,
+                plotSize,
+                componentFactory,
+                executor,
+                computationMessagesHandler
+            )
+
+            val itemBoundsInt =
+                Rectangle(bunchItem.x.toInt(), bunchItem.y.toInt(), plotSize.x.toInt(), plotSize.y.toInt())
+            itemComponent.bounds = itemBoundsInt
+            bunchComponent.add(itemComponent)
+
+            val itemBoundsDouble = DoubleRectangle(
+                itemBoundsInt.x.toDouble(),
+                itemBoundsInt.y.toDouble(),
+                itemBoundsInt.width.toDouble(),
+                itemBoundsInt.height.toDouble()
+            )
+            bunchBounds = bunchBounds.union(itemBoundsDouble)
+        }
+
+        val bunchSizeInt = Dimension(
+            bunchBounds.width.toInt(),
+            bunchBounds.height.toInt()
+        )
+
+        bunchComponent.minimumSize = bunchSizeInt
+        bunchComponent.maximumSize = bunchSizeInt
+        return bunchComponent
     }
 
     private fun buildSinglePlotFromProcessedSpecs(
