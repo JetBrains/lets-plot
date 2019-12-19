@@ -7,16 +7,58 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.config.PlotConfigClientSide
+import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
+import jetbrains.datalore.plot.config.PlotConfigUtil
+import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
 object DemoAndTest {
 
     fun createPlot(plotSpec: MutableMap<String, Any>, andBuildComponent: Boolean = true): Plot {
-        val plot = Monolithic.createPlot(plotSpec, null)
+        val plot = createPlot(plotSpec) {
+            for (s in it) {
+                println("PLOT MESSAGE: $s")
+            }
+        }
         if (andBuildComponent) {
             val rootGroup = plot.rootGroup
         }
         return plot
     }
+
+    private fun createPlot(
+        plotSpec: MutableMap<String, Any>,
+        computationMessagesHandler: ((List<String>) -> Unit)?
+    ): Plot {
+
+        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+
+        @Suppress("NAME_SHADOWING")
+        val plotSpec = transformPlotSpec(plotSpec)
+        if (computationMessagesHandler != null) {
+            val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
+            if (!computationMessages.isEmpty()) {
+                computationMessagesHandler(computationMessages)
+            }
+        }
+
+        if (PlotConfig.isFailure(plotSpec)) {
+            val errorMessage = PlotConfig.getErrorMessage(plotSpec)
+            throw IllegalArgumentException(errorMessage)
+        }
+
+        val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
+        return assembler.createPlot()
+    }
+
+    private fun transformPlotSpec(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
+        @Suppress("NAME_SHADOWING")
+        var plotSpec = plotSpec
+        plotSpec = PlotConfigServerSide.processTransform(plotSpec)
+        return PlotConfigClientSide.processTransform(plotSpec)
+    }
+
 
     fun contourDemoData(): Map<String, List<*>> {
         val countX = 20
