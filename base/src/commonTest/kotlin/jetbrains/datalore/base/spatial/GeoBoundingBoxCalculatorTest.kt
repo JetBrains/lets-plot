@@ -19,11 +19,23 @@ import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.point
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.rectangle
 import jetbrains.datalore.base.spatial.GeoUtils.BBOX_CALCULATOR
 import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
-import kotlin.test.Test
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
+import jetbrains.datalore.base.typedGeometry.Rect
+import kotlin.test.*
+
+interface World
 
 class GeoBoundingBoxCalculatorTest {
+
+    @Test
+    fun roundingErrorTest() {
+        val pointRect = Rect<World>(127.99999999999999, 127.99999999999997, 0.0, 0.0)
+
+        val rect = GeoBoundingBoxCalculator(
+            Rect<World>(0.0,0.0, 256.0, 256.0), true, false
+        ).calculateBoundingBoxFromRectangles(listOf(pointRect))
+
+        assertNotEquals(pointRect, rect)
+    }
 
     @Test
     fun whenPointsCloseToAntiMeridian_ShouldBoundingBoxCrossesAntiMeridian() {

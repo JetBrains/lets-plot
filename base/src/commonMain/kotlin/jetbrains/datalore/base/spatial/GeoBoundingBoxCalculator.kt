@@ -315,15 +315,20 @@ class GeoBoundingBoxCalculator<TypeT>(
         }
 
         private fun invertRange(range: ClosedRange<Double>, width: Double): ClosedRange<Double> {
+            // Fix for rounding error for invertRange introduced by math with width.
+            fun safeRange(first: Double, second: Double) = ClosedRange.closed(min(first, second), max(first, second))
+
             return when {
                 length(range) > width ->
                     ClosedRange.closed(range.lowerEndpoint(), range.lowerEndpoint())
                 range.upperEndpoint() > width ->
-                    ClosedRange.closed(range.upperEndpoint() - width, range.lowerEndpoint())
+                    safeRange(range.upperEndpoint() - width, range.lowerEndpoint())
                 else ->
-                    ClosedRange.closed(range.upperEndpoint(), width + range.lowerEndpoint())
+                    safeRange(range.upperEndpoint(), width + range.lowerEndpoint())
             }
         }
+
+
 
         private fun length(range: ClosedRange<Double>): Double {
             return range.upperEndpoint() - range.lowerEndpoint()
