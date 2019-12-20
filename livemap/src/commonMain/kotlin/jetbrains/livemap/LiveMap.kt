@@ -5,9 +5,11 @@
 
 package jetbrains.livemap
 
+import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
@@ -54,10 +56,7 @@ import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
 import jetbrains.livemap.fragments.FragmentProvider
-import jetbrains.livemap.projections.Coordinates
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.newDoubleRectangle
-import jetbrains.livemap.projections.toClientPoint
+import jetbrains.livemap.projections.*
 import jetbrains.livemap.tiles.CellStateUpdateSystem
 import jetbrains.livemap.tiles.TileLoadingSystemFactory
 import jetbrains.livemap.tiles.TileRemovingSystem
@@ -77,8 +76,10 @@ class LiveMap(
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
-    private val myGeocodingProvider: GeocodingProvider
-    ) : BaseLiveMap() {
+    private val myGeocodingProvider: GeocodingProvider,
+    private val myMapLocationRect: Async<Rect<World>>?,
+    private val myZoom: Int?
+) : BaseLiveMap() {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
     private var myInitialized: Boolean = false
@@ -170,10 +171,10 @@ class LiveMap(
                 CentroidGeocodingSystem(componentManager, myGeocodingProvider),
                 BBoxGeocodingSystem(componentManager, myGeocodingProvider),
 
-                LocationCounterSystem(componentManager, true),
+                LocationCounterSystem(componentManager, myMapLocationRect == null),
                 LocationGeocodingSystem(componentManager, myGeocodingProvider),
                 LocationCalculateSystem(componentManager),
-                StartMapLocationSystem(componentManager, true, null),
+                StartMapLocationSystem(componentManager, myZoom, myMapLocationRect),
 
                 ApplyPointSystem(componentManager),
 

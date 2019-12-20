@@ -50,7 +50,10 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
                 myLiveMapSpec.geocodingService,
                 myLiveMapSpec.level,
                 myLiveMapSpec.parent
-            )
+            ),
+            myLiveMapSpec.location
+                ?.getBBox(MapLocationGeocoder(myLiveMapSpec.geocodingService, myMapRuler, myMapProjection)),
+            myLiveMapSpec.zoom
         ))
     }
 }
