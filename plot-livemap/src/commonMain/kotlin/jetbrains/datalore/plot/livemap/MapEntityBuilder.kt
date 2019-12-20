@@ -200,7 +200,7 @@ internal class MapEntityBuilder {
             index = this@MapEntityBuilder.index
             mapId =this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
-            fillColor = this@MapEntityBuilder.fillColor
+            fillColor = this@MapEntityBuilder.strokeColor // It's not mistake
             strokeColor = this@MapEntityBuilder.strokeColor
             strokeWidth = this@MapEntityBuilder.strokeWidth
             label = this@MapEntityBuilder.label

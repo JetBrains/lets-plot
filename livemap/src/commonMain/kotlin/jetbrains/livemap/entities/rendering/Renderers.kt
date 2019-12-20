@@ -157,10 +157,9 @@ object Renderers {
             val textSpec = entity.get<TextSpecComponent>().textSpec
 
             ctx.save()
+
             ctx.rotate(textSpec.angle)
 
-            ctx.setTextAlign(Context2d.TextAlign.CENTER)
-            ctx.setTextBaseline(Context2d.TextBaseline.MIDDLE)
             ctx.setFont(textSpec.font)
             ctx.setFillStyle(style.fillColor)
 
