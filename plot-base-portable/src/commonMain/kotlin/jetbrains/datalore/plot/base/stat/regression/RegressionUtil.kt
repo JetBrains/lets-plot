@@ -5,7 +5,8 @@
 
 package jetbrains.datalore.plot.base.stat.regression
 
-import org.apache.commons.math3.stat.descriptive.rank.Percentile
+import jetbrains.datalore.plot.base.stat.math3.Percentile
+import kotlin.random.Random
 
 internal object RegressionUtil {
 
@@ -22,7 +23,7 @@ internal object RegressionUtil {
     // sample m int from 0..n-1
     private fun sampleInt(n: Int, m: Int): IntArray {
         if (n < m || m < 0) {
-            throw IllegalArgumentException("Sample $m data from $n data is impossible!")
+            error("Sample $m data from $n data is impossible!")
         }
         val perm = IntArray(n)
         for (i in 0 until n) {
@@ -31,7 +32,7 @@ internal object RegressionUtil {
 
         val result = IntArray(m)
         for (j in 0 until m) {
-            val r = j + (Math.random() * (n - j)).toInt()
+            val r = j + (Random.nextDouble() * (n - j)).toInt()
             result[j] = perm[r]
             perm[r] = perm[j]
         }
@@ -39,7 +40,6 @@ internal object RegressionUtil {
     }
 
     fun percentile(data: List<Double>, p: Double): Double {
-        val per = Percentile()
-        return per.evaluate(data.toDoubleArray(), p * 100)
+        return Percentile.evaluate(data.toDoubleArray(), p * 100)
     }
 }
