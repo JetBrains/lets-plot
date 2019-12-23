@@ -8,12 +8,8 @@ package jetbrains.datalore.plot.server.config
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.GeomName
-import jetbrains.datalore.plot.config.Option.Layer.DATA
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAPPING
-import jetbrains.datalore.plot.config.Option.Layer.POS
-import jetbrains.datalore.plot.config.Option.Layer.STAT
-import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.KIND
 import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
@@ -63,19 +59,15 @@ object ServerSideTestUtil {
         )
     }
 
-    internal fun geoPositionsDict(
-        geoReference: Map<String, Any>,
-        geoReferenceMeta: Map<String, Any>
+    internal fun geomPolygonSpec(
+        mapData: Map<String, Any>,
+        mapDataMeta: Map<String, Any>
     ): Map<String, Any?> {
         return mapOf(
             GEOM to GeomName.POLYGON,
-            DATA to null,
-            DATA_META to null,
-            GEO_POSITIONS to geoReference,
-            MAP_DATA_META to geoReferenceMeta,
-            MAPPING to emptyMap,
-            STAT to null,
-            POS to null
+            GEO_POSITIONS to mapData,
+            MAP_DATA_META to mapDataMeta,
+            MAPPING to emptyMap
         )
     }
 }

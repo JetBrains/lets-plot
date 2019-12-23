@@ -6,15 +6,16 @@
 package jetbrains.datalore.plot.server.config.transform
 
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.DATA_COLUMN_JOIN_KEY
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_COLUMN_GEOJSON
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_COLUMN_JOIN_KEY
+import jetbrains.datalore.plot.builder.map.GeoPositionField
+import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_GEOMETRY_COLUMN
+import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_KEY_COLUMN
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.DATA
 import jetbrains.datalore.plot.config.Option.Layer.MAPPING
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame
 import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.select
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector
@@ -22,33 +23,28 @@ import jetbrains.datalore.plot.config.transform.SpecSelector
 class GeoDataFrameMappingChange : SpecChange {
 
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
-        val dataSpec = spec[DATA] as MutableMap<String, Any>
-        val geometryColumn =
-            ((spec[DATA_META] as Map<*, *>)[GeoDataFrame.TAG] as Map<*, *>)[GeoDataFrame.GEOMETRY] as String
+        val geometryColumnName = spec.select(DATA_META, GeoDataFrame.TAG, GeoDataFrame.GEOMETRY) as String
+        val geometries = spec.select(DATA, geometryColumnName) as List<*>
 
-        val keys =
-            generateKeys((dataSpec[geometryColumn] as List<*>).size)
+        val keys = geometries.indices.map(Int::toString)
 
-        spec[GEO_POSITIONS] = HashMap(
-            mapOf(
-                MAP_COLUMN_JOIN_KEY to keys,
-                MAP_COLUMN_GEOJSON to dataSpec[geometryColumn]
-            )
+        spec[GEO_POSITIONS] = mutableMapOf(
+            MAP_JOIN_KEY_COLUMN to keys,
+            MAP_GEOMETRY_COLUMN to geometries
         )
 
-        dataSpec.remove(geometryColumn)
-        dataSpec[DATA_COLUMN_JOIN_KEY] = keys
+        with(spec[DATA] as MutableMap<String, Any>) {
+            remove(geometryColumnName)
+            put(GeoPositionField.DATA_JOIN_KEY_COLUMN, keys)
+        }
 
-        spec.getOrPut(MAPPING) { HashMap<Any, Any>() }
-
-        val mapping = spec[MAPPING] as MutableMap<String, Any>
-        mapping[MAP_ID.name] = DATA_COLUMN_JOIN_KEY
+        val mapping = spec.getOrPut(MAPPING) { HashMap<Any, Any>() } as MutableMap<String, Any>
+        mapping[MAP_ID.name] = GeoPositionField.DATA_JOIN_KEY_COLUMN
     }
 
     override fun isApplicable(spec: Map<String, Any>): Boolean {
         return (spec[GEO_POSITIONS] == null
-                && spec[DATA_META] is Map<*, *>
-                && (spec[DATA_META] as Map<*, *>).containsKey(GeoDataFrame.TAG))
+                && spec.select(DATA_META, GeoDataFrame.TAG) != null)
     }
 
     companion object {
@@ -56,8 +52,5 @@ class GeoDataFrameMappingChange : SpecChange {
             return SpecSelector.of(Plot.LAYERS)
         }
 
-        private fun generateKeys(size: Int): List<String> {
-            return (0 until size).map { it.toString() }
-        }
     }
 }
