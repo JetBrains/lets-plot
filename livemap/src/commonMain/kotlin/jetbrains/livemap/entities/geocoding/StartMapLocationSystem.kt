@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.entities.geocoding
 
+import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.LiveMapContext
@@ -22,13 +23,14 @@ import jetbrains.livemap.projections.World
 
 class StartMapLocationSystem(
     componentManager: EcsComponentManager,
-    private var myNeedLocation: Boolean,
-    private val myZoom: Int?
+    private val myZoom: Int?,
+    private val myLocationRect: Async<Rect<World>>?
 ) : LiveMapSystem(componentManager) {
     private lateinit var myLocation: LocationComponent
     private lateinit var myCamera: EcsEntity
     private lateinit var myViewport: Viewport
     private lateinit var myDefaultLocation: List<Rect<World>>
+    private var myNeedLocation = true
 
     override fun initImpl(context: LiveMapContext) {
         myLocation = getSingleton()
@@ -38,12 +40,16 @@ class StartMapLocationSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        if (myNeedLocation && myLocation.isReady()) {
+        if (!myNeedLocation) return
+
+        myLocationRect?.map {
+            myLocation.wait(1)
+            myLocation.add(it)
+        }
+
+        if (myLocation.isReady()) {
             myNeedLocation = false
             val position = myLocation.locations
-                .flatMap {
-                    it.convertToWorldRects(context.mapProjection)
-                }
                 .run(myViewport::calculateBoundingBox)
                 .run(::createMapPosition)
 

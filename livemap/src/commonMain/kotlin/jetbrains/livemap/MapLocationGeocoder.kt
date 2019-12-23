@@ -7,7 +7,6 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.gis.geoprotocol.GeoRequest
@@ -26,51 +25,50 @@ class MapLocationGeocoder(
     private val myMapRuler: MapRuler<World>,
     private val myMapProjection: MapProjection
 ) {
-
     fun geocodeMapRegion(mapRegion: MapRegion): Async<WorldRectangle> {
-        val requestBuilder: GeoRequestBuilder.RequestBuilderBase<*>
 
-        if (mapRegion.containsId()) {
-            requestBuilder = GeoRequestBuilder.ExplicitRequestBuilder().setIds(mapRegion.idList)
+        return createRequestBuilder(mapRegion)
+            .addFeature(GeoRequest.FeatureOption.CENTROID)
+            .addFeature(GeoRequest.FeatureOption.POSITION)
+            .build()
+            .run(myGeocodingService::execute)
+            .map { features ->
+                if (features.isEmpty()) {
+                    throw RuntimeException("There is no geocoded feature for location.")
+                }
 
-        } else if (mapRegion.containsName()) {
-            requestBuilder = GeoRequestBuilder.GeocodingRequestBuilder()
-                .addQuery(
-                    GeoRequestBuilder.RegionQueryBuilder()
-                        .setQueryNames(mapRegion.name)
-                        .build()
-                )
-
-        } else {
-            throw IllegalArgumentException("Unknown map region kind")
-        }
-
-        return myGeocodingService.execute(
-            requestBuilder
-                .addFeature(GeoRequest.FeatureOption.CENTROID)
-                .addFeature(GeoRequest.FeatureOption.POSITION)
-                .build()
-        ).map { features ->
-            if (features.isEmpty()) {
-                throw RuntimeException("There is no geocoded feature for location.")
+                if (features.size == 1) {
+                    val feature = features[0]
+                    calculateExtendedRectangleWithCenter(
+                        myMapRuler,
+                        calculateBBoxOfGeoRect(feature.position!!),
+                        myMapProjection.project(feature.centroid!!.reinterpret())
+                    )
+                } else {
+                    features
+                        .map { it.position!! }
+                        .run(::calculateBBoxOfGeoRects)
+                }
             }
-
-            val boundingBox: WorldRectangle
-            if (features.size == 1) {
-                val feature = features.get(0)
-                boundingBox = calculateExtendedRectangleWithCenter(
-                    myMapRuler,
-                    calculateBBoxOfGeoRect(feature.position!!),
-                    myMapProjection.project(feature.centroid!!.reinterpret<LonLat>())
-                )
-            } else {
-                val positions = ArrayList<GeoRectangle>()
-                features.forEach { feature -> positions.add(feature.position!!) }
-                boundingBox = calculateBBoxOfGeoRects(positions)
-            }
-            boundingBox
-        }
     }
+
+    private fun createRequestBuilder(mapRegion: MapRegion) =
+        when {
+            mapRegion.containsId() -> {
+                GeoRequestBuilder.ExplicitRequestBuilder().setIds(mapRegion.idList)
+            }
+            mapRegion.containsName() -> {
+                GeoRequestBuilder.GeocodingRequestBuilder()
+                    .addQuery(
+                        GeoRequestBuilder.RegionQueryBuilder()
+                            .setQueryNames(mapRegion.name)
+                            .build()
+                    )
+            }
+            else -> {
+                throw IllegalArgumentException("Unknown map region kind")
+            }
+        }
 
     fun calculateBBoxOfGeoRect(geoRect: GeoRectangle): Rect<World> {
         return myMapRuler.calculateBoundingBox(geoRect.convertToWorldRects(myMapProjection))

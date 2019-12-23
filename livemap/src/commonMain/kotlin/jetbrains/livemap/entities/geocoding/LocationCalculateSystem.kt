@@ -5,8 +5,6 @@
 
 package jetbrains.livemap.entities.geocoding
 
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.limitLat
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
@@ -30,18 +28,9 @@ class LocationCalculateSystem(
             .forEach { entity ->
                 entity.remove<NeedCalculateLocationComponent>()
 
-                val origin = entity.get<WorldOriginComponent>().origin
-                val dimension = entity.tryGet<WorldDimensionComponent>()?.dimension ?: ZERO_WORLD_POINT
-
-                val bottomLeft = context.mapProjection.invert(origin)
-                val topRight = context.mapProjection.invert(origin + dimension)
-
-                GeoRectangle(
-                    bottomLeft.x,
-                    limitLat(topRight.y),
-                    topRight.x,
-                    limitLat(bottomLeft.y)
-
+                Rect(
+                    entity.get<WorldOriginComponent>().origin,
+                    entity.tryGet<WorldDimensionComponent>()?.dimension ?: ZERO_WORLD_POINT
                 ).run(myLocation::add)
             }
     }

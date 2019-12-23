@@ -175,9 +175,10 @@ internal class LiveMapSpecBuilder {
             }
 
             throw IllegalArgumentException(
-                ("Expected: location" + " = DataFrame with "
-                        + "['" + POINT_X + "', '" + POINT_Y + "'] or "
-                        + "['" + RECT_XMIN + "', '" + RECT_YMIN + "', '" + RECT_XMAX + "', '" + RECT_YMAX + "'] columns")
+                "Expected: location = DataFrame with " +
+                        "['$POINT_X', '$POINT_Y'] or " +
+                        "['$RECT_XMIN', '$RECT_YMIN', '$RECT_XMAX', '$RECT_YMAX'] " +
+                        "columns"
             )
         }
 
@@ -226,7 +227,7 @@ internal class LiveMapSpecBuilder {
                     handlerMap[REGION_TYPE_DATAFRAME] = { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
                     handleRegionObject((location as Map<*, *>?)!!, handlerMap)
                 }
-                else -> throw IllegalArgumentException("Expected: locatiobn" + " = [String|Array|DataFrame]")
+                else -> throw IllegalArgumentException("Expected: location" + " = [String|Array|DataFrame]")
             }
         }
 

@@ -10,6 +10,8 @@ import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.MapWidgetUtil.convertToWorldRects
 
 class LocationGeocodingSystem(
     componentManager: EcsComponentManager,
@@ -17,9 +19,12 @@ class LocationGeocodingSystem(
 ) : LiveMapSystem(componentManager) {
 
     private lateinit var myLocation: LocationComponent
+    private lateinit var myMapProjection: MapProjection
 
     override fun initImpl(context: LiveMapContext) {
         myLocation = getSingleton()
+        myMapProjection = context.mapProjection
+
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -47,7 +52,9 @@ class LocationGeocodingSystem(
             features[entity.get<RegionIdComponent>().regionId]
                 ?.position
                 ?.let { rect ->
-                    myLocation.add(rect)
+                    rect
+                        .convertToWorldRects(myMapProjection)
+                        .forEach(myLocation::add)
                     entity.remove<WaitGeocodeLocationComponent>()
                 }
         }

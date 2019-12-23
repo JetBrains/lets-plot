@@ -6,9 +6,11 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.projections.LonLatPoint
+import jetbrains.livemap.projections.World
 import jetbrains.livemap.projections.WorldPoint
 
 class MapIdComponent(val mapId: String) : EcsComponent
@@ -25,9 +27,9 @@ class NeedCalculateLocationComponent : EcsComponent
 
 class LocationComponent: EcsComponent {
     private var myWaitingCount = 0
-    val locations = ArrayList<GeoRectangle>()
+    val locations = ArrayList<Rect<World>>()
 
-    fun add(rect: GeoRectangle) {
+    fun add(rect: Rect<World>) {
         locations.add(rect)
     }
 
