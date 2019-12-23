@@ -139,8 +139,8 @@ class GeoBoundingBoxCalculator<TypeT>(
         return Rect(
             xRange.lowerEndpoint(),
             yRange.lowerEndpoint(),
-            length(xRange),
-            length(yRange)
+            xRange.length(),
+            yRange.length()
         )
     }
 
@@ -241,28 +241,36 @@ class GeoBoundingBoxCalculator<TypeT>(
                 throw RuntimeException("No coordinates for bounding box calculation.")
             }
 
-            val coordRanges =
-                combineCoordRanges(
-                    helper,
-                    mapRange.lowerEndpoint(),
-                    mapRange.upperEndpoint()
-                )
-            val maxGapRange =
-                findMaxGapBetweenRanges(
-                    coordRanges,
-                    length(
-                        mapRange
-                    )
-                )
-            return normalizeCenter(
-                invertRange(
-                    maxGapRange,
-                    length(
-                        mapRange
-                    )
-                ),
-                mapRange
-            )
+            return combineCoordRanges(
+                helper,
+                mapRange.lowerEndpoint(),
+                mapRange.upperEndpoint()
+            ).run {
+                findMaxGapBetweenRanges(this, mapRange.length())
+            }.run {
+                invertRange(this, mapRange.length())
+            }.run {
+                normalizeCenter(this, mapRange)
+            }
+
+//            val coordRanges =
+//                combineCoordRanges(
+//                    helper,
+//                    mapRange.lowerEndpoint(),
+//                    mapRange.upperEndpoint()
+//                )
+//            val maxGapRange =
+//                findMaxGapBetweenRanges(
+//                    coordRanges,
+//                    mapRange.length()
+//                )
+//            return normalizeCenter(
+//                invertRange(
+//                    maxGapRange,
+//                    mapRange.length()
+//                ),
+//                mapRange
+//            )
         }
 
         private fun normalizeCenter(range: ClosedRange<Double>, mapRange: ClosedRange<Double>): ClosedRange<Double> {
@@ -270,12 +278,8 @@ class GeoBoundingBoxCalculator<TypeT>(
                 range
             } else {
                 ClosedRange.closed(
-                    range.lowerEndpoint() - length(
-                        mapRange
-                    ),
-                    range.upperEndpoint() - length(
-                        mapRange
-                    )
+                    range.lowerEndpoint() - mapRange.length(),
+                    range.upperEndpoint() - mapRange.length()
                 )
             }
         }
@@ -303,10 +307,7 @@ class GeoBoundingBoxCalculator<TypeT>(
                 val range = it.next()
 
                 nextLower = range.lowerEndpoint()
-                if (nextLower > prevUpper && nextLower - prevUpper > length(
-                        maxGapRange
-                    )
-                ) {
+                if (nextLower > prevUpper && nextLower - prevUpper > maxGapRange.length()) {
                     maxGapRange = ClosedRange.closed(prevUpper, nextLower)
                 }
                 prevUpper = max(prevUpper, range.upperEndpoint())
@@ -319,7 +320,7 @@ class GeoBoundingBoxCalculator<TypeT>(
             fun safeRange(first: Double, second: Double) = ClosedRange.closed(min(first, second), max(first, second))
 
             return when {
-                length(range) > width ->
+                range.length() > width ->
                     ClosedRange.closed(range.lowerEndpoint(), range.lowerEndpoint())
                 range.upperEndpoint() > width ->
                     safeRange(range.upperEndpoint() - width, range.lowerEndpoint())
@@ -328,10 +329,8 @@ class GeoBoundingBoxCalculator<TypeT>(
             }
         }
 
-
-
-        private fun length(range: ClosedRange<Double>): Double {
-            return range.upperEndpoint() - range.lowerEndpoint()
+        private fun ClosedRange<Double>.length(): Double {
+            return upperEndpoint() - lowerEndpoint()
         }
     }
 }
