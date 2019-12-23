@@ -23,5 +23,5 @@ object GeoPositionField {
     const val RECT_YMAX = "latmax"
 
     // Key used for join from MAP
-    const val DATA_COLUMN_JOIN_KEY = "__key__"
+    const val DATA_JOIN_KEY_COLUMN = "__key__"
 }

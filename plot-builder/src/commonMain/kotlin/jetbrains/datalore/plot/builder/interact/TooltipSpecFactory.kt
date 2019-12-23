@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.MappedDataAccess.MappedData
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.builder.map.GeoPositionField.DATA_COLUMN_JOIN_KEY
+import jetbrains.datalore.plot.builder.map.GeoPositionField.DATA_JOIN_KEY_COLUMN
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X1
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y
@@ -229,7 +229,7 @@ class TooltipSpecFactory(
                 POINT_X1,
                 POINT_Y,
                 POINT_Y1)
-        private val AUTO_GENERATED_NAMES = setOf(DATA_COLUMN_JOIN_KEY)
+        private val AUTO_GENERATED_NAMES = setOf(DATA_JOIN_KEY_COLUMN)
 
         val AXIS_TOOLTIP_COLOR = Color.GRAY
     }

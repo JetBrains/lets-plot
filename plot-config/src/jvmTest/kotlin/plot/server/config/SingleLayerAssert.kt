@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_COLUMN_GEOJSON
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_COLUMN_JOIN_KEY
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_COLUMN_OSM_ID
+import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_GEOMETRY_COLUMN
+import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_KEY_COLUMN
+import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_OSM_ID_COLUMN
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import org.assertj.core.api.AbstractAssert
@@ -63,15 +63,15 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
     }
 
     internal fun haveMapIds(expectedIds: List<*>): SingleLayerAssert {
-        return haveMapValues(MAP_COLUMN_JOIN_KEY, expectedIds)
+        return haveMapValues(MAP_JOIN_KEY_COLUMN, expectedIds)
     }
 
     internal fun haveMapGeometries(expectedGeometries: List<*>): SingleLayerAssert {
-        return haveMapValues(MAP_COLUMN_GEOJSON, expectedGeometries)
+        return haveMapValues(MAP_GEOMETRY_COLUMN, expectedGeometries)
     }
 
     internal fun haveMapGeocode(expectedGeocode: List<*>): SingleLayerAssert {
-        return haveMapValues(MAP_COLUMN_OSM_ID, expectedGeocode)
+        return haveMapValues(MAP_OSM_ID_COLUMN, expectedGeocode)
     }
 
     private fun haveMapValues(key: String, expectedMapValues: List<*>): SingleLayerAssert {
