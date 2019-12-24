@@ -38,7 +38,7 @@ class Parser internal constructor(
             }
         }
 
-        myGeometryObjectParser!!.parsePoint()
+        myGeometryObjectParser!!.nextCoordinate()
         return true
     }
 
@@ -78,42 +78,45 @@ class Parser internal constructor(
                 continue
             }
 
-            myGeometryObjectParser = GeometryObjectParser(precision, myInput)
+            myGeometryObjectParser = GeometryObjectParser(precision, myInput, myGeometryConsumer)
 
             when (geometryType) {
                 GeometryType.POINT -> {
-                    myGeometryObjectParser!!.parsePoint(myGeometryConsumer::onPoint)
+                    myGeometryObjectParser!!.parsePoint()
                     return true
                 }
 
                 GeometryType.LINESTRING -> {
-                    myGeometryObjectParser!!.parseLineString(myGeometryConsumer::onLineString)
+                    myGeometryObjectParser!!.parseLineString()
                     return true
                 }
 
                 GeometryType.POLYGON -> {
-                    myGeometryObjectParser!!.parsePolygon(myGeometryConsumer::onPolygon)
+                    myGeometryObjectParser!!.parsePolygon()
                     return true
                 }
 
                 GeometryType.MULTI_POINT -> {
                     myGeometryObjectParser!!.parseMultiPoint(
                         nGeometries,
-                        idList, myGeometryConsumer::onMultiPoint)
+                        idList
+                    )
                     return true
                 }
 
                 GeometryType.MULTI_LINESTRING -> {
                     myGeometryObjectParser!!.parseMultiLine(
                         nGeometries,
-                        idList, myGeometryConsumer::onMultiLineString)
+                        idList
+                    )
                     return true
                 }
 
                 GeometryType.MULTI_POLYGON -> {
                     myGeometryObjectParser!!.pushMultiPolygon(
                         nGeometries,
-                        idList, myGeometryConsumer::onMultiPolygon)
+                        idList
+                    )
                     return true
                 }
 

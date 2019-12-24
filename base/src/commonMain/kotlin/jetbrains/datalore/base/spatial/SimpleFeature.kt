@@ -12,25 +12,25 @@ object SimpleFeature {
         fun onPoint(point: Vec<Generic>): Unit = error("Point isn't supported")
         fun onLineString(lineString: LineString<Generic>): Unit = error("LineString isn't supported")
         fun onPolygon(polygon: Polygon<Generic>): Unit = error("Polygon isn't supported")
-        fun onMultiPoint(multiPoint: MultiPoint<Generic>, idList: List<Int>): Unit = error("MultiPoint isn't supported")
-        fun onMultiLineString(multiLineString: MultiLineString<Generic>, idList: List<Int>): Unit = error("MultiLineString isn't supported")
-        fun onMultiPolygon(multipolygon: MultiPolygon<Generic>, idList: List<Int>): Unit = error("MultiPolygon isn't supported")
+        fun onMultiPoint(multiPoint: MultiPoint<Generic>): Unit = error("MultiPoint isn't supported")
+        fun onMultiLineString(multiLineString: MultiLineString<Generic>): Unit = error("MultiLineString isn't supported")
+        fun onMultiPolygon(multipolygon: MultiPolygon<Generic>): Unit = error("MultiPolygon isn't supported")
     }
 
-    class Consumer(
-        var point: (Vec<Generic>) -> Unit = { error("Point isn't supported") },
-        var lineString: (LineString<Generic>) -> Unit = { error("LineString isn't supported") },
-        var polygon: (Polygon<Generic>) -> Unit = { error("Polygon isn't supported") },
-        var multiPoint: (MultiPoint<Generic>, List<Int>) -> Unit = { _, _ -> error("MultiPoint isn't supported") },
-        var multiLineString: (MultiLineString<Generic>, List<Int>) -> Unit = { _, _ -> error("MultiLineString isn't supported") },
-        var multiPolygon: (MultiPolygon<Generic>, List<Int>) -> Unit = { _, _ -> error("MultiPolygon isn't supported") }
+    class Consumer<T>(
+        var point: (Vec<T>) -> Unit = { error("Point isn't supported") },
+        var lineString: (LineString<T>) -> Unit = { error("LineString isn't supported") },
+        var polygon: (Polygon<T>) -> Unit = { error("Polygon isn't supported") },
+        var multiPoint: (MultiPoint<T>) -> Unit = { error("MultiPoint isn't supported") },
+        var multiLineString: (MultiLineString<T>) -> Unit = { error("MultiLineString isn't supported") },
+        var multiPolygon: (MultiPolygon<T>) -> Unit = { error("MultiPolygon isn't supported") }
     ) : GeometryConsumer {
-        override fun onPoint(point: Vec<Generic>): Unit = point(point)
-        override fun onLineString(lineString: LineString<Generic>): Unit = lineString(lineString)
-        override fun onPolygon(polygon: Polygon<Generic>): Unit = polygon(polygon)
-        override fun onMultiPoint(multiPoint: MultiPoint<Generic>, idList: List<Int>): Unit = multiPoint(multiPoint, idList)
-        override fun onMultiLineString(multiLineString: MultiLineString<Generic>, idList: List<Int>): Unit = multiLineString(multiLineString, idList)
-        override fun onMultiPolygon(multipolygon: MultiPolygon<Generic>, idList: List<Int>): Unit = multiPolygon(multipolygon, idList)
+        override fun onPoint(point: Vec<Generic>): Unit = point(point.reinterpret())
+        override fun onLineString(lineString: LineString<Generic>): Unit = lineString(lineString.reinterpret())
+        override fun onPolygon(polygon: Polygon<Generic>): Unit = polygon(polygon.reinterpret())
+        override fun onMultiPoint(multiPoint: MultiPoint<Generic>): Unit = multiPoint(multiPoint.reinterpret())
+        override fun onMultiLineString(multiLineString: MultiLineString<Generic>): Unit = multiLineString(multiLineString.reinterpret())
+        override fun onMultiPolygon(multipolygon: MultiPolygon<Generic>): Unit = multiPolygon(multipolygon.reinterpret())
     }
 
     enum class GeometryType {

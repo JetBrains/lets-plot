@@ -9,11 +9,9 @@ import kotlin.math.max
 import kotlin.math.min
 
 object DoubleRectangles {
-    private val DOUBLE_VECTOR_GET_X = { p: DoubleVector -> p.x }
-    private val DOUBLE_VECTOR_GET_Y = { p: DoubleVector -> p.y }
 
     fun boundingBox(points: Iterable<DoubleVector>): DoubleRectangle {
-        return calculateBoundingBox(points, DOUBLE_VECTOR_GET_X, DOUBLE_VECTOR_GET_Y)
+        return calculateBoundingBox(points, DoubleVector::x, DoubleVector::y)
         { minX, minY, maxX, maxY ->
             DoubleRectangle.span(
                 DoubleVector(minX, minY),

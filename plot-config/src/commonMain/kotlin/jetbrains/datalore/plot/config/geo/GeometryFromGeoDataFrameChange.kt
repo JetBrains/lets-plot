@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.config.geo
 
 import jetbrains.datalore.base.spatial.GeoJson
-import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.SimpleFeature
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GeoDataKind
@@ -38,33 +37,17 @@ internal class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange()
     }
 
     private class GeometryCombiner internal constructor(
-        private val geometryDataFrameBuilder: GeometryDataFrameBuilder
-    ) : SimpleFeature.GeometryConsumer {
-        private lateinit var myId: String
+        private val geometryDataBuilder: GeometryDataFrameBuilder
+    ) {
         fun combine(id: String, geometry: String) {
-            myId = id
-            GeoJson.parse(geometry, this)
-        }
-
-        fun handlePoint(point: Vec<LonLat>): Unit = geometryDataFrameBuilder.addPoint(myId, point)
-
-        override fun onPoint(point: Vec<Generic>): Unit = handlePoint(point.reinterpret())
-        override fun onLineString(lineString: LineString<Generic>) {
-            geometryDataFrameBuilder.addBoundary(myId, lineString.reinterpret())
-        }
-        override fun onPolygon(polygon: Polygon<Generic>) {
-            geometryDataFrameBuilder.addBoundary(myId, polygon.reinterpret())
-        }
-        override fun onMultiPoint(multiPoint: MultiPoint<Generic>, idList: List<Int>) {
-            geometryDataFrameBuilder.addBoundary(myId, multiPoint.reinterpret())
-        }
-
-        override fun onMultiLineString(multiLineString: MultiLineString<Generic>, idList: List<Int>) {
-            geometryDataFrameBuilder.addBoundary(myId, multiLineString.reinterpret())
-        }
-
-        override fun onMultiPolygon(multipolygon: MultiPolygon<Generic>, idList: List<Int>) {
-            geometryDataFrameBuilder.addBoundary(myId, multipolygon.reinterpret())
+            GeoJson.parse(geometry){
+                point = { geometryDataBuilder.addPoint(id, it) }
+                lineString = { geometryDataBuilder.addBoundary(id, it) }
+                polygon = { geometryDataBuilder.addBoundary(id, it) }
+                multiPoint = { geometryDataBuilder.addBoundary(id, it) }
+                multiLineString = { geometryDataBuilder.addBoundary(id, it) }
+                multiPolygon = { geometryDataBuilder.addBoundary(id, it) }
+            }
         }
     }
 

@@ -16,15 +16,13 @@ object GeoJson {
     private const val GEOMETRY_LON_INDEX = 0
     private const val GEOMETRY_LAT_INDEX = 1
 
-    fun parse(geoJson: String, handler: SimpleFeature.Consumer.() -> Unit) {
-        parse(geoJson, SimpleFeature.Consumer().apply(handler))
+    fun parse(geoJson: String, handler: SimpleFeature.Consumer<LonLat>.() -> Unit) {
+        val geoObj = FluentObject(JsonSupport.parseJson(geoJson))
+        val geometryConsumer = SimpleFeature.Consumer<LonLat>().apply(handler)
+        parse(geoObj, geometryConsumer)
     }
 
-    fun parse(geoJson: String, handler: SimpleFeature.GeometryConsumer) {
-        parse(FluentObject(JsonSupport.parseJson(geoJson)), handler)
-    }
-
-    fun parse(obj: FluentObject, handler: SimpleFeature.GeometryConsumer) {
+    private fun parse(obj: FluentObject, handler: SimpleFeature.GeometryConsumer) {
         val type = obj.getString(GEOMETRY_TYPE)
 
         if (type == "FeatureCollection") {
@@ -35,24 +33,12 @@ object GeoJson {
         } else {
             val coordinates = obj.getArray(GEOMETRY_COORDINATES)
             when (type) {
-                "Point" -> {
-                    parsePoint(coordinates).let(handler::onPoint)
-                }
-                "LineString" -> {
-                    parseLineString(coordinates).let(handler::onLineString)
-                }
-                "Polygon" -> {
-                    parsePolygon(coordinates).let(handler::onPolygon)
-                }
-                "MultiPoint" -> {
-                    parseMultiPoint(coordinates).let { handler.onMultiPoint(it, emptyList()) }
-                }
-                "MultiLineString" -> {
-                    parseMultiLineString(coordinates).let { handler.onMultiLineString(it, emptyList()) }
-                }
-                "MultiPolygon" -> {
-                    parseMultiPolygon(coordinates).let { handler.onMultiPolygon(it, emptyList()) }
-                }
+                "Point" -> parsePoint(coordinates).let(handler::onPoint)
+                "LineString" -> parseLineString(coordinates).let(handler::onLineString)
+                "Polygon" -> parsePolygon(coordinates).let(handler::onPolygon)
+                "MultiPoint" -> parseMultiPoint(coordinates).let(handler::onMultiPoint)
+                "MultiLineString" -> parseMultiLineString(coordinates).let(handler::onMultiLineString)
+                "MultiPolygon" -> parseMultiPolygon(coordinates).let(handler::onMultiPolygon)
                 else -> error("Not support GeoJson type: $type")
             }
         }

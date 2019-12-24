@@ -35,13 +35,10 @@ fun <T> createMultiPolygon(points: List<Vec<T>>): MultiPolygon<T> {
     return MultiPolygon(polygons)
 }
 
-private val VEC_GET_X = { p: Vec<*> -> p.x }
-private val VEC_GET_Y = { p: Vec<*> -> p.y }
-
 fun <TypeT> Iterable<Vec<TypeT>>.boundingBox(): Rect<TypeT> {
     return DoubleRectangles.calculateBoundingBox(this,
-        VEC_GET_X,
-        VEC_GET_Y
+        Vec<*>::x,
+        Vec<*>::y
     )
     { minX, minY, maxX, maxY ->
         newSpanRectangle(

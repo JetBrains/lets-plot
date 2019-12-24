@@ -103,7 +103,7 @@ class GeoJsonTest {
             """.trimMargin()
 
         GeoJson.parse(data) {
-            multiPoint = { points, _ -> expected.removeOrThrow(points) }
+            multiPoint = { expected.removeOrThrow(it) }
         }
         assertTrue { expected.isEmpty() }
     }
@@ -126,7 +126,7 @@ class GeoJsonTest {
             """.trimMargin()
 
         GeoJson.parse(data) {
-            multiLineString = { lineStrings, _ -> expected.removeOrThrow(lineStrings) }
+            multiLineString = { expected.removeOrThrow(it) }
         }
 
         assertTrue { expected.isEmpty() }
@@ -158,7 +158,7 @@ class GeoJsonTest {
             """.trimMargin()
 
         GeoJson.parse(data) {
-            multiPolygon = { multiPolygon, _ -> expected.removeOrThrow(multiPolygon) }
+            multiPolygon = { expected.removeOrThrow(it) }
         }
 
         assertTrue { expected.isEmpty() }
@@ -192,7 +192,7 @@ class GeoJsonTest {
             """.trimMargin()
 
         GeoJson.parse(data) {
-            multiPolygon = { multiPolygon, _ -> expected.removeOrThrow(multiPolygon) }
+            multiPolygon = { expected.removeOrThrow(it) }
         }
 
         assertTrue(expected.isEmpty())
@@ -253,12 +253,12 @@ class GeoJsonTest {
     companion object {
         private fun <T> MutableList<T>.removeOrThrow(v: T) = if (contains(v)) { remove(v) } else { error("Object $v not found") }
         private fun p(x: Int, y: Int) = p(x.toDouble(), y.toDouble())
-        private fun p(x: Double, y: Double) = explicitVec<Generic>(x, y)
-        private fun lineString(vararg points: Vec<Generic>) = LineString<Generic>(points.toList())
-        private fun ring(vararg points: Vec<Generic>) = Ring<Generic>(points.toList())
-        private fun polygon(vararg rings: Ring<Generic>) = Polygon<Generic>(rings.toList())
-        private fun multiPoint(vararg points: Vec<Generic>) = MultiPoint<Generic>(points.toList())
-        private fun multiLineString(vararg lineStrings: LineString<Generic>) = MultiLineString<Generic>(lineStrings.toList())
-        private fun multiPolygon(vararg polygons: Polygon<Generic>) = MultiPolygon<Generic>(polygons.toList())
+        private fun p(x: Double, y: Double) = explicitVec<LonLat>(x, y)
+        private fun lineString(vararg points: Vec<LonLat>) = LineString<LonLat>(points.toList())
+        private fun ring(vararg points: Vec<LonLat>) = Ring<LonLat>(points.toList())
+        private fun polygon(vararg rings: Ring<LonLat>) = Polygon<LonLat>(rings.toList())
+        private fun multiPoint(vararg points: Vec<LonLat>) = MultiPoint<LonLat>(points.toList())
+        private fun multiLineString(vararg lineStrings: LineString<LonLat>) = MultiLineString<LonLat>(lineStrings.toList())
+        private fun multiPolygon(vararg polygons: Polygon<LonLat>) = MultiPolygon<LonLat>(polygons.toList())
     }
 }

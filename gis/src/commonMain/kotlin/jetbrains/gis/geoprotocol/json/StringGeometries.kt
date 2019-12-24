@@ -63,7 +63,7 @@ object StringGeometries {
                 override fun onPolygon(polygon: Polygon<Generic>) {
                     polygons.add(polygon)
                 }
-                override fun onMultiPolygon(multipolygon: MultiPolygon<Generic>, idList: List<Int>) {
+                override fun onMultiPolygon(multipolygon: MultiPolygon<Generic>) {
                     polygons.addAll(multipolygon)
                 }
             }

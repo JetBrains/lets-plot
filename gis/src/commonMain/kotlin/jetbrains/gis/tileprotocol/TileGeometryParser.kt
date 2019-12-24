@@ -60,28 +60,16 @@ class TileGeometryParser(geometryCollection: GeometryCollection) {
             ))
         }
 
-        override fun onMultiPoint(multiPoint: MultiPoint<Generic>, idList: List<Int>) {
-            if (idList.isEmpty()) {
-                myTileGeometries.add(Geometry.createMultiPoint(multiPoint.reinterpret()))
-            } else {
-                multiPoint.forEach(this::onPoint)
-            }
+        override fun onMultiPoint(multiPoint: MultiPoint<Generic>) {
+            myTileGeometries.add(Geometry.createMultiPoint(multiPoint.reinterpret()))
         }
 
-        override fun onMultiLineString(multiLineString: MultiLineString<Generic>, idList: List<Int>) {
-            if (idList.isEmpty()) {
-                myTileGeometries.add(Geometry.createMultiLineString(multiLineString.reinterpret()))
-            } else {
-                multiLineString.forEach(this::onLineString)
-            }
+        override fun onMultiLineString(multiLineString: MultiLineString<Generic>) {
+            myTileGeometries.add(Geometry.createMultiLineString(multiLineString.reinterpret()))
         }
 
-        override fun onMultiPolygon(multipolygon: MultiPolygon<Generic>, idList: List<Int>) {
-            if (idList.isEmpty()) {
-                myTileGeometries.add(Geometry.createMultiPolygon(multipolygon.reinterpret()))
-            } else {
-                multipolygon.forEach(this::onPolygon)
-            }
+        override fun onMultiPolygon(multipolygon: MultiPolygon<Generic>) {
+            myTileGeometries.add(Geometry.createMultiPolygon(multipolygon.reinterpret()))
         }
     }
 }

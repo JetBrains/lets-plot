@@ -123,7 +123,7 @@ fun geometry(
     isClosed: Boolean,
     isGeodesic: Boolean
 ): MultiPolygon<LonLat> {
-    val coord = points.map { limitCoord(it) }
+    val coord = points.map(::limitCoord)
 
     return if (isClosed) {
         createMultiPolygon(coord)
