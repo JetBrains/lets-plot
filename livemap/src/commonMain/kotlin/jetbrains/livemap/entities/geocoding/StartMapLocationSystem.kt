@@ -22,9 +22,7 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.World
-import kotlin.math.ln
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.*
 
 class StartMapLocationSystem(
     componentManager: EcsComponentManager,
@@ -59,7 +57,7 @@ class StartMapLocationSystem(
                 .calculatePosition { zoom, coordinates ->
                     val camera = getSingletonEntity<CameraComponent>()
                     camera.get<CameraComponent>().apply {
-                        this.zoom = zoom
+                        this.zoom = floor(zoom)
                         this.position = coordinates
                     }
 
