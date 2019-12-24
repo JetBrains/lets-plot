@@ -6,24 +6,29 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.datalore.base.async.Async
+import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
-import jetbrains.livemap.MapPosition
-import jetbrains.livemap.MapWidgetUtil
-import jetbrains.livemap.MapWidgetUtil.DEFAULT_LOCATION
-import jetbrains.livemap.MapWidgetUtil.convertToWorldRects
+import jetbrains.livemap.MapLocationGeocoder.Companion.convertToWorldRects
+import jetbrains.livemap.LiveMapConstants
+import jetbrains.livemap.LiveMapConstants.DEFAULT_LOCATION
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.UpdateViewProjectionComponent
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.World
+import kotlin.math.ln
+import kotlin.math.max
+import kotlin.math.min
 
 class StartMapLocationSystem(
     componentManager: EcsComponentManager,
-    private val myZoom: Int?,
+    private val myZoom: Double?,
     private val myLocationRect: Async<Rect<World>>?
 ) : LiveMapSystem(componentManager) {
     private lateinit var myLocation: LocationComponent
@@ -49,32 +54,48 @@ class StartMapLocationSystem(
 
         if (myLocation.isReady()) {
             myNeedLocation = false
-            val position = myLocation.locations
+            myLocation.locations
                 .run(myViewport::calculateBoundingBox)
-                .run(::createMapPosition)
+                .calculatePosition { zoom, coordinates ->
+                    val camera = getSingletonEntity<CameraComponent>()
+                    camera.get<CameraComponent>().apply {
+                        this.zoom = zoom
+                        this.position = coordinates
+                    }
 
-            val camera = getSingletonEntity<CameraComponent>()
-            camera.get<CameraComponent>().apply {
-                zoom = position.zoom.toDouble()
-                this.position = position.coordinate
-            }
-
-            camera.tag(::UpdateViewProjectionComponent)
+                    camera.tag(::UpdateViewProjectionComponent)
+                }
         }
     }
 
-    private fun createMapPosition(rectangle: Rect<World>): MapPosition {
+    private fun Rect<World>.calculatePosition(positionConsumer: (zoom: Double, coordinates: Vec<World>) -> Unit) {
 
-        val zoom: Int = myZoom
-            ?: if (rectangle.dimension.x != 0.0 && rectangle.dimension.y != 0.0) {
-                MapWidgetUtil.calculateMaxZoom(rectangle.dimension, myViewport.size)
+        val zoom: Double = myZoom
+            ?: if (dimension.x != 0.0 && dimension.y != 0.0) {
+                calculateMaxZoom(dimension, myViewport.size)
             } else {
-                MapWidgetUtil.calculateMaxZoom(
+                calculateMaxZoom(
                     myViewport.calculateBoundingBox(myDefaultLocation).dimension,
                     myViewport.size
                 )
             }
 
-        return MapPosition(zoom, rectangle.center)
+        positionConsumer(zoom, center)
+    }
+
+    private fun calculateMaxZoom(rectSize: Vec<World>, containerSize: Vec<Client>): Double {
+        val xZoom = calculateMaxZoom(rectSize.x, containerSize.x)
+        val yZoom = calculateMaxZoom(rectSize.y, containerSize.y)
+        val zoom = min(xZoom, yZoom)
+        return max(LiveMapConstants.MIN_ZOOM.toDouble(), min(zoom, LiveMapConstants.MAX_ZOOM.toDouble()))
+    }
+
+    private fun calculateMaxZoom(regionLength: Double, containerLength: Double): Double {
+        if (regionLength == 0.0) {
+            return LiveMapConstants.MAX_ZOOM.toDouble()
+        }
+        return if (containerLength == 0.0) {
+            LiveMapConstants.MIN_ZOOM.toDouble()
+        } else (ln(containerLength / regionLength) / ln(2.0))
     }
 }

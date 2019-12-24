@@ -9,7 +9,7 @@ import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.gis.geoprotocol.Boundary
-import jetbrains.livemap.mapobjects.MapLayerKind.*
+import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 

@@ -23,7 +23,6 @@ import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayersConfigurator
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.mapobjects.MapLayerKind
 import kotlin.math.abs
 import kotlin.math.min
 

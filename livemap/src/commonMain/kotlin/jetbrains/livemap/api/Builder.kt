@@ -32,6 +32,7 @@ import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.projections.ProjectionType
 import jetbrains.livemap.projections.createArcPath
+import kotlin.math.abs
 
 @DslMarker
 annotation class LiveMapDsl
@@ -129,7 +130,7 @@ fun geometry(
     } else {
         coord
             .run { if (isGeodesic) createArcPath(this) else this }
-            .run(MapWidgetUtil::splitPathByAntiMeridian)
+            .run(::splitPathByAntiMeridian)
             .map { path -> Polygon(listOf(Ring(path))) }
             .run(::MultiPolygon)
     }
@@ -140,6 +141,41 @@ fun limitCoord(point: Vec<LonLat>): Vec<LonLat> {
         limitLon(point.x),
         limitLat(point.y)
     )
+}
+
+private const val FULL_ANGLE = 360.0
+private const val STRAIGHT_ANGLE = 180.0
+
+fun splitPathByAntiMeridian(path: List<Vec<LonLat>>): List<List<Vec<LonLat>>> {
+    val pathList = ArrayList<List<Vec<LonLat>>>()
+    var currentPath = ArrayList<Vec<LonLat>>()
+    if (path.isNotEmpty()) {
+        currentPath.add(path[0])
+
+        for (i in 1 until path.size) {
+            val prev = path[i - 1]
+            val next = path[i]
+            val lonDelta = abs(next.x - prev.x)
+
+            if (lonDelta > FULL_ANGLE - lonDelta) {
+                val sign = (if (prev.x < 0.0) -1 else +1).toDouble()
+
+                val x1 = prev.x - sign * STRAIGHT_ANGLE
+                val x2 = next.x + sign * STRAIGHT_ANGLE
+                val lat = (next.y - prev.y) * (if (x2 == x1) 1.0 / 2.0 else x1 / (x1 - x2)) + prev.y
+
+                currentPath.add(explicitVec(sign * STRAIGHT_ANGLE, lat))
+                pathList.add(currentPath)
+                currentPath = ArrayList()
+                currentPath.add(explicitVec(-sign * STRAIGHT_ANGLE, lat))
+            }
+
+            currentPath.add(next)
+        }
+    }
+
+    pathList.add(currentPath)
+    return pathList
 }
 
 @LiveMapDsl

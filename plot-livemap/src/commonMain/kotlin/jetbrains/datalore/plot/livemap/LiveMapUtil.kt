@@ -19,7 +19,6 @@ import jetbrains.livemap.LiveMapCanvasFigure
 import jetbrains.livemap.LiveMapFactory
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.*
-import jetbrains.livemap.mapobjects.MapLayerKind
 import jetbrains.livemap.ui.Clipboard
 
 object LiveMapUtil {

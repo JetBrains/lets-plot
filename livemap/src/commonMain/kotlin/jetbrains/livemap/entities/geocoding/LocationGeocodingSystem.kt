@@ -11,7 +11,7 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.MapWidgetUtil.convertToWorldRects
+import jetbrains.livemap.MapLocationGeocoder.Companion.convertToWorldRects
 
 class LocationGeocodingSystem(
     componentManager: EcsComponentManager,

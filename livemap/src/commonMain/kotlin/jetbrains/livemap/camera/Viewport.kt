@@ -9,7 +9,7 @@ import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.plus
-import jetbrains.livemap.MapWidgetUtil
+import jetbrains.livemap.LiveMapConstants
 import jetbrains.livemap.projections.*
 import jetbrains.livemap.tiles.CellKey
 import kotlin.math.max
@@ -30,7 +30,7 @@ open class Viewport internal constructor(
 
     var zoom: Int = 1
         set(zoom) {
-            field = max(MapWidgetUtil.MIN_ZOOM, min(zoom, MapWidgetUtil.MAX_ZOOM))
+            field = max(LiveMapConstants.MIN_ZOOM, min(zoom, LiveMapConstants.MAX_ZOOM))
             windowSize = zoomTransform.invert(size)
             windowOrigin = viewportTransform.invert(Coordinates.ZERO_CLIENT_POINT)
             updateWindow()

@@ -11,8 +11,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.LiveMapSystem
-import jetbrains.livemap.MapWidgetUtil.MAX_ZOOM
-import jetbrains.livemap.MapWidgetUtil.MIN_ZOOM
+import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
+import jetbrains.livemap.LiveMapConstants.MIN_ZOOM
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraScale
 import jetbrains.livemap.camera.Viewport

@@ -5,7 +5,7 @@
 
 package jetbrains.livemap
 
-import jetbrains.livemap.MapLayerGeocodingHelper.Companion.isMapIdWithOsmId
+import jetbrains.livemap.entities.geocoding.RegionIdGeocodingSystem.Companion.isMapIdWithOsmId
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -17,8 +17,8 @@ class IsMapIdWithOsmIdTest {
         val value0 = "123"
         val value1 = "abc"
         val value2 = ""
-        val value3 = null
-        val value4 = "12c"
+        val value3 = "12c"
+        val value4 = "12.0"
 
         assertTrue { isMapIdWithOsmId(value0) }
         assertFalse { isMapIdWithOsmId(value1) }

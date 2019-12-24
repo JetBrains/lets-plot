@@ -19,7 +19,16 @@ class RegionIdGeocodingSystem(
         val requested = getEntities<MapIdComponent>()
             .filterNot { it.contains<WaitingGeocodingComponent>() }
 
+        requested.forEach {
+            val mapId = it.get<MapIdComponent>().mapId
+            if (isMapIdWithOsmId(mapId)) {
+                it.add(RegionIdComponent(mapId))
+                it.remove<MapIdComponent>()
+            }
+        }
+
         val names = requested
+            .filter { it.contains<MapIdComponent>() }
             .map { it.get<MapIdComponent>().mapId }
             .distinct()
             .toList()
@@ -45,5 +54,9 @@ class RegionIdGeocodingSystem(
             MapIdComponent::class,
             WaitingGeocodingComponent::class
         )
+
+        fun isMapIdWithOsmId(mapId: String): Boolean {
+            return mapId.toIntOrNull() != null
+        }
     }
 }

@@ -16,8 +16,7 @@ import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayersConfigurator
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.mapobjects.MapLayerKind
-import jetbrains.livemap.mapobjects.MapLayerKind.POINT
+import jetbrains.datalore.plot.livemap.MapLayerKind.POINT
 
 internal class LiveMapDataPointAestheticsProcessor(
     private val myAesthetics: Aesthetics,

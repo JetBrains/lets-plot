@@ -144,7 +144,7 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                 texts {
                     text {
                         label = "POLAND"
-                        mapId = "Poland"
+                        mapId = "99431"
                         size = 25.0
                         angle = 30.0
                     }

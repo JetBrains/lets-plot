@@ -30,7 +30,7 @@ import jetbrains.livemap.DevParams.Companion.UPDATE_PAUSE_MS
 import jetbrains.livemap.DevParams.Companion.UPDATE_TIME_MULTIPLIER
 import jetbrains.livemap.DevParams.MicroTaskExecutor.*
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
-import jetbrains.livemap.MapWidgetUtil.MAX_ZOOM
+import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
 import jetbrains.livemap.camera.*
 import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.core.ecs.*
@@ -174,7 +174,7 @@ class LiveMap(
                 LocationCounterSystem(componentManager, myMapLocationRect == null),
                 LocationGeocodingSystem(componentManager, myGeocodingProvider),
                 LocationCalculateSystem(componentManager),
-                StartMapLocationSystem(componentManager, myZoom, myMapLocationRect),
+                StartMapLocationSystem(componentManager, myZoom?.toDouble(), myMapLocationRect),
 
                 ApplyPointSystem(componentManager),
 

@@ -7,18 +7,13 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.reinterpret
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
-import jetbrains.livemap.MapWidgetUtil.calculateExtendedRectangleWithCenter
-import jetbrains.livemap.MapWidgetUtil.convertToWorldRects
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.MapRuler
-import jetbrains.livemap.projections.World
-import jetbrains.livemap.projections.WorldRectangle
+import jetbrains.livemap.projections.*
+import kotlin.math.min
 
 class MapLocationGeocoder(
     private val myGeocodingService: GeocodingService,
@@ -78,5 +73,57 @@ class MapLocationGeocoder(
         val xyRects = ArrayList<Rect<World>>()
         geoRects.forEach { geoRect -> xyRects.addAll(geoRect.convertToWorldRects(myMapProjection)) }
         return myMapRuler.calculateBoundingBox(xyRects)
+    }
+
+    private fun <TypeT> calculateExtendedRectangleWithCenter(
+        mapRuler: MapRuler<TypeT>,
+        rect: Rect<TypeT>,
+        center: Vec<TypeT>
+    ): Rect<TypeT> {
+        val radiusX = calculateRadius(
+            center.x,
+            rect.left,
+            rect.width,
+            mapRuler::distanceX
+        )
+        val radiusY = calculateRadius(
+            center.y,
+            rect.top,
+            rect.height,
+            mapRuler::distanceY
+        )
+
+        return Rect(
+            center.x - radiusX,
+            center.y - radiusY,
+            radiusX * 2,
+            radiusY * 2
+        )
+    }
+
+    private fun calculateRadius(
+        center: Double,
+        left: Double,
+        width: Double,
+        distance: (Double, Double) -> Double
+    ): Double {
+        val right = left + width
+        val minEdgeDistance = min(
+            distance(center, left),
+            distance(center, right)
+        )
+        return when (center) {
+            in left..right -> width - minEdgeDistance
+            else -> width + minEdgeDistance
+        }
+    }
+
+    companion object {
+        fun GeoRectangle.convertToWorldRects(mapProjection: MapProjection): List<Rect<World>> {
+            return splitByAntiMeridian()
+                .map { rect ->
+                    ProjectionUtil.transformBBox(rect) { mapProjection.project(it) }
+                }
+        }
     }
 }
