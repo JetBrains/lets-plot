@@ -271,14 +271,12 @@ fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
     }
 }
 
-fun internalTiles(block: LiveMapTileServiceBuilder.() -> Unit): TileService {
-    return LiveMapTileServiceBuilder()
-        .apply {
+fun internalTiles(): TileService {
+    return liveMapTiles {
             theme = TileService.Theme.COLOR
             host = "10.0.0.127"
             port = 3933
         }
-        .apply(block).build()
 }
 
 fun liveMapTiles(block: LiveMapTileServiceBuilder.() -> Unit) =

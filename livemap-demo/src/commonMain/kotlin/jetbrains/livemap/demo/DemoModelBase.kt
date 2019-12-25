@@ -33,7 +33,7 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
         return liveMapConfig {
             size = dimension
 
-            tileService = internalTiles {}
+            tileService = internalTiles()
 
             geocodingService = liveMapGeocoding {
                 host = "geo.datalore.io"

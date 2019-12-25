@@ -22,15 +22,15 @@ class RectDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                     polygon {
                         geometry(rect(-104.032789, 35.309947, -80.237456, 48.979166), isGeodesic = false)
 
-                        fillColor = Color.parseColor("rgba(255, 175, 175, 153)")
-                        strokeColor = Color.parseColor("rgba(128, 0, 128, 153)")
+                        fillColor = Color(255, 175, 175, 153)
+                        strokeColor = Color(128, 0, 128, 153)
                         strokeWidth = 6.0
                     }
 
                     polygon {
                         geometry(rect(170.0, 0.0, -170.0, 30.0), isGeodesic = false)
 
-                        fillColor = Color.parseColor("rgba(255, 175, 175, 153)")
+                        fillColor = Color(255, 175, 175, 153)
                         strokeWidth = 0.0
                     }
                 }
