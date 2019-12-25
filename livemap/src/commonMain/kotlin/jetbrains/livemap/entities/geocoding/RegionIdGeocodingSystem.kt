@@ -16,7 +16,7 @@ class RegionIdGeocodingSystem(
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
 
-        val requested = getEntities<MapIdComponent>()
+        val requested = getMutableEntities<MapIdComponent>()
             .filterNot { it.contains<WaitingGeocodingComponent>() }
 
         requested.forEach {
