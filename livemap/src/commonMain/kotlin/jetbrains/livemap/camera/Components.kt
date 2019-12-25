@@ -28,4 +28,4 @@ class CameraUpdateComponent : EcsComponent {
 
 class CameraComponent(var zoom: Double, var position: WorldPoint) : EcsComponent
 
-class UpdateViewProjectionComponent : EcsComponent
+class UpdateViewportComponent : EcsComponent

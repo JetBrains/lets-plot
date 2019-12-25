@@ -68,7 +68,7 @@ object CameraScale {
                 if (progress == 1.0) {
                     camera.position = scaleEffect.viewportPosition
                     cameraEntity.remove<CameraScaleEffectComponent>()
-                    cameraEntity.tag(::UpdateViewProjectionComponent)
+                    cameraEntity.tag(::UpdateViewportComponent)
                 }
             }
         }

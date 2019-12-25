@@ -24,6 +24,7 @@ import jetbrains.gis.tileprotocol.socket.SocketBuilder
 import jetbrains.gis.tileprotocol.socket.SocketHandler
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
 import jetbrains.livemap.*
+import jetbrains.livemap.LayerProvider.EmptyLayerProvider
 import jetbrains.livemap.LayerProvider.LayerProviderImpl
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.LayerManager
@@ -42,7 +43,7 @@ class LiveMapBuilder {
     lateinit var size: DoubleVector
     lateinit var geocodingService: GeocodingService
     lateinit var tileService: TileService
-    lateinit var layerProvider: LayerProvider
+    var layerProvider: LayerProvider = EmptyLayerProvider()
 
     var zoom: Int? = null
     var interactive: Boolean = true

@@ -174,7 +174,7 @@ class LiveMap(
                 LocationCounterSystem(componentManager, myMapLocationRect == null),
                 LocationGeocodingSystem(componentManager, myGeocodingProvider),
                 LocationCalculateSystem(componentManager),
-                StartMapLocationSystem(componentManager, myZoom?.toDouble(), myMapLocationRect),
+                MapLocationInitializationSystem(componentManager, myZoom?.toDouble(), myMapLocationRect),
 
                 ApplyPointSystem(componentManager),
 
@@ -183,7 +183,7 @@ class LiveMap(
                 // Service systems
                 AnimationObjectSystem(componentManager),
                 AnimationSystem(componentManager),
-                ViewProjectionUpdateSystem(componentManager),
+                ViewportUpdateSystem(componentManager),
                 LiveMapUiSystem(myUiService, componentManager, myMapLocationConsumer, myLayerManager),
 
                 CellStateUpdateSystem(componentManager),

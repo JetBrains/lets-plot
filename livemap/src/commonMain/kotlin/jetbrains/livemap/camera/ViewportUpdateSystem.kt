@@ -10,7 +10,7 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import kotlin.math.roundToInt
 
-class ViewProjectionUpdateSystem(componentManager: EcsComponentManager) :
+class ViewportUpdateSystem(componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
@@ -22,9 +22,9 @@ class ViewProjectionUpdateSystem(componentManager: EcsComponentManager) :
             viewport.position = camera.position
         }
 
-        if (cameraEntity.contains(UpdateViewProjectionComponent::class)) {
+        if (cameraEntity.contains(UpdateViewportComponent::class)) {
             viewport.zoom = camera.zoom.roundToInt()
-            cameraEntity.removeComponent(UpdateViewProjectionComponent::class)
+            cameraEntity.removeComponent(UpdateViewportComponent::class)
         }
     }
 }

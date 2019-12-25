@@ -37,4 +37,15 @@ interface LayerProvider {
             ).apply(myLayerConfigurator)
         }
     }
+
+    class EmptyLayerProvider() : LayerProvider {
+        override fun provide(
+            componentManager: EcsComponentManager,
+            layerManager: LayerManager,
+            mapProjection: MapProjection,
+            context2d: Context2d
+        ) {
+            //
+        }
+    }
 }
