@@ -20,10 +20,7 @@ class PointsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
         return basicLiveMap {
             layers {
                 points {
-                    point {
-                        coord(SPB)
-                        strokeColor = Color.WHITE
-                    }
+
                     point {
                         coord(MOSCOW)
                         strokeColor = Color.RED
@@ -36,8 +33,7 @@ class PointsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         coord(NEW_YORK)
                         strokeColor = Color.GREEN
                     }
-                }
-                points {
+
                     point {
                         coord(0.0, 0.0)
 
@@ -45,6 +41,12 @@ class PointsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         shape = 21
                         radius = 10.0
                         fillColor = Color.MAGENTA
+                    }
+
+                    point {
+                        mapId = "Texas"
+                        shape = 21
+                        fillColor = Color.DARK_MAGENTA
                     }
                 }
             }
