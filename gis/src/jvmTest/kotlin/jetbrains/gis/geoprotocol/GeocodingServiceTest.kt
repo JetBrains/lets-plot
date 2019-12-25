@@ -79,7 +79,7 @@ class GeocodingServiceTest {
 
         val request = GeoRequestBuilder.ExplicitRequestBuilder()
             .setIds(listOf("1"))
-            .addFeature(GeoRequest.FeatureOption.TILES)
+            .addFeature(GeoRequest.FeatureOption.FRAGMENTS)
             .build()
 
         `when`(transport.send(request)).thenReturn(a)

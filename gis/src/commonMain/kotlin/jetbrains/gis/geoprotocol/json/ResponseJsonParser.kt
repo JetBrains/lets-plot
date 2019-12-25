@@ -33,7 +33,7 @@ import jetbrains.gis.geoprotocol.json.ResponseKeys.NAMESAKE_PARENTS
 import jetbrains.gis.geoprotocol.json.ResponseKeys.POSITION
 import jetbrains.gis.geoprotocol.json.ResponseKeys.QUERY
 import jetbrains.gis.geoprotocol.json.ResponseKeys.STATUS
-import jetbrains.gis.geoprotocol.json.ResponseKeys.TILES
+import jetbrains.gis.geoprotocol.json.ResponseKeys.FRAGMENTS
 
 object ResponseJsonParser {
     fun parse(json: Obj): GeoResponse {
@@ -63,11 +63,11 @@ object ResponseJsonParser {
                         .getExistingObject(CENTROID) { feature.setCentroid(parseCentroid(it)) }
                         .getExistingObject(LIMIT) { feature.setLimit(parseGeoRectangle(it)) }
                         .getExistingObject(POSITION) { feature.setPosition(parseGeoRectangle(it)) }
-                        .getExistingObject(TILES) { tiles -> tiles
-                            .forArrEntries() { quadKey, geometry -> feature
-                                .addTile(GeoTile(
+                        .getExistingObject(FRAGMENTS) { fragments -> fragments
+                            .forArrEntries() { quadKey, boundary -> feature
+                                .addFragment(Fragment(
                                     QuadKey(quadKey),
-                                    geometry.map { readTile(it!! as String) }
+                                    boundary.map { readBoundary(it!! as String) }
                                 ))
                             }
                         }
@@ -117,11 +117,11 @@ object ResponseJsonParser {
     }
 
     private fun readGeometry(geoJson: String): Boundary<Generic> {
-        return StringGeometries.fromGeoJson(geoJson)
+        return Boundaries.fromGeoJson(geoJson)
     }
 
-    private fun readTile(geometry: String): Boundary<Generic> {
-        return StringGeometries.fromTwkb(geometry)
+    private fun readBoundary(boundary: String): Boundary<Generic> {
+        return Boundaries.fromTwkb(boundary)
     }
 
     private fun parseGeoRectangle(data: FluentObject): GeoRectangle {

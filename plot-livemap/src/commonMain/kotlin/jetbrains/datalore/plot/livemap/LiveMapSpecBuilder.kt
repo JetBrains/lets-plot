@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.GeoUtils.BBOX_CALCULATOR
-import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
+import jetbrains.datalore.base.spatial.*
+import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
@@ -148,13 +148,14 @@ internal class LiveMapSpecBuilder {
         private fun calculateGeoRectangle(lonLatList: List<*>): GeoRectangle {
             require(!(lonLatList.isNotEmpty() && lonLatList.size % 2 != 0)) { ("Expected: location"
             + " = [double lon1, double lat1, double lon2, double lat2, ... , double lonN, double latN]") }
-            return convertToGeoRectangle(BBOX_CALCULATOR.calculateBoundingBox(lonLatList.toDoubleList()))
+            return convertToGeoRectangle(BboxUtil.calculateBoundingBox(lonLatList.toDoubleList()))
         }
 
         private fun calculateGeoRectangle(lonLatDataMap: Map<*, *>): GeoRectangle {
+
             if (lonLatDataMap.containsKey(POINT_X) && lonLatDataMap.containsKey(POINT_Y)) {
                 return convertToGeoRectangle(
-                    BBOX_CALCULATOR.calculateBoundingBox(
+                    BboxUtil.calculateBoundingBox(
                         (lonLatDataMap[POINT_X] as List<*>).toDoubleList(),
                         (lonLatDataMap[POINT_Y] as List<*>).toDoubleList()
                     )
@@ -165,7 +166,7 @@ internal class LiveMapSpecBuilder {
                         lonLatDataMap.containsKey(RECT_XMAX) && lonLatDataMap.containsKey(RECT_YMAX))
             ) {
                 return convertToGeoRectangle(
-                    BBOX_CALCULATOR.calculateBoundingBox(
+                    BboxUtil.calculateBoundingBox(
                         (lonLatDataMap[RECT_XMIN] as List<*>).toDoubleList(),
                         (lonLatDataMap[RECT_YMIN] as List<*>).toDoubleList(),
                         (lonLatDataMap[RECT_XMAX] as List<*>).toDoubleList(),
@@ -243,5 +244,51 @@ internal class LiveMapSpecBuilder {
 
             throw IllegalArgumentException("Invalid map region type: $regionType")
         }
+    }
+
+    object BboxUtil {
+
+        fun calculateBoundingBox(xyCoords: List<Double>): Rect<LonLat> {
+            return BBOX_CALCULATOR.pointsBBox(xyCoords)
+        }
+
+        fun calculateBoundingBox(xCoords: List<Double>, yCoords: List<Double>): Rect<LonLat> {
+            Preconditions.checkArgument(
+                xCoords.size == yCoords.size,
+                "Longitude list count is not equal Latitude list count."
+            )
+
+            return BBOX_CALCULATOR.calculateBoundingBox(
+                makeSegments(xCoords::get, xCoords::get, xCoords.size),
+                makeSegments(yCoords::get, yCoords::get, xCoords.size)
+            )
+        }
+
+        fun calculateBoundingBox(
+            minXCoords: List<Double>,
+            minYCoords: List<Double>,
+            maxXCoords: List<Double>,
+            maxYCoords: List<Double>
+        ): Rect<LonLat> {
+            val count = minXCoords.size
+            Preconditions.checkArgument(
+                minYCoords.size == count && maxXCoords.size == count && maxYCoords.size == count,
+                "Counts of 'minLongitudes', 'minLatitudes', 'maxLongitudes', 'maxLatitudes' lists are not equal."
+            )
+
+            return BBOX_CALCULATOR.calculateBoundingBox(
+                makeSegments(minXCoords::get, maxXCoords::get, count),
+                makeSegments(minYCoords::get, maxYCoords::get, count)
+            )
+        }
+
+        fun calculateBoundingBoxFromGeoRectangles(rectangles: List<GeoRectangle>): Rect<LonLat> {
+            return BBOX_CALCULATOR.geoRectsBBox(rectangles)
+        }
+
+        fun calculateBoundingBoxFromRectangles(rectangles: List<Rect<LonLat>>): Rect<LonLat> {
+            return BBOX_CALCULATOR.rectsBBox(rectangles)
+        }
+
     }
 }

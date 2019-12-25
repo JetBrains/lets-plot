@@ -11,7 +11,7 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase.*
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
 import jetbrains.datalore.jetbrains.livemap.tile.Mocks.CellStateSpec
-import jetbrains.gis.geoprotocol.GeoTile
+import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraUpdateComponent
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -224,8 +224,8 @@ object Mocks {
     }
 
     class FragmentsResponseAsync(
-        private val myAsync: SimpleAsync<Map<String, List<GeoTile>>>,
-        private val myResponse: Map<String, List<GeoTile>>
+        private val myAsync: SimpleAsync<Map<String, List<Fragment>>>,
+        private val myResponse: Map<String, List<Fragment>>
     ) {
 
         internal fun success() {

@@ -12,12 +12,15 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Polygon
 
 
-class GeoTile(val key: QuadKey<LonLat>, val geometries: List<Boundary<Generic>>) {
+class Fragment(
+    val key: QuadKey<LonLat>,
+    val boundaries: List<Boundary<Generic>>
+) {
     val multiPolygon: MultiPolygon<Generic>
 
     init {
         val xyMultipolygon = ArrayList<Polygon<Generic>>()
-        for (boundary in geometries) {
+        for (boundary in boundaries) {
             val xyBoundary = boundary.asMultipolygon()
             for (xyPolygon in xyBoundary) {
                 if (!xyPolygon.isEmpty()) {

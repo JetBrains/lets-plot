@@ -8,27 +8,19 @@ package jetbrains.gis.tileprotocol
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.SimpleFeature
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.gis.common.twkb.Parser
 import jetbrains.gis.common.twkb.Twkb
 
 
 class TileGeometryParser(geometryCollection: GeometryCollection) {
-    private val myGeometryConsumer: MyGeometryConsumer
-    private val myParser: Parser
+    private val myGeometryConsumer = MyGeometryConsumer()
+    private val myParser = Twkb.parser(geometryCollection.asTwkb(), myGeometryConsumer)
 
     val geometries: List<Geometry<LonLat>>
         get() = myGeometryConsumer.tileGeometries
 
-    init {
-        myGeometryConsumer = MyGeometryConsumer()
-        myParser = Twkb.parser(geometryCollection.asTwkb(), myGeometryConsumer)
-    }
+    fun resume() = myParser.next()
 
-    fun resume(): Boolean {
-        return myParser.next()
-    }
-
-    private class MyGeometryConsumer : SimpleFeature.GeometryConsumer {
+    private class MyGeometryConsumer : SimpleFeature.GeometryConsumer<Generic> {
         private val myTileGeometries = ArrayList<Geometry<LonLat>>()
 
         val tileGeometries: List<Geometry<LonLat>>

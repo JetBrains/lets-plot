@@ -35,19 +35,27 @@ class TileRenderer : Renderer {
         renderTile(tile, CellKey(""), CellKey(""))
     }
 
-    private fun renderTile(tile: Tile, srcKey: CellKey, dstKey: CellKey) {
+    private fun renderTile(tile: Tile, srcCell: CellKey, dstCell: CellKey) {
         when (tile) {
-            is SnapshotTile -> renderSnapshotTile(tile, srcKey, dstKey)
-            is SubTile -> renderSubTile(tile, srcKey, dstKey)
-            is CompositeTile -> renderCompositeTile(tile, srcKey, dstKey)
+            is SnapshotTile -> renderSnapshotTile(tile, srcCell, dstCell)
+            is SubTile -> renderSubTile(tile, srcCell, dstCell)
+            is CompositeTile -> renderCompositeTile(tile, srcCell, dstCell)
             is EmptyTile -> {}
             else -> error("Unsupported Tile class: ${Tile::class}")
         }
     }
 
-    private fun renderSnapshotTile(tile: SnapshotTile, srcKey: CellKey, dstKey: CellKey) {
-        val srcRect = srcKey.projectRect(myCellRect)
-        val dstRect = dstKey.projectRect(myCellRect)
+    private fun renderSubTile(tile: SubTile, srcCell: CellKey, dstCell: CellKey) {
+        renderTile(tile.tile, tile.subKey + srcCell, dstCell)
+    }
+
+    private fun renderCompositeTile(tile: CompositeTile, srcCell: CellKey, dstCell: CellKey) {
+        tile.tiles.forEach { (tile, cell) -> renderTile(tile, srcCell, dstCell + cell) }
+    }
+
+    private fun renderSnapshotTile(tile: SnapshotTile, srcCell: CellKey, dstCell: CellKey) {
+        val srcRect = srcCell.projectRect(myCellRect)
+        val dstRect = dstCell.projectRect(myCellRect)
         myCtx.drawImage(
             tile.snapshot,
             srcRect.left,
@@ -61,11 +69,4 @@ class TileRenderer : Renderer {
         )
     }
 
-    private fun renderSubTile(tile: SubTile, srcKey: CellKey, dstKey: CellKey) {
-        renderTile(tile.tile, tile.subKey + srcKey, dstKey)
-    }
-
-    private fun renderCompositeTile(tile: CompositeTile, srcKey: CellKey, dstKey: CellKey) {
-        tile.tiles.forEach { (tile, key) -> renderTile(tile, srcKey, dstKey + key) }
-    }
 }

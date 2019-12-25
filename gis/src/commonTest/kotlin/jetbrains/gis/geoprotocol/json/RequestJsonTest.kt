@@ -41,7 +41,7 @@ class RequestJsonTest {
             GeoRequestBuilder.ExplicitRequestBuilder()
                 .setIds(IDS)
                 .setResolution(13)
-                .setTiles(tiles)
+                .setFragments(tiles)
                 .addFeature(GeoRequest.FeatureOption.CENTROID)
                 .addFeature(GeoRequest.FeatureOption.POSITION)
                 .build()

@@ -17,7 +17,9 @@ import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
 import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
 import jetbrains.livemap.tiles.TileLoadingSystemFactory.Companion.createTileLoadingFactory
 
-class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactory {
+class LiveMapFactory(
+    private val myLiveMapSpec: LiveMapSpec
+) {
     private val myMapProjection: MapProjection
     private val myViewport: Viewport
     private val myMapRuler: MapRuler<World>
@@ -35,7 +37,7 @@ class LiveMapFactory(private val myLiveMapSpec: LiveMapSpec) : BaseLiveMapFactor
         )
     }
 
-    override fun createLiveMap(): Async<BaseLiveMap> {
+    fun createLiveMap(): Async<LiveMap> {
         myViewport.zoom = 1
 
         return Asyncs.constant(LiveMap(

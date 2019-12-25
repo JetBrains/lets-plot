@@ -8,29 +8,29 @@ package jetbrains.livemap.fragments
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.gis.geoprotocol.GeoTile
+import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
 
-internal open class FragmentCache(mapSize: DoubleVector) {
+internal class FragmentCache(mapSize: DoubleVector) {
 
     private val limit = CACHED_ZOOM_COUNT * calculateCachedSideTileCount(mapSize.x) * calculateCachedSideTileCount(mapSize.y)
-    private val cache: LruCache<QuadKey<LonLat>, MutableMap<String, GeoTile?>> = LruCache(limit)
+    private val cache: LruCache<QuadKey<LonLat>, MutableMap<String, Fragment?>> = LruCache(limit)
 
-    fun contains(mapObjectId: String, tileId: QuadKey<LonLat>): Boolean {
-        return cache[tileId]?.containsKey(mapObjectId) ?: false
+    fun contains(mapObjectId: String, quadKey: QuadKey<LonLat>): Boolean {
+        return cache[quadKey]?.containsKey(mapObjectId) ?: false
     }
 
-    operator fun get(mapObjectId: String, tileId: QuadKey<LonLat>): GeoTile? {
-        return cache[tileId]?.get(mapObjectId)
+    operator fun get(mapObjectId: String, quadKey: QuadKey<LonLat>): Fragment? {
+        return cache[quadKey]?.get(mapObjectId)
     }
 
-    fun putEmpty(mapObjectId: String, tileId: QuadKey<LonLat>) {
-        put(mapObjectId, tileId, null)
+    fun putEmpty(mapObjectId: String, quadKey: QuadKey<LonLat>) {
+        put(mapObjectId, quadKey, null)
     }
 
-    fun put(mapObjectId: String, tileId: QuadKey<LonLat>, tile: GeoTile?) {
-        cache.getOrPut(tileId, ::HashMap)[mapObjectId] = tile
+    fun put(mapObjectId: String, quadKey: QuadKey<LonLat>, fragment: Fragment?) {
+        cache.getOrPut(quadKey, ::HashMap)[mapObjectId] = fragment
     }
 
     companion object {

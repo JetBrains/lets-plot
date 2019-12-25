@@ -9,9 +9,11 @@ import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.EventSource
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
-import jetbrains.livemap.BaseLiveMap
+import jetbrains.livemap.LiveMap
 
-class LiveMapContent(private val liveMap: BaseLiveMap) : CanvasContent, EventSource<Throwable> {
+class LiveMapContent(
+    private val liveMap: LiveMap
+) : CanvasContent, EventSource<Throwable> {
 
     override fun show(parentControl: CanvasControl) {
         liveMap.draw(parentControl)

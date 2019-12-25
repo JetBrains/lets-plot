@@ -43,7 +43,7 @@ object GeoResponseBuilder {
         private var position: GeoRectangle? = null
         private var boundary: Boundary<Generic>? = null
         private var highlights: MutableList<String> = ArrayList()
-        private var tileGeometries: ArrayList<GeoTile> = ArrayList()
+        private var fragments: ArrayList<Fragment> = ArrayList()
 
         fun setQuery(v: String) = apply { query = v }
         fun setId(v: String) = apply { id = v }
@@ -53,7 +53,7 @@ object GeoResponseBuilder {
         fun setLimit(v: GeoRectangle) = apply { limit = v }
         fun setPosition(v: GeoRectangle) = apply { position = v }
         fun addHighlight(v: String) = apply { highlights.add(v) }
-        fun addTile(v: GeoTile) = apply { tileGeometries.add(v) }
+        fun addFragment(v: Fragment) = apply { fragments.add(v) }
 
         fun build(): GeocodedFeature {
             return GeocodedFeature(
@@ -65,7 +65,7 @@ object GeoResponseBuilder {
                 limit,
                 boundary,
                 highlights.ifEmpty { null },
-                tileGeometries.ifEmpty { null }
+                fragments.ifEmpty { null }
             )
         }
     }

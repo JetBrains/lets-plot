@@ -6,11 +6,7 @@
 package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.BOTTOM_RECT_GETTER
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.LEFT_RECT_GETTER
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.RIGHT_RECT_GETTER
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.TOP_RECT_GETTER
-import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.*
 import kotlin.test.assertEquals
 
 internal object GeoRectangleTestHelper {
@@ -34,9 +30,9 @@ internal object GeoRectangleTestHelper {
     }
 
     fun assertRectangleEquals(expected: Rect<*>, actual: Rect<*>) {
-        assertDoubleParameterEquals(expected, actual, LEFT_RECT_GETTER)
-        assertDoubleParameterEquals(expected, actual, TOP_RECT_GETTER)
-        assertDoubleParameterEquals(expected, actual, RIGHT_RECT_GETTER)
-        assertDoubleParameterEquals(expected, actual, BOTTOM_RECT_GETTER)
+        assertDoubleParameterEquals(expected, actual, Rect<*>::left)
+        assertDoubleParameterEquals(expected, actual, Rect<*>::top)
+        assertDoubleParameterEquals(expected, actual, Rect<*>::right)
+        assertDoubleParameterEquals(expected, actual, Rect<*>::bottom)
     }
 }

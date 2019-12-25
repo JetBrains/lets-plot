@@ -11,7 +11,7 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder
-import jetbrains.gis.geoprotocol.GeoTile
+import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.gis.geoprotocol.GeocodingService
 
 internal class FragmentProviderImpl(
@@ -19,65 +19,65 @@ internal class FragmentProviderImpl(
     private val geocodingService: GeocodingService
 ) : FragmentProvider {
 
-    override fun getGeometries(mapObjectIds: List<String>, tileIds: Collection<QuadKey<LonLat>>): Async<Map<String, List<GeoTile>>> {
-        val objectsWithMissingTiles = HashMap<String, List<QuadKey<LonLat>>>()
+    override fun getFragments(mapObjectIds: List<String>, quads: Collection<QuadKey<LonLat>>): Async<Map<String, List<Fragment>>> {
+        val objectsWithMissingFragments = HashMap<String, List<QuadKey<LonLat>>>()
 
         var isMissing = false
         for (mapObjectId in mapObjectIds) {
-            val missingTiles = ArrayList<QuadKey<LonLat>>()
-            for (tileId in tileIds) {
-                if (!fragmentCache.contains(mapObjectId, tileId)) {
-                    missingTiles.add(tileId)
+            val missingFragments = ArrayList<QuadKey<LonLat>>()
+            for (quadKey in quads) {
+                if (!fragmentCache.contains(mapObjectId, quadKey)) {
+                    missingFragments.add(quadKey)
                     isMissing = true
                 }
             }
-            if (!missingTiles.isEmpty()) {
-                objectsWithMissingTiles[mapObjectId] = missingTiles
+            if (!missingFragments.isEmpty()) {
+                objectsWithMissingFragments[mapObjectId] = missingFragments
             }
         }
 
         if (!isMissing) {
-            return Asyncs.constant(getCachedGeometries(mapObjectIds, tileIds))
+            return Asyncs.constant(getCachedGeometries(mapObjectIds, quads))
         }
 
         val request = GeoRequestBuilder.ExplicitRequestBuilder()
             .setIds(mapObjectIds)
-            .addFeature(GeoRequest.FeatureOption.TILES)
-            .setTiles(objectsWithMissingTiles)
+            .addFeature(GeoRequest.FeatureOption.FRAGMENTS)
+            .setFragments(objectsWithMissingFragments)
             .build()
 
         return geocodingService
             .execute(request)
             .map { features ->
-                tileIds.forEach { tileId ->
+                quads.forEach { quadKey ->
                     mapObjectIds.forEach { mapObjectId ->
-                        if (!fragmentCache.contains(mapObjectId, tileId)) {
-                            fragmentCache.putEmpty(mapObjectId, tileId)
+                        if (!fragmentCache.contains(mapObjectId, quadKey)) {
+                            fragmentCache.putEmpty(mapObjectId, quadKey)
                         }
                     }
                 }
 
                 features.forEach { geocodedFeature ->
-                    geocodedFeature.tiles?.forEach {
+                    geocodedFeature.fragments?.forEach {
                         fragmentCache.put(geocodedFeature.id, it.key, it)
                     }
                 }
-                getCachedGeometries(mapObjectIds, tileIds)
+                getCachedGeometries(mapObjectIds, quads)
             }
     }
 
     private fun getCachedGeometries(
         mapObjectIds: List<String>,
-        tileIds: Collection<QuadKey<LonLat>>
-    ): Map<String, List<GeoTile>> {
-        val result = HashMap<String, List<GeoTile>>()
+        quads: Collection<QuadKey<LonLat>>
+    ): Map<String, List<Fragment>> {
+        val result = HashMap<String, List<Fragment>>()
 
         mapObjectIds.forEach { mapObjectId ->
-            val tiles = ArrayList<GeoTile>()
-            tileIds.forEach { tileId ->
-                fragmentCache[mapObjectId, tileId]?.let(tiles::add)
+            val fragments = ArrayList<Fragment>()
+            quads.forEach { quadKey ->
+                fragmentCache[mapObjectId, quadKey]?.let(fragments::add)
             }
-            result[mapObjectId] = tiles
+            result[mapObjectId] = fragments
         }
 
         return result

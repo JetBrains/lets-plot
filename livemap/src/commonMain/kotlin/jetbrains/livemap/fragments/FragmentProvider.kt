@@ -9,12 +9,12 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.gis.geoprotocol.GeoTile
+import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.gis.geoprotocol.GeocodingService
 
 interface FragmentProvider {
 
-    fun getGeometries(mapObjectIds: List<String>, tileIds: Collection<QuadKey<LonLat>>): Async<Map<String, List<GeoTile>>>
+    fun getFragments(mapObjectIds: List<String>, quads: Collection<QuadKey<LonLat>>): Async<Map<String, List<Fragment>>>
 
     companion object {
         fun create(geocodingService: GeocodingService, mapSize: DoubleVector): FragmentProvider {

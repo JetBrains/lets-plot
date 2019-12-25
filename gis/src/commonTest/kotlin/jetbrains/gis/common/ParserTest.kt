@@ -494,7 +494,7 @@ class ParserTest {
     }
 
 
-    internal class CollectedGeometryConsumer : SimpleFeature.GeometryConsumer {
+    internal class CollectedGeometryConsumer : SimpleFeature.GeometryConsumer<Generic> {
         private val myPoints = ArrayList<Vec<Generic>>()
         private val myLineStrings = ArrayList<LineString<Generic>>()
         private val myPolygons = ArrayList<Polygon<Generic>>()
@@ -545,7 +545,7 @@ class ParserTest {
         }
     }
 
-    internal class SimpleGeometryConsumer : SimpleFeature.GeometryConsumer {
+    internal class SimpleGeometryConsumer : SimpleFeature.GeometryConsumer<Generic> {
         var point: Vec<Generic>? = null
             private set
         var lineString: LineString<Generic>? = null

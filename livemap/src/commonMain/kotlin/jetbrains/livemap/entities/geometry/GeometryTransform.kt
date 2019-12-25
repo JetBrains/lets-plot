@@ -76,7 +76,7 @@ object GeometryTransform {
 
         fun next(p: Vec<InT>, ring: MutableCollection<Vec<OutT>>) {
             if (myRing == null || // first call
-                ring != myRing) { // next ring
+                ring !== myRing) { // next ring
                 myRing = ring
                 myPrevPoint = null
             }

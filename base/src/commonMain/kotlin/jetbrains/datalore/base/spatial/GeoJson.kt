@@ -11,71 +11,72 @@ import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.typedGeometry.*
 
 object GeoJson {
-    private const val GEOMETRY_TYPE = "type"
-    private const val GEOMETRY_COORDINATES = "coordinates"
-    private const val GEOMETRY_LON_INDEX = 0
-    private const val GEOMETRY_LAT_INDEX = 1
+    private const val LON_INDEX = 0
+    private const val LAT_INDEX = 1
 
-    fun parse(geoJson: String, handler: SimpleFeature.Consumer<LonLat>.() -> Unit) {
+    fun <T> parse(geoJson: String, handler: SimpleFeature.Consumer<T>.() -> Unit) {
         val geoObj = FluentObject(JsonSupport.parseJson(geoJson))
-        val geometryConsumer = SimpleFeature.Consumer<LonLat>().apply(handler)
-        parse(geoObj, geometryConsumer)
+        val geometryConsumer = SimpleFeature.Consumer<T>().apply(handler)
+        Parser<T>().parse(geoObj, geometryConsumer)
     }
 
-    private fun parse(obj: FluentObject, handler: SimpleFeature.GeometryConsumer) {
-        val type = obj.getString(GEOMETRY_TYPE)
+    private class Parser<T> {
 
-        if (type == "FeatureCollection") {
-            obj.getArray("features").fluentObjectStream()
-                .filter { it.getString("type") == "Feature" }
-                .map { it.getObject("geometry") }
-                .forEach { parse(it, handler) }
-        } else {
-            val coordinates = obj.getArray(GEOMETRY_COORDINATES)
-            when (type) {
-                "Point" -> parsePoint(coordinates).let(handler::onPoint)
-                "LineString" -> parseLineString(coordinates).let(handler::onLineString)
-                "Polygon" -> parsePolygon(coordinates).let(handler::onPolygon)
-                "MultiPoint" -> parseMultiPoint(coordinates).let(handler::onMultiPoint)
-                "MultiLineString" -> parseMultiLineString(coordinates).let(handler::onMultiLineString)
-                "MultiPolygon" -> parseMultiPolygon(coordinates).let(handler::onMultiPolygon)
-                else -> error("Not support GeoJson type: $type")
+        internal fun parse(obj: FluentObject, handler: SimpleFeature.GeometryConsumer<T>) {
+            val type = obj.getString("type")
+
+            if (type == "FeatureCollection") {
+                obj.getArray("features").fluentObjectStream()
+                    .filter { it.getString("type") == "Feature" }
+                    .map { it.getObject("geometry") }
+                    .forEach { parse(it, handler) }
+            } else {
+                val coordinates = obj.getArray("coordinates")
+                when (type) {
+                    "Point" -> parsePoint(coordinates).let(handler::onPoint)
+                    "LineString" -> parseLineString(coordinates).let(handler::onLineString)
+                    "Polygon" -> parsePolygon(coordinates).let(handler::onPolygon)
+                    "MultiPoint" -> parseMultiPoint(coordinates).let(handler::onMultiPoint)
+                    "MultiLineString" -> parseMultiLineString(coordinates).let(handler::onMultiLineString)
+                    "MultiPolygon" -> parseMultiPolygon(coordinates).let(handler::onMultiPolygon)
+                    else -> error("Not support GeoJson type: $type")
+                }
             }
         }
-    }
 
-    private fun parsePoint(jsonPoint: FluentArray): Vec<Generic> {
-        return explicitVec<Generic>(
-            jsonPoint.getDouble(GEOMETRY_LON_INDEX),
-            jsonPoint.getDouble(GEOMETRY_LAT_INDEX)
-        )
-    }
+        private fun parsePoint(jsonPoint: FluentArray): Vec<T> {
+            return explicitVec<T>(
+                jsonPoint.getDouble(LON_INDEX),
+                jsonPoint.getDouble(LAT_INDEX)
+            )
+        }
 
-    private fun parseLineString(jsonLineString: FluentArray): LineString<Generic> {
-        return jsonLineString.mapArray(this::parsePoint).let(::LineString)
-    }
+        private fun parseLineString(jsonLineString: FluentArray): LineString<T> {
+            return jsonLineString.mapArray(this::parsePoint).let(::LineString)
+        }
 
-    private fun parseRing(jsonRing: FluentArray): Ring<Generic> {
-        return jsonRing.mapArray(this::parsePoint).let(::Ring)
-    }
+        private fun parseRing(jsonRing: FluentArray): Ring<T> {
+            return jsonRing.mapArray(this::parsePoint).let(::Ring)
+        }
 
-    private fun parseMultiPoint(jsonMultiPoint: FluentArray): MultiPoint<Generic> {
-        return jsonMultiPoint.mapArray(this::parsePoint).let(::MultiPoint)
-    }
+        private fun parseMultiPoint(jsonMultiPoint: FluentArray): MultiPoint<T> {
+            return jsonMultiPoint.mapArray(this::parsePoint).let(::MultiPoint)
+        }
 
-    private fun parsePolygon(jsonPolygon: FluentArray): Polygon<Generic> {
-        return jsonPolygon.mapArray(this::parseRing).let(::Polygon)
-    }
+        private fun parsePolygon(jsonPolygon: FluentArray): Polygon<T> {
+            return jsonPolygon.mapArray(this::parseRing).let(::Polygon)
+        }
 
-    private fun parseMultiLineString(jsonLineStrings: FluentArray): MultiLineString<Generic> {
-        return jsonLineStrings.mapArray(this::parseLineString).let(::MultiLineString)
-    }
+        private fun parseMultiLineString(jsonLineStrings: FluentArray): MultiLineString<T> {
+            return jsonLineStrings.mapArray(this::parseLineString).let(::MultiLineString)
+        }
 
-    private fun parseMultiPolygon(jsonMultiPolygon: FluentArray): MultiPolygon<Generic> {
-        return jsonMultiPolygon.mapArray(this::parsePolygon).let(::MultiPolygon)
-    }
+        private fun parseMultiPolygon(jsonMultiPolygon: FluentArray): MultiPolygon<T> {
+            return jsonMultiPolygon.mapArray(this::parsePolygon).let(::MultiPolygon)
+        }
 
-    private fun <T> FluentArray.mapArray(f: (FluentArray) -> T): List<T> {
-        return this.stream().map { f(FluentArray(it as List<Any?>)) }.toList()
+        private fun <T> FluentArray.mapArray(f: (FluentArray) -> T): List<T> {
+            return this.stream().map { f(FluentArray(it as List<Any?>)) }.toList()
+        }
     }
 }

@@ -9,10 +9,11 @@ import jetbrains.datalore.base.json.*
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.gis.geoprotocol.Boundaries
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.gis.geoprotocol.GeoResponse
 import jetbrains.gis.geoprotocol.GeoResponse.*
-import jetbrains.gis.geoprotocol.GeoTile
+import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.gis.geoprotocol.json.ResponseKeys.BOUNDARY
 import jetbrains.gis.geoprotocol.json.ResponseKeys.CENTROID
 import jetbrains.gis.geoprotocol.json.ResponseKeys.DATA
@@ -32,7 +33,7 @@ import jetbrains.gis.geoprotocol.json.ResponseKeys.NAMESAKE_PARENTS
 import jetbrains.gis.geoprotocol.json.ResponseKeys.POSITION
 import jetbrains.gis.geoprotocol.json.ResponseKeys.QUERY
 import jetbrains.gis.geoprotocol.json.ResponseKeys.STATUS
-import jetbrains.gis.geoprotocol.json.ResponseKeys.TILES
+import jetbrains.gis.geoprotocol.json.ResponseKeys.FRAGMENTS
 
 object ResponseJsonFormatter {
     fun format(response: GeoResponse): Obj {
@@ -68,7 +69,7 @@ object ResponseJsonFormatter {
                                 .putRemovable(POSITION, formatRect(feature.position))
                                 .putRemovable(CENTROID, formatPoint(feature.centroid))
                                 .putRemovable(BOUNDARY, formatGeometry(feature.boundary))
-                                .putRemovable(TILES, formatTiles(feature.tiles))
+                                .putRemovable(FRAGMENTS, formatTiles(feature.fragments))
                         })
                     )
             )
@@ -130,22 +131,22 @@ object ResponseJsonFormatter {
         }
     }
 
-    private fun formatGeometry(geometry: Boundary<Generic>?): FluentPrimitive? {
-        return geometry?.let { FluentPrimitive(geometryToString(it)) }
+    private fun formatGeometry(boundary: Boundary<Generic>?): FluentPrimitive? {
+        return boundary?.let { FluentPrimitive(boundaryToString(it)) }
     }
 
-    private fun geometryToString(geometry: Boundary<Generic>): String {
-        return StringGeometries.getRawData(geometry)
+    private fun boundaryToString(boundary: Boundary<Generic>): String {
+        return Boundaries.getRawData(boundary)
     }
 
-    private fun formatTiles(tiles: List<GeoTile>?): FluentObject? {
+    private fun formatTiles(tiles: List<Fragment>?): FluentObject? {
         return tiles?.let {
             val obj = FluentObject()
             for (tile in tiles) {
                 val geometries = FluentArray()
 
-                for (boundary in tile.geometries) {
-                    geometries.add(geometryToString(boundary))
+                for (boundary in tile.boundaries) {
+                    geometries.add(boundaryToString(boundary))
                 }
 
                 obj.put(tile.key.key, geometries)

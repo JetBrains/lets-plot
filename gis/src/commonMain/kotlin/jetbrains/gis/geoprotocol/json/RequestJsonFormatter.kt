@@ -38,7 +38,7 @@ import jetbrains.gis.geoprotocol.json.RequestKeys.RESOLUTION
 import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_COORDINATES
 import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_LEVEL
 import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_PARENT
-import jetbrains.gis.geoprotocol.json.RequestKeys.TILES
+import jetbrains.gis.geoprotocol.json.RequestKeys.FRAGMENTS
 import jetbrains.gis.geoprotocol.json.RequestKeys.VERSION
 import kotlin.math.max
 import kotlin.math.min
@@ -115,7 +115,7 @@ object RequestJsonFormatter {
             .put(MODE, mode)
             .put(RESOLUTION, request.levelOfDetails?.toResolution())
             .put(FEATURE_OPTIONS, request.features.map { formatEnum(it) })
-            .putRemovable(TILES, request.tiles?.let {
+            .putRemovable(FRAGMENTS, request.fragments?.let {
                     val obj = FluentObject()
                     it.map { (region, quads) ->
                         obj.put(region, quads.map(QuadKey<LonLat>::key))

@@ -10,6 +10,9 @@ import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder
+import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
+import jetbrains.gis.geoprotocol.GeoRequestBuilder.GeocodingRequestBuilder
+import jetbrains.gis.geoprotocol.GeoRequestBuilder.RegionQueryBuilder
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.projections.*
@@ -33,7 +36,7 @@ class MapLocationGeocoder(
                 }
 
                 if (features.size == 1) {
-                    val feature = features[0]
+                    val feature = features.single()
                     calculateExtendedRectangleWithCenter(
                         myMapRuler,
                         calculateBBoxOfGeoRect(feature.position!!),
@@ -50,12 +53,12 @@ class MapLocationGeocoder(
     private fun createRequestBuilder(mapRegion: MapRegion) =
         when {
             mapRegion.containsId() -> {
-                GeoRequestBuilder.ExplicitRequestBuilder().setIds(mapRegion.idList)
+                ExplicitRequestBuilder().setIds(mapRegion.idList)
             }
             mapRegion.containsName() -> {
-                GeoRequestBuilder.GeocodingRequestBuilder()
+                GeocodingRequestBuilder()
                     .addQuery(
-                        GeoRequestBuilder.RegionQueryBuilder()
+                        RegionQueryBuilder()
                             .setQueryNames(mapRegion.name)
                             .build()
                     )
