@@ -58,7 +58,7 @@ class MapLocationInitializationSystem(
                 .run(myViewport::calculateBoundingBox)
                 .calculatePosition { zoom, coordinates ->
                     myCamera.get<CameraComponent>().apply {
-                        this.zoom = floor(zoom)
+                        //this.zoom = floor(zoom)
                         this.position = coordinates
                     }
 

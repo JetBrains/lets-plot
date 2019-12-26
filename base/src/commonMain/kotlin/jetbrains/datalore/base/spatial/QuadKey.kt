@@ -41,7 +41,7 @@ fun <T, OutT> QuadKey<T>.projectRect(rect: Rect<OutT>): Rect<OutT> {
     return Rect(origin, dimension)
 }
 
-fun QuadKey<LonLat>.zoom() = ((length - 1) / 3 + 1) * 3
+fun QuadKey<LonLat>.zoom() = length
 
 fun <TypeT> QuadKey<TypeT>.computeOrigin(mapRect: Rect<TypeT>): Vec<TypeT> {
     return projectOrigin(mapRect)

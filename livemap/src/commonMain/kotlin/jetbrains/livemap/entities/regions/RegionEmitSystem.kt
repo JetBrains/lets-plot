@@ -18,7 +18,7 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : LiveMapSystem(co
     private var myPendingZoom = -1
 
     override fun initImpl(context: LiveMapContext) {
-        createEntity("emitted_regions").addComponent(EmittedRegionsComponent())
+        createEntity("emitted_regions").add(EmittedRegionsComponent())
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {

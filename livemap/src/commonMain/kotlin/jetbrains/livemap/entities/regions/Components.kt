@@ -68,6 +68,10 @@ class EmptyFragmentsComponent : EcsComponent {
     }
 }
 
+class ExistingRegionsComponent : EcsComponent {
+    val existingRegions = HashSet<String>()
+}
+
 class ChangedFragmentsComponent : EcsComponent {
     private val myNewFragments = HashSet<FragmentKey>()
     private val myObsoleteFragments = HashSet<FragmentKey>()
@@ -114,7 +118,7 @@ class DownloadingFragmentsComponent : EcsComponent {
 
     fun reduceQueue(keys: Set<FragmentKey>) {
         for (key in keys) {
-            queue[key.quadKey.zoom()]?.remove(key)
+            queue[key.zoom()]?.remove(key)
         }
     }
 
