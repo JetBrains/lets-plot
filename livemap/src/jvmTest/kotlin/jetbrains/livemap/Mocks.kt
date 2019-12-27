@@ -12,8 +12,6 @@ import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase.*
 import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
 import jetbrains.datalore.jetbrains.livemap.tile.Mocks.CellStateSpec
 import jetbrains.gis.geoprotocol.Fragment
-import jetbrains.livemap.camera.CameraComponent
-import jetbrains.livemap.camera.CameraUpdateComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.regions.*
 import java.util.*
@@ -46,10 +44,6 @@ object Mocks {
 
     fun camera(testBase: LiveMapTestBase): CameraSpec {
         return CameraSpec(testBase)
-    }
-
-    fun cameraUpdate(testBase: LiveMapTestBase): CameraUpdateSpec {
-        return CameraUpdateSpec(testBase)
     }
 
     fun scheduler(testBase: LiveMapTestBase): SchedulerSpec {
@@ -157,31 +151,6 @@ object Mocks {
         }
     }
 
-    class CameraUpdateSpec internal constructor(testBase: LiveMapTestBase) : MockSpec(testBase) {
-        private var myNone = false
-        private var myZoomChanged = false
-
-        fun zoom(): CameraUpdateSpec {
-            myZoomChanged = true
-            return this
-        }
-
-        fun none(): CameraUpdateSpec {
-            myNone = true
-            return this
-        }
-
-        override fun apply() {
-            val component = componentManager.getSingleton<CameraUpdateComponent>()
-            if (myNone) {
-                myNone = false
-                component.nothing()
-            } else {
-                component.isZoomChanged = myZoomChanged
-            }
-        }
-    }
-
     class CameraSpec internal constructor(testBase: LiveMapTestBase) : MockSpec(testBase) {
         private var myZoom: Double? = null
 
@@ -191,8 +160,8 @@ object Mocks {
         }
 
         override fun apply() {
-            val cameraComponent = componentManager.getSingleton<CameraComponent>()
-            myZoom?.let { cameraComponent.zoom = it }
+            // val cameraComponent = componentManager.getSingleton<CameraComponent>()
+            myZoom?.let { liveMapContext.camera.requestZoom(it) }
         }
     }
 

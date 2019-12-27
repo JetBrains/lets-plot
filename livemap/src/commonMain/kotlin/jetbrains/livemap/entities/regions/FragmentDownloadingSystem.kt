@@ -13,8 +13,8 @@ import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.Utils.diff
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.fragments.FragmentProvider
 
@@ -22,7 +22,7 @@ class FragmentDownloadingSystem(
     private val myMaxActiveDownloads: Int,
     private val myFragmentGeometryProvider: FragmentProvider,
     componentManager: EcsComponentManager
-) : LiveMapSystem(componentManager) {
+) : AbstractSystem<LiveMapContext>(componentManager) {
     private val myRegionFragments = HashMap<String, MutableList<Fragment>>()
     private val myLock = Lock()
 
@@ -48,7 +48,7 @@ class FragmentDownloadingSystem(
         run {
             // download fragments if there are any empty downloading slots
             if (downloadingFragments.downloading.size < myMaxActiveDownloads) {
-                val zoomQueue = downloadingFragments.getZoomQueue(camera().zoom.toInt())
+                val zoomQueue = downloadingFragments.getZoomQueue(context.camera.zoom.toInt())
                 val availableDownloadsCount = myMaxActiveDownloads - downloadingFragments.downloading.size
                 val toDownload = zoomQueue.take(availableDownloadsCount)
                 if (toDownload.isNotEmpty()) {

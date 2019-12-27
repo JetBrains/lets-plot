@@ -47,6 +47,13 @@ class FragmentUpdateSystem(
             val regionId = regionEntity.get<RegionIdComponent>().regionId
 
             var quadsToAdd = cellStateComponent.quadsToAdd
+
+            if (quadsToAdd.isNotEmpty()) {
+                println(quadsToAdd)
+                println(existingRegions.contains(regionId))
+                println(cellStateComponent.visibleQuads)
+            }
+
             if (!existingRegions.contains(regionId)) {
                 quadsToAdd = cellStateComponent.visibleQuads
                 existingRegions.add(regionId)

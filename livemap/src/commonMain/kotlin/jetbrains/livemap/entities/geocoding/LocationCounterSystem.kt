@@ -6,13 +6,13 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 
 class LocationCounterSystem(
     componentManager: EcsComponentManager,
     private val myNeedLocation: Boolean
-) : LiveMapSystem(componentManager) {
+) : AbstractSystem<LiveMapContext>(componentManager) {
     private val myLocation = LocationComponent()
 
     override fun initImpl(context: LiveMapContext) {

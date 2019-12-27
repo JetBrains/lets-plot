@@ -8,42 +8,43 @@ package jetbrains.livemap.camera
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.entities.Entities
-import jetbrains.livemap.projections.Coordinates
-import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.core.ecs.addComponents
 
 class CameraUpdateDetectionSystem(componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
-    private var myPreviousCameraZoom: Double = 0.0
-    private var myPreviousCameraCenter: WorldPoint = Coordinates.ZERO_WORLD_POINT
+    private lateinit var myCamera: MutableCamera
 
     override fun initImpl(context: LiveMapContext) {
-        val viewport = context.mapRenderContext.viewport
+        myCamera = context.camera as MutableCamera
+
         createEntity("camera")
-            .addComponent(CameraUpdateComponent())
-            .addComponent(
-                CameraComponent(
-                    viewport.zoom.toDouble(),
-                    viewport.position
-                )
-            )
+            .addComponents {
+                + CameraComponent(myCamera)
+            }
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val cameraEntity = Entities.camera(componentManager)
-        val camera = cameraEntity.get<CameraComponent>()
-        val cameraUpdate = cameraEntity.get<CameraUpdateComponent>()
 
         removeChangedComponents()
 
-        cameraUpdate.isZoomChanged = myPreviousCameraZoom != camera.zoom
-        cameraUpdate.isMoved = myPreviousCameraCenter != camera.position
+        myCamera.isZoomChanged = false
+        myCamera.isMoved = false
 
-        myPreviousCameraZoom = camera.zoom
-        myPreviousCameraCenter = camera.position
+        myCamera.requestedZoom?.let {
+            myCamera.zoom = it
+            myCamera.isZoomChanged = true
+        }
 
-        if (cameraUpdate.isZoomChanged || cameraUpdate.isMoved) {
-            updateAll(cameraUpdate.isZoomChanged, cameraUpdate.isMoved)
+        myCamera.requestedPosition?.let {
+            myCamera.position = it
+            myCamera.isMoved = true
+        }
+
+        myCamera.requestedZoom = null
+        myCamera.requestedPosition = null
+
+        if (myCamera.isZoomChanged || myCamera.isMoved) {
+            updateAll(myCamera.isZoomChanged, myCamera.isMoved)
         }
     }
 

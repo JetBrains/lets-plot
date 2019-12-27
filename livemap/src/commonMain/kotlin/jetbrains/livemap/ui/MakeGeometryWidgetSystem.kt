@@ -7,12 +7,12 @@ package jetbrains.livemap.ui
 
 import jetbrains.datalore.base.values.Color.Companion.parseHex
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.api.PathBuilder
 import jetbrains.livemap.api.PointBuilder
 import jetbrains.livemap.api.geometry
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.animation.Animations.AnimationBuilder
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.input.InputMouseEvent
@@ -27,7 +27,7 @@ class MakeGeometryWidgetSystem(
     private val myComponentManager: EcsComponentManager,
     private val myMapProjection: MapProjection,
     private val myViewport: Viewport
-) : LiveMapSystem(myComponentManager) {
+) : AbstractSystem<LiveMapContext>(myComponentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
 

@@ -7,8 +7,9 @@ package jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.ZoomChangedComponent
+import jetbrains.livemap.camera.isIntegerZoom
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.multitasking.MicroTask
@@ -25,7 +26,7 @@ import jetbrains.livemap.projections.WorldProjection
 class WorldGeometry2ScreenUpdateSystem(
     private val myQuantIterations: Int,
     componentManager: EcsComponentManager
-) : LiveMapSystem(componentManager) {
+) : AbstractSystem<LiveMapContext>(componentManager) {
 
     private fun createScalingTask(entity: EcsEntity, zoom: Int): MicroTask<Unit> {
 
@@ -59,7 +60,7 @@ class WorldGeometry2ScreenUpdateSystem(
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val viewport = context.mapRenderContext.viewport
 
-        if (camera().isIntegerZoom) {
+        if (context.camera.isIntegerZoom) {
             getEntities(COMPONENT_TYPES).forEach {
                 it.setComponent(
                     MicroThreadComponent(

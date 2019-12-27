@@ -110,11 +110,18 @@ class LiveMap(
 
     fun draw(canvasControl: CanvasControl) {
         val componentManager = EcsComponentManager()
+        val camera = MutableCamera(componentManager)
+            .apply {
+                requestZoom(viewport.zoom.toDouble())
+                requestPosition(viewport.position)
+            }
+
         myContext = LiveMapContext(
             myMapProjection,
             canvasControl,
             MapRenderContext(viewport, canvasControl),
-            ::fireThrowable
+            ::fireThrowable,
+            camera
         )
 
         myUiService = UiService(componentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))

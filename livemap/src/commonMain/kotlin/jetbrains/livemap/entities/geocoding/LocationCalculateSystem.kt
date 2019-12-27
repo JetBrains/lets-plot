@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.entities.geocoding
 
-import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
@@ -15,7 +15,7 @@ import jetbrains.livemap.projections.Coordinates.ZERO_WORLD_POINT
 
 class LocationCalculateSystem(
     componentManager: EcsComponentManager
-) : LiveMapSystem(componentManager) {
+) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLocation: LocationComponent
 
     override fun initImpl(context: LiveMapContext) {

@@ -8,7 +8,7 @@ package jetbrains.datalore.jetbrains.livemap
 import jetbrains.datalore.jetbrains.livemap.core.ecs.ComponentManagerUtil
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.MapRenderContext
-import jetbrains.livemap.camera.CameraComponent
+import jetbrains.livemap.camera.MutableCamera
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.ecs.*
@@ -35,17 +35,19 @@ abstract class LiveMapTestBase {
 
     protected abstract val systemsOrder: List<KClass<out EcsSystem>>
 
-    protected val camera: EcsEntity
-        get() = componentManager.getSingletonEntity(CameraComponent::class)
+    protected lateinit var myCamera: MutableCamera
+
 
     @Before
     open fun setUp() {
         componentManager = EcsComponentManager()
+        myCamera = MutableCamera(componentManager)
 
         liveMapContext = mock(LiveMapContext::class.java)
 
         val mapRenderContext = mock(MapRenderContext::class.java)
         `when`(liveMapContext.mapRenderContext).thenReturn(mapRenderContext)
+        `when`(liveMapContext.camera).thenReturn(myCamera)
 
         mySystemTime = mock(SystemTime::class.java)
         `when`(liveMapContext.systemTime).thenReturn(mySystemTime)
@@ -163,6 +165,9 @@ abstract class LiveMapTestBase {
 
         protected val componentManager: EcsComponentManager
             get() = testBase.componentManager
+
+        protected val liveMapContext: LiveMapContext
+            get() = testBase.liveMapContext
 
         abstract fun apply()
     }

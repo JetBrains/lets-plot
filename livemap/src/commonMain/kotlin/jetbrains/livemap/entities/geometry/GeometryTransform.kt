@@ -62,8 +62,6 @@ object GeometryTransform {
                 MultiLineStringTransform(geometry.multiLineString, transform).map(::createMultiLineString)
             MULTI_POINT ->
                 MultiPointTransform(geometry.multiPoint, transform).map(::createMultiPoint)
-            else ->
-                throw IllegalArgumentException("Unsupported geometry type: ${geometry.type}")
         }
     }
 

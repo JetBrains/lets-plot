@@ -8,14 +8,14 @@ package jetbrains.livemap.ui
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapLocation
-import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
 import jetbrains.livemap.LiveMapConstants.MIN_ZOOM
+import jetbrains.livemap.LiveMapContext
+import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraScale
 import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -35,7 +35,7 @@ class LiveMapUiSystem(
     componentManager: EcsComponentManager,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myLayerManager: LayerManager
-) : LiveMapSystem(componentManager) {
+) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLiveMapLocation: LiveMapLocation
     private lateinit var myZoomPlus: MutableImage
     private lateinit var myZoomMinus: MutableImage
@@ -45,7 +45,7 @@ class LiveMapUiSystem(
     private var myUiState: UiState = ResourcesLoading()
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        myUiState.update()
+        myUiState.update(context)
     }
 
     override fun initImpl(context: LiveMapContext) {
@@ -174,11 +174,11 @@ class LiveMapUiSystem(
     }
 
     internal abstract class UiState {
-        internal abstract fun update()
+        internal abstract fun update(context: LiveMapContext)
     }
 
     private inner class ResourcesLoading : UiState() {
-        override fun update() {
+        override fun update(context: LiveMapContext) {
             if (myUiService.resourceManager.isReady(
                     KEY_PLUS,
                     KEY_MINUS,
@@ -189,23 +189,27 @@ class LiveMapUiSystem(
                     KEY_MAKE_GEOMETRY_ACTIVE
                 )
             ) {
-                myUiState = Processing()
+                myUiState = Processing().apply { initialize(context) }
             }
         }
     }
 
     private inner class Processing : UiState() {
-        init {
+
+        fun initialize(context: LiveMapContext) {
             val res = myUiService.resourceManager
 
             myGetCenter.snapshot = res[KEY_GET_CENTER]
             updateMakeGeometryButton()
-            updateZoomButtons(camera().zoom)
+            updateZoomButtons(context.camera.zoom)
         }
 
-        override fun update() {
+        override fun update(context: LiveMapContext) {
             updateMakeGeometryButton()
-            camera().ifZoomChanged { updateZoomButtons(camera().zoom) }
+
+            if (context.camera.isZoomChanged) {
+                updateZoomButtons(context.camera.zoom)
+            }
         }
 
         internal fun updateMakeGeometryButton() {

@@ -12,11 +12,10 @@ import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.LiveMapConstants
 import jetbrains.livemap.LiveMapConstants.DEFAULT_LOCATION
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.MapLocationGeocoder.Companion.convertToWorldRects
 import jetbrains.livemap.camera.CameraComponent
-import jetbrains.livemap.camera.UpdateViewportComponent
 import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.projections.Client
@@ -30,7 +29,7 @@ class MapLocationInitializationSystem(
     componentManager: EcsComponentManager,
     private val myZoom: Double?,
     private val myLocationRect: Async<Rect<World>>?
-) : LiveMapSystem(componentManager) {
+) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLocation: LocationComponent
     private lateinit var myCamera: EcsEntity
     private lateinit var myViewport: Viewport
@@ -57,12 +56,8 @@ class MapLocationInitializationSystem(
             myLocation.locations
                 .run(myViewport::calculateBoundingBox)
                 .calculatePosition { zoom, coordinates ->
-                    myCamera.get<CameraComponent>().apply {
-                        //this.zoom = floor(zoom)
-                        this.position = coordinates
-                    }
-
-                    myCamera.tag(::UpdateViewportComponent)
+                    context.camera.requestZoom(floor(zoom))
+                    context.camera.requestPosition(coordinates)
                 }
         }
     }

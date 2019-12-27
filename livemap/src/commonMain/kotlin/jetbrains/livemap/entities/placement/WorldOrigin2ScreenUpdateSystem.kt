@@ -6,12 +6,12 @@
 package jetbrains.livemap.entities.placement
 
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.camera.CenterChangedComponent
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 
-class WorldOrigin2ScreenUpdateSystem(componentManager: EcsComponentManager) : LiveMapSystem(componentManager) {
+class WorldOrigin2ScreenUpdateSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val viewport = context.mapRenderContext.viewport

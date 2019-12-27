@@ -7,9 +7,8 @@ package jetbrains.datalore.jetbrains.livemap.camera
 
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.datalore.jetbrains.livemap.Mocks
-import jetbrains.livemap.camera.CameraComponent
-import jetbrains.livemap.camera.CameraUpdateComponent
 import jetbrains.livemap.camera.CameraUpdateDetectionSystem
+import jetbrains.livemap.camera.isIntegerZoom
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertTrue
@@ -51,14 +50,13 @@ class CameraUpdateDetectionSystemTest : LiveMapTestBase() {
     }
 
     private fun zoomChanged(): Boolean =
-        camera.get<CameraUpdateComponent>().isZoomChanged
-                && camera.get<CameraComponent>().zoom % 1 == 0.0
+        myCamera.isZoomChanged && myCamera.isIntegerZoom
 
     private fun checkZoomed(isTrue: Boolean) {
         assertTrue { zoomChanged() == isTrue }
     }
 
     private fun checkScaled(isTrue: Boolean) {
-        assertTrue { camera.get<CameraUpdateComponent>().isZoomChanged == isTrue }
+        assertTrue { myCamera.isZoomChanged == isTrue }
     }
 }

@@ -100,6 +100,12 @@ class FeaturesDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                     line {
                         coord(BOSTON)
                     }
+
+                    line {
+                        mapId = "UK"
+                        strokeColor = Color.PINK
+                        strokeWidth = 3.0
+                    }
                 }
 
                 bars {

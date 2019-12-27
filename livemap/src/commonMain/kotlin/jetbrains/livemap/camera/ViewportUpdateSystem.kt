@@ -8,7 +8,6 @@ package jetbrains.livemap.camera
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import kotlin.math.roundToInt
 
 class ViewportUpdateSystem(componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
@@ -22,9 +21,8 @@ class ViewportUpdateSystem(componentManager: EcsComponentManager) :
             viewport.position = camera.position
         }
 
-        if (cameraEntity.contains(UpdateViewportComponent::class)) {
-            viewport.zoom = camera.zoom.roundToInt()
-            cameraEntity.removeComponent(UpdateViewportComponent::class)
+        if (context.camera.isZoomChanged && context.camera.isIntegerZoom) {
+            viewport.zoom = context.camera.zoom.toInt()
         }
     }
 }
