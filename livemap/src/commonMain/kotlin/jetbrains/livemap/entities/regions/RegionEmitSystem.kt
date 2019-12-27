@@ -28,9 +28,6 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : AbstractSystem<L
             myPendingFragments.clear()
         }
 
-        if (getSingleton<ChangedFragmentsComponent>().requested.isNotEmpty()) {
-            println(getSingleton<ChangedFragmentsComponent>().requested)
-        }
         getSingleton<ChangedFragmentsComponent>().requested.forEach(::wait)
         getSingleton<ChangedFragmentsComponent>().obsolete.forEach(::remove)
         getSingleton<EmittedFragmentsComponent>().keys().forEach(::accept)
@@ -40,7 +37,6 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : AbstractSystem<L
 
         for (readyRegion in checkReadyRegions()) {
             emittedRegionsComponent.keys().add(readyRegion)
-            println("HEHEY")
             renderRegion(readyRegion)
         }
     }
