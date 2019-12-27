@@ -38,7 +38,7 @@ class PieSectorComponent : EcsComponent {
 class StyleComponent : EcsComponent {
     var fillColor: String? = null
     var strokeColor: String? = null
-    var strokeWidth: Double = 0.toDouble()
+    var strokeWidth: Double = 0.0
     var lineDash: DoubleArray? = null
 }
 

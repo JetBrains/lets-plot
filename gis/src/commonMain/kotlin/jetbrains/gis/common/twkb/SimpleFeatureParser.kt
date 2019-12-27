@@ -13,16 +13,20 @@ import jetbrains.datalore.base.gcommon.collect.Stack
 import jetbrains.datalore.base.spatial.SimpleFeature
 import jetbrains.datalore.base.typedGeometry.*
 
-internal class GeometryObjectParser(
-    precision: Double,
-    input: Input,
-    private val myGeometryConsumer: SimpleFeature.GeometryConsumer
+internal class SimpleFeatureParser(
+    private val myPrecision: Double,
+    private val myInputBuffer: InputBuffer,
+    private val myGeometryConsumer: SimpleFeature.GeometryConsumer<Generic>
 ) {
-    private val myGeometryStream = GeometryStream(precision, input)
-    private val myParsers = Stack<GeometryParser>()
 
-    fun nextCoordinate() {
-        myParsers.peek()?.parseNext()
+    private val myParsers = Stack<GeometryParser>()
+    private var x = 0
+    private var y = 0
+
+    internal fun readPoint(): Vec<Generic> {
+        x += myInputBuffer.readVarInt()
+        y += myInputBuffer.readVarInt()
+        return explicitVec<Generic>(x / myPrecision, y / myPrecision)
     }
 
     fun parsingObject(): Boolean  = !myParsers.empty()
@@ -97,12 +101,12 @@ internal class GeometryObjectParser(
         )
     }
 
-    private fun readCount() = myGeometryStream.readCount()
-    private fun readPoint() = myGeometryStream.readPoint()
+    private fun readCount() = myInputBuffer.readVarUInt()
+    internal fun nextCoordinate() { myParsers.peek()?.parseNext() }
     private fun popParser() = myParsers.pop() ?: error("No more parsers")
 
-    internal abstract class GeometryParser(
-        private val myCtx: GeometryObjectParser
+    private abstract class GeometryParser(
+        private val myCtx: SimpleFeatureParser
     ) {
 
         internal abstract fun parseNext()
@@ -121,9 +125,9 @@ internal class GeometryObjectParser(
         }
     }
 
-    internal class PointParser(
+    private class PointParser(
         private val myParsingResultConsumer: Consumer<Vec<Generic>>,
-        ctx: GeometryObjectParser
+        ctx: SimpleFeatureParser
     ) : GeometryParser(ctx) {
         private lateinit var myP: Vec<Generic>
 
@@ -138,15 +142,12 @@ internal class GeometryObjectParser(
         }
     }
 
-    internal abstract class GeometryListParser<GeometryT>(
+    private abstract class GeometryListParser<GeometryT>(
         private val myCount: Int,
         private val myParsingResultConsumer: Consumer<List<GeometryT>>,
-        ctx: GeometryObjectParser
+        ctx: SimpleFeatureParser
     ) : GeometryParser(ctx) {
         private val myGeometries = ArrayList<GeometryT>(myCount)
-
-        private val geometries: List<GeometryT>
-            get() = myGeometries
 
         fun addGeometry(geometry: GeometryT) {
             myGeometries.add(geometry)
@@ -156,13 +157,13 @@ internal class GeometryObjectParser(
 
         fun done() {
             popThisParser()
-            myParsingResultConsumer(geometries)
+            myParsingResultConsumer(myGeometries)
         }
     }
 
-    internal class PointsParser(
+    private class PointsParser(
         parsingResultConsumer: Consumer<List<Vec<Generic>>>,
-        ctx: GeometryObjectParser
+        ctx: SimpleFeatureParser
     ) : GeometryListParser<Vec<Generic>>(ctx.readCount(), parsingResultConsumer, ctx) {
 
         override fun parseNext() {
@@ -174,12 +175,12 @@ internal class GeometryObjectParser(
         }
     }
 
-    internal open class NestedGeometryParser<NestedGeometriesT, GeometryT>(
+    private open class NestedGeometryParser<NestedGeometriesT, GeometryT>(
         count: Int,
         private val myNestedParserFactory: Function<Consumer<NestedGeometriesT>, GeometryParser>,
         private val myNestedToGeometry: Function<NestedGeometriesT, GeometryT>,
         parsingResultConsumer: Consumer<List<GeometryT>>,
-        ctx: GeometryObjectParser
+        ctx: SimpleFeatureParser
     ) : GeometryListParser<GeometryT>(count, parsingResultConsumer, ctx) {
 
         override fun parseNext() {
@@ -195,9 +196,9 @@ internal class GeometryObjectParser(
         }
     }
 
-    internal class PolygonParser(
+    private class PolygonParser(
         parsingResultConsumer: Consumer<List<Ring<Generic>>>,
-        ctx: GeometryObjectParser
+        ctx: SimpleFeatureParser
     ) :
         NestedGeometryParser<List<Vec<Generic>>, Ring<Generic>>(
             ctx.readCount(),
@@ -207,10 +208,10 @@ internal class GeometryObjectParser(
             ctx
         )
 
-    internal class MultiPointParser(
+    private class MultiPointParser(
         nGeometries: Int,
         parsingResultConsumer: Consumer<List<Vec<Generic>>>,
-        ctx: GeometryObjectParser
+        ctx: SimpleFeatureParser
     ) : NestedGeometryParser<Vec<Generic>, Vec<Generic>>(
         nGeometries,
         funcOf { point -> PointParser(point, ctx) },
@@ -219,10 +220,10 @@ internal class GeometryObjectParser(
         ctx
     )
 
-    internal class MultiLineStringParser(
+    private class MultiLineStringParser(
         nGeometries: Int,
         parsingResultConsumer: Consumer<List<LineString<Generic>>>,
-        ctx: GeometryObjectParser
+        ctx: SimpleFeatureParser
     ) : NestedGeometryParser<List<Vec<Generic>>, LineString<Generic>>(
         nGeometries,
         funcOf { points -> PointsParser(points, ctx) },
@@ -231,10 +232,10 @@ internal class GeometryObjectParser(
         ctx
     )
 
-    internal class MultiPolygonParser(
+    private class MultiPolygonParser(
         nGeometries: Int,
         parsingResultConsumer: Consumer<List<Polygon<Generic>>>,
-        ctx: GeometryObjectParser
+        ctx: SimpleFeatureParser
     ) : NestedGeometryParser<List<Ring<Generic>>, Polygon<Generic>>(
         nGeometries,
         funcOf { ringsConsumer -> PolygonParser(ringsConsumer, ctx) },
@@ -242,22 +243,4 @@ internal class GeometryObjectParser(
         parsingResultConsumer,
         ctx
     )
-
-    internal class GeometryStream(
-        private val myPrecision: Double,
-        private val myInput: Input
-    ) {
-        private var x = 0
-        private var y = 0
-
-        fun readPoint(): Vec<Generic> {
-            x += myInput.readVarInt()
-            y += myInput.readVarInt()
-            return explicitVec<Generic>(x / myPrecision, y / myPrecision)
-        }
-
-        fun readCount(): Int {
-            return myInput.readVarUInt()
-        }
-    }
 }

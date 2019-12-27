@@ -11,10 +11,10 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.gis.geoprotocol.GeoTile
+import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
 import jetbrains.livemap.core.Utils.diff
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.fragments.FragmentProvider
 
@@ -22,8 +22,8 @@ class FragmentDownloadingSystem(
     private val myMaxActiveDownloads: Int,
     private val myFragmentGeometryProvider: FragmentProvider,
     componentManager: EcsComponentManager
-) : LiveMapSystem(componentManager) {
-    private val myRegionTiles = HashMap<String, MutableList<GeoTile>>()
+) : AbstractSystem<LiveMapContext>(componentManager) {
+    private val myRegionFragments = HashMap<String, MutableList<Fragment>>()
     private val myLock = Lock()
 
     override fun initImpl(context: LiveMapContext) {
@@ -48,7 +48,7 @@ class FragmentDownloadingSystem(
         run {
             // download fragments if there are any empty downloading slots
             if (downloadingFragments.downloading.size < myMaxActiveDownloads) {
-                val zoomQueue = downloadingFragments.getZoomQueue(camera().zoom.toInt())
+                val zoomQueue = downloadingFragments.getZoomQueue(context.camera.zoom.toInt())
                 val availableDownloadsCount = myMaxActiveDownloads - downloadingFragments.downloading.size
                 val toDownload = zoomQueue.take(availableDownloadsCount)
                 if (toDownload.isNotEmpty()) {
@@ -64,11 +64,11 @@ class FragmentDownloadingSystem(
         val downloadedFragments = HashMap<FragmentKey, MultiPolygon<Generic>>()
         run {
             // process downloadedFragments fragments
-            var responses = emptyMap<String, List<GeoTile>>()
+            var responses = emptyMap<String, List<Fragment>>()
             myLock.execute {
-                if (!myRegionTiles.isEmpty()) {
-                    responses = HashMap<String, List<GeoTile>>(myRegionTiles)
-                    myRegionTiles.clear()
+                if (!myRegionFragments.isEmpty()) {
+                    responses = HashMap<String, List<Fragment>>(myRegionFragments)
+                    myRegionFragments.clear()
                 }
             }
 
@@ -113,27 +113,25 @@ class FragmentDownloadingSystem(
 
         regionRequest.forEach { (requestRegionId, requestQuads) ->
             myFragmentGeometryProvider
-                .getGeometries(listOf(requestRegionId), requestQuads)
-                .onSuccess { receivedTiles ->
-                    receivedTiles.forEach { (regionId, geoTiles) ->
-                        val registeredTiles = ArrayList(geoTiles)
+                .getFragments(listOf(requestRegionId), requestQuads)
+                .onSuccess { receivedFragments ->
+                    receivedFragments.forEach { (regionId, fragments) ->
+                        val registeredFragments = ArrayList(fragments)
 
                         // Emulate response for empty quads - this is needed to finish waiting for a fragment data
-                        val receivedQuads = geoTiles.map { it.key }.toSet()
+                        val receivedQuads = fragments.map(Fragment::key).toSet()
 
-                        diff(requestQuads, receivedQuads).forEach { emptyQuad ->
-                            registeredTiles.add(
-                                GeoTile(
-                                    emptyQuad,
-                                    emptyList()
+                        diff(requestQuads, receivedQuads) // not received means empty
+                            .forEach { emptyQuad ->
+                                registeredFragments.add(
+                                    Fragment(emptyQuad, emptyList())
                                 )
-                            )
                         }
 
                         myLock.execute {
-                            myRegionTiles
+                            myRegionFragments
                                 .getOrPut(regionId, ::ArrayList)
-                                .addAll(registeredTiles)
+                                .addAll(registeredFragments)
 
                             return@execute
                         }

@@ -6,29 +6,30 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.center
-import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
-import jetbrains.livemap.MapLocationGeocoder.Companion.convertToWorldRects
 import jetbrains.livemap.LiveMapConstants
 import jetbrains.livemap.LiveMapConstants.DEFAULT_LOCATION
+import jetbrains.livemap.LiveMapContext
+import jetbrains.livemap.MapLocationGeocoder.Companion.convertToWorldRects
 import jetbrains.livemap.camera.CameraComponent
-import jetbrains.livemap.camera.UpdateViewProjectionComponent
 import jetbrains.livemap.camera.Viewport
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.projections.Client
 import jetbrains.livemap.projections.World
-import kotlin.math.*
+import kotlin.math.floor
+import kotlin.math.ln
+import kotlin.math.max
+import kotlin.math.min
 
-class StartMapLocationSystem(
+class MapLocationInitializationSystem(
     componentManager: EcsComponentManager,
     private val myZoom: Double?,
     private val myLocationRect: Async<Rect<World>>?
-) : LiveMapSystem(componentManager) {
+) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLocation: LocationComponent
     private lateinit var myCamera: EcsEntity
     private lateinit var myViewport: Viewport
@@ -55,13 +56,8 @@ class StartMapLocationSystem(
             myLocation.locations
                 .run(myViewport::calculateBoundingBox)
                 .calculatePosition { zoom, coordinates ->
-                    val camera = getSingletonEntity<CameraComponent>()
-                    camera.get<CameraComponent>().apply {
-                        this.zoom = floor(zoom)
-                        this.position = coordinates
-                    }
-
-                    camera.tag(::UpdateViewProjectionComponent)
+                    context.camera.requestZoom(floor(zoom))
+                    context.camera.requestPosition(coordinates)
                 }
         }
     }

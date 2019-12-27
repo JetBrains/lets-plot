@@ -50,7 +50,6 @@ object CameraScale {
 
         override fun updateImpl(context: LiveMapContext, dt: Double) {
             val cameraEntity = getSingletonEntity(CameraComponent::class)
-            val camera = cameraEntity.get<CameraComponent>()
 
             cameraEntity.tryGet<CameraScaleEffectComponent>()?.let { scaleEffect ->
                 val animation = getEntityById(scaleEffect.animationId) ?: return
@@ -63,12 +62,12 @@ object CameraScale {
                     else -> 1.0 + deltaZoom
                 }
 
-                camera.zoom = scaleEffect.startZoom + deltaZoom
+                context.camera.requestZoom(scaleEffect.startZoom + deltaZoom)
 
                 if (progress == 1.0) {
-                    camera.position = scaleEffect.viewportPosition
+                    context.camera.requestPosition(scaleEffect.viewportPosition)
                     cameraEntity.remove<CameraScaleEffectComponent>()
-                    cameraEntity.tag(::UpdateViewProjectionComponent)
+                    // cameraEntity.tag(::UpdateViewportComponent)
                 }
             }
         }

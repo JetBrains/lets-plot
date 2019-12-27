@@ -10,6 +10,7 @@ import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.gis.geoprotocol.Boundaries
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.FeatureLevel.STATE
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse
@@ -61,7 +62,7 @@ class GeoResponseJsonTest {
     }
 
     companion object {
-        private val GEOMETRY = StringGeometries.fromGeoJson("Raw geometry string")
+        private val GEOMETRY = Boundaries.fromGeoJson("Raw geometry string")
 
         private val GEOCODED_FEATURE_WITH_DATA = GeoResponseBuilder.GeocodedFeatureBuilder()
             .setQuery("TX")

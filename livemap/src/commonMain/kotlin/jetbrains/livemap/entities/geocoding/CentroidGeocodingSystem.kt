@@ -9,7 +9,7 @@ import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.CENTROID
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.projections.LonLatPoint
 import jetbrains.livemap.projections.WorldPoint
@@ -17,7 +17,7 @@ import jetbrains.livemap.projections.WorldPoint
 class CentroidGeocodingSystem(
     componentManager: EcsComponentManager,
     private val myGeocodingProvider: GeocodingProvider
-) : LiveMapSystem(componentManager) {
+) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myProject: (LonLatPoint) -> WorldPoint
 
     override fun initImpl(context: LiveMapContext) {

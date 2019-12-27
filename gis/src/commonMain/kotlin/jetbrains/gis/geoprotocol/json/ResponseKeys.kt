@@ -16,7 +16,7 @@ internal object ResponseKeys {
     const val NAME = "name"
     const val HIGHLIGHTS = "highlights"
     const val BOUNDARY = "boundary"
-    const val TILES = "tiles"
+    const val FRAGMENTS = "tiles"
     const val LIMIT = "limit"
     const val CENTROID = "centroid"
     const val POSITION = "position"

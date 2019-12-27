@@ -15,7 +15,7 @@ import jetbrains.datalore.base.spatial.QuadKey
 interface GeoRequest {
 
     val features: Set<FeatureOption>
-    val tiles: Map<String, List<QuadKey<LonLat>>>?
+    val fragments: Map<String, List<QuadKey<LonLat>>>?
     val levelOfDetails: LevelOfDetails?
 
     enum class FeatureOption private constructor(private val myValue: String) {
@@ -24,7 +24,7 @@ interface GeoRequest {
         CENTROID("centroid"),
         LIMIT("limit"),
         BOUNDARY("boundary"),
-        TILES("tiles");
+        FRAGMENTS("tiles");
 
         override fun toString(): String {
             return myValue

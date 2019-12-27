@@ -6,17 +6,17 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 
 class RegionIdGeocodingSystem(
     componentManager: EcsComponentManager,
     private val myGeocodingProvider: GeocodingProvider
-) : LiveMapSystem(componentManager) {
+) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
 
-        val requested = getEntities<MapIdComponent>()
+        val requested = getMutableEntities<MapIdComponent>()
             .filterNot { it.contains<WaitingGeocodingComponent>() }
 
         requested.forEach {

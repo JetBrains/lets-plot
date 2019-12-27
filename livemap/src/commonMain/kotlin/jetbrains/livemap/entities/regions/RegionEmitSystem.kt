@@ -6,29 +6,31 @@
 package jetbrains.livemap.entities.regions
 
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.LiveMapSystem
+import jetbrains.livemap.camera.isIntegerZoom
+import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.regions.Utils.zoom
 
-class RegionEmitSystem(componentManager: EcsComponentManager) : LiveMapSystem(componentManager) {
+class RegionEmitSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
     private val myRegionIndex: Utils.RegionsIndex = Utils.RegionsIndex(componentManager)
     private val myPendingFragments = HashMap<String, PendingFragments>()
     private var myPendingZoom = -1
 
     override fun initImpl(context: LiveMapContext) {
-        createEntity("emitted_regions").addComponent(EmittedRegionsComponent())
+        createEntity("emitted_regions").add(EmittedRegionsComponent())
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        camera().ifZoomChanged {
-            if (camera().isIntegerZoom) {
-                myPendingZoom = camera().zoom.toInt()
-                myPendingFragments.clear()
-            }
+        if (context.camera.isZoomChanged && context.camera.isIntegerZoom) {
+            myPendingZoom = context.camera.zoom.toInt()
+            myPendingFragments.clear()
         }
 
+        if (getSingleton<ChangedFragmentsComponent>().requested.isNotEmpty()) {
+            println(getSingleton<ChangedFragmentsComponent>().requested)
+        }
         getSingleton<ChangedFragmentsComponent>().requested.forEach(::wait)
         getSingleton<ChangedFragmentsComponent>().obsolete.forEach(::remove)
         getSingleton<EmittedFragmentsComponent>().keys().forEach(::accept)
@@ -38,6 +40,7 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : LiveMapSystem(co
 
         for (readyRegion in checkReadyRegions()) {
             emittedRegionsComponent.keys().add(readyRegion)
+            println("HEHEY")
             renderRegion(readyRegion)
         }
     }

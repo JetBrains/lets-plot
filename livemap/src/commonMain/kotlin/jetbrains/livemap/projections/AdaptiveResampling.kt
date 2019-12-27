@@ -10,7 +10,10 @@ import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.base.typedGeometry.plus
 import kotlin.math.sqrt
 
-class AdaptiveResampling<InT, OutT>(private val transform: (Vec<InT>) -> Vec<OutT>, epsilon: Double) {
+class AdaptiveResampling<InT, OutT>(
+    private val transform: (Vec<InT>) -> Vec<OutT>,
+    epsilon: Double
+) {
     private val epsilonSqr: Double = epsilon * epsilon
 
     private fun <T> MutableList<T>.pop(): T {
@@ -70,7 +73,7 @@ class AdaptiveResampling<InT, OutT>(private val transform: (Vec<InT>) -> Vec<Out
     private fun length(p1: Vec<*>, p2: Vec<*>): Double {
         val x = p2.x - p1.x
         val y = p2.y - p1.y
-        return sqrt(x * x + y * y)
+        return x * x + y * y
     }
 
     private fun distance(p: Vec<*>, l1: Vec<*>, l2: Vec<*>): Double {

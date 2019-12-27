@@ -14,7 +14,7 @@ import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 
-class LiveMapCanvasFigure (private val liveMap: Async<BaseLiveMap>) : CanvasFigure {
+class LiveMapCanvasFigure (private val liveMap: Async<LiveMap>) : CanvasFigure {
     private val myDimension = ValueProperty(DoubleVector.ZERO)
     private val myLiveMapPresenter = LiveMapPresenter()
 

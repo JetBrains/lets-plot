@@ -73,15 +73,25 @@ object Renderers {
                 }
             }
 
-            Utils.apply(entity.get<StyleComponent>(), ctx)
+            val style = entity.get<StyleComponent>()
+
             ctx.setLineJoin(LineJoin.ROUND)
 
             ctx.beginPath()
 
             drawLines(entity.get<ScreenGeometryComponent>().geometry, ctx) { c ->
                 c.closePath()
-                c.fill()
-                c.stroke()
+
+                if (style.fillColor != null) {
+                    c.setFillStyle(style.fillColor)
+                    c.fill()
+                }
+
+                if (style.strokeColor != null && style.strokeWidth != 0.0) {
+                    c.setStrokeStyle(style.strokeColor)
+                    c.setLineWidth(style.strokeWidth)
+                    c.stroke()
+                }
             }
 
             ctx.restore()

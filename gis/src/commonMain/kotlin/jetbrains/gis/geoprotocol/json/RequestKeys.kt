@@ -20,7 +20,7 @@ internal object RequestKeys {
     const val MAP_REGION_VALUES = "values"
     const val NAMESAKE_EXAMPLE_LIMIT = "namesake_example_limit"
 
-    const val TILES = "tiles"
+    const val FRAGMENTS = "tiles"
 
     const val AMBIGUITY_RESOLVER = "ambiguity_resolver"
     const val AMBIGUITY_IGNORING_STRATEGY = "ambiguity_resolver_ignoring_strategy"

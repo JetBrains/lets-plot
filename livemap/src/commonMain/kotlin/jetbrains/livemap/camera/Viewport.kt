@@ -16,7 +16,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 open class Viewport internal constructor(
-    private val helper: ViewportHelper<World>,
+    private val helper: ViewportHelper,
     val size: ClientPoint
 ) {
 
@@ -83,7 +83,7 @@ open class Viewport internal constructor(
     }
 
     companion object {
-        fun create(helper: ViewportHelper<World>, size: ClientPoint, position: WorldPoint): Viewport {
+        fun create(helper: ViewportHelper, size: ClientPoint, position: WorldPoint): Viewport {
             return Viewport(helper, size).apply {
                 this.position = position
             }

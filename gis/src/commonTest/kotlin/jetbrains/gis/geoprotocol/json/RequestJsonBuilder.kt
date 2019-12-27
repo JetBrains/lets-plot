@@ -48,7 +48,7 @@ class RequestJsonBuilder private constructor(private val myRequestBuilder: Reque
 
     fun featureOptions(vararg v: FeatureOption) = apply { v.forEach { myRequestBuilder.addFeature(it) } }
     fun resolution(v: Int?) = apply { myRequestBuilder.setResolution(v) }
-    fun tiles(v: Map<String, List<QuadKey<LonLat>>>?) = apply { myRequestBuilder.setTiles(v) }
+    fun tiles(v: Map<String, List<QuadKey<LonLat>>>?) = apply { myRequestBuilder.setFragments(v) }
     fun highlights() = apply { myRequestBuilder.addFeature(FeatureOption.HIGHLIGHTS) }
     fun position() = apply { myRequestBuilder.addFeature(FeatureOption.POSITION) }
     fun centroid() = apply { myRequestBuilder.addFeature(FeatureOption.CENTROID) }

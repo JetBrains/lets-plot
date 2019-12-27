@@ -13,7 +13,7 @@ import jetbrains.livemap.DevParams.Companion.DEBUG_TILES
 import jetbrains.livemap.DevParams.Companion.RASTER_TILES
 import jetbrains.livemap.DevParams.Companion.VECTOR_TILES
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.api.internalTiles
+import jetbrains.livemap.api.liveMapTiles
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem
@@ -65,7 +65,7 @@ interface TileLoadingSystemFactory {
             val vectorTiles = devParams.read(VECTOR_TILES)
             return VectorTileLoadingSystemFactory(
                 devParams.read(COMPUTATION_PROJECTION_QUANT),
-                internalTiles {
+                liveMapTiles {
                     host = vectorTiles.host
                     port = vectorTiles.port
                     theme = vectorTiles.theme

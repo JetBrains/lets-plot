@@ -26,7 +26,7 @@ object GeoRequestBuilder {
         abstract val mode: GeocodingMode
         protected val features: MutableSet<FeatureOption> = HashSet<FeatureOption>()
 
-        protected var tiles: MutableMap<String, List<QuadKey<LonLat>>>? = null
+        protected var fragments: MutableMap<String, List<QuadKey<LonLat>>>? = null
             private set
 
         protected var levelOfDetails: LevelOfDetails? = null
@@ -44,16 +44,16 @@ object GeoRequestBuilder {
             return mySelf
         }
 
-        fun setTiles(keys: Map<String, List<QuadKey<LonLat>>>?): T {
-            this.tiles = keys?.let { HashMap(it) }
+        fun setFragments(keys: Map<String, List<QuadKey<LonLat>>>?): T {
+            this.fragments = keys?.let { HashMap(it) }
             return mySelf
         }
 
-        fun addTiles(id: String, keys: List<QuadKey<LonLat>>): T {
-            if (tiles == null) {
-                tiles = hashMapOf<String, List<QuadKey<LonLat>>>()
+        fun addFragments(id: String, keys: List<QuadKey<LonLat>>): T {
+            if (fragments == null) {
+                fragments = hashMapOf<String, List<QuadKey<LonLat>>>()
             }
-            this.tiles!!.set(id, keys)
+            this.fragments!!.set(id, keys)
             return mySelf
         }
 
@@ -87,7 +87,7 @@ object GeoRequestBuilder {
         override fun build(): GeoRequest {
             return MyReverseGeocodingSearchRequest(
                 features,
-                tiles,
+                fragments,
                 levelOfDetails,
                 coordinates,
                 level,
@@ -97,12 +97,12 @@ object GeoRequestBuilder {
 
         internal class MyReverseGeocodingSearchRequest(
             features: Set<FeatureOption>,
-            tiles: Map<String, List<QuadKey<LonLat>>>?,
+            fragments: Map<String, List<QuadKey<LonLat>>>?,
             levelOfDetails: LevelOfDetails?,
             override val coordinates: List<DoubleVector>,
             override val level: FeatureLevel,
             override val parent: MapRegion?
-        ) : MyGeoRequestBase(features, tiles, levelOfDetails), ReverseGeocodingSearchRequest
+        ) : MyGeoRequestBase(features, fragments, levelOfDetails), ReverseGeocodingSearchRequest
     }
 
     class GeocodingRequestBuilder : RequestBuilderBase<GeocodingRequestBuilder>() {
@@ -130,7 +130,7 @@ object GeoRequestBuilder {
                 featureLevel,
                 namesakeExampleLimit,
                 features,
-                tiles,
+                fragments,
                 levelOfDetails
             )
         }
@@ -140,9 +140,9 @@ object GeoRequestBuilder {
             override val level: FeatureLevel?,
             override val namesakeExampleLimit: Int,
             features: Set<FeatureOption>,
-            tiles: Map<String, List<QuadKey<LonLat>>>?,
+            fragments: Map<String, List<QuadKey<LonLat>>>?,
             levelOfDetails: LevelOfDetails?
-        ) : MyGeoRequestBase(features, tiles, levelOfDetails), GeocodingSearchRequest
+        ) : MyGeoRequestBase(features, fragments, levelOfDetails), GeocodingSearchRequest
 
         companion object {
             private const val DEFAULT_NAMESAKE_EXAMPLE_LIMIT = 10
@@ -167,7 +167,7 @@ object GeoRequestBuilder {
             return MyExplicitSearchRequest(
                 ids,
                 features,
-                tiles,
+                fragments,
                 levelOfDetails
             )
         }
@@ -175,15 +175,15 @@ object GeoRequestBuilder {
         internal class MyExplicitSearchRequest(
             override val ids: List<String>,
             features: Set<FeatureOption>,
-            tiles: Map<String, List<QuadKey<LonLat>>>?,
+            fragments: Map<String, List<QuadKey<LonLat>>>?,
             levelOfDetails: LevelOfDetails?
-        ) : MyGeoRequestBase(features, tiles, levelOfDetails), ExplicitSearchRequest
+        ) : MyGeoRequestBase(features, fragments, levelOfDetails), ExplicitSearchRequest
     }
 
 
     internal open class MyGeoRequestBase(
         override val features: Set<FeatureOption>,
-        override val tiles: Map<String, List<QuadKey<LonLat>>>?,
+        override val fragments: Map<String, List<QuadKey<LonLat>>>?,
         override val levelOfDetails: LevelOfDetails?
     ) : GeoRequest
 

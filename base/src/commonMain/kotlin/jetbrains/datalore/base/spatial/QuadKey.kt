@@ -20,9 +20,7 @@ data class QuadKey<T>(
 
 fun QuadKey<LonLat>.computeRect(): Rect<LonLat> {
     val origin = this.computeOrigin(EARTH_RECT)
-    val dimension = EARTH_RECT.dimension * (1.0 / GeoUtils.getTileCount(
-        length
-    ))
+    val dimension = EARTH_RECT.dimension / calulateQuadsCount(length).toDouble()
 
     val flippedY = EARTH_RECT.scalarBottom - (origin.scalarY + dimension.scalarY - EARTH_RECT.scalarTop)
     return Rect(origin.transform(newY = { flippedY }), dimension)
@@ -34,14 +32,12 @@ fun <T> QuadKey<T>.computeRect(rect: Rect<T>): Rect<T> {
 
 fun <T, OutT> QuadKey<T>.projectRect(rect: Rect<OutT>): Rect<OutT> {
     val origin = projectOrigin(rect)
-    val dimension = rect.dimension * (1.0 / GeoUtils.getTileCount(
-        length
-    ))
+    val dimension = rect.dimension / calulateQuadsCount(length).toDouble()
 
     return Rect(origin, dimension)
 }
 
-fun QuadKey<LonLat>.zoom() = ((length - 1) / 3 + 1) * 3
+fun QuadKey<LonLat>.zoom() = length
 
 fun <TypeT> QuadKey<TypeT>.computeOrigin(mapRect: Rect<TypeT>): Vec<TypeT> {
     return projectOrigin(mapRect)

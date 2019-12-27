@@ -6,7 +6,6 @@
 package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertRectangleEquals
-import jetbrains.datalore.base.spatial.GeoUtils.tileXYToTileID
 import jetbrains.datalore.base.typedGeometry.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -48,6 +47,6 @@ class GeoUtilsTest {
     @Test
     fun calculateBostonTileIdByCentroid() {
         val zoom = 4
-        assertEquals("0123", tileXYToTileID(5, 3, zoom))
+        assertEquals("0123", xyToKey(5, 3, zoom))
     }
 }

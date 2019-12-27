@@ -40,7 +40,7 @@ import jetbrains.gis.geoprotocol.json.RequestKeys.RESOLUTION
 import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_COORDINATES
 import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_LEVEL
 import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_PARENT
-import jetbrains.gis.geoprotocol.json.RequestKeys.TILES
+import jetbrains.gis.geoprotocol.json.RequestKeys.FRAGMENTS
 import kotlin.math.abs
 
 object RequestJsonParser {
@@ -62,9 +62,9 @@ object RequestJsonParser {
         requestFluentJson
             .getOptionalInt(RESOLUTION) { builder.setResolution(it) }
             .forEnums(FEATURE_OPTIONS, { builder.addFeature(it) }, FeatureOption.values())
-            .getExistingObject(TILES) { tiles -> tiles
+            .getExistingObject(FRAGMENTS) { tiles -> tiles
                 .forEntries { id, quadKeys ->
-                    builder.addTiles(id, stringStreamOf(quadKeys as Arr).requireNoNulls().map {
+                    builder.addFragments(id, stringStreamOf(quadKeys as Arr).requireNoNulls().map {
                         QuadKey<LonLat>(
                             it
                         )

@@ -8,6 +8,12 @@ package jetbrains.livemap
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.observable.event.EventHandler
+import jetbrains.datalore.base.observable.event.EventSource
+import jetbrains.datalore.base.observable.event.SimpleEventSource
+import jetbrains.datalore.base.observable.property.Property
+import jetbrains.datalore.base.observable.property.ValueProperty
+import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.div
@@ -79,7 +85,7 @@ class LiveMap(
     private val myGeocodingProvider: GeocodingProvider,
     private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?
-) : BaseLiveMap() {
+) : EventSource<Throwable>, Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
     private var myInitialized: Boolean = false
@@ -91,13 +97,31 @@ class LiveMap(
     private lateinit var mySchedulerSystem: SchedulerSystem
     private lateinit var myUiService: UiService
 
-    override fun draw(canvasControl: CanvasControl) {
+    private val throwableSource = SimpleEventSource<Throwable>()
+    val isLoading: Property<Boolean> = ValueProperty(true)
+
+    override fun addHandler(handler: EventHandler<Throwable>): Registration {
+        return throwableSource.addHandler(handler)
+    }
+
+    private fun fireThrowable(throwable: Throwable) {
+        throwableSource.fire(throwable)
+    }
+
+    fun draw(canvasControl: CanvasControl) {
         val componentManager = EcsComponentManager()
+        val camera = MutableCamera(componentManager)
+            .apply {
+                requestZoom(viewport.zoom.toDouble())
+                requestPosition(viewport.position)
+            }
+
         myContext = LiveMapContext(
             myMapProjection,
             canvasControl,
             MapRenderContext(viewport, canvasControl),
-            ::fireThrowable
+            ::fireThrowable,
+            camera
         )
 
         myUiService = UiService(componentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
@@ -174,7 +198,7 @@ class LiveMap(
                 LocationCounterSystem(componentManager, myMapLocationRect == null),
                 LocationGeocodingSystem(componentManager, myGeocodingProvider),
                 LocationCalculateSystem(componentManager),
-                StartMapLocationSystem(componentManager, myZoom?.toDouble(), myMapLocationRect),
+                MapLocationInitializationSystem(componentManager, myZoom?.toDouble(), myMapLocationRect),
 
                 ApplyPointSystem(componentManager),
 
@@ -183,7 +207,7 @@ class LiveMap(
                 // Service systems
                 AnimationObjectSystem(componentManager),
                 AnimationSystem(componentManager),
-                ViewProjectionUpdateSystem(componentManager),
+                ViewportUpdateSystem(componentManager),
                 LiveMapUiSystem(myUiService, componentManager, myMapLocationConsumer, myLayerManager),
 
                 CellStateUpdateSystem(componentManager),

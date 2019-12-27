@@ -25,7 +25,7 @@ interface GeoResponse {
             val limit: GeoRectangle?,
             val boundary: Boundary<Generic>?,
             val highlights: List<String>?,
-            val tiles: List<GeoTile>?
+            val fragments: List<Fragment>?
         )
     }
 

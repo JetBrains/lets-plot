@@ -52,12 +52,12 @@ internal object RequestAssertions {
         }
 
         fun hasTiles(expected: Map<String, List<QuadKey<LonLat>>>): TAssertion {
-            assertEquals(expected, actual.tiles)
+            assertEquals(expected, actual.fragments)
             return mySelf
         }
 
         fun hasNoTiles(): TAssertion {
-            assertTrue(actual.tiles == null || actual.tiles!!.isEmpty())
+            assertTrue(actual.fragments == null || actual.fragments!!.isEmpty())
             return mySelf
         }
 

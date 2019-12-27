@@ -11,6 +11,7 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.projections.MapProjection
 import jetbrains.livemap.tiles.components.CellStateComponent
 import jetbrains.livemap.tiles.components.StatisticsComponent
@@ -20,8 +21,10 @@ class CellStateUpdateSystem(componentManager: EcsComponentManager) : AbstractSys
 
     override fun initImpl(context: LiveMapContext) {
         createEntity("CellState")
-            .addComponent(StatisticsComponent())
-            .addComponent(CellStateComponent())
+            .addComponents {
+                + StatisticsComponent()
+                + CellStateComponent()
+            }
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {

@@ -33,7 +33,7 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
         return liveMapConfig {
             size = dimension
 
-            tileService = internalTiles {}
+            tileService = internalTiles()
 
             geocodingService = liveMapGeocoding {
                 host = "geo.datalore.io"
@@ -48,11 +48,11 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
                 loopY = false
             }
 
-            params(
-                DevParams.DEBUG_GRID.key to true,
-                DevParams.MICRO_TASK_EXECUTOR.key to "ui_thread",
-                DevParams.PERF_STATS.key to true
-            )
+//            params(
+//                DevParams.DEBUG_GRID.key to true,
+//                DevParams.MICRO_TASK_EXECUTOR.key to "ui_thread",
+//                DevParams.PERF_STATS.key to true
+//            )
 
             mapLocationConsumer = { Clipboard.copy(LiveMapLocation.getLocationString(it)) }
         }

@@ -62,8 +62,6 @@ object GeometryTransform {
                 MultiLineStringTransform(geometry.multiLineString, transform).map(::createMultiLineString)
             MULTI_POINT ->
                 MultiPointTransform(geometry.multiPoint, transform).map(::createMultiPoint)
-            else ->
-                throw IllegalArgumentException("Unsupported geometry type: ${geometry.type}")
         }
     }
 
@@ -76,7 +74,7 @@ object GeometryTransform {
 
         fun next(p: Vec<InT>, ring: MutableCollection<Vec<OutT>>) {
             if (myRing == null || // first call
-                ring != myRing) { // next ring
+                ring !== myRing) { // next ring
                 myRing = ring
                 myPrevPoint = null
             }

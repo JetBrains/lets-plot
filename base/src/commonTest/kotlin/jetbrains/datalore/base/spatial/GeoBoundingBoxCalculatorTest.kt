@@ -9,17 +9,11 @@ package jetbrains.datalore.base.spatial
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MAX_LATITUDE_GETTER
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MAX_LONGITUDE_GETTER
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MIN_LATITUDE_GETTER
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.MIN_LONGITUDE_GETTER
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertDoubleEquals
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.point
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.rectangle
-import jetbrains.datalore.base.spatial.GeoUtils.BBOX_CALCULATOR
-import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
-import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.*
 import kotlin.test.*
 
 interface World
@@ -32,7 +26,7 @@ class GeoBoundingBoxCalculatorTest {
 
         val rect = GeoBoundingBoxCalculator(
             Rect<World>(0.0,0.0, 256.0, 256.0), true, false
-        ).calculateBoundingBoxFromRectangles(listOf(pointRect))
+        ).rectsBBox(listOf(pointRect))
 
         assertNotEquals(pointRect, rect)
     }
@@ -127,9 +121,9 @@ class GeoBoundingBoxCalculatorTest {
     fun calculateLoopLimitRangeForSingleRange() {
         val mapRange = ClosedRange.closed(0.0, 255.99999999999997)
         val range = ClosedRange.closed(100.0, 100.0)
-        val coordinateHelper = createCoordinateHelper(listOf(range))
+        val segments = sequenceOf(Segment(range.lowerEndpoint(), range.upperEndpoint()))
 
-        val limitRange = calculateLoopLimitRange(coordinateHelper, mapRange)
+        val limitRange = calculateLoopLimitRange(segments, mapRange)
         assertDoubleEquals(range.lowerEndpoint(), limitRange.lowerEndpoint())
         assertDoubleEquals(range.upperEndpoint(), limitRange.upperEndpoint())
     }
@@ -160,10 +154,11 @@ class GeoBoundingBoxCalculatorTest {
             return rectangle(point.x, point.y, point.x, point.y)
         }
 
+
         private fun longitudeLimitEqualsChecker(expectedLeft: Double, expectedRight: Double): Consumer<GeoRectangle> {
             return { location: GeoRectangle ->
-                assertDoubleEquals(expectedLeft, location.minLongitude())
-                assertDoubleEquals(expectedRight, location.maxLongitude())
+                assertDoubleEquals(expectedLeft, location.startLongitude())
+                assertDoubleEquals(expectedRight, location.endLongitude())
             }
         }
 
@@ -172,7 +167,7 @@ class GeoBoundingBoxCalculatorTest {
         }
 
         private fun longitudeLimitEqualsChecker(expectedLeft: GeoRectangle, expectedRight: GeoRectangle): Consumer<GeoRectangle> {
-            return longitudeLimitEqualsChecker(expectedLeft.minLongitude(), expectedRight.maxLongitude())
+            return longitudeLimitEqualsChecker(expectedLeft.startLongitude(), expectedRight.endLongitude())
         }
 
         private fun latitudeLimitEqualsChecker(expectedBottom: Double, expectedTop: Double): Consumer<GeoRectangle> {
@@ -220,54 +215,18 @@ class GeoBoundingBoxCalculatorTest {
             lonLats.add(point.x)
             lonLats.add(point.y)
         }
-        return convertToGeoRectangle(BBOX_CALCULATOR.calculateBoundingBox(lonLats))
-    }
-
-    private fun calculateLocationFromLonLatArrays(vararg points: DoubleVector): GeoRectangle {
-        val pointList = listOf(*points)
-        val longitudes = asCoordinateList(pointList, X_GETTER)
-        val latitudes = asCoordinateList(pointList, Y_GETTER)
-
-        return convertToGeoRectangle(BBOX_CALCULATOR.calculateBoundingBox(longitudes, latitudes))
-    }
-
-    private fun calculateLocationFromLimitArrays(vararg rectangles: GeoRectangle): GeoRectangle {
-        val rectangleList = listOf(*rectangles)
-        val minLongitudes = asCoordinateList(rectangleList, MIN_LONGITUDE_GETTER)
-        val minLatitudes = asCoordinateList(rectangleList, MIN_LATITUDE_GETTER)
-        val maxLongitudes = asCoordinateList(rectangleList, MAX_LONGITUDE_GETTER)
-        val maxLatitudes = asCoordinateList(rectangleList, MAX_LATITUDE_GETTER)
-
-        return convertToGeoRectangle(BBOX_CALCULATOR.calculateBoundingBox(minLongitudes, minLatitudes, maxLongitudes, maxLatitudes))
+        return convertToGeoRectangle(BBOX_CALCULATOR.pointsBBox(lonLats))
     }
 
     private fun calculateLocationFromBoundingBoxArrays(vararg rectangles: GeoRectangle): GeoRectangle {
-        return convertToGeoRectangle(BBOX_CALCULATOR.calculateBoundingBoxFromGeoRectangles(listOf(*rectangles)))
+        return convertToGeoRectangle(BBOX_CALCULATOR.geoRectsBBox(listOf(*rectangles)))
     }
 
     private fun checkLocationsWhichCalculatedFromPoints(locationChecker: Consumer<GeoRectangle>, vararg points: DoubleVector) {
         locationChecker(calculateLocationFromCoordinateArray(*points))
-        locationChecker(calculateLocationFromLonLatArrays(*points))
     }
 
     private fun checkLocationsWhichCalculatedFromRectangles(locationChecker: Consumer<GeoRectangle>, vararg rectangles: GeoRectangle) {
-        locationChecker(calculateLocationFromLimitArrays(*rectangles))
         locationChecker(calculateLocationFromBoundingBoxArrays(*rectangles))
-    }
-
-    private fun createCoordinateHelper(ranges: List<ClosedRange<Double>>): GeoBoundingBoxCalculator.CoordinateHelper {
-        return object : GeoBoundingBoxCalculator.CoordinateHelper {
-            override fun minCoord(index: Int): Double {
-                return ranges[index].lowerEndpoint()
-            }
-
-            override fun maxCoord(index: Int): Double {
-                return ranges[index].upperEndpoint()
-            }
-
-            override fun size(): Int {
-                return ranges.size
-            }
-        }
     }
 }

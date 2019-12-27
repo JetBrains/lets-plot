@@ -27,6 +27,7 @@ class FragmentUpdateSystem(
             .addComponents {
                 + ChangedFragmentsComponent()
                 + EmptyFragmentsComponent()
+                + ExistingRegionsComponent()
             }
     }
 
@@ -34,8 +35,8 @@ class FragmentUpdateSystem(
         val cellStateComponent = getSingleton<CellStateComponent>()
         val changedFragmentsComponent = getSingleton<ChangedFragmentsComponent>()
         val emptyFragments = getSingleton<EmptyFragmentsComponent>()
+        val existingRegions = getSingleton<ExistingRegionsComponent>().existingRegions
 
-        val quadsToAdd = cellStateComponent.quadsToAdd
         val quadsToRemove = cellStateComponent.quadsToRemove
 
         val fragmentsToAdd = ArrayList<FragmentKey>()
@@ -44,6 +45,19 @@ class FragmentUpdateSystem(
         for (regionEntity in getEntities(REGION_ENTITY_COMPONENTS)) {
             val bbox = regionEntity.get<RegionBBoxComponent>().bbox
             val regionId = regionEntity.get<RegionIdComponent>().regionId
+
+            var quadsToAdd = cellStateComponent.quadsToAdd
+
+            if (quadsToAdd.isNotEmpty()) {
+                println(quadsToAdd)
+                println(existingRegions.contains(regionId))
+                println(cellStateComponent.visibleQuads)
+            }
+
+            if (!existingRegions.contains(regionId)) {
+                quadsToAdd = cellStateComponent.visibleQuads
+                existingRegions.add(regionId)
+            }
 
             for (quad in quadsToAdd) {
                 if (!emptyFragments.contains(regionId, quad) && bbox.intersect(quad)) {

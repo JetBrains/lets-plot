@@ -7,23 +7,24 @@ package jetbrains.livemap.camera
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator
+import jetbrains.datalore.base.spatial.calculateQuadKeys
+import jetbrains.datalore.base.spatial.rectsBBox
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.projections.MapRuler
 import jetbrains.livemap.projections.World
 import jetbrains.livemap.projections.WorldPoint
 import jetbrains.livemap.projections.WorldRectangle
 import jetbrains.livemap.tiles.CellKey
-import jetbrains.livemap.tiles.calculateCellKeys
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-class ViewportHelper<TypeT>(
-    private val myMapRect: Rect<TypeT>,
+class ViewportHelper(
+    private val myMapRect: Rect<World>,
     private val myLoopX: Boolean,
     private val myLoopY: Boolean
-) : ViewportMath, MapRuler<TypeT> {
+) : ViewportMath, MapRuler<World> {
     private fun splitRange(
         range: ClosedRange<Double>,
         mapRange: ClosedRange<Double>,
@@ -118,8 +119,8 @@ class ViewportHelper<TypeT>(
         return abs(deltaY(y1, y2))
     }
 
-    override fun calculateBoundingBox(xyRects: List<Rect<TypeT>>): Rect<TypeT> {
-        return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).calculateBoundingBoxFromRectangles(xyRects)
+    override fun calculateBoundingBox(xyRects: List<Rect<World>>): Rect<World> {
+        return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).rectsBBox(xyRects)
     }
 
     override fun normalizeX(x: Double): Double {
@@ -144,21 +145,20 @@ class ViewportHelper<TypeT>(
     }
 
     override fun getCells(viewRect: WorldRectangle, cellLevel: Int): Set<CellKey> =
-        HashSet<CellKey>().apply {
-            splitRect(viewRect).forEach {
-                this.addAll(calculateCellKeys(myMapRect, it, cellLevel))
-            }
-        }
+        splitRect(viewRect)
+            .map { calculateQuadKeys(myMapRect, it, cellLevel, ::CellKey) }
+            .flatten()
+            .toSet()
 
-    private fun splitRect(rect: WorldRectangle): List<Rect<TypeT>> {
+    private fun splitRect(rect: WorldRectangle): List<Rect<World>> {
         val xRanges = splitRange(rect.xRange(), myMapRect.xRange(), myLoopX)
         val yRanges = splitRange(rect.yRange(), myMapRect.yRange(), myLoopY)
 
-        val rects = ArrayList<Rect<TypeT>>()
+        val rects = ArrayList<Rect<World>>()
         xRanges.forEach { xRange ->
             yRanges.forEach { yRange ->
                 rects.add(
-                    Rect<TypeT>(
+                    Rect<World>(
                         xRange.lowerEndpoint(),
                         yRange.lowerEndpoint(),
                         length(xRange),

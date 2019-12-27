@@ -17,16 +17,15 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val cameraEntity = getSingletonEntity(CameraComponent::class)
-        val camera = cameraEntity.get<CameraComponent>()
         val mouseInput = cameraEntity.get<MouseInputComponent>()
         val viewport = context.mapRenderContext.viewport
 
         val dragDistance = mouseInput.dragDistance
 
         if (dragDistance != null && dragDistance != Vector.ZERO) {
-            camera.position = viewport.getMapCoord(
+            context.camera.requestPosition(viewport.getMapCoord(
                 viewport.center - dragDistance.toClientPoint()
-            )
+            ))
         }
     }
 }

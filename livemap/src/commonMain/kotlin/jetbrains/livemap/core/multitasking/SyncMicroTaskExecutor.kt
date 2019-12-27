@@ -31,15 +31,13 @@ class SyncMicroTaskExecutor(
                 taskIterator.next().run {
                     var iterations = quantumIterations
 
-                    if (microThread is MicroTask<*>) {
-                        while (iterations-- > 0 && microThread.alive()) {
-                            microThread.resume()
-                        }
+                    while (iterations-- > 0 && microThread.alive()) {
+                        microThread.resume()
+                    }
 
-                        if (!microThread.alive()) {
-                            finishedTasks.add(this)
-                            taskIterator.remove()
-                        }
+                    if (!microThread.alive()) {
+                        finishedTasks.add(this)
+                        taskIterator.remove()
                     }
                 }
             }

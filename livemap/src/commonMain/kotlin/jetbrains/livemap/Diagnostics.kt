@@ -13,12 +13,14 @@ import jetbrains.livemap.core.Utils.formatDouble
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
+import jetbrains.livemap.core.rendering.layers.CanvasLayer
 import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.Text
 import jetbrains.livemap.entities.regions.CachedFragmentsComponent
 import jetbrains.livemap.entities.regions.DownloadingFragmentsComponent
+import jetbrains.livemap.entities.regions.FragmentKey
 import jetbrains.livemap.entities.regions.StreamingFragmentsComponent
 import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem.HttpTileResponseComponent
 import jetbrains.livemap.tiles.vector.TileLoadingSystem.TileResponseComponent
@@ -141,7 +143,7 @@ open class Diagnostics {
                     .map { it.get<CanvasLayerComponent>().canvasLayer }
                     .toSet()
                     .intersect(registry.getSingleton<LayersOrderComponent>().canvasLayers)
-                    .joinToString { it.name }
+                    .joinToString(transform = CanvasLayer::name)
 
                 debugService.setValue(DIRTY_LAYERS, "Dirty layers: $dirtyLayers")
             }
@@ -190,7 +192,7 @@ open class Diagnostics {
 
             override fun update() {
                 val counts = registry.tryGetSingleton<DownloadingFragmentsComponent>()
-                    ?.let { "D: ${it.downloading.size} Q: ${it.queue.values.sumBy { queue -> queue.size }}" }
+                    ?.let { "D: ${it.downloading.size} Q: ${it.queue.values.sumBy(MutableSet<FragmentKey>::size)}" }
                     ?: "D: 0 Q: 0"
 
                 debugService.setValue(DOWNLOADING_FRAGMENTS, "Downloading fragments: $counts")

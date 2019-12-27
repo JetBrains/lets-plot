@@ -27,9 +27,9 @@ internal object ProtocolJsonHelper {
 
     fun formatGeoRectangle(rect: GeoRectangle): FluentObject =
         FluentObject()
-            .put(MIN_LON, rect.minLongitude())
+            .put(MIN_LON, rect.startLongitude())
             .put(MIN_LAT, rect.minLatitude())
             .put(MAX_LAT, rect.maxLatitude())
-            .put(MAX_LON, rect.maxLongitude())
+            .put(MAX_LON, rect.endLongitude())
 }
 

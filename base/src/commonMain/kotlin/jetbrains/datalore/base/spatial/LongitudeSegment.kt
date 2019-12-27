@@ -8,28 +8,28 @@ package jetbrains.datalore.base.spatial
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
 
-internal class LongitudeRange(lower: Double, upper: Double) {
-    private val myLower: Double = limitLon(lower)
-    private val myUpper: Double = limitLon(upper)
+internal class LongitudeSegment(start: Double, end: Double) {
+    private val myStart: Double = limitLon(start)
+    private val myEnd: Double = limitLon(end)
 
     val isEmpty: Boolean
-        get() = myUpper == myLower
+        get() = myEnd == myStart
 
-    fun lower(): Double {
-        return myLower
+    fun start(): Double {
+        return myStart
     }
 
-    fun upper(): Double {
-        return myUpper
+    fun end(): Double {
+        return myEnd
     }
 
     fun length(): Double {
-        return myUpper - myLower + if (myUpper < myLower) FULL_LONGITUDE else 0.0
+        return myEnd - myStart + if (myEnd < myStart) FULL_LONGITUDE else 0.0
     }
 
-    fun encloses(longitudeRange: LongitudeRange): Boolean {
+    fun encloses(longitudeSegment: LongitudeSegment): Boolean {
         val externalRanges = splitByAntiMeridian()
-        val internalRanges = longitudeRange.splitByAntiMeridian()
+        val internalRanges = longitudeSegment.splitByAntiMeridian()
 
         for (internalRange in internalRanges) {
             if (!disjointRangesEncloseRange(
@@ -43,44 +43,43 @@ internal class LongitudeRange(lower: Double, upper: Double) {
         return true
     }
 
-    fun invert(): LongitudeRange {
-        return LongitudeRange(myUpper, myLower)
+    fun invert(): LongitudeSegment {
+        return LongitudeSegment(myEnd, myStart)
     }
 
     fun splitByAntiMeridian(): List<ClosedRange<Double>> {
-        val result = ArrayList<ClosedRange<Double>>()
-        splitRange(
-            myLower, myUpper,
+        return splitSegment(
+            myStart, myEnd,
             MIN_LONGITUDE,
-            MAX_LONGITUDE, result
+            MAX_LONGITUDE
         )
-        return result
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
-        val that = other as LongitudeRange
-        return that.myLower.equals(myLower) && that.myUpper.equals(myUpper)
+        val that = other as LongitudeSegment
+        return that.myStart.equals(myStart) && that.myEnd.equals(myEnd)
     }
 
     override fun hashCode(): Int {
-        return listOf(myLower, myUpper).hashCode()
+        return listOf(myStart, myEnd).hashCode()
     }
 
     companion object {
-        fun splitRange(
-            lower: Double,
-            upper: Double,
+        fun splitSegment(
+            start: Double,
+            end: Double,
             min: Double,
-            max: Double,
-            result: MutableCollection<ClosedRange<Double>>
-        ) {
-            if (upper < lower) {
-                result.add(ClosedRange.closed(lower, max))
-                result.add(ClosedRange.closed(min, upper))
+            max: Double
+        ) : List<ClosedRange<Double>> {
+            return if (start <= end) {
+                listOf(ClosedRange.closed(start, end))
             } else {
-                result.add(ClosedRange.closed(lower, upper))
+                listOf(
+                    ClosedRange.closed(start, max),
+                    ClosedRange.closed(min, end)
+                )
             }
         }
 

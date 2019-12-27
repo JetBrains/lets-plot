@@ -5,10 +5,7 @@
 
 package jetbrains.datalore.plot.config.geo
 
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.GeoUtils.BBOX_CALCULATOR
-import jetbrains.datalore.base.spatial.GeoUtils.convertToGeoRectangle
-import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y
@@ -63,7 +60,7 @@ internal class GeometryDataFrameBuilder(private val myGeoDataKind: GeoDataKind) 
 
     fun addBoundary(id: String, multiPoint: MultiPoint<LonLat>) {
         if (myGeoDataKind === GeoDataKind.LIMIT) {
-            val bbox = BBOX_CALCULATOR.calculateBoundingBoxFromRectangles(listOf(multiPoint.boundingBox()))
+            val bbox = BBOX_CALCULATOR.rectsBBox(listOf(multiPoint.boundingBox()))
             insertGeoRectangle(id, convertToGeoRectangle(bbox))
         } else {
             insertPoints(id, multiPoint, myGeoDataKind === GeoDataKind.BOUNDARY)
@@ -72,7 +69,7 @@ internal class GeometryDataFrameBuilder(private val myGeoDataKind: GeoDataKind) 
 
     fun addBoundary(id: String, lineString: LineString<LonLat>) {
         if (myGeoDataKind === GeoDataKind.LIMIT) {
-            val bbox = BBOX_CALCULATOR.calculateBoundingBoxFromRectangles(listOf(lineString.boundingBox()))
+            val bbox = BBOX_CALCULATOR.rectsBBox(listOf(lineString.boundingBox()))
             insertGeoRectangle(id, convertToGeoRectangle(bbox))
         } else {
             insertPoints(id, lineString, myGeoDataKind === GeoDataKind.BOUNDARY)
@@ -81,7 +78,7 @@ internal class GeometryDataFrameBuilder(private val myGeoDataKind: GeoDataKind) 
 
     fun addBoundary(id: String, multiLineString: MultiLineString<LonLat>) {
         if (myGeoDataKind === GeoDataKind.LIMIT) {
-            val bbox = BBOX_CALCULATOR.calculateBoundingBoxFromRectangles(listOf(multiLineString.flatten().boundingBox()))
+            val bbox = BBOX_CALCULATOR.rectsBBox(listOf(multiLineString.flatten().boundingBox()))
             insertGeoRectangle(id, convertToGeoRectangle(bbox))
         } else {
             insertPoints(id, multiLineString.flatten(), myGeoDataKind === GeoDataKind.BOUNDARY)
@@ -90,7 +87,7 @@ internal class GeometryDataFrameBuilder(private val myGeoDataKind: GeoDataKind) 
 
     fun addBoundary(id: String, polygon: Polygon<LonLat>) {
         if (myGeoDataKind === GeoDataKind.LIMIT) {
-            val bbox = BBOX_CALCULATOR.calculateBoundingBoxFromRectangles(listOf(polygon.limit()))
+            val bbox = BBOX_CALCULATOR.rectsBBox(listOf(polygon.limit()))
             insertGeoRectangle(id, convertToGeoRectangle(bbox))
         } else {
             insertPoints(id, polygon.flatten(), myGeoDataKind === GeoDataKind.BOUNDARY)
@@ -99,7 +96,7 @@ internal class GeometryDataFrameBuilder(private val myGeoDataKind: GeoDataKind) 
 
     fun addBoundary(id: String, boundary: MultiPolygon<LonLat>) {
         if (myGeoDataKind === GeoDataKind.LIMIT) {
-            val bbox = BBOX_CALCULATOR.calculateBoundingBoxFromRectangles(boundary.limit())
+            val bbox = BBOX_CALCULATOR.rectsBBox(boundary.limit())
             insertGeoRectangle(id, convertToGeoRectangle(bbox))
         } else {
             boundary.flatten().flatten().let { insertPoints(id, it, myGeoDataKind === GeoDataKind.BOUNDARY) }

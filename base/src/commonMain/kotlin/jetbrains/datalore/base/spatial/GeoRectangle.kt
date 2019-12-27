@@ -10,12 +10,12 @@ import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.newSpanRectangle
 
-class GeoRectangle(minLongitude: Double, minLatitude: Double, maxLongitude: Double, maxLatitude: Double) {
-    private val myLongitudeRange: LongitudeRange
+class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Double, maxLatitude: Double) {
+    private val myLongitudeSegment: LongitudeSegment
     private val myLatitudeRange: ClosedRange<Double>
 
     val isEmpty: Boolean
-        get() = myLongitudeRange.isEmpty && latitudeRangeIsEmpty(myLatitudeRange)
+        get() = myLongitudeSegment.isEmpty && latitudeRangeIsEmpty(myLatitudeRange)
 
     private fun latitudeRangeIsEmpty(range: ClosedRange<Double>): Boolean {
         return range.upperEndpoint() == range.lowerEndpoint()
@@ -24,34 +24,24 @@ class GeoRectangle(minLongitude: Double, minLatitude: Double, maxLongitude: Doub
     init {
         require(minLatitude <= maxLatitude) { "Invalid latitude range: [$minLatitude..$maxLatitude]" }
 
-        myLongitudeRange = LongitudeRange(minLongitude, maxLongitude)
+        myLongitudeSegment = LongitudeSegment(startLongitude, endLongitude)
         myLatitudeRange = ClosedRange.closed(minLatitude, maxLatitude)
     }
 
-    fun minLongitude(): Double {
-        return myLongitudeRange.lower()
-    }
+    fun startLongitude(): Double = myLongitudeSegment.start()
+    fun endLongitude(): Double = myLongitudeSegment.end()
 
-    fun minLatitude(): Double {
-        return myLatitudeRange.lowerEndpoint()
-    }
-
-    fun maxLongitude(): Double {
-        return myLongitudeRange.upper()
-    }
-
-    fun maxLatitude(): Double {
-        return myLatitudeRange.upperEndpoint()
-    }
+    fun minLatitude(): Double = myLatitudeRange.lowerEndpoint()
+    fun maxLatitude(): Double = myLatitudeRange.upperEndpoint()
 
     fun encloses(rect: GeoRectangle): Boolean {
-        return myLongitudeRange.encloses(rect.myLongitudeRange) && myLatitudeRange.encloses(rect.myLatitudeRange)
+        return myLongitudeSegment.encloses(rect.myLongitudeSegment) && myLatitudeRange.encloses(rect.myLatitudeRange)
     }
 
     fun splitByAntiMeridian(): List<Rect<LonLat>> {
         val rects = ArrayList<Rect<LonLat>>()
 
-        val longitudeRanges = myLongitudeRange.splitByAntiMeridian()
+        val longitudeRanges = myLongitudeSegment.splitByAntiMeridian()
         for (longitudeRange in longitudeRanges) {
             rects.add(
                 newSpanRectangle(
@@ -67,10 +57,10 @@ class GeoRectangle(minLongitude: Double, minLatitude: Double, maxLongitude: Doub
         if (this === other) return true
         if (other == null || this::class != other::class) return false
         val that = other as GeoRectangle?
-        return myLongitudeRange == that!!.myLongitudeRange && myLatitudeRange == that.myLatitudeRange
+        return myLongitudeSegment == that!!.myLongitudeSegment && myLatitudeRange == that.myLatitudeRange
     }
 
     override fun hashCode(): Int {
-        return listOf(myLongitudeRange, myLatitudeRange).hashCode()
+        return listOf(myLongitudeSegment, myLatitudeRange).hashCode()
     }
 }

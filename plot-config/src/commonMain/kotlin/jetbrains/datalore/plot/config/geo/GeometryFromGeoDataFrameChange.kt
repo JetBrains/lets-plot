@@ -6,8 +6,7 @@
 package jetbrains.datalore.plot.config.geo
 
 import jetbrains.datalore.base.spatial.GeoJson
-import jetbrains.datalore.base.spatial.SimpleFeature
-import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GeoDataKind
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_GEOMETRY_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_KEY_COLUMN
@@ -40,13 +39,13 @@ internal class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange()
         private val geometryDataBuilder: GeometryDataFrameBuilder
     ) {
         fun combine(id: String, geometry: String) {
-            GeoJson.parse(geometry){
-                point = { geometryDataBuilder.addPoint(id, it) }
-                lineString = { geometryDataBuilder.addBoundary(id, it) }
-                polygon = { geometryDataBuilder.addBoundary(id, it) }
-                multiPoint = { geometryDataBuilder.addBoundary(id, it) }
-                multiLineString = { geometryDataBuilder.addBoundary(id, it) }
-                multiPolygon = { geometryDataBuilder.addBoundary(id, it) }
+            GeoJson.parse<LonLat>(geometry){
+                onPoint = { geometryDataBuilder.addPoint(id, it) }
+                onLineString = { geometryDataBuilder.addBoundary(id, it) }
+                onPolygon = { geometryDataBuilder.addBoundary(id, it) }
+                onMultiPoint = { geometryDataBuilder.addBoundary(id, it) }
+                onMultiLineString = { geometryDataBuilder.addBoundary(id, it) }
+                onMultiPolygon = { geometryDataBuilder.addBoundary(id, it) }
             }
         }
     }

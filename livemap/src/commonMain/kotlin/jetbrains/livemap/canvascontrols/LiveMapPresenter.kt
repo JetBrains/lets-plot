@@ -13,7 +13,7 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.scheduleAsync
-import jetbrains.livemap.BaseLiveMap
+import jetbrains.livemap.LiveMap
 
 class LiveMapPresenter : Disposable {
     private val contentPresenter: CanvasContentPresenter
@@ -34,14 +34,14 @@ class LiveMapPresenter : Disposable {
         contentPresenter = presenter
     }
 
-    fun render(canvasControl: CanvasControl, liveMap: Async<BaseLiveMap>) {
+    fun render(canvasControl: CanvasControl, liveMap: Async<LiveMap>) {
         contentPresenter.canvasControl = canvasControl
 
         showSpinner()
         canvasControl.scheduleAsync(liveMap).onResult(::showLiveMap, ::showError)
     }
 
-    private fun showLiveMap(liveMap: BaseLiveMap) {
+    private fun showLiveMap(liveMap: LiveMap) {
         check(isLoadingLiveMapRegistration === Registration.EMPTY) { "Unexpected" }
 
         initializing.set(false)
