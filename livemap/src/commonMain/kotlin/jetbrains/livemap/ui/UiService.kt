@@ -17,8 +17,8 @@ import jetbrains.livemap.ui.UiRenderingTaskSystem.UiLayerComponent
 
 class UiService(private val myComponentManager: EcsComponentManager, val resourceManager: ResourceManager) {
 
-    fun addRenderable(renderBox: RenderBox): EcsEntity {
-        return addParentLayerComponent(myComponentManager.createEntity("ui_renderable"), renderBox)
+    fun addRenderable(renderBox: RenderBox, name: String = "ui_renderable"): EcsEntity {
+        return addParentLayerComponent(myComponentManager.createEntity(name), renderBox)
     }
 
     private fun addParentLayerComponent(entity: EcsEntity, renderBox: RenderBox): EcsEntity {

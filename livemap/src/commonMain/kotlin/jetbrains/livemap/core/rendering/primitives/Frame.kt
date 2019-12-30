@@ -9,7 +9,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.canvas.Context2d
 import kotlin.math.max
 
-class Frame constructor(private val position: DoubleVector, private val renderBoxes: List<RenderBox>) :
+class Frame constructor(
+    private val position: DoubleVector,
+    private val renderBoxes: List<RenderBox>
+) :
     RenderBox {
 
     override val origin get() = position

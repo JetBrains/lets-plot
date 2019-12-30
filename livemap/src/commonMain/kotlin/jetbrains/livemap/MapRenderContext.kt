@@ -26,7 +26,7 @@ open class MapRenderContext internal constructor(
         draw(context, origin.x, origin.y, renderObject)
     }
 
-    fun draw(context: Context2d, x: Double, y: Double, renderObject: RenderObject) {
+    private fun draw(context: Context2d, x: Double, y: Double, renderObject: RenderObject) {
         context.save()
         context.translate(floor(x), floor(y))
         renderObject.render(context)

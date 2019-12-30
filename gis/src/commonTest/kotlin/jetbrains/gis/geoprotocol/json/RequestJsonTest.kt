@@ -28,7 +28,7 @@ class RequestJsonTest {
     @Test
     fun explicitWithAllParameters() {
 
-        val tiles = mapOf(
+        val fragments = mapOf(
             "asd" to listOf<QuadKey<LonLat>>(
                 QuadKey("032"),
                 QuadKey("033"),
@@ -41,7 +41,7 @@ class RequestJsonTest {
             GeoRequestBuilder.ExplicitRequestBuilder()
                 .setIds(IDS)
                 .setResolution(13)
-                .setFragments(tiles)
+                .setFragments(fragments)
                 .addFeature(GeoRequest.FeatureOption.CENTROID)
                 .addFeature(GeoRequest.FeatureOption.POSITION)
                 .build()
@@ -52,7 +52,7 @@ class RequestJsonTest {
         assertThatExplicitRequest(request)
             .hasIds(IDS)
             .hasLevelOfDetails(LevelOfDetails.CITY_LOW)
-            .hasTiles(tiles)
+            .hasFragments(fragments)
             .hasFeatures(GeoRequest.FeatureOption.CENTROID, GeoRequest.FeatureOption.POSITION)
     }
 
@@ -70,7 +70,7 @@ class RequestJsonTest {
         assertThatExplicitRequest(request)
             .hasIds(IDS)
             .hasNoLevelOfDetails()
-            .hasNoTiles()
+            .hasNoFragments()
             .hasNoFeatures()
     }
 

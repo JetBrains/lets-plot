@@ -22,7 +22,7 @@ class Text : RenderBox {
         }
     var color: Color = Color.WHITE
     var isDirty = true; private set
-    var fontHeight: Double = 0.0
+    var fontHeight: Double = 10.0
     var fontFamily = "sherif"
 
     override fun render(ctx: Context2d) {

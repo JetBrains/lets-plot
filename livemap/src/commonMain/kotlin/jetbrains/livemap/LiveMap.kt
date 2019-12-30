@@ -39,6 +39,7 @@ import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
 import jetbrains.livemap.camera.*
 import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
+import jetbrains.livemap.core.BusyStateSystem
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.input.*
 import jetbrains.livemap.core.multitasking.AsyncMicroTaskExecutorFactory
@@ -236,6 +237,8 @@ class LiveMap(
 
                 // Geoms
                 EntitiesRenderingTaskSystem(componentManager),
+
+                BusyStateSystem(componentManager, myUiService),
 
                 UiRenderingTaskSystem(componentManager),
                 myLayerRenderingSystem,
