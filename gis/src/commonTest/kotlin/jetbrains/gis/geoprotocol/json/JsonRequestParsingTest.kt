@@ -30,7 +30,7 @@ class JsonRequestParsingTest {
         RequestAssertions.ExplicitSearchRequestAssertion(request)
             .hasIds(listOf("73979", "122641"))
             .hasFeatures(FeatureOption.POSITION, FeatureOption.CENTROID)
-            .hasNoTiles()
+            .hasNoFragments()
             .hasNoLevelOfDetails();
     }
 
@@ -40,13 +40,13 @@ class JsonRequestParsingTest {
         val request = parseGeocodingRequest(
             RequestJsonBuilder.geocoding()
                 .resolution(RESOLUTION)
-                .tiles(TILE_IDS)
+                .fragments(TILE_IDS)
                 .build()
         )
 
         RequestAssertions.GeocodingSearchRequestAssertion(request)
             .hasLevelOfDetails(LevelOfDetails.fromResolution(RESOLUTION))
-            .hasTiles(TILE_IDS);
+            .hasFragments(TILE_IDS);
     }
 
     @Test
@@ -54,13 +54,13 @@ class JsonRequestParsingTest {
         val request = parseGeocodingRequest(
             RequestJsonBuilder.geocoding()
                 .resolution(null)
-                .tiles(null)
+                .fragments(null)
                 .build()
         )
 
         RequestAssertions.GeocodingSearchRequestAssertion(request)
             .hasNoLevelOfDetails()
-            .hasNoTiles();
+            .hasNoFragments();
     }
 
     @Test

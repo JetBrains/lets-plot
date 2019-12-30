@@ -23,6 +23,7 @@ import jetbrains.gis.geoprotocol.json.RequestKeys.AMBIGUITY_RESOLVER
 import jetbrains.gis.geoprotocol.json.RequestKeys.COORDINATE_LAT
 import jetbrains.gis.geoprotocol.json.RequestKeys.COORDINATE_LON
 import jetbrains.gis.geoprotocol.json.RequestKeys.FEATURE_OPTIONS
+import jetbrains.gis.geoprotocol.json.RequestKeys.FRAGMENTS
 import jetbrains.gis.geoprotocol.json.RequestKeys.IDS
 import jetbrains.gis.geoprotocol.json.RequestKeys.LAT_MAX
 import jetbrains.gis.geoprotocol.json.RequestKeys.LAT_MIN
@@ -40,7 +41,6 @@ import jetbrains.gis.geoprotocol.json.RequestKeys.RESOLUTION
 import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_COORDINATES
 import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_LEVEL
 import jetbrains.gis.geoprotocol.json.RequestKeys.REVERSE_PARENT
-import jetbrains.gis.geoprotocol.json.RequestKeys.FRAGMENTS
 import kotlin.math.abs
 
 object RequestJsonParser {
@@ -62,13 +62,13 @@ object RequestJsonParser {
         requestFluentJson
             .getOptionalInt(RESOLUTION) { builder.setResolution(it) }
             .forEnums(FEATURE_OPTIONS, { builder.addFeature(it) }, FeatureOption.values())
-            .getExistingObject(FRAGMENTS) { tiles -> tiles
+            .getExistingObject(FRAGMENTS) { fragments -> fragments
                 .forEntries { id, quadKeys ->
-                    builder.addFragments(id, stringStreamOf(quadKeys as Arr).requireNoNulls().map {
-                        QuadKey<LonLat>(
-                            it
-                        )
-                    }.toList())
+                    builder.addFragments(id, stringStreamOf(quadKeys as Arr)
+                        .requireNoNulls()
+                        .map { QuadKey<LonLat>(it) }
+                        .toList()
+                    )
                 }
             }
     }

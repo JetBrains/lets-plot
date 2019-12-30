@@ -12,6 +12,7 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.LiveMapContext
+import jetbrains.livemap.core.BusyStateComponent
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
@@ -64,6 +65,7 @@ class TileLoadingSystem(
                 .addComponents {
                     + CellComponent(cellKey)
                     + tileResponseComponent
+                    + BusyStateComponent()
                 }
 
             myTileDataFetcher.fetch(cellKey).onResult(
@@ -76,6 +78,7 @@ class TileLoadingSystem(
         for (entity in getEntities<TileResponseComponent>()) {
             val tileData = entity.get<TileResponseComponent>().tileData ?: continue
             downloadedEntities.add(entity)
+            entity.remove<BusyStateComponent>()
 
             val cellKey = entity.get<CellComponent>().cellKey
             val tileEntities = getTileLayerEntities(cellKey)
@@ -85,6 +88,7 @@ class TileLoadingSystem(
                 .flatMap { tileFeatures ->
                     val microThreads = ArrayList<MicroTask<Unit>>()
                     tileEntities.forEach { tileLayerEntity ->
+                        tileLayerEntity.add(BusyStateComponent())
                         microThreads.add(
                             myTileDataRenderer
                                 .render(myCanvasSupplier(), tileFeatures, cellKey, tileLayerEntity.get<KindComponent>().layerKind)
@@ -92,6 +96,7 @@ class TileLoadingSystem(
                                     snapshotAsync.onSuccess { snapshot ->
                                         runLaterBySystem(tileLayerEntity) { theEntity ->
                                             theEntity.get<TileComponent>().tile = SnapshotTile(snapshot)
+                                            theEntity.remove<BusyStateComponent>()
                                             ParentLayerComponent.tagDirtyParentLayer(theEntity)
                                         }
                                     }
@@ -100,7 +105,8 @@ class TileLoadingSystem(
                         )
                     }
                     MicroTaskUtil.join(microThreads)
-                })
+                }
+                )
         }
 
         downloadedEntities.forEach { it.remove<TileResponseComponent>() }

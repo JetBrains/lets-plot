@@ -11,13 +11,14 @@ import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.gis.geoprotocol.Boundaries
 import jetbrains.gis.geoprotocol.Boundary
+import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.gis.geoprotocol.GeoResponse
 import jetbrains.gis.geoprotocol.GeoResponse.*
-import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.gis.geoprotocol.json.ResponseKeys.BOUNDARY
 import jetbrains.gis.geoprotocol.json.ResponseKeys.CENTROID
 import jetbrains.gis.geoprotocol.json.ResponseKeys.DATA
 import jetbrains.gis.geoprotocol.json.ResponseKeys.FEATURES
+import jetbrains.gis.geoprotocol.json.ResponseKeys.FRAGMENTS
 import jetbrains.gis.geoprotocol.json.ResponseKeys.HIGHLIGHTS
 import jetbrains.gis.geoprotocol.json.ResponseKeys.ID
 import jetbrains.gis.geoprotocol.json.ResponseKeys.LAT
@@ -33,7 +34,6 @@ import jetbrains.gis.geoprotocol.json.ResponseKeys.NAMESAKE_PARENTS
 import jetbrains.gis.geoprotocol.json.ResponseKeys.POSITION
 import jetbrains.gis.geoprotocol.json.ResponseKeys.QUERY
 import jetbrains.gis.geoprotocol.json.ResponseKeys.STATUS
-import jetbrains.gis.geoprotocol.json.ResponseKeys.FRAGMENTS
 
 object ResponseJsonFormatter {
     fun format(response: GeoResponse): Obj {
@@ -69,7 +69,7 @@ object ResponseJsonFormatter {
                                 .putRemovable(POSITION, formatRect(feature.position))
                                 .putRemovable(CENTROID, formatPoint(feature.centroid))
                                 .putRemovable(BOUNDARY, formatGeometry(feature.boundary))
-                                .putRemovable(FRAGMENTS, formatTiles(feature.fragments))
+                                .putRemovable(FRAGMENTS, formatFragments(feature.fragments))
                         })
                     )
             )
@@ -139,17 +139,17 @@ object ResponseJsonFormatter {
         return Boundaries.getRawData(boundary)
     }
 
-    private fun formatTiles(tiles: List<Fragment>?): FluentObject? {
-        return tiles?.let {
+    private fun formatFragments(fragments: List<Fragment>?): FluentObject? {
+        return fragments?.let {
             val obj = FluentObject()
-            for (tile in tiles) {
-                val geometries = FluentArray()
+            for (fragment in fragments) {
+                val boundaries = FluentArray()
 
-                for (boundary in tile.boundaries) {
-                    geometries.add(boundaryToString(boundary))
+                for (boundary in fragment.boundaries) {
+                    boundaries.add(boundaryToString(boundary))
                 }
 
-                obj.put(tile.key.key, geometries)
+                obj.put(fragment.key.key, boundaries)
             }
 
             return obj
