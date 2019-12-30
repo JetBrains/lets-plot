@@ -97,6 +97,11 @@ Various presentation options:
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
   
 
+### Other demos
+
+A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) with `Lets-Plot` for visualization.    
+  
+
 ### New to experienced users
 
 The following features of `Lets-Plot` are not present or have different implementation in other `Grammar of Graphics` libraries.
