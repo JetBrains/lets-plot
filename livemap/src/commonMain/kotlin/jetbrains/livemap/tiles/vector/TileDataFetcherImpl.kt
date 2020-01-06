@@ -10,9 +10,9 @@ import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.tiles.CellKey
-import jetbrains.livemap.tiles.convertCellKeyToQuadKeys
+import jetbrains.livemap.cells.CellKey
+import jetbrains.livemap.cells.convertCellKeyToQuadKeys
+import jetbrains.livemap.projection.MapProjection
 
 internal class TileDataFetcherImpl(private val myMapProjection: MapProjection, private val myTileService: TileService) :
     TileDataFetcher {

@@ -28,7 +28,7 @@ import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.rendering.setFillColor
 import jetbrains.livemap.entities.rendering.setStrokeColor
-import jetbrains.livemap.projections.Client
+import jetbrains.livemap.projection.Client
 import org.mockito.Mockito
 import kotlin.math.pow
 import kotlin.math.round

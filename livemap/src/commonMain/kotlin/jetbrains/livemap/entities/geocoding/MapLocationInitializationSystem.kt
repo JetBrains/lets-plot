@@ -12,14 +12,14 @@ import jetbrains.datalore.base.typedGeometry.center
 import jetbrains.livemap.LiveMapConstants
 import jetbrains.livemap.LiveMapConstants.DEFAULT_LOCATION
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.MapLocationGeocoder.Companion.convertToWorldRects
 import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.projections.Client
-import jetbrains.livemap.projections.World
+import jetbrains.livemap.projection.Client
+import jetbrains.livemap.projection.World
+import jetbrains.livemap.services.MapLocationGeocoder.Companion.convertToWorldRects
 import kotlin.math.floor
 import kotlin.math.ln
 import kotlin.math.max

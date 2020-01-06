@@ -9,8 +9,8 @@ import jetbrains.datalore.base.spatial.projectRect
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.livemap.projections.Client
-import jetbrains.livemap.tiles.CellKey
+import jetbrains.livemap.cells.CellKey
+import jetbrains.livemap.projection.Client
 import jetbrains.livemap.tiles.DonorTileCalculator
 import jetbrains.livemap.tiles.Tile
 import jetbrains.livemap.tiles.TileRenderer

@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.tiles.raster
 
-import jetbrains.livemap.tiles.CellKey
+import jetbrains.livemap.cells.CellKey
 import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem.Companion.getZXY
 import kotlin.test.Test
 import kotlin.test.assertEquals

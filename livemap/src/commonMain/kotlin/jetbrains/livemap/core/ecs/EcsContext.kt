@@ -9,20 +9,18 @@ import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.livemap.core.MetricsService
 import jetbrains.livemap.core.SystemTime
 
-open class EcsContext(val eventSource: MouseEventSource) : EcsClock {
-    override val systemTime
-        get() = mySystemTime
+open class EcsContext(
+    val eventSource: MouseEventSource
+) : EcsClock {
+    override val systemTime = SystemTime()
+    override var frameStartTimeMs: Long = 0
+    override val frameDurationMs: Long get() = systemTime.getTimeMs() - frameStartTimeMs
 
-    private val mySystemTime = SystemTime()
-
-    val metricsService = MetricsService(mySystemTime)
-
-    override var updateStartTime: Long = 0
-
+    val metricsService = MetricsService(systemTime)
     var tick: Long = 0
 
-    internal fun startUpdate() {
+    internal fun startFrame() {
         tick++
-        updateStartTime = systemTime.getTimeMs()
+        frameStartTimeMs = systemTime.getTimeMs()
     }
 }

@@ -10,11 +10,11 @@ import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator
 import jetbrains.datalore.base.spatial.calculateQuadKeys
 import jetbrains.datalore.base.spatial.rectsBBox
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.livemap.projections.MapRuler
-import jetbrains.livemap.projections.World
-import jetbrains.livemap.projections.WorldPoint
-import jetbrains.livemap.projections.WorldRectangle
-import jetbrains.livemap.tiles.CellKey
+import jetbrains.livemap.cells.CellKey
+import jetbrains.livemap.core.projections.MapRuler
+import jetbrains.livemap.projection.World
+import jetbrains.livemap.projection.WorldPoint
+import jetbrains.livemap.projection.WorldRectangle
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max

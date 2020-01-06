@@ -10,7 +10,7 @@ import jetbrains.datalore.vis.canvas.CanvasProvider
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.rendering.primitives.RenderObject
-import jetbrains.livemap.projections.ClientPoint
+import jetbrains.livemap.projection.ClientPoint
 import kotlin.math.floor
 
 open class MapRenderContext internal constructor(

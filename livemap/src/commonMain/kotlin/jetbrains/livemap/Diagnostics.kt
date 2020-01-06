@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.MetricsService
-import jetbrains.livemap.core.Utils.formatDouble
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
@@ -225,6 +224,12 @@ open class Diagnostics {
 
         internal interface Diagnostic {
             fun update()
+        }
+
+        private fun formatDouble(v: Double, precision: Int): String {
+            val intV = v.toInt()
+            val fracV = ((v - intV.toDouble()) * 10.0 * precision.toDouble()).toInt()
+            return "$intV.$fracV"
         }
 
         companion object {

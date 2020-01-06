@@ -11,6 +11,7 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.entities.regions.RegionFragmentsComponent
+import jetbrains.livemap.services.GeocodingProvider
 
 class BBoxGeocodingSystem(
     componentManager: EcsComponentManager,

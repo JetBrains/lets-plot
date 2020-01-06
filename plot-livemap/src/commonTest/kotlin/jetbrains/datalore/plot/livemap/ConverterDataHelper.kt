@@ -10,10 +10,10 @@ import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.collection
-import jetbrains.livemap.projections.Coordinates.ZERO_WORLD_POINT
-import jetbrains.livemap.projections.ProjectionType
-import jetbrains.livemap.projections.ProjectionUtil.TILE_PIXEL_SIZE
-import jetbrains.livemap.projections.ProjectionUtil.createMapProjection
+import jetbrains.livemap.LiveMapConstants.TILE_PIXEL_SIZE
+import jetbrains.livemap.core.projections.ProjectionType
+import jetbrains.livemap.projection.Coordinates.ZERO_WORLD_POINT
+import jetbrains.livemap.projection.createMapProjection
 
 
 internal object ConverterDataHelper {

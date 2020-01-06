@@ -7,6 +7,7 @@ package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.livemap.LiveMapContext
+import jetbrains.livemap.cells.*
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -17,11 +18,14 @@ import jetbrains.livemap.entities.placement.*
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.RendererComponent
-import jetbrains.livemap.projections.WorldRectangle
-import jetbrains.livemap.tiles.components.*
+import jetbrains.livemap.projection.WorldRectangle
+import jetbrains.livemap.tiles.components.DebugDataComponent
+import jetbrains.livemap.tiles.components.RendererCacheComponent
 import jetbrains.livemap.tiles.components.RendererCacheComponent.Companion.NULL_RENDERER
-import jetbrains.livemap.tiles.debug.DebugCellRenderer
+import jetbrains.livemap.tiles.components.RequestTilesComponent
+import jetbrains.livemap.tiles.components.TileComponent
 import jetbrains.livemap.tiles.vector.TileLoadingSystem
+import jetbrains.livemap.tiles.vector.debug.DebugCellRenderer
 
 class TileRequestSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myMapRect: WorldRectangle

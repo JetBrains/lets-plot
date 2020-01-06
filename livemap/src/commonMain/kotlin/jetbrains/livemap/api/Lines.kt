@@ -22,7 +22,7 @@ import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PathRenderer
-import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projection.MapProjection
 
 @LiveMapDsl
 class Lines(

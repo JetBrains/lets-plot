@@ -9,8 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.livemap.projections.ClientPoint
-import jetbrains.livemap.projections.ClientRectangle
+import jetbrains.livemap.projection.ClientPoint
+import jetbrains.livemap.projection.ClientRectangle
 
 fun Context2d.drawImage(snapshot: Canvas.Snapshot, p: DoubleVector) = drawImage(snapshot, p.x, p.y)
 fun Context2d.drawImage(snapshot: Canvas.Snapshot, origin: DoubleVector, dimension: DoubleVector) {

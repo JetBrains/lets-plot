@@ -12,11 +12,11 @@ import jetbrains.livemap.camera.MutableCamera
 import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.ecs.*
+import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.core.multitasking.SyncMicroTaskExecutor
 import jetbrains.livemap.entities.placement.WorldOriginComponent
-import jetbrains.livemap.projections.Coordinates
-import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projection.Coordinates
+import jetbrains.livemap.projection.WorldPoint
 import org.junit.Before
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
@@ -54,7 +54,7 @@ abstract class LiveMapTestBase {
 
         addSystem<EcsSystem>(
             SchedulerSystem(
-                SyncMicroTaskExecutor(liveMapContext, SCHEDULER_FRAME_TIME_LIMIT),
+                MicroTaskCooperativeExecutor(liveMapContext, SCHEDULER_FRAME_TIME_LIMIT),
                 componentManager
             )
         )
@@ -192,8 +192,9 @@ abstract class LiveMapTestBase {
         fun frameTime() : MockSpec {
             return object : MockSpec(myTestBase) {
                 override fun apply() {
-                    `when`(testBase.liveMapContext.updateStartTime).thenReturn(0L)
+                    `when`(testBase.liveMapContext.frameStartTimeMs).thenReturn(0L)
                     `when`(testBase.mySystemTime.getTimeMs()).thenReturn(SCHEDULER_FRAME_TIME_LIMIT + 1L)
+                    `when`(testBase.liveMapContext.frameDurationMs).thenCallRealMethod()
                 }
             }
         }
@@ -201,8 +202,9 @@ abstract class LiveMapTestBase {
         fun skipAll(): MockSpec {
             return object : MockSpec(myTestBase) {
                 override fun apply() {
-                    `when`(testBase.liveMapContext.updateStartTime).thenReturn(0L)
+                    `when`(testBase.liveMapContext.frameStartTimeMs).thenReturn(0L)
                     `when`(testBase.mySystemTime.getTimeMs()).thenReturn(SCHEDULER_FRAME_TIME_LIMIT + 1L)
+                    `when`(testBase.liveMapContext.frameDurationMs).thenCallRealMethod()
                 }
             }
         }
@@ -210,8 +212,9 @@ abstract class LiveMapTestBase {
         fun runAll(): MockSpec {
             return object : MockSpec(myTestBase) {
                 override fun apply() {
-                    `when`(testBase.liveMapContext.updateStartTime).thenReturn(0L)
+                    `when`(testBase.liveMapContext.frameStartTimeMs).thenReturn(0L)
                     `when`(testBase.mySystemTime.getTimeMs()).thenReturn(0L)
+                    `when`(testBase.liveMapContext.frameDurationMs).thenCallRealMethod()
                 }
             }
         }
@@ -219,8 +222,9 @@ abstract class LiveMapTestBase {
         fun runTimes(vararg times: Long): MockSpec {
             return object : MockSpec(myTestBase) {
                 override fun apply() {
-                    `when`(testBase.liveMapContext.updateStartTime).thenReturn(times[0])
+                    `when`(testBase.liveMapContext.frameStartTimeMs).thenReturn(times[0])
                     `when`(testBase.mySystemTime.getTimeMs()).thenReturn(times[0], *times.drop(1).toTypedArray())
+                    `when`(testBase.liveMapContext.frameDurationMs).thenCallRealMethod()
                 }
             }
         }

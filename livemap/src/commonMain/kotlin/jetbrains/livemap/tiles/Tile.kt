@@ -6,6 +6,7 @@
 package jetbrains.livemap.tiles
 
 import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.livemap.cells.CellKey
 import jetbrains.livemap.containers.LinkedList
 
 interface Tile {

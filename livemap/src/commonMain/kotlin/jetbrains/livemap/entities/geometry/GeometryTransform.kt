@@ -14,8 +14,9 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.map
-import jetbrains.livemap.projections.AdaptiveResampling
-import jetbrains.livemap.projections.ProjectionUtil.SAMPLING_EPSILON
+import jetbrains.livemap.core.projections.AdaptiveResampling
+
+private const val SAMPLING_EPSILON = 0.001
 
 object GeometryTransform {
     fun <InT, OutT> resampling(

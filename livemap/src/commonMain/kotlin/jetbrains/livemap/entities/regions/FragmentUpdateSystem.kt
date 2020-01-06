@@ -11,12 +11,12 @@ import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.datalore.base.typedGeometry.intersects
 import jetbrains.livemap.LiveMapContext
+import jetbrains.livemap.cells.CellStateComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.entities.geocoding.RegionBBoxComponent
 import jetbrains.livemap.entities.geocoding.RegionIdComponent
-import jetbrains.livemap.tiles.components.CellStateComponent
 
 class FragmentUpdateSystem(
     componentManager: EcsComponentManager

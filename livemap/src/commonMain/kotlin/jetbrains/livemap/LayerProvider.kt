@@ -2,10 +2,11 @@ package jetbrains.livemap
 
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.api.LayersBuilder
+import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.entities.rendering.TextMeasurer
-import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projection.MapProjection
 
 
 interface LayerProvider {

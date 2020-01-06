@@ -11,7 +11,7 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
-import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projection.MapProjection
 
 class ApplyPointSystem(
     componentManager: EcsComponentManager

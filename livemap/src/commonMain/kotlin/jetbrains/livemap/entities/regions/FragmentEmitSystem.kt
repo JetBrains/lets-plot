@@ -16,7 +16,7 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraListenerComponent
 import jetbrains.livemap.camera.CenterChangedComponent
 import jetbrains.livemap.camera.ZoomChangedComponent
-import jetbrains.livemap.core.Utils.common
+import jetbrains.livemap.cells.CellStateComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -24,6 +24,7 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
+import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.entities.geometry.GeometryTransform
 import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
@@ -34,11 +35,9 @@ import jetbrains.livemap.entities.regions.Utils.RegionsIndex
 import jetbrains.livemap.entities.regions.Utils.entityName
 import jetbrains.livemap.entities.regions.Utils.zoom
 import jetbrains.livemap.entities.scaling.ScaleComponent
-import jetbrains.livemap.projections.Client
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.ProjectionUtil
-import jetbrains.livemap.projections.World
-import jetbrains.livemap.tiles.components.CellStateComponent
+import jetbrains.livemap.projection.Client
+import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.projection.World
 
 class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
@@ -91,8 +90,7 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
         emittedFragments.addAll(emptyFragments)
         emittedFragments.addAll(transformedFragments.keys)
         emittedFragments.addAll(
-            common(
-                getSingleton<ChangedFragmentsComponent>().requested,
+            getSingleton<ChangedFragmentsComponent>().requested.intersect(
                 getSingleton<CachedFragmentsComponent>().keys()
             )
         )

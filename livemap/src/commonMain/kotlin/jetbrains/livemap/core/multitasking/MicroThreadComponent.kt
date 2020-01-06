@@ -9,8 +9,8 @@ import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 
 class MicroThreadComponent(
-    val microThread: MicroTask<Unit>,
-    internal val quantumIterations: Int
+    val microTask: MicroTask<Unit>,
+    internal val resumesBeforeTimeCheck: Int
 ) : EcsComponent
 
 fun EcsEntity.setMicroThread(i: Int, f: MicroTask<Unit>) {

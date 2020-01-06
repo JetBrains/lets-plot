@@ -11,7 +11,7 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.entities.placement.WorldDimensionComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
-import jetbrains.livemap.projections.Coordinates.ZERO_WORLD_POINT
+import jetbrains.livemap.projection.Coordinates.ZERO_WORLD_POINT
 
 class LocationCalculateSystem(
     componentManager: EcsComponentManager

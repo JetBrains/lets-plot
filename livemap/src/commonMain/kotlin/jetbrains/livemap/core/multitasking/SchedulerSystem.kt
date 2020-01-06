@@ -34,7 +34,7 @@ class SchedulerSystem(
                 .filter { it.get<MicroThreadComponent>() in finishedTasks }
                 .forEach {it.remove<MicroThreadComponent>() }
 
-            loading = context.systemTime.getTimeMs() - context.updateStartTime
+            loading = context.frameDurationMs
         } else {
             loading = 0
         }

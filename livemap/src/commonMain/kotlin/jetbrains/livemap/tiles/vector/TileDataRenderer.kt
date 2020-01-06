@@ -7,9 +7,9 @@ package jetbrains.livemap.tiles.vector
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.livemap.cells.CellKey
+import jetbrains.livemap.cells.CellLayerKind
 import jetbrains.livemap.core.multitasking.MicroTask
-import jetbrains.livemap.tiles.CellKey
-import jetbrains.livemap.tiles.components.CellLayerKind
 
 internal interface TileDataRenderer {
     fun render(

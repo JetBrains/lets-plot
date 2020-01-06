@@ -8,10 +8,11 @@ package jetbrains.livemap.entities.geocoding
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.POSITION
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.MapLocationGeocoder.Companion.convertToWorldRects
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.services.GeocodingProvider
+import jetbrains.livemap.services.MapLocationGeocoder.Companion.convertToWorldRects
 
 class LocationGeocodingSystem(
     componentManager: EcsComponentManager,

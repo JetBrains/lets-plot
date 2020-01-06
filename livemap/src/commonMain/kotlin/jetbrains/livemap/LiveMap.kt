@@ -22,30 +22,35 @@ import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
-import jetbrains.livemap.DevParams.Companion.COMPUTATION_FRAME_TIME
-import jetbrains.livemap.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
-import jetbrains.livemap.DevParams.Companion.DEBUG_GRID
-import jetbrains.livemap.DevParams.Companion.FRAGMENT_ACTIVE_DOWNLOADS_LIMIT
-import jetbrains.livemap.DevParams.Companion.FRAGMENT_CACHE_LIMIT
-import jetbrains.livemap.DevParams.Companion.MICRO_TASK_EXECUTOR
-import jetbrains.livemap.DevParams.Companion.PERF_STATS
-import jetbrains.livemap.DevParams.Companion.RASTER_TILES
-import jetbrains.livemap.DevParams.Companion.RENDER_TARGET
-import jetbrains.livemap.DevParams.Companion.TILE_CACHE_LIMIT
-import jetbrains.livemap.DevParams.Companion.UPDATE_PAUSE_MS
-import jetbrains.livemap.DevParams.Companion.UPDATE_TIME_MULTIPLIER
-import jetbrains.livemap.DevParams.MicroTaskExecutor.*
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
 import jetbrains.livemap.camera.*
 import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
+import jetbrains.livemap.cells.CellLayerComponent
+import jetbrains.livemap.cells.CellLayerKind
+import jetbrains.livemap.cells.CellStateUpdateSystem
+import jetbrains.livemap.cells.DebugCellLayerComponent
+import jetbrains.livemap.config.DevParams
+import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_FRAME_TIME
+import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
+import jetbrains.livemap.config.DevParams.Companion.DEBUG_GRID
+import jetbrains.livemap.config.DevParams.Companion.FRAGMENT_ACTIVE_DOWNLOADS_LIMIT
+import jetbrains.livemap.config.DevParams.Companion.FRAGMENT_CACHE_LIMIT
+import jetbrains.livemap.config.DevParams.Companion.MICRO_TASK_EXECUTOR
+import jetbrains.livemap.config.DevParams.Companion.PERF_STATS
+import jetbrains.livemap.config.DevParams.Companion.RASTER_TILES
+import jetbrains.livemap.config.DevParams.Companion.RENDER_TARGET
+import jetbrains.livemap.config.DevParams.Companion.TILE_CACHE_LIMIT
+import jetbrains.livemap.config.DevParams.Companion.UPDATE_PAUSE_MS
+import jetbrains.livemap.config.DevParams.Companion.UPDATE_TIME_MULTIPLIER
+import jetbrains.livemap.config.DevParams.MicroTaskExecutor.*
 import jetbrains.livemap.core.BusyStateSystem
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.input.*
-import jetbrains.livemap.core.multitasking.AsyncMicroTaskExecutorFactory
+import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.MicroTaskExecutor
+import jetbrains.livemap.core.multitasking.MicroTaskMultiThreadedExecutorFactory
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.core.multitasking.SyncMicroTaskExecutor
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.layers.LayerManagers.createLayerManager
@@ -62,17 +67,14 @@ import jetbrains.livemap.entities.regions.*
 import jetbrains.livemap.entities.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.scaling.ScaleUpdateSystem
-import jetbrains.livemap.fragments.FragmentProvider
-import jetbrains.livemap.projections.*
-import jetbrains.livemap.tiles.CellStateUpdateSystem
+import jetbrains.livemap.projection.*
+import jetbrains.livemap.services.FragmentProvider
+import jetbrains.livemap.services.GeocodingProvider
 import jetbrains.livemap.tiles.TileLoadingSystemFactory
 import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.tiles.TileRequestSystem
-import jetbrains.livemap.tiles.components.CellLayerComponent
-import jetbrains.livemap.tiles.components.CellLayerKind
-import jetbrains.livemap.tiles.components.DebugCellLayerComponent
-import jetbrains.livemap.tiles.debug.DebugDataSystem
 import jetbrains.livemap.tiles.raster.RasterTileLayerComponent
+import jetbrains.livemap.tiles.vector.debug.DebugDataSystem
 import jetbrains.livemap.ui.*
 
 class LiveMap(
@@ -174,9 +176,9 @@ class LiveMap(
 
     private fun initSystems(componentManager: EcsComponentManager) {
         val microTaskExecutor: MicroTaskExecutor = when (myDevParams.read(MICRO_TASK_EXECUTOR)) {
-            UI_THREAD -> SyncMicroTaskExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
-            AUTO, BACKGROUND -> AsyncMicroTaskExecutorFactory.create()
-        } ?: SyncMicroTaskExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
+            UI_THREAD -> MicroTaskCooperativeExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
+            AUTO, BACKGROUND -> MicroTaskMultiThreadedExecutorFactory.create()
+        } ?: MicroTaskCooperativeExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
 
         myLayerRenderingSystem = myLayerManager.createLayerRenderingSystem()
         mySchedulerSystem = SchedulerSystem(microTaskExecutor, componentManager)

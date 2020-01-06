@@ -12,20 +12,23 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.LiveMapContext
+import jetbrains.livemap.cells.CellComponent
+import jetbrains.livemap.cells.CellKey
+import jetbrains.livemap.cells.CellLayerKind
+import jetbrains.livemap.cells.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
+import jetbrains.livemap.cells.KindComponent
 import jetbrains.livemap.core.BusyStateComponent
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.projections.WorldRectangle
-import jetbrains.livemap.tiles.CellKey
-import jetbrains.livemap.tiles.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
+import jetbrains.livemap.projection.WorldRectangle
 import jetbrains.livemap.tiles.Tile.SnapshotTile
-import jetbrains.livemap.tiles.components.*
-import jetbrains.livemap.tiles.components.CellLayerKind.LABEL
-import jetbrains.livemap.tiles.components.CellLayerKind.WORLD
-import jetbrains.livemap.tiles.debug.DebugTileDataFetcher
-import jetbrains.livemap.tiles.debug.DebugTileDataParser
-import jetbrains.livemap.tiles.debug.DebugTileDataRenderer
+import jetbrains.livemap.tiles.components.RequestTilesComponent
+import jetbrains.livemap.tiles.components.StatisticsComponent
+import jetbrains.livemap.tiles.components.TileComponent
+import jetbrains.livemap.tiles.vector.debug.DebugTileDataFetcher
+import jetbrains.livemap.tiles.vector.debug.DebugTileDataParser
+import jetbrains.livemap.tiles.vector.debug.DebugTileDataRenderer
 
 class TileLoadingSystem(
     private val myQuantumIterations: Int,
@@ -116,7 +119,7 @@ class TileLoadingSystem(
         return getEntities(CELL_COMPONENT_LIST)
             .filter {
                 it.get<CellComponent>().cellKey == cellKey
-                        && it.get<KindComponent>().layerKind in setOf(WORLD, LABEL)
+                        && it.get<KindComponent>().layerKind in setOf(CellLayerKind.WORLD, CellLayerKind.LABEL)
             }
     }
 

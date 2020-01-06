@@ -14,11 +14,11 @@ import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
-import jetbrains.livemap.DevParams
-import jetbrains.livemap.LiveMapCanvasFigure
-import jetbrains.livemap.LiveMapFactory
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.*
+import jetbrains.livemap.config.DevParams
+import jetbrains.livemap.config.LiveMapCanvasFigure
+import jetbrains.livemap.config.LiveMapFactory
 import jetbrains.livemap.ui.Clipboard
 
 object LiveMapUtil {

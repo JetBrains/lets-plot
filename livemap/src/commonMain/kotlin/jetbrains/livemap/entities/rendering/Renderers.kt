@@ -15,7 +15,7 @@ import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Utils.drawPath
 import jetbrains.livemap.entities.scaling.ScaleComponent
-import jetbrains.livemap.projections.Client
+import jetbrains.livemap.projection.Client
 
 object Renderers {
 

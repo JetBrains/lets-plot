@@ -9,10 +9,7 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs.constant
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.limitLat
-import jetbrains.datalore.base.spatial.limitLon
+import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
@@ -23,16 +20,18 @@ import jetbrains.gis.tileprotocol.socket.Socket
 import jetbrains.gis.tileprotocol.socket.SocketBuilder
 import jetbrains.gis.tileprotocol.socket.SocketHandler
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
-import jetbrains.livemap.*
+import jetbrains.livemap.LayerProvider
 import jetbrains.livemap.LayerProvider.EmptyLayerProvider
 import jetbrains.livemap.LayerProvider.LayerProviderImpl
+import jetbrains.livemap.MapLocation
+import jetbrains.livemap.config.DevParams
+import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.projections.ProjectionType
+import jetbrains.livemap.core.projections.createArcPath
+import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.entities.rendering.TextMeasurer
-import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.ProjectionType
-import jetbrains.livemap.projections.createArcPath
+import jetbrains.livemap.projection.MapProjection
 import kotlin.math.abs
 
 @DslMarker
@@ -56,7 +55,8 @@ class LiveMapBuilder {
     var isLoopY: Boolean = false
 
     var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit }
-    var devParams: DevParams = DevParams(HashMap<String, Any>())
+    var devParams: DevParams =
+        DevParams(HashMap<String, Any>())
 
 
     fun params(vararg values: Pair<String, Any>) {

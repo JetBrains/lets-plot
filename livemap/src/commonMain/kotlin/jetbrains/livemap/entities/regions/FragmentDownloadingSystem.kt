@@ -13,10 +13,9 @@ import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.livemap.LiveMapContext
-import jetbrains.livemap.core.Utils.diff
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.fragments.FragmentProvider
+import jetbrains.livemap.services.FragmentProvider
 
 class FragmentDownloadingSystem(
     private val myMaxActiveDownloads: Int,
@@ -121,7 +120,7 @@ class FragmentDownloadingSystem(
                         // Emulate response for empty quads - this is needed to finish waiting for a fragment data
                         val receivedQuads = fragments.map(Fragment::key).toSet()
 
-                        diff(requestQuads, receivedQuads) // not received means empty
+                        requestQuads.subtract(receivedQuads) // not received means empty
                             .forEach { emptyQuad ->
                                 registeredFragments.add(
                                     Fragment(emptyQuad, emptyList())

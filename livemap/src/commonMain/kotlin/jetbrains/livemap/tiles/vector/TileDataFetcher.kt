@@ -7,7 +7,7 @@ package jetbrains.livemap.tiles.vector
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.gis.tileprotocol.TileLayer
-import jetbrains.livemap.tiles.CellKey
+import jetbrains.livemap.cells.CellKey
 
 internal interface TileDataFetcher {
     fun fetch(cellKey: CellKey): Async<List<TileLayer>>

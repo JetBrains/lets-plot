@@ -6,6 +6,7 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
@@ -14,6 +15,7 @@ import jetbrains.livemap.core.animation.Animations
 import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.projections.ProjectionUtil.transformMultiPolygon
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
@@ -30,9 +32,7 @@ import jetbrains.livemap.entities.rendering.RendererComponent
 import jetbrains.livemap.entities.rendering.Renderers.PathRenderer
 import jetbrains.livemap.entities.rendering.StyleComponent
 import jetbrains.livemap.entities.rendering.setStrokeColor
-import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.ProjectionUtil.transformMultiPolygon
+import jetbrains.livemap.projection.MapProjection
 
 @LiveMapDsl
 class Paths(

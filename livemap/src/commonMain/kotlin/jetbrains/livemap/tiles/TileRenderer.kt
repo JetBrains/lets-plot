@@ -8,11 +8,12 @@ package jetbrains.livemap.tiles
 import jetbrains.datalore.base.spatial.projectRect
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.livemap.cells.CellKey
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.placement.ScreenDimensionComponent
 import jetbrains.livemap.entities.rendering.Renderer
-import jetbrains.livemap.projections.Client
-import jetbrains.livemap.projections.Coordinates.ZERO_CLIENT_POINT
+import jetbrains.livemap.projection.Client
+import jetbrains.livemap.projection.Coordinates.ZERO_CLIENT_POINT
 import jetbrains.livemap.tiles.Tile.*
 import jetbrains.livemap.tiles.components.TileComponent
 
@@ -32,7 +33,10 @@ class TileRenderer : Renderer {
     internal fun render(tile: Tile, cellRect: Rect<Client>, ctx: Context2d) {
         myCellRect = cellRect
         myCtx = ctx
-        renderTile(tile, CellKey(""), CellKey(""))
+        renderTile(tile,
+            CellKey(""),
+            CellKey("")
+        )
     }
 
     private fun renderTile(tile: Tile, srcCell: CellKey, dstCell: CellKey) {

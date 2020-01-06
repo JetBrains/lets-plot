@@ -20,7 +20,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.ta
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
 import jetbrains.livemap.entities.placement.WorldOriginComponent
 import jetbrains.livemap.entities.scaling.ScaleComponent
-import jetbrains.livemap.projections.WorldProjection
+import jetbrains.livemap.projection.WorldProjection
 
 
 class WorldGeometry2ScreenUpdateSystem(

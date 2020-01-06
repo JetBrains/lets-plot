@@ -10,7 +10,7 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.ChartSource
 import jetbrains.livemap.api.splitMapBarChart
-import jetbrains.livemap.projections.Client
+import jetbrains.livemap.projection.Client
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

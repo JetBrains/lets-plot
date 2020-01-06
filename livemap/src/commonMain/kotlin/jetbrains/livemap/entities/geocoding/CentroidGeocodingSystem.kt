@@ -5,14 +5,15 @@
 
 package jetbrains.livemap.entities.geocoding
 
+import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.CENTROID
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projection.WorldPoint
+import jetbrains.livemap.services.GeocodingProvider
 
 class CentroidGeocodingSystem(
     componentManager: EcsComponentManager,

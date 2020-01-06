@@ -39,7 +39,7 @@ class MultiAsyncMicroTaskExecutor internal constructor() : MicroTaskExecutor {
 
         tasks.removeAll(myRunningTasks.keys)
         tasks.forEach { microThreadComponent ->
-            val task = Task(microThreadComponent.microThread)
+            val task = Task(microThreadComponent.microTask)
             myExecutorService.submit(task)
             myRunningTasks[microThreadComponent] = task
         }

@@ -11,9 +11,9 @@ import jetbrains.livemap.camera.isIntegerZoom
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.projections.ClientPoint
-import jetbrains.livemap.projections.WorldPoint
-import jetbrains.livemap.projections.WorldProjection
+import jetbrains.livemap.projection.ClientPoint
+import jetbrains.livemap.projection.WorldPoint
+import jetbrains.livemap.projection.WorldProjection
 
 class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 

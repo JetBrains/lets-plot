@@ -19,8 +19,8 @@ import jetbrains.livemap.ui.UiService
 
 /**
  * Entities with this component causes the map to show a spinner.
- * Have to be used to mark important missing data - tiles, fragments, objects waiting for
- * geocoding and not rendering. If BusyStateComponent
+ * Have to be used to mark an important missing data - tiles, fragments, objects waiting for
+ * geocoding and not rendering.
  */
 class BusyStateComponent : EcsComponent {
 

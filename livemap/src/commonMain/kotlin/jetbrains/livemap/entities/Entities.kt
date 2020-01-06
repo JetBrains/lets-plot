@@ -5,11 +5,9 @@
 
 package jetbrains.livemap.entities
 
-import jetbrains.livemap.camera.CameraComponent
 import jetbrains.livemap.camera.CameraListenerComponent
 import jetbrains.livemap.camera.CenterChangedComponent
 import jetbrains.livemap.camera.ZoomChangedComponent
-import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -31,14 +29,6 @@ object Entities {
                 + CenterChangedComponent()
                 + ZoomChangedComponent()
             }
-    }
-
-    fun camera(componentManager: EcsComponentManager): EcsEntity {
-        return componentManager.getEntity(CameraComponent::class)
-    }
-
-    fun animation(componentManager: EcsComponentManager, name: String): EcsEntity {
-        return componentManager.createEntity(name).addComponents { + AnimationComponent() }
     }
 
     class MapEntityFactory(layerEntity: EcsEntity) {

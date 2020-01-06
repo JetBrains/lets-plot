@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,16 +8,19 @@ package jetbrains.livemap
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.spatial.FULL_LONGITUDE
 import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.camera.Viewport
-import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.World
-import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.projection.World
+import jetbrains.livemap.projection.WorldPoint
 import kotlin.math.pow
 import kotlin.math.round
 
-class LiveMapLocation(private val myViewport: Viewport, private val myMapProjection: MapProjection) {
+class LiveMapLocation(
+    private val myViewport: Viewport,
+    private val myMapProjection: MapProjection
+) {
 
     val viewLonLatRect: DoubleRectangle
         get() {

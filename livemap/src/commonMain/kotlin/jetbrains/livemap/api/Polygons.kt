@@ -6,11 +6,13 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.geocoding.MapIdComponent
@@ -27,10 +29,8 @@ import jetbrains.livemap.entities.regions.RegionRenderer
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PolygonRenderer
 import jetbrains.livemap.entities.scaling.ScaleComponent
-import jetbrains.livemap.projections.Coordinates
-import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.ProjectionUtil
+import jetbrains.livemap.projection.Coordinates
+import jetbrains.livemap.projection.MapProjection
 
 
 @LiveMapDsl

@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.ui
 
+import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.values.Color.Companion.parseHex
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.api.PathBuilder
@@ -19,9 +20,8 @@ import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
 import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
-import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.MapProjection
-import jetbrains.livemap.projections.toClientPoint
+import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.projection.toClientPoint
 
 class MakeGeometryWidgetSystem(
     private val myComponentManager: EcsComponentManager,

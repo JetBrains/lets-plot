@@ -51,7 +51,8 @@ class LiveMapUiSystem(
     override fun initImpl(context: LiveMapContext) {
         myViewport = context.mapRenderContext.viewport
 
-        myLiveMapLocation = LiveMapLocation(myViewport, context.mapProjection)
+        myLiveMapLocation =
+            LiveMapLocation(myViewport, context.mapProjection)
 
         myUiService.resourceManager
             .add(KEY_PLUS, BUTTON_PLUS)

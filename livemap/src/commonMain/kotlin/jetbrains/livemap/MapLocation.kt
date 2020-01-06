@@ -10,7 +10,8 @@ import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.gis.geoprotocol.MapRegion
-import jetbrains.livemap.projections.World
+import jetbrains.livemap.projection.World
+import jetbrains.livemap.services.MapLocationGeocoder
 
 interface MapLocation {
 

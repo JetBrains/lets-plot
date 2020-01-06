@@ -9,7 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.livemap.projections.Client
+import jetbrains.livemap.core.rendering.TextMeasurer
+import jetbrains.livemap.projection.Client
 import kotlin.math.abs
 import kotlin.math.max
 

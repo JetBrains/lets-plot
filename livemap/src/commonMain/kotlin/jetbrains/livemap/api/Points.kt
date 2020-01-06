@@ -22,7 +22,7 @@ import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.*
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.PointRenderer
-import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projection.MapProjection
 
 @LiveMapDsl
 class Points(

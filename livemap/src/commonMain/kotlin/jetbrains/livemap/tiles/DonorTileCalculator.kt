@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.tiles
 
+import jetbrains.livemap.cells.CellKey
 import jetbrains.livemap.containers.LinkedList
 import jetbrains.livemap.tiles.Tile.CompositeTile
 import jetbrains.livemap.tiles.Tile.EmptyTile.Companion.EMPTY_TILE
@@ -61,5 +62,6 @@ internal class DonorTileCalculator(private val myExistedTiles: Map<CellKey, Tile
 
     private fun CellKey.startsWith(other: CellKey): Boolean = this.key.startsWith(other.key)
 
-    private fun CellKey.subKey(other: CellKey): CellKey = CellKey(this.key.substring(other.length))
+    private fun CellKey.subKey(other: CellKey): CellKey =
+        CellKey(this.key.substring(other.length))
 }

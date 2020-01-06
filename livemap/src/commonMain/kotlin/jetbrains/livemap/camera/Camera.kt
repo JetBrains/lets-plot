@@ -7,8 +7,8 @@ package jetbrains.livemap.camera
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.projections.Coordinates.ZERO_WORLD_POINT
-import jetbrains.livemap.projections.World
+import jetbrains.livemap.projection.Coordinates.ZERO_WORLD_POINT
+import jetbrains.livemap.projection.World
 
 interface Camera {
     val zoom: Double

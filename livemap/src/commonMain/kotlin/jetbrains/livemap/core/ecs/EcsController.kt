@@ -20,7 +20,7 @@ class EcsController(
     }
 
     fun update(dt: Double) {
-        myContext.startUpdate()
+        myContext.startFrame()
 
         myDebugService.reset()
         for (system in mySystems) {

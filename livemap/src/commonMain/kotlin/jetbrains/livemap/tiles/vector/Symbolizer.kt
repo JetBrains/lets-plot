@@ -13,10 +13,10 @@ import jetbrains.datalore.base.typedGeometry.Ring
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.tileprotocol.mapConfig.Style
-import jetbrains.livemap.projections.Client
+import jetbrains.livemap.projection.Client
 import kotlin.math.round
 
-interface Symbolizer {
+internal interface Symbolizer {
 
     fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit>
     fun applyTo(ctx: Context2d)

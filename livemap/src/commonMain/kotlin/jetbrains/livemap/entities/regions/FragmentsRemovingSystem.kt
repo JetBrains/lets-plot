@@ -6,10 +6,10 @@
 package jetbrains.livemap.entities.regions
 
 import jetbrains.livemap.LiveMapContext
+import jetbrains.livemap.cells.CellStateComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.entities.regions.Utils.zoom
-import jetbrains.livemap.tiles.components.CellStateComponent
 
 class FragmentsRemovingSystem(private val myCacheSize: Int, componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {

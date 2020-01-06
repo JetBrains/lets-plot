@@ -16,7 +16,7 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.ta
 import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
 import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.entities.rendering.StyleComponent
-import jetbrains.livemap.projections.Client
+import jetbrains.livemap.projection.Client
 import kotlin.math.sqrt
 
 

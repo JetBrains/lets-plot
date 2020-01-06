@@ -10,8 +10,10 @@ import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.livemap.LiveMapConstants
-import jetbrains.livemap.projections.*
-import jetbrains.livemap.tiles.CellKey
+import jetbrains.livemap.cells.CellKey
+import jetbrains.livemap.core.projections.Projection
+import jetbrains.livemap.core.projections.ProjectionUtil
+import jetbrains.livemap.projection.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -25,7 +27,11 @@ open class Viewport internal constructor(
     private val viewportTransform = viewportTransform(zoomTransform, { position }, { center })
     private var windowSize = Coordinates.ZERO_WORLD_POINT
     private var windowOrigin = Coordinates.ZERO_WORLD_POINT
-    var window: WorldRectangle = WorldRectangle(Coordinates.ZERO_WORLD_POINT, Coordinates.ZERO_WORLD_POINT)
+    var window: WorldRectangle =
+        WorldRectangle(
+            Coordinates.ZERO_WORLD_POINT,
+            Coordinates.ZERO_WORLD_POINT
+        )
         private set
 
     var zoom: Int = 1

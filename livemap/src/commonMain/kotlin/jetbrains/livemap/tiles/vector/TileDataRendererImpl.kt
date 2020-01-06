@@ -13,11 +13,11 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.tileprotocol.mapConfig.MapConfig
 import jetbrains.gis.tileprotocol.mapConfig.Rule
+import jetbrains.livemap.cells.CellKey
+import jetbrains.livemap.cells.CellLayerKind
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.map
-import jetbrains.livemap.tiles.CellKey
-import jetbrains.livemap.tiles.components.CellLayerKind
 
 internal class TileDataRendererImpl(
     private val myMapConfigSupplier: () -> MapConfig?

@@ -9,8 +9,8 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.animation.Animations.EASE_OUT_QUAD
 import jetbrains.livemap.core.ecs.*
-import jetbrains.livemap.projections.ClientPoint
-import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projection.ClientPoint
+import jetbrains.livemap.projection.WorldPoint
 import kotlin.math.sign
 
 object CameraScale {

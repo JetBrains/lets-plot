@@ -7,13 +7,13 @@ package jetbrains.livemap.tiles
 
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
-import jetbrains.livemap.DevParams
-import jetbrains.livemap.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
-import jetbrains.livemap.DevParams.Companion.DEBUG_TILES
-import jetbrains.livemap.DevParams.Companion.RASTER_TILES
-import jetbrains.livemap.DevParams.Companion.VECTOR_TILES
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.api.liveMapTiles
+import jetbrains.livemap.config.DevParams
+import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
+import jetbrains.livemap.config.DevParams.Companion.DEBUG_TILES
+import jetbrains.livemap.config.DevParams.Companion.RASTER_TILES
+import jetbrains.livemap.config.DevParams.Companion.VECTOR_TILES
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem

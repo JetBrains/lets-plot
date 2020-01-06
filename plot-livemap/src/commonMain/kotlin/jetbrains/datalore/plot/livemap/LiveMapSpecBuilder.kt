@@ -22,13 +22,13 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMAX
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
-import jetbrains.livemap.DevParams
 import jetbrains.livemap.LayerProvider.LayerProviderImpl
-import jetbrains.livemap.LiveMapSpec
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.api.liveMapGeocoding
-import jetbrains.livemap.projections.ProjectionType
+import jetbrains.livemap.config.DevParams
+import jetbrains.livemap.config.LiveMapSpec
+import jetbrains.livemap.core.projections.ProjectionType
 
 
 internal class LiveMapSpecBuilder {

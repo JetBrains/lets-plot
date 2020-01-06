@@ -9,5 +9,6 @@ import jetbrains.livemap.core.SystemTime
 
 interface EcsClock {
     val systemTime: SystemTime
-    val updateStartTime: Long
+    val frameStartTimeMs: Long
+    val frameDurationMs: Long
 }

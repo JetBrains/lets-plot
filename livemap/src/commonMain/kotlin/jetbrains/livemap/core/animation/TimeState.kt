@@ -5,7 +5,11 @@
 
 package jetbrains.livemap.core.animation
 
-class TimeState(val duration: Double, private val loop: Animation.Loop, var direction: Animation.Direction) {
+class TimeState(
+    val duration: Double,
+    private val loop: Animation.Loop,
+    var direction: Animation.Direction
+) {
     var isFinished: Boolean = false
         private set
 

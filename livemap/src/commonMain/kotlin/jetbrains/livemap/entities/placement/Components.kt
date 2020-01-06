@@ -6,9 +6,9 @@
 package jetbrains.livemap.entities.placement
 
 import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.projections.ClientPoint
-import jetbrains.livemap.projections.Coordinates
-import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projection.ClientPoint
+import jetbrains.livemap.projection.Coordinates
+import jetbrains.livemap.projection.WorldPoint
 
 class WorldDimensionComponent(var dimension: WorldPoint) : EcsComponent
 class WorldOriginComponent(var origin: WorldPoint) : EcsComponent

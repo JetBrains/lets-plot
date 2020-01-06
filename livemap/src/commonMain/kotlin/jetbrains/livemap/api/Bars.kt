@@ -10,7 +10,7 @@ import jetbrains.livemap.entities.Entities.MapEntityFactory
 import jetbrains.livemap.entities.placement.*
 import jetbrains.livemap.entities.rendering.*
 import jetbrains.livemap.entities.rendering.Renderers.BarRenderer
-import jetbrains.livemap.projections.Client
+import jetbrains.livemap.projection.Client
 import kotlin.math.abs
 
 @LiveMapDsl

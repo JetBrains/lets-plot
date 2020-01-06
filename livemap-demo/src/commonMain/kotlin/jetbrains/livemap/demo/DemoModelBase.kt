@@ -8,12 +8,11 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
-import jetbrains.livemap.DevParams
-import jetbrains.livemap.LiveMapFactory
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.*
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
-import jetbrains.livemap.projections.ProjectionType
+import jetbrains.livemap.config.LiveMapFactory
+import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.ui.Clipboard
 
 abstract class DemoModelBase(private val dimension: DoubleVector) {

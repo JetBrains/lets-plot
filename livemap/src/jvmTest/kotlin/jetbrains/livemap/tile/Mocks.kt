@@ -8,7 +8,7 @@ package jetbrains.datalore.jetbrains.livemap.tile
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
-import jetbrains.livemap.tiles.components.CellStateComponent
+import jetbrains.livemap.cells.CellStateComponent
 import java.util.*
 import kotlin.collections.HashSet
 import kotlin.collections.component1

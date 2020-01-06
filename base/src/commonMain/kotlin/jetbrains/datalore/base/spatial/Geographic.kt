@@ -10,6 +10,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class LonLat
+typealias LonLatPoint = Vec<LonLat>
 
 val EARTH_RECT = Rect<LonLat>(
     MIN_LONGITUDE,

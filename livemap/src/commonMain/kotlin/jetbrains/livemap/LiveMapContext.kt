@@ -8,8 +8,11 @@ package jetbrains.livemap
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.livemap.camera.Camera
 import jetbrains.livemap.core.ecs.EcsContext
-import jetbrains.livemap.projections.MapProjection
+import jetbrains.livemap.projection.MapProjection
 
+/**
+ * open for tests
+ */
 open class LiveMapContext(
     open val mapProjection: MapProjection,
     eventSource: MouseEventSource,

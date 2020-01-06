@@ -6,12 +6,12 @@
 package jetbrains.livemap.entities.geocoding
 
 import jetbrains.datalore.base.spatial.GeoRectangle
+import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.projections.LonLatPoint
-import jetbrains.livemap.projections.World
-import jetbrains.livemap.projections.WorldPoint
+import jetbrains.livemap.projection.World
+import jetbrains.livemap.projection.WorldPoint
 
 class MapIdComponent(val mapId: String) : EcsComponent
 

@@ -7,7 +7,7 @@ package jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.projections.World
+import jetbrains.livemap.projection.World
 
 class WorldGeometryComponent : EcsComponent {
     var geometry: MultiPolygon<World>? = null

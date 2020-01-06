@@ -8,6 +8,7 @@ package jetbrains.livemap.entities.geocoding
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.services.GeocodingProvider
 
 class RegionIdGeocodingSystem(
     componentManager: EcsComponentManager,

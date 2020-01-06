@@ -11,7 +11,7 @@ import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.input.MouseInputComponent
-import jetbrains.livemap.projections.toClientPoint
+import jetbrains.livemap.projection.toClientPoint
 
 class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 

@@ -53,7 +53,7 @@ class SchedulerSystemTest : LiveMapTestBase() {
 
         override fun apply() {
             testBase.getEntity(myEntityName).get<MicroThreadComponent>().run {
-                `when`(microThread.alive()).thenReturn(myAlive)
+                `when`(microTask.alive()).thenReturn(myAlive)
             }
         }
 
