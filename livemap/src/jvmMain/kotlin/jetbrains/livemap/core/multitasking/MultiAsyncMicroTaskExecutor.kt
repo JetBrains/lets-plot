@@ -26,13 +26,15 @@ class MultiAsyncMicroTaskExecutor internal constructor() : MicroTaskExecutor {
         myRunningTasks.entries.removeIf {
             if (it.value.isDone) {
                 finishedTasks.add(it.key)
+                return@removeIf true
             }
 
             if (!tasks.contains(it.key)) {
                 it.value.cancel()
+                return@removeIf true
             }
 
-            false
+            return@removeIf false
         }
 
         tasks.removeAll(myRunningTasks.keys)
