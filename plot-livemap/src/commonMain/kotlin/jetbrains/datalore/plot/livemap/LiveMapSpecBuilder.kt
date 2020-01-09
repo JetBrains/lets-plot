@@ -23,6 +23,8 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.LayerProvider.LayerProviderImpl
+import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
+import jetbrains.livemap.LiveMapConstants.MIN_ZOOM
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.api.liveMapGeocoding
@@ -101,7 +103,7 @@ internal class LiveMapSpecBuilder {
             isUseFrame = false, //liveMapProcessor.heatMapWithFrame(),
             projectionType = projectionType,
             location = createMapLocation(myLiveMapOptions.location),
-            zoom = myLiveMapOptions.zoom,
+            zoom = checkZoom(myLiveMapOptions.zoom),
             level = getFeatureLevel(myLiveMapOptions.featureLevel),
             parent = createMapRegion(myLiveMapOptions.parent),
             layerProvider = LayerProviderImpl(myDevParams) { layersConfigurators.forEach { it() } },
@@ -143,6 +145,14 @@ internal class LiveMapSpecBuilder {
             @Suppress("UNCHECKED_CAST")
             val list = data as List<String>
             return MapRegion.withIdList(list)
+        }
+
+        private fun checkZoom(zoom: Int?): Int? {
+            if (zoom == null || zoom in IntRange(MIN_ZOOM, MAX_ZOOM)) {
+                return zoom
+            }
+
+            error("Zoom must be in range [$MIN_ZOOM, $MAX_ZOOM]")
         }
 
         private fun calculateGeoRectangle(lonLatList: List<*>): GeoRectangle {
