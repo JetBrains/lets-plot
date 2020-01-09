@@ -46,7 +46,7 @@ class RegionIdGeocodingSystem(
                         entity.remove<MapIdComponent>()
                     }
                 }
-                onFailure { context.showError(it) }
+                onFailure(context::raiseError)
             }
     }
 

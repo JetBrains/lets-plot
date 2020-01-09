@@ -11,12 +11,14 @@ import jetbrains.livemap.core.ecs.EcsContext
 import jetbrains.livemap.projection.MapProjection
 
 /**
- * open for tests
+ * opens are for tests
  */
 open class LiveMapContext(
     open val mapProjection: MapProjection,
-    eventSource: MouseEventSource,
+    mouseEventSource: MouseEventSource,
     open val mapRenderContext: MapRenderContext,
-    val showError: (Throwable) -> Unit,
+    private val errorHandler: (Throwable) -> Unit,
     open val camera: Camera
-) : EcsContext(eventSource)
+) : EcsContext(mouseEventSource) {
+    fun raiseError(error: Throwable) = errorHandler(error)
+}

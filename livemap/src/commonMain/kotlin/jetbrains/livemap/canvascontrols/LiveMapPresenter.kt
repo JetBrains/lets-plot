@@ -17,7 +17,7 @@ import jetbrains.livemap.LiveMap
 
 class LiveMapPresenter : Disposable {
     private val contentPresenter: CanvasContentPresenter
-    private var registration = Registration.EMPTY
+    private var errorHandlerRegistration = Registration.EMPTY
     private var isLoadingLiveMapRegistration = Registration.EMPTY
     private var removed = false
 
@@ -48,8 +48,8 @@ class LiveMapPresenter : Disposable {
         isLoadingLiveMapRegistration = PropertyBinding.bindOneWay(liveMap.isLoading, liveMapIsLoading)
 
         setContent {
-            LiveMapContent(liveMap).also {
-                registration = it.addHandler(::showError)
+            LiveMapContent(liveMap).also { liveMapContent ->
+                errorHandlerRegistration = liveMapContent.addErrorHandler(::showError)
             }
         }
     }
@@ -76,7 +76,7 @@ class LiveMapPresenter : Disposable {
 
     override fun dispose() {
         removed = true
-        registration.dispose()
+        errorHandlerRegistration.dispose()
         isLoadingLiveMapRegistration.dispose()
         contentPresenter.clear()
     }

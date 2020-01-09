@@ -5,15 +5,13 @@
 
 package jetbrains.livemap.canvascontrols
 
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.event.EventSource
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.livemap.LiveMap
 
 class LiveMapContent(
     private val liveMap: LiveMap
-) : CanvasContent, EventSource<Throwable> {
+) : CanvasContent {
 
     override fun show(parentControl: CanvasControl) {
         liveMap.draw(parentControl)
@@ -23,17 +21,7 @@ class LiveMapContent(
         liveMap.dispose()
     }
 
-    override fun addHandler(handler: EventHandler<Throwable>): Registration {
-        return liveMap.addHandler(handler)
-    }
-
-    fun addHandler(handler: (Throwable) -> Unit): Registration {
-        return liveMap.addHandler(
-            object : EventHandler<Throwable> {
-                override fun onEvent(event: Throwable) {
-                    handler(event)
-                }
-            }
-        )
+    fun addErrorHandler(handler: (Throwable) -> Unit): Registration {
+        return liveMap.addErrorHandler(handler)
     }
 }

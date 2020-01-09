@@ -17,7 +17,11 @@ import jetbrains.gis.geoprotocol.json.RequestJsonFormatter.format
 import jetbrains.gis.geoprotocol.json.ResponseJsonParser.parse
 import kotlinx.coroutines.launch
 
-class GeoTransportImpl(private val myHost: String, private val myPort: Int?, private val myRoute: String): GeoTransport {
+class GeoTransportImpl(
+    private val myHost: String,
+    private val myPort: Int?,
+    private val myRoute: String
+): GeoTransport {
     private val myClient = HttpClient()
 
     override fun send(request: GeoRequest): Async<GeoResponse> {
@@ -25,7 +29,7 @@ class GeoTransportImpl(private val myHost: String, private val myPort: Int?, pri
 
         myClient.launch {
             try {
-                val response= myClient.post<String> {
+                val response = myClient.post<String> {
                     url {
                         protocol = URLProtocol.HTTPS
                         host = myHost

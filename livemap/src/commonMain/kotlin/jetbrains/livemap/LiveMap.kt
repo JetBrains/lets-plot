@@ -9,7 +9,6 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.event.EventSource
 import jetbrains.datalore.base.observable.event.SimpleEventSource
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
@@ -88,7 +87,7 @@ class LiveMap(
     private val myGeocodingProvider: GeocodingProvider,
     private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?
-) : EventSource<Throwable>, Disposable {
+) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
     private var myInitialized: Boolean = false
@@ -100,15 +99,17 @@ class LiveMap(
     private lateinit var mySchedulerSystem: SchedulerSystem
     private lateinit var myUiService: UiService
 
-    private val throwableSource = SimpleEventSource<Throwable>()
+    private val errorEvent = SimpleEventSource<Throwable>()
     val isLoading: Property<Boolean> = ValueProperty(true)
 
-    override fun addHandler(handler: EventHandler<Throwable>): Registration {
-        return throwableSource.addHandler(handler)
-    }
-
-    private fun fireThrowable(throwable: Throwable) {
-        throwableSource.fire(throwable)
+    fun addErrorHandler(handler: (Throwable) -> Unit): Registration {
+        return errorEvent.addHandler(
+            object : EventHandler<Throwable> {
+                override fun onEvent(event: Throwable) {
+                    handler(event)
+                }
+            }
+        )
     }
 
     fun draw(canvasControl: CanvasControl) {
@@ -120,11 +121,11 @@ class LiveMap(
             }
 
         myContext = LiveMapContext(
-            myMapProjection,
-            canvasControl,
-            MapRenderContext(viewport, canvasControl),
-            ::fireThrowable,
-            camera
+            mapProjection = myMapProjection,
+            mouseEventSource = canvasControl,
+            mapRenderContext = MapRenderContext(viewport, canvasControl),
+            errorHandler = { canvasControl.schedule { errorEvent.fire(it) } },
+            camera = camera
         )
 
         myUiService = UiService(componentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
