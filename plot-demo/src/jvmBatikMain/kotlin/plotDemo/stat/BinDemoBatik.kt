@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.stat
 
 import jetbrains.datalore.plotDemo.model.stat.BinDemo
-import jetbrains.datalore.vis.swing.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
 
 class BinDemoBatik : BinDemo() {
 

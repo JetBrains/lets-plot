@@ -6,11 +6,13 @@
 package jetbrains.datalore.plotDemo.plotContainer
 
 import jetbrains.datalore.plotDemo.model.plotContainer.BarPlotResizeDemo
-import jetbrains.datalore.vis.swing.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
 
 object BarPlotResizeDiscreteXDemoBatik {
     @JvmStatic
     fun main(args: Array<String>) {
-        PlotResizeDemoUtil.show(BarPlotResizeDemo.discreteX(), BatikMapperDemoFactory())
+        PlotResizeDemoUtil.show(BarPlotResizeDemo.discreteX(),
+            BatikMapperDemoFactory()
+        )
     }
 }

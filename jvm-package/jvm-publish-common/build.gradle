@@ -16,11 +16,8 @@ kotlin {
 
                 api project(':base-portable')
                 api project(':base')
-//                api project(':mapper-core')
                 api project(':vis-canvas')
                 api project(':vis-svg')
-//                api project(':vis-svg-mapper')
-//                api project(':vis-svg-mapper-jfx')
                 api project(':plot-base-portable')
                 api project(':plot-base')
                 api project(':plot-common-portable')
@@ -29,8 +26,6 @@ kotlin {
                 api project(':plot-builder')
                 api project(':plot-config-portable')
                 api project(':plot-config')
-//                api project(':vis-demo-common')
-//                api project(':vis-demo-common-jfx')
             }
         }
         jvmMain {

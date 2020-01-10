@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.plotDemo.model.component.AxisComponentDemo
-import jetbrains.datalore.vis.swing.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
 
 fun main() {
     with(AxisComponentDemo()) {

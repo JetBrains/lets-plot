@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.BarPlot
-import jetbrains.datalore.vis.swing.BatikMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
 
 object BarPlotBatik {
     @JvmStatic

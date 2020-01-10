@@ -8,7 +8,7 @@ package jetbrains.datalore.vis.svgMapperDemo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgDemoModel.a.DemoModelA
-import jetbrains.datalore.vis.swing.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
 
 fun main() {
     val size = DoubleVector(500.0, 500.0)

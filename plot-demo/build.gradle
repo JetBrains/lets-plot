@@ -77,6 +77,7 @@ kotlin {
             dependencies {
                 implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation project(':vis-svg-mapper-batik')
+                implementation project(':vis-demo-common-batik')
             }
         }
         jvmJfxMain {

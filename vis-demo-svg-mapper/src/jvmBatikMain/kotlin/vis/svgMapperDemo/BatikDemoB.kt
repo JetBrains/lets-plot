@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.svgMapperDemo
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.svgDemoModel.b.DemoModelB
-import jetbrains.datalore.vis.swing.BatikMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFrame
 
 fun main() {
     val svgRoots = listOf(DemoModelB.createModel())

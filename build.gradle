@@ -51,11 +51,8 @@ allprojects {
 def include_sources_letsPlotJvmCommon = [
         'base-portable',
         'base',
-//        'mapper-core',
         'vis-canvas',
         'vis-svg',
-//        'vis-svg-mapper',
-//        'vis-svg-mapper-jfx',
         'plot-base-portable',
         'plot-base',
         'plot-common-portable',
@@ -64,8 +61,6 @@ def include_sources_letsPlotJvmCommon = [
         'plot-builder',
         'plot-config-portable',
         'plot-config',
-//        'vis-demo-common',
-//        'vis-demo-common-jfx',
 ]
 
 def include_sources_letsPlotJvmJfx = [

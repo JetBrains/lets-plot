@@ -27,7 +27,6 @@ kotlin {
                 implementation project(':vis-svg')
                 implementation project(':vis-canvas')
                 implementation project(':vis-demo-common')
-                implementation project(':vis-demo-common-jfx')
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
                 implementation project(':plot-base-portable')

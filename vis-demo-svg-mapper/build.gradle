@@ -24,7 +24,6 @@ kotlin {
                 implementation project(':vis-svg')
                 implementation project(':vis-svg-mapper')
                 implementation project(':vis-demo-common')
-                implementation project(':vis-demo-common-jfx')
             }
         }
 
@@ -39,15 +38,16 @@ kotlin {
             dependencies {
                 implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation project(":vis-svg-mapper-batik")
+                implementation project(':vis-demo-common-batik')
             }
         }
         jvmJfxMain {
             dependsOn allJvm
             dependencies {
                 implementation "org.apache.commons:commons-math3:$math3_version"
-//                runtimeOnly project(':vis-canvas') // needed for `svg transform` parsing
                 implementation project(':vis-canvas') // needed for `svg transform` parsing
                 implementation project(":vis-svg-mapper-jfx")
+                implementation project(':vis-demo-common-jfx')
             }
         }
         jvmBrowserMain {
