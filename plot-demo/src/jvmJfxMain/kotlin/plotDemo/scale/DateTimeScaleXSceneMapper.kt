@@ -8,7 +8,7 @@ package jetbrains.datalore.plotDemo.scale
 import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
 import jetbrains.datalore.plotDemo.model.scale.DateTimeScaleX
 import jetbrains.datalore.plotDemo.plotConfig.PlotConfigDemoUtil
-import jetbrains.datalore.vis.demoUtils.jfx.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
 
 object DateTimeScaleXSceneMapper {
     @JvmStatic

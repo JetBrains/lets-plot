@@ -7,7 +7,7 @@ package jetbrains.datalore.plotDemo.geom
 
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.geom.PointDemo
-import jetbrains.datalore.vis.demoUtils.jfx.SceneMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFrame
 
 class PointDemoSceneMapper : PointDemo() {
 

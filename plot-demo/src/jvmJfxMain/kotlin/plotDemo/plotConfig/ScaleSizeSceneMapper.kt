@@ -8,7 +8,7 @@ package jetbrains.datalore.plotDemo.plotConfig
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
 import jetbrains.datalore.plotDemo.model.plotConfig.ScaleSize
-import jetbrains.datalore.vis.demoUtils.jfx.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
 
 object ScaleSizeSceneMapper {
     @JvmStatic

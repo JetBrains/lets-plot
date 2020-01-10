@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.vis.demoUtils.jfx
+package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFrame

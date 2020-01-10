@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.plotDemo.model.component.TextLabelDemo
-import jetbrains.datalore.vis.demoUtils.jfx.SceneMapperDemoFrame
+import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFrame
 
 fun main() {
     with(TextLabelDemo()) {

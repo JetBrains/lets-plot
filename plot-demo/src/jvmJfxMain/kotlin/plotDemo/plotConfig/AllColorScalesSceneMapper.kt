@@ -7,7 +7,7 @@ package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.plotConfig.AllColorScales
-import jetbrains.datalore.vis.demoUtils.jfx.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
 
 object AllColorScalesSceneMapper {
     @JvmStatic
