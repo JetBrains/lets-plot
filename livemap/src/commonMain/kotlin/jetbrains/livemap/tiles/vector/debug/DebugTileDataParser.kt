@@ -10,8 +10,8 @@ import jetbrains.livemap.cells.CellKey
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.multitasking.DebugMicroTask
 import jetbrains.livemap.core.multitasking.MicroTask
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.PARSING_TIME
-import jetbrains.livemap.tiles.components.StatisticsComponent
+import jetbrains.livemap.tiles.DebugDataComponent.Companion.PARSING_TIME
+import jetbrains.livemap.tiles.StatisticsComponent
 import jetbrains.livemap.tiles.vector.TileDataParser
 import jetbrains.livemap.tiles.vector.TileFeature
 

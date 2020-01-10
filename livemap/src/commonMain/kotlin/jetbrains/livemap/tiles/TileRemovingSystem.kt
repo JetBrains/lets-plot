@@ -14,8 +14,7 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
 import jetbrains.livemap.entities.rendering.RendererComponent
-import jetbrains.livemap.tiles.components.RendererCacheComponent
-import jetbrains.livemap.tiles.components.RendererCacheComponent.Companion.NULL_RENDERER
+import jetbrains.livemap.tiles.RendererCacheComponent.Companion.NULL_RENDERER
 
 class TileRemovingSystem(private val myTileCacheLimit: Int, componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {

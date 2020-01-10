@@ -20,8 +20,8 @@ import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.setMicroThread
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.tiles.Tile
-import jetbrains.livemap.tiles.components.RequestTilesComponent
-import jetbrains.livemap.tiles.components.TileComponent
+import jetbrains.livemap.tiles.RequestTilesComponent
+import jetbrains.livemap.tiles.TileComponent
 import jetbrains.livemap.tiles.vector.TileLoadingSystem
 import kotlin.math.pow
 import kotlin.math.roundToInt

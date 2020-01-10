@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.tiles.components
+package jetbrains.livemap.tiles
 
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.cells.CellKey
@@ -11,7 +11,6 @@ import jetbrains.livemap.cells.CellLayerKind
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.entities.rendering.Renderer
-import jetbrains.livemap.tiles.Tile
 
 
 class StatisticsComponent : EcsComponent {

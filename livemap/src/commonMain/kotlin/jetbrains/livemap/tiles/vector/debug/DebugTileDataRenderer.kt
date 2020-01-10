@@ -12,9 +12,9 @@ import jetbrains.livemap.cells.CellLayerKind
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.multitasking.DebugMicroTask
 import jetbrains.livemap.core.multitasking.MicroTask
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.renderTimeKey
-import jetbrains.livemap.tiles.components.DebugDataComponent.Companion.snapshotTimeKey
-import jetbrains.livemap.tiles.components.StatisticsComponent
+import jetbrains.livemap.tiles.DebugDataComponent.Companion.renderTimeKey
+import jetbrains.livemap.tiles.DebugDataComponent.Companion.snapshotTimeKey
+import jetbrains.livemap.tiles.StatisticsComponent
 import jetbrains.livemap.tiles.vector.TileDataRenderer
 import jetbrains.livemap.tiles.vector.TileFeature
 

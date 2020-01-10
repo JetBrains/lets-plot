@@ -15,7 +15,6 @@ import jetbrains.livemap.entities.rendering.Renderer
 import jetbrains.livemap.projection.Client
 import jetbrains.livemap.projection.Coordinates.ZERO_CLIENT_POINT
 import jetbrains.livemap.tiles.Tile.*
-import jetbrains.livemap.tiles.components.TileComponent
 
 class TileRenderer : Renderer {
     private lateinit var myCellRect: Rect<Client>

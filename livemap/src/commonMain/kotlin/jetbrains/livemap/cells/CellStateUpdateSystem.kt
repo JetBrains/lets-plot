@@ -13,7 +13,7 @@ import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.tiles.components.StatisticsComponent
+import jetbrains.livemap.tiles.StatisticsComponent
 import kotlin.reflect.KClass
 
 class CellStateUpdateSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
@@ -21,7 +21,7 @@ class CellStateUpdateSystem(componentManager: EcsComponentManager) : AbstractSys
     override fun initImpl(context: LiveMapContext) {
         createEntity("CellState")
             .addComponents {
-                + StatisticsComponent()
+                +StatisticsComponent()
                 + CellStateComponent()
             }
     }
