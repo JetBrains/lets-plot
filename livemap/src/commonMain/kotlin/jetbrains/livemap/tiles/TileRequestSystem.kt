@@ -7,17 +7,17 @@ package jetbrains.livemap.tiles
 
 import jetbrains.datalore.base.spatial.computeRect
 import jetbrains.livemap.LiveMapContext
+import jetbrains.livemap.api.mapEntity
 import jetbrains.livemap.cells.*
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.entities.Entities
-import jetbrains.livemap.entities.placement.*
-import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
-import jetbrains.livemap.entities.rendering.Renderer
-import jetbrains.livemap.entities.rendering.RendererComponent
+import jetbrains.livemap.placement.*
+import jetbrains.livemap.rendering.LayerEntitiesComponent
+import jetbrains.livemap.rendering.Renderer
+import jetbrains.livemap.rendering.RendererComponent
 import jetbrains.livemap.projection.WorldRectangle
 import jetbrains.livemap.tiles.RendererCacheComponent.Companion.NULL_RENDERER
 import jetbrains.livemap.tiles.vector.TileLoadingSystem
@@ -74,13 +74,11 @@ class TileRequestSystem(componentManager: EcsComponentManager) : AbstractSystem<
         for (layer in getEntities(CellLayerComponent::class)) {
             val layerKind = layer.get<CellLayerComponent>().layerKind
 
-            val parentLayerComponent = ParentLayerComponent(layer.id)
-            val name = "tile_${layerKind}_$cellKey"
             val tileLayerEntity =
-                Entities.mapEntity(
+                mapEntity(
                     componentManager,
-                    parentLayerComponent,
-                    name
+                    ParentLayerComponent(layer.id),
+                    "tile_${layerKind}_$cellKey"
                 )
                     .addComponents {
                         + WorldOriginComponent(tileRect.origin)

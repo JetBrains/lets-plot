@@ -10,8 +10,7 @@ import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.*
+import jetbrains.livemap.geocoding.*
 import jetbrains.livemap.projection.World
 import jetbrains.livemap.projection.WorldPoint
 import jetbrains.livemap.projection.WorldRectangle

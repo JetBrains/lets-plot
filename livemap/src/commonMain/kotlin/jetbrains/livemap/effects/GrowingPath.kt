@@ -13,9 +13,9 @@ import jetbrains.gis.geoprotocol.GeometryUtil.asLineString
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
-import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
-import jetbrains.livemap.entities.rendering.Renderer
-import jetbrains.livemap.entities.rendering.StyleComponent
+import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.rendering.Renderer
+import jetbrains.livemap.rendering.StyleComponent
 import jetbrains.livemap.projection.Client
 import kotlin.math.sqrt
 

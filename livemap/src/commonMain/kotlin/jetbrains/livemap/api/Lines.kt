@@ -11,17 +11,16 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.NeedCalculateLocationComponent
-import jetbrains.livemap.entities.geocoding.NeedGeocodeLocationComponent
-import jetbrains.livemap.entities.geocoding.NeedLocationComponent
-import jetbrains.livemap.entities.geometry.WorldGeometryComponent
-import jetbrains.livemap.entities.placement.ScreenLoopComponent
-import jetbrains.livemap.entities.placement.ScreenOriginComponent
-import jetbrains.livemap.entities.placement.WorldDimensionComponent
-import jetbrains.livemap.entities.placement.WorldOriginComponent
-import jetbrains.livemap.entities.rendering.*
-import jetbrains.livemap.entities.rendering.Renderers.PathRenderer
+import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
+import jetbrains.livemap.geocoding.NeedGeocodeLocationComponent
+import jetbrains.livemap.geocoding.NeedLocationComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
+import jetbrains.livemap.placement.ScreenLoopComponent
+import jetbrains.livemap.placement.ScreenOriginComponent
+import jetbrains.livemap.placement.WorldDimensionComponent
+import jetbrains.livemap.placement.WorldOriginComponent
+import jetbrains.livemap.rendering.*
+import jetbrains.livemap.rendering.Renderers.PathRenderer
 import jetbrains.livemap.projection.MapProjection
 
 @LiveMapDsl

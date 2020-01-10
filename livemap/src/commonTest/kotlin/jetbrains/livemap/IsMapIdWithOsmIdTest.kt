@@ -5,7 +5,7 @@
 
 package jetbrains.livemap
 
-import jetbrains.livemap.entities.geocoding.RegionIdGeocodingSystem.Companion.isMapIdWithOsmId
+import jetbrains.livemap.geocoding.RegionIdGeocodingSystem.Companion.isMapIdWithOsmId
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

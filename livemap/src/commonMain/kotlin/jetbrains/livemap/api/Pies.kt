@@ -8,13 +8,12 @@ package jetbrains.livemap.api
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.placement.ScreenDimensionComponent
-import jetbrains.livemap.entities.placement.ScreenLoopComponent
-import jetbrains.livemap.entities.placement.ScreenOriginComponent
-import jetbrains.livemap.entities.placement.WorldOriginComponent
-import jetbrains.livemap.entities.rendering.*
-import jetbrains.livemap.entities.rendering.Renderers.PieSectorRenderer
+import jetbrains.livemap.placement.ScreenDimensionComponent
+import jetbrains.livemap.placement.ScreenLoopComponent
+import jetbrains.livemap.placement.ScreenOriginComponent
+import jetbrains.livemap.placement.WorldOriginComponent
+import jetbrains.livemap.rendering.*
+import jetbrains.livemap.rendering.Renderers.PieSectorRenderer
 import kotlin.math.PI
 
 @LiveMapDsl

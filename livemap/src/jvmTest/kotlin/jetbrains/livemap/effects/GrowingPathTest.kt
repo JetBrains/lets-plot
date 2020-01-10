@@ -25,10 +25,10 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectSystem
 import jetbrains.livemap.effects.GrowingPath.GrowingPathRenderer
-import jetbrains.livemap.entities.geometry.ScreenGeometryComponent
-import jetbrains.livemap.entities.rendering.StyleComponent
-import jetbrains.livemap.entities.rendering.setFillColor
-import jetbrains.livemap.entities.rendering.setStrokeColor
+import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.rendering.StyleComponent
+import jetbrains.livemap.rendering.setFillColor
+import jetbrains.livemap.rendering.setStrokeColor
 import jetbrains.livemap.projection.Client
 import org.mockito.Mockito
 import kotlin.math.pow

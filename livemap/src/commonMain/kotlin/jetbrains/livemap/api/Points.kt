@@ -18,10 +18,9 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.placement.*
-import jetbrains.livemap.entities.rendering.*
-import jetbrains.livemap.entities.rendering.Renderers.PointRenderer
+import jetbrains.livemap.placement.*
+import jetbrains.livemap.rendering.*
+import jetbrains.livemap.rendering.Renderers.PointRenderer
 import jetbrains.livemap.projection.MapProjection
 
 @LiveMapDsl

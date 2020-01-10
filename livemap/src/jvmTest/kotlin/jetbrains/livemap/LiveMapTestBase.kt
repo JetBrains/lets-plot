@@ -14,7 +14,7 @@ import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.entities.placement.WorldOriginComponent
+import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.projection.Coordinates
 import jetbrains.livemap.projection.WorldPoint
 import org.junit.Before

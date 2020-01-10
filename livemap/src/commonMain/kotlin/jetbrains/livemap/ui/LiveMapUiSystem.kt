@@ -28,7 +28,7 @@ import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.MutableImage
 import jetbrains.livemap.core.rendering.primitives.Text
-import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
+import jetbrains.livemap.rendering.LayerEntitiesComponent
 
 class LiveMapUiSystem(
     private val myUiService: UiService,

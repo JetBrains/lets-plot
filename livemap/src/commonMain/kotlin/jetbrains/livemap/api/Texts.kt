@@ -12,10 +12,9 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.placement.*
-import jetbrains.livemap.entities.rendering.*
-import jetbrains.livemap.entities.rendering.Renderers.TextRenderer
+import jetbrains.livemap.placement.*
+import jetbrains.livemap.rendering.*
+import jetbrains.livemap.rendering.Renderers.TextRenderer
 
 @LiveMapDsl
 class Texts(

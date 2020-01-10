@@ -12,8 +12,8 @@ import jetbrains.livemap.cells.CellStateComponent
 import jetbrains.livemap.cells.CellStateUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
-import jetbrains.livemap.entities.rendering.RendererComponent
+import jetbrains.livemap.rendering.LayerEntitiesComponent
+import jetbrains.livemap.rendering.RendererComponent
 import jetbrains.livemap.tiles.RendererCacheComponent.Companion.NULL_RENDERER
 
 class TileRemovingSystem(private val myTileCacheLimit: Int, componentManager: EcsComponentManager) :

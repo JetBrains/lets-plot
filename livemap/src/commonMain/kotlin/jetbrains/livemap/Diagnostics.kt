@@ -17,10 +17,10 @@ import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayersOrderComponent
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.Text
-import jetbrains.livemap.entities.regions.CachedFragmentsComponent
-import jetbrains.livemap.entities.regions.DownloadingFragmentsComponent
-import jetbrains.livemap.entities.regions.FragmentKey
-import jetbrains.livemap.entities.regions.StreamingFragmentsComponent
+import jetbrains.livemap.regions.CachedFragmentsComponent
+import jetbrains.livemap.regions.DownloadingFragmentsComponent
+import jetbrains.livemap.regions.FragmentKey
+import jetbrains.livemap.regions.StreamingFragmentsComponent
 import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem.HttpTileResponseComponent
 import jetbrains.livemap.tiles.vector.TileLoadingSystem.TileResponseComponent
 import jetbrains.livemap.ui.UiService

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.core.projections.ProjectionUtil.transformMultiPolygon
-import jetbrains.livemap.entities.geometry.GeometryTransform
+import jetbrains.livemap.geometry.GeometryTransform
 import jetbrains.livemap.projection.World
 import jetbrains.livemap.projection.createMapProjection
 import org.junit.Test

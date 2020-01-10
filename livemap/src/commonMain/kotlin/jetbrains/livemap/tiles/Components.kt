@@ -10,7 +10,7 @@ import jetbrains.livemap.cells.CellKey
 import jetbrains.livemap.cells.CellLayerKind
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.entities.rendering.Renderer
+import jetbrains.livemap.rendering.Renderer
 
 
 class StatisticsComponent : EcsComponent {

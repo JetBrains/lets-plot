@@ -8,6 +8,7 @@ package jetbrains.livemap.ui
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.values.Color.Companion.parseHex
 import jetbrains.livemap.LiveMapContext
+import jetbrains.livemap.api.MapEntityFactory
 import jetbrains.livemap.api.PathBuilder
 import jetbrains.livemap.api.PointBuilder
 import jetbrains.livemap.api.geometry
@@ -18,8 +19,7 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
-import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.rendering.LayerEntitiesComponent
+import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.toClientPoint
 
