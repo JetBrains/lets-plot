@@ -29,6 +29,7 @@ enum class ImageType {
     RGBA,
 }
 
+// TODO: Not used ? 
 fun transcodeToDataUrl(width: Int, height: Int, type: ImageType, base64: String): String {
     val bytes = Base64.getDecoder().decode(base64)
     val channels: Int = when (type) {

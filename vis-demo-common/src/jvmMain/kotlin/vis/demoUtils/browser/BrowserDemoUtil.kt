@@ -48,10 +48,6 @@ object BrowserDemoUtil {
         "plot-config.js"
     )
 
-    val DEMO_COMMON_LIBS = listOf(
-        "vis-demo-common.js"
-    )
-
     private const val ROOT_PROJECT = "lets-plot"
     private const val JS_PATH = "js-package/build/js"
     private const val ROOT_ELEMENT_ID = "root"
@@ -82,8 +78,21 @@ object BrowserDemoUtil {
         return projectRoot
     }
 
+    private fun projectJs(projectName: String) =
+        "${getRootPath()}/$projectName/build/classes/kotlin/js/main/$projectName.js"
+
     fun mapperDemoHtml(demoProject: String, callFun: String, libs: List<String>, title: String): String {
-        val mainScript = "${getRootPath()}/$demoProject/build/classes/kotlin/js/main/$demoProject.js"
+        return mapperDemoHtml(demoProject, callFun, libs, null, title)
+    }
+
+    fun mapperDemoHtml(
+        demoProject: String,
+        callFun: String,
+        libs: List<String>,
+        projectDeps: List<String>?,
+        title: String
+    ): String {
+        val mainScript = projectJs(demoProject)
         val writer = StringWriter().appendHTML().html {
             lang = "en"
             head {
@@ -94,6 +103,15 @@ object BrowserDemoUtil {
                     script {
                         type = "text/javascript"
                         src = "${getRootPath()}/$JS_PATH/$lib"
+                    }
+                }
+
+                if (projectDeps != null) {
+                    for (projectDep in projectDeps) {
+                        script {
+                            type = "text/javascript"
+                            src = projectJs(projectDep)
+                        }
                     }
                 }
 

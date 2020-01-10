@@ -7,20 +7,20 @@ package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.BASE_MAPPER_LIBS
-import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.DEMO_COMMON_LIBS
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.KOTLIN_LIBS
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.PLOT_LIBS
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.mapperDemoHtml
 
 private const val DEMO_PROJECT = "plot-demo"
 private const val CALL_FUN = "jetbrains.datalore.plotDemo.component.axisComponentDemo"
-private val LIBS = KOTLIN_LIBS + BASE_MAPPER_LIBS + PLOT_LIBS + DEMO_COMMON_LIBS
+private val LIBS = KOTLIN_LIBS + BASE_MAPPER_LIBS + PLOT_LIBS
 
 fun main() {
     BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
         mapperDemoHtml(
             DEMO_PROJECT,
             CALL_FUN,
-            LIBS, "Axis component")
+            LIBS, "Axis component"
+        )
     }
 }

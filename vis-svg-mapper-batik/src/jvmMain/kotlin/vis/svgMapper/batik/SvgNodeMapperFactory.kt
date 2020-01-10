@@ -8,7 +8,7 @@ package jetbrains.datalore.vis.svgMapper.batik
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MapperFactory
 import jetbrains.datalore.vis.svg.*
-import jetbrains.datalore.vis.svgMapper.RGBEncoderAwt
+import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
 import org.apache.batik.dom.AbstractDocument
 import org.apache.batik.dom.svg.SVGOMElement
 import org.w3c.dom.Node
