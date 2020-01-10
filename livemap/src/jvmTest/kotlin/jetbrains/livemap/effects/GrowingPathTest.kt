@@ -20,6 +20,7 @@ import jetbrains.livemap.core.animation.Animations
 import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsContext
+import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectComponent
 import jetbrains.livemap.effects.GrowingPath.GrowingPathEffectSystem
@@ -46,7 +47,7 @@ class GrowingPathTest {
     private lateinit var myGrowingPathEffectComponent: GrowingPathEffectComponent
 
     private fun p(x: Double, y: Double): Vec<Client> {
-        return explicitVec<Client>(x, y)
+        return explicitVec(x, y)
     }
 
     private fun index(i: Int): EffectState {
@@ -84,7 +85,7 @@ class GrowingPathTest {
         myGrowingPathEffectComponent = GrowingPathEffectComponent().apply {
             animationId = myComponentManager
                 .createEntity("animation")
-                .addComponent(myAnimationComponent).id
+                .add(myAnimationComponent).id
         }
     }
 
@@ -131,42 +132,35 @@ class GrowingPathTest {
 
     private fun createEffect(vararg points: Vec<Client>) {
         myComponentManager.createEntity("effect")
-            .addComponent(myGrowingPathEffectComponent)
-            .addComponent(
-                ScreenGeometryComponent().apply {
+            .addComponents {
+                + myGrowingPathEffectComponent
+                + ScreenGeometryComponent().apply {
                     geometry = createGeometry(*points)
                 }
-            )
-            .addComponent(
-                ParentLayerComponent(
+                + ParentLayerComponent(
                     myComponentManager.createEntity("parent layer").id
                 )
-            )
+            }
     }
 
     @Test
     fun rendererTest() {
         val renderer = GrowingPathRenderer()
         val pathEntity = myComponentManager.createEntity("path_entity")
-            .addComponent(
-                GrowingPathEffectComponent().apply {
+            .addComponents {
+                + GrowingPathEffectComponent().apply {
                     endIndex = 3
                     interpolatedPoint = explicitVec(3.5, 3.5)
                 }
-
-            )
-            .addComponent(
-                ScreenGeometryComponent().apply {
+                + ScreenGeometryComponent().apply {
                     geometry = createGeometry(p(0.0, 0.0), p(1.0, 1.0), p(2.0, 2.0), p(3.0, 3.0), p(4.0, 4.0))
                 }
-            )
-            .addComponent(
-                (StyleComponent().apply {
+                + StyleComponent().apply {
                     setFillColor(Color.BLACK)
                     setStrokeColor(Color.BLACK)
                     strokeWidth = 1.0
-                })
-            )
+                }
+            }
 
         val context2d = Mockito.mock(Context2d::class.java)
 
