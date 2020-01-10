@@ -160,6 +160,7 @@ object MonolithicAwt {
             bunchBounds.height.toInt()
         )
 
+        bunchComponent.preferredSize = bunchSizeInt
         bunchComponent.minimumSize = bunchSizeInt
         bunchComponent.maximumSize = bunchSizeInt
         return bunchComponent
