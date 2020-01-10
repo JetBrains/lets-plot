@@ -12,7 +12,7 @@ class PriorityQueue<T>(private val comparator: Comparator<T>) {
         var index = queue.binarySearch(value, comparator)
 
         if (index < 0) {
-            index = 0
+            index = -index - 1
         }
 
         queue.add(index, value)
@@ -21,4 +21,6 @@ class PriorityQueue<T>(private val comparator: Comparator<T>) {
     fun peek(): T? = if (queue.isEmpty()) null else queue[0]
 
     fun clear() = queue.clear()
+
+    fun toArray() = queue
 }
