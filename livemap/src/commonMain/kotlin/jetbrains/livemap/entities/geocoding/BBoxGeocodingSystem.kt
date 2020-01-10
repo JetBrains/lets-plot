@@ -19,30 +19,44 @@ class BBoxGeocodingSystem(
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val regionIds = getEntities(BBOX_COMPONENTS)
+        val entities = getMutableEntities(NEED_BBOX)
+
+        if (entities.isEmpty()) return
+
+        val regionIds = entities
             .map { it.get<RegionIdComponent>().regionId }
             .distinct()
-            .toList()
-
-        if (regionIds.isEmpty()) return
 
         myGeocodingProvider
             .featuresByRegionIds(regionIds, listOf(LIMIT))
             .map(::parseBBoxMap)
+
+        entities.forEach {
+            it.add(WaitBboxComponent())
+            it.remove<NeedBboxComponent>()
+        }
     }
 
     private fun parseBBoxMap(features: Map<String, GeocodedFeature>) {
-        getMutableEntities(BBOX_COMPONENTS).forEach { entity ->
+        getMutableEntities(WAIT_BBOX).forEach { entity ->
             features[entity.get<RegionIdComponent>().regionId]
                 ?.limit
-                ?.run(::RegionBBoxComponent)
-                ?.run(entity::add)
+                ?.let {
+                    entity.add(RegionBBoxComponent(it))
+                    entity.remove<WaitBboxComponent>()
+                }
         }
     }
 
     companion object {
-        val BBOX_COMPONENTS = listOf(
+        val NEED_BBOX = listOf(
             RegionIdComponent::class,
+            NeedBboxComponent::class
+        )
+
+        val WAIT_BBOX = listOf(
+            RegionIdComponent::class,
+            WaitBboxComponent::class,
             RegionFragmentsComponent::class
         )
     }

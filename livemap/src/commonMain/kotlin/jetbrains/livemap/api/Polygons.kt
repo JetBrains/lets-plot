@@ -15,10 +15,7 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.entities.Entities.MapEntityFactory
-import jetbrains.livemap.entities.geocoding.MapIdComponent
-import jetbrains.livemap.entities.geocoding.NeedCalculateLocationComponent
-import jetbrains.livemap.entities.geocoding.NeedGeocodeLocationComponent
-import jetbrains.livemap.entities.geocoding.NeedLocationComponent
+import jetbrains.livemap.entities.geocoding.*
 import jetbrains.livemap.entities.geometry.WorldGeometryComponent
 import jetbrains.livemap.entities.placement.ScreenLoopComponent
 import jetbrains.livemap.entities.placement.ScreenOriginComponent
@@ -115,6 +112,7 @@ class PolygonsBuilder(
             .createMapEntity("map_ent_d_polygon_$mapId")
             .addComponents {
                 + MapIdComponent(mapId!!)
+                + NeedBboxComponent()
                 + RegionFragmentsComponent()
                 + RendererComponent(RegionRenderer())
                 + ScreenLoopComponent().apply { origins = listOf(Coordinates.ZERO_CLIENT_POINT) }

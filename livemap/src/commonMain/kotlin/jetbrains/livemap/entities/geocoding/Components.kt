@@ -17,7 +17,8 @@ class MapIdComponent(val mapId: String) : EcsComponent
 
 class RegionIdComponent(var regionId: String) : EcsComponent
 
-class CentroidComponent : EcsComponent
+class NeedCentroidComponent : EcsComponent
+class WaitCentroidComponent : EcsComponent
 
 class NeedLocationComponent : EcsComponent
 class NeedGeocodeLocationComponent : EcsComponent
@@ -45,6 +46,9 @@ class LocationComponent: EcsComponent {
 class LonLatComponent(val point: LonLatPoint): EcsComponent
 
 class WaitingGeocodingComponent : EcsComponent
+
+class NeedBboxComponent : EcsComponent
+class WaitBboxComponent : EcsComponent
 
 class RegionBBoxComponent(val bbox: GeoRectangle) : EcsComponent
 

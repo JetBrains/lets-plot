@@ -26,33 +26,44 @@ class CentroidGeocodingSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val regionIds = getEntities(CENTROID_COMPONENTS)
+        val entities = getMutableEntities(NEED_CENTROID)
+
+        if (entities.isEmpty()) return
+
+        val regionIds = entities
             .map { it.get<RegionIdComponent>().regionId }
             .distinct()
-            .toList()
-
-        if (regionIds.isEmpty()) return
 
         myGeocodingProvider
             .featuresByRegionIds(regionIds, listOf(CENTROID))
             .map(::parseCentroidMap)
+
+        entities.forEach {
+            it.add(WaitCentroidComponent())
+            it.remove<NeedCentroidComponent>()
+        }
     }
 
     private fun parseCentroidMap(features: Map<String, GeocodedFeature>) {
 
-        getMutableEntities(CENTROID_COMPONENTS).forEach { entity ->
+        getMutableEntities(WAIT_CENTROID).forEach { entity ->
             features[entity.get<RegionIdComponent>().regionId]
                 ?.centroid
                 ?.let { coord ->
                     entity.add(LonLatComponent(coord.reinterpret()))
-                    entity.remove<CentroidComponent>()
+                    entity.remove<WaitCentroidComponent>()
                 }
         }
     }
 
     companion object {
-        val CENTROID_COMPONENTS = listOf(
-            CentroidComponent::class,
+        val NEED_CENTROID = listOf(
+            NeedCentroidComponent::class,
+            RegionIdComponent::class
+        )
+
+        val WAIT_CENTROID = listOf(
+            WaitCentroidComponent::class,
             RegionIdComponent::class
         )
     }

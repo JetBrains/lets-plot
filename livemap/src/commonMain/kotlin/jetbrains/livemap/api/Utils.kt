@@ -109,7 +109,7 @@ fun MapEntityFactory.createStaticEntity(name: String, point: LonLatPoint): EcsEn
 fun MapEntityFactory.createDynamicEntity(name: String, mapId: String): EcsEntity =
     createMapEntity(name)
         .addComponents {
-            + CentroidComponent()
+            + NeedCentroidComponent()
             + MapIdComponent(mapId)
         }
 
