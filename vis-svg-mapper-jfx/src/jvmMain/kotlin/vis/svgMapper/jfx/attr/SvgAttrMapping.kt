@@ -36,7 +36,7 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
 
     companion object {
         private fun setStyle(value: String, target: Node) {
-            val valueFx = value.split(";").joinToString(";") { if (it.isNotEmpty()) "-fx-$it" else it }
+            val valueFx = value.split(";").joinToString(";") { if (it.isNotEmpty()) "-fx-${it.trim()}" else it }
             target.style = valueFx
         }
 
