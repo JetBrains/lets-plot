@@ -12,12 +12,13 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
-import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.plot.builder.Plot
+import jetbrains.datalore.plot.MonolithicCommon
+import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
+import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
+import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.livemap.LiveMapUtil
+import jetbrains.datalore.plot.config.FailureHandler
+import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.svg.SvgNodeContainer
@@ -34,11 +35,6 @@ import kotlin.dom.createElement
 
 private val LOG = KotlinLogging.logger {}
 
-private val DEF_PLOT_SIZE = DoubleVector(500.0, 400.0)
-private val DEF_LIVE_MAP_SIZE = DoubleVector(800.0, 600.0)
-
-private const val FIT_IN_WIDTH = false
-private const val ASPECT_RATIO = 3.0 / 2.0   // TODO: theme
 
 /**
  * The entry point to call in JS
@@ -82,54 +78,46 @@ private fun buildPlotFromProcessedSpecsIntern(
     height: Double,
     parentElement: HTMLElement
 ) {
-    throwTestingErrors()  // noop
-
-    PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
-    if (PlotConfig.isFailure(plotSpec)) {
-        val errorMessage = PlotConfig.getErrorMessage(plotSpec)
+    val plotSize = if (width > 0 && height > 0) DoubleVector(width, height) else null
+    val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, plotSize)
+    if (buildResult.isError) {
+        val errorMessage = (buildResult as Error).error
         showError(errorMessage, parentElement)
         return
     }
 
-    when {
-        PlotConfig.isPlotSpec(plotSpec) -> buildSinglePlotFromProcessedSpecs(plotSpec, width, height, parentElement)
-        PlotConfig.isGGBunchSpec(plotSpec) -> buildGGBunchFromProcessedSpecs(plotSpec, parentElement)
-        else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(plotSpec))
+    val success = buildResult as Success
+    val computationMessages = success.buildInfos.flatMap { it.computationMessages }
+    computationMessages.forEach {
+        showInfo(it, parentElement)
+    }
+
+    if (success.buildInfos.size == 1) {
+        // a single plot
+        buildSinglePlotComponent(success.buildInfos[0].plotContainer, parentElement)
+    } else {
+        // a bunch
+        buildGGBunchComponent(success.buildInfos, parentElement)
     }
 }
 
-private fun buildGGBunchFromProcessedSpecs(bunchSpec: MutableMap<String, Any>, parentElement: HTMLElement) {
-    val bunchConfig = BunchConfig(bunchSpec)
-    if (bunchConfig.bunchItems.isEmpty()) return
-
-    var bunchBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
-    for (bunchItem in bunchConfig.bunchItems) {
-        val plotSpec = bunchItem.featureSpec as MutableMap<String, Any>
-        val assembler = createPlotAssembler(plotSpec) { messages ->
-            messages.forEach {
-                showInfo(it, parentElement)
-            }
-        }
-
-        val plotSize = if (bunchItem.hasSize()) {
-            bunchItem.size
-        } else {
-            PlotConfigClientSideUtil.getPlotSizeOrNull(plotSpec) ?: DEF_PLOT_SIZE
-        }
-
+fun buildGGBunchComponent(plotInfos: List<PlotBuildInfo>, parentElement: HTMLElement) {
+    for (plotInfo in plotInfos) {
         val itemElement = parentElement.ownerDocument!!.createElement("div") {
             setAttribute(
                 "style",
-                "position: absolute; left: ${bunchItem.x}px; top: ${bunchItem.y}px;"
+                "position: absolute; left: ${plotInfo.origin.x}px; top: ${plotInfo.origin.y}px;"
             )
         } as HTMLElement
 
         parentElement.appendChild(itemElement)
-        buildPlotComponent(plotSpec, assembler, plotSize, itemElement)
-
-        val itemBounds = DoubleRectangle(bunchItem.x, bunchItem.y, plotSize.x, plotSize.y)
-        bunchBounds = bunchBounds.union(itemBounds)
+        buildSinglePlotComponent(plotInfo.plotContainer, itemElement)
     }
+
+    val bunchBounds = plotInfos.map { it.bounds() }
+        .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
+            acc.union(bounds)
+        }
 
     parentElement.setAttribute(
         "style",
@@ -137,105 +125,18 @@ private fun buildGGBunchFromProcessedSpecs(bunchSpec: MutableMap<String, Any>, p
     )
 }
 
-private fun buildSinglePlotFromProcessedSpecs(
-    plotSpec: MutableMap<String, Any>,
-    width: Double,
-    height: Double,
+private fun buildSinglePlotComponent(
+    plotContainer: PlotContainer,
     parentElement: HTMLElement
 ) {
-
-    val assembler = createPlotAssembler(plotSpec) { messages ->
-        messages.forEach {
-            showInfo(it, parentElement)
-        }
-    }
-
-    // Figure out plot size
-    val plotSize = if (width > 0 && height > 0) {
-        DoubleVector(width, height)
-    } else {
-        var plotSizeSpec = PlotConfigClientSideUtil.getPlotSizeOrNull(plotSpec)
-        if (plotSizeSpec != null) {
-            plotSizeSpec
-        } else {
-            val maxWidth = if (width > 0) width else parentElement.offsetWidth.toDouble()
-            if (FIT_IN_WIDTH) {
-                DoubleVector(maxWidth, maxWidth / ASPECT_RATIO)
-            } else {
-                val defaultSize = defaultPlotSize(assembler)
-                if (defaultSize.x > maxWidth) {
-                    val scaler = maxWidth / defaultSize.x
-                    DoubleVector(maxWidth, defaultSize.y * scaler)
-                } else {
-                    defaultSize
-                }
-            }
-        }
-    }
-
-    buildPlotComponent(plotSpec, assembler, plotSize, parentElement)
-}
-
-private fun buildPlotComponent(
-    plotSpec: MutableMap<String, Any>,
-    assembler: PlotAssembler,
-    plotSize: DoubleVector,
-    parentElement: HTMLElement
-) {
-    LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(plotSpec))
-        ?.let {
-            LiveMapUtil.injectLiveMapProvider(
-                assembler.layersByTile,
-                it
-            )
-        }
-
-    val plot = assembler.createPlot()
-    val svg = buildPlotSvg(plot, plotSize, parentElement)
+    val svg = buildPlotSvg(plotContainer, parentElement)
     parentElement.appendChild(svg)
 }
 
-private fun createPlotAssembler(
-    plotSpec: MutableMap<String, Any>,
-    computationMessagesHandler: ((List<String>) -> Unit)?
-): PlotAssembler {
-    @Suppress("NAME_SHADOWING")
-    var plotSpec = plotSpec
-    plotSpec = PlotConfigClientSide.processTransform(plotSpec)
-    if (computationMessagesHandler != null) {
-        val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
-        if (computationMessages.isNotEmpty()) {
-            computationMessagesHandler(computationMessages)
-        }
-    }
-
-    return PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
-}
-
-private fun defaultPlotSize(assembler: PlotAssembler): DoubleVector {
-    var plotSize = DEF_PLOT_SIZE
-    val facets = assembler.facets
-    if (facets.isDefined) {
-        val xLevels = facets.xLevels!!
-        val yLevels = facets.yLevels!!
-        val columns = if (xLevels.isEmpty()) 1 else xLevels.size
-        val rows = if (yLevels.isEmpty()) 1 else yLevels.size
-        val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / columns)
-        val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / rows)
-        plotSize = DoubleVector(panelWidth * columns, panelHeight * rows)
-    } else if (assembler.containsLiveMap) {
-        plotSize = DEF_LIVE_MAP_SIZE
-    }
-    return plotSize
-}
-
 private fun buildPlotSvg(
-    plot: Plot,
-    plotSize: DoubleVector,
+    plotContainer: PlotContainer,
     eventTarget: Node
 ): SVGSVGElement {
-
-    val plotContainer = PlotContainer(plot, ValueProperty(plotSize))
 
     eventTarget.addEventListener(DomEventType.MOUSE_MOVE.name, { e: Event ->
         plotContainer.mouseEventPeer.dispatch(
@@ -296,11 +197,3 @@ private fun showText(message: String, style: String, parentElement: HTMLElement)
     parentElement.appendChild(paragraphElement)
 }
 
-private fun throwTestingErrors() {
-    // testing errors
-//        throw RuntimeException()
-//        throw RuntimeException("My sudden crush")
-//        throw IllegalArgumentException("User configuration error")
-//        throw IllegalStateException("User configuration error")
-//        throw IllegalStateException()   // Huh?
-}

@@ -32,12 +32,12 @@ kotlin {
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
 
-                if (project.buildSettings.enable_livemap) {
-                    implementation project(':gis')
-                    implementation project(':plot-livemap')
-                } else {
-                    implementation project(':plot-livemap-stub')
-                }
+//                if (project.buildSettings.enable_livemap) {
+//                    implementation project(':gis')
+//                    implementation project(':plot-livemap')
+//                } else {
+//                    implementation project(':plot-livemap-stub')
+//                }
             }
         }
 

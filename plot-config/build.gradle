@@ -29,6 +29,13 @@ kotlin {
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
+
+                if (project.buildSettings.enable_livemap) {
+                    implementation project(':gis')
+                    implementation project(':plot-livemap')
+                } else {
+                    implementation project(':plot-livemap-stub')
+                }
             }
         }
         commonTest {
@@ -61,7 +68,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-js')
                 implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-                
+
                 implementation project(':mapper-core')
                 implementation project(':vis-svg-mapper')
             }

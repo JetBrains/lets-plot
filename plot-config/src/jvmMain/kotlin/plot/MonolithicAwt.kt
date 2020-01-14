@@ -28,6 +28,7 @@ import javax.swing.JPanel
 private val LOG = KotlinLogging.logger {}
 
 object MonolithicAwt {
+
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
@@ -36,7 +37,6 @@ object MonolithicAwt {
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
         return try {
-            throwTestingErrors()  // noop
             val buildResult = MonolithicCommon.buildPlotsFromRawSpecs(plotSpec, plotSize)
             if (buildResult.isError) {
                 val errorMessage = (buildResult as Error).error
@@ -148,18 +148,5 @@ object MonolithicAwt {
         val label = JLabel(s)
         label.foreground = Color.RED
         return label
-    }
-
-    private fun throwTestingErrors() {
-        // testing errors
-//        throw RuntimeException()
-//        throw RuntimeException("My sudden crush")
-//        throw IllegalArgumentException("User configuration error")
-//        throw IllegalStateException("User configuration error")
-//        throw IllegalStateException()   // Huh?
-    }
-
-    interface MessageHandler {
-        fun showInfo(message: String)
     }
 }

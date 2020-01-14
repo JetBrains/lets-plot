@@ -12,17 +12,22 @@ import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
 
 object MonolithicCommon {
-    private val DEF_PLOT_SIZE = DoubleVector(500.0, 400.0)
-    private val DEF_LIVE_MAP_SIZE = DoubleVector(800.0, 600.0)
+    private const val ASPECT_RATIO = 3.0 / 2.0   // TODO: theme
+    private const val DEF_PLOT_WIDTH = 500.0
+    private const val DEF_LIVE_MAP_WIDTH = 800.0
+    private val DEF_PLOT_SIZE = DoubleVector(DEF_PLOT_WIDTH, DEF_PLOT_WIDTH / ASPECT_RATIO)
+    private val DEF_LIVE_MAP_SIZE = DoubleVector(DEF_LIVE_MAP_WIDTH, DEF_LIVE_MAP_WIDTH / ASPECT_RATIO)
 
     fun buildPlotsFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?
     ): PlotsBuildResult {
+        throwTestingErrors()  // noop
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
         val processedSpec =
             if (PlotConfig.isFailure(plotSpec)) {
@@ -30,16 +35,17 @@ object MonolithicCommon {
             } else {
                 PlotConfigServerSide.processTransform(plotSpec)
             }
-        return buildPlotsFromProcessedSpecsIntern(
+        return buildPlotsFromProcessedSpecs(
             processedSpec,
             plotSize
         )
     }
 
-    private fun buildPlotsFromProcessedSpecsIntern(
+    fun buildPlotsFromProcessedSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?
     ): PlotsBuildResult {
+        throwTestingErrors()  // noop
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             val errorMessage = PlotConfig.getErrorMessage(plotSpec)
@@ -98,18 +104,27 @@ object MonolithicCommon {
             computationMessages.addAll(it)
         }
 
+        LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(plotSpec))
+            ?.let {
+                LiveMapUtil.injectLiveMapProvider(
+                    assembler.layersByTile,
+                    it
+                )
+            }
+
         // Figure out plot size
         @Suppress("NAME_SHADOWING")
-        val plotSize = if (plotSize != null) {
-            plotSize
-        } else {
-            var plotSizeSpec = PlotConfigClientSideUtil.getPlotSizeOrNull(plotSpec)
-            if (plotSizeSpec != null) {
-                plotSizeSpec
+        val plotSize =
+            if (plotSize != null) {
+                plotSize
             } else {
-                defaultPlotSize(assembler)
+                var plotSizeSpec = PlotConfigClientSideUtil.getPlotSizeOrNull(plotSpec)
+                if (plotSizeSpec != null) {
+                    plotSizeSpec
+                } else {
+                    defaultPlotSize(assembler)
+                }
             }
-        }
 
         val plot = assembler.createPlot()
         val preferredSize = ValueProperty(plotSize)
@@ -153,6 +168,15 @@ object MonolithicCommon {
             plotSize = DEF_LIVE_MAP_SIZE
         }
         return plotSize
+    }
+
+    private fun throwTestingErrors() {
+        // testing errors
+//        throw RuntimeException()
+//        throw RuntimeException("My sudden crush")
+//        throw IllegalArgumentException("User configuration error")
+//        throw IllegalStateException("User configuration error")
+//        throw IllegalStateException()   // Huh?
     }
 
 
