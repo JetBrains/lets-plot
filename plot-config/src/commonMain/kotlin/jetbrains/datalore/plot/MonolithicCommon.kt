@@ -64,7 +64,6 @@ object MonolithicCommon {
         if (bunchConfig.bunchItems.isEmpty()) return PlotsBuildResult.Error("No plots in the bunch")
 
         val buildInfos = ArrayList<PlotBuildInfo>()
-        var bunchBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
         for (bunchItem in bunchConfig.bunchItems) {
             val plotSpec = bunchItem.featureSpec as MutableMap<String, Any>
 
@@ -83,8 +82,6 @@ object MonolithicCommon {
                 buildInfo.computationMessages
             )
             buildInfos.add(buildInfo)
-
-//            bunchBounds = bunchBounds.union(success.bounds())
         }
 
         return PlotsBuildResult.Success(buildInfos)
