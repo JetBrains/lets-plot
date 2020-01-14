@@ -19,12 +19,15 @@ import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.scale.Mappers
+import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
+import jetbrains.datalore.vis.svg.SvgClipPathElement
+import jetbrains.datalore.vis.svg.SvgIRI
 import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class PlotTile(
@@ -65,8 +68,27 @@ internal class PlotTile(
     // We want event handlers to be called on SvgElement-s
     getRootGroup().setPrebuiltSubtree(true);
     */
+
         val geomBounds = myLayoutInfo.geomBounds
         addFacetLabels(geomBounds)
+
+        // clipping
+        val clipIri = run {
+            val clip = SvgClipPathElement().apply {
+                id().set("plotClipRect_${geomBounds.left}_${geomBounds.top}")
+                children().add(
+                    SvgRectElement().apply {
+                        width().set(geomBounds.width)
+                        height().set(geomBounds.height)
+                    }
+                )
+            }
+
+            add(clip)
+
+            SvgIRI(clip.id().get()!!)
+        }
+
 
         val liveMapGeomLayer = myLayers.firstOrNull { it.isLiveMap }
         if (liveMapGeomLayer == null && myShowAxis) {
@@ -129,6 +151,7 @@ internal class PlotTile(
             val geomLayerComponents = buildGeoms(sharedNumericMappers, overallNumericDomains, myCoord)
             for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
+                layerComponent.rootGroup.clipPath().set(clipIri)
                 add(layerComponent)
             }
         }
@@ -180,8 +203,8 @@ internal class PlotTile(
         }
     }
 
-    private fun buildAxis(scale: Scale<Double>, info: AxisLayoutInfo, coord: CoordinateSystem, theme: AxisTheme): jetbrains.datalore.plot.builder.guide.AxisComponent {
-        val axis = jetbrains.datalore.plot.builder.guide.AxisComponent(info.axisLength, info.orientation!!)
+    private fun buildAxis(scale: Scale<Double>, info: AxisLayoutInfo, coord: CoordinateSystem, theme: AxisTheme): AxisComponent {
+        val axis = AxisComponent(info.axisLength, info.orientation!!)
         AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
         AxisUtil.applyLayoutInfo(axis, info)
         AxisUtil.applyTheme(axis, theme)
