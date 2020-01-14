@@ -18,7 +18,7 @@ object CoordLimSceneMapper {
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             @Suppress("SpellCheckingInspection")
             PlotConfigDemoUtil.show(
-                "coord_cartesian(x_lim=[2, 22])",
+                "coord x/y limits",
                 plotSpecList,
                 SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET),
                 DoubleVector(600.0, 300.0)

@@ -11,20 +11,17 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class CoordLim : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            simple()
+            noLims(),
+            xLims()
         )
     }
 
-    private fun simple(): Map<String, Any> {
+    private fun createSpec(coordSpec: String?): MutableMap<String, Any> {
         val spec = """
             |{
             |   'data': null, 
-            |   'mapping': null, 
-            |   'coord': {
-            |       'name': 'cartesian', 
-            |       'xlim': [2, 22], 
-            |       'ylim': null
-            |   }, 
+            |   'mapping': null,
+            |    ${if (coordSpec == null) "" else (coordSpec + ",")}
             |   'kind': 'plot', 
             |   'scales': [], 
             |   'layers': [{
@@ -46,6 +43,25 @@ class CoordLim : PlotConfigDemoBase() {
             |       'sampling': null
             |   }]
             |}""".trimMargin()
+
         return parsePlotSpec(spec)
+    }
+
+    private fun noLims(): Map<String, Any> {
+        return createSpec(null)
+    }
+
+    private fun xLims(): Map<String, Any> {
+        val spec = createSpec(
+            """
+            |   'coord': {
+            |       'name': 'cartesian', 
+            |       'xlim': [2, 22], 
+            |       'ylim': null
+            |   }
+        """.trimMargin()
+        )
+        spec["ggtitle"] = mapOf("text" to "coord_cartesian(x_lim=[2, 22])")
+        return spec
     }
 }

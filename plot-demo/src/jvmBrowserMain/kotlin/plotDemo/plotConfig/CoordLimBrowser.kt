@@ -13,7 +13,7 @@ object CoordLimBrowser {
         with(CoordLim()) {
             @Suppress("UNCHECKED_CAST")
             (PlotConfigDemoUtil.show(
-                "coord_cartesian(x_lim=[2, 22])",
+                "coord x/y limits",
                 plotSpecList() as List<MutableMap<String, Any>>,
                 demoComponentSize
             ))
