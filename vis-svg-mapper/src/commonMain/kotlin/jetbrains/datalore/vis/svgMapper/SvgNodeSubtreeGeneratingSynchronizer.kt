@@ -30,10 +30,11 @@ class SvgNodeSubtreeGeneratingSynchronizer<T>(
             source !is SvgSlimNode,
             "Slim SVG node is not expected: ${source::class.simpleName}"
         )
-        for (sourceNode in source.children()) {
-            // TODO: why in `children` cycle?
-            targetPeer.appendChild(target, generateNode(source))
-        }
+//        for (sourceNode in source.children()) {
+//            // TODO: why in `children` cycle?
+//            targetPeer.appendChild(target, generateNode(source))
+//        }
+        targetPeer.appendChild(target, generateNode(source))
     }
 
     override fun detach() {
