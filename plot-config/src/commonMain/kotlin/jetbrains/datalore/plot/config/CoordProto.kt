@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.Option.CoordName.CARTESIAN
@@ -24,18 +23,10 @@ internal object CoordProto {
 
     fun createCoordProvider(coordName: String, options: OptionsAccessor): CoordProvider {
         return when (coordName) {
-            CARTESIAN -> {
-
-                // TODO: add `getRangeOrNull()` to OptionsAccessor (we already have `getRange()` there)
-                fun toRange(pair: List<Double>): ClosedRange<Double>? = when {
-                    pair.size == 2 -> ClosedRange.closed(pair.first(), pair.last())
-                    else -> null
-                }
-
-                val xLim = toRange(options.getDoubleList(X_LIM))
-                val yLim = toRange(options.getDoubleList(Y_LIM))
-                CoordProviders.cartesian(xLim, yLim)
-            }
+            CARTESIAN -> CoordProviders.cartesian(
+                options.getRangeOrNull(X_LIM),
+                options.getRangeOrNull(Y_LIM)
+            )
             FIXED -> CoordProviders.fixed(options.getDouble(RATIO) ?: 1.0)
             MAP -> CoordProviders.map()
             else -> throw IllegalArgumentException("Unknown coordinate system name: '$coordName'")

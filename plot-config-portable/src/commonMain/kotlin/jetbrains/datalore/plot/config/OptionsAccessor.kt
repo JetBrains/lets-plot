@@ -107,6 +107,14 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
         throw IllegalArgumentException("'Range' value is expected in form: [min, max]")
     }
 
+    fun getRangeOrNull(option: String): ClosedRange<Double>? {
+        val pair = getDoubleList(option)
+        return when {
+            pair.size == 2 -> ClosedRange.closed(pair.first(), pair.last())
+            else -> null
+        }
+    }
+
     fun getMap(option: String): Map<*, *> {
         val v = get(option) ?: return emptyMap<Any, Any>()
         if (v is Map<*, *>) {
