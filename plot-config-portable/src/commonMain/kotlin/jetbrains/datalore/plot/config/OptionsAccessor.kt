@@ -122,6 +122,7 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
         }
 
         val lower = pair.first().toDouble()
+        // TODO: why do we need a range with 0 span?
         val upper = pair.last().toDouble() // same as first for singleton list
 
         return try {
