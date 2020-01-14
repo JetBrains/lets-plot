@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.mapper.core.Synchronizer
 import jetbrains.datalore.mapper.core.SynchronizerContext
+import jetbrains.datalore.vis.svg.SvgClipPathElement
 import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgTextNode
@@ -30,6 +31,7 @@ class SvgNodeSubtreeGeneratingSynchronizer<T>(
             "Slim SVG node is not expected: ${source::class.simpleName}"
         )
         for (sourceNode in source.children()) {
+            // TODO: why in `children` cycle?
             targetPeer.appendChild(target, generateNode(source))
         }
     }

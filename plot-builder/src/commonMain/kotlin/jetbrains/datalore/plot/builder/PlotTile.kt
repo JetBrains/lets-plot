@@ -26,8 +26,6 @@ import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
-import jetbrains.datalore.vis.svg.SvgClipPathElement
-import jetbrains.datalore.vis.svg.SvgIRI
 import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class PlotTile(
@@ -72,22 +70,23 @@ internal class PlotTile(
         val geomBounds = myLayoutInfo.geomBounds
         addFacetLabels(geomBounds)
 
-        // clipping
-        val clipIri = run {
-            val clip = SvgClipPathElement().apply {
-                id().set("plotClipRect_${geomBounds.left}_${geomBounds.top}")
-                children().add(
-                    SvgRectElement().apply {
-                        width().set(geomBounds.width)
-                        height().set(geomBounds.height)
-                    }
-                )
-            }
-
-            add(clip)
-
-            SvgIRI(clip.id().get()!!)
-        }
+// TODO: fix crash in JFX when using clip-path
+//        // clipping
+//        val clipIri = run {
+//            val clip = SvgClipPathElement().apply {
+//                id().set("plotClipRect_${geomBounds.left}_${geomBounds.top}")
+//                children().add(
+//                    SvgRectElement().apply {
+//                        width().set(geomBounds.width)
+//                        height().set(geomBounds.height)
+//                    }
+//                )
+//            }
+//
+//            add(clip)
+//
+//            SvgIRI(clip.id().get()!!)
+//        }
 
 
         val liveMapGeomLayer = myLayers.firstOrNull { it.isLiveMap }
@@ -151,7 +150,8 @@ internal class PlotTile(
             val geomLayerComponents = buildGeoms(sharedNumericMappers, overallNumericDomains, myCoord)
             for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
-                layerComponent.rootGroup.clipPath().set(clipIri)
+// TODO: fix crash in JFX when using clip-path
+//                layerComponent.rootGroup.clipPath().set(clipIri)
                 add(layerComponent)
             }
         }
@@ -203,7 +203,12 @@ internal class PlotTile(
         }
     }
 
-    private fun buildAxis(scale: Scale<Double>, info: AxisLayoutInfo, coord: CoordinateSystem, theme: AxisTheme): AxisComponent {
+    private fun buildAxis(
+        scale: Scale<Double>,
+        info: AxisLayoutInfo,
+        coord: CoordinateSystem,
+        theme: AxisTheme
+    ): AxisComponent {
         val axis = AxisComponent(info.axisLength, info.orientation!!)
         AxisUtil.setBreaks(axis, scale, coord, info.orientation.isHorizontal)
         AxisUtil.applyLayoutInfo(axis, info)
@@ -245,10 +250,10 @@ internal class PlotTile(
             myTargetLocators.add(targetCollector)
 
             val ctx = jetbrains.datalore.plot.builder.assemble.GeomContextBuilder()
-                    .aesthetics(aesthetics)
-                    .aestheticMappers(aestheticMappers)
-                    .geomTargetCollector(targetCollector)
-                    .build()
+                .aesthetics(aesthetics)
+                .aestheticMappers(aestheticMappers)
+                .geomTargetCollector(targetCollector)
+                .build()
 
             val pos = rendererData.pos
             val geom = layer.geom
