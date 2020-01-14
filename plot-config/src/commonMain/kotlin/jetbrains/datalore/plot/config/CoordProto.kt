@@ -25,7 +25,9 @@ internal object CoordProto {
     fun createCoordProvider(coordName: String, options: OptionsAccessor): CoordProvider {
         return when (coordName) {
             CARTESIAN -> {
-                fun toRange(pair: List<Double>): ClosedRange<Double>?  = when {
+
+                // TODO: add `getRangeOrNull()` to OptionsAccessor (we already have `getRange()` there)
+                fun toRange(pair: List<Double>): ClosedRange<Double>? = when {
                     pair.size == 2 -> ClosedRange.closed(pair.first(), pair.last())
                     else -> null
                 }
