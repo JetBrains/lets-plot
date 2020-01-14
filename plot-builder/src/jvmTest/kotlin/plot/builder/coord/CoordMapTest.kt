@@ -15,7 +15,7 @@ internal class CoordMapTest : jetbrains.datalore.plot.builder.coord.CoordTestBas
     @BeforeTest
     fun setUp() {
         dataBounds = DoubleRectangle(DoubleVector.ZERO,
-            jetbrains.datalore.plot.builder.coord.CoordMapTest.Companion.DATA_SPAN
+            DATA_SPAN
         )
     }
 
@@ -24,12 +24,12 @@ internal class CoordMapTest : jetbrains.datalore.plot.builder.coord.CoordTestBas
         // Coord Map keeps fixed ratio == 1 (equal X and Y)
         val dataBounds = dataBounds
         tryAdjustDomains(2.0,
-            jetbrains.datalore.plot.builder.coord.CoordMapTest.Companion.PROVIDER, dataBounds!!.xRange(),
-            jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.expand(dataBounds.yRange(), 2.0)
+            PROVIDER, dataBounds!!.xRange(),
+            expand(dataBounds.yRange(), 2.0)
         )
         tryAdjustDomains(0.5,
-            jetbrains.datalore.plot.builder.coord.CoordMapTest.Companion.PROVIDER,
-            jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.expand(dataBounds.xRange(), 2.0), dataBounds.yRange())
+            PROVIDER,
+            expand(dataBounds.xRange(), 2.0), dataBounds.yRange())
     }
 
     @Test
@@ -38,24 +38,24 @@ internal class CoordMapTest : jetbrains.datalore.plot.builder.coord.CoordTestBas
         run {
             val ratio = 2.0
             val shortSide = shortSideOfDisplay(ratio)
-            tryApplyScales(ratio, jetbrains.datalore.plot.builder.coord.CoordMapTest.Companion.PROVIDER,
+            tryApplyScales(ratio, PROVIDER,
                     DoubleVector(0.0, 0.0), DoubleVector(shortSide, shortSide), DoubleVector(0.0, 1.0E-2))
         }
         run {
             val ratio = 0.5
             val shortSide = shortSideOfDisplay(ratio)
-            tryApplyScales(ratio, jetbrains.datalore.plot.builder.coord.CoordMapTest.Companion.PROVIDER,
+            tryApplyScales(ratio, PROVIDER,
                     DoubleVector(0.0, 0.0), DoubleVector(shortSide, shortSide), DoubleVector(0.0, 1.0E-5))
         }
     }
 
     private fun shortSideOfDisplay(ratio: Double): Double {
-        val displaySize = jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.unitDisplaySize(ratio)
+        val displaySize = unitDisplaySize(ratio)
         return Math.min(displaySize.x, displaySize.y)
     }
 
     companion object {
-        private val PROVIDER = jetbrains.datalore.plot.builder.coord.CoordProviders.map()
+        private val PROVIDER = CoordProviders.map()
 
         private val DATA_SPAN = DoubleVector(10.0, 10.0)
     }

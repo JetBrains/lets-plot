@@ -5,17 +5,19 @@
 
 package jetbrains.datalore.plot.builder.coord
 
+import jetbrains.datalore.plot.builder.coord.map.MercatorProjectionY
+
 object CoordProviders {
-    fun cartesian(): jetbrains.datalore.plot.builder.coord.CoordProvider {
-        return jetbrains.datalore.plot.builder.coord.CartesianCoordProvider()
+    fun cartesian(): CoordProvider {
+        return CartesianCoordProvider()
     }
 
-    fun fixed(ratio: Double): jetbrains.datalore.plot.builder.coord.CoordProvider {
-        return jetbrains.datalore.plot.builder.coord.FixedRatioCoordProvider(ratio)
+    fun fixed(ratio: Double): CoordProvider {
+        return FixedRatioCoordProvider(ratio)
     }
 
-    fun map(): jetbrains.datalore.plot.builder.coord.CoordProvider {
+    fun map(): CoordProvider {
         // Mercator projection is cylindrical thus we don't really need 'projection X'
-        return jetbrains.datalore.plot.builder.coord.ProjectionCoordProvider.Companion.withProjectionY(jetbrains.datalore.plot.builder.coord.map.MercatorProjectionY())
+        return ProjectionCoordProvider.withProjectionY(MercatorProjectionY())
     }
 }

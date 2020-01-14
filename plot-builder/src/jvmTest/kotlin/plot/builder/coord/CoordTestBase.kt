@@ -21,12 +21,12 @@ internal open class CoordTestBase {
     /**
      * ratio - ratio between height and width of the display  (ratio = h / w)
      */
-    fun tryAdjustDomains(ratio: Double, provider: jetbrains.datalore.plot.builder.coord.CoordProvider, expectedX: ClosedRange<Double>, expectedY: ClosedRange<Double>) {
+    fun tryAdjustDomains(ratio: Double, provider: CoordProvider, expectedX: ClosedRange<Double>, expectedY: ClosedRange<Double>) {
 
         val dataBounds = this.dataBounds
         val domainX = dataBounds!!.xRange()
         val domainY = dataBounds.yRange()
-        val displaySize = jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.unitDisplaySize(ratio)
+        val displaySize = unitDisplaySize(ratio)
 
         val domains = provider.adjustDomains(domainX, domainY, displaySize)
 
@@ -37,36 +37,36 @@ internal open class CoordTestBase {
     /**
      * ratio - ratio between height and width of the display  (ratio = h / w)
      */
-    fun tryApplyScales(ratio: Double, provider: jetbrains.datalore.plot.builder.coord.CoordProvider, expectedMin: DoubleVector, expectedMax: DoubleVector, accuracy: DoubleVector) {
+    fun tryApplyScales(ratio: Double, provider: CoordProvider, expectedMin: DoubleVector, expectedMax: DoubleVector, accuracy: DoubleVector) {
 
         val dataBounds = this.dataBounds
         var domainX = dataBounds!!.xRange()
         var domainY = dataBounds.yRange()
-        val displaySize = jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.unitDisplaySize(ratio)
+        val displaySize = unitDisplaySize(ratio)
         val domains = provider.adjustDomains(domainX, domainY, displaySize)
         domainX = domains.first
         domainY = domains.second
 
         val scaleX =
-            jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.scaleX(provider, domainX, displaySize.x)
+            scaleX(provider, domainX, displaySize.x)
         val scaleY =
-            jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.scaleY(provider, domainY, displaySize.y)
+            scaleY(provider, domainY, displaySize.y)
 
         // adapts to display size
         val actualMin =
-            jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.applyScales(dataBounds.origin, scaleX, scaleY)
-        jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.assertEqualPoints(
+            applyScales(dataBounds.origin, scaleX, scaleY)
+        assertEqualPoints(
             "min",
             expectedMin,
             actualMin,
             accuracy
         )
-        val actualMax = jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.applyScales(
+        val actualMax = applyScales(
             dataBounds.origin.add(dataBounds.dimension),
             scaleX,
             scaleY
         )
-        jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.assertEqualPoints(
+        assertEqualPoints(
             "max",
             expectedMax,
             actualMax,
@@ -79,8 +79,8 @@ internal open class CoordTestBase {
         private val EMPTY_BREAKS = GuideBreaks(emptyList<Any>(), emptyList(), emptyList())
 
         fun unitDisplaySize(ratio: Double): DoubleVector {
-            val w = if (ratio > 1) jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.UNIT else jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.UNIT / ratio
-            val h = if (ratio < 1) jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.UNIT else jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.UNIT * ratio
+            val w = if (ratio > 1) UNIT else UNIT / ratio
+            val h = if (ratio < 1) UNIT else UNIT * ratio
             //return new DoubleVector(UNIT, UNIT * ratio);
             return DoubleVector(w, h)
         }
@@ -94,21 +94,21 @@ internal open class CoordTestBase {
             )
         }
 
-        fun scaleX(provider: jetbrains.datalore.plot.builder.coord.CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
+        fun scaleX(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
             return provider.buildAxisScaleX(
                     Scales.continuousDomainNumericRange("Test scale X"),
                     domain,
                     axisLength,
-                jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.EMPTY_BREAKS
+                EMPTY_BREAKS
             )
         }
 
-        fun scaleY(provider: jetbrains.datalore.plot.builder.coord.CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
+        fun scaleY(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
             return provider.buildAxisScaleY(
                     Scales.continuousDomainNumericRange("Test scale Y"),
                     domain,
                     axisLength,
-                jetbrains.datalore.plot.builder.coord.CoordTestBase.Companion.EMPTY_BREAKS
+                EMPTY_BREAKS
             )
         }
 

@@ -12,12 +12,20 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-internal class ProjectionCoordProvider private constructor(private val myProjectionX: Projection?, private val myProjectionY: Projection?)// square grid
+internal class ProjectionCoordProvider private constructor(
+    private val myProjectionX: Projection?,
+    private val myProjectionY: Projection?
+)// square grid
     : jetbrains.datalore.plot.builder.coord.FixedRatioCoordProvider(1.0) {
 
-    override fun buildAxisScaleX(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
+    override fun buildAxisScaleX(
+        scaleProto: Scale<Double>,
+        domain: ClosedRange<Double>,
+        axisLength: Double,
+        breaks: GuideBreaks
+    ): Scale<Double> {
         return if (myProjectionX != null) {
-            jetbrains.datalore.plot.builder.coord.ProjectionCoordProvider.Companion.buildAxisScaleWithProjection(
+            buildAxisScaleWithProjection(
                 myProjectionX,
                 scaleProto,
                 domain,
@@ -27,9 +35,14 @@ internal class ProjectionCoordProvider private constructor(private val myProject
         } else super.buildAxisScaleX(scaleProto, domain, axisLength, breaks)
     }
 
-    override fun buildAxisScaleY(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
+    override fun buildAxisScaleY(
+        scaleProto: Scale<Double>,
+        domain: ClosedRange<Double>,
+        axisLength: Double,
+        breaks: GuideBreaks
+    ): Scale<Double> {
         return if (myProjectionY != null) {
-            jetbrains.datalore.plot.builder.coord.ProjectionCoordProvider.Companion.buildAxisScaleWithProjection(
+            buildAxisScaleWithProjection(
                 myProjectionY,
                 scaleProto,
                 domain,
@@ -40,33 +53,35 @@ internal class ProjectionCoordProvider private constructor(private val myProject
     }
 
     companion object {
-        fun withProjectionY(projectionY: Projection): jetbrains.datalore.plot.builder.coord.CoordProvider {
-            return jetbrains.datalore.plot.builder.coord.ProjectionCoordProvider(null, projectionY)
+        fun withProjectionY(projectionY: Projection): CoordProvider {
+            return ProjectionCoordProvider(null, projectionY)
         }
 
-        private fun buildAxisScaleWithProjection(projection: Projection, scaleProto: Scale<Double>,
-                                                 domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
+        private fun buildAxisScaleWithProjection(
+            projection: Projection, scaleProto: Scale<Double>,
+            domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks
+        ): Scale<Double> {
 
             val validDomain = projection.toValidDomain(domain)
             val validDomainProjected = ClosedRange.closed(
-                    projection.apply(validDomain.lowerEndpoint())!!,
-                    projection.apply(validDomain.upperEndpoint())!!
+                projection.apply(validDomain.lowerEndpoint()),
+                projection.apply(validDomain.upperEndpoint())
             )
 
             val projectionInverse = Mappers.linear(validDomainProjected, validDomain)
 
             val linearMapper =
-                jetbrains.datalore.plot.builder.coord.CoordProviderBase.Companion.axisMapper(domain, axisLength)
-            val scaleMapper = jetbrains.datalore.plot.builder.coord.ProjectionCoordProvider.Companion.twistScaleMapper(
+                axisMapper(domain, axisLength)
+            val scaleMapper = twistScaleMapper(
                 projection,
                 projectionInverse,
                 linearMapper
             )
-            val validBreaks = jetbrains.datalore.plot.builder.coord.ProjectionCoordProvider.Companion.validateBreaks(
+            val validBreaks = validateBreaks(
                 validDomain,
                 breaks
             )
-            return jetbrains.datalore.plot.builder.coord.CoordProviderBase.Companion.buildAxisScaleDefault(
+            return buildAxisScaleDefault(
                 scaleProto,
                 scaleMapper,
                 validBreaks
@@ -95,7 +110,8 @@ internal class ProjectionCoordProvider private constructor(private val myProject
 
         private fun twistScaleMapper(
             projection: Projection, projectionInverse: (Double) -> Double,
-            scaleMapper: (Double?) -> Double?): (Double?) -> Double? {
+            scaleMapper: (Double?) -> Double?
+        ): (Double?) -> Double? {
             return { v ->
                 val projected = projection.apply(v!!)
                 val unProjected = projectionInverse(projected)
