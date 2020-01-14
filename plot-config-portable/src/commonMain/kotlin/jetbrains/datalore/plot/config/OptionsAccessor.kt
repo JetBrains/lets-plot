@@ -114,7 +114,7 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
         }
 
         val pair = list
-            .take(list.size.coerceAtMost(2)) // items to take: one for n = 1singleton list, two for >= 2
+            .take(list.size.coerceAtMost(2)) // items to take: size of list but no more than 2
             .filterIsInstance<Number>()
 
         if (pair.isEmpty()) {
