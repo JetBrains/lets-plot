@@ -46,6 +46,6 @@ internal class CoordCartesianTest : jetbrains.datalore.plot.builder.coord.CoordT
     }
 
     companion object {
-        private val PROVIDER = CoordProviders.cartesian()
+        private val PROVIDER = CoordProviders.cartesian(null, null)
     }
 }

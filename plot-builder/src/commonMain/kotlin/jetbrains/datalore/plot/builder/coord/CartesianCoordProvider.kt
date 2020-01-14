@@ -9,10 +9,16 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 
-internal class CartesianCoordProvider : CoordProviderBase() {
+internal class CartesianCoordProvider(
+    private val xLim: ClosedRange<Double>?,
+    private val yLim: ClosedRange<Double>?
+) : CoordProviderBase() {
 
-    override fun adjustDomains(xDomain: ClosedRange<Double>, yDomain: ClosedRange<Double>, displaySize: DoubleVector): Pair<ClosedRange<Double>, ClosedRange<Double>> {
-        // unchanged
-        return Pair(xDomain, yDomain)
+    override fun adjustDomains(
+        xDomain: ClosedRange<Double>,
+        yDomain: ClosedRange<Double>,
+        displaySize: DoubleVector
+    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        return Pair(xLim ?: xDomain, yLim ?: yDomain)
     }
 }

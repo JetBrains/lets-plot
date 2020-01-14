@@ -13,8 +13,8 @@ __all__ = ['coord_cartesian',
            ]
 
 
-def coord_cartesian():
-    return _coord('cartesian')
+def coord_cartesian(xlim=None, ylim=None):
+    return _coord('cartesian', xlim=xlim, ylim=ylim)
 
 
 def coord_fixed(ratio=1.):

@@ -5,11 +5,12 @@
 
 package jetbrains.datalore.plot.builder.coord
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.builder.coord.map.MercatorProjectionY
 
 object CoordProviders {
-    fun cartesian(): CoordProvider {
-        return CartesianCoordProvider()
+    fun cartesian(xLim: ClosedRange<Double>? = null, yLim: ClosedRange<Double>? = null): CoordProvider {
+        return CartesianCoordProvider(xLim, yLim)
     }
 
     fun fixed(ratio: Double): CoordProvider {
