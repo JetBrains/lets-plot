@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.ui
+package jetbrains.livemap.makegeometrywidget
 
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.values.Color.Companion.parseHex
@@ -54,7 +54,8 @@ class MakeGeometryWidgetSystem(
         PointBuilder(factory)
             .apply {
                 point = lonlat
-                strokeColor = DARK_ORANGE
+                strokeColor =
+                    DARK_ORANGE
                 shape = 20
             }
             .build(pointScaling = false, animationBuilder = AnimationBuilder(500.0))
@@ -63,7 +64,8 @@ class MakeGeometryWidgetSystem(
             PathBuilder(factory, myMapProjection)
                 .apply {
                     geometry(listOf(widgetLayer.last(), lonlat), false)
-                    strokeColor = DARK_ORANGE
+                    strokeColor =
+                        DARK_ORANGE
                     strokeWidth = 1.5
                 }
                 .build()

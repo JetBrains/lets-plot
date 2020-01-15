@@ -59,6 +59,7 @@ import jetbrains.livemap.core.rendering.primitives.Rectangle
 import jetbrains.livemap.effects.GrowingPath
 import jetbrains.livemap.geocoding.*
 import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
+import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
 import jetbrains.livemap.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.placement.WorldOrigin2ScreenUpdateSystem

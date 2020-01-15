@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.ui
+package jetbrains.livemap.makegeometrywidget
 
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec

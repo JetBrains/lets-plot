@@ -28,6 +28,8 @@ import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.MutableImage
 import jetbrains.livemap.core.rendering.primitives.Text
+import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetComponent
+import jetbrains.livemap.makegeometrywidget.createFormattedGeometryString
 import jetbrains.livemap.rendering.LayerEntitiesComponent
 
 class LiveMapUiSystem(
