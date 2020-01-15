@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.values.Color
@@ -70,25 +71,6 @@ internal class PlotTile(
         val geomBounds = myLayoutInfo.geomBounds
         addFacetLabels(geomBounds)
 
-// TODO: fix crash in JFX when using clip-path
-//        // clipping
-//        val clipIri = run {
-//            val clip = SvgClipPathElement().apply {
-//                id().set("plotClipRect_${geomBounds.left}_${geomBounds.top}")
-//                children().add(
-//                    SvgRectElement().apply {
-//                        width().set(geomBounds.width)
-//                        height().set(geomBounds.height)
-//                    }
-//                )
-//            }
-//
-//            add(clip)
-//
-//            SvgIRI(clip.id().get()!!)
-//        }
-
-
         val liveMapGeomLayer = myLayers.firstOrNull { it.isLiveMap }
         if (liveMapGeomLayer == null && myShowAxis) {
             addAxis(geomBounds)
@@ -150,8 +132,7 @@ internal class PlotTile(
             val geomLayerComponents = buildGeoms(sharedNumericMappers, overallNumericDomains, myCoord)
             for (layerComponent in geomLayerComponents) {
                 layerComponent.moveTo(geomBounds.origin)
-// TODO: fix crash in JFX when using clip-path
-//                layerComponent.rootGroup.clipPath().set(clipIri)
+                layerComponent.clipBounds(DoubleRectangle(ZERO, geomBounds.dimension))
                 add(layerComponent)
             }
         }

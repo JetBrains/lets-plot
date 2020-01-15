@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.vis.svg
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.observable.property.Property
 
 abstract class SvgGraphicsElement : SvgStylableElement() {
@@ -17,8 +18,12 @@ abstract class SvgGraphicsElement : SvgStylableElement() {
             SvgAttributeSpec.createSpec("opacity")
         val VISIBILITY: SvgAttributeSpec<Visibility> =
             SvgAttributeSpec.createSpec("visibility")
-        private val CLIP_PATH: SvgAttributeSpec<SvgIRI> =
+        val CLIP_PATH: SvgAttributeSpec<SvgIRI> =
             SvgAttributeSpec.createSpec("clip-path")
+
+        // Only for JFX. Workaround for implementation complexity of CLIP_PATH.
+        val CLIP_BOUNDS_JFX: SvgAttributeSpec<DoubleRectangle> =
+            SvgAttributeSpec.createSpec("clip-bounds-jfx")
     }
 
 

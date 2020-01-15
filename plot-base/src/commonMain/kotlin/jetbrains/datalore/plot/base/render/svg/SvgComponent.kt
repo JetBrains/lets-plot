@@ -6,11 +6,13 @@
 package jetbrains.datalore.plot.base.render.svg
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.svg.*
+import jetbrains.datalore.vis.svg.SvgGraphicsElement.Companion.CLIP_BOUNDS_JFX
 import kotlin.random.Random
 
 abstract class SvgComponent {
@@ -154,14 +156,24 @@ abstract class SvgComponent {
         return rootGroup.pointToAbsoluteCoordinates(location)
     }
 
-    protected fun defineClipPath(clipNode: SvgNode): SvgClipPathElement {
-        val defs = SvgDefsElement()
-        val clipPath = SvgClipPathElement()
-        clipPath.id().set(nextId("clip"))
-        clipPath.children().add(clipNode)
-        defs.children().add(clipPath)
+    fun clipBounds(rect: DoubleRectangle) {
+        val clipPathElement = SvgClipPathElement().apply {
+            id().set(nextId("clip"))
+            children().add(SvgRectElement().apply {
+                x().set(rect.left)
+                y().set(rect.top)
+                width().set(rect.width)
+                height().set(rect.height)
+            }
+            )
+        }
+        val defs = SvgDefsElement().apply {
+            children().add(clipPathElement)
+        }
         add(defs)
-        return clipPath
+
+        rootGroup.clipPath().set(SvgIRI(clipPathElement.id().get()!!))
+        rootGroup.setAttribute(CLIP_BOUNDS_JFX, rect) // JFX workaround
     }
 
     fun addClassName(className: String) {
