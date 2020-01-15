@@ -1,21 +1,22 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plotDemo.plotConfig
+package jetbrains.datalore.plotSvg
 
-import jetbrains.datalore.plotDemo.model.plotConfig.CoordLim
+import jetbrains.datalore.plotDemo.model.plotConfig.Density2df
 
-object CoordLimBrowser {
+object Density2dfSvg {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(CoordLim()) {
+        with(Density2df()) {
             @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
-                "coord x/y limits",
+            (PlotSvgDemoUtil.show(
+                "Density2df plot",
                 plotSpecList() as List<MutableMap<String, Any>>,
                 demoComponentSize
             ))
         }
-    }}
+    }
+}

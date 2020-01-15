@@ -68,7 +68,7 @@ object BrowserDemoUtil {
         }
 
         val desktop = Desktop.getDesktop()
-        desktop.browse(file.toURI());
+        desktop.browse(file.toURI())
     }
 
     private fun getProjectRoot(): String {

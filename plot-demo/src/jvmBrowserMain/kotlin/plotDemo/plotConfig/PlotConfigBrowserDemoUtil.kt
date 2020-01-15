@@ -13,11 +13,12 @@ import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import java.io.StringWriter
 
-private const val DEMO_PROJECT = "plot-demo"
-private const val ROOT_ELEMENT_ID = "root"
-private const val JS_DIST_PATH = "js-package/build/dist"
+object PlotConfigBrowserDemoUtil {
+    private const val DEMO_PROJECT = "plot-demo"
+    private const val ROOT_ELEMENT_ID = "root"
+    private const val JS_DIST_PATH = "js-package/build/dist"
 
-object PlotConfigDemoUtil {
+
     fun show(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
@@ -71,6 +72,17 @@ object PlotConfigDemoUtil {
             lang = "en"
             head {
                 title(title)
+                style {
+                    unsafe {
+                        +"""
+                            div.demo {
+                                border: 1px solid orange;
+                                margin: 20px;
+                                display: inline-block;
+                            }
+                        """.trimIndent()
+                    }
+                }
             }
             body {
                 script {
@@ -78,7 +90,7 @@ object PlotConfigDemoUtil {
                     src = getPlotLibPath()
                 }
 
-                div { id = ROOT_ELEMENT_ID }
+                div("demo") { id = ROOT_ELEMENT_ID }
 
                 script {
                     type = "text/javascript"

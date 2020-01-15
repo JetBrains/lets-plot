@@ -53,11 +53,15 @@ object BrowserDemoUtil {
     private const val ROOT_ELEMENT_ID = "root"
 
     fun openInBrowser(demoProjectRelativePath: String, html: () -> String) {
+        openInBrowser(demoProjectRelativePath, "index", ".html", html)
+    }
+
+    fun openInBrowser(demoProjectRelativePath: String, filePref: String, fileSuff: String, html: () -> String) {
 
         val rootPath = getRootPath()
         println("Project root: $rootPath")
         val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
-        val file = File.createTempFile("index", ".html", tmpDir)
+        val file = File.createTempFile(filePref, fileSuff, tmpDir)
         println(file.canonicalFile)
 
         FileWriter(file).use {
