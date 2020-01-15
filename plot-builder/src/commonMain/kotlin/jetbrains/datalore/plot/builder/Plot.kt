@@ -19,6 +19,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.render.svg.SvgIndex
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
@@ -36,9 +37,9 @@ import mu.KotlinLogging
 
 abstract class Plot(private val theme: Theme) : SvgComponent() {
 
-    private val myPreferredSize = ValueProperty(jetbrains.datalore.plot.builder.Plot.Companion.DEF_PLOT_SIZE)
+    private val myPreferredSize = ValueProperty(DEF_PLOT_SIZE)
     private val myLaidOutSize = ValueProperty(DoubleVector.ZERO)
-    private val myTooltipHelper = jetbrains.datalore.plot.builder.PlotTooltipHelper()
+    private val myTooltipHelper = PlotTooltipHelper()
     private val myLiveMapFigures = ArrayList<CanvasFigure>()
 
     internal val mouseEventPeer = jetbrains.datalore.plot.builder.event.MouseEventPeer()
@@ -83,11 +84,11 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     protected abstract fun plotLayout(): PlotLayout
 
     override fun buildComponent() {
+        SvgIndex.reset()
         try {
             buildPlot()
         } catch (e: RuntimeException) {
             LOG.error(e) { "buildPlot" }
-//            ThrowableHandlers.instance.handle(e)
 
             val rootCause = Throwables.getRootCause(e)
             val messages = arrayOf(
@@ -138,7 +139,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         tilesOrigin: DoubleVector,
         tileInfo: TileLayoutInfo,
         tileLayers: List<GeomLayer>
-    ): jetbrains.datalore.plot.builder.PlotTile {
+    ): PlotTile {
 
         val xScale: Scale<Double>
         val yScale: Scale<Double>
@@ -156,15 +157,15 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             coord = coordProvider.createCoordinateSystem(xDomain, xAxisLength, yDomain, yAxisLength)
         } else {
             // bogus scales and coordinate system (live map doesn't need them)
-            xScale = jetbrains.datalore.plot.builder.BogusScale()
-            yScale = jetbrains.datalore.plot.builder.BogusScale()
-            coord = jetbrains.datalore.plot.builder.BogusCoordinateSystem()
+            xScale = BogusScale()
+            yScale = BogusScale()
+            coord = BogusCoordinateSystem()
         }
 
         val tile =
-            jetbrains.datalore.plot.builder.PlotTile(tileLayers, xScale, yScale, tilesOrigin, tileInfo, coord, theme)
+            PlotTile(tileLayers, xScale, yScale, tilesOrigin, tileInfo, coord, theme)
         tile.setShowAxis(isAxisEnabled)
-        tile.debugDrawing().set(jetbrains.datalore.plot.builder.Plot.Companion.DEBUG_DRAWING)
+        tile.debugDrawing().set(DEBUG_DRAWING)
 
         return tile
     }
@@ -234,7 +235,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         val entirePlot = DoubleRectangle(DoubleVector.ZERO, preferredSize)
 
         @Suppress("ConstantConditionIf")
-        if (jetbrains.datalore.plot.builder.Plot.Companion.DEBUG_DRAWING) {
+        if (DEBUG_DRAWING) {
             val rect = SvgRectElement(entirePlot)
             rect.strokeColor().set(Color.MAGENTA)
             rect.strokeWidth().set(1.0)
@@ -271,7 +272,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         @Suppress("ConstantConditionIf")
-        if (jetbrains.datalore.plot.builder.Plot.Companion.DEBUG_DRAWING) {
+        if (DEBUG_DRAWING) {
             val rect = SvgRectElement(withoutTitleAndLegends)
             rect.strokeColor().set(Color.BLUE)
             rect.strokeWidth().set(1.0)
@@ -324,7 +325,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         // build tiles
 
         val tilesOrigin = geomAndAxis.origin
-        for (i in 0 until plotInfo.tiles.size) {
+        for (i in plotInfo.tiles.indices) {
             val tileInfo = plotInfo.tiles[i]
 
             //GWT.log("plot offset: " + tileInfo.plotOffset);
@@ -356,7 +357,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     */
 
         @Suppress("ConstantConditionIf")
-        if (jetbrains.datalore.plot.builder.Plot.Companion.DEBUG_DRAWING) {
+        if (DEBUG_DRAWING) {
             val rect = SvgRectElement(geomAreaBounds)
             rect.strokeColor().set(Color.RED)
             rect.strokeWidth().set(1.0)

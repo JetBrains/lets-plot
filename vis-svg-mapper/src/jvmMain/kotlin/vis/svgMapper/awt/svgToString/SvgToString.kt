@@ -28,7 +28,9 @@ object SvgToString {
     }
 
     private fun renderElement(svgElement: SvgElement, buffer: StringBuilder, level: Int) {
-        crlf(buffer, level)
+        if (level > 0) {
+            crlf(buffer, level)
+        }
         buffer.append('<').append(svgElement.elementName)
         for (key in svgElement.attributeKeys) {
             buffer.append(' ')

@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.vis.svg.SvgSvgElement
+import jetbrains.datalore.vis.svgMapper.awt.svgToString.SvgToString
 import mu.KotlinLogging
 import java.awt.Color
 import java.awt.Dimension
@@ -28,6 +29,29 @@ import javax.swing.JPanel
 private val LOG = KotlinLogging.logger {}
 
 object MonolithicAwt {
+
+    fun buildSvgImagesFromRawSpecs(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector?,
+        computationMessagesHandler: ((List<String>) -> Unit)
+    ): List<String> {
+        val buildResult = MonolithicCommon.buildPlotsFromRawSpecs(plotSpec, plotSize)
+        if (buildResult.isError) {
+            val errorMessage = (buildResult as Error).error
+            throw RuntimeException(errorMessage)
+        }
+
+        val success = buildResult as Success
+        val computationMessages = success.buildInfos.flatMap { it.computationMessages }
+        if (computationMessages.isNotEmpty()) {
+            computationMessagesHandler(computationMessages)
+        }
+
+        return success.buildInfos.map {
+            it.plotContainer.ensureContentBuilt()
+            it.plotContainer.svg
+        }.map { SvgToString.render(it) }
+    }
 
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
@@ -54,7 +78,11 @@ object MonolithicAwt {
             return buildGGBunchComponenet(success.buildInfos, componentFactory, executor)
 
         } catch (e: RuntimeException) {
-            handleException(e)
+            val failureInfo = FailureHandler.failureInfo(e)
+            if (failureInfo.isInternalError) {
+                LOG.error(e) {}
+            }
+            return createErrorLabel(failureInfo.message)
         }
     }
 
@@ -135,14 +163,6 @@ object MonolithicAwt {
 //    private fun DoubleVector.toVector(): Vector {
 //        return Vector(x.toInt(), y.toInt())
 //    }
-
-    private fun handleException(e: RuntimeException): JComponent {
-        val failureInfo = FailureHandler.failureInfo(e)
-        if (failureInfo.isInternalError) {
-            LOG.error(e) {}
-        }
-        return createErrorLabel(failureInfo.message)
-    }
 
     private fun createErrorLabel(s: String): JComponent {
         val label = JLabel(s)

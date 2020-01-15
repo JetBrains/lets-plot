@@ -51,6 +51,8 @@ kotlin {
                 implementation "com.google.code.gson:gson:$gson_version"
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+                implementation project(':vis-svg-mapper')
             }
         }
         jvmTest {
