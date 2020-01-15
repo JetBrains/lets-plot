@@ -82,7 +82,7 @@ object MonolithicAwt {
             if (failureInfo.isInternalError) {
                 LOG.error(e) {}
             }
-            return createErrorLabel(failureInfo.message)
+            createErrorLabel(failureInfo.message)
         }
     }
 
