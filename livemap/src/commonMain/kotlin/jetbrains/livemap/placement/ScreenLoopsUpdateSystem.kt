@@ -24,7 +24,9 @@ class ScreenLoopsUpdateSystem(componentManager: EcsComponentManager) : AbstractS
 
             val dimension = entity.get<ScreenDimensionComponent>().dimension
 
-            entity.get<ScreenLoopComponent>().origins = viewport.getOrigins(origin, dimension)
+            entity.get<ScreenLoopComponent>().run {
+                origins = viewport.getOrigins(origin, dimension).map { rounding.apply(it) }
+            }
         }
     }
 

@@ -5,26 +5,37 @@
 
 package jetbrains.livemap.placement
 
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.core.ecs.EcsComponent
-import jetbrains.livemap.projection.ClientPoint
+import jetbrains.livemap.projection.Client
 import jetbrains.livemap.projection.Coordinates
 import jetbrains.livemap.projection.WorldPoint
+import kotlin.math.floor
 
 class WorldDimensionComponent(var dimension: WorldPoint) : EcsComponent
 class WorldOriginComponent(var origin: WorldPoint) : EcsComponent
 
 class ScreenLoopComponent : EcsComponent {
-    var origins: List<ClientPoint> = ArrayList()
+    var origins: List<Vec<Client>> = ArrayList()
+    var rounding: Rounding = Rounding.NONE
+
+    enum class Rounding(private val f: (Vec<Client>) -> Vec<Client>) {
+        NONE({ it }),
+        FLOOR( { explicitVec(floor(it.x), floor(it.y)) });
+
+        fun apply(vector: Vec<Client>) = f(vector)
+    }
 }
 
 class ScreenDimensionComponent : EcsComponent {
-    var dimension: ClientPoint = Coordinates.ZERO_CLIENT_POINT
+    var dimension: Vec<Client> = Coordinates.ZERO_CLIENT_POINT
 }
 
 class ScreenOriginComponent : EcsComponent {
-    var origin: ClientPoint = Coordinates.ZERO_CLIENT_POINT
+    var origin: Vec<Client> = Coordinates.ZERO_CLIENT_POINT
 }
 
 class ScreenOffsetComponent : EcsComponent {
-    var offset: ClientPoint = Coordinates.ZERO_CLIENT_POINT
+    var offset: Vec<Client> = Coordinates.ZERO_CLIENT_POINT
 }

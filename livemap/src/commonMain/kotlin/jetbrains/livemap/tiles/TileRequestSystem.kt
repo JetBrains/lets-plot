@@ -15,6 +15,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.placement.*
+import jetbrains.livemap.placement.ScreenLoopComponent.Rounding.FLOOR
 import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.rendering.Renderer
 import jetbrains.livemap.rendering.RendererComponent
@@ -83,7 +84,7 @@ class TileRequestSystem(componentManager: EcsComponentManager) : AbstractSystem<
                     .addComponents {
                         + WorldOriginComponent(tileRect.origin)
                         + RendererComponent(NULL_RENDERER)
-                        + ScreenLoopComponent()
+                        + ScreenLoopComponent().apply { rounding = FLOOR }
                         + ScreenOriginComponent()
                         + screenDimension {
                             dimension = WorldDimension2ScreenUpdateSystem.world2Screen(tileRect.dimension, zoom)
