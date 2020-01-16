@@ -74,9 +74,15 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
     override fun createSnapshot(bytes: ByteArray): Async<Canvas.Snapshot> {
         return Asyncs.constant(
             JavafxCanvas.JavafxSnapshot(
-                imagePngByteArrayToImage(
-                    bytes
-                )
+                imagePngByteArrayToImage(bytes)
+            )
+        )
+    }
+
+    override fun createSnapshot(bytes: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        return Asyncs.constant(
+            JavafxCanvas.JavafxSnapshot(
+                imagePngByteArrayToImage(bytes, size * myPixelRatio.toInt())
             )
         )
     }
@@ -130,5 +136,9 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
         override fun onSpecAdded(spec: MouseEventSpec) {}
 
         override fun onSpecRemoved(spec: MouseEventSpec) {}
+    }
+
+    private operator fun Vector.times(value: Int): Vector {
+        return Vector(x * value, y * value)
     }
 }

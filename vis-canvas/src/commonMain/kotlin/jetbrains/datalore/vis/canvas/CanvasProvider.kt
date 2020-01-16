@@ -13,4 +13,5 @@ interface CanvasProvider {
     fun createCanvas(size: Vector): Canvas
     fun createSnapshot(dataUrl: String): Async<Snapshot>
     fun createSnapshot(bytes: ByteArray): Async<Snapshot>
+    fun createSnapshot(bytes: ByteArray, size: Vector): Async<Snapshot>
 }

@@ -67,15 +67,36 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
     }
 
     override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
+        return createSnapshot(dataUrl, null)
+    }
+
+    override fun createSnapshot(bytes: ByteArray): Async<Canvas.Snapshot> {
+        return Blob(arrayOf(bytes), BlobPropertyBag("image/png"))
+            .let(URL.Companion::createObjectURL)
+            .let(::createSnapshot)
+    }
+
+    private fun createSnapshot(dataUrl: String, size: Vector?): Async<Canvas.Snapshot> {
         val async = SimpleAsync<Canvas.Snapshot>()
 
         val image = Image()
 
         image.onload = {
-            val domCanvas =
-                DomCanvas.create(Vector(image.width, image.height), 1.0)
+
+            val screenSize = size?.let { it * DEVICE_PIXEL_RATIO.toInt() } ?: Vector(image.width, image.height)
+            val domCanvas = DomCanvas.create(screenSize, 1.0)
             val ctx = domCanvas.canvasElement.getContext("2d") as CanvasRenderingContext2D
-            ctx.drawImage(image, 0.0, 0.0)
+            ctx.drawImage(
+                image,
+                0.0,
+                0.0,
+                image.width.toDouble(),
+                image.height.toDouble(),
+                0.0,
+                0.0,
+                screenSize.x.toDouble(),
+                screenSize.y.toDouble()
+            )
 
             domCanvas.takeSnapshot().onSuccess { async.success(it) }
         }
@@ -85,10 +106,10 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         return async
     }
 
-    override fun createSnapshot(bytes: ByteArray): Async<Canvas.Snapshot> {
+    override fun createSnapshot(bytes: ByteArray, size: Vector): Async<Canvas.Snapshot> {
         return Blob(arrayOf(bytes), BlobPropertyBag("image/png"))
             .let { URL.createObjectURL(it) }
-            .let(::createSnapshot)
+            .let { createSnapshot(it, size) }
     }
 
     override fun addChild(canvas: Canvas) {
@@ -162,4 +183,8 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
 
         override fun onSpecRemoved(spec: MouseEventSpec) {}
     }
+}
+
+private operator fun Vector.times(value: Int): Vector {
+    return Vector(x * value, y * value)
 }

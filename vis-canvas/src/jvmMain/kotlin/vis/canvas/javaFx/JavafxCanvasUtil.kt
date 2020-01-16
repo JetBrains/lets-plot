@@ -14,6 +14,7 @@ import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.SimpleAsync
+import jetbrains.datalore.base.geometry.Vector
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -74,5 +75,9 @@ internal object JavafxCanvasUtil {
 
     fun imagePngByteArrayToImage(bytes: ByteArray): Image {
         return Image(ByteArrayInputStream(bytes))
+    }
+
+    fun imagePngByteArrayToImage(bytes: ByteArray, size: Vector): Image {
+        return Image(ByteArrayInputStream(bytes), size.x.toDouble(), size.y.toDouble(), false, false)
     }
 }

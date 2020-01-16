@@ -5,10 +5,12 @@
 
 package jetbrains.livemap.tiles.raster
 
+import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.spatial.projectOrigin
 import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
+import jetbrains.livemap.LiveMapConstants.TILE_PIXEL_SIZE
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.cells.CellComponent
 import jetbrains.livemap.cells.CellKey
@@ -19,8 +21,8 @@ import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.setMicroThread
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.tiles.Tile
 import jetbrains.livemap.tiles.RequestTilesComponent
+import jetbrains.livemap.tiles.Tile
 import jetbrains.livemap.tiles.TileComponent
 import jetbrains.livemap.tiles.vector.TileLoadingSystem
 import kotlin.math.pow
@@ -57,12 +59,14 @@ class RasterTileLoadingSystem(
             getTileLayerEntities(cellKey).forEach { httpTileEntity ->
                 microThreads.add(
                     MicroTaskUtil.create {
-                        context.mapRenderContext.canvasProvider.createSnapshot(imageData).onSuccess { snapshot ->
+                        context.mapRenderContext.canvasProvider
+                            .createSnapshot(imageData, Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
+                            .onSuccess { snapshot ->
 
-                            runLaterBySystem(httpTileEntity) { theEntity ->
-                                theEntity.get<TileComponent>().tile = Tile.SnapshotTile(snapshot)
-                                ParentLayerComponent.tagDirtyParentLayer(theEntity)
-                            }
+                                runLaterBySystem(httpTileEntity) { theEntity ->
+                                    theEntity.get<TileComponent>().tile = Tile.SnapshotTile(snapshot)
+                                    ParentLayerComponent.tagDirtyParentLayer(theEntity)
+                                }
                         }
                     }
                 )

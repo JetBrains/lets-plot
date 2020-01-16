@@ -65,6 +65,10 @@ internal class JavafxGraphicsCanvasControl(
         return myJavafxCanvasControl.createSnapshot(bytes)
     }
 
+    override fun createSnapshot(bytes: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        return myJavafxCanvasControl.createSnapshot(bytes, size)
+    }
+
     override fun addChild(canvas: Canvas) {
         myJavafxCanvasControl.addChild(canvas)
     }

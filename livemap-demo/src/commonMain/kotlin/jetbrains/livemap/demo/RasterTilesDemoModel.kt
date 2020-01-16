@@ -15,8 +15,9 @@ class RasterTilesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
         return basicLiveMap {
             params(
                 DevParams.RASTER_TILES.key to mapOf(
-                    "host" to "a.tile.stamen.com/watercolor",
-                    "protocol" to "http"
+                    "host" to "c.tile.stamen.com/toner",
+                    "protocol" to "http",
+                    "format" to "/\${z}/\${x}/\${y}@2x.png"
                 )
             )
         }
