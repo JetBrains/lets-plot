@@ -92,7 +92,10 @@ build.dependsOn += copyProcessedResources
 // Trick to copy kotlin.js etc. to `output`
 configurations {
     libraryDependenciesJs
-    projectDependenciesJs
+    projectDependenciesJs {
+        canBeConsumed = false
+        canBeResolved = true
+    }
 }
 
 dependencies {
@@ -103,25 +106,27 @@ dependencies {
     libraryDependenciesJs "io.ktor:ktor-client-websockets:$ktor_version"
     libraryDependenciesJs "io.ktor:ktor-client-cio:$ktor_version"
     libraryDependenciesJs "io.ktor:ktor-client-js:$ktor_version"
-    projectDependenciesJs project(':base-portable')
-    projectDependenciesJs project(':base')
-    projectDependenciesJs project(':gis')
-    projectDependenciesJs project(':livemap')
-    projectDependenciesJs project(':mapper-core')
-    projectDependenciesJs project(':vis-svg')
 
-    projectDependenciesJs project(':vis-demo-common')
+    projectDependenciesJs project(path: ':base-portable', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':base', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':gis', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':livemap', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':mapper-core', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':vis-svg', configuration: 'outputJsJar')
 
-    projectDependenciesJs project(':vis-canvas')         // required by plot-builder (get rid?)
+    projectDependenciesJs project(path: ':vis-demo-common', configuration: 'outputJsJar')
 
-    projectDependenciesJs project(':plot-common-portable')
-    projectDependenciesJs project(':plot-common')
-    projectDependenciesJs project(':plot-base')
-    projectDependenciesJs project(':plot-base-portable')
-    projectDependenciesJs project(':plot-builder-portable')
-    projectDependenciesJs project(':plot-builder')
-    projectDependenciesJs project(':plot-config-portable')
-    projectDependenciesJs project(':plot-config')
+    projectDependenciesJs project(path: ':vis-canvas', configuration: 'outputJsJar')
+    // required by plot-builder (get rid?)
+
+    projectDependenciesJs project(path: ':plot-common-portable', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-common', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-base', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-base-portable', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-builder-portable', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-builder', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-config-portable', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-config', configuration: 'outputJsJar')
 }
 
 // ---------------------------------

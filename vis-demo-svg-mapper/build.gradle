@@ -86,7 +86,10 @@ idea {
 // Trick to copy kotlin.js etc. to `output`
 configurations {
     libraryDependenciesJs
-    projectDependenciesJs
+    projectDependenciesJs {
+        canBeConsumed = false
+        canBeResolved = true
+    }
 }
 
 dependencies {
@@ -94,11 +97,8 @@ dependencies {
     libraryDependenciesJs "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
     // for Assertions.kt ToDo: get rid of kotlin-test here
     libraryDependenciesJs "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
-    projectDependenciesJs project(':base')
-    projectDependenciesJs project(':mapper-core')
-    projectDependenciesJs project(':vis-svg')
-    projectDependenciesJs project(':vis-svg-mapper')
-    projectDependenciesJs project(':vis-demo-common')
+
+    projectDependenciesJs project(path: ':vis-demo-common', configuration: 'outputJsJar')
 }
 
 // ---------------------------------

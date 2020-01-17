@@ -90,8 +90,19 @@ subprojects {
             kotlinOptions.jvmTarget = "1.8"
 
         }
-//        if (name == 'compileKotlinJs') {
-//        }
+        if (name == 'jsJar') {
+            // add 'outgoing configuration'
+            configurations {
+                outputJsJar {
+                    canBeConsumed = true
+                    canBeResolved = false
+                }
+            }
+
+            artifacts {
+                outputJsJar(jsJar)
+            }
+        }
     }
 
     // jar jvm sources of this project

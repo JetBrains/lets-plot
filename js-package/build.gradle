@@ -85,7 +85,10 @@ repositories.whenObjectAdded {
 // Trick to copy kotlin.js etc. to `output`
 configurations {
     libraryDependenciesJs
-    projectDependenciesJs
+    projectDependenciesJs {
+        canBeConsumed = false
+        canBeResolved = true
+    }
 }
 
 dependencies {
@@ -95,30 +98,32 @@ dependencies {
     libraryDependenciesJs "io.ktor:ktor-client-core-js:$ktor_version"
     libraryDependenciesJs "io.ktor:ktor-client-js:$ktor_version"
 
-    projectDependenciesJs project(':base-portable')
-    projectDependenciesJs project(':base')
-    projectDependenciesJs project(':mapper-core')
-    projectDependenciesJs project(':vis-svg')
-    projectDependenciesJs project(':vis-svg-mapper')
+    projectDependenciesJs project(path: ':base-portable', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':base', configuration: 'outputJsJar')
+
+    projectDependenciesJs project(path: ':mapper-core', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':vis-svg', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':vis-svg-mapper', configuration: 'outputJsJar')
 
     if (project.buildSettings.enable_livemap) {
-        projectDependenciesJs project(':gis')
-        projectDependenciesJs project(':livemap')
-        projectDependenciesJs project(':plot-livemap')
+        projectDependenciesJs project(path: ':gis', configuration: 'outputJsJar')
+        projectDependenciesJs project(path: ':livemap', configuration: 'outputJsJar')
+        projectDependenciesJs project(path: ':plot-livemap', configuration: 'outputJsJar')
     } else {
-        projectDependenciesJs project(':plot-livemap-stub')
+        projectDependenciesJs project(path: ':plot-livemap-stub', configuration: 'outputJsJar')
     }
 
-    projectDependenciesJs project(':vis-canvas')         // required by plot-builder (get rid?)
+    projectDependenciesJs project(path: ':vis-canvas', configuration: 'outputJsJar')
+    // required by plot-builder (get rid?)
 
-    projectDependenciesJs project(':plot-common-portable')
-    projectDependenciesJs project(':plot-common')
-    projectDependenciesJs project(':plot-base-portable')
-    projectDependenciesJs project(':plot-base')
-    projectDependenciesJs project(':plot-builder-portable')
-    projectDependenciesJs project(':plot-builder')
-    projectDependenciesJs project(':plot-config-portable')
-    projectDependenciesJs project(':plot-config')
+    projectDependenciesJs project(path: ':plot-common-portable', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-common', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-base-portable', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-base', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-builder-portable', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-builder', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-config-portable', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':plot-config', configuration: 'outputJsJar')
 }
 
 // ---------------------------------
@@ -136,7 +141,7 @@ task copyLibraryDependenciesJs(type: Copy) {
 
 task copyProjectDependenciesJs(type: Copy) {
     configurations.projectDependenciesJs.each {
-        def jarJs = it.absolutePath.replace("-metadata-", "-js-")
+        def jarJs = it.absolutePath
         println "project dependency: $jarJs"
         from zipTree(jarJs).matching { include '*.js' }
     }
