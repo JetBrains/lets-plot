@@ -63,67 +63,48 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
 
     fun getList(option: String): List<*> {
         val v = get(option) ?: return ArrayList<Any>()
-        if (v is List<*>) {
-            return v
-        }
-        throw IllegalArgumentException("Not a List: " + option + ": " + v::class.simpleName)
+
+        require(v is List<*>) { "Not a List: " + option + ": " + v::class.simpleName }
+
+        return v
     }
 
     fun getDoubleList(option: String): List<Double> {
         val list = getList(option)
-        val predicate: (Any?) -> Boolean = { v -> v != null && v is Double }
-        if (list.all(predicate)) {
-            @Suppress("UNCHECKED_CAST")
-            return list as List<Double>
-        }
 
-        throw IllegalArgumentException("Expected numeric value but was : ${list.find(predicate)}")
+        requireAll(list, { it is Number }) { "Expected numeric value but was : $it" }
+
+        @Suppress("UNCHECKED_CAST")
+        return list as List<Double>
     }
 
     fun getStringList(option: String): List<String> {
         val list = getList(option)
-        val predicate: (Any?) -> Boolean = { v -> v != null && v is String }
-        if (list.all(predicate)) {
-            @Suppress("UNCHECKED_CAST")
-            return list as List<String>
-        }
 
-        throw IllegalArgumentException("Expected string value but was : ${list.find(predicate)}")
+        requireAll(list, { it is String }) { "Expected string value but was : $it" }
+
+        @Suppress("UNCHECKED_CAST")
+        return list as List<String>
     }
 
     internal fun getRange(option: String): ClosedRange<Double> {
-        val error =
-            { v: Any? -> throw IllegalArgumentException("'range' value is expected in form: [min, max] but was: $v") }
-        val v = get(option)
-        if (v is List<*> && v.isNotEmpty()) {
-            val lower = asDouble(v[0]) ?: error(v)
-            var upper = lower
-            if (v.size > 1) {
-                upper = asDouble(v[1]) ?: error(v)
-            }
-            return ClosedRange.closed(lower, upper)
-        }
+        require(has(option)) { "'Range' value is expected in form: [min, max]" }
 
-        throw IllegalArgumentException("'Range' value is expected in form: [min, max]")
+        val range = getRangeOrNull(option)
+
+        requireNotNull(range) { "'range' value is expected in form: [min, max] but was: ${get(option)}" }
+
+        return range
     }
 
     fun getRangeOrNull(option: String): ClosedRange<Double>? {
-        val list = get(option)
-        if (list !is List<*>) {
+        val pair = get(option)
+        if ((pair is List<*> && pair.size == 2 && pair.all { it is Double }) != true) {
             return null
         }
 
-        val pair = list
-            .take(list.size.coerceAtMost(2)) // items to take: size of list but no more than 2
-            .filterIsInstance<Number>()
-
-        if (pair.isEmpty()) {
-            return null
-        }
-
-        val lower = pair.first().toDouble()
-        // TODO: why do we need a range with 0 span?
-        val upper = pair.last().toDouble() // same as first for singleton list
+        val lower = pair.first() as Double
+        val upper = pair.last() as Double
 
         return try {
             ClosedRange.closed(lower, upper)
@@ -134,10 +115,10 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
 
     fun getMap(option: String): Map<*, *> {
         val v = get(option) ?: return emptyMap<Any, Any>()
-        if (v is Map<*, *>) {
-            return v
-        }
-        throw IllegalArgumentException("Not a Map: " + option + ": " + v::class.simpleName)
+
+        require(v is Map<*, *>) { "Not a Map: " + option + ": " + v::class.simpleName }
+
+        return v
     }
 
     @JvmOverloads
@@ -183,6 +164,10 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
 
         private fun asDouble(value: Any?): Double? {
             return (value as? Number)?.toDouble()
+        }
+
+        private fun <T> requireAll(items: Iterable<T>, predicate: (T) -> Boolean, lazy: (T) -> Any) {
+            items.filterNot { predicate(it) }.firstOrNull()?.let { require(false) { lazy(it) } }
         }
     }
 }
