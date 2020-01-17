@@ -16,20 +16,6 @@ import jetbrains.datalore.vis.svg.SvgGraphicsElement.Companion.CLIP_BOUNDS_JFX
 
 abstract class SvgComponent {
     companion object {
-//        private val RANDOM = Random.Default
-//        private val USED_IDS = HashSet<String>()
-//
-//        protected fun nextId(prefix: String): String {
-//            var id: String
-//            var l: Long = 0
-//            do {
-//                l += RANDOM.nextInt(10000)
-//                id = prefix + l
-//            } while (USED_IDS.contains(id))
-//            USED_IDS.add(id)
-//            return id
-//        }
-
         fun buildTransform(origin: DoubleVector, rotationAngle: Double): SvgTransform {
             val transformBuilder = SvgTransformBuilder()
             if (origin != DoubleVector.ZERO) {
@@ -81,7 +67,7 @@ abstract class SvgComponent {
 
     protected abstract fun buildComponent()
 
-    protected fun <EventT> rebuildHandler(): EventHandler<in EventT> {
+    protected fun <EventT> rebuildHandler(): EventHandler<EventT> {
         return object : EventHandler<EventT> {
             override fun onEvent(event: EventT) {
                 needRebuild()
@@ -157,8 +143,7 @@ abstract class SvgComponent {
 
     fun clipBounds(rect: DoubleRectangle) {
         val clipPathElement = SvgClipPathElement().apply {
-            //            id().set(nextId("clip"))
-            id().set("clip" + SvgIndex.next())
+            id().set(SvgUID.get("clip"))
             children().add(SvgRectElement().apply {
                 x().set(rect.left)
                 y().set(rect.top)

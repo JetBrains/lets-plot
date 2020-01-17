@@ -19,7 +19,6 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.plot.base.render.svg.SvgIndex
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
@@ -84,7 +83,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     protected abstract fun plotLayout(): PlotLayout
 
     override fun buildComponent() {
-        SvgIndex.reset()
         try {
             buildPlot()
         } catch (e: RuntimeException) {

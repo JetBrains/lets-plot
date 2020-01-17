@@ -5,12 +5,15 @@
 
 package jetbrains.datalore.plot.base.render.svg
 
-object SvgIndex {
-    private var NEXT = 0
+object SvgUID {
+    private var nextIndex = 0
 
+    // Use in tests to stabilize ids
     fun reset() {
-        NEXT = 0
+        nextIndex = 0
     }
 
-    fun next() = NEXT++
+    fun get(prefix: String): String {
+        return "$prefix${nextIndex++}"
+    }
 }

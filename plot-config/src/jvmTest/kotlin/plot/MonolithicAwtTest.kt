@@ -6,11 +6,17 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.render.svg.SvgUID
 import junit.framework.TestCase.assertEquals
+import org.junit.Before
 import org.junit.Test
 
 
 internal class MonolithicAwtTest {
+    @Before
+    fun setUp() {
+        SvgUID.reset()
+    }
 
     @Test
     fun svgFromSinglePlot() {
@@ -24,7 +30,7 @@ internal class MonolithicAwtTest {
 
         assertEquals(1, svgImages.size)
         assertEquals(EXPECTED_SINGLE_PLOT, svgImages[0])
-        
+
 //        println(svgImages[0])
     }
 
@@ -39,8 +45,8 @@ internal class MonolithicAwtTest {
         )
 
         assertEquals(2, svgImages.size)
-        assertEquals(EXPECTED_GGBUNCH_PLOT_0, svgImages[0])
-        assertEquals(EXPECTED_GGBUNCH_PLOT_0, svgImages[1])
+        assertEquals(expectedGGBunchPlot(0), svgImages[0])
+        assertEquals(expectedGGBunchPlot(1), svgImages[1])
 
 //        println(svgImages[0])
     }
@@ -112,7 +118,7 @@ internal class MonolithicAwtTest {
 
 
     companion object {
-        val PLOT_STYLE_ELEMENT = """
+        private val PLOT_STYLE_ELEMENT = """
         |  <style type="text/css">
         |  .plt-container {
         |	font-family: "Lucida Grande", sans-serif;
@@ -167,7 +173,7 @@ internal class MonolithicAwtTest {
         |  </style>
         """.trimMargin()
 
-        val EXPECTED_SINGLE_PLOT = """
+        private val EXPECTED_SINGLE_PLOT = """
         |<svg class="plt-container" width="400.0" height="300.0">
         |$PLOT_STYLE_ELEMENT
         |  <g class="plt-plot">
@@ -298,7 +304,7 @@ internal class MonolithicAwtTest {
         |</svg>
         """.trimMargin()
 
-        val EXPECTED_GGBUNCH_PLOT_0 = """
+        private fun expectedGGBunchPlot(index: Int) = """
         |<svg class="plt-container" width="150.0" height="150.0">
         |$PLOT_STYLE_ELEMENT
         |  <g class="plt-plot">
@@ -365,9 +371,9 @@ internal class MonolithicAwtTest {
         |        <line x1="0.0" y1="0.0" x2="0.0" y2="101.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(15.7 0.0 ) " clip-path="url(#clip0)" clip-bounds-jfx="[rect (0.0, 0.0), (95.69090909090906, 101.0)]">
+        |      <g transform="translate(15.7 0.0 ) " clip-path="url(#clip$index)" clip-bounds-jfx="[rect (0.0, 0.0), (95.69090909090906, 101.0)]">
         |        <defs>
-        |          <clipPath id="clip0">
+        |          <clipPath id="clip$index">
         |            <rect x="0.0" y="0.0" width="95.69090909090906" height="101.0">
         |            </rect>
         |          </clipPath>
