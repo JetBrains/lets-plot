@@ -143,7 +143,7 @@ abstract class SvgComponent {
 
     fun clipBounds(rect: DoubleRectangle) {
         val clipPathElement = SvgClipPathElement().apply {
-            id().set(SvgUID.get("clip"))
+            id().set(SvgUID.get("lplt-clip"))
             children().add(SvgRectElement().apply {
                 x().set(rect.left)
                 y().set(rect.top)

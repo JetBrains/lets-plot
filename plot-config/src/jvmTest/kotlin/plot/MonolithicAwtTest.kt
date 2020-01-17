@@ -267,9 +267,9 @@ internal class MonolithicAwtTest {
         |        <line x1="0.0" y1="0.0" x2="0.0" y2="251.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(29.1 0.0 ) " clip-path="url(#clip0)" clip-bounds-jfx="[rect (0.0, 0.0), (340.9, 251.0)]">
+        |      <g transform="translate(29.1 0.0 ) " clip-path="url(#lplt-clip0)" clip-bounds-jfx="[rect (0.0, 0.0), (340.9, 251.0)]">
         |        <defs>
-        |          <clipPath id="clip0">
+        |          <clipPath id="lplt-clip0">
         |            <rect x="0.0" y="0.0" width="340.9" height="251.0">
         |            </rect>
         |          </clipPath>
@@ -371,9 +371,9 @@ internal class MonolithicAwtTest {
         |        <line x1="0.0" y1="0.0" x2="0.0" y2="101.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(15.7 0.0 ) " clip-path="url(#clip$index)" clip-bounds-jfx="[rect (0.0, 0.0), (95.69090909090906, 101.0)]">
+        |      <g transform="translate(15.7 0.0 ) " clip-path="url(#lplt-clip$index)" clip-bounds-jfx="[rect (0.0, 0.0), (95.69090909090906, 101.0)]">
         |        <defs>
-        |          <clipPath id="clip$index">
+        |          <clipPath id="lplt-clip$index">
         |            <rect x="0.0" y="0.0" width="95.69090909090906" height="101.0">
         |            </rect>
         |          </clipPath>
