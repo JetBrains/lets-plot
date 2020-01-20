@@ -6,7 +6,8 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.*
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.Projection
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap
 
 class LiveMapOptionsParser {
@@ -48,9 +49,9 @@ class LiveMapOptionsParser {
                 opts.getBoolean(LiveMap.SCALED, false),
                 opts.getBoolean(LiveMap.CLUSTERING, false),
                 opts.getBoolean(LiveMap.LABELS, true),
-                opts.getString(LiveMap.THEME)?.let(::parseTheme) ?: Theme.COLOR,
                 opts.getString(LiveMap.PROJECTION)?.let(::parseProjection) ?: Projection.EPSG3857,
                 opts.getBoolean(LiveMap.GEODESIC, true),
+                opts.getMap(LiveMap.TILES),
                 opts.getMap(LiveMap.DEV_PARAMS)
             )
         }
@@ -65,20 +66,7 @@ class LiveMapOptionsParser {
             } catch (ignored: Exception) {
                 throw IllegalArgumentException("geom" + formatValues(
                     DisplayMode.values()
-                )
-                )
-            }
-        }
-
-        private fun parseTheme(theme: String): Theme {
-            try {
-                return Theme.valueOf(theme.toUpperCase())
-            } catch (ignored: Exception) {
-                throw IllegalArgumentException(
-                    LiveMap.THEME + formatValues(
-                        Theme.values()
-                    )
-                )
+                ))
             }
         }
 
@@ -88,8 +76,6 @@ class LiveMapOptionsParser {
             } catch (ignored: Exception) {
                 throw IllegalArgumentException(LiveMap.PROJECTION + formatValues(Projection.values()))
             }
-
         }
     }
-
 }

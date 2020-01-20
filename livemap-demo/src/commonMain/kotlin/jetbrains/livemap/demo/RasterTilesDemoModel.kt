@@ -7,19 +7,18 @@ package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.livemap.api.LiveMapBuilder
-import jetbrains.livemap.config.DevParams
+import jetbrains.livemap.config.TileParameters
+import jetbrains.livemap.tiles.TileLoadingSystemFactory
 
 class RasterTilesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
-            params(
-                DevParams.RASTER_TILES.key to mapOf(
-                    "host" to "c.tile.stamen.com/toner",
-                    "protocol" to "http",
-                    "format" to "/\${z}/\${x}/\${y}@2x.png"
-                )
-            )
+            tileLoadingSystemFactory =
+                TileLoadingSystemFactory.createTileLoadingFactory(
+                    TileParameters(mapOf("raster" to "http://c.tile.stamen.com/toner/{z}/{x}/{y}@2x.png")),
+                    false,
+                    1000)
         }
     }
 }

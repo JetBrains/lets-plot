@@ -37,7 +37,6 @@ import jetbrains.livemap.config.DevParams.Companion.FRAGMENT_ACTIVE_DOWNLOADS_LI
 import jetbrains.livemap.config.DevParams.Companion.FRAGMENT_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.MICRO_TASK_EXECUTOR
 import jetbrains.livemap.config.DevParams.Companion.PERF_STATS
-import jetbrains.livemap.config.DevParams.Companion.RASTER_TILES
 import jetbrains.livemap.config.DevParams.Companion.RENDER_TARGET
 import jetbrains.livemap.config.DevParams.Companion.TILE_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_PAUSE_MS
@@ -295,7 +294,7 @@ class LiveMap(
             .createEntity("layers_order")
             .addComponents { + myLayerManager.createLayersOrderComponent() }
 
-        if (myDevParams.isNotSet(RASTER_TILES)) {
+        if (myTileLoadingSystemBuilder is TileLoadingSystemFactory.VectorTileLoadingSystemFactory) {
             componentManager
                 .createEntity("vector_layer_ground")
                 .addComponents {
@@ -321,7 +320,7 @@ class LiveMap(
             myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d
         )
 
-        if (myDevParams.isNotSet(RASTER_TILES)) {
+        if (myTileLoadingSystemBuilder is TileLoadingSystemFactory.VectorTileLoadingSystemFactory) {
             componentManager
                 .createEntity("vector_layer_labels")
                 .addComponents {

@@ -29,6 +29,7 @@ import jetbrains.livemap.camera.CenterChangedComponent
 import jetbrains.livemap.camera.ZoomChangedComponent
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.LiveMapSpec
+import jetbrains.livemap.config.TileParameters
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -37,8 +38,10 @@ import jetbrains.livemap.core.projections.createArcPath
 import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
-import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.rendering.LayerEntitiesComponent
+import jetbrains.livemap.tiles.TileLoadingSystemFactory
+import jetbrains.livemap.tiles.TileLoadingSystemFactory.Companion.createTileLoadingFactory
 import kotlin.math.abs
 
 @DslMarker
@@ -62,13 +65,15 @@ class LiveMapBuilder {
     var isLoopY: Boolean = false
 
     var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit }
+
+    var tileLoadingSystemFactory: TileLoadingSystemFactory = createTileLoadingFactory(
+        tiles = TileParameters(emptyMap<Any, Any>()),
+        debug = false,
+        quant = 1000
+    )
+
     var devParams: DevParams =
         DevParams(HashMap<String, Any>())
-
-
-    fun params(vararg values: Pair<String, Any>) {
-        devParams = DevParams(mapOf(*values))
-    }
 
     fun build(): LiveMapSpec {
         return LiveMapSpec(
@@ -88,6 +93,8 @@ class LiveMapBuilder {
             geocodingService = geocodingService,
 
             mapLocationConsumer = mapLocationConsumer,
+
+            tileLoadingSystemFactory = tileLoadingSystemFactory,
 
             devParams = devParams,
 

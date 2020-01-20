@@ -95,9 +95,9 @@ class RasterTileLoadingSystem(
                 .let { cellKey.projectOrigin(it) }
                 .let {
                     format
-                        .replace("\${z}", cellKey.length.toString(), false)
-                        .replace("\${x}", it.x.roundToInt().toString(), false)
-                        .replace("\${y}", it.y.roundToInt().toString(), false)
+                        .replace("{z}", cellKey.length.toString(), false)
+                        .replace("{x}", it.x.roundToInt().toString(), false)
+                        .replace("{y}", it.y.roundToInt().toString(), false)
                 }
         }
     }

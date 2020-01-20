@@ -5,7 +5,6 @@
 
 package jetbrains.livemap.config
 
-import jetbrains.gis.tileprotocol.TileService.Theme
 import jetbrains.livemap.core.rendering.layers.RenderTarget
 
 class DevParams(private val devParams: Map<*, *>) {
@@ -20,27 +19,11 @@ class DevParams(private val devParams: Map<*, *>) {
         return param.isSet(this)
     }
 
-    fun isNotSet(param: RasterParam): Boolean {
-        return !param.isSet(this)
-    }
-
     fun read(param: IntParam): Int {
         return param.read(this)
     }
 
     fun read(param: DoubleParam): Double {
-        return param.read(this)
-    }
-
-    fun read(param: StringParam): String {
-        return param.read(this)
-    }
-
-    fun read(param: RasterParam): RasterTiles? {
-        return param.read(this)
-    }
-
-    fun read(param: VectorParam): VectorTiles {
         return param.read(this)
     }
 
@@ -72,16 +55,6 @@ class DevParams(private val devParams: Map<*, *>) {
             }
     }
 
-    class StringParam(val key: String, private val defaultValue: String) {
-
-        fun read(params: DevParams): String =
-            when(val v = params[key]) {
-                null -> defaultValue
-                is String -> v
-                else -> throw IllegalArgumentException()
-            }
-    }
-
     class BoolParam(
         val key: String,
         private val defaultValue: Boolean
@@ -94,63 +67,6 @@ class DevParams(private val devParams: Map<*, *>) {
                 is String -> v.toBoolean()
                 else -> throw IllegalArgumentException()
             }
-    }
-
-    class RasterParam(val key: String) {
-        fun read(params: DevParams): RasterTiles? {
-
-            return when(val v = params[key]) {
-                null -> null
-                is Map<*, *> -> RasterTiles().apply {
-                    v["protocol"]?.let { if (it is String) protocol = it }
-                    v["host"]?.let { if (it is String) host = it }
-                    v["port"]?.let { if (it is Int) port = it }
-                    v["format"]?.let { if (it is String) format = it }
-                }
-                else -> throw IllegalArgumentException()
-            }
-        }
-
-        fun isSet(params: DevParams): Boolean {
-            return params[key] != null
-        }
-    }
-
-    class RasterTiles {
-        var protocol: String = "https"
-        var host: String = "localhost"
-        var port: Int? = null
-        var format: String = "/\${z}/\${x}/\${y}.png"
-    }
-
-    class VectorParam(val key: String) {
-        fun read(params: DevParams): VectorTiles {
-            val vector = VectorTiles()
-
-            return when(val v = params[key]) {
-                null -> vector
-                is Map<*, *> -> vector.apply {
-                    v["host"]?.let { if (it is String) host = it }
-                    v["port"]?.let { if (it is Int) port = it }
-                    v["theme"]?.let { if (it is String) theme = parseTheme(it) }
-                }
-                else -> throw IllegalArgumentException()
-            }
-        }
-
-        private fun parseTheme(theme: String): Theme {
-            try {
-                return Theme.valueOf(theme.toUpperCase())
-            } catch (ignored: Exception) {
-                throw IllegalArgumentException("Unknown theme type: $theme")
-            }
-        }
-    }
-
-    class VectorTiles {
-        var host: String = "tiles.datalore.io"
-        var port: Int? = null
-        var theme: Theme = Theme.COLOR
     }
 
     class EnumParam<ValueT>(
@@ -195,8 +111,6 @@ class DevParams(private val devParams: Map<*, *>) {
         val UPDATE_TIME_MULTIPLIER =
             DoubleParam("update_time_multiplier", 1.0)
         val POINT_SCALING = BoolParam("point_scaling", false)
-        val RASTER_TILES = RasterParam("raster_tiles")
-        val VECTOR_TILES = VectorParam("vector_tiles")
 
         val RENDER_TARGET: EnumParam<RenderTarget> =
             EnumParam(

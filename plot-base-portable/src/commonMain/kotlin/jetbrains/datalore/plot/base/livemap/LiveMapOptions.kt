@@ -19,8 +19,8 @@ class LiveMapOptions(
     val scaled: Boolean,
     val clustering: Boolean,
     val labels: Boolean,
-    val theme: Theme,
     val projection: Projection,
     val geodesic: Boolean,
+    val tiles: Map<*, *>,
     val devParams: Map<*, *>
 )

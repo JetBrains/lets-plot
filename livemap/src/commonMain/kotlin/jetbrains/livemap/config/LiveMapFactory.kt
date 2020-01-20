@@ -17,7 +17,6 @@ import jetbrains.livemap.projection.*
 import jetbrains.livemap.services.GeocodingProvider
 import jetbrains.livemap.services.MapLocationGeocoder
 import jetbrains.livemap.services.newFragmentProvider
-import jetbrains.livemap.tiles.TileLoadingSystemFactory.Companion.createTileLoadingFactory
 
 class LiveMapFactory(
     private val myLiveMapSpec: LiveMapSpec
@@ -49,7 +48,7 @@ class LiveMapFactory(
                 myMapProjection,
                 myViewport,
                 myLiveMapSpec.layerProvider,
-                createTileLoadingFactory(myLiveMapSpec.devParams),
+                myLiveMapSpec.tileLoadingSystemFactory,
                 newFragmentProvider(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
                 myLiveMapSpec.devParams,
                 myLiveMapSpec.mapLocationConsumer,

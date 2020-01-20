@@ -9,11 +9,7 @@ import jetbrains.gis.tileprotocol.TileService
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.api.liveMapTiles
-import jetbrains.livemap.config.DevParams
-import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
-import jetbrains.livemap.config.DevParams.Companion.DEBUG_TILES
-import jetbrains.livemap.config.DevParams.Companion.RASTER_TILES
-import jetbrains.livemap.config.DevParams.Companion.VECTOR_TILES
+import jetbrains.livemap.config.TileParameters
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.tiles.raster.RasterTileLoadingSystem
@@ -30,7 +26,7 @@ interface TileLoadingSystemFactory {
         }
     }
 
-    private class RasterTileLoadingSystemFactory(
+    class RasterTileLoadingSystemFactory(
         private val myTileTransport: HttpTileTransport,
         private val myRequestFormat: String
     ) : TileLoadingSystemFactory {
@@ -40,7 +36,7 @@ interface TileLoadingSystemFactory {
         }
     }
 
-    private class VectorTileLoadingSystemFactory(
+     class VectorTileLoadingSystemFactory(
         private val myQuantumIterations: Int,
         private val myTileService: TileService
     ) : TileLoadingSystemFactory {
@@ -51,24 +47,21 @@ interface TileLoadingSystemFactory {
     }
 
     companion object {
-        fun createTileLoadingFactory(devParams: DevParams): TileLoadingSystemFactory {
-            if (devParams.isSet(DEBUG_TILES))
+        fun createTileLoadingFactory(tiles: TileParameters, debug: Boolean, quant: Int): TileLoadingSystemFactory {
+            if (debug)
                 return DummyTileLoadingSystemFactory()
 
-            val rasterTiles = devParams.read(RASTER_TILES)
-            if (rasterTiles != null)
-                return RasterTileLoadingSystemFactory(
-                    HttpTileTransport(rasterTiles.protocol, rasterTiles.host, rasterTiles.port, ""),
-                    rasterTiles.format
+            return tiles.raster?.let { rasterUrl ->
+                RasterTileLoadingSystemFactory(
+                    HttpTileTransport(),
+                    rasterUrl
                 )
-
-            val vectorTiles = devParams.read(VECTOR_TILES)
-            return VectorTileLoadingSystemFactory(
-                devParams.read(COMPUTATION_PROJECTION_QUANT),
+            } ?: VectorTileLoadingSystemFactory(
+                quant,
                 liveMapTiles {
-                    host = vectorTiles.host
-                    port = vectorTiles.port
-                    theme = vectorTiles.theme
+                    host = tiles.vector.host
+                    port = tiles.vector.port
+                    theme = tiles.vector.theme
                 }
             )
         }

@@ -130,6 +130,7 @@ object Option {
             const val THEME = "theme"
             const val PROJECTION = "projection"
             const val GEODESIC = "geodesic"
+            const val TILES = "tiles"
             const val DEV_PARAMS = "dev_params"
         }
     }
