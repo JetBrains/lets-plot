@@ -155,7 +155,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             "italic", "oblique"                 // 'normal' is default
         )
         private val FONT_FAMILY_MAP = mapOf(
-            "suns" to "sans-serif",
+            "sans" to "sans-serif",
             "serif" to "serif",
             "mono" to "monospace"
         )
