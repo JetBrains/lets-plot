@@ -62,11 +62,12 @@ import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
 import jetbrains.livemap.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.placement.WorldOrigin2ScreenUpdateSystem
+import jetbrains.livemap.projection.*
 import jetbrains.livemap.regions.*
 import jetbrains.livemap.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.scaling.ScaleUpdateSystem
-import jetbrains.livemap.projection.*
+import jetbrains.livemap.searching.SearchingSystem
 import jetbrains.livemap.services.FragmentProvider
 import jetbrains.livemap.services.GeocodingProvider
 import jetbrains.livemap.tiles.TileLoadingSystemFactory
@@ -74,7 +75,10 @@ import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.tiles.TileRequestSystem
 import jetbrains.livemap.tiles.raster.RasterTileLayerComponent
 import jetbrains.livemap.tiles.vector.debug.DebugDataSystem
-import jetbrains.livemap.ui.*
+import jetbrains.livemap.ui.LiveMapUiSystem
+import jetbrains.livemap.ui.ResourceManager
+import jetbrains.livemap.ui.UiRenderingTaskSystem
+import jetbrains.livemap.ui.UiService
 
 class LiveMap(
     private val myMapProjection: MapProjection,
@@ -86,7 +90,8 @@ class LiveMap(
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myGeocodingProvider: GeocodingProvider,
     private val myMapLocationRect: Async<Rect<World>>?,
-    private val myZoom: Int?
+    private val myZoom: Int?,
+    private val myIndexConsumer: (Int) -> Unit
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
@@ -192,6 +197,7 @@ class LiveMap(
                 MouseInputDetectionSystem(componentManager),
                 CameraInputSystem(componentManager),
                 CameraUpdateDetectionSystem(componentManager),
+                SearchingSystem(componentManager, myIndexConsumer),
 
                 MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
 

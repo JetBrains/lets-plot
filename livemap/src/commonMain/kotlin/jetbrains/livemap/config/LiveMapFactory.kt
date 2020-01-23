@@ -26,10 +26,8 @@ class LiveMapFactory(
     private val myMapRuler: MapRuler<World>
 
     init {
-        val mapRect =
-            WorldRectangle(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
-        myMapProjection =
-            createMapProjection(myLiveMapSpec.projectionType, mapRect)
+        val mapRect = WorldRectangle(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
+        myMapProjection = createMapProjection(myLiveMapSpec.projectionType, mapRect)
         val multiMapHelper = ViewportHelper(mapRect, myLiveMapSpec.isLoopX, myLiveMapSpec.isLoopY)
         myMapRuler = multiMapHelper
 
@@ -65,7 +63,8 @@ class LiveMapFactory(
                             myMapProjection
                         )
                     ),
-                myLiveMapSpec.zoom
+                myLiveMapSpec.zoom,
+                { println(it) } // todo: set real consumer
             )
         )
     }

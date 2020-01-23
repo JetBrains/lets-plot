@@ -14,6 +14,8 @@ import jetbrains.livemap.placement.ScreenOriginComponent
 import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.PieSectorRenderer
+import jetbrains.livemap.searching.LocatorComponent
+import jetbrains.livemap.searching.PieLocatorHelper
 import kotlin.math.PI
 
 @LiveMapDsl
@@ -90,6 +92,7 @@ class PiesFactory(
                     + ScreenDimensionComponent()
                     + ScreenLoopComponent()
                     + ScreenOriginComponent()
+                    + LocatorComponent(PieLocatorHelper())
                 }
             )
             currentAngle = endAngle

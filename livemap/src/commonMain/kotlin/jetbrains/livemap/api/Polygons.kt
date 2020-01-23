@@ -27,7 +27,9 @@ import jetbrains.livemap.rendering.Renderers.PolygonRenderer
 import jetbrains.livemap.scaling.ScaleComponent
 import jetbrains.livemap.projection.Coordinates
 import jetbrains.livemap.projection.MapProjection
-
+import jetbrains.livemap.searching.LocatorComponent
+import jetbrains.livemap.searching.PointLocatorHelper
+import jetbrains.livemap.searching.PolygonLocatorHelper
 
 @LiveMapDsl
 class Polygons(
@@ -103,6 +105,7 @@ class PolygonsBuilder(
                 }
                 + NeedLocationComponent()
                 + NeedCalculateLocationComponent()
+                + LocatorComponent(PolygonLocatorHelper())
             }
     }
 
@@ -123,6 +126,7 @@ class PolygonsBuilder(
                 }
                 + NeedLocationComponent()
                 + NeedGeocodeLocationComponent()
+                + LocatorComponent(PolygonLocatorHelper())
             }
     }
 }

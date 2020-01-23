@@ -19,9 +19,11 @@ import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.placement.*
+import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.PointRenderer
-import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.searching.LocatorComponent
+import jetbrains.livemap.searching.PointLocatorHelper
 
 @LiveMapDsl
 class Points(
@@ -109,6 +111,7 @@ class PointBuilder(
                     + RendererComponent(PointRenderer())
                     + ScreenLoopComponent()
                     + ScreenOriginComponent()
+                    + LocatorComponent(PointLocatorHelper())
 
                     if (animation == 2) {
                         val transformComponent = TransformComponent()
