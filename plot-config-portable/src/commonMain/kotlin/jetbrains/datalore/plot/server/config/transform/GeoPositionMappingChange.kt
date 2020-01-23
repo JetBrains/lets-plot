@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GEOCODING_OSM_ID_COLU
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GEOCODING_REQUEST_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GEO_POSITIONS_KEYS
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_GEOMETRY_COLUMN
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_KEY_COLUMN
+import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_ID_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_OSM_ID_COLUMN
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame
@@ -49,7 +49,7 @@ class GeoPositionMappingChange : SpecChange {
 
         private fun transformGeoReference(geomSpec: Map<String, Any?>): Map<String, Any?> {
             return mapOf(
-                    MAP_JOIN_KEY_COLUMN to geomSpec.select(GEO_POSITIONS, GEOCODING_REQUEST_COLUMN),
+                    MAP_JOIN_ID_COLUMN to geomSpec.select(GEO_POSITIONS, GEOCODING_REQUEST_COLUMN),
                     MAP_OSM_ID_COLUMN to geomSpec.select(GEO_POSITIONS, GEOCODING_OSM_ID_COLUMN)
             )
         }
@@ -64,7 +64,7 @@ class GeoPositionMappingChange : SpecChange {
 
             listOf(GEOCODING_REQUEST_COLUMN, *GEO_POSITIONS_KEYS.toTypedArray())
                 .firstOrNull { mapOptions.containsKey(it)}
-                ?.let { transformedGeoPositions[MAP_JOIN_KEY_COLUMN] = mapOptions[it] }
+                ?.let { transformedGeoPositions[MAP_JOIN_ID_COLUMN] = mapOptions[it] }
 
             return transformedGeoPositions
         }

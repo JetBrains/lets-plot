@@ -20,6 +20,11 @@ object GeoJson {
         Parser<T>().parse(geoObj, geometryConsumer)
     }
 
+    fun <T> parse(geoJson: String, consumer: SimpleFeature.GeometryConsumer<T>) {
+        val geoObj = FluentObject(JsonSupport.parseJson(geoJson))
+        Parser<T>().parse(geoObj, consumer)
+    }
+
     private class Parser<T> {
 
         internal fun parse(obj: FluentObject, handler: SimpleFeature.GeometryConsumer<T>) {

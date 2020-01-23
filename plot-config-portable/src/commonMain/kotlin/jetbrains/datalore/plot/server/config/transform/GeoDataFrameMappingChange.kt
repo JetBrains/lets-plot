@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.server.config.transform
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.builder.map.GeoPositionField
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_GEOMETRY_COLUMN
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_KEY_COLUMN
+import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_ID_COLUMN
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.DATA
 import jetbrains.datalore.plot.config.Option.Layer.MAPPING
@@ -29,7 +29,7 @@ class GeoDataFrameMappingChange : SpecChange {
         val keys = geometries.indices.map(Int::toString)
 
         spec[GEO_POSITIONS] = mutableMapOf(
-            MAP_JOIN_KEY_COLUMN to keys,
+            MAP_JOIN_ID_COLUMN to keys,
             MAP_GEOMETRY_COLUMN to geometries
         )
 

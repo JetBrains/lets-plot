@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.server.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.builder.map.GeoPositionField
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GEOCODING_REQUEST_COLUMN
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_KEY_COLUMN
+import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_ID_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_REGION_COLUMN
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.GeomName
@@ -99,7 +99,7 @@ class GeoDataFrameMappingChangeTest {
             DATA_FRAME + mapOf(
                 GEOCODING_REQUEST_COLUMN to MAP_DATA_REQUESTS,
                 MAP_REGION_COLUMN to MAP_DATA_REGIONS,
-                MAP_JOIN_KEY_COLUMN to MAP_DATA_JOIN_KEYS,
+                MAP_JOIN_ID_COLUMN to MAP_DATA_JOIN_KEYS,
                 GEOMETRY_COLUMN to GEOMETRIES
         )
 
