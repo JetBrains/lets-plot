@@ -60,8 +60,8 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     // checkArgument(smoothingMethod == Method.LM or Method.LOESS, "Linear and loess models are supported only, use: method='lm' or 'loess'");
     var smoothingMethod = DEF_SMOOTHING_METHOD
     var confidenceLevel = DEF_CONFIDENCE_LEVEL
-    var isDisplayConfidenceInterval =
-        DEF_DISPLAY_CONFIDENCE_INTERVAL
+    var isDisplayConfidenceInterval = DEF_DISPLAY_CONFIDENCE_INTERVAL
+    var span = DEF_SPAN
 
     override fun requires(): List<Aes<*>> {
         return listOf<Aes<*>>(Aes.Y)
@@ -99,6 +99,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         private val DEF_SMOOTHING_METHOD = Method.LM
         private const val DEF_CONFIDENCE_LEVEL = 0.95    // 95 %
         private const val DEF_DISPLAY_CONFIDENCE_INTERVAL = true
+        private const val DEF_SPAN = 0.5
     }
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
         if (!data.has(TransformVar.Y)) {
@@ -161,7 +162,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
         val regression = when (smoothingMethod) {
             Method.LM    -> LinearRegression(valuesX, valuesY, confidenceLevel)
-            Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel)
+            Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
             else -> throw IllegalArgumentException(
                 "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
             )

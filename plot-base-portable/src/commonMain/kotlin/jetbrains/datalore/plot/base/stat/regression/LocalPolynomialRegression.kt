@@ -14,7 +14,8 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 class LocalPolynomialRegression(
     xs: List<Double?>,
     ys: List<Double?>,
-    confidenceLevel: Double
+    confidenceLevel: Double,
+    private val myBandwidth: Double
 )
     : RegressionEvaluator(xs, ys, confidenceLevel) {
 
@@ -61,18 +62,18 @@ class LocalPolynomialRegression(
         )
     }
 
+    private fun getPoly(points: List<DoubleVector>): PolynomialSplineFunction {
+        val listX = ArrayList<Double>()
+        val listY = ArrayList<Double>()
+        points
+            .sortedBy( DoubleVector::x )
+            .forEach { listX.add(it.x); listY.add(it.y) }
+
+        return LoessInterpolator(myBandwidth, 4).interpolate(listX.toDoubleArray(), listY.toDoubleArray())
+    }
+
     companion object {
         private const val DEF_SAMPLE_NUMBER = 150
-
-        private fun getPoly(points: List<DoubleVector>): PolynomialSplineFunction {
-            val listX = ArrayList<Double>()
-            val listY = ArrayList<Double>()
-            points
-                .sortedBy( DoubleVector::x )
-                .forEach { listX.add(it.x); listY.add(it.y) }
-
-            return LoessInterpolator(0.5, 4).interpolate(listX.toDoubleArray(), listY.toDoubleArray())
-        }
 
         private fun interpolateLinear(function: PolynomialSplineFunction, x: Double): Double {
             val knots = function.knots

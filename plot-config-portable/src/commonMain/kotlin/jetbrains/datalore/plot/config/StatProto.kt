@@ -145,6 +145,8 @@ class StatProto {
             }
         }
 
+        options["span"]?.let { stat.span = it.asDouble() }
+
         return stat
     }
 
@@ -203,6 +205,8 @@ class StatProto {
         }
         return stat
     }
+
+    private fun Any?.asDouble() = (this as Number).toDouble()
 
     companion object {
         private val DEFAULTS = HashMap<String, Map<String, Any>>()

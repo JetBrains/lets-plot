@@ -266,6 +266,8 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    span : number, optional
+        Amount of smoothing. A sensible value is usually 0.25 to 0.5.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
