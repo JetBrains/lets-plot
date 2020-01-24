@@ -73,6 +73,7 @@ object GeomUtil {
         }
     })
     private val WITH_X_Y = { pointAes: DataPointAesthetics -> SeriesUtil.allFinite(pointAes.x(), pointAes.y()) }
+    private val WITH_X = { pointAes: DataPointAesthetics -> SeriesUtil.isFinite(pointAes.x()) }
     private val WITH_Y = { pointAes: DataPointAesthetics -> SeriesUtil.isFinite(pointAes.y()) }
 
     private fun toLocationOrNull(x: Double?, y: Double?): DoubleVector? {
@@ -81,14 +82,22 @@ object GeomUtil {
         } else null
     }
 
+    @Suppress("FunctionName")
     fun with_X_Y(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
         return dataPoints.filter { p -> WITH_X_Y.invoke(p) }
     }
 
+    @Suppress("FunctionName")
+    fun with_X(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+        return dataPoints.filter { p -> WITH_X.invoke(p) }
+    }
+
+    @Suppress("FunctionName")
     fun with_Y(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
         return dataPoints.filter { p -> WITH_Y.invoke(p) }
     }
 
+    @Suppress("FunctionName")
     fun ordered_X(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
         if (ORDERING_X.isOrdered(dataPoints)) {
             return dataPoints
@@ -110,17 +119,25 @@ object GeomUtil {
         return max(width, minWidth)
     }
 
-    fun withDefined(dataPoints: Iterable<DataPointAesthetics>, vararg required: Aes<*>): Iterable<DataPointAesthetics> {
-        return dataPoints.filter { p ->
-            var match = true
-            for (aes in required) {
-                if (!p.defined(aes)) {
-                    match = false
-                    break
-                }
-            }
-            match
-        }
+    fun withDefined(dataPoints: Iterable<DataPointAesthetics>, aes: Aes<*>): Iterable<DataPointAesthetics> {
+        return dataPoints.filter { p -> p.defined(aes) }
+    }
+
+    fun withDefined(
+        dataPoints: Iterable<DataPointAesthetics>,
+        aes0: Aes<*>,
+        aes1: Aes<*>
+    ): Iterable<DataPointAesthetics> {
+        return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) }
+    }
+
+    fun withDefined(
+        dataPoints: Iterable<DataPointAesthetics>,
+        aes0: Aes<*>,
+        aes1: Aes<*>,
+        aes2: Aes<*>
+    ): Iterable<DataPointAesthetics> {
+        return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) }
     }
 
     fun rectangleByDataPoint(p: DataPointAesthetics, ctx: GeomContext): DoubleRectangle {
@@ -156,11 +173,11 @@ object GeomUtil {
 
     fun rectToGeometry(minX: Double, minY: Double, maxX: Double, maxY: Double): List<DoubleVector> {
         return listOf(
-                DoubleVector(minX, minY),
-                DoubleVector(minX, maxY),
-                DoubleVector(maxX, maxY),
-                DoubleVector(maxX, minY),
-                DoubleVector(minX, minY)
+            DoubleVector(minX, minY),
+            DoubleVector(minX, maxY),
+            DoubleVector(maxX, maxY),
+            DoubleVector(maxX, minY),
+            DoubleVector(minX, minY)
         )
     }
 }

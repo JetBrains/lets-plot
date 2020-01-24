@@ -35,6 +35,7 @@ object DefaultSampling {
     val BAR = pick(50)
     val HISTOGRAM = systematic(500)
     val ERROR_BAR = pick(50)
+    val CROSS_BAR = pick(50)
     val BOX_PLOT = pick(50)
 
     // lines

@@ -102,9 +102,9 @@ object GeomMeta {
                 Aes.X, Aes.Y,
                 Aes.WIDTH,
                 Aes.HEIGHT,
+                Aes.ALPHA,
                 Aes.COLOR,
                 Aes.FILL,
-                Aes.ALPHA,
                 Aes.LINETYPE,
                 Aes.SIZE
             )
@@ -113,10 +113,23 @@ object GeomMeta {
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
                 Aes.WIDTH,
-                Aes.SIZE, // path width
-                Aes.LINETYPE,
+                Aes.ALPHA,
                 Aes.COLOR,
-                Aes.ALPHA
+                Aes.LINETYPE,
+                Aes.SIZE
+            )
+
+            GeomKind.CROSS_BAR -> listOf(
+                Aes.X,
+                Aes.YMIN, Aes.YMAX, Aes.MIDDLE,
+                Aes.WIDTH,
+
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SHAPE,
+                Aes.SIZE
             )
 
             GeomKind.CONTOUR -> PATH
@@ -162,7 +175,7 @@ object GeomMeta {
                 Aes.UPPER, // NaN for 'outlier' data-point
 
                 Aes.X,
-                Aes.Y, // NaN for 'box' data-point
+                Aes.Y, // NaN for 'box' data-point (used for outliers)
                 Aes.YMAX,
                 Aes.YMIN,
 
@@ -171,7 +184,7 @@ object GeomMeta {
                 Aes.FILL,
                 Aes.LINETYPE,
                 Aes.SHAPE,
-                Aes.SIZE, // path width
+                Aes.SIZE, // line width
                 Aes.WIDTH
             )
 

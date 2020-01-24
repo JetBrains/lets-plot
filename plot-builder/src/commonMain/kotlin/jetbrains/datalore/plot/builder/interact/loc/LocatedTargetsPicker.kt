@@ -18,8 +18,8 @@ internal class LocatedTargetsPicker {
 
     fun addLookupResult(lookupResult: LookupResult) {
         val distance =
-            jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker.Companion.distance(lookupResult)
-        if (distance > jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE) {
+            distance(lookupResult)
+        if (distance > CUTOFF_DISTANCE) {
             return
         }
 
@@ -27,7 +27,7 @@ internal class LocatedTargetsPicker {
             myPicked.clear()
             myPicked.add(lookupResult)
             myMinDistance = distance
-        } else if (myMinDistance == distance && jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker.Companion.sameGeomKind(
+        } else if (myMinDistance == distance && sameGeomKind(
                 myPicked[0],
                 lookupResult
             )
@@ -40,14 +40,15 @@ internal class LocatedTargetsPicker {
         internal const val CUTOFF_DISTANCE = 30.0
         internal const val FAKE_DISTANCE = 15.0
         private val UNIVARIATE_GEOMS = listOf(
-                GeomKind.DENSITY,
-                GeomKind.FREQPOLY,
-                GeomKind.BOX_PLOT,
-                GeomKind.HISTOGRAM,
-                GeomKind.LINE,
-                GeomKind.AREA,
-                GeomKind.BAR,
-                GeomKind.ERROR_BAR
+            GeomKind.DENSITY,
+            GeomKind.FREQPOLY,
+            GeomKind.BOX_PLOT,
+            GeomKind.HISTOGRAM,
+            GeomKind.LINE,
+            GeomKind.AREA,
+            GeomKind.BAR,
+            GeomKind.ERROR_BAR,
+            GeomKind.CROSS_BAR
         )
 
         private fun distance(locatedTargetList: LookupResult): Double {
@@ -55,12 +56,12 @@ internal class LocatedTargetsPicker {
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance
             // between cursor is zero). Fake the distance to give a chance for tooltips from other layers.
             return if (distance == 0.0) {
-                jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
+                FAKE_DISTANCE
             } else distance
         }
 
         private fun sameGeomKind(lft: LookupResult, rgt: LookupResult): Boolean {
-            return lft.geomKind === rgt.geomKind && jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker.Companion.UNIVARIATE_GEOMS.contains(rgt.geomKind)
+            return lft.geomKind === rgt.geomKind && UNIVARIATE_GEOMS.contains(rgt.geomKind)
         }
     }
 }

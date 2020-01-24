@@ -120,11 +120,13 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
 
     inner class SvgElementHelper {
         fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics): SvgLineElement {
-            val start_ = toClient(start, p)
-            val end_ = toClient(end, p)
+            @Suppress("NAME_SHADOWING")
+            val start = toClient(start, p)
+            @Suppress("NAME_SHADOWING")
+            val end = toClient(end, p)
             val line = SvgLineElement(
-                start_.x, start_.y,
-                end_.x, end_.y
+                start.x, start.y,
+                end.x, end.y
             )
             decorate(line, p)
             return line

@@ -29,7 +29,7 @@ class ErrorBarGeom : GeomBase() {
         get() = MyLegendKeyElementFactory()
 
     private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.with_X_Y(aesthetics.dataPoints())
+        return GeomUtil.with_X(aesthetics.dataPoints())
     }
 
     override fun buildIntern(
@@ -105,18 +105,6 @@ class ErrorBarGeom : GeomBase() {
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.YMIN,
-//                Aes.YMAX,
-//                Aes.WIDTH,
-//
-//                Aes.SIZE, // path width
-//                Aes.LINETYPE,
-//                Aes.COLOR,
-//                Aes.ALPHA
-//        )
-
         const val HANDLES_GROUPS = false
 
         private fun errorBarShape(r: DoubleRectangle, p: DataPointAesthetics): SvgGElement {

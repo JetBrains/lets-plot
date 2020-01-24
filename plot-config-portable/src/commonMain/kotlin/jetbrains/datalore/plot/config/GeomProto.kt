@@ -33,6 +33,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             HISTOGRAM -> DefaultSampling.HISTOGRAM
             TILE -> DefaultSampling.TILE
             ERROR_BAR -> DefaultSampling.ERROR_BAR
+            CROSS_BAR -> DefaultSampling.CROSS_BAR
             CONTOUR -> DefaultSampling.CONTOUR
             CONTOURF -> DefaultSampling.CONTOURF
             POLYGON -> DefaultSampling.POLYGON
@@ -81,42 +82,24 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private val COMMON = createCommonDefaults()
 
         init {
-            DEFAULTS[POINT] =
-                COMMON
-            DEFAULTS[PATH] =
-                COMMON
-            DEFAULTS[LINE] =
-                COMMON
+            for (geomKind in values()) {
+                DEFAULTS[geomKind] = COMMON
+            }
+
             DEFAULTS[SMOOTH] =
                 createSmoothDefaults()
             DEFAULTS[BAR] =
                 createBarDefaults()
             DEFAULTS[HISTOGRAM] =
                 createHistogramDefaults()
-            DEFAULTS[TILE] =
-                COMMON
-            DEFAULTS[ERROR_BAR] =
-                COMMON
             DEFAULTS[CONTOUR] =
                 createContourDefaults()
             DEFAULTS[CONTOURF] =
                 createContourfDefaults()
-            DEFAULTS[POLYGON] =
-                COMMON
-            DEFAULTS[MAP] =
-                COMMON
-            DEFAULTS[AB_LINE] =
-                COMMON
-            DEFAULTS[H_LINE] =
-                COMMON
-            DEFAULTS[V_LINE] =
-                COMMON
+            DEFAULTS[CROSS_BAR] =
+                createCrossBarDefaults()
             DEFAULTS[BOX_PLOT] =
                 createBoxplotDefaults()
-            DEFAULTS[LIVE_MAP] =
-                COMMON
-            DEFAULTS[RIBBON] =
-                COMMON
             DEFAULTS[AREA] =
                 createAreaDefaults()
             DEFAULTS[DENSITY] =
@@ -125,22 +108,8 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 createDensity2dDefaults()
             DEFAULTS[DENSITY2DF] =
                 createDensity2dfDefaults()
-            DEFAULTS[JITTER] =
-                COMMON
             DEFAULTS[FREQPOLY] =
                 createFreqpolyDefaults()
-            DEFAULTS[STEP] =
-                COMMON
-            DEFAULTS[RECT] =
-                COMMON
-            DEFAULTS[SEGMENT] =
-                COMMON
-            DEFAULTS[TEXT] =
-                COMMON
-            DEFAULTS[RASTER] =
-                COMMON
-            DEFAULTS[IMAGE] =
-                COMMON
         }
 
         private fun createCommonDefaults(): Map<String, Any> {
@@ -182,10 +151,17 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         }
 
 
+        private fun createCrossBarDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults["stat"] = "identity"
+            defaults["position"] = mapOf("name" to "dodge", "width" to 0.95)
+            return defaults
+        }
+
         private fun createBoxplotDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "boxplot"
-            defaults["position"] = "dodge"
+            defaults["position"] = mapOf("name" to "dodge", "width" to 0.95)
             return defaults
         }
 

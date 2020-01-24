@@ -197,21 +197,30 @@ object PlotConfigClientSideUtil {
         val builder = GeomInteractionBuilder(renders)
         if (statKind === StatKind.SMOOTH) {
             when (geomKind) {
-                GeomKind.POINT, GeomKind.CONTOUR -> return builder.univariateFunction(LookupStrategy.NEAREST)
-
+                GeomKind.POINT,
+                GeomKind.CONTOUR -> return builder.univariateFunction(LookupStrategy.NEAREST)
                 else -> {
                 }
             }
         }
 
         when (geomKind) {
-            GeomKind.DENSITY, GeomKind.FREQPOLY, GeomKind.BOX_PLOT, GeomKind.HISTOGRAM, GeomKind.LINE, GeomKind.AREA -> return builder.univariateFunction(
-                LookupStrategy.HOVER
-            )
+            GeomKind.DENSITY,
+            GeomKind.FREQPOLY,
+            GeomKind.BOX_PLOT,
+            GeomKind.HISTOGRAM,
+            GeomKind.LINE,
+            GeomKind.AREA,
+            GeomKind.BAR,
+            GeomKind.ERROR_BAR,
+            GeomKind.CROSS_BAR -> return builder.univariateFunction(LookupStrategy.HOVER)
 
-            GeomKind.BAR, GeomKind.ERROR_BAR -> return builder.univariateFunction(LookupStrategy.HOVER)
-
-            GeomKind.SMOOTH, GeomKind.POINT, GeomKind.CONTOUR, GeomKind.RIBBON, GeomKind.DENSITY2D, GeomKind.TILE -> {
+            GeomKind.SMOOTH,
+            GeomKind.POINT,
+            GeomKind.CONTOUR,
+            GeomKind.RIBBON,
+            GeomKind.DENSITY2D,
+            GeomKind.TILE -> {
                 if (geomKind === GeomKind.SMOOTH) {
                     builder.axisAes(listOf(Aes.X))
                 }
@@ -228,11 +237,11 @@ object PlotConfigClientSideUtil {
                 }
                 return builder.bivariateFunction(AREA_GEOM)
             }
-            // fall through
 
-            GeomKind.DENSITY2DF, GeomKind.CONTOURF, GeomKind.POLYGON, GeomKind.MAP -> return builder.bivariateFunction(
-                AREA_GEOM
-            )
+            GeomKind.DENSITY2DF,
+            GeomKind.CONTOURF,
+            GeomKind.POLYGON,
+            GeomKind.MAP -> return builder.bivariateFunction(AREA_GEOM)
 
             GeomKind.LIVE_MAP -> return builder.multilayerLookupStrategy()
 

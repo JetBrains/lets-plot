@@ -12,6 +12,13 @@ import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromLayerOptions
+import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
+import jetbrains.datalore.plot.config.Option.Geom.CrossBar
+import jetbrains.datalore.plot.config.Option.Geom.Image
+import jetbrains.datalore.plot.config.Option.Geom.Path
+import jetbrains.datalore.plot.config.Option.Geom.Point
+import jetbrains.datalore.plot.config.Option.Geom.Segment
+import jetbrains.datalore.plot.config.Option.Geom.Step
 
 class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
     private val preferredCoordinateSystem: CoordProvider? = when (geomKind) {
@@ -36,20 +43,26 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
         return preferredCoordinateSystem!!
     }
 
-    //    fun geomProvider(geomName: String, opts: OptionsAccessor): GeomProvider {
-//        when (val geomKind = Option.GeomName.toGeomKind(geomName)) {
     fun geomProvider(opts: OptionsAccessor): GeomProvider {
         when (geomKind) {
+            GeomKind.CROSS_BAR -> return GeomProvider.crossBar() {
+                val geom = CrossBarGeom()
+                if (opts.hasOwn(CrossBar.FATTEN)) {
+                    geom.fattenMidline = opts.getDouble(CrossBar.FATTEN)!!
+                }
+                geom
+            }
+
             GeomKind.BOX_PLOT -> return GeomProvider.boxplot {
                 val geom = BoxplotGeom()
-                if (opts.hasOwn(Option.Geom.BoxplotOutlier.COLOR)) {
-                    geom.setOutlierColor(opts.getColor(Option.Geom.BoxplotOutlier.COLOR)!!)
+                if (opts.hasOwn(BoxplotOutlier.COLOR)) {
+                    geom.setOutlierColor(opts.getColor(BoxplotOutlier.COLOR)!!)
                 }
-                if (opts.hasOwn(Option.Geom.BoxplotOutlier.FILL)) {
-                    geom.setOutlierFill(opts.getColor(Option.Geom.BoxplotOutlier.FILL)!!)
+                if (opts.hasOwn(BoxplotOutlier.FILL)) {
+                    geom.setOutlierFill(opts.getColor(BoxplotOutlier.FILL)!!)
                 }
-                geom.setOutlierShape(opts.getShape(Option.Geom.BoxplotOutlier.SHAPE))
-                geom.setOutlierSize(opts.getDouble(Option.Geom.BoxplotOutlier.SIZE))
+                geom.setOutlierShape(opts.getShape(BoxplotOutlier.SHAPE))
+                geom.setOutlierSize(opts.getDouble(BoxplotOutlier.SIZE))
                 geom
             }
 
@@ -57,39 +70,37 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 return GeomProvider.livemap(parseFromLayerOptions(opts))
             }
 
-            GeomKind.JITTER -> return GeomProvider.jitter()
-
             GeomKind.STEP -> return GeomProvider.step {
                 val geom = StepGeom()
-                if (opts.hasOwn(Option.Geom.Step.DIRECTION)) {
-                    geom.setDirection(opts.getString(Option.Geom.Step.DIRECTION)!!)
+                if (opts.hasOwn(Step.DIRECTION)) {
+                    geom.setDirection(opts.getString(Step.DIRECTION)!!)
                 }
                 geom
             }
             GeomKind.SEGMENT -> return GeomProvider.segment {
                 val geom = SegmentGeom()
-                if (opts.has(Option.Geom.Segment.ARROW)) {
-                    val cfg1 = ArrowSpecConfig.create(opts[Option.Geom.Segment.ARROW]!!)
+                if (opts.has(Segment.ARROW)) {
+                    val cfg1 = ArrowSpecConfig.create(opts[Segment.ARROW]!!)
                     geom.arrowSpec = cfg1.createArrowSpec()
                 }
-                if (opts.has(Option.Geom.Segment.ANIMATION)) {
-                    geom.animation = opts[Option.Geom.Segment.ANIMATION]
+                if (opts.has(Segment.ANIMATION)) {
+                    geom.animation = opts[Segment.ANIMATION]
                 }
                 geom
             }
 
             GeomKind.PATH -> return GeomProvider.path {
                 val geom = PathGeom()
-                if (opts.has(Option.Geom.Path.ANIMATION)) {
-                    geom.animation = opts[Option.Geom.Path.ANIMATION]
+                if (opts.has(Path.ANIMATION)) {
+                    geom.animation = opts[Path.ANIMATION]
                 }
                 geom
             }
 
             GeomKind.POINT -> return GeomProvider.point {
                 val geom = PointGeom()
-                if (opts.has(Option.Geom.Point.ANIMATION)) {
-                    geom.animation = opts[Option.Geom.Point.ANIMATION]
+                if (opts.has(Point.ANIMATION)) {
+                    geom.animation = opts[Point.ANIMATION]
                 }
                 geom
             }
@@ -102,13 +113,12 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.IMAGE -> return GeomProvider.image {
                 Preconditions.checkArgument(
-                    opts.hasOwn(Option.Geom.Image.HREF),
+                    opts.hasOwn(Image.HREF),
                     "Image reference URL (href) is not specified"
                 )
                 ImageGeom(
-                    opts.getString(Option.Geom.Image.HREF)!!
+                    opts.getString(Image.HREF)!!
                 )
-
             }
 
 
@@ -134,6 +144,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
             PROVIDER[GeomKind.TILE] = GeomProvider.tile()
             PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()
+            // crossbar - special case
             PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
             PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()
             PROVIDER[GeomKind.POLYGON] = GeomProvider.polygon()
@@ -147,7 +158,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.DENSITY] = GeomProvider.density()
             PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
             PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
-            // jitter - special case
+            PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
             PROVIDER[GeomKind.FREQPOLY] = GeomProvider.freqpoly()
             // step - special case
             PROVIDER[GeomKind.RECT] = GeomProvider.rect()

@@ -80,6 +80,10 @@ object Option {
             const val GEO_POSITIONS = "map"
         }
 
+        object CrossBar {
+            const val FATTEN = "fatten"
+        }
+
         object BoxplotOutlier {
             const val COLOR = "outlier_color"
             const val FILL = "outlier_fill"
@@ -270,6 +274,7 @@ object Option {
         private const val TILE = "tile"
         private const val MAP = "map"
         private const val ERROR_BAR = "errorbar"
+        private const val CROSS_BAR = "crossbar"
         const val POLYGON = "polygon"
         private const val AB_LINE = "abline"
         private const val H_LINE = "hline"
@@ -305,6 +310,7 @@ object Option {
             map[TILE] = GeomKind.TILE
             map[MAP] = GeomKind.MAP
             map[ERROR_BAR] = GeomKind.ERROR_BAR
+            map[CROSS_BAR] = GeomKind.CROSS_BAR
             map[POLYGON] = GeomKind.POLYGON
             map[AB_LINE] = GeomKind.AB_LINE
             map[H_LINE] = GeomKind.H_LINE

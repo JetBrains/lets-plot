@@ -14,6 +14,7 @@ enum class GeomKind {
     TILE,
     MAP,
     ERROR_BAR,
+    CROSS_BAR,
     POLYGON,
     AB_LINE,
     H_LINE,

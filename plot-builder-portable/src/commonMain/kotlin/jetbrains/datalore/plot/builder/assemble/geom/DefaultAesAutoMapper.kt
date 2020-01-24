@@ -96,6 +96,7 @@ class DefaultAesAutoMapper constructor(
                 ) { false }
 
                 GeomKind.ERROR_BAR,
+                GeomKind.CROSS_BAR,
                 GeomKind.CONTOUR,
                 GeomKind.CONTOURF,
                 GeomKind.POLYGON,
