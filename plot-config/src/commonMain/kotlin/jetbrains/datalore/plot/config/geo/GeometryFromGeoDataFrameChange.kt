@@ -111,9 +111,9 @@ internal class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange()
         private val closePath: Boolean
     ) : GeometryCollector(GeoPositionField.POINT_X, GeoPositionField.POINT_Y) {
         protected override val geometryConsumer: SimpleFeature.Consumer<LonLat> = SimpleFeature.Consumer<LonLat>(
-            onPoint = if (closePath) ::nop else ::insertPoint, // Do not add points to polygon
-            onMultiPoint = { insertPoints(it) },
-            onLineString = { insertPoints(it) },
+            onPoint = ::insertPoint,
+            onMultiPoint = ::insertPoints,
+            onLineString = ::insertPoints,
             onMultiLineString = { insertPoints(it.flatten()) },
             onPolygon = { insertPoints(it.flatten()) },
             onMultiPolygon = { insertPoints(it.flatten().flatten()) }
