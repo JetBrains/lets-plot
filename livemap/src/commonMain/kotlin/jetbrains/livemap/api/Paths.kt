@@ -32,6 +32,8 @@ import jetbrains.livemap.rendering.Renderers.PathRenderer
 import jetbrains.livemap.rendering.StyleComponent
 import jetbrains.livemap.rendering.setStrokeColor
 import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.searching.LocatorComponent
+import jetbrains.livemap.searching.PathLocatorHelper
 
 @LiveMapDsl
 class Paths(
@@ -100,6 +102,7 @@ class PathBuilder(
                         }
                         + NeedLocationComponent()
                         + NeedCalculateLocationComponent()
+                        + LocatorComponent(PathLocatorHelper())
                     }
 
                 if (animation == 2) {

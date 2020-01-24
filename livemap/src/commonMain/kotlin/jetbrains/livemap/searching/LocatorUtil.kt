@@ -5,23 +5,13 @@
 
 package jetbrains.livemap.searching
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.livemap.core.projections.MapRuler
-import jetbrains.livemap.projection.World
+import jetbrains.datalore.base.typedGeometry.*
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 object LocatorUtil {
-    fun rescaleLengthByZoom(srcLength: Double, srcZoom: Int, dstZoom: Int): Double {
-        return if (dstZoom >= srcZoom) {
-            srcLength * (1 shl dstZoom - srcZoom)
-        } else {
-            srcLength / (1 shl srcZoom - dstZoom)
-        }
-    }
 
     fun <TypeT> calculateAngle(coord1: Vec<TypeT>, coord2: Vec<TypeT>): Double {
         val dx: Double = (coord2.x - coord1.x)
@@ -35,71 +25,57 @@ object LocatorUtil {
         )
     }
 
-    fun distance(coord1: Vec<World>, coord2: Vec<World>, mapRuler: MapRuler<World>): Double {
-        return sqrt(
-            mapRuler.deltaX(coord1.x, coord2.x).pow(2.0) +
-                    mapRuler.deltaY(coord1.y, coord2.y).pow(2.0)
-        )
-    }
-
-    fun coordInExtendedRect(
-        coord: DoubleVector,
-        rect: DoubleRectangle,
-        delta: Double,
-        mapRuler: MapRuler<World>
+    fun <TypeT> coordInExtendedRect(
+        coord: Vec<TypeT>,
+        rect: Rect<TypeT>,
+        delta: Double
     ): Boolean {
-        return rect.contains(coord) || mapRuler.distanceX(
-            coord.x,
-            rect.left
-        ) <= delta || mapRuler.distanceX(coord.x, rect.right) <= delta || mapRuler.distanceY(
-            coord.y,
-            rect.bottom
-        ) <= delta || mapRuler.distanceY(coord.y, rect.top) <= delta
+        return rect.contains(coord)
+                || abs(coord.x - rect.left) <= delta
+                || abs(coord.x - rect.right) <= delta
+                || abs(coord.y - rect.bottom) <= delta
+                || abs(coord.y - rect.top) <= delta
     }
 
-    fun pathContainsCoordinate(
-        coord: DoubleVector,
-        path: List<DoubleVector>,
-        strokeWidth: Double,
-        mapRuler: MapRuler<World>
+    fun <TypeT> pathContainsCoordinate(
+        coord: Vec<TypeT>,
+        path: List<Vec<TypeT>>,
+        strokeWidth: Double
     ): Boolean {
         for (i in 0 until path.size - 1) {
-            if (calculateSquareDistanceToPathSegment(coord, path, i, mapRuler) <= strokeWidth.pow(2.0)) {
+            if (calculateSquareDistanceToPathSegment(coord, path, i) <= strokeWidth.pow(2.0)) {
                 return true
             }
         }
         return false
     }
 
-    fun calculateSquareDistanceToPathSegment(
-        coord: DoubleVector,
-        path: List<DoubleVector>,
-        segmentNum: Int,
-        mapRuler: MapRuler<World>
+    private fun <TypeT> calculateSquareDistanceToPathSegment(
+        coord: Vec<TypeT>,
+        path: List<Vec<TypeT>>,
+        segmentNum: Int
     ): Double {
         val next = segmentNum + 1
-        val dx: Double = mapRuler.deltaX(path[segmentNum].x, path[next].x)
-        val dy: Double = mapRuler.deltaY(path[segmentNum].y, path[next].y)
-        val scalar: Double =
-            dx * mapRuler.deltaX(path[segmentNum].x, coord.x) + dy * mapRuler.deltaY(path[segmentNum].y, coord.y)
+        val dx: Double = path[next].x - path[segmentNum].x
+        val dy: Double = path[next].y - path[segmentNum].y
+        val scalar: Double = dx * (coord.x - path[segmentNum].x) + dy * (coord.y - path[segmentNum].y)
         if (scalar <= 0) {
-            return calculateSquareDistanceToPathPoint(coord, path, segmentNum, mapRuler)
+            return calculateSquareDistanceToPathPoint(coord, path, segmentNum)
         }
         val segmentSquareLength = dx * dx + dy * dy
         val baseSquareLength = scalar * scalar / segmentSquareLength
         return if (baseSquareLength >= segmentSquareLength) {
-            calculateSquareDistanceToPathPoint(coord, path, next, mapRuler)
-        } else calculateSquareDistanceToPathPoint(coord, path, segmentNum, mapRuler) - baseSquareLength
+            calculateSquareDistanceToPathPoint(coord, path, next)
+        } else calculateSquareDistanceToPathPoint(coord, path, segmentNum) - baseSquareLength
     }
 
-    private fun calculateSquareDistanceToPathPoint(
-        coord: DoubleVector,
-        path: List<DoubleVector>,
-        pointNum: Int,
-        mapRuler: MapRuler<World>
+    private fun <TypeT> calculateSquareDistanceToPathPoint(
+        coord: Vec<TypeT>,
+        path: List<Vec<TypeT>>,
+        pointNum: Int
     ): Double {
-        val dx: Double = mapRuler.deltaX(coord.x, path[pointNum].x)
-        val dy: Double = mapRuler.deltaY(coord.y, path[pointNum].y)
+        val dx: Double = coord.x - path[pointNum].x
+        val dy: Double = coord.y - path[pointNum].y
         return dx * dx + dy * dy
     }
 

@@ -10,6 +10,8 @@ import jetbrains.livemap.placement.*
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.BarRenderer
 import jetbrains.livemap.projection.Client
+import jetbrains.livemap.searching.BarLocatorHelper
+import jetbrains.livemap.searching.LocatorComponent
 import kotlin.math.abs
 
 @LiveMapDsl
@@ -82,6 +84,7 @@ class BarsFactory(
                             setStrokeColor(source.strokeColor)
                             setStrokeWidth(source.strokeWidth)
                         }
+                        + LocatorComponent(BarLocatorHelper())
                     }
                 )
             }
