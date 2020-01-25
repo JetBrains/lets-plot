@@ -84,6 +84,10 @@ object Option {
             const val FATTEN = "fatten"
         }
 
+        object Boxplot {
+            const val FATTEN = "fatten"
+        }
+
         object BoxplotOutlier {
             const val COLOR = "outlier_color"
             const val FILL = "outlier_fill"

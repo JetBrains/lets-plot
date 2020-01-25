@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.LiveMapOptionsParser.Companion.parseFromLayerOptions
+import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Image
@@ -55,14 +56,17 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.BOX_PLOT -> return GeomProvider.boxplot {
                 val geom = BoxplotGeom()
+                if (opts.hasOwn(Boxplot.FATTEN)) {
+                    geom.fattenMidline = opts.getDouble(Boxplot.FATTEN)!!
+                }
                 if (opts.hasOwn(BoxplotOutlier.COLOR)) {
-                    geom.setOutlierColor(opts.getColor(BoxplotOutlier.COLOR)!!)
+                    geom.outlierColor = opts.getColor(BoxplotOutlier.COLOR)!!
                 }
                 if (opts.hasOwn(BoxplotOutlier.FILL)) {
-                    geom.setOutlierFill(opts.getColor(BoxplotOutlier.FILL)!!)
+                    geom.outlierFill = opts.getColor(BoxplotOutlier.FILL)!!
                 }
-                geom.setOutlierShape(opts.getShape(BoxplotOutlier.SHAPE))
-                geom.setOutlierSize(opts.getDouble(BoxplotOutlier.SIZE))
+                geom.outlierShape = opts.getShape(BoxplotOutlier.SHAPE)
+                geom.outlierSize = opts.getDouble(BoxplotOutlier.SIZE)
                 geom
             }
 

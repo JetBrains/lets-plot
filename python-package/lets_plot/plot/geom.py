@@ -700,20 +700,18 @@ def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend
 
     Examples
     ---------
-    >>> import numpy as np
     >>> from lets_plot import *
-    >>> N = 10
-    >>> M = 10
-    >>> m = np.random.random(M) * 5.0
-    >>> cov = np.eye(M)
-    >>> W = np.random.multivariate_normal(m, cov, N)
-    >>> se = W.std(axis=1)
-    >>> mean = W.mean(axis=1)
-    >>> ymin = mean - se
-    >>> ymax = mean + se
-    >>> x = np.arange(0, N, 1)
-    >>> dat = dict(x=x, ymin=ymin, ymax=ymax, middle=mean)
-    >>> ggplot(dat, aes(x='x')) + geom_crossbar(aes(ymin='ymin', ymax='ymax', middle='mean'))
+    >>>
+    >>> data = dict(
+    >>>     supp = ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
+    >>>     dose = [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
+    >>>     length = [13.23, 22.70, 26.06, 7.98, 16.77, 26.14],
+    >>>     len_min = [11.83, 21.2, 24.50, 4.24, 15.26, 23.35],
+    >>>     len_max = [15.63, 24.9, 27.11, 10.72, 19.28, 28.93]
+    >>> )
+    >>>
+    >>> p = ggplot(data, aes(x='dose', color='supp'))
+    >>> p + geom_crossbar(aes(ymin='len_min', ymax='len_max', middle='length'), fatten=5)
     """
     return _geom('crossbar', mapping, data, stat, position, show_legend, sampling=sampling, fatten=fatten, **other_args)
 
@@ -1172,6 +1170,7 @@ def geom_vline(mapping=None, data=None, stat=None, position=None, show_legend=No
 
 
 def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+                 fatten=None,
                  outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None,
                  varwidth=None,
                  **other_args):
@@ -1194,12 +1193,15 @@ def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    fatten : number, default: 1.0
+        A multiplicative factor applied to size of the middle bar
     outlier_color, outlier_fill, outlier_shape, outlier_size:
         Default aesthetics for outliers.
     varwidth:
         if FALSE (default) make a standard box plot.
         If TRUE, boxes are drawn with widths proportional to the square-roots of the number of
         observations in the groups.
+
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1227,39 +1229,19 @@ def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=
 
     Examples
     --------
-    >>> # Using stats "identity" one can define boxplot from computations
-    >>> import pandas as pd
+    >>> from pandas import DataFrame
     >>> import numpy as np
-    >>> from scipy.stats import norm
     >>> from lets_plot import *
-    >>> y = norm.rvs(size=100)
-    >>> df = {'x': [1], \
-    >>>   'lower': np.percentile(y, 5), \
-    >>>   'upper': np.percentile(y, 95), \
-    >>>   'middle': np.percentile(y, 50), \
-    >>>   'ymin': np.min(y), \
-    >>>   'ymax': np.max(y)}
-    >>> df = pd.DataFrame(df)
-    >>> ggplot(df, aes('x')) \
-    >>>     + geom_boxplot(aes(lower='lower', \
-    >>>                        upper='upper', \
-    >>>                        middle='middle', \
-    >>>                        ymin='ymin', \
-    >>>                        ymax='ymax'), \
-    >>>                    stat='identity')
-    >>> # samples from normal distribution with outliers
-    >>> import pandas as pd
-    >>> from scipy.stats import multivariate_normal
-    >>> n = 1000
-    >>> m = 5
-    >>> sigma = gamma(1.5, 0.1).rvs(size=m)
-    >>> X = multivariate_normal(cov=np.diag(sigma)).rvs(size=n)
-    >>> df = pd.DataFrame(X)
-    >>> df = pd.melt(df)
-    >>> ggplot(df, aes('variable', 'value')) \
-    >>>         + geom_boxplot(outlier_color='red', outlier_size=3, outlier_shape=8)
+    >>>
+    >>> np.random.seed(123)
+    >>> data = DataFrame(dict(
+    >>>     cond=np.repeat(['A','B'], 200),
+    >>>     rating=np.concatenate((np.random.normal(0, 1, 200), np.random.normal(.8, 1, 200)))
+    >>> ))
+    >>> p = ggplot(data, aes(x='cond', y='rating')) + ggsize(300, 200)
+    >>> p + geom_boxplot(outlier_color='red', outlier_shape=8, outlier_size=5)
     """
-    return _geom('boxplot', mapping, data, stat, position, show_legend, sampling=sampling,
+    return _geom('boxplot', mapping, data, stat, position, show_legend, sampling=sampling, fatten=fatten,
                  outlier_color=outlier_color, outlier_fill=outlier_fill, outlier_shape=outlier_shape,
                  outlier_size=outlier_size, varwidth=varwidth,
                  **other_args)

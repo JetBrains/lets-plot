@@ -21,31 +21,31 @@ import jetbrains.datalore.vis.svg.SvgLineElement
 
 class BoxplotGeom : GeomBase() {
 
-    private var outlierColor: Color? = null
-    private var outlierFill: Color? = null
-    private var outlierShape: PointShape? = null
-    private var outlierSize: Double? = null
-
     var fattenMidline: Double = 1.0
+
+    var outlierColor: Color? = null
+    var outlierFill: Color? = null
+    var outlierShape: PointShape? = null
+    var outlierSize: Double? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
 
-    fun setOutlierColor(outlierColor: Color) {
-        this.outlierColor = outlierColor
-    }
-
-    fun setOutlierFill(outlierFill: Color) {
-        this.outlierFill = outlierFill
-    }
-
-    fun setOutlierShape(outlierShape: PointShape?) {
-        this.outlierShape = outlierShape
-    }
-
-    fun setOutlierSize(outlierSize: Double?) {
-        this.outlierSize = outlierSize
-    }
+//    fun setOutlierColor(outlierColor: Color) {
+//        this.outlierColor = outlierColor
+//    }
+//
+//    fun setOutlierFill(outlierFill: Color) {
+//        this.outlierFill = outlierFill
+//    }
+//
+//    fun setOutlierShape(outlierShape: PointShape?) {
+//        this.outlierShape = outlierShape
+//    }
+//
+//    fun setOutlierSize(outlierSize: Double?) {
+//        this.outlierSize = outlierSize
+//    }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -54,68 +54,14 @@ class BoxplotGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-//        buildBoxes(root, aesthetics, pos, coord, ctx)
         CrossBarHelper.buildBoxes(root, aesthetics, pos, coord, ctx, rectangleByDataPoint(ctx))
         buildLines(root, aesthetics, pos, coord, ctx)
         buildOutliers(root, aesthetics, pos, coord, ctx)
-//        buildHints(aesthetics, pos, coord, ctx)
         CrossBarHelper.buildTooltips(
             listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
             aesthetics, pos, coord, ctx, rectangleByDataPoint(ctx)
         )
     }
-
-//    private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
-//        val helper = GeomHelper(pos, coord, ctx)
-//
-//        for (p in aesthetics.dataPoints()) {
-//            val rect = rectangleByDataPoint(ctx)(p) ?: continue
-//
-//            val xCoord = rect.center.x
-//            val width = GeomUtil.widthPx(p, ctx, 2.0)
-//            val clientRect = helper.toClient(DoubleRectangle(0.0, 0.0, width, 0.0), p)
-//            val objectRadius = clientRect.width / 2.0
-//
-//            val hint = HintConfigFactory()
-//                .defaultObjectRadius(objectRadius)
-//                .defaultX(xCoord)
-//                .defaultKind(HORIZONTAL_TOOLTIP)
-//
-//            val hints = HintsCollection(p, helper)
-//                .addHint(hint.create(Aes.YMAX))
-//                .addHint(hint.create(Aes.UPPER))
-//                .addHint(hint.create(Aes.MIDDLE))
-//                .addHint(hint.create(Aes.LOWER))
-//                .addHint(hint.create(Aes.YMIN))
-//                .hints
-//
-//            ctx.targetCollector.addRectangle(
-//                p.index(),
-//                helper.toClient(rect, p),
-//                params()
-//                    .setTipLayoutHints(hints)
-//                    .setColor(fromColor(p))
-//            )
-//
-//        }
-//    }
-
-//    private fun buildBoxes(
-//        root: SvgRoot,
-//        aesthetics: Aesthetics,
-//        pos: PositionAdjustment,
-//        coord: CoordinateSystem,
-//        ctx: GeomContext
-//    ) {
-//        // rectangles
-//        val helper = RectanglesHelper(aesthetics, pos, coord, ctx)
-//        val rectangles = helper.createRectangles(
-//            rectangleByDataPoint(
-//                ctx
-//            )
-//        )
-//        rectangles.forEach { root.add(it) }
-//    }
 
     private fun buildLines(
         root: SvgRoot,
@@ -128,34 +74,9 @@ class BoxplotGeom : GeomBase() {
 
         val helper = GeomHelper(pos, coord, ctx)
         val elementHelper = helper.createSvgElementHelper()
-
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X)) {
             val x = p.x()!!
-//            val hasWidth = p.defined(Aes.WIDTH)
-//            val width = if (hasWidth)
-//                GeomUtil.widthPx(p, ctx, 2.0)
-//            else
-//                Double.NaN
-
             val lines = ArrayList<SvgLineElement>()
-
-//            // middle
-//            if (hasWidth && p.defined(Aes.MIDDLE)) {
-//                val middle = p.middle()!!
-//                lines.add(
-//                    elementHelper.createLine(
-//                        DoubleVector(x - width / 2, middle),
-//                        DoubleVector(x + width / 2, middle),
-//                        p
-//                    )
-//                )
-//            }
-
-            /*
-      double halfFenceWidth = hasWidth
-          ? width * .1 / 2
-          : 0;
-      */
 
             // lower whisker
             if (p.defined(Aes.LOWER) && p.defined(Aes.YMIN)) {
@@ -225,7 +146,6 @@ class BoxplotGeom : GeomBase() {
     private class OutlierAestheticsMapper(color: Color?, fill: Color?, shape: PointShape?, size: Double?) :
         Function<DataPointAesthetics, DataPointAesthetics> {
 
-        //private final Map<Aes, Object> myValueByAes = new HashMap<>();
         private val myValueByAes = TypedKeyHashMap()
 
         init {
@@ -268,7 +188,7 @@ class BoxplotGeom : GeomBase() {
                     // overwrite 'size' of 'super'
                     return getIntern(
                         Aes.SIZE,
-                        DEF_SIZE
+                        OUTLIER_DEF_SIZE
                     )
                 }
 
@@ -279,57 +199,13 @@ class BoxplotGeom : GeomBase() {
                 }
             }
         }
-
-        companion object {
-            private val DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
-        }
     }
-
-//    private class MyLegendKeyElementFactory : LegendKeyElementFactory {
-//
-//        override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
-//            val whiskerSize = .2
-//
-//            val strokeWidth = AesScaling.strokeWidth(p)
-//            val width = (size.x - strokeWidth) * .8 // a bit narrower
-//            val height = size.y - strokeWidth
-//            val x = (size.x - width) / 2
-//            val y = strokeWidth / 2
-//
-//
-//            // box
-//            val rect = SvgRectElement(
-//                x,
-//                y + height * whiskerSize,
-//                width,
-//                height * (1 - 2 * whiskerSize)
-//            )
-//            GeomHelper.decorate(rect, p)
-//
-//            // lines
-//            val middleY = y + height * .5
-//            val middle = SvgLineElement(x, middleY, x + width, middleY)
-//            GeomHelper.decorate(middle, p)
-//            val middleX = x + width * .5
-//            val lowerWhisker =
-//                SvgLineElement(middleX, y + height * (1 - whiskerSize), middleX, y + height)
-//            GeomHelper.decorate(lowerWhisker, p)
-//            val upperWhisker = SvgLineElement(middleX, y, middleX, y + height * whiskerSize)
-//            GeomHelper.decorate(upperWhisker, p)
-//
-//            val g = SvgGElement()
-//            g.children().add(rect)
-//            g.children().add(middle)
-//            g.children().add(lowerWhisker)
-//            g.children().add(upperWhisker)
-//            return g
-//        }
-//    }
 
     companion object {
         const val HANDLES_GROUPS = false
 
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory()
+        private val OUTLIER_DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
 
         private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
