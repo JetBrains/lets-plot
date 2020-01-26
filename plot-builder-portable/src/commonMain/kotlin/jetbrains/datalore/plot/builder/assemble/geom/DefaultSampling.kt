@@ -26,6 +26,7 @@ object DefaultSampling {
     val AB_LINE = random(5000, null)
     val H_LINE = random(5000, null)
     val V_LINE = random(5000, null)
+    val LINE_RANGE = random(5000, null)
     val JITTER = random(5000, null)
     val RECT = random(5000, null)
     val SEGMENT = random(5000, null)

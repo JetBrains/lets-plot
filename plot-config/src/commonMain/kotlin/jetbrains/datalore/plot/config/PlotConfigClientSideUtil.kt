@@ -213,7 +213,8 @@ object PlotConfigClientSideUtil {
             GeomKind.AREA,
             GeomKind.BAR,
             GeomKind.ERROR_BAR,
-            GeomKind.CROSS_BAR -> return builder.univariateFunction(LookupStrategy.HOVER)
+            GeomKind.CROSS_BAR,
+            GeomKind.LINE_RANGE -> return builder.univariateFunction(LookupStrategy.HOVER)
 
             GeomKind.SMOOTH,
             GeomKind.POINT,

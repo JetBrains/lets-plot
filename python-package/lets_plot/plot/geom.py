@@ -11,7 +11,7 @@ from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, g
 __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_smooth', 'geom_bar', 'geom_histogram',
            'geom_tile', 'geom_raster',
-           'geom_errorbar', 'geom_crossbar',
+           'geom_errorbar', 'geom_crossbar', 'geom_linerange',
            'geom_contour',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
@@ -714,6 +714,71 @@ def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend
     >>> p + geom_crossbar(aes(ymin='len_min', ymax='len_max', middle='length'), fatten=5)
     """
     return _geom('crossbar', mapping, data, stat, position, show_legend, sampling=sampling, fatten=fatten, **other_args)
+
+
+def geom_linerange(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+                   **other_args):
+    """
+    Line range, defined by an upper and lower value
+
+    Parameters
+    ----------
+    mapping : set of aesthetic mappings created by aes() function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dictionary or pandas DataFrame, optional
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : string, optional
+        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
+        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
+        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
+        linear default)
+    position : string, optional
+        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
+        position adjustment function.
+    other_args :
+        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
+        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
+        paired geom/stat.
+    Returns
+    -------
+        geom object specification
+    Notes
+    -----
+    geom_linerange represents a vertical interval, defined by x, ymin, ymax.
+    geom_linerange understands the following aesthetics mappings:
+    - x : x-axis coordinates
+    - ymin : lower bound for line range.
+    - ymax : upper bound for line range.
+    - alpha : transparency level of a layer
+        Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry lines
+        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - size : lines width
+        Defines bar line width
+    - linetype : type of the line of tile's border
+        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
+        5 = "longdash", 6 = "twodash"
+
+    Examples
+    ---------
+    >>> import numpy as np
+    >>> from lets_plot import *
+    >>> N = 10
+    >>> M = 10
+    >>> m = np.random.random(M) * 5.0
+    >>> cov = np.eye(M)
+    >>> W = np.random.multivariate_normal(m, cov, N)
+    >>> se = W.std(axis=1)
+    >>> mean = W.mean(axis=1)
+    >>> ymin = mean - se
+    >>> ymax = mean + se
+    >>> x = np.arange(0, N, 1)
+    >>> dat = dict(x=x, ymin=ymin, ymax=ymax)
+    >>> ggplot(dat, aes(x='x')) + geom_linerange(aes(ymin='ymin', ymax='ymax'))
+    """
+    return _geom('linerange', mapping, data, stat, position, show_legend, sampling=sampling, **other_args)
 
 
 def geom_contour(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, bins=None,

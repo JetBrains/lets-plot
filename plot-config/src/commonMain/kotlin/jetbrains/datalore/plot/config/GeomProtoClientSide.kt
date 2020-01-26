@@ -149,6 +149,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.TILE] = GeomProvider.tile()
             PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()
             // crossbar - special case
+            PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
             PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
             PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()
             PROVIDER[GeomKind.POLYGON] = GeomProvider.polygon()

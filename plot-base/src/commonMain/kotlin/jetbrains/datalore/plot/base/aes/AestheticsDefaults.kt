@@ -119,6 +119,10 @@ open class AestheticsDefaults {
                 .update(Aes.FILL, Color.WHITE)
         }
 
+        fun lineRange(): AestheticsDefaults {
+            return AestheticsDefaults()
+        }
+
         fun polygon(): AestheticsDefaults {
             return AestheticsDefaults()
                 .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)

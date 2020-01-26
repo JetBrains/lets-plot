@@ -138,6 +138,15 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ).build()
         }
 
+        fun lineRange(): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.LINE_RANGE,
+                AestheticsDefaults.lineRange(),
+                LineRangeGeom.HANDLES_GROUPS
+            ) { LineRangeGeom() }
+                .build()
+        }
+
         fun contour(): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.CONTOUR,

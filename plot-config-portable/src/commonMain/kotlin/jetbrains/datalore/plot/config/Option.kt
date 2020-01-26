@@ -279,6 +279,7 @@ object Option {
         private const val MAP = "map"
         private const val ERROR_BAR = "errorbar"
         private const val CROSS_BAR = "crossbar"
+        private const val LINE_RANGE = "linerange"
         const val POLYGON = "polygon"
         private const val AB_LINE = "abline"
         private const val H_LINE = "hline"
@@ -315,6 +316,7 @@ object Option {
             map[MAP] = GeomKind.MAP
             map[ERROR_BAR] = GeomKind.ERROR_BAR
             map[CROSS_BAR] = GeomKind.CROSS_BAR
+            map[LINE_RANGE] = GeomKind.LINE_RANGE
             map[POLYGON] = GeomKind.POLYGON
             map[AB_LINE] = GeomKind.AB_LINE
             map[H_LINE] = GeomKind.H_LINE

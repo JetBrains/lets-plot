@@ -132,6 +132,15 @@ object GeomMeta {
                 Aes.SIZE
             )
 
+            GeomKind.LINE_RANGE -> listOf(
+                Aes.X,
+                Aes.YMIN, Aes.YMAX,
+                Aes.SIZE, // path width
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA
+            )
+
             GeomKind.CONTOUR -> PATH
             GeomKind.CONTOURF -> POLYGON
             GeomKind.POLYGON -> POLYGON

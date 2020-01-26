@@ -48,7 +48,8 @@ internal class LocatedTargetsPicker {
             GeomKind.AREA,
             GeomKind.BAR,
             GeomKind.ERROR_BAR,
-            GeomKind.CROSS_BAR
+            GeomKind.CROSS_BAR,
+            GeomKind.LINE_RANGE
         )
 
         private fun distance(locatedTargetList: LookupResult): Double {
