@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
+import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import jetbrains.datalore.plot.builder.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
@@ -172,6 +173,27 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
                 expect().tooltipY(108.33333333333331),
                 expect().tooltipY(153.33333333333331),
                 expect().tooltipY(358.3333333333333)
+        )
+    }
+
+    @Test
+    fun whenThereIsNotEnoughVerticalSpaceForAllTooltips_ShouldSelectNearestTooltip() {
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(DEFAULT_OBJECT_RADIUS)
+            .defaultTipSize(size(80.0, 200.0))
+
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .cursor(coord(90.0, 320.0))
+            .addTooltip(tooltipBuilder.horizontal(FIRST_TOOLTIP_KEY,  coord(20.0, 250.0)).buildTooltip())
+            .addTooltip(tooltipBuilder.horizontal(SECOND_TOOLTIP_KEY, coord(20.0, 300.0)).buildTooltip())
+            .addTooltip(tooltipBuilder.horizontal(THIRD_TOOLTIP_KEY,  coord(20.0, 350.0)).buildTooltip())
+            .build()
+
+        arrange(layoutManagerController)
+
+        assertAllTooltips(
+            expect().text(SECOND_TOOLTIP_KEY)
+                    .tooltipY(expectedSideTipY(SECOND_TOOLTIP_KEY))
         )
     }
 
