@@ -37,7 +37,7 @@ class CrossBarGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private val LEGEND_FACTORY = CrossBarHelper.legendFactory()
+        private val LEGEND_FACTORY = CrossBarHelper.legendFactory(false)
 
         private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->

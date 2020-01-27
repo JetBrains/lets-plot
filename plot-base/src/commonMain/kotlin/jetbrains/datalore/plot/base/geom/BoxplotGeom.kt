@@ -204,7 +204,7 @@ class BoxplotGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private val LEGEND_FACTORY = CrossBarHelper.legendFactory()
+        private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
         private val OUTLIER_DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
 
         private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {

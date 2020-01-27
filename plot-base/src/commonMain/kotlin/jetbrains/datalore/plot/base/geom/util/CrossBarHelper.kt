@@ -63,7 +63,7 @@ object CrossBarHelper {
         }
     }
 
-    fun legendFactory(): LegendKeyElementFactory = CrossBarLegendKeyElementFactory()
+    fun legendFactory(whiskers: Boolean): LegendKeyElementFactory = CrossBarLegendKeyElementFactory(whiskers)
 
     fun buildTooltips(
         hintAesList: List<Aes<Double>>,
@@ -93,15 +93,6 @@ object CrossBarHelper {
                     acc.addHint(hintFactory.create(aes))
                 }
 
-//            val hintsCollection = HintsCollection(p, helper)
-//            val hints = hintsCollection
-//                .addHint(hintFactory.create(Aes.YMAX))
-//                .addHint(hintFactory.create(Aes.UPPER))
-//                .addHint(hintFactory.create(Aes.MIDDLE))
-//                .addHint(hintFactory.create(Aes.LOWER))
-//                .addHint(hintFactory.create(Aes.YMIN))
-//                .hints
-
             ctx.targetCollector.addRectangle(
                 p.index(),
                 helper.toClient(rect, p),
@@ -113,7 +104,7 @@ object CrossBarHelper {
     }
 }
 
-private class CrossBarLegendKeyElementFactory : LegendKeyElementFactory {
+private class CrossBarLegendKeyElementFactory(val whiskers: Boolean) : LegendKeyElementFactory {
 
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
         val whiskerSize = .2
@@ -126,11 +117,18 @@ private class CrossBarLegendKeyElementFactory : LegendKeyElementFactory {
 
 
         // box
+        var boxHeight = height
+        var boxY = y
+        if (whiskers) {
+            boxHeight = height * (1 - 2 * whiskerSize)
+            boxY = y + height * whiskerSize
+        }
+
         val rect = SvgRectElement(
             x,
-            y + height * whiskerSize,
+            boxY,
             width,
-            height * (1 - 2 * whiskerSize)
+            boxHeight
         )
         GeomHelper.decorate(rect, p)
 
@@ -138,18 +136,22 @@ private class CrossBarLegendKeyElementFactory : LegendKeyElementFactory {
         val middleY = y + height * .5
         val middle = SvgLineElement(x, middleY, x + width, middleY)
         GeomHelper.decorate(middle, p)
-        val middleX = x + width * .5
-        val lowerWhisker =
-            SvgLineElement(middleX, y + height * (1 - whiskerSize), middleX, y + height)
-        GeomHelper.decorate(lowerWhisker, p)
-        val upperWhisker = SvgLineElement(middleX, y, middleX, y + height * whiskerSize)
-        GeomHelper.decorate(upperWhisker, p)
 
         val g = SvgGElement()
         g.children().add(rect)
         g.children().add(middle)
-        g.children().add(lowerWhisker)
-        g.children().add(upperWhisker)
+
+        if (whiskers) {
+            val middleX = x + width * .5
+            val lowerWhisker =
+                SvgLineElement(middleX, y + height * (1 - whiskerSize), middleX, y + height)
+            GeomHelper.decorate(lowerWhisker, p)
+            val upperWhisker = SvgLineElement(middleX, y, middleX, y + height * whiskerSize)
+            GeomHelper.decorate(upperWhisker, p)
+            g.children().add(lowerWhisker)
+            g.children().add(upperWhisker)
+        }
+
         return g
     }
 }
