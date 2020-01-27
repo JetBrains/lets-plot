@@ -15,14 +15,22 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 import jetbrains.datalore.vis.svg.slim.SvgSlimGroup
+import jetbrains.datalore.vis.svg.slim.SvgSlimObject
 
 abstract class GeomBase : Geom {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = GenericLegendKeyElementFactory()
 
-    override fun build(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun build(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         buildIntern(root, aesthetics, pos, coord, ctx)
     }
 
@@ -30,7 +38,13 @@ abstract class GeomBase : Geom {
         return ctx.targetCollector
     }
 
-    protected abstract fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext)
+    protected abstract fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    )
 
     companion object {
         fun wrap(slimGroup: SvgSlimGroup): SvgGElement {
@@ -38,6 +52,12 @@ abstract class GeomBase : Geom {
             g.isPrebuiltSubtree = true
             g.children().add(slimGroup.asDummySvgNode())
             return g
+        }
+
+        fun wrap(o: SvgSlimObject): SvgGElement {
+            val slimGroup = SvgSlimElements.g(1)
+            o.appendTo(slimGroup)
+            return GeomBase.wrap(slimGroup)
         }
 
         fun aesViewPort(aesthetics: Aesthetics): DoubleRectangle {
@@ -56,8 +76,9 @@ abstract class GeomBase : Geom {
 
         private fun rect(rangeX: ClosedRange<Double>, rangeY: ClosedRange<Double>): DoubleRectangle {
             return DoubleRectangle(
-                    rangeX.lowerEndpoint(), rangeY.lowerEndpoint(),
-                    SeriesUtil.span(rangeX), SeriesUtil.span(rangeY))
+                rangeX.lowerEndpoint(), rangeY.lowerEndpoint(),
+                SeriesUtil.span(rangeX), SeriesUtil.span(rangeY)
+            )
         }
 
         fun appendNodes(paths: List<LinePath>, root: SvgRoot) {

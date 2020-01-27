@@ -6,32 +6,30 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.aes.AesScaling
+import jetbrains.datalore.plot.base.geom.util.CompositeLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColor
 import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
-import jetbrains.datalore.plot.base.geom.util.LinesHelper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgLineElement
+import jetbrains.datalore.plot.base.render.point.PointShapeSvg
+import kotlin.math.max
 
-class LineRangeGeom : GeomBase() {
+class PointRangeGeom : GeomBase() {
+    var fattenMidPoint: Double = DEF_FATTEN
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PathGeom.LEGEND_KEY_ELEMENT_FACTORY
+        get() = CompositeLegendKeyElementFactory(
+            PathLegendKeyElementFactory(),
+            PointLegendKeyElementFactory(DEF_FATTEN)
+        )
 
-    private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.with_X_Y(aesthetics.dataPoints())
-    }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -40,27 +38,34 @@ class LineRangeGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
 
-        val lines = ArrayList<SvgLineElement>()
-        for (p in dataPoints) {
-            val x = p.x()
-            val ymin = p.ymin()
-            val ymax = p.ymax()
-            if (!SeriesUtil.allFinite(x, ymin, ymax)) {
-                continue
-            }
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.YMIN, Aes.YMAX)) {
+            val x = p.x()!!
+            val y = p.y()!!
+            val ymin = p.ymin()!!
+            val ymax = p.ymax()!!
 
-            val start = DoubleVector(x!!, ymin!!)
-            val end = DoubleVector(x, ymax!!)
+            // vertical line
+            val start = DoubleVector(x, ymin)
+            val end = DoubleVector(x, ymax)
             val line = helper.createLine(start, end, p)
-            lines.add(line)
+            root.add(line)
             buildHints(start, end, p, ctx, geomHelper)
-        }
 
-        lines.forEach { root.add(it) }
+            // mid-point
+            val location = geomHelper.toClient(DoubleVector(x, y), p)
+            val shape = p.shape()!!
+            val o = PointShapeSvg.create(shape, location, p, fattenMidPoint)
+            root.add(wrap(o))
+//            ctx.targetCollector.addPoint(
+//                p.index(),
+//                location,
+//                shape.size(p) * fattenMidline / 2,
+//                PointGeom.tooltipParams(p)
+//            )
+        }
     }
 
     private fun buildHints(
@@ -70,7 +75,7 @@ class LineRangeGeom : GeomBase() {
         ctx: GeomContext,
         geomHelper: GeomHelper
     ) {
-        val width = 2.0
+        val width = max(p.width()!!, 2.0)
         val objectRadius = width / 2
         val height = start.y - end.y
         val clientRect = geomHelper.toClient(DoubleRectangle(start.x - objectRadius, start.y, width, height), p)
@@ -95,5 +100,7 @@ class LineRangeGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
+
+        const val DEF_FATTEN = 4.0
     }
 }

@@ -84,6 +84,10 @@ object Option {
             const val FATTEN = "fatten"
         }
 
+        object PointRange {
+            const val FATTEN = "fatten"
+        }
+
         object Boxplot {
             const val FATTEN = "fatten"
         }
@@ -280,6 +284,7 @@ object Option {
         private const val ERROR_BAR = "errorbar"
         private const val CROSS_BAR = "crossbar"
         private const val LINE_RANGE = "linerange"
+        private const val POINT_RANGE = "pointrange"
         const val POLYGON = "polygon"
         private const val AB_LINE = "abline"
         private const val H_LINE = "hline"
@@ -317,6 +322,7 @@ object Option {
             map[ERROR_BAR] = GeomKind.ERROR_BAR
             map[CROSS_BAR] = GeomKind.CROSS_BAR
             map[LINE_RANGE] = GeomKind.LINE_RANGE
+            map[POINT_RANGE] = GeomKind.POINT_RANGE
             map[POLYGON] = GeomKind.POLYGON
             map[AB_LINE] = GeomKind.AB_LINE
             map[H_LINE] = GeomKind.H_LINE

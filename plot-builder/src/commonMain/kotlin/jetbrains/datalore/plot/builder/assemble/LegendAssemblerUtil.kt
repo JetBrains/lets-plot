@@ -9,6 +9,8 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.builder.guide.LegendDirection
+import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 internal object LegendAssemblerUtil {
@@ -32,7 +34,9 @@ internal object LegendAssemblerUtil {
 
 
     fun mapToAesthetics(
-        valueByAesIterable: Collection<Map<Aes<*>, Any>>, constantByAes: Map<Aes<*>, Any>, aestheticsDefaults: AestheticsDefaults
+        valueByAesIterable: Collection<Map<Aes<*>, Any>>,
+        constantByAes: Map<Aes<*>, Any>,
+        aestheticsDefaults: AestheticsDefaults
     ): Aesthetics {
         val dataPoints = ArrayList<Map<Aes<*>, Any>>()
         for (valueByAes in valueByAesIterable) {
@@ -60,14 +64,15 @@ internal object LegendAssemblerUtil {
         return builder.build()
     }
 
-    fun legendDirection(theme: LegendTheme): jetbrains.datalore.plot.builder.guide.LegendDirection {
+    fun legendDirection(theme: LegendTheme): LegendDirection {
         var legendDirection = theme.direction()
-        if (legendDirection === jetbrains.datalore.plot.builder.guide.LegendDirection.AUTO) {
+        if (legendDirection === LegendDirection.AUTO) {
             val legendPosition = theme.position()
-            legendDirection = if (legendPosition === jetbrains.datalore.plot.builder.guide.LegendPosition.TOP || legendPosition === jetbrains.datalore.plot.builder.guide.LegendPosition.BOTTOM)
-                jetbrains.datalore.plot.builder.guide.LegendDirection.HORIZONTAL
-            else
-                jetbrains.datalore.plot.builder.guide.LegendDirection.VERTICAL
+            legendDirection =
+                if (legendPosition === LegendPosition.TOP || legendPosition === LegendPosition.BOTTOM)
+                    LegendDirection.HORIZONTAL
+                else
+                    LegendDirection.VERTICAL
         }
         return legendDirection
     }

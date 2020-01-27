@@ -10,23 +10,19 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.point.PointShapeSvg
 import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 
-internal class PointLegendKeyElementFactory : LegendKeyElementFactory {
+internal class PointLegendKeyElementFactory(private val fatten: Double = 1.0) : LegendKeyElementFactory {
 
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
         val location = DoubleVector(size.x / 2, size.y / 2)
         val shape = p.shape()!!
-//        val slimObject = shape.create(location, p)
-        val slimObject = PointShapeSvg.create(shape, location, p)
-        val slimGroup = SvgSlimElements.g(1)
-        slimObject.appendTo(slimGroup)
-        return GeomBase.wrap(slimGroup)
+        val slimObject = PointShapeSvg.create(shape, location, p, fatten)
+        return GeomBase.wrap(slimObject)
     }
 
     override fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
         val shape = p.shape()!!
-        val shapeSize = shape.size(p)
+        val shapeSize = shape.size(p) * fatten
         val strokeWidth = shape.strokeWidth(p)
         val size = shapeSize + strokeWidth + 2.0
         return DoubleVector(size, size)

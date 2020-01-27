@@ -214,6 +214,7 @@ object PlotConfigClientSideUtil {
             GeomKind.BAR,
             GeomKind.ERROR_BAR,
             GeomKind.CROSS_BAR,
+            GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE -> return builder.univariateFunction(LookupStrategy.HOVER)
 
             GeomKind.SMOOTH,

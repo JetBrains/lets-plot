@@ -98,6 +98,7 @@ class DefaultAesAutoMapper constructor(
                 GeomKind.ERROR_BAR,
                 GeomKind.CROSS_BAR,
                 GeomKind.LINE_RANGE,
+                GeomKind.POINT_RANGE,
                 GeomKind.CONTOUR,
                 GeomKind.CONTOURF,
                 GeomKind.POLYGON,

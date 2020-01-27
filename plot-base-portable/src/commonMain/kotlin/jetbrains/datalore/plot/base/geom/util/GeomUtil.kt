@@ -140,6 +140,16 @@ object GeomUtil {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) }
     }
 
+    fun withDefined(
+        dataPoints: Iterable<DataPointAesthetics>,
+        aes0: Aes<*>,
+        aes1: Aes<*>,
+        aes2: Aes<*>,
+        aes3: Aes<*>
+    ): Iterable<DataPointAesthetics> {
+        return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
+    }
+
     fun rectangleByDataPoint(p: DataPointAesthetics, ctx: GeomContext): DoubleRectangle {
         val x = p.x()!!
         val y = p.y()!!

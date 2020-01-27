@@ -52,7 +52,7 @@ open class AestheticsDefaults {
 
     companion object {
         fun point(): AestheticsDefaults {
-            return AestheticsDefaults()
+            return base()
                 .update(Aes.SIZE, 2.0)
                 .updateInLegend(Aes.SIZE, 5.0)
         }
@@ -120,16 +120,20 @@ open class AestheticsDefaults {
         }
 
         fun lineRange(): AestheticsDefaults {
-            return AestheticsDefaults()
+            return path()
+        }
+
+        fun pointRange(): AestheticsDefaults {
+            return path()
         }
 
         fun polygon(): AestheticsDefaults {
-            return AestheticsDefaults()
+            return base()
                 .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
         fun map(): AestheticsDefaults {
-            return AestheticsDefaults()
+            return base()
                 .update(Aes.SIZE, 0.2)                    // outline thickness
                 .update(Aes.COLOR, Color.GRAY)
                 .update(Aes.FILL, Color.TRANSPARENT)
@@ -177,7 +181,7 @@ open class AestheticsDefaults {
         }
 
         fun contourf(): AestheticsDefaults {
-            return AestheticsDefaults()
+            return base()
                 .update(Aes.SIZE, 0.0)
         }
 
@@ -210,7 +214,7 @@ open class AestheticsDefaults {
         }
 
         fun text(): AestheticsDefaults {
-            return AestheticsDefaults()
+            return base()
                 .update(Aes.SIZE, 7.0)
                 .update(Aes.COLOR, Color.parseHex("#3d3d3d")) // dark gray
         }

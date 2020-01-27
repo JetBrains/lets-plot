@@ -16,6 +16,7 @@ enum class GeomKind {
     ERROR_BAR,
     CROSS_BAR,
     LINE_RANGE,
+    POINT_RANGE,
     POLYGON,
     AB_LINE,
     H_LINE,

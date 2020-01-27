@@ -49,7 +49,7 @@ open class PointGeom : GeomBase() {
                 val location = helper.toClient(DoubleVector(x!!, y!!), p)
 
                 val shape = p.shape()!!
-                targetCollector.addPoint(i, location, shape.size(p) / 2, getTooltipParams(p))
+                targetCollector.addPoint(i, location, shape.size(p) / 2, tooltipParams(p))
                 val o = PointShapeSvg.create(shape, location, p)
                 o.appendTo(slimGroup)
             }
@@ -57,20 +57,20 @@ open class PointGeom : GeomBase() {
         root.add(wrap(slimGroup))
     }
 
-    private fun getTooltipParams(p: DataPointAesthetics): TooltipParams {
-        var color = Color.TRANSPARENT
-        if (p.shape() == TinyPointShape) {
-            color = p.color()!!
-        } else if (p.shape() is NamedShape) {
-            val shape = p.shape() as NamedShape
-            color = AestheticsUtil.fill(shape.isFilled, shape.isSolid, p)
-        }
-
-        return params().setColor(fromColorValue(color, p.alpha()!!))
-    }
-
     companion object {
         const val HANDLES_GROUPS = false
+
+        fun tooltipParams(p: DataPointAesthetics): TooltipParams {
+            var color = Color.TRANSPARENT
+            if (p.shape() == TinyPointShape) {
+                color = p.color()!!
+            } else if (p.shape() is NamedShape) {
+                val shape = p.shape() as NamedShape
+                color = AestheticsUtil.fill(shape.isFilled, shape.isSolid, p)
+            }
+
+            return params().setColor(fromColorValue(color, p.alpha()!!))
+        }
     }
 }
 

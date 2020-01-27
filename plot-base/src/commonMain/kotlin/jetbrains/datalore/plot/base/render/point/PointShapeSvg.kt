@@ -15,12 +15,12 @@ import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 import jetbrains.datalore.vis.svg.slim.SvgSlimObject
 
 object PointShapeSvg {
-    fun create(shape: PointShape, location: DoubleVector, p: DataPointAesthetics): SvgSlimObject {
+    fun create(shape: PointShape, location: DoubleVector, p: DataPointAesthetics, fatten: Double = 1.0): SvgSlimObject {
         if (shape == TinyPointShape) {
             return createTinyDotShape(location, p)
         }
         if (shape is NamedShape) {
-            return createNamedShape(shape, location, p)
+            return createNamedShape(shape, location, p, fatten)
         }
         throw IllegalArgumentException("Unsupported point shape code ${shape.code} ${shape::class.simpleName}")
     }
@@ -34,9 +34,13 @@ object PointShapeSvg {
         return r
     }
 
-    private fun createNamedShape(shape: NamedShape, location: DoubleVector, p: DataPointAesthetics): SvgSlimObject {
-        val glyph =
-            createSlimGlyph(shape, location, shape.size(p))
+    private fun createNamedShape(
+        shape: NamedShape,
+        location: DoubleVector,
+        p: DataPointAesthetics,
+        fatten: Double
+    ): SvgSlimObject {
+        val glyph = createSlimGlyph(shape, location, shape.size(p) * fatten)
         AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, shape.strokeWidth(p))
         return glyph
     }

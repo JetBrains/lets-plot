@@ -31,22 +31,6 @@ class BoxplotGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
 
-//    fun setOutlierColor(outlierColor: Color) {
-//        this.outlierColor = outlierColor
-//    }
-//
-//    fun setOutlierFill(outlierFill: Color) {
-//        this.outlierFill = outlierFill
-//    }
-//
-//    fun setOutlierShape(outlierShape: PointShape?) {
-//        this.outlierShape = outlierShape
-//    }
-//
-//    fun setOutlierSize(outlierSize: Double?) {
-//        this.outlierSize = outlierSize
-//    }
-
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,

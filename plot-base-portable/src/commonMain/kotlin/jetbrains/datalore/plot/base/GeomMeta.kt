@@ -135,10 +135,21 @@ object GeomMeta {
             GeomKind.LINE_RANGE -> listOf(
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
-                Aes.SIZE, // path width
-                Aes.LINETYPE,
+                Aes.ALPHA,
                 Aes.COLOR,
-                Aes.ALPHA
+                Aes.LINETYPE,
+                Aes.SIZE
+            )
+
+            GeomKind.POINT_RANGE -> listOf(
+                Aes.X, Aes.Y,
+                Aes.YMIN, Aes.YMAX,
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SHAPE,
+                Aes.SIZE
             )
 
             GeomKind.CONTOUR -> PATH

@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Image
 import jetbrains.datalore.plot.config.Option.Geom.Path
 import jetbrains.datalore.plot.config.Option.Geom.Point
+import jetbrains.datalore.plot.config.Option.Geom.PointRange
 import jetbrains.datalore.plot.config.Option.Geom.Segment
 import jetbrains.datalore.plot.config.Option.Geom.Step
 
@@ -50,6 +51,14 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 val geom = CrossBarGeom()
                 if (opts.hasOwn(CrossBar.FATTEN)) {
                     geom.fattenMidline = opts.getDouble(CrossBar.FATTEN)!!
+                }
+                geom
+            }
+
+            GeomKind.POINT_RANGE -> return GeomProvider.pointRange() {
+                val geom = PointRangeGeom()
+                if (opts.hasOwn(PointRange.FATTEN)) {
+                    geom.fattenMidPoint = opts.getDouble(PointRange.FATTEN)!!
                 }
                 geom
             }
@@ -149,6 +158,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.TILE] = GeomProvider.tile()
             PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()
             // crossbar - special case
+            // pointrange - special case
             PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
             PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
             PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()

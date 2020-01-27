@@ -91,7 +91,6 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
         fun smooth(): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.SMOOTH,
-//                SmoothGeom.RENDERS,
                 AestheticsDefaults.smooth(),
                 SmoothGeom.HANDLES_GROUPS
             ) { SmoothGeom() }.build()
@@ -143,8 +142,16 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 GeomKind.LINE_RANGE,
                 AestheticsDefaults.lineRange(),
                 LineRangeGeom.HANDLES_GROUPS
-            ) { LineRangeGeom() }
-                .build()
+            ) { LineRangeGeom() }.build()
+        }
+
+        fun pointRange(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.POINT_RANGE,
+                AestheticsDefaults.pointRange(),
+                PointRangeGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
         }
 
         fun contour(): GeomProvider {
