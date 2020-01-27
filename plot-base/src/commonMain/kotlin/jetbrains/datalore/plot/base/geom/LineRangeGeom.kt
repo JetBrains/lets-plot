@@ -27,7 +27,7 @@ import jetbrains.datalore.vis.svg.SvgLineElement
 class LineRangeGeom : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PathGeom.LEGEND_KEY_ELEMENT_FACTORY
+        get() = VLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
     private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
         return GeomUtil.with_X_Y(aesthetics.dataPoints())

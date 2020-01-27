@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.geom.legend.VLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -19,11 +20,17 @@ import jetbrains.datalore.vis.svg.SvgLineElement
 class VLineGeom : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PathGeom.LEGEND_KEY_ELEMENT_FACTORY
+        get() = LEGEND_KEY_ELEMENT_FACTORY
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = GeomHelper(pos, coord, ctx)
-                .createSvgElementHelper()
+            .createSvgElementHelper()
 
         val viewPort = aesViewPort(aesthetics)
 
@@ -44,17 +51,8 @@ class VLineGeom : GeomBase() {
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                //Aes.X,
-//                //Aes.Y,
-//                Aes.XINTERCEPT,
-//
-//                Aes.SIZE, // path width
-//                Aes.LINETYPE,
-//                Aes.COLOR,
-//                Aes.ALPHA
-//        )
-
         const val HANDLES_GROUPS = false
+        val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory =
+            VLineLegendKeyElementFactory()
     }
 }

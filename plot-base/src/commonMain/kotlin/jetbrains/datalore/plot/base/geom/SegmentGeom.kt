@@ -25,11 +25,17 @@ class SegmentGeom : GeomBase() {
     var animation: Any? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PathGeom.LEGEND_KEY_ELEMENT_FACTORY
+        get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = GeomHelper(pos, coord, ctx)
-                .createSvgElementHelper()
+            .createSvgElementHelper()
 
         for (p in aesthetics.dataPoints()) {
             if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
@@ -69,19 +75,6 @@ class SegmentGeom : GeomBase() {
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.Y,
-//                Aes.XEND,
-//                Aes.YEND,
-//                Aes.SIZE,
-//                Aes.LINETYPE,
-//                Aes.COLOR,
-//                Aes.ALPHA,
-//                Aes.SPEED,
-//                Aes.FLOW
-//        )
-
         const val HANDLES_GROUPS = false
     }
 }

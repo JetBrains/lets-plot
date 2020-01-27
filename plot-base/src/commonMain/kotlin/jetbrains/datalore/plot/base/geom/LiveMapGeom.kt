@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.GenericLegendKeyElementFactory
+import jetbrains.datalore.plot.base.geom.legend.GenericLegendKeyElementFactory
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot

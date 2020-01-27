@@ -17,17 +17,18 @@ open class PathGeom : GeomBase() {
     var animation: Any? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = LEGEND_KEY_ELEMENT_FACTORY
+        get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
     protected open fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
         return GeomUtil.with_X_Y(aesthetics.dataPoints())
     }
 
-    override fun buildIntern(root: SvgRoot,
-                             aesthetics: Aesthetics,
-                             pos: PositionAdjustment,
-                             coord: CoordinateSystem,
-                             ctx: GeomContext
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
     ) {
 
         val dataPoints = dataPoints(aesthetics)
@@ -39,21 +40,7 @@ open class PathGeom : GeomBase() {
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.Y,
-//                Aes.SIZE, // path width
-//                Aes.LINETYPE,
-//                Aes.COLOR,
-//                Aes.ALPHA,
-//                Aes.MAP_ID,
-//                Aes.SPEED,
-//                Aes.FLOW
-//        )
-
         const val HANDLES_GROUPS = true
-        val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory =
-            PathLegendKeyElementFactory()
     }
 
 }

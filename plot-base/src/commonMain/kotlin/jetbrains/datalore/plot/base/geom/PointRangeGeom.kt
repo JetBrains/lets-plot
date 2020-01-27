@@ -8,7 +8,8 @@ package jetbrains.datalore.plot.base.geom
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.CompositeLegendKeyElementFactory
+import jetbrains.datalore.plot.base.geom.legend.CompositeLegendKeyElementFactory
+import jetbrains.datalore.plot.base.geom.legend.VLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColor
@@ -26,7 +27,7 @@ class PointRangeGeom : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = CompositeLegendKeyElementFactory(
-            PathLegendKeyElementFactory(),
+            VLineLegendKeyElementFactory(),
             PointLegendKeyElementFactory(DEF_FATTEN)
         )
 

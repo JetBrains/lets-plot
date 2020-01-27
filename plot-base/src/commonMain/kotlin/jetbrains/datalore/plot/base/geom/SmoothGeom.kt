@@ -21,9 +21,15 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 class SmoothGeom : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PathGeom.LEGEND_KEY_ELEMENT_FACTORY
+        get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val dataPoints = ordered_X(with_X_Y(aesthetics.dataPoints()))
         val helper = LinesHelper(pos, coord, ctx)
 
@@ -41,7 +47,12 @@ class SmoothGeom : GeomBase() {
         buildHints(dataPoints, pos, coord, ctx)
     }
 
-    private fun buildHints(dataPoints: Iterable<DataPointAesthetics>, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    private fun buildHints(
+        dataPoints: Iterable<DataPointAesthetics>,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = GeomHelper(pos, coord, ctx)
 
         for (p in dataPoints) {
@@ -49,40 +60,29 @@ class SmoothGeom : GeomBase() {
             val objectRadius = 0.0
 
             val hint = HintConfigFactory()
-                    .defaultObjectRadius(objectRadius)
-                    .defaultX(xCoord)
-                    .defaultKind(HORIZONTAL_TOOLTIP)
-                    .defaultColor(p.fill()!!,
-                        PROPORTION(p.alpha())
-                    )
+                .defaultObjectRadius(objectRadius)
+                .defaultX(xCoord)
+                .defaultKind(HORIZONTAL_TOOLTIP)
+                .defaultColor(
+                    p.fill()!!,
+                    PROPORTION(p.alpha())
+                )
 
             val hintsCollection = HintsCollection(p, helper)
-                    .addHint(hint.create(Aes.YMAX))
-                    .addHint(hint.create(Aes.YMIN))
-                    .addHint(hint.create(Aes.Y).color(p.color()!!))
+                .addHint(hint.create(Aes.YMAX))
+                .addHint(hint.create(Aes.YMIN))
+                .addHint(hint.create(Aes.Y).color(p.color()!!))
 
             val clientCoord = helper.toClient(p.x(), p.y(), p)
-            ctx.targetCollector.addPoint(p.index(), clientCoord, objectRadius,
-                    params()
-                            .setTipLayoutHints(hintsCollection.hints)
+            ctx.targetCollector.addPoint(
+                p.index(), clientCoord, objectRadius,
+                params()
+                    .setTipLayoutHints(hintsCollection.hints)
             )
         }
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.Y,
-//                Aes.YMIN,
-//                Aes.YMAX,
-//
-//                Aes.SIZE, // path width
-//                Aes.LINETYPE,
-//                Aes.COLOR,
-//                Aes.FILL,
-//                Aes.ALPHA
-//        )
-
         const val HANDLES_GROUPS = true
 
         private val PROPORTION = { v: Double? -> if (v == null) null else v / 10 }

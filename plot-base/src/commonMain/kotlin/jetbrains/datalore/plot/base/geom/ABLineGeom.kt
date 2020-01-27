@@ -21,11 +21,17 @@ import jetbrains.datalore.vis.svg.SvgLineElement
 class ABLineGeom : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PathGeom.LEGEND_KEY_ELEMENT_FACTORY
+        get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = GeomHelper(pos, coord, ctx)
-                .createSvgElementHelper()
+            .createSvgElementHelper()
 
         val viewPort = aesViewPort(aesthetics)
         val boundaries = Iterables.toList(viewPort.parts)
@@ -62,18 +68,6 @@ class ABLineGeom : GeomBase() {
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                //Aes.X,
-//                //Aes.Y,
-//                Aes.INTERCEPT,
-//                Aes.SLOPE,
-//
-//                Aes.SIZE, // path width
-//                Aes.LINETYPE,
-//                Aes.COLOR,
-//                Aes.ALPHA
-//        )
-
         const val HANDLES_GROUPS = false
     }
 }

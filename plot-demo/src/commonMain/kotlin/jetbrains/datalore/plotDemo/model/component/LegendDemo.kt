@@ -9,7 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
-import jetbrains.datalore.plot.base.geom.util.GenericLegendKeyElementFactory
+import jetbrains.datalore.plot.base.geom.legend.GenericLegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.builder.scale.GuideBreak
@@ -36,7 +36,8 @@ open class LegendDemo : SimpleDemoBase() {
                 //      .width(constant(0.75))
                 .build()
 
-        val keyElementFactory = GenericLegendKeyElementFactory()
+        val keyElementFactory =
+            GenericLegendKeyElementFactory()
         val legendBreaks = ArrayList<jetbrains.datalore.plot.builder.guide.LegendBreak>()
         val labelsIterator = labels.iterator()
         for (aesthetics in aes.dataPoints()) {
