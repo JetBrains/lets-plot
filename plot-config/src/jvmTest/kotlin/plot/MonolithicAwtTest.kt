@@ -174,7 +174,7 @@ internal class MonolithicAwtTest {
         """.trimMargin()
 
         private val EXPECTED_SINGLE_PLOT = """
-        |<svg class="plt-container" width="400.0" height="300.0">
+        |<svg xmlns="http://www.w3.org/2000/svg" class="plt-container" width="400.0" height="300.0">
         |$PLOT_STYLE_ELEMENT
         |  <g class="plt-plot">
         |    <g transform="translate(20.0 10.0 ) ">
@@ -305,7 +305,7 @@ internal class MonolithicAwtTest {
         """.trimMargin()
 
         private fun expectedGGBunchPlot(index: Int) = """
-        |<svg class="plt-container" width="150.0" height="150.0">
+        |<svg xmlns="http://www.w3.org/2000/svg" class="plt-container" width="150.0" height="150.0">
         |$PLOT_STYLE_ELEMENT
         |  <g class="plt-plot">
         |    <g transform="translate(20.0 10.0 ) ">

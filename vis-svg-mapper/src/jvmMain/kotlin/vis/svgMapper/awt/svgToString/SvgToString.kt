@@ -9,6 +9,7 @@ import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgImageElementEx
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svg.SvgTextNode
+import jetbrains.datalore.vis.svg.XmlNamespace.SVG_NAMESPACE_URI
 import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
 
 object SvgToString {
@@ -32,6 +33,10 @@ object SvgToString {
             crlf(buffer, level)
         }
         buffer.append('<').append(svgElement.elementName)
+        if (svgElement.elementName.equals("svg")) {
+            buffer.append(" xmlns").append("=\"").append(SVG_NAMESPACE_URI).append('"')
+        }
+
         for (key in svgElement.attributeKeys) {
             buffer.append(' ')
             val name: String = key.name
