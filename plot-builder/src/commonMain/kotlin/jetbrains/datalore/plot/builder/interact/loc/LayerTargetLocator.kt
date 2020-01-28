@@ -41,22 +41,22 @@ internal class LayerTargetLocator(
     init {
         fun toProjection(prototype: TargetPrototype): TargetProjection {
             return when (prototype.hitShape.kind) {
-                POINT -> PointTargetProjection.Companion.create(
+                POINT -> PointTargetProjection.create(
                     prototype.hitShape.point.center,
                     lookupSpec.lookupSpace
                 )
 
-                RECT -> RectTargetProjection.Companion.create(
+                RECT -> RectTargetProjection.create(
                     prototype.hitShape.rect,
                     lookupSpec.lookupSpace
                 )
 
-                POLYGON -> PolygonTargetProjection.Companion.create(
+                POLYGON -> PolygonTargetProjection.create(
                     prototype.hitShape.points,
                     lookupSpec.lookupSpace
                 )
 
-                PATH -> PathTargetProjection.Companion.create(
+                PATH -> PathTargetProjection.create(
                     prototype.hitShape.points,
                     prototype.indexMapper,
                     lookupSpec.lookupSpace

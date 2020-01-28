@@ -10,8 +10,8 @@ import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 
-class GeomInteraction(builder: jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder) :
-    jetbrains.datalore.plot.builder.interact.ContextualMappingProvider {
+class GeomInteraction(builder: GeomInteractionBuilder) :
+    ContextualMappingProvider {
 
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
@@ -24,7 +24,7 @@ class GeomInteraction(builder: jetbrains.datalore.plot.builder.interact.GeomInte
     }
 
     override fun createContextualMapping(dataAccess: MappedDataAccess): ContextualMapping {
-        return jetbrains.datalore.plot.builder.interact.GeomInteraction.Companion.createContextualMapping(
+        return createContextualMapping(
             myDisplayableAes,
             if (myAxisTooltipEnabled) myAxisAes else emptyList(),
             dataAccess

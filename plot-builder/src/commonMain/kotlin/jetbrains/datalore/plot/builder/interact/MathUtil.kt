@@ -97,26 +97,26 @@ object MathUtil {
         constructor(x: Double, y: Double) : this(DoubleVector(x, y))
 
         fun check(coord: DoubleVector): Boolean {
-            return compare(coord) == jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT.NEW_CLOSER
+            return compare(coord) == COMPARE_RESULT.NEW_CLOSER
         }
 
-        fun compare(coord: DoubleVector): jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT {
-            val newDistance = jetbrains.datalore.plot.builder.interact.MathUtil.distance(target, coord)
+        fun compare(coord: DoubleVector): COMPARE_RESULT {
+            val newDistance = distance(target, coord)
             if (distance < 0) {
                 setNewClosestCoord(coord, newDistance)
-                return jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT.NEW_CLOSER
+                return COMPARE_RESULT.NEW_CLOSER
             }
 
             if (distance < newDistance) {
-                return jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT.NEW_FARTHER
+                return COMPARE_RESULT.NEW_FARTHER
             }
 
             if (distance == newDistance) {
-                return jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT.EQUAL
+                return COMPARE_RESULT.EQUAL
             }
 
             setNewClosestCoord(coord, newDistance)
-            return jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT.NEW_CLOSER
+            return COMPARE_RESULT.NEW_CLOSER
         }
 
         private fun setNewClosestCoord(coord: DoubleVector, distance: Double) {
@@ -143,11 +143,11 @@ object MathUtil {
             return myLength
         }
 
-        fun overlaps(v: jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange): Boolean {
+        fun overlaps(v: DoubleRange): Boolean {
             return start() <= v.end() && v.start() <= end()
         }
 
-        fun inside(v: jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange): Boolean {
+        fun inside(v: DoubleRange): Boolean {
             return start() >= v.start() && end() <= v.end()
         }
 
@@ -163,44 +163,44 @@ object MathUtil {
             return myStart + length()
         }
 
-        fun move(delta: Double): jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange {
-            return jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.Companion.withStartAndLength(
+        fun move(delta: Double): DoubleRange {
+            return withStartAndLength(
                 start() + delta,
                 length()
             )
         }
 
-        fun moveLeft(delta: Double): jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange {
+        fun moveLeft(delta: Double): DoubleRange {
             if (delta < 0) {
                 throw IllegalStateException("Value should be positive")
             }
 
-            return jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.Companion.withStartAndLength(
+            return withStartAndLength(
                 start() - delta,
                 length()
             )
         }
 
-        fun moveRight(delta: Double): jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange {
+        fun moveRight(delta: Double): DoubleRange {
             if (delta < 0) {
                 throw IllegalStateException("Value should be positive")
             }
 
-            return jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.Companion.withStartAndLength(
+            return withStartAndLength(
                 start() + delta,
                 length()
             )
         }
 
         companion object {
-            fun withStartAndEnd(start: Double, end: Double): jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange {
+            fun withStartAndEnd(start: Double, end: Double): DoubleRange {
                 val rangeStart = min(start, end)
                 val rangeLength = max(start, end) - rangeStart
-                return jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange(rangeStart, rangeLength)
+                return DoubleRange(rangeStart, rangeLength)
             }
 
-            fun withStartAndLength(start: Double, length: Double): jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange {
-                return jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange(start, length)
+            fun withStartAndLength(start: Double, length: Double): DoubleRange {
+                return DoubleRange(start, length)
             }
         }
 
