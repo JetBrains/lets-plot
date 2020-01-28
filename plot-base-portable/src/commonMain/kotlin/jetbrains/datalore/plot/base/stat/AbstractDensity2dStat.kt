@@ -41,8 +41,8 @@ abstract class AbstractDensity2dStat : BaseStat(DEF_MAPPING) {
     protected var kernel: ((Double) -> Double)? = null
         private set
 
-    protected val binOptions: StatUtil.BinOptions
-        get() = StatUtil.BinOptions(myBinCount, myBinWidth)
+    protected val binOptions: BinStatUtil.BinOptions
+        get() = BinStatUtil.BinOptions(myBinCount, myBinWidth)
 
     init {
         setKernel(DensityStat.Kernel.GAUSSIAN)

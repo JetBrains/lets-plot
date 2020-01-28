@@ -9,8 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Stat
 
-abstract class BaseStat(private val defaultMappings: Map<Aes<*>, DataFrame.Variable>) :
-    Stat {
+abstract class BaseStat(private val defaultMappings: Map<Aes<*>, DataFrame.Variable>) : Stat {
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return defaultMappings.containsKey(aes)

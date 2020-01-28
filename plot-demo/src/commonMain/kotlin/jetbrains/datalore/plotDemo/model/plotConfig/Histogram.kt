@@ -19,7 +19,7 @@ open class Histogram : PlotConfigDemoBase() {
         return listOf(
             basic(),
             withWeights(),
-            withConstantWeight()
+            densityMapping()
         )
     }
 
@@ -68,27 +68,6 @@ open class Histogram : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun withConstantWeight(): Map<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'x'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'histogram'," +
-                    "                  'fill': 'orange'," +
-                    "                  'weight': 10" +
-                    "               }" +
-                    "           ]" +
-                    "}"
-
-            val plotSpec1 = HashMap(parsePlotSpec(spec))
-            plotSpec1["data"] = DATA
-            return plotSpec1
-        }
-
         fun withWeights(): Map<String, Any> {
             val spec = "{" +
                     "   'kind': 'plot'," +
@@ -108,5 +87,29 @@ open class Histogram : PlotConfigDemoBase() {
             plotSpec["data"] = DATA
             return plotSpec
         }
+
+        fun densityMapping(): Map<String, Any> {
+            val spec = "{" +
+                    "   'kind': 'plot'," +
+                    "   'mapping': {" +
+                    "             'x': 'x'" +
+                    "           }," +
+
+                    "   'layers': [" +
+                    "               {" +
+                    "                  'geom': 'histogram'," +
+                    "                  'mapping': {" +
+                    "                            'y': '..density..'" +
+                    "                          }," +
+                    "                  'fill': 'orange'" +
+                    "               }" +
+                    "           ]" +
+                    "}"
+
+            val plotSpec1 = HashMap(parsePlotSpec(spec))
+            plotSpec1["data"] = DATA
+            return plotSpec1
+        }
+
     }
 }

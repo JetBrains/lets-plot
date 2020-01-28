@@ -24,7 +24,7 @@ internal class CountStat : BaseStat(DEF_MAPPING) {
         }
 
         val valuesX = data.getNumeric(TransformVar.X)
-        val weight = StatUtil.weightVector(valuesX.size, data)
+        val weight = BinStatUtil.weightVector(valuesX.size, data)
 
         val statX = ArrayList<Double>()
         val statCount = ArrayList<Double>()

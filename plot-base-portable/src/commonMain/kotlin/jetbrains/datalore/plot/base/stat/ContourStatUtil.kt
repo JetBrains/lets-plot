@@ -47,7 +47,7 @@ object ContourStatUtil {
         return Pair(colCount, rowCount)
     }
 
-    fun computeLevels(data: DataFrame, binOptions: StatUtil.BinOptions): List<Double>? {
+    fun computeLevels(data: DataFrame, binOptions: BinStatUtil.BinOptions): List<Double>? {
         if (!(data.has(TransformVar.X) && data.has(TransformVar.Y) && data.has(
                 TransformVar.Z))) {
             return null
@@ -56,7 +56,7 @@ object ContourStatUtil {
         return computeLevels(zRange, binOptions)
     }
 
-    fun computeLevels(zRange: ClosedRange<Double>?, binOptions: StatUtil.BinOptions): List<Double>? {
+    fun computeLevels(zRange: ClosedRange<Double>?, binOptions: BinStatUtil.BinOptions): List<Double>? {
         if (zRange == null) {
             return null
         }
@@ -65,7 +65,7 @@ object ContourStatUtil {
             return null
         }
 
-        val b = StatUtil.binCountAndWidth(spanZ, binOptions)
+        val b = BinStatUtil.binCountAndWidth(spanZ, binOptions)
         val levels = ArrayList<Double>()
         for (i in 0 until b.count) {
             var level = i * b.width + zRange.lowerEndpoint()

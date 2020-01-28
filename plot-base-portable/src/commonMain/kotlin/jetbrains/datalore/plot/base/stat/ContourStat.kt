@@ -41,10 +41,10 @@ import jetbrains.datalore.plot.base.StatContext
  */
 internal class ContourStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPPING) {
 
-    private val myBinOptions: StatUtil.BinOptions
+    private val myBinOptions: BinStatUtil.BinOptions
 
     init {
-        myBinOptions = StatUtil.BinOptions(binCount, binWidth)
+        myBinOptions = BinStatUtil.BinOptions(binCount, binWidth)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {

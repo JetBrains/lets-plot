@@ -64,7 +64,7 @@ class DensityStat : BaseStat(DEF_MAPPING) {
         val statScaled = ArrayList<Double>()
 
         // weight aesthetics
-        val weight = StatUtil.weightVector(valuesX.size, data)
+        val weight = BinStatUtil.weightVector(valuesX.size, data)
 
         val bandWidth: Double
         val densityFunction: (Double) -> Double

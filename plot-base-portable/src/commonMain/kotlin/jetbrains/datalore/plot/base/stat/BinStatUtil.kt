@@ -14,7 +14,7 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-object StatUtil {
+object BinStatUtil {
     private const val MAX_BIN_COUNT = 500
 
     fun weightAtIndex(data: DataFrame): (Int) -> Double {
@@ -48,27 +48,18 @@ object StatUtil {
         return CountAndWidth(binCount, binWidth)
     }
 
-    /*
-  public static List<Double> pickAtIndices(List<Double> list, List<Integer> indices) {
-    List<Double> result = new ArrayList<>();
-    for (Integer index : indices) {
-      result.add(list.get(index));
-    }
-    return result;
-  }
-  */
-
     fun computeBins(
-            valuesX: List<Double?>,
-            startX: Double,
-            binCount: Int,
-            binWidth: Double,
-            weightAtIndex: (Int) -> Double,
-            densityNormalizingFactor: Double): BinsData {
+        valuesX: List<Double?>,
+        startX: Double,
+        binCount: Int,
+        binWidth: Double,
+        weightAtIndex: (Int) -> Double,
+        densityNormalizingFactor: Double
+    ): BinsData {
 
         var totalCount = 0.0
         val countByBinIndex = HashMap<Int, MutableDouble>()
-        val dataIndicesByBinIndex = HashMap<Int, MutableList<Int>>()
+//        val dataIndicesByBinIndex = HashMap<Int, MutableList<Int>>()
         for (dataIndex in valuesX.indices) {
             val x = valuesX[dataIndex]
             if (!SeriesUtil.isFinite(x)) {
@@ -82,11 +73,11 @@ object StatUtil {
             }
             countByBinIndex[binIndex]!!.getAndAdd(weight)
 
-            if (!dataIndicesByBinIndex.containsKey(binIndex)) {
-                dataIndicesByBinIndex[binIndex] = ArrayList()
-            }
+//            if (!dataIndicesByBinIndex.containsKey(binIndex)) {
+//                dataIndicesByBinIndex[binIndex] = ArrayList()
+//            }
 
-            dataIndicesByBinIndex[binIndex]!!.add(dataIndex)
+//            dataIndicesByBinIndex[binIndex]!!.add(dataIndex)
         }
 
         val x = ArrayList<Double>()
@@ -108,10 +99,12 @@ object StatUtil {
             densities.add(density)
         }
 
-        return BinsData(x, counts, densities, dataIndicesByBinIndex)
+//        return BinsData(x, counts, densities, dataIndicesByBinIndex)
+        return BinsData(x, counts, densities)
     }
 
-    class BinOptions(binCount: Int, val binWidth: Double?  // optional
+    class BinOptions(
+        binCount: Int, val binWidth: Double?  // optional
     ) {
         val binCount: Int = min(MAX_BIN_COUNT, max(1, binCount))
 
@@ -123,9 +116,8 @@ object StatUtil {
     class CountAndWidth(val count: Int, val width: Double)
 
     class BinsData(
-            internal val x: List<Double>,
-            internal val count: List<Double>,
-            internal val density: List<Double>,
-            private val dataIndicesByBinIndex: Map<Int, List<Int>>)
-
+        internal val x: List<Double>,
+        internal val count: List<Double>,
+        internal val density: List<Double>
+    )
 }
