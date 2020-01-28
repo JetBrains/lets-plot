@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.geom
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.CrossBarHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
@@ -28,7 +29,7 @@ class CrossBarGeom : GeomBase() {
     ) {
         CrossBarHelper.buildBoxes(root, aesthetics, pos, coord, ctx, rectangleByDataPoint(ctx))
         CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
-        CrossBarHelper.buildTooltips(
+        BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.MIDDLE, Aes.YMIN),
             aesthetics, pos, coord, ctx, rectangleByDataPoint(ctx)
         )

@@ -9,9 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColor
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.vis.svg.SvgGElement
@@ -64,44 +61,6 @@ object CrossBarHelper {
     }
 
     fun legendFactory(whiskers: Boolean): LegendKeyElementFactory = CrossBarLegendKeyElementFactory(whiskers)
-
-    fun buildTooltips(
-        hintAesList: List<Aes<Double>>,
-        aesthetics: Aesthetics,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
-        ctx: GeomContext,
-        rectFactory: (DataPointAesthetics) -> DoubleRectangle?
-    ) {
-        val helper = GeomHelper(pos, coord, ctx)
-
-        for (p in aesthetics.dataPoints()) {
-            val rect = rectFactory(p) ?: continue
-
-            val xCoord = rect.center.x
-            val width = GeomUtil.widthPx(p, ctx, 2.0)
-            val clientRect = helper.toClient(DoubleRectangle(0.0, 0.0, width, 0.0), p)
-            val objectRadius = clientRect.width / 2.0
-
-            val hintFactory = HintsCollection.HintConfigFactory()
-                .defaultObjectRadius(objectRadius)
-                .defaultX(xCoord)
-                .defaultKind(HORIZONTAL_TOOLTIP)
-
-            val hintConfigs = hintAesList
-                .fold(HintsCollection(p, helper)) { acc, aes ->
-                    acc.addHint(hintFactory.create(aes))
-                }
-
-            ctx.targetCollector.addRectangle(
-                p.index(),
-                helper.toClient(rect, p),
-                params()
-                    .setTipLayoutHints(hintConfigs.hints)
-                    .setColor(fromColor(p))
-            )
-        }
-    }
 }
 
 private class CrossBarLegendKeyElementFactory(val whiskers: Boolean) : LegendKeyElementFactory {
