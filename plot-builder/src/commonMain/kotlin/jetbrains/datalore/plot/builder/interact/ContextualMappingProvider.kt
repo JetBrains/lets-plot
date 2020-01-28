@@ -12,7 +12,7 @@ interface ContextualMappingProvider {
     fun createContextualMapping(dataAccess: MappedDataAccess): ContextualMapping
 
     companion object {
-        val NONE = object : jetbrains.datalore.plot.builder.interact.ContextualMappingProvider {
+        val NONE = object : ContextualMappingProvider {
             override fun createContextualMapping(dataAccess: MappedDataAccess): ContextualMapping {
                 return ContextualMapping(
                     emptyList(),

@@ -19,44 +19,44 @@ internal class LayerTargetLocator(
     private val geomKind: GeomKind,
     lookupSpec: GeomTargetLocator.LookupSpec,
     private val contextualMapping: ContextualMapping,
-    targetPrototypes: List<jetbrains.datalore.plot.builder.interact.loc.TargetPrototype>) :
+    targetPrototypes: List<TargetPrototype>) :
     GeomTargetLocator {
 
-    private val myTargets = ArrayList<jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Target>()
-    private val myTargetDetector: jetbrains.datalore.plot.builder.interact.loc.TargetDetector =
-        jetbrains.datalore.plot.builder.interact.loc.TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
+    private val myTargets = ArrayList<Target>()
+    private val myTargetDetector: TargetDetector =
+        TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
 
-    private val myCollectingStrategy: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy =
+    private val myCollectingStrategy: Collector.CollectingStrategy =
             if (lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.X) {
-                jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy.APPEND
+                Collector.CollectingStrategy.APPEND
             } else if (lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.HOVER) {
-                jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy.APPEND
+                Collector.CollectingStrategy.APPEND
             } else if (lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.NONE ||
                     lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.NONE) {
-                jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy.IGNORE
+                Collector.CollectingStrategy.IGNORE
             } else {
-                jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy.REPLACE
+                Collector.CollectingStrategy.REPLACE
             }
 
     init {
-        fun toProjection(prototype: jetbrains.datalore.plot.builder.interact.loc.TargetPrototype): jetbrains.datalore.plot.builder.interact.loc.TargetProjection {
+        fun toProjection(prototype: TargetPrototype): TargetProjection {
             return when (prototype.hitShape.kind) {
-                POINT -> jetbrains.datalore.plot.builder.interact.loc.PointTargetProjection.Companion.create(
+                POINT -> PointTargetProjection.create(
                     prototype.hitShape.point.center,
                     lookupSpec.lookupSpace
                 )
 
-                RECT -> jetbrains.datalore.plot.builder.interact.loc.RectTargetProjection.Companion.create(
+                RECT -> RectTargetProjection.create(
                     prototype.hitShape.rect,
                     lookupSpec.lookupSpace
                 )
 
-                POLYGON -> jetbrains.datalore.plot.builder.interact.loc.PolygonTargetProjection.Companion.create(
+                POLYGON -> PolygonTargetProjection.create(
                     prototype.hitShape.points,
                     lookupSpec.lookupSpace
                 )
 
-                PATH -> jetbrains.datalore.plot.builder.interact.loc.PathTargetProjection.Companion.create(
+                PATH -> PathTargetProjection.create(
                     prototype.hitShape.points,
                     prototype.indexMapper,
                     lookupSpec.lookupSpace
@@ -66,7 +66,7 @@ internal class LayerTargetLocator(
 
         for (prototype in targetPrototypes) {
             myTargets.add(
-                jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Target(
+                Target(
                     toProjection(prototype),
                     prototype
                 )
@@ -74,7 +74,7 @@ internal class LayerTargetLocator(
         }
     }
 
-    private fun addLookupResults(collector: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector<GeomTarget>, targets: MutableList<GeomTargetLocator.LookupResult>) {
+    private fun addLookupResults(collector: Collector<GeomTarget>, targets: MutableList<GeomTargetLocator.LookupResult>) {
         if (collector.size() == 0) {
             return
         }
@@ -96,23 +96,23 @@ internal class LayerTargetLocator(
             return null
         }
 
-        val rectCollector = jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector<GeomTarget>(
+        val rectCollector = Collector<GeomTarget>(
             coord,
             myCollectingStrategy
         )
-        val pointCollector = jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector<GeomTarget>(
+        val pointCollector = Collector<GeomTarget>(
             coord,
             myCollectingStrategy
         )
-        val pathCollector = jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector<GeomTarget>(
+        val pathCollector = Collector<GeomTarget>(
             coord,
             myCollectingStrategy
         )
 
         // Should always replace because of polygon with holes - only top should have tooltip.
-        val polygonCollector = jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector<GeomTarget>(
+        val polygonCollector = Collector<GeomTarget>(
             coord,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy.REPLACE
+            Collector.CollectingStrategy.REPLACE
         )
 
         for (target in myTargets) {
@@ -153,12 +153,12 @@ internal class LayerTargetLocator(
         return closestTargets
     }
 
-    private fun processRect(coord: DoubleVector, target: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Target, resultCollector: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector<GeomTarget>) {
+    private fun processRect(coord: DoubleVector, target: Target, resultCollector: Collector<GeomTarget>) {
         if (myTargetDetector.checkRect(coord, target.rectProjection, resultCollector.closestPointChecker)) {
 
             val rect = target.prototype.hitShape.rect
             resultCollector.collect(
-                    target.prototype.crateGeomTarget(
+                    target.prototype.createGeomTarget(
                             rect.origin.add(DoubleVector(rect.width / 2, 0.0)),
                             getKeyForSingleObjectGeometry(target.prototype)
                     )
@@ -166,11 +166,11 @@ internal class LayerTargetLocator(
         }
     }
 
-    private fun processPolygon(coord: DoubleVector, target: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Target, resultCollector: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector<GeomTarget>) {
+    private fun processPolygon(coord: DoubleVector, target: Target, resultCollector: Collector<GeomTarget>) {
         if (myTargetDetector.checkPolygon(coord, target.polygonProjection, resultCollector.closestPointChecker)) {
 
             resultCollector.collect(
-                    target.prototype.crateGeomTarget(
+                    target.prototype.createGeomTarget(
                             coord,
                             getKeyForSingleObjectGeometry(target.prototype)
                     )
@@ -178,11 +178,11 @@ internal class LayerTargetLocator(
         }
     }
 
-    private fun processPoint(coord: DoubleVector, target: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Target, resultCollector: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector<GeomTarget>) {
+    private fun processPoint(coord: DoubleVector, target: Target, resultCollector: Collector<GeomTarget>) {
         if (myTargetDetector.checkPoint(coord, target.pointProjection, resultCollector.closestPointChecker)) {
 
             resultCollector.collect(
-                    target.prototype.crateGeomTarget(
+                    target.prototype.createGeomTarget(
                             target.prototype.hitShape.point.center,
                             getKeyForSingleObjectGeometry(target.prototype)
                     )
@@ -190,10 +190,10 @@ internal class LayerTargetLocator(
         }
     }
 
-    private fun processPath(coord: DoubleVector, target: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Target, resultCollector: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector<GeomTarget>) {
+    private fun processPath(coord: DoubleVector, target: Target, resultCollector: Collector<GeomTarget>) {
         // When searching single point from all targets (REPLACE) - should search nearest projection between every path target.
         // When searching points for every target (APPEND) - should reset nearest point between every path target.
-        val pointChecker = if (myCollectingStrategy == jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy.APPEND)
+        val pointChecker = if (myCollectingStrategy == Collector.CollectingStrategy.APPEND)
             ClosestPointChecker(coord)
         else
             resultCollector.closestPointChecker
@@ -201,7 +201,7 @@ internal class LayerTargetLocator(
         val hitPoint = myTargetDetector.checkPath(coord, target.pathProjection, pointChecker)
         if (hitPoint != null) {
             resultCollector.collect(
-                    target.prototype.crateGeomTarget(
+                    target.prototype.createGeomTarget(
                             hitPoint.originalCoord,
                             hitPoint.index
                     )
@@ -209,34 +209,34 @@ internal class LayerTargetLocator(
         }
     }
 
-    private fun getKeyForSingleObjectGeometry(prototype: jetbrains.datalore.plot.builder.interact.loc.TargetPrototype): Int {
+    private fun getKeyForSingleObjectGeometry(prototype: TargetPrototype): Int {
         return prototype.indexMapper(0)
     }
 
-    internal class Target(private val targetProjection: jetbrains.datalore.plot.builder.interact.loc.TargetProjection, val prototype: jetbrains.datalore.plot.builder.interact.loc.TargetPrototype) {
+    internal class Target(private val targetProjection: TargetProjection, val prototype: TargetPrototype) {
 
-        val pointProjection: jetbrains.datalore.plot.builder.interact.loc.PointTargetProjection
-            get() = targetProjection as jetbrains.datalore.plot.builder.interact.loc.PointTargetProjection
+        val pointProjection: PointTargetProjection
+            get() = targetProjection as PointTargetProjection
 
-        val rectProjection: jetbrains.datalore.plot.builder.interact.loc.RectTargetProjection
-            get() = targetProjection as jetbrains.datalore.plot.builder.interact.loc.RectTargetProjection
+        val rectProjection: RectTargetProjection
+            get() = targetProjection as RectTargetProjection
 
-        val polygonProjection: jetbrains.datalore.plot.builder.interact.loc.PolygonTargetProjection
-            get() = targetProjection as jetbrains.datalore.plot.builder.interact.loc.PolygonTargetProjection
+        val polygonProjection: PolygonTargetProjection
+            get() = targetProjection as PolygonTargetProjection
 
-        val pathProjection: jetbrains.datalore.plot.builder.interact.loc.PathTargetProjection
-            get() = targetProjection as jetbrains.datalore.plot.builder.interact.loc.PathTargetProjection
+        val pathProjection: PathTargetProjection
+            get() = targetProjection as PathTargetProjection
     }
 
-    internal class Collector<T>(cursor: DoubleVector, private val myStrategy: jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy) {
+    internal class Collector<T>(cursor: DoubleVector, private val myStrategy: CollectingStrategy) {
         private val result = ArrayList<T>()
         val closestPointChecker: ClosestPointChecker = ClosestPointChecker(cursor)
 
         fun collect(data: T) {
             when (myStrategy) {
-                jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy.APPEND -> add(data)
-                jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy.REPLACE -> replace(data)
-                jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator.Collector.CollectingStrategy.IGNORE -> return
+                CollectingStrategy.APPEND -> add(data)
+                CollectingStrategy.REPLACE -> replace(data)
+                CollectingStrategy.IGNORE -> return
             }
         }
 

@@ -18,7 +18,7 @@ class TargetPrototype(
     internal val indexMapper: (Int) -> Int,
     private val tooltipParams: TooltipParams) {
 
-    internal fun crateGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
+    internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
         return GeomTarget(
             hitIndex,
             createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor()),

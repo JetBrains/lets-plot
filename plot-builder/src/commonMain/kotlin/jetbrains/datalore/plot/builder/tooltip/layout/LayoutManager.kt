@@ -17,7 +17,10 @@ import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlig
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
 import kotlin.math.min
 
-class LayoutManager(private val myViewport: DoubleRectangle, private val myPreferredHorizontalAlignment: HorizontalAlignment) {
+class LayoutManager(
+    private val myViewport: DoubleRectangle,
+    private val myPreferredHorizontalAlignment: HorizontalAlignment
+) {
     private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)
     private var myCursorCoord: DoubleVector = DoubleVector.ZERO
@@ -64,9 +67,21 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
 
         for (measuredTooltip in tooltips) {
             when (measuredTooltip.hintKind) {
-                VERTICAL_TOOLTIP -> placementList.add(calculateVerticalTooltipPosition(measuredTooltip, TOP, NORMAL_STEM_LENGTH, false))
+                VERTICAL_TOOLTIP -> placementList.add(
+                    calculateVerticalTooltipPosition(
+                        measuredTooltip,
+                        TOP,
+                        NORMAL_STEM_LENGTH,
+                        false
+                    )
+                )
 
-                HORIZONTAL_TOOLTIP -> placementList.add(calculateHorizontalTooltipPosition(measuredTooltip, NORMAL_STEM_LENGTH))
+                HORIZONTAL_TOOLTIP -> placementList.add(
+                    calculateHorizontalTooltipPosition(
+                        measuredTooltip,
+                        NORMAL_STEM_LENGTH
+                    )
+                )
 
                 CURSOR_TOOLTIP -> placementList.add(calculateCursorTooltipPosition(measuredTooltip))
 
@@ -103,19 +118,35 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
 
         // Now try to space out other tooltips.
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.
-        HorizontalTooltipExpander(myVerticalSpace)
-                .fixOverlapping(tooltips.select(HORIZONTAL_TOOLTIP))
-                .forEach(::fixate)
 
-        VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace)
-                .fixOverlapping(tooltips.select(VERTICAL_TOOLTIP), restrictions)
-                .forEach(::fixate)
+        tooltips.select(HORIZONTAL_TOOLTIP).let { horizontalTooltips ->
+            if (horizontalTooltips.sumByDouble(PositionedTooltip::height) < myVerticalSpace.length()) {
+                HorizontalTooltipExpander(myVerticalSpace).fixOverlapping(horizontalTooltips)
+                    .forEach(::fixate)
+            } else {
+                horizontalTooltips
+                    .filter { it.stemCoord.y < myCursorCoord.y }
+                    .maxBy { it.stemCoord.y }
+                    ?.let(::fixate)
+            }
+        }
+
+        tooltips.select(VERTICAL_TOOLTIP)
+            .let {
+                VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
+                    it,
+                    restrictions
+                )
+            }
+            .forEach(::fixate)
 
         return separatedTooltips
     }
 
-    private fun calculateVerticalTooltipPosition(measuredTooltip: MeasuredTooltip, alignment: VerticalAlignment,
-                                                 stemLength: Double, ignoreCursor: Boolean): PositionedTooltip {
+    private fun calculateVerticalTooltipPosition(
+        measuredTooltip: MeasuredTooltip, alignment: VerticalAlignment,
+        stemLength: Double, ignoreCursor: Boolean
+    ): PositionedTooltip {
         val tooltipX = centerInsideRange(measuredTooltip.hintCoord.x, measuredTooltip.size.x, myHorizontalSpace)
 
         val stemY: Double
@@ -135,7 +166,13 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
             else
                 EMPTY_DOUBLE_RANGE
 
-            if (myVerticalAlignmentResolver.resolve(topTooltipRange, bottomTooltipRange, alignment, cursorVerticalRange) === TOP) {
+            if (myVerticalAlignmentResolver.resolve(
+                    topTooltipRange,
+                    bottomTooltipRange,
+                    alignment,
+                    cursorVerticalRange
+                ) === TOP
+            ) {
                 tooltipY = topTooltipRange.start()
                 stemY = targetTopPoint
             } else {
@@ -151,7 +188,10 @@ class LayoutManager(private val myViewport: DoubleRectangle, private val myPrefe
         )
     }
 
-    private fun calculateHorizontalTooltipPosition(measuredTooltip: MeasuredTooltip, stemLength: Double): PositionedTooltip {
+    private fun calculateHorizontalTooltipPosition(
+        measuredTooltip: MeasuredTooltip,
+        stemLength: Double
+    ): PositionedTooltip {
         val tooltipY = centerInsideRange(measuredTooltip.hintCoord.y, measuredTooltip.size.y, myVerticalSpace)
 
         val tooltipX: Double

@@ -24,7 +24,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
 
     val displayableAes: List<Aes<*>>
         get() = if (myAxisAesFromFunctionKind != null) {
-            jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.exclude(
+            exclude(
                 mySupportedAesList,
                 myAxisAesFromFunctionKind!!
             )
@@ -36,19 +36,19 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         else
             myAxisTooltipVisibilityFromConfig!!
 
-    fun showAxisTooltip(isTrue: Boolean): jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder {
+    fun showAxisTooltip(isTrue: Boolean): GeomInteractionBuilder {
         myAxisTooltipVisibilityFromConfig = isTrue
         return this
     }
 
-    fun multilayerLookupStrategy(): jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder {
+    fun multilayerLookupStrategy(): GeomInteractionBuilder {
         locatorLookupStrategy = LookupStrategy.NEAREST
         locatorLookupSpace = LookupSpace.XY
         return this
     }
 
-    fun univariateFunction(lookupStrategy: LookupStrategy): jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder {
-        myAxisAesFromFunctionKind = jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.AES_X
+    fun univariateFunction(lookupStrategy: LookupStrategy): GeomInteractionBuilder {
+        myAxisAesFromFunctionKind = AES_X
         locatorLookupStrategy = lookupStrategy
         myAxisTooltipVisibilityFromFunctionKind = true
         locatorLookupSpace = LookupSpace.X
@@ -56,8 +56,8 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         return this
     }
 
-    fun bivariateFunction(area: Boolean): jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder {
-        myAxisAesFromFunctionKind = jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.AES_XY
+    fun bivariateFunction(area: Boolean): GeomInteractionBuilder {
+        myAxisAesFromFunctionKind = AES_XY
 
         if (area) {
             locatorLookupStrategy = LookupStrategy.HOVER
@@ -71,7 +71,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         return this
     }
 
-    fun none(): jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder {
+    fun none(): GeomInteractionBuilder {
         myAxisAesFromFunctionKind = ArrayList(mySupportedAesList)
         locatorLookupStrategy = LookupStrategy.NONE
         myAxisTooltipVisibilityFromFunctionKind = true
@@ -80,11 +80,11 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         return this
     }
 
-    fun build(): jetbrains.datalore.plot.builder.interact.GeomInteraction {
-        return jetbrains.datalore.plot.builder.interact.GeomInteraction(this)
+    fun build(): GeomInteraction {
+        return GeomInteraction(this)
     }
 
-    fun axisAes(axisAes: List<Aes<*>>): jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder {
+    fun axisAes(axisAes: List<Aes<*>>): GeomInteractionBuilder {
         myAxisAesFromConfig = ArrayList(axisAes)
         return this
     }
