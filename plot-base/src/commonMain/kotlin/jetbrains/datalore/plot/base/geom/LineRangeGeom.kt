@@ -12,11 +12,6 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColor
-import jetbrains.datalore.plot.base.geom.util.HintsCollection
-import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import kotlin.math.max
@@ -45,42 +40,11 @@ class LineRangeGeom : GeomBase() {
             val end = DoubleVector(x, ymax)
             val line = helper.createLine(start, end, p)
             root.add(line)
-            buildHints(start, end, p, ctx, geomHelper)
         }
 
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx, rectangleByDataPoint()
-        )
-    }
-
-    private fun buildHints(
-        start: DoubleVector,
-        end: DoubleVector,
-        p: DataPointAesthetics,
-        ctx: GeomContext,
-        geomHelper: GeomHelper
-    ) {
-        val width = 2.0
-        val objectRadius = width / 2
-        val height = start.y - end.y
-        val clientRect = geomHelper.toClient(DoubleRectangle(start.x - objectRadius, start.y, width, height), p)
-
-        val hint = HintConfigFactory()
-            .defaultObjectRadius(objectRadius)
-            .defaultX(p.x()!!)
-            .defaultKind(HORIZONTAL_TOOLTIP)
-
-        val hints = HintsCollection(p, geomHelper)
-            .addHint(hint.create(Aes.YMAX))
-            .addHint(hint.create(Aes.YMIN))
-            .hints
-
-        ctx.targetCollector.addRectangle(
-            p.index(), clientRect,
-            params()
-                .setTipLayoutHints(hints)
-                .setColor(fromColor(p))
         )
     }
 
