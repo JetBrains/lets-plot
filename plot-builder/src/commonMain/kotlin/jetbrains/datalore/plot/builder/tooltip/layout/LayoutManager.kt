@@ -121,8 +121,7 @@ class LayoutManager(
 
         tooltips.select(HORIZONTAL_TOOLTIP).let { horizontalTooltips ->
             if (horizontalTooltips.sumByDouble(PositionedTooltip::height) < myVerticalSpace.length()) {
-                horizontalTooltips
-                    .let { HorizontalTooltipExpander(myVerticalSpace).fixOverlapping(it) }
+                HorizontalTooltipExpander(myVerticalSpace).fixOverlapping(horizontalTooltips)
                     .forEach(::fixate)
             } else {
                 horizontalTooltips
