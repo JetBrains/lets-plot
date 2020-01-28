@@ -36,10 +36,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : string, optional
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
+        The statistical transformation to use on the data for this layer.
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
@@ -662,10 +659,7 @@ def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : string, optional
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
+        The statistical transformation to use on the data for this layer.
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
@@ -680,20 +674,20 @@ def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend
         geom object specification
     Notes
     -----
-    geom_crossbar represents a vertical interval, defined by x, ymin, ymax. The mean is computed by statistical
-    transformation and represented by horizontal line.
+    geom_crossbar represents a vertical interval, defined by x, ymin, ymax. The mean is represented by horizontal line.
+
     geom_crossbar understands the following aesthetics mappings:
     - x : x-axis coordinates
     - ymin : lower bound for error bar.
     - ymax : upper bound for error bar.
-    - middle : median, 50% quantile
+    - middle : position of median bar.
     - width : width of a bar.
     - alpha : transparency level of a layer
         Understands numbers between 0 and 1.
     - color (colour) : color of a geometry lines
         Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width
-        Defines bar line width
+    - fill : color of geometry filling.
+    - size : lines width.
     - linetype : type of the line of tile's border
         Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
         5 = "longdash", 6 = "twodash"
@@ -714,6 +708,72 @@ def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend
     >>> p + geom_crossbar(aes(ymin='len_min', ymax='len_max', middle='length'), fatten=5)
     """
     return _geom('crossbar', mapping, data, stat, position, show_legend, sampling=sampling, fatten=fatten, **other_args)
+
+
+def geom_pointrange(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, fatten=None,
+                    **other_args):
+    """
+    Vertical line defined by upper and lower value with mid-point at Y-location.
+
+    Parameters
+    ----------
+    mapping : set of aesthetic mappings created by aes() function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dictionary or pandas DataFrame, optional
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : string, optional
+        The statistical transformation to use on the data for this layer.
+    position : string, optional
+        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
+        position adjustment function.
+    fatten : number, default: 5.0
+        A multiplicative factor applied to size of the middle bar
+    other_args :
+        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
+        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
+        paired geom/stat.
+    Returns
+    -------
+        geom object specification
+    Notes
+    -----
+    geom_pointrange represents a vertical interval, defined by x, ymin, ymax. The mid-point is defined by y.
+
+    geom_pointrange understands the following aesthetics mappings:
+    - x : x-axis coordinates
+    - y : position of mid-point.
+    - ymin : lower bound for error bar.
+    - ymax : upper bound for error bar.
+    - alpha : transparency level of a layer
+        Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry lines.
+        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of geometry filling.
+    - size : lines width, size of mid-point.
+    - linetype : type of the line of tile's border
+        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
+        5 = "longdash", 6 = "twodash"
+    - shape : shape of the mid-point
+
+    Examples
+    ---------
+    >>> from lets_plot import *
+    >>>
+    >>> data = dict(
+    >>>     supp = ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
+    >>>     dose = [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
+    >>>     length = [13.23, 22.70, 26.06, 7.98, 16.77, 26.14],
+    >>>     len_min = [11.83, 21.2, 24.50, 4.24, 15.26, 23.35],
+    >>>     len_max = [15.63, 24.9, 27.11, 10.72, 19.28, 28.93]
+    >>> )
+    >>>
+    >>> p = ggplot(data, aes(x='dose', color='supp'))
+    >>> p + geom_crossbar(aes(ymin='len_min', ymax='len_max', y='length'), fatten=5)
+    """
+    return _geom('pointrange', mapping, data, stat, position, show_legend, sampling=sampling, fatten=fatten,
+                 **other_args)
 
 
 def geom_linerange(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
