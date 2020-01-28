@@ -11,7 +11,7 @@ from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, g
 __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_smooth', 'geom_bar', 'geom_histogram',
            'geom_tile', 'geom_raster',
-           'geom_errorbar', 'geom_crossbar', 'geom_linerange',
+           'geom_errorbar', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
            'geom_contour',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',

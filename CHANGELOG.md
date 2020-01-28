@@ -8,8 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - geopandas support in geoms.
 - LOESS smoothing method.
-- geom_crossbar
-- add `fatten` to geom_boxplot
+- geom_crossbar, geom_linerange, geom_pointrange
 
 ## [1.1.0] - 2019-12-17
 ### Added
