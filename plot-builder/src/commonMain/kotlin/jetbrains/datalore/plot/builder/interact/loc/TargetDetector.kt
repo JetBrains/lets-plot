@@ -17,7 +17,7 @@ internal class TargetDetector(
         private val locatorLookupSpace: LookupSpace,
         private val locatorLookupStrategy: LookupStrategy) {
 
-    fun checkPath(cursorCoord: DoubleVector, pathProjection: jetbrains.datalore.plot.builder.interact.loc.PathTargetProjection, closestPointChecker: ClosestPointChecker): PathPoint? {
+    fun checkPath(cursorCoord: DoubleVector, pathProjection: PathTargetProjection, closestPointChecker: ClosestPointChecker): PathPoint? {
 
         when (locatorLookupSpace) {
 
@@ -31,7 +31,7 @@ internal class TargetDetector(
                     return null
                 }
 
-                val resultIndex = jetbrains.datalore.plot.builder.interact.loc.TargetDetector.Companion.binarySearch(
+                val resultIndex = binarySearch(
                     cursorCoord.x,
                     pathPoints.size
                 ) { index ->
@@ -59,7 +59,7 @@ internal class TargetDetector(
                         for (pathPoint in pathProjection.points) {
                             val targetPointCoord = pathPoint.projection().xy()
                             if (jetbrains.datalore.plot.builder.interact.MathUtil.areEqual(targetPointCoord, cursorCoord,
-                                    jetbrains.datalore.plot.builder.interact.loc.TargetDetector.Companion.POINT_AREA_EPSILON
+                                    POINT_AREA_EPSILON
                                 )) {
                                 return pathPoint
                             }
@@ -88,7 +88,7 @@ internal class TargetDetector(
         }
     }
 
-    fun checkPoint(cursorCoord: DoubleVector, pointProjection: jetbrains.datalore.plot.builder.interact.loc.PointTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
+    fun checkPoint(cursorCoord: DoubleVector, pointProjection: PointTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
         when (locatorLookupSpace) {
 
             LookupSpace.X -> {
@@ -96,13 +96,13 @@ internal class TargetDetector(
                 when (locatorLookupStrategy) {
 
                     LookupStrategy.HOVER -> return jetbrains.datalore.plot.builder.interact.MathUtil.areEqual(x, cursorCoord.x,
-                        jetbrains.datalore.plot.builder.interact.loc.TargetDetector.Companion.POINT_AREA_EPSILON
+                        POINT_AREA_EPSILON
                     )
 
                     LookupStrategy.NEAREST -> {
                         // Too far. Don't add this point into result list
                         return if (!jetbrains.datalore.plot.builder.interact.MathUtil.areEqual(closestPointChecker.target.x, x,
-                                jetbrains.datalore.plot.builder.interact.loc.TargetDetector.Companion.POINT_X_NEAREST_EPSILON
+                                POINT_X_NEAREST_EPSILON
                             )) {
                             false
                         } else closestPointChecker.check(DoubleVector(x, 0.0))
@@ -120,7 +120,7 @@ internal class TargetDetector(
                 return when (locatorLookupStrategy) {
 
                     LookupStrategy.HOVER -> jetbrains.datalore.plot.builder.interact.MathUtil.areEqual(targetPointCoord, cursorCoord,
-                        jetbrains.datalore.plot.builder.interact.loc.TargetDetector.Companion.POINT_AREA_EPSILON
+                        POINT_AREA_EPSILON
                     )
 
                     LookupStrategy.NEAREST -> closestPointChecker.check(targetPointCoord)
@@ -137,7 +137,7 @@ internal class TargetDetector(
         }
     }
 
-    fun checkRect(cursorCoord: DoubleVector, rectProjection: jetbrains.datalore.plot.builder.interact.loc.RectTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
+    fun checkRect(cursorCoord: DoubleVector, rectProjection: RectTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
         when (locatorLookupSpace) {
 
             LookupSpace.X -> {
@@ -177,7 +177,7 @@ internal class TargetDetector(
         }
     }
 
-    fun checkPolygon(cursorCoord: DoubleVector, polygonProjection: jetbrains.datalore.plot.builder.interact.loc.PolygonTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
+    fun checkPolygon(cursorCoord: DoubleVector, polygonProjection: PolygonTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
         when (locatorLookupSpace) {
 
             LookupSpace.X -> {
@@ -219,7 +219,7 @@ internal class TargetDetector(
 
             LookupStrategy.NEAREST -> {
                 //Too far
-                return if (!range.contains(cursorCoord.x - jetbrains.datalore.plot.builder.interact.loc.TargetDetector.Companion.RECT_X_NEAREST_EPSILON) && !range.contains(cursorCoord.x + jetbrains.datalore.plot.builder.interact.loc.TargetDetector.Companion.RECT_X_NEAREST_EPSILON)) {
+                return if (!range.contains(cursorCoord.x - RECT_X_NEAREST_EPSILON) && !range.contains(cursorCoord.x + RECT_X_NEAREST_EPSILON)) {
                     false
                 } else closestPointChecker.compare(DoubleVector(range.start() + range.length() / 2, cursorCoord.y)) !== COMPARE_RESULT.NEW_FARTHER
 

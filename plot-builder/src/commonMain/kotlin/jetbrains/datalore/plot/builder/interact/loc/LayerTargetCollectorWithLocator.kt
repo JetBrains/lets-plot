@@ -19,12 +19,12 @@ class LayerTargetCollectorWithLocator(
     private val contextualMapping: ContextualMapping
 ) : GeomTargetCollector, GeomTargetLocator {
 
-    private val myTargets = ArrayList<jetbrains.datalore.plot.builder.interact.loc.TargetPrototype>()
+    private val myTargets = ArrayList<TargetPrototype>()
     private var myLocator: GeomTargetLocator? = null
 
     override fun addPoint(index: Int, point: DoubleVector, radius: Double, tooltipParams: GeomTargetCollector.TooltipParams) {
         addTarget(
-            jetbrains.datalore.plot.builder.interact.loc.TargetPrototype(
+            TargetPrototype(
                 HitShape.point(point, radius),
                 { index },
                 tooltipParams
@@ -34,7 +34,7 @@ class LayerTargetCollectorWithLocator(
 
     override fun addRectangle(index: Int, rectangle: DoubleRectangle, tooltipParams: GeomTargetCollector.TooltipParams) {
         addTarget(
-            jetbrains.datalore.plot.builder.interact.loc.TargetPrototype(
+            TargetPrototype(
                 HitShape.rect(rectangle),
                 { index },
                 tooltipParams
@@ -44,7 +44,7 @@ class LayerTargetCollectorWithLocator(
 
     override fun addPath(points: List<DoubleVector>, localToGlobalIndex: (Int) -> Int, tooltipParams: GeomTargetCollector.TooltipParams, closePath: Boolean) {
         addTarget(
-            jetbrains.datalore.plot.builder.interact.loc.TargetPrototype(
+            TargetPrototype(
                 HitShape.path(points, closePath),
                 localToGlobalIndex,
                 tooltipParams
@@ -52,14 +52,14 @@ class LayerTargetCollectorWithLocator(
         )
     }
 
-    private fun addTarget(targetPrototype: jetbrains.datalore.plot.builder.interact.loc.TargetPrototype) {
+    private fun addTarget(targetPrototype: TargetPrototype) {
         myTargets.add(targetPrototype)
         myLocator = null
     }
 
     override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
         if (myLocator == null) {
-            myLocator = jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator(
+            myLocator = LayerTargetLocator(
                 geomKind,
                 lookupSpec,
                 contextualMapping,
