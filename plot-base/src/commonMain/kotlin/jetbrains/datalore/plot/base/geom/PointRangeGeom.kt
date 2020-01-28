@@ -102,6 +102,6 @@ class PointRangeGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        const val DEF_FATTEN = 4.0
+        const val DEF_FATTEN = 5.0
     }
 }

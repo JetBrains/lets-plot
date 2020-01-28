@@ -14,8 +14,7 @@ class PointRange : PlotConfigDemoBase() {
         return listOf(
             basic(),
             adjustMidpointSize(),
-            adjustMidpointAndFill(),
-            tmp()
+            adjustMidpointAndFill()
         )
     }
 
@@ -69,30 +68,6 @@ class PointRange : PlotConfigDemoBase() {
             | 'layers': [
             |             {
             |                 'geom': 'pointrange',
-            |                 'mapping': {
-            |                              'ymin': 'min',
-            |                              'ymax': 'max',
-            |                              'y': 'len'
-            |                            },
-            |                 'position': {'name': 'dodge', 'width': 0.33},
-            |                 'size': 5,
-            |                 'color': 'rgb(240,240,240)',
-            |                 'shape': 21,
-            |                 'fatten': 0.8
-            |             }
-            |         ]
-            |}
-            """.trimMargin()
-        return parsePlotSpec(spec)
-    }
-    private fun tmp(): Map<String, Any> {
-        val spec = """
-            |{'kind': 'plot',
-            | $DATA,
-            | 'mapping': {'x': 'dose', 'fill': 'supp'},
-            | 'layers': [
-            |             {
-            |                 'geom': 'point',
             |                 'mapping': {
             |                              'ymin': 'min',
             |                              'ymax': 'max',

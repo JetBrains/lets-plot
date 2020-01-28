@@ -44,15 +44,20 @@ internal object LegendAssemblerUtil {
             for (aes in Aes.values()) {
                 dataPoint[aes] = aestheticsDefaults.defaultValueInLegend(aes)!!
             }
+
+            // Derive some aesthetics from constants
+            for (constantAes in constantByAes.keys) {
+                when (constantAes) {
+                    Aes.SHAPE,
+                    Aes.COLOR,
+                    Aes.FILL -> dataPoint[constantAes] = constantByAes[constantAes]!!
+                }
+            }
+
             for (aes in valueByAes.keys) {
                 dataPoint[aes] = valueByAes[aes]!!
             }
-            /*
-      Disabled because 'size'-related constants are often looks ugly in legend
-      for (Aes aes : constantByAes.keySet()) {
-        dataPoint.put(aes, constantByAes.get(aes));
-      }
-      */
+
             dataPoints.add(dataPoint)
         }
 
