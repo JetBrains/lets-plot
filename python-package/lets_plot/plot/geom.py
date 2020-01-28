@@ -790,10 +790,7 @@ def geom_linerange(mapping=None, data=None, stat=None, position=None, show_legen
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : string, optional
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
+        The statistical transformation to use on the data for this layer.
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
@@ -816,27 +813,24 @@ def geom_linerange(mapping=None, data=None, stat=None, position=None, show_legen
     - color (colour) : color of a geometry lines
         Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width
-        Defines bar line width
     - linetype : type of the line of tile's border
         Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
         5 = "longdash", 6 = "twodash"
 
     Examples
     ---------
-    >>> import numpy as np
     >>> from lets_plot import *
-    >>> N = 10
-    >>> M = 10
-    >>> m = np.random.random(M) * 5.0
-    >>> cov = np.eye(M)
-    >>> W = np.random.multivariate_normal(m, cov, N)
-    >>> se = W.std(axis=1)
-    >>> mean = W.mean(axis=1)
-    >>> ymin = mean - se
-    >>> ymax = mean + se
-    >>> x = np.arange(0, N, 1)
-    >>> dat = dict(x=x, ymin=ymin, ymax=ymax)
-    >>> ggplot(dat, aes(x='x')) + geom_linerange(aes(ymin='ymin', ymax='ymax'))
+    >>>
+    >>> data = dict(
+    >>>     supp = ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
+    >>>     dose = [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
+    >>>     length = [13.23, 22.70, 26.06, 7.98, 16.77, 26.14],
+    >>>     len_min = [11.83, 21.2, 24.50, 4.24, 15.26, 23.35],
+    >>>     len_max = [15.63, 24.9, 27.11, 10.72, 19.28, 28.93]
+    >>> )
+    >>>
+    >>> p = ggplot(data, aes(x='dose', color='supp'))
+    >>> p + geom_linerange(aes(ymin='len_min', ymax='len_max'))
     """
     return _geom('linerange', mapping, data, stat, position, show_legend, sampling=sampling, **other_args)
 
