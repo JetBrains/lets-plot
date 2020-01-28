@@ -141,220 +141,220 @@ class LayoutManager(
             }
             .forEach(::fixate)
 
-    return separatedTooltips
-}
+        return separatedTooltips
+    }
 
-private fun calculateVerticalTooltipPosition(
-    measuredTooltip: MeasuredTooltip, alignment: VerticalAlignment,
-    stemLength: Double, ignoreCursor: Boolean
-): PositionedTooltip {
-    val tooltipX = centerInsideRange(measuredTooltip.hintCoord.x, measuredTooltip.size.x, myHorizontalSpace)
+    private fun calculateVerticalTooltipPosition(
+        measuredTooltip: MeasuredTooltip, alignment: VerticalAlignment,
+        stemLength: Double, ignoreCursor: Boolean
+    ): PositionedTooltip {
+        val tooltipX = centerInsideRange(measuredTooltip.hintCoord.x, measuredTooltip.size.x, myHorizontalSpace)
 
-    val stemY: Double
-    val tooltipY: Double
-    run {
-        val targetCoordY = measuredTooltip.hintCoord.y
+        val stemY: Double
+        val tooltipY: Double
+        run {
+            val targetCoordY = measuredTooltip.hintCoord.y
 
-        val targetTopPoint = targetCoordY - measuredTooltip.hintRadius
-        val targetBottomPoint = targetCoordY + measuredTooltip.hintRadius
+            val targetTopPoint = targetCoordY - measuredTooltip.hintRadius
+            val targetBottomPoint = targetCoordY + measuredTooltip.hintRadius
 
+            val tooltipHeight = measuredTooltip.size.y
+            val topTooltipRange = leftAligned(targetTopPoint, tooltipHeight, stemLength)
+            val bottomTooltipRange = rightAligned(targetBottomPoint, tooltipHeight, stemLength)
+
+            val cursorVerticalRange = if (!ignoreCursor && overlapsCursorHorizontalRange(measuredTooltip, tooltipX))
+                DoubleRange.withStartAndLength(myCursorCoord.y, CURSOR_DIMENSION.y)
+            else
+                EMPTY_DOUBLE_RANGE
+
+            if (myVerticalAlignmentResolver.resolve(
+                    topTooltipRange,
+                    bottomTooltipRange,
+                    alignment,
+                    cursorVerticalRange
+                ) === TOP
+            ) {
+                tooltipY = topTooltipRange.start()
+                stemY = targetTopPoint
+            } else {
+                tooltipY = bottomTooltipRange.start()
+                stemY = targetBottomPoint
+            }
+        }
+
+        return PositionedTooltip(
+            measuredTooltip = measuredTooltip,
+            tooltipCoord = DoubleVector(tooltipX, tooltipY),
+            stemCoord = DoubleVector(measuredTooltip.hintCoord.x, stemY)
+        )
+    }
+
+    private fun calculateHorizontalTooltipPosition(
+        measuredTooltip: MeasuredTooltip,
+        stemLength: Double
+    ): PositionedTooltip {
+        val tooltipY = centerInsideRange(measuredTooltip.hintCoord.y, measuredTooltip.size.y, myVerticalSpace)
+
+        val tooltipX: Double
+        val stemX: Double
+        run {
+            val targetCoordX = measuredTooltip.hintCoord.x
+            val tooltipWidth = measuredTooltip.size.x
+            val hintSize = measuredTooltip.hintRadius
+            val margin = hintSize + stemLength
+
+            val leftTooltipPlacement = leftAligned(targetCoordX, tooltipWidth, margin)
+            val rightTooltipPlacement = rightAligned(targetCoordX, tooltipWidth, margin)
+
+            val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace)
+            val canFitRight = rightTooltipPlacement.inside(myHorizontalSpace)
+
+            if (!(canFitLeft || canFitRight)) {
+                tooltipX = 0.0
+                stemX = targetCoordX
+            } else if (myPreferredHorizontalAlignment == HorizontalAlignment.LEFT && canFitLeft || !canFitRight) {
+                tooltipX = leftTooltipPlacement.start()
+                stemX = targetCoordX - hintSize
+            } else {
+                tooltipX = rightTooltipPlacement.start()
+                stemX = targetCoordX + hintSize
+            }
+        }
+
+        val stemCoord = DoubleVector(stemX, measuredTooltip.hintCoord.y)
+        val tooltipCoord = DoubleVector(tooltipX, tooltipY)
+        return PositionedTooltip(measuredTooltip, tooltipCoord, stemCoord)
+    }
+
+    private fun calculateCursorTooltipPosition(measuredTooltip: MeasuredTooltip): PositionedTooltip {
+        val tooltipX = centerInsideRange(myCursorCoord.x, measuredTooltip.size.x, myHorizontalSpace)
+
+        val targetCoordY = myCursorCoord.y
         val tooltipHeight = measuredTooltip.size.y
-        val topTooltipRange = leftAligned(targetTopPoint, tooltipHeight, stemLength)
-        val bottomTooltipRange = rightAligned(targetBottomPoint, tooltipHeight, stemLength)
+        val verticalMargin = NORMAL_STEM_LENGTH
 
-        val cursorVerticalRange = if (!ignoreCursor && overlapsCursorHorizontalRange(measuredTooltip, tooltipX))
-            DoubleRange.withStartAndLength(myCursorCoord.y, CURSOR_DIMENSION.y)
-        else
-            EMPTY_DOUBLE_RANGE
+        val topTooltipPlacement = leftAligned(targetCoordY, tooltipHeight, verticalMargin)
+        val bottomTooltipPlacement = rightAligned(targetCoordY, tooltipHeight, verticalMargin)
 
-        if (myVerticalAlignmentResolver.resolve(
-                topTooltipRange,
-                bottomTooltipRange,
-                alignment,
-                cursorVerticalRange
-            ) === TOP
-        ) {
-            tooltipY = topTooltipRange.start()
-            stemY = targetTopPoint
+        val tooltipY = if (topTooltipPlacement.inside(myVerticalSpace)) {
+            topTooltipPlacement.start()
         } else {
-            tooltipY = bottomTooltipRange.start()
-            stemY = targetBottomPoint
+            bottomTooltipPlacement.start()
+        }
+
+        val tooltipCoord = DoubleVector(tooltipX, tooltipY)
+        return PositionedTooltip(measuredTooltip, tooltipCoord, myCursorCoord)
+    }
+
+    private fun overlapsCursorHorizontalRange(measuredTooltip: MeasuredTooltip, tooltipX: Double): Boolean {
+        val horizontalTooltipRange = DoubleRange.withStartAndLength(tooltipX, measuredTooltip.size.x)
+        val cursorHorizontalRange = DoubleRange.withStartAndLength(myCursorCoord.x, CURSOR_DIMENSION.x)
+        return horizontalTooltipRange.overlaps(cursorHorizontalRange)
+    }
+
+
+    internal enum class VerticalAlignment {
+        TOP,
+        BOTTOM
+    }
+
+    enum class HorizontalAlignment {
+        LEFT,
+        RIGHT,
+        CENTER
+    }
+
+    class PositionedTooltip {
+        val tooltipBox: TooltipBox
+        internal val tooltipSize: DoubleVector
+        val tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec
+        val tooltipCoord: DoubleVector
+        val stemCoord: DoubleVector
+
+        internal val left get() = tooltipCoord.x
+        internal val top get() = tooltipCoord.y
+        internal val width get() = tooltipSize.x
+        internal val height get() = tooltipSize.y
+        internal val bottom get() = tooltipCoord.y + height
+        internal val right get() = tooltipCoord.x + width
+        internal val hintKind get() = tooltipSpec.layoutHint.kind
+
+        internal constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector) {
+            tooltipSpec = measuredTooltip.tooltipSpec
+            tooltipSize = measuredTooltip.size
+            tooltipBox = measuredTooltip.tooltipBox
+            this.tooltipCoord = tooltipCoord
+            this.stemCoord = stemCoord
+        }
+
+        private constructor(positionedTooltip: PositionedTooltip, newTooltipCoord: DoubleVector) {
+            tooltipSpec = positionedTooltip.tooltipSpec
+            tooltipSize = positionedTooltip.tooltipSize
+            tooltipBox = positionedTooltip.tooltipBox
+            stemCoord = positionedTooltip.stemCoord
+            tooltipCoord = newTooltipCoord
+        }
+
+        internal fun moveTo(newTooltipCoord: DoubleVector): PositionedTooltip {
+            return PositionedTooltip(this, newTooltipCoord)
+        }
+
+        internal fun rect(): DoubleRectangle {
+            return DoubleRectangle(tooltipCoord, tooltipSize)
         }
     }
 
-    return PositionedTooltip(
-        measuredTooltip = measuredTooltip,
-        tooltipCoord = DoubleVector(tooltipX, tooltipY),
-        stemCoord = DoubleVector(measuredTooltip.hintCoord.x, stemY)
-    )
-}
+    class MeasuredTooltip(
+        internal val tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec,
+        internal val size: DoubleVector,
+        internal val tooltipBox: TooltipBox
+    ) {
+        constructor(tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec, tooltipBox: TooltipBox)
+                : this(tooltipSpec, tooltipBox.contentRect.dimension, tooltipBox)
 
-private fun calculateHorizontalTooltipPosition(
-    measuredTooltip: MeasuredTooltip,
-    stemLength: Double
-): PositionedTooltip {
-    val tooltipY = centerInsideRange(measuredTooltip.hintCoord.y, measuredTooltip.size.y, myVerticalSpace)
-
-    val tooltipX: Double
-    val stemX: Double
-    run {
-        val targetCoordX = measuredTooltip.hintCoord.x
-        val tooltipWidth = measuredTooltip.size.x
-        val hintSize = measuredTooltip.hintRadius
-        val margin = hintSize + stemLength
-
-        val leftTooltipPlacement = leftAligned(targetCoordX, tooltipWidth, margin)
-        val rightTooltipPlacement = rightAligned(targetCoordX, tooltipWidth, margin)
-
-        val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace)
-        val canFitRight = rightTooltipPlacement.inside(myHorizontalSpace)
-
-        if (!(canFitLeft || canFitRight)) {
-            tooltipX = 0.0
-            stemX = targetCoordX
-        } else if (myPreferredHorizontalAlignment == HorizontalAlignment.LEFT && canFitLeft || !canFitRight) {
-            tooltipX = leftTooltipPlacement.start()
-            stemX = targetCoordX - hintSize
-        } else {
-            tooltipX = rightTooltipPlacement.start()
-            stemX = targetCoordX + hintSize
-        }
+        internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
+        internal val hintKind get() = tooltipSpec.layoutHint.kind
+        internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius
     }
 
-    val stemCoord = DoubleVector(stemX, measuredTooltip.hintCoord.y)
-    val tooltipCoord = DoubleVector(tooltipX, tooltipY)
-    return PositionedTooltip(measuredTooltip, tooltipCoord, stemCoord)
-}
+    companion object {
 
-private fun calculateCursorTooltipPosition(measuredTooltip: MeasuredTooltip): PositionedTooltip {
-    val tooltipX = centerInsideRange(myCursorCoord.x, measuredTooltip.size.x, myHorizontalSpace)
+        private val CURSOR_DIMENSION = DoubleVector(10.0, 10.0)
+        private val EMPTY_DOUBLE_RANGE = DoubleRange.withStartAndLength(0.0, 0.0)
 
-    val targetCoordY = myCursorCoord.y
-    val tooltipHeight = measuredTooltip.size.y
-    val verticalMargin = NORMAL_STEM_LENGTH
+        internal fun moveIntoLimit(range: DoubleRange, limit: DoubleRange): DoubleRange {
+            if (range.inside(limit)) {
+                return range
+            }
 
-    val topTooltipPlacement = leftAligned(targetCoordY, tooltipHeight, verticalMargin)
-    val bottomTooltipPlacement = rightAligned(targetCoordY, tooltipHeight, verticalMargin)
+            if (range.start() < limit.start()) {
+                return range.move(limit.start() - range.start())
+            }
 
-    val tooltipY = if (topTooltipPlacement.inside(myVerticalSpace)) {
-        topTooltipPlacement.start()
-    } else {
-        bottomTooltipPlacement.start()
-    }
+            return if (range.end() > limit.end()) {
+                range.move(limit.end() - range.end())
+            } else range
 
-    val tooltipCoord = DoubleVector(tooltipX, tooltipY)
-    return PositionedTooltip(measuredTooltip, tooltipCoord, myCursorCoord)
-}
-
-private fun overlapsCursorHorizontalRange(measuredTooltip: MeasuredTooltip, tooltipX: Double): Boolean {
-    val horizontalTooltipRange = DoubleRange.withStartAndLength(tooltipX, measuredTooltip.size.x)
-    val cursorHorizontalRange = DoubleRange.withStartAndLength(myCursorCoord.x, CURSOR_DIMENSION.x)
-    return horizontalTooltipRange.overlaps(cursorHorizontalRange)
-}
-
-
-internal enum class VerticalAlignment {
-    TOP,
-    BOTTOM
-}
-
-enum class HorizontalAlignment {
-    LEFT,
-    RIGHT,
-    CENTER
-}
-
-class PositionedTooltip {
-    val tooltipBox: TooltipBox
-    internal val tooltipSize: DoubleVector
-    val tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec
-    val tooltipCoord: DoubleVector
-    val stemCoord: DoubleVector
-
-    internal val left get() = tooltipCoord.x
-    internal val top get() = tooltipCoord.y
-    internal val width get() = tooltipSize.x
-    internal val height get() = tooltipSize.y
-    internal val bottom get() = tooltipCoord.y + height
-    internal val right get() = tooltipCoord.x + width
-    internal val hintKind get() = tooltipSpec.layoutHint.kind
-
-    internal constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector) {
-        tooltipSpec = measuredTooltip.tooltipSpec
-        tooltipSize = measuredTooltip.size
-        tooltipBox = measuredTooltip.tooltipBox
-        this.tooltipCoord = tooltipCoord
-        this.stemCoord = stemCoord
-    }
-
-    private constructor(positionedTooltip: PositionedTooltip, newTooltipCoord: DoubleVector) {
-        tooltipSpec = positionedTooltip.tooltipSpec
-        tooltipSize = positionedTooltip.tooltipSize
-        tooltipBox = positionedTooltip.tooltipBox
-        stemCoord = positionedTooltip.stemCoord
-        tooltipCoord = newTooltipCoord
-    }
-
-    internal fun moveTo(newTooltipCoord: DoubleVector): PositionedTooltip {
-        return PositionedTooltip(this, newTooltipCoord)
-    }
-
-    internal fun rect(): DoubleRectangle {
-        return DoubleRectangle(tooltipCoord, tooltipSize)
-    }
-}
-
-class MeasuredTooltip(
-    internal val tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec,
-    internal val size: DoubleVector,
-    internal val tooltipBox: TooltipBox
-) {
-    constructor(tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec, tooltipBox: TooltipBox)
-            : this(tooltipSpec, tooltipBox.contentRect.dimension, tooltipBox)
-
-    internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
-    internal val hintKind get() = tooltipSpec.layoutHint.kind
-    internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius
-}
-
-companion object {
-
-    private val CURSOR_DIMENSION = DoubleVector(10.0, 10.0)
-    private val EMPTY_DOUBLE_RANGE = DoubleRange.withStartAndLength(0.0, 0.0)
-
-    internal fun moveIntoLimit(range: DoubleRange, limit: DoubleRange): DoubleRange {
-        if (range.inside(limit)) {
-            return range
         }
 
-        if (range.start() < limit.start()) {
-            return range.move(limit.start() - range.start())
+        private fun centered(start: Double, length: Double): DoubleRange {
+            return DoubleRange.withStartAndLength(start - length / 2, length)
         }
 
-        return if (range.end() > limit.end()) {
-            range.move(limit.end() - range.end())
-        } else range
+        private fun leftAligned(start: Double, length: Double, margin: Double): DoubleRange {
+            return DoubleRange.withStartAndLength(start - length - margin, length)
+        }
 
-    }
+        private fun rightAligned(start: Double, length: Double, margin: Double): DoubleRange {
+            return DoubleRange.withStartAndLength(start + margin, length)
+        }
 
-    private fun centered(start: Double, length: Double): DoubleRange {
-        return DoubleRange.withStartAndLength(start - length / 2, length)
-    }
+        private fun centerInsideRange(position: Double, size: Double, range: DoubleRange): Double {
+            return moveIntoLimit(centered(position, size), range).start()
+        }
 
-    private fun leftAligned(start: Double, length: Double, margin: Double): DoubleRange {
-        return DoubleRange.withStartAndLength(start - length - margin, length)
+        private fun List<PositionedTooltip>.select(vararg kinds: Kind): List<PositionedTooltip> {
+            return this.filter { kinds.contains(it.hintKind) }
+        }
     }
-
-    private fun rightAligned(start: Double, length: Double, margin: Double): DoubleRange {
-        return DoubleRange.withStartAndLength(start + margin, length)
-    }
-
-    private fun centerInsideRange(position: Double, size: Double, range: DoubleRange): Double {
-        return moveIntoLimit(centered(position, size), range).start()
-    }
-
-    private fun List<PositionedTooltip>.select(vararg kinds: Kind): List<PositionedTooltip> {
-        return this.filter { kinds.contains(it.hintKind) }
-    }
-}
 }
