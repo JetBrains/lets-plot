@@ -28,6 +28,9 @@ object GeoPositionsDataUtil {
     const val MAP_OSM_ID_COLUMN = "__geoid__"
     const val MAP_GEOMETRY_COLUMN = "__geometry__"
 
+    // Column in map to be used in JOIN with data
+    const val MAP_JOIN_COLUMN = "map_join"
+
     // Columns can be used as request
     val GEO_POSITIONS_KEYS = listOf(
         MAP_REGION_COLUMN,

@@ -23,7 +23,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
 
 
 def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, animation=None,
-               **other_args):
+               map_join=None, **other_args):
     """
     Points, as for a scatter plot.
 
@@ -50,6 +50,8 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         2. 'y' or 'lat'
         3. 'region' or 'id'
         GeocodedRegion object is produced only by regions() or regions_xxx() functions and does not have any special requirements.
+    map_join : string, optional
+        Selects a column in a map parameter that will be used as a key in a data and map join operation.
     other_args :
         Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -89,7 +91,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
     >>> p += geom_point(shape=21, color='red', fill='green', size=5, stat='smooth')
     """
     return _geom('point', mapping, data, stat, position, show_legend, sampling=sampling, animation=animation,
-                 **other_args)
+                 map_join=map_join, **other_args)
 
 
 def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, animation=None,

@@ -9,10 +9,12 @@ import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GEOCODING_OSM_ID_COLU
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GEOCODING_REQUEST_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GEO_POSITIONS_KEYS
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_GEOMETRY_COLUMN
+import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_ID_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_OSM_ID_COLUMN
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
-import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame
+import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
+import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.TAG
 import jetbrains.datalore.plot.config.Option.Meta.GeoReference
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
 import jetbrains.datalore.plot.config.Option.Plot
@@ -34,7 +36,7 @@ class GeoPositionMappingChange : SpecChange {
     companion object {
         private val SUPPORTED_TAGS = mapOf<String, (Map<String, Any?>) -> Map<String, Any?>>(
                 GeoReference.TAG to ::transformGeoReference,
-                GeoDataFrame.TAG to ::transformGeoDataFrame
+                TAG to ::transformGeoDataFrame
         )
 
         internal fun specSelector(): SpecSelector {
@@ -46,7 +48,6 @@ class GeoPositionMappingChange : SpecChange {
                 SUPPORTED_TAGS.keys.firstOrNull((it as Map<*, *>).keys::contains) }
         }
 
-
         private fun transformGeoReference(geomSpec: Map<String, Any?>): Map<String, Any?> {
             return mapOf(
                     MAP_JOIN_ID_COLUMN to geomSpec.select(GEO_POSITIONS, GEOCODING_REQUEST_COLUMN),
@@ -55,18 +56,17 @@ class GeoPositionMappingChange : SpecChange {
         }
 
         private fun transformGeoDataFrame(geomSpec: Map<String, Any?>): Map<String, Any?> {
-            val mapOptions = geomSpec[GEO_POSITIONS] as Map<*, *>
+            val mapSpec = geomSpec[GEO_POSITIONS] as Map<*, *>
 
-            val geometryColumnName = geomSpec.select(MAP_DATA_META, GeoDataFrame.TAG, GeoDataFrame.GEOMETRY) as String
-            val transformedGeoPositions = mutableMapOf(
-                MAP_GEOMETRY_COLUMN to mapOptions[geometryColumnName]
+            val transformedMapSpec = mutableMapOf(
+                MAP_GEOMETRY_COLUMN to mapSpec[geomSpec.select(MAP_DATA_META, TAG, GEOMETRY)]
             )
 
-            listOf(GEOCODING_REQUEST_COLUMN, *GEO_POSITIONS_KEYS.toTypedArray())
-                .firstOrNull { mapOptions.containsKey(it)}
-                ?.let { transformedGeoPositions[MAP_JOIN_ID_COLUMN] = mapOptions[it] }
+            listOf(geomSpec.select(MAP_JOIN_COLUMN), GEOCODING_REQUEST_COLUMN, *GEO_POSITIONS_KEYS.toTypedArray())
+                .firstOrNull { mapSpec.containsKey(it)}
+                ?.let { transformedMapSpec[MAP_JOIN_ID_COLUMN] = mapSpec[it] }
 
-            return transformedGeoPositions
+            return transformedMapSpec
         }
     }
 }
