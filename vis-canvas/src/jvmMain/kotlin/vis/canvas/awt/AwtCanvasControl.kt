@@ -61,6 +61,10 @@ class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactor
         )
     }
 
+    fun dispatch(eventSpec: MouseEventSpec, mouseEvent: AwtMouseEvent) {
+        myEventPeer.dispatch(eventSpec, mouseEvent)
+    }
+
     override fun createCanvas(size: Vector): Canvas {
         return myGraphicsCanvasControl.createCanvas(size)
     }

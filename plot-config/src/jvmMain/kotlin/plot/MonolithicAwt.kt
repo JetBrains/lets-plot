@@ -5,15 +5,18 @@
 
 package jetbrains.datalore.plot
 
+import javafx.embed.swing.JFXPanel
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
-import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.config.FailureHandler
+import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
+import jetbrains.datalore.vis.canvas.javaFx.JavafxGraphicsCanvasControlFactory
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.awt.svgToString.SvgToString
 import mu.KotlinLogging
@@ -72,7 +75,7 @@ object MonolithicAwt {
             computationMessagesHandler(computationMessages)
             if (success.buildInfos.size == 1) {
                 // a single plot
-                return buildPlotSvgComponent(success.buildInfos[0].plotContainer, componentFactory, executor)
+                return buildPlotSvgComponent(success.buildInfos[0], componentFactory, executor)
             }
             // ggbunch
             return buildGGBunchComponenet(success.buildInfos, componentFactory, executor)
@@ -96,7 +99,7 @@ object MonolithicAwt {
         bunchComponent.border = null
 
         for (plotInfo in plotInfos) {
-            val plotComponent = buildPlotSvgComponent(plotInfo.plotContainer, componentFactory, executor)
+            val plotComponent = buildPlotSvgComponent(plotInfo, componentFactory, executor)
             val bounds = plotInfo.bounds()
             plotComponent.bounds = Rectangle(
                 bounds.origin.x.toInt(),
@@ -124,45 +127,92 @@ object MonolithicAwt {
     }
 
     fun buildPlotSvgComponent(
-        plotContainer: PlotContainer,
+        plotInfo: PlotBuildInfo,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
-
+        val plotContainer = plotInfo.plotContainer
         plotContainer.ensureContentBuilt()
-        val component = componentFactory(plotContainer.svg)
+        val plotComponent: JComponent = componentFactory(plotContainer.svg)
+        val resultComponent: JComponent
+        var liveMapControl: AwtCanvasControl? = null
 
-        component.addMouseListener(object : MouseAdapter() {
+        if (plotContainer.liveMapFigures.isEmpty()) {
+
+            resultComponent = plotComponent
+        } else {
+            val liveMapFigure = plotContainer.liveMapFigures.single()
+
+            liveMapControl = AwtCanvasControl(
+                    JavafxGraphicsCanvasControlFactory(1.0),
+                    liveMapFigure.dimension().get().toVector()
+                )
+            liveMapFigure.mapToCanvas(liveMapControl)
+
+            val container = JFXPanel()
+
+            liveMapControl.component.bounds = Rectangle(0,0, liveMapControl.size.x, liveMapControl.size.y)
+            plotComponent.bounds = Rectangle(0,0, plotInfo.size.get().x.toInt(), plotInfo.size.get().y.toInt())
+
+            container.add(plotComponent)
+            container.add(liveMapControl.component)
+
+            resultComponent = container
+        }
+
+        plotComponent.addMouseListener(object : MouseAdapter() {
             override fun mouseExited(e: MouseEvent) {
                 super.mouseExited(e)
                 executor {
                     plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
                 }
+
+                liveMapControl?.dispatch(MouseEventSpec.MOUSE_LEFT, e)
+            }
+
+            override fun mousePressed(e: MouseEvent) {
+                super.mousePressed(e)
+                liveMapControl?.dispatch(MouseEventSpec.MOUSE_PRESSED, e)
+            }
+
+            override fun mouseReleased(e: MouseEvent) {
+                super.mouseReleased(e)
+                liveMapControl?.dispatch(MouseEventSpec.MOUSE_RELEASED, e)
+            }
+
+            override fun mouseClicked(e: MouseEvent) {
+                super.mouseClicked(e)
+                if (e.clickCount % 2 == 1) {
+                    liveMapControl?.dispatch(MouseEventSpec.MOUSE_CLICKED, e)
+                } else {
+                    liveMapControl?.dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e)
+                }
             }
         })
-        component.addMouseMotionListener(object : MouseAdapter() {
+
+        plotComponent.addMouseMotionListener(object : MouseAdapter() {
             override fun mouseMoved(e: MouseEvent) {
                 super.mouseMoved(e)
                 executor {
                     plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
                 }
+
+                liveMapControl?.dispatch(MouseEventSpec.MOUSE_MOVED, e)
+            }
+
+            override fun mouseDragged(e: MouseEvent) {
+                super.mouseDragged(e)
+                liveMapControl?.dispatch(MouseEventSpec.MOUSE_DRAGGED, e)
             }
         })
 
-        // TODO: Inject Livemap
-//        plotContainer.liveMapFigures.forEach { liveMapFigure ->
-//            val canvasControl =
-//                DomCanvasControl(liveMapFigure.dimension().get().toVector())
-//            liveMapFigure.mapToCanvas(canvasControl)
-//            eventTarget.appendChild(canvasControl.rootElement)
-//        }
 
-        return component;
+        return resultComponent
     }
 
-//    private fun DoubleVector.toVector(): Vector {
-//        return Vector(x.toInt(), y.toInt())
-//    }
+    private fun DoubleVector.toVector(): Vector {
+        return Vector(x.toInt(), y.toInt())
+    }
 
     private fun createErrorLabel(s: String): JComponent {
         val label = JLabel(s)
