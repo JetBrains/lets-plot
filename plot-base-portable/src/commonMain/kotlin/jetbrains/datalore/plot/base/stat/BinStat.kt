@@ -29,15 +29,13 @@ import kotlin.math.abs
  * ncount - count, scaled to maximum of 1
  * ndensity - density, scaled to maximum of 1
  */
-
 internal class BinStat(
     binCount: Int,
     binWidth: Double?,
     private val xPosKind: XPosKind,
     private val xPos: Double
 ) : BaseStat(DEF_MAPPING) {
-    private val binOptions: BinStatUtil.BinOptions =
-        BinStatUtil.BinOptions(binCount, binWidth)
+    private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
         if (data.hasNoOrEmpty(TransformVar.X)) {
@@ -72,8 +70,7 @@ internal class BinStat(
         var spanX = rangeX.upperEndpoint() - startX!!
 
         // initial bin count/width
-        var b: BinStatUtil.CountAndWidth =
-            BinStatUtil.binCountAndWidth(spanX, binOptions)
+        var b: BinStatUtil.CountAndWidth = BinStatUtil.binCountAndWidth(spanX, binOptions)
 
         // adjusted bin count/width
         // extend the data range by 0.7 of binWidth on each ends (to allow limited horizontal adjustments)
