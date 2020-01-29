@@ -37,9 +37,9 @@ object GeoPositionsDataUtil {
     private val GEOMS_SUPPORT = mapOf(
             GeomKind.MAP to GeoDataSupport.boundary(),
             GeomKind.POLYGON to GeoDataSupport.boundary(),
-            GeomKind.POINT to GeoDataSupport.centroid(),
-            GeomKind.RECT to GeoDataSupport.limit(),
-            GeomKind.PATH to GeoDataSupport.centroid()
+            GeomKind.POINT to GeoDataSupport.point(),
+            GeomKind.RECT to GeoDataSupport.bbox(),
+            GeomKind.PATH to GeoDataSupport.path()
     )
 
     fun isGeomSupported(geomKind: GeomKind): Boolean {
@@ -147,8 +147,9 @@ object GeoPositionsDataUtil {
     }
 
     enum class GeoDataKind {
-        CENTROID,
-        LIMIT,
+        POINT,
+        PATH,
+        BBOX,
         BOUNDARY
     }
 
@@ -163,12 +164,16 @@ object GeoPositionsDataUtil {
                 return GeoDataSupport(GeoDataKind.BOUNDARY, ::createPointMapping)
             }
 
-            fun centroid(): GeoDataSupport {
-                return GeoDataSupport(GeoDataKind.CENTROID, ::createPointMapping)
+            fun point(): GeoDataSupport {
+                return GeoDataSupport(GeoDataKind.POINT, ::createPointMapping)
             }
 
-            fun limit(): GeoDataSupport {
-                return GeoDataSupport(GeoDataKind.LIMIT, ::createRectMapping)
+            fun path(): GeoDataSupport {
+                return GeoDataSupport(GeoDataKind.PATH, ::createPointMapping)
+            }
+
+            fun bbox(): GeoDataSupport {
+                return GeoDataSupport(GeoDataKind.BBOX, ::createRectMapping)
             }
 
             private fun createRectMapping(dataFrame: DataFrame): Map<Aes<*>, Variable> {

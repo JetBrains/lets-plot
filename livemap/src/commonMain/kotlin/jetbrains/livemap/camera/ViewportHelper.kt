@@ -8,7 +8,7 @@ package jetbrains.livemap.camera
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator
 import jetbrains.datalore.base.spatial.calculateQuadKeys
-import jetbrains.datalore.base.spatial.rectsBBox
+import jetbrains.datalore.base.spatial.union
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.cells.CellKey
 import jetbrains.livemap.core.projections.MapRuler
@@ -69,7 +69,7 @@ class ViewportHelper(
     }
 
     override fun calculateBoundingBox(xyRects: List<Rect<World>>): Rect<World> {
-        return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).rectsBBox(xyRects)
+        return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).union(xyRects)
     }
 
     private fun normalizeX(x: Double): Double {

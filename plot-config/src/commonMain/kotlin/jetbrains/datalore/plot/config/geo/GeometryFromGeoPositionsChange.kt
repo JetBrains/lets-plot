@@ -32,14 +32,14 @@ internal abstract class GeometryFromGeoPositionsChange : SpecChange {
         ctx: SpecChangeContext
     ) {
         @Suppress("UNCHECKED_CAST")
-        val geoPositionsSpec = spec[GEO_POSITIONS] as MutableMap<String, Any>
+        val mapSpec = spec[GEO_POSITIONS] as MutableMap<String, Any>
         val geoDataKind: GeoPositionsDataUtil.GeoDataKind = getGeoDataKind(getGeomKind(spec))
-        changeGeoPositions(geoPositionsSpec, geoDataKind)
+        changeGeoPositions(mapSpec, geoDataKind)
     }
 
     abstract val geoPositionsKeys: Set<String>
     abstract fun changeGeoPositions(
-        geoPositionsSpec: MutableMap<String, Any>,
+        mapSpec: MutableMap<String, Any>,
         geoDataKind: GeoPositionsDataUtil.GeoDataKind
     )
 

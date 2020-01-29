@@ -7,7 +7,6 @@ package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.LongitudeSegment.Companion.splitSegment
 import jetbrains.datalore.base.typedGeometry.*
 import kotlin.math.max
@@ -164,7 +163,7 @@ fun <T> GeoBoundingBoxCalculator<T>.pointsBBox(xyCoords: List<Double>): Rect<T> 
     )
 }
 
-fun <T> GeoBoundingBoxCalculator<T>.rectsBBox(rectangles: List<Rect<T>>): Rect<T> {
+fun <T> GeoBoundingBoxCalculator<T>.union(rectangles: List<Rect<T>>): Rect<T> {
     return calculateBoundingBox(
         makeSegments(
             { rectangles[it].left },

@@ -300,14 +300,5 @@ internal class LiveMapSpecBuilder {
                 makeSegments(minYCoords::get, maxYCoords::get, count)
             )
         }
-
-        fun calculateBoundingBoxFromGeoRectangles(rectangles: List<GeoRectangle>): Rect<LonLat> {
-            return BBOX_CALCULATOR.geoRectsBBox(rectangles)
-        }
-
-        fun calculateBoundingBoxFromRectangles(rectangles: List<Rect<LonLat>>): Rect<LonLat> {
-            return BBOX_CALCULATOR.rectsBBox(rectangles)
-        }
-
     }
 }

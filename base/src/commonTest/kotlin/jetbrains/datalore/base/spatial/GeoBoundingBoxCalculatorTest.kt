@@ -13,8 +13,11 @@ import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.calcul
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertDoubleEquals
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.point
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.rectangle
-import jetbrains.datalore.base.typedGeometry.*
-import kotlin.test.*
+import jetbrains.datalore.base.typedGeometry.Rect
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 interface World
 
@@ -26,7 +29,7 @@ class GeoBoundingBoxCalculatorTest {
 
         val rect = GeoBoundingBoxCalculator(
             Rect<World>(0.0,0.0, 256.0, 256.0), true, false
-        ).rectsBBox(listOf(pointRect))
+        ).union(listOf(pointRect))
 
         assertNotEquals(pointRect, rect)
     }
