@@ -25,6 +25,7 @@ object DefaultSampling {
     // point-like
     val POINT = random(50000, SEED)   // optimized
     val TILE = random(50000, SEED)    // optimized
+    val BIN_2D = TILE
     val AB_LINE = random(5000, SEED)
     val H_LINE = random(5000, SEED)
     val V_LINE = random(5000, SEED)

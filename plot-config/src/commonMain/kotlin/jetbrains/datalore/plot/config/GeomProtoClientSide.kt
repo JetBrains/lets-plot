@@ -25,6 +25,7 @@ import jetbrains.datalore.plot.config.Option.Geom.Step
 class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
     private val preferredCoordinateSystem: CoordProvider? = when (geomKind) {
         GeomKind.TILE,
+        GeomKind.BIN_2D,
         GeomKind.CONTOUR,
         GeomKind.CONTOURF,
         GeomKind.DENSITY2D,
@@ -156,6 +157,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.BAR] = GeomProvider.bar()
             PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
             PROVIDER[GeomKind.TILE] = GeomProvider.tile()
+            PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
             PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()
             // crossbar - special case
             // pointrange - special case

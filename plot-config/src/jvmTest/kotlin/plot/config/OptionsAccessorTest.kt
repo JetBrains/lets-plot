@@ -61,4 +61,20 @@ class OptionsAccessorTest {
             assertDoubleEquals(i.toDouble(), OptionsAccessor.over(options).getDouble(option), 0.0)
         }
     }
+
+    @Test
+    fun numPair() {
+        val options = mapOf(
+            "a" to listOf(1, 2, 3)
+        )
+        assertEquals(Pair(1, 2), OptionsAccessor.over(options).getNumPair("a"))
+    }
+
+    @Test
+    fun numQPair() {
+        val options = mapOf(
+            "a" to listOf(1, null, 3)
+        )
+        assertEquals(Pair(1, null), OptionsAccessor.over(options).getNumQPair("a"))
+    }
 }

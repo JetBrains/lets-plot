@@ -222,7 +222,8 @@ object PlotConfigClientSideUtil {
             GeomKind.CONTOUR,
             GeomKind.RIBBON,
             GeomKind.DENSITY2D,
-            GeomKind.TILE -> {
+            GeomKind.TILE,
+            GeomKind.BIN_2D -> {
                 if (geomKind === GeomKind.SMOOTH) {
                     builder.axisAes(listOf(Aes.X))
                 }

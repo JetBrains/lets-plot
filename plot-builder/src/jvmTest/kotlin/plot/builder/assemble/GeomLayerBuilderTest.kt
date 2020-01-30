@@ -10,6 +10,8 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.Companion
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -43,7 +45,7 @@ class GeomLayerBuilderTest {
                 .put(cat, listOf("a", "a", "b", "b"))
                 .build()
 
-        val geomProvider = jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.histogram()
+        val geomProvider = GeomProvider.histogram()
         val stat = Stats.bin().build()
         val posProvider = PosProvider.barStack()
 

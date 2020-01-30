@@ -36,16 +36,16 @@ object DemoAndTest {
 
         @Suppress("NAME_SHADOWING")
         val plotSpec = transformPlotSpec(plotSpec)
+        if (PlotConfig.isFailure(plotSpec)) {
+            val errorMessage = PlotConfig.getErrorMessage(plotSpec)
+            throw IllegalArgumentException(errorMessage)
+        }
+
         if (computationMessagesHandler != null) {
             val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
             if (!computationMessages.isEmpty()) {
                 computationMessagesHandler(computationMessages)
             }
-        }
-
-        if (PlotConfig.isFailure(plotSpec)) {
-            val errorMessage = PlotConfig.getErrorMessage(plotSpec)
-            throw IllegalArgumentException(errorMessage)
         }
 
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(plotSpec)

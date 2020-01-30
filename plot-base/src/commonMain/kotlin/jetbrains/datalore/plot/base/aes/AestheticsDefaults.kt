@@ -107,6 +107,10 @@ open class AestheticsDefaults {
                 .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
+        fun bin2d(): AestheticsDefaults {
+            return tile()
+        }
+
         fun errorBar(): AestheticsDefaults {
             return AestheticsDefaults()
                 .update(Aes.COLOR, Color.BLACK)

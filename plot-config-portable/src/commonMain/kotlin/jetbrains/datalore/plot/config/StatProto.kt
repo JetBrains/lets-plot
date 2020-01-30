@@ -21,6 +21,8 @@ class StatProto {
     internal fun createStat(statKind: StatKind, options: Map<*, *>): Stat {
         // ToDo: pass 'option accessor'
         // ToDo: get rid of 'if'-s: everything must be present in the 'defaults'
+        // ToDo: get rid of XXXStatBuilder
+        // ToDo: see BIN2D
         when (statKind) {
             StatKind.IDENTITY -> return Stats.IDENTITY
             StatKind.COUNT -> return Stats.count()
@@ -39,6 +41,20 @@ class StatProto {
                     binStat.boundary((options["boundary"] as Number).toDouble())
                 }
                 return binStat.build()
+            }
+
+            StatKind.BIN2D -> {
+                val opts = OptionsAccessor.over(options)
+                val (binCountX, binCountY) = opts.getNumPair(Bin2dStat.P_BINS)
+                val (binWidthX, binWidthY) = opts.getNumQPair(Bin2dStat.P_BINWIDTH)
+
+                return Bin2dStat(
+                    binCountX = binCountX.toInt(),
+                    binCountY = binCountY.toInt(),
+                    binWidthX = binWidthX?.toDouble(),
+                    binWidthY = binWidthY?.toDouble(),
+                    drop = opts.getBoolean(Bin2dStat.P_BINWIDTH, def = Bin2dStat.DEF_DROP)
+                )
             }
 
             StatKind.CONTOUR -> {
@@ -215,26 +231,28 @@ class StatProto {
         init {
             DEFAULTS["identity"] = emptyMap()
             DEFAULTS["count"] = emptyMap()
-            DEFAULTS["bin"] =
-                createBinDefaults()
+            DEFAULTS["bin"] = createBinDefaults()
+            DEFAULTS["bin2d"] = createBin2dDefaults()
             DEFAULTS["smooth"] = emptyMap()
-            DEFAULTS["contour"] =
-                createContourDefaults()
-            DEFAULTS["contourf"] =
-                createContourfDefaults()
-            DEFAULTS["boxplot"] =
-                createBoxplotDefaults()
-            DEFAULTS["density"] =
-                createDensityDefaults()
-            DEFAULTS["density2d"] =
-                createDensity2dDefaults()
-            DEFAULTS["density2df"] =
-                createDensity2dDefaults()
+            DEFAULTS["contour"] = createContourDefaults()
+            DEFAULTS["contourf"] = createContourfDefaults()
+            DEFAULTS["boxplot"] = createBoxplotDefaults()
+            DEFAULTS["density"] = createDensityDefaults()
+            DEFAULTS["density2d"] = createDensity2dDefaults()
+            DEFAULTS["density2df"] = createDensity2dDefaults()
         }
 
         private fun createBinDefaults(): Map<String, Any> {
             return mapOf(
                 "bins" to BinStatBuilder.DEF_BIN_COUNT
+            )
+        }
+
+        private fun createBin2dDefaults(): Map<String, Any> {
+            return mapOf(
+                Bin2dStat.P_BINS to Bin2dStat.DEF_BINS,
+                Bin2dStat.P_BINWIDTH to Bin2dStat.DEF_BINWIDTH,
+                Bin2dStat.P_DROP to Bin2dStat.DEF_DROP
             )
         }
 

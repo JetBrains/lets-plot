@@ -76,7 +76,8 @@ class DefaultAesAutoMapper constructor(
                 GeomKind.PATH,
                 GeomKind.LINE,
                 GeomKind.SMOOTH,
-                GeomKind.TILE -> DefaultAesAutoMapper(
+                GeomKind.TILE,
+                GeomKind.BIN_2D -> DefaultAesAutoMapper(
                     listOf(
                         Aes.X,
                         Aes.Y

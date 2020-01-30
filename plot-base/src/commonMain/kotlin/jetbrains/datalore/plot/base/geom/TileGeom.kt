@@ -16,9 +16,15 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 /**
  * geom_tile uses the center of the tile and its size (x, y, width, height).
  */
-class TileGeom : GeomBase() {
+open class TileGeom : GeomBase() {
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx)
         val slimGroup = helper.createSlimRectangles(
             rectangleByDataPoint(
@@ -31,22 +37,10 @@ class TileGeom : GeomBase() {
             helper,
             rectangleByDataPoint(ctx),
             { p: DataPointAesthetics -> HintColorUtil.fromFill(p) })
-                .collectTo(ctx.targetCollector)
+            .collectTo(ctx.targetCollector)
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.Y,
-//                Aes.WIDTH,
-//                Aes.HEIGHT,
-//                Aes.COLOR,
-//                Aes.FILL,
-//                Aes.ALPHA,
-//                Aes.LINETYPE,
-//                Aes.SIZE
-//        )
-
         const val HANDLES_GROUPS = false
 
         private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle {

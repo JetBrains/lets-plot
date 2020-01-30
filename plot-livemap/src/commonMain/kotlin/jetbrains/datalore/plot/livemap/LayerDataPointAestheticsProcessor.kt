@@ -69,7 +69,7 @@ internal class LayerDataPointAestheticsProcessor(
                 layerKind = MapLayerKind.POLYGON
             }
 
-            TILE -> {
+            TILE, BIN_2D -> {
                 mapEntityBuilders = dataPointsConverter.toTile()
                 layerKind = MapLayerKind.POLYGON
             }

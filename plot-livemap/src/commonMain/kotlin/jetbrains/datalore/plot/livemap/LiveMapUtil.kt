@@ -94,6 +94,7 @@ object LiveMapUtil {
             DENSITY2DF,
             PATH,
             TILE,
+            BIN_2D,
             V_LINE,
             H_LINE -> hiddenAes.addAll(listOf(Aes.X, Aes.Y))
 

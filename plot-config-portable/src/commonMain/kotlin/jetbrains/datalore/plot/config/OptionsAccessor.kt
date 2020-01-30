@@ -64,24 +64,50 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
     fun getList(option: String): List<*> {
         val v = get(option) ?: return ArrayList<Any>()
 
-        require(v is List<*>) { "Not a List: " + option + ": " + v::class.simpleName }
+        require(v is List<*>) { "Not a List: $option: ${v::class.simpleName}" }
 
         return v
     }
 
     fun getDoubleList(option: String): List<Double> {
+        val list = getNumList(option)
+        return list.map { it.toDouble() }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getNumPair(option: String): Pair<Number, Number> {
+        val list = getNumList(option) { it is Number }
+        return pickTwo(option, list) as Pair<Number, Number>
+    }
+
+    fun getNumQPair(option: String): Pair<Number?, Number?> {
+        val list = getNumList(option) { it == null || it is Number }
+        return Pair(list[0], list[1])
+    }
+
+    private fun <T> pickTwo(option: String, list: List<T>): Pair<T, T> {
+        require(list.size >= 2) { "$option requires a list of 2 but was ${list.size}" }
+        return Pair(list[0], list[1])
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getNumList(option: String): List<Number> = getNumList(option) { it is Number } as List<Number>
+
+    fun getNumQList(option: String): List<Number?> = getNumList(option) { it == null || it is Number }
+
+    private fun getNumList(option: String, predicate: (Any?) -> Boolean): List<Number?> {
         val list = getList(option)
 
-        requireAll(list, { it is Number }) { "Expected numeric value but was : $it" }
+        requireAll(list, predicate) { "$option requires a list of numbers but not numeric encountered: $it" }
 
         @Suppress("UNCHECKED_CAST")
-        return list as List<Double>
+        return list as List<Number?>
     }
 
     fun getStringList(option: String): List<String> {
         val list = getList(option)
 
-        requireAll(list, { it is String }) { "Expected string value but was : $it" }
+        requireAll(list, { it is String }) { "$option requires a list of strings but not string encountered: $it" }
 
         @Suppress("UNCHECKED_CAST")
         return list as List<String>

@@ -31,11 +31,11 @@ import kotlin.math.floor
  * ndensity - density, scaled to maximum of 1
  */
 class Bin2dStat(
-    binCountX: Int,
-    binWidthX: Double?,
-    binCountY: Int,
-    binWidthY: Double?,
-    private val drop: Boolean
+    binCountX: Int = DEF_BINS[0],
+    binWidthX: Double? = DEF_BINWIDTH[0],
+    binCountY: Int = DEF_BINS[1],
+    binWidthY: Double? = DEF_BINWIDTH[1],
+    private val drop: Boolean = DEF_DROP
 ) : BaseStat(DEF_MAPPING) {
     private val binOptionsX = BinStatUtil.BinOptions(binCountX, binWidthX)
     private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY)
@@ -54,39 +54,6 @@ class Bin2dStat(
         if (xRange == null || yRange == null) {
             return withEmptyStatValues()
         }
-
-        // replace 0-range --> 1-range (span can't be 0)
-//        if (SeriesUtil.span(xRange) <= SeriesUtil.TINY) {
-//            xRange = ClosedRange(xRange.lowerEndpoint() - 0.5, xRange.lowerEndpoint() + 0.5)
-//        }
-//        if (SeriesUtil.span(yRange) <= SeriesUtil.TINY) {
-//            yRange = ClosedRange(yRange.lowerEndpoint() - 0.5, yRange.lowerEndpoint() + 0.5)
-//        }
-
-        //        var xStart = xRange.lowerEndpoint()
-//        var yStart = yRange.lowerEndpoint()
-//        var xSpan = SeriesUtil.span(xRange)
-//        var ySpan = SeriesUtil.span(yRange)
-//
-//        // span can't be 0
-//        if (xSpan <= SeriesUtil.TINY) {
-//            xSpan = 1.0
-//            yStart
-//        }
-//        if (ySpan <= SeriesUtil.TINY) {
-//            ySpan = 1.0
-//        }
-
-//        var xSpan = SeriesUtil.span(xRange)
-//        var ySpan = SeriesUtil.span(yRange)
-//        // span can't be 0
-//        if (xSpan <= SeriesUtil.TINY) {
-//            xSpan = 1.0
-//        }
-//        if (ySpan <= SeriesUtil.TINY) {
-//            ySpan = 1.0
-//        }
-
 
         // initial bin width and count
 
@@ -193,6 +160,15 @@ class Bin2dStat(
 
 
     companion object {
+
+        const val P_BINS = "bins"
+        const val P_BINWIDTH = "binwidth"
+        const val P_DROP = "drop"
+
+        val DEF_BINS = listOf(30, 30)
+        val DEF_BINWIDTH = listOf<Double?>(null, null)
+        const val DEF_DROP = true
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,

@@ -11,6 +11,7 @@ enum class StatKind {
     IDENTITY,
     COUNT,
     BIN,
+    BIN2D,
     SMOOTH,
     CONTOUR,
     CONTOURF,

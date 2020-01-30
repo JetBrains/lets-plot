@@ -98,7 +98,8 @@ object GeomMeta {
                 Aes.SIZE
             )
 
-            GeomKind.TILE -> listOf(
+            GeomKind.TILE,
+            GeomKind.BIN_2D -> listOf(
                 Aes.X, Aes.Y,
                 Aes.WIDTH,
                 Aes.HEIGHT,

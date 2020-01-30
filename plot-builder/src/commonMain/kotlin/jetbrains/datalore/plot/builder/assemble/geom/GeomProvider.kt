@@ -120,6 +120,14 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ) { TileGeom() }.build()
         }
 
+        fun bin2d(): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.BIN_2D,
+                AestheticsDefaults.bin2d(),
+                Bin2dGeom.HANDLES_GROUPS
+            ) { Bin2dGeom() }.build()
+        }
+
         fun errorBar(): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.ERROR_BAR,

@@ -76,21 +76,15 @@ object PlotConfigUtil {
 
     // frontend
     fun findComputationMessages(spec: Map<*, *>): List<String> {
-        val result: List<String>
-        if (PlotConfig.isPlotSpec(spec)) {
-            result = getComputationMessages(spec)
-        } else if (PlotConfig.isGGBunchSpec(spec)) {
-            val bunchConfig = BunchConfig(spec)
-            result = ArrayList()
-            for (bunchItem in bunchConfig.bunchItems) {
-                result.addAll(getComputationMessages(bunchItem.featureSpec))
+        val result: List<String> =
+            when {
+                PlotConfig.isPlotSpec(spec) -> getComputationMessages(spec)
+                PlotConfig.isGGBunchSpec(spec) -> {
+                    val bunchConfig = BunchConfig(spec)
+                    bunchConfig.bunchItems.flatMap { getComputationMessages(it.featureSpec) }
+                }
+                else -> throw RuntimeException("Unexpected plot spec kind: ${PlotConfig.specKind(spec)}")
             }
-        } else {
-            throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(
-                spec
-            )
-            )
-        }
 
         return result.distinct()
     }

@@ -280,6 +280,7 @@ object Option {
         private const val BAR = "bar"
         const val HISTOGRAM = "histogram"
         private const val TILE = "tile"
+        private const val BIN_2D = "bin2d"
         private const val MAP = "map"
         private const val ERROR_BAR = "errorbar"
         private const val CROSS_BAR = "crossbar"
@@ -318,6 +319,7 @@ object Option {
             map[BAR] = GeomKind.BAR
             map[HISTOGRAM] = GeomKind.HISTOGRAM
             map[TILE] = GeomKind.TILE
+            map[BIN_2D] = GeomKind.BIN_2D
             map[MAP] = GeomKind.MAP
             map[ERROR_BAR] = GeomKind.ERROR_BAR
             map[CROSS_BAR] = GeomKind.CROSS_BAR

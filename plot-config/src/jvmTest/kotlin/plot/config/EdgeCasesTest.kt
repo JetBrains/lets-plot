@@ -80,7 +80,7 @@ class EdgeCasesTest {
         }
     }
 
-    private fun checkWithNaNInXYSeries(geom: String) {
+    internal fun checkWithNaNInXYSeries(geom: String) {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 //"   'data': " + data +

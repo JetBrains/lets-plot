@@ -274,10 +274,10 @@ object SeriesUtil {
         private val myCanBeCast: Boolean
 
         init {
-            if (myEmpty) {
-                myCanBeCast = true
+            myCanBeCast = if (myEmpty) {
+                true
             } else {
-                myCanBeCast = all(filter(myIterable) { it != null }) { input -> input is Double }
+                all(filter(myIterable) { it != null }) { input -> input is Double }
             }
         }
 

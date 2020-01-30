@@ -12,6 +12,7 @@ enum class GeomKind {
     BAR,
     HISTOGRAM,
     TILE,
+    BIN_2D,
     MAP,
     ERROR_BAR,
     CROSS_BAR,
