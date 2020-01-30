@@ -29,16 +29,25 @@ internal class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange()
         geoDataKind: GeoDataKind
     ) {
         val geometryTables = (mapSpec[MAP_GEOMETRY_COLUMN] as List<*>).map { parseGeometry(it as String, geoDataKind) }
-        val dataTable = mapSpec[MAP_JOIN_ID_COLUMN]
-            ?.let { col -> col as List<String> }
-            ?.let { ids ->
-                ids.zip(geometryTables)
-                    .fold(mutableMapOf<String, MutableList<Any>>(), { dataFrame, (id, geometryTable) ->
-                        dataFrame
-                            .concat(geometryTable)
-                            .concat(MAP_JOIN_ID_COLUMN, MutableList(geometryTable.rowCount) { id })
-                    })
-            }
+
+        if (geometryTables.sumBy { it.rowCount } == 0) {
+            error("Geometries are empty or no matching types. Expected: " +
+                    when(geoDataKind) {
+                        GeoDataKind.POINT -> "Point, MultiPoint"
+                        GeoDataKind.PATH -> "LineString, MultiLineString"
+                        GeoDataKind.BOUNDARY -> "Polygon, MultiPolygon"
+                        GeoDataKind.BBOX -> "MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon"
+                    }
+            )
+        }
+
+        val dataTable = (mapSpec[MAP_JOIN_ID_COLUMN] as? List<*>)
+            ?.zip(geometryTables)
+            ?.fold(mutableMapOf<String, MutableList<Any>>(), { dataFrame, (id, geometryTable) ->
+                dataFrame
+                    .concat(geometryTable)
+                    .concat(MAP_JOIN_ID_COLUMN, MutableList(geometryTable.rowCount) { id as String })
+            })
             ?: geometryTables.fold(mutableMapOf<String, MutableList<Any>>(), { dataFrame, geometryTable ->
                 dataFrame.concat(geometryTable)
             })
