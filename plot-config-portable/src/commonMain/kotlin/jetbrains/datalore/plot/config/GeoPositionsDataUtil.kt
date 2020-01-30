@@ -42,7 +42,8 @@ object GeoPositionsDataUtil {
             GeomKind.POLYGON to GeoDataSupport.boundary(),
             GeomKind.POINT to GeoDataSupport.point(),
             GeomKind.RECT to GeoDataSupport.bbox(),
-            GeomKind.PATH to GeoDataSupport.path()
+            GeomKind.PATH to GeoDataSupport.path(),
+            GeomKind.TEXT to GeoDataSupport.point()
     )
 
     fun isGeomSupported(geomKind: GeomKind): Boolean {
