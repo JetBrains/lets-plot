@@ -250,8 +250,8 @@ class StatProto {
 
         private fun createBin2dDefaults(): Map<String, Any> {
             return mapOf(
-                Bin2dStat.P_BINS to Bin2dStat.DEF_BINS,
-                Bin2dStat.P_BINWIDTH to Bin2dStat.DEF_BINWIDTH,
+                Bin2dStat.P_BINS to listOf(Bin2dStat.DEF_BINS, Bin2dStat.DEF_BINS),
+                Bin2dStat.P_BINWIDTH to listOf(Bin2dStat.DEF_BINWIDTH, Bin2dStat.DEF_BINWIDTH),
                 Bin2dStat.P_DROP to Bin2dStat.DEF_DROP
             )
         }

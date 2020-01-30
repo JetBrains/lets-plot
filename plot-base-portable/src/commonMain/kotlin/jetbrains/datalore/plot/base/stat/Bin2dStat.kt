@@ -31,10 +31,10 @@ import kotlin.math.floor
  * ndensity - density, scaled to maximum of 1
  */
 class Bin2dStat(
-    binCountX: Int = DEF_BINS[0],
-    binWidthX: Double? = DEF_BINWIDTH[0],
-    binCountY: Int = DEF_BINS[1],
-    binWidthY: Double? = DEF_BINWIDTH[1],
+    binCountX: Int = DEF_BINS,
+    binCountY: Int = DEF_BINS,
+    binWidthX: Double? = DEF_BINWIDTH,
+    binWidthY: Double? = DEF_BINWIDTH,
     private val drop: Boolean = DEF_DROP
 ) : BaseStat(DEF_MAPPING) {
     private val binOptionsX = BinStatUtil.BinOptions(binCountX, binWidthX)
@@ -165,8 +165,8 @@ class Bin2dStat(
         const val P_BINWIDTH = "binwidth"
         const val P_DROP = "drop"
 
-        val DEF_BINS = listOf(30, 30)
-        val DEF_BINWIDTH = listOf<Double?>(null, null)
+        const val DEF_BINS = 30
+        val DEF_BINWIDTH: Double? = null
         const val DEF_DROP = true
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(

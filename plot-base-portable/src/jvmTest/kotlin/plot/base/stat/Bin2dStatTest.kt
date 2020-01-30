@@ -153,8 +153,8 @@ class Bin2dStatTest {
         private fun applyBin2dStat(df: DataFrame, binCountX: Int, binCountY: Int, drop: Boolean = false): DataFrame {
             val stat = Bin2dStat(
                 binCountX,
-                null,
                 binCountY,
+                null,
                 null,
                 drop = drop
             )
