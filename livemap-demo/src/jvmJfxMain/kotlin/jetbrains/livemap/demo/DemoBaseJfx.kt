@@ -15,9 +15,7 @@ open class DemoBaseJfx(private val demoModelProvider: (DoubleVector) -> DemoMode
     private val size: Vector get() = Vector(800, 600)
 
     internal fun show() {
-        val canvasControl = AwtCanvasControl(
-            JavafxGraphicsCanvasControlFactory(1.0), size
-        )
+        val canvasControl = AwtCanvasControl(1.0, size)
 
         demoModelProvider(size.toDoubleVector()).show(canvasControl)
 

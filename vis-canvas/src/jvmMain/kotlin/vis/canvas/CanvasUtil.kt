@@ -16,18 +16,4 @@ object CanvasUtil {
         } else defaultValue
     }
 
-    fun drawGraphicsCanvasControl(graphicsCanvasControl: GraphicsCanvasControl, g: Graphics) {
-        val image = graphicsCanvasControl.image
-        if (image != null) {
-            val size = graphicsCanvasControl.size
-            @Suppress("UNUSED_ANONYMOUS_PARAMETER")
-            g.drawImage(image, 0, 0, size.x, size.y) {
-                img,
-                infoflags,
-                x,
-                y,
-                width,
-                height -> true }
-        }
-    }
 }

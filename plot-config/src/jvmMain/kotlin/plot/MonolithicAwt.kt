@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
-import jetbrains.datalore.vis.canvas.javaFx.JavafxGraphicsCanvasControlFactory
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.awt.svgToString.SvgToString
 import mu.KotlinLogging
@@ -144,9 +143,9 @@ object MonolithicAwt {
             val liveMapFigure = plotContainer.liveMapFigures.single()
 
             liveMapControl = AwtCanvasControl(
-                    JavafxGraphicsCanvasControlFactory(1.0),
-                    liveMapFigure.dimension().get().toVector()
-                )
+                1.0,
+                liveMapFigure.dimension().get().toVector()
+            )
             liveMapFigure.mapToCanvas(liveMapControl)
 
             val container = JFXPanel()

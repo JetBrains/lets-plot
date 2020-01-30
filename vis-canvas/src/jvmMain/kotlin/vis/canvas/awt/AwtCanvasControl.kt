@@ -14,11 +14,13 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer
+import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
-import jetbrains.datalore.vis.canvas.CanvasUtil.drawGraphicsCanvasControl
+import jetbrains.datalore.vis.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.EventPeer
+import jetbrains.datalore.vis.canvas.javaFx.JavafxGraphicsCanvasControl
 import java.awt.Component
 import java.awt.Graphics
 import java.awt.event.MouseListener
@@ -28,9 +30,9 @@ import javax.swing.JPanel
 import javax.swing.SwingUtilities
 import java.awt.event.MouseEvent as AwtMouseEvent
 
-class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactory, size: Vector) :
+class AwtCanvasControl(myPixelRatio: Double, size: Vector) :
     CanvasControl {
-    private lateinit var myGraphicsCanvasControl: GraphicsCanvasControl
+    private lateinit var myGraphicsCanvasControl: JavafxGraphicsCanvasControl
     private val myEventPeer: AwtEventPeer
     val component: JComponent
 
@@ -41,10 +43,21 @@ class AwtCanvasControl(graphicsCanvasControlFactory: GraphicsCanvasControlFactor
         component = object : JPanel() {
             override fun paint(g: Graphics?) {
                 super.paint(g)
-                drawGraphicsCanvasControl(myGraphicsCanvasControl, g!!)
+                val image = myGraphicsCanvasControl.image
+                if (image != null) {
+                    val size = myGraphicsCanvasControl.size
+                    @Suppress("UNUSED_ANONYMOUS_PARAMETER")
+                    g!!.drawImage(image, 0, 0, size.x, size.y) {
+                        img,
+                        infoflags,
+                        x,
+                        y,
+                        width,
+                        height -> true }
+                }
             }
         }
-        myGraphicsCanvasControl = graphicsCanvasControlFactory.create(size, Runnable { component.repaint() })
+        myGraphicsCanvasControl = JavafxGraphicsCanvasControl(size, Runnable { component.repaint() }, myPixelRatio)
         myEventPeer = AwtEventPeer(component)
     }
 
