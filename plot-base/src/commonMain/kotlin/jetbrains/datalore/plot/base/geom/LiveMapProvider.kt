@@ -6,8 +6,14 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 
 interface LiveMapProvider {
-    fun createLiveMap(dimension: DoubleVector): CanvasFigure
+    fun createLiveMap(dimension: DoubleVector): LiveMapData
+
+    class LiveMapData(
+        val canvasFigure: CanvasFigure,
+        val targetLocator: GeomTargetLocator
+    )
 }

@@ -40,7 +40,7 @@ class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
         myMapProvider = liveMapProvider
     }
 
-    fun createCanvasFigure(dimension: DoubleVector): CanvasFigure {
+    fun createCanvasFigure(dimension: DoubleVector): LiveMapProvider.LiveMapData {
         return myMapProvider?.createLiveMap(dimension) ?: error("geom_livemap is not enabled")
     }
 

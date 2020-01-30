@@ -10,10 +10,12 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
+import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
+import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil
-import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.*
 import jetbrains.livemap.config.DevParams
@@ -109,12 +111,21 @@ object LiveMapUtil {
         return hiddenAes
     }
 
+    fun createContextualMapping(geomKind: GeomKind, dataAccess: MappedDataAccess): ContextualMapping {
+        val aesList: MutableList<Aes<*>> = ArrayList(dataAccess.mappedAes)
+        aesList.removeAll(
+            getHiddenAes(geomKind)
+        )
+        return ContextualMapping(aesList, emptyList(), dataAccess)
+    }
+
     private class MyLiveMapProvider internal constructor(
         geomLayers: List<GeomLayer>,
         private val myLiveMapOptions: LiveMapOptions
     ) : LiveMapProvider {
 
         private val liveMapSpecBuilder: LiveMapSpecBuilder
+        private val myTargetSource = HashMap<Int, ContextualMapping>()
 
         init {
             require(geomLayers.isNotEmpty())
@@ -127,6 +138,15 @@ object LiveMapUtil {
                     emptyMap(),
                     emptyMap()
                 )
+            }
+
+            geomLayers
+                .map(newLiveMapRendererData)
+                .forEach { layer ->
+                    val contextualMapping = createContextualMapping(layer.geomKind, layer.dataAccess)
+                    layer.aesthetics.dataPoints().forEach {
+                        myTargetSource[it.index()] = contextualMapping
+                    }
             }
 
             // feature geom layers
@@ -158,10 +178,15 @@ object LiveMapUtil {
             }
         }
 
-        override fun createLiveMap(dimension: DoubleVector): CanvasFigure {
+        override fun createLiveMap(dimension: DoubleVector): LiveMapData {
             return liveMapSpecBuilder.size(dimension).build()
                 .let { liveMapSpec -> LiveMapFactory(liveMapSpec).createLiveMap() }
-                .let { liveMapAsync -> LiveMapCanvasFigure(liveMapAsync).apply { setDimension(dimension) } }
+                .let { liveMapAsync ->
+                    LiveMapData(
+                        LiveMapCanvasFigure(liveMapAsync).apply { setDimension(dimension) },
+                        LiveMapTargetLocator(liveMapAsync, myTargetSource)
+                    )
+                }
         }
     }
 }

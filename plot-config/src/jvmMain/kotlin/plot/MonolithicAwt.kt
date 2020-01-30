@@ -78,7 +78,7 @@ object MonolithicAwt {
                 return buildPlotSvgComponent(success.buildInfos[0], componentFactory, executor)
             }
             // ggbunch
-            return buildGGBunchComponenet(success.buildInfos, componentFactory, executor)
+            return buildGGBunchComponent(success.buildInfos, componentFactory, executor)
 
         } catch (e: RuntimeException) {
             val failureInfo = FailureHandler.failureInfo(e)
@@ -89,7 +89,7 @@ object MonolithicAwt {
         }
     }
 
-    private fun buildGGBunchComponenet(
+    private fun buildGGBunchComponent(
         plotInfos: List<PlotBuildInfo>,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit

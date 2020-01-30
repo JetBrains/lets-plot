@@ -22,6 +22,7 @@ import jetbrains.livemap.placement.*
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.PointRenderer
+import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.PointLocatorHelper
 
@@ -98,6 +99,7 @@ class PointBuilder(
                     error("Can't create point entity. [point] and [mapId] is null.")
             }.run {
                 setInitializer { worldPoint ->
+                    + IndexComponent(index)
                     + ShapeComponent().apply { shape = this@PointBuilder.shape }
                     + createStyle()
                     + if (pointScaling) {

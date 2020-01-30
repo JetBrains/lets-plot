@@ -24,6 +24,8 @@ class SearchingSystem(
         mouseInput.location?.let { location ->
             val entities = getEntities(COMPONENTS)
 
+            println("location $location")
+
             val targets = entities.filter { entity ->
                 entity.get<LocatorComponent>().locatorHelper.isCoordinateInTarget(explicitVec(location.x.toDouble(), location.y.toDouble()), entity)
             }.toList()
@@ -36,6 +38,7 @@ class SearchingSystem(
 
     companion object {
         val COMPONENTS = listOf(
+            IndexComponent::class,
             LocatorComponent::class
         )
     }

@@ -5,6 +5,6 @@
 
 package jetbrains.livemap.searching
 
-import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.core.ecs.EcsComponent
 
-class LocatedTarget(val index: Int, val color: Color, val tooltipAesSpec: Any/*TooltipAesSpec*/)
+class IndexComponent(val index: Int): EcsComponent

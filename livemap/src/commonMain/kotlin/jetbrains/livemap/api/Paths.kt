@@ -32,6 +32,7 @@ import jetbrains.livemap.rendering.Renderers.PathRenderer
 import jetbrains.livemap.rendering.StyleComponent
 import jetbrains.livemap.rendering.setStrokeColor
 import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.PathLocatorHelper
 
@@ -89,6 +90,7 @@ class PathBuilder(
                 val entity = myFactory
                     .createMapEntity("map_ent_path")
                     .addComponents {
+                        + IndexComponent(index)
                         + RendererComponent(PathRenderer())
                         + WorldOriginComponent(bbox.origin)
                         + WorldGeometryComponent().apply { geometry = coord }

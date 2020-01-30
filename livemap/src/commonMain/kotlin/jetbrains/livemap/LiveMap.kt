@@ -7,6 +7,7 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.SimpleEventSource
@@ -16,7 +17,9 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.div
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.typedGeometry.plus
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
@@ -67,6 +70,8 @@ import jetbrains.livemap.regions.*
 import jetbrains.livemap.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.scaling.ScaleUpdateSystem
+import jetbrains.livemap.searching.IndexComponent
+import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.SearchingSystem
 import jetbrains.livemap.services.FragmentProvider
 import jetbrains.livemap.services.GeocodingProvider
@@ -117,8 +122,10 @@ class LiveMap(
         )
     }
 
+    private val myComponentManager = EcsComponentManager()
+
     fun draw(canvasControl: CanvasControl) {
-        val componentManager = EcsComponentManager()
+        val componentManager = myComponentManager
         val camera = MutableCamera(componentManager)
             .apply {
                 requestZoom(viewport.zoom.toDouble())
@@ -147,6 +154,20 @@ class LiveMap(
             canvasControl,
             AnimationEventHandler.toHandler(updateController::onTime)
         )
+    }
+
+    fun search(coord: DoubleVector): Pair<Int, Color?>? {
+        val entities = myComponentManager.getEntities(SearchingSystem.COMPONENTS)
+
+        entities.forEach { entity ->
+            entity.get<LocatorComponent>().locatorHelper.run {
+                if (isCoordinateInTarget(explicitVec(coord.x, coord.y), entity)) {
+                    return entity.get<IndexComponent>().index to getColor(entity)
+                }
+            }
+        }
+
+        return null
     }
 
     private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {
@@ -197,7 +218,7 @@ class LiveMap(
                 MouseInputDetectionSystem(componentManager),
                 CameraInputSystem(componentManager),
                 CameraUpdateDetectionSystem(componentManager),
-                SearchingSystem(componentManager, myIndexConsumer),
+                // SearchingSystem(componentManager, myIndexConsumer),
 
                 MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
 

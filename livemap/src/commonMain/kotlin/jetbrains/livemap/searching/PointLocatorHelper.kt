@@ -17,7 +17,9 @@ import jetbrains.livemap.rendering.StyleComponent
 class PointLocatorHelper : LocatorHelper {
 
     override fun getColor(target: EcsEntity): Color? {
-        return target.get<StyleComponent>().strokeColor?.let(::parseColor)
+        return target.get<StyleComponent>().run {
+            (strokeColor ?: fillColor)?.let(::parseColor)
+        }
     }
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
