@@ -258,7 +258,8 @@ object GeomMeta {
                 Aes.FONTFACE,
                 Aes.HJUST,
                 Aes.VJUST,
-                Aes.ANGLE
+                Aes.ANGLE,
+                Aes.MAP_ID
             )
 
             GeomKind.LIVE_MAP -> listOf( // ToDo: not static - depends on 'display mode'
