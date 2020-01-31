@@ -222,8 +222,7 @@ object PlotConfigClientSideUtil {
             GeomKind.CONTOUR,
             GeomKind.RIBBON,
             GeomKind.DENSITY2D,
-            GeomKind.TILE,
-            GeomKind.BIN_2D -> {
+            GeomKind.TILE -> {
                 if (geomKind === GeomKind.SMOOTH) {
                     builder.axisAes(listOf(Aes.X))
                 }
@@ -244,6 +243,7 @@ object PlotConfigClientSideUtil {
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
             GeomKind.POLYGON,
+            GeomKind.BIN_2D,
             GeomKind.MAP -> return builder.bivariateFunction(AREA_GEOM)
 
             GeomKind.LIVE_MAP -> return builder.multilayerLookupStrategy()

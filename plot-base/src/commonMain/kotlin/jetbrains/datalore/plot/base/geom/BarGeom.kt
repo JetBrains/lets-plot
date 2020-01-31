@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.geom.util.RectTargetCollectorHelper
 import jetbrains.datalore.plot.base.geom.util.RectanglesHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -32,24 +32,20 @@ open class BarGeom : GeomBase() {
         rectangles.reverse()
         rectangles.forEach { root.add(it) }
 
-        RectTargetCollectorHelper(
-            helper,
+//        RectTargetCollectorHelper(
+//            helper,
+//            rectangleByDataPoint(ctx),
+//            { HintColorUtil.fromFill(it) })
+//            .collectTo(ctx.targetCollector)
+        BarTooltipHelper.collectRectangleTargets(
+            emptyList(),
+            aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx),
-            { HintColorUtil.fromFill(it) })
-            .collectTo(ctx.targetCollector)
+            { HintColorUtil.fromFill(it) }
+        )
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.Y,
-//                Aes.COLOR,
-//                Aes.FILL,
-//                Aes.ALPHA,
-//                Aes.WIDTH,
-//                Aes.SIZE
-//        )
-
         const val HANDLES_GROUPS = false
 
         private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {

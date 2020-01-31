@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.CrossBarHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 
@@ -31,7 +32,9 @@ class CrossBarGeom : GeomBase() {
         CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.MIDDLE, Aes.YMIN),
-            aesthetics, pos, coord, ctx, rectangleByDataPoint(ctx)
+            aesthetics, pos, coord, ctx,
+            rectangleByDataPoint(ctx),
+            { HintColorUtil.fromColor(it) }
         )
     }
 

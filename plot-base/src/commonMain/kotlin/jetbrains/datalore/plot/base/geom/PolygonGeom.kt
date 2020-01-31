@@ -17,8 +17,9 @@ open class PolygonGeom : GeomBase() {
         return GeomUtil.with_X_Y(aesthetics.dataPoints())
     }
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem,
-                             ctx: GeomContext
+    override fun buildIntern(
+        root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem,
+        ctx: GeomContext
     ) {
         val dataPoints = dataPoints(aesthetics)
         val targetCollector = getGeomTargetCollector(ctx)
@@ -30,18 +31,6 @@ open class PolygonGeom : GeomBase() {
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.Y,
-//
-//                Aes.SIZE, // path width
-//                Aes.LINETYPE,
-//                Aes.COLOR,
-//                Aes.FILL,
-//                Aes.ALPHA,
-//                Aes.MAP_ID
-//        )
-
         const val HANDLES_GROUPS = true
     }
 }

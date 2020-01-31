@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.geom.legend.VLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.point.PointShapeSvg
@@ -63,7 +64,9 @@ class PointRangeGeom : GeomBase() {
 
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
-            aesthetics, pos, coord, ctx, LineRangeGeom.rectangleByDataPoint()
+            aesthetics, pos, coord, ctx,
+            LineRangeGeom.rectangleByDataPoint(),
+            { HintColorUtil.fromColor(it) }
         )
     }
 

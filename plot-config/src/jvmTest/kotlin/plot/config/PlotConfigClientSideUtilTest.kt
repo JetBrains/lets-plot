@@ -18,11 +18,11 @@ class PlotConfigClientSideUtilTest {
         val layerSettingsList = ArrayList<Pair<GeomKind, StatKind>>()
 
         GeomKind.values()
-                .filter { geomKind -> !WITHOUT_AXIS_TOOLTIP.contains(geomKind) }
-                .forEach { geomKind -> layerSettingsList.add(Pair(geomKind, StatKind.IDENTITY)) }
+            .filter { geomKind -> !WITHOUT_AXIS_TOOLTIP.contains(geomKind) }
+            .forEach { geomKind -> layerSettingsList.add(Pair(geomKind, StatKind.IDENTITY)) }
 
         listOf(StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D)
-                .forEach { statKind -> layerSettingsList.add(Pair(GeomKind.PATH, statKind)) }
+            .forEach { statKind -> layerSettingsList.add(Pair(GeomKind.PATH, statKind)) }
 
         assertAxisTooltipEnabled(layerSettingsList, true)
     }
@@ -32,12 +32,17 @@ class PlotConfigClientSideUtilTest {
         val layerSettingsList = ArrayList<Pair<GeomKind, StatKind>>()
 
         WITHOUT_AXIS_TOOLTIP
-                .forEach { geomKind -> layerSettingsList.add(Pair<GeomKind, StatKind>(geomKind, StatKind.IDENTITY)) }
+            .forEach { geomKind ->
+                layerSettingsList.add(Pair<GeomKind, StatKind>(geomKind, StatKind.IDENTITY))
+            }
 
         assertAxisTooltipEnabled(layerSettingsList, false)
     }
 
-    private fun assertAxisTooltipEnabled(layerSettingsList: List<Pair<GeomKind, StatKind>>, isAxisTooltipEnabled: Boolean) {
+    private fun assertAxisTooltipEnabled(
+        layerSettingsList: List<Pair<GeomKind, StatKind>>,
+        isAxisTooltipEnabled: Boolean
+    ) {
         for (settings in layerSettingsList) {
             val geomKind = settings.first
             val statKind = settings.second
@@ -48,6 +53,6 @@ class PlotConfigClientSideUtilTest {
     }
 
     companion object {
-        private val WITHOUT_AXIS_TOOLTIP = listOf(PATH, MAP, DENSITY2DF, CONTOURF, POLYGON, LIVE_MAP)
+        private val WITHOUT_AXIS_TOOLTIP = listOf(PATH, MAP, DENSITY2DF, CONTOURF, POLYGON, BIN_2D, LIVE_MAP)
     }
 }

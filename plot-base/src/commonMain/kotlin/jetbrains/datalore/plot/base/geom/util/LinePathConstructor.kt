@@ -46,6 +46,6 @@ class LinePathConstructor(
     }
 
     companion object {
-        private val DROP_POINT_DISTANCE = 0.999
+        private const val DROP_POINT_DISTANCE = 0.999
     }
 }

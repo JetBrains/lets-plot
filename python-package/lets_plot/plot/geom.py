@@ -9,7 +9,8 @@ from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, g
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
 #
 __all__ = ['geom_point', 'geom_path', 'geom_line',
-           'geom_smooth', 'geom_bar', 'geom_histogram',
+           'geom_smooth', 'geom_bar',
+           'geom_histogram', 'geom_bin2d',
            'geom_tile', 'geom_raster',
            'geom_errorbar', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
            'geom_contour',
@@ -397,7 +398,12 @@ def geom_bar(mapping=None, data=None, stat=None, position=None, show_legend=None
     return _geom('bar', mapping, data, stat, position, show_legend, sampling=sampling, **other_args)
 
 
-def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, **other_args):
+def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+                   bins=None,
+                   binwidth=None,
+                   center=None,
+                   boundary=None,
+                   **other_args):
     """
     Displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number of observations
     in each bin.
@@ -410,21 +416,20 @@ def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legen
     data : dictionary or pandas DataFrame, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    position : string, optional
+    stat : string, optional, default: "bin"
+        The statistical transformation to use on the data for this layer.
+    position : string, optional, default: "stack"
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
-    width :
+    bins :
+        Number of bins.  Overridden by binwidth. Defaults to 30
+    binwidth :
         The width of the bins. The default is to use bin widths that cover the range of the data. You should always
         override this value, exploring multiple widths to find the best to illustrate the stories in your data.
-        The bin width of a date variable is the number of days in each time; the bin width of a time variable is the
-        number of seconds.
-    bins :
-        Number of bins.  Overridden by width. Defaults to 30
+    center : number, optional
+        Specifies x-value to align bin centers to.
+    boundary : number, optional
+        Specifies x-value to align bin boundary (i.e. point berween bins) to.
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -436,20 +441,18 @@ def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legen
     -----
     geom_histogram displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number
     of observations in each bin.
-    Histograms use bars. Default number for geom_histogram handles no group aesthetics.
 
     geom_histogram understands the following aesthetics mappings:
     - x : x-axis value (this values will produce cases or bins for bars)
-    - y : y-axis value (this value will be used to multiply the bar heights), setting y to '..density..' produces
-        normalized (density) histogram
+    - y : y-axis value, default: "..count..".
+        Alternatively: '..density..'
+    - weight : used by "bin" stat to compute weighted sum instead of simple count.
     - alpha : transparency level of a layer
         Understands numbers between 0 and 1.
-    - color (colour) : color of a geometry lines
+    - color : color of a geometry lines
         Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling
-    - width : the width of the bins
     - size : lines width
-        Defines bar line width
 
     Examples
     ---------
@@ -466,7 +469,89 @@ def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legen
     >>> dat = pd.melt(dat)
     >>> ggplot(dat, aes(x='value')) + geom_histogram(color='red', fill='green', size=3)
     """
-    return _geom('histogram', mapping, data, stat, position, show_legend, sampling=sampling, **other_args)
+    return _geom('histogram', mapping, data, stat, position, show_legend, sampling=sampling,
+                 bins=bins,
+                 binwidth=binwidth,
+                 center=center,
+                 boundary=boundary,
+                 **other_args)
+
+
+def geom_bin2d(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None,
+               bins=None,
+               binwidth=None,
+               drop=None,
+               **other_args):
+    """
+    Displays a 1d distribution by dividing variable mapped to x axis into bins and counting the number of observations
+    in each bin.
+
+    Parameters
+    ----------
+    mapping : set of aesthetic mappings created by aes() function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dictionary or pandas DataFrame, optional
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : string, default: "bin"
+        The statistical transformation to use on the data for this layer.
+    position : string, default: "stack"
+        Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
+        position adjustment function.
+    bins : list of 2 numbers, default: [30,30]
+        Number of bins in both directions, vertical and horizontal.  Overridden by binwidth.
+    binwidth : list of 2 numbers, optional
+        The width of the bins in both directions, vertical and horizontal. Overrides `bins`.
+        The default is to use bin widths that cover the entire range of the data.
+    drop : bool, optional, default: True
+        Specifies whether to remove all bins with 0 counts.
+
+Aesthetics
+    other_args :
+        Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
+        value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
+        paired geom/stat.
+    Returns
+    -------
+        geom object specification
+    Notes
+    -----
+    geom_bin2d applies rectangular grid to the plane then counts observation in each cell of the grid (bin).
+    Uses geom_tile to display counts as a tile fill-color.
+
+    geom_histogram understands the following aesthetics mappings:
+    - x : x-axis value
+    - y : y-axis value
+    - weight : used by "bin" stat to compute weighted sum instead of simple count.
+    - alpha : number in [0..1]
+        Transparency level of a layer
+    - color : color of a geometry lines
+        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of geometry filling, default: "..count..".
+        Alternatively: '..density..'
+    - size : lines width
+
+    Examples
+    ---------
+    >>> import numpy as np
+    >>> import pandas as pd
+    >>> from scipy.stats import multivariate_normal
+    >>> from lets_plot import *
+    >>> N = 100
+    >>> M = 3
+    >>> mean = np.arange(M) * 5
+    >>> cov = np.eye(M)
+    >>> X = multivariate_normal.rvs(mean, cov, N)
+    >>> dat = pd.DataFrame(X)
+    >>> dat = pd.melt(dat)
+    >>> ggplot(dat, aes(x='value')) + geom_histogram(color='red', fill='green', size=3)
+    """
+    return _geom('bin2d', mapping, data, stat, position, show_legend, sampling=sampling,
+                 bins=bins,
+                 binwidth=binwidth,
+                 drop=drop,
+                 **other_args)
 
 
 def geom_tile(mapping=None, data=None, stat=None, position=None, show_legend=None, sampling=None, **other_args):

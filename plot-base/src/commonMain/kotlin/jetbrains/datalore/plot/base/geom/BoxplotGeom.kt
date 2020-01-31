@@ -43,7 +43,9 @@ class BoxplotGeom : GeomBase() {
         buildOutliers(root, aesthetics, pos, coord, ctx)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
-            aesthetics, pos, coord, ctx, rectangleByDataPoint(ctx)
+            aesthetics, pos, coord, ctx,
+            rectangleByDataPoint(ctx),
+            { HintColorUtil.fromColor(it) }
         )
     }
 

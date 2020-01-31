@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
@@ -17,7 +18,8 @@ object BarTooltipHelper {
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext,
-        rectFactory: (DataPointAesthetics) -> DoubleRectangle?
+        rectFactory: (DataPointAesthetics) -> DoubleRectangle?,
+        colorFactory: (DataPointAesthetics) -> Color
     ) {
         val helper = GeomHelper(pos, coord, ctx)
 
@@ -43,7 +45,8 @@ object BarTooltipHelper {
                 helper.toClient(rect, p),
                 GeomTargetCollector.TooltipParams.params()
                     .setTipLayoutHints(hintConfigs.hints)
-                    .setColor(HintColorUtil.fromColor(p))
+//                    .setColor(HintColorUtil.fromColor(p))
+                    .setColor(colorFactory(p))
             )
         }
     }

@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import kotlin.math.max
@@ -44,7 +45,9 @@ class LineRangeGeom : GeomBase() {
 
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
-            aesthetics, pos, coord, ctx, rectangleByDataPoint()
+            aesthetics, pos, coord, ctx,
+            rectangleByDataPoint(),
+            { HintColorUtil.fromColor(it) }
         )
     }
 
