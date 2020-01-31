@@ -15,8 +15,8 @@ open class Bin2d : PlotConfigDemoBase() {
             basic(),
             setBinCount(),
             setBinWidth(),
-            setBinWidthMapWeights()
-//            densityMapping()
+            setBinWidth_Weight(),
+            setBinWidth_Weight_Density()
         )
     }
 
@@ -111,7 +111,8 @@ open class Bin2d : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun setBinWidthMapWeights(): Map<String, Any> {
+        @Suppress("FunctionName")
+        fun setBinWidth_Weight(): Map<String, Any> {
             val spec = """
                 |   { 
                 |      'kind': 'plot', 
@@ -136,48 +137,31 @@ open class Bin2d : PlotConfigDemoBase() {
             return plotSpec
         }
 
-        fun withWeights(): Map<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'x'," +
-                    "             'weight': 'weight'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'histogram'" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+        @Suppress("FunctionName")
+        fun setBinWidth_Weight_Density(): Map<String, Any> {
+            val spec = """
+                |   { 
+                |      'kind': 'plot', 
+                |      'mapping': { 
+                |                'x': 'x', 
+                |                'y': 'y' 
+                |              },                    
+                |      'layers': [ 
+                |                  { 
+                |                     'geom': 'bin2d',
+                |                     'binwidth': [3,3],
+                |                     'mapping': { 
+                |                               'weight': 'weight', 
+                |                               'fill': '..density..' 
+                |                             }                    
+                |                  } 
+                |              ] 
+                |   }
+            """.trimMargin()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
         }
-
-        fun densityMapping(): Map<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'x'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'histogram'," +
-                    "                  'mapping': {" +
-                    "                            'y': '..density..'" +
-                    "                          }," +
-                    "                  'fill': 'orange'" +
-                    "               }" +
-                    "           ]" +
-                    "}"
-
-            val plotSpec1 = HashMap(parsePlotSpec(spec))
-            plotSpec1["data"] = DATA
-            return plotSpec1
-        }
-
     }
 }
