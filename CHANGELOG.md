@@ -7,10 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- geopandas support in geoms: point, path, polygon, rec, text.
-- support for LOESS smoothing method in geom_smooth.
-- new geometry layers: geom_crossbar, geom_linerange, geom_pointrange, geom_bin2d.
-- support for coordinate stystem `xlim`, `ylim` parameters (i.e. "clipping"). As yet only for `coordinate_cartesian`.
+- *geopandas* support in geoms: point, path, polygon, rec, text.
+- support for LOESS smoothing method in *geom_smooth*.
+- new geometry layers: *geom_crossbar*, *geom_linerange*, *geom_pointrange*, *geom_bin2d*.
+- support for coordinate stystem *xlim*, *ylim* parameters (i.e. "clipping"). As yet only for `coordinate_cartesian`.
 
 ### Fixed
 - Was not working `weight` parameter in stats: bin, count, bin2d, density, density2d
