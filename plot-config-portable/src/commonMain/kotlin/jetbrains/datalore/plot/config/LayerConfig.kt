@@ -135,7 +135,7 @@ class LayerConfig constructor(
 
         val consumedAesSet = HashSet(geomProto.renders())
         if (!myClientSide) {
-            consumedAesSet.addAll(stat.requires())
+            consumedAesSet.addAll(stat.consumes())
         }
 
         val varBindings = LayerConfigUtil.createBindings(

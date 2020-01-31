@@ -21,11 +21,7 @@ class DensityStat : BaseStat(DEF_MAPPING) {
     private var myN = DEF_N
     private var myBandWidthMethod = NRD0
     private var myBandWidth: Double? = null
-    private var myKernel: (Double) -> Double =
-        DensityStatUtil.kernel(Kernel.GAUSSIAN)
-
-    init {
-    }
+    private var myKernel: (Double) -> Double = DensityStatUtil.kernel(Kernel.GAUSSIAN)
 
     fun setKernel(kernel: Kernel) {
         myKernel = DensityStatUtil.kernel(kernel)
@@ -50,6 +46,14 @@ class DensityStat : BaseStat(DEF_MAPPING) {
     fun setBandWidth(bw: Double) {
         //myBW = BandWidth.DOUBLE;
         myBandWidth = bw
+    }
+
+    override fun requires(): List<Aes<*>> {
+        return listOf<Aes<*>>(Aes.X)
+    }
+
+    override fun consumes(): List<Aes<*>> {
+        return requires() + listOf(Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
@@ -92,16 +96,12 @@ class DensityStat : BaseStat(DEF_MAPPING) {
         }
 
         return DataFrame.Builder()
-                .putNumeric(Stats.X, statX)
-                .putNumeric(Stats.DENSITY, statDensity)
-                .putNumeric(Stats.COUNT, statCount)
-                .putNumeric(Stats.SCALED, statScaled)
-                //.putNumericVar(Stats.GROUP, newGroups)
-                .build()
-    }
-
-    override fun requires(): List<Aes<*>> {
-        return listOf<Aes<*>>(Aes.X)
+            .putNumeric(Stats.X, statX)
+            .putNumeric(Stats.DENSITY, statDensity)
+            .putNumeric(Stats.COUNT, statCount)
+            .putNumeric(Stats.SCALED, statScaled)
+            //.putNumericVar(Stats.GROUP, newGroups)
+            .build()
     }
 
     enum class Kernel {
@@ -126,8 +126,8 @@ class DensityStat : BaseStat(DEF_MAPPING) {
         const val DEF_N = 512
         const val DEF_BW = "nrd0"
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-                Aes.X to Stats.X,
-                Aes.Y to Stats.DENSITY
+            Aes.X to Stats.X,
+            Aes.Y to Stats.DENSITY
         )
         private const val MAX_N = 9999
     }

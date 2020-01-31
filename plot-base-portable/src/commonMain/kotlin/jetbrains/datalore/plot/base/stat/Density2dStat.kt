@@ -52,7 +52,6 @@ class Density2dStat internal constructor() : AbstractDensity2dStat() {
         val stepsY = DensityStatUtil.createStepValues(yRange!!, ny)
 
         // weight aesthetics
-        //Function<Integer, Double> weightAtIndex = StatUtil.weightAtIndex(data);
         val groupWeight = BinStatUtil.weightVector(xVector.size, data)
 
         val matrixX = BlockRealMatrix(

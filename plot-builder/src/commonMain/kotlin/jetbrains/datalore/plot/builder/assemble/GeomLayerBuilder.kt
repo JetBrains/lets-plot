@@ -39,7 +39,8 @@ class GeomLayerBuilder {
 
     private var myDataPreprocessor: ((DataFrame) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
-    private var myContextualMappingProvider: jetbrains.datalore.plot.builder.interact.ContextualMappingProvider = jetbrains.datalore.plot.builder.interact.ContextualMappingProvider.NONE
+    private var myContextualMappingProvider: jetbrains.datalore.plot.builder.interact.ContextualMappingProvider =
+        jetbrains.datalore.plot.builder.interact.ContextualMappingProvider.NONE
 
     private var myIsLegendDisabled: Boolean = false
 
@@ -144,7 +145,7 @@ class GeomLayerBuilder {
             data,
             myGeomProvider,
             myPosProvider,
-            handledAes(),
+//            handledAes(),
             myGeomProvider.renders(),
             GroupingContext(data, myBindings, myGroupingVarName, handlesGroups()).groupMapper,
             replacementBindings.values,
@@ -161,16 +162,16 @@ class GeomLayerBuilder {
         return myGeomProvider.handlesGroups() || myPosProvider.handlesGroups()
     }
 
-    private fun handledAes(): List<Aes<*>> {
-        return GeomLayerBuilderUtil.handledAes(myGeomProvider, myStat)
-    }
+//    private fun handledAes(): List<Aes<*>> {
+//        return GeomLayerBuilderUtil.handledAes(myGeomProvider, myStat)
+//    }
 
 
     private class MyGeomLayer(
         override val dataFrame: DataFrame,
         geomProvider: GeomProvider,
         private val myPosProvider: PosProvider,
-        handledAes: List<Aes<*>>,
+//        handledAes: List<Aes<*>>,
         renderedAes: List<Aes<*>>,
         override val group: (Int) -> Int,
         varBindings: Collection<VarBinding>,
@@ -185,7 +186,7 @@ class GeomLayerBuilder {
         override val geomKind: GeomKind = geomProvider.geomKind
         override val aestheticsDefaults: AestheticsDefaults
 
-        private val myHandledAes: List<Aes<*>>
+        //        private val myHandledAes: List<Aes<*>>
         private val myRenderedAes: List<Aes<*>>
         private val myConstantByAes: TypedKeyHashMap
         private val myVarBindingsByAes = HashMap<Aes<*>, VarBinding>()
@@ -197,7 +198,7 @@ class GeomLayerBuilder {
             get() = geom is LiveMapGeom
 
         init {
-            myHandledAes = ArrayList(handledAes)
+//            myHandledAes = ArrayList(handledAes)
             myRenderedAes = ArrayList(renderedAes)
 
             // constant value by aes (default + specified)
@@ -213,9 +214,9 @@ class GeomLayerBuilder {
             }
         }
 
-        override fun handledAes(): List<Aes<*>> {
-            return myHandledAes
-        }
+//        override fun handledAes(): List<Aes<*>> {
+//            return myHandledAes
+//        }
 
         override fun renderedAes(): List<Aes<*>> {
             return myRenderedAes

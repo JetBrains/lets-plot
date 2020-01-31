@@ -10,6 +10,8 @@ interface Stat {
 
     fun requires(): List<Aes<*>>
 
+    fun consumes(): List<Aes<*>> = requires()
+
     fun hasDefaultMapping(aes: Aes<*>): Boolean
 
     fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable

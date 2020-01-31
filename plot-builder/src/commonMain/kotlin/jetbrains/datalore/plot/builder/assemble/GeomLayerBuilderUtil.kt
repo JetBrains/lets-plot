@@ -15,11 +15,13 @@ import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 
 object GeomLayerBuilderUtil {
 
-    fun handledAes(geomProvider: jetbrains.datalore.plot.builder.assemble.geom.GeomProvider, stat: Stat): List<Aes<*>> {
+/*
+    fun handledAes(geomProvider: GeomProvider, stat: Stat): List<Aes<*>> {
         val handledAes = LinkedHashSet(geomProvider.renders())
         handledAes.addAll(stat.requires())
         return ArrayList(handledAes)
     }
+*/
 
     /*
   public static boolean isOriginalData(DataFrame data) {
@@ -67,7 +69,7 @@ object GeomLayerBuilderUtil {
                 // Add binding if not there
                 if (!bindingsByAes.containsKey(aes)) {
                     val scale = ScaleProviderHelper.getOrCreateDefault(aes, scaleProviderByAes)
-                            .createScale(data, statVar)
+                        .createScale(data, statVar)
                     bindingsByAes[aes] = VarBinding(statVar, aes, scale)
                 }
             }

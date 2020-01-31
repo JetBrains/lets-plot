@@ -36,7 +36,7 @@ interface GeomLayer {
 
     val contextualMapping: ContextualMapping
 
-    fun handledAes(): List<Aes<*>>
+//    fun handledAes(): List<Aes<*>>
 
     fun renderedAes(): List<Aes<*>>
 

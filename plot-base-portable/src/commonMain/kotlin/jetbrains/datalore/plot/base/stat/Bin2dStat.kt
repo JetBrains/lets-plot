@@ -44,6 +44,10 @@ class Bin2dStat(
         return listOf(Aes.X, Aes.Y)
     }
 
+    override fun consumes(): List<Aes<*>> {
+        return requires() + listOf(Aes.WEIGHT)
+    }
+
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
         if (!hasRequiredValues(data)) {
             return withEmptyStatValues()

@@ -8,7 +8,6 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
-import kotlin.math.abs
 
 /**
  * See 'Plotting distributions'
@@ -35,9 +34,9 @@ open class Histogram : PlotConfigDemoBase() {
             val xs = DemoUtil.gauss(count, 12, 0.0, 5.0)
             val weights = ArrayList<Double>()
             for (x in xs) {
-                //weights.add(x < 0 ? 2. : .5);
-                //weights.add(2.);
-                weights.add(abs(x))
+                weights.add(if (x < 0.0) 2.0 else 0.5);
+//                weights.add(2.0);
+//                weights.add(abs(x))
             }
             val map = HashMap<String, List<*>>()
             map["x"] = xs
