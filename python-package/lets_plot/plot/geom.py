@@ -32,7 +32,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : string, optional
@@ -42,16 +42,13 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         position adjustment function.
     animation : type of the animation, optional
         Codes and names: 0 = "none" (default), 1 = "ripple".
-    map : dictionary, pandas DataFrame or GeocodedRegion object
-        Using with aesthetic param 'map_id'.
-        Data (Dictionary or DataFrame object) contains region boundaries (coordinates of polygon vertices on the map).
+    map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint)
+        Data containing coordinates of points.
+        Can be used with aesthetic parameter 'map_id' for joining data and map coordinates.
         Dictionary and DataFrame object must contain keys/columns:
         1. 'x' or 'lon' or 'long'
         2. 'y' or 'lat'
-        3. 'region' or 'id'
-        GeocodedRegion object is produced only by regions() or regions_xxx() functions and does not have any special requirements.
-    map_join : string, optional
-        Selects a column in a map parameter that will be used as a key in a data and map join operation.
+    map_join : name used to join map coordinates with data
     other_args :
         Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -104,7 +101,7 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes LineString and MultiLineString), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : string, optional
@@ -117,6 +114,13 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         position adjustment function.
     animation : type of the animation, optional
         Codes and names: 0 = "none" (default), 1 = "dash", 2 = "plane", 3 = "circle".
+    map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes LineString and MultiLineString)
+        Can be used with aesthetic parameter 'map_id' for joining data and map coordinates.
+
+        Dictionary and DataFrame object must contain keys/columns:
+        1. 'x' or 'lon' or 'long'
+        2. 'y' or 'lat'
+    map_join : name used to join map coordinates with data
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -130,6 +134,7 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
     geom_path lets you explore how two variables are related over time.
 
     geom_path understands the following aesthetics mappings:
+    - map_id : name used to join data with map coordinates
     - x : x-axis value
     - y : y-axis value
     - alpha : transparency level of a point
@@ -984,7 +989,7 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : string, optional
@@ -995,14 +1000,13 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
-    map : dictionary, pandas DataFrame or GeocodedRegion object
-        Using with aesthetic param 'map_id'.
-        Data (Dictionary or DataFrame object) is containing region boundaries (coordinates of polygon vertices on map).
+    map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon)
+        Data (Dictionary, DataFrame or GeoDataFrame object) contains coordinates of polygon vertices on map.
+        Can be used with aesthetic parameter 'map_id' for joining data and map coordinates.
         Dictionary and DataFrame object must contain keys/columns:
         1. 'x' or 'lon' or 'long'
         2. 'y' or 'lat'
-        3. 'region' or 'id'
-        GeocodedRegion object is produced only by regions() or regions_xxx() functions and does not have any special requirements.
+    map_join : name used to join map coordinates with data    
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1054,7 +1058,7 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : string, optional
@@ -1062,12 +1066,12 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    map : dictionary or pandas DataFrame
+    map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon)
         Data containing region boundaries (coordinates of polygon vertices on map).
         It must contain columns:
          1. 'x' or 'lon' or 'long'
          2. 'y' or 'lat'
-         3. 'region' or 'id'
+    map_join : name used to join map coordinates with data
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1893,7 +1897,7 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
     mapping : set of aesthetic mappings created by aes() function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dictionary or pandas DataFrame, optional
+    data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : string, optional
@@ -1904,6 +1908,12 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    map : dictionary, pandas DataFrame or GeoDataFrame (shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon)
+        Bounding boxes of geometries will be drawn.
+        Data must contain columns:
+         1. 'x' or 'lon' or 'long'
+         2. 'y' or 'lat'
+    map_join : name used to join map coordinates with data	
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1916,6 +1926,7 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
     geom_rect draws rectangles
 
     geom_rect understands the following aesthetics mappings:
+    - map_id : name used to join data with map coordinates
     - xmin : x-axis value
     - xmax : x-axis value
     - ymin : y-axis value
@@ -2023,6 +2034,11 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint)
+        Data must contain columns:
+         1. 'x' or 'lon' or 'long'
+         2. 'y' or 'lat'
+    map_join : name used to join map coordinates with data
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2035,6 +2051,7 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
     Adds text directly to the plot.
 
     geom_text understands the following aesthetics mappings:
+    - map_id : name used to join data with map coordinates
     - x : x-axis value
     - y : y-axis value
     - label : text to add to plot
