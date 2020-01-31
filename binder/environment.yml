@@ -14,5 +14,4 @@ dependencies:
       - lets-plot
       - pypng
       - scikit-datasets
-      - fiona
       - geopandas
