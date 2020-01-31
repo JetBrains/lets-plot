@@ -457,17 +457,13 @@ def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legen
     Examples
     ---------
     >>> import numpy as np
-    >>> import pandas as pd
-    >>> from scipy.stats import multivariate_normal
     >>> from lets_plot import *
-    >>> N = 100
-    >>> M = 3
-    >>> mean = np.arange(M) * 5
-    >>> cov = np.eye(M)
-    >>> X = multivariate_normal.rvs(mean, cov, N)
-    >>> dat = pd.DataFrame(X)
-    >>> dat = pd.melt(dat)
-    >>> ggplot(dat, aes(x='value')) + geom_histogram(color='red', fill='green', size=3)
+    >>>
+    >>> np.random.seed(123)
+    >>> data = dict(
+    >>>     x = np.random.normal(0, 1, 100)
+    >>> )
+    >>> ggplot(data) + geom_histogram(aes(x='x'))
     """
     return _geom('histogram', mapping, data, stat, position, show_legend, sampling=sampling,
                  bins=bins,
@@ -535,17 +531,17 @@ Aesthetics
     Examples
     ---------
     >>> import numpy as np
-    >>> import pandas as pd
-    >>> from scipy.stats import multivariate_normal
     >>> from lets_plot import *
-    >>> N = 100
-    >>> M = 3
-    >>> mean = np.arange(M) * 5
-    >>> cov = np.eye(M)
-    >>> X = multivariate_normal.rvs(mean, cov, N)
-    >>> dat = pd.DataFrame(X)
-    >>> dat = pd.melt(dat)
-    >>> ggplot(dat, aes(x='value')) + geom_histogram(color='red', fill='green', size=3)
+    >>>
+    >>> cov=[[1, 0],
+    >>>      [0, 1]]
+    >>> x, y = np.random.multivariate_normal(mean=[0,0], cov=cov, size=400).T
+    >>>
+    >>> data = dict(
+    >>>     x = x,
+    >>>     y = y
+    >>> )
+    >>> ggplot(data) + geom_bin2d(aes(x='x', y='y'), binwidth=[0.5,0.5])
     """
     return _geom('bin2d', mapping, data, stat, position, show_legend, sampling=sampling,
                  bins=bins,
