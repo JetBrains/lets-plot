@@ -71,16 +71,12 @@ abstract class AbstractDensity2dStat : BaseStat(DEF_MAPPING) {
         this.kernel = DensityStatUtil.kernel(kernel)
     }
 
-
-    override fun requires(): List<Aes<*>> {
-        return listOf(Aes.X, Aes.Y)
-    }
-
     override fun consumes(): List<Aes<*>> {
-        return requires() + listOf(Aes.WEIGHT)
+        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
+        // ToDo: ???
         throw IllegalStateException("'density2d' statistic can't be executed on the client side")
     }
 

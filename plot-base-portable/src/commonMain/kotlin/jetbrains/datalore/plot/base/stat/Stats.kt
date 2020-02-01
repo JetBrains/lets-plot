@@ -121,7 +121,7 @@ object Stats {
             return DataFrame.Builder.emptyFrame()
         }
 
-        override fun requires(): List<Aes<*>> {
+        override fun consumes(): List<Aes<*>> {
             return emptyList()
         }
     }

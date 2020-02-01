@@ -40,16 +40,12 @@ class Bin2dStat(
     private val binOptionsX = BinStatUtil.BinOptions(binCountX, binWidthX)
     private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY)
 
-    override fun requires(): List<Aes<*>> {
-        return listOf(Aes.X, Aes.Y)
-    }
-
     override fun consumes(): List<Aes<*>> {
-        return requires() + listOf(Aes.WEIGHT)
+        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
-        if (!hasRequiredValues(data)) {
+        if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
             return withEmptyStatValues()
         }
 

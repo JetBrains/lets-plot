@@ -37,17 +37,13 @@ internal class BinStat(
 ) : BaseStat(DEF_MAPPING) {
     private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
-    override fun requires(): List<Aes<*>> {
-        return listOf(Aes.X)
-    }
-
     override fun consumes(): List<Aes<*>> {
-        return requires() + listOf(Aes.WEIGHT)
+        return listOf(Aes.X, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
-        if (data.hasNoOrEmpty(TransformVar.X)) {
-            return DataFrame.Builder.emptyFrame()
+        if (!hasRequiredValues(data, Aes.X)) {
+            return withEmptyStatValues()
         }
 
         val statX = ArrayList<Double>()

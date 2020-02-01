@@ -23,8 +23,8 @@ abstract class BaseStat(private val defaultMappings: Map<Aes<*>, DataFrame.Varia
         throw IllegalArgumentException("Stat " + this::class.simpleName + " has no default mapping for aes: " + aes)
     }
 
-    protected fun hasRequiredValues(data: DataFrame): Boolean {
-        for (requiredAes in requires()) {
+    protected fun hasRequiredValues(data: DataFrame, vararg aes: Aes<*>): Boolean {
+        for (requiredAes in aes) {
             val variable = TransformVar.forAes(requiredAes)
             if (data.hasNoOrEmpty(variable)) {
                 return false

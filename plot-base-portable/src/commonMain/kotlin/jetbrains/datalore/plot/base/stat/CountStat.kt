@@ -18,17 +18,13 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
  */
 internal class CountStat : BaseStat(DEF_MAPPING) {
 
-    override fun requires(): List<Aes<*>> {
-        return listOf<Aes<*>>(Aes.X)
-    }
-
     override fun consumes(): List<Aes<*>> {
-        return requires() + listOf(Aes.WEIGHT)
+        return listOf(Aes.X, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
-        if (data.hasNoOrEmpty(TransformVar.X)) {
-            return DataFrame.Builder.emptyFrame()
+        if (!hasRequiredValues(data, Aes.X)) {
+            return withEmptyStatValues()
         }
 
         val valuesX = data.getNumeric(TransformVar.X)
@@ -44,15 +40,15 @@ internal class CountStat : BaseStat(DEF_MAPPING) {
         }
 
         return DataFrame.Builder()
-                .putNumeric(Stats.X, statX)
-                .putNumeric(Stats.COUNT, statCount)
-                .build()
+            .putNumeric(Stats.X, statX)
+            .putNumeric(Stats.COUNT, statCount)
+            .build()
     }
 
     companion object {
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-                Aes.X to Stats.X,
-                Aes.Y to Stats.COUNT
+            Aes.X to Stats.X,
+            Aes.Y to Stats.COUNT
         )
 
         private fun countByX(valuesX: List<Double?>, weight: List<Double?>): Map<Double, MutableDouble> {

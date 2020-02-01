@@ -44,21 +44,16 @@ class DensityStat : BaseStat(DEF_MAPPING) {
     }
 
     fun setBandWidth(bw: Double) {
-        //myBW = BandWidth.DOUBLE;
         myBandWidth = bw
     }
 
-    override fun requires(): List<Aes<*>> {
-        return listOf<Aes<*>>(Aes.X)
-    }
-
     override fun consumes(): List<Aes<*>> {
-        return requires() + listOf(Aes.WEIGHT)
+        return listOf(Aes.X, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
-        if (data.hasNoOrEmpty(TransformVar.X)) {
-            return DataFrame.Builder.emptyFrame()
+        if (!hasRequiredValues(data, Aes.X)) {
+            return withEmptyStatValues()
         }
 
         val valuesX = data.getNumeric(TransformVar.X)
@@ -131,11 +126,4 @@ class DensityStat : BaseStat(DEF_MAPPING) {
         )
         private const val MAX_N = 9999
     }
-
-    /*
-  @Override
-  public boolean handlesGroups() {
-    return true;
-  }
-  */
 }

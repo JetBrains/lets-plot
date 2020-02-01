@@ -63,10 +63,6 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     var isDisplayConfidenceInterval = DEF_DISPLAY_CONFIDENCE_INTERVAL
     var span = DEF_SPAN
 
-    override fun requires(): List<Aes<*>> {
-        return listOf<Aes<*>>(Aes.Y)
-    }
-
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
                 aes == Aes.YMIN && isDisplayConfidenceInterval ||
@@ -101,10 +97,17 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         private const val DEF_DISPLAY_CONFIDENCE_INTERVAL = true
         private const val DEF_SPAN = 0.5
     }
+
+
+    override fun consumes(): List<Aes<*>> {
+        return listOf<Aes<*>>(Aes.Y)
+    }
+
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
-        if (!data.has(TransformVar.Y)) {
+        if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
+
         val valuesY = data.getNumeric(TransformVar.Y)
         if (valuesY.size < 3) {  // at least 3 data points required
             return withEmptyStatValues()
@@ -139,13 +142,13 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         statSE = statValues[Stats.SE]!!
 
         val statData = DataFrame.Builder()
-                .putNumeric(Stats.X, statX)
-                .putNumeric(Stats.Y, statY)
+            .putNumeric(Stats.X, statX)
+            .putNumeric(Stats.Y, statY)
 
         if (isDisplayConfidenceInterval) {
             statData.putNumeric(Stats.Y_MIN, statMinY)
-                    .putNumeric(Stats.Y_MAX, statMaxY)
-                    .putNumeric(Stats.SE, statSE)
+                .putNumeric(Stats.Y_MAX, statMaxY)
+                .putNumeric(Stats.SE, statSE)
         }
 
         return statData.build()
@@ -161,7 +164,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
 
     private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
         val regression = when (smoothingMethod) {
-            Method.LM    -> LinearRegression(valuesX, valuesY, confidenceLevel)
+            Method.LM -> LinearRegression(valuesX, valuesY, confidenceLevel)
             Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
             else -> throw IllegalArgumentException(
                 "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
