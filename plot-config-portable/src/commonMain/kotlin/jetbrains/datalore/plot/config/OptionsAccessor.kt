@@ -125,12 +125,12 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
 
     fun getRangeOrNull(option: String): ClosedRange<Double>? {
         val pair = get(option)
-        if ((pair is List<*> && pair.size == 2 && pair.all { it is Double }) != true) {
+        if ((pair is List<*> && pair.size == 2 && pair.all { it is Number }) != true) {
             return null
         }
 
-        val lower = pair.first() as Double
-        val upper = pair.last() as Double
+        val lower = (pair.first() as Number).toDouble()
+        val upper = (pair.last() as Number).toDouble()
 
         return try {
             ClosedRange.closed(lower, upper)
