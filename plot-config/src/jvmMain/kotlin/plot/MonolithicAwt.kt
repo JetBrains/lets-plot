@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot
 
+import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
@@ -15,7 +16,7 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.config.FailureHandler
-import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
+import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.awt.svgToString.SvgToString
 import mu.KotlinLogging
@@ -132,31 +133,30 @@ object MonolithicAwt {
     ): JComponent {
         val plotContainer = plotInfo.plotContainer
         plotContainer.ensureContentBuilt()
+
         val plotComponent: JComponent = componentFactory(plotContainer.svg)
-        val resultComponent: JComponent
-        var liveMapControl: AwtCanvasControl? = null
+        var liveMapControl: JavafxCanvasControl? = null
 
-        if (plotContainer.liveMapFigures.isEmpty()) {
+        val resultComponent = if (plotContainer.liveMapFigures.isEmpty()) {
 
-            resultComponent = plotComponent
+            plotComponent
         } else {
             val liveMapFigure = plotContainer.liveMapFigures.single()
 
-            liveMapControl = AwtCanvasControl(
-                1.0,
-                liveMapFigure.dimension().get().toVector()
+            liveMapControl = JavafxCanvasControl(
+                liveMapFigure.dimension().get().toVector(),
+                1.0
             )
-            liveMapFigure.mapToCanvas(liveMapControl)
 
-            val container = JFXPanel()
+            Platform.runLater{ liveMapFigure.mapToCanvas(liveMapControl) }
 
             liveMapControl.component.bounds = Rectangle(0,0, liveMapControl.size.x, liveMapControl.size.y)
             plotComponent.bounds = Rectangle(0,0, plotInfo.size.get().x.toInt(), plotInfo.size.get().y.toInt())
 
-            container.add(plotComponent)
-            container.add(liveMapControl.component)
-
-            resultComponent = container
+            JFXPanel().also {
+                it.add(plotComponent)
+                it.add(liveMapControl.component)
+            }
         }
 
         plotComponent.addMouseListener(object : MouseAdapter() {
@@ -166,25 +166,25 @@ object MonolithicAwt {
                     plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
                 }
 
-                liveMapControl?.dispatch(MouseEventSpec.MOUSE_LEFT, e)
+                liveMapControl?.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
             }
 
             override fun mousePressed(e: MouseEvent) {
                 super.mousePressed(e)
-                liveMapControl?.dispatch(MouseEventSpec.MOUSE_PRESSED, e)
+                liveMapControl?.dispatch(MouseEventSpec.MOUSE_PRESSED, AwtEventUtil.translate(e))
             }
 
             override fun mouseReleased(e: MouseEvent) {
                 super.mouseReleased(e)
-                liveMapControl?.dispatch(MouseEventSpec.MOUSE_RELEASED, e)
+                liveMapControl?.dispatch(MouseEventSpec.MOUSE_RELEASED, AwtEventUtil.translate(e))
             }
 
             override fun mouseClicked(e: MouseEvent) {
                 super.mouseClicked(e)
                 if (e.clickCount % 2 == 1) {
-                    liveMapControl?.dispatch(MouseEventSpec.MOUSE_CLICKED, e)
+                    liveMapControl?.dispatch(MouseEventSpec.MOUSE_CLICKED, AwtEventUtil.translate(e))
                 } else {
-                    liveMapControl?.dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e)
+                    liveMapControl?.dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, AwtEventUtil.translate(e))
                 }
             }
         })
@@ -196,12 +196,12 @@ object MonolithicAwt {
                     plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
                 }
 
-                liveMapControl?.dispatch(MouseEventSpec.MOUSE_MOVED, e)
+                liveMapControl?.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
             }
 
             override fun mouseDragged(e: MouseEvent) {
                 super.mouseDragged(e)
-                liveMapControl?.dispatch(MouseEventSpec.MOUSE_DRAGGED, e)
+                liveMapControl?.dispatch(MouseEventSpec.MOUSE_DRAGGED, AwtEventUtil.translate(e))
             }
         })
 

@@ -21,25 +21,11 @@ class FeaturesRawJfxDemo : Application() {
     override fun start(theStage: Stage) {
         val dim = Vector(800, 600)
         val javafxCanvasControl = JavafxCanvasControl(dim, 1.0)
-        FeaturesDemoModel(dim.toDoubleVector()).show(javafxCanvasControl) {
-            zoom = 7
-            location {
-                geocodingHint {
-                    parent = MapRegion.withName("Russia")
-                    level = FeatureLevel.CITY
-                }
-                name = "Moscow"
-            }
-        }
+        FeaturesDemoModel(dim.toDoubleVector()).show(javafxCanvasControl)
 
         theStage.title = "Javafx Livemap Demo"
-        theStage.scene = Scene(
-            Group().apply {
-                children.add(javafxCanvasControl.javafxRoot)
-            },
-            dim.x.toDouble(),
-            dim.y.toDouble()
-        )
+        theStage.scene = javafxCanvasControl.component.scene
+
         theStage.show()
     }
 

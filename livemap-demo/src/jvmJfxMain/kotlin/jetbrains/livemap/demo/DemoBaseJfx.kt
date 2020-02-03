@@ -5,20 +5,20 @@
 
 package jetbrains.livemap.demo
 
+import javafx.application.Platform
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasDemoUtil
-import jetbrains.datalore.vis.canvas.javaFx.JavafxGraphicsCanvasControlFactory
+import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 
 open class DemoBaseJfx(private val demoModelProvider: (DoubleVector) -> DemoModelBase) {
     private val size: Vector get() = Vector(800, 600)
 
     internal fun show() {
-        val canvasControl = AwtCanvasControl(1.0, size)
+        val canvasControl = JavafxCanvasControl(size, 1.0)
 
-        demoModelProvider(size.toDoubleVector()).show(canvasControl)
+        Platform.runLater { demoModelProvider(size.toDoubleVector()).show(canvasControl) }
 
-        AwtCanvasDemoUtil.showAwtCanvasControl("AWT Livemap Demo", canvasControl)
+        AwtCanvasDemoUtil.showCanvasControl("AWT Livemap Demo", canvasControl)
     }
 }

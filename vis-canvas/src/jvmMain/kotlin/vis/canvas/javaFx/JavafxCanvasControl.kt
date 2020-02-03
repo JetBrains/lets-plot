@@ -5,9 +5,10 @@
 
 package jetbrains.datalore.vis.canvas.javaFx
 
+import javafx.embed.swing.JFXPanel
 import javafx.scene.Group
 import javafx.scene.Node
-import javafx.scene.Parent
+import javafx.scene.Scene
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.event.MouseEvent
@@ -26,18 +27,18 @@ import jetbrains.datalore.vis.canvas.EventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasUtil.imagePngBase64ToImage
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasUtil.imagePngByteArrayToImage
 import javafx.event.EventHandler as jfxHandler
-import javafx.scene.input.MouseEvent as JfxMouseEvent
 
-class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: Double) :
-    CanvasControl {
-    private val myEventPeer: JavafxEventPeer
+class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: Double) : CanvasControl {
     private val myRoot = Group()
-
-    val javafxRoot: Parent
-        get() = myRoot
+    private val myEventPeer = JavafxEventPeer(myRoot)
+    val component: JFXPanel = JFXPanel()
 
     init {
-        myEventPeer = JavafxEventPeer(myRoot)
+        component.scene = Scene(myRoot)
+    }
+
+    fun dispatch(eventSpec: MouseEventSpec, mouseEvent: MouseEvent) {
+        myEventPeer.dispatch(eventSpec, mouseEvent)
     }
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
@@ -52,7 +53,7 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
         return myEventPeer.addEventHandler(
             eventSpec,
             handler {
-                eventHandler.onEvent(JfxEventUtil.translate(it))
+                eventHandler.onEvent(it)
             }
         )
     }
@@ -103,33 +104,33 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
         JavafxCanvasUtil.runInJavafxThread(f)
     }
 
-    private class JavafxEventPeer(node: Node) : EventPeer<MouseEventSpec, JfxMouseEvent>(MouseEventSpec::class) {
+    private class JavafxEventPeer(node: Node) : EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
 
         init {
             node.onMouseEntered = jfxHandler {
-                dispatch(MOUSE_ENTERED, it)
+                dispatch(MOUSE_ENTERED, JfxEventUtil.translate(it) )
             }
             node.onMouseExited = jfxHandler {
-                dispatch(MOUSE_LEFT, it)
+                dispatch(MOUSE_LEFT, JfxEventUtil.translate(it))
             }
             node.onMouseMoved = jfxHandler {
-                dispatch(MOUSE_MOVED, it)
+                dispatch(MOUSE_MOVED, JfxEventUtil.translate(it))
             }
             node.onMouseDragged = jfxHandler {
-                dispatch(MOUSE_DRAGGED, it)
+                dispatch(MOUSE_DRAGGED, JfxEventUtil.translate(it))
             }
             node.onMouseClicked = jfxHandler {
                 if (it.clickCount % 2 == 1) {
-                    dispatch(MOUSE_CLICKED, it)
+                    dispatch(MOUSE_CLICKED, JfxEventUtil.translate(it))
                 } else {
-                    dispatch(MOUSE_DOUBLE_CLICKED, it)
+                    dispatch(MOUSE_DOUBLE_CLICKED, JfxEventUtil.translate(it))
                 }
             }
             node.onMousePressed = jfxHandler {
-                dispatch(MOUSE_PRESSED, it)
+                dispatch(MOUSE_PRESSED, JfxEventUtil.translate(it))
             }
             node.onMouseReleased = jfxHandler {
-                dispatch(MOUSE_RELEASED, it)
+                dispatch(MOUSE_RELEASED, JfxEventUtil.translate(it))
             }
         }
 

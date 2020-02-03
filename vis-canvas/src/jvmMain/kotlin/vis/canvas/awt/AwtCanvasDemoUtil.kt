@@ -5,12 +5,13 @@
 
 package jetbrains.datalore.vis.canvas.awt
 
+import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import java.awt.BorderLayout
 import javax.swing.JFrame
 import javax.swing.WindowConstants
 
 object AwtCanvasDemoUtil {
-    fun showAwtCanvasControl(title: String, canvasControl: AwtCanvasControl) {
+    fun showCanvasControl(title: String, canvasControl: JavafxCanvasControl) {
         val frame = JFrame(title)
         frame.layout = BorderLayout()
         frame.contentPane.add(canvasControl.component)
