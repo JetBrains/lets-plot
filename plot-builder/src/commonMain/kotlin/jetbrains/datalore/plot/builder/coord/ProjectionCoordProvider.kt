@@ -14,9 +14,11 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ProjectionCoordProvider private constructor(
     private val myProjectionX: Projection?,
-    private val myProjectionY: Projection?
+    private val myProjectionY: Projection?,
+    xLim: ClosedRange<Double>?,
+    yLim: ClosedRange<Double>?
 )// square grid
-    : jetbrains.datalore.plot.builder.coord.FixedRatioCoordProvider(1.0) {
+    : FixedRatioCoordProvider(1.0, xLim, yLim) {
 
     override fun buildAxisScaleX(
         scaleProto: Scale<Double>,
@@ -53,8 +55,12 @@ internal class ProjectionCoordProvider private constructor(
     }
 
     companion object {
-        fun withProjectionY(projectionY: Projection): CoordProvider {
-            return ProjectionCoordProvider(null, projectionY)
+        fun withProjectionY(
+            projectionY: Projection,
+            xLim: ClosedRange<Double>?,
+            yLim: ClosedRange<Double>?
+        ): CoordProvider {
+            return ProjectionCoordProvider(null, projectionY, xLim, yLim)
         }
 
         private fun buildAxisScaleWithProjection(

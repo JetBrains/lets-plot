@@ -13,12 +13,19 @@ object CoordProviders {
         return CartesianCoordProvider(xLim, yLim)
     }
 
-    fun fixed(ratio: Double): CoordProvider {
-        return FixedRatioCoordProvider(ratio)
+    fun fixed(
+        ratio: Double,
+        xLim: ClosedRange<Double>? = null,
+        yLim: ClosedRange<Double>? = null
+    ): CoordProvider {
+        return FixedRatioCoordProvider(ratio, xLim, yLim)
     }
 
-    fun map(): CoordProvider {
+    fun map(
+        xLim: ClosedRange<Double>? = null,
+        yLim: ClosedRange<Double>? = null
+    ): CoordProvider {
         // Mercator projection is cylindrical thus we don't really need 'projection X'
-        return ProjectionCoordProvider.withProjectionY(MercatorProjectionY())
+        return ProjectionCoordProvider.withProjectionY(MercatorProjectionY(), xLim, yLim)
     }
 }

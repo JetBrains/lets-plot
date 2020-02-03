@@ -6,6 +6,8 @@
 package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.coord.Coords
@@ -13,7 +15,10 @@ import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 
-internal abstract class CoordProviderBase : CoordProvider {
+internal abstract class CoordProviderBase(
+    private val xLim: ClosedRange<Double>?,
+    private val yLim: ClosedRange<Double>?
+) : CoordProvider {
 
     override fun buildAxisScaleX(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
         return buildAxisScaleDefault(
@@ -41,6 +46,27 @@ internal abstract class CoordProviderBase : CoordProvider {
                 MapperUtil.map(yDomain,
                     axisMapper(yDomain, yAxisLength)
                 ))
+    }
+
+    final override fun adjustDomains(
+        xDomain: ClosedRange<Double>,
+        yDomain: ClosedRange<Double>,
+        displaySize: DoubleVector
+    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        return adjustDomainsImpl(xDomain, yDomain, displaySize)
+            .let { Pair(
+                xLim ?: it.first,
+                yLim ?: it.second
+            )
+        }
+    }
+
+    protected open fun adjustDomainsImpl(
+        xDomain: ClosedRange<Double>,
+        yDomain: ClosedRange<Double>,
+        displaySize: DoubleVector
+    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        return Pair(xDomain, yDomain)
     }
 
     companion object {

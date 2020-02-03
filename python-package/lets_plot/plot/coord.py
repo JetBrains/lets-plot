@@ -17,12 +17,12 @@ def coord_cartesian(xlim=None, ylim=None):
     return _coord('cartesian', xlim=xlim, ylim=ylim)
 
 
-def coord_fixed(ratio=1.):
-    return _coord('fixed', ratio=ratio)
+def coord_fixed(ratio=1., xlim=None, ylim=None):
+    return _coord('fixed', ratio=ratio, xlim=xlim, ylim=ylim)
 
 
-def coord_map():
-    return _coord('map')
+def coord_map(xlim=None, ylim=None):
+    return _coord('map', xlim=xlim, ylim=ylim)
 
 
 def _coord(name, **other):

@@ -22,13 +22,12 @@ internal object CoordProto {
     private const val PROJECTION = "projection"   // todo
 
     fun createCoordProvider(coordName: String, options: OptionsAccessor): CoordProvider {
+        val xLim = options.getRangeOrNull(X_LIM)
+        val yLim = options.getRangeOrNull(Y_LIM)
         return when (coordName) {
-            CARTESIAN -> CoordProviders.cartesian(
-                options.getRangeOrNull(X_LIM),
-                options.getRangeOrNull(Y_LIM)
-            )
-            FIXED -> CoordProviders.fixed(options.getDouble(RATIO) ?: 1.0)
-            MAP -> CoordProviders.map()
+            CARTESIAN -> CoordProviders.cartesian(xLim, yLim)
+            FIXED -> CoordProviders.fixed(options.getDouble(RATIO) ?: 1.0, xLim, yLim)
+            MAP -> CoordProviders.map(xLim, yLim)
             else -> throw IllegalArgumentException("Unknown coordinate system name: '$coordName'")
         }
     }

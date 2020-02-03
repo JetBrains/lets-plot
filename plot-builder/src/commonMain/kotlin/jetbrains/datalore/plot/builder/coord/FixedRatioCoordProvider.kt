@@ -10,18 +10,28 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-internal open class FixedRatioCoordProvider
 /**
  * A fixed scale coordinate system forces a specified ratio between the physical representation of data units on the axes.
  * The ratio represents the number of units on the y-axis equivalent to one unit on the x-axis.
  * ratio = 1, ensures that one unit on the x-axis is the same length as one unit on the y-axis.
  * Ratios higher than one make units on the y axis longer than units on the x-axis, and vice versa.
  */
-(private val myRatio: Double) : jetbrains.datalore.plot.builder.coord.CoordProviderBase() {
+internal open class FixedRatioCoordProvider(
+    private val myRatio: Double,
+    private val xLim: ClosedRange<Double>?,
+    private val yLim: ClosedRange<Double>?
+) : CoordProviderBase(xLim, yLim) {
 
-    override fun adjustDomains(xDomain: ClosedRange<Double>, yDomain: ClosedRange<Double>, displaySize: DoubleVector): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+    override fun adjustDomainsImpl(
+        xDomain: ClosedRange<Double>,
+        yDomain: ClosedRange<Double>,
+        displaySize: DoubleVector
+    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        @Suppress("NAME_SHADOWING")
         var xDomain = xDomain
+        @Suppress("NAME_SHADOWING")
         var yDomain = yDomain
+
         val spanX = SeriesUtil.span(xDomain)
         val spanY = SeriesUtil.span(yDomain)
         if (spanX < SeriesUtil.TINY || spanY < SeriesUtil.TINY) {
