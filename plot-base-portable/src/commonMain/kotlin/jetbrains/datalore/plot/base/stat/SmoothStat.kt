@@ -191,7 +191,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
 
         for (i in 0 until smootherPointCount) {
             val x = startX + i * stepX
-            val eval = regression.evalX(x)
+            val eval = regression.evalX(x.coerceIn(rangeX.lowerEndpoint(), rangeX.upperEndpoint()))
             statX.add(x)
             statY.add(eval.y)
             statMinY.add(eval.ymin)
