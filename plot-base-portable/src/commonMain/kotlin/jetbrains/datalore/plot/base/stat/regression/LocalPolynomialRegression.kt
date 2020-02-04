@@ -73,7 +73,7 @@ class LocalPolynomialRegression(
     }
 
     companion object {
-        private const val DEF_SAMPLE_NUMBER = 150
+        private const val DEF_SAMPLE_NUMBER = 50
 
         private fun interpolateLinear(function: PolynomialSplineFunction, x: Double): Double {
             val knots = function.knots
