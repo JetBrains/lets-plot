@@ -10,8 +10,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 
 internal abstract class TileLayoutBase : TileLayout {
     companion object {
-        val GEOM_MARGIN = 0.0          // min space around geom area
-        protected val CLIP_EXTEND = 5.0
+        const val GEOM_MARGIN = 0.0          // min space around geom area
+        protected const val CLIP_EXTEND = 5.0
         val GEOM_MIN_SIZE = DoubleVector(50.0, 50.0)
 
         fun geomBounds(xAxisThickness: Double, yAxisThickness: Double, plotSize: DoubleVector): DoubleRectangle {

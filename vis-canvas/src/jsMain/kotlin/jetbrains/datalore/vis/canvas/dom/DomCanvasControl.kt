@@ -14,6 +14,7 @@ import jetbrains.datalore.base.event.dom.DomEventUtil.translateInTargetCoord
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.base.js.css.setPosition
+import jetbrains.datalore.base.js.css.setZIndex
 import jetbrains.datalore.base.js.dom.DomEventListener
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.observable.event.EventHandler
@@ -34,10 +35,17 @@ import org.w3c.dom.events.MouseEvent as W3cMouseEvent
 
 class DomCanvasControl(override val size: Vector) : CanvasControl {
     val rootElement: HTMLElement = document.createElement("div") as HTMLElement
-    private val eventPeer = DomEventPeer(rootElement)
+    private val myEventPeer = DomEventPeer(rootElement)
 
     init {
-        rootElement.style.setPosition(CssPosition.RELATIVE)
+        rootElement.style.run {
+            setPosition(CssPosition.RELATIVE)
+            setZIndex(-1)
+        }
+    }
+
+    fun dispatch(eventSpec: MouseEventSpec, mouseEvent: MouseEvent) {
+        myEventPeer.dispatch(eventSpec, mouseEvent)
     }
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
@@ -49,14 +57,9 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-        val translator = when (eventSpec) {
-            MouseEventSpec.MOUSE_PRESSED, MouseEventSpec.MOUSE_DRAGGED -> ::translateInPageCoord
-            else -> ::translateInTargetCoord
-        }
-
-        return eventPeer.addEventHandler(
+        return myEventPeer.addEventHandler(
             eventSpec,
-            handler { eventHandler.onEvent(translator(it)) }
+            handler { eventHandler.onEvent(it) }
         )
     }
 
@@ -129,40 +132,40 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
     }
 
     private class DomEventPeer (private val myRootElement: Node) :
-        EventPeer<MouseEventSpec, W3cMouseEvent>(MouseEventSpec::class) {
+        EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
         private var myButtonPressed = false
         private var myWasDragged = false
 
         init {
-            handle(DomEventType.MOUSE_ENTER) { dispatch(MouseEventSpec.MOUSE_ENTERED, it) }
+            handle(DomEventType.MOUSE_ENTER) { dispatch(MouseEventSpec.MOUSE_ENTERED, translateInTargetCoord(it)) }
 
-            handle(DomEventType.MOUSE_LEAVE) { dispatch(MouseEventSpec.MOUSE_LEFT, it) }
+            handle(DomEventType.MOUSE_LEAVE) { dispatch(MouseEventSpec.MOUSE_LEFT, translateInTargetCoord(it)) }
 
             handle(DomEventType.CLICK) {
                 if (!myWasDragged) {
-                    dispatch(MouseEventSpec.MOUSE_CLICKED, it)
+                    dispatch(MouseEventSpec.MOUSE_CLICKED, translateInTargetCoord(it))
                 }
                 myWasDragged = false
             }
 
-            handle(DomEventType.DOUBLE_CLICK) { dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, it) }
+            handle(DomEventType.DOUBLE_CLICK) { dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, translateInTargetCoord(it)) }
 
             handle(DomEventType.MOUSE_DOWN) {
                 myButtonPressed = true
-                dispatch(MouseEventSpec.MOUSE_PRESSED, it)
+                dispatch(MouseEventSpec.MOUSE_PRESSED, translateInPageCoord(it))
             }
 
             handle(DomEventType.MOUSE_UP) {
                 myButtonPressed = false
-                dispatch(MouseEventSpec.MOUSE_RELEASED, it)
+                dispatch(MouseEventSpec.MOUSE_RELEASED, translateInTargetCoord(it))
             }
 
             handle(DomEventType.MOUSE_MOVE) {
                 if (myButtonPressed) {
                     myWasDragged = true
-                    dispatch(MouseEventSpec.MOUSE_DRAGGED, it)
+                    dispatch(MouseEventSpec.MOUSE_DRAGGED, translateInPageCoord(it))
                 } else {
-                    dispatch(MouseEventSpec.MOUSE_MOVED, it)
+                    dispatch(MouseEventSpec.MOUSE_MOVED, translateInTargetCoord(it))
                 }
             }
         }

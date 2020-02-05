@@ -106,7 +106,9 @@ internal class PlotTile(
         // render geoms
 
         if (liveMapGeomLayer != null) {
-            val liveMapData = liveMapGeomLayer.createCanvasFigure(geomBounds.dimension)
+            val realBounds = myLayoutInfo.getAbsoluteGeomBounds(myTilesOrigin)
+
+            val liveMapData = liveMapGeomLayer.createCanvasFigure(realBounds)
 
             val rectElement = SvgRectElement(geomBounds).apply {
                 addClass(Style.PLOT_GLASS_PANE)
@@ -260,6 +262,6 @@ internal class PlotTile(
     }
 }
 
-private fun GeomLayer.createCanvasFigure(dimension: DoubleVector): LiveMapProvider.LiveMapData {
-    return (geom as LiveMapGeom).createCanvasFigure(dimension)
+private fun GeomLayer.createCanvasFigure(bounds: DoubleRectangle): LiveMapProvider.LiveMapData {
+    return (geom as LiveMapGeom).createCanvasFigure(bounds)
 }

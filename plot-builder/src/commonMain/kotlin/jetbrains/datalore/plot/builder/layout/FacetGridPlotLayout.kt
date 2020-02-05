@@ -22,12 +22,11 @@ internal class FacetGridPlotLayout(private val myColLabels: List<String>, privat
 
         checkArgument(!(myColLabels.isEmpty() && myRowLabels.isEmpty()), "No col/row labels")
 
-        myFaceting = if (myColLabels.isEmpty())
-            Faceting.ROW
-        else if (myRowLabels.isEmpty())
-            Faceting.COL
-        else
-            Faceting.BOTH
+        myFaceting = when {
+            myColLabels.isEmpty() -> Faceting.ROW
+            myRowLabels.isEmpty() -> Faceting.COL
+            else -> Faceting.BOTH
+        }
 
         myColCount = if (myColLabels.isEmpty()) 1 else myColLabels.size
         myRowCount = if (myRowLabels.isEmpty()) 1 else myRowLabels.size
@@ -39,14 +38,13 @@ internal class FacetGridPlotLayout(private val myColLabels: List<String>, privat
     override fun doLayout(preferredSize: DoubleVector): PlotLayoutInfo {
         var tilesAreaSize = DoubleVector(
                 preferredSize.x - (paddingLeft + paddingRight),
-                preferredSize.y - (paddingTop + paddingBottom))
+                preferredSize.y - (paddingTop + paddingBottom)
+        )
 
-        val facetTabs: DoubleVector
-        when (myFaceting) {
-            FacetGridPlotLayout.Faceting.COL -> facetTabs = DoubleVector(0.0, FACET_TAB_HEIGHT)
-            FacetGridPlotLayout.Faceting.ROW -> facetTabs = DoubleVector(FACET_TAB_HEIGHT, 0.0)
-            FacetGridPlotLayout.Faceting.BOTH -> facetTabs = DoubleVector(FACET_TAB_HEIGHT, FACET_TAB_HEIGHT)
-            else -> facetTabs = DoubleVector(FACET_TAB_HEIGHT, FACET_TAB_HEIGHT)
+        val facetTabs = when (myFaceting) {
+            Faceting.COL -> DoubleVector(0.0, FACET_TAB_HEIGHT)
+            Faceting.ROW -> DoubleVector(FACET_TAB_HEIGHT, 0.0)
+            Faceting.BOTH -> DoubleVector(FACET_TAB_HEIGHT, FACET_TAB_HEIGHT)
         }
 
         tilesAreaSize = tilesAreaSize.subtract(facetTabs)
@@ -131,8 +129,8 @@ internal class FacetGridPlotLayout(private val myColLabels: List<String>, privat
                         bounds,
                         geomBounds,
                         TileLayoutBase.clipBounds(geomBounds),
-                        tileInfo.layoutInfo.xAxisInfo!!,
-                        tileInfo.layoutInfo.yAxisInfo!!,
+                        tileInfo.layoutInfo.xAxisInfo,
+                        tileInfo.layoutInfo.yAxisInfo,
                         row == myRowCount - 1, // show X-axis for bottom row tiles
                         col == 0                 // show Y-axis for leftmost tiles
                 )
@@ -190,7 +188,7 @@ internal class FacetGridPlotLayout(private val myColLabels: List<String>, privat
     }
 
     companion object {
-        private val FACET_TAB_HEIGHT = 30.0
-        private val PANEL_PADDING = 10.0
+        private const val FACET_TAB_HEIGHT = 30.0
+        private const val PANEL_PADDING = 10.0
     }
 }

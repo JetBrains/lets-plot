@@ -155,8 +155,7 @@ private fun buildPlotSvg(
     plotContainer.ensureContentBuilt()
 
     plotContainer.liveMapFigures.forEach { liveMapFigure ->
-        val canvasControl =
-            DomCanvasControl(liveMapFigure.dimension().get().toVector())
+        val canvasControl = DomCanvasControl(liveMapFigure.bounds().get().dimension.toVector())
         liveMapFigure.mapToCanvas(canvasControl)
         eventTarget.appendChild(canvasControl.rootElement)
     }

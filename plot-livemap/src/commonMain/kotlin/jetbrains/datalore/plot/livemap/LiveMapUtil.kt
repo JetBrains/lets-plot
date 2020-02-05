@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
@@ -178,12 +178,12 @@ object LiveMapUtil {
             }
         }
 
-        override fun createLiveMap(dimension: DoubleVector): LiveMapData {
-            return liveMapSpecBuilder.size(dimension).build()
+        override fun createLiveMap(bounds: DoubleRectangle): LiveMapData {
+            return liveMapSpecBuilder.size(bounds.dimension).build()
                 .let { liveMapSpec -> LiveMapFactory(liveMapSpec).createLiveMap() }
                 .let { liveMapAsync ->
                     LiveMapData(
-                        LiveMapCanvasFigure(liveMapAsync).apply { setDimension(dimension) },
+                        LiveMapCanvasFigure(liveMapAsync).apply { setBounds(bounds) },
                         LiveMapTargetLocator(liveMapAsync, myTargetSource)
                     )
                 }

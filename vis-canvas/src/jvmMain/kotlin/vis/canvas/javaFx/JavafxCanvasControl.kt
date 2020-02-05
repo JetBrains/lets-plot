@@ -37,8 +37,22 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
         component.scene = Scene(myRoot)
     }
 
+    fun safeDispatch(eventSpec: MouseEventSpec, mouseEvent: MouseEvent) {
+        if (component.bounds.contains(mouseEvent.x, mouseEvent.y)) {
+            dispatch(eventSpec, mouseEvent)
+        }
+    }
+
     fun dispatch(eventSpec: MouseEventSpec, mouseEvent: MouseEvent) {
-        myEventPeer.dispatch(eventSpec, mouseEvent)
+        myEventPeer.dispatch(
+            eventSpec,
+            MouseEvent(
+                mouseEvent.x - component.bounds.x,
+                mouseEvent.y - component.bounds.y,
+                mouseEvent.button,
+                mouseEvent.modifiers
+            )
+        )
     }
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {

@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
-internal class LivemapTileLayout : TileLayoutBase() {
+internal class LiveMapTileLayout : TileLayoutBase() {
 
     override fun doLayout(preferredSize: DoubleVector): TileLayoutInfo {
         var geomBounds = geomBounds(0.0, 0.0, preferredSize)

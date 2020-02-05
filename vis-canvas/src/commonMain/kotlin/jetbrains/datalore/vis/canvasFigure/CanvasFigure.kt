@@ -5,13 +5,13 @@
 
 package jetbrains.datalore.vis.canvasFigure
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
 
 interface CanvasFigure {
-    fun dimension(): ReadableProperty<DoubleVector>
+    fun bounds(): ReadableProperty<DoubleRectangle>
 
     fun mapToCanvas(canvasControl: CanvasControl): Registration
 }
