@@ -150,16 +150,16 @@ object MonolithicAwt {
             plotContainer.liveMapFigures.forEach { canvasFigure ->
                 val bounds = canvasFigure.bounds().get()
                 val liveMapControl = JavafxCanvasControl(
-                    bounds.dimension.toVector(),
+                    bounds.dimension,
                     1.0
                 )
 
                 Platform.runLater{ canvasFigure.mapToCanvas(liveMapControl) }
                 liveMapControl.component.bounds = Rectangle(
-                    bounds.origin.x.toInt(),
-                    bounds.origin.y.toInt(),
-                    bounds.dimension.x.toInt(),
-                    bounds.dimension.y.toInt()
+                    bounds.origin.x,
+                    bounds.origin.y,
+                    bounds.dimension.x,
+                    bounds.dimension.y
                 )
 
                 panel.add(liveMapControl.component)
@@ -218,10 +218,6 @@ object MonolithicAwt {
 
 
         return resultComponent
-    }
-
-    private fun DoubleVector.toVector(): Vector {
-        return Vector(x.toInt(), y.toInt())
     }
 
     private fun createErrorLabel(s: String): JComponent {

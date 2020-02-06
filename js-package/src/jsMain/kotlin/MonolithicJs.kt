@@ -9,7 +9,9 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.dom.DomEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.js.css.setLeft
+import jetbrains.datalore.base.js.css.setTop
+import jetbrains.datalore.base.js.css.setWidth
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
 import jetbrains.datalore.plot.MonolithicCommon
@@ -154,10 +156,20 @@ private fun buildPlotSvg(
 
     plotContainer.ensureContentBuilt()
 
+    val controls = ArrayList<DomCanvasControl>()
+
     plotContainer.liveMapFigures.forEach { liveMapFigure ->
-        val canvasControl = DomCanvasControl(liveMapFigure.bounds().get().dimension.toVector())
+        val bounds = liveMapFigure.bounds().get()
+        val canvasControl = DomCanvasControl(bounds.dimension, bounds.origin, eventTarget)
+        canvasControl.rootElement.style.run {
+            setLeft(bounds.origin.x.toDouble())
+            setTop(bounds.origin.y.toDouble())
+            setWidth(bounds.dimension.x)
+        }
+
         liveMapFigure.mapToCanvas(canvasControl)
         eventTarget.appendChild(canvasControl.rootElement)
+        controls.add(canvasControl)
     }
 
     val svgRoot = plotContainer.svg
@@ -165,10 +177,6 @@ private fun buildPlotSvg(
     SvgNodeContainer(svgRoot)
     mapper.attachRoot()
     return mapper.target
-}
-
-private fun DoubleVector.toVector(): Vector {
-    return Vector(x.toInt(), y.toInt())
 }
 
 private fun handleException(e: RuntimeException, parentElement: HTMLElement) {

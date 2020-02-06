@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
@@ -183,7 +184,15 @@ object LiveMapUtil {
                 .let { liveMapSpec -> LiveMapFactory(liveMapSpec).createLiveMap() }
                 .let { liveMapAsync ->
                     LiveMapData(
-                        LiveMapCanvasFigure(liveMapAsync).apply { setBounds(bounds) },
+                        LiveMapCanvasFigure(liveMapAsync)
+                            .apply {
+                                setBounds(Rectangle(
+                                    bounds.origin.x.toInt(),
+                                    bounds.origin.y.toInt(),
+                                    bounds.dimension.x.toInt(),
+                                    bounds.dimension.y.toInt()
+                                ))
+                            },
                         LiveMapTargetLocator(liveMapAsync, myTargetSource)
                     )
                 }

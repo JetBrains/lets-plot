@@ -31,11 +31,7 @@ import javafx.event.EventHandler as jfxHandler
 class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: Double) : CanvasControl {
     private val myRoot = Group()
     private val myEventPeer = JavafxEventPeer(myRoot)
-    val component: JFXPanel = JFXPanel()
-
-    init {
-        component.scene = Scene(myRoot)
-    }
+    val component: JFXPanel = JFXPanel().apply { scene = Scene(myRoot) }
 
     fun safeDispatch(eventSpec: MouseEventSpec, mouseEvent: MouseEvent) {
         if (component.bounds.contains(mouseEvent.x, mouseEvent.y)) {

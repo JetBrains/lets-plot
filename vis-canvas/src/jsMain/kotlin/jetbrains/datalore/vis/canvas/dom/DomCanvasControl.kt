@@ -9,8 +9,8 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.SimpleAsync
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.dom.DomEventUtil.translateInPageCoord
 import jetbrains.datalore.base.event.dom.DomEventUtil.translateInTargetCoord
+import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.base.js.css.setPosition
@@ -33,19 +33,16 @@ import org.w3c.files.BlobPropertyBag
 import kotlin.browser.document
 import org.w3c.dom.events.MouseEvent as W3cMouseEvent
 
-class DomCanvasControl(override val size: Vector) : CanvasControl {
+class DomCanvasControl(override val size: Vector, private val myEventOffset: Vector = Vector.ZERO, eventTarget: Node? = null) : CanvasControl {
+    private val myBounds = Rectangle(myEventOffset, size)
     val rootElement: HTMLElement = document.createElement("div") as HTMLElement
-    private val myEventPeer = DomEventPeer(rootElement)
+    private val myEventPeer = DomEventPeer(eventTarget ?: rootElement)
 
     init {
         rootElement.style.run {
             setPosition(CssPosition.RELATIVE)
             setZIndex(-1)
         }
-    }
-
-    fun dispatch(eventSpec: MouseEventSpec, mouseEvent: MouseEvent) {
-        myEventPeer.dispatch(eventSpec, mouseEvent)
     }
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
@@ -59,7 +56,19 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
         return myEventPeer.addEventHandler(
             eventSpec,
-            handler { eventHandler.onEvent(it) }
+            handler { mouseEvent ->
+
+                if (eventSpec in listOf(MouseEventSpec.MOUSE_DRAGGED, MouseEventSpec.MOUSE_RELEASED) || myBounds.contains(Vector(mouseEvent.x, mouseEvent.y))) {
+                    eventHandler.onEvent(
+                        MouseEvent(
+                            mouseEvent.x - myEventOffset.x,
+                            mouseEvent.y - myEventOffset.y,
+                            mouseEvent.button,
+                            mouseEvent.modifiers
+                        )
+                    )
+                }
+            }
         )
     }
 
@@ -131,7 +140,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
         f()
     }
 
-    private class DomEventPeer (private val myRootElement: Node) :
+    private class DomEventPeer (private val myEventTarget: Node) :
         EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
         private var myButtonPressed = false
         private var myWasDragged = false
@@ -152,7 +161,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
 
             handle(DomEventType.MOUSE_DOWN) {
                 myButtonPressed = true
-                dispatch(MouseEventSpec.MOUSE_PRESSED, translateInPageCoord(it))
+                dispatch(MouseEventSpec.MOUSE_PRESSED, translateInTargetCoord(it))
             }
 
             handle(DomEventType.MOUSE_UP) {
@@ -163,7 +172,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
             handle(DomEventType.MOUSE_MOVE) {
                 if (myButtonPressed) {
                     myWasDragged = true
-                    dispatch(MouseEventSpec.MOUSE_DRAGGED, translateInPageCoord(it))
+                    dispatch(MouseEventSpec.MOUSE_DRAGGED, translateInTargetCoord(it))
                 } else {
                     dispatch(MouseEventSpec.MOUSE_MOVED, translateInTargetCoord(it))
                 }
@@ -179,7 +188,7 @@ class DomCanvasControl(override val size: Vector) : CanvasControl {
 
         private fun targetNode(eventSpec: DomEventType<W3cMouseEvent>): Node = when (eventSpec) {
             DomEventType.MOUSE_MOVE, DomEventType.MOUSE_UP -> document
-            else -> myRootElement
+            else -> myEventTarget
         }
 
         override fun onSpecAdded(spec: MouseEventSpec) {}
