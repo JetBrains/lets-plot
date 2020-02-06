@@ -45,7 +45,7 @@ class TooltipBox : SvgComponent() {
     val contentRect get() = DoubleRectangle.span(DoubleVector.ZERO, myTextBox.dimension)
     var visible: Boolean
         get() = rootGroup.visibility().get() == VISIBLE
-        set(isVisible: Boolean) { rootGroup.visibility().set(VISIBLE.takeIf { isVisible } ?: HIDDEN) }
+        set(isVisible) { rootGroup.visibility().set(VISIBLE.takeIf { isVisible } ?: HIDDEN) }
 
     private val myPointerBox = PointerBox()
     private val myTextBox = TextBox()
@@ -185,7 +185,7 @@ class TooltipBox : SvgComponent() {
 
                     DoubleVector(
                         max(textDimension.x, labelBbox.width),
-                        label.y().get()!! + LINE_INTERVAL
+                        label.y().get()!! + LINE_INTERVAL + (labelBbox.height + labelBbox.top)
                     )
                 })
                 .subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line

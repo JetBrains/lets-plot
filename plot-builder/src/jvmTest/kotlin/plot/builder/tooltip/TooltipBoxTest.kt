@@ -53,7 +53,7 @@ class TooltipBoxTest {
         }
 
         tooltipBox.apply {
-            setPosition(ZERO, p(wordSize.x + 100.0, wordSize.y / 2.0), VERTICAL)
+            setPosition(ZERO, p(wordSize.x + 100.0, 4.0), VERTICAL)
             assertNull(pointerDirection, "Pointer y coord within tooltips y range - direction should be null")
         }
     }
