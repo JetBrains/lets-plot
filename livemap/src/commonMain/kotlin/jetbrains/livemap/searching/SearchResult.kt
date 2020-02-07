@@ -5,6 +5,6 @@
 
 package jetbrains.livemap.searching
 
-import jetbrains.livemap.core.ecs.EcsComponent
+import jetbrains.datalore.base.values.Color
 
-class IndexComponent(val index: Int): EcsComponent
+class SearchResult(val index: Int, val color: Color?)

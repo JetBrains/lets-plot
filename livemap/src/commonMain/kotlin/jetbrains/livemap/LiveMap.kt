@@ -19,7 +19,6 @@ import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.typedGeometry.plus
-import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
@@ -72,7 +71,8 @@ import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.scaling.ScaleUpdateSystem
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.SearchingSystem
+import jetbrains.livemap.searching.SEARCH_COMPONENTS
+import jetbrains.livemap.searching.SearchResult
 import jetbrains.livemap.services.FragmentProvider
 import jetbrains.livemap.services.GeocodingProvider
 import jetbrains.livemap.tiles.TileLoadingSystemFactory
@@ -95,8 +95,7 @@ class LiveMap(
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myGeocodingProvider: GeocodingProvider,
     private val myMapLocationRect: Async<Rect<World>>?,
-    private val myZoom: Int?,
-    private val myIndexConsumer: (Int) -> Unit
+    private val myZoom: Int?
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
@@ -125,8 +124,7 @@ class LiveMap(
     private val myComponentManager = EcsComponentManager()
 
     fun draw(canvasControl: CanvasControl) {
-        val componentManager = myComponentManager
-        val camera = MutableCamera(componentManager)
+        val camera = MutableCamera(myComponentManager)
             .apply {
                 requestZoom(viewport.zoom.toDouble())
                 requestPosition(viewport.position)
@@ -140,12 +138,12 @@ class LiveMap(
             camera = camera
         )
 
-        myUiService = UiService(componentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
+        myUiService = UiService(myComponentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
 
-        myLayerManager = createLayerManager(componentManager, myRenderTarget, canvasControl)
+        myLayerManager = createLayerManager(myComponentManager, myRenderTarget, canvasControl)
 
         val updateController = UpdateController(
-            { dt -> animationHandler(componentManager, dt) },
+            { dt -> animationHandler(myComponentManager, dt) },
             myDevParams.read(UPDATE_PAUSE_MS).toLong(),
             myDevParams.read(UPDATE_TIME_MULTIPLIER)
         )
@@ -156,13 +154,11 @@ class LiveMap(
         )
     }
 
-    fun search(coord: DoubleVector): Pair<Int, Color?>? {
-        val entities = myComponentManager.getEntities(SearchingSystem.COMPONENTS)
-
-        entities.forEach { entity ->
+    fun search(coord: DoubleVector): SearchResult? {
+        myComponentManager.getEntities(SEARCH_COMPONENTS).forEach { entity ->
             entity.get<LocatorComponent>().locatorHelper.run {
                 if (isCoordinateInTarget(explicitVec(coord.x, coord.y), entity)) {
-                    return entity.get<IndexComponent>().index to getColor(entity)
+                    return SearchResult(entity.get<IndexComponent>().index, getColor(entity))
                 }
             }
         }
@@ -218,7 +214,6 @@ class LiveMap(
                 MouseInputDetectionSystem(componentManager),
                 CameraInputSystem(componentManager),
                 CameraUpdateDetectionSystem(componentManager),
-                // SearchingSystem(componentManager, myIndexConsumer),
 
                 MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
 
@@ -277,9 +272,6 @@ class LiveMap(
                 // Effects
                 GrowingPath.GrowingPathEffectSystem(componentManager),
                 CameraScale.CameraScaleEffectSystem(componentManager)
-
-                // Tooltips
-                //TooltipTargetSystem(componentManager, myRegionGeometryConsumer),
 
                 //LoadingStateSystem(componentManager, isLoading())
             )

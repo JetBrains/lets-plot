@@ -63,8 +63,7 @@ class LiveMapFactory(
                             myMapProjection
                         )
                     ),
-                myLiveMapSpec.zoom,
-                { println(it) } // todo: set real consumer
+                myLiveMapSpec.zoom
             )
         )
     }

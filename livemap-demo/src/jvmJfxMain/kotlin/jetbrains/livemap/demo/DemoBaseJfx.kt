@@ -8,8 +8,10 @@ package jetbrains.livemap.demo
 import javafx.application.Platform
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.vis.canvas.awt.AwtCanvasDemoUtil
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
+import java.awt.BorderLayout
+import javax.swing.JFrame
+import javax.swing.WindowConstants
 
 open class DemoBaseJfx(private val demoModelProvider: (DoubleVector) -> DemoModelBase) {
     private val size: Vector get() = Vector(800, 600)
@@ -19,6 +21,15 @@ open class DemoBaseJfx(private val demoModelProvider: (DoubleVector) -> DemoMode
 
         Platform.runLater { demoModelProvider(size.toDoubleVector()).show(canvasControl) }
 
-        AwtCanvasDemoUtil.showCanvasControl("AWT Livemap Demo", canvasControl)
+        showCanvasControl("AWT LiveMap Demo", canvasControl)
+    }
+
+    private fun showCanvasControl(title: String, canvasControl: JavafxCanvasControl) {
+        val frame = JFrame(title)
+        frame.layout = BorderLayout()
+        frame.contentPane.add(canvasControl.component)
+        frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+        frame.setSize(canvasControl.size.x, canvasControl.size.y)
+        frame.isVisible = true
     }
 }

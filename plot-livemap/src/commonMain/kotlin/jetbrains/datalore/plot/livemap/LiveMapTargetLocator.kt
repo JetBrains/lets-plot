@@ -18,7 +18,7 @@ class LiveMapTargetLocator(
     liveMapAsync: Async<LiveMap>,
     private val myTargetSource: HashMap<Int, ContextualMapping>
 ) : GeomTargetLocator {
-    var myLiveMap: LiveMap? = null
+    private var myLiveMap: LiveMap? = null
 
     init {
         liveMapAsync.map { myLiveMap = it }
@@ -27,10 +27,10 @@ class LiveMapTargetLocator(
     override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
        return myLiveMap?.search(coord)?.run {
            GeomTargetLocator.LookupResult(
-               listOf(GeomTarget(first, TipLayoutHint.cursorTooltip(coord, second), HashMap())),
+               listOf(GeomTarget(index, TipLayoutHint.cursorTooltip(coord, color), HashMap())),
                TARGET_DISTANCE,
                GeomKind.LIVE_MAP,
-               myTargetSource[first]!!
+               myTargetSource[index]!!
            )
        }
     }
