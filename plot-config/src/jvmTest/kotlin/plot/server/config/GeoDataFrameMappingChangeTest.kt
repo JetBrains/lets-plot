@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.builder.map.GeoPositionField
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GEOCODING_REQUEST_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_ID_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_REGION_COLUMN
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
@@ -19,6 +18,7 @@ import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame
+import jetbrains.datalore.plot.config.Option.Meta.GeoReference
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.createLayerConfigsByLayerSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.geomPolygonSpec
@@ -97,7 +97,7 @@ class GeoDataFrameMappingChangeTest {
 
         private val MAP_DATA_WITH_IDS =
             DATA_FRAME + mapOf(
-                GEOCODING_REQUEST_COLUMN to MAP_DATA_REQUESTS,
+                GeoReference.REQUEST to MAP_DATA_REQUESTS,
                 MAP_REGION_COLUMN to MAP_DATA_REGIONS,
                 MAP_JOIN_ID_COLUMN to MAP_DATA_JOIN_KEYS,
                 GEOMETRY_COLUMN to GEOMETRIES

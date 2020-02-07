@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GEOCODING_OSM_ID_COLUMN
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GEOCODING_REQUEST_COLUMN
 import jetbrains.datalore.plot.config.Option.Meta.GeoReference
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.createLayerConfigsByLayerSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.geomPolygonSpec
@@ -20,14 +18,14 @@ class GeoReferenceMappingChangeTest {
         val cfg = createLayerConfigsByLayerSpec(geomPolygonSpec(GEO_REFERENCE, GEO_REFERENCE_META))
 
         assertThat(cfg)
-                .haveMapIds(GEO_REFERENCE[GEOCODING_REQUEST_COLUMN] as List<*>)
-                .haveMapGeocode(GEO_REFERENCE[GEOCODING_OSM_ID_COLUMN] as List<*>)
+                .haveMapIds(GEO_REFERENCE[GeoReference.REQUEST] as List<*>)
+                .haveMapGeocode(GEO_REFERENCE[GeoReference.OSM_ID] as List<*>)
     }
 
     companion object {
         private val GEO_REFERENCE = mapOf(
-                GEOCODING_REQUEST_COLUMN to listOf("foo", "bar", "xyz"),
-                GEOCODING_OSM_ID_COLUMN to listOf("123", "42", "27"),
+            GeoReference.REQUEST to listOf("foo", "bar", "xyz"),
+            GeoReference.OSM_ID to listOf("123", "42", "27"),
                 "found name" to listOf("Foo", "Bar", "xyz"),
                 "highlights" to listOf(
                         listOf("foo baz"),

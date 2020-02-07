@@ -35,6 +35,8 @@ object Option {
 
         object GeoReference {
             const val TAG = "georeference"
+            const val REQUEST = "request"
+            const val OSM_ID = "id"
         }
     }
 

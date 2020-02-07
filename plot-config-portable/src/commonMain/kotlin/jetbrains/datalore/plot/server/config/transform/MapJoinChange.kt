@@ -18,14 +18,14 @@ import jetbrains.datalore.plot.config.write
 
 class MapJoinChange: SpecChange {
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
-        val (dataJoinColumn, mapJoinColumn) = spec.select(MAP_JOIN) as List<*>
+        val (dataJoinColumn, mapJoinColumn) = spec.list(MAP_JOIN)!!
         dataJoinColumn?.let { spec.write(MAPPING, MAP_ID) { it } }
         mapJoinColumn?.let { spec.write(MAP_JOIN_COLUMN) { it } }
     }
 
     override fun isApplicable(spec: Map<String, Any>): Boolean {
         return spec.contains(MAP_JOIN)
-                && spec.contains(Option.Meta.MAP_DATA_META)
+                && spec.contains(MAP_DATA_META)
     }
 
     companion object {
