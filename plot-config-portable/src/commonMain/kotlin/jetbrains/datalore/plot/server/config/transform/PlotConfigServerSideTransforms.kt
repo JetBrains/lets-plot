@@ -15,43 +15,47 @@ object PlotConfigServerSideTransforms {
     fun migrationTransform(): PlotSpecTransform {
         // ToDo: remove after all input is updated (demo, test, sci ide)
         return PlotSpecTransform.builderForRawSpec()
-                .change(
-                    MoveGeomPropertiesToLayerMigration.specSelector(false),
-                    MoveGeomPropertiesToLayerMigration()
-                )
-                .build()
+            .change(
+                MoveGeomPropertiesToLayerMigration.specSelector(false),
+                MoveGeomPropertiesToLayerMigration()
+            )
+            .build()
     }
 
     fun entryTransform(): PlotSpecTransform {
         return PlotSpecTransform.builderForRawSpec()
-                .change(
-                    SpecSelector.of(Plot.DATA),
-                    NumericDataVectorSpecChange()
-                )
-                .change(
-                    SpecSelector.of(Plot.LAYERS, Layer.DATA),
-                    NumericDataVectorSpecChange()
-                )
-                .change(
-                    SpecSelector.of(Plot.LAYERS, Layer.GEOM, Layer.DATA),
-                    NumericDataVectorSpecChange()
-                ) // ToDo: remove (and tests)
-                .change(
-                    ReplaceDataVectorsInAesMappingChange.specSelector(),
-                    ReplaceDataVectorsInAesMappingChange()
-                )
-                .change(
-                    LonLatSpecInMappingSpecChange.specSelector(),
-                    LonLatSpecInMappingSpecChange()
-                )
-                .change(
-                    GeoDataFrameMappingChange.specSelector(),
-                    GeoDataFrameMappingChange()
-                )
-                .change(
-                    GeoPositionMappingChange.specSelector(),
-                    GeoPositionMappingChange()
-                )
-                .build()
+            .change(
+                SpecSelector.of(Plot.DATA),
+                NumericDataVectorSpecChange()
+            )
+            .change(
+                SpecSelector.of(Plot.LAYERS, Layer.DATA),
+                NumericDataVectorSpecChange()
+            )
+            .change(
+                SpecSelector.of(Plot.LAYERS, Layer.GEOM, Layer.DATA),
+                NumericDataVectorSpecChange()
+            ) // ToDo: remove (and tests)
+            .change(
+                ReplaceDataVectorsInAesMappingChange.specSelector(),
+                ReplaceDataVectorsInAesMappingChange()
+            )
+            .change(
+                MapJoinChange.specSelector(),
+                MapJoinChange()
+            )
+            .change(
+                LonLatSpecInMappingSpecChange.specSelector(),
+                LonLatSpecInMappingSpecChange()
+            )
+            .change(
+                GeoDataFrameMappingChange.specSelector(),
+                GeoDataFrameMappingChange()
+            )
+            .change(
+                GeoPositionMappingChange.specSelector(),
+                GeoPositionMappingChange()
+            )
+            .build()
     }
 }

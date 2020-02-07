@@ -2190,6 +2190,14 @@ def _geom(name, mapping=None, data=None, stat=None, position=None, show_legend=N
 
     map_data_meta = as_annotated_map_data(kwargs.get('map', None))
 
+    map_join = kwargs.get('map_join', None)
+    if map_join is not None:
+        pair = as_pair(map_join)
+        if pair is not None:
+            kwargs['map_join'] = pair
+        else:
+            raise ValueError("Unexpected 'map_join' format. Should be str, [str] or [str, str]")
+
     return LayerSpec(geom=name, stat=stat, data=data, mapping=mapping, position=position, show_legend=show_legend,
                      **data_meta, **map_data_meta,
                      **kwargs)

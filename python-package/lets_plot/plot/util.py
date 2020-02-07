@@ -2,6 +2,7 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+from collections import Iterable
 from typing import Any, Tuple
 
 
@@ -85,3 +86,16 @@ def is_ndarray(data) -> bool:
         return isinstance(data, ndarray)
     except ImportError:
         return False
+
+def as_pair(data):
+    if isinstance(data, str):
+        return [data, None]
+    elif isinstance(data, Iterable):
+        if len(data) == 0:
+            return [None, None]
+        if len(data) == 1:
+            return [data[0], None]
+        elif len(data) == 2:
+            return [data[0], data[1]]
+    else:
+        return None
