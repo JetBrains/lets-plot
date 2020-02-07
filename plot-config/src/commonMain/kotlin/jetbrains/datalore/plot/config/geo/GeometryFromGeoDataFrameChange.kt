@@ -24,10 +24,7 @@ internal class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange()
     override val geoPositionsKeys: Set<String>
         get() = GEO_DATA_FRAME_KEYS
 
-    override fun changeGeoPositions(
-        mapSpec: MutableMap<String, Any>,
-        geoDataKind: GeoDataKind
-    ) {
+    override fun changeGeoPositions(mapSpec: MutableMap<String, Any>, geoDataKind: GeoDataKind) {
         val geometryTables = (mapSpec[MAP_GEOMETRY_COLUMN] as List<*>).map { parseGeometry(it as String, geoDataKind) }
 
         if (geometryTables.sumBy { it.rowCount } == 0) {
@@ -56,10 +53,7 @@ internal class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange()
         mapSpec.putAll(dataTable)
     }
 
-    private fun parseGeometry(
-        geoJson: String,
-        geoDataKind: GeoDataKind
-    ): MutableMap<String, MutableList<Double>> {
+    private fun parseGeometry(geoJson: String, geoDataKind: GeoDataKind): MutableMap<String, MutableList<Double>> {
         val geometryTable = mutableMapOf<String, MutableList<Double>>()
 
         when (geoDataKind) {
@@ -75,7 +69,6 @@ internal class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange()
                 onPolygon = { it.flatten().forEach(geometryTable::append) }
                 onMultiPolygon = { it.flatten().flatten().forEach(geometryTable::append) }
             }
-
             GeoDataKind.BBOX -> {
                 fun insert(bboxes: List<Rect<LonLat>>) =
                     bboxes
@@ -133,16 +126,16 @@ private fun <T> MutableMap<String, MutableList<T>>.concat(key: String, values: L
     concat(mutableMapOf(key to values))
 }
 
-fun MutableMap<String, MutableList<Double>>.append(key: String, value: Double) {
+private fun MutableMap<String, MutableList<Double>>.append(key: String, value: Double) {
     getOrPut(key, { mutableListOf() }).add(value)
 }
 
-fun MutableMap<String, MutableList<Double>>.append(p: Vec<LonLat>) {
+private fun MutableMap<String, MutableList<Double>>.append(p: Vec<LonLat>) {
     append(POINT_X, p.x)
     append(POINT_Y, p.y)
 }
 
-fun MutableMap<String, MutableList<Double>>.append(rect: Rect<LonLat>) {
+private fun MutableMap<String, MutableList<Double>>.append(rect: Rect<LonLat>) {
     append(RECT_XMIN, rect.left)
     append(RECT_XMAX, rect.right)
     append(RECT_YMIN, rect.top)

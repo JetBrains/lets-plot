@@ -3,7 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, geo_data_frame_to_lon_lat
+from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, geo_data_frame_to_lon_lat, as_pair
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -49,7 +49,10 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         Dictionary and DataFrame object must contain keys/columns:
         1. 'x' or 'lon' or 'long'
         2. 'y' or 'lat'
-    map_join : name used to join map coordinates with data
+    map_join : str, pair, optional
+        Pair of names used to join map coordinates with data.
+        str or fist value in pair - column in data
+        second value in pair - column in map
     other_args :
         Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -121,7 +124,10 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         Dictionary and DataFrame object must contain keys/columns:
         1. 'x' or 'lon' or 'long'
         2. 'y' or 'lat'
-    map_join : name used to join map coordinates with data
+    map_join : str, pair, optional
+        Pair of names used to join map coordinates with data.
+        str or fist value in pair - column in data
+        second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1087,7 +1093,10 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         Dictionary and DataFrame object must contain keys/columns:
         1. 'x' or 'lon' or 'long'
         2. 'y' or 'lat'
-    map_join : name used to join map coordinates with data    
+    map_join : str, pair, optional
+        Pair of names used to join map coordinates with data.
+        str or fist value in pair - column in data
+        second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1152,7 +1161,10 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
         It must contain columns:
          1. 'x' or 'lon' or 'long'
          2. 'y' or 'lat'
-    map_join : name used to join map coordinates with data
+    map_join : str, pair, optional
+        Pair of names used to join map coordinates with data.
+        str or fist value in pair - column in data
+        second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -1994,7 +2006,10 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
         Data must contain columns:
          1. 'x' or 'lon' or 'long'
          2. 'y' or 'lat'
-    map_join : name used to join map coordinates with data	
+    map_join : str, pair, optional
+        Pair of names used to join map coordinates with data.
+        str or fist value in pair - column in data
+        second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2119,7 +2134,10 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
         Data must contain columns:
          1. 'x' or 'lon' or 'long'
          2. 'y' or 'lat'
-    map_join : name used to join map coordinates with data
+    map_join : str, pair, optional
+        Pair of names used to join map coordinates with data.
+        str or fist value in pair - column in data
+        second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -2199,5 +2217,4 @@ def _geom(name, mapping=None, data=None, stat=None, position=None, show_legend=N
             raise ValueError("Unexpected 'map_join' format. Should be str, [str] or [str, str]")
 
     return LayerSpec(geom=name, stat=stat, data=data, mapping=mapping, position=position, show_legend=show_legend,
-                     **data_meta, **map_data_meta,
-                     **kwargs)
+                     **data_meta, **map_data_meta, **kwargs)

@@ -27,10 +27,7 @@ internal abstract class GeometryFromGeoPositionsChange : SpecChange {
         return isGeomSupported(getGeomKind(spec))
     }
 
-    override fun apply(
-        spec: MutableMap<String, Any>,
-        ctx: SpecChangeContext
-    ) {
+    override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         @Suppress("UNCHECKED_CAST")
         val mapSpec = spec[GEO_POSITIONS] as MutableMap<String, Any>
         val geoDataKind: GeoPositionsDataUtil.GeoDataKind = getGeoDataKind(getGeomKind(spec))
@@ -38,16 +35,9 @@ internal abstract class GeometryFromGeoPositionsChange : SpecChange {
     }
 
     abstract val geoPositionsKeys: Set<String>
-    abstract fun changeGeoPositions(
-        mapSpec: MutableMap<String, Any>,
-        geoDataKind: GeoPositionsDataUtil.GeoDataKind
-    )
+    abstract fun changeGeoPositions(mapSpec: MutableMap<String, Any>, geoDataKind: GeoPositionsDataUtil.GeoDataKind)
 
     companion object {
-        fun getStringStream(map: MutableMap<*, *>?, key: String?): List<String?>? {
-            return (map!![key] as MutableList<*>?)?.map { o: Any? -> o as String? }
-        }
-
         private fun getGeomKind(layerSpec: Map<String, Any>): GeomKind {
             val name = layerSpec[GEOM] as String
             return Option.GeomName.toGeomKind(name)

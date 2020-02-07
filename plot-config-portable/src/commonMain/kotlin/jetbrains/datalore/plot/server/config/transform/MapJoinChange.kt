@@ -10,7 +10,8 @@ import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_COLUMN
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.Option.Layer.MAPPING
 import jetbrains.datalore.plot.config.Option.Mapping.MAP_ID
-import jetbrains.datalore.plot.config.select
+import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
+import jetbrains.datalore.plot.config.list
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector

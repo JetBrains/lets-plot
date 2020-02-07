@@ -45,6 +45,10 @@ fun Map<*, *>.section(path: List<String>): Map<*, *>? {
     return path.fold<String, Map<*, *>?>(this, { section, next -> section?.read(next)?.let { it as Map<*, *> } ?: return@fold null } )
 }
 
+fun Map<*, *>.list(vararg query: String): List<*>? {
+    return list(query.dropLast(1), query.last())
+}
+
 fun Map<*, *>.list(path: List<String>, item: String): List<*>? {
     return section(path)?.get(item) as? List<*>
 }
