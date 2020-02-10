@@ -8,12 +8,17 @@ package jetbrains.datalore.base.event.awt
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.KeyModifiers
 import jetbrains.datalore.base.event.MouseEvent
+import jetbrains.datalore.base.geometry.Vector
 import java.awt.event.MouseEvent as AwtMouseEvent
 
 object AwtEventUtil {
 
-    fun translate(e: AwtMouseEvent): MouseEvent {
-        return MouseEvent(e.x, e.y, getButton(e), getModifiers(e))
+    fun translate(e: AwtMouseEvent, offset: Vector = Vector.ZERO): MouseEvent {
+        return MouseEvent(
+            e.x - offset.x,
+            e.y - offset.y,
+            getButton(e),
+            getModifiers(e))
     }
 
     private fun getButton(e: AwtMouseEvent): Button {

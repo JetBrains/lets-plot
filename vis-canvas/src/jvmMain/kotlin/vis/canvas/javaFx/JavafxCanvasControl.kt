@@ -5,16 +5,11 @@
 
 package jetbrains.datalore.vis.canvas.javaFx
 
-import javafx.embed.swing.JFXPanel
 import javafx.scene.Group
-import javafx.scene.Node
-import javafx.scene.Scene
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.MouseEventSpec.*
-import jetbrains.datalore.base.event.jfx.JfxEventUtil
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.handler
@@ -26,30 +21,14 @@ import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasUtil.imagePngBase64ToImage
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasUtil.imagePngByteArrayToImage
-import javafx.event.EventHandler as jfxHandler
 
-class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: Double) : CanvasControl {
-    private val myRoot = Group()
-    private val myEventPeer = JavafxEventPeer(myRoot)
-    val component: JFXPanel = JFXPanel().apply { scene = Scene(myRoot) }
 
-    fun safeDispatch(eventSpec: MouseEventSpec, mouseEvent: MouseEvent) {
-        if (component.bounds.contains(mouseEvent.x, mouseEvent.y)) {
-            dispatch(eventSpec, mouseEvent)
-        }
-    }
-
-    fun dispatch(eventSpec: MouseEventSpec, mouseEvent: MouseEvent) {
-        myEventPeer.dispatch(
-            eventSpec,
-            MouseEvent(
-                mouseEvent.x - component.bounds.x,
-                mouseEvent.y - component.bounds.y,
-                mouseEvent.button,
-                mouseEvent.modifiers
-            )
-        )
-    }
+class JavafxCanvasControl(
+    private val myRoot: Group,
+    override val size: Vector,
+    private val myPixelRatio: Double,
+    private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>
+) : CanvasControl {
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
         return object : JavafxAnimationTimer() {
@@ -112,41 +91,6 @@ class JavafxCanvasControl(override val size: Vector, private val myPixelRatio: D
 
     override fun <T> schedule(f: () -> T) {
         JavafxCanvasUtil.runInJavafxThread(f)
-    }
-
-    private class JavafxEventPeer(node: Node) : EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
-
-        init {
-            node.onMouseEntered = jfxHandler {
-                dispatch(MOUSE_ENTERED, JfxEventUtil.translate(it) )
-            }
-            node.onMouseExited = jfxHandler {
-                dispatch(MOUSE_LEFT, JfxEventUtil.translate(it))
-            }
-            node.onMouseMoved = jfxHandler {
-                dispatch(MOUSE_MOVED, JfxEventUtil.translate(it))
-            }
-            node.onMouseDragged = jfxHandler {
-                dispatch(MOUSE_DRAGGED, JfxEventUtil.translate(it))
-            }
-            node.onMouseClicked = jfxHandler {
-                if (it.clickCount % 2 == 1) {
-                    dispatch(MOUSE_CLICKED, JfxEventUtil.translate(it))
-                } else {
-                    dispatch(MOUSE_DOUBLE_CLICKED, JfxEventUtil.translate(it))
-                }
-            }
-            node.onMousePressed = jfxHandler {
-                dispatch(MOUSE_PRESSED, JfxEventUtil.translate(it))
-            }
-            node.onMouseReleased = jfxHandler {
-                dispatch(MOUSE_RELEASED, JfxEventUtil.translate(it))
-            }
-        }
-
-        override fun onSpecAdded(spec: MouseEventSpec) {}
-
-        override fun onSpecRemoved(spec: MouseEventSpec) {}
     }
 
     private operator fun Vector.times(value: Int): Vector {

@@ -7,15 +7,17 @@ package jetbrains.datalore.plot
 
 import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
+import javafx.scene.Group
+import javafx.scene.Scene
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.config.FailureHandler
+import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.awt.svgToString.SvgToString
@@ -148,22 +150,30 @@ object MonolithicAwt {
             panel.add(plotComponent)
 
             plotContainer.liveMapFigures.forEach { canvasFigure ->
-                val bounds = canvasFigure.bounds().get()
-                val liveMapControl = JavafxCanvasControl(
-                    bounds.dimension,
-                    1.0
-                )
+                val canvasBounds = canvasFigure.bounds().get()
+                val rootGroup = Group()
 
-                Platform.runLater{ canvasFigure.mapToCanvas(liveMapControl) }
-                liveMapControl.component.bounds = Rectangle(
-                    bounds.origin.x,
-                    bounds.origin.y,
-                    bounds.dimension.x,
-                    bounds.dimension.y
-                )
+                JFXPanel()
+                    .apply {
+                        scene = Scene(rootGroup)
+                        bounds = Rectangle(
+                            canvasBounds.origin.x,
+                            canvasBounds.origin.y,
+                            canvasBounds.dimension.x,
+                            canvasBounds.dimension.y
+                        )
+                        panel.add(this)
+                    }
 
-                panel.add(liveMapControl.component)
-                controls.add(liveMapControl)
+                JavafxCanvasControl(
+                    rootGroup,
+                    canvasBounds.dimension,
+                    1.0,
+                    AwtEventPeer(plotComponent, canvasBounds)
+                ).let {
+                    Platform.runLater{ canvasFigure.mapToCanvas(it) }
+                    controls.add(it)
+                }
             }
 
             panel
@@ -175,27 +185,6 @@ object MonolithicAwt {
                 executor {
                     plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
                 }
-
-                controls.forEach { it.safeDispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e)) }
-            }
-
-            override fun mousePressed(e: MouseEvent) {
-                super.mousePressed(e)
-                controls.forEach { it.safeDispatch(MouseEventSpec.MOUSE_PRESSED, AwtEventUtil.translate(e)) }
-            }
-
-            override fun mouseReleased(e: MouseEvent) {
-                super.mouseReleased(e)
-                controls.forEach { it.dispatch(MouseEventSpec.MOUSE_RELEASED, AwtEventUtil.translate(e)) }
-            }
-
-            override fun mouseClicked(e: MouseEvent) {
-                super.mouseClicked(e)
-                if (e.clickCount % 2 == 1) {
-                    controls.forEach { it.safeDispatch(MouseEventSpec.MOUSE_CLICKED, AwtEventUtil.translate(e)) }
-                } else {
-                    controls.forEach { it.safeDispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, AwtEventUtil.translate(e)) }
-                }
             }
         })
 
@@ -205,14 +194,6 @@ object MonolithicAwt {
                 executor {
                     plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
                 }
-
-                controls.forEach { it.safeDispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e)) }
-            }
-
-            override fun mouseDragged(e: MouseEvent) {
-                super.mouseDragged(e)
-
-                controls.forEach { it.dispatch(MouseEventSpec.MOUSE_DRAGGED, AwtEventUtil.translate(e)) }
             }
         })
 
