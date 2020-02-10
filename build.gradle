@@ -15,8 +15,8 @@ plugins {
 }
 
 group 'org.jetbrains.lets-plot'
-version "1.2.0rc2"
-project.ext.js_artifact_version = "1.2.0rc2"
+version "1.2.1-SNAPSHOT"
+project.ext.js_artifact_version = "1.2.dev1"
 
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
