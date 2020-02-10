@@ -11,8 +11,10 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class CoordLim : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            noLims(),
-            xLims()
+            //fixed(),
+            fixedLim()
+            //noLims(),
+            //xLims()
         )
     }
 
@@ -48,7 +50,7 @@ class CoordLim : PlotConfigDemoBase() {
     }
 
     private fun noLims(): Map<String, Any> {
-        return createSpec(null)
+        return createSpec(null).apply { this["ggtitle"] = mapOf("text" to "coord_cartesian(x_lim=[2, 22])") }
     }
 
     private fun xLims(): Map<String, Any> {
@@ -62,6 +64,34 @@ class CoordLim : PlotConfigDemoBase() {
         """.trimMargin()
         )
         spec["ggtitle"] = mapOf("text" to "coord_cartesian(x_lim=[2, 22])")
+        return spec
+    }
+
+    private fun fixedLim(): Map<String, Any> {
+        val spec = createSpec(
+            """
+            |   'coord': {
+            |       'name': 'fixed', 
+            |       'xlim': [2, 22], 
+            |       'ylim': null
+            |   }
+        """.trimMargin()
+        )
+        spec["ggtitle"] = mapOf("text" to "coord_fixed(x_lim=[2, 22])")
+        return spec
+    }
+
+    private fun fixed(): Map<String, Any> {
+        val spec = createSpec(
+            """
+            |   'coord': {
+            |       'name': 'fixed', 
+            |       'xlim': null, 
+            |       'ylim': null
+            |   }
+        """.trimMargin()
+        )
+        spec["ggtitle"] = mapOf("text" to "coord_fixed()")
         return spec
     }
 }

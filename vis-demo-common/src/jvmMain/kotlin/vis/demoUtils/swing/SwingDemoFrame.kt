@@ -63,7 +63,7 @@ abstract class SwingDemoFrame(
     abstract fun createSvgComponent(svgRoot: SvgSvgElement): JComponent
 
     companion object {
-        val FRAME_SIZE = Dimension(800, 600)
+        val FRAME_SIZE = Dimension(800, 1200)
         private const val MARGIN_LEFT = 50
         const val SPACE_V = 5
 

@@ -28,9 +28,9 @@ internal open class FixedRatioCoordProvider(
         displaySize: DoubleVector
     ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
         @Suppress("NAME_SHADOWING")
-        var xDomain = xDomain
+        var xDomain = xLim ?: xDomain
         @Suppress("NAME_SHADOWING")
-        var yDomain = yDomain
+        var yDomain = yLim ?: yDomain
 
         val spanX = SeriesUtil.span(xDomain)
         val spanY = SeriesUtil.span(yDomain)
@@ -52,17 +52,33 @@ internal open class FixedRatioCoordProvider(
             displayH *= 1 / myRatio
         }
 
-        val ratioX = spanX / displayW
-        val ratioY = spanY / displayH
+        val ratioX: Double
+        val ratioY: Double
 
-        // Take bigger ratio and apply to ortogonal domain (axis) so that
-        // ratio: (data range) / (axis length) is the same for both X and Y.
-        if (ratioX > ratioY) {
-            val spanAdjusted = displayH * ratioX
-            yDomain = SeriesUtil.expand(yDomain, spanAdjusted)
+        if (xLim == null && yLim == null || xLim != null && yLim != null) {
+            ratioX = spanX / displayW
+            ratioY = spanY / displayH
+            // Take bigger ratio and apply to ortogonal domain (axis) so that
+            // ratio: (data range) / (axis length) is the same for both X and Y.
+            if (ratioX > ratioY) {
+                val spanAdjusted = displayH * ratioX
+                yDomain = SeriesUtil.expand(yDomain, spanAdjusted)
+            } else {
+                val spanAdjusted = displayW * ratioY
+                xDomain = SeriesUtil.expand(xDomain, spanAdjusted)
+            }
         } else {
-            val spanAdjusted = displayW * ratioY
-            xDomain = SeriesUtil.expand(xDomain, spanAdjusted)
+            if (xLim != null) {
+                ratioX = spanX / displayW
+                val spanAdjusted = displayH * ratioX
+                yDomain = SeriesUtil.expand(yDomain, spanAdjusted)
+
+
+            } else {
+                ratioY = spanY / displayH
+                val spanAdjusted = displayW * ratioY
+                xDomain = SeriesUtil.expand(xDomain, spanAdjusted)
+            }
         }
 
         return Pair(xDomain, yDomain)
