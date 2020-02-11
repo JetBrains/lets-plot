@@ -30,8 +30,24 @@ Upgrade `Lets-Plot` version to just released RC version:
 
 ##### 1. NBViewer
 
-TBD.
+No farther changes needed.
 
 ##### 2. Binder
 
-TBD.
+In all notebooks which uses new features or fixes included in the coming production build update the *demos-tag* part in
+the Binder URLs.  
+
+For example: the next *Lets-Plot* version is 1.2.3. The *demos-tag* is going to be **v1.2.3demos1*** add all Binder URLs
+like:
+
+`https://mybinder.org/v2/gh/JetBrains/lets-plot/v1.1.0demos1?....`
+
+need to be updated as: 
+
+`https://mybinder.org/v2/gh/JetBrains/lets-plot/v1.2.3demos1?....`
+
+Push the updated demo notebooks and git tag:
+
+`git add --all && git commit -m "Updated demo notebooks binder url to match repo tag v1.2.3demos1" && git push`
+
+`git tag v1.2.3demos1 && git push --tags`
