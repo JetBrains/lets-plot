@@ -18,17 +18,16 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     private var myAxisTooltipVisibilityFromConfig: Boolean? = null
     private var myAxisAesFromFunctionKind: List<Aes<*>>? = null
     private var myAxisAesFromConfig: List<Aes<*>>? = null
+    private var hiddenAes: List<Aes<*>>? = null
 
     val axisAes: List<Aes<*>>
         get() = myAxisAesFromConfig ?: myAxisAesFromFunctionKind ?: ArrayList()
 
     val displayableAes: List<Aes<*>>
-        get() = if (myAxisAesFromFunctionKind != null) {
-            exclude(
-                mySupportedAesList,
-                myAxisAesFromFunctionKind!!
-            )
-        } else mySupportedAesList
+        get() = excludeFromAesList(
+            excludeFromAesList(mySupportedAesList, myAxisAesFromFunctionKind),
+            hiddenAes
+        )
 
     val isAxisTooltipEnabled: Boolean
         get() = if (myAxisTooltipVisibilityFromConfig == null)
@@ -36,8 +35,20 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         else
             myAxisTooltipVisibilityFromConfig!!
 
+    private fun excludeFromAesList(aesList: List<Aes<*>>, aesToRemove: List<Aes<*>>?): List<Aes<*>> {
+        return if (aesToRemove != null)
+            exclude(aesList, aesToRemove!!)
+        else
+            aesList
+    }
+
     fun showAxisTooltip(isTrue: Boolean): GeomInteractionBuilder {
         myAxisTooltipVisibilityFromConfig = isTrue
+        return this
+    }
+
+    fun hideAes(aes: List<Aes<*>>): GeomInteractionBuilder {
+        hiddenAes = aes
         return this
     }
 

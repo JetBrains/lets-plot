@@ -207,7 +207,6 @@ object PlotConfigClientSideUtil {
         when (geomKind) {
             GeomKind.DENSITY,
             GeomKind.FREQPOLY,
-            GeomKind.BOX_PLOT,
             GeomKind.HISTOGRAM,
             GeomKind.LINE,
             GeomKind.AREA,
@@ -216,7 +215,7 @@ object PlotConfigClientSideUtil {
             GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE -> return builder.univariateFunction(LookupStrategy.HOVER)
-
+            GeomKind.BOX_PLOT ->  return builder.univariateFunction(LookupStrategy.HOVER).hideAes(listOf(Aes.Y))
             GeomKind.SMOOTH,
             GeomKind.POINT,
             GeomKind.CONTOUR,
