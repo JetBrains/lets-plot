@@ -8,10 +8,7 @@ package jetbrains.datalore.plot.builder.interact.loc
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.base.interact.HitShape
+import jetbrains.datalore.plot.base.interact.*
 
 class LayerTargetCollectorWithLocator(
     private val geomKind: GeomKind,
@@ -32,22 +29,35 @@ class LayerTargetCollectorWithLocator(
         )
     }
 
-    override fun addRectangle(index: Int, rectangle: DoubleRectangle, tooltipParams: GeomTargetCollector.TooltipParams) {
+    override fun addRectangle(
+        index: Int,
+        rectangle: DoubleRectangle,
+        tooltipParams: GeomTargetCollector.TooltipParams,
+        tooltipKind: TipLayoutHint.Kind
+    ) {
         addTarget(
             TargetPrototype(
                 HitShape.rect(rectangle),
                 { index },
-                tooltipParams
+                tooltipParams,
+                tooltipKind
             )
         )
     }
 
-    override fun addPath(points: List<DoubleVector>, localToGlobalIndex: (Int) -> Int, tooltipParams: GeomTargetCollector.TooltipParams, closePath: Boolean) {
+    override fun addPath(
+        points: List<DoubleVector>,
+        localToGlobalIndex: (Int) -> Int,
+        tooltipParams: GeomTargetCollector.TooltipParams,
+        closePath: Boolean,
+        tooltipKind: TipLayoutHint.Kind
+    ) {
         addTarget(
             TargetPrototype(
                 HitShape.path(points, closePath),
                 localToGlobalIndex,
-                tooltipParams
+                tooltipParams,
+                tooltipKind
             )
         )
     }

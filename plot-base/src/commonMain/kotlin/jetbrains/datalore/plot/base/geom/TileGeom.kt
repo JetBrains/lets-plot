@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.RectTargetCollectorHelper
 import jetbrains.datalore.plot.base.geom.util.RectanglesHelper
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 /**
@@ -36,7 +37,8 @@ open class TileGeom : GeomBase() {
         RectTargetCollectorHelper(
             helper,
             rectangleByDataPoint(ctx),
-            { p: DataPointAesthetics -> HintColorUtil.fromFill(p) })
+            { p: DataPointAesthetics -> HintColorUtil.fromFill(p) },
+            TipLayoutHint.Kind.VERTICAL_TOOLTIP)
             .collectTo(ctx.targetCollector)
     }
 

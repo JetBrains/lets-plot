@@ -12,33 +12,52 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.HitShape
 import jetbrains.datalore.plot.base.interact.HitShape.Kind.*
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 
 class TargetPrototype(
     internal val hitShape: HitShape,
     internal val indexMapper: (Int) -> Int,
-    private val tooltipParams: TooltipParams) {
+    private val tooltipParams: TooltipParams,
+    private val tooltipKind: TipLayoutHint.Kind
+) {
 
     internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
         return GeomTarget(
             hitIndex,
-            createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor()),
+            createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor(), tooltipKind),
             tooltipParams.getTipLayoutHints()
         )
     }
 
     companion object {
-        fun createTipLayoutHint(hitCoord: DoubleVector, hitShape: HitShape, fill: Color): TipLayoutHint {
+        fun createTipLayoutHint(
+            hitCoord: DoubleVector,
+            hitShape: HitShape,
+            fill: Color,
+            tooltipKind: TipLayoutHint.Kind
+        ): TipLayoutHint {
+
             return when (hitShape.kind) {
-                RECT -> {
-                    val radius = hitShape.rect.width / 2
-                    TipLayoutHint.horizontalTooltip(hitCoord, radius, fill)
+                POINT -> when (tooltipKind) {
+                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, hitShape.point.radius, fill)
+                    else -> error("Wrong TipLayoutHint.kind = $tooltipKind for POINT")
                 }
 
-                POINT -> TipLayoutHint.verticalTooltip(hitCoord, hitShape.point.radius, fill)
+                RECT -> when (tooltipKind) {
+                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, 0.0, fill)
+                    HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, hitShape.rect.width / 2, fill)
+                    else -> error("Wrong TipLayoutHint.kind = $tooltipKind for RECT")
+                }
 
-                PATH -> TipLayoutHint.horizontalTooltip(hitCoord, 0.0, fill)
+                PATH -> when (tooltipKind) {
+                    HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, 0.0, fill)
+                    else -> error("Wrong TipLayoutHint.kind = $tooltipKind for PATH")
+                }
 
-                POLYGON -> TipLayoutHint.cursorTooltip(hitCoord, fill)
+                POLYGON -> when (tooltipKind) {
+                    CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(hitCoord, fill)
+                    else -> error("Wrong TipLayoutHint.kind = $tooltipKind for POLYGON")
+                }
             }
         }
     }

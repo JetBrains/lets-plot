@@ -12,11 +12,28 @@ import jetbrains.datalore.plot.base.Aes
 
 interface GeomTargetCollector {
 
-    fun addPoint(index: Int, point: DoubleVector, radius: Double, tooltipParams: TooltipParams)
+    fun addPoint(
+        index: Int,
+        point: DoubleVector,
+        radius: Double,
+        tooltipParams: TooltipParams,
+        tooltipKind: TipLayoutHint.Kind = TipLayoutHint.Kind.VERTICAL_TOOLTIP
+    )
 
-    fun addRectangle(index: Int, rectangle: DoubleRectangle, tooltipParams: TooltipParams)
+    fun addRectangle(
+        index: Int,
+        rectangle: DoubleRectangle,
+        tooltipParams: TooltipParams,
+        tooltipKind: TipLayoutHint.Kind = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+    )
 
-    fun addPath(points: List<DoubleVector>, localToGlobalIndex: (Int) -> Int, tooltipParams: TooltipParams, closePath: Boolean)
+    fun addPath(
+        points: List<DoubleVector>,
+        localToGlobalIndex: (Int) -> Int,
+        tooltipParams: TooltipParams,
+        closePath: Boolean,
+        tooltipKind: TipLayoutHint.Kind = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+    )
 
     class TooltipParams {
 

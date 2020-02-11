@@ -20,41 +20,52 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
     private val myAesTipLayoutHints: MutableMap<Aes<*>, TipLayoutHint> = HashMap()
     private var myFill = Color.TRANSPARENT
 
-    fun withPointHitShape(coord: DoubleVector, radius: Double): jetbrains.datalore.plot.builder.interact.TestingGeomTargetBuilder {
+    fun withPointHitShape(coord: DoubleVector, radius: Double): TestingGeomTargetBuilder {
         myHintShape = HitShape.point(coord, radius)
         return this
     }
 
-    fun withPathHitShape(): jetbrains.datalore.plot.builder.interact.TestingGeomTargetBuilder {
+    fun withPathHitShape(): TestingGeomTargetBuilder {
         myHintShape = HitShape.path(emptyList(), false)
         return this
     }
 
-    fun withPolygonHitShape(cursorCoord: DoubleVector): jetbrains.datalore.plot.builder.interact.TestingGeomTargetBuilder {
+    fun withPolygonHitShape(cursorCoord: DoubleVector): TestingGeomTargetBuilder {
         myTargetHitCoord = cursorCoord
         myHintShape = HitShape.path(emptyList(), true)
         return this
     }
 
-    fun withRectHitShape(rect: DoubleRectangle): jetbrains.datalore.plot.builder.interact.TestingGeomTargetBuilder {
+    fun withRectHitShape(rect: DoubleRectangle): TestingGeomTargetBuilder {
         myHintShape = HitShape.rect(rect)
         return this
     }
 
-    fun withLayoutHint(aes: Aes<*>, layoutHint: TipLayoutHint): jetbrains.datalore.plot.builder.interact.TestingGeomTargetBuilder {
+    fun withLayoutHint(aes: Aes<*>, layoutHint: TipLayoutHint): TestingGeomTargetBuilder {
         myAesTipLayoutHints[aes] = layoutHint
         return this
     }
 
-    fun withFill(fill: Color): jetbrains.datalore.plot.builder.interact.TestingGeomTargetBuilder {
+    fun withFill(fill: Color): TestingGeomTargetBuilder {
         myFill = fill
         return this
     }
 
     fun build(): GeomTarget {
+
+       fun detectTipLayoutHint(kind : HitShape.Kind) : TipLayoutHint.Kind {
+            return when (kind) {
+                HitShape.Kind.POINT -> TipLayoutHint.Kind.VERTICAL_TOOLTIP
+                HitShape.Kind.RECT -> TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                HitShape.Kind.POLYGON -> TipLayoutHint.Kind.CURSOR_TOOLTIP
+                HitShape.Kind.PATH -> TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                else -> error("Unkown hint shape kind")
+            }
+        }
+
         return GeomTarget(
             IGNORED_HIT_INDEX,
-            createTipLayoutHint(myTargetHitCoord, myHintShape, myFill),
+            createTipLayoutHint(myTargetHitCoord, myHintShape, myFill, detectTipLayoutHint(myHintShape.kind)),
             myAesTipLayoutHints
         )
     }

@@ -221,8 +221,7 @@ object PlotConfigClientSideUtil {
             GeomKind.POINT,
             GeomKind.CONTOUR,
             GeomKind.RIBBON,
-            GeomKind.DENSITY2D,
-            GeomKind.TILE -> {
+            GeomKind.DENSITY2D -> {
                 if (geomKind === GeomKind.SMOOTH) {
                     builder.axisAes(listOf(Aes.X))
                 }
@@ -240,6 +239,7 @@ object PlotConfigClientSideUtil {
                 return builder.bivariateFunction(AREA_GEOM)
             }
 
+            GeomKind.TILE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
             GeomKind.POLYGON,

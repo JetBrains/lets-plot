@@ -53,6 +53,6 @@ class PlotConfigClientSideUtilTest {
     }
 
     companion object {
-        private val WITHOUT_AXIS_TOOLTIP = listOf(PATH, MAP, DENSITY2DF, CONTOURF, POLYGON, BIN_2D, LIVE_MAP)
+        private val WITHOUT_AXIS_TOOLTIP = listOf(PATH, MAP, DENSITY2DF, CONTOURF, POLYGON, TILE, BIN_2D, LIVE_MAP)
     }
 }
