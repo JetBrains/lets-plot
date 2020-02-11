@@ -70,13 +70,15 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <a href="https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb"> 
     <img src="https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.png" width="109" height="20" align="left">
 </a>
+<br>
+<br>
 
 
 ### What is new in v.1.2.0
 
 * Shapely and GeoPandas support.
 
-    GeoPandas *GeoDataFrame* is supported by following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`
+    GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
 
     Examples: 
 
