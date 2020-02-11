@@ -19,12 +19,19 @@ class LayerTargetCollectorWithLocator(
     private val myTargets = ArrayList<TargetPrototype>()
     private var myLocator: GeomTargetLocator? = null
 
-    override fun addPoint(index: Int, point: DoubleVector, radius: Double, tooltipParams: GeomTargetCollector.TooltipParams) {
+    override fun addPoint(
+        index: Int,
+        point: DoubleVector,
+        radius: Double,
+        tooltipParams: GeomTargetCollector.TooltipParams,
+        tooltipKind: TipLayoutHint.Kind
+    ) {
         addTarget(
             TargetPrototype(
                 HitShape.point(point, radius),
                 { index },
-                tooltipParams
+                tooltipParams,
+                tooltipKind
             )
         )
     }

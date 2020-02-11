@@ -17,12 +17,12 @@ class PlotConfigClientSideUtilTest {
     fun shouldShowAxisTooltip() {
         val layerSettingsList = ArrayList<Pair<GeomKind, StatKind>>()
 
-        GeomKind.values()
+        values()
             .filter { geomKind -> !WITHOUT_AXIS_TOOLTIP.contains(geomKind) }
             .forEach { geomKind -> layerSettingsList.add(Pair(geomKind, StatKind.IDENTITY)) }
 
         listOf(StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D)
-            .forEach { statKind -> layerSettingsList.add(Pair(GeomKind.PATH, statKind)) }
+            .forEach { statKind -> layerSettingsList.add(Pair(PATH, statKind)) }
 
         assertAxisTooltipEnabled(layerSettingsList, true)
     }
