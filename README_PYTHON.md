@@ -72,41 +72,65 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 </a>
 
 
-### Examples
+### What is new in v.1.2.0
 
-Try the following examples to study more features of the Lets-Plot library.
+* Shapely and GeoPandas support.
 
-Quickstart in Jupyter: [quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb)
+    GeoPandas *GeoDataFrame* is supported by following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`
 
-Histogram, density plot, box plot and facets:
+    Examples: 
+
+    - Basics of map creation using *Lets-Plot* and *GeoPandas*: [geopandas_naturalearth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb)
+
+    - Inset map of Kotlin island: [geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb)
+
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="630" height="449"><br><br>
+
+* Plot cropping using `xlim, ylim` parameters of coordinate system.
+
+    See GeoPandas demos above.
+
+* LOESS smoothing method in geom_smooth: 
+[geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb)
+
+* New geometry layers.
+
+    `geom_crossbar, geom_linerange, geom_pointrange`: 
+[error_bars.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/error_bars.ipynb)
+
+    `geom_bin2d`:
+[density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/density_2d)
+
+
+
+### Example Notebooks
+
+Try the following examples to study more features of the `Lets-Plot` library.
+
+* Quickstart in Jupyter: [quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb)
+
+* Histogram, density plot, box plot and facets:
 [distributions.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/distributions.ipynb) 
 
-Error-bars, points, lines, bars, dodge position:
+* Error-bars, points, lines, bars, dodge position:
 [error_bars.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/error_bars.ipynb)
  
-Points, point shapes, linear regression, jitter position:
+* Points, point shapes, linear regression, jitter position:
 [scatter_plot.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/scatter_plot.ipynb)
  
-Points, density2d, polygons, density2df:
+* Points, density2d, polygons, density2df:
 [density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/density_2d.ipynb)
  
-Tiles, contours, polygons, contourf:
+* Tiles, contours, polygons, contourf:
 [contours.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/contours.ipynb)
  
-Various presentation options:
+* Various presentation options:
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
   
-
-### Other demos
-
-A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) with `Lets-Plot` for visualization.    
   
-
-### New to experienced users
-
 The following features of `Lets-Plot` are not present or have different implementation in other `Grammar of Graphics` libraries.
 
-#### Plotting functions
+##### Plotting functions
 
 * `ggsize()` - sets the size of the plot. Used in many examples starting from `quickstart`.
 * `geom_density2df()` - fills space between equal density lines on a 2D density plot. Similar to `geom_density2d` but supports the `fill` aesthetic.
@@ -127,7 +151,7 @@ The following features of `Lets-Plot` are not present or have different implemen
 
     Example: [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb)
 
-#### GGBanch
+##### GGBanch
 
 GGBunch allows to show a collection of plots on one figure. Each plot in the collection can have arbitrary location and size. There is no automatic layout inside the bunch.
 
@@ -136,12 +160,18 @@ Examples:
 * [scatter_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/scatter_matrix.ipynb)
 
 
-#### Data sampling 
+##### Data sampling 
 
 Sampling is a special technique of data transformation, which helps dealing with large datasets and overplotting.
 
 [Learn more](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md) about sampling in Lets-Plot. 
+  
+  
 
+### Artistic demos
+
+A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) with `Lets-Plot` for visualization.    
+  
 
 ### Change Log
 
