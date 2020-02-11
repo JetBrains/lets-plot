@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 
 internal open class CoordTestBase {
 
-    var dataBounds: DoubleRectangle? = null
+    lateinit var dataBounds: DoubleRectangle
 
     /**
      * ratio - ratio between height and width of the display  (ratio = h / w)
@@ -24,7 +24,7 @@ internal open class CoordTestBase {
     fun tryAdjustDomains(ratio: Double, provider: CoordProvider, expectedX: ClosedRange<Double>, expectedY: ClosedRange<Double>) {
 
         val dataBounds = this.dataBounds
-        val domainX = dataBounds!!.xRange()
+        val domainX = dataBounds.xRange()
         val domainY = dataBounds.yRange()
         val displaySize = unitDisplaySize(ratio)
 
@@ -40,7 +40,7 @@ internal open class CoordTestBase {
     fun tryApplyScales(ratio: Double, provider: CoordProvider, expectedMin: DoubleVector, expectedMax: DoubleVector, accuracy: DoubleVector) {
 
         val dataBounds = this.dataBounds
-        var domainX = dataBounds!!.xRange()
+        var domainX = dataBounds.xRange()
         var domainY = dataBounds.yRange()
         val displaySize = unitDisplaySize(ratio)
         val domains = provider.adjustDomains(domainX, domainY, displaySize)

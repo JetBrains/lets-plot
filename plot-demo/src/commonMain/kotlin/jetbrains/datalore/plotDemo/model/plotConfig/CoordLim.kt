@@ -11,7 +11,7 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class CoordLim : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            //fixed(),
+            fixed(),
             fixedLim()
             //noLims(),
             //xLims()
@@ -72,7 +72,7 @@ class CoordLim : PlotConfigDemoBase() {
             """
             |   'coord': {
             |       'name': 'fixed', 
-            |       'xlim': [2, 22], 
+            |       'xlim': [15, 30], 
             |       'ylim': null
             |   }
         """.trimMargin()

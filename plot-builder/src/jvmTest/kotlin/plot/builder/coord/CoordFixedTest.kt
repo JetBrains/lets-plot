@@ -5,24 +5,37 @@
 
 package jetbrains.datalore.plot.builder.coord
 
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import kotlin.math.min
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestBase() {
 
     @BeforeTest
     fun setUp() {
-        dataBounds = DoubleRectangle(DoubleVector.ZERO,
-            DATA_SPAN
-        )
+        dataBounds = DoubleRectangle(DoubleVector.ZERO, DATA_SPAN)
+    }
+
+    @Test
+    fun limits() {
+        val dataBounds = DoubleRectangle(0.0, 0.0, 5.0, 5.0)
+        val screenSize = DoubleVector(800.0, 600.0)
+        val (xDomain, yDomain) = CoordProviders
+            .fixed(1.0, ClosedRange.closed(1.0, 4.0))
+            .adjustDomains(dataBounds.xRange(), dataBounds.yRange(), screenSize)
+
+        assertEquals(ClosedRange.closed(800.0 * 0.2, 800.0 * 0.8), xDomain)
+        assertEquals(ClosedRange.closed(600.0 * 0.2, 600.0 * 0.8), yDomain)
     }
 
     @Test
     fun adjustDomains() {
         // fixed ratio == 1 (equal X and Y)
-        val dataBounds = dataBounds!!
+        val dataBounds = dataBounds
         val rangeX = dataBounds.xRange()
         val rangeY = dataBounds.yRange()
 
@@ -104,7 +117,7 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
 
     private fun shortSideOfDisplay(ratio: Double): Double {
         val displaySize = unitDisplaySize(ratio)
-        return Math.min(displaySize.x, displaySize.y)
+        return min(displaySize.x, displaySize.y)
     }
 
     companion object {

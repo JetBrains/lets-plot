@@ -29,4 +29,7 @@ class Pair<FirstT, SecondT>(val first: FirstT, val second: SecondT) {
     override fun toString(): String {
         return "[$first, $second]"
     }
+
+    operator fun component1() = first
+    operator fun component2() = second
 }
