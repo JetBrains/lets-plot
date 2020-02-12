@@ -76,23 +76,24 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 
 ### What is new in v.1.2.0
 
-* Shapely and GeoPandas support.
+* [Shapely](https://pypi.org/project/Shapely/) and [GeoPandas](https://geopandas.org) support.
 
     GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
 
     Examples: 
 
-    - Basics of map creation using *Lets-Plot* and *GeoPandas*: [geopandas_naturalearth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb)
+    - Map building basics with *Lets-Plot* and *GeoPandas*: [geopandas_naturalearth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb)
 
-    - Inset map of Kotlin island: [geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb)
+    - Inserting a map of Kotlin island: [geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb)
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="630" height="449"><br><br>
 
-* Plot cropping using `xlim, ylim` parameters of coordinate system.
+* Plot cropping using the `xlim, ylim` coordinate system parameters.
 
-    See GeoPandas demos above.
+    See [geopandas_naturalearth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb) 
+    and [geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb).
 
-* LOESS smoothing method in geom_smooth: 
+* [LOESS](https://en.wikipedia.org/wiki/Local_regression) smoothing method in geom_smooth: 
 [geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb)
 
 * New geometry layers.
