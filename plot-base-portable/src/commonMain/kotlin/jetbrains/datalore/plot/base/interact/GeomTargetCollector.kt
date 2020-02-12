@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 
 interface GeomTargetCollector {
 
@@ -17,14 +18,14 @@ interface GeomTargetCollector {
         point: DoubleVector,
         radius: Double,
         tooltipParams: TooltipParams,
-        tooltipKind: TipLayoutHint.Kind = TipLayoutHint.Kind.VERTICAL_TOOLTIP
+        tooltipKind: Kind = Kind.VERTICAL_TOOLTIP
     )
 
     fun addRectangle(
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: TooltipParams,
-        tooltipKind: TipLayoutHint.Kind = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+        tooltipKind: Kind = Kind.HORIZONTAL_TOOLTIP
     )
 
     fun addPath(
@@ -32,7 +33,7 @@ interface GeomTargetCollector {
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: TooltipParams,
         closePath: Boolean,
-        tooltipKind: TipLayoutHint.Kind = TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+        tooltipKind: Kind = if (closePath) { Kind.CURSOR_TOOLTIP } else { Kind.HORIZONTAL_TOOLTIP }
     )
 
     class TooltipParams {
