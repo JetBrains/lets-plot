@@ -11,8 +11,10 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class CoordLim : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            noLims(),
-            xLims()
+            fixed(),
+            fixedXLim(7, 17),
+            fixedYLim(7, 17),
+            fixedLims(xMin = -1, xMax = 7, yMin = -1, yMax = 15)
         )
     }
 
@@ -47,21 +49,59 @@ class CoordLim : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun noLims(): Map<String, Any> {
-        return createSpec(null)
-    }
-
-    private fun xLims(): Map<String, Any> {
+    private fun fixedXLim(min: Number, max: Number): Map<String, Any> {
         val spec = createSpec(
             """
             |   'coord': {
-            |       'name': 'cartesian', 
-            |       'xlim': [2, 22], 
+            |       'name': 'fixed', 
+            |       'xlim': [$min, $max], 
             |       'ylim': null
             |   }
         """.trimMargin()
         )
-        spec["ggtitle"] = mapOf("text" to "coord_cartesian(x_lim=[2, 22])")
+        spec["ggtitle"] = mapOf("text" to "coord_fixed(x_lim=[$min, $max])")
+        return spec
+    }
+
+    private fun fixedYLim(min: Number, max: Number): Map<String, Any> {
+        val spec = createSpec(
+            """
+            |   'coord': {
+            |       'name': 'fixed',
+            |       'xlim': null,
+            |       'ylim': [$min, $max]
+            |   }
+        """.trimMargin()
+        )
+        spec["ggtitle"] = mapOf("text" to "coord_fixed(y_lim=[$min, $max])")
+        return spec
+    }
+
+    private fun fixedLims(xMin: Number, xMax: Number, yMin: Number, yMax: Number): Map<String, Any> {
+        val spec = createSpec(
+            """
+            |   'coord': {
+            |       'name': 'fixed',
+            |       'xlim': [$xMin, $xMax],
+            |       'ylim': [$yMin, $yMax]
+            |   }
+        """.trimMargin()
+        )
+        spec["ggtitle"] = mapOf("text" to "coord_fixed(x_lim=[$xMin, $xMax], y_lim=[$yMin, $yMax])")
+        return spec
+    }
+
+    private fun fixed(): Map<String, Any> {
+        val spec = createSpec(
+            """
+            |   'coord': {
+            |       'name': 'fixed', 
+            |       'xlim': null, 
+            |       'ylim': null
+            |   }
+        """.trimMargin()
+        )
+        spec["ggtitle"] = mapOf("text" to "coord_fixed()")
         return spec
     }
 }

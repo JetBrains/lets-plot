@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil.span
 
 /**
  * A fixed scale coordinate system forces a specified ratio between the physical representation of data units on the axes.
@@ -27,17 +28,6 @@ internal open class FixedRatioCoordProvider(
         yDomain: ClosedRange<Double>,
         displaySize: DoubleVector
     ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
-        @Suppress("NAME_SHADOWING")
-        var xDomain = xDomain
-        @Suppress("NAME_SHADOWING")
-        var yDomain = yDomain
-
-        val spanX = SeriesUtil.span(xDomain)
-        val spanY = SeriesUtil.span(yDomain)
-        if (spanX < SeriesUtil.TINY || spanY < SeriesUtil.TINY) {
-            return Pair(xDomain, yDomain) // don't touch
-        }
-
         // fit the data into the display
         var displayW = displaySize.x
         var displayH = displaySize.y
@@ -52,19 +42,61 @@ internal open class FixedRatioCoordProvider(
             displayH *= 1 / myRatio
         }
 
-        val ratioX = spanX / displayW
-        val ratioY = spanY / displayH
+        if (
+            listOf(xLim, yLim).all { it == null } ||
+            listOf(xLim, yLim).all { it != null }
+        ) {
+            @Suppress("NAME_SHADOWING")
+            var xDomain = xDomain
+            @Suppress("NAME_SHADOWING")
+            var yDomain = yDomain
 
-        // Take bigger ratio and apply to ortogonal domain (axis) so that
-        // ratio: (data range) / (axis length) is the same for both X and Y.
-        if (ratioX > ratioY) {
-            val spanAdjusted = displayH * ratioX
-            yDomain = SeriesUtil.expand(yDomain, spanAdjusted)
-        } else {
-            val spanAdjusted = displayW * ratioY
-            xDomain = SeriesUtil.expand(xDomain, spanAdjusted)
+            if (listOf(xLim, yLim).all { it != null }) {
+                xDomain = xLim!!
+                yDomain = yLim!!
+            }
+
+            val spanX = span(xDomain)
+            val spanY = span(yDomain)
+            if (spanX < SeriesUtil.TINY || spanY < SeriesUtil.TINY) {
+                return Pair(xDomain, yDomain) // don't touch
+            }
+
+            val ratioX = spanX / displayW
+            val ratioY = spanY / displayH
+
+            // Take bigger ratio and apply to ortogonal domain (axis) so that
+            // ratio: (data range) / (axis length) is the same for both X and Y.
+            if (ratioX > ratioY) {
+                val spanAdjusted = displayH * ratioX
+                yDomain = SeriesUtil.expand(yDomain, spanAdjusted)
+            } else {
+                val spanAdjusted = displayW * ratioY
+                xDomain = SeriesUtil.expand(xDomain, spanAdjusted)
+            }
+
+            return Pair(xDomain, yDomain)
         }
 
-        return Pair(xDomain, yDomain)
+        fun limitOrth(orig: ClosedRange<Double>, lim: ClosedRange<Double>, orth: ClosedRange<Double>):ClosedRange<Double> {
+            val scale = span(orig) / span(orth)
+            val lowerExpand = (orig.lowerEndpoint() - lim.lowerEndpoint()) * scale
+            val upperExpand = (lim.upperEndpoint() - orig.upperEndpoint()) * scale
+            return SeriesUtil.expand(orth, lowerExpand, upperExpand)
+        }
+
+        if (xLim != null) {
+            val newSpan = displayH * (span(xLim) / displayW)
+            val yLim = limitOrth(xDomain, xLim, yDomain)
+            return Pair(xLim, SeriesUtil.expand(yLim, newSpan))
+
+        } else if (yLim != null) {
+            val newSpan = displayW * (span(yLim) / displayH)
+            val xLim = limitOrth(yDomain, yLim, xDomain)
+            return Pair(SeriesUtil.expand(xLim, newSpan), yLim)
+
+        } else {
+            error("Impossible")
+        }
     }
 }

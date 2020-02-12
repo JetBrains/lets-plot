@@ -54,11 +54,6 @@ internal abstract class CoordProviderBase(
         displaySize: DoubleVector
     ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
         return adjustDomainsImpl(xDomain, yDomain, displaySize)
-            .let { Pair(
-                xLim ?: it.first,
-                yLim ?: it.second
-            )
-        }
     }
 
     protected open fun adjustDomainsImpl(
@@ -66,7 +61,7 @@ internal abstract class CoordProviderBase(
         yDomain: ClosedRange<Double>,
         displaySize: DoubleVector
     ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
-        return Pair(xDomain, yDomain)
+        return Pair(xLim ?: xDomain, yLim ?: yDomain)
     }
 
     companion object {

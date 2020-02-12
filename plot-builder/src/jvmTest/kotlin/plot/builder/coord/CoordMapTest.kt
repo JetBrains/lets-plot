@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import kotlin.math.min
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -24,7 +25,7 @@ internal class CoordMapTest : jetbrains.datalore.plot.builder.coord.CoordTestBas
         // Coord Map keeps fixed ratio == 1 (equal X and Y)
         val dataBounds = dataBounds
         tryAdjustDomains(2.0,
-            PROVIDER, dataBounds!!.xRange(),
+            PROVIDER, dataBounds.xRange(),
             expand(dataBounds.yRange(), 2.0)
         )
         tryAdjustDomains(0.5,
@@ -51,7 +52,7 @@ internal class CoordMapTest : jetbrains.datalore.plot.builder.coord.CoordTestBas
 
     private fun shortSideOfDisplay(ratio: Double): Double {
         val displaySize = unitDisplaySize(ratio)
-        return Math.min(displaySize.x, displaySize.y)
+        return min(displaySize.x, displaySize.y)
     }
 
     companion object {

@@ -19,7 +19,7 @@ internal class CoordCartesianTest : jetbrains.datalore.plot.builder.coord.CoordT
 
     @Test
     fun adjustDomains() {
-        val dataBounds = dataBounds!!
+        val dataBounds = dataBounds
         // domains not changed
         tryAdjustDomains(2.0,
             PROVIDER, dataBounds.xRange(), dataBounds.yRange())
