@@ -6,12 +6,15 @@
 package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.ClosedRange.Companion.closed
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Pair
+import kotlin.math.abs
 import kotlin.math.min
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.fail
 
 internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestBase() {
 
@@ -22,14 +25,96 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
 
     @Test
     fun limits() {
-        val dataBounds = DoubleRectangle(0.0, 0.0, 5.0, 5.0)
-        val screenSize = DoubleVector(800.0, 600.0)
-        val (xDomain, yDomain) = CoordProviders
-            .fixed(1.0, ClosedRange.closed(1.0, 4.0))
-            .adjustDomains(dataBounds.xRange(), dataBounds.yRange(), screenSize)
+        fun squareCoord(xLim: ClosedRange<Double>? = null, yLim: ClosedRange<Double>? = null): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+            val dataBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector(25.0, 25.0))
+            val screenSize = DoubleVector(800.0, 600.0)
+            val (xDomain, yDomain) = CoordProviders
+                .fixed(1.0, xLim, yLim)
+                .adjustDomains(dataBounds.xRange(), dataBounds.yRange(), screenSize)
+            return Pair(xDomain, yDomain)
+        }
 
-        assertEquals(ClosedRange.closed(800.0 * 0.2, 800.0 * 0.8), xDomain)
-        assertEquals(ClosedRange.closed(600.0 * 0.2, 600.0 * 0.8), yDomain)
+        // xLim
+        run {
+
+            // xLim in range
+            squareCoord(xLim = closed(1.0, 4.0))
+                .let { (xDomain, yDomain) ->
+                    assertEquals(closed(1.0, 4.0), xDomain)
+                    assertEquals(closed(1.375, 3.625), yDomain)
+                }
+
+            // xLim wider than range
+            squareCoord(xLim = closed(-3.0, 4.0))
+                .let { (xDomain, yDomain) ->
+                    assertEquals(closed(-3.0, 4.0), xDomain)
+                    assertEquals(closed(-2.125, 3.125), yDomain)
+                }
+
+            // xLim out of range
+            squareCoord(xLim = closed(-9.0, -4.0))
+                .let { (xDomain, yDomain) ->
+                    assertEquals(closed(-9.0, -4.0), xDomain)
+                    assertEquals(closed(-8.375, -4.625), yDomain)
+                }
+
+        }
+
+        // yLim
+        run {
+            // yLim in range
+            squareCoord(yLim = closed(1.0, 4.0))
+                .let { (xDomain, yDomain) ->
+                    assertEquals(closed(0.5, 4.5), xDomain)
+                    assertEquals(closed(1.0, 4.0), yDomain)
+                }
+
+            // yLim wider than range
+            squareCoord(yLim = closed(-3.0, 6.0))
+                .let { (xDomain, yDomain) ->
+                    assertEquals(closed(-4.5, 7.5), xDomain)
+                    assertEquals(closed(-3.0, 6.0), yDomain)
+                }
+
+            // yLim out of range
+            squareCoord(yLim = closed(-9.0, -6.0))
+                .let { (xDomain, yDomain) ->
+                    assertEquals(closed(-9.5, -5.5), xDomain)
+                    assertEquals(closed(-9.0, -6.0), yDomain)
+                }
+        }
+
+
+        // xLim && yLim
+        run {
+            // intersecting, wider yLim wins
+            squareCoord(xLim = closed(10.0, 15.0), yLim = closed(9.0, 16.0))
+                .let { (xDomain, yDomain) ->
+                    assertEquals(closed(7.833, 17.166), xDomain)
+                    assertEquals(closed(9.0, 16.0), yDomain)
+                }
+
+            // intersecting, wider xLim wins
+            squareCoord(xLim = closed(9.0, 16.0), yLim = closed(12.0, 14.0))
+                .let { (xDomain, yDomain) ->
+                    assertEquals(closed(9.0, 16.0), xDomain)
+                    assertEquals(closed(10.375, 15.625), yDomain)
+                }
+
+            // non-intersecting, wider xLim wins
+            squareCoord(xLim = closed(9.0, 16.0), yLim = closed(19.0, 22.0))
+                .let { (xDomain, yDomain) ->
+                    assertEquals(closed(9.0, 16.0), xDomain)
+                    assertEquals(closed(17.875, 23.125), yDomain)
+                }
+
+            // non-intersecting, wider yLim wins
+            squareCoord(xLim = closed(15.0, 16.0), yLim = closed(18.0, 22.0))
+                .let { (xDomain, yDomain) ->
+                    assertEquals(closed(12.833, 18.166), xDomain)
+                    assertEquals(closed(18.0, 22.0), yDomain)
+                }
+        }
     }
 
     @Test
@@ -118,6 +203,19 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
     private fun shortSideOfDisplay(ratio: Double): Double {
         val displaySize = unitDisplaySize(ratio)
         return min(displaySize.x, displaySize.y)
+    }
+
+    private fun ClosedRange<Double>.equals(other: ClosedRange<Double>, epsilon: Double = 0.00001): Boolean {
+        fun doubleEquals(expected: Double, actual: Double, epsilon: Double) = abs(expected - actual) < epsilon
+
+        return doubleEquals(lowerEndpoint(), other.lowerEndpoint(), epsilon) &&
+                doubleEquals(upperEndpoint(), other.upperEndpoint(), epsilon)
+    }
+
+    private fun assertEquals(expected: ClosedRange<Double>, actual: ClosedRange<Double>, epsilon: Double = 0.001) {
+        if (!expected.equals(actual, epsilon)) {
+            fail("$expected != $actual")
+        }
     }
 
     companion object {
