@@ -18,8 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Was not working `weight` parameter in stats: bin, count, bin2d, density, density2d
-- removed 'NaN' from tooltip in geom_boxplot.
-- better tooltips positioning in geoms: tile, bin2d.
+- incorrect tooltip line 'NaN' in geom_boxplot.
+- ambiguous tooltip positioning in geoms: tile, bin2d.
 
 ## [1.1.0] - 2019-12-17
 ### Added
