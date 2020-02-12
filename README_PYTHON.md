@@ -84,7 +84,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 
     - Map building basics with *Lets-Plot* and *GeoPandas*: [geopandas_naturalearth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb)
 
-    - An inset map of Kotlin island: [geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb)
+    - An **inset map** of Kotlin island: [geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb)
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="630" height="449"><br><br>
 
