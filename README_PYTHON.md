@@ -53,7 +53,7 @@ To install the Lets-Plot library, run the following command:
 ```shell script
 pip install lets-plot
 ```
-<a name="Quick start with Jupyter" id="inst"></a>
+<a name="Quick start with Jupyter" id="start"></a>
 ### Quick start with Jupyter
 
 To evaluate the plotting capabilities of Lets-Plot, add the following code to a Jupyter notebook:
