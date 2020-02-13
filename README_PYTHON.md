@@ -31,8 +31,9 @@
 - [What is new](#new)
 - [Examples](#examples)
 
-### Implementation Overview
 <a name="Implementation Overview" id="overview"></a>
+### Implementation Overview
+
 The Lets-Plot python extension includes native backend and a Python API, which was mostly based on the [`ggplot2`](https://ggplot2.tidyverse.org/) package well-known to data scientists who use R.
 
 R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who want to learn the grammar of graphics. 
@@ -45,16 +46,16 @@ One important difference is that the python package in Datalore is named **datal
 
 The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/) as a learning tool in comparison to Jupyter is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
 
-
-### Installation
 <a name="Installation" id="inst"></a>
+### Installation
+
 To install the Lets-Plot library, run the following command:
 ```shell script
 pip install lets-plot
 ```
-
-### Quick start with Jupyter
 <a name="Quick start with Jupyter" id="inst"></a>
+### Quick start with Jupyter
+
 To evaluate the plotting capabilities of Lets-Plot, add the following code to a Jupyter notebook:
 ```python
 import numpy as np
@@ -79,9 +80,9 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <br>
 <br>
 
-
-### What is new in v.1.2.0
 <a name="What is new" id="new"></a>
+### What is new in v.1.2.0
+
 * [Shapely](https://pypi.org/project/Shapely/) and [GeoPandas](https://geopandas.org) support.
 
     GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
@@ -111,9 +112,9 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 [density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/density_2d)
 
 
-
-### Example Notebooks
 <a name="Examples" id="examples"></a>
+### Example Notebooks
+
 
 Try the following examples to study more features of the `Lets-Plot` library.
 
