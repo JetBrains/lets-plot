@@ -85,7 +85,8 @@ class PointBuilder(
 
     fun build(
         pointScaling: Boolean,
-        animationBuilder: AnimationBuilder
+        animationBuilder: AnimationBuilder,
+        nonInteractive: Boolean = false
     ): EcsEntity {
 
         val size = radius * 2.0
@@ -113,7 +114,10 @@ class PointBuilder(
                     + RendererComponent(PointRenderer())
                     + ScreenLoopComponent()
                     + ScreenOriginComponent()
-                    + LocatorComponent(PointLocatorHelper())
+
+                    if (!nonInteractive) {
+                        + LocatorComponent(PointLocatorHelper())
+                    }
 
                     if (animation == 2) {
                         val transformComponent = TransformComponent()
