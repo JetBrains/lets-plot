@@ -11,9 +11,10 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            facetBars(),
+            setZoom(),
+            setLocation(),
             points(),
-            facet()
+            pointsWithZoomAndLocation()
         )
     }
 
@@ -61,7 +62,50 @@ class LiveMap : PlotConfigDemoBase() {
         }
         
         fun points(): Map<String, Any> {
-            val spec = """{"ggtitle": {"text": "Points on map"}, "data": {"lon": [-100.420313, -91.016016], "lat": [34.835461, 38.843142], "clr": ["one", "two"]}, "mapping": null, "kind": "plot", "scales": [], "layers": [{"geom": "livemap", "stat": null, "data": null, "mapping": null, "position": null, "show_legend": null, "sampling": null, "display_mode": null, "level": null, "within": null, "interactive": null, "location": null, "zoom": null, "magnifier": null, "clustering": null, "scaled": null, "labels": null, "theme": null, "projection": null, "geodesic": null, "tiles": null}, {"geom": "point", "stat": null, "data": null, "mapping": {"x": "lon", "y": "lat", "color": "clr"}, "position": null, "show_legend": null, "sampling": null, "animation": null, "size": 20}]}"""
+            val spec = """{
+                "ggtitle": {"text": "Points on map"}, 
+                "data": {"lon": [-100.420313, -91.016016], "lat": [34.835461, 38.843142], "clr": ["one", "two"]}, 
+                "mapping": null, 
+                "kind": "plot", 
+                "scales": [], 
+                "layers": [
+                    {
+                        "geom": "livemap", 
+                        "stat": null, 
+                        "data": null, 
+                        "mapping": null, 
+                        "position": null, 
+                        "show_legend": null, 
+                        "sampling": null, 
+                        "display_mode": null, 
+                        "level": null, 
+                        "within": null, 
+                        "interactive": null, 
+                        "location": null, 
+                        "zoom": null, 
+                        "magnifier": null, 
+                        "clustering": null, 
+                        "scaled": null, 
+                        "labels": null, 
+                        "theme": null, 
+                        "projection": null, 
+                        "geodesic": null, 
+                        "tiles": null
+                    }, 
+                    {
+                        "geom": "point", 
+                        "stat": null, 
+                        "data": null, 
+                        "mapping": {"x": "lon", "y": "lat", "color": "clr"}, 
+                        "position": null, 
+                        "show_legend": null, 
+                        "sampling": null, 
+                        "animation": null, 
+                        "size": 20
+                    }
+                ]
+            }""".trimMargin()
+
             return parsePlotSpec(spec)
         }
         
@@ -74,6 +118,132 @@ class LiveMap : PlotConfigDemoBase() {
 
         fun facet(): Map<String, Any> {
             val spec = """{"data": {"lon": [-100.420313, -91.016016], "lat": [34.835461, 38.843142]}, "mapping": null, "facet": {"name": "grid", "x": "lon", "y": "lon"}, "ggtitle": {"text": "Two points"}, "kind": "plot", "scales": [], "layers": [{"geom": "livemap", "stat": null, "data": null, "mapping": null, "position": null, "show_legend": null, "sampling": null, "display_mode": null, "level": null, "within": null, "interactive": null, "location": null, "zoom": null, "magnifier": null, "clustering": null, "scaled": null, "labels": null, "theme": null, "projection": null, "geodesic": null, "tiles": null}, {"geom": "point", "stat": null, "data": null, "mapping": {"x": "lon", "y": "lat", "color": "lon"}, "position": null, "show_legend": null, "sampling": null, "animation": null, "size": 20}]}"""
+            return parsePlotSpec(spec)
+        }
+
+        fun pointsWithZoomAndLocation(): Map<String, Any> {
+            val spec = """{
+                "ggtitle": {"text": "Points with zoom and location"}, 
+                "data": {"lon": [-100.420313, -91.016016], "lat": [34.835461, 38.843142], "clr": ["one", "two"]}, 
+                "mapping": null, 
+                "kind": "plot", 
+                "scales": [], 
+                "layers": [
+                    {
+                        "geom": "livemap", 
+                        "stat": null, 
+                        "data": null, 
+                        "mapping": null, 
+                        "position": null, 
+                        "show_legend": null, 
+                        "sampling": null, 
+                        "display_mode": null, 
+                        "level": null, 
+                        "within": null, 
+                        "interactive": null, 
+                        "location": {
+                            "type": "coordinates",
+                            "data": [25.878516, 58.317548, 33.590918, 60.884144]
+                        },
+                        "zoom": 10, 
+                        "magnifier": null, 
+                        "clustering": null, 
+                        "scaled": null, 
+                        "labels": null, 
+                        "theme": null, 
+                        "projection": null, 
+                        "geodesic": null, 
+                        "tiles": null
+                    }, 
+                    {
+                        "geom": "point", 
+                        "stat": null, 
+                        "data": null, 
+                        "mapping": {"x": "lon", "y": "lat", "color": "clr"}, 
+                        "position": null, 
+                        "show_legend": null, 
+                        "sampling": null, 
+                        "animation": null, 
+                        "size": 20
+                    }
+                ]
+            }""".trimMargin()
+
+            return parsePlotSpec(spec)
+        }
+
+        fun setLocation(): Map<String, Any> {
+            val spec = """{
+                "ggtitle": {"text": "Set location"}, 
+                "data": null,
+                "mapping": null,
+                "kind": "plot",
+                "scales": [],
+                "layers": [
+                    {
+                        "geom": "livemap",
+                        "stat": null,
+                        "data": null,
+                        "mapping": null,
+                        "position": null,
+                        "show_legend": null,
+                        "sampling": null,
+                        "display_mode": null,
+                        "level": null,
+                        "within": null,
+                        "interactive": null,
+                        "location": {
+                            "type": "coordinates",
+                            "data": [25.878516, 58.317548, 33.590918, 60.884144]
+                        },
+                        "zoom": null,
+                        "magnifier": null,
+                        "clustering": null,
+                        "scaled": null,
+                        "labels": null,
+                        "theme": null,
+                        "projection": null,
+                        "geodesic": null,
+                        "tiles": null
+                    }
+                ]
+            }"""
+            return parsePlotSpec(spec)
+        }
+
+        fun setZoom(): Map<String, Any> {
+            val spec = """{
+                "ggtitle": {"text": "Set zoom and default location"}, 
+                "data": null,
+                "mapping": null,
+                "kind": "plot",
+                "scales": [],
+                "layers": [
+                    {
+                        "geom": "livemap",
+                        "stat": null,
+                        "data": null,
+                        "mapping": null,
+                        "position": null,
+                        "show_legend": null,
+                        "sampling": null,
+                        "display_mode": null,
+                        "level": null,
+                        "within": null,
+                        "interactive": null,
+                        "location": null,
+                        "zoom": 4,
+                        "magnifier": null,
+                        "clustering": null,
+                        "scaled": null,
+                        "labels": null,
+                        "theme": null,
+                        "projection": null,
+                        "geodesic": null,
+                        "tiles": null
+                    }
+                ]
+            }"""
             return parsePlotSpec(spec)
         }
     }
