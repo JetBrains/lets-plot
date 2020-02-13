@@ -6,8 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.2.1] - 2020-02-13
 ### Fixed
-- tooltips not showing on geom_polygon
+- tooltip not showing in geom_polygon
 
 ## [1.2.0] - 2020-02-12
 ### Added
@@ -20,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Was not working `weight` parameter in stats: bin, count, bin2d, density, density2d
 - incorrect tooltip line 'NaN' in geom_boxplot.
 - ambiguous tooltip positioning in geoms: tile, bin2d.
+- cropped text in tooltip.
 
 ## [1.1.0] - 2019-12-17
 ### Added
