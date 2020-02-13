@@ -51,7 +51,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         2. 'y' or 'lat'
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or fist value in pair - column in data
+        str or first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
@@ -126,7 +126,7 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         2. 'y' or 'lat'
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or fist value in pair - column in data
+        str or first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -1095,7 +1095,7 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         2. 'y' or 'lat'
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or fist value in pair - column in data
+        str or first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -1163,7 +1163,7 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
          2. 'y' or 'lat'
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or fist value in pair - column in data
+        str or first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -2008,7 +2008,7 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
          2. 'y' or 'lat'
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or fist value in pair - column in data
+        str or first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -2136,7 +2136,7 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
          2. 'y' or 'lat'
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or fist value in pair - column in data
+        str or first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed

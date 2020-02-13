@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.0] - 2020-02-12
 ### Added
-- *geopandas* support in geoms: point, path, polygon, rec, text.
+- *geopandas* support in geoms: point, path, polygon, rect, text.
 - support for LOESS smoothing method in *geom_smooth*.
 - new geometry layers: *geom_crossbar*, *geom_linerange*, *geom_pointrange*, *geom_bin2d*.
 - support for coordinate stystem *xlim*, *ylim* parameters (i.e. "clipping").
