@@ -25,8 +25,14 @@
     </tr>
 </table>
 
-### Implementation Overview
+- [Implementation Overview](#overview)
+- [Installation](#inst)
+- [Quick start with Jupyter](#start)
+- [What is new](#new)
+- [Examples](#examples)
 
+### Implementation Overview
+<a name="Implementation Overview" id="overview"></a>
 The Lets-Plot python extension includes native backend and a Python API, which was mostly based on the [`ggplot2`](https://ggplot2.tidyverse.org/) package well-known to data scientists who use R.
 
 R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who want to learn the grammar of graphics. 
@@ -41,14 +47,14 @@ The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-
 
 
 ### Installation
-
+<a name="Installation" id="inst"></a>
 To install the Lets-Plot library, run the following command:
 ```shell script
 pip install lets-plot
 ```
 
-### Quickstart in Jupyter
-
+### Quick start with Jupyter
+<a name="Quick start with Jupyter" id="inst"></a>
 To evaluate the plotting capabilities of Lets-Plot, add the following code to a Jupyter notebook:
 ```python
 import numpy as np
@@ -75,7 +81,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 
 
 ### What is new in v.1.2.0
-
+<a name="What is new" id="new"></a>
 * [Shapely](https://pypi.org/project/Shapely/) and [GeoPandas](https://geopandas.org) support.
 
     GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
@@ -107,6 +113,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 
 
 ### Example Notebooks
+<a name="Examples" id="examples"></a>
 
 Try the following examples to study more features of the `Lets-Plot` library.
 
