@@ -246,5 +246,43 @@ class LiveMap : PlotConfigDemoBase() {
             }"""
             return parsePlotSpec(spec)
         }
+        
+        fun wrongRasterTileUrl(): Map<String, Any> {
+            val spec = """{
+                "ggtitle": {"text": "Wrong tile url"}, 
+                "data": null,
+                "mapping": null,
+                "kind": "plot",
+                "scales": [],
+                "layers": [
+                    {
+                        "geom": "livemap",
+                        "stat": null,
+                        "data": null,
+                        "mapping": null,
+                        "position": null,
+                        "show_legend": null,
+                        "sampling": null,
+                        "display_mode": null,
+                        "level": null,
+                        "within": null,
+                        "interactive": null,
+                        "location": null,
+                        "zoom": null,
+                        "magnifier": null,
+                        "clustering": null,
+                        "scaled": null,
+                        "labels": null,
+                        "theme": null,
+                        "projection": null,
+                        "geodesic": null,
+                        "tiles": {"raster": "http://c.tile.stamen.com/tonerd/{x}/{y}.png"}
+                    }
+                ]
+            }"""
+            return parsePlotSpec(spec)
+        }
     }
+
+    
 }
