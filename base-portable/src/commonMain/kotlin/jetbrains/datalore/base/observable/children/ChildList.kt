@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -36,7 +36,8 @@ open class ChildList<ParentT, ChildT : SimpleComposite<in ParentT?, in ChildT>>(
 
     override fun beforeItemAdded(index: Int, item: ChildT) {
         item.parent().set(myParent)
-        item.setPositionData(object : PositionData<ChildT> {
+        item.setPositionData(object :
+            PositionData<ChildT> {
             override fun get(): Position<ChildT> {
                 @Suppress("NAME_SHADOWING")
                 val index = indexOf(item)

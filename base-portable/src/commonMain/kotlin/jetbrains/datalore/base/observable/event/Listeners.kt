@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -40,7 +40,12 @@ open class Listeners<ListenerT> {
         return object : Registration() {
             override fun doRemove() {
                 if (myFireDepth > 0) {
-                    myListeners!!.add(ListenerOp(l, false))
+                    myListeners!!.add(
+                        ListenerOp(
+                            l,
+                            false
+                        )
+                    )
                 } else {
                     myListeners!!.remove(l as Any)
                     myListenersCount--

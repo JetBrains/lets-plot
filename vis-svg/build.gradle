@@ -11,13 +11,14 @@ plugins {
 kotlin {
     jvm()
     js()
-    
+    macosX64()
+    linuxX64()
+
     sourceSets {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':base-portable')
-                implementation project(':base')
             }
         }
         commonTest {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -7,30 +7,30 @@ package jetbrains.datalore.base.observable.collections.list
 
 import jetbrains.datalore.base.observable.collections.CollectionItemEvent
 import jetbrains.datalore.base.observable.collections.CollectionListener
-import jetbrains.datalore.base.observable.collections.DataloreIndexOutOfBoundsException
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.ListenerCaller
 import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.registration.Registration
 
-abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), ObservableList<ItemT> {
+abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(),
+    ObservableList<ItemT> {
     private var myListeners: Listeners<CollectionListener<in ItemT>>? = null
 
     protected open fun checkAdd(index: Int, item: ItemT) {
         if (index < 0 || index > size) {
-            throw DataloreIndexOutOfBoundsException("Add: index=$index, size=$size")
+            throw IndexOutOfBoundsException("Add: index=$index, size=$size")
         }
     }
 
     protected open fun checkSet(index: Int, oldItem: ItemT, newItem: ItemT) {
         if (index < 0 || index >= size) {
-            throw DataloreIndexOutOfBoundsException("Set: index=$index, size=$size")
+            throw IndexOutOfBoundsException("Set: index=$index, size=$size")
         }
     }
 
     protected open fun checkRemove(index: Int, item: ItemT) {
         if (index < 0 || index >= size) {
-            throw DataloreIndexOutOfBoundsException("Remove: index=$index, size=$size")
+            throw IndexOutOfBoundsException("Remove: index=$index, size=$size")
         }
     }
 
@@ -146,7 +146,8 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(), Obs
     }
 
     override fun addHandler(handler: EventHandler<CollectionItemEvent<out ItemT>>): Registration {
-        val listener = object : CollectionListener<ItemT> {
+        val listener = object :
+            CollectionListener<ItemT> {
             override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                 handler.onEvent(event)
             }

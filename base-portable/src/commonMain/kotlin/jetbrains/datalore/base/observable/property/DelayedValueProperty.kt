@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -16,7 +16,7 @@ class DelayedValueProperty<ValueT>
 constructor(
         private var myValue: ValueT? = null) :
         BaseReadableProperty<ValueT?>(),
-        Property<ValueT?> {
+    Property<ValueT?> {
 
     private var myHandlers: Listeners<EventHandler<PropertyChangeEvent<out ValueT?>>>? = null
     private var myPendingEvent: PropertyChangeEvent<out ValueT?>? = null
@@ -36,7 +36,8 @@ constructor(
         if (myPendingEvent != null) {
             throw IllegalStateException()
         }
-        myPendingEvent = PropertyChangeEvent(oldValue, myValue)
+        myPendingEvent =
+            PropertyChangeEvent(oldValue, myValue)
     }
 
     fun flush() {

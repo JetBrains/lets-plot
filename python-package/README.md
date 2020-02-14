@@ -28,7 +28,7 @@ or just run shell command (if the changes are only in the Python code):
 
 ## Installing locally
 
-* change to `lets-plot/python-package` dir
+* change dir to `lets-plot/python-package`
 * create / activate Python environment (if needed)
 * run shell commands: 
 

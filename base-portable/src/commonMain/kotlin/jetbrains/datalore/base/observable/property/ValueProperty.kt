@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -14,8 +14,8 @@ import jetbrains.datalore.base.registration.Registration
  * A simple implementation of Read/Write property which stores the value in a field
  */
 open class ValueProperty<ValueT>(private var myValue: ValueT) :
-        BaseReadableProperty<ValueT>(),
-        Property<ValueT> {
+    BaseReadableProperty<ValueT>(),
+    Property<ValueT> {
 
     private var myHandlers: Listeners<EventHandler<PropertyChangeEvent<out ValueT>>>? = null
 
@@ -36,7 +36,8 @@ open class ValueProperty<ValueT>(private var myValue: ValueT) :
 
     private fun fireEvents(oldValue: ValueT, newValue: ValueT) {
         if (myHandlers != null) {
-            val event = PropertyChangeEvent(oldValue, newValue)
+            val event =
+                PropertyChangeEvent(oldValue, newValue)
             myHandlers!!.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<out ValueT>>> {
                 override fun call(l: EventHandler<PropertyChangeEvent<out ValueT>>) {
                     l.onEvent(event)

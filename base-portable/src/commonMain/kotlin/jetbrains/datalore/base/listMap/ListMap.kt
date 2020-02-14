@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -31,6 +31,7 @@ class ListMap<K, V> {
         if (index >= 0) {
             val value = myData[index + 1]
             removeAt(index)
+            @Suppress("UNCHECKED_CAST")
             return value as V?
         } else {
             return null
@@ -95,11 +96,9 @@ class ListMap<K, V> {
         if (index >= 0) {
             val oldValue = myData[index + 1]
             myData[index + 1] = value
+            @Suppress("UNCHECKED_CAST")
             return oldValue as V?
         }
-
-//        val newArray = arrayOfNulls<Any>(myData.size + 2)
-//        System.arraycopy(myData, 0, newArray, 0, myData.size)
 
         val newArray = Array(myData.size + 2) { i ->
             if (i < myData.size) myData[i] else null
@@ -115,7 +114,10 @@ class ListMap<K, V> {
         val index = findByKey(key)
         return if (index == -1) {
             null
-        } else myData[index + 1] as V?
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            myData[index + 1] as V?
+        }
     }
 
     override fun toString(): String {
@@ -150,6 +152,7 @@ class ListMap<K, V> {
                     throw NoSuchElementException()
                 }
                 nextCalled = true
+                @Suppress("UNCHECKED_CAST")
                 val value = spec[index] as T
                 index += 2
                 return value
@@ -184,10 +187,6 @@ class ListMap<K, V> {
             return
         }
 
-//        val newArray = arrayOfNulls<Any>(myData.size - 2)
-//        System.arraycopy(myData, 0, newArray, 0, index)
-//        System.arraycopy(myData, index + 2, newArray, index, myData.size - index - 2)
-
         val newArray = Array(myData.size - 2) { i ->
             if (i < index) {
                 myData[i]
@@ -201,10 +200,12 @@ class ListMap<K, V> {
 
     inner class Entry internal constructor(private val myIndex: Int) {
         fun key(): K {
+            @Suppress("UNCHECKED_CAST")
             return myData[myIndex] as K
         }
 
         fun value(): V? {
+            @Suppress("UNCHECKED_CAST")
             return myData[myIndex + 1] as V?
         }
     }
