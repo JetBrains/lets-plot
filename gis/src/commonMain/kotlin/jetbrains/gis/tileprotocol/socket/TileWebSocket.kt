@@ -9,10 +9,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.features.websocket.wss
 import io.ktor.http.DEFAULT_PORT
 import io.ktor.http.HttpMethod
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.WebSocketSession
-import io.ktor.http.cio.websocket.readBytes
-import io.ktor.http.cio.websocket.readText
+import io.ktor.http.cio.websocket.*
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
@@ -53,7 +50,7 @@ class TileWebSocket(
 
     override fun close() {
         myClient.launch {
-            mySession?.close()
+            mySession?.close(CloseReason(CloseReason.Codes.NORMAL, "Close session"))
             mySession = null
         }
     }
