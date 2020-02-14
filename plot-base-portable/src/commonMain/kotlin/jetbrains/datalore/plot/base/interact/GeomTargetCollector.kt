@@ -32,8 +32,14 @@ interface GeomTargetCollector {
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: TooltipParams,
-        closePath: Boolean,
-        tooltipKind: Kind = if (closePath) { Kind.CURSOR_TOOLTIP } else { Kind.HORIZONTAL_TOOLTIP }
+        tooltipKind: Kind = Kind.HORIZONTAL_TOOLTIP
+    )
+
+    fun addPolygon(
+        points: List<DoubleVector>,
+        localToGlobalIndex: (Int) -> Int,
+        tooltipParams: TooltipParams,
+        tooltipKind: Kind = Kind.CURSOR_TOOLTIP
     )
 
     class TooltipParams {
@@ -65,5 +71,4 @@ interface GeomTargetCollector {
             }
         }
     }
-
 }

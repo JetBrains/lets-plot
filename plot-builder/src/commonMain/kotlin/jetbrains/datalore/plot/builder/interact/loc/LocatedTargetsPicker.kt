@@ -17,8 +17,7 @@ internal class LocatedTargetsPicker {
         get() = myPicked
 
     fun addLookupResult(lookupResult: LookupResult) {
-        val distance =
-            distance(lookupResult)
+        val distance = distance(lookupResult)
         if (distance > CUTOFF_DISTANCE) {
             return
         }
@@ -27,10 +26,9 @@ internal class LocatedTargetsPicker {
             myPicked.clear()
             myPicked.add(lookupResult)
             myMinDistance = distance
-        } else if (myMinDistance == distance && sameGeomKind(
-                myPicked[0],
-                lookupResult
-            )
+        } else if (
+            myMinDistance == distance
+            && sameGeomKind(myPicked[0], lookupResult)
         ) {
             myPicked.add(lookupResult)
         }

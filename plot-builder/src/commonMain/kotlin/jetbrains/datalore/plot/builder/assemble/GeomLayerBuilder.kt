@@ -26,6 +26,7 @@ import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
+import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
 class GeomLayerBuilder {
@@ -39,8 +40,7 @@ class GeomLayerBuilder {
 
     private var myDataPreprocessor: ((DataFrame) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
-    private var myContextualMappingProvider: jetbrains.datalore.plot.builder.interact.ContextualMappingProvider =
-        jetbrains.datalore.plot.builder.interact.ContextualMappingProvider.NONE
+    private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
     private var myIsLegendDisabled: Boolean = false
 
@@ -89,7 +89,7 @@ class GeomLayerBuilder {
         return this
     }
 
-    fun contextualMappingProvider(v: jetbrains.datalore.plot.builder.interact.ContextualMappingProvider): GeomLayerBuilder {
+    fun contextualMappingProvider(v: ContextualMappingProvider): GeomLayerBuilder {
         myContextualMappingProvider = v
         return this
     }

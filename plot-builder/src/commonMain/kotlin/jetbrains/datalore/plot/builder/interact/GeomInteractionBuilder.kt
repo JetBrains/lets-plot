@@ -96,12 +96,5 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
 
         private val AES_X = listOf(Aes.X)
         private val AES_XY = listOf(Aes.X, Aes.Y)
-
-        private fun exclude(list: List<Aes<*>>, itemsToRemove: List<Aes<*>>): List<Aes<*>> {
-            val visibleAes = ArrayList(list)
-            visibleAes.removeAll(itemsToRemove)
-
-            return visibleAes
-        }
     }
 }

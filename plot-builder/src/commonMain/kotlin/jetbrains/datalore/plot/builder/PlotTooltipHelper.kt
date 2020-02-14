@@ -9,28 +9,31 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
+import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker
 import jetbrains.datalore.plot.builder.interact.loc.TransformedTargetLocator
 
 internal class PlotTooltipHelper {
-    private val myTileInfos = ArrayList<jetbrains.datalore.plot.builder.PlotTooltipHelper.TileInfo>()
+    private val myTileInfos = ArrayList<TileInfo>()
 
     fun removeAllTileInfos() {
         myTileInfos.clear()
     }
 
     fun addTileInfo(geomBounds: DoubleRectangle, targetLocators: List<GeomTargetLocator>) {
-        val tileInfo = jetbrains.datalore.plot.builder.PlotTooltipHelper.TileInfo(geomBounds, targetLocators)
+        val tileInfo = TileInfo(geomBounds, targetLocators)
         myTileInfos.add(tileInfo)
     }
 
-    fun createTooltipSpecs(plotCoord: DoubleVector): List<jetbrains.datalore.plot.builder.interact.TooltipSpec> {
+    fun createTooltipSpecs(plotCoord: DoubleVector): List<TooltipSpec> {
         val tileInfo = findTileInfo(plotCoord) ?: return emptyList()
 
         val lookupResults = tileInfo.findTargets(plotCoord)
         return createTooltipSpecs(lookupResults, tileInfo.axisOrigin)
     }
 
-    private fun findTileInfo(plotCoord: DoubleVector): jetbrains.datalore.plot.builder.PlotTooltipHelper.TileInfo? {
+    private fun findTileInfo(plotCoord: DoubleVector): TileInfo? {
         for (tileInfo in myTileInfos) {
             if (tileInfo.contains(plotCoord)) {
                 return tileInfo
@@ -40,12 +43,11 @@ internal class PlotTooltipHelper {
         return null
     }
 
-    private fun createTooltipSpecs(lookupResults: List<LookupResult>, axisOrigin: DoubleVector): List<jetbrains.datalore.plot.builder.interact.TooltipSpec> {
-        val tooltipSpecs = ArrayList<jetbrains.datalore.plot.builder.interact.TooltipSpec>()
+    private fun createTooltipSpecs(lookupResults: List<LookupResult>, axisOrigin: DoubleVector): List<TooltipSpec> {
+        val tooltipSpecs = ArrayList<TooltipSpec>()
 
         lookupResults.forEach { result ->
-            val factory =
-                jetbrains.datalore.plot.builder.interact.TooltipSpecFactory(result.contextualMapping, axisOrigin)
+            val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin)
             result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
         }
 
@@ -53,8 +55,7 @@ internal class PlotTooltipHelper {
     }
 
 
-    private class TileInfo(private val geomBounds: DoubleRectangle,
-                           targetLocators: List<GeomTargetLocator>) {
+    private class TileInfo(private val geomBounds: DoubleRectangle, targetLocators: List<GeomTargetLocator>) {
 
         private val myTargetLocators = targetLocators.map { TileTargetLocator(it) }
 
@@ -62,7 +63,7 @@ internal class PlotTooltipHelper {
             get() = DoubleVector(geomBounds.left, geomBounds.bottom)
 
         internal fun findTargets(plotCoord: DoubleVector): List<LookupResult> {
-            val targetsPicker = jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker().apply {
+            val targetsPicker = LocatedTargetsPicker().apply {
                 for (locator in myTargetLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {

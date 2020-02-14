@@ -27,24 +27,19 @@ open class HitShape private constructor(val kind: Kind, private val shape: Any) 
 
     companion object {
         fun point(p: DoubleVector, radius: Double): HitShape {
-            return HitShape(
-                Kind.POINT,
-                DoubleCircle(p, radius)
-            )
+            return HitShape(Kind.POINT, DoubleCircle(p, radius))
         }
 
         fun rect(r: DoubleRectangle): HitShape {
-            return HitShape(
-                Kind.RECT,
-                r
-            )
+            return HitShape(Kind.RECT, r)
         }
 
-        fun path(points: List<DoubleVector>, closePath: Boolean): HitShape {
-            return shapeWithPath(
-                if (closePath) Kind.POLYGON else Kind.PATH,
-                points
-            )
+        fun path(points: List<DoubleVector>): HitShape {
+            return shapeWithPath(Kind.PATH, points)
+        }
+
+        fun polygon(points: List<DoubleVector>): HitShape {
+            return shapeWithPath(Kind.POLYGON, points)
         }
 
         private fun shapeWithPath(kind: Kind, points: List<DoubleVector>): HitShape {

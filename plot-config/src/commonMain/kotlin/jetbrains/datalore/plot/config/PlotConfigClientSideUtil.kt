@@ -215,7 +215,7 @@ object PlotConfigClientSideUtil {
             GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE -> return builder.univariateFunction(LookupStrategy.HOVER)
-            GeomKind.BOX_PLOT ->  return builder.univariateFunction(LookupStrategy.HOVER).hideAes(listOf(Aes.Y))
+            GeomKind.BOX_PLOT -> return builder.univariateFunction(LookupStrategy.HOVER).hideAes(listOf(Aes.Y))
             GeomKind.SMOOTH,
             GeomKind.POINT,
             GeomKind.CONTOUR,
@@ -244,6 +244,7 @@ object PlotConfigClientSideUtil {
             GeomKind.POLYGON,
             GeomKind.BIN_2D,
             GeomKind.MAP -> return builder.bivariateFunction(AREA_GEOM)
+            GeomKind.RECT -> return builder.bivariateFunction(AREA_GEOM).hideAes(listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX))
 
             GeomKind.LIVE_MAP -> return builder.multilayerLookupStrategy()
 

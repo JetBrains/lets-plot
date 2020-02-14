@@ -26,13 +26,13 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
     }
 
     fun withPathHitShape(): TestingGeomTargetBuilder {
-        myHintShape = HitShape.path(emptyList(), false)
+        myHintShape = HitShape.path(emptyList())
         return this
     }
 
     fun withPolygonHitShape(cursorCoord: DoubleVector): TestingGeomTargetBuilder {
         myTargetHitCoord = cursorCoord
-        myHintShape = HitShape.path(emptyList(), true)
+        myHintShape = HitShape.polygon(emptyList())
         return this
     }
 

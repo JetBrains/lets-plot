@@ -46,6 +46,7 @@ class TargetPrototype(
                 RECT -> when (tooltipKind) {
                     VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, 0.0, fill)
                     HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, hitShape.rect.width / 2, fill)
+                    CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(hitCoord, fill)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for RECT")
                 }
 

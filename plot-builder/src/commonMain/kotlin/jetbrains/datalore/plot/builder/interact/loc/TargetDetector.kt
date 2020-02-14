@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.interact.loc
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.plot.builder.interact.MathUtil
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARE_RESULT
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
@@ -58,7 +59,7 @@ internal class TargetDetector(
                     LookupStrategy.HOVER -> {
                         for (pathPoint in pathProjection.points) {
                             val targetPointCoord = pathPoint.projection().xy()
-                            if (jetbrains.datalore.plot.builder.interact.MathUtil.areEqual(targetPointCoord, cursorCoord,
+                            if (MathUtil.areEqual(targetPointCoord, cursorCoord,
                                     POINT_AREA_EPSILON
                                 )) {
                                 return pathPoint
@@ -95,13 +96,13 @@ internal class TargetDetector(
                 val x = pointProjection.x()
                 when (locatorLookupStrategy) {
 
-                    LookupStrategy.HOVER -> return jetbrains.datalore.plot.builder.interact.MathUtil.areEqual(x, cursorCoord.x,
+                    LookupStrategy.HOVER -> return MathUtil.areEqual(x, cursorCoord.x,
                         POINT_AREA_EPSILON
                     )
 
                     LookupStrategy.NEAREST -> {
                         // Too far. Don't add this point into result list
-                        return if (!jetbrains.datalore.plot.builder.interact.MathUtil.areEqual(closestPointChecker.target.x, x,
+                        return if (!MathUtil.areEqual(closestPointChecker.target.x, x,
                                 POINT_X_NEAREST_EPSILON
                             )) {
                             false
@@ -119,7 +120,7 @@ internal class TargetDetector(
                 val targetPointCoord = pointProjection.xy()
                 return when (locatorLookupStrategy) {
 
-                    LookupStrategy.HOVER -> jetbrains.datalore.plot.builder.interact.MathUtil.areEqual(targetPointCoord, cursorCoord,
+                    LookupStrategy.HOVER -> MathUtil.areEqual(targetPointCoord, cursorCoord,
                         POINT_AREA_EPSILON
                     )
 
@@ -193,7 +194,7 @@ internal class TargetDetector(
                         // Doesn't support nearest strategy. Target can be found only by hovering a cursor above the polygon.
                         var counter = 0
                         for (ring in polygon) {
-                            if (ring.bbox.contains(cursorCoord) && jetbrains.datalore.plot.builder.interact.MathUtil.polygonContainsCoordinate(ring.edges, cursorCoord)) {
+                            if (ring.bbox.contains(cursorCoord) && MathUtil.polygonContainsCoordinate(ring.edges, cursorCoord)) {
                                 counter++
                             }
                         }

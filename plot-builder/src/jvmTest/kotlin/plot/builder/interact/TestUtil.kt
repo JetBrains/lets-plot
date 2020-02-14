@@ -262,7 +262,7 @@ object TestUtil {
     }
 
     internal fun pathTarget(key: Int, points: List<DoubleVector>): TargetPrototype {
-        val pathShape = HitShape.path(points, false)
+        val pathShape = HitShape.path(points)
         return TargetPrototype(pathShape, { hitIndex ->
             encodeIndex(
                 key,
@@ -272,7 +272,7 @@ object TestUtil {
     }
 
     internal fun pathTarget(points: List<DoubleVector>): TargetPrototype {
-        val pathShape = HitShape.path(points, false)
+        val pathShape = HitShape.path(points)
         return TargetPrototype(pathShape, identity(), params(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
     }
 
@@ -289,12 +289,12 @@ object TestUtil {
     }
 
     internal fun pathTarget(points: List<DoubleVector>, indexMapper: (Int) -> Int): TargetPrototype {
-        val pathShape = HitShape.path(points, false)
+        val pathShape = HitShape.path(points)
         return TargetPrototype(pathShape, indexMapper, params(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
     }
 
     internal fun polygonTarget(key: Int, points: List<DoubleVector>): TargetPrototype {
-        val polygonShape = HitShape.path(points, true)
+        val polygonShape = HitShape.polygon(points)
         return TargetPrototype(polygonShape, { key }, params(), TipLayoutHint.Kind.CURSOR_TOOLTIP)
     }
 

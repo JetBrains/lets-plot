@@ -7,13 +7,14 @@ package jetbrains.datalore.plot.base.interact
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 
 class NullGeomTargetCollector : GeomTargetCollector {
     override fun addPoint(
         index: Int,
         point: DoubleVector,
         radius: Double,
-        tooltipParams: GeomTargetCollector.TooltipParams,
+        tooltipParams: TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
     }
@@ -21,7 +22,7 @@ class NullGeomTargetCollector : GeomTargetCollector {
     override fun addRectangle(
         index: Int,
         rectangle: DoubleRectangle,
-        tooltipParams: GeomTargetCollector.TooltipParams,
+        tooltipParams: TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
     }
@@ -29,8 +30,15 @@ class NullGeomTargetCollector : GeomTargetCollector {
     override fun addPath(
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
-        tooltipParams: GeomTargetCollector.TooltipParams,
-        closePath: Boolean,
+        tooltipParams: TooltipParams,
+        tooltipKind: TipLayoutHint.Kind
+    ) {
+    }
+
+    override fun addPolygon(
+        points: List<DoubleVector>,
+        localToGlobalIndex: (Int) -> Int,
+        tooltipParams: TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
     }

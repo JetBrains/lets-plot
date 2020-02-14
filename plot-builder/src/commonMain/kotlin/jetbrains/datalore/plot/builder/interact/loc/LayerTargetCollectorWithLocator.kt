@@ -56,12 +56,27 @@ class LayerTargetCollectorWithLocator(
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        closePath: Boolean,
         tooltipKind: TipLayoutHint.Kind
     ) {
         addTarget(
             TargetPrototype(
-                HitShape.path(points, closePath),
+                HitShape.path(points),
+                localToGlobalIndex,
+                tooltipParams,
+                tooltipKind
+            )
+        )
+    }
+
+    override fun addPolygon(
+        points: List<DoubleVector>,
+        localToGlobalIndex: (Int) -> Int,
+        tooltipParams: GeomTargetCollector.TooltipParams,
+        tooltipKind: TipLayoutHint.Kind
+    ) {
+        addTarget(
+            TargetPrototype(
+                HitShape.polygon(points),
                 localToGlobalIndex,
                 tooltipParams,
                 tooltipKind
