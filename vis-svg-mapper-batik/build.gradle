@@ -22,7 +22,7 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
-                implementation project(':vis-svg')
+                implementation project(':vis-svg-portable')
             }
         }
         jvmMain {

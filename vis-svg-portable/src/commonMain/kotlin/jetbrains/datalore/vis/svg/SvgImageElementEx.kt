@@ -31,7 +31,7 @@ class SvgImageElementEx(x: Double, y: Double, width: Double, height: Double, pri
                 return hrefProp.get()
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out String?>>): Registration {
+            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out String?>>): Registration {
                 return hrefProp.addHandler(handler)
             }
 

@@ -102,6 +102,7 @@ object SvgUtils {
 
     fun copyAttributes(source: SvgElement, target: SvgElement) {
         for (attributeSpec in source.attributeKeys) {
+            @Suppress("UNCHECKED_CAST")
             val spec = attributeSpec as SvgAttributeSpec<Any?>
             target.setAttribute(spec, source.getAttribute(attributeSpec).get())
         }

@@ -20,7 +20,7 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
-                implementation project(':vis-svg')
+                implementation project(':vis-svg-portable')
                 implementation project(':vis-canvas')
                 implementation project(':vis-svg-mapper')
                 implementation project(':plot-base-portable')
@@ -102,7 +102,7 @@ dependencies {
     projectDependenciesJs project(path: ':base', configuration: 'outputJsJar')
 
     projectDependenciesJs project(path: ':mapper-core', configuration: 'outputJsJar')
-    projectDependenciesJs project(path: ':vis-svg', configuration: 'outputJsJar')
+    projectDependenciesJs project(path: ':vis-svg-portable', configuration: 'outputJsJar')
     projectDependenciesJs project(path: ':vis-svg-mapper', configuration: 'outputJsJar')
 
     if (project.buildSettings.enable_livemap) {

@@ -339,10 +339,6 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
         val xs = ArrayList<Double>(points.size)
         val ys = ArrayList<Double>(points.size)
         for (point in points) {
-            if (point == null) {
-                throw IllegalArgumentException("Points list for interpolation must not contain nulls")
-            }
-
             xs.add(point.x)
             ys.add(point.y)
         }

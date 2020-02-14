@@ -31,7 +31,7 @@ object BrowserDemoUtil {
         "lets-plot-base-portable.js",
         "lets-plot-base.js",
         "mapper-core.js",
-        "vis-svg.js",
+        "vis-svg-portable.js",
         "vis-canvas.js"
     )
 

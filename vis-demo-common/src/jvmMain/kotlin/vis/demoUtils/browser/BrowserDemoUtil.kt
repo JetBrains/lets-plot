@@ -22,7 +22,7 @@ object BrowserDemoUtil {
         "lets-plot-base-portable.js",          // base-portable
         "lets-plot-base.js",                   // base
         "mapper-core.js",
-        "vis-svg.js",
+        "vis-svg-portable.js",
         "vis-svg-mapper.js"
     )
 

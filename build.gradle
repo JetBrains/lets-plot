@@ -52,7 +52,7 @@ def include_sources_letsPlotJvmCommon = [
         'base-portable',
         'base',
         'vis-canvas',
-        'vis-svg',
+        'vis-svg-portable',
         'plot-base-portable',
         'plot-base',
         'plot-common-portable',

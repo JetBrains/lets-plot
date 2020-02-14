@@ -163,6 +163,7 @@ abstract class SvgElement : SvgNode() {
 
         operator fun <ValueT> get(spec: SvgAttributeSpec<ValueT>): ValueT? {
             return if (myAttrs != null && myAttrs!!.containsKey(spec)) {
+                @Suppress("UNCHECKED_CAST")
                 myAttrs!![spec] as ValueT
             } else null
         }
@@ -173,9 +174,11 @@ abstract class SvgElement : SvgNode() {
             }
 
             val oldValue = if (value == null) {
+                @Suppress("UNCHECKED_CAST")
                 val v = myAttrs!!.remove(spec) as ValueT
                 v
             } else {
+                @Suppress("UNCHECKED_CAST")
                 val v = myAttrs!!.put(spec, value) as ValueT
                 v
             }

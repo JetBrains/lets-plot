@@ -65,6 +65,7 @@ open class Listeners<ListenerT> {
         try {
             val size = myListenersCount
             for (i in 0 until size) {
+                @Suppress("UNCHECKED_CAST")
                 val l = myListeners!![i] as ListenerT
 
                 if (isRemoved(l)) continue
@@ -84,6 +85,7 @@ open class Listeners<ListenerT> {
     private fun isRemoved(l: ListenerT): Boolean {
         val size = myListeners!!.size
         for (i in myListenersCount until size) {
+            @Suppress("UNCHECKED_CAST")
             val op = myListeners!![i] as ListenerOp<ListenerT>
             if (!op.add && op.listener === l) return true
         }
@@ -105,6 +107,7 @@ open class Listeners<ListenerT> {
             val ops = opsList.toTypedArray()
             opsList.clear()
             for (o in ops) {
+                @Suppress("UNCHECKED_CAST")
                 val op = o as ListenerOp<ListenerT>
                 if (op.add) {
                     myListeners!!.add(op.listener as Any)
