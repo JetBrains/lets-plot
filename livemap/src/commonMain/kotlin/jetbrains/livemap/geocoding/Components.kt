@@ -27,7 +27,7 @@ class WaitGeocodeLocationComponent : EcsComponent
 class NeedCalculateLocationComponent : EcsComponent
 
 class LocationComponent: EcsComponent {
-    private var myWaitingCount = 0
+    private var myWaitingCount: Int? = null
     val locations = ArrayList<Rect<World>>()
 
     fun add(rect: Rect<World>) {
@@ -35,11 +35,11 @@ class LocationComponent: EcsComponent {
     }
 
     fun wait(n: Int) {
-        myWaitingCount += n
+        myWaitingCount = myWaitingCount?.let { it + n } ?: n
     }
 
     fun isReady(): Boolean {
-        return myWaitingCount > 0 && myWaitingCount == locations.size
+        return myWaitingCount != null && myWaitingCount == locations.size
     }
 }
 

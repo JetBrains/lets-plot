@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
+import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
@@ -105,13 +106,17 @@ internal class PlotTile(
         // render geoms
 
         if (liveMapGeomLayer != null) {
-            liveMapFigure = liveMapGeomLayer.createCanvasFigure(geomBounds.dimension)
+            val realBounds = myLayoutInfo.getAbsoluteGeomBounds(myTilesOrigin)
+
+            val liveMapData = liveMapGeomLayer.createCanvasFigure(realBounds)
 
             val rectElement = SvgRectElement(geomBounds).apply {
                 addClass(Style.PLOT_GLASS_PANE)
                 opacity().set(0.0)
             }
             add(rectElement)
+            liveMapFigure = liveMapData.canvasFigure
+            myTargetLocators.add(liveMapData.targetLocator)
         } else {
             // normal plot tile
             val sharedNumericMappers = HashMap<Aes<Double>, (Double?) -> Double?>()
@@ -257,6 +262,6 @@ internal class PlotTile(
     }
 }
 
-private fun GeomLayer.createCanvasFigure(dimension: DoubleVector): CanvasFigure {
-    return (geom as LiveMapGeom).createCanvasFigure(dimension)
+private fun GeomLayer.createCanvasFigure(bounds: DoubleRectangle): LiveMapProvider.LiveMapData {
+    return (geom as LiveMapGeom).createCanvasFigure(bounds)
 }

@@ -19,9 +19,12 @@ import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.placement.*
+import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.PointRenderer
-import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.searching.IndexComponent
+import jetbrains.livemap.searching.LocatorComponent
+import jetbrains.livemap.searching.PointLocatorHelper
 
 @LiveMapDsl
 class Points(
@@ -82,7 +85,8 @@ class PointBuilder(
 
     fun build(
         pointScaling: Boolean,
-        animationBuilder: AnimationBuilder
+        animationBuilder: AnimationBuilder,
+        nonInteractive: Boolean = false
     ): EcsEntity {
 
         val size = radius * 2.0
@@ -96,6 +100,7 @@ class PointBuilder(
                     error("Can't create point entity. [point] and [mapId] is null.")
             }.run {
                 setInitializer { worldPoint ->
+                    + IndexComponent(index)
                     + ShapeComponent().apply { shape = this@PointBuilder.shape }
                     + createStyle()
                     + if (pointScaling) {
@@ -109,6 +114,10 @@ class PointBuilder(
                     + RendererComponent(PointRenderer())
                     + ScreenLoopComponent()
                     + ScreenOriginComponent()
+
+                    if (!nonInteractive) {
+                        + LocatorComponent(PointLocatorHelper())
+                    }
 
                     if (animation == 2) {
                         val transformComponent = TransformComponent()

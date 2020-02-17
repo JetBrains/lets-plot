@@ -5,9 +5,15 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 
 interface LiveMapProvider {
-    fun createLiveMap(dimension: DoubleVector): CanvasFigure
+    fun createLiveMap(bounds: DoubleRectangle): LiveMapData
+
+    class LiveMapData(
+        val canvasFigure: CanvasFigure,
+        val targetLocator: GeomTargetLocator
+    )
 }

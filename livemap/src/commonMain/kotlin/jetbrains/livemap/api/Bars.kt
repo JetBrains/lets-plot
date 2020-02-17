@@ -10,6 +10,9 @@ import jetbrains.livemap.placement.*
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.BarRenderer
 import jetbrains.livemap.projection.Client
+import jetbrains.livemap.searching.BarLocatorHelper
+import jetbrains.livemap.searching.IndexComponent
+import jetbrains.livemap.searching.LocatorComponent
 import kotlin.math.abs
 
 @LiveMapDsl
@@ -61,7 +64,7 @@ class BarsFactory(
         val result = ArrayList<EcsEntity>()
 
         myItems.forEach { source ->
-            splitMapBarChart(source, maxAbsValue) { barOffset, barDimension, color->
+            splitMapBarChart(source, maxAbsValue) {index, barOffset, barDimension, color->
                 result.add(
                     when {
                         source.point != null ->
@@ -71,6 +74,7 @@ class BarsFactory(
                         else ->
                             error("Can't create bar entity. [point] and [mapId] is null.")
                     }.setInitializer { worldPoint ->
+                        + IndexComponent(index)
                         + RendererComponent(BarRenderer())
                         + WorldOriginComponent(worldPoint)
                         + ScreenLoopComponent()
@@ -82,6 +86,7 @@ class BarsFactory(
                             setStrokeColor(source.strokeColor)
                             setStrokeWidth(source.strokeWidth)
                         }
+                        + LocatorComponent(BarLocatorHelper())
                     }
                 )
             }
@@ -91,7 +96,7 @@ class BarsFactory(
     }
 }
 
-fun splitMapBarChart(source: ChartSource, maxAbsValue: Double, consumer: (Vec<Client>, Vec<Client>, Color) -> Unit) {
+fun splitMapBarChart(source: ChartSource, maxAbsValue: Double, consumer: (Int, Vec<Client>, Vec<Client>, Color) -> Unit) {
     val percents = transformValues2Percents(source.values, maxAbsValue)
 
     val radius = source.radius
@@ -105,6 +110,6 @@ fun splitMapBarChart(source: ChartSource, maxAbsValue: Double, consumer: (Vec<Cl
             (barWidth + spacing) * i - radius,
             if (percents[i] > 0) -barDimension.y else 0.0
         )
-        consumer(barOffset, barDimension, source.colors[i])
+        consumer(source.indices[i], barOffset, barDimension, source.colors[i])
     }
 }

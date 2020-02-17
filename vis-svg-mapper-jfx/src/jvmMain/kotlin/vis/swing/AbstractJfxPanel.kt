@@ -8,6 +8,7 @@ package jetbrains.datalore.vis.swing
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.paint.Color.TRANSPARENT
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
@@ -48,7 +49,7 @@ abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPane
         myRegFx.dispose()
         myRegFx = CompositeRegistration()
 
-        val scene = Scene(createSceneParent())
+        val scene = Scene(createSceneParent(), TRANSPARENT)
         scene.stylesheets.addAll(stylesheets)
         setScene(scene)
     }
