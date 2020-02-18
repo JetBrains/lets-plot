@@ -14,9 +14,6 @@ import jetbrains.livemap.placement.ScreenOriginComponent
 import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.PieSectorRenderer
-import jetbrains.livemap.searching.IndexComponent
-import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.PieLocatorHelper
 import kotlin.math.PI
 
 @LiveMapDsl
@@ -78,7 +75,6 @@ class PiesFactory(
                     else ->
                         error("Can't create pieSector entity. [point] and [mapId] is null.")
                 }.setInitializer { worldPoint ->
-                    + IndexComponent(source.indices[i])
                     + RendererComponent(PieSectorRenderer())
                     + WorldOriginComponent(worldPoint)
                     + PieSectorComponent().apply {
@@ -94,7 +90,6 @@ class PiesFactory(
                     + ScreenDimensionComponent()
                     + ScreenLoopComponent()
                     + ScreenOriginComponent()
-                    + LocatorComponent(PieLocatorHelper())
                 }
             )
             currentAngle = endAngle

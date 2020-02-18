@@ -24,7 +24,6 @@ class PlotBuilder(private val myTheme: Theme) {
     private lateinit var myScaleYProto: Scale<Double>
     private var myAxisEnabled = true
     private var myInteractionsEnabled = true
-    private var hasLiveMap = false
 
     fun setTitle(title: String?) {
         myTitle = title
@@ -78,11 +77,6 @@ class PlotBuilder(private val myTheme: Theme) {
         return this
     }
 
-    fun setLiveMap(b: Boolean): PlotBuilder {
-        hasLiveMap = b
-        return this
-    }
-
     fun build(): Plot {
         return MyPlot(this)
     }
@@ -102,7 +96,6 @@ class PlotBuilder(private val myTheme: Theme) {
         private val myLayersByTile: List<List<GeomLayer>>
         private val myLayout: PlotLayout?
         private val myLegendBoxInfos: List<LegendBoxInfo>
-        private val hasLiveMap: Boolean
 
         override val isAxisEnabled: Boolean
         override val isInteractionsEnabled: Boolean
@@ -133,8 +126,6 @@ class PlotBuilder(private val myTheme: Theme) {
             myLayout = b.myLayout
             myLegendBoxInfos = ArrayList(b.myLegendBoxInfos)
 
-            hasLiveMap = b.hasLiveMap
-
             isAxisEnabled = b.myAxisEnabled
             isInteractionsEnabled = b.myInteractionsEnabled
         }
@@ -149,10 +140,6 @@ class PlotBuilder(private val myTheme: Theme) {
 
         override fun hasAxisTitleBottom(): Boolean {
             return myAxisXTitleEnabled && !Strings.isNullOrEmpty(myAxisTitleBottom)
-        }
-
-        override fun hasLiveMap(): Boolean {
-            return hasLiveMap
         }
 
         override fun tileLayers(tileIndex: Int): List<GeomLayer> {

@@ -9,17 +9,12 @@ import javafx.scene.input.MouseButton
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.KeyModifiers
 import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.geometry.Vector
 import kotlin.math.roundToInt
 import javafx.scene.input.MouseEvent as JfxMouseEvent
 
 object JfxEventUtil {
-    fun translate(e: JfxMouseEvent, offset: Vector = Vector.ZERO): MouseEvent {
-        return MouseEvent(
-            e.x.roundToInt() - offset.x,
-            e.y.roundToInt() - offset.y,
-            getButton(e),
-            getModifiers(e))
+    fun translate(e: JfxMouseEvent): MouseEvent {
+        return MouseEvent(e.x.roundToInt(), e.y.roundToInt(), getButton(e), getModifiers(e))
     }
 
     private fun getModifiers(e: JfxMouseEvent): KeyModifiers {

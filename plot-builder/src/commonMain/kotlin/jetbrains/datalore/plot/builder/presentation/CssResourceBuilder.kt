@@ -76,12 +76,6 @@ class SelectorBuilder {
         return this
     }
 
-    fun userSelect(value: UserSelectValue): SelectorBuilder {
-        styleMap[StyleType.USER_SELECT] = value
-
-        return this
-    }
-
     fun pointerEvents(value: PointerEventsValue): SelectorBuilder {
         styleMap[StyleType.POINTER_EVENTS] = value
 
@@ -127,7 +121,6 @@ enum class StyleType(val str: String) {
     FONT_SIZE("font-size"),
     FILL("fill"),
     CURSOR("cursor"),
-    USER_SELECT("user-select"),
     POINTER_EVENTS("pointer-events"),
     OPACITY("opacity"),
     SHAPE_RENDERING("shape-rendering"),
@@ -141,11 +134,6 @@ enum class SizeMeasure(val str: String) {
 
 enum class CursorValue(val str: String) {
     CROSSHAIR("crosshair");
-    override fun toString() = str
-}
-
-enum class UserSelectValue(val str: String) {
-    NONE("none");
     override fun toString() = str
 }
 

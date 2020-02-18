@@ -5,10 +5,6 @@
 
 package jetbrains.datalore.plot
 
-import javafx.application.Platform
-import javafx.embed.swing.JFXPanel
-import javafx.scene.Group
-import javafx.scene.Scene
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
@@ -16,9 +12,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
+import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.config.FailureHandler
-import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
-import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.awt.svgToString.SvgToString
 import mu.KotlinLogging
@@ -77,10 +72,10 @@ object MonolithicAwt {
             computationMessagesHandler(computationMessages)
             if (success.buildInfos.size == 1) {
                 // a single plot
-                return buildPlotSvgComponent(success.buildInfos[0], componentFactory, executor)
+                return buildPlotSvgComponent(success.buildInfos[0].plotContainer, componentFactory, executor)
             }
             // ggbunch
-            return buildGGBunchComponent(success.buildInfos, componentFactory, executor)
+            return buildGGBunchComponenet(success.buildInfos, componentFactory, executor)
 
         } catch (e: RuntimeException) {
             val failureInfo = FailureHandler.failureInfo(e)
@@ -91,7 +86,7 @@ object MonolithicAwt {
         }
     }
 
-    private fun buildGGBunchComponent(
+    private fun buildGGBunchComponenet(
         plotInfos: List<PlotBuildInfo>,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
@@ -101,7 +96,7 @@ object MonolithicAwt {
         bunchComponent.border = null
 
         for (plotInfo in plotInfos) {
-            val plotComponent = buildPlotSvgComponent(plotInfo, componentFactory, executor)
+            val plotComponent = buildPlotSvgComponent(plotInfo.plotContainer, componentFactory, executor)
             val bounds = plotInfo.bounds()
             plotComponent.bounds = Rectangle(
                 bounds.origin.x.toInt(),
@@ -129,57 +124,15 @@ object MonolithicAwt {
     }
 
     fun buildPlotSvgComponent(
-        plotInfo: PlotBuildInfo,
+        plotContainer: PlotContainer,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
-        val plotContainer = plotInfo.plotContainer
+
         plotContainer.ensureContentBuilt()
+        val component = componentFactory(plotContainer.svg)
 
-        val plotComponent: JComponent = componentFactory(plotContainer.svg)
-
-        val controls = ArrayList<JavafxCanvasControl>()
-
-        val resultComponent = if (plotContainer.liveMapFigures.isEmpty()) {
-
-            plotComponent
-        } else {
-            plotComponent.bounds = Rectangle(0,0, plotInfo.size.get().x.toInt(), plotInfo.size.get().y.toInt())
-            val panel = JFXPanel()
-
-            panel.add(plotComponent)
-
-            plotContainer.liveMapFigures.forEach { canvasFigure ->
-                val canvasBounds = canvasFigure.bounds().get()
-                val rootGroup = Group()
-
-                JFXPanel()
-                    .apply {
-                        scene = Scene(rootGroup)
-                        bounds = Rectangle(
-                            canvasBounds.origin.x,
-                            canvasBounds.origin.y,
-                            canvasBounds.dimension.x,
-                            canvasBounds.dimension.y
-                        )
-                        panel.add(this)
-                    }
-
-                JavafxCanvasControl(
-                    rootGroup,
-                    canvasBounds.dimension,
-                    1.0,
-                    AwtEventPeer(plotComponent, canvasBounds)
-                ).let {
-                    Platform.runLater{ canvasFigure.mapToCanvas(it) }
-                    controls.add(it)
-                }
-            }
-
-            panel
-        }
-
-        plotComponent.addMouseListener(object : MouseAdapter() {
+        component.addMouseListener(object : MouseAdapter() {
             override fun mouseExited(e: MouseEvent) {
                 super.mouseExited(e)
                 executor {
@@ -187,8 +140,7 @@ object MonolithicAwt {
                 }
             }
         })
-
-        plotComponent.addMouseMotionListener(object : MouseAdapter() {
+        component.addMouseMotionListener(object : MouseAdapter() {
             override fun mouseMoved(e: MouseEvent) {
                 super.mouseMoved(e)
                 executor {
@@ -197,9 +149,20 @@ object MonolithicAwt {
             }
         })
 
+        // TODO: Inject Livemap
+//        plotContainer.liveMapFigures.forEach { liveMapFigure ->
+//            val canvasControl =
+//                DomCanvasControl(liveMapFigure.dimension().get().toVector())
+//            liveMapFigure.mapToCanvas(canvasControl)
+//            eventTarget.appendChild(canvasControl.rootElement)
+//        }
 
-        return resultComponent
+        return component;
     }
+
+//    private fun DoubleVector.toVector(): Vector {
+//        return Vector(x.toInt(), y.toInt())
+//    }
 
     private fun createErrorLabel(s: String): JComponent {
         val label = JLabel(s)

@@ -9,22 +9,13 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.SimpleAsync
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.dom.DomEventUtil
 import jetbrains.datalore.base.event.dom.DomEventUtil.translateInPageCoord
-import jetbrains.datalore.base.geometry.Rectangle
+import jetbrains.datalore.base.event.dom.DomEventUtil.translateInTargetCoord
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.base.js.css.setPosition
 import jetbrains.datalore.base.js.dom.DomEventListener
 import jetbrains.datalore.base.js.dom.DomEventType
-import jetbrains.datalore.base.js.dom.DomEventType.Companion.CLICK
-import jetbrains.datalore.base.js.dom.DomEventType.Companion.DOUBLE_CLICK
-import jetbrains.datalore.base.js.dom.DomEventType.Companion.MOUSE_DOWN
-import jetbrains.datalore.base.js.dom.DomEventType.Companion.MOUSE_ENTER
-import jetbrains.datalore.base.js.dom.DomEventType.Companion.MOUSE_LEAVE
-import jetbrains.datalore.base.js.dom.DomEventType.Companion.MOUSE_MOVE
-import jetbrains.datalore.base.js.dom.DomEventType.Companion.MOUSE_UP
-import jetbrains.datalore.base.js.dom.DomMouseEvent
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.Registration
@@ -41,14 +32,16 @@ import org.w3c.files.BlobPropertyBag
 import kotlin.browser.document
 import org.w3c.dom.events.MouseEvent as W3cMouseEvent
 
-class DomCanvasControl(
-    private val myRootElement: HTMLElement,
-    override val size: Vector,
-    private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>
-) : CanvasControl {
+class DomCanvasControl(override val size: Vector) : CanvasControl {
+    val rootElement: HTMLElement = document.createElement("div") as HTMLElement
+    private val eventPeer = DomEventPeer(rootElement)
+
+    init {
+        rootElement.style.setPosition(CssPosition.RELATIVE)
+    }
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
-        return object : DomAnimationTimer(myRootElement) {
+        return object : DomAnimationTimer(rootElement) {
             override fun handle(millisTime: Long) {
                 eventHandler.onEvent(millisTime)
             }
@@ -56,11 +49,14 @@ class DomCanvasControl(
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-        return myEventPeer.addEventHandler(
+        val translator = when (eventSpec) {
+            MouseEventSpec.MOUSE_PRESSED, MouseEventSpec.MOUSE_DRAGGED -> ::translateInPageCoord
+            else -> ::translateInTargetCoord
+        }
+
+        return eventPeer.addEventHandler(
             eventSpec,
-            handler {
-                eventHandler.onEvent(it)
-            }
+            handler { eventHandler.onEvent(translator(it)) }
         )
     }
 
@@ -117,75 +113,56 @@ class DomCanvasControl(
     }
 
     override fun addChild(canvas: Canvas) {
-        myRootElement.appendChild((canvas as DomCanvas).canvasElement)
+        rootElement.appendChild((canvas as DomCanvas).canvasElement)
     }
 
     override fun addChild(index: Int, canvas: Canvas) {
-        myRootElement.insertBefore((canvas as DomCanvas).canvasElement, myRootElement.childNodes[index])
+        rootElement.insertBefore((canvas as DomCanvas).canvasElement, rootElement.childNodes[index])
     }
 
     override fun removeChild(canvas: Canvas) {
-        myRootElement.removeChild((canvas as DomCanvas).canvasElement)
+        rootElement.removeChild((canvas as DomCanvas).canvasElement)
     }
 
     override fun <T> schedule(f: () -> T) {
         f()
     }
 
-    class DomEventPeer (private val myEventTarget: Node, private val myTargetBounds: Rectangle) :
-        EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
+    private class DomEventPeer (private val myRootElement: Node) :
+        EventPeer<MouseEventSpec, W3cMouseEvent>(MouseEventSpec::class) {
         private var myButtonPressed = false
         private var myWasDragged = false
 
         init {
-            handle(MOUSE_ENTER) {
-                if (!isHitOnTarget(it)) return@handle
+            handle(DomEventType.MOUSE_ENTER) { dispatch(MouseEventSpec.MOUSE_ENTERED, it) }
 
-                dispatch(MouseEventSpec.MOUSE_ENTERED, translate(it))
-            }
+            handle(DomEventType.MOUSE_LEAVE) { dispatch(MouseEventSpec.MOUSE_LEFT, it) }
 
-            handle(MOUSE_LEAVE) {
-                if (!isHitOnTarget(it)) return@handle
-
-                dispatch(MouseEventSpec.MOUSE_LEFT, translate(it))
-            }
-
-            handle(CLICK) {
+            handle(DomEventType.CLICK) {
                 if (!myWasDragged) {
-                    if (!isHitOnTarget(it)) return@handle
-
-                    dispatch(MouseEventSpec.MOUSE_CLICKED, translate(it))
+                    dispatch(MouseEventSpec.MOUSE_CLICKED, it)
                 }
                 myWasDragged = false
             }
 
-            handle(DOUBLE_CLICK) {
-                if (!isHitOnTarget(it)) return@handle
+            handle(DomEventType.DOUBLE_CLICK) { dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, it) }
 
-                dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, translate(it))
-            }
-
-            handle(MOUSE_DOWN) {
-                if (!isHitOnTarget(it)) return@handle
-
+            handle(DomEventType.MOUSE_DOWN) {
                 myButtonPressed = true
-                dispatch(MouseEventSpec.MOUSE_PRESSED, translateInPageCoord(it))
+                dispatch(MouseEventSpec.MOUSE_PRESSED, it)
             }
 
-            handle(MOUSE_UP) {
+            handle(DomEventType.MOUSE_UP) {
                 myButtonPressed = false
-                dispatch(MouseEventSpec.MOUSE_RELEASED, translate(it))
+                dispatch(MouseEventSpec.MOUSE_RELEASED, it)
             }
 
-            handle(MOUSE_MOVE) {
+            handle(DomEventType.MOUSE_MOVE) {
                 if (myButtonPressed) {
                     myWasDragged = true
-
-                    dispatch(MouseEventSpec.MOUSE_DRAGGED, translateInPageCoord(it))
+                    dispatch(MouseEventSpec.MOUSE_DRAGGED, it)
                 } else {
-                    if (!isHitOnTarget(it)) return@handle
-
-                    dispatch(MouseEventSpec.MOUSE_MOVED, translate(it))
+                    dispatch(MouseEventSpec.MOUSE_MOVED, it)
                 }
             }
         }
@@ -198,21 +175,13 @@ class DomCanvasControl(
         }
 
         private fun targetNode(eventSpec: DomEventType<W3cMouseEvent>): Node = when (eventSpec) {
-            MOUSE_MOVE, MOUSE_UP -> document
-            else -> myEventTarget
+            DomEventType.MOUSE_MOVE, DomEventType.MOUSE_UP -> document
+            else -> myRootElement
         }
 
         override fun onSpecAdded(spec: MouseEventSpec) {}
 
         override fun onSpecRemoved(spec: MouseEventSpec) {}
-
-        private fun isHitOnTarget(event: DomMouseEvent): Boolean {
-            return myTargetBounds.contains(Vector(event.offsetX.toInt(), event.offsetY.toInt()))
-        }
-
-        private fun translate(event: DomMouseEvent) : MouseEvent {
-            return DomEventUtil.translateInTargetCoordWithOffset(event, myTargetBounds.origin)
-        }
     }
 }
 

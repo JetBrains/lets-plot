@@ -35,7 +35,7 @@ protected constructor(specClass: KClass<SpecT>) { // originally `specClass` was 
         })
     }
 
-    fun dispatch(eventSpec: SpecT, event: EventT) {
+    protected fun dispatch(eventSpec: SpecT, event: EventT) {
         myEventHandlers[eventSpec]?.fire(object : ListenerCaller<EventHandler<EventT>> {
             override fun call(l: EventHandler<EventT>) {
                 l.onEvent(event)

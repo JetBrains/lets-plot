@@ -26,15 +26,12 @@ import jetbrains.livemap.placement.ScreenLoopComponent
 import jetbrains.livemap.placement.ScreenOriginComponent
 import jetbrains.livemap.placement.WorldDimensionComponent
 import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.rendering.RendererComponent
 import jetbrains.livemap.rendering.Renderers.PathRenderer
 import jetbrains.livemap.rendering.StyleComponent
 import jetbrains.livemap.rendering.setStrokeColor
-import jetbrains.livemap.searching.IndexComponent
-import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.PathLocatorHelper
+import jetbrains.livemap.projection.MapProjection
 
 @LiveMapDsl
 class Paths(
@@ -81,7 +78,7 @@ class PathBuilder(
     var speed: Double = 0.0
     var flow: Double = 0.0
 
-    fun build(nonInteractive: Boolean = false): EcsEntity? {
+    fun build(): EcsEntity? {
         val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
 
         return coord
@@ -90,7 +87,6 @@ class PathBuilder(
                 val entity = myFactory
                     .createMapEntity("map_ent_path")
                     .addComponents {
-                        + IndexComponent(index)
                         + RendererComponent(PathRenderer())
                         + WorldOriginComponent(bbox.origin)
                         + WorldGeometryComponent().apply { geometry = coord }
@@ -104,9 +100,6 @@ class PathBuilder(
                         }
                         + NeedLocationComponent()
                         + NeedCalculateLocationComponent()
-                        if (!nonInteractive) {
-                            + LocatorComponent(PathLocatorHelper())
-                        }
                     }
 
                 if (animation == 2) {
