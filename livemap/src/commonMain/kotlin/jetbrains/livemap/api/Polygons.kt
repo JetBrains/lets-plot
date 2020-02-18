@@ -27,10 +27,7 @@ import jetbrains.livemap.rendering.Renderers.PolygonRenderer
 import jetbrains.livemap.scaling.ScaleComponent
 import jetbrains.livemap.projection.Coordinates
 import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.searching.IndexComponent
-import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.PointLocatorHelper
-import jetbrains.livemap.searching.PolygonLocatorHelper
+
 
 @LiveMapDsl
 class Polygons(
@@ -92,7 +89,6 @@ class PolygonsBuilder(
         return myFactory
             .createMapEntity("map_ent_s_polygon")
             .addComponents {
-                + IndexComponent(index)
                 + RendererComponent(PolygonRenderer())
                 + WorldOriginComponent(bbox.origin)
                 + WorldGeometryComponent().apply { this.geometry = geometry }
@@ -107,7 +103,6 @@ class PolygonsBuilder(
                 }
                 + NeedLocationComponent()
                 + NeedCalculateLocationComponent()
-                + LocatorComponent(PolygonLocatorHelper())
             }
     }
 
@@ -115,7 +110,6 @@ class PolygonsBuilder(
         return myFactory
             .createMapEntity("map_ent_d_polygon_$mapId")
             .addComponents {
-                + IndexComponent(index)
                 + MapIdComponent(mapId!!)
                 + NeedBboxComponent()
                 + RegionFragmentsComponent()
@@ -129,7 +123,6 @@ class PolygonsBuilder(
                 }
                 + NeedLocationComponent()
                 + NeedGeocodeLocationComponent()
-                + LocatorComponent(PolygonLocatorHelper())
             }
     }
 }

@@ -6,7 +6,6 @@
 package jetbrains.datalore.base.event.dom
 
 import jetbrains.datalore.base.event.*
-import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.dom.DomKeyEvent
 import jetbrains.datalore.base.js.dom.DomMouseButtons
 import jetbrains.datalore.base.js.dom.DomMouseEvent
@@ -108,13 +107,5 @@ object DomEventUtil {
 
     fun translateInTargetCoord(e: DomMouseEvent): MouseEvent {
         return MouseEvent(e.offsetX.toInt(), e.offsetY.toInt(), getButton(e), getModifiers(e))
-    }
-
-    fun translateInTargetCoordWithOffset(e: DomMouseEvent, offset: Vector = Vector.ZERO): MouseEvent {
-        return MouseEvent(
-            e.offsetX.toInt() - offset.x,
-            e.offsetY.toInt() - offset.y,
-            getButton(e),
-            getModifiers(e))
     }
 }

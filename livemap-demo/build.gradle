@@ -7,7 +7,6 @@ kotlin {
     jvm("jvmJfx")
     jvm("jvmRawJfx")
     jvm("jvmBrowser")
-    jvm("jvmJfxPlot")
     js() {
         compileKotlinJs {
             kotlinOptions.sourceMap = true
@@ -32,13 +31,6 @@ kotlin {
                 implementation project(':plot-builder')
                 implementation project(':plot-base-portable')
                 implementation project(':plot-base')
-                implementation project(':plot-config-portable')
-                implementation project(':plot-config')
-                implementation project(':plot-common-portable')
-                implementation project(':plot-demo-common')
-                implementation project(':mapper-core')
-                implementation project(':plot-livemap')
-                implementation project(':vis-svg-mapper')
             }
         }
         allJvm {
@@ -54,13 +46,6 @@ kotlin {
         }
         jvmJfxMain {
             dependsOn allJvm
-        }
-        jvmJfxPlotMain {
-            dependsOn allJvm
-            dependencies {
-                implementation project(':vis-demo-common-jfx')
-                implementation project(':vis-svg-mapper-jfx')
-            }
         }
         jvmRawJfxMain {
             dependsOn allJvm

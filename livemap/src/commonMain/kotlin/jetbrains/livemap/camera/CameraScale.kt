@@ -19,7 +19,7 @@ object CameraScale {
         val camera = cameraEntity.get<CameraComponent>()
 
         if (camera.zoom % 1 != 0.0) {
-            return
+            error("Non integer camera zoom detected: ${camera.zoom}")
         }
 
         val animation = cameraEntity.componentManager

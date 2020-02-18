@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.GeomLayerListUtil
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotBuilder
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -78,13 +77,13 @@ class PlotAssembler private constructor(
             emptyList()
 
         // share first X/Y scale among all layers
-        @Suppress("UNCHECKED_CAST")
-        var xScaleProto = GeomLayerListUtil.anyBoundXScale(myLayersByTile) as Scale<Double>?
+        var xScaleProto =
+            jetbrains.datalore.plot.builder.GeomLayerListUtil.anyBoundXScale(myLayersByTile) as Scale<Double>?
         if (xScaleProto == null) {
             xScaleProto = Scales.continuousDomain("x", Aes.X)
         }
-        @Suppress("UNCHECKED_CAST")
-        var yScaleProto = GeomLayerListUtil.anyBoundYScale(myLayersByTile) as Scale<Double>?
+        var yScaleProto =
+            jetbrains.datalore.plot.builder.GeomLayerListUtil.anyBoundYScale(myLayersByTile) as Scale<Double>?
         if (yScaleProto == null) {
             yScaleProto = Scales.continuousDomain("y", Aes.Y)
         }
@@ -95,18 +94,18 @@ class PlotAssembler private constructor(
             //  - ignore coord provider
             //  - plot layout without axes
             val plotLayout = PlotAssemblerUtil.createPlotLayout(
-                LiveMapTileLayout(),
+                LivemapTileLayout(),
                 isFacetLayout,
                 facets
             )
-            return createXYPlot(xScaleProto, yScaleProto, plotLayout, legendsBoxInfos, hasLiveMap = true)
+            return createXYPlot(xScaleProto, yScaleProto, plotLayout, legendsBoxInfos)
         }
 
         // train scales
         val rangeByAes = PlotAssemblerUtil.rangeByNumericAes(myLayersByTile)
 
         val xDomain = rangeByAes.get(Aes.X)
-        val yDomain = rangeByAes[Aes.Y]
+        val yDomain = rangeByAes.get(Aes.Y)
         checkState(xDomain != null, "X domain not defined")
         checkState(yDomain != null, "Y domain not defined")
         checkState(SeriesUtil.isFinite(xDomain!!.lowerEndpoint()), "X domain lower end: " + xDomain.lowerEndpoint())
@@ -137,11 +136,8 @@ class PlotAssembler private constructor(
 
 
     private fun createXYPlot(
-        xScaleProto: Scale<Double>,
-        yScaleProto: Scale<Double>,
-        plotLayout: PlotLayout,
-        legendBoxInfos: List<LegendBoxInfo>,
-        hasLiveMap: Boolean = false
+        xScaleProto: Scale<Double>, yScaleProto: Scale<Double>,
+        plotLayout: PlotLayout, legendBoxInfos: List<LegendBoxInfo>
     ): Plot {
 
         val plotBuilder = PlotBuilder(myTheme)
@@ -161,7 +157,6 @@ class PlotAssembler private constructor(
         plotBuilder.setPlotLayout(plotLayout)
         plotBuilder.axisEnabled(myAxisEnabled)
         plotBuilder.interactionsEnabled(myInteractionsEnabled)
-        plotBuilder.setLiveMap(hasLiveMap)
         return plotBuilder.build()
     }
 

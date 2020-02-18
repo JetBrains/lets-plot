@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.plot.MonolithicAwt
-import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plotDemo.model.plotContainer.BarPlotResizeDemo
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
 import java.awt.Color
@@ -98,7 +97,7 @@ object PlotResizeDemoUtil {
     ) {
         val plot = demo.createPlot(plotSizeProp)
         val component = MonolithicAwt.buildPlotSvgComponent(
-            MonolithicCommon.PlotBuildInfo(plot, DoubleVector(0.0, 0.0), plotSizeProp, emptyList()),
+            plot,
             factory::createSvgComponent,
             factory.createPlotEdtExecutor()
         )

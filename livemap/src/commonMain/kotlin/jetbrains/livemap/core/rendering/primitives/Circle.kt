@@ -26,7 +26,7 @@ class Circle : RenderBox {
     private var center: DoubleVector = DoubleVector.ZERO
 
     private fun update() {
-        center = dimension.mul(0.5)
+        center = origin.add(dimension.mul(0.5))
     }
 
     var strokeColor: Color? = null

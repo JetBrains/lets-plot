@@ -22,7 +22,6 @@ import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.PathRenderer
 import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.searching.IndexComponent
 
 @LiveMapDsl
 class Lines(
@@ -89,7 +88,6 @@ class LineBuilder(
                 val line = createLineGeometry(worldPoint, horizontal, myMapProjection.mapRect)
                 val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, myMapProjection.mapRect)
 
-                + IndexComponent(index)
                 + RendererComponent(PathRenderer())
                 + WorldOriginComponent(bbox.origin)
                 + WorldGeometryComponent().apply { geometry = line }

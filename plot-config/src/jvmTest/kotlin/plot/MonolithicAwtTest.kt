@@ -129,7 +129,6 @@ internal class MonolithicAwtTest {
         |}
         |.plt-glass-pane {
         |	cursor: crosshair;
-        |	user-select: none;
         |}
         |.plt-data-tooltip text {
         |	font-size: 12px;

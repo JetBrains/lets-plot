@@ -46,25 +46,19 @@ class MapLocationInitializationSystem(
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         if (!myNeedLocation) return
 
-        if (myLocationRect != null) {
-            myLocationRect.map {
-                myNeedLocation = false
-                listOf(it).run(myViewport::calculateBoundingBox)
-                    .calculatePosition { zoom, coordinates ->
-                        context.setCameraPosition(zoom, coordinates)
-                    }
-            }
-        } else {
-            if (myLocation.isReady()) {
-                myNeedLocation = false
+        myLocationRect?.map {
+            myLocation.wait(1)
+            myLocation.add(it)
+        }
 
-                (myLocation.locations.takeIf { it.isNotEmpty() } ?: myDefaultLocation)
-
+        if (myLocation.isReady()) {
+            myNeedLocation = false
+            myLocation.locations
                 .run(myViewport::calculateBoundingBox)
-                    .calculatePosition { zoom, coordinates ->
-                        context.setCameraPosition(zoom, coordinates)
-                    }
-            }
+                .calculatePosition { zoom, coordinates ->
+                    context.camera.requestZoom(floor(zoom))
+                    context.camera.requestPosition(coordinates)
+                }
         }
     }
 
@@ -81,11 +75,6 @@ class MapLocationInitializationSystem(
             }
 
         positionConsumer(zoom, center)
-    }
-
-    private fun LiveMapContext.setCameraPosition(zoom: Double, coordinates: Vec<World>) {
-        camera.requestZoom(floor(zoom))
-        camera.requestPosition(coordinates)
     }
 
     private fun calculateMaxZoom(rectSize: Vec<World>, containerSize: Vec<Client>): Double {

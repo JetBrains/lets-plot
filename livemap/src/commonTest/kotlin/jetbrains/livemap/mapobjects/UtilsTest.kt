@@ -27,7 +27,7 @@ class UtilsTest {
             radius = 10.0
             values = listOf(-2.0, -0.0, 4.0)
             colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-        }, 4.0) { _, offset, dimension, _ ->
+        }, 4.0) { offset, dimension, _ ->
             actualOffsets.add(offset)
             actualDims.add(dimension)
         }
