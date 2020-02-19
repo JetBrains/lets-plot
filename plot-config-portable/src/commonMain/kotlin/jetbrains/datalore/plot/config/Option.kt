@@ -38,6 +38,12 @@ object Option {
             const val REQUEST = "request"
             const val OSM_ID = "id"
         }
+
+        object SeriesAnnotation {
+            const val TAG = "series_annotation"
+            const val NAME = "variable"
+            const val CATEGORY = "category"
+        }
     }
 
     object GGBunch {

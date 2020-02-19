@@ -4,7 +4,27 @@
 #
 import json
 
-__all__ = ['aes', 'layer']
+__all__ = ['aes', 'layer', 'factor']
+
+
+class VariableMeta:
+    def __init__(self, name, kind):
+        if name is None:
+            raise ValueError("name can't be none")
+
+        if kind is None:
+            raise ValueError("kind can't be none")
+
+        self.name = name
+        self.kind = kind
+
+
+def factor(var_name):
+    if isinstance(var_name, str):
+        return VariableMeta(var_name, 'discrete')
+
+    # aes(x=factor([1, 2, 3])) - pass as is
+    return var_name
 
 
 def aes(x=None, y=None, **other):

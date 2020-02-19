@@ -5,6 +5,8 @@
 from collections import Iterable
 from typing import Any, Tuple
 
+from lets_plot.plot.core import aes, VariableMeta
+
 
 def as_boolean(val, *, default):
     if val is None:
@@ -13,21 +15,42 @@ def as_boolean(val, *, default):
     return bool(val) and val != 'False'
 
 
-def as_annotated_data(raw_data: Any) -> Tuple:
-    data = raw_data
+def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
     data_meta = {}
+
+    # data
+    data = raw_data
 
     if is_data_pub_stream(data):
         data = {}
         for col_name in raw_data.col_names:
             data[col_name] = []
 
-        data_meta = {'data_meta': {'pubsub': {'channel_id': raw_data.channel_id, 'col_names': raw_data.col_names}}}
+        data_meta.update({'pubsub': {'channel_id': raw_data.channel_id, 'col_names': raw_data.col_names}})
 
     elif is_geo_data_frame(data):
-        data_meta = {'data_meta': get_geo_data_frame_meta(data)}
+        data_meta.update(get_geo_data_frame_meta(data))
 
-    return data, data_meta
+
+    # mapping
+    mapping = {}
+    var_meta = []
+
+    if raw_mapping is not None:
+        for key, variable in raw_mapping.as_dict().items():
+            if key == 'name': # ignore FeatureSpec.name property
+                continue
+
+            if isinstance(variable, VariableMeta):
+                mapping[key] = variable.name
+                var_meta.append({ 'variable': variable.name, 'category': variable.kind })
+            else:
+                mapping[key] = variable
+
+            if len(var_meta) > 0:
+                data_meta.update({ 'series_annotation': var_meta })
+
+    return data, aes(**mapping), {'data_meta': data_meta }
 
 
 def is_data_pub_stream(data: Any) -> bool:
