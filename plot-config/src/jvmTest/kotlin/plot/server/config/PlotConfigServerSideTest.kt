@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.server.config
 
+import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
@@ -44,7 +45,7 @@ class PlotConfigServerSideTest {
         }
 
         @Suppress("ConstantConditionIf")
-        if (!jetbrains.datalore.plot.FeatureSwitch.USE_DATA_FRAME_ENCODING) {
+        if (!FeatureSwitch.USE_DATA_FRAME_ENCODING) {
             return
         }
 

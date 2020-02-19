@@ -28,10 +28,10 @@ internal class MonolithicAwtTest {
             }
         )
 
+//        println(svgImages[0])
+
         assertEquals(1, svgImages.size)
         assertEquals(EXPECTED_SINGLE_PLOT, svgImages[0])
-
-//        println(svgImages[0])
     }
 
     @Test
@@ -295,12 +295,6 @@ internal class MonolithicAwtTest {
         |      </g>
         |    </g>
         |  </g>
-        |  <g>
-        |    <g>
-        |    </g>
-        |  </g>
-        |  <rect class="plt-glass-pane" opacity="0.0" width="400.0" height="300.0">
-        |  </rect>
         |</svg>
         """.trimMargin()
 
@@ -402,12 +396,6 @@ internal class MonolithicAwtTest {
         |      </g>
         |    </g>
         |  </g>
-        |  <g>
-        |    <g>
-        |    </g>
-        |  </g>
-        |  <rect class="plt-glass-pane" opacity="0.0" width="150.0" height="150.0">
-        |  </rect>
         |</svg>
         """.trimMargin()
     }

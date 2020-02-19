@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.config.PlotConfigUtil
+import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
 object DemoAndTest {
@@ -56,7 +57,7 @@ object DemoAndTest {
         @Suppress("NAME_SHADOWING")
         var plotSpec = plotSpec
         plotSpec = PlotConfigServerSide.processTransform(plotSpec)
-        return PlotConfigClientSide.processTransform(plotSpec)
+        return PlotConfigClientSideJvmJs.processTransform(plotSpec)
     }
 
 

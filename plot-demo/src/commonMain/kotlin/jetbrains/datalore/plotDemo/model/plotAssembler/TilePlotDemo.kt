@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -88,7 +89,7 @@ open class TilePlotDemo : SimpleDemoBase() {
         // Plot
         //
         val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(tilesLayer),
-                jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
+                CoordProviders.cartesian(), DefaultTheme())
         assembler.setTitle("Tile geometry")
         assembler.disableInteractions()
         return assembler.createPlot()

@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.model.SharedPieces
@@ -82,7 +83,7 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
                 )
                 .build(df)
 
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
+        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
         assembler.disableInteractions()
         assembler.setTitle("Raster image geometry")
         return assembler.createPlot()

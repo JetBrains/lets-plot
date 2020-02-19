@@ -17,10 +17,16 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.FailureHandler
+import jetbrains.datalore.plot.config.LiveMapOptionsParser
+import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.livemap.LiveMapUtil
+import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
+import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
 import mu.KotlinLogging
@@ -46,11 +52,7 @@ fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, pa
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
-        val processedSpec = if (PlotConfig.isFailure(plotSpec)) {
-            plotSpec
-        } else {
-            PlotConfigServerSide.processTransform(plotSpec)
-        }
+        val processedSpec = processSpecs(plotSpec, frontendOnly = false)
         buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
@@ -66,7 +68,9 @@ fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, pa
 fun buildPlotFromProcessedSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
-        buildPlotFromProcessedSpecsIntern(plotSpec, width, height, parentElement)
+        // "processed" here means "processed on backend" -> apply "frontend" transforms to have truly processed specs.
+        val processedSpec = processSpecs(plotSpec, frontendOnly = true)
+        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
     }
@@ -94,7 +98,7 @@ private fun buildPlotFromProcessedSpecsIntern(
 
     if (success.buildInfos.size == 1) {
         // a single plot
-        buildSinglePlotComponent(success.buildInfos[0].plotContainer, parentElement)
+        buildSinglePlotComponent(success.buildInfos[0], parentElement)
     } else {
         // a bunch
         buildGGBunchComponent(success.buildInfos, parentElement)
@@ -111,7 +115,7 @@ fun buildGGBunchComponent(plotInfos: List<PlotBuildInfo>, parentElement: HTMLEle
         } as HTMLElement
 
         parentElement.appendChild(itemElement)
-        buildSinglePlotComponent(plotInfo.plotContainer, itemElement)
+        buildSinglePlotComponent(plotInfo, itemElement)
     }
 
     val bunchBounds = plotInfos.map { it.bounds() }
@@ -126,11 +130,30 @@ fun buildGGBunchComponent(plotInfos: List<PlotBuildInfo>, parentElement: HTMLEle
 }
 
 private fun buildSinglePlotComponent(
-    plotContainer: PlotContainer,
+    plotBuildInfo: PlotBuildInfo,
     parentElement: HTMLElement
 ) {
+
+    val assembler = plotBuildInfo.plotAssembler
+    injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec)
+
+    val plot = assembler.createPlot()
+    val plotContainer = PlotContainer(plot, plotBuildInfo.size)
     val svg = buildPlotSvg(plotContainer, parentElement)
     parentElement.appendChild(svg)
+}
+
+private fun injectLivemapProvider(
+    plotAssembler: PlotAssembler,
+    processedPlotSpec: MutableMap<String, Any>
+) {
+    LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(processedPlotSpec))
+        ?.let {
+            LiveMapUtil.injectLiveMapProvider(
+                plotAssembler.layersByTile,
+                it
+            )
+        }
 }
 
 private fun buildPlotSvg(
@@ -156,7 +179,7 @@ private fun buildPlotSvg(
 
     plotContainer.liveMapFigures.forEach { liveMapFigure ->
         val canvasControl =
-            DomCanvasControl(liveMapFigure.dimension().get().toVector())
+            DomCanvasControl((liveMapFigure as CanvasFigure).dimension().get().toVector())
         liveMapFigure.mapToCanvas(canvasControl)
         eventTarget.appendChild(canvasControl.rootElement)
     }
@@ -195,5 +218,29 @@ private fun showText(message: String, style: String, parentElement: HTMLElement)
     }
     paragraphElement.textContent = message
     parentElement.appendChild(paragraphElement)
+}
+
+@Suppress("DuplicatedCode")
+private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
+    PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+    if (PlotConfig.isFailure(plotSpec)) {
+        return plotSpec
+    }
+
+    // Backend transforms
+    @Suppress("NAME_SHADOWING")
+    val plotSpec =
+        if (frontendOnly) {
+            plotSpec
+        } else {
+            PlotConfigServerSide.processTransform(plotSpec)
+        }
+
+    if (PlotConfig.isFailure(plotSpec)) {
+        return plotSpec
+    }
+
+    // Frontend transforms
+    return PlotConfigClientSideJvmJs.processTransform(plotSpec)
 }
 

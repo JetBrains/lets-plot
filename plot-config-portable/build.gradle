@@ -22,6 +22,7 @@ kotlin {
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
                 implementation project(':base-portable')
+                implementation project(':vis-svg-portable')
                 implementation project(':plot-common-portable')
                 implementation project(':plot-base-portable')
                 implementation project(':plot-builder-portable')

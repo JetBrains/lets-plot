@@ -13,9 +13,17 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.FailureHandler
+import jetbrains.datalore.plot.config.LiveMapOptionsParser
+import jetbrains.datalore.plot.config.OptionsAccessor
+import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.livemap.LiveMapUtil
+import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
+import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.svgMapper.awt.svgToString.SvgToString
+import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
+import jetbrains.datalore.vis.svgToString.SvgToString
 import mu.KotlinLogging
 import java.awt.Color
 import java.awt.Dimension
@@ -30,27 +38,20 @@ private val LOG = KotlinLogging.logger {}
 
 object MonolithicAwt {
 
+    /**
+     * Static SVG export
+     */
     fun buildSvgImagesFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): List<String> {
-        val buildResult = MonolithicCommon.buildPlotsFromRawSpecs(plotSpec, plotSize)
-        if (buildResult.isError) {
-            val errorMessage = (buildResult as Error).error
-            throw RuntimeException(errorMessage)
-        }
-
-        val success = buildResult as Success
-        val computationMessages = success.buildInfos.flatMap { it.computationMessages }
-        if (computationMessages.isNotEmpty()) {
-            computationMessagesHandler(computationMessages)
-        }
-
-        return success.buildInfos.map {
-            it.plotContainer.ensureContentBuilt()
-            it.plotContainer.svg
-        }.map { SvgToString.render(it) }
+        return MonolithicCommon.buildSvgImagesFromRawSpecs(
+            plotSpec,
+            plotSize,
+            SvgToString(RGBEncoderAwt()),
+            computationMessagesHandler
+        )
     }
 
     fun buildPlotFromRawSpecs(
@@ -61,7 +62,10 @@ object MonolithicAwt {
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
         return try {
-            val buildResult = MonolithicCommon.buildPlotsFromRawSpecs(plotSpec, plotSize)
+
+            @Suppress("NAME_SHADOWING")
+            val plotSpec = processSpecs(plotSpec, frontendOnly = false)
+            val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, plotSize)
             if (buildResult.isError) {
                 val errorMessage = (buildResult as Error).error
                 return createErrorLabel(errorMessage)
@@ -72,7 +76,7 @@ object MonolithicAwt {
             computationMessagesHandler(computationMessages)
             if (success.buildInfos.size == 1) {
                 // a single plot
-                return buildPlotSvgComponent(success.buildInfos[0].plotContainer, componentFactory, executor)
+                return buildPlotSvgComponent(success.buildInfos[0], componentFactory, executor)
             }
             // ggbunch
             return buildGGBunchComponenet(success.buildInfos, componentFactory, executor)
@@ -96,7 +100,7 @@ object MonolithicAwt {
         bunchComponent.border = null
 
         for (plotInfo in plotInfos) {
-            val plotComponent = buildPlotSvgComponent(plotInfo.plotContainer, componentFactory, executor)
+            val plotComponent = buildPlotSvgComponent(plotInfo, componentFactory, executor)
             val bounds = plotInfo.bounds()
             plotComponent.bounds = Rectangle(
                 bounds.origin.x.toInt(),
@@ -123,12 +127,25 @@ object MonolithicAwt {
         return bunchComponent
     }
 
+    private fun buildPlotSvgComponent(
+        plotBuildInfo: PlotBuildInfo,
+        componentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit
+    ): JComponent {
+        val assembler = plotBuildInfo.plotAssembler
+        injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec)
+
+        val plot = assembler.createPlot()
+        val plotContainer = PlotContainer(plot, plotBuildInfo.size)
+
+        return buildPlotSvgComponent(plotContainer, componentFactory, executor)
+    }
+
     fun buildPlotSvgComponent(
         plotContainer: PlotContainer,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
-
         plotContainer.ensureContentBuilt()
         val component = componentFactory(plotContainer.svg)
 
@@ -149,24 +166,51 @@ object MonolithicAwt {
             }
         })
 
-        // TODO: Inject Livemap
-//        plotContainer.liveMapFigures.forEach { liveMapFigure ->
-//            val canvasControl =
-//                DomCanvasControl(liveMapFigure.dimension().get().toVector())
-//            liveMapFigure.mapToCanvas(canvasControl)
-//            eventTarget.appendChild(canvasControl.rootElement)
-//        }
-
         return component;
     }
 
-//    private fun DoubleVector.toVector(): Vector {
-//        return Vector(x.toInt(), y.toInt())
-//    }
+    private fun injectLivemapProvider(
+        plotAssembler: PlotAssembler,
+        processedPlotSpec: MutableMap<String, Any>
+    ) {
+        LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(processedPlotSpec))
+            ?.let {
+                LiveMapUtil.injectLiveMapProvider(
+                    plotAssembler.layersByTile,
+                    it
+                )
+            }
+    }
 
     private fun createErrorLabel(s: String): JComponent {
         val label = JLabel(s)
         label.foreground = Color.RED
         return label
+    }
+
+    @Suppress("DuplicatedCode")
+    private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
+        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+        if (PlotConfig.isFailure(plotSpec)) {
+            return plotSpec
+        }
+
+        // Backend transforms
+        @Suppress("NAME_SHADOWING")
+        val plotSpec =
+            if (frontendOnly) {
+                plotSpec
+            } else {
+                // This transform doesn't need to be "portable"
+                // Could use PlotConfigServerSideJvm in case we needed "encoding"
+                PlotConfigServerSide.processTransform(plotSpec)
+            }
+
+        if (PlotConfig.isFailure(plotSpec)) {
+            return plotSpec
+        }
+
+        // Frontend transforms
+        return PlotConfigClientSideJvmJs.processTransform(plotSpec)
     }
 }

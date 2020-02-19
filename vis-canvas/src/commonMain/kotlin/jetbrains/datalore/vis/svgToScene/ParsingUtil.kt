@@ -6,7 +6,6 @@
 package jetbrains.datalore.vis.svgToScene
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.collections.DataloreIndexOutOfBoundsException
 import jetbrains.datalore.vis.svg.SvgPathData.Action
 
 import jetbrains.datalore.vis.svg.SvgTransform
@@ -137,7 +136,7 @@ internal object ParsingUtil {
 
         fun getParam(i: Int): Double? {
             if (!containsParam(i)) {
-                throw DataloreIndexOutOfBoundsException("index: $i; size: $paramCount; name: $name")
+                throw IndexOutOfBoundsException("index: $i; size: $paramCount; name: $name")
             }
             return myParams[i]
         }

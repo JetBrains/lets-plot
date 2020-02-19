@@ -8,6 +8,7 @@ package jetbrains.datalore.plotDemo.model.util
 import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.GeomContext
+import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import kotlin.random.Random
 
 object DemoUtil {
@@ -85,6 +86,6 @@ object DemoUtil {
     }
 
     fun geomContext(aes: Aesthetics): GeomContext {
-        return jetbrains.datalore.plot.builder.assemble.GeomContextBuilder().aesthetics(aes).build()
+        return GeomContextBuilder().aesthetics(aes).build()
     }
 }

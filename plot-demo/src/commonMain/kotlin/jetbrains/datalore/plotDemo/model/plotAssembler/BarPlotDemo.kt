@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
@@ -68,7 +69,7 @@ open class BarPlotDemo : SimpleDemoBase() {
                 )
                 .addConstantAes(Aes.WIDTH, 0.75)
                 .build(data)
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
+        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
 
         assembler.disableInteractions()
         return assembler.createPlot()
@@ -133,7 +134,7 @@ open class BarPlotDemo : SimpleDemoBase() {
                 .addConstantAes(Aes.WIDTH, if (stacked) 0.75 else 0.9)
                 .build(data)
 
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
+        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
         assembler.disableInteractions()
         return assembler.createPlot()
     }
@@ -171,7 +172,7 @@ open class BarPlotDemo : SimpleDemoBase() {
                 .addBinding(VarBinding.deferred(Stats.COUNT, Aes.FILL, fillScaleProvider))
                 .addConstantAes(Aes.WIDTH, .3)
                 .build(data)
-        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), jetbrains.datalore.plot.builder.coord.CoordProviders.cartesian(), DefaultTheme())
+        val assembler = jetbrains.datalore.plot.builder.assemble.PlotAssembler.singleTile(listOf(layer), CoordProviders.cartesian(), DefaultTheme())
 
         assembler.disableInteractions()
         return assembler.createPlot()
