@@ -11,10 +11,10 @@ import jetbrains.datalore.vis.svg.slim.SvgSlimShape
 
 class DiamondGlyph(location: DoubleVector, width: Double) : SingletonGlyph(location, width) {
 
-    override fun createShape(location: DoubleVector, size: Double): SvgSlimShape {
-        val half = size / 2
-        val x = doubleArrayOf(half, size, half, 0.0)
-        val y = doubleArrayOf(0.0, half, size, half)
+    override fun createShape(location: DoubleVector, width: Double): SvgSlimShape {
+        val half = width / 2
+        val x = doubleArrayOf(half, width, half, 0.0)
+        val y = doubleArrayOf(0.0, half, width, half)
         val ox = location.x - half
         val oy = location.y - half
         for (i in 0..3) {

@@ -130,6 +130,7 @@ object ScaleUtil {
 
     fun inverseTransformToContinuousDomain(l: List<Double?>, scale: Scale<*>): List<Double?> {
         checkState(scale.isContinuousDomain, "Not continuous numeric domain: $scale")
+        @Suppress("UNCHECKED_CAST")
         return inverseTransform(l, scale) as List<Double?>
     }
 

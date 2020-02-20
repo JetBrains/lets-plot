@@ -186,8 +186,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun <T> constantAes(aes: Aes<T>, v: T): AestheticsBuilder {
         myConstantAes.add(aes)
-        myIndexFunctionMap[aes] =
-            constant(v)
+        myIndexFunctionMap[aes] = constant(v)
         return this
     }
 

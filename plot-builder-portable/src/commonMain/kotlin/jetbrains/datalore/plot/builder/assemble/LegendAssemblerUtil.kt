@@ -19,6 +19,7 @@ internal object LegendAssemblerUtil {
     ): Aesthetics {
         val builder = AestheticsBuilder(0)
         for (aes in Aes.values()) {
+            @Suppress("UNCHECKED_CAST")
             builder.constantAes(aes as Aes<Any>, aestheticsDefaults.defaultValue(aes))
         }
         for (aes in valuesByAes.keys) {
@@ -63,8 +64,8 @@ internal object LegendAssemblerUtil {
 
         val builder = AestheticsBuilder(dataPoints.size)
         for (aes in Aes.values()) {
-            val aes1 = aes as Aes<Any>
-            builder.aes(aes1) { index -> dataPoints[index][aes]!! }
+            @Suppress("UNCHECKED_CAST")
+            builder.aes(aes as Aes<Any>) { index -> dataPoints[index][aes]!! }
         }
         return builder.build()
     }

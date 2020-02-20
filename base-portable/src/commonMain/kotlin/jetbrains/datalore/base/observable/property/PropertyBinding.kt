@@ -18,6 +18,7 @@ object PropertyBinding {
         target.set(source.get())
         return source.addHandler(object : EventHandler<PropertyChangeEvent<out ValueT>> {
             override fun onEvent(event: PropertyChangeEvent<out ValueT>) {
+                @Suppress("UNCHECKED_CAST")
                 target.set(event.newValue as ValueT)
             }
         })

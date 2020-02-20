@@ -53,14 +53,14 @@ class SvgToString(private val rgbEncoder: RGBEncoder?) {
                 var childNode = childNode
                 if (childNode is SvgTextNode) {
                     renderTextNode(
-                        childNode as SvgTextNode,
+                        childNode,
                         buffer,
                         level
                     )
                 } else if (childNode is SvgElement) {
                     if (childNode is SvgImageElementEx) {
                         if (rgbEncoder != null) {
-                            childNode = (childNode as SvgImageElementEx).asImageElement(rgbEncoder)
+                            childNode = childNode.asImageElement(rgbEncoder)
                         } else {
                             // ToDo: error?
                             continue

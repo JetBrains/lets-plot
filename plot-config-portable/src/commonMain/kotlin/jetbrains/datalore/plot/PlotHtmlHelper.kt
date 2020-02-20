@@ -15,9 +15,9 @@ object PlotHtmlHelper {
 //    private const val suffix = "min.js"
 
     @Suppress("SameParameterValue")
-    private fun randomString(len: Long): String {
+    private fun randomString(len: Int): String {
         val alphabet = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-        return List(6) { alphabet.random() }.joinToString("")
+        return List(len) { alphabet.random() }.joinToString("")
     }
 
     fun scriptUrl(

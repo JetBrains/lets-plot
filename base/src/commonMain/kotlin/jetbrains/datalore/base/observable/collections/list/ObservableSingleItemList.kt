@@ -37,6 +37,7 @@ class ObservableSingleItemList<ItemT> :
         if (myEmpty || index != 0) {
             throw DataloreIndexOutOfBoundsException(index)
         }
+        @Suppress("UNCHECKED_CAST")
         return myItem as ItemT
     }
 

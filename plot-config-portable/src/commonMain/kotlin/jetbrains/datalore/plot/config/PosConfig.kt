@@ -7,7 +7,8 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 
-internal class PosConfig private constructor(name: String, options: Map<String, Any>) : OptionsAccessor(options, emptyMap<Any, Any>()) {
+internal class PosConfig private constructor(name: String, options: Map<String, Any>) :
+    OptionsAccessor(options, emptyMap<Any, Any>()) {
 
     val pos: PosProvider = PosProto.createPosProvider(name, mergedOptions)
 
@@ -17,12 +18,11 @@ internal class PosConfig private constructor(name: String, options: Map<String, 
             //        or
             //        map with options
             if (position is Map<*, *>) {
-                val positionMap = position as Map<String, Any>
-                val options = HashMap(positionMap)
+                @Suppress("UNCHECKED_CAST")
+                val options = HashMap(position as Map<String, Any>)
                 return createForName(
-                    ConfigUtil.featureName(
-                        options
-                    ), options
+                    ConfigUtil.featureName(options),
+                    options
                 )
             }
             return createForName(position.toString(), HashMap())

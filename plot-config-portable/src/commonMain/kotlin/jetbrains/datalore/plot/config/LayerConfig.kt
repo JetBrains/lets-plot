@@ -71,7 +71,7 @@ class LayerConfig constructor(
         // mapping (inherit from plot)
         val mappingOptions = HashMap(plotMapping)
         // update with 'layer' mapping
-        mappingOptions.putAll(getMap(MAPPING) as Map<Any, Any>)
+        mappingOptions.putAll(getMap(MAPPING))
 
         val layerData = ConfigUtil.createDataFrame(get(DATA))
         var combinedData: DataFrame

@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.GeomLayerListUtil
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.builder.PlotBuilder
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -78,12 +79,12 @@ class PlotAssembler private constructor(
 
         // share first X/Y scale among all layers
         var xScaleProto =
-            jetbrains.datalore.plot.builder.GeomLayerListUtil.anyBoundXScale(myLayersByTile) as Scale<Double>?
+            GeomLayerListUtil.anyBoundXScale(myLayersByTile)
         if (xScaleProto == null) {
             xScaleProto = Scales.continuousDomain("x", Aes.X)
         }
         var yScaleProto =
-            jetbrains.datalore.plot.builder.GeomLayerListUtil.anyBoundYScale(myLayersByTile) as Scale<Double>?
+            GeomLayerListUtil.anyBoundYScale(myLayersByTile)
         if (yScaleProto == null) {
             yScaleProto = Scales.continuousDomain("y", Aes.Y)
         }

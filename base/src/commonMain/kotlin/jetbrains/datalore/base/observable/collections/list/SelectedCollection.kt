@@ -39,8 +39,7 @@ protected constructor(
     protected fun select(): CollectionT {
         val sourceVal = mySource.get()
         if (sourceVal != null) {
-            val res = mySelector(sourceVal)
-            if (res != null) return res
+            return mySelector(sourceVal)
         }
 
         return empty()

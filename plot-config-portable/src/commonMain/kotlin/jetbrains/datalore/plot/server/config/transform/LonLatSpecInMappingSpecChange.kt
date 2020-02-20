@@ -42,9 +42,10 @@ class LonLatSpecInMappingSpecChange : SpecChange {
 
         // check if the value is: lon_lat(lon = 'x', lat = 'y')
         if (mapIdMapping.containsKey(LONLAT_SPEC_KEY)
-                && LONLAT_SPEC_VALUE == mapIdMapping[LONLAT_SPEC_KEY]
-                && mapIdMapping.containsKey(LON_KEY)
-                && mapIdMapping.containsKey(LAT_KEY)) {
+            && LONLAT_SPEC_VALUE == mapIdMapping[LONLAT_SPEC_KEY]
+            && mapIdMapping.containsKey(LON_KEY)
+            && mapIdMapping.containsKey(LAT_KEY)
+        ) {
 
             val lonDataKey = mapIdMapping[LON_KEY].toString()
             val latDataKey = mapIdMapping[LAT_KEY].toString()
@@ -53,10 +54,10 @@ class LonLatSpecInMappingSpecChange : SpecChange {
             // Find data spec containing both: lon and lat data keys
             var dataSpec: MutableMap<String, Any>? = null
             if (spec[DATA] is Map<*, *>) {
-                val layerDataSpec = spec[DATA] as MutableMap<String, Any>
+                val layerDataSpec = spec[DATA] as Map<*, *>
                 if (layerDataSpec.keys.containsAll(keys)) {
-                    dataSpec = layerDataSpec
-                } else {
+                    @Suppress("UNCHECKED_CAST")
+                    dataSpec = layerDataSpec as MutableMap<String, Any>
                 }
             }
 
@@ -81,6 +82,7 @@ class LonLatSpecInMappingSpecChange : SpecChange {
             // add 'lon/lat' data vector
             dataSpec[GENERATED_LONLAT_COLUMN_NAME] = coords
             // update map_id mapping
+            @Suppress("UNCHECKED_CAST")
             val aesSpec = spec[MAPPING] as MutableMap<String, Any>
             aesSpec[Mapping.MAP_ID] =
                 GENERATED_LONLAT_COLUMN_NAME

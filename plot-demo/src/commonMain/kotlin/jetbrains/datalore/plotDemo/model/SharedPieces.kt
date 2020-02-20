@@ -113,6 +113,7 @@ object SharedPieces {
     }
 
     fun samplePolyAndPointsPlotWith(addedLayerSpecJson: String, addedData: Map<String, List<*>>): Map<String, Any> {
+        @Suppress("NAME_SHADOWING")
         var addedLayerSpecJson = addedLayerSpecJson
         if (addedData.isNotEmpty()) {
             val layerSpec = parsePlotSpec(addedLayerSpecJson)

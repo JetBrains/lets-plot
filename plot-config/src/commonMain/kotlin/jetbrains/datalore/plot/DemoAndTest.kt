@@ -8,7 +8,6 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.Plot
 import jetbrains.datalore.plot.config.PlotConfig
-import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.config.PlotConfigUtil
 import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
@@ -23,7 +22,7 @@ object DemoAndTest {
             }
         }
         if (andBuildComponent) {
-            val rootGroup = plot.rootGroup
+            plot.ensureBuilt()
         }
         return plot
     }

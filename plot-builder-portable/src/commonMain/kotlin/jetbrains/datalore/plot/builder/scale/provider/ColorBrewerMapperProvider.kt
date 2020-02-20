@@ -47,7 +47,7 @@ constructor(type: String?, palette: Any?, direction: Double?, naValue: Color) : 
             "div" -> ColorPalette.Type.DIVERGING
             "qual" -> ColorPalette.Type.QUALITATIVE
             else -> throw IllegalArgumentException(
-                    "Palette type expected one of 'seq' (sequential), 'div' (diverging) or 'qual' (qualitative) but was: '$name'"
+                "Palette type expected one of 'seq' (sequential), 'div' (diverging) or 'qual' (qualitative) but was: '$name'"
             )
         }
     }
@@ -58,12 +58,11 @@ constructor(type: String?, palette: Any?, direction: Double?, naValue: Color) : 
                 ColorPalette.Type.SEQUENTIAL -> ColorPalette.Sequential.valueOf(name)
                 ColorPalette.Type.DIVERGING -> ColorPalette.Diverging.valueOf(name)
                 ColorPalette.Type.QUALITATIVE -> ColorPalette.Qualitative.valueOf(name)
-            }// unexpected palette type
+            }
         } catch (ignore: IllegalArgumentException) {
             // Enum type has no constant with the specified name error.
             // Replace generic error massage with specific one
-            var names = "<unavailable>"
-            names = when (paletteType) {
+            val names = when (paletteType) {
                 ColorPalette.Type.SEQUENTIAL -> names(ColorPalette.Sequential.values())
                 ColorPalette.Type.DIVERGING -> names(ColorPalette.Diverging.values())
                 ColorPalette.Type.QUALITATIVE -> names(ColorPalette.Qualitative.values())
@@ -74,6 +73,7 @@ constructor(type: String?, palette: Any?, direction: Double?, naValue: Color) : 
     }
 
     private fun colorSchemeByIndex(paletteType: ColorPalette.Type, index: Int): ColorScheme {
+            @Suppress("UNCHECKED_CAST")
         val values: Array<ColorScheme> = when (paletteType) {
             ColorPalette.Type.SEQUENTIAL -> ColorPalette.Sequential.values() as Array<ColorScheme>
             ColorPalette.Type.DIVERGING -> ColorPalette.Diverging.values() as Array<ColorScheme>
@@ -110,10 +110,17 @@ constructor(type: String?, palette: Any?, direction: Double?, naValue: Color) : 
         return GuideMappers.discreteToDiscrete(data, variable, colors, naValue)
     }
 
-    override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
+    override fun createContinuousMapper(
+        data: DataFrame,
+        variable: DataFrame.Variable,
+        lowerLimit: Double?,
+        upperLimit: Double?,
+        trans: Transform?
+    ): GuideMapper<Color> {
         val colors = getColors(data, variable)
         return GuideMappers.continuousToDiscrete(
-                MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans), colors, naValue)
+            MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans), colors, naValue
+        )
     }
 
     private fun getColors(data: DataFrame, `var`: DataFrame.Variable): List<Color> {

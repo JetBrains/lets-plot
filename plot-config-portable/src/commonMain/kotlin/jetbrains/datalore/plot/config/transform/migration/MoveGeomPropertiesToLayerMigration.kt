@@ -57,8 +57,8 @@ class MoveGeomPropertiesToLayerMigration : SpecChange {
         val name = geomSpec.remove("name") as String
 
         spec[GEOM] = name
-        val geomSpec1 = geomSpec as Map<String, Any>
-        spec.putAll(geomSpec1)
+        @Suppress("UNCHECKED_CAST")
+        spec.putAll(geomSpec as Map<String, Any>)
     }
 
     companion object {

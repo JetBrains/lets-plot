@@ -28,7 +28,11 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
     }
 
 
-    private class MyRowDetector internal constructor(private val myMinRowSize: Int, error: Double, values: Iterable<Double>) : RegularMeshDetector(error) {
+    private class MyRowDetector internal constructor(
+        private val myMinRowSize: Int,
+        error: Double,
+        values: Iterable<Double>
+    ) : RegularMeshDetector(error) {
 
         init {
             init(values)
@@ -42,9 +46,6 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
             var prevValue: Double? = null
             var count = myMinRowSize
             for (value in values) {
-                if (value == null) {
-                    return
-                }
                 if (prevValue != null) {
                     val dist = value - prevValue
                     if (nearZero(dist)) {
@@ -73,7 +74,11 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
         }
     }
 
-    private class MyColumnDetector internal constructor(private val myMinRowSize: Int, error: Double, values: Iterable<Double>) : RegularMeshDetector(error) {
+    private class MyColumnDetector internal constructor(
+        private val myMinRowSize: Int,
+        error: Double,
+        values: Iterable<Double>
+    ) : RegularMeshDetector(error) {
 
         init {
             init(values)
@@ -88,10 +93,6 @@ abstract class RegularMeshDetector protected constructor(private val myError: Do
             val rowValue = arrayOf<Double?>(null, null)
             var rowIndex = 0
             for (value in values) {
-                if (value == null) {
-                    isMesh = false
-                    return
-                }
                 if (rowValue[rowIndex] == null) {
                     rowValue[rowIndex] = value
                     rowSize[rowIndex]++

@@ -57,10 +57,11 @@ object Asyncs {
                 }
 
                 //return cannot be moved to try block to avoid catching possible errors from Asyncs.constant call
-                if (result == null) {
-                    return constant(null)
+                return if (result == null) {
+                    constant(null)
                 } else {
-                    return result as Async<ResultT?>
+                    @Suppress("UNCHECKED_CAST")
+                    result as Async<ResultT?>
                 }
             }
         }

@@ -25,7 +25,12 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal object PlotAssemblerUtil {
 
-    private fun updateAesRangeMap(aes: Aes<*>, range: ClosedRange<Double>?, rangeByAes: MutableMap<Aes<*>, ClosedRange<Double>>) {
+    private fun updateAesRangeMap(
+        aes: Aes<*>,
+        range: ClosedRange<Double>?,
+        rangeByAes: MutableMap<Aes<*>, ClosedRange<Double>>
+    ) {
+        @Suppress("NAME_SHADOWING")
         var range = range
         if (range != null) {
             val wasRange = rangeByAes[aes]
@@ -37,6 +42,7 @@ internal object PlotAssemblerUtil {
     }
 
     private fun updateRange(range: ClosedRange<Double>?, wasRange: ClosedRange<Double>?): ClosedRange<Double>? {
+        @Suppress("NAME_SHADOWING")
         var range = range
         if (range != null) {
             if (wasRange != null) {
@@ -58,9 +64,11 @@ internal object PlotAssemblerUtil {
         return wasRange
     }
 
-    fun createLegends(layersByPanel: List<List<jetbrains.datalore.plot.builder.GeomLayer>>,
-                      guideOptionsMap: Map<Aes<*>, GuideOptions>,
-                      theme: LegendTheme): List<LegendBoxInfo> {
+    fun createLegends(
+        layersByPanel: List<List<jetbrains.datalore.plot.builder.GeomLayer>>,
+        guideOptionsMap: Map<Aes<*>, GuideOptions>,
+        theme: LegendTheme
+    ): List<LegendBoxInfo> {
 
         // stitch together layers from all panels
         var planeCount = 0
@@ -105,10 +113,12 @@ internal object PlotAssemblerUtil {
         )
     }
 
-    private fun createLegends(stitchedLayersList: List<StitchedPlotLayers>,
-                              dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
-                              guideOptionsMap: Map<Aes<*>, GuideOptions>,
-                              theme: LegendTheme): List<LegendBoxInfo> {
+    private fun createLegends(
+        stitchedLayersList: List<StitchedPlotLayers>,
+        dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
+        guideOptionsMap: Map<Aes<*>, GuideOptions>,
+        theme: LegendTheme
+    ): List<LegendBoxInfo> {
 
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
@@ -133,15 +143,21 @@ internal object PlotAssemblerUtil {
                     if (guideOptions is ColorBarOptions) {
                         checkFitsColorBar(binding)
                         colorBar = true
+                        @Suppress("UNCHECKED_CAST")
                         val colorScale = scale as Scale<Color>
-                        colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(scaleName, binding.aes,
-                                dataRangeByAes, colorScale, guideOptions, theme)
+                        colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
+                            scaleName, binding.aes,
+                            dataRangeByAes, colorScale, guideOptions, theme
+                        )
                     }
                 } else if (fitsColorBar(binding)) {
                     colorBar = true
+                    @Suppress("UNCHECKED_CAST")
                     val colorScale = scale as Scale<Color>
-                    colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(scaleName, binding.aes,
-                            dataRangeByAes, colorScale, null, theme)
+                    colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
+                        scaleName, binding.aes,
+                        dataRangeByAes, colorScale, null, theme
+                    )
                 }
 
                 if (!colorBar) {
@@ -166,7 +182,13 @@ internal object PlotAssemblerUtil {
                 val legendKeyFactory = stitchedLayers.legendKeyElementFactory
                 val aestheticsDefaults = stitchedLayers.aestheticsDefaults
                 val legendAssembler = legendAssemblerByTitle[scaleName]!!
-                legendAssembler.addLayer(legendKeyFactory, varBindings, layerConstantByAes, aestheticsDefaults, dataRangeByAes)
+                legendAssembler.addLayer(
+                    legendKeyFactory,
+                    varBindings,
+                    layerConstantByAes,
+                    aestheticsDefaults,
+                    dataRangeByAes
+                )
             }
         }
 
@@ -206,8 +228,9 @@ internal object PlotAssemblerUtil {
         }
 
         return FacetGridPlotLayout(
-                xLabs, yLabs,
-                tileLayout)
+            xLabs, yLabs,
+            tileLayout
+        )
     }
 
 
@@ -272,7 +295,8 @@ internal object PlotAssemblerUtil {
                                 xRange,
                                 layerAesRange
                             )
-                        layerAesRange = jetbrains.datalore.plot.builder.PlotUtil.rangeWithExpand(layer, aes, layerAesRange)
+                        layerAesRange =
+                            jetbrains.datalore.plot.builder.PlotUtil.rangeWithExpand(layer, aes, layerAesRange)
                     } else if (Aes.isAffectingScaleY(aes)) {
                         if (isYCalculated) {
                             continue
@@ -285,7 +309,8 @@ internal object PlotAssemblerUtil {
                                 yRange,
                                 layerAesRange
                             )
-                        layerAesRange = jetbrains.datalore.plot.builder.PlotUtil.rangeWithExpand(layer, aes, layerAesRange)
+                        layerAesRange =
+                            jetbrains.datalore.plot.builder.PlotUtil.rangeWithExpand(layer, aes, layerAesRange)
                     } else {
                         realAes = aes
                         layerAesRange =

@@ -43,7 +43,6 @@ object PositionAdjustments {
         return when (strategy) {
             StackingStrategy.SPLIT_POSITIVE_NEGATIVE -> StackPos.splitPositiveNegative(aes)
             StackingStrategy.SUM_POSITIVE_NEGATIVE -> StackPos.sumPositiveNegative(aes)
-            else -> throw IllegalArgumentException("strategy: $strategy")
         }
     }
 

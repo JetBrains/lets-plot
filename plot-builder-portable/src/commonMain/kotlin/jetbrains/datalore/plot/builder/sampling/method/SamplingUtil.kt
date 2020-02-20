@@ -87,7 +87,9 @@ internal object SamplingUtil {
         var lastPoint: DoubleVector? = null
         var start = -1
 
+        @Suppress("UNCHECKED_CAST")
         val xValues = population[xVar(population)] as List<Any>
+        @Suppress("UNCHECKED_CAST")
         val yValues = population[yVar(population)] as List<Any>
         val points = DoubleVectorComponentsList(xValues, yValues)
         for (i in points.indices) {

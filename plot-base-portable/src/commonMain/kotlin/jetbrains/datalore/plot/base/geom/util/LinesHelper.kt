@@ -112,9 +112,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
                 decorate(path, multiPointData.aes, false)
                 pathInfos.add(
                     PathInfo(
-                        path,
-                        multiPointData.aes,
-                        multiPointData.group
+                        path
                     )
                 )
             }
@@ -190,5 +188,5 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     }
 
     // ToDo: get rid of PathInfo class
-    class PathInfo internal constructor(val path: LinePath, aes: DataPointAesthetics, group: Int)
+    class PathInfo internal constructor(val path: LinePath)
 }

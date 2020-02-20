@@ -9,11 +9,6 @@ import kotlin.reflect.KClass
 
 actual object PortableLogging {
     actual fun logger(cl: KClass<*>): Logger {
-        return object : Logger {
-            val name = cl.simpleName ?: "<anonymous>"
-            override fun error(e: Throwable, message: () -> String) {
-                println("ERR [$name] : ${message()}")
-            }
-        }
+        return PrintlnLogger(cl.simpleName ?: "<anonymous>")
     }
 }

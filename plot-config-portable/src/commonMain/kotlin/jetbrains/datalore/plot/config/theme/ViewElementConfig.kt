@@ -13,23 +13,27 @@ import jetbrains.datalore.plot.config.OptionsAccessor
  * Specify the display of how non-data components of the plot are a drawn.
  * See: https://ggplot2.tidyverse.org/reference/element.html
  */
-internal class ViewElementConfig private constructor(private val myName: String, options: Map<*, *>) : OptionsAccessor(options) {
+internal class ViewElementConfig private constructor(
+    private val name: String,
+    options: Map<*, *>
+) : OptionsAccessor(options) {
 
     val isBlank: Boolean
-        get() = BLANK == myName
+        get() = BLANK == name
 
     init {
-        checkState(BLANK == myName, "Only 'element_blank' is supported")
+        checkState(BLANK == name, "Only 'element_blank' is supported")
     }
 
     companion object {
-        private val BLANK = "blank"
+        private const val BLANK = "blank"
 
         fun create(elem: Any): ViewElementConfig {
             // element - name (like blank)
             // or
             // map with options
             if (elem is Map<*, *>) {
+                @Suppress("UNCHECKED_CAST")
                 val options = elem as Map<String, Any>
                 return createForName(ConfigUtil.featureName(options), options)
             }

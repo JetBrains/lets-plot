@@ -65,6 +65,7 @@ class PlotSpecTransform private constructor(builder: Builder) {
 
     private fun applyChangesToValue(sel: SpecSelector, v: Any?, ctx: SpecChangeContext) {
         if (v is Map<*, *>) {
+            @Suppress("UNCHECKED_CAST")
             val spec = v as MutableMap<String, Any>
             applyChangesToSpec(sel, spec, ctx)
         } else if (v is List<*>) {

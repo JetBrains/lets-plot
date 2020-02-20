@@ -5,10 +5,8 @@
 
 package jetbrains.datalore.base.logging
 
-import kotlin.reflect.KClass
-
-actual object PortableLogging {
-    actual fun logger(cl: KClass<*>): Logger {
-        return PrintlnLogger(cl.simpleName ?: "<anonymous>")
+class PrintlnLogger(val name: String) : Logger {
+    override fun error(e: Throwable, message: () -> String) {
+        println("ERR [$name] : ${message()}")
     }
 }

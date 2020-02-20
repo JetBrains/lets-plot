@@ -41,12 +41,13 @@ object GeomLayerBuilderUtil {
         // finalize deferred bindings
         val bindingsByAes = HashMap<Aes<*>, VarBinding>()
         for (binding in bindings) {
-            var _binding = binding
-            if (_binding.isDeferred) {
+            @Suppress("NAME_SHADOWING")
+            var binding = binding
+            if (binding.isDeferred) {
                 // finalize deferred binding
-                _binding = _binding.bindDeferred(data)
+                binding = binding.bindDeferred(data)
             }
-            bindingsByAes[_binding.aes] = _binding
+            bindingsByAes[binding.aes] = binding
         }
 
         // no 'origin' variables beyond this point
@@ -61,9 +62,9 @@ object GeomLayerBuilderUtil {
         // re-bind variables if not 'identity' stat
         val defStatMapping = Stats.defaultMapping(stat)
 
-        if (!defStatMapping.isEmpty()) {
+        if (defStatMapping.isNotEmpty()) {
             // apply stat's default mappings
-            val statVarByBoundVar = HashMap<DataFrame.Variable, DataFrame.Variable>()
+//            val statVarByBoundVar = HashMap<DataFrame.Variable, DataFrame.Variable>()
             for (aes in defStatMapping.keys) {
                 val statVar = defStatMapping[aes]!!
                 // Add binding if not there

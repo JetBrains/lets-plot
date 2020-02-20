@@ -18,15 +18,19 @@ internal object ReplaceDataVectorsInAesMappingChangeUtil {
         return name
     }
 
-    internal class AesMappingPreprocessor(private val myOpts: MutableMap<String, Any>, private val myDataKey: String, private val myMappingKey: String) {
+    internal class AesMappingPreprocessor(
+        private val myOpts: MutableMap<String, Any>,
+        private val myDataKey: String,
+        private val myMappingKey: String
+    ) {
 
         val dataColNames: List<String>
             get() {
                 if (myOpts.containsKey(myDataKey)) {
                     val data = myOpts[myDataKey]
                     if (data is Map<*, *>) {
-                        val dataMap = data as Map<String, *>
-                        return ArrayList(dataMap.keys)
+                        @Suppress("UNCHECKED_CAST")
+                        return ArrayList(data.keys as Set<String>)
                     }
                 }
                 return emptyList()
@@ -37,19 +41,18 @@ internal object ReplaceDataVectorsInAesMappingChangeUtil {
                 return
             }
 
-            val mappingValue = myOpts[myMappingKey] as? Map<*, *> ?: return
+            @Suppress("UNCHECKED_CAST")
+            val aesMapping = myOpts[myMappingKey] as? MutableMap<String, Any> ?: return
 
-            val aesMapping = mappingValue as MutableMap<String, Any>
             val replacementAesMapping = HashMap<String, Any>()
             val addedDataVectors = HashMap<String, List<*>>()
             for (aesKey in aesMapping.keys) {
                 val value = aesMapping[aesKey]
                 if (value is List<*>) {
-                    val varName =
-                        genVarName(
-                            aesKey,
-                            usedVarNameCollector
-                        )
+                    val varName = genVarName(
+                        aesKey,
+                        usedVarNameCollector
+                    )
                     replacementAesMapping[aesKey] = varName
                     addedDataVectors[varName] = value
                 }
@@ -66,8 +69,8 @@ internal object ReplaceDataVectorsInAesMappingChangeUtil {
             if (myOpts.containsKey(myDataKey)) {
                 val dataValue = myOpts[myDataKey]
                 if (dataValue is Map<*, *>) {
-                    val map = dataValue as MutableMap<String, Any>
-                    data = map
+                    @Suppress("UNCHECKED_CAST")
+                    data = dataValue as MutableMap<String, Any>
                 }
             }
 

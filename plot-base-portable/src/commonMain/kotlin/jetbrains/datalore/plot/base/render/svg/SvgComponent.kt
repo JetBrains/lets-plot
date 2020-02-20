@@ -45,14 +45,14 @@ abstract class SvgComponent {
 
     val rootGroup: SvgGElement
         get() {
-            if (!(myIsBuilt || myIsBuilding)) {
-                buildComponentIntern()
-            }
+            ensureBuilt()
             return myRootGroup
         }
 
-    protected fun ensureBuilt() {
-        rootGroup
+    fun ensureBuilt() {
+        if (!(myIsBuilt || myIsBuilding)) {
+            buildComponentIntern()
+        }
     }
 
     private fun buildComponentIntern() {

@@ -9,11 +9,22 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
 class Generic
 
+@Suppress("UNCHECKED_CAST")
 fun <TypeT> Vec<Generic>.reinterpret(): Vec<TypeT> = this as Vec<TypeT>
+
+@Suppress("UNCHECKED_CAST")
 fun <TypeT> MultiPoint<Generic>.reinterpret(): MultiPoint<TypeT> = this as MultiPoint<TypeT>
+
+@Suppress("UNCHECKED_CAST")
 fun <TypeT> LineString<Generic>.reinterpret(): LineString<TypeT> = this as LineString<TypeT>
+
+@Suppress("UNCHECKED_CAST")
 fun <TypeT> MultiLineString<Generic>.reinterpret(): MultiLineString<TypeT> = this as MultiLineString<TypeT>
+
+@Suppress("UNCHECKED_CAST")
 fun <TypeT> Polygon<Generic>.reinterpret(): Polygon<TypeT> = this as Polygon<TypeT>
+
+@Suppress("UNCHECKED_CAST")
 fun <TypeT> MultiPolygon<Generic>.reinterpret(): MultiPolygon<TypeT> = this as MultiPolygon<TypeT>
 
 val Rect<*>.bottom: Double get() = origin.y + dimension.y
@@ -80,4 +91,6 @@ fun <TypeT> Rect<TypeT>.intersects(rect: Rect<TypeT>): Boolean {
 fun Rect<*>.xRange() = ClosedRange.closed(origin.x, origin.x + dimension.x)
 fun Rect<*>.yRange() = ClosedRange.closed(origin.y, origin.y + dimension.y)
 
-fun <TypeT> MultiPolygon<TypeT>.limit(): List<Rect<TypeT>> { return map { polygon -> polygon.limit() } }
+fun <TypeT> MultiPolygon<TypeT>.limit(): List<Rect<TypeT>> {
+    return map { polygon -> polygon.limit() }
+}

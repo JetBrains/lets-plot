@@ -67,6 +67,7 @@ object DataProcessing {
             )
             groupSizeListAfterStat.add(sd.rowCount())
             for (variable in sd.variables()) {
+                @Suppress("UNCHECKED_CAST")
                 val list = sd[variable] as List<Any>
                 resultSeries[variable] = list
             }
@@ -116,6 +117,7 @@ object DataProcessing {
                     if (!resultSeries.containsKey(variable)) {
                         resultSeries[variable] = ArrayList()
                     }
+                    @Suppress("UNCHECKED_CAST")
                     (resultSeries[variable] as MutableList).addAll(sd[variable] as List<Any>)
                 }
             }
