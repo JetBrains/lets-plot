@@ -9,7 +9,8 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.dom.DomEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.js.css.*
+import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
 import jetbrains.datalore.plot.MonolithicCommon
@@ -36,6 +37,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGSVGElement
+import kotlin.browser.document
 import kotlin.dom.createElement
 
 
@@ -178,10 +180,25 @@ private fun buildPlotSvg(
     plotContainer.ensureContentBuilt()
 
     plotContainer.liveMapFigures.forEach { liveMapFigure ->
-        val canvasControl =
-            DomCanvasControl((liveMapFigure as CanvasFigure).dimension().get().toVector())
+        val bounds = (liveMapFigure as CanvasFigure).bounds().get()
+        val rootElement = document.createElement("div") as HTMLElement
+
+        rootElement.style.run {
+            setLeft(bounds.origin.x.toDouble())
+            setTop(bounds.origin.y.toDouble())
+            setWidth(bounds.dimension.x)
+            setPosition(CssPosition.RELATIVE)
+            setZIndex(-1)
+        }
+
+        val canvasControl = DomCanvasControl(
+            rootElement,
+            bounds.dimension,
+            DomCanvasControl.DomEventPeer(eventTarget, bounds)
+        )
+
         liveMapFigure.mapToCanvas(canvasControl)
-        eventTarget.appendChild(canvasControl.rootElement)
+        eventTarget.appendChild(rootElement)
     }
 
     val svgRoot = plotContainer.svg
@@ -189,10 +206,6 @@ private fun buildPlotSvg(
     SvgNodeContainer(svgRoot)
     mapper.attachRoot()
     return mapper.target
-}
-
-private fun DoubleVector.toVector(): Vector {
-    return Vector(x.toInt(), y.toInt())
 }
 
 private fun handleException(e: RuntimeException, parentElement: HTMLElement) {

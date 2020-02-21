@@ -5,6 +5,10 @@
 
 package jetbrains.datalore.plot
 
+import javafx.application.Platform
+import javafx.embed.swing.JFXPanel
+import javafx.scene.Group
+import javafx.scene.Scene
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
@@ -21,6 +25,9 @@ import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
+import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
+import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
 import jetbrains.datalore.vis.svgToString.SvgToString
@@ -79,7 +86,7 @@ object MonolithicAwt {
                 return buildPlotSvgComponent(success.buildInfos[0], componentFactory, executor)
             }
             // ggbunch
-            return buildGGBunchComponenet(success.buildInfos, componentFactory, executor)
+            return buildGGBunchComponent(success.buildInfos, componentFactory, executor)
 
         } catch (e: RuntimeException) {
             val failureInfo = FailureHandler.failureInfo(e)
@@ -90,7 +97,7 @@ object MonolithicAwt {
         }
     }
 
-    private fun buildGGBunchComponenet(
+    private fun buildGGBunchComponent(
         plotInfos: List<PlotBuildInfo>,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
@@ -133,12 +140,57 @@ object MonolithicAwt {
         executor: (() -> Unit) -> Unit
     ): JComponent {
         val assembler = plotBuildInfo.plotAssembler
-        injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec)
+        injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec)
 
         val plot = assembler.createPlot()
         val plotContainer = PlotContainer(plot, plotBuildInfo.size)
+        val plotComponent = buildPlotSvgComponent(plotContainer, componentFactory, executor)
 
-        return buildPlotSvgComponent(plotContainer, componentFactory, executor)
+        return if (plotContainer.liveMapFigures.isNotEmpty()) {
+            @Suppress("UNCHECKED_CAST")
+            buildPlotLiveMapComponent(plotContainer.liveMapFigures as List<CanvasFigure>, plotComponent, plotBuildInfo.size.get())
+        } else {
+            plotComponent
+        }
+    }
+
+    private fun buildPlotLiveMapComponent(
+        liveMapFigures: List<CanvasFigure>,
+        plotComponent: JComponent,
+        size: DoubleVector
+    ): JComponent {
+        plotComponent.bounds = Rectangle(0,0, size.x.toInt(), size.y.toInt())
+        val panel = JFXPanel()
+
+        panel.add(plotComponent)
+
+        liveMapFigures.forEach { canvasFigure ->
+            val canvasBounds = canvasFigure .bounds().get()
+            val rootGroup = Group()
+
+            JFXPanel()
+                .apply {
+                    scene = Scene(rootGroup)
+                    bounds = Rectangle(
+                        canvasBounds.origin.x,
+                        canvasBounds.origin.y,
+                        canvasBounds.dimension.x,
+                        canvasBounds.dimension.y
+                    )
+                    panel.add(this)
+                }
+
+            JavafxCanvasControl(
+                rootGroup,
+                canvasBounds.dimension,
+                1.0,
+                AwtEventPeer(plotComponent, canvasBounds)
+            ).let {
+                Platform.runLater{ canvasFigure.mapToCanvas(it) }
+            }
+        }
+
+        return panel
     }
 
     fun buildPlotSvgComponent(
@@ -147,9 +199,10 @@ object MonolithicAwt {
         executor: (() -> Unit) -> Unit
     ): JComponent {
         plotContainer.ensureContentBuilt()
-        val component = componentFactory(plotContainer.svg)
 
-        component.addMouseListener(object : MouseAdapter() {
+        val plotComponent: JComponent = componentFactory(plotContainer.svg)
+
+        plotComponent.addMouseListener(object : MouseAdapter() {
             override fun mouseExited(e: MouseEvent) {
                 super.mouseExited(e)
                 executor {
@@ -157,7 +210,8 @@ object MonolithicAwt {
                 }
             }
         })
-        component.addMouseMotionListener(object : MouseAdapter() {
+
+        plotComponent.addMouseMotionListener(object : MouseAdapter() {
             override fun mouseMoved(e: MouseEvent) {
                 super.mouseMoved(e)
                 executor {
@@ -166,10 +220,10 @@ object MonolithicAwt {
             }
         })
 
-        return component;
+        return plotComponent
     }
 
-    private fun injectLivemapProvider(
+    private fun injectLiveMapProvider(
         plotAssembler: PlotAssembler,
         processedPlotSpec: MutableMap<String, Any>
     ) {
@@ -188,7 +242,7 @@ object MonolithicAwt {
         return label
     }
 
-    @Suppress("DuplicatedCode")
+    @Suppress("DuplicatedCode", "SameParameterValue")
     private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
