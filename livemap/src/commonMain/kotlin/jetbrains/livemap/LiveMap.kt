@@ -7,6 +7,7 @@ package jetbrains.livemap
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.SimpleEventSource
@@ -16,6 +17,7 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.div
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
@@ -62,11 +64,15 @@ import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
 import jetbrains.livemap.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.placement.WorldOrigin2ScreenUpdateSystem
+import jetbrains.livemap.projection.*
 import jetbrains.livemap.regions.*
 import jetbrains.livemap.rendering.EntitiesRenderingTaskSystem
 import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.scaling.ScaleUpdateSystem
-import jetbrains.livemap.projection.*
+import jetbrains.livemap.searching.IndexComponent
+import jetbrains.livemap.searching.LocatorComponent
+import jetbrains.livemap.searching.SEARCH_COMPONENTS
+import jetbrains.livemap.searching.SearchResult
 import jetbrains.livemap.services.FragmentProvider
 import jetbrains.livemap.services.GeocodingProvider
 import jetbrains.livemap.tiles.TileLoadingSystemFactory
@@ -74,7 +80,10 @@ import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.tiles.TileRequestSystem
 import jetbrains.livemap.tiles.raster.RasterTileLayerComponent
 import jetbrains.livemap.tiles.vector.debug.DebugDataSystem
-import jetbrains.livemap.ui.*
+import jetbrains.livemap.ui.LiveMapUiSystem
+import jetbrains.livemap.ui.ResourceManager
+import jetbrains.livemap.ui.UiRenderingTaskSystem
+import jetbrains.livemap.ui.UiService
 
 class LiveMap(
     private val myMapProjection: MapProjection,
@@ -112,9 +121,10 @@ class LiveMap(
         )
     }
 
+    private val myComponentManager = EcsComponentManager()
+
     fun draw(canvasControl: CanvasControl) {
-        val componentManager = EcsComponentManager()
-        val camera = MutableCamera(componentManager)
+        val camera = MutableCamera(myComponentManager)
             .apply {
                 requestZoom(viewport.zoom.toDouble())
                 requestPosition(viewport.position)
@@ -128,12 +138,12 @@ class LiveMap(
             camera = camera
         )
 
-        myUiService = UiService(componentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
+        myUiService = UiService(myComponentManager, ResourceManager(myContext.mapRenderContext.canvasProvider))
 
-        myLayerManager = createLayerManager(componentManager, myRenderTarget, canvasControl)
+        myLayerManager = createLayerManager(myComponentManager, myRenderTarget, canvasControl)
 
         val updateController = UpdateController(
-            { dt -> animationHandler(componentManager, dt) },
+            { dt -> animationHandler(myComponentManager, dt) },
             myDevParams.read(UPDATE_PAUSE_MS).toLong(),
             myDevParams.read(UPDATE_TIME_MULTIPLIER)
         )
@@ -142,6 +152,21 @@ class LiveMap(
             canvasControl,
             AnimationEventHandler.toHandler(updateController::onTime)
         )
+    }
+
+    fun search(coord: DoubleVector): SearchResult? {
+        myComponentManager.getEntities(SEARCH_COMPONENTS).forEach { entity ->
+            entity.get<LocatorComponent>().locatorHelper.run {
+                if (isCoordinateInTarget(explicitVec(coord.x, coord.y), entity)) {
+
+                    val indexComponent = entity.get<IndexComponent>()
+
+                    return SearchResult(indexComponent.layerIndex, indexComponent.index, getColor(entity))
+                }
+            }
+        }
+
+        return null
     }
 
     private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {
@@ -250,9 +275,6 @@ class LiveMap(
                 // Effects
                 GrowingPath.GrowingPathEffectSystem(componentManager),
                 CameraScale.CameraScaleEffectSystem(componentManager)
-
-                // Tooltips
-                //TooltipTargetSystem(componentManager, myRegionGeometryConsumer),
 
                 //LoadingStateSystem(componentManager, isLoading())
             )

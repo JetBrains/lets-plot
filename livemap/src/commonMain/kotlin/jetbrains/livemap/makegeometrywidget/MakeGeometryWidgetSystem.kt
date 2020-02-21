@@ -19,9 +19,9 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
-import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.projection.toClientPoint
+import jetbrains.livemap.rendering.LayerEntitiesComponent
 
 class MakeGeometryWidgetSystem(
     private val myComponentManager: EcsComponentManager,
@@ -54,21 +54,23 @@ class MakeGeometryWidgetSystem(
         PointBuilder(factory)
             .apply {
                 point = lonlat
-                strokeColor =
-                    DARK_ORANGE
+                strokeColor = DARK_ORANGE
                 shape = 20
             }
-            .build(pointScaling = false, animationBuilder = AnimationBuilder(500.0))
+            .build(
+                pointScaling = false,
+                animationBuilder = AnimationBuilder(500.0),
+                nonInteractive = true
+            )
 
         if (widgetLayer.count() > 0) {
             PathBuilder(factory, myMapProjection)
                 .apply {
                     geometry(listOf(widgetLayer.last(), lonlat), false)
-                    strokeColor =
-                        DARK_ORANGE
+                    strokeColor = DARK_ORANGE
                     strokeWidth = 1.5
                 }
-                .build()
+                .build(true)
         }
     }
 

@@ -28,7 +28,7 @@ internal class LiveMapDataPointAestheticsProcessor(
     private val myLonLatInsideMapIdSpecified: Boolean = allAesMatch(myAesthetics, ::isLiveMapWithLonLat)
 
     val mapEntityBuilders: List<MapEntityBuilder>
-        get() = if (useMultiDataPoint()) processMultiDataPoints() else processDataPoints()
+        get() = (if (useMultiDataPoint()) processMultiDataPoints() else processDataPoints()).onEach { it.layerIndex = 0 }
 
     private fun isFrameSet(p: DataPointAesthetics): Boolean {
         return p.frame() != AesInitValue[Aes.FRAME]

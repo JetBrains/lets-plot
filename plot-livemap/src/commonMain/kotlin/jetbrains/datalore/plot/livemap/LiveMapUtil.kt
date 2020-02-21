@@ -5,15 +5,18 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
+import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
+import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil
-import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.*
 import jetbrains.livemap.config.DevParams
@@ -109,12 +112,21 @@ object LiveMapUtil {
         return hiddenAes
     }
 
+    fun createContextualMapping(geomKind: GeomKind, dataAccess: MappedDataAccess): ContextualMapping {
+        val aesList: MutableList<Aes<*>> = ArrayList(dataAccess.mappedAes)
+        aesList.removeAll(
+            getHiddenAes(geomKind)
+        )
+        return ContextualMapping(aesList, emptyList(), dataAccess)
+    }
+
     private class MyLiveMapProvider internal constructor(
         geomLayers: List<GeomLayer>,
         private val myLiveMapOptions: LiveMapOptions
     ) : LiveMapProvider {
 
         private val liveMapSpecBuilder: LiveMapSpecBuilder
+        private val myTargetSource = HashMap<Pair<Int, Int>, ContextualMapping>()
 
         init {
             require(geomLayers.isNotEmpty())
@@ -129,6 +141,15 @@ object LiveMapUtil {
                 )
             }
 
+            geomLayers
+                .map(newLiveMapRendererData)
+                .forEachIndexed {layerIndex, layer ->
+                    val contextualMapping = createContextualMapping(layer.geomKind, layer.dataAccess)
+                    layer.aesthetics.dataPoints().forEach {
+                        myTargetSource[layerIndex to it.index()] = contextualMapping
+                    }
+            }
+
             // feature geom layers
             val layers = geomLayers
                 .drop(1) // skip geom_livemap
@@ -138,8 +159,7 @@ object LiveMapUtil {
                         LiveMapLayerData(
                             geom,
                             geomKind,
-                            aesthetics,
-                            dataAccess
+                            aesthetics
                         )
                     }
                 }
@@ -158,10 +178,23 @@ object LiveMapUtil {
             }
         }
 
-        override fun createLiveMap(dimension: DoubleVector): CanvasFigure {
-            return liveMapSpecBuilder.size(dimension).build()
+        override fun createLiveMap(bounds: DoubleRectangle): LiveMapData {
+            return liveMapSpecBuilder.size(bounds.dimension).build()
                 .let { liveMapSpec -> LiveMapFactory(liveMapSpec).createLiveMap() }
-                .let { liveMapAsync -> LiveMapCanvasFigure(liveMapAsync).apply { setDimension(dimension) } }
+                .let { liveMapAsync ->
+                    LiveMapData(
+                        LiveMapCanvasFigure(liveMapAsync)
+                            .apply {
+                                setBounds(Rectangle(
+                                    bounds.origin.x.toInt(),
+                                    bounds.origin.y.toInt(),
+                                    bounds.dimension.x.toInt(),
+                                    bounds.dimension.y.toInt()
+                                ))
+                            },
+                        LiveMapTargetLocator(liveMapAsync, myTargetSource)
+                    )
+                }
         }
     }
 }

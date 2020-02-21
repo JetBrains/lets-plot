@@ -120,6 +120,7 @@ class LayersBuilder(
 
 @LiveMapDsl
 class ChartSource {
+    var layerIndex: Int? = null
     var mapId: String? = null
     var point: Vec<LonLat>? = null
 
