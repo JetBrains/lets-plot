@@ -47,7 +47,8 @@ object PlotLayoutUtil {
     }
 
     fun absoluteGeomBounds(origin: DoubleVector, plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
-        Preconditions.checkArgument(!plotLayoutInfo.tiles.isEmpty(), "Plot is empty")
+        require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
+
         var result: DoubleRectangle? = null
         for (tile in plotLayoutInfo.tiles) {
             val geomBounds = tile.getAbsoluteGeomBounds(origin)
