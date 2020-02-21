@@ -52,6 +52,7 @@ object Style {
         .add(
             SelectorBuilder(PLOT_GLASS_PANE)
             .cursor(CursorValue.CROSSHAIR)
+            .userSelect(UserSelectValue.NONE)
         )
         .add(
             SelectorBuilder(PLOT_DATA_TOOLTIP)
