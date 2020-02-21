@@ -59,10 +59,10 @@ internal class PointDataAccess(
                 .run(::ensureNotZeroRange)
 
             val formatter = getBreaksGenerator(scale).labelFormatter(domain, 100)
-            return { value -> value?.let { formatter.invoke(it) } ?: "NULL" }
+            return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
         } else {
             val labelsMap = labelByBreak(scale)
-            return { value -> value?.let { labelsMap.getValue(it) } ?: "NULL" }
+            return { value -> value?.let { labelsMap.getValue(it) } ?: "n/a" }
         }
     }
 }
