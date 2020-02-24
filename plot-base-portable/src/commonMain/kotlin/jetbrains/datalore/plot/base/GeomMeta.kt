@@ -7,7 +7,11 @@ package jetbrains.datalore.plot.base
 
 import kotlin.native.concurrent.ThreadLocal
 
-@ThreadLocal  // objects a frozen by default but we are going to mutate `renderedAesByGeom` map
+// In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.
+// See:  https://github.com/JetBrains/kotlin-native/blob/master/IMMUTABILITY.md
+// Required mutations:
+//      -   `renderedAesByGeom` map
+@ThreadLocal
 object GeomMeta {
     private val renderedAesByGeom = HashMap<GeomKind, List<Aes<*>>>()
 

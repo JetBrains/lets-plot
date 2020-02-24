@@ -24,8 +24,15 @@ static PyObject* generate_html(PyObject* self, PyObject* plotSpecDict) {
     return html;
 }
 
+static PyObject* export_svg(PyObject* self, PyObject* plotSpecDict) {
+    T_(PlotHtmlGenProxy) htmlGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotHtmlGenProxy._instance();
+    PyObject* svg = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotHtmlGenProxy.generateSvg(htmlGen, plotSpecDict);
+    return svg;
+}
+
 static PyMethodDef module_methods[] = {
-   { "generate_html", (PyCFunction)generate_html, METH_O, "Generates HTML representing plot" },
+   { "generate_html", (PyCFunction)generate_html, METH_O, "Generates HTML and JS sufficient for buidling of interactive plot." },
+   { "export_svg", (PyCFunction)export_svg, METH_O, "Generates SVG representing plot." },
    { NULL }
 };
 

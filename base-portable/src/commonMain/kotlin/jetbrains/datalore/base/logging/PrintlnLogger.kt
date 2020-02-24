@@ -9,4 +9,8 @@ class PrintlnLogger(val name: String) : Logger {
     override fun error(e: Throwable, message: () -> String) {
         println("ERR [$name] : ${message()}")
     }
+
+    override fun info(message: () -> String) {
+        println("INFO [$name] : ${message()}")
+    }
 }

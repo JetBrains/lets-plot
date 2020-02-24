@@ -130,7 +130,7 @@ open class BoxPlot : PlotConfigDemoBase() {
                     "                  'geom': 'boxplot'," +
                     "                  'outlier_color': 'red'," +
                     "                  'outlier_shape': 1," +
-                    "                  'outlier_size': 3" +
+                    "                  'outlier_size': 15" +
                     "               }" +
                     "           ]" +
                     "}"

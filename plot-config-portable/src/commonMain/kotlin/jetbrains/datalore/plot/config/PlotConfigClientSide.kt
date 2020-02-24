@@ -69,6 +69,9 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             var plotSpec = plotSpec
             val isGGBunch = isGGBunchSpec(plotSpec)
 
+            // ToDo: GeometryFromGeoDataFrameChange depends on Json support
+            //  - make Json support portable
+            //  - return `GeometryFromGeoDataFrameChange`
 // Moved to PlotConfigClientSideJvmJs
 //            plotSpec = PlotSpecTransform.builderForRawSpec()
 //                .change(GeometryFromGeoDataFrameChange.specSelector(isGGBunch), GeometryFromGeoDataFrameChange())

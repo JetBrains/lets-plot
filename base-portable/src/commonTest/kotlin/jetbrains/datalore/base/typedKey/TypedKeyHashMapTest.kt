@@ -9,20 +9,20 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 
 
-class TypedKeyContainerTest {
+class TypedKeyHashMapTest {
     private fun <T> create(name: String): Key<T> {
         return BadKey(name)
     }
 
     @Test
     fun badKey() {
-        val typedKeyContainer = TypedKeyHashMap()
+        val typedKeyMap = TypedKeyHashMap()
         val stringListTypedKey = create<List<String>>("stringList")
         val integerListTypedKey = create<List<Int>>("integerList")
         val stringList = listOf("a", "b")
-        typedKeyContainer.put(stringListTypedKey, stringList)
+        typedKeyMap.put(stringListTypedKey, stringList)
 
-        val integerList = typedKeyContainer[integerListTypedKey]
+        val integerList = typedKeyMap[integerListTypedKey]
         val firstInteger: Any? = integerList[0]  // Class cast error if: String -> Int  (only when JVM)
         assertFalse(firstInteger is Int)
     }

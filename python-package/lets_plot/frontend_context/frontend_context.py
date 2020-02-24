@@ -7,7 +7,6 @@ from typing import Dict, Any
 from .._global_settings import _get_global_bool
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
-from ..type_utils.type_utils import is_dict_or_dataframe, standardize_dict
 
 __all__ = ['load_lets_plot_js']
 
@@ -50,22 +49,10 @@ def _setup_html_context(offline: bool, verbose: bool):
     _frontend_contexts['html'] = ctx
 
 
-def _standardize_plot_spec(plot_spec: Dict) -> Dict:
-    """
-    :param plot_spec: dict or pandas.DataFrame
-    """
-    if not is_dict_or_dataframe(plot_spec):
-        raise ValueError("dict or pandas.Dataframe expected but was {}".format(type(plot_spec)))
-
-    return standardize_dict(plot_spec)
-
-
 def _as_html(plot_spec: Dict) -> str:
     """
-    :param plot_spec: dict or pandas.DataFrame
+    :param plot_spec: dict
     """
-    plot_spec = _standardize_plot_spec(plot_spec)
-
     if 'html' not in _frontend_contexts:
         # Lazy context setup
         _setup_html_context(_get_global_bool('offline'), verbose=False)
@@ -84,8 +71,7 @@ def _display_plot(plot_spec: Any):
     try:
         from IPython.display import display_html
 
-        plot_spec_dict = _standardize_plot_spec(plot_spec.as_dict())
-        display_html(_as_html(plot_spec_dict), raw=True)
+        display_html(_as_html(plot_spec.as_dict()), raw=True)
         return
     except ImportError:
         pass

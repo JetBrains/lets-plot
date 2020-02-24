@@ -15,6 +15,10 @@ actual object PortableLogging {
             override fun error(e: Throwable, message: () -> String) {
                 kl.error(message)
             }
+
+            override fun info(message: () -> String) {
+                kl.info(message)
+            }
         }
     }
 }

@@ -7,4 +7,5 @@ package jetbrains.datalore.base.logging
 
 interface Logger {
     fun error(e: Throwable, message: () -> String)
+    fun info(message: () -> String)
 }

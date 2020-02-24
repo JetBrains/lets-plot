@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.aes
 
-import jetbrains.datalore.base.typedKey.TypedKeyContainer
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
@@ -13,17 +12,23 @@ import jetbrains.datalore.plot.base.livemap.LivemapConstants
 
 open class AestheticsDefaults {
 
-    private val myDefaults: TypedKeyContainer
-    private val myDefaultsInLegend = TypedKeyHashMap()
-
-    init {
-        myDefaults = TypedKeyHashMap()
+    private val myDefaults = TypedKeyHashMap().apply {
         for (aes in Aes.values()) {
             // Safe cast because AesInitValue.get(aes) is guaranteed to return correct type.
             @Suppress("UNCHECKED_CAST")
-            myDefaults.put(aes as Aes<Any>, AesInitValue[aes])
+            put(aes as Aes<Any>, AesInitValue[aes])
         }
     }
+    private val myDefaultsInLegend = TypedKeyHashMap()
+
+//    init {
+//        myDefaults = TypedKeyHashMap()
+//        for (aes in Aes.values()) {
+//            // Safe cast because AesInitValue.get(aes) is guaranteed to return correct type.
+//            @Suppress("UNCHECKED_CAST")
+//            myDefaults.put(aes as Aes<Any>, AesInitValue[aes])
+//        }
+//    }
 
     protected fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
         myDefaults.put(aes, defaultValue)

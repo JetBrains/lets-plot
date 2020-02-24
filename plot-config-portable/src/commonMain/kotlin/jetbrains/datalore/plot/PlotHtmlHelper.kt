@@ -10,9 +10,6 @@ import jetbrains.datalore.base.jsObject.JsObjectSupport
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
 object PlotHtmlHelper {
-//    private const val baseUrl = "https://dl.bintray.com/jetbrains/lets-plot"
-//    private const val version = "1.0.0"
-//    private const val suffix = "min.js"
 
     @Suppress("SameParameterValue")
     private fun randomString(len: Int): String {

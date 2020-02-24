@@ -5,10 +5,8 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
@@ -38,7 +36,8 @@ class BoxplotGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        CrossBarHelper.buildBoxes(root, aesthetics, pos, coord, ctx,
+        CrossBarHelper.buildBoxes(
+            root, aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx)
         )
         buildLines(root, aesthetics, pos, coord, ctx)
@@ -125,74 +124,44 @@ class BoxplotGeom : GeomBase() {
     }
 
     private fun getOutliersAesthetics(aesthetics: Aesthetics): Aesthetics {
-        val outlierAesMapper = OutlierAestheticsMapper(
-            outlierColor, outlierFill, outlierShape, outlierSize
-        )
-
-        return MappedAesthetics(aesthetics) {
-            outlierAesMapper.apply(
-                it
-            )
+        return MappedAesthetics(aesthetics) { p ->
+            toOutlierDataPointAesthetics(p)
         }
     }
 
-    private class OutlierAestheticsMapper(color: Color?, fill: Color?, shape: PointShape?, size: Double?) :
-        Function<DataPointAesthetics, DataPointAesthetics> {
-
-        private val myValueByAes = TypedKeyHashMap()
-
-        init {
-            if (color != null) {
-                myValueByAes.put(Aes.COLOR, color)
-            }
-            if (fill != null) {
-                myValueByAes.put(Aes.FILL, fill)
-            }
-            if (shape != null) {
-                myValueByAes.put(Aes.SHAPE, shape)
-            }
-            if (size != null) {
-                myValueByAes.put(Aes.SIZE, size)
-            }
+    /**
+     * The geom `Aesthetics` contains both: reqular data-points and "outlier" data-points.
+     * Regular data-point do not yave Y defined. We use this feature to feature to
+     * detect regular data-points and ignore them.
+     */
+    private fun toOutlierDataPointAesthetics(p: DataPointAesthetics): DataPointAesthetics {
+        if (!p.defined(Aes.Y)) {
+            // not an "outlier" data-point
+            return p
         }
 
-        override fun apply(value: DataPointAesthetics): DataPointAesthetics {
-            return if (!value.defined(Aes.Y)) {
-                // not an outlier data-point
-                value
-            } else object : DataPointAestheticsDelegate(value) {
-                override operator fun <T> get(aes: Aes<T>): T? {
-                    return getIntern(aes, super.get(aes))
-                }
+        return object : DataPointAestheticsDelegate(p) {
+            override operator fun <T> get(aes: Aes<T>): T? = getIntern(aes)
 
-                override fun color(): Color? {
-                    return getIntern(Aes.COLOR, super.color())
-                }
+            override fun color(): Color? = getIntern(Aes.COLOR)
+            override fun fill(): Color? = getIntern(Aes.FILL)
+            override fun shape(): PointShape? = getIntern(Aes.SHAPE)
+            override fun size(): Double? = getIntern(Aes.SIZE)
 
-                override fun fill(): Color? {
-                    return getIntern(Aes.FILL, super.fill())
+            private fun <T> getIntern(aes: Aes<T>): T? {
+                val value = when (aes) {
+                    Aes.COLOR -> outlierColor ?: super.color()
+                    Aes.FILL -> outlierFill ?: super.fill()
+                    Aes.SHAPE -> outlierShape ?: super.shape()
+                    Aes.SIZE -> outlierSize ?: OUTLIER_DEF_SIZE  // 'size' of 'super' is line thickness on box-plot
+                    else -> super.get(aes)
                 }
-
-                override fun shape(): PointShape? {
-                    return getIntern(Aes.SHAPE, super.shape())
-                }
-
-                override fun size(): Double? {
-                    // overwrite 'size' of 'super'
-                    return getIntern(
-                        Aes.SIZE,
-                        OUTLIER_DEF_SIZE
-                    )
-                }
-
-                private fun <T> getIntern(aes: Aes<T>, naValue: T?): T? {
-                    return if (myValueByAes.containsKey(aes)) {
-                        myValueByAes[aes]
-                    } else naValue
-                }
+                @Suppress("UNCHECKED_CAST")
+                return value as T?
             }
         }
     }
+
 
     companion object {
         const val HANDLES_GROUPS = false

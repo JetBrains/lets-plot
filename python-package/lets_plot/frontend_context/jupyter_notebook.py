@@ -13,6 +13,7 @@ from IPython.display import display_html
 
 from .frontend_context import FrontendContext
 from .._global_settings import _get_global_str, _has_global_value, _is_production
+from .. import _kbridge as kbr
 from .._version import __version__
 
 
@@ -23,9 +24,7 @@ class JupyterNotebookContext(FrontendContext):
         self.connected = connected
 
     def as_str(self, plot_spec: Dict) -> str:
-        # noinspection PyUnresolvedReferences
-        import lets_plot_kotlin_bridge
-        return lets_plot_kotlin_bridge.generate_html(plot_spec)
+        return kbr._generate_dynamic_display_html(plot_spec)
 
     def _undef_modules_script(self) -> str:
         pass

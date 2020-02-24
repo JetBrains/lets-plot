@@ -97,7 +97,8 @@ internal class MonolithicAwtTest {
     }
 
     private fun rawSpecStr_GGBunchItemPlot(): String {
-        val spec = """
+
+        return """
         |{
         |   'kind': 'plot',
         |   'data': {'x': [1, 2], 'y': [0, 3]},
@@ -112,8 +113,6 @@ internal class MonolithicAwtTest {
         |               ]
         |}
         """.trimMargin()
-
-        return spec
     }
 
 
