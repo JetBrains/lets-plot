@@ -18,15 +18,15 @@
 #define TLSVAR __thread
 #endif
 
-static PyObject* generate_html(PyObject* self, PyObject* plotSpecDict) {
-    T_(PlotHtmlGenProxy) htmlGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotHtmlGenProxy._instance();
-    PyObject* html = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotHtmlGenProxy.applyToRawSpecs(htmlGen, plotSpecDict);
+static PyObject* generate_html(PyObject* self, PyObject* rawPlotSpecDict) {
+    T_(PlotReprGenerator) reprGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator._instance();
+    PyObject* html = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator.generateDynamicDisplayHtml(reprGen, rawPlotSpecDict);
     return html;
 }
 
-static PyObject* export_svg(PyObject* self, PyObject* plotSpecDict) {
-    T_(PlotHtmlGenProxy) htmlGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotHtmlGenProxy._instance();
-    PyObject* svg = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotHtmlGenProxy.generateSvg(htmlGen, plotSpecDict);
+static PyObject* export_svg(PyObject* self, PyObject* rawPlotSpecDict) {
+    T_(PlotReprGenerator) reprGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator._instance();
+    PyObject* svg = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator.generateSvg(reprGen, rawPlotSpecDict);
     return svg;
 }
 

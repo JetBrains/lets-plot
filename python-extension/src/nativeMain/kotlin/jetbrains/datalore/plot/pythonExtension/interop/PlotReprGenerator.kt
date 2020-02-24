@@ -7,10 +7,8 @@ import jetbrains.datalore.plot.PlotSvgExport
 import jetbrains.datalore.plot.pythonExtension.interop.TypeUtils.pyDictToMap
 import kotlinx.cinterop.CPointer
 
-// ToDo: rename -> NativeGenerator
-object PlotHtmlGenProxy {
-    // ToDo: rename method
-    fun applyToRawSpecs(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
+object PlotReprGenerator {
+    fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
         val plotSpecMap = pyDictToMap(plotSpecDict)
 
         @Suppress("UNCHECKED_CAST")
