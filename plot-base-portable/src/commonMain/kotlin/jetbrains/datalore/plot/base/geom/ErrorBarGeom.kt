@@ -64,7 +64,12 @@ class ErrorBarGeom : GeomBase() {
             )
             root.add(g)
 
-            buildHints(r, p, ctx, geomHelper)
+            buildHints(
+                DoubleRectangle(r.center, DoubleVector(width, 0.0)),
+                p,
+                ctx,
+                geomHelper
+            )
         }
     }
 
