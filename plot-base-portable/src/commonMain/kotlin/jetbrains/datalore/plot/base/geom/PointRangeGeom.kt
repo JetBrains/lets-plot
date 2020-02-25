@@ -5,8 +5,10 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.legend.CompositeLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.legend.VLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
@@ -16,6 +18,7 @@ import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.point.PointShapeSvg
+import kotlin.math.max
 
 class PointRangeGeom : GeomBase() {
     var fattenMidPoint: Double =
@@ -66,7 +69,7 @@ class PointRangeGeom : GeomBase() {
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            LineRangeGeom.rectangleByDataPoint(),
+            rectangleByDataPoint(),
             { HintColorUtil.fromColor(it) }
         )
     }
@@ -75,5 +78,24 @@ class PointRangeGeom : GeomBase() {
         const val HANDLES_GROUPS = false
 
         const val DEF_FATTEN = 5.0
+
+        fun rectangleByDataPoint(): (DataPointAesthetics) -> DoubleRectangle? {
+            return { p ->
+                if (p.defined(Aes.X) &&
+                    p.defined(Aes.Y)
+                ) {
+                    val x = p.x()!!
+                    val y = p.y()!!
+
+                    val width = max(AesScaling.strokeWidth(p), 2.0)
+
+                    val origin = DoubleVector(x - width / 2, y)
+                    val dimensions = DoubleVector(width, 0.0 )
+                    DoubleRectangle(origin, dimensions)
+                } else {
+                    null
+                }
+            }
+        }
     }
 }
