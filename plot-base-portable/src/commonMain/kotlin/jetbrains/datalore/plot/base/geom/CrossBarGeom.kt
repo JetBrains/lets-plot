@@ -34,7 +34,7 @@ class CrossBarGeom : GeomBase() {
         )
         CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
         BarTooltipHelper.collectRectangleTargets(
-            listOf(Aes.YMAX, Aes.MIDDLE, Aes.YMIN),
+            listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx, true),
             { HintColorUtil.fromColor(it) }
