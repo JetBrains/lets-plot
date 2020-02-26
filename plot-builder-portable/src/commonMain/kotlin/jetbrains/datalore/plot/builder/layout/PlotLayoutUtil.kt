@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -16,6 +15,8 @@ object PlotLayoutUtil {
     val AXIS_TITLE_OUTER_MARGIN = 4.0
     val AXIS_TITLE_INNER_MARGIN = 4.0
     private val TITLE_V_MARGIN = 4.0
+    private val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
+    private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 
     fun titleDimensions(text: String): DoubleVector {
         if (isNullOrEmpty(text)) {
@@ -55,5 +56,12 @@ object PlotLayoutUtil {
             result = result?.union(geomBounds) ?: geomBounds
         }
         return result!!
+    }
+
+    fun liveMapBounds(plotOrigin: DoubleVector, plotDimension: DoubleVector): DoubleRectangle {
+        return DoubleRectangle(
+            plotOrigin.add(LIVE_MAP_PLOT_PADDING),
+            plotDimension.subtract(LIVE_MAP_PLOT_MARGIN)
+        )
     }
 }

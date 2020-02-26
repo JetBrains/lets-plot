@@ -25,11 +25,12 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
-import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
+import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgElement
@@ -250,10 +251,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         }
 
         if (hasLiveMap()) {
-            entirePlot = DoubleRectangle(
-                entirePlot.origin.add(DoubleVector(10.0, 0.0)),
-                entirePlot.dimension.subtract(DoubleVector(10.0, 10.0))
-            )
+            entirePlot = liveMapBounds(entirePlot.origin, entirePlot.dimension)
         }
 
         // subtract title size
