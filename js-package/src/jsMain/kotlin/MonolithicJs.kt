@@ -181,9 +181,9 @@ private fun buildPlotSvg(
 
     plotContainer.liveMapFigures.forEach { liveMapFigure ->
         val bounds = (liveMapFigure as CanvasFigure).bounds().get()
-        val rootElement = document.createElement("div") as HTMLElement
+        val liveMapDiv = document.createElement("div") as HTMLElement
 
-        rootElement.style.run {
+        liveMapDiv.style.run {
             setLeft(bounds.origin.x.toDouble())
             setTop(bounds.origin.y.toDouble())
             setWidth(bounds.dimension.x)
@@ -192,13 +192,13 @@ private fun buildPlotSvg(
         }
 
         val canvasControl = DomCanvasControl(
-            rootElement,
+            liveMapDiv,
             bounds.dimension,
             DomCanvasControl.DomEventPeer(eventTarget, bounds)
         )
 
         liveMapFigure.mapToCanvas(canvasControl)
-        eventTarget.appendChild(rootElement)
+        eventTarget.appendChild(liveMapDiv)
     }
 
     val svgRoot = plotContainer.svg

@@ -27,7 +27,6 @@ import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.interact.loc.LayerTargetCollectorWithLocator
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
@@ -112,11 +111,6 @@ internal class PlotTile(
 
             val liveMapData = liveMapGeomLayer.createCanvasFigure(realBounds)
 
-            val rectElement = SvgRectElement(geomBounds).apply {
-                addClass(Style.PLOT_GLASS_PANE)
-                opacity().set(0.0)
-            }
-            add(rectElement)
             liveMapFigure = liveMapData.canvasFigure
             myTargetLocators.add(liveMapData.targetLocator)
         } else {
