@@ -20,6 +20,8 @@ kotlin {
             target = macosX64("native")
         } else if (currentOs.isLinux()) {
             target = linuxX64("native")
+        } else if (currentOs.isWindows()) {
+            target = mingwX64("native")
         } else {
             throw "Unsupported platform " + currentOs.displayName
         }

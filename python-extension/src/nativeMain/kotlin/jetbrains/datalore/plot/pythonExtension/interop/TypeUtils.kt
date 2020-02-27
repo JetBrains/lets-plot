@@ -37,7 +37,7 @@ internal object TypeUtils {
 
     private fun pyStrToString(str: TPyObjPtr) = PyBytes_AsString(PyUnicode_AsUTF8String(str))?.toKString()
 
-    private fun pyIntToLong(int: TPyObjPtr): Long = PyLong_AsLong(int)
+    private fun pyIntToLong(int: TPyObjPtr): Long = PyLong_AsLong(int).toLong()
 
     private fun pyFloatToDouble(float: TPyObjPtr): Double = PyFloat_AsDouble(float)
 

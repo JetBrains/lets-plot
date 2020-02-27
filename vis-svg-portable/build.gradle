@@ -13,6 +13,7 @@ kotlin {
     js()
     macosX64()
     linuxX64()
+    mingwX64()
 
     sourceSets {
         commonMain {

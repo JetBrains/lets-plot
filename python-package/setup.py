@@ -55,6 +55,10 @@ with open(os.path.join(this_dir, python_package, '_version.py')) as f:
 with open(os.path.join(root_dir, 'README_PYTHON.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+if this_system == "Windows":
+    import distutils.cygwinccompiler
+    distutils.cygwinccompiler.get_msvcr = lambda: []
+
 setup(name='lets-plot',
       license="MIT",
       version=version_locals['__version__'],
@@ -74,6 +78,7 @@ setup(name='lets-plot',
           "Framework :: Jupyter",
           "Operating System :: MacOS",
           "Operating System :: POSIX :: Linux",
+          "Operating System :: Microsoft :: Windows",
           "Programming Language :: Python :: Implementation :: CPython",
           "Topic :: Scientific/Engineering :: Visualization",
           "Intended Audience :: Science/Research",

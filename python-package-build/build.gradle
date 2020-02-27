@@ -1,3 +1,5 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 plugins {
     id 'kotlin-multiplatform'
 }
@@ -11,6 +13,7 @@ plugins {
 // Building and publishing Python package
 // ----------------------------------------
 
+def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 def task_group = 'lets plot'
 def tools_dir = "${rootDir}/tools"
 def python_package_dir = "${rootDir}/python-package"
@@ -33,11 +36,22 @@ if (project.buildSettings.enable_python_package) {
         description = 'Builds lets-plot wheel distribution (python)'
 
         workingDir python_package_dir
-        commandLine "${python_bin_path}/python3",
-                'setup.py',
-                'update_js',
-                'bdist_wheel',
-                "--dist-dir=${python_package_dist_dir}"
+        if (currentOs.isWindows()) {
+            commandLine "${python_bin_path}/python",
+                    'setup.py',
+                    'update_js',
+                    'bdist_wheel',
+                    "--dist-dir=${python_package_dist_dir}",
+                    'build',
+                    '-c',
+                    'mingw32'
+        } else {
+            commandLine "${python_bin_path}/python3",
+                    'setup.py',
+                    'update_js',
+                    'bdist_wheel',
+                    "--dist-dir=${python_package_dist_dir}"
+        }
     }
 
     task buildManylinuxWheels(type: Exec) {
