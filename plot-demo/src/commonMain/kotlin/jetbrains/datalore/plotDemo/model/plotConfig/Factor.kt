@@ -11,8 +11,8 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class Factor : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            dataInMapping()
-            ,fillFactor()
+            //dataInMapping()
+            fillFactor()
             ,fillAndColorFactor()
             ,fillFactorWithScaleColor()
         )
@@ -27,7 +27,7 @@ class Factor : PlotConfigDemoBase() {
     "layers": [{
         "geom": "point", 
         "mapping": {"x": [0, 5, 10], "y": [0, 5, 10], "color": [1, 2, 4]}, 
-        "data_meta": {"series_annotation": [{"variable": [1, 2, 4], "category": "discrete"}]}, 
+        "data_meta": {"series_annotation": [{"variable": [1, 2, 4], "annotation": "discrete"}]}, 
         "shape": 21, 
         "size": 9
     }]
@@ -46,7 +46,7 @@ class Factor : PlotConfigDemoBase() {
     "layers": [{
         "geom": "point", 
         "mapping": {"fill": "a", "color": "b"}, 
-        "data_meta": {"series_annotation": [{"variable": "a", "category": "discrete"}]},
+        "data_meta": {"series_annotation": [{"variable": "a", "annotation": "discrete"}]},
         "shape": 21, 
         "size": 9
     }]
@@ -63,11 +63,11 @@ class Factor : PlotConfigDemoBase() {
     "data": $data, 
     "mapping": {"x": "x", "y": "y"}, 
     "kind": "plot", 
-    "scales": [{"aesthetic": "color", "scale_mapper_kind": "color_hue", "discrete": True}],
+    "scales": [{"aesthetic": "color", "discrete": True}],
     "layers": [{
         "geom": "point", 
         "mapping": {"fill": "a", "color": "b"}, 
-        "data_meta": {"series_annotation": [{"variable": "a", "category": "discrete"}]},
+        "data_meta": {"series_annotation": [{"variable": "a", "annotation": "discrete"}]},
         "shape": 21, 
         "size": 9
     }]
@@ -88,8 +88,8 @@ class Factor : PlotConfigDemoBase() {
         "geom": "point", 
         "mapping": {"fill": "a", "color": "b"}, 
         "data_meta": {"series_annotation": [
-            {"variable": "a", "category": "discrete"}, 
-            {"variable": "b", "category": "discrete"}
+            {"variable": "a", "annotation": "discrete"}, 
+            {"variable": "b", "annotation": "discrete"}
         ]},
         "shape": 21, 
         "size": 9

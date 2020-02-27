@@ -41,8 +41,9 @@ object Option {
 
         object SeriesAnnotation {
             const val TAG = "series_annotation"
-            const val NAME = "variable"
-            const val CATEGORY = "category"
+            const val VARIABLE = "variable"
+            const val ANNOTATION = "annotation"
+            const val DISCRETE = "discrete"
         }
     }
 

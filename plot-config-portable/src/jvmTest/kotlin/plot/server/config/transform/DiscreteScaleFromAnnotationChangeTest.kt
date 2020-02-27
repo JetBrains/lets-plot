@@ -19,7 +19,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class DiscreteScaleFromMetaChangeTest {
+class DiscreteScaleFromAnnotationChangeTest {
 
     @Test
     fun withoutMetaShouldNotAddScale() {
@@ -32,7 +32,7 @@ class DiscreteScaleFromMetaChangeTest {
             )
         }
 
-        DiscreteScaleFromMetaChange().apply(plotSpec, dummyCtx)
+        DiscreteScaleFromAnnotationChange().apply(plotSpec, dummyCtx)
         plotSpec.sections(Plot.SCALES).run { assertNull(this) }
     }
 
@@ -46,20 +46,20 @@ class DiscreteScaleFromMetaChangeTest {
                     write(Meta.DATA_META, SeriesAnnotation.TAG) {
                         list(
                             dict {
-                                write(SeriesAnnotation.NAME) { varName }
-                                write(SeriesAnnotation.CATEGORY) { "discrete" }
+                                write(SeriesAnnotation.VARIABLE) { varName }
+                                write(SeriesAnnotation.ANNOTATION) { "discrete" }
                             }
                         )
                     }
                 }
             )
         }
-        DiscreteScaleFromMetaChange().apply(plotSpec, dummyCtx)
+        DiscreteScaleFromAnnotationChange().apply(plotSpec, dummyCtx)
 
         plotSpec.sections(Plot.SCALES)!![0].run {
             read(Option.Scale.AES).run { assertEquals(toOption(Aes.COLOR), this) }
             read(Option.Scale.DISCRETE_DOMAIN).run { assertEquals(true, this) }
-            read(Option.Scale.SCALE_MAPPER_KIND).run { assertEquals("color_hue", this) }
+            read(Option.Scale.SCALE_MAPPER_KIND).run { assertNull(this) }
         }
     }
 
@@ -79,15 +79,15 @@ class DiscreteScaleFromMetaChangeTest {
                     write(Meta.DATA_META, SeriesAnnotation.TAG) {
                         list(
                             dict {
-                                write(SeriesAnnotation.NAME) { varName }
-                                write(SeriesAnnotation.CATEGORY) { "discrete" }
+                                write(SeriesAnnotation.VARIABLE) { varName }
+                                write(SeriesAnnotation.ANNOTATION) { "discrete" }
                             }
                         )
                     }
                 }
             )
         }
-        DiscreteScaleFromMetaChange().apply(plotSpec, dummyCtx)
+        DiscreteScaleFromAnnotationChange().apply(plotSpec, dummyCtx)
 
         with(plotSpec.sections(Plot.SCALES)!![0]) {
             read(Option.Scale.AES).run { assertEquals(toOption(Aes.ALPHA), this) }
@@ -98,7 +98,7 @@ class DiscreteScaleFromMetaChangeTest {
         with(plotSpec.sections(Plot.SCALES)!![1]) {
             read(Option.Scale.AES).run { assertEquals(toOption(Aes.COLOR), this) }
             read(Option.Scale.DISCRETE_DOMAIN).run { assertEquals(true, this) }
-            read(Option.Scale.SCALE_MAPPER_KIND).run { assertEquals("color_hue", this) }
+            read(Option.Scale.SCALE_MAPPER_KIND).run { assertNull(this) }
         }
     }
 }
