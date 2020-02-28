@@ -39,21 +39,23 @@
 ##### 3. Edit `build_settings.yml`:
 
  - set both `build_python_extension` and `enable_python_package` options to `yes`
- - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.7
+ - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.6
  - check and set credentials in the `PyPI settings` and `Bintray settings` sections
 
 ##### 4. Build the project:
 
 run `./gradlew build`
 
-_As the result you will get artifacts for js-package and python-package (python wheel file built with Python 3.7)_
+_As the result you will get artifacts for js-package and python-package (python wheel file built with Python 3.6)_
 
-##### 5. Build python wheels with Python 3.8:
+##### 5. Build python wheels with Python 3.7 and 3.8:
 
- - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.8
+ - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.7
  - run `./gradlew python-package-build:build`
  
-_This step will add python wheel file built with Python 3.8._
+Reproduce this steps for Python 3.8
+ 
+_Then you'll get python wheel files built with Python 3.7 and 3.8._
 
 
 ##### 6. _(for Linux only)_ Build python wheels for Manylinux platform:
