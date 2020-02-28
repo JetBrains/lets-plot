@@ -68,7 +68,7 @@ def ggplot(data=None, mapping=None):
     if isinstance(data, FeatureSpec):
         raise ValueError("Object {!r} is not acceptable as 'data' argument in ggplot()".format(data.kind))
 
-    data, data_meta = as_annotated_data(data)
+    data, mapping, data_meta = as_annotated_data(data, mapping)
 
     return PlotSpec(data, mapping, scales=[], layers=[], **data_meta)
 

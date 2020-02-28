@@ -1101,7 +1101,6 @@ def scale_fill_discrete(h=None, c=None, l=None, h_start=None, direction=None,
     # same as scale_fill_hue but always 'discrete'
     return _scale('fill', name, breaks, labels, limits, expand, na_value, guide, None, h=h, c=c, l=l, h_start=h_start,
                   direction=direction,
-                  scale_mapper_kind='color_hue',
                   discrete=True)
 
 
@@ -1148,7 +1147,6 @@ def scale_color_discrete(h=None, c=None, l=None, h_start=None, direction=None,
     # same as scale_color_hue but always 'discrete'
     return _scale('color', name, breaks, labels, limits, expand, na_value, guide, None, h=h, c=c, l=l, h_start=h_start,
                   direction=direction,
-                  scale_mapper_kind='color_hue',
                   discrete=True)
 
 

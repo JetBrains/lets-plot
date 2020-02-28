@@ -53,11 +53,35 @@ fun Map<*, *>.list(path: List<String>, item: String): List<*>? {
     return section(path)?.get(item) as? List<*>
 }
 
+fun Map<*, *>.sections(vararg query: String): List<Map<*, *>>? {
+    return list(*query)?.map { it as Map<*, *> }?.toList()
+}
+
 fun Map<*, *>.provideSection(path: List<String>): Map<*, *> {
     return path.fold(this, { section, next -> section.asMutable().getOrPut(next, { HashMap<String, Any>() }) as Map<*, *> })
+}
+
+fun Map<*, *>.provideSections(vararg query: String): List<Map<*, *>> {
+    return provideSections(query.dropLast(1), query.last())
+}
+
+fun Map<*, *>.provideSections(path: List<String>, item: String): List<Map<*, *>> {
+    @Suppress("UNCHECKED_CAST")
+    return provideSection(path).asMutable().getOrPut(item, { mutableListOf<Map<*, *>>() }) as List<Map<*, *>>
 }
 
 @Suppress("UNCHECKED_CAST")
 fun Map<*, *>.asMutable(): MutableMap<String, Any> {
     return this as MutableMap<String, Any>
 }
+
+@Suppress("UNCHECKED_CAST")
+fun <T> List<T>.asMutable(): MutableList<T> {
+    return this as MutableList<T>
+}
+
+@Suppress("UNCHECKED_CAST")
+fun List<*>.asSections(): List<Map<*, *>> {
+    return this as List<Map<*, *>>
+}
+

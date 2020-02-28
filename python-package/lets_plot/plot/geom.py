@@ -2198,7 +2198,7 @@ def _geom(name, mapping=None, data=None, stat=None, position=None, show_legend=N
         if not (isinstance(mapping, FeatureSpec) and mapping.kind == 'mapping'):
             raise ValueError("Unexpected value for argument 'mapping'. Hint: try to use function aes()")
 
-    data, data_meta = as_annotated_data(data)
+    data, mapping, data_meta = as_annotated_data(data, mapping)
 
     if is_geo_data_frame(data):
         data = geo_data_frame_to_lon_lat(data)

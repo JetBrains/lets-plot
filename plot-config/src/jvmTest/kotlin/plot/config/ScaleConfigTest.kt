@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
+import jetbrains.datalore.plot.config.Option.Mapping.toOption
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -110,5 +111,30 @@ class ScaleConfigTest {
                 checkIdentityMappingNumeric(aes as Aes<Double>, input)
             }
         }
+    }
+
+    @Test
+    fun colorHueMapperForDiscreteFillColorScale() {
+        fun checkDiscreteScale(aes: Aes<Color>) {
+
+            val scaleSpec = mapOf(
+                "discrete" to true,
+                "aesthetic" to toOption(aes)
+            )
+
+            val dataFrame = DataFrameUtil.fromMap(mapOf("a" to listOf(1.0, 2.0, 3.0, 4.0)))
+
+            val scaleMapper = ScaleConfig<Color>(scaleSpec)
+                .createScaleProvider()
+                .createScale(dataFrame, dataFrame.variables().first { it.name == "a" })
+                .mapper
+
+            assertEquals(Color(160,229,114), scaleMapper(1.0))
+            assertEquals(Color(114,206,229), scaleMapper(2.0))
+            assertEquals(Color(206,114,229), scaleMapper(3.0))
+        }
+
+        checkDiscreteScale(Aes.FILL)
+        checkDiscreteScale(Aes.COLOR)
     }
 }

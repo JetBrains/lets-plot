@@ -41,6 +41,10 @@ object PlotConfigServerSideTransforms {
                 ReplaceDataVectorsInAesMappingChange()
             )
             .change(
+                DiscreteScaleFromAnnotationChange.specSelector(),
+                DiscreteScaleFromAnnotationChange()
+            )
+            .change(
                 MapJoinChange.specSelector(),
                 MapJoinChange()
             )
