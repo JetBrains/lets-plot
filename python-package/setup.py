@@ -55,9 +55,14 @@ with open(os.path.join(this_dir, python_package, '_version.py')) as f:
 with open(os.path.join(root_dir, 'README_PYTHON.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-if this_system == "Windows":
+if this_system == 'Windows':
     import distutils.cygwinccompiler
     distutils.cygwinccompiler.get_msvcr = lambda: []
+
+if this_system == 'Darwin':
+    stdc_lib = 'c++'
+else:
+    stdc_lib = 'stdc++'
 
 setup(name='lets-plot',
       license="MIT",
@@ -96,7 +101,7 @@ setup(name='lets-plot',
       ext_modules=[
           Extension('lets_plot_kotlin_bridge',
                     include_dirs=[binaries_build_path],
-                    libraries=['lets_plot_python_extension', 'stdc++'],
+                    libraries=['lets_plot_python_extension', stdc_lib],
                     library_dirs=[binaries_build_path],
                     depends=['liblets_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],
