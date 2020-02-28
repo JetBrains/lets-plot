@@ -28,14 +28,15 @@ class CrossBarGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        CrossBarHelper.buildBoxes(root, aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx)
+        CrossBarHelper.buildBoxes(
+            root, aesthetics, pos, coord, ctx,
+            rectangleByDataPoint(ctx, false)
         )
         CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
         BarTooltipHelper.collectRectangleTargets(
-            listOf(Aes.YMAX, Aes.MIDDLE, Aes.YMIN),
+            listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx),
+            rectangleByDataPoint(ctx, true),
             { HintColorUtil.fromColor(it) }
         )
     }
@@ -45,9 +46,13 @@ class CrossBarGeom : GeomBase() {
 
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(false)
 
-        private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun rectangleByDataPoint(
+            ctx: GeomContext,
+            isHintRect: Boolean
+        ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
-                if (p.defined(Aes.X) &&
+                if (!isHintRect &&
+                    p.defined(Aes.X) &&
                     p.defined(Aes.YMIN) &&
                     p.defined(Aes.YMAX) &&
                     p.defined(Aes.WIDTH)
@@ -59,6 +64,17 @@ class CrossBarGeom : GeomBase() {
 
                     val origin = DoubleVector(x - width / 2, ymin)
                     val dimensions = DoubleVector(width, ymax - ymin)
+                    DoubleRectangle(origin, dimensions)
+                } else if (isHintRect &&
+                    p.defined(Aes.X) &&
+                    p.defined(Aes.MIDDLE)
+                ) {
+                    val x = p.x()!!
+                    val middle = p.middle()!!
+                    val width = GeomUtil.widthPx(p, ctx, 2.0)
+
+                    val origin = DoubleVector(x - width / 2, middle)
+                    val dimensions = DoubleVector(width, 0.0)
                     DoubleRectangle(origin, dimensions)
                 } else {
                     null

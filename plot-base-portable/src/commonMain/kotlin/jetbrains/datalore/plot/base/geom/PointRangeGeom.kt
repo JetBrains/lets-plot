@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.legend.CompositeLegendKeyElementFactory
@@ -66,7 +67,7 @@ class PointRangeGeom : GeomBase() {
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            LineRangeGeom.rectangleByDataPoint(),
+            rectangleByDataPoint(fattenMidPoint),
             { HintColorUtil.fromColor(it) }
         )
     }
@@ -75,5 +76,27 @@ class PointRangeGeom : GeomBase() {
         const val HANDLES_GROUPS = false
 
         const val DEF_FATTEN = 5.0
+
+        fun rectangleByDataPoint(fatten: Double): (DataPointAesthetics) -> DoubleRectangle? {
+            return { p ->
+                if (p.defined(Aes.X) &&
+                    p.defined(Aes.Y)
+                ) {
+                    val x = p.x()!!
+                    val y = p.y()!!
+
+                    val shape = p.shape()!!
+                    val shapeSize = shape.size(p) * fatten
+                    val strokeWidth = shape.strokeWidth(p)
+                    val width = shapeSize + strokeWidth
+
+                    val origin = DoubleVector(x - width / 2, y)
+                    val dimensions = DoubleVector(width, 0.0 )
+                    DoubleRectangle(origin, dimensions)
+                } else {
+                    null
+                }
+            }
+        }
     }
 }

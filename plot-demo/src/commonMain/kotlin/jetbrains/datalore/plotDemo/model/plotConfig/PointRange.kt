@@ -12,12 +12,32 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class PointRange : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
+            drink(),
             basic(),
             adjustMidpointSize(),
             adjustMidpointAndFill()
         )
     }
 
+    private fun drink(): Map<String, Any> {
+        val spec = """
+            |{'kind': 'plot',
+            |'data' : {'drink': ['coffee','tea','water', 'milk'],
+            |           'mean': [3, 4, 6, 2],
+            |           'upper': [1, 5, 7, 4],
+            |           'lower': [6, 3, 2, 1]
+            |         },
+            | 'layers': [
+            |             {
+            |                'geom': 'pointrange',
+            |                'mapping': {'x': 'drink', 'y'='mean', 'ymin'='lower', 'ymax'='upper', 'fill'='mean'},
+            |                'fatten': 10
+            |             }
+            |         ]
+            |}
+            """.trimMargin()
+        return parsePlotSpec(spec)
+    }
     private fun basic(): Map<String, Any> {
         val spec = """
             |{'kind': 'plot',

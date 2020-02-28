@@ -63,10 +63,11 @@ class LineRangeGeom : GeomBase() {
                     val x = p.x()!!
                     val ymin = p.ymin()!!
                     val ymax = p.ymax()!!
-                    val width = max(AesScaling.strokeWidth(p), 2.0)
+                    val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
+                    val height = ymax - ymin
 
-                    val origin = DoubleVector(x - width / 2, ymin)
-                    val dimensions = DoubleVector(width, ymax - ymin)
+                    val origin = DoubleVector(x - width / 2, ymax - height / 2)
+                    val dimensions = DoubleVector(width, 0.0 )
                     DoubleRectangle(origin, dimensions)
                 } else {
                     null
