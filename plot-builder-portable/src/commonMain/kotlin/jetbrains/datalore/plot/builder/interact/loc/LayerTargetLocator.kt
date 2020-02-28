@@ -26,8 +26,13 @@ internal class LayerTargetLocator(
     private val myTargetDetector: TargetDetector =
         TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
 
+    private val mySimpleGeometry = setOf(GeomKind.RECT, GeomKind.POLYGON)
+
     private val myCollectingStrategy: Collector.CollectingStrategy =
-            if (lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.X) {
+            if (geomKind in mySimpleGeometry) {
+                // fix overlapping tooltips under cursor
+                Collector.CollectingStrategy.REPLACE
+            } else if (lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.X) {
                 Collector.CollectingStrategy.APPEND
             } else if (lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.HOVER) {
                 Collector.CollectingStrategy.APPEND
