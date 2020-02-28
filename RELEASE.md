@@ -28,7 +28,7 @@
 ### Build the project for publishing
 
 **The next steps need to be reproduced on all supported platforms (`Mac`, `Linux` and `Windows`).**   
-**On Windows use `.\gradlew.bat` instead of `./gradlew` to call Gradle script.**
+**On Windows use `.\gradlew.bat` instead of `./gradlew` to run Gradle script.**
 
 ##### 1. Checkout repository in a new directory: 
 
