@@ -5,7 +5,8 @@
 from collections import Iterable
 from typing import Any, Tuple
 
-from lets_plot.plot.core import aes, VariableMeta
+from lets_plot.mapping import VariableMeta
+from lets_plot.plot.core import aes
 
 
 def as_boolean(val, *, default):
