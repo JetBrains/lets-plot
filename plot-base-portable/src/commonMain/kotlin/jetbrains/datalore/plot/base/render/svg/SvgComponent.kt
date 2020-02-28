@@ -15,20 +15,6 @@ import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.SvgGraphicsElement.Companion.CLIP_BOUNDS_JFX
 
 abstract class SvgComponent {
-    companion object {
-        fun buildTransform(origin: DoubleVector, rotationAngle: Double): SvgTransform {
-            val transformBuilder = SvgTransformBuilder()
-            if (origin != DoubleVector.ZERO) {
-                transformBuilder.translate(origin.x, origin.y)
-            }
-            if (rotationAngle != 0.0) {
-                transformBuilder.rotate(rotationAngle)
-            }
-            return transformBuilder.build()
-        }
-    }
-
-
     private var myIsBuilt: Boolean = false
     private var myIsBuilding: Boolean = false
     private val myRootGroup = SvgGElement()
@@ -143,7 +129,7 @@ abstract class SvgComponent {
 
     fun clipBounds(rect: DoubleRectangle) {
         val clipPathElement = SvgClipPathElement().apply {
-            id().set(SvgUID.get("lplt-clip"))
+            id().set(SvgUID.get(CLIP_PATH_ID_PREFIX))
             children().add(SvgRectElement().apply {
                 x().set(rect.left)
                 y().set(rect.top)
@@ -163,5 +149,20 @@ abstract class SvgComponent {
 
     fun addClassName(className: String) {
         myRootGroup.addClass(className)
+    }
+
+    companion object {
+        const val CLIP_PATH_ID_PREFIX = "lplt-clip"
+
+        fun buildTransform(origin: DoubleVector, rotationAngle: Double): SvgTransform {
+            val transformBuilder = SvgTransformBuilder()
+            if (origin != DoubleVector.ZERO) {
+                transformBuilder.translate(origin.x, origin.y)
+            }
+            if (rotationAngle != 0.0) {
+                transformBuilder.rotate(rotationAngle)
+            }
+            return transformBuilder.build()
+        }
     }
 }
