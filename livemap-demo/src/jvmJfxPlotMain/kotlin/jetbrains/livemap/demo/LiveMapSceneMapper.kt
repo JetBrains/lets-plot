@@ -6,7 +6,7 @@
 package jetbrains.livemap.demo
 
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plotDemo.plotConfig.PlotConfigDemoUtil
+import jetbrains.datalore.plotDemo.plotConfig.LiveMapPlotConfigDemoUtil
 import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
 import jetbrains.livemap.plotDemo.LiveMap
 
@@ -16,7 +16,7 @@ object LiveMapSceneMapper {
         with(LiveMap()) {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotConfigDemoUtil.show(
+            LiveMapPlotConfigDemoUtil.show(
                 "Bar & Line plot",
                 plotSpecList,
                 SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET),
