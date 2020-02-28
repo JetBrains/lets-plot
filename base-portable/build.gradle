@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 plugins {
     id 'kotlin-multiplatform'
     id 'org.jetbrains.gradle.plugin.idea-ext'
@@ -20,9 +22,18 @@ kotlin {
 //            kotlinOptions.moduleKind = "umd"
         }
     }
-    macosX64()
-    linuxX64()
-    mingwX64()
+
+    if (project.buildSettings.build_python_extension) {
+        def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+
+        if (currentOs.isMacOsX()) {
+            macosX64()
+        } else if (currentOs.isLinux()) {
+            linuxX64()
+        } else if (currentOs.isWindows()) {
+            mingwX64()
+        }
+    }
 
     sourceSets {
         commonMain {
