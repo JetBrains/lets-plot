@@ -8,7 +8,7 @@ set -e -x
 
 working_dir="/tmp/python-package/"
 dist_dir="dist/"
-python_bin_version="cp3[7-8]*"
+python_bin_version="cp3[6-8]*"
 
 
 cd $working_dir
