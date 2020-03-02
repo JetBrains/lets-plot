@@ -41,22 +41,7 @@ import javax.swing.JPanel
 private val LOG = KotlinLogging.logger {}
 
 object LiveMapMonolithicJfx {
-
-    /**
-     * Static SVG export
-     */
-    fun buildSvgImagesFromRawSpecs(
-        plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?,
-        computationMessagesHandler: ((List<String>) -> Unit)
-    ): List<String> {
-        return MonolithicCommon.buildSvgImagesFromRawSpecs(
-            plotSpec,
-            plotSize,
-            SvgToString(RGBEncoderAwt()),
-            computationMessagesHandler
-        )
-    }
+    // todo: remove duplication with MonolithicAwt
 
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
