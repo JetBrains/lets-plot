@@ -6,7 +6,6 @@
 package jetbrains.livemap.demo
 
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plotDemo.plotConfig.LiveMapPlotConfigDemoUtil
 import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
 import jetbrains.livemap.plotDemo.LiveMap
 

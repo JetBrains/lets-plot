@@ -3,10 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plotDemo.plotConfig
+package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.LiveMapMonolithicJfx
+import jetbrains.datalore.livemap.jfxPackage.LiveMapMonolithicJfx
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
 import java.awt.Color
 import java.awt.Component
@@ -31,7 +31,12 @@ object LiveMapPlotConfigDemoUtil {
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
             panel.add(Box.createRigidArea(Dimension(50, 0)))
 
-            addPlots(panel, plotSpecList, factory, plotSize)
+            addPlots(
+                panel,
+                plotSpecList,
+                factory,
+                plotSize
+            )
 
             panel.add(Box.createRigidArea(Dimension(0, 5)))
         }

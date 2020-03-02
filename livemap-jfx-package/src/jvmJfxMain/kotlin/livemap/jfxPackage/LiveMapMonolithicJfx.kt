@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot
+package jetbrains.datalore.livemap.jfxPackage
 
 import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
@@ -13,6 +13,7 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.FailureHandler
@@ -26,8 +27,6 @@ import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
-import jetbrains.datalore.vis.svgToString.SvgToString
 import mu.KotlinLogging
 import java.awt.Color
 import java.awt.Dimension
@@ -65,10 +64,18 @@ object LiveMapMonolithicJfx {
             computationMessagesHandler(computationMessages)
             if (success.buildInfos.size == 1) {
                 // a single plot
-                return buildPlotSvgComponent(success.buildInfos[0], componentFactory, executor)
+                return buildPlotSvgComponent(
+                    success.buildInfos[0],
+                    componentFactory,
+                    executor
+                )
             }
             // ggbunch
-            return buildGGBunchComponent(success.buildInfos, componentFactory, executor)
+            return buildGGBunchComponent(
+                success.buildInfos,
+                componentFactory,
+                executor
+            )
 
         } catch (e: RuntimeException) {
             val failureInfo = FailureHandler.failureInfo(e)
@@ -89,7 +96,8 @@ object LiveMapMonolithicJfx {
         bunchComponent.border = null
 
         for (plotInfo in plotInfos) {
-            val plotComponent = buildPlotSvgComponent(plotInfo, componentFactory, executor)
+            val plotComponent =
+                buildPlotSvgComponent(plotInfo, componentFactory, executor)
             val bounds = plotInfo.bounds()
             plotComponent.bounds = Rectangle(
                 bounds.origin.x.toInt(),
@@ -126,11 +134,19 @@ object LiveMapMonolithicJfx {
 
         val plot = assembler.createPlot()
         val plotContainer = PlotContainer(plot, plotBuildInfo.size)
-        val plotComponent = buildPlotSvgComponent(plotContainer, componentFactory, executor)
+        val plotComponent = buildPlotSvgComponent(
+            plotContainer,
+            componentFactory,
+            executor
+        )
 
         return if (plotContainer.liveMapFigures.isNotEmpty()) {
             @Suppress("UNCHECKED_CAST")
-            buildPlotLiveMapComponent(plotContainer.liveMapFigures as List<CanvasFigure>, plotComponent, plotBuildInfo.size.get())
+            (buildPlotLiveMapComponent(
+        plotContainer.liveMapFigures as List<CanvasFigure>,
+        plotComponent,
+        plotBuildInfo.size.get()
+    ))
         } else {
             plotComponent
         }

@@ -60,6 +60,7 @@ kotlin {
             dependencies {
                 implementation project(':vis-demo-common-jfx')
                 implementation project(':vis-svg-mapper-jfx')
+                implementation project(':livemap-jfx-package')
             }
         }
         jvmRawJfxMain {
