@@ -5,13 +5,61 @@
 
 package jetbrains.datalore.base.json
 
-expect object JsonSupport {
-    fun parseJson(jsonString: String): MutableMap<String, Any?>
-    fun formatJson(o: Any): String
+object JsonSupport {
+    fun parseJson(jsonString: String): MutableMap<String, Any?> {
+        @Suppress("UNCHECKED_CAST")
+        return JsonParser(jsonString).parseJson() as MutableMap<String, Any?>
+    }
+    fun formatJson(o: Any): String {
+        return JsonFormatter().formatJson(o)
+    }
 }
 
-fun fromString(json: String): Any? {
-    return Parser(json).toMap()
+class JsonFormatter {
+    private lateinit var buffer: StringBuilder
+
+    fun formatJson(o: Any): String {
+        buffer = StringBuilder()
+        formatMap(o as Map<*, *>)
+        return buffer.toString()
+    }
+
+    private fun formatList(list: List<*>) {
+        append("[")
+        list.headTail(::formatValue) { tail -> tail.forEach { append(","); formatValue(it) } }
+        append("]")
+    }
+
+    private fun formatMap(map: Map<*, *>) {
+        append("{")
+        map.entries.headTail(::formatPair) { tail -> tail.forEach { append(",\n"); formatPair(it) } }
+        append("}")
+    }
+
+    private fun formatValue(v: Any?) {
+        when (v) {
+            null -> append("null")
+            is String -> append("\"${v.escape()}\"")
+            is Number, Boolean -> append(v.toString())
+            is Array<*> -> formatList(v.asList())
+            is List<*> -> formatList(v)
+            is Map<*, *> -> formatMap(v)
+            else -> throw IllegalArgumentException("Can't serialize object $v")
+        }
+    }
+
+    private fun formatPair(pair: Map.Entry<Any?, Any?>) {
+        append("\"${pair.key}\":"); formatValue(pair.value)
+    }
+
+    private fun append(s: String) = buffer.append(s)
+
+    private fun <E> Collection<E>.headTail(head: (E) -> Unit, tail: (Sequence<E>) -> Unit) {
+        if (!isEmpty()) {
+            head(first())
+            tail(asSequence().drop(1))
+        }
+    }
 }
 
 
@@ -58,10 +106,10 @@ class Lexer(
             currentChar == ']' -> Token.RIGHT_BRACKET.also { advance() }
             currentChar == ',' -> Token.COMMA.also { advance() }
             currentChar == ':' -> Token.COLON.also { advance() }
-            currentChar == '"' -> Token.STRING.also { readString() }
             currentChar == 't' -> Token.TRUE.also { read("true") }
             currentChar == 'f' -> Token.FALSE.also { read("false") }
             currentChar == 'n' -> Token.NULL.also { read("null") }
+            isStringToken(currentChar) -> Token.STRING.also { readString() }
             readNumber() -> Token.NUMBER
             else -> error("Unkown token: ${currentChar}")
         }.also { currentToken = it }
@@ -72,7 +120,7 @@ class Lexer(
     private fun readString() {
         startToken()
         advance() // opening quote
-        while(currentChar != '"') {
+        while(!isStringToken(currentChar)) {
             if(currentChar == '\\') {
                 advance()
                 when {
@@ -118,6 +166,7 @@ class Lexer(
     private fun isFinished(): Boolean = i == input.length
     private fun startToken() { tokenStart = i }
     private fun advance() { ++i }
+    private fun isStringToken(c: Char) = c == '\"' || c == '\''
 
     private fun read(str: String) {
         return str.forEach {
@@ -145,11 +194,11 @@ private val digits: CharRange = '0'..'9'
 private fun Char?.isDigit() = this in digits
 private fun Char.isHex(): Boolean { return isDigit() || this in 'a'..'f' || this in 'A'..'F' }
 
-class Parser(
+class JsonParser(
     private val json: String
 ) {
 
-    fun toMap(): Any? {
+    fun parseJson(): Any? {
         val lexer = Lexer(json).also { it.nextToken() }
         return parseValue(lexer)
     }
@@ -224,22 +273,16 @@ private fun String.unescape(): String {
     var i = 1
     var end = length - 1
     while(i < end) {
-        if (get(i) == '\\') {
-            i++
-            if (get(i) == 'u') {
+        output.append(
+            if (get(i) == '\\') {
                 i++
-                output.append(substring(i, i + 4).toInt(16).toChar())
-                i += 4
-            } else if (get(i) in UNESCAPED) {
-                output.append(ESCAPED[UNESCAPED.indexOf(get(i))])
-                i++
-            } else {
-                error("Invalid escape sequence")
-            }
-        } else {
-            output.append(get(i))
-            i++
-        }
+                when {
+                    get(i) in UNESCAPED -> { ESCAPED[UNESCAPED.indexOf(get(i))].also { i++ } }
+                    get(i) == 'u' -> { i++; substring(i, i + 4).toInt(16).toChar().also { i += 4 } }
+                    else -> { error("Invalid escape sequence") }
+                }
+            } else { get(i++) }
+        )
     }
     return output.toString()
 }

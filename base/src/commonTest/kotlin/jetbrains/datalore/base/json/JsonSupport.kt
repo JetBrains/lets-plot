@@ -5,51 +5,14 @@
 
 package jetbrains.datalore.base.json
 
-import jetbrains.datalore.base.json.Token.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class JsonSupportTest {
 
-    data class Expectation(
-        val token: Token,
-        val text: String? = null
-    )
-
-    fun assertLexer(input: String, vararg expectations: Expectation) {
-        val lexer = Lexer(input)
-        expectations.forEach { expectation ->
-            assertEquals(expectation.token, lexer.nextToken())
-            expectation.text?.let { assertEquals(it, lexer.tokenValue())}
-        }
-    }
-
-    fun token(token: Token, text: String? = null): Expectation {
-        return Expectation(token, text)
-    }
     @Test
-    fun simpleLexer() {
-        assertLexer("""
-            {
-                "hello": "world",
-                "number": 12.345
-            }
-        """.trimIndent(),
-            token(LEFT_BRACE),
-            token(STRING, "\"hello\""),
-            token(COLON),
-            token(STRING, "\"world\""),
-            token(COMMA),
-            token(STRING, "\"number\""),
-            token(COLON),
-            token(NUMBER, "12.345"),
-            token(RIGHT_BRACE)
-            )
-    }
-
-    @Test
-    fun fromResources() {
+    fun parser() {
 
         val cases = listOf(
             testCase("""[null, 1, "1", {}]""", listOf<Any?>(null, 1.0, "1", emptyMap<Any, Any>())),
@@ -155,18 +118,24 @@ class JsonSupportTest {
             .drop(0)
             .forEachIndexed {index, (json, expected) ->
             try {
-                println("$index/${cases.count()}: $json")
                 Lexer(json).run {
-                    while (nextToken() != null){}
+                    @Suppress("ControlFlowWithEmptyBody")
+                    while (nextToken() != null) {}
                 }
 
-                val result = Parser(json).toMap()
+                val result = JsonParser(json).parseJson()
                 if (expected != null) {
                     assertEquals(expected, result)
                 }
-            } catch (e: Exception) {
+
+            }
+            catch (e: AssertionError) {
+                println("$index/${cases.count()}: $json")
                 throw e
-                //fail("$index: \"$json\"\n$e")
+            }
+            catch (e: Exception) {
+                println("$index/${cases.count()}: $json")
+                throw e
             }
         }
 
