@@ -28,23 +28,36 @@ object GeoJson {
     private class Parser<T> {
 
         internal fun parse(obj: FluentObject, handler: SimpleFeature.GeometryConsumer<T>) {
-            val type = obj.getString("type")
+            when (val type = obj.getString("type")) {
+                "FeatureCollection" -> {
+                    require(obj.contains("features")) { "GeoJson: Missing 'features' in 'FeatureCollection'" }
 
-            if (type == "FeatureCollection") {
-                obj.getArray("features").fluentObjectStream()
-                    .filter { it.getString("type") == "Feature" }
-                    .map { it.getObject("geometry") }
-                    .forEach { parse(it, handler) }
-            } else {
-                val coordinates = obj.getArray("coordinates")
-                when (type) {
-                    "Point" -> parsePoint(coordinates).let(handler::onPoint)
-                    "LineString" -> parseLineString(coordinates).let(handler::onLineString)
-                    "Polygon" -> parsePolygon(coordinates).let(handler::onPolygon)
-                    "MultiPoint" -> parseMultiPoint(coordinates).let(handler::onMultiPoint)
-                    "MultiLineString" -> parseMultiLineString(coordinates).let(handler::onMultiLineString)
-                    "MultiPolygon" -> parseMultiPolygon(coordinates).let(handler::onMultiPolygon)
-                    else -> error("Not support GeoJson type: $type")
+                    obj.getArray("features").fluentObjectStream()
+                        .filter { it.getString("type") == "Feature" }
+                        .map { it.getObject("geometry") }
+                        .forEach { parse(it, handler) }
+                }
+
+                "GeometryCollection" -> {
+                    require(obj.contains("geometries")) { "GeoJson: Missing 'geometries' in 'GeometryCollection'" }
+
+                    obj.getArray("geometries").fluentObjectStream()
+                        .forEach { parse(it, handler) }
+                }
+
+                else -> {
+                    require(obj.contains("coordinates")) { "GeoJson: Missing 'coordinates' in $type" }
+
+                    val coordinates = obj.getArray("coordinates")
+                    when (type) {
+                        "Point" -> parsePoint(coordinates).let(handler::onPoint)
+                        "LineString" -> parseLineString(coordinates).let(handler::onLineString)
+                        "Polygon" -> parsePolygon(coordinates).let(handler::onPolygon)
+                        "MultiPoint" -> parseMultiPoint(coordinates).let(handler::onMultiPoint)
+                        "MultiLineString" -> parseMultiLineString(coordinates).let(handler::onMultiLineString)
+                        "MultiPolygon" -> parseMultiPolygon(coordinates).let(handler::onMultiPolygon)
+                        else -> error("Not support GeoJson type: $type")
+                    }
                 }
             }
         }

@@ -204,7 +204,33 @@ class GeoJsonTest {
     }
 
     @Test
-    fun simpleCollection() {
+    fun simpleGeometryCollection() {
+        val expectedPoint = mutableListOf(p(102.0, 0.5))
+        val expectedLineString = mutableListOf(lineString(p(102.0, 0.0), p(103.0, 1.0), p(104.0, 0.0), p(105.0, 1.0)))
+        val expectedPolygon = mutableListOf(polygon(ring(p(100.0, 0.0), p(101.0, 0.0), p(101.0, 1.0), p(100.0, 1.0), p(100.0, 0.0))))
+        val data = """
+            |{ "type": "GeometryCollection",
+            |    "geometries": [
+            |        {"type": "Point", "coordinates": [102.0, 0.5]},
+            |        { "type": "LineString", "coordinates": [[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]]},
+            |        {"type": "Polygon", "coordinates": [[ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0] ]]}
+            |   ]
+            |}
+            """.trimMargin()
+
+        parse(data) {
+            onPoint = { expectedPoint.removeOrThrow(it) }
+            onLineString = { expectedLineString.removeOrThrow(it) }
+            onPolygon = { expectedPolygon.removeOrThrow(it) }
+        }
+
+        assertTrue(expectedPoint.isEmpty())
+        assertTrue(expectedLineString.isEmpty())
+        assertTrue(expectedPolygon.isEmpty())
+    }
+
+    @Test
+    fun simpleFeatureCollection() {
         val expectedPoint = mutableListOf(p(102.0, 0.5))
         val expectedLineString = mutableListOf(lineString(p(102.0, 0.0), p(103.0, 1.0), p(104.0, 0.0), p(105.0, 1.0)))
         val expectedPolygon = mutableListOf(polygon(ring(p(100.0, 0.0), p(101.0, 0.0), p(101.0, 1.0), p(100.0, 1.0), p(100.0, 0.0))))
@@ -254,7 +280,7 @@ class GeoJsonTest {
         assertTrue(expectedLineString.isEmpty())
         assertTrue(expectedPolygon.isEmpty())
     }
-    
+
     companion object {
         private fun <T> MutableList<T>.removeOrThrow(v: T) = if (contains(v)) { remove(v) } else { error("Object $v not found") }
         private fun p(x: Int, y: Int) = p(x.toDouble(), y.toDouble())
