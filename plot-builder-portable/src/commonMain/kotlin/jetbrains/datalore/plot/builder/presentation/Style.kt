@@ -33,13 +33,14 @@ object Style {
     const val LEGEND = "plt_legend"
     const val LEGEND_TITLE = "legend-title"
 
-    const val PLOT_GLASS_PANE = "plt-glass-pane"
     const val PLOT_DATA_TOOLTIP = "plt-data-tooltip"
     const val PLOT_AXIS_TOOLTIP = "plt-axis-tooltip"
     val CSS = CssResourceBuilder()
         .add(
             SelectorBuilder(PLOT_CONTAINER)
             .fontFamily(Defaults.FONT_FAMILY_NORMAL)
+            .cursor(CursorValue.CROSSHAIR)
+            .userSelect(UserSelectValue.NONE)
         )
         .add(
             SelectorBuilder(TEXT)
@@ -48,11 +49,6 @@ object Style {
                 SizeMeasure.PX
             )
             .fill(Defaults.TEXT_COLOR)
-        )
-        .add(
-            SelectorBuilder(PLOT_GLASS_PANE)
-            .cursor(CursorValue.CROSSHAIR)
-            .userSelect(UserSelectValue.NONE)
         )
         .add(
             SelectorBuilder(PLOT_DATA_TOOLTIP)

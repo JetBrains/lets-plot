@@ -132,7 +132,7 @@ class DomCanvasControl(
         f()
     }
 
-    class DomEventPeer (private val myEventTarget: Node, private val myTargetBounds: Rectangle) :
+    class DomEventPeer (private val myEventTarget: Element, private val myTargetBounds: Rectangle) :
         EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
         private var myButtonPressed = false
         private var myWasDragged = false
@@ -211,7 +211,7 @@ class DomCanvasControl(
         }
 
         private fun translate(event: DomMouseEvent) : MouseEvent {
-            return DomEventUtil.translateInTargetCoordWithOffset(event, myTargetBounds.origin)
+            return DomEventUtil.translateInTargetCoordWithOffset(event, myEventTarget, myTargetBounds.origin)
         }
     }
 }

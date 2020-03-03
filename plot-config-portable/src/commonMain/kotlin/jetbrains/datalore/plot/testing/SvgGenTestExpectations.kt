@@ -10,14 +10,12 @@ val SINGLE_PLOT_STYLE_ELEMENT = """
         |  <style type="text/css">
         |  .plt-container {
         |	font-family: "Lucida Grande", sans-serif;
+        |	cursor: crosshair;
+        |	user-select: none;
         |}
         |text {
         |	font-size: 12px;
         |	fill: #3d3d3d;
-        |}
-        |.plt-glass-pane {
-        |	cursor: crosshair;
-        |	user-select: none;
         |}
         |.plt-data-tooltip text {
         |	font-size: 12px;
@@ -294,14 +292,12 @@ internal val EXPECTED_BUNCH_SVG = """
         |
         |  .plt-container {
         |	font-family: "Lucida Grande", sans-serif;
+        |	cursor: crosshair;
+        |	user-select: none;
         |}
         |text {
         |	font-size: 12px;
         |	fill: #3d3d3d;
-        |}
-        |.plt-glass-pane {
-        |	cursor: crosshair;
-        |	user-select: none;
         |}
         |.plt-data-tooltip text {
         |	font-size: 12px;

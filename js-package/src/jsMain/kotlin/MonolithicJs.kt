@@ -31,18 +31,16 @@ import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
 import mu.KotlinLogging
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
-import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGSVGElement
 import kotlin.browser.document
 import kotlin.dom.createElement
 
-
 private val LOG = KotlinLogging.logger {}
-
 
 /**
  * The entry point to call in JS
@@ -160,20 +158,20 @@ private fun injectLivemapProvider(
 
 private fun buildPlotSvg(
     plotContainer: PlotContainer,
-    eventTarget: Node
+    eventTarget: Element
 ): SVGSVGElement {
 
     eventTarget.addEventListener(DomEventType.MOUSE_MOVE.name, { e: Event ->
         plotContainer.mouseEventPeer.dispatch(
             MouseEventSpec.MOUSE_MOVED,
-            DomEventUtil.translateInTargetCoord(e as MouseEvent)
+            DomEventUtil.translateInTargetCoord(e as MouseEvent, eventTarget)
         )
     })
 
     eventTarget.addEventListener(DomEventType.MOUSE_LEAVE.name, { e: Event ->
         plotContainer.mouseEventPeer.dispatch(
             MouseEventSpec.MOUSE_LEFT,
-            DomEventUtil.translateInTargetCoord(e as MouseEvent)
+            DomEventUtil.translateInTargetCoord(e as MouseEvent, eventTarget)
         )
     })
 
