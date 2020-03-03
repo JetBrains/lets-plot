@@ -7,11 +7,14 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.SvgUID
-import junit.framework.TestCase
+import jetbrains.datalore.plot.testing.EXPECTED_BUNCH_SVG
+import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
+import jetbrains.datalore.plot.testing.rawSpec_GGBunch
+import jetbrains.datalore.plot.testing.rawSpec_SinglePlot
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
-// ToDo: move to plot-config-portable (can't currently because depends on parsePlotSpec, JsonSupport)
 internal class PlotSvgExportTest {
     @BeforeTest
     fun setUp() {
@@ -29,7 +32,7 @@ internal class PlotSvgExportTest {
 
 //        println(svg)
 
-        TestCase.assertEquals(withUpdatedClipPathId(EXPECTED_SINGLE_PLOT_SVG), svg)
+        assertEquals(withUpdatedClipPathId(EXPECTED_SINGLE_PLOT_SVG), svg)
     }
 
     @Test
@@ -41,8 +44,14 @@ internal class PlotSvgExportTest {
             clipPathIdTransform = { currSuffix -> "$currSuffix++" }
         )
 
-        TestCase.assertEquals(withUpdatedClipPathId(EXPECTED_BUNCH_SVG), svg)
+        assertEquals(withUpdatedClipPathId(EXPECTED_BUNCH_SVG), svg)
 
 //        println(svg)
     }
+
+    private fun withUpdatedClipPathId(s: String): String {
+        return s.replace("lplt-clip0", "lplt-clip0++")
+            .replace("lplt-clip1", "lplt-clip1++")
+    }
+
 }

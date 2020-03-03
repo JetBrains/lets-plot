@@ -3,9 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot
+package jetbrains.datalore.plot.testing
 
-internal fun rawSpec_SinglePlot(): MutableMap<String, Any> {
+import jetbrains.datalore.plot.parsePlotSpec
+
+fun rawSpec_SinglePlot(): MutableMap<String, Any> {
     val spec = """
             |{
             |  'kind': 'plot',
@@ -25,7 +27,7 @@ internal fun rawSpec_SinglePlot(): MutableMap<String, Any> {
     return parsePlotSpec(spec)
 }
 
-internal fun rawSpec_GGBunch(): MutableMap<String, Any> {
+fun rawSpec_GGBunch(): MutableMap<String, Any> {
     val spec = """
         |{
         |   'kind': 'ggbunch',
@@ -50,7 +52,7 @@ internal fun rawSpec_GGBunch(): MutableMap<String, Any> {
     return parsePlotSpec(spec)
 }
 
-internal fun rawSpecStr_GGBunchItemPlot(): String {
+fun rawSpecStr_GGBunchItemPlot(): String {
 
     return """
         |{

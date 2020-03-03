@@ -118,11 +118,6 @@ class JsonSupportTest {
             .drop(0)
             .forEachIndexed {index, (json, expected) ->
             try {
-                Lexer(json).run {
-                    @Suppress("ControlFlowWithEmptyBody")
-                    while (nextToken() != null) {}
-                }
-
                 val result = JsonParser(json).parseJson()
                 if (expected != null) {
                     assertEquals(expected, result)

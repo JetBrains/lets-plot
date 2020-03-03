@@ -7,6 +7,10 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.SvgUID
+import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
+import jetbrains.datalore.plot.testing.expectedSingleBunchItemSvg
+import jetbrains.datalore.plot.testing.rawSpec_GGBunch
+import jetbrains.datalore.plot.testing.rawSpec_SinglePlot
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
