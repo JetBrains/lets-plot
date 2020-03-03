@@ -34,7 +34,7 @@ internal enum class Token {
     NULL,
 }
 
-internal val ESCAPING_MAP = mapOf(
+internal val SPECIAL_CHARS = mapOf(
     '"' to '"',
     '\\' to '\\',
     '/' to '/',
@@ -45,12 +45,30 @@ internal val ESCAPING_MAP = mapOf(
     't' to '\t'
 )
 
-fun String.escape() =
-    this.replace("\\", "\\\\")
-        .replace("\"", "\\\"")
-        .replace("\n", "\\n")
-        .replace("\r", "\\r")
-        .replace("\t", "\\t")
+private val CONTROL_CHARS = (0 until 0x20).map(Int::toChar).toSet()
+
+fun String.escape(): String {
+    var output: StringBuilder? = null
+    var i = 0
+
+    fun appendOutput(str: String) {
+        output = (output ?: StringBuilder(substring(0, i))).append(str)
+    }
+
+    while(i < length) {
+        when(val ch = get(i)) {
+            '\\' -> appendOutput("""\\""")
+            '"' -> appendOutput("""\"""")
+            '\n' -> appendOutput("""\n""")
+            '\r' -> appendOutput("""\r""")
+            '\t' -> appendOutput("""\t""")
+            in CONTROL_CHARS -> appendOutput("""\u${ch.toInt().toString(16).padStart(4, '0')}""")
+            else -> output?.append(ch)
+        }
+        i++
+    }
+    return output?.toString() ?: this
+}
 
 fun String.unescape(): String {
     var output: StringBuilder? = null
@@ -62,10 +80,10 @@ fun String.unescape(): String {
         val ch = get(i)
         if (ch == '\\') {
             output = output ?: StringBuilder(substring(start, i))
-            when(get(++i)) {
-                in ESCAPING_MAP -> ESCAPING_MAP[get(i)].also { i++ }
+            when(val escapedChar = get(++i)) {
+                in SPECIAL_CHARS -> SPECIAL_CHARS[escapedChar].also { i++ }
                 'u' -> substring(i + 1, i + 5).toInt(16).toChar().also { i += 5 }
-                else -> throw JsonParser.JsonException("Invalid escape character: ${get(i)}")
+                else -> throw JsonParser.JsonException("Invalid escape character: ${escapedChar}")
             }.let { output.append(it) }
         } else {
             output?.append(ch); i++

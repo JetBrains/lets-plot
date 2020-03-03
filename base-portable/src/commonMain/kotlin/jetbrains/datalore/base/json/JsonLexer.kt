@@ -39,7 +39,7 @@ internal class JsonLexer(
             currentChar == 'n' -> Token.NULL.also { read("null") }
             currentChar == '"' -> Token.STRING.also { readString() }
             readNumber() -> Token.NUMBER
-            else -> error("Unkown token: ${currentChar}")
+            else -> error("$i:${currentChar} - unkown token")
         }.also { currentToken = it }
     }
 
@@ -59,7 +59,7 @@ internal class JsonLexer(
                             advance()
                         }
                     }
-                    currentChar in ESCAPING_MAP -> advance()
+                    currentChar in SPECIAL_CHARS -> advance()
                     else -> error("Invalid escape sequence")
                 }
             } else {
