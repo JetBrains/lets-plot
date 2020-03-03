@@ -1,41 +1,9 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package jetbrains.datalore.base.json
-
-actual object JsonSupport {
-    actual fun parseJson(jsonString: String): MutableMap<String, Any?> {
-        return JsonParser().handleObject(JSON.parse(jsonString))
-    }
-
-    actual fun formatJson(o: Any): String {
-        return JsonFormatter().formatJson(o)
-    }
-}
-
-
-class JsonParser {
-    fun handleObject(v: dynamic): MutableMap<String, Any?> {
-        return js("Object").entries(v)
-            .unsafeCast<Array<Array<*>>>()
-            .map { (k, v) -> k as String to handleValue(v) }
-            .toMap(HashMap())
-    }
-
-    private fun handleArray(v: Array<*>) = v.map { handleValue(it) }
-
-    private fun handleValue(v: Any?): Any? {
-        return when (v) {
-            is String, Boolean, null -> v
-            is Number -> v.toDouble()
-            is Array<*> -> handleArray(v)
-            else -> handleObject(v)
-        }
-    }
-}
-
 
 class JsonFormatter {
     private lateinit var buffer: StringBuilder
@@ -83,4 +51,3 @@ class JsonFormatter {
         }
     }
 }
-

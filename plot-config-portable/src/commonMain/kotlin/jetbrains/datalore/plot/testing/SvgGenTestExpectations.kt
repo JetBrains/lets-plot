@@ -3,14 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot
+package jetbrains.datalore.plot.testing
 
-internal fun withUpdatedClipPathId(s: String): String {
-    return s.replace("lplt-clip0", "lplt-clip0++")
-        .replace("lplt-clip1", "lplt-clip1++")
-}
 
-private val SINGLE_PLOT_STYLE_ELEMENT = """
+val SINGLE_PLOT_STYLE_ELEMENT = """
         |  <style type="text/css">
         |  .plt-container {
         |	font-family: "Lucida Grande", sans-serif;
@@ -65,7 +61,7 @@ private val SINGLE_PLOT_STYLE_ELEMENT = """
         |  </style>
         """.trimMargin()
 
-internal val EXPECTED_SINGLE_PLOT_SVG = """
+val EXPECTED_SINGLE_PLOT_SVG = """
         |<svg xmlns="http://www.w3.org/2000/svg" class="plt-container" width="400.0" height="300.0">
         |$SINGLE_PLOT_STYLE_ELEMENT
         |  <g class="plt-plot">
@@ -190,7 +186,7 @@ internal val EXPECTED_SINGLE_PLOT_SVG = """
         |</svg>
         """.trimMargin()
 
-internal fun expectedSingleBunchItemSvg(index: Int) = """
+fun expectedSingleBunchItemSvg(index: Int) = """
         |<svg xmlns="http://www.w3.org/2000/svg" class="plt-container" width="150.0" height="150.0">
         |$SINGLE_PLOT_STYLE_ELEMENT
         |  <g class="plt-plot">

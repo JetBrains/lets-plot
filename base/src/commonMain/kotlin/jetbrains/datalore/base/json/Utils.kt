@@ -5,41 +5,8 @@
 
 package jetbrains.datalore.base.json
 
-
-
-
-fun newObj(): HashMap<String, Any?> = HashMap()
-
-fun toObj(map: Map<*, *>): Obj {
-    val obj = HashMap<String, Any?>()
-    for (key in map.keys) {
-        val s = key as String
-        obj[s] = toVal(map[s])
-    }
-
-    return obj
-}
-
-private fun toArr(v: List<*>): Arr {
-    val arr = ArrayList<Any?>()
-    for (o in v) {
-        arr.add(toVal(o))
-    }
-
-    return arr
-}
-
-private fun toVal(v: Any?): Any? {
-    return when (v) {
-        null -> null
-        is String,
-        is Number,
-        is Boolean -> v
-        is Map<*, *> -> toObj(v)
-        is List<*> -> toArr(v)
-        else -> throw IllegalArgumentException("Unknown type: ${v.toString()}")
-    }
-}
+typealias Arr = List<*>
+typealias Obj = Map<*, *>
 
 fun streamOf(arr: Arr): Sequence<*> = arr.asSequence()
 fun objectsStreamOf(arr: Arr): Sequence<Obj> = streamOf(arr).map { it as Obj }
