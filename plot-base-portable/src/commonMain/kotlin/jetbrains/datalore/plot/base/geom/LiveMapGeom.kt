@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.SomeFig
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.legend.GenericLegendKeyElementFactory
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
@@ -40,8 +41,8 @@ class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
         myMapProvider = liveMapProvider
     }
 
-    fun createCanvasFigure(dinension: DoubleVector): SomeFig {
-        return myMapProvider?.createLiveMap(dinension) ?: error("geom_livemap is not enabled")
+    fun createCanvasFigure(bounds: DoubleRectangle): LiveMapProvider.LiveMapData {
+        return myMapProvider?.createLiveMap(bounds) ?: error("geom_livemap is not enabled")
     }
 
     companion object {

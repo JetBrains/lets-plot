@@ -13,6 +13,5 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 class LiveMapLayerData(
     val geom: Geom,
     val geomKind: GeomKind,
-    val aesthetics: Aesthetics,
-    val dataAccess: MappedDataAccess
+    val aesthetics: Aesthetics
 )

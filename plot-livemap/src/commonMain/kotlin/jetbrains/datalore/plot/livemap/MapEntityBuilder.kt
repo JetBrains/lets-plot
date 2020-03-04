@@ -50,6 +50,7 @@ internal class MapEntityBuilder {
     var point: Vec<LonLat>? = null
     var animation = 0
     var geodesic: Boolean = false
+    var layerIndex: Int? = null
 
     val index get() = myP.index()
     val shape get() = myP.shape()!!.code
@@ -122,6 +123,7 @@ internal class MapEntityBuilder {
 
     fun toPointBuilder(): (PointBuilder.() -> Unit)? {
         return {
+            layerIndex = this@MapEntityBuilder.layerIndex
             index = this@MapEntityBuilder.index
             mapId =this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
@@ -137,6 +139,7 @@ internal class MapEntityBuilder {
 
     fun createPolygonConfigurator(): PolygonsBuilder.() -> Unit {
         return {
+            layerIndex = this@MapEntityBuilder.layerIndex
             index = this@MapEntityBuilder.index
             mapId = this@MapEntityBuilder.mapId
 
@@ -152,6 +155,7 @@ internal class MapEntityBuilder {
     fun toPathBuilder(): (PathBuilder.() -> Unit)? {
         return geometry?.let {
             {
+                layerIndex = this@MapEntityBuilder.layerIndex
                 index = this@MapEntityBuilder.index
 
                 multiPolygon = it
@@ -169,7 +173,6 @@ internal class MapEntityBuilder {
 
     fun toLineBuilder(): (LineBuilder.() -> Unit)? {
         return {
-            index = this@MapEntityBuilder.index
             mapId = this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
             lineDash = this@MapEntityBuilder.lineDash
@@ -180,6 +183,7 @@ internal class MapEntityBuilder {
 
     fun toChartBuilder(): (ChartSource.() -> Unit)? {
         return {
+            layerIndex = this@MapEntityBuilder.layerIndex
             mapId = this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
 

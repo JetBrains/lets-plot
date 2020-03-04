@@ -13,12 +13,8 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.FailureHandler
-import jetbrains.datalore.plot.config.LiveMapOptionsParser
-import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfig
-import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.svg.SvgSvgElement
@@ -79,7 +75,7 @@ object MonolithicAwt {
                 return buildPlotSvgComponent(success.buildInfos[0], componentFactory, executor)
             }
             // ggbunch
-            return buildGGBunchComponenet(success.buildInfos, componentFactory, executor)
+            return buildGGBunchComponent(success.buildInfos, componentFactory, executor)
 
         } catch (e: RuntimeException) {
             val failureInfo = FailureHandler.failureInfo(e)
@@ -90,7 +86,7 @@ object MonolithicAwt {
         }
     }
 
-    private fun buildGGBunchComponenet(
+    private fun buildGGBunchComponent(
         plotInfos: List<PlotBuildInfo>,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
@@ -133,12 +129,14 @@ object MonolithicAwt {
         executor: (() -> Unit) -> Unit
     ): JComponent {
         val assembler = plotBuildInfo.plotAssembler
-        injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec)
 
         val plot = assembler.createPlot()
         val plotContainer = PlotContainer(plot, plotBuildInfo.size)
+        val plotComponent = buildPlotSvgComponent(plotContainer, componentFactory, executor)
 
-        return buildPlotSvgComponent(plotContainer, componentFactory, executor)
+        require(plotContainer.liveMapFigures.isEmpty()) { "geom_livemap is not enabled" }
+
+        return plotComponent
     }
 
     fun buildPlotSvgComponent(
@@ -147,9 +145,10 @@ object MonolithicAwt {
         executor: (() -> Unit) -> Unit
     ): JComponent {
         plotContainer.ensureContentBuilt()
-        val component = componentFactory(plotContainer.svg)
 
-        component.addMouseListener(object : MouseAdapter() {
+        val plotComponent: JComponent = componentFactory(plotContainer.svg)
+
+        plotComponent.addMouseListener(object : MouseAdapter() {
             override fun mouseExited(e: MouseEvent) {
                 super.mouseExited(e)
                 executor {
@@ -157,7 +156,8 @@ object MonolithicAwt {
                 }
             }
         })
-        component.addMouseMotionListener(object : MouseAdapter() {
+
+        plotComponent.addMouseMotionListener(object : MouseAdapter() {
             override fun mouseMoved(e: MouseEvent) {
                 super.mouseMoved(e)
                 executor {
@@ -166,20 +166,7 @@ object MonolithicAwt {
             }
         })
 
-        return component;
-    }
-
-    private fun injectLivemapProvider(
-        plotAssembler: PlotAssembler,
-        processedPlotSpec: MutableMap<String, Any>
-    ) {
-        LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(processedPlotSpec))
-            ?.let {
-                LiveMapUtil.injectLiveMapProvider(
-                    plotAssembler.layersByTile,
-                    it
-                )
-            }
+        return plotComponent
     }
 
     private fun createErrorLabel(s: String): JComponent {
@@ -188,7 +175,7 @@ object MonolithicAwt {
         return label
     }
 
-    @Suppress("DuplicatedCode")
+    @Suppress("DuplicatedCode", "SameParameterValue")
     private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {

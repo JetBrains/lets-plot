@@ -18,6 +18,7 @@ import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.SomeFig
+import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
@@ -26,8 +27,10 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgElement
@@ -80,6 +83,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     protected abstract fun hasAxisTitleLeft(): Boolean
 
     protected abstract fun hasAxisTitleBottom(): Boolean
+
+    protected abstract fun hasLiveMap(): Boolean
 
     protected abstract fun tileLayers(tileIndex: Int): List<GeomLayer>
 
@@ -173,32 +178,32 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     private fun createAxisTitle(
         text: String,
-        orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+        orientation: Orientation,
         plotBounds: DoubleRectangle,
         geomBounds: DoubleRectangle
     ) {
         val horizontalAnchor = HorizontalAnchor.MIDDLE
         val verticalAnchor: VerticalAnchor = when (orientation) {
-            jetbrains.datalore.plot.builder.guide.Orientation.LEFT, jetbrains.datalore.plot.builder.guide.Orientation.RIGHT, jetbrains.datalore.plot.builder.guide.Orientation.TOP -> VerticalAnchor.TOP
-            jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM -> VerticalAnchor.BOTTOM
+            Orientation.LEFT, Orientation.RIGHT, Orientation.TOP -> VerticalAnchor.TOP
+            Orientation.BOTTOM -> VerticalAnchor.BOTTOM
         }
 
         val titleLocation: DoubleVector
         var rotation = 0.0
         when (orientation) {
-            jetbrains.datalore.plot.builder.guide.Orientation.LEFT -> {
+            Orientation.LEFT -> {
                 titleLocation =
                     DoubleVector(plotBounds.left + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN, geomBounds.center.y)
                 rotation = -90.0
             }
-            jetbrains.datalore.plot.builder.guide.Orientation.RIGHT -> {
+            Orientation.RIGHT -> {
                 titleLocation =
                     DoubleVector(plotBounds.right - PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN, geomBounds.center.y)
                 rotation = 90.0
             }
-            jetbrains.datalore.plot.builder.guide.Orientation.TOP -> titleLocation =
+            Orientation.TOP -> titleLocation =
                 DoubleVector(geomBounds.center.x, plotBounds.top + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN)
-            jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM -> titleLocation =
+            Orientation.BOTTOM -> titleLocation =
                 DoubleVector(geomBounds.center.x, plotBounds.bottom - PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN)
         }
 
@@ -233,7 +238,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         val preferredSize = myPreferredSize.get()
 
         // compute geom bounds
-        val entirePlot = DoubleRectangle(DoubleVector.ZERO, preferredSize)
+        var entirePlot = DoubleRectangle(DoubleVector.ZERO, preferredSize)
 
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
@@ -245,12 +250,16 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             add(rect)
         }
 
+        if (hasLiveMap()) {
+            entirePlot = liveMapBounds(entirePlot.origin, entirePlot.dimension)
+        }
+
         // subtract title size
         var withoutTitle = entirePlot
         if (hasTitle()) {
             val titleSize = PlotLayoutUtil.titleDimensions(title)
-            val origin = DoubleVector(0.0, titleSize.y)
-            withoutTitle = DoubleRectangle(origin, preferredSize.subtract(origin))
+            val origin = entirePlot.origin.add(DoubleVector(0.0, titleSize.y))
+            withoutTitle = DoubleRectangle(origin, entirePlot.dimension.subtract(DoubleVector(0.0, titleSize.y)))
 
             val titleLabel = TextLabel(title)
             titleLabel.addClassName(Style.PLOT_TITLE)
@@ -331,10 +340,10 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         for (i in plotInfo.tiles.indices) {
             val tileInfo = plotInfo.tiles[i]
 
-            //GWT.log("plot offset: " + tileInfo.plotOffset);
-            //GWT.log("     bounds: " + tileInfo.bounds);
-            //GWT.log("geom bounds: " + tileInfo.geomBounds);
-            //GWT.log("clip bounds: " + tileInfo.clipBounds);
+//            println("plot offset: " + tileInfo.plotOffset)
+//            println("     bounds: " + tileInfo.bounds)
+//            println("geom bounds: " + tileInfo.geomBounds)
+//            println("clip bounds: " + tileInfo.clipBounds)
             val tile = createTile(tilesOrigin, tileInfo, tileLayers(i))
 
             tile.moveTo(tilesOrigin.add(tileInfo.plotOffset))
@@ -346,18 +355,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             val realGeomBounds = tileInfo.geomBounds.add(tilesOrigin.add(tileInfo.plotOffset))
             myTooltipHelper.addTileInfo(realGeomBounds, tile.targetLocators)
         }
-
-        /*
-    DoubleRectangle plotBounds = new DoubleRectangle(DoubleVector.ZERO, plotActualSize);
-    if (DEBUG_DRAWING) {
-      SvgRectElement rect = new SvgRectElement(plotBounds);
-      rect.strokeColor().set(Color.BLUE);
-      rect.strokeWidth().set(2.);
-      rect.fillOpacity().set(0.);
-      onMouseMove(rect, "BLUE: Plot Bounds: " + plotBounds);
-      add(rect);
-    }
-    */
 
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
@@ -374,7 +371,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             if (hasAxisTitleLeft()) {
                 createAxisTitle(
                     axisTitleLeft,
-                    jetbrains.datalore.plot.builder.guide.Orientation.LEFT,
+                    Orientation.LEFT,
                     withoutTitleAndLegends,
                     geomAreaBounds
                 )
@@ -382,7 +379,7 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
             if (hasAxisTitleBottom()) {
                 createAxisTitle(
                     axisTitleBottom,
-                    jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM,
+                    Orientation.BOTTOM,
                     withoutTitleAndLegends,
                     geomAreaBounds
                 )
@@ -407,6 +404,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
         private val LOG = PortableLogging.logger(Plot::class)
 
         private val DEF_PLOT_SIZE = DoubleVector(600.0, 400.0)
-        private const val DEBUG_DRAWING = jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
+        private const val DEBUG_DRAWING = PLOT_DEBUG_DRAWING
     }
 }

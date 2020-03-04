@@ -64,7 +64,6 @@ class LineBuilder(
     private val myFactory: MapEntityFactory,
     private val myMapProjection: MapProjection
 ) {
-    var index: Int = 0
     var mapId: String? = null
     var point: Vec<LonLat>? = null
 

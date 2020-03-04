@@ -10,12 +10,12 @@ pluginManagement {
         }
     }
 }
-
 include 'base-portable',
         'base',
         'gis',
         'livemap',
         'livemap-demo',
+        'livemap-jfx-package',
         'plot-livemap',
         'plot-livemap-stub',
         'mapper-core',
@@ -37,6 +37,7 @@ include 'base-portable',
         'vis-demo-common-batik',
         'vis-demo-svg-mapper',
         'plot-demo',
+        'plot-demo-common',
         'python-extension',
         'python-package-build',
         'js-package',
@@ -45,6 +46,7 @@ include 'base-portable',
         'jvm-package:jvm-publish-common',
         'jvm-package:jvm-publish-jfx',
         'test-common'
+
 
 
 /*

@@ -16,6 +16,8 @@ object PlotLayoutUtil {
     val AXIS_TITLE_OUTER_MARGIN = 4.0
     val AXIS_TITLE_INNER_MARGIN = 4.0
     private val TITLE_V_MARGIN = 4.0
+    private val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
+    private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 
     fun titleDimensions(text: String): DoubleVector {
         if (isNullOrEmpty(text)) {
@@ -48,11 +50,19 @@ object PlotLayoutUtil {
 
     fun absoluteGeomBounds(origin: DoubleVector, plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
         Preconditions.checkArgument(!plotLayoutInfo.tiles.isEmpty(), "Plot is empty")
+
         var result: DoubleRectangle? = null
         for (tile in plotLayoutInfo.tiles) {
             val geomBounds = tile.getAbsoluteGeomBounds(origin)
             result = result?.union(geomBounds) ?: geomBounds
         }
         return result!!
+    }
+
+    fun liveMapBounds(plotOrigin: DoubleVector, plotDimension: DoubleVector): DoubleRectangle {
+        return DoubleRectangle(
+            plotOrigin.add(LIVE_MAP_PLOT_PADDING),
+            plotDimension.subtract(LIVE_MAP_PLOT_MARGIN)
+        )
     }
 }

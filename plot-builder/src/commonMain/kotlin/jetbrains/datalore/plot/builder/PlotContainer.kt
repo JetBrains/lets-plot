@@ -13,9 +13,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.plot.builder.interact.render.TooltipLayer
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgRectElement
 
 class PlotContainer(
     plot: Plot,
@@ -23,22 +21,14 @@ class PlotContainer(
 ) : PlotContainerPortable(plot, preferredSize) {
 
     private val myDecorationLayer = SvgGElement()
-    private val myMouseMoveRect = SvgRectElement()
 
     val mouseEventPeer: jetbrains.datalore.plot.builder.event.MouseEventPeer
         get() = plot.mouseEventPeer
 
-    init {
-        // this rect blocks mouse_left events while cursor moves above svg tree elements (in GWT only)
-        myMouseMoveRect.addClass(Style.PLOT_GLASS_PANE)
-        myMouseMoveRect.opacity().set(0.0)
-    }
-
-    protected override fun buildContent() {
+    override fun buildContent() {
         super.buildContent()
         if (plot.isInteractionsEnabled) {
             svg.children().add(myDecorationLayer)
-            svg.children().add(myMouseMoveRect)
             hookupInteractions()
         }
     }

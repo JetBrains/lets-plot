@@ -80,6 +80,10 @@ fun <TypeT> Polygon<TypeT>.limit(): Rect<TypeT> {
     return asSequence().flatten().asIterable().boundingBox()
 }
 
+fun <TypeT> Rect<TypeT>.contains(v: Vec<TypeT>): Boolean {
+    return origin.x <= v.x && origin.x + dimension.x >= v.x && origin.y <= v.y && origin.y + dimension.y >= v.y
+}
+
 fun <TypeT> Rect<TypeT>.intersects(rect: Rect<TypeT>): Boolean {
     val t1 = origin
     val t2 = origin + dimension

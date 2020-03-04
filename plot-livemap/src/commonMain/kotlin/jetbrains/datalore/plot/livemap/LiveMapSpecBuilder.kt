@@ -90,7 +90,7 @@ internal class LiveMapSpecBuilder {
 
         val layersConfigurators: ArrayList<LayersBuilder.() -> Unit> = ArrayList()
         layersConfigurators.add(liveMapLayerProcessor.createConfigurator())
-        layersConfigurators.addAll(myLayers.map(geomLayersProcessor::createConfigurator))
+        layersConfigurators.addAll(myLayers.mapIndexed(geomLayersProcessor::createConfigurator))
 
         return LiveMapSpec(
             geocodingService = liveMapGeocoding {
