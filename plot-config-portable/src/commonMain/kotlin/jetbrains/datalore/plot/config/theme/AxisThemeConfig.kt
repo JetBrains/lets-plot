@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.config.Option.Theme.AXIS_LINE
 import jetbrains.datalore.plot.config.Option.Theme.AXIS_TEXT
 import jetbrains.datalore.plot.config.Option.Theme.AXIS_TICKS
 import jetbrains.datalore.plot.config.Option.Theme.AXIS_TITLE
+import jetbrains.datalore.plot.config.Option.Theme.AXIS_TOOLTIP
 import jetbrains.datalore.plot.config.OptionsAccessor
 
 class AxisThemeConfig private constructor(options: Map<*, *>, defOptions: Map<*, *>, private val myX: Boolean) : OptionsAccessor(options, defOptions), AxisTheme {
@@ -43,6 +44,10 @@ class AxisThemeConfig private constructor(options: Map<*, *>, defOptions: Map<*,
 
     override fun showTitle(): Boolean {
         return !disabled(AXIS_TITLE)
+    }
+
+    override fun showTooltip(): Boolean {
+        return !disabled(AXIS_TOOLTIP)
     }
 
     override fun lineWidth(): Double {

@@ -13,6 +13,7 @@ def theme(*,
           axis_ticks=None, axis_ticks_x=None, axis_ticks_y=None,
           axis_line=None, axis_line_x=None, axis_line_y=None,
           legend_position=None,
+          axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
           **kwargs):
     """
     Use theme() to modify individual components of a theme,
@@ -60,6 +61,14 @@ def theme(*,
     legend_position : ['none' | 'left' | 'right' | 'bottom' | 'top'] or two-element numeric vector.
         the position of legends
 
+    axis_tooltip : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
+        axes tooltips
+
+    axis_tooltip_x : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
+        x axis tooltips
+
+     axis_tooltip_y : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
+        y axis tooltips
 
     Returns
     -------
@@ -94,6 +103,9 @@ def theme(*,
                        axis_line_x=axis_line_x,
                        axis_line_y=axis_line_y,
                        legend_position=legend_position,
+                       axis_tooltip=axis_tooltip,
+                       axis_tooltip_x=axis_tooltip_x,
+                       axis_tooltip_y=axis_tooltip_y,
                        **kwargs)
 
 

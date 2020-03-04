@@ -16,7 +16,6 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
     private val myDisplayableAes: List<Aes<*>> = builder.displayableAes
-    private val myAxisTooltipEnabled: Boolean = builder.isAxisTooltipEnabled
     private val myAxisAes: List<Aes<*>> = builder.axisAes
 
     fun createLookupSpec(): LookupSpec {
@@ -26,7 +25,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     override fun createContextualMapping(dataAccess: MappedDataAccess): ContextualMapping {
         return createContextualMapping(
             myDisplayableAes,
-            if (myAxisTooltipEnabled) myAxisAes else emptyList(),
+            myAxisAes,
             dataAccess
         )
     }
