@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
  - Python 3.6 support.
  - Windows platform support.
+ - factor() function.
+ - tooltip for geom_rect
 
 ## [1.2.1] - 2020-02-13
 ### Fixed
