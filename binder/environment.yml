@@ -16,3 +16,4 @@ dependencies:
       - scikit-datasets
       - geopandas
       - requests
+      - ipywidgets
