@@ -17,3 +17,4 @@ dependencies:
       - geopandas
       - requests
       - ipywidgets
+      - sklearn
