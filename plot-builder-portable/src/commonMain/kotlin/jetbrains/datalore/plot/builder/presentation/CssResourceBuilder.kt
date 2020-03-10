@@ -79,6 +79,7 @@ class SelectorBuilder {
 
     fun userSelect(value: UserSelectValue): SelectorBuilder {
         styleMap[StyleType.USER_SELECT] = value
+        styleMap[StyleType.WEBKIT_USER_SELECT] = value
 
         return this
     }
@@ -132,6 +133,7 @@ enum class StyleType(val str: String) {
     FILL("fill"),
     CURSOR("cursor"),
     USER_SELECT("user-select"),
+    WEBKIT_USER_SELECT("-webkit-user-select"),
     POINTER_EVENTS("pointer-events"),
     OPACITY("opacity"),
     SHAPE_RENDERING("shape-rendering"),

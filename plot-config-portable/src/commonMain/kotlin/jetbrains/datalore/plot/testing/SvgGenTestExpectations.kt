@@ -12,6 +12,7 @@ val SINGLE_PLOT_STYLE_ELEMENT = """
         |	font-family: "Lucida Grande", sans-serif;
         |	cursor: crosshair;
         |	user-select: none;
+        |	-webkit-user-select: none;
         |}
         |text {
         |	font-size: 12px;
@@ -294,6 +295,7 @@ internal val EXPECTED_BUNCH_SVG = """
         |	font-family: "Lucida Grande", sans-serif;
         |	cursor: crosshair;
         |	user-select: none;
+        |	-webkit-user-select: none;
         |}
         |text {
         |	font-size: 12px;
