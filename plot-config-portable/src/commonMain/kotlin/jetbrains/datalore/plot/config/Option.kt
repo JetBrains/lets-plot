@@ -81,6 +81,7 @@ object Option {
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
+        const val TOOLTIP = "tooltip"
     }
 
     object Geom {

@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAPPING
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
+import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP
 
 class LayerConfig constructor(
     layerOptions: Map<*, *>,
@@ -44,6 +45,7 @@ class LayerConfig constructor(
     val constantsMap: Map<Aes<*>, Any>
     val statKind: StatKind
     private val mySamplings: List<Sampling>?
+    val tooltipAes: List<Aes<*>>?
 
     var ownData: DataFrame? = null
         private set
@@ -137,6 +139,20 @@ class LayerConfig constructor(
         if (!myClientSide) {
             consumedAesSet.addAll(stat.consumes())
         }
+
+        //tooltip
+        val tooltipAes = if (has(TOOLTIP)) ArrayList<Aes<*>>() else null
+        if (tooltipAes != null) {
+            val tooltipList = getStringList(TOOLTIP)
+            if (tooltipList.isNotEmpty()) {
+                for (aes in aesMapping) {
+                    if (tooltipList.contains(aes.key.name)) {
+                        tooltipAes.add(aes.key)
+                    }
+                }
+            }
+        }
+        this.tooltipAes = tooltipAes
 
         val varBindings = LayerConfigUtil.createBindings(
             combinedData,
