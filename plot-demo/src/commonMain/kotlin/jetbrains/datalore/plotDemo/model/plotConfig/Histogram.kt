@@ -17,6 +17,7 @@ open class Histogram : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             basic(),
+            basicWithVLine(),
             withWeights(),
             densityMapping()
         )
@@ -60,6 +61,30 @@ open class Histogram : PlotConfigDemoBase() {
                     "                  'geom': 'histogram'" +
                     "               }" +
                     "           ]" +
+                    "}"
+
+            val plotSpec = HashMap(parsePlotSpec(spec))
+            plotSpec["data"] = DATA
+            return plotSpec
+        }
+
+        fun basicWithVLine(): Map<String, Any> {
+            val spec = "{" +
+                    "   'kind': 'plot'," +
+                    "   'mapping': {" +
+                    "             'x': 'x'" +
+                    "           }," +
+
+                    "   'layers': [" +
+                    "                  {'geom': 'histogram'}," +
+                    "                  {'geom': { " +
+                    "                              'name' : 'vline'," +
+                    "                              'data': { 'vl': [2.0, 5.0] }" +
+                    "                           }," +
+                    "                          'mapping': {'xintercept': 'vl'}, " +
+                    "                          'color': 'red'" +
+                    "                  }" +
+                    "              ]" +
                     "}"
 
             val plotSpec = HashMap(parsePlotSpec(spec))
