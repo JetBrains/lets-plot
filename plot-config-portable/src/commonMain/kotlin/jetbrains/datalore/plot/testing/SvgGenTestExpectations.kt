@@ -13,6 +13,8 @@ val SINGLE_PLOT_STYLE_ELEMENT = """
         |	cursor: crosshair;
         |	user-select: none;
         |	-webkit-user-select: none;
+        |	-moz-user-select: none;
+        |	-ms-user-select: none;
         |}
         |text {
         |	font-size: 12px;
@@ -296,6 +298,8 @@ internal val EXPECTED_BUNCH_SVG = """
         |	cursor: crosshair;
         |	user-select: none;
         |	-webkit-user-select: none;
+        |	-moz-user-select: none;
+        |	-ms-user-select: none;
         |}
         |text {
         |	font-size: 12px;
