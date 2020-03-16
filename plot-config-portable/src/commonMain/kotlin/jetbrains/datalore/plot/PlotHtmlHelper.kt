@@ -7,15 +7,10 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.jsObject.JsObjectSupport
+import jetbrains.datalore.base.random.RandomString.randomString
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
 object PlotHtmlHelper {
-
-    @Suppress("SameParameterValue")
-    private fun randomString(len: Int): String {
-        val alphabet = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-        return List(len) { alphabet.random() }.joinToString("")
-    }
 
     fun scriptUrl(
         version: String,

@@ -19,7 +19,7 @@ import org.junit.Test
 internal class MonolithicAwtTest {
     @Before
     fun setUp() {
-        SvgUID.reset()
+        SvgUID.setUpForTest()
     }
 
     @Test

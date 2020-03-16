@@ -18,7 +18,7 @@ import kotlin.test.assertEquals
 internal class PlotSvgExportTest {
     @BeforeTest
     fun setUp() {
-        SvgUID.reset()
+        SvgUID.setUpForTest()
     }
 
     @Test
@@ -26,13 +26,12 @@ internal class PlotSvgExportTest {
         @Suppress("MoveLambdaOutsideParentheses")
         val svg = PlotSvgExport.buildSvgImageFromRawSpecs(
             plotSpec = rawSpec_SinglePlot(),
-            plotSize = DoubleVector(400.0, 300.0),
-            clipPathIdTransform = { currSuffix -> "$currSuffix++" }
+            plotSize = DoubleVector(400.0, 300.0)
         )
 
 //        println(svg)
 
-        assertEquals(withUpdatedClipPathId(EXPECTED_SINGLE_PLOT_SVG), svg)
+        assertEquals(EXPECTED_SINGLE_PLOT_SVG, svg)
     }
 
     @Test
@@ -40,18 +39,11 @@ internal class PlotSvgExportTest {
         @Suppress("MoveLambdaOutsideParentheses")
         val svg = PlotSvgExport.buildSvgImageFromRawSpecs(
             plotSpec = rawSpec_GGBunch(),
-            plotSize = DoubleVector(400.0, 300.0),  // Ignored
-            clipPathIdTransform = { currSuffix -> "$currSuffix++" }
+            plotSize = DoubleVector(400.0, 300.0)  // Ignored
         )
 
-        assertEquals(withUpdatedClipPathId(EXPECTED_BUNCH_SVG), svg)
+        assertEquals(EXPECTED_BUNCH_SVG, svg)
 
 //        println(svg)
     }
-
-    private fun withUpdatedClipPathId(s: String): String {
-        return s.replace("lplt-clip0", "lplt-clip0++")
-            .replace("lplt-clip1", "lplt-clip1++")
-    }
-
 }

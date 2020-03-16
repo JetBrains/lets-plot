@@ -8,43 +8,27 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.plot.base.render.svg.SvgComponent.Companion.CLIP_PATH_ID_PREFIX
 import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.vis.svgToString.SvgToString
-import kotlin.math.abs
-import kotlin.random.Random
 
 object PlotSvgExport {
     private val LOG = PortableLogging.logger(PlotSvgExport::class)
-    private val RAND = Random.Default
 
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
-     * @param plotSize Desired SVG image size. Ignored if plotSpec is GGBunch.
      */
-    fun buildSvgImageFromRawSpecs(plotSpec: MutableMap<String, Any>): String {
-        return buildSvgImageFromRawSpecs(plotSpec) { s -> clipPathIdTransformRandom(s) }
-    }
-
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildSvgImageFromRawSpecs(
-        plotSpec: MutableMap<String, Any>,
-        clipPathIdTransform: (currSuffix: String) -> String
+        plotSpec: MutableMap<String, Any>
     ): String {
-        return buildSvgImageFromRawSpecs(plotSpec, null, clipPathIdTransform)
-    }
-
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun buildSvgImageFromRawSpecs(plotSpec: MutableMap<String, Any>, plotSize: DoubleVector?): String {
-        return buildSvgImageFromRawSpecs(plotSpec, plotSize) { s -> clipPathIdTransformRandom(s) }
+        return buildSvgImageFromRawSpecs(plotSpec, null)
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?,
-        clipPathIdTransform: (currSuffix: String) -> String
+        plotSize: DoubleVector?
     ): String {
         val list = MonolithicCommon.buildSvgImagesFromRawSpecs(
             plotSpec,
@@ -61,8 +45,7 @@ object PlotSvgExport {
         }
 
         if (list.size == 1) {
-            val svg = list[0]
-            return updateClipPathIdSinglePlotSvg(svg, clipPathIdTransform)
+            return list[0]
         }
 
         // Must be GGBunch
@@ -75,7 +58,7 @@ object PlotSvgExport {
         val bunchItems = BunchConfig(plotSpec).bunchItems
         for ((plotSvg, bunchItem) in list.zip(bunchItems)) {
             val (itemSvg, size) = transformBunchItemSvg(
-                plotSvg, bunchItem.x, bunchItem.y, clipPathIdTransform
+                plotSvg, bunchItem.x, bunchItem.y
             )
             bunchItemSvgList.add(itemSvg)
             bunchBounds = bunchBounds.union(DoubleRectangle(bunchItem.x, bunchItem.y, size.x, size.y))
@@ -104,8 +87,7 @@ object PlotSvgExport {
     private fun transformBunchItemSvg(
         svg: String,
         x: Double,
-        y: Double,
-        clipPathIdTransform: (currSuffix: String) -> String
+        y: Double
     ): Pair<String, DoubleVector> {
         val svgHead = svg.split("<style type=\"text/css\">")[0]
         val split = svg.split("</style>")
@@ -114,41 +96,11 @@ object PlotSvgExport {
         val width = extractDouble(Regex(".*width=\"(\\d+)\\.?(\\d+)?\""), svgHead)
         val height = extractDouble(Regex(".*height=\"(\\d+)\\.?(\\d+)?\""), svgHead)
 
-        val rootGroupUpdated = updateClipPathIdSinglePlotSvg(rootGroup, clipPathIdTransform)
         val rootGroupTranslated =
-            """<g transform="translate($x $y)" ${rootGroupUpdated.substring(
-                rootGroupUpdated.indexOf("<g ") + 3
+            """<g transform="translate($x $y)" ${rootGroup.substring(
+                rootGroup.indexOf("<g ") + 3
             )}"""
         return Pair(rootGroupTranslated, DoubleVector(width, height))
-    }
-
-    /**
-     * In SVG clip-path id is global.
-     * Nice to make them unique in exported SVG to avoid the id collision when this SVG is used somethere.
-     * We expect just one clip-path declaration and one clip-path reference per plot.
-     */
-    private fun updateClipPathIdSinglePlotSvg(
-        svg: String,
-        clipPathIdTransform: (currSuffix: String) -> String
-    ): String {
-        // example: <clipPath id="lplt-clip0">
-        val declRegex = Regex("<clipPath .*id=\"$CLIP_PATH_ID_PREFIX(.+)\"")
-
-        val matchResult = declRegex.find(svg)
-        if (matchResult == null) {
-            return svg
-        }
-
-        val currSuffix = matchResult.groupValues[1]
-        val transformedSuffix = clipPathIdTransform(currSuffix)
-
-        // replace declaration
-        val svgUpd = svg.replace(declRegex, """<clipPath id="lplt-clip$transformedSuffix"""")
-
-        // replace reference
-        // example: clip-path="url(#lplt-clip0)"
-        val refRegex = Regex("clip-path=\"url[(]#$CLIP_PATH_ID_PREFIX(.+)[)]\"")
-        return svgUpd.replace(refRegex, """clip-path="url(#lplt-clip$transformedSuffix)"""")
     }
 
     private fun extractDouble(regex: Regex, text: String): Double {
@@ -158,9 +110,5 @@ object PlotSvgExport {
             "${values[1]}".toDouble()
         else
             "${values[1]}.${values[2]}".toDouble()
-    }
-
-    private fun clipPathIdTransformRandom(currSuffix: String): String {
-        return "$currSuffix-${abs(RAND.nextInt())}"
     }
 }

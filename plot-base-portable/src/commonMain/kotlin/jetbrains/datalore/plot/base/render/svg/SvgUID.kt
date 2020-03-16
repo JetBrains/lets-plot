@@ -5,22 +5,28 @@
 
 package jetbrains.datalore.plot.base.render.svg
 
+import jetbrains.datalore.base.random.RandomString.randomString
 import kotlin.native.concurrent.ThreadLocal
 
 // In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.
 // See:  https://github.com/JetBrains/kotlin-native/blob/master/IMMUTABILITY.md
 // Required mutations:
-//      -   `nextIndex`
+//      -   `suffixGen`
 @ThreadLocal
 object SvgUID {
-    private var nextIndex = 0
+    private var suffixGen: () -> Any = { randomString(6) }
 
-    // Use in tests to stabilize ids
-    fun reset() {
-        nextIndex = 0
+    fun setUpForTest() {
+        val incrementalId = IncrementalId()
+        suffixGen = { incrementalId.next() }
     }
 
     fun get(prefix: String): String {
-        return "$prefix${nextIndex++}"
+        return "$prefix${suffixGen()}"
+    }
+
+    private class IncrementalId {
+        private var nextIndex = 0
+        fun next() = ("clip-${nextIndex++}")
     }
 }

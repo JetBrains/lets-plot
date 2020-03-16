@@ -152,7 +152,7 @@ abstract class SvgComponent {
     }
 
     companion object {
-        const val CLIP_PATH_ID_PREFIX = "lplt-clip"
+        const val CLIP_PATH_ID_PREFIX = "" // No prefix
 
         fun buildTransform(origin: DoubleVector, rotationAngle: Double): SvgTransform {
             val transformBuilder = SvgTransformBuilder()

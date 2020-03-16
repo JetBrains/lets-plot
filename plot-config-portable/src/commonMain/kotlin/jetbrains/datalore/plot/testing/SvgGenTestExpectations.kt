@@ -154,9 +154,9 @@ val EXPECTED_SINGLE_PLOT_SVG = """
         |        <line x1="0.0" y1="0.0" x2="0.0" y2="251.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(29.1 0.0 ) " clip-path="url(#lplt-clip0)" clip-bounds-jfx="[rect (0.0, 0.0), (340.9, 251.0)]">
+        |      <g transform="translate(29.1 0.0 ) " clip-path="url(#clip-0)" clip-bounds-jfx="[rect (0.0, 0.0), (340.9, 251.0)]">
         |        <defs>
-        |          <clipPath id="lplt-clip0">
+        |          <clipPath id="clip-0">
         |            <rect x="0.0" y="0.0" width="340.9" height="251.0">
         |            </rect>
         |          </clipPath>
@@ -252,9 +252,9 @@ fun expectedSingleBunchItemSvg(index: Int) = """
         |        <line x1="0.0" y1="0.0" x2="0.0" y2="101.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(15.7 0.0 ) " clip-path="url(#lplt-clip$index)" clip-bounds-jfx="[rect (0.0, 0.0), (95.69090909090906, 101.0)]">
+        |      <g transform="translate(15.7 0.0 ) " clip-path="url(#clip-$index)" clip-bounds-jfx="[rect (0.0, 0.0), (95.69090909090906, 101.0)]">
         |        <defs>
-        |          <clipPath id="lplt-clip$index">
+        |          <clipPath id="clip-$index">
         |            <rect x="0.0" y="0.0" width="95.69090909090906" height="101.0">
         |            </rect>
         |          </clipPath>
@@ -405,9 +405,9 @@ internal val EXPECTED_BUNCH_SVG = """
         |        <line x1="0.0" y1="0.0" x2="0.0" y2="101.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(15.7 0.0 ) " clip-path="url(#lplt-clip0)" clip-bounds-jfx="[rect (0.0, 0.0), (95.69090909090906, 101.0)]">
+        |      <g transform="translate(15.7 0.0 ) " clip-path="url(#clip-0)" clip-bounds-jfx="[rect (0.0, 0.0), (95.69090909090906, 101.0)]">
         |        <defs>
-        |          <clipPath id="lplt-clip0">
+        |          <clipPath id="clip-0">
         |            <rect x="0.0" y="0.0" width="95.69090909090906" height="101.0">
         |            </rect>
         |          </clipPath>
@@ -501,9 +501,9 @@ internal val EXPECTED_BUNCH_SVG = """
         |        <line x1="0.0" y1="0.0" x2="0.0" y2="101.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         |        </line>
         |      </g>
-        |      <g transform="translate(15.7 0.0 ) " clip-path="url(#lplt-clip1)" clip-bounds-jfx="[rect (0.0, 0.0), (95.69090909090906, 101.0)]">
+        |      <g transform="translate(15.7 0.0 ) " clip-path="url(#clip-1)" clip-bounds-jfx="[rect (0.0, 0.0), (95.69090909090906, 101.0)]">
         |        <defs>
-        |          <clipPath id="lplt-clip1">
+        |          <clipPath id="clip-1">
         |            <rect x="0.0" y="0.0" width="95.69090909090906" height="101.0">
         |            </rect>
         |          </clipPath>
