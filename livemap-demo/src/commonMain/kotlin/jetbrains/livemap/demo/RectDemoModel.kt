@@ -32,7 +32,12 @@ class RectDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     }
 
     private fun rect(minLongitude: Double, minLatitude: Double, maxLongitude: Double, maxLatitude: Double): List<LonLatPoint> {
-        return GeoRectangle(minLongitude, minLatitude, maxLongitude, maxLatitude)
+        return GeoRectangle(
+            minLongitude,
+            minLatitude,
+            maxLongitude,
+            maxLatitude
+        )
             .splitByAntiMeridian()
             .flatMap {
                 listOf(

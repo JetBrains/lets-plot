@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot.COORD
 import jetbrains.datalore.plot.config.Option.Plot.THEME
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createGuideOptionsMap
+import jetbrains.datalore.plot.config.geo.GeometryFromGeoDataFrameChange
 import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
@@ -69,14 +70,10 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             var plotSpec = plotSpec
             val isGGBunch = isGGBunchSpec(plotSpec)
 
-            // ToDo: GeometryFromGeoDataFrameChange depends on Json support
-            //  - make Json support portable
-            //  - return `GeometryFromGeoDataFrameChange`
-// Moved to PlotConfigClientSideJvmJs
-//            plotSpec = PlotSpecTransform.builderForRawSpec()
-//                .change(GeometryFromGeoDataFrameChange.specSelector(isGGBunch), GeometryFromGeoDataFrameChange())
-//                .build()
-//                .apply(plotSpec)
+            plotSpec = PlotSpecTransform.builderForRawSpec()
+                .change(GeometryFromGeoDataFrameChange.specSelector(isGGBunch), GeometryFromGeoDataFrameChange())
+                .build()
+                .apply(plotSpec)
 
             // migration to new schema of plot specs
             // needed to support 'saved output' in old format

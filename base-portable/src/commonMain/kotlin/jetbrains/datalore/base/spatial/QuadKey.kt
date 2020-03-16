@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -20,7 +20,9 @@ data class QuadKey<T>(
 
 fun QuadKey<LonLat>.computeRect(): Rect<LonLat> {
     val origin = this.computeOrigin(EARTH_RECT)
-    val dimension = EARTH_RECT.dimension / calulateQuadsCount(length).toDouble()
+    val dimension = EARTH_RECT.dimension / calulateQuadsCount(
+        length
+    ).toDouble()
 
     val flippedY = EARTH_RECT.scalarBottom - (origin.scalarY + dimension.scalarY - EARTH_RECT.scalarTop)
     return Rect(origin.transform(newY = { flippedY }), dimension)

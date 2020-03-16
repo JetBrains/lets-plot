@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -24,7 +24,8 @@ class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Do
     init {
         require(minLatitude <= maxLatitude) { "Invalid latitude range: [$minLatitude..$maxLatitude]" }
 
-        myLongitudeSegment = LongitudeSegment(startLongitude, endLongitude)
+        myLongitudeSegment =
+            LongitudeSegment(startLongitude, endLongitude)
         myLatitudeRange = ClosedRange.closed(minLatitude, maxLatitude)
     }
 

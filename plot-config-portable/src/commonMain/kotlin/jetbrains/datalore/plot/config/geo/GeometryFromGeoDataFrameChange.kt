@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -20,7 +20,7 @@ import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.transform.SpecSelector
 
 
-internal class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange() {
+class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange() {
     override val geoPositionsKeys: Set<String>
         get() = GEO_DATA_FRAME_KEYS
 
@@ -28,13 +28,14 @@ internal class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange()
         val geometryTables = (mapSpec[MAP_GEOMETRY_COLUMN] as List<*>).map { parseGeometry(it as String, geoDataKind) }
 
         if (geometryTables.sumBy { it.rowCount } == 0) {
-            error("Geometries are empty or no matching types. Expected: " +
-                    when(geoDataKind) {
-                        GeoDataKind.POINT -> "Point, MultiPoint"
-                        GeoDataKind.PATH -> "LineString, MultiLineString"
-                        GeoDataKind.BOUNDARY -> "Polygon, MultiPolygon"
-                        GeoDataKind.BBOX -> "MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon"
-                    }
+            error(
+                "Geometries are empty or no matching types. Expected: " +
+                        when (geoDataKind) {
+                            GeoDataKind.POINT -> "Point, MultiPoint"
+                            GeoDataKind.PATH -> "LineString, MultiLineString"
+                            GeoDataKind.BOUNDARY -> "Polygon, MultiPolygon"
+                            GeoDataKind.BBOX -> "MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon"
+                        }
             )
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -31,14 +31,19 @@ class FluentObject : FluentValue {
     fun put(key: String, v: String?) = apply { myObj[key] = v }
     fun put(key: String, v: Number?) = apply { myObj[key] = v }
     fun put(key: String, v: Boolean?) = apply { myObj[key] = v }
-    fun <T : Enum<T>> put(key: String, v: T?) = apply { myObj[key] = v?.let { formatEnum(it) } }
+    fun <T : Enum<T>> put(key: String, v: T?) = apply { myObj[key] = v?.let {
+        formatEnum(
+            it
+        )
+    } }
 
     fun getInt(key: String) = myObj.getNumber(key).toInt()
     fun getDouble(key: String) = myObj.getDouble(key)
     fun getBoolean(key: String) = myObj[key] as Boolean
     fun getString(key: String) = myObj[key] as String
     fun getStrings(key: String) = getArr(key).map { getAsString(it) }
-    fun <T : Enum<T>> getEnum(key: String, enumValues: Array<T>) = parseEnum<T>(myObj[key] as String, enumValues)
+    fun <T : Enum<T>> getEnum(key: String, enumValues: Array<T>) =
+        parseEnum<T>(myObj[key] as String, enumValues)
     inline fun <reified T : Enum<T>> getEnum(key: String) = getEnum<T>(key, enumValues<T>())
     fun getArray(key: String) = FluentArray(getArr(key))
     fun getObject(key: String) = FluentObject(getObj(key))
@@ -125,7 +130,12 @@ class FluentObject : FluentValue {
     }
 
     fun <T : Enum<T>> forEnums(key: String, processor: (T) -> Unit, enumValues: Array<T>) = apply {
-        getArr(key).forEach { processor(parseEnum(it as String, enumValues)) }
+        getArr(key).forEach { processor(
+            parseEnum(
+                it as String,
+                enumValues
+            )
+        ) }
     }
 
     fun <T : Enum<T>> getOptionalEnum(key: String, processor: (T?) -> Unit, enumValues: Array<T>) = apply {

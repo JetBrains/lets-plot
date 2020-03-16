@@ -122,7 +122,14 @@ class ViewportHelper(
 
     fun getCells(viewRect: WorldRectangle, cellLevel: Int): Set<CellKey> =
         splitRect(viewRect)
-            .map { calculateQuadKeys(myMapRect, it, cellLevel, ::CellKey) }
+            .map {
+                calculateQuadKeys(
+                    myMapRect,
+                    it,
+                    cellLevel,
+                    ::CellKey
+                )
+            }
             .flatten()
             .toSet()
 

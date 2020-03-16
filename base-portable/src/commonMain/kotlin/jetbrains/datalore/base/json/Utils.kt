@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,8 +9,12 @@ typealias Arr = List<*>
 typealias Obj = Map<*, *>
 
 fun streamOf(arr: Arr): Sequence<*> = arr.asSequence()
-fun objectsStreamOf(arr: Arr): Sequence<Obj> = streamOf(arr).map { it as Obj }
-fun stringStreamOf(arr: Arr): Sequence<String?> = streamOf(arr).map { it as String? }
+fun objectsStreamOf(arr: Arr): Sequence<Obj> = streamOf(
+    arr
+).map { it as Obj }
+fun stringStreamOf(arr: Arr): Sequence<String?> = streamOf(
+    arr
+).map { it as String? }
 
 fun isBoolean(e: Any) = e is Boolean
 fun isNumber(e: Any) = e is Number
@@ -35,10 +39,13 @@ fun getAsString(e: Any?): String? =
 fun <T : Enum<T>> parseEnum(enumStringValue: String, values: Array<T>): T =
     values.first { mode -> mode.toString().equals(enumStringValue, ignoreCase = true) }
 
-inline fun <reified T : Enum<T>> parseEnum(enumStringValue: String): T = parseEnum(enumStringValue, enumValues<T>())
+inline fun <reified T : Enum<T>> parseEnum(enumStringValue: String): T =
+    parseEnum(enumStringValue, enumValues<T>())
 fun <T : Enum<T>> formatEnum(enumValue: T): String = enumValue.toString().toLowerCase()
 
-fun <T : Enum<T>> FluentObject.put(key: String, v: Collection<T>) = this.put(key, v.map { formatEnum(it) })
+fun <T : Enum<T>> FluentObject.put(key: String, v: Collection<T>) = this.put(key, v.map {
+    formatEnum(it)
+})
 fun FluentObject.put(key: String, v: List<String>) = put(key, FluentArray().addStrings(v.map { it }))
 
 fun Map<*, *>.getNumber(key: String) = if (this[key] == null) 0.0 else this[key] as Number

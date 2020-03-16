@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 
 
-internal abstract class GeometryFromGeoPositionsChange : SpecChange {
+abstract class GeometryFromGeoPositionsChange : SpecChange {
     override fun isApplicable(spec: Map<String, Any>): Boolean {
         if (spec[GEO_POSITIONS] !is MutableMap<*, *>) {
             return false
@@ -24,13 +24,21 @@ internal abstract class GeometryFromGeoPositionsChange : SpecChange {
         if (!(spec[GEO_POSITIONS] as MutableMap<*, *>?)!!.keys.containsAll(geoPositionsKeys)) {
             return false
         }
-        return isGeomSupported(getGeomKind(spec))
+        return isGeomSupported(
+            getGeomKind(
+                spec
+            )
+        )
     }
 
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         @Suppress("UNCHECKED_CAST")
         val mapSpec = spec[GEO_POSITIONS] as MutableMap<String, Any>
-        val geoDataKind: GeoPositionsDataUtil.GeoDataKind = getGeoDataKind(getGeomKind(spec))
+        val geoDataKind: GeoPositionsDataUtil.GeoDataKind = getGeoDataKind(
+            getGeomKind(
+                spec
+            )
+        )
         changeGeoPositions(mapSpec, geoDataKind)
     }
 

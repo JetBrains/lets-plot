@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -26,13 +26,32 @@ internal object GeoRectangleTestHelper {
     }
 
     private fun <T> assertDoubleParameterEquals(expected: T, actual: T, getter: (T) -> Double) {
-        assertDoubleEquals(getter(expected), getter(actual))
+        assertDoubleEquals(
+            getter(expected),
+            getter(actual)
+        )
     }
 
     fun assertRectangleEquals(expected: Rect<*>, actual: Rect<*>) {
-        assertDoubleParameterEquals(expected, actual, Rect<*>::left)
-        assertDoubleParameterEquals(expected, actual, Rect<*>::top)
-        assertDoubleParameterEquals(expected, actual, Rect<*>::right)
-        assertDoubleParameterEquals(expected, actual, Rect<*>::bottom)
+        assertDoubleParameterEquals(
+            expected,
+            actual,
+            Rect<*>::left
+        )
+        assertDoubleParameterEquals(
+            expected,
+            actual,
+            Rect<*>::top
+        )
+        assertDoubleParameterEquals(
+            expected,
+            actual,
+            Rect<*>::right
+        )
+        assertDoubleParameterEquals(
+            expected,
+            actual,
+            Rect<*>::bottom
+        )
     }
 }
