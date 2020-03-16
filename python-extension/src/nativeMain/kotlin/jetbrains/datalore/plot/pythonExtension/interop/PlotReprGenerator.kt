@@ -3,7 +3,7 @@ package jetbrains.datalore.plot.pythonExtension.interop
 import Python.PyObject
 import Python.Py_BuildValue
 import jetbrains.datalore.plot.PlotHtmlHelper
-import jetbrains.datalore.plot.PlotSvgExport
+import jetbrains.datalore.plot.PlotSvgExportPortable
 import jetbrains.datalore.plot.pythonExtension.interop.TypeUtils.pyDictToMap
 import kotlinx.cinterop.CPointer
 
@@ -21,7 +21,7 @@ object PlotReprGenerator {
         val plotSpecMap = pyDictToMap(plotSpecDict)
 
         @Suppress("UNCHECKED_CAST")
-        val svg = PlotSvgExport.buildSvgImageFromRawSpecs(plotSpecMap as MutableMap<String, Any>)
+        val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpecMap as MutableMap<String, Any>)
         val result = Py_BuildValue("s", svg);
         return result
     }

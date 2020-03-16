@@ -9,6 +9,7 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
@@ -18,8 +19,6 @@ import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
-import jetbrains.datalore.vis.svgToString.SvgToString
 import mu.KotlinLogging
 import java.awt.Color
 import java.awt.Dimension
@@ -37,17 +36,20 @@ object MonolithicAwt {
     /**
      * Static SVG export
      */
+    @Deprecated(
+        level = DeprecationLevel.ERROR,
+        message = "was replaced with PlotSvgExport.buildSvgImageFromRawSpecs",
+        replaceWith = ReplaceWith(
+            expression = "PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, plotSize)",
+            imports = ["jetbrains.datalore.plot.PlotSvgExport"]
+        )
+    )
     fun buildSvgImagesFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): List<String> {
-        return MonolithicCommon.buildSvgImagesFromRawSpecs(
-            plotSpec,
-            plotSize,
-            SvgToString(RGBEncoderAwt()),
-            computationMessagesHandler
-        )
+        UNSUPPORTED("was replaced with PlotSvgExport.buildSvgImageFromRawSpecs")
     }
 
     fun buildPlotFromRawSpecs(

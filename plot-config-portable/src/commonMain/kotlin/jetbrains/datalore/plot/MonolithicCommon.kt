@@ -113,7 +113,6 @@ object MonolithicCommon {
                 )
 
             buildInfo = PlotBuildInfo(
-//                buildInfo.plotContainer,
                 buildInfo.plotAssembler,
                 buildInfo.processedPlotSpec,
                 DoubleVector(bunchItem.x, bunchItem.y),  // true origin
@@ -137,16 +136,7 @@ object MonolithicCommon {
             computationMessages.addAll(it)
         }
 
-// Moved to MonolithicAwt, MonolithicJs : 
-//        LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(plotSpec))
-//            ?.let {
-//                LiveMapUtil.injectLiveMapProvider(
-//                    assembler.layersByTile,
-//                    it
-//                )
-//            }
-
-        // Figure out plot size
+        // Figure out the plot size
         @Suppress("NAME_SHADOWING")
         val plotSize =
             if (plotSize != null) {
@@ -160,11 +150,8 @@ object MonolithicCommon {
                 }
             }
 
-//        val plot = assembler.createPlot()
         val preferredSize = ValueProperty(plotSize)
-//        val plotContainer = PlotContainer(plot, preferredSize)
         return PlotBuildInfo(
-//            plotContainer,
             assembler,
             plotSpec,
             DoubleVector.ZERO,
@@ -178,9 +165,6 @@ object MonolithicCommon {
         computationMessagesHandler: ((List<String>) -> Unit)
     ): PlotAssembler {
 
-//        @Suppress("NAME_SHADOWING")
-//        var plotSpec = plotSpec
-//        plotSpec = PlotConfigClientSide.processTransform(plotSpec)
         val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
         if (computationMessages.isNotEmpty()) {
             computationMessagesHandler(computationMessages)
@@ -222,7 +206,7 @@ object MonolithicCommon {
             return plotSpec
         }
 
-        // Only "portable" transforms (not supported: GeoJson, raster image, any async transforms)
+        // Only "portable" transforms (not supported: raster image, any async transforms)
 
         // Backend transforms
         @Suppress("NAME_SHADOWING")
@@ -253,7 +237,6 @@ object MonolithicCommon {
     }
 
     class PlotBuildInfo(
-//        val plotContainer: PlotContainer,
         val plotAssembler: PlotAssembler,
         val processedPlotSpec: MutableMap<String, Any>,
         val origin: DoubleVector,

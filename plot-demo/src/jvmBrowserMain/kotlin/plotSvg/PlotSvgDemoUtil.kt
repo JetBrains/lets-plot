@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotSvg
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.MonolithicAwt
+import jetbrains.datalore.plot.PlotSvgExport
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
@@ -53,13 +53,9 @@ object PlotSvgDemoUtil {
             }
             body {
                 for (plotSpec in plotSpecList) {
-                    val svgImages = MonolithicAwt.buildSvgImagesFromRawSpecs(plotSpec, plotSize) {
-                        println(it)
-                    }
-                    for (svgImage in svgImages) {
-                        div("demo") {
-                            unsafe { +svgImage }
-                        }
+                    val svgImage = PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, plotSize)
+                    div("demo") {
+                        unsafe { +svgImage }
                     }
                 }
             }

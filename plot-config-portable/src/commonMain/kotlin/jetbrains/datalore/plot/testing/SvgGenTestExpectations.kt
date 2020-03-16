@@ -286,7 +286,7 @@ fun expectedSingleBunchItemSvg(index: Int) = """
         |</svg>
         """.trimMargin()
 
-internal val EXPECTED_BUNCH_SVG = """
+val EXPECTED_BUNCH_SVG = """
         |<svg xmlns="http://www.w3.org/2000/svg" class="plt-container" width="300.0" height="150.0">
         |<style type="text/css">
         |

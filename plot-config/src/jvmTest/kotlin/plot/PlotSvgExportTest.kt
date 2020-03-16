@@ -11,39 +11,36 @@ import jetbrains.datalore.plot.testing.EXPECTED_BUNCH_SVG
 import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
 import jetbrains.datalore.plot.testing.rawSpec_GGBunch
 import jetbrains.datalore.plot.testing.rawSpec_SinglePlot
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import junit.framework.TestCase.assertEquals
+import org.junit.Before
+import org.junit.Test
+
 
 internal class PlotSvgExportTest {
-    @BeforeTest
+    @Before
     fun setUp() {
         SvgUID.setUpForTest()
     }
 
     @Test
     fun svgFromSinglePlot() {
-        @Suppress("MoveLambdaOutsideParentheses")
-        val svg = PlotSvgExport.buildSvgImageFromRawSpecs(
+        val svgImage = PlotSvgExport.buildSvgImageFromRawSpecs(
             plotSpec = rawSpec_SinglePlot(),
             plotSize = DoubleVector(400.0, 300.0)
         )
 
-//        println(svg)
+//        println(svgImage)
 
-        assertEquals(EXPECTED_SINGLE_PLOT_SVG, svg)
+        assertEquals(EXPECTED_SINGLE_PLOT_SVG, svgImage)
     }
 
     @Test
     fun svgFromGGBunch() {
-        @Suppress("MoveLambdaOutsideParentheses")
         val svg = PlotSvgExport.buildSvgImageFromRawSpecs(
             plotSpec = rawSpec_GGBunch(),
             plotSize = DoubleVector(400.0, 300.0)  // Ignored
         )
 
-        assertEquals(EXPECTED_BUNCH_SVG, svg)
-
-//        println(svg)
+        kotlin.test.assertEquals(EXPECTED_BUNCH_SVG, svg)
     }
 }

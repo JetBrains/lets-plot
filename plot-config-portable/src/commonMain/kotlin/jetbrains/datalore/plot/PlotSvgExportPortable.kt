@@ -12,28 +12,36 @@ import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.vis.svgToString.SvgToString
 
-object PlotSvgExport {
-    private val LOG = PortableLogging.logger(PlotSvgExport::class)
+object PlotSvgExportPortable {
+    private val LOG = PortableLogging.logger(PlotSvgExportPortable::class)
+    private val PORTABLE_SVG_STR_MAPPER =
+        SvgToString(rgbEncoder = null)   // data-frame --> rgb image is not supported (geom_raster)
 
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildSvgImageFromRawSpecs(
-        plotSpec: MutableMap<String, Any>
+        plotSpec: MutableMap<String, Any>,
+        svgToString: SvgToString = PORTABLE_SVG_STR_MAPPER
     ): String {
-        return buildSvgImageFromRawSpecs(plotSpec, null)
+        return buildSvgImageFromRawSpecs(plotSpec, null, svgToString)
     }
 
+    /**
+     * @param plotSpec Raw specification of a plot or GGBunch.
+     * @param plotSize Desired plot size. Has no effect on GGBunch.
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?
+        plotSize: DoubleVector?,
+        svgToString: SvgToString = PORTABLE_SVG_STR_MAPPER
     ): String {
         val list = MonolithicCommon.buildSvgImagesFromRawSpecs(
             plotSpec,
             plotSize,
-            SvgToString(rgbEncoder = null)          // data-frame --> rgb image is not supported
+            svgToString
         ) { messages ->
             messages.forEach {
                 LOG.info { "[when SVG generating] $it" }
