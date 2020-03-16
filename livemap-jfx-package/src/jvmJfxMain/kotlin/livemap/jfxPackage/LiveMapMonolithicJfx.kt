@@ -9,125 +9,28 @@ import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Group
 import javafx.scene.Scene
-import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.awt.AwtEventUtil
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.Monolithic
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.config.OptionsAccessor
-import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
-import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import mu.KotlinLogging
-import java.awt.Color
-import java.awt.Dimension
 import java.awt.Rectangle
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
 
-private val LOG = KotlinLogging.logger {}
+class LiveMapMonolithicJfx(
+    componentFactory: (svg: SvgSvgElement) -> JComponent,
+    executor: (() -> Unit) -> Unit
+) : Monolithic(componentFactory, executor) {
 
-object LiveMapMonolithicJfx {
-    // todo: remove duplication with MonolithicAwt
-
-    fun buildPlotFromRawSpecs(
-        plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?,
-        componentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit,
-        computationMessagesHandler: ((List<String>) -> Unit)
-    ): JComponent {
-        return try {
-
-            @Suppress("NAME_SHADOWING")
-            val plotSpec = processSpecs(plotSpec, frontendOnly = false)
-            val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, plotSize)
-            if (buildResult.isError) {
-                val errorMessage = (buildResult as MonolithicCommon.PlotsBuildResult.Error).error
-                return createErrorLabel(errorMessage)
-            }
-
-            val success = buildResult as MonolithicCommon.PlotsBuildResult.Success
-            val computationMessages = success.buildInfos.flatMap { it.computationMessages }
-            computationMessagesHandler(computationMessages)
-            if (success.buildInfos.size == 1) {
-                // a single plot
-                return buildPlotSvgComponent(
-                    success.buildInfos[0],
-                    componentFactory,
-                    executor
-                )
-            }
-            // ggbunch
-            return buildGGBunchComponent(
-                success.buildInfos,
-                componentFactory,
-                executor
-            )
-
-        } catch (e: RuntimeException) {
-            val failureInfo = FailureHandler.failureInfo(e)
-            if (failureInfo.isInternalError) {
-                LOG.error(e) {}
-            }
-            createErrorLabel(failureInfo.message)
-        }
-    }
-
-    private fun buildGGBunchComponent(
-        plotInfos: List<MonolithicCommon.PlotBuildInfo>,
-        componentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
-    ): JComponent {
-
-        val bunchComponent = JPanel(null)
-        bunchComponent.border = null
-
-        for (plotInfo in plotInfos) {
-            val plotComponent =
-                buildPlotSvgComponent(plotInfo, componentFactory, executor)
-            val bounds = plotInfo.bounds()
-            plotComponent.bounds = Rectangle(
-                bounds.origin.x.toInt(),
-                bounds.origin.y.toInt(),
-                bounds.dimension.x.toInt(),
-                bounds.dimension.y.toInt()
-            )
-            bunchComponent.add(plotComponent)
-        }
-
-        val bunchBounds = plotInfos.map { it.bounds() }
-            .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
-                acc.union(bounds)
-            }
-
-        val bunchDimensions = Dimension(
-            bunchBounds.width.toInt(),
-            bunchBounds.height.toInt()
-        )
-
-        bunchComponent.preferredSize = bunchDimensions
-        bunchComponent.minimumSize = bunchDimensions
-        bunchComponent.maximumSize = bunchDimensions
-        return bunchComponent
-    }
-
-    private fun buildPlotSvgComponent(
-        plotBuildInfo: MonolithicCommon.PlotBuildInfo,
-        componentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
+    override fun buildPlotSvgComponent(
+        plotBuildInfo: MonolithicCommon.PlotBuildInfo
     ): JComponent {
         val assembler = plotBuildInfo.plotAssembler
         injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec)
@@ -135,18 +38,16 @@ object LiveMapMonolithicJfx {
         val plot = assembler.createPlot()
         val plotContainer = PlotContainer(plot, plotBuildInfo.size)
         val plotComponent = buildPlotSvgComponent(
-            plotContainer,
-            componentFactory,
-            executor
+            plotContainer
         )
 
         return if (plotContainer.liveMapFigures.isNotEmpty()) {
             @Suppress("UNCHECKED_CAST")
-            (buildPlotLiveMapComponent(
-        plotContainer.liveMapFigures as List<CanvasFigure>,
-        plotComponent,
-        plotBuildInfo.size.get()
-    ))
+            buildPlotLiveMapComponent(
+                plotContainer.liveMapFigures as List<CanvasFigure>,
+                plotComponent,
+                plotBuildInfo.size.get()
+            )
         } else {
             plotComponent
         }
@@ -191,35 +92,7 @@ object LiveMapMonolithicJfx {
         return panel
     }
 
-    fun buildPlotSvgComponent(
-        plotContainer: PlotContainer,
-        componentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
-    ): JComponent {
-        plotContainer.ensureContentBuilt()
 
-        val plotComponent: JComponent = componentFactory(plotContainer.svg)
-
-        plotComponent.addMouseListener(object : MouseAdapter() {
-            override fun mouseExited(e: MouseEvent) {
-                super.mouseExited(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
-                }
-            }
-        })
-
-        plotComponent.addMouseMotionListener(object : MouseAdapter() {
-            override fun mouseMoved(e: MouseEvent) {
-                super.mouseMoved(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
-                }
-            }
-        })
-
-        return plotComponent
-    }
 
     private fun injectLiveMapProvider(
         plotAssembler: PlotAssembler,
@@ -232,37 +105,5 @@ object LiveMapMonolithicJfx {
                     it
                 )
             }
-    }
-
-    private fun createErrorLabel(s: String): JComponent {
-        val label = JLabel(s)
-        label.foreground = Color.RED
-        return label
-    }
-
-    @Suppress("DuplicatedCode", "SameParameterValue")
-    private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
-        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
-        if (PlotConfig.isFailure(plotSpec)) {
-            return plotSpec
-        }
-
-        // Backend transforms
-        @Suppress("NAME_SHADOWING")
-        val plotSpec =
-            if (frontendOnly) {
-                plotSpec
-            } else {
-                // This transform doesn't need to be "portable"
-                // Could use PlotConfigServerSideJvm in case we needed "encoding"
-                PlotConfigServerSide.processTransform(plotSpec)
-            }
-
-        if (PlotConfig.isFailure(plotSpec)) {
-            return plotSpec
-        }
-
-        // Frontend transforms
-        return PlotConfigClientSideJvmJs.processTransform(plotSpec)
     }
 }

@@ -6,6 +6,7 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.Monolithic
 import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
 import java.awt.*
@@ -21,6 +22,21 @@ object PlotConfigDemoUtil {
         factory: SwingDemoFactory,
         plotSize: DoubleVector?
     ) {
+        val monolithic = MonolithicAwt(
+            factory::createSvgComponent,
+            factory.createPlotEdtExecutor()
+        )
+
+        create(title, plotSpecList, factory, plotSize, monolithic)
+    }
+
+    fun create(
+        title: String,
+        plotSpecList: List<MutableMap<String, Any>>,
+        factory: SwingDemoFactory,
+        plotSize: DoubleVector?,
+        monolithic: Monolithic
+    ) {
         factory.createDemoFrame(title).show {
             val panel = this
             panel.removeAll()
@@ -28,7 +44,7 @@ object PlotConfigDemoUtil {
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
             panel.add(Box.createRigidArea(Dimension(50, 0)))
 
-            addPlots(panel, plotSpecList, factory, plotSize)
+            addPlots(panel, plotSpecList, monolithic, plotSize)
 
             panel.add(Box.createRigidArea(Dimension(0, 5)))
         }
@@ -37,16 +53,13 @@ object PlotConfigDemoUtil {
     private fun addPlots(
         panel: JPanel,
         plotSpecList: List<MutableMap<String, Any>>,
-        factory: SwingDemoFactory,
+        monolithic: Monolithic,
         plotSize: DoubleVector?
     ) {
         try {
+
             for (plotSpec in plotSpecList) {
-                val component = MonolithicAwt.buildPlotFromRawSpecs(
-                    plotSpec, plotSize,
-                    factory::createSvgComponent,
-                    factory.createPlotEdtExecutor()
-                ) {
+                val component = monolithic.buildPlotFromRawSpecs(plotSpec, plotSize) {
                     for (s in it) {
                         println("DEMO PLOT INFO: $s")
                     }
