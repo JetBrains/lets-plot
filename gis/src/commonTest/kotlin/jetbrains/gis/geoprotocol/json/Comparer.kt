@@ -43,50 +43,25 @@ internal object Comparer {
     }
 
     private fun tryCompareAsBoolean(left: Any, right: Any, ctx: Context) {
-        if (isBoolean(left) && isBoolean(
-                right
-            )
-        ) {
-            if (getAsBoolean(left) != getAsBoolean(
-                    right
-                )
-            ) {
-                ctx.fail("${getAsBoolean(left)} != ${getAsBoolean(
-                    right
-                )}")
+        if (isBoolean(left) && isBoolean(right)) {
+            if (getAsBoolean(left) != getAsBoolean(right)) {
+                ctx.fail("${getAsBoolean(left)} != ${getAsBoolean(right)}")
             }
         }
     }
 
     private fun tryCompareAsNumber(left: Any, right: Any, ctx: Context) {
-        if (isNumber(left) && isNumber(
-                right
-            )
-        ) {
-            if (getAsDouble(left) != getAsDouble(
-                    right
-                )
-            ) {
-                ctx.fail("${getAsDouble(left)} != ${getAsDouble(
-                    right
-                )}")
+        if (isNumber(left) && isNumber(right)) {
+            if (getAsDouble(left) != getAsDouble(right)) {
+                ctx.fail("${getAsDouble(left)} != ${getAsDouble(right)}")
             }
         }
     }
 
     private fun tryCompareAsString(left: Any, right: Any, ctx: Context) {
-        if (isString(left) && isString(
-                right
-            )
-        ) {
-            if (!getAsString(left).equals(
-                    getAsString(
-                        right
-                    )
-                )) {
-                ctx.fail("${getAsString(left)} != ${getAsString(
-                    right
-                )}")
+        if (isString(left) && isString(right)) {
+            if (!getAsString(left).equals(getAsString(right))) {
+                ctx.fail("${getAsString(left)} != ${getAsString(right)}")
             }
         }
     }

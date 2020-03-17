@@ -24,21 +24,13 @@ abstract class GeometryFromGeoPositionsChange : SpecChange {
         if (!(spec[GEO_POSITIONS] as MutableMap<*, *>?)!!.keys.containsAll(geoPositionsKeys)) {
             return false
         }
-        return isGeomSupported(
-            getGeomKind(
-                spec
-            )
-        )
+        return isGeomSupported(getGeomKind(spec))
     }
 
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         @Suppress("UNCHECKED_CAST")
         val mapSpec = spec[GEO_POSITIONS] as MutableMap<String, Any>
-        val geoDataKind: GeoPositionsDataUtil.GeoDataKind = getGeoDataKind(
-            getGeomKind(
-                spec
-            )
-        )
+        val geoDataKind: GeoPositionsDataUtil.GeoDataKind = getGeoDataKind(getGeomKind(spec))
         changeGeoPositions(mapSpec, geoDataKind)
     }
 

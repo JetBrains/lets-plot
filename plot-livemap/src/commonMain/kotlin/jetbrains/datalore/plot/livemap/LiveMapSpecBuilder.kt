@@ -167,11 +167,7 @@ internal class LiveMapSpecBuilder {
         private fun calculateGeoRectangle(lonLatList: List<*>): GeoRectangle {
             require(!(lonLatList.isNotEmpty() && lonLatList.size % 2 != 0)) { ("Expected: location"
             + " = [double lon1, double lat1, double lon2, double lat2, ... , double lonN, double latN]") }
-            return convertToGeoRectangle(
-                BboxUtil.calculateBoundingBox(
-                    lonLatList.toDoubleList()
-                )
-            )
+            return convertToGeoRectangle(BboxUtil.calculateBoundingBox(lonLatList.toDoubleList()))
         }
 
         private fun calculateGeoRectangle(lonLatDataMap: Map<*, *>): GeoRectangle {

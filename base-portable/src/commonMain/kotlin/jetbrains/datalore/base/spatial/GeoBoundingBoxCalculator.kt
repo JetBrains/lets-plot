@@ -54,10 +54,7 @@ class GeoBoundingBoxCalculator<TypeT>(
         loop: Boolean
     ): ClosedRange<Double> {
         return if (loop) {
-            calculateLoopLimitRange(
-                segments,
-                mapRange
-            )
+            calculateLoopLimitRange(segments, mapRange)
         } else {
             ClosedRange.closed(
                 segments.map(Segment::start).min()!!,
@@ -77,24 +74,9 @@ class GeoBoundingBoxCalculator<TypeT>(
                     )
                 }
                 .flatten()
-                .run {
-                    findMaxGapBetweenRanges(
-                        this,
-                        mapRange.length()
-                    )
-                }
-                .run {
-                    invertRange(
-                        this,
-                        mapRange.length()
-                    )
-                }
-                .run {
-                    normalizeCenter(
-                        this,
-                        mapRange
-                    )
-                }
+                .run { findMaxGapBetweenRanges(this, mapRange.length()) }
+                .run { invertRange(this, mapRange.length()) }
+                .run { normalizeCenter(this, mapRange) }
         }
 
         private fun normalizeCenter(range: ClosedRange<Double>, mapRange: ClosedRange<Double>): ClosedRange<Double> {
@@ -151,12 +133,7 @@ class GeoBoundingBoxCalculator<TypeT>(
 }
 
 fun makeSegments(start: (Int) -> Double, end: (Int) -> Double, size: Int): Sequence<Segment> {
-    return (0 until size).asSequence().map {
-        Segment(
-            start(it),
-            end(it)
-        )
-    }
+    return (0 until size).asSequence().map { Segment(start(it), end(it)) }
 }
 
 fun <T> GeoBoundingBoxCalculator<T>.geoRectsBBox(rectangles: List<GeoRectangle>): Rect<T> {

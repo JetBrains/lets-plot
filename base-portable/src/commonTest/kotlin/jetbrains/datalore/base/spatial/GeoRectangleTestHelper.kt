@@ -33,25 +33,9 @@ internal object GeoRectangleTestHelper {
     }
 
     fun assertRectangleEquals(expected: Rect<*>, actual: Rect<*>) {
-        assertDoubleParameterEquals(
-            expected,
-            actual,
-            Rect<*>::left
-        )
-        assertDoubleParameterEquals(
-            expected,
-            actual,
-            Rect<*>::top
-        )
-        assertDoubleParameterEquals(
-            expected,
-            actual,
-            Rect<*>::right
-        )
-        assertDoubleParameterEquals(
-            expected,
-            actual,
-            Rect<*>::bottom
-        )
+        assertDoubleParameterEquals(expected, actual, Rect<*>::left)
+        assertDoubleParameterEquals(expected, actual, Rect<*>::top)
+        assertDoubleParameterEquals(expected, actual, Rect<*>::right)
+        assertDoubleParameterEquals(expected, actual, Rect<*>::bottom)
     }
 }

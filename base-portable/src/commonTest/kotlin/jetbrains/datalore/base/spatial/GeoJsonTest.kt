@@ -14,10 +14,7 @@ typealias GeomTag = Generic
 class GeoJsonTest {
 
     private fun parse(geoJson: String, handler: SimpleFeature.Consumer<GeomTag>.() -> Unit) {
-        GeoJson.parse<GeomTag>(
-            geoJson,
-            handler
-        )
+        GeoJson.parse<GeomTag>(geoJson, handler)
     }
     @Test
     fun simplePoint() {
@@ -39,14 +36,7 @@ class GeoJsonTest {
     @Test
     fun simpleLineString() {
         val expected = mutableListOf(
-            lineString(
-                p(
-                    30,
-                    10
-                ),
-                p(10, 30),
-                p(40, 40)
-            )
+            lineString(p(30, 10), p(10, 30), p(40, 40))
         )
         val data = """
             |{ "type": "LineString", 
@@ -66,13 +56,7 @@ class GeoJsonTest {
     fun simplePolygon() {
         val expected = mutableListOf(
             polygon(
-                ring(
-                    p(30, 10),
-                    p(40, 40),
-                    p(20, 40),
-                    p(10, 20),
-                    p(30, 10)
-                )
+                ring(p(30, 10), p(40, 40), p(20, 40), p(10, 20), p(30, 10))
             )
         )
         val data = """
@@ -93,25 +77,8 @@ class GeoJsonTest {
     fun polygonWithHole() {
         val expected = mutableListOf(
             polygon(
-                ring(
-                    p(
-                        35,
-                        10
-                    ),
-                    p(45, 45),
-                    p(15, 40),
-                    p(10, 20),
-                    p(35, 10)
-                ),
-                ring(
-                    p(
-                        20,
-                        30
-                    ),
-                    p(35, 35),
-                    p(30, 20),
-                    p(20, 30)
-                )
+                ring(p(35, 10), p(45, 45), p(15, 40), p(10, 20), p(35, 10)),
+                ring(p(20, 30), p(35, 35), p(30, 20), p(20, 30))
             )
         )
         val data = """
@@ -132,15 +99,7 @@ class GeoJsonTest {
     @Test
     fun simpleMultiPoint() {
         val expected = mutableListOf(
-            multiPoint(
-                p(
-                    10,
-                    40
-                ),
-                p(40, 30),
-                p(20, 20),
-                p(30, 10)
-            )
+            multiPoint(p(10, 40), p(40, 30), p(20, 20), p(30, 10))
         )
         val data = """
             |{ "type": "MultiPoint", 
@@ -160,23 +119,8 @@ class GeoJsonTest {
     fun simpleMultiLineString() {
         val expected = mutableListOf(
             multiLineString(
-                lineString(
-                    p(
-                        10,
-                        10
-                    ),
-                    p(20, 20),
-                    p(10, 40)
-                ),
-                lineString(
-                    p(
-                        40,
-                        40
-                    ),
-                    p(30, 30),
-                    p(40, 20),
-                    p(30, 10)
-                )
+                lineString(p(10, 10), p(20, 20), p(10, 40)),
+                lineString(p(40, 40), p(30, 30), p(40, 20), p(30, 10))
             )
         )
         val data = """
@@ -200,27 +144,10 @@ class GeoJsonTest {
         val expected = mutableListOf(
             multiPolygon(
                 polygon(
-                    ring(
-                        p(
-                            30,
-                            20
-                        ),
-                        p(45, 40),
-                        p(10, 40),
-                        p(30, 20)
-                    )
+                    ring(p(30, 20), p(45, 40), p(10, 40), p(30, 20))
                 ),
                 polygon(
-                    ring(
-                        p(
-                            15,
-                            5
-                        ),
-                        p(40, 10),
-                        p(10, 20),
-                        p(5, 10),
-                        p(15, 5)
-                    )
+                    ring(p(15, 5), p(40, 10), p(10, 20), p(5, 10), p(15, 5))
                 )
             )
         )
@@ -249,37 +176,11 @@ class GeoJsonTest {
         val expected = mutableListOf(
             multiPolygon(
                 polygon(
-                    ring(
-                        p(
-                            40,
-                            40
-                        ),
-                        p(20, 45),
-                        p(45, 30),
-                        p(40, 40)
-                    )
+                    ring(p(40, 40), p(20, 45), p(45, 30), p(40, 40))
                 ),
                 polygon(
-                    ring(
-                        p(
-                            20,
-                            35
-                        ),
-                        p(10, 30),
-                        p(10, 10),
-                        p(30, 5),
-                        p(45, 20),
-                        p(20, 35)
-                    ),
-                    ring(
-                        p(
-                            30,
-                            20
-                        ),
-                        p(20, 15),
-                        p(20, 25),
-                        p(30, 20)
-                    )
+                    ring(p(20, 35), p(10, 30), p(10, 10), p(30, 5), p(45, 20), p(20, 35)),
+                    ring(p(30, 20),p(20, 15),p(20, 25),p(30, 20))
                 )
             )
         )
@@ -307,10 +208,7 @@ class GeoJsonTest {
     @Test
     fun simpleGeometryCollection() {
         val expectedPoint = mutableListOf(
-            p(
-                102.0,
-                0.5
-            )
+            p(102.0, 0.5)
         )
         val expectedLineString = mutableListOf(
             lineString(
@@ -322,16 +220,7 @@ class GeoJsonTest {
         )
         val expectedPolygon = mutableListOf(
             polygon(
-                ring(
-                    p(
-                        100.0,
-                        0.0
-                    ),
-                    p(101.0, 0.0),
-                    p(101.0, 1.0),
-                    p(100.0, 1.0),
-                    p(100.0, 0.0)
-                )
+                ring(p(100.0, 0.0), p(101.0, 0.0), p(101.0, 1.0), p(100.0, 1.0), p(100.0, 0.0))
             )
         )
         val data = """
@@ -358,31 +247,14 @@ class GeoJsonTest {
     @Test
     fun simpleFeatureCollection() {
         val expectedPoint = mutableListOf(
-            p(
-                102.0,
-                0.5
-            )
+            p(102.0, 0.5)
         )
         val expectedLineString = mutableListOf(
-            lineString(
-                p(102.0, 0.0),
-                p(103.0, 1.0),
-                p(104.0, 0.0),
-                p(105.0, 1.0)
-            )
+            lineString(p(102.0, 0.0), p(103.0, 1.0), p(104.0, 0.0), p(105.0, 1.0))
         )
         val expectedPolygon = mutableListOf(
             polygon(
-                ring(
-                    p(
-                        100.0,
-                        0.0
-                    ),
-                    p(101.0, 0.0),
-                    p(101.0, 1.0),
-                    p(100.0, 1.0),
-                    p(100.0, 0.0)
-                )
+                ring(p(100.0, 0.0), p(101.0, 0.0), p(101.0, 1.0), p(100.0, 1.0), p(100.0, 0.0))
             )
         )
         val data = """
@@ -434,8 +306,7 @@ class GeoJsonTest {
 
     companion object {
         private fun <T> MutableList<T>.removeOrThrow(v: T) = if (contains(v)) { remove(v) } else { error("Object $v not found") }
-        private fun p(x: Int, y: Int) =
-            p(x.toDouble(), y.toDouble())
+        private fun p(x: Int, y: Int) = p(x.toDouble(), y.toDouble())
         private fun p(x: Double, y: Double) = explicitVec<GeomTag>(x, y)
         private fun lineString(vararg points: Vec<GeomTag>) = LineString<GeomTag>(points.toList())
         private fun ring(vararg points: Vec<GeomTag>) = Ring<GeomTag>(points.toList())

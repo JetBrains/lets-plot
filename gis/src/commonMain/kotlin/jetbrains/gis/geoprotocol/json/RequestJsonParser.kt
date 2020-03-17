@@ -66,11 +66,7 @@ object RequestJsonParser {
                 .forEntries { id, quadKeys ->
                     builder.addFragments(id, stringStreamOf(quadKeys as Arr)
                         .requireNoNulls()
-                        .map {
-                            QuadKey<LonLat>(
-                                it
-                            )
-                        }
+                        .map { QuadKey<LonLat>(it) }
                         .toList()
                     )
                 }

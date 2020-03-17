@@ -31,11 +31,7 @@ class FluentObject : FluentValue {
     fun put(key: String, v: String?) = apply { myObj[key] = v }
     fun put(key: String, v: Number?) = apply { myObj[key] = v }
     fun put(key: String, v: Boolean?) = apply { myObj[key] = v }
-    fun <T : Enum<T>> put(key: String, v: T?) = apply { myObj[key] = v?.let {
-        formatEnum(
-            it
-        )
-    } }
+    fun <T : Enum<T>> put(key: String, v: T?) = apply { myObj[key] = v?.let { formatEnum(it) } }
 
     fun getInt(key: String) = myObj.getNumber(key).toInt()
     fun getDouble(key: String) = myObj.getDouble(key)
@@ -130,12 +126,7 @@ class FluentObject : FluentValue {
     }
 
     fun <T : Enum<T>> forEnums(key: String, processor: (T) -> Unit, enumValues: Array<T>) = apply {
-        getArr(key).forEach { processor(
-            parseEnum(
-                it as String,
-                enumValues
-            )
-        ) }
+        getArr(key).forEach { processor(parseEnum(it as String, enumValues)) }
     }
 
     fun <T : Enum<T>> getOptionalEnum(key: String, processor: (T?) -> Unit, enumValues: Array<T>) = apply {
