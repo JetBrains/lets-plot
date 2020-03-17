@@ -33,3 +33,28 @@ def export_svg(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
         f.write(svg)
 
     return abspath(filename)
+
+
+def export_html(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
+    """
+    Exports plot or `bunch` of plots to file in HTML format.
+
+    Parameters
+    ----------
+    plot: PlotSpec or GGBunch object
+            Plot specification to export.
+    filename: str
+            Filename to save HTML page under.
+     Returns
+    -------
+        Absolute pathname of created HTML file.
+
+    """
+    if not (isinstance(plot, PlotSpec) or isinstance(plot, GGBunch)):
+        raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot)))
+
+    html_page = kbr._generate_static_html_page(plot.as_dict())
+    with io.open(filename, mode="w", encoding="utf-8") as f:
+        f.write(html_page)
+
+    return abspath(filename)

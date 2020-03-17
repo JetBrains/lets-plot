@@ -19,6 +19,11 @@ def _generate_svg(plot_spec: Dict) -> str:
     return lets_plot_kotlin_bridge.export_svg(plot_spec)
 
 
+def _generate_static_html_page(plot_spec: Dict) -> str:
+    plot_spec = _standardize_plot_spec(plot_spec)
+    return lets_plot_kotlin_bridge.export_html(plot_spec)
+
+
 def _standardize_plot_spec(plot_spec: Dict) -> Dict:
     """
     :param plot_spec: dict
