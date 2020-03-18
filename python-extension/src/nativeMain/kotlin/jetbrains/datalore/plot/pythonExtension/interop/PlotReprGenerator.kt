@@ -31,14 +31,14 @@ object PlotReprGenerator {
 
     fun generateStaticHtmlPage(
         plotSpecDict: CPointer<PyObject>?,
-        versionCStr: CPointer<ByteVar>
+        versionCStr: CPointer<ByteVar>,
+        iFrame: Int
     ): CPointer<PyObject>? {
         val plotSpecMap = pyDictToMap(plotSpecDict)
         val version = versionCStr.toKString()
 
-        // ToDo: iFrame
         @Suppress("UNCHECKED_CAST")
-        val html = PlotHtmlExport.buildHtmlFromRawSpecs(plotSpecMap as MutableMap<String, Any>, version)
+        val html = PlotHtmlExport.buildHtmlFromRawSpecs(plotSpecMap as MutableMap<String, Any>, version, iFrame == 1)
         val result = Py_BuildValue("s", html);
         return result
     }
