@@ -140,19 +140,8 @@ class LayerConfig constructor(
             consumedAesSet.addAll(stat.consumes())
         }
 
-        //tooltip
-        val tooltipAes = if (has(TOOLTIP)) ArrayList<Aes<*>>() else null
-        if (tooltipAes != null) {
-            val tooltipList = getStringList(TOOLTIP)
-            if (tooltipList.isNotEmpty()) {
-                for (aes in aesMapping) {
-                    if (tooltipList.contains(aes.key.name)) {
-                        tooltipAes.add(aes.key)
-                    }
-                }
-            }
-        }
-        this.tooltipAes = tooltipAes
+        // tooltip aes list
+        this.tooltipAes = getTooltipAesList(aesMapping)
 
         val varBindings = LayerConfigUtil.createBindings(
             combinedData,
@@ -211,6 +200,28 @@ class LayerConfig constructor(
 
     fun isExplicitGrouping(varName: String): Boolean {
         return explicitGroupingVarName != null && explicitGroupingVarName == varName
+    }
+
+    private fun getTooltipAesList(aesMapping: Map<Aes<*>, DataFrame.Variable>): List<Aes<*>>? {
+        // tooltip list is not defined - will be used default tooltips
+        if (!has(TOOLTIP))
+            return null
+
+        val aesStringList = getStringList(TOOLTIP)
+
+        // check if all elements of list are aes
+        (aesStringList - Aes.values().map { it.name }).firstOrNull {
+            error("${it} is not aes name ")
+        }
+
+        // detach aes
+        val aesList = Aes.values().filter { aesStringList.contains(it.name) }
+
+        // check if aes list matches to mapping
+        if (!aesMapping.keys.containsAll(aesList))
+            error("Aes list does not match to mapping")
+
+        return aesList
     }
 
     private companion object {
