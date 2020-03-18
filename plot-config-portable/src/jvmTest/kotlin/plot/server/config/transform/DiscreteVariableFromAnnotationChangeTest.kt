@@ -20,7 +20,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class DiscreteScaleFromAnnotationChangeTest {
+class DiscreteVariableFromAnnotationChangeTest {
 
     @Test
     fun withoutMetaShouldNotAddScale() {
@@ -33,7 +33,7 @@ class DiscreteScaleFromAnnotationChangeTest {
             )
         }
 
-        DiscreteScaleFromAnnotationChange().apply(plotSpec, dummyCtx)
+        DiscreteVariableFromAnnotationChange().apply(plotSpec, dummyCtx)
         plotSpec.sections(Plot.SCALES).run { assertNull(this) }
     }
 
@@ -55,7 +55,7 @@ class DiscreteScaleFromAnnotationChangeTest {
                 }
             )
         }
-        DiscreteScaleFromAnnotationChange().apply(plotSpec, dummyCtx)
+        DiscreteVariableFromAnnotationChange().apply(plotSpec, dummyCtx)
 
         plotSpec.sections(Plot.SCALES)!![0].run {
             read(Option.Scale.AES).run { assertEquals(toOption(Aes.COLOR), this) }
@@ -88,7 +88,7 @@ class DiscreteScaleFromAnnotationChangeTest {
                 }
             )
         }
-        DiscreteScaleFromAnnotationChange().apply(plotSpec, dummyCtx)
+        DiscreteVariableFromAnnotationChange().apply(plotSpec, dummyCtx)
 
         with(plotSpec.sections(Plot.SCALES)!![0]) {
             read(Option.Scale.AES).run { assertEquals(toOption(Aes.ALPHA), this) }

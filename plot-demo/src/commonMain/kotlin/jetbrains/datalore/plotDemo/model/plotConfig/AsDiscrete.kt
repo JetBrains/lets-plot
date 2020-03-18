@@ -8,21 +8,61 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class Factor : PlotConfigDemoBase() {
+class AsDiscrete : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             //dataInMapping()
-            fillFactor()
-            ,fillAndColorFactor()
-            ,fillFactorWithScaleColor()
+//            fillFactor()
+//            ,fillAndColorFactor()
+//            ,fillFactorWithScaleColor(),
+            discreteGroup()
         )
     }
 
-    private val data = """{"x": [0, 5, 10], "y": [0, 5, 10], "a": [1, 2, 4], "b": [5, 6, 7]}"""
+    private val data = """{
+        |"x": [0, 5, 10, 15], 
+        |"y": [0, 5, 10, 15], 
+        |"a": [1, 2, 4, 6], 
+        |"b": [10, 11, 12, 13], 
+        |"c": ["a", "a", "b", "b"], 
+        |"g": [0, 0, 1, 1]
+|}""".trimMargin()
+
+    private fun discreteGroup(): Map<String, Any> {
+        val spec = """
+            {
+              "data": $data,
+              "mapping": {
+                "x": "x",
+                "y": "y"
+              },
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "line",
+                  "mapping": {
+                    "color": "g"
+                  },
+                  "data_meta": {
+                    "series_annotation": [
+                      {
+                        "variable": "g",
+                        "annotation": "discrete"
+                      }
+                    ]
+                  },
+                  "size": 3
+                }
+              ]
+            }
+        """.trimIndent()
+        return parsePlotSpec(spec)
+    }
+
     private fun dataInMapping(): Map<String, Any> {
         val spec = """
 {
-    "ggtitle": { "text": "geom_point(aes(x=[0, 5, 10], y=[0, 5, 10], color=factor([1, 2, 4]))"}, 
+    "ggtitle": { "text": "geom_point(aes(x=[0, 5, 10], y=[0, 5, 10], color=as_discrete([1, 2, 4]))"}, 
     "kind": "plot", 
     "layers": [{
         "geom": "point", 
@@ -39,7 +79,7 @@ class Factor : PlotConfigDemoBase() {
 
         val spec = """
 {
-    "ggtitle": { "text": "... fill=factor('a') ..."}, 
+    "ggtitle": { "text": "... fill=as_discrete(a) ..."}, 
     "data": $data, 
     "mapping": {"x": "x", "y": "y"}, 
     "kind": "plot", 
@@ -59,11 +99,11 @@ class Factor : PlotConfigDemoBase() {
 
         val spec = """
 {
-    "ggtitle": { "text": "... fill=factor('a'), scale_color_discrete() ..."}, 
+    "ggtitle": { "text": "... fill=as_discrete(a), scale_color_discrete() ..."}, 
     "data": $data, 
     "mapping": {"x": "x", "y": "y"}, 
     "kind": "plot", 
-    "scales": [{"aesthetic": "color", "discrete": True}],
+    "scales": [{"aesthetic": "color", "discrete": true}],
     "layers": [{
         "geom": "point", 
         "mapping": {"fill": "a", "color": "b"}, 
@@ -80,7 +120,7 @@ class Factor : PlotConfigDemoBase() {
 
         val spec = """
 {
-    "ggtitle": { "text": "... fill=factor('a'), color=factor('b') ..."}, 
+    "ggtitle": { "text": "... fill=as_discrete(a), color=as_discrete(b) ..."}, 
     "data": $data, 
     "mapping": {"x": "x", "y": "y"}, 
     "kind": "plot", 

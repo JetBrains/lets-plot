@@ -14,7 +14,7 @@ class VariableMeta:
         self.kind = kind
 
 
-def factor(var_name):
+def as_discrete(var_name):
     """
     Marks a numeric variable as categorical.
 
@@ -41,7 +41,7 @@ def factor(var_name):
     >>>       'y': [0, 5, 10, 15],
     >>>       'a': [1, 2, 3, 2]
     >>> }
-    >>> ggplot(df, aes(x='x', y='y')) + geom_point(aes(color=pm.factor('a')), size=9)
+    >>> ggplot(df, aes(x='x', y='y')) + geom_point(aes(color=pm.as_discrete('a')), size=9)
     """
     if isinstance(var_name, str):
         return VariableMeta(var_name, 'discrete')

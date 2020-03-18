@@ -7,18 +7,18 @@ package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plotDemo.model.plotConfig.Factor
+import jetbrains.datalore.plotDemo.model.plotConfig.AsDiscrete
 import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
 
-object FactorJfx {
+object AsDiscreteJfx {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(Factor()) {
+        with(AsDiscrete()) {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             @Suppress("SpellCheckingInspection")
             PlotConfigDemoUtil.show(
-                "Factor",
+                "as_discrete",
                 plotSpecList,
                 SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET),
                 DoubleVector(600.0, 300.0)
