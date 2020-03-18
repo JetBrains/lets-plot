@@ -6,7 +6,9 @@ import jetbrains.datalore.plot.PlotHtmlExport
 import jetbrains.datalore.plot.PlotHtmlHelper
 import jetbrains.datalore.plot.PlotSvgExportPortable
 import jetbrains.datalore.plot.pythonExtension.interop.TypeUtils.pyDictToMap
+import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.toKString
 
 object PlotReprGenerator {
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
@@ -27,13 +29,16 @@ object PlotReprGenerator {
         return result
     }
 
-    fun generateStaticHtmlPage(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
+    fun generateStaticHtmlPage(
+        plotSpecDict: CPointer<PyObject>?,
+        versionCStr: CPointer<ByteVar>
+    ): CPointer<PyObject>? {
         val plotSpecMap = pyDictToMap(plotSpecDict)
+        val version = versionCStr.toKString()
 
-        // ToDo: version
         // ToDo: iFrame
         @Suppress("UNCHECKED_CAST")
-        val html = PlotHtmlExport.buildHtmlFromRawSpecs(plotSpecMap as MutableMap<String, Any>)
+        val html = PlotHtmlExport.buildHtmlFromRawSpecs(plotSpecMap as MutableMap<String, Any>, version)
         val result = Py_BuildValue("s", html);
         return result
     }

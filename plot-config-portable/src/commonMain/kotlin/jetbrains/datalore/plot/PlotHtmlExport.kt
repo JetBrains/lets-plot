@@ -33,7 +33,7 @@ object PlotHtmlExport {
         val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(PlotHtmlHelper.scriptUrl(version))
         val displayHtml = PlotHtmlHelper.getStaticDisplayHtmlForRawSpec(plotSpec, plotSize)
 
-        val html = """
+        return """
             |<html lang="en">
             |   <head>
             |       $configureHtml
@@ -43,7 +43,5 @@ object PlotHtmlExport {
             |   </body>
             |</html>
         """.trimMargin()
-
-        return html
     }
 }

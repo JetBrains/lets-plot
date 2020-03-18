@@ -6,6 +6,8 @@ from os.path import abspath
 from typing import Union
 
 from .. import _kbridge as kbr
+from .._global_settings import _is_production
+from .._version import __version__
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
 
@@ -53,7 +55,8 @@ def export_html(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
     if not (isinstance(plot, PlotSpec) or isinstance(plot, GGBunch)):
         raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot)))
 
-    html_page = kbr._generate_static_html_page(plot.as_dict())
+    version = __version__ if _is_production() else "latest"
+    html_page = kbr._generate_static_html_page(plot.as_dict(), version)
     with io.open(filename, mode="w", encoding="utf-8") as f:
         f.write(html_page)
 
