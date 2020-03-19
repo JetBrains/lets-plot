@@ -161,6 +161,10 @@ private fun buildPlotSvg(
     eventTarget: Element
 ): SVGSVGElement {
 
+    eventTarget.addEventListener(DomEventType.MOUSE_DOWN.name, { e: Event ->
+        e.preventDefault()
+    })
+
     eventTarget.addEventListener(DomEventType.MOUSE_MOVE.name, { e: Event ->
         plotContainer.mouseEventPeer.dispatch(
             MouseEventSpec.MOUSE_MOVED,
