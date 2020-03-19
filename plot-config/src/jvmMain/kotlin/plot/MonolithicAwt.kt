@@ -10,14 +10,6 @@ import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
-import jetbrains.datalore.vis.svgToString.SvgToString
-import mu.KotlinLogging
-import java.awt.Color
-import java.awt.Dimension
-import java.awt.Rectangle
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.JComponent
 
 
@@ -45,19 +37,20 @@ class MonolithicAwt(
          * Static SVG export
          */
         @Deprecated(
-        level = DeprecationLevel.ERROR,
-        message = "was replaced with PlotSvgExport.buildSvgImageFromRawSpecs",
-        replaceWith = ReplaceWith(
-            expression = "PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, plotSize)",
-            imports = ["jetbrains.datalore.plot.PlotSvgExport"]
+            level = DeprecationLevel.ERROR,
+            message = "was replaced with PlotSvgExport.buildSvgImageFromRawSpecs",
+            replaceWith = ReplaceWith(
+                expression = "PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, plotSize)",
+                imports = ["jetbrains.datalore.plot.PlotSvgExport"]
+            )
         )
-    )fun buildSvgImagesFromRawSpecs(
+
+        fun buildSvgImagesFromRawSpecs(
             plotSpec: MutableMap<String, Any>,
             plotSize: DoubleVector?,
             computationMessagesHandler: ((List<String>) -> Unit)
         ): List<String> {
-            UNSUPPORTED("was replaced with PlotSvgExport.buildSvgImageFromRawSpecs"
-            )
+            UNSUPPORTED("was replaced with PlotSvgExport.buildSvgImageFromRawSpecs")
         }
     }
 }
