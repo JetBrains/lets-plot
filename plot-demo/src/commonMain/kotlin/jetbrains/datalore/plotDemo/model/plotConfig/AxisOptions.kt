@@ -15,6 +15,8 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
             defaultAxis(),
             noXTitle(),
             noYTitle(),
+            noXTooltip(),
+            noYTooltip(),
             noXTickLabels(),
             noYTickLabels(),
             noTickMarks(),
@@ -96,6 +98,40 @@ open class AxisOptions : PlotConfigDemoBase(DoubleVector(300.0, 200.0)) {
                     "    'theme': {" +
                     "                'axis_title_y': {'name': 'blank'}" +  // element_blank()
 
+                    "             }" +
+                    "}"
+
+            val plotSpec = HashMap(parsePlotSpec(spec))
+            plotSpec["data"] = data()
+            return plotSpec
+        }
+
+        fun noXTooltip(): Map<String, Any> {
+            val spec = "{" +
+                    "   'kind': 'plot'," +
+                    layerMapping() +
+                    "," +
+                    title("No X tooltip") +
+                    "," +
+                    "    'theme': {" +
+                    "                'axis_tooltip_x': {'name': 'blank'}" +
+                    "             }" +
+                    "}"
+
+            val plotSpec = HashMap(parsePlotSpec(spec))
+            plotSpec["data"] = data()
+            return plotSpec
+        }
+
+        fun noYTooltip(): Map<String, Any> {
+            val spec = "{" +
+                    "   'kind': 'plot'," +
+                    layerMapping() +
+                    "," +
+                    title("No Y tooltip") +
+                    "," +
+                    "    'theme': {" +
+                    "                'axis_tooltip_y': {'name': 'blank'}" +
                     "             }" +
                     "}"
 

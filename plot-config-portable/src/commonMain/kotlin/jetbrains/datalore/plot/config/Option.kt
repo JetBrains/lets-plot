@@ -275,6 +275,7 @@ object Option {
         const val AXIS_LINE = "axis_line"
         const val AXIS_TICKS = "axis_ticks"
         const val AXIS_TEXT = "axis_text"
+        const val AXIS_TOOLTIP = "axis_tooltip"
         // tick labels
         const val AXIS_TITLE = "axis_title"
         const val LEGEND_POSITION = "legend_position"

@@ -14,6 +14,8 @@ interface AxisTheme {
 
     fun showTitle(): Boolean
 
+    fun showTooltip(): Boolean
+
     fun lineWidth(): Double
 
     fun tickMarkWidth(): Double

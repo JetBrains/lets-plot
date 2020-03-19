@@ -24,6 +24,10 @@ class DefaultAxisTheme : AxisTheme {
         return true
     }
 
+    override fun showTooltip(): Boolean {
+        return true
+    }
+
     override fun lineWidth(): Double {
         return Plot.Axis.LINE_WIDTH
     }

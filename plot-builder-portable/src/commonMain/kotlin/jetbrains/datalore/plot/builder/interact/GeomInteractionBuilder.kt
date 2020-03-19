@@ -21,7 +21,13 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     private var hiddenAes: List<Aes<*>>? = null
 
     val axisAes: List<Aes<*>>
-        get() = myAxisAesFromConfig ?: myAxisAesFromFunctionKind ?: ArrayList()
+        get() {
+            val aesList = when {
+                !isAxisTooltipEnabled -> emptyList()
+                else -> (myAxisAesFromConfig ?: myAxisAesFromFunctionKind ?: emptyList())
+            }
+            return aesList - hiddenAes.orEmpty()
+        }
 
     val displayableAes: List<Aes<*>>
         get() = mySupportedAesList - myAxisAesFromFunctionKind.orEmpty() - hiddenAes.orEmpty()
@@ -39,6 +45,11 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
 
     fun hideAes(aes: List<Aes<*>>): GeomInteractionBuilder {
         hiddenAes = aes
+        return this
+    }
+
+    fun addHiddenAes(aes: List<Aes<*>>): GeomInteractionBuilder {
+        hiddenAes = hiddenAes.orEmpty() + aes
         return this
     }
 

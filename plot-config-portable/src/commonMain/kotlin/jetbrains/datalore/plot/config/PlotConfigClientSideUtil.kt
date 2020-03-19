@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.AREA_GEOM
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.NON_AREA_GEOM
+import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot
 
 object PlotConfigClientSideUtil {
@@ -62,7 +63,7 @@ object PlotConfigClientSideUtil {
         return DoubleVector(width, height)
     }
 
-    private fun buildPlotLayers(cfg: PlotConfig): List<List<GeomLayer>> {
+    private fun buildPlotLayers(cfg: PlotConfigClientSide): List<List<GeomLayer>> {
         val dataByLayer = ArrayList<DataFrame>()
         for (layerConfig in cfg.layerConfigs) {
             val layerData = layerConfig.combinedData
@@ -86,7 +87,7 @@ object PlotConfigClientSideUtil {
                 if (layerBuilders.size == layerIndex) {
                     val layerConfig = cfg.layerConfigs[layerIndex]
                     val layerBuilder = createLayerBuilder(layerConfig, scaleProvidersMap)
-                    configGeomTargets(layerBuilder, layerConfig, isMultilayer)
+                    configGeomTargets(layerBuilder, layerConfig, isMultilayer, cfg.theme)
                     layerBuilders.add(layerBuilder)
                 }
 
@@ -103,18 +104,21 @@ object PlotConfigClientSideUtil {
     private fun configGeomTargets(
         layerBuilder: GeomLayerBuilder,
         layerConfig: LayerConfig,
-        multilayer: Boolean
+        multilayer: Boolean,
+        theme: Theme
     ) {
-//        val geomProvider = layerConfig.geomProvider
+        val axisWithoutTooltip = ArrayList<Aes<*>>()
+        if (!theme.axisX().showTooltip()) axisWithoutTooltip.add(Aes.X)
+        if (!theme.axisY().showTooltip()) axisWithoutTooltip.add(Aes.Y)
 
         val geomInteraction = createGeomInteractionBuilder(
-//            geomProvider.renders(),
             layerConfig.geomProto.renders(),
-//            geomProvider.geomKind,
             layerConfig.geomProto.geomKind,
             layerConfig.statKind,
             multilayer
-        ).build()
+        )
+            .addHiddenAes(axisWithoutTooltip)
+            .build()
 
         layerBuilder
             .locatorLookupSpec(geomInteraction.createLookupSpec())
