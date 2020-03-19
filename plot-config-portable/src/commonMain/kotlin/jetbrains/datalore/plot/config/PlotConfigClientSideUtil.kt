@@ -118,6 +118,7 @@ object PlotConfigClientSideUtil {
             multilayer
         )
             .addHiddenAes(axisWithoutTooltip)
+            .tooltipAes(layerConfig.tooltipAes)
             .build()
 
         layerBuilder

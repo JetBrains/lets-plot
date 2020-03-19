@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAPPING
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
+import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP
 
 class LayerConfig constructor(
     layerOptions: Map<*, *>,
@@ -44,6 +45,7 @@ class LayerConfig constructor(
     val constantsMap: Map<Aes<*>, Any>
     val statKind: StatKind
     private val mySamplings: List<Sampling>?
+    val tooltipAes: List<Aes<*>>?
 
     var ownData: DataFrame? = null
         private set
@@ -138,6 +140,9 @@ class LayerConfig constructor(
             consumedAesSet.addAll(stat.consumes())
         }
 
+        // tooltip aes list
+        this.tooltipAes = getTooltipAesList(aesMapping)
+
         val varBindings = LayerConfigUtil.createBindings(
             combinedData,
             aesMapping,
@@ -195,6 +200,28 @@ class LayerConfig constructor(
 
     fun isExplicitGrouping(varName: String): Boolean {
         return explicitGroupingVarName != null && explicitGroupingVarName == varName
+    }
+
+    private fun getTooltipAesList(aesMapping: Map<Aes<*>, DataFrame.Variable>): List<Aes<*>>? {
+        // tooltip list is not defined - will be used default tooltips
+        if (!has(TOOLTIP))
+            return null
+
+        val aesStringList = getStringList(TOOLTIP)
+
+        // check if all elements of list are aes
+        (aesStringList - Aes.values().map { it.name }).firstOrNull {
+            error("${it} is not aes name ")
+        }
+
+        // detach aes
+        val aesList = Aes.values().filter { aesStringList.contains(it.name) }
+
+        // check if aes list matches to mapping
+        if (!aesMapping.keys.containsAll(aesList))
+            error("Aes list does not match to mapping")
+
+        return aesList
     }
 
     private companion object {

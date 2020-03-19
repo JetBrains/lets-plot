@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -57,6 +58,18 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
+    fun haveTooltipAesList(expectedAesList : List<Aes<*>>?): SingleLayerAssert {
+        if (expectedAesList != null) {
+            assertTooltipAesListCount(expectedAesList.size)
+            for (aes in expectedAesList)
+                assertAesTooltip(aes)
+        }
+        else {
+            assertNull(myLayer.tooltipAes)
+        }
+        return this
+    }
+
     internal fun haveMapVectors(expectedMapVectors: Map<String, List<*>>): SingleLayerAssert {
         Assertions.assertThat(expectedMapVectors).isEqualTo(myLayer[GEO_POSITIONS])
         return this
@@ -91,6 +104,14 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         }
 
         fail("No binding $aes -> $varName")
+    }
+
+    private fun assertAesTooltip(aes: Aes<*>) {
+        myLayer.tooltipAes?.contains(aes)?.let { assertTrue(it, "No tooltip for '${aes.name}' aes") }
+    }
+
+    private fun assertTooltipAesListCount(expectedCount: Int) {
+        assertEquals(expectedCount, myLayer.tooltipAes?.size, "Wrong size of tooltip aes list")
     }
 
     companion object {
