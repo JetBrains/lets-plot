@@ -14,7 +14,7 @@ from ..plot.plot import GGBunch
 
 def export_svg(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
     """
-    Exports plot or `bunch` of plots to file in SVG format.
+    Exports plot or `bunch` to a file in SVG format.
     
     Parameters
     ----------
@@ -39,7 +39,7 @@ def export_svg(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
 
 def export_html(plot: Union[PlotSpec, GGBunch], filename: str, iframe: bool = False) -> str:
     """
-    Exports plot or `bunch` of plots to file in HTML format.
+    Exports plot or `bunch` to a file in HTML format.
 
     Parameters
     ----------

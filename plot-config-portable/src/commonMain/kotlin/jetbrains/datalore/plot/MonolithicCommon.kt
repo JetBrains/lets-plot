@@ -19,12 +19,6 @@ import jetbrains.datalore.vis.svgToString.SvgToString
 
 
 object MonolithicCommon {
-    private const val ASPECT_RATIO = 3.0 / 2.0   // TODO: theme
-    private const val DEF_PLOT_WIDTH = 500.0
-    private const val DEF_LIVE_MAP_WIDTH = 800.0
-    private val DEF_PLOT_SIZE = DoubleVector(DEF_PLOT_WIDTH, DEF_PLOT_WIDTH / ASPECT_RATIO)
-    private val DEF_LIVE_MAP_SIZE = DoubleVector(DEF_LIVE_MAP_WIDTH, DEF_LIVE_MAP_WIDTH / ASPECT_RATIO)
-
 
     /**
      * Static SVG export
@@ -99,17 +93,10 @@ object MonolithicCommon {
         val buildInfos = ArrayList<PlotBuildInfo>()
         for (bunchItem in bunchConfig.bunchItems) {
             val plotSpec = bunchItem.featureSpec as MutableMap<String, Any>
-
-            val plotSize = if (bunchItem.hasSize()) {
-                bunchItem.size
-            } else {
-                PlotConfigClientSideUtil.getPlotSizeOrNull(plotSpec) ?: DEF_PLOT_SIZE
-            }
-
             var buildInfo =
                 buildSinglePlotFromProcessedSpecs(
                     plotSpec,
-                    plotSize
+                    PlotSizeHelper.bunchItemSize(bunchItem)
                 )
 
             buildInfo = PlotBuildInfo(
@@ -136,21 +123,10 @@ object MonolithicCommon {
             computationMessages.addAll(it)
         }
 
-        // Figure out the plot size
-        @Suppress("NAME_SHADOWING")
-        val plotSize =
-            if (plotSize != null) {
-                plotSize
-            } else {
-                var plotSizeSpec = PlotConfigClientSideUtil.getPlotSizeOrNull(plotSpec)
-                if (plotSizeSpec != null) {
-                    plotSizeSpec
-                } else {
-                    defaultPlotSize(assembler)
-                }
-            }
+        val preferredSize = ValueProperty(
+            PlotSizeHelper.singlePlotSize(plotSpec, plotSize, assembler.facets, assembler.containsLiveMap)
+        )
 
-        val preferredSize = ValueProperty(plotSize)
         return PlotBuildInfo(
             assembler,
             plotSpec,
@@ -160,7 +136,7 @@ object MonolithicCommon {
         )
     }
 
-    private fun createPlotAssembler(
+    internal fun createPlotAssembler(
         plotSpec: MutableMap<String, Any>,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): PlotAssembler {
@@ -173,23 +149,6 @@ object MonolithicCommon {
         return PlotConfigClientSideUtil.createPlotAssembler(plotSpec)
     }
 
-    private fun defaultPlotSize(assembler: PlotAssembler): DoubleVector {
-        var plotSize = DEF_PLOT_SIZE
-        val facets = assembler.facets
-        if (facets.isDefined) {
-            val xLevels = facets.xLevels!!
-            val yLevels = facets.yLevels!!
-            val columns = if (xLevels.isEmpty()) 1 else xLevels.size
-            val rows = if (yLevels.isEmpty()) 1 else yLevels.size
-            val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / columns)
-            val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / rows)
-            plotSize = DoubleVector(panelWidth * columns, panelHeight * rows)
-        } else if (assembler.containsLiveMap) {
-            plotSize = DEF_LIVE_MAP_SIZE
-        }
-        return plotSize
-    }
-
     private fun throwTestingErrors() {
         // testing errors
 //        throw RuntimeException()
@@ -200,7 +159,7 @@ object MonolithicCommon {
     }
 
     @Suppress("DuplicatedCode")
-    private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
+    internal fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             return plotSpec

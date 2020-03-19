@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
@@ -20,7 +19,6 @@ import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.AREA_GEOM
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.NON_AREA_GEOM
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.plot.config.Option.Plot
 
 object PlotConfigClientSideUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -47,20 +45,6 @@ object PlotConfigClientSideUtil {
         assembler.setGuideOptionsMap(config.guideOptionsMap)
         assembler.facets = config.facets
         return assembler
-    }
-
-    fun getPlotSizeOrNull(opts: Map<String, Any>): DoubleVector? {
-        if (!opts.containsKey(Plot.SIZE)) {
-            return null
-        }
-        val map = OptionsAccessor.over(opts).getMap(Plot.SIZE)
-        val sizeSpec = OptionsAccessor.over(map)
-        val width = sizeSpec.getDouble("width")
-        val height = sizeSpec.getDouble("height")
-        if (width == null || height == null) {
-            return null
-        }
-        return DoubleVector(width, height)
     }
 
     private fun buildPlotLayers(cfg: PlotConfigClientSide): List<List<GeomLayer>> {
@@ -141,7 +125,7 @@ object PlotConfigClientSideUtil {
 
         val constantAesMap = layerConfig.constantsMap
         for (aes in constantAesMap.keys) {
-            @Suppress("UNCHECKED_CAST")
+            @Suppress("UNCHECKED_CAST", "MapGetWithNotNullAssertionOperator")
             layerBuilder.addConstantAes(aes as Aes<Any>, constantAesMap[aes]!!)
         }
 
@@ -250,7 +234,8 @@ object PlotConfigClientSideUtil {
             GeomKind.POLYGON,
             GeomKind.BIN_2D,
             GeomKind.MAP -> return builder.bivariateFunction(AREA_GEOM)
-            GeomKind.RECT -> return builder.bivariateFunction(AREA_GEOM).hideAes(listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX))
+            GeomKind.RECT -> return builder.bivariateFunction(AREA_GEOM)
+                .hideAes(listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX))
 
             GeomKind.LIVE_MAP -> return builder.multilayerLookupStrategy()
 

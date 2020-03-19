@@ -6,6 +6,8 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.config.PlotConfig
+import kotlin.math.round
 
 object PlotHtmlExport {
     /**
@@ -39,9 +41,14 @@ object PlotHtmlExport {
         val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(PlotHtmlHelper.scriptUrl(version))
         val displayHtml = PlotHtmlHelper.getStaticDisplayHtmlForRawSpec(plotSpec, plotSize)
 
+        val style = if (iFrame) {
+            "\n       <style> html, body { margin: 0; overflow: hidden; } </style>"
+        } else {
+            ""
+        }
         val html = """
             |<html lang="en">
-            |   <head>
+            |   <head>$style
             |       $configureHtml
             |   </head>
             |   <body>
@@ -51,8 +58,18 @@ object PlotHtmlExport {
         """.trimMargin()
 
         return if (iFrame) {
+            val attributes = ArrayList<String>()
+            attributes.add("src='about:blank'")
+            attributes.add("style='border:none !important;'")
+            val preferredSize = preferredPlotSize(plotSpec, plotSize)
+            if (preferredSize != null) {
+                attributes.add("width='${round(preferredSize.x + 0.5).toInt()}'")
+                attributes.add("height='${round(preferredSize.y + 0.5).toInt()}'")
+            }
+            attributes.add("srcdoc=\"${escapeHtmlAttr(html)}\"")
+
             """
-            <iframe srcdoc="${escapeHtmlAttr(html)}"></iframe>    
+            <iframe ${attributes.joinToString(" ")}></iframe>    
             """.trimIndent()
         } else {
             html
@@ -64,5 +81,33 @@ object PlotHtmlExport {
             .replace("&", "&amp;")
             .replace("<", "&lt;")
             .replace("\"", "&quot;")
+    }
+
+    private fun preferredPlotSize(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector?
+    ): DoubleVector? {
+        try {
+            @Suppress("NAME_SHADOWING")
+            val plotSpec = MonolithicCommon.processSpecs(plotSpec, frontendOnly = false)
+            if (PlotConfig.isFailure(plotSpec)) {
+                return null
+            }
+
+            return when {
+                PlotConfig.isPlotSpec(plotSpec) -> {
+                    val assembler = MonolithicCommon.createPlotAssembler(plotSpec) {
+                        // ignore messages
+                    }
+                    PlotSizeHelper.singlePlotSize(plotSpec, plotSize, assembler.facets, assembler.containsLiveMap)
+                }
+                PlotConfig.isGGBunchSpec(plotSpec) -> {
+                    PlotSizeHelper.plotBunchSize(PlotSizeHelper.bunchItemBoundsList(plotSpec))
+                }
+                else -> null
+            }
+        } catch (e: RuntimeException) {
+            return null
+        }
     }
 }
