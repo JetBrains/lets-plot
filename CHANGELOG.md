@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Python 3.6 support.
  - Windows platform support.
  - factor() function.
- - tooltip for geom_rect
+ - tooltip for geom_rect.
+ - export SVG/HTML to file. 
  
  ### Fixed
  - error if data contains NaT value.
