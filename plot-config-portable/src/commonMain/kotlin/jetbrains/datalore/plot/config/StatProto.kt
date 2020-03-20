@@ -132,6 +132,7 @@ class StatProto {
         //  n (80) - number of points to evaluate smoother at
         //  se (TRUE ) - display confidence interval around smooth?
         //  level (0.95) - level of confidence interval to use
+        //  deg ( >= 1 ) - degree of polynomial for regression
         val stat = Stats.smooth()
 
         if (options.containsKey("n")) {
@@ -162,6 +163,10 @@ class StatProto {
         }
 
         options["span"]?.let { stat.span = it.asDouble() }
+
+        if ( options.containsKey("deg")) {
+            stat.deg = (options["deg"] as Number).toInt()
+        }
 
         return stat
     }

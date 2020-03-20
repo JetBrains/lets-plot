@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.stat.regression
 
 import jetbrains.datalore.plot.base.stat.math3.Percentile
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.random.Random
 
 internal object RegressionUtil {
@@ -42,4 +43,54 @@ internal object RegressionUtil {
     fun percentile(data: List<Double>, p: Double): Double {
         return Percentile.evaluate(data.toDoubleArray(), p * 100)
     }
+}
+
+fun allFinite( xs : List<Double?>, ys : List<Double? >) : Pair<DoubleArray, DoubleArray >  {
+    var tx = ArrayList<Double>()
+    var ty = ArrayList<Double>()
+
+    for ( p in xs.asSequence().zip(ys.asSequence() )) {
+        if (  SeriesUtil.allFinite(p)  ) {
+            tx.add(p.first!!)
+            ty.add(p.second!!)
+        }
+    }
+
+    return Pair( tx.toDoubleArray(), ty.toDoubleArray() )
+}
+
+fun allFiniteUnique( xs : List<Double?>, ys : List<Double? >) : Pair<DoubleArray, DoubleArray >  {
+    val tp = ArrayList<Pair<Double,Double>>()
+
+    for ( p in xs.asSequence().zip(ys.asSequence() )) {
+        if (  SeriesUtil.allFinite(p)  ) {
+            tp.add( Pair( p.first!!, p.second!! ))
+        }
+    }
+
+    tp.sortBy { it.first }
+
+    if ( tp.isEmpty() )
+        return Pair( DoubleArray(0), DoubleArray(0) )
+
+    var tx = ArrayList<Double>()
+    var ty = ArrayList<Double>()
+    var prev_x = tp.first().first
+    var prev_ys = arrayListOf (tp.first().second )
+
+    for ( p in tp.subList(1, tp.size) ) {
+        if ( p.first != prev_x ) {
+            tx.add(prev_x)
+            ty.add( prev_ys.average() )
+            prev_x = p.first
+            prev_ys.clear()
+        }
+
+        prev_ys.add( p.second )
+    }
+
+    tx.add(prev_x)
+    ty.add( prev_ys.average() )
+
+    return Pair(tx.toDoubleArray(),ty.toDoubleArray())
 }
