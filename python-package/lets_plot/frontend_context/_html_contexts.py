@@ -16,14 +16,18 @@ def _create_html_frontend_context(isolated_frame: bool = None, offline: bool = N
     :return:
     """
     if isolated_frame is None:
-        # ToDo: check env var first
-
-        isolated_frame = _detect_isolated_frame()
+        isolated_frame = _use_isolated_frame()
 
     if isolated_frame:
         return StaticHtmlPageContext(offline)
     else:
         return JupyterNotebookContext(offline)
+
+
+def _use_isolated_frame() -> bool:
+    # ToDo: check env var first
+
+    return _detect_isolated_frame()
 
 
 def _detect_isolated_frame() -> bool:

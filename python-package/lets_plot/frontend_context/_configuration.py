@@ -5,7 +5,7 @@
 from typing import Dict, Any
 
 from ._frontend_ctx import FrontendContext
-from ._html_contexts import _create_html_frontend_context
+from ._html_contexts import _create_html_frontend_context, _use_isolated_frame
 from .._global_settings import _get_global_bool
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
@@ -84,14 +84,20 @@ def _display_plot(plot_spec: Any):
 
 def _as_html(plot_spec: Dict) -> str:
     """
+    Creates plot HTML using 'html' frontend context.
+
     :param plot_spec: dict
     """
     if 'html' not in _frontend_contexts:
-        return """\
-            <div style="color:darkred;">
-                Lets-plot `html` is not configured.<br> 
-                Try to use `LetsPlot.setup_html()` before first occurrence of plot.
-            </div>    
-            """
+        if _use_isolated_frame():
+            # 'Isolated' HTML context can be setup lazily.
+            _setup_html_context(isolated_frame=True, offline=False)
+        else:
+            return """\
+                <div style="color:darkred;">
+                    Lets-plot `html` is not configured.<br> 
+                    Try to use `LetsPlot.setup_html()` before first occurrence of plot.
+                </div>    
+                """
 
     return _frontend_contexts['html'].as_str(plot_spec)
