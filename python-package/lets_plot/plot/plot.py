@@ -175,12 +175,12 @@ class GGBunch(FeatureSpec):
         """
         Special method discovered and invoked by IPython.display.display
         """
-        from ..frontend_context.frontend_context import _as_html
+        from ..frontend_context._configuration import _as_html
         return _as_html(self.as_dict())
 
     def show(self):
         """
         Draw all plots currently in this 'bunch'
         """
-        from ..frontend_context.frontend_context import _display_plot
+        from ..frontend_context._configuration import _display_plot
         _display_plot(self)

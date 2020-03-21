@@ -14,4 +14,21 @@ from .frontend_context import *
 
 __all__ = (plot.__all__ +
            frontend_context.__all__ +
-           ['LetsPlotSettings'])
+           ['LetsPlotSettings', 'LetsPlot'])
+
+from .frontend_context import _configuration as cfg
+
+class LetsPlot:
+    @classmethod
+    def setup_html(cls, isolated_frame: bool = None, offline: bool = None) -> None:
+        """
+        Configure HTML frontend context
+        :param settings:
+        :return:
+        """
+        if not (isinstance(isolated_frame, bool) or isolated_frame is None):
+            raise ValueError("'isolated' argument is not boolean: {}".format(type(isolated_frame)))
+        if not (isinstance(offline, bool) or offline is None):
+            raise ValueError("'offline' argument is not boolean: {}".format(type(offline)))
+
+        cfg._setup_html_context(isolated_frame, offline)

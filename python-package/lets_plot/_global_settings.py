@@ -22,15 +22,6 @@ class LetsPlotSettings:
     def apply(cls, settings: Dict):
         _settings.update(settings)
 
-    # @classmethod
-    # def init_frontend(cls, settings=None):
-    #     if settings is None:
-    #         settings = {}
-    #
-    #     LetsPlotSettings.apply(settings)
-    #     # ToDo: inject js to the notebook
-    #     raise NotImplementedError
-
 
 def _is_production() -> bool:
     return 'dev' not in __version__

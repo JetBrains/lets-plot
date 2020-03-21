@@ -11,23 +11,17 @@ from typing import Dict
 # noinspection PyPackageRequirements
 from IPython.display import display_html
 
-from .frontend_context import FrontendContext
-from .._global_settings import _get_global_str, _has_global_value, _is_production
+from ._frontend_ctx import FrontendContext
 from .. import _kbridge as kbr
+from .._global_settings import _get_global_str, _has_global_value, _is_production
 from .._version import __version__
 
 
 class JupyterNotebookContext(FrontendContext):
 
-    def __init__(self, connected: bool) -> None:
+    def __init__(self, offline: bool) -> None:
         super().__init__()
-        self.connected = connected
-
-    def as_str(self, plot_spec: Dict) -> str:
-        return kbr._generate_dynamic_display_html(plot_spec)
-
-    def _undef_modules_script(self) -> str:
-        pass
+        self.connected = not offline
 
     def configure(self, verbose: bool):
         if self.connected:
@@ -36,6 +30,9 @@ class JupyterNotebookContext(FrontendContext):
         else:
             # noinspection PyTypeChecker
             display_html(self._configure_embedded_script(verbose), raw=True)
+
+    def as_str(self, plot_spec: Dict) -> str:
+        return kbr._generate_dynamic_display_html(plot_spec)
 
     @staticmethod
     def _configure_connected_script(verbose: bool) -> str:
