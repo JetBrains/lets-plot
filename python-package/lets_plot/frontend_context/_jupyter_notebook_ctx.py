@@ -13,7 +13,7 @@ from IPython.display import display_html
 
 from ._frontend_ctx import FrontendContext
 from .. import _kbridge as kbr
-from .._global_settings import _get_global_str, _has_global_value, _is_production
+from .._global_settings import get_global_str, has_global_value, is_production
 from .._version import __version__
 
 
@@ -36,11 +36,11 @@ class JupyterNotebookContext(FrontendContext):
 
     @staticmethod
     def _configure_connected_script(verbose: bool) -> str:
-        base_url = _get_global_str("js_base_url")
-        if _has_global_value('js_name'):
-            name = _get_global_str('js_name')
+        base_url = get_global_str("js_base_url")
+        if has_global_value('js_name'):
+            name = get_global_str('js_name')
         else:
-            suffix = ".min.js" if _is_production() else ".js"
+            suffix = ".min.js" if is_production() else ".js"
             name = "lets-plot-{version}{suffix}".format(version=__version__, suffix=suffix)
 
         url = "{base_url}/{name}".format(base_url=base_url, name=name)

@@ -4,8 +4,9 @@
 import os
 
 from ._frontend_ctx import FrontendContext
-from ._static_html_page_ctx import StaticHtmlPageContext
 from ._jupyter_notebook_ctx import JupyterNotebookContext
+from ._static_html_page_ctx import StaticHtmlPageContext
+from .._global_settings import has_global_value, get_global_bool, HTML_ISOLATED_FRAME
 
 
 def _create_html_frontend_context(isolated_frame: bool = None, offline: bool = None) -> FrontendContext:
@@ -25,7 +26,9 @@ def _create_html_frontend_context(isolated_frame: bool = None, offline: bool = N
 
 
 def _use_isolated_frame() -> bool:
-    # ToDo: check env var first
+    # check environment
+    if has_global_value(HTML_ISOLATED_FRAME):
+        return get_global_bool(HTML_ISOLATED_FRAME)
 
     return _detect_isolated_frame()
 

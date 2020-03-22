@@ -6,7 +6,7 @@ from typing import Dict, Any
 
 from ._frontend_ctx import FrontendContext
 from ._html_contexts import _create_html_frontend_context, _use_isolated_frame
-from .._global_settings import _get_global_bool
+from .._global_settings import get_global_bool
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
 
@@ -25,7 +25,7 @@ def _setup_html_context(isolated_frame: bool = None, offline: bool = None) -> No
     :param embed:
     :return:
     """
-    embed = offline if offline is not None else _get_global_bool('offline')
+    embed = offline if offline is not None else get_global_bool('offline')
     ctx = _create_html_frontend_context(isolated_frame, embed)
     ctx.configure(verbose=True)
     _frontend_contexts['html'] = ctx
