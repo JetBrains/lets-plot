@@ -32,10 +32,10 @@ class LocalPolynomialRegression(
         val (xVals, yVals) = allFiniteUnique(xs, ys)
 
         n = xVals.size
-        meanX = xVals.sum().div(n)
+        meanX = xVals.average()
         sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
 
-        val meanY = yVals.sum().div(n)
+        val meanY = yVals.average()
         val sumYY = yVals.sumByDouble { (it - meanY).pow(2) }
         val sumXY = xVals.zip(yVals).sumByDouble { (x, y) -> (x - meanX) * (y - meanY) }
 

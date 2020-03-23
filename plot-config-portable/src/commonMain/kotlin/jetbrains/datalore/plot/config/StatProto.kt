@@ -164,9 +164,7 @@ class StatProto {
 
         options["span"]?.let { stat.span = it.asDouble() }
 
-        if (options.containsKey("deg")) {
-            stat.deg = (options["deg"] as Number).toInt()
-        }
+        options["deg"]?.let { stat.deg = it.asInt() }
 
         return stat
     }
@@ -228,6 +226,8 @@ class StatProto {
     }
 
     private fun Any?.asDouble() = (this as Number).toDouble()
+
+    private fun Any?.asInt() = (this as Number).toInt()
 
     companion object {
         private val DEFAULTS = HashMap<String, Map<String, Any>>()

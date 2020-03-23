@@ -5,23 +5,17 @@
 
 package jetbrains.datalore.plot.base.stat.math3
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import kotlin.math.pow
 
 class ForsythePolynomialGenerator(private val knots: DoubleArray) {
-    private var ps: ArrayList<PolynomialFunction>
+    private val ps: ArrayList<PolynomialFunction>
 
     init {
-        Preconditions.checkArgument(
-            knots.isNotEmpty(),
-            "The knots list must not be empty"
-        )
-
-        val xMean = knots.sum().div(knots.size)
+        require(knots.isNotEmpty()) { "The knots list must not be empty" }
 
         ps = arrayListOf(
             PolynomialFunction(doubleArrayOf(1.0)),
-            PolynomialFunction(doubleArrayOf(-xMean, 1.0))
+            PolynomialFunction(doubleArrayOf(-knots.average(), 1.0))
         )
     }
 
@@ -58,9 +52,9 @@ class ForsythePolynomialGenerator(private val knots: DoubleArray) {
 
             for (k in sz..n + 1) {
                 val (a, b) = alphaBeta(k)
-                val pprev = ps.last()
-                val pprevprev = ps[ps.size - 2]
-                val p = X * pprev - a * pprev - b * pprevprev
+                val pPrev = ps.last()
+                val pPrevPrev = ps[ps.size - 2]
+                val p = X * pPrev - a * pPrev - b * pPrevPrev
                 ps.add(p)
             }
         }
@@ -68,10 +62,8 @@ class ForsythePolynomialGenerator(private val knots: DoubleArray) {
         return ps[n]
     }
 
-
     companion object {
         val X = PolynomialFunction(doubleArrayOf(0.0, 1.0))
     }
-
 }
 

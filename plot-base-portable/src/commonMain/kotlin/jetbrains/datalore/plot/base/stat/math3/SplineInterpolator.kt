@@ -51,8 +51,7 @@ package jetbrains.datalore.plot.base.stat.math3
  * @version $Id: SplineInterpolator.java 1244107 2012-02-14 16:17:55Z erans $
  */
 
-class SplineInterpolator 
-{
+class SplineInterpolator {
     /**
      * Computes an interpolating function for the data set.
      * @param x the arguments for the interpolation points
@@ -71,7 +70,7 @@ class SplineInterpolator
             error("Dimension mismatch ${x.size} != ${y.size}")
         }
         if (x.size < 3) {
-            error("Too small value of points number: ${x.size} < 3" )
+            error("Too small value of points number: ${x.size} < 3")
         }
         // Number of intervals.  The number of data points is n + 1.
         val n = x.size - 1
@@ -85,9 +84,9 @@ class SplineInterpolator
         val z = DoubleArray(n + 1)
         mu[0] = 0.0
         z[0] = 0.0
-        var g = 0.0
+
         for (i in 1 until n) {
-            g = 2.0 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1]
+            var g = 2.0 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1]
             mu[i] = h[i] / g
             z[i] =
                 (3.0 * (y[i + 1] * h[i - 1] - y[i] * (x[i + 1] - x[i - 1]) + y[i - 1] * h[i]) /

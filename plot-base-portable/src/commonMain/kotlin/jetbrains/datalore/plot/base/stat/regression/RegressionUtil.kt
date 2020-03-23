@@ -49,10 +49,10 @@ fun allFinite(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArr
     val tx = ArrayList<Double>()
     val ty = ArrayList<Double>()
 
-    for (p in xs.asSequence().zip(ys.asSequence())) {
-        if (SeriesUtil.allFinite(p)) {
-            tx.add(p.first!!)
-            ty.add(p.second!!)
+    for ((x, y) in xs.asSequence().zip(ys.asSequence())) {
+        if (SeriesUtil.allFinite(x, y)) {
+            tx.add(x!!)
+            ty.add(y!!)
         }
     }
 
@@ -62,9 +62,9 @@ fun allFinite(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArr
 fun allFiniteUnique(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
     val tp = ArrayList<Pair<Double, Double>>()
 
-    for (p in xs.asSequence().zip(ys.asSequence())) {
-        if (SeriesUtil.allFinite(p)) {
-            tp.add(Pair(p.first!!, p.second!!))
+    for ((x, y) in xs.asSequence().zip(ys.asSequence())) {
+        if (SeriesUtil.allFinite(x, y)) {
+            tp.add(Pair(x!!, y!!))
         }
     }
 
@@ -75,20 +75,19 @@ fun allFiniteUnique(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, Dou
 
     val tx = ArrayList<Double>()
     val ty = ArrayList<Double>()
-    var prev_x = tp.first().first
-    var sumY = tp.first().second
+    var (prev_x, sumY) = tp.first()
     var countY = 1
 
-    for (p in tp.subList(1, tp.size)) {
-        if (p.first != prev_x) {
+    for ((x, y) in tp.subList(1, tp.size)) {
+        if (x != prev_x) {
             tx.add(prev_x)
             ty.add(sumY.div(countY))
-            prev_x = p.first
+            prev_x = x
             sumY = 0.0
             countY = 0
         }
 
-        sumY += p.second
+        sumY += y
         countY += 1
     }
 

@@ -127,30 +127,25 @@ class PolynomialFunction(c: DoubleArray?) {
         return PolynomialFunction(dd)
     }
 
-    operator fun plus(other: PolynomialFunction): PolynomialFunction {
+    private fun apply_op(other: PolynomialFunction, op: (Double, Double) -> Double): PolynomialFunction {
         val sz = max(coefficients.size, other.coefficients.size)
         val nc = DoubleArray(sz)
 
         for (i in (0 until sz)) {
             val a = if (i < coefficients.size) coefficients[i] else 0.0
             val b = if (i < other.coefficients.size) other.coefficients[i] else 0.0
-            nc[i] = a + b
+            nc[i] = op(a, b)
         }
 
         return PolynomialFunction(nc)
     }
 
+    operator fun plus(other: PolynomialFunction): PolynomialFunction {
+        return apply_op(other, { x, y -> x + y })
+    }
+
     operator fun minus(other: PolynomialFunction): PolynomialFunction {
-        val sz = max(coefficients.size, other.coefficients.size)
-        val nc = DoubleArray(sz)
-
-        for (i in (0 until sz)) {
-            val a = if (i < coefficients.size) coefficients[i] else 0.0
-            val b = if (i < other.coefficients.size) other.coefficients[i] else 0.0
-            nc[i] = a - b
-        }
-
-        return PolynomialFunction(nc)
+        return apply_op(other, { x, y -> x - y })
     }
 
     fun multiply(a: Double): PolynomialFunction {
@@ -179,14 +174,7 @@ class PolynomialFunction(c: DoubleArray?) {
         return PolynomialFunction(nc)
     }
 
-    fun degree(): Int {
-        var n = coefficients.size
-
-        while (n > 1 && coefficients[n - 1] == 0.0)
-            --n
-
-        return n - 1
-    }
+    fun degree(): Int = max(0, coefficients.indexOfLast { it != 0.0 })
 
     operator fun compareTo(other: PolynomialFunction): Int {
         val d1 = degree()

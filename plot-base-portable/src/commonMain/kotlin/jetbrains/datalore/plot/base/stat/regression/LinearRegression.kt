@@ -24,19 +24,14 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
     init {
         val (xVals, yVals) = allFinite(xs, ys)
         n = xVals.size
-        meanX = xVals.sum().div(n)
+        meanX = xVals.average()
         sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
 
-        val meanY = yVals.sum().div(n)
+        val meanY = yVals.average()
         val sumYY = yVals.sumByDouble { (it - meanY).pow(2) }
         val sumXY = xVals.zip(yVals).sumByDouble { (x, y) -> (x - meanX) * (y - meanY) }
 
-        beta1 = run {
-            val variance = sumXX
-            val covariance = sumXY
-            covariance / variance
-        }
-
+        beta1 = sumXY / sumXX
         beta0 = meanY - beta1 * meanX
 
         sy = run { // Standard error of estimate

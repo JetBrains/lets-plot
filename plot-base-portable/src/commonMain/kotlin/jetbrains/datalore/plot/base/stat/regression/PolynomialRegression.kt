@@ -40,7 +40,7 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
 
         p = calcPolynomial(deg, xVals, yVals)
 
-        meanX = xVals.sum().div(n)
+        meanX = xVals.average()
         sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
         val df = n - deg - 1.0
 

@@ -52,10 +52,6 @@ object SeriesUtil {
         return isFinite(v0) && isFinite(v1)
     }
 
-    fun allFinite(p: Pair<Double?, Double?>): Boolean {
-        return isFinite(p.first) && isFinite(p.second)
-    }
-
     fun allFinite(v0: Double?, v1: Double?, v2: Double?): Boolean {
         return allFinite(
             v0,
