@@ -67,7 +67,9 @@ run `./gradlew python-package-build:buildManylinuxWheels`
 
 ##### 1. JavaScript artifacts (Bintray):
 
-run `./gradlew js-package:bintrayUpload`
+ - `./gradlew js-package:js-publish-version:bintrayUpload`
+
+ - `./gradlew js-package:js-publish-latest:bintrayUpload`
 
 ##### 2. Python wheels (PyPi):
 
@@ -78,6 +80,12 @@ run `./gradlew js-package:bintrayUpload`
  - for production (pypi.org):
  
  `./gradlew python-package-build:publishProdPythonPackage`
+ 
+##### 3. JVM artifacts (Bintray/JCenter):
+
+ - `./gradlew :jvm-package:jvm-publish-common:bintrayUpload`
+ 
+ - `./gradlew :jvm-package:jvm-publish-jfx:bintrayUpload`
  
  
 ### Add the GitHub release:
