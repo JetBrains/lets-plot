@@ -17,11 +17,11 @@
     </tr>
     <tr>
         <td>OS</td>
-        <td>Linux, MacOS</td>
+        <td>Linux, MacOS, Windows</td>
     </tr>
     <tr>
         <td>Python versions</td>
-        <td>3.7, 3.8</td>
+        <td>3.6, 3.7, 3.8</td>
     </tr>
 </table>
 
