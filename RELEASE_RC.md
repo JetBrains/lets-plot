@@ -17,6 +17,7 @@ Upgrade `Lets-Plot` version to just released RC version:
 
 ##### 2. Create a new Conda environment.
 
+`conda env remove -n my_test_env`
 `conda env create -n my_test_env -f <path>/binder/environment.yml`
 `conda activate my_test_env`
 `conda install jupyter`
