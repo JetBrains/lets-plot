@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - factor() function.
  - tooltip for geom_rect.
  - export SVG/HTML to file. 
+ - `tooltip` parameter for geoms.
+ - `axis_tooltip` parameters for `theme()`.
+ - tooltip for `geom_vline` with mapping.
  
  ### Fixed
  - error if data contains NaT value.
