@@ -14,10 +14,10 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, deg : Int )
-    : RegressionEvaluator(xs, ys, confidenceLevel) {
+class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, deg: Int) :
+    RegressionEvaluator(xs, ys, confidenceLevel) {
 
-    private val p : PolynomialFunction
+    private val p: PolynomialFunction
     private val n: Int
     private val meanX: Double
     private val sumXX: Double
@@ -30,7 +30,7 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
             "Degree of polynomial must be at least 2"
         )
 
-        val (xVals, yVals) = allFiniteUnique( xs, ys )
+        val (xVals, yVals) = allFiniteUnique(xs, ys)
         n = xVals.size
 
         Preconditions.checkArgument(
@@ -38,17 +38,14 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
             "The number of valid data points must be greater than deg"
         )
 
-        p = calcPolynomial( deg, xVals, yVals )
+        p = calcPolynomial(deg, xVals, yVals)
 
         meanX = xVals.sum().div(n)
         sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
-
-        val meanY = yVals.sum().div(n)
-
         val df = n - deg - 1.0
 
         sy = run { // Standard error of estimate
-            val sse = xVals.zip(yVals).sumByDouble { (x, y) -> (y-p.value(x)).pow(2) }
+            val sse = xVals.zip(yVals).sumByDouble { (x, y) -> (y - p.value(x)).pow(2) }
             sqrt(sse / (df))
         }
 
@@ -58,29 +55,29 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
         }
     }
 
-    private fun calcPolynomial( deg: Int,  xVals : DoubleArray, yVals : DoubleArray ) : PolynomialFunction {
-        var fpg = ForsythePolynomialGenerator( xVals )
-        var res = PolynomialFunction( doubleArrayOf( 0.0))
+    private fun calcPolynomial(deg: Int, xVals: DoubleArray, yVals: DoubleArray): PolynomialFunction {
+        val fpg = ForsythePolynomialGenerator(xVals)
+        var res = PolynomialFunction(doubleArrayOf(0.0))
 
-        for ( i in 0 .. deg ) {
+        for (i in 0..deg) {
             val p = fpg.getPolynomial(i)
-            val s = coefficient( p, xVals, yVals )
+            val s = coefficient(p, xVals, yVals)
             res += s * p
         }
 
         return res
     }
 
-    private fun coefficient( p : PolynomialFunction,  xVals : DoubleArray, yVals : DoubleArray ) : Double {
+    private fun coefficient(p: PolynomialFunction, xVals: DoubleArray, yVals: DoubleArray): Double {
         var ww = 0.0
         var w = 0.0
-        for ( i in 0 until xVals.size ) {
+        for (i in 0 until xVals.size) {
             val x = xVals[i]
             val y = yVals[i]
             val pval = p.value(x)
 
             ww += pval * pval
-            w  += y * pval
+            w += y * pval
         }
 
         return w / ww

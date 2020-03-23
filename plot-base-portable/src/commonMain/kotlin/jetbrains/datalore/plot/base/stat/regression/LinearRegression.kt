@@ -10,8 +10,8 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double)
-    : RegressionEvaluator(xs, ys, confidenceLevel) {
+class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double) :
+    RegressionEvaluator(xs, ys, confidenceLevel) {
 
     private val n: Int
     private val meanX: Double
@@ -22,7 +22,7 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
     private val tcritical: Double
 
     init {
-        val (xVals, yVals) = allFinite( xs, ys )
+        val (xVals, yVals) = allFinite(xs, ys)
         n = xVals.size
         meanX = xVals.sum().div(n)
         sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
@@ -50,7 +50,7 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
         }
     }
 
-    private fun value( x : Double ) : Double = beta1 * x + beta0
+    private fun value(x: Double): Double = beta1 * x + beta0
 
     override fun evalX(x: Double): EvalResult {
 

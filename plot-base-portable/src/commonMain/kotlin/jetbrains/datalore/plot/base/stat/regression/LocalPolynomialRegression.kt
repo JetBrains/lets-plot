@@ -29,7 +29,7 @@ class LocalPolynomialRegression(
     private val myPolynomial: PolynomialSplineFunction
 
     init {
-        val ( xVals, yVals ) = allFiniteUnique( xs, ys )
+        val (xVals, yVals) = allFiniteUnique(xs, ys)
 
         n = xVals.size
         meanX = xVals.sum().div(n)
@@ -73,7 +73,7 @@ class LocalPolynomialRegression(
         )
     }
 
-    private fun getPoly( xVals : DoubleArray, yVals : DoubleArray): PolynomialSplineFunction {
-        return LoessInterpolator(myBandwidth, 4).interpolate( xVals, yVals)
+    private fun getPoly(xVals: DoubleArray, yVals: DoubleArray): PolynomialSplineFunction {
+        return LoessInterpolator(myBandwidth, 4).interpolate(xVals, yVals)
     }
 }

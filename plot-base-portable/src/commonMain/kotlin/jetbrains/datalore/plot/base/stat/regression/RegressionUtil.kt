@@ -45,52 +45,52 @@ internal object RegressionUtil {
     }
 }
 
-fun allFinite( xs : List<Double?>, ys : List<Double? >) : Pair<DoubleArray, DoubleArray >  {
-    var tx = ArrayList<Double>()
-    var ty = ArrayList<Double>()
+fun allFinite(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
+    val tx = ArrayList<Double>()
+    val ty = ArrayList<Double>()
 
-    for ( p in xs.asSequence().zip(ys.asSequence() )) {
-        if (  SeriesUtil.allFinite(p)  ) {
+    for (p in xs.asSequence().zip(ys.asSequence())) {
+        if (SeriesUtil.allFinite(p)) {
             tx.add(p.first!!)
             ty.add(p.second!!)
         }
     }
 
-    return Pair( tx.toDoubleArray(), ty.toDoubleArray() )
+    return Pair(tx.toDoubleArray(), ty.toDoubleArray())
 }
 
-fun allFiniteUnique( xs : List<Double?>, ys : List<Double? >) : Pair<DoubleArray, DoubleArray >  {
-    val tp = ArrayList<Pair<Double,Double>>()
+fun allFiniteUnique(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
+    val tp = ArrayList<Pair<Double, Double>>()
 
-    for ( p in xs.asSequence().zip(ys.asSequence() )) {
-        if (  SeriesUtil.allFinite(p)  ) {
-            tp.add( Pair( p.first!!, p.second!! ))
+    for (p in xs.asSequence().zip(ys.asSequence())) {
+        if (SeriesUtil.allFinite(p)) {
+            tp.add(Pair(p.first!!, p.second!!))
         }
     }
 
     tp.sortBy { it.first }
 
-    if ( tp.isEmpty() )
-        return Pair( DoubleArray(0), DoubleArray(0) )
+    if (tp.isEmpty())
+        return Pair(DoubleArray(0), DoubleArray(0))
 
-    var tx = ArrayList<Double>()
-    var ty = ArrayList<Double>()
+    val tx = ArrayList<Double>()
+    val ty = ArrayList<Double>()
     var prev_x = tp.first().first
-    var prev_ys = arrayListOf (tp.first().second )
+    val prev_ys = arrayListOf(tp.first().second)
 
-    for ( p in tp.subList(1, tp.size) ) {
-        if ( p.first != prev_x ) {
+    for (p in tp.subList(1, tp.size)) {
+        if (p.first != prev_x) {
             tx.add(prev_x)
-            ty.add( prev_ys.average() )
+            ty.add(prev_ys.average())
             prev_x = p.first
             prev_ys.clear()
         }
 
-        prev_ys.add( p.second )
+        prev_ys.add(p.second)
     }
 
     tx.add(prev_x)
-    ty.add( prev_ys.average() )
+    ty.add(prev_ys.average())
 
-    return Pair(tx.toDoubleArray(),ty.toDoubleArray())
+    return Pair(tx.toDoubleArray(), ty.toDoubleArray())
 }

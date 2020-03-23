@@ -58,12 +58,13 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
  */
 class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     var smootherPointCount = DEF_EVAL_POINT_COUNT
+
     // checkArgument(smoothingMethod == Method.LM or Method.LOESS, "Linear and loess models are supported only, use: method='lm' or 'loess'");
     var smoothingMethod = DEF_SMOOTHING_METHOD
     var confidenceLevel = DEF_CONFIDENCE_LEVEL
     var isDisplayConfidenceInterval = DEF_DISPLAY_CONFIDENCE_INTERVAL
     var span = DEF_SPAN
-    var deg : Int = DEF_DEG // default degree for polynomial regression
+    var deg: Int = DEF_DEG // default degree for polynomial regression
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
@@ -167,10 +168,10 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
 
     private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
         val regression = when (smoothingMethod) {
-            Method.LM -> if ( deg == 1 )
-                            LinearRegression(valuesX, valuesY, confidenceLevel)
-                         else
-                            PolynomialRegression( valuesX, valuesY, confidenceLevel, deg )
+            Method.LM -> if (deg == 1)
+                LinearRegression(valuesX, valuesY, confidenceLevel)
+            else
+                PolynomialRegression(valuesX, valuesY, confidenceLevel, deg)
             Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
             else -> throw IllegalArgumentException(
                 "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"

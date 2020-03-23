@@ -14,78 +14,78 @@ import kotlin.test.assertTrue
 class AllFiniteUniqueTest {
     @Test
     fun Test0() {
-        val xs :  List<Double?> = arrayListOf(  )
-        val ys :  List<Double?> = arrayListOf(  )
+        val xs: List<Double?> = arrayListOf()
+        val ys: List<Double?> = arrayListOf()
 
-        val p = allFiniteUnique(xs, ys )
+        val p = allFiniteUnique(xs, ys)
 
-        assertTrue( p.first contentEquals doubleArrayOf( ))
-        assertTrue( p.second contentEquals doubleArrayOf( ))
+        assertTrue(p.first contentEquals doubleArrayOf())
+        assertTrue(p.second contentEquals doubleArrayOf())
     }
 
     @Test
     fun Test1() {
-        val xs :  List<Double?> = arrayListOf( 1.0 )
-        val ys :  List<Double?> = arrayListOf( 1.0 )
+        val xs: List<Double?> = arrayListOf(1.0)
+        val ys: List<Double?> = arrayListOf(1.0)
 
-        val p = allFiniteUnique(xs, ys )
+        val p = allFiniteUnique(xs, ys)
 
-        assertTrue( p.first contentEquals doubleArrayOf(1.0 ))
-        assertTrue( p.second contentEquals doubleArrayOf(1.0 ))
+        assertTrue(p.first contentEquals doubleArrayOf(1.0))
+        assertTrue(p.second contentEquals doubleArrayOf(1.0))
     }
 
     @Test
     fun Test2() {
-        val xs :  List<Double?> = arrayListOf( 2.0, 1.0 )
-        val ys :  List<Double?> = arrayListOf( 3.0, 1.0 )
+        val xs: List<Double?> = arrayListOf(2.0, 1.0)
+        val ys: List<Double?> = arrayListOf(3.0, 1.0)
 
-        val p = allFiniteUnique(xs, ys )
+        val p = allFiniteUnique(xs, ys)
 
-        assertTrue( p.first contentEquals doubleArrayOf(1.0,2.0 ))
-        assertTrue( p.second contentEquals doubleArrayOf(1.0 , 3.0))
+        assertTrue(p.first contentEquals doubleArrayOf(1.0, 2.0))
+        assertTrue(p.second contentEquals doubleArrayOf(1.0, 3.0))
     }
 
     @Test
     fun Test3() {
-        val xs :  List<Double?> = arrayListOf( 2.0, 1.0, null )
-        val ys :  List<Double?> = arrayListOf( 3.0, 1.0 , 2.0 )
+        val xs: List<Double?> = arrayListOf(2.0, 1.0, null)
+        val ys: List<Double?> = arrayListOf(3.0, 1.0, 2.0)
 
-        val p = allFiniteUnique(xs, ys )
+        val p = allFiniteUnique(xs, ys)
 
-        assertTrue( p.first contentEquals doubleArrayOf(1.0,2.0 ))
-        assertTrue( p.second contentEquals doubleArrayOf(1.0 , 3.0))
+        assertTrue(p.first contentEquals doubleArrayOf(1.0, 2.0))
+        assertTrue(p.second contentEquals doubleArrayOf(1.0, 3.0))
     }
 
     @Test
     fun Test4() {
-        val xs :  List<Double?> = arrayListOf( 2.0, 1.0, 0.0 )
-        val ys :  List<Double?> = arrayListOf( 3.0, 1.0 , null )
+        val xs: List<Double?> = arrayListOf(2.0, 1.0, 0.0)
+        val ys: List<Double?> = arrayListOf(3.0, 1.0, null)
 
-        val p = allFiniteUnique(xs, ys )
+        val p = allFiniteUnique(xs, ys)
 
-        assertTrue( p.first contentEquals doubleArrayOf(1.0,2.0 ))
-        assertTrue( p.second contentEquals doubleArrayOf(1.0 , 3.0))
+        assertTrue(p.first contentEquals doubleArrayOf(1.0, 2.0))
+        assertTrue(p.second contentEquals doubleArrayOf(1.0, 3.0))
     }
 
     @Test
     fun Test5() {
-        val xs :  List<Double?> = arrayListOf( 2.0, 1.0, 0.0 , 1.0)
-        val ys :  List<Double?> = arrayListOf( 3.0, 1.0 , null , 3.0)
+        val xs: List<Double?> = arrayListOf(2.0, 1.0, 0.0, 1.0)
+        val ys: List<Double?> = arrayListOf(3.0, 1.0, null, 3.0)
 
-        val p = allFiniteUnique(xs, ys )
+        val p = allFiniteUnique(xs, ys)
 
-        assertTrue( p.first contentEquals doubleArrayOf(1.0,2.0 ))
-        assertTrue( p.second contentEquals doubleArrayOf(2.0 , 3.0))
+        assertTrue(p.first contentEquals doubleArrayOf(1.0, 2.0))
+        assertTrue(p.second contentEquals doubleArrayOf(2.0, 3.0))
     }
 
     @Test
     fun Test6() {
-        val xs :  List<Double?> = arrayListOf( null, null, null, 1.0, 3.0, 3.0, 2.0, 2.0 )
-        val ys :  List<Double?> = arrayListOf( 100.0, 13.0, 1.0, 10.0, 1.0, 3.0, null, 20.0 )
+        val xs: List<Double?> = arrayListOf(null, null, null, 1.0, 3.0, 3.0, 2.0, 2.0)
+        val ys: List<Double?> = arrayListOf(100.0, 13.0, 1.0, 10.0, 1.0, 3.0, null, 20.0)
 
-        val p = allFiniteUnique(xs, ys )
+        val p = allFiniteUnique(xs, ys)
 
-        assertTrue( p.first contentEquals doubleArrayOf(1.0,2.0, 3.0 ))
-        assertTrue( p.second contentEquals doubleArrayOf(10.0, 20.0, 2.0))
+        assertTrue(p.first contentEquals doubleArrayOf(1.0, 2.0, 3.0))
+        assertTrue(p.second contentEquals doubleArrayOf(10.0, 20.0, 2.0))
     }
 }

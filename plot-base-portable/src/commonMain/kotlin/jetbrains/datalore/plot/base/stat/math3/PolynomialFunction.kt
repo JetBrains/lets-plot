@@ -39,14 +39,14 @@ import kotlin.math.abs
  * @version $Id: PolynomialFunction.java 1244107 2012-02-14 16:17:55Z erans $
  */
 
-public class PolynomialFunction(c: DoubleArray?) {
+class PolynomialFunction(c: DoubleArray?) {
 
     /**
      * The coefficients of the polynomial, ordered by degree -- i.e.,
      * coefficients[0] is the constant term and coefficients[n] is the
      * coefficient of x^n where n is the degree of the polynomial.
      */
-    private var coefficients : DoubleArray
+    private var coefficients: DoubleArray
 
     /**
      * Construct a polynomial with the given coefficients.  The first element
@@ -115,91 +115,91 @@ public class PolynomialFunction(c: DoubleArray?) {
         return result
     }
 
-    operator fun unaryPlus() = PolynomialFunction( coefficients )
+    operator fun unaryPlus() = PolynomialFunction(coefficients)
 
-    operator fun unaryMinus() : PolynomialFunction {
-        var dd = DoubleArray( coefficients.size )
+    operator fun unaryMinus(): PolynomialFunction {
+        val dd = DoubleArray(coefficients.size)
 
-        for ( (i, c) in coefficients.withIndex() ) {
+        for ((i, c) in coefficients.withIndex()) {
             dd[i] = -c
         }
 
-        return PolynomialFunction( dd)
+        return PolynomialFunction(dd)
     }
 
-    operator fun plus( other : PolynomialFunction ) : PolynomialFunction {
-        val sz = max( coefficients.size, other.coefficients.size )
-        var nc = DoubleArray(sz)
+    operator fun plus(other: PolynomialFunction): PolynomialFunction {
+        val sz = max(coefficients.size, other.coefficients.size)
+        val nc = DoubleArray(sz)
 
-        for ( i in (0 until sz)) {
-            val a = if ( i < coefficients.size ) coefficients[i] else 0.0
-            val b = if ( i < other.coefficients.size ) other.coefficients[i] else 0.0
+        for (i in (0 until sz)) {
+            val a = if (i < coefficients.size) coefficients[i] else 0.0
+            val b = if (i < other.coefficients.size) other.coefficients[i] else 0.0
             nc[i] = a + b
         }
 
-        return PolynomialFunction( nc )
+        return PolynomialFunction(nc)
     }
 
-    operator fun minus( other : PolynomialFunction ) : PolynomialFunction {
-        val sz = max( coefficients.size, other.coefficients.size )
-        var nc = DoubleArray(sz)
+    operator fun minus(other: PolynomialFunction): PolynomialFunction {
+        val sz = max(coefficients.size, other.coefficients.size)
+        val nc = DoubleArray(sz)
 
-        for ( i in (0 until sz)) {
-            val a = if ( i < coefficients.size ) coefficients[i] else 0.0
-            val b = if ( i < other.coefficients.size ) other.coefficients[i] else 0.0
+        for (i in (0 until sz)) {
+            val a = if (i < coefficients.size) coefficients[i] else 0.0
+            val b = if (i < other.coefficients.size) other.coefficients[i] else 0.0
             nc[i] = a - b
         }
 
-        return PolynomialFunction( nc )
+        return PolynomialFunction(nc)
     }
 
-    fun multiply( a : Double ) : PolynomialFunction {
-        var dd = DoubleArray( coefficients.size )
+    fun multiply(a: Double): PolynomialFunction {
+        val dd = DoubleArray(coefficients.size)
 
-        for ( (i, c) in coefficients.withIndex() ) {
-            dd[i] = a*c
+        for ((i, c) in coefficients.withIndex()) {
+            dd[i] = a * c
         }
 
-        return PolynomialFunction( dd)
+        return PolynomialFunction(dd)
     }
 
-    operator fun times( other : PolynomialFunction ) : PolynomialFunction {
-        val nd = coefficients.size  + other.coefficients.size - 1
-        var nc = DoubleArray( nd )
+    operator fun times(other: PolynomialFunction): PolynomialFunction {
+        val nd = coefficients.size + other.coefficients.size - 1
+        val nc = DoubleArray(nd)
 
-        for ( i in (0 until nd)) {
-            for ( j in (0..i)) {
-                val a = if ( j < coefficients.size ) coefficients[j] else 0.0
+        for (i in (0 until nd)) {
+            for (j in (0..i)) {
+                val a = if (j < coefficients.size) coefficients[j] else 0.0
                 val k = i - j
-                val b = if ( k < other.coefficients.size ) other.coefficients[k] else 0.0
-                nc[i] += a*b
+                val b = if (k < other.coefficients.size) other.coefficients[k] else 0.0
+                nc[i] += a * b
             }
         }
 
         return PolynomialFunction(nc)
     }
 
-    fun degree () : Int {
+    fun degree(): Int {
         var n = coefficients.size
 
-        while ( n > 1 && coefficients[n-1] == 0.0 )
+        while (n > 1 && coefficients[n - 1] == 0.0)
             --n
 
         return n - 1
     }
 
-    operator fun compareTo(other : PolynomialFunction ) : Int {
+    operator fun compareTo(other: PolynomialFunction): Int {
         val d1 = degree()
         val d2 = other.degree()
-        val n = min ( d1 , d2 ) + 1
+        val n = min(d1, d2) + 1
 
-        for ( i in 0 until n ) {
+        for (i in 0 until n) {
             val a = coefficients[i]
             val b = other.coefficients[i]
 
             val res = a.compareTo(b)
 
-            if ( res != 0 )
+            if (res != 0)
                 return res
         }
 
@@ -207,7 +207,7 @@ public class PolynomialFunction(c: DoubleArray?) {
     }
 
     override operator fun equals(other: Any?): Boolean {
-        if ( other == null || other !is PolynomialFunction )
+        if (other == null || other !is PolynomialFunction)
             return false
 
         return compareTo(other) == 0
@@ -217,22 +217,22 @@ public class PolynomialFunction(c: DoubleArray?) {
         return coefficients.hashCode()
     }
 
-    override  fun toString() : String {
-        var sb = StringBuilder()
+    override fun toString(): String {
+        val sb = StringBuilder()
 
-        for ( i in coefficients.lastIndex downTo 0 ) {
+        for (i in coefficients.lastIndex downTo 0) {
 
-            if ( coefficients[i] != 0.0 ) {
+            if (coefficients[i] != 0.0) {
 
-                if ( !sb.isEmpty())
+                if (!sb.isEmpty())
                     sb.append(" + ")
 
-                sb.append( coefficients[i].toString() )
+                sb.append(coefficients[i].toString())
 
-                if ( i > 0 )
+                if (i > 0)
                     sb.append("x")
 
-                if ( i > 1 )
+                if (i > 1)
                     sb.append("^").append(i)
             }
         }
@@ -241,7 +241,7 @@ public class PolynomialFunction(c: DoubleArray?) {
     }
 }
 
-operator fun Double.times ( p : PolynomialFunction ) : PolynomialFunction {
-    return p.multiply( this )
+operator fun Double.times(p: PolynomialFunction): PolynomialFunction {
+    return p.multiply(this)
 }
 

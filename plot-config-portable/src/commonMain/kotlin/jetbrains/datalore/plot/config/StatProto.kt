@@ -164,7 +164,7 @@ class StatProto {
 
         options["span"]?.let { stat.span = it.asDouble() }
 
-        if ( options.containsKey("deg")) {
+        if (options.containsKey("deg")) {
             stat.deg = (options["deg"] as Number).toInt()
         }
 
