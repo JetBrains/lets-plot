@@ -17,7 +17,7 @@ object LiveMapPlotConfigDemoUtil {
         factory: SwingDemoFactory,
         plotSize: DoubleVector?
     ) {
-        val monolithic = LiveMapMonolithicJfx(
+        val monolithic = LiveMapMonolithicJfx.createPlotFactory(
             factory::createSvgComponent,
             factory.createPlotEdtExecutor()
         )

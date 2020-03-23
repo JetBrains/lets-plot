@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.Monolithic
+import jetbrains.datalore.plot.PlotFactory
 import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
 import java.awt.*
@@ -22,7 +22,7 @@ object PlotConfigDemoUtil {
         factory: SwingDemoFactory,
         plotSize: DoubleVector?
     ) {
-        val monolithic = MonolithicAwt(
+        val monolithic = MonolithicAwt.createPlotFactory(
             factory::createSvgComponent,
             factory.createPlotEdtExecutor()
         )
@@ -35,7 +35,7 @@ object PlotConfigDemoUtil {
         plotSpecList: List<MutableMap<String, Any>>,
         factory: SwingDemoFactory,
         plotSize: DoubleVector?,
-        monolithic: Monolithic
+        plotFactory: PlotFactory
     ) {
         factory.createDemoFrame(title).show {
             val panel = this
@@ -44,7 +44,7 @@ object PlotConfigDemoUtil {
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
             panel.add(Box.createRigidArea(Dimension(50, 0)))
 
-            addPlots(panel, plotSpecList, monolithic, plotSize)
+            addPlots(panel, plotSpecList, plotFactory, plotSize)
 
             panel.add(Box.createRigidArea(Dimension(0, 5)))
         }
@@ -53,13 +53,13 @@ object PlotConfigDemoUtil {
     private fun addPlots(
         panel: JPanel,
         plotSpecList: List<MutableMap<String, Any>>,
-        monolithic: Monolithic,
+        plotFactory: PlotFactory,
         plotSize: DoubleVector?
     ) {
         try {
 
             for (plotSpec in plotSpecList) {
-                val component = monolithic.buildPlotFromRawSpecs(plotSpec, plotSize) {
+                val component = plotFactory.buildPlotFromRawSpecs(plotSpec, plotSize) {
                     for (s in it) {
                         println("DEMO PLOT INFO: $s")
                     }

@@ -27,12 +27,12 @@ import javax.swing.JPanel
 
 private val LOG = KotlinLogging.logger {}
 
-abstract class Monolithic(
+class PlotFactory(
     val componentFactory: (svg: SvgSvgElement) -> JComponent,
-    val executor: (() -> Unit) -> Unit
+    val executor: (() -> Unit) -> Unit,
+    val buildPlotComponent: (plotBuildInfo: MonolithicCommon.PlotBuildInfo,
+                             buildPlotSvgComponent: (plotContainer: PlotContainer) -> JComponent) -> JComponent
 ) {
-
-    abstract fun buildPlotSvgComponent(plotBuildInfo: MonolithicCommon.PlotBuildInfo): JComponent
 
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
@@ -54,7 +54,7 @@ abstract class Monolithic(
             computationMessagesHandler(computationMessages)
             if (success.buildInfos.size == 1) {
                 // a single plot
-                return buildPlotSvgComponent(success.buildInfos[0])
+                return buildPlotComponent(success.buildInfos[0], ::buildPlotSvgComponent)
             }
             // ggbunch
             return buildGGBunchComponent(success.buildInfos)
@@ -105,7 +105,7 @@ abstract class Monolithic(
         bunchComponent.border = null
 
         for (plotInfo in plotInfos) {
-            val plotComponent = buildPlotSvgComponent(plotInfo)
+            val plotComponent = buildPlotComponent(plotInfo, ::buildPlotSvgComponent)
             val bounds = plotInfo.bounds()
             plotComponent.bounds = Rectangle(
                 bounds.origin.x.toInt(),
@@ -138,6 +138,7 @@ abstract class Monolithic(
         return label
     }
 
+    @Suppress("SameParameterValue")
     private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {

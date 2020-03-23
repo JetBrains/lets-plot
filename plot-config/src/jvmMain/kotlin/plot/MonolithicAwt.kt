@@ -13,13 +13,17 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
 import javax.swing.JComponent
 
 
-class MonolithicAwt(
-    componentFactory: (svg: SvgSvgElement) -> JComponent,
-    executor: (() -> Unit) -> Unit
-) : Monolithic(componentFactory, executor) {
+object MonolithicAwt {
+    fun createPlotFactory(
+        componentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit
+    ): PlotFactory {
+        return PlotFactory(componentFactory, executor, ::buildPlotComponent)
+    }
 
-    override fun buildPlotSvgComponent(
-        plotBuildInfo: PlotBuildInfo
+    private fun buildPlotComponent(
+        plotBuildInfo: PlotBuildInfo,
+        buildPlotSvgComponent: (plotContainer: PlotContainer) -> JComponent
     ): JComponent {
         val assembler = plotBuildInfo.plotAssembler
 
@@ -32,25 +36,23 @@ class MonolithicAwt(
         return plotComponent
     }
 
-    companion object {
-        /**
-         * Static SVG export
-         */
-        @Deprecated(
-            level = DeprecationLevel.ERROR,
-            message = "was replaced with PlotSvgExport.buildSvgImageFromRawSpecs",
-            replaceWith = ReplaceWith(
-                expression = "PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, plotSize)",
-                imports = ["jetbrains.datalore.plot.PlotSvgExport"]
-            )
+    /**
+     * Static SVG export
+     */
+    @Deprecated(
+        level = DeprecationLevel.ERROR,
+        message = "was replaced with PlotSvgExport.buildSvgImageFromRawSpecs",
+        replaceWith = ReplaceWith(
+            expression = "PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, plotSize)",
+            imports = ["jetbrains.datalore.plot.PlotSvgExport"]
         )
+    )
 
-        fun buildSvgImagesFromRawSpecs(
-            plotSpec: MutableMap<String, Any>,
-            plotSize: DoubleVector?,
-            computationMessagesHandler: ((List<String>) -> Unit)
-        ): List<String> {
-            UNSUPPORTED("was replaced with PlotSvgExport.buildSvgImageFromRawSpecs")
-        }
+    fun buildSvgImagesFromRawSpecs(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector?,
+        computationMessagesHandler: ((List<String>) -> Unit)
+    ): List<String> {
+        UNSUPPORTED("was replaced with PlotSvgExport.buildSvgImageFromRawSpecs")
     }
 }

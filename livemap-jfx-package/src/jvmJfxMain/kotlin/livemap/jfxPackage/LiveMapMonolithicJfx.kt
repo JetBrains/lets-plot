@@ -10,7 +10,7 @@ import javafx.embed.swing.JFXPanel
 import javafx.scene.Group
 import javafx.scene.Scene
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.Monolithic
+import jetbrains.datalore.plot.PlotFactory
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -24,22 +24,25 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
 import java.awt.Rectangle
 import javax.swing.JComponent
 
-class LiveMapMonolithicJfx(
-    componentFactory: (svg: SvgSvgElement) -> JComponent,
-    executor: (() -> Unit) -> Unit
-) : Monolithic(componentFactory, executor) {
+object LiveMapMonolithicJfx{
 
-    override fun buildPlotSvgComponent(
-        plotBuildInfo: MonolithicCommon.PlotBuildInfo
+    fun createPlotFactory(
+        componentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit
+    ): PlotFactory {
+        return PlotFactory(componentFactory, executor, ::buildPlotComponent)
+    }
+
+    private fun buildPlotComponent(
+        plotBuildInfo: MonolithicCommon.PlotBuildInfo,
+        buildPlotSvgComponent: (plotContainer: PlotContainer) -> JComponent
     ): JComponent {
         val assembler = plotBuildInfo.plotAssembler
         injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec)
 
         val plot = assembler.createPlot()
         val plotContainer = PlotContainer(plot, plotBuildInfo.size)
-        val plotComponent = buildPlotSvgComponent(
-            plotContainer
-        )
+        val plotComponent = buildPlotSvgComponent(plotContainer)
 
         return if (plotContainer.liveMapFigures.isNotEmpty()) {
             @Suppress("UNCHECKED_CAST")
@@ -91,8 +94,6 @@ class LiveMapMonolithicJfx(
 
         return panel
     }
-
-
 
     private fun injectLiveMapProvider(
         plotAssembler: PlotAssembler,
