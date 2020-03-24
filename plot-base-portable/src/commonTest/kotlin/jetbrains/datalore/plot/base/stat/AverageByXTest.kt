@@ -5,17 +5,17 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.plot.base.stat.regression.allFiniteUnique
+import jetbrains.datalore.plot.base.stat.regression.averageByX
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class AllFiniteUniqueTest {
+class AverageByXTest {
     @Test
     fun Test0() {
         val xs: List<Double?> = arrayListOf()
         val ys: List<Double?> = arrayListOf()
 
-        val p = allFiniteUnique(xs, ys)
+        val p = averageByX(xs, ys)
 
         assertTrue(p.first contentEquals doubleArrayOf())
         assertTrue(p.second contentEquals doubleArrayOf())
@@ -26,7 +26,7 @@ class AllFiniteUniqueTest {
         val xs: List<Double?> = arrayListOf(1.0)
         val ys: List<Double?> = arrayListOf(1.0)
 
-        val p = allFiniteUnique(xs, ys)
+        val p = averageByX(xs, ys)
 
         assertTrue(p.first contentEquals doubleArrayOf(1.0))
         assertTrue(p.second contentEquals doubleArrayOf(1.0))
@@ -37,7 +37,7 @@ class AllFiniteUniqueTest {
         val xs: List<Double?> = arrayListOf(2.0, 1.0)
         val ys: List<Double?> = arrayListOf(3.0, 1.0)
 
-        val p = allFiniteUnique(xs, ys)
+        val p = averageByX(xs, ys)
 
         assertTrue(p.first contentEquals doubleArrayOf(1.0, 2.0))
         assertTrue(p.second contentEquals doubleArrayOf(1.0, 3.0))
@@ -48,7 +48,7 @@ class AllFiniteUniqueTest {
         val xs: List<Double?> = arrayListOf(2.0, 1.0, null)
         val ys: List<Double?> = arrayListOf(3.0, 1.0, 2.0)
 
-        val p = allFiniteUnique(xs, ys)
+        val p = averageByX(xs, ys)
 
         assertTrue(p.first contentEquals doubleArrayOf(1.0, 2.0))
         assertTrue(p.second contentEquals doubleArrayOf(1.0, 3.0))
@@ -59,7 +59,7 @@ class AllFiniteUniqueTest {
         val xs: List<Double?> = arrayListOf(2.0, 1.0, 0.0)
         val ys: List<Double?> = arrayListOf(3.0, 1.0, null)
 
-        val p = allFiniteUnique(xs, ys)
+        val p = averageByX(xs, ys)
 
         assertTrue(p.first contentEquals doubleArrayOf(1.0, 2.0))
         assertTrue(p.second contentEquals doubleArrayOf(1.0, 3.0))
@@ -70,7 +70,7 @@ class AllFiniteUniqueTest {
         val xs: List<Double?> = arrayListOf(2.0, 1.0, 0.0, 1.0)
         val ys: List<Double?> = arrayListOf(3.0, 1.0, null, 3.0)
 
-        val p = allFiniteUnique(xs, ys)
+        val p = averageByX(xs, ys)
 
         assertTrue(p.first contentEquals doubleArrayOf(1.0, 2.0))
         assertTrue(p.second contentEquals doubleArrayOf(2.0, 3.0))
@@ -81,7 +81,7 @@ class AllFiniteUniqueTest {
         val xs: List<Double?> = arrayListOf(null, null, null, 1.0, 3.0, 3.0, 2.0, 2.0)
         val ys: List<Double?> = arrayListOf(100.0, 13.0, 1.0, 10.0, 1.0, 3.0, null, 20.0)
 
-        val p = allFiniteUnique(xs, ys)
+        val p = averageByX(xs, ys)
 
         assertTrue(p.first contentEquals doubleArrayOf(1.0, 2.0, 3.0))
         assertTrue(p.second contentEquals doubleArrayOf(10.0, 20.0, 2.0))

@@ -59,7 +59,7 @@ fun allFinite(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArr
     return Pair(tx.toDoubleArray(), ty.toDoubleArray())
 }
 
-fun finitePairs(xs: List<Double?>, ys: List<Double?>): ArrayList<Pair<Double, Double>> {
+private fun finitePairs(xs: List<Double?>, ys: List<Double?>): ArrayList<Pair<Double, Double>> {
     val res = ArrayList<Pair<Double, Double>>()
 
     for ((x, y) in xs.asSequence().zip(ys.asSequence())) {
@@ -71,7 +71,7 @@ fun finitePairs(xs: List<Double?>, ys: List<Double?>): ArrayList<Pair<Double, Do
     return res
 }
 
-fun averageByX(lst: List<Pair<Double, Double>>): Pair<List<Double>, List<Double>> {
+private fun averageByX(lst: List<Pair<Double, Double>>): Pair<List<Double>, List<Double>> {
 
     if (lst.isEmpty())
         return Pair(ArrayList<Double>(), ArrayList<Double>())
@@ -100,7 +100,7 @@ fun averageByX(lst: List<Pair<Double, Double>>): Pair<List<Double>, List<Double>
     return Pair(tx, ty)
 }
 
-fun allFiniteUnique(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
+fun averageByX(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
     val tp = finitePairs(xs, ys)
     tp.sortBy { it.first }
     val res = averageByX(tp)

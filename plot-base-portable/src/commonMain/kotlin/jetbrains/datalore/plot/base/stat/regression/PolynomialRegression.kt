@@ -30,7 +30,7 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
             "Degree of polynomial must be at least 2"
         )
 
-        val (xVals, yVals) = allFiniteUnique(xs, ys)
+        val (xVals, yVals) = averageByX(xs, ys)
         n = xVals.size
 
         Preconditions.checkArgument(

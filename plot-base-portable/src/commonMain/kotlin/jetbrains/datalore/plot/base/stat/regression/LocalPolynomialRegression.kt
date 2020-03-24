@@ -29,7 +29,7 @@ class LocalPolynomialRegression(
     private val myPolynomial: PolynomialSplineFunction
 
     init {
-        val (xVals, yVals) = allFiniteUnique(xs, ys)
+        val (xVals, yVals) = averageByX(xs, ys)
 
         n = xVals.size
         meanX = xVals.average()
