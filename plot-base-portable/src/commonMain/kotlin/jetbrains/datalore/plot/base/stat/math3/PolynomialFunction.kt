@@ -141,11 +141,11 @@ class PolynomialFunction(c: DoubleArray?) {
     }
 
     operator fun plus(other: PolynomialFunction): PolynomialFunction {
-        return apply_op(other, { x, y -> x + y })
+        return apply_op(other) { x, y -> x + y }
     }
 
     operator fun minus(other: PolynomialFunction): PolynomialFunction {
-        return apply_op(other, { x, y -> x - y })
+        return apply_op(other) { x, y -> x - y }
     }
 
     fun multiply(a: Double): PolynomialFunction {

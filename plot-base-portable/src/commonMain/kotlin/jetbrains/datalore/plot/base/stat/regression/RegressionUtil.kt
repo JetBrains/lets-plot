@@ -75,14 +75,14 @@ fun allFiniteUnique(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, Dou
 
     val tx = ArrayList<Double>()
     val ty = ArrayList<Double>()
-    var (prev_x, sumY) = tp.first()
+    var (prevX, sumY) = tp.first()
     var countY = 1
 
     for ((x, y) in tp.subList(1, tp.size)) {
-        if (x != prev_x) {
-            tx.add(prev_x)
+        if (x != prevX) {
+            tx.add(prevX)
             ty.add(sumY.div(countY))
-            prev_x = x
+            prevX = x
             sumY = 0.0
             countY = 0
         }
@@ -91,7 +91,7 @@ fun allFiniteUnique(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, Dou
         countY += 1
     }
 
-    tx.add(prev_x)
+    tx.add(prevX)
     ty.add(sumY.div(countY))
 
     return Pair(tx.toDoubleArray(), ty.toDoubleArray())
