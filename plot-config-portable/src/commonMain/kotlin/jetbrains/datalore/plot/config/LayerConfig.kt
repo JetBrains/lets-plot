@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP
+import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
@@ -76,7 +77,8 @@ class LayerConfig constructor(
         // update with 'layer' mapping
         mappingOptions.putAll(getMap(MAPPING))
 
-        val layerData = ConfigUtil.createDataFrame(get(DATA))
+        @Suppress("UNCHECKED_CAST")
+        val layerData = ConfigUtil.createDataFrame(get(DATA), ConfigUtil.getSeriesAnnotation(getMap(DATA_META)))
         var combinedData: DataFrame
         if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
             combinedData = DataFrameUtil.appendReplace(sharedData, layerData)

@@ -146,7 +146,8 @@ class DataFrame private constructor(builder: Builder) {
     class Variable @JvmOverloads constructor(
         val name: String,
         val source: Source = Source.ORIGIN,
-        val label: String = name) {
+        val label: String = name
+    ) {
 
         val isOrigin: Boolean
             get() = source == Source.ORIGIN
@@ -202,6 +203,12 @@ class DataFrame private constructor(builder: Builder) {
         fun putNumeric(variable: Variable, v: List<Double?>): Builder {
             putIntern(variable, v)
             myIsNumeric[variable] = true
+            return this
+        }
+
+        fun putDiscrete(variable: Variable, v: List<*>): Builder {
+            putIntern(variable, v)
+            myIsNumeric[variable] = false
             return this
         }
 

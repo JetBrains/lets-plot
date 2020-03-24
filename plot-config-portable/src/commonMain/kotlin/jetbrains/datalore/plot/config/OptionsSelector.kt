@@ -18,7 +18,7 @@ fun Map<*, *>.write(vararg query: String, value: () -> Any) {
 }
 
 fun Map<*, *>.write(path: List<String>, item: String, value: Any) {
-    provideSection(path).asMutable()[item] = value
+    provideSection(path)[item] = value
 }
 
 fun Map<*, *>.remove(vararg query: String) {
@@ -37,12 +37,12 @@ fun Map<*, *>.has(path: List<String>, item: String): Boolean {
     return section(path)?.containsKey(item) ?: false
 }
 
-fun Map<*, *>.section(vararg query: String): Map<*, *>? {
-    return section(query.toList())
+fun Map<*, *>.section(vararg query: String): Map<String, Any>? {
+    return section(query.toList())?.typed()
 }
 
-fun Map<*, *>.section(path: List<String>): Map<*, *>? {
-    return path.fold<String, Map<*, *>?>(this, { section, next -> section?.read(next)?.let { it as Map<*, *> } ?: return@fold null } )
+fun Map<*, *>.section(path: List<String>): Map<String, Any>? {
+    return path.fold<String, Map<*, *>?>(this, { section, next -> section?.read(next)?.let { it as? Map<*, *> } ?: return@fold null } )?.typed()
 }
 
 fun Map<*, *>.list(vararg query: String): List<*>? {
@@ -54,25 +54,42 @@ fun Map<*, *>.list(path: List<String>, item: String): List<*>? {
 }
 
 fun Map<*, *>.sections(vararg query: String): List<Map<*, *>>? {
-    return list(*query)?.map { it as Map<*, *> }?.toList()
+    return list(*query)?.mapNotNull { it as? Map<*, *> }?.toList()
 }
 
-fun Map<*, *>.provideSection(path: List<String>): Map<*, *> {
-    return path.fold(this, { section, next -> section.asMutable().getOrPut(next, { HashMap<String, Any>() }) as Map<*, *> })
+fun Map<*, *>.provideSection(vararg query: String): MutableMap<String, Any> {
+    return provideSection(query.toList())
 }
 
-fun Map<*, *>.provideSections(vararg query: String): List<Map<*, *>> {
-    return provideSections(query.dropLast(1), query.last())
+fun Map<*, *>.provideSection(path: List<String>): MutableMap<String, Any> {
+    return path.fold(
+        this,
+        { acc, next ->
+            acc.asMutable().getOrPut(
+                key = next,
+                defaultValue = { HashMap<String, Any>() }
+            ) as Map<*, *>
+        }
+    ).asMutable()
 }
 
-fun Map<*, *>.provideSections(path: List<String>, item: String): List<Map<*, *>> {
+fun Map<*, *>.provideSections(vararg query: String): MutableList<Map<*, *>> {
+    return provideSections(query.dropLast(1), query.last()).asMutable()
+}
+
+fun Map<*, *>.provideSections(path: List<String>, item: String): MutableList<Map<*, *>> {
     @Suppress("UNCHECKED_CAST")
-    return provideSection(path).asMutable().getOrPut(item, { mutableListOf<Map<*, *>>() }) as List<Map<*, *>>
+    return provideSection(path).getOrPut(item, { mutableListOf<Map<*, *>>() }) as MutableList<Map<*, *>>
 }
 
 @Suppress("UNCHECKED_CAST")
 fun Map<*, *>.asMutable(): MutableMap<String, Any> {
     return this as MutableMap<String, Any>
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <K, V> Map<*, *>.typed(): Map<K, V> {
+    return this as Map<K, V>
 }
 
 @Suppress("UNCHECKED_CAST")

@@ -16,10 +16,12 @@ import jetbrains.datalore.plot.config.read
 import jetbrains.datalore.plot.config.sections
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.write
+import org.junit.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
+@Ignore
 class DiscreteVariableFromAnnotationChangeTest {
 
     @Test

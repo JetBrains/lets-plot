@@ -11,11 +11,13 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class AsDiscrete : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            //dataInMapping()
-//            fillFactor()
-//            ,fillAndColorFactor()
-//            ,fillFactorWithScaleColor(),
-            discreteGroup()
+            fillFactor(),
+            fillAndColorFactor(),
+            fillFactorWithScaleColor(),
+            layerData_DiscreteGroup(),
+            plotData_DiscreteGroup(),
+            smoothStatAsDiscrete(),
+            smoothStatWithGroup()
         )
     }
 
@@ -28,19 +30,58 @@ class AsDiscrete : PlotConfigDemoBase() {
         |"g": [0, 0, 1, 1]
 |}""".trimMargin()
 
-    private fun discreteGroup(): Map<String, Any> {
+    private val smoothData = """
+        |{
+        |    "x": [0, 2, 5, 8, 9, 12, 16, 20, 40],
+        |    "y": [3, 1, 2, 7, 8, 9, 10, 10, 10],
+        |    "g": [0, 0, 0, 1, 1, 1, 2, 2, 2],
+        |    "d": ['0', '0', '0', '1', '1', '1', '2', '2', '2']
+        |}
+    """.trimMargin()
+
+
+    private fun plotData_DiscreteGroup(): Map<String, Any> {
         val spec = """
             {
+              "kind": "plot",
               "data": $data,
               "mapping": {
                 "x": "x",
-                "y": "y"
+                "y": "y",
+                "color": "g"
               },
-              "kind": "plot",
+              "data_meta": {
+                "series_annotation": [
+                  {
+                    "variable": "g",
+                    "annotation": "discrete"
+                  }
+                ]
+              },
               "layers": [
                 {
                   "geom": "line",
                   "mapping": {
+                  },
+                  "size": 3
+                }
+              ]
+            }
+        """.trimIndent()
+        return parsePlotSpec(spec)
+    }
+
+    private fun layerData_DiscreteGroup(): Map<String, Any> {
+        val spec = """
+            {
+              "kind": "plot",
+              "layers": [
+                {
+                  "data": $data,
+                  "geom": "line",
+                  "mapping": {
+                    "x": "x",
+                    "y": "y",
                     "color": "g"
                   },
                   "data_meta": {
@@ -59,33 +100,79 @@ class AsDiscrete : PlotConfigDemoBase() {
         return parsePlotSpec(spec)
     }
 
-    private fun dataInMapping(): Map<String, Any> {
+    private fun smoothStatAsDiscrete(): Map<String, Any> {
         val spec = """
-{
-    "ggtitle": { "text": "geom_point(aes(x=[0, 5, 10], y=[0, 5, 10], color=as_discrete([1, 2, 4]))"}, 
-    "kind": "plot", 
-    "layers": [{
-        "geom": "point", 
-        "mapping": {"x": [0, 5, 10], "y": [0, 5, 10], "color": [1, 2, 4]}, 
-        "data_meta": {"series_annotation": [{"variable": [1, 2, 4], "annotation": "discrete"}]}, 
-        "shape": 21, 
-        "size": 9
-    }]
-}        """.trimIndent()
+            {
+              "mapping": {
+                "x": "x",
+                "y": "y"
+              },
+              "kind": "plot",
+              "layers": [
+                {
+                  "data": $smoothData,
+                  "geom": "smooth",
+                  "mapping": {
+                    "color": "g"
+                  },
+                  "data_meta": {
+                    "series_annotation": [
+                      {
+                        "variable": "g",
+                        "annotation": "discrete"
+                      }
+                    ]
+                  },
+                  "se": false
+                }
+              ]
+            }
+        """.trimIndent()
         return parsePlotSpec(spec)
     }
+    private fun smoothStatWithGroup(): Map<String, Any> {
+        val spec = """
+            {
+              "data": $smoothData,
+              "mapping": {
+                "x": "x",
+                "y": "y"
+              },
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "smooth",
+                  "mapping": {
+                    "color": "g",
+                    "group": "g"
+                  },
+                  "data_meta": {
+                    "series_annotation": [
+                      {
+                        "variable": "g",
+                        "annotation": "discrete"
+                      }
+                    ]
+                  },
+                  "se": false
+                }
+              ]
+            }
+        """.trimIndent()
+        return parsePlotSpec(spec)
+    }
+
 
     private fun fillFactor(): Map<String, Any> {
 
         val spec = """
 {
     "ggtitle": { "text": "... fill=as_discrete(a) ..."}, 
-    "data": $data, 
-    "mapping": {"x": "x", "y": "y"}, 
     "kind": "plot", 
     "layers": [{
         "geom": "point", 
-        "mapping": {"fill": "a", "color": "b"}, 
+        "data": $data,
+        "mapping": {"x": "x", "y": "y", "fill": "a", "color": "b"}, 
         "data_meta": {"series_annotation": [{"variable": "a", "annotation": "discrete"}]},
         "shape": 21, 
         "size": 9

@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.config.Option.Meta
+import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.Kind
 import jetbrains.datalore.plot.config.Option.Plot.COORD
 import jetbrains.datalore.plot.config.Option.Plot.FACET
@@ -44,7 +45,10 @@ abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(
 
     init {
 
-        sharedData = ConfigUtil.createDataFrame(get(DATA))
+        sharedData = ConfigUtil.createDataFrame(
+            get(DATA),
+            ConfigUtil.getSeriesAnnotation(getMap(DATA_META))
+        )
         checkState(sharedData != null)
 
         scaleConfigs = createScaleConfigs()

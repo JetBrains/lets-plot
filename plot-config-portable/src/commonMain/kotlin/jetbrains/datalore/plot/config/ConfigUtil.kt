@@ -10,6 +10,8 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.Dummies
+import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation
+import jetbrains.datalore.plot.server.config.transform.DiscreteVariableFromAnnotationChange
 
 object ConfigUtil {
     fun featureName(options: Map<*, *>): String {
@@ -30,9 +32,19 @@ object ConfigUtil {
                 }
     }
 
-    internal fun createDataFrame(rawData: Any?): DataFrame {
+    fun getSeriesAnnotation(options: Map<*, *>): Map<String, String> {
+        return options
+            .sections(SeriesAnnotation.TAG)
+            ?.associate { it.read(SeriesAnnotation.VARIABLE) as String to it.read(SeriesAnnotation.ANNOTATION) as String }
+            ?: emptyMap()
+    }
+
+    internal fun createDataFrame(
+        rawData: Any?,
+        dataMeta: Map<String, String> = emptyMap()
+    ): DataFrame {
         val varNameMap = asVarNameMap(rawData)
-        return updateDataFrame(DataFrame.Builder.emptyFrame(), varNameMap)
+        return updateDataFrame(DataFrame.Builder.emptyFrame(), varNameMap, dataMeta)
     }
 
     /**
@@ -137,33 +149,38 @@ object ConfigUtil {
         return varNameMap
     }
 
-    private fun updateDataFrame(df: DataFrame, data: Map<String, List<*>>): DataFrame {
+    private fun updateDataFrame(
+        df: DataFrame,
+        data: Map<String, List<*>>,
+        dataMeta: Map<String, String>
+    ): DataFrame {
         val dfVars = DataFrameUtil.variables(df)
         val b = df.builder()
-        for (varName in data.keys) {
-            val variable: DataFrame.Variable
-            if (dfVars.containsKey(varName)) {
-                variable = dfVars[varName]!!
-            } else {
-                variable = DataFrameUtil.createVariable(varName)
-            }
+        for ((varName, values) in data) {
+            val isDiscrete = DiscreteVariableFromAnnotationChange
+                .decodeName(varName) // var name in data encoded by SpecChange
+                ?.let { dataMeta[it] } // data meta keeps original var name
+                ?.let(SeriesAnnotation.DISCRETE::equals)
 
-            b.put(variable, toList(data[varName]!!))
+            val variable = dfVars[varName] ?: DataFrameUtil.createVariable(varName)
+
+            @Suppress("UNCHECKED_CAST")
+            when (isDiscrete) {
+                true -> b.putDiscrete(variable, values as List<Double?>)
+                false -> b.putNumeric(variable, values as List<Double?>)
+                null -> b.put(variable, values)
+            }
         }
         return b.build()
     }
 
     private fun toList(o: Any): List<*> {
-        if (o is List<*>) {
-            return o
+        return when (o) {
+            is List<*> -> o
+            is Number -> listOf(o.toDouble())
+            is Iterable<*> -> throw IllegalArgumentException("Can't cast/transform to list: " + o::class.simpleName)
+            else -> listOf(o.toString())
         }
-        if (o is Number) {
-            return listOf(o.toDouble())
-        }
-        if (o is Iterable<*>) {
-            throw IllegalArgumentException("Can't cast/transform to list: " + o::class.simpleName)
-        }
-        return listOf(o.toString())
     }
 
     internal fun createAesMapping(data: DataFrame, mapping: Map<*, *>?): Map<Aes<*>, DataFrame.Variable> {
