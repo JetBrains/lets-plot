@@ -25,7 +25,7 @@ Due to the unique multi-platform nature of Kotlin programming language, you can 
 
 ### JVM artifacts and Kotlin API
 
-[ ![Download](https://api.bintray.com/packages/jetbrains/lets-plot-maven/lets-plot-jars/images/download.svg?version=1.3.0rc1) ](https://bintray.com/jetbrains/lets-plot-maven/lets-plot-jars/1.3.0rc1/link)
+[ ![Download](https://api.bintray.com/packages/jetbrains/lets-plot-maven/lets-plot-jars/images/download.svg)](https://bintray.com/jetbrains/lets-plot-maven/lets-plot-jars/_latestVersion)
 
 [Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) adds Grammar-of-Graphics plotting capabilities to Kotlin kernels for Jupyter notebooks.
 
