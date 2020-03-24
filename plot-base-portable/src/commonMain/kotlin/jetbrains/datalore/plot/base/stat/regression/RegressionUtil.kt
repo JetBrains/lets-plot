@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.stat.regression
 
 import jetbrains.datalore.plot.base.stat.math3.Percentile
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.random.Random
 
 internal object RegressionUtil {
@@ -42,4 +43,66 @@ internal object RegressionUtil {
     fun percentile(data: List<Double>, p: Double): Double {
         return Percentile.evaluate(data.toDoubleArray(), p * 100)
     }
+}
+
+fun allFinite(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
+    val tx = ArrayList<Double>()
+    val ty = ArrayList<Double>()
+
+    for ((x, y) in xs.asSequence().zip(ys.asSequence())) {
+        if (SeriesUtil.allFinite(x, y)) {
+            tx.add(x!!)
+            ty.add(y!!)
+        }
+    }
+
+    return Pair(tx.toDoubleArray(), ty.toDoubleArray())
+}
+
+private fun finitePairs(xs: List<Double?>, ys: List<Double?>): ArrayList<Pair<Double, Double>> {
+    val res = ArrayList<Pair<Double, Double>>()
+
+    for ((x, y) in xs.asSequence().zip(ys.asSequence())) {
+        if (SeriesUtil.allFinite(x, y)) {
+            res.add(Pair(x!!, y!!))
+        }
+    }
+
+    return res
+}
+
+private fun averageByX(lst: List<Pair<Double, Double>>): Pair<List<Double>, List<Double>> {
+
+    if (lst.isEmpty())
+        return Pair(ArrayList<Double>(), ArrayList<Double>())
+
+    val tx = ArrayList<Double>()
+    val ty = ArrayList<Double>()
+    var (prevX, sumY) = lst.first()
+    var countY = 1
+
+    for ((x, y) in lst.asSequence().drop(1)) {
+        if (x == prevX) {
+            sumY += y
+            ++countY
+        } else {
+            tx.add(prevX)
+            ty.add(sumY.div(countY))
+            prevX = x
+            sumY = y
+            countY = 1
+        }
+    }
+
+    tx.add(prevX)
+    ty.add(sumY.div(countY))
+
+    return Pair(tx, ty)
+}
+
+fun averageByX(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
+    val tp = finitePairs(xs, ys)
+    tp.sortBy { it.first }
+    val res = averageByX(tp)
+    return Pair(res.first.toDoubleArray(), res.second.toDoubleArray())
 }

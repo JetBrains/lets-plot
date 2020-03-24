@@ -6,57 +6,46 @@
 package jetbrains.datalore.plot.base.stat.regression
 
 import jetbrains.datalore.plot.base.stat.math3.TDistribution
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double)
-    : RegressionEvaluator(xs, ys, confidenceLevel) {
+class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double) :
+    RegressionEvaluator(xs, ys, confidenceLevel) {
 
     private val n: Int
     private val meanX: Double
     private val sumXX: Double
     private val beta1: Double
     private val beta0: Double
-    private val sy: Double
+    private val sy: Double // Standard error of estimate
     private val tcritical: Double
 
     init {
-        val (xVals, yVals) = xs.asSequence().zip(ys.asSequence())
-            .filter { (x, y) -> SeriesUtil.allFinite(x, y) }
-            .fold(Pair(mutableListOf<Double>(), mutableListOf<Double>())) { points, (x, y) ->
-                points.apply {
-                    first.add(x!!)
-                    second.add(y!!)
-                }
-            }
-
+        val (xVals, yVals) = allFinite(xs, ys)
         n = xVals.size
-        meanX = xVals.sum().div(n)
+        meanX = xVals.average()
         sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
 
-        val meanY = yVals.sum().div(n)
-        sy = run {
-            val sumYY = yVals.sumByDouble { (it - meanY).pow(2) }
-            val sumXY = xVals.zip(yVals).sumByDouble { (x, y) -> (x - meanX) * (y - meanY) }
-            val sse = max(0.0, sumYY - sumXY * sumXY / sumXX);
-            sqrt(sse / (n - 2))
-        }
+        val meanY = yVals.average()
+        val sumYY = yVals.sumByDouble { (it - meanY).pow(2) }
+        val sumXY = xVals.zip(yVals).sumByDouble { (x, y) -> (x - meanX) * (y - meanY) }
 
-        beta1 = run {
-            val variance = xVals.map { (it - meanX).pow(2) }.sum()
-            val covariance = xVals.zip(yVals).map { (x, y) -> (x - meanX) * (y - meanY) }.sum()
-            covariance / variance
-        }
-
+        beta1 = sumXY / sumXX
         beta0 = meanY - beta1 * meanX
+
+        sy = run { // Standard error of estimate
+            val sse = max(0.0, sumYY - sumXY * sumXY / sumXX) // https://en.wikipedia.org/wiki/Residual_sum_of_squares
+            sqrt(sse / (n - 2)) // SE estimate
+        }
 
         tcritical = run {
             val alpha = 1.0 - confidenceLevel
             TDistribution(n - 2.0).inverseCumulativeProbability(1.0 - alpha / 2.0)
         }
     }
+
+    private fun value(x: Double): Double = beta1 * x + beta0
 
     override fun evalX(x: Double): EvalResult {
 
@@ -70,7 +59,7 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
 
 
         // standard error (of estimate?)
-        val se = run {
+        val se = run {// standard error of predicted means
             // x deviation squared
             val dxSquare = (x - meanX).pow(2)
             sy * sqrt(1.0 / n + dxSquare / sumXX)
@@ -78,8 +67,8 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
 
         // half-width of confidence interval for estimated mean y
         val halfConfidenceInterval = tcritical * se
+        val yHat = value(x)
 
-        val yHat = beta1 * x + beta0
         return EvalResult(
             yHat,
             yHat - halfConfidenceInterval,
