@@ -20,8 +20,7 @@ class ForsythePolynomialGenerator(private val knots: DoubleArray) {
     }
 
     private fun alphaBeta(i: Int): Pair<Double, Double> {
-        if (i != ps.size)
-            error("Alpha must be calculated sequentially.")
+        require(i == ps.size) { "Alpha must be calculated sequentially." }
 
         val p = ps.last()
         val pp = ps[ps.size - 2]
@@ -41,11 +40,10 @@ class ForsythePolynomialGenerator(private val knots: DoubleArray) {
     }
 
     fun getPolynomial(n: Int): PolynomialFunction {
-        if (n < 0)
-            error("Degree of Forsythe polynomial must not be negative")
 
-        if (n >= knots.size)
-            error("Degree of Forsythe polynomial must not exceed knots.size - 1")
+        require(n >= 0) { "Degree of Forsythe polynomial must not be negative" }
+
+        require(n < knots.size) { "Degree of Forsythe polynomial must not exceed knots.size - 1" }
 
         if (n >= ps.size) {
             val sz = ps.size
