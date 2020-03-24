@@ -71,7 +71,7 @@ fun finitePairs(xs: List<Double?>, ys: List<Double?>): ArrayList<Pair<Double, Do
     return res
 }
 
-fun uniquelizeList(lst: ArrayList<Pair<Double, Double>>): Pair<ArrayList<Double>, ArrayList<Double>> {
+fun averageByX(lst: List<Pair<Double, Double>>): Pair<List<Double>, List<Double>> {
 
     if (lst.isEmpty())
         return Pair(ArrayList<Double>(), ArrayList<Double>())
@@ -81,7 +81,7 @@ fun uniquelizeList(lst: ArrayList<Pair<Double, Double>>): Pair<ArrayList<Double>
     var (prevX, sumY) = lst.first()
     var countY = 1
 
-    for ((x, y) in lst.drop(1)) {
+    for ((x, y) in lst.asSequence().drop(1)) {
         if (x == prevX) {
             sumY += y
             ++countY
@@ -97,12 +97,12 @@ fun uniquelizeList(lst: ArrayList<Pair<Double, Double>>): Pair<ArrayList<Double>
     tx.add(prevX)
     ty.add(sumY.div(countY))
 
-    return Pair( tx, ty)
+    return Pair(tx, ty)
 }
 
 fun allFiniteUnique(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
     val tp = finitePairs(xs, ys)
     tp.sortBy { it.first }
-    val res = uniquelizeList(tp)
+    val res = averageByX(tp)
     return Pair(res.first.toDoubleArray(), res.second.toDoubleArray())
 }

@@ -9,8 +9,6 @@ import jetbrains.datalore.plot.base.stat.regression.allFiniteUnique
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-//fun allFiniteUnique( xs : List<Double?>, ys : List<Double? >) : Pair<DoubleArray, DoubleArray >  {
-
 class AllFiniteUniqueTest {
     @Test
     fun Test0() {
