@@ -28,11 +28,11 @@
 - [Implementation Overview](#overview)
 - [Installation](#inst)
 - [Quick start with Jupyter](#start)
-- [What is new](#new)
 - [Examples](#examples)
+- [What is new in 1.3.0](#new)
 
 <a name="Implementation Overview" id="overview"></a>
-### Implementation Overview
+## Implementation Overview
 
 The Lets-Plot python extension includes native backend and a Python API, which was mostly based on the [`ggplot2`](https://ggplot2.tidyverse.org/) package well-known to data scientists who use R.
 
@@ -47,19 +47,20 @@ One important difference is that the python package in Datalore is named **datal
 The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/) as a learning tool in comparison to Jupyter is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
 
 <a name="Installation" id="inst"></a>
-### Installation
+## Installation
 
 To install the Lets-Plot library, run the following command:
 ```shell script
 pip install lets-plot
 ```
 <a name="Quick start with Jupyter" id="start"></a>
-### Quick start with Jupyter
+## Quick start with Jupyter
 
 To evaluate the plotting capabilities of Lets-Plot, add the following code to a Jupyter notebook:
 ```python
 import numpy as np
 from lets_plot import *
+LetsPlot.setup_html()        
 
 np.random.seed(12)
 data = dict(
@@ -80,40 +81,8 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <br>
 <br>
 
-<a name="What is new" id="new"></a>
-### What is new in v.1.2.0
-
-* [Shapely](https://pypi.org/project/Shapely/) and [GeoPandas](https://geopandas.org) support.
-
-    GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
-
-    Examples: 
-
-    - Map building basics with *Lets-Plot* and *GeoPandas*: [geopandas_naturalearth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb)
-
-    - An **inset map** of Kotlin island: [geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb)
-
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="630" height="449"><br><br>
-
-* Plot cropping using the `xlim, ylim` coordinate system parameters.
-
-    See [geopandas_naturalearth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb) 
-    and [geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb).
-
-* [LOESS](https://en.wikipedia.org/wiki/Local_regression) smoothing method in geom_smooth: 
-[geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb)
-
-* New geometry layers.
-
-    `geom_crossbar, geom_linerange, geom_pointrange`: 
-[error_bars.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/error_bars.ipynb)
-
-    `geom_bin2d`:
-[density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/density_2d)
-
-
 <a name="Examples" id="examples"></a>
-### Example Notebooks
+## Example Notebooks
 
 
 Try the following examples to study more features of the `Lets-Plot` library.
@@ -123,13 +92,16 @@ Try the following examples to study more features of the `Lets-Plot` library.
 * Histogram, density plot, box plot and facets:
 [distributions.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/distributions.ipynb) 
 
-* Error-bars, points, lines, bars, dodge position:
+* Error-bars, crossbar, linerange, pointrange, points, lines, bars, dodge position:
 [error_bars.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/error_bars.ipynb)
  
 * Points, point shapes, linear regression, jitter position:
 [scatter_plot.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/scatter_plot.ipynb)
  
-* Points, density2d, polygons, density2df:
+* Smoothing: linear, [LOESS](https://en.wikipedia.org/wiki/Local_regression):
+[geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb) 
+ 
+* Points, density2d, polygons, density2df, bin2d:
 [density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/density_2d.ipynb)
  
 * Tiles, contours, polygons, contourf:
@@ -139,9 +111,22 @@ Try the following examples to study more features of the `Lets-Plot` library.
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
   
   
-The following features of `Lets-Plot` are not present or have different implementation in other `Grammar of Graphics` libraries.
+### GeoDataFrame support ([Shapely](https://pypi.org/project/Shapely/) and [GeoPandas](https://geopandas.org)). 
+  
+GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
 
-##### Plotting functions
+* Map building basics with *Lets-Plot* and *GeoPandas*: 
+[geopandas_naturalearth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb)
+
+* An **inset map** of Kotlin island: 
+[geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb)
+
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="473" height="327"><br><br>
+
+  
+### Nonstandard plotting functions  
+  
+The following features of `Lets-Plot` are not present or have different implementation in other `Grammar of Graphics` libraries.
 
 * `ggsize()` - sets the size of the plot. Used in many examples starting from `quickstart`.
 * `geom_density2df()` - fills space between equal density lines on a 2D density plot. Similar to `geom_density2d` but supports the `fill` aesthetic.
@@ -162,16 +147,17 @@ The following features of `Lets-Plot` are not present or have different implemen
 
     Example: [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb)
 
-##### GGBanch
+### GGBanch
 
 GGBunch allows to show a collection of plots on one figure. Each plot in the collection can have arbitrary location and size. There is no automatic layout inside the bunch.
 
-Examples: 
+Examples:
+
 * [ggbunch.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/ggbunch.ipynb)
 * [scatter_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/scatter_matrix.ipynb)
 
 
-##### Data sampling 
+### Data sampling 
 
 Sampling is a special technique of data transformation, which helps dealing with large datasets and overplotting.
 
@@ -181,15 +167,64 @@ Sampling is a special technique of data transformation, which helps dealing with
 
 ### Artistic demos
 
-A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) with `Lets-Plot` for visualization.    
+A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) using `Lets-Plot` library for visualization.    
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/klein_bottle.png" alt="Couldn't load klein_bottle.png" width="498" height="386">
+<br>
   
 
-### Change Log
+<a name="What is new" id="new"></a>
+## What is new in 1.3.0
+
+### SVG/HTML export to file.
+
+`export_svg` function takes plot specification and filename as parameters and saves SVG representation of plot to a file in current working directorty.
+```python
+from lets_plot import *
+p = ggplot()...
+               
+# export SVG to file
+from lets_plot.export.simple import export_svg
+
+export_svg(p, "p.svg")
+```
+ 
+`export_html` function takes plot specification and filename as parameters and saves dynamic HTML to a file in current working directorty.
+When viewing this content the internet connection is required.
+
+`export_html` has one more option - `iframe`. If `iframe=True` then `Lets-PLot` will wrap output HTML into `iframe`.
+
+```python
+from lets_plot import *
+p = ggplot()...
+               
+# export HTML to file
+from lets_plot.export.simple import export_html
+
+export_html(p, "p.htm")
+```
+Example notebook: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML_new.ipynb)
+ 
+### Offline mode for Jupyter notebooks.
+
+In classic Jupyter notebook `LetsPlot.setup_html()` statement by default pre-loads `Lets-Plot` JS library from CDN. 
+Alternatively, option `offline=True` will force `Lets-Plot` to add the full Lets-Plot js bundle to the notebook. 
+In this case plots in the notebook will be working without an internet connection.
+```python
+from lets_plot import *
+
+LetsPlot.setup_html(offline=True)
+```
+
+### Cloud-based notebooks like Google Colab and Datalore.
+
+Example of Google Colab notebook: [quickstart.ipynb](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-)
+
+## Change Log
 
 See [Lets-Plot at Github](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md).
 
 
-### License
+## License
 
 Code and documentation released under the [MIT license](https://github.com/JetBrains/lets-plot/blob/master/LICENSE).
 Copyright 2019, JetBrains s.r.o.
