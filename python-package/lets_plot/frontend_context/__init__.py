@@ -3,6 +3,6 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 
-from .frontend_context import *
+from ._configuration import *
 
-__all__ = frontend_context.__all__
+__all__ = _configuration.__all__

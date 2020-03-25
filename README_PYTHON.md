@@ -17,11 +17,11 @@
     </tr>
     <tr>
         <td>OS</td>
-        <td>Linux, MacOS</td>
+        <td>Linux, MacOS, Windows</td>
     </tr>
     <tr>
         <td>Python versions</td>
-        <td>3.7, 3.8</td>
+        <td>3.6, 3.7, 3.8</td>
     </tr>
 </table>
 
@@ -100,7 +100,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
     See [geopandas_naturalearth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_naturalearth.ipynb) 
     and [geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb).
 
-* [LOESS](https://en.wikipedia.org/wiki/Local_regression) smoothing method in geom_smooth: 
+* [LOESS](https://en.wikipedia.org/wiki/Local_regression) smoothing method in `geom_smooth`: 
 [geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb)
 
 * New geometry layers.
@@ -139,7 +139,7 @@ Try the following examples to study more features of the `Lets-Plot` library.
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
   
   
-The following features of `Lets-Plot` are not present or have different implementation in other `Grammar of Graphics` libraries.
+The following features of `Lets-Plot` are not available or have different implementation in other `Grammar of Graphics` libraries.
 
 ##### Plotting functions
 
