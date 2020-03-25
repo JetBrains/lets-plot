@@ -217,7 +217,7 @@ from lets_plot import *
 LetsPlot.setup_html(offline=True)
 ```
 
-### Cloud-based notebooks like Google Colab and Datalore.
+### Cloud-based notebooks are supported (like Google Colab, JetBrains Datalore)
 
 Example of Google Colab notebook: [quickstart.ipynb](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-)
 
