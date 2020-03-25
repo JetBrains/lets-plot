@@ -126,7 +126,7 @@ GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_po
   
 ### Nonstandard plotting functions  
   
-The following features of `Lets-Plot` are not present or have different implementation in other `Grammar of Graphics` libraries.
+The following features of `Lets-Plot` are not available or have different implementation in other `Grammar of Graphics` libraries.
 
 * `ggsize()` - sets the size of the plot. Used in many examples starting from `quickstart`.
 * `geom_density2df()` - fills space between equal density lines on a 2D density plot. Similar to `geom_density2d` but supports the `fill` aesthetic.
@@ -177,7 +177,8 @@ A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-exa
 
 ### SVG/HTML export to file.
 
-`export_svg` function takes plot specification and filename as parameters and saves SVG representation of plot to a file in current working directorty.
+`export_svg` function takes plot specification and filename as parameters and saves SVG representation of the plot to
+ a file in the current working directory.
 ```python
 from lets_plot import *
 p = ggplot()...
@@ -188,7 +189,8 @@ from lets_plot.export.simple import export_svg
 export_svg(p, "p.svg")
 ```
  
-`export_html` function takes plot specification and filename as parameters and saves dynamic HTML to a file in current working directorty.
+`export_html` function takes plot specification and filename as parameters and saves dynamic HTML to a file in the current 
+working directory.
 When viewing this content the internet connection is required.
 
 `export_html` has one more option - `iframe`. If `iframe=True` then `Lets-PLot` will wrap output HTML into `iframe`.
@@ -206,9 +208,9 @@ Example notebook: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrain
  
 ### Offline mode for Jupyter notebooks.
 
-In classic Jupyter notebook `LetsPlot.setup_html()` statement by default pre-loads `Lets-Plot` JS library from CDN. 
-Alternatively, option `offline=True` will force `Lets-Plot` to add the full Lets-Plot js bundle to the notebook. 
-In this case plots in the notebook will be working without an internet connection.
+In classic Jupyter notebook the `LetsPlot.setup_html()` statement by default pre-loads `Lets-Plot` JS library from CDN. 
+Alternatively, option `offline=True` will force `Lets-Plot` adding the full Lets-Plot JS bundle to the notebook. 
+In this case, plots in the notebook will be working without an Internet connection.
 ```python
 from lets_plot import *
 
