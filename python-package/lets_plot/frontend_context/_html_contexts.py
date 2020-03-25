@@ -11,10 +11,18 @@ from .._global_settings import has_global_value, get_global_bool, HTML_ISOLATED_
 
 def _create_html_frontend_context(isolated_frame: bool = None, offline: bool = None) -> FrontendContext:
     """
+    Configures Lets-Plot HTML output.
 
-    :param isolated_frame:
-    :param offline:
-    :return:
+    Parameters
+    ----------
+    isolated_frame : bool, optional, default None - auto-detect
+        If `True`, generate HTLM which can be used in `iframe` or in a standalone HTML document
+        If `False`, pre-load Lets-Plot JS library. Notebook cell output will only consist of HTML for the plot rendering.
+
+    offline : bool, optional, default None - evaluated to 'connected' mode in production environment.
+        If `True`, full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
+        to work with notebook without the Internet connection.
+        If `False`, load Lets-Plot JS library from CDN.
     """
     if isolated_frame is None:
         isolated_frame = _use_isolated_frame()
