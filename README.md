@@ -31,5 +31,5 @@ Due to the unique multi-platform nature of Kotlin programming language, you can 
 
 Besides Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into a JVM-based application.
 
-To learn more about creating plots in JVM environment see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) in
-[Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub  
+To learn more about creating plots in a JVM environment see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) in
+[Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub.
