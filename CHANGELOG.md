@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - `tooltip` parameter for geoms.
  - `axis_tooltip` parameters for `theme()`.
 
-## [1.3.0] - 2020-03-..
+## [1.3.0] - 2020-03-26
 ### Added
  - Python 3.6 support.
  - Windows platform support.
