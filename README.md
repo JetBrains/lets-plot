@@ -15,15 +15,21 @@ The design of Lets-Plot library is heavily influenced by Leland Wilkinson work [
 Due to the unique multi-platform nature of Kotlin programming language, you can obtain the plotting functionality that is packaged as a JavaScript library, JVM library, and a native Python extension.
 
 ### Python Extension 
+<a href="https://pypi.org/project/lets-plot/"/>
+<img src="https://badge.fury.io/py/lets-plot.svg"/>
+<br>
 
-[Learn](README_PYTHON.md) how to create plots in Jupyter using the Lets-Plot python package.
+[Learn](README_PYTHON.md) how to create plots using the `Lets-Plot` python package.
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
 
-### Kotlin API
+### JVM artifacts and Kotlin API
+
+[ ![Download](https://api.bintray.com/packages/jetbrains/lets-plot-maven/lets-plot-jars/images/download.svg)](https://bintray.com/jetbrains/lets-plot-maven/lets-plot-jars/_latestVersion)
 
 [Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) adds Grammar-of-Graphics plotting capabilities to Kotlin kernels for Jupyter notebooks.
 
 Besides Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into a JVM-based application.
 
-**Lets-Plot Kotlin** API is experimental and has not been publicly released yet.   
+To learn more about creating plots in a JVM environment see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) in
+[Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub.

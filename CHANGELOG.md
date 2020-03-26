@@ -6,18 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+ - as_discrete() function.
+ - `tooltip` parameter for geoms.
+ - `axis_tooltip` parameters for `theme()`.
+
+## [1.3.0] - 2020-03-26
 ### Added
  - Python 3.6 support.
  - Windows platform support.
- - factor() function.
- - tooltip for geom_rect.
- - export SVG/HTML to file. 
- - `tooltip` parameter for geoms.
- - `axis_tooltip` parameters for `theme()`.
- - tooltip for `geom_vline` with mapping.
+ - SVG/HTML export to file.
+ - Offline mode for Jupyter notebooks.
+ - Support for cloud-based notebooks like Google Colab and Datalore.
+ - JVM Maven artefacts released.
  
  ### Fixed
- - error if data contains NaT value.
+ - No tooltip on `geom_rect` and `geom_vline`.
+ - Error when date-time series contains `NaT` value.
+ 
+ ### Changed
+ - Optional `load_lets_plot_js()` function is now deprecated.
+ - Initialisation call `LetsPlot.setup_html()` is now mandatory in Jupyter.
 
 ## [1.2.1] - 2020-02-13
 ### Fixed
