@@ -49,9 +49,7 @@ object SeriesUtil {
     }
 
     fun allFinite(v0: Double?, v1: Double?): Boolean {
-        return isFinite(v0) && isFinite(
-            v1
-        )
+        return isFinite(v0) && isFinite(v1)
     }
 
     fun allFinite(v0: Double?, v1: Double?, v2: Double?): Boolean {

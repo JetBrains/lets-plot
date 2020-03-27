@@ -64,7 +64,8 @@ import kotlin.math.sqrt
 class LoessInterpolator(
     private val bandwidth: Double = DEFAULT_BANDWIDTH,
     private val robustnessIters: Int = DEFAULT_ROBUSTNESS_ITERS,
-    private val accuracy: Double =  DEFAULT_ACCURACY) {
+    private val accuracy: Double = DEFAULT_ACCURACY
+) {
 
     /**
      * Construct a new {@link LoessInterpolator}
@@ -92,13 +93,11 @@ class LoessInterpolator(
      */
 
     init {
-        if (bandwidth < 0 || bandwidth > 1) {
-            error( "Out of range of bandwidth value: $bandwidth should be < 0 and > 1")
-        }
+        if (bandwidth <= 0 || bandwidth > 1)
+            error("Out of range of bandwidth value: $bandwidth should be > 0 and <= 1")
 
-        if (robustnessIters < 0) {
+        if (robustnessIters < 0)
             error("Not positive Robutness iterationa: $robustnessIters")
-        }
     }
 
     /**
@@ -122,7 +121,7 @@ class LoessInterpolator(
      * accomodate the size of the input data (i.e. the bandwidth must be
      * larger than 2/n).
      */
-    fun interpolate( xval: DoubleArray, yval: DoubleArray): PolynomialSplineFunction {
+    fun interpolate(xval: DoubleArray, yval: DoubleArray): PolynomialSplineFunction {
         return SplineInterpolator().interpolate(xval, smooth(xval, yval))
     }
 
@@ -182,7 +181,7 @@ class LoessInterpolator(
             for (i in 0 until n) {
                 val x = xval[i]
                 // Find out the interval of source points on which
-                    // a regression is to be made.
+                // a regression is to be made.
                 if (i > 0) {
                     updateBandwidthInterval(
                         xval,
@@ -213,7 +212,7 @@ class LoessInterpolator(
                 var sumXSquared = 0.0
                 var sumY = 0.0
                 var sumXY = 0.0
-                val denom: Double = abs (1.0 / (xval[edge] - x))
+                val denom: Double = abs(1.0 / (xval[edge] - x))
                 for (k in ileft..iright) {
                     val xk = xval[k]
                     val yk = yval[k]
@@ -296,7 +295,8 @@ class LoessInterpolator(
         // is closer to xval[i] than the leftmost point of the current interval
         val nextRight: Int = nextNonzero(weights, right)
         if (nextRight < xval.size && xval[nextRight] - xval[i] < xval[i] - xval[left]) {
-            val nextLeft: Int = nextNonzero(weights, bandwidthInterval[0]
+            val nextLeft: Int = nextNonzero(
+                weights, bandwidthInterval[0]
             )
             bandwidthInterval[0] = nextLeft
             bandwidthInterval[1] = nextRight
@@ -320,6 +320,7 @@ class LoessInterpolator(
         val tmp = 1 - absX * absX * absX
         return tmp * tmp * tmp
     }
+
     /**
      * Return the smallest index `j` such that
      * `j > i && (j == weights.length || weights[j] != 0)`.
@@ -374,6 +375,7 @@ class LoessInterpolator(
             error("Argument $x is not a finite number")
         }
     }
+
     /**
      * Check that all elements of an array are finite real numbers.
      *
@@ -390,8 +392,10 @@ class LoessInterpolator(
     companion object {
         /** Default value of the bandwidth parameter.  */
         const val DEFAULT_BANDWIDTH = 0.3
+
         /** Default value of the number of robustness iterations.  */
         const val DEFAULT_ROBUSTNESS_ITERS = 2
+
         /**
          * Default value for accuracy.
          * @since 2.1

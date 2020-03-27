@@ -29,29 +29,22 @@ class LocalPolynomialRegression(
     private val myPolynomial: PolynomialSplineFunction
 
     init {
-        val mapX: MutableMap<Double, MutableList<Double>> = hashMapOf()
+        val (xVals, yVals) = averageByX(xs, ys)
 
-        xs.zip(ys)
-            .filter { (x, y) -> SeriesUtil.allFinite(x, y) }
-            .forEach { (x, y) -> mapX.getOrPut(x!!) { mutableListOf() }.add(y!!) }
+        n = xVals.size
+        meanX = xVals.average()
+        sumXX = xVals.sumByDouble { (it - meanX).pow(2) }
 
-        val distinct = mapX
-            .map { (x, ys) -> x to ys.average() }
-            .map { (x, y) -> DoubleVector(x, y) }
-
-        n = distinct.size
-        meanX = distinct.map { it.x }.sum().div(n)
-        sumXX = distinct.map { (it.x - meanX).pow(2) }.sum()
-        val meanY = distinct.map { it.y }.sum().div(n)
+        val meanY = yVals.average()
+        val sumYY = yVals.sumByDouble { (it - meanY).pow(2) }
+        val sumXY = xVals.zip(yVals).sumByDouble { (x, y) -> (x - meanX) * (y - meanY) }
 
         sy = run {
-            val sumYY = distinct.map { (it.y - meanY).pow(2) }.sum()
-            val sumXY = distinct.sumByDouble { (it.x - meanX) * (it.y - meanY) }
-            val sse = max(0.0, sumYY - sumXY * sumXY / sumXX);
+            val sse = max(0.0, sumYY - sumXY * sumXY / sumXX)
             sqrt(sse / (n - 2))
         }
 
-        myPolynomial = getPoly(distinct)
+        myPolynomial = getPoly(xVals, yVals)
 
         tcritical = run {
             val alpha = 1.0 - confidenceLevel
@@ -80,13 +73,7 @@ class LocalPolynomialRegression(
         )
     }
 
-    private fun getPoly(points: List<DoubleVector>): PolynomialSplineFunction {
-        val listX = ArrayList<Double>()
-        val listY = ArrayList<Double>()
-        points
-            .sortedBy(DoubleVector::x)
-            .forEach { listX.add(it.x); listY.add(it.y) }
-
-        return LoessInterpolator(myBandwidth, 4).interpolate(listX.toDoubleArray(), listY.toDoubleArray())
+    private fun getPoly(xVals: DoubleArray, yVals: DoubleArray): PolynomialSplineFunction {
+        return LoessInterpolator(myBandwidth, 4).interpolate(xVals, yVals)
     }
 }
