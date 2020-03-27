@@ -102,12 +102,31 @@ object PlotConfigClientSideUtil {
             multilayer
         )
             .addHiddenAes(axisWithoutTooltip)
-            .tooltipAes(layerConfig.tooltipAes)
+            .also { it.tooltipAes(createTooltipAesList(layerConfig, it.displayableAes, it.axisAes)) }
             .build()
 
         layerBuilder
             .locatorLookupSpec(geomInteraction.createLookupSpec())
             .contextualMappingProvider(geomInteraction)
+    }
+
+    private fun createTooltipAesList(
+        layerConfig: LayerConfig,
+        displayableAes: List<Aes<*>>,
+        axisAes: List<Aes<*>>
+    ): List<Aes<*>>? {
+
+        // return the predefined list
+        if (layerConfig.tooltipAes != null)
+            return layerConfig.tooltipAes
+
+        // remove axis mapping: if aes and axis are binds to the same data
+        val aesListForTooltip = ArrayList(displayableAes)
+        for (aes in axisAes) {
+            val axisVariable = layerConfig.getVariableForAes(aes)
+            aesListForTooltip.removeAll { layerConfig.getVariableForAes(it) == axisVariable }
+        }
+        return aesListForTooltip
     }
 
     private fun createLayerBuilder(

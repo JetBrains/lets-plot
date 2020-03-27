@@ -202,6 +202,10 @@ class LayerConfig constructor(
         return explicitGroupingVarName != null && explicitGroupingVarName == varName
     }
 
+    fun getVariableForAes(aes: Aes<*>): DataFrame.Variable? {
+        return varBindings.find { it.aes == aes }?.variable
+    }
+
     private fun getTooltipAesList(aesMapping: Map<Aes<*>, DataFrame.Variable>): List<Aes<*>>? {
         // tooltip list is not defined - will be used default tooltips
         if (!has(TOOLTIP))

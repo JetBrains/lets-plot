@@ -31,10 +31,10 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         }
 
     val displayableAes: List<Aes<*>>
-        get() = if (myTooltipAes != null)
-            myTooltipAes!!
-        else
-            mySupportedAesList - myAxisAesFromFunctionKind.orEmpty() - hiddenAes.orEmpty()
+        get() = mySupportedAesList - myAxisAesFromFunctionKind.orEmpty() - hiddenAes.orEmpty()
+
+    val aesListForTooltip: List<Aes<*>>
+        get() = myTooltipAes ?: displayableAes
 
     val isAxisTooltipEnabled: Boolean
         get() = if (myAxisTooltipVisibilityFromConfig == null)
