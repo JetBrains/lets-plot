@@ -204,7 +204,7 @@ from lets_plot.export.simple import export_html
 
 export_html(p, "p.htm")
 ```
-Example notebook: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML_new.ipynb)
+Example notebook: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
  
 ### Offline mode for Jupyter notebooks.
 

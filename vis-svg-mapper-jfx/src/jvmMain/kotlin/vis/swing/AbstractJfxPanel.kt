@@ -8,7 +8,7 @@ package jetbrains.datalore.vis.swing
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Parent
 import javafx.scene.Scene
-import javafx.scene.paint.Color.TRANSPARENT
+import javafx.scene.paint.Color.WHITE
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
@@ -30,7 +30,7 @@ abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPane
         scaleUpdated = true
         // Fix for HiDPI display. Force JavaFX to repaint scene with a proper scale factor by changing stylesheets.
         // Other ways to force repaint (like changing size of the scene) can work too, but also can cause artifacts.
-        runOnFxThread { with (scene.stylesheets) { firstOrNull()?.let { remove(it); add(it); } } }
+        runOnFxThread { with(scene.stylesheets) { firstOrNull()?.let { remove(it); add(it); } } }
     }
     // END HACK
 
@@ -49,7 +49,10 @@ abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPane
         myRegFx.dispose()
         myRegFx = CompositeRegistration()
 
-        val scene = Scene(createSceneParent(), TRANSPARENT)
+        // Don't do 'transparent'.
+        // This distorts colors on plot when alpha < 1 even if parent component has WHITE background.
+//        val scene = Scene(createSceneParent(), TRANSPARENT)
+        val scene = Scene(createSceneParent(), WHITE)
         scene.stylesheets.addAll(stylesheets)
         setScene(scene)
     }

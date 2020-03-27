@@ -24,7 +24,7 @@ object PlotConfigDemoUtil {
         factory.createDemoFrame(title).show {
             val panel = this
             panel.removeAll()
-            panel.background = Color.WHITE
+//            panel.background = Color.WHITE
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
             panel.add(Box.createRigidArea(Dimension(50, 0)))
 
