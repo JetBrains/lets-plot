@@ -12,24 +12,50 @@ import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import javax.swing.JComponent
 
-
 object MonolithicAwt {
-    fun createPlotFactory(
+    fun buildPlotFromRawSpecs(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector?,
+        componentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit,
+        computationMessagesHandler: ((List<String>) -> Unit)
+    ): JComponent {
+        return createPlotFactory(componentFactory, executor)
+            .buildPlotFromRawSpecs(plotSpec, plotSize, computationMessagesHandler)
+    }
+
+    fun buildPlotSvgComponent(
+        plotContainer: PlotContainer,
         componentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
+    ): JComponent {
+        return createPlotFactory(componentFactory, executor)
+            .buildPlotSvgComponent(plotContainer)
+    }
+
+    private fun createPlotFactory(
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit
     ): PlotFactory {
-        return PlotFactory(componentFactory, executor, ::buildPlotComponent)
+        return object : PlotFactory(svgComponentFactory, executor) {
+            override fun buildPlotComponent(
+                plotBuildInfo: PlotBuildInfo,
+                buildPlotSvgComponent: (plotContainer: PlotContainer) -> JComponent
+            ): JComponent {
+                return this@MonolithicAwt.buildPlotComponent(plotBuildInfo, buildPlotSvgComponent)
+            }
+        }
     }
 
     private fun buildPlotComponent(
         plotBuildInfo: PlotBuildInfo,
-        buildPlotSvgComponent: (plotContainer: PlotContainer) -> JComponent
+        plotComponentFactory: (plotContainer: PlotContainer) -> JComponent
     ): JComponent {
         val assembler = plotBuildInfo.plotAssembler
 
         val plot = assembler.createPlot()
         val plotContainer = PlotContainer(plot, plotBuildInfo.size)
-        val plotComponent = buildPlotSvgComponent(plotContainer)
+        val plotComponent = plotComponentFactory(plotContainer)
 
         require(plotContainer.liveMapFigures.isEmpty()) { "geom_livemap is not enabled" }
 

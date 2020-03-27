@@ -27,12 +27,15 @@ import javax.swing.JPanel
 
 private val LOG = KotlinLogging.logger {}
 
-class PlotFactory(
-    val componentFactory: (svg: SvgSvgElement) -> JComponent,
-    val executor: (() -> Unit) -> Unit,
-    val buildPlotComponent: (plotBuildInfo: MonolithicCommon.PlotBuildInfo,
-                             buildPlotSvgComponent: (plotContainer: PlotContainer) -> JComponent) -> JComponent
+abstract class PlotFactory(
+    val svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+    val executor: (() -> Unit) -> Unit
 ) {
+
+    abstract fun buildPlotComponent(
+        plotBuildInfo: MonolithicCommon.PlotBuildInfo,
+        buildPlotSvgComponent: (plotContainer: PlotContainer) -> JComponent
+    ) : JComponent
 
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
@@ -73,7 +76,7 @@ class PlotFactory(
     ): JComponent {
         plotContainer.ensureContentBuilt()
 
-        val plotComponent: JComponent = componentFactory(plotContainer.svg)
+        val plotComponent: JComponent = svgComponentFactory(plotContainer.svg)
 
         plotComponent.addMouseListener(object : MouseAdapter() {
             override fun mouseExited(e: MouseEvent) {

@@ -6,9 +6,10 @@
 package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.livemap.jfxPackage.LiveMapMonolithicJfx
+import jetbrains.datalore.livemap.jfxPackage.MonolithicAwtLM
 import jetbrains.datalore.plotDemo.plotConfig.PlotConfigDemoUtil.create
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
+import javax.swing.JComponent
 
 object LiveMapPlotConfigDemoUtil {
     fun show(
@@ -17,11 +18,19 @@ object LiveMapPlotConfigDemoUtil {
         factory: SwingDemoFactory,
         plotSize: DoubleVector?
     ) {
-        val monolithic = LiveMapMonolithicJfx.createPlotFactory(
-            factory::createSvgComponent,
-            factory.createPlotEdtExecutor()
-        )
+        fun rawSpecPlotBuilder(plotSpec: MutableMap<String, Any>): JComponent {
+            return MonolithicAwtLM.buildPlotFromRawSpecs(
+                plotSpec,
+                plotSize,
+                factory::createSvgComponent,
+                factory.createPlotEdtExecutor()
+            ) {
+                for (s in it) {
+                    println("DEMO PLOT INFO: $s")
+                }
+            }
+        }
 
-        create(title,plotSpecList, factory, plotSize, monolithic)
+        create(title,plotSpecList, factory, plotSize, ::rawSpecPlotBuilder)
     }
 }
