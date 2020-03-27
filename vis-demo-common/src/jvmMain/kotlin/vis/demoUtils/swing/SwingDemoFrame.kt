@@ -22,7 +22,7 @@ abstract class SwingDemoFrame(
             val frame = JFrame(title)
 
             val panel = JPanel()
-            panel.background = Color.WHITE
+//            panel.background = Color.WHITE
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
             panel.add(Box.createRigidArea(Dimension(MARGIN_LEFT, 0)))
             panel.add(Box.createRigidArea(Dimension(0,
