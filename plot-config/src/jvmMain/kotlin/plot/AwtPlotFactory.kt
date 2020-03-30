@@ -27,14 +27,14 @@ import javax.swing.JPanel
 
 private val LOG = KotlinLogging.logger {}
 
-abstract class PlotFactory(
+abstract class AwtPlotFactory(
     val svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
     val executor: (() -> Unit) -> Unit
 ) {
 
     abstract fun buildPlotComponent(
         plotBuildInfo: MonolithicCommon.PlotBuildInfo,
-        buildPlotSvgComponent: (plotContainer: PlotContainer) -> JComponent
+        plotComponentFactory: (plotContainer: PlotContainer) -> JComponent
     ) : JComponent
 
     fun buildPlotFromRawSpecs(

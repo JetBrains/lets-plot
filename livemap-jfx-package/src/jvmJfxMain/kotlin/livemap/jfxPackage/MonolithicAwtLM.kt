@@ -11,7 +11,7 @@ import javafx.scene.Group
 import javafx.scene.Scene
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
-import jetbrains.datalore.plot.PlotFactory
+import jetbrains.datalore.plot.AwtPlotFactory
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
@@ -29,48 +29,42 @@ object MonolithicAwtLM {
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        componentFactory: (svg: SvgSvgElement) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
-        return createPlotFactory(componentFactory, executor)
+        return createPlotFactory(svgComponentFactory, executor)
             .buildPlotFromRawSpecs(plotSpec, plotSize, computationMessagesHandler)
     }
 
     private fun createPlotFactory(
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
-    ): PlotFactory {
-        return object : PlotFactory(svgComponentFactory, executor) {
+    ): AwtPlotFactory {
+        return object : AwtPlotFactory(svgComponentFactory, executor) {
             override fun buildPlotComponent(
                 plotBuildInfo: PlotBuildInfo,
-                buildPlotSvgComponent: (plotContainer: PlotContainer) -> JComponent
+                plotComponentFactory: (plotContainer: PlotContainer) -> JComponent
             ): JComponent {
-                return this@MonolithicAwtLM.buildPlotComponent(plotBuildInfo, buildPlotSvgComponent)
+                val assembler = plotBuildInfo.plotAssembler
+
+                injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec)
+
+                val plot = assembler.createPlot()
+                val plotContainer = PlotContainer(plot, plotBuildInfo.size)
+                val plotComponent = plotComponentFactory(plotContainer)
+
+                return if (plotContainer.liveMapFigures.isNotEmpty()) {
+                    @Suppress("UNCHECKED_CAST")
+                    buildPlotLiveMapComponent(
+                        plotContainer.liveMapFigures as List<CanvasFigure>,
+                        plotComponent,
+                        plotBuildInfo.size.get()
+                    )
+                } else {
+                    plotComponent
+                }
             }
-        }
-    }
-
-    private fun buildPlotComponent(
-        plotBuildInfo: PlotBuildInfo,
-        plotComponentFactory: (plotContainer: PlotContainer) -> JComponent
-    ): JComponent {
-        val assembler = plotBuildInfo.plotAssembler
-        injectLiveMapProvider(assembler, plotBuildInfo.processedPlotSpec)
-
-        val plot = assembler.createPlot()
-        val plotContainer = PlotContainer(plot, plotBuildInfo.size)
-        val plotComponent = plotComponentFactory(plotContainer)
-
-        return if (plotContainer.liveMapFigures.isNotEmpty()) {
-            @Suppress("UNCHECKED_CAST")
-            buildPlotLiveMapComponent(
-                plotContainer.liveMapFigures as List<CanvasFigure>,
-                plotComponent,
-                plotBuildInfo.size.get()
-            )
-        } else {
-            plotComponent
         }
     }
 

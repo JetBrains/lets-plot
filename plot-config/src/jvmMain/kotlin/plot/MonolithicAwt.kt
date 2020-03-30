@@ -16,50 +16,42 @@ object MonolithicAwt {
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        componentFactory: (svg: SvgSvgElement) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
-        return createPlotFactory(componentFactory, executor)
+        return createPlotFactory(svgComponentFactory, executor)
             .buildPlotFromRawSpecs(plotSpec, plotSize, computationMessagesHandler)
     }
 
     fun buildPlotSvgComponent(
         plotContainer: PlotContainer,
-        componentFactory: (svg: SvgSvgElement) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
-        return createPlotFactory(componentFactory, executor)
+        return createPlotFactory(svgComponentFactory, executor)
             .buildPlotSvgComponent(plotContainer)
     }
 
     private fun createPlotFactory(
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
-    ): PlotFactory {
-        return object : PlotFactory(svgComponentFactory, executor) {
+    ): AwtPlotFactory {
+        return object : AwtPlotFactory(svgComponentFactory, executor) {
             override fun buildPlotComponent(
                 plotBuildInfo: PlotBuildInfo,
-                buildPlotSvgComponent: (plotContainer: PlotContainer) -> JComponent
+                plotComponentFactory: (plotContainer: PlotContainer) -> JComponent
             ): JComponent {
-                return this@MonolithicAwt.buildPlotComponent(plotBuildInfo, buildPlotSvgComponent)
+                val assembler = plotBuildInfo.plotAssembler
+                val plot = assembler.createPlot()
+                val plotContainer = PlotContainer(plot, plotBuildInfo.size)
+                val plotComponent = plotComponentFactory(plotContainer)
+
+                require(plotContainer.liveMapFigures.isEmpty()) { "geom_livemap is not enabled" }
+
+                return plotComponent
             }
         }
-    }
-
-    private fun buildPlotComponent(
-        plotBuildInfo: PlotBuildInfo,
-        plotComponentFactory: (plotContainer: PlotContainer) -> JComponent
-    ): JComponent {
-        val assembler = plotBuildInfo.plotAssembler
-
-        val plot = assembler.createPlot()
-        val plotContainer = PlotContainer(plot, plotBuildInfo.size)
-        val plotComponent = plotComponentFactory(plotContainer)
-
-        require(plotContainer.liveMapFigures.isEmpty()) { "geom_livemap is not enabled" }
-
-        return plotComponent
     }
 
     /**
