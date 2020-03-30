@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.AREA_GEOM
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.NON_AREA_GEOM
+import jetbrains.datalore.plot.builder.map.GeoPositionField
 import jetbrains.datalore.plot.builder.theme.Theme
 
 object PlotConfigClientSideUtil {
@@ -126,6 +127,13 @@ object PlotConfigClientSideUtil {
             val axisVariable = layerConfig.getVariableForAes(aes)
             aesListForTooltip.removeAll { layerConfig.getVariableForAes(it) == axisVariable }
         }
+
+        // remove auto generated mappings
+        aesListForTooltip.removeAll { setOf(GeoPositionField.DATA_JOIN_KEY_COLUMN).contains(layerConfig.getScaleForAes(it)?.name) }
+
+        // remove map_id mapping
+        aesListForTooltip.removeAll { it === Aes.MAP_ID }
+
         return aesListForTooltip
     }
 
