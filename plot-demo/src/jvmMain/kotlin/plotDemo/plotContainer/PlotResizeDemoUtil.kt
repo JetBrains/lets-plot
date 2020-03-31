@@ -96,11 +96,13 @@ object PlotResizeDemoUtil {
         factory: SwingDemoFactory
     ) {
         val plot = demo.createPlot(plotSizeProp)
+
         val component = MonolithicAwt.buildPlotSvgComponent(
             plot,
             factory::createSvgComponent,
             factory.createPlotEdtExecutor()
         )
+
         component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
         container.add(component)
     }

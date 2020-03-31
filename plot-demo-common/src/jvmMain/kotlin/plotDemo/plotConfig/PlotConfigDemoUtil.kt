@@ -8,11 +8,11 @@ package jetbrains.datalore.plotDemo.plotConfig
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
-import java.awt.*
-import javax.swing.BorderFactory
-import javax.swing.Box
-import javax.swing.BoxLayout
-import javax.swing.JPanel
+import java.awt.Color
+import java.awt.Component
+import java.awt.Dimension
+import java.awt.Label
+import javax.swing.*
 
 object PlotConfigDemoUtil {
     fun show(
@@ -21,6 +21,30 @@ object PlotConfigDemoUtil {
         factory: SwingDemoFactory,
         plotSize: DoubleVector?
     ) {
+
+        fun rawSpecPlotBuilder(plotSpec: MutableMap<String, Any>): JComponent  {
+            return MonolithicAwt.buildPlotFromRawSpecs(
+                plotSpec,
+                plotSize,
+                factory::createSvgComponent,
+                factory.createPlotEdtExecutor()
+            ) {
+                for (s in it) {
+                    println("DEMO PLOT INFO: $s")
+                }
+            }
+        }
+
+        create(title, plotSpecList, factory, plotSize, ::rawSpecPlotBuilder)
+    }
+
+    fun create(
+        title: String,
+        plotSpecList: List<MutableMap<String, Any>>,
+        factory: SwingDemoFactory,
+        plotSize: DoubleVector?,
+        rawSpecPlotBuilder: (plotSpec: MutableMap<String, Any>) -> JComponent
+    ) {
         factory.createDemoFrame(title).show {
             val panel = this
             panel.removeAll()
@@ -28,7 +52,7 @@ object PlotConfigDemoUtil {
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
             panel.add(Box.createRigidArea(Dimension(50, 0)))
 
-            addPlots(panel, plotSpecList, factory, plotSize)
+            addPlots(panel, plotSpecList, plotSize, rawSpecPlotBuilder)
 
             panel.add(Box.createRigidArea(Dimension(0, 5)))
         }
@@ -37,20 +61,13 @@ object PlotConfigDemoUtil {
     private fun addPlots(
         panel: JPanel,
         plotSpecList: List<MutableMap<String, Any>>,
-        factory: SwingDemoFactory,
-        plotSize: DoubleVector?
+        plotSize: DoubleVector?,
+        rawSpecPlotBuilder: (plotSpec: MutableMap<String, Any>) -> JComponent
     ) {
         try {
+
             for (plotSpec in plotSpecList) {
-                val component = MonolithicAwt.buildPlotFromRawSpecs(
-                    plotSpec, plotSize,
-                    factory::createSvgComponent,
-                    factory.createPlotEdtExecutor()
-                ) {
-                    for (s in it) {
-                        println("DEMO PLOT INFO: $s")
-                    }
-                }
+                val component = rawSpecPlotBuilder(plotSpec)
 
                 component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
 
