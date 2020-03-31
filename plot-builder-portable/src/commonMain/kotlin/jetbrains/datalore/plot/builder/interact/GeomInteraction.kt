@@ -16,7 +16,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
     private val myAesListForTooltip: List<Aes<*>> = builder.aesListForTooltip
-    private val myAxisAes: List<Aes<*>> = builder.axisAesList
+    private val myAxisAes: List<Aes<*>> = builder.axisAesListForTooltip
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)

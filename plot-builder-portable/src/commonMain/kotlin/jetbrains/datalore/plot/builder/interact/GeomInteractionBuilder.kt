@@ -17,11 +17,11 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     private var myAxisTooltipVisibilityFromFunctionKind: Boolean = false
     private var myAxisTooltipVisibilityFromConfig: Boolean? = null
     private var myAxisAesFromFunctionKind: List<Aes<*>>? = null
-    private lateinit var myAxisAes: List<Aes<*>>
+    private lateinit var myToolipAxisAes: List<Aes<*>>
     private lateinit var myTooltipAes: List<Aes<*>>
 
-    val axisAesList: List<Aes<*>>
-        get() = myAxisAes
+    val axisAesListForTooltip: List<Aes<*>>
+        get() = myToolipAxisAes
 
     val aesListForTooltip: List<Aes<*>>
         get() = myTooltipAes
@@ -46,7 +46,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     }
 
     fun axisAes(axisAes: List<Aes<*>>): GeomInteractionBuilder {
-        myAxisAes = axisAes
+        myToolipAxisAes = axisAes
         return this
     }
 
@@ -61,7 +61,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         locatorLookupStrategy = lookupStrategy
         myAxisTooltipVisibilityFromFunctionKind = true
         locatorLookupSpace = LookupSpace.X
-        setDefaultAes()
+        initDefaultTooltips()
         return this
     }
 
@@ -76,7 +76,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
             myAxisTooltipVisibilityFromFunctionKind = true
         }
         locatorLookupSpace = LookupSpace.XY
-        setDefaultAes()
+        initDefaultTooltips()
         return this
     }
 
@@ -85,12 +85,12 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         locatorLookupStrategy = LookupStrategy.NONE
         myAxisTooltipVisibilityFromFunctionKind = true
         locatorLookupSpace = LookupSpace.NONE
-        setDefaultAes()
+        initDefaultTooltips()
         return this
     }
 
-    private fun setDefaultAes() {
-        myAxisAes = if (!isAxisTooltipEnabled) emptyList() else getAxisFromFunctionKind
+    private fun initDefaultTooltips() {
+        myToolipAxisAes = if (!isAxisTooltipEnabled) emptyList() else getAxisFromFunctionKind
         myTooltipAes = mySupportedAesList - getAxisFromFunctionKind
     }
 

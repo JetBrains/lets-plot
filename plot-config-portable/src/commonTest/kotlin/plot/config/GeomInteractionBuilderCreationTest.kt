@@ -23,7 +23,7 @@ class GeomInteractionBuilderCreationTest {
     )
 
     @Test
-    fun checkAesListsTest() {
+    fun checkAesListsForTooltipTest() {
         val mappedData = data + mapOf(
             Aes.COLOR.name to listOf('a')
         )
@@ -46,7 +46,7 @@ class GeomInteractionBuilderCreationTest {
         val expectedAxisList = listOf(Aes.X)
         val expectedAesListCount = (layerConfig.geomProto.renders() - expectedAxisList).size
 
-        assertAesListCount(expectedAxisList.size, builder.axisAesList)
+        assertAesListCount(expectedAxisList.size, builder.axisAesListForTooltip)
         assertAesListCount(expectedAesListCount, builder.aesListForTooltip)
     }
 
@@ -76,7 +76,7 @@ class GeomInteractionBuilderCreationTest {
         // without Aes.MAP_ID:
         val expectedAesListCount = (layerConfig.geomProto.renders() - expectedAxisList).size - 1
 
-        assertAesListCount(expectedAxisList.size, builder.axisAesList)
+        assertAesListCount(expectedAxisList.size, builder.axisAesListForTooltip)
         assertAesListCount(expectedAesListCount, builder.aesListForTooltip)
     }
 
@@ -107,7 +107,7 @@ class GeomInteractionBuilderCreationTest {
         // without Aes.MAP_ID:
         val expectedAesListCount = (layerConfig.geomProto.renders() - listOf(Aes.X, Aes.Y)).size - 1
 
-        assertAesListCount(expectedAxisCount, builder.axisAesList)
+        assertAesListCount(expectedAxisCount, builder.axisAesListForTooltip)
         assertAesListCount(expectedAesListCount, builder.aesListForTooltip)
 
     }
@@ -139,7 +139,7 @@ class GeomInteractionBuilderCreationTest {
         // without duplicated Aes.FILL:
         val expectedAesListCount = (layerConfig.geomProto.renders() - expectedAxisList).size - 1
 
-        assertAesListCount(expectedAxisList.size, builder.axisAesList)
+        assertAesListCount(expectedAxisList.size, builder.axisAesListForTooltip)
         assertAesListCount(expectedAesListCount, builder.aesListForTooltip)
     }
 
@@ -182,7 +182,7 @@ class GeomInteractionBuilderCreationTest {
             false
         )
 
-        assertAesListCount(0, builder.axisAesList)
+        assertAesListCount(0, builder.axisAesListForTooltip)
         assertAesListCount(1, builder.aesListForTooltip)
     }
 
