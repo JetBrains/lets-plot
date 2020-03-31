@@ -30,7 +30,7 @@ object MonolithicAwt {
         executor: (() -> Unit) -> Unit
     ): JComponent {
         return createPlotFactory(svgComponentFactory, executor)
-            .buildPlotSvgComponent(plotContainer)
+            .buildPlotComponent(plotContainer)
     }
 
     private fun createPlotFactory(
@@ -39,17 +39,15 @@ object MonolithicAwt {
     ): AwtPlotFactory {
         return object : AwtPlotFactory(svgComponentFactory, executor) {
             override fun buildPlotComponent(
-                plotBuildInfo: PlotBuildInfo,
-                plotComponentFactory: (plotContainer: PlotContainer) -> JComponent
+                plotBuildInfo: PlotBuildInfo
             ): JComponent {
                 val assembler = plotBuildInfo.plotAssembler
                 val plot = assembler.createPlot()
                 val plotContainer = PlotContainer(plot, plotBuildInfo.size)
-                val plotComponent = plotComponentFactory(plotContainer)
 
                 require(plotContainer.liveMapFigures.isEmpty()) { "geom_livemap is not enabled" }
 
-                return plotComponent
+                return buildPlotComponent(plotContainer)
             }
         }
     }

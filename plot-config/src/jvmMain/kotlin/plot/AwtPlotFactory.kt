@@ -33,8 +33,7 @@ abstract class AwtPlotFactory(
 ) {
 
     abstract fun buildPlotComponent(
-        plotBuildInfo: MonolithicCommon.PlotBuildInfo,
-        plotComponentFactory: (plotContainer: PlotContainer) -> JComponent
+        plotBuildInfo: MonolithicCommon.PlotBuildInfo
     ) : JComponent
 
     fun buildPlotFromRawSpecs(
@@ -57,7 +56,7 @@ abstract class AwtPlotFactory(
             computationMessagesHandler(computationMessages)
             if (success.buildInfos.size == 1) {
                 // a single plot
-                return buildPlotComponent(success.buildInfos[0], ::buildPlotSvgComponent)
+                return buildPlotComponent(success.buildInfos[0])
             }
             // ggbunch
             return buildGGBunchComponent(success.buildInfos)
@@ -71,7 +70,7 @@ abstract class AwtPlotFactory(
         }
     }
 
-    fun buildPlotSvgComponent(
+    fun buildPlotComponent(
         plotContainer: PlotContainer
     ): JComponent {
         plotContainer.ensureContentBuilt()
@@ -108,7 +107,7 @@ abstract class AwtPlotFactory(
         bunchComponent.border = null
 
         for (plotInfo in plotInfos) {
-            val plotComponent = buildPlotComponent(plotInfo, ::buildPlotSvgComponent)
+            val plotComponent = buildPlotComponent(plotInfo)
             val bounds = plotInfo.bounds()
             plotComponent.bounds = Rectangle(
                 bounds.origin.x.toInt(),

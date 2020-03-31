@@ -43,8 +43,7 @@ object MonolithicAwtLM {
     ): AwtPlotFactory {
         return object : AwtPlotFactory(svgComponentFactory, executor) {
             override fun buildPlotComponent(
-                plotBuildInfo: PlotBuildInfo,
-                plotComponentFactory: (plotContainer: PlotContainer) -> JComponent
+                plotBuildInfo: PlotBuildInfo
             ): JComponent {
                 val assembler = plotBuildInfo.plotAssembler
 
@@ -52,7 +51,7 @@ object MonolithicAwtLM {
 
                 val plot = assembler.createPlot()
                 val plotContainer = PlotContainer(plot, plotBuildInfo.size)
-                val plotComponent = plotComponentFactory(plotContainer)
+                val plotComponent = buildPlotComponent(plotContainer)
 
                 return if (plotContainer.liveMapFigures.isNotEmpty()) {
                     @Suppress("UNCHECKED_CAST")
