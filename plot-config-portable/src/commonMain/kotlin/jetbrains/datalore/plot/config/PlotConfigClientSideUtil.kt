@@ -97,44 +97,14 @@ object PlotConfigClientSideUtil {
         if (!theme.axisY().showTooltip()) axisWithoutTooltip.add(Aes.Y)
 
         val geomInteraction = createGeomInteractionBuilder(
-            layerConfig.geomProto.renders(),
-            layerConfig.geomProto.geomKind,
-            layerConfig.statKind,
+            layerConfig,
+            axisWithoutTooltip,
             multilayer
-        )
-            .addHiddenAes(axisWithoutTooltip)
-            .also { it.tooltipAes(createTooltipAesList(layerConfig, it.displayableAes, it.axisAes)) }
-            .build()
+        ).build()
 
         layerBuilder
             .locatorLookupSpec(geomInteraction.createLookupSpec())
             .contextualMappingProvider(geomInteraction)
-    }
-
-    private fun createTooltipAesList(
-        layerConfig: LayerConfig,
-        displayableAes: List<Aes<*>>,
-        axisAes: List<Aes<*>>
-    ): List<Aes<*>>? {
-
-        // return the predefined list
-        if (layerConfig.tooltipAes != null)
-            return layerConfig.tooltipAes
-
-        // remove axis mapping: if aes and axis are binds to the same data
-        val aesListForTooltip = ArrayList(displayableAes)
-        for (aes in axisAes) {
-            val axisVariable = layerConfig.getVariableForAes(aes)
-            aesListForTooltip.removeAll { layerConfig.getVariableForAes(it) == axisVariable }
-        }
-
-        // remove auto generated mappings
-        aesListForTooltip.removeAll { setOf(GeoPositionField.DATA_JOIN_KEY_COLUMN).contains(layerConfig.getScaleForAes(it)?.name) }
-
-        // remove map_id mapping
-        aesListForTooltip.removeAll { it === Aes.MAP_ID }
-
-        return aesListForTooltip
     }
 
     private fun createLayerBuilder(
@@ -205,6 +175,83 @@ object PlotConfigClientSideUtil {
         return builder
     }
 
+    internal fun createGeomInteractionBuilder(
+        layerConfig: LayerConfig,
+        axisWithoutTooltip: List<Aes<*>>,
+        multilayer: Boolean
+    ): GeomInteractionBuilder {
+
+        val builder = createGeomInteractionBuilder(
+            layerConfig.geomProto.renders(),
+            layerConfig.geomProto.geomKind,
+            layerConfig.statKind,
+            multilayer
+        )
+
+        // Set aes lists
+        val hiddenAesList = createHiddenAesList(layerConfig.geomProto.geomKind) + axisWithoutTooltip
+        val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind) - hiddenAesList
+        val aesList = createTooltipAesList(layerConfig, builder.getAxisFromFunctionKind ) -  hiddenAesList
+
+        builder.axisAes(axisAes)
+               .tooltipAes(aesList)
+
+        return builder
+    }
+
+    private fun createHiddenAesList(geomKind: GeomKind): List<Aes<*>> {
+        return when (geomKind) {
+            GeomKind.BOX_PLOT -> listOf(Aes.Y)
+            GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
+            else -> emptyList()
+        }
+    }
+
+    private fun createAxisAesListByGeomKind(geomKind: GeomKind): List<Aes<*>> {
+        return if (geomKind === GeomKind.SMOOTH)
+            listOf(Aes.X)
+        else
+            emptyList()
+    }
+
+    private fun createAxisAesList(geomBuilder: GeomInteractionBuilder, geomKind: GeomKind): List<Aes<*>> {
+        return when {
+            !geomBuilder.isAxisTooltipEnabled -> emptyList()
+            else -> {
+                val axisAesFromConfig = createAxisAesListByGeomKind(geomKind)
+                if (axisAesFromConfig.isNotEmpty())
+                    axisAesFromConfig
+                else
+                    geomBuilder.getAxisFromFunctionKind
+            }
+        }
+    }
+
+    private fun createTooltipAesList(
+        layerConfig: LayerConfig,
+        axisAes: List<Aes<*>>
+    ): List<Aes<*>> {
+
+        // return the predefined list
+        if (layerConfig.tooltipAes != null)
+            return layerConfig.tooltipAes
+
+        // remove axis mapping: if aes and axis are bound to the same data
+        val aesListForTooltip = ArrayList(layerConfig.geomProto.renders() - axisAes)
+        for (aes in axisAes) {
+            val axisVariable = layerConfig.getVariableForAes(aes)
+            aesListForTooltip.removeAll { layerConfig.getVariableForAes(it) == axisVariable }
+        }
+
+        // remove auto generated mappings
+        aesListForTooltip.removeAll { layerConfig.getScaleForAes(it)?.name == GeoPositionField.DATA_JOIN_KEY_COLUMN }
+
+        // remove map_id mapping
+        aesListForTooltip.removeAll { it === Aes.MAP_ID }
+
+        return aesListForTooltip
+    }
+
     private fun initGeomInteractionBuilder(
         renders: List<Aes<*>>,
         geomKind: GeomKind,
@@ -231,19 +278,15 @@ object PlotConfigClientSideUtil {
             GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE -> return builder.univariateFunction(LookupStrategy.HOVER)
-            GeomKind.BOX_PLOT -> return builder.univariateFunction(LookupStrategy.HOVER).hideAes(listOf(Aes.Y))
+            GeomKind.BOX_PLOT -> return builder.univariateFunction(LookupStrategy.HOVER)
             GeomKind.V_LINE -> return builder.univariateFunction(LookupStrategy.NEAREST)
             GeomKind.SMOOTH,
             GeomKind.POINT,
             GeomKind.CONTOUR,
             GeomKind.RIBBON,
             GeomKind.DENSITY2D -> {
-                if (geomKind === GeomKind.SMOOTH) {
-                    builder.axisAes(listOf(Aes.X))
-                }
                 return builder.bivariateFunction(NON_AREA_GEOM)
             }
-
             GeomKind.PATH -> {
                 when (statKind) {
                     StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> return builder.bivariateFunction(
@@ -262,7 +305,6 @@ object PlotConfigClientSideUtil {
             GeomKind.BIN_2D,
             GeomKind.MAP -> return builder.bivariateFunction(AREA_GEOM)
             GeomKind.RECT -> return builder.bivariateFunction(AREA_GEOM)
-                .hideAes(listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX))
 
             GeomKind.LIVE_MAP -> return builder.multilayerLookupStrategy()
 
