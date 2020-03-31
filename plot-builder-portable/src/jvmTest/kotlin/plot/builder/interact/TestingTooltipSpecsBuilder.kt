@@ -18,18 +18,18 @@ import org.mockito.Mockito.*
 
 
 internal class TestingTooltipSpecsBuilder private constructor(
-        private val contextualMappingProvider: jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
+        private val contextualMappingProvider: ContextualMappingProvider
 ) {
 
-    private val mappedDataAccessMock = jetbrains.datalore.plot.builder.interact.MappedDataAccessMock()
+    private val mappedDataAccessMock = MappedDataAccessMock()
     private val mockSettings = withSettings()
             .defaultAnswer(ReturnsNotNullValuesAnswer())
 
-    fun build(): List<jetbrains.datalore.plot.builder.interact.TooltipSpec> {
+    fun build(): List<TooltipSpec> {
         val mappedDataAccess = buildMappedDataAccess()
 
         val contextualMapping = contextualMappingProvider.createContextualMapping(mappedDataAccess)
-        val factory = jetbrains.datalore.plot.builder.interact.TooltipSpecFactory(contextualMapping, DoubleVector.ZERO)
+        val factory = TooltipSpecFactory(contextualMapping, DoubleVector.ZERO)
 
         val tipLayoutHint = mock(TipLayoutHint::class.java, mockSettings)
         `when`(tipLayoutHint.kind).thenReturn(VERTICAL_TOOLTIP)
@@ -46,34 +46,34 @@ internal class TestingTooltipSpecsBuilder private constructor(
         return mappedDataAccessMock.mappedDataAccess
     }
 
-    fun <T> variable(mappedData: jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping<T>): jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder {
+    fun <T> variable(mappedData: MappedDataAccessMock.Mapping<T>): TestingTooltipSpecsBuilder {
         mappedDataAccessMock.add(mappedData)
         return this
     }
 
     companion object {
         private val DISPLAYABLE_AES_LIST =
-            jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder.Companion.toList(Aes.values())
+            toList(Aes.values())
 
-        fun univariateFunctionBuilder(): jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder {
-            return jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder(
-                jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder(jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder.Companion.DISPLAYABLE_AES_LIST)
+        fun univariateFunctionBuilder(): TestingTooltipSpecsBuilder {
+            return TestingTooltipSpecsBuilder(
+                GeomInteractionBuilder(DISPLAYABLE_AES_LIST)
                     .univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
                     .build()
             )
         }
 
-        fun bivariateFunctionBuilder(): jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder {
-            return jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder(
-                jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder(jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder.Companion.DISPLAYABLE_AES_LIST)
+        fun bivariateFunctionBuilder(): TestingTooltipSpecsBuilder {
+            return TestingTooltipSpecsBuilder(
+                GeomInteractionBuilder(DISPLAYABLE_AES_LIST)
                     .bivariateFunction(false)
                     .build()
             )
         }
 
-        fun areaFunctionBuilder(): jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder {
-            return jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder(
-                jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder(jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder.Companion.DISPLAYABLE_AES_LIST)
+        fun areaFunctionBuilder(): TestingTooltipSpecsBuilder {
+            return TestingTooltipSpecsBuilder(
+                GeomInteractionBuilder(DISPLAYABLE_AES_LIST)
                     .bivariateFunction(true)
                     .build()
             )
