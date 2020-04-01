@@ -39,7 +39,7 @@ class PlotConfigClientSideUtilTest {
 
         WITHOUT_AXIS_TOOLTIP
             .forEach { geomKind ->
-                layerSettingsList.add(Pair<GeomKind, StatKind>(geomKind,
+                layerSettingsList.add(Pair(geomKind,
                     StatKind.IDENTITY
                 ))
             }

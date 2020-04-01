@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.VarBinding
@@ -200,6 +201,14 @@ class LayerConfig constructor(
 
     fun isExplicitGrouping(varName: String): Boolean {
         return explicitGroupingVarName != null && explicitGroupingVarName == varName
+    }
+
+    fun getVariableForAes(aes: Aes<*>): DataFrame.Variable? {
+        return varBindings.find { it.aes == aes }?.variable
+    }
+
+    fun getScaleForAes(aes: Aes<*>): Scale<*>? {
+        return varBindings.find { it.aes == aes }?.scale
     }
 
     private fun getTooltipAesList(aesMapping: Map<Aes<*>, DataFrame.Variable>): List<Aes<*>>? {

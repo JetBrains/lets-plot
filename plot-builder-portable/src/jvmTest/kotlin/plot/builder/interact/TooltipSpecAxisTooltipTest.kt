@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.X_AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory.Companion.AXIS_TOOLTIP_COLOR
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper() {
@@ -23,7 +24,7 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
 
     @Test
     fun whenXIsNotMapped_ShouldNotThrowException() {
-        createTooltipSpecs(geomTargetBuilder.withPointHitShape(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD, 0.0).build())
+        createTooltipSpecs(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
     }
 
     @Test
@@ -34,8 +35,8 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
         buildTooltipSpecs()
 
         assertHint(X_AXIS_TOOLTIP,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_X_AXIS_COORD,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.DEFAULT_OBJECT_RADIUS
+            TARGET_X_AXIS_COORD,
+            DEFAULT_OBJECT_RADIUS
         )
         assertFill(AXIS_TOOLTIP_COLOR)
         assertLines(0, xMapping.shortTooltipText())
@@ -52,9 +53,9 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
         createTooltipSpecs(geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(
                     Aes.FILL, TipLayoutHint.verticalTooltip(
-                    jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD,
-                    jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.OBJECT_RADIUS,
-                    jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.FILL_COLOR
+                    TARGET_HIT_COORD,
+                    OBJECT_RADIUS,
+                    FILL_COLOR
                 ))
                 .build())
 
@@ -62,7 +63,7 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
         assertLines(1, yMapping.shortTooltipText())
     }
 
-
+    @Ignore
     @Test
     fun shouldNotDuplicateVarToAxisAndGenericTooltip() {
         val var1 = variable().name("cylinders").value("4").isContinuous(true)

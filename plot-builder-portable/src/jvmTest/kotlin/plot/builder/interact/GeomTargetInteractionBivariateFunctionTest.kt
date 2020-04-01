@@ -26,7 +26,7 @@ class GeomTargetInteractionBivariateFunctionTest {
     fun whenXIsContinuous_ShouldAddTooltipText() {
         val mapping = continuous(Aes.X)
         val targetTooltipSpec = createBuilder()
-                .variable<Double>(mapping)
+                .variable(mapping)
                 .build()
 
         assertText(targetTooltipSpec, mapping.shortTooltipText())
@@ -45,7 +45,7 @@ class GeomTargetInteractionBivariateFunctionTest {
     fun whenYIsContinuous_ShouldAddTooltipText() {
         val mapping = continuous(Aes.Y)
         val targetTooltipSpec = createBuilder()
-                .variable<Double>(mapping)
+                .variable(mapping)
                 .build()
 
         assertText(targetTooltipSpec, mapping.shortTooltipText())
@@ -64,7 +64,7 @@ class GeomTargetInteractionBivariateFunctionTest {
     fun whenWidthIsContinuous_ShouldAddTooltipText() {
         val mapping = continuous(Aes.WIDTH)
         val targetTooltipSpec = createBuilder()
-                .variable<Double>(mapping)
+                .variable(mapping)
                 .build()
 
         assertText(targetTooltipSpec, mapping.longTooltipText())
@@ -74,13 +74,13 @@ class GeomTargetInteractionBivariateFunctionTest {
     fun whenWidthIsNotContinuous_ShouldAddTooltipText() {
         val mapping = discrete(Aes.WIDTH)
         val targetTooltipSpec = createBuilder()
-                .variable<Double>(mapping)
+                .variable(mapping)
                 .build()
 
         assertText(targetTooltipSpec, mapping.longTooltipText())
     }
 
-    private fun createBuilder(): jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder {
-        return jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder.Companion.bivariateFunctionBuilder()
+    private fun createBuilder(): TestingTooltipSpecsBuilder {
+        return TestingTooltipSpecsBuilder.bivariateFunctionBuilder()
     }
 }
