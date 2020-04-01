@@ -280,7 +280,6 @@ object PlotConfigClientSideUtil {
             GeomKind.LINE_RANGE -> return builder.univariateFunction(LookupStrategy.HOVER)
             GeomKind.BOX_PLOT -> return builder.univariateFunction(LookupStrategy.HOVER)
             GeomKind.V_LINE -> return builder.univariateFunction(LookupStrategy.NEAREST)
-            GeomKind.H_LINE,
             GeomKind.SMOOTH,
             GeomKind.POINT,
             GeomKind.CONTOUR,
@@ -298,7 +297,7 @@ object PlotConfigClientSideUtil {
                 }
                 return builder.bivariateFunction(AREA_GEOM)
             }
-
+            GeomKind.H_LINE,
             GeomKind.TILE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
