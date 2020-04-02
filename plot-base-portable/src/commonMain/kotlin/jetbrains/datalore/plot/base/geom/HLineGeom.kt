@@ -21,7 +21,6 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgLineElement
-import kotlin.math.max
 
 class HLineGeom : GeomBase() {
 
@@ -51,9 +50,9 @@ class HLineGeom : GeomBase() {
                     val line = helper.createLine(start, end, p)
                     lines.add(line)
 
-                    val h = max(AesScaling.strokeWidth(p), 4.0) * 2.0
-                    val origin = DoubleVector(0.0, intercept - h)
-                    val dimensions = DoubleVector(end.x, h * 2.0)
+                    val h = AesScaling.strokeWidth(p)
+                    val origin = DoubleVector(0.0, intercept - h/2 - 2.0)
+                    val dimensions = DoubleVector(end.x, h + 4.0)
                     val rect = DoubleRectangle(origin, dimensions)
                     ctx.targetCollector.addRectangle(
                         p.index(),
