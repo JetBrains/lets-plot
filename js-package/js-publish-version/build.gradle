@@ -3,11 +3,6 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-plugins {
-    // publishing to bintray
-    id "com.jfrog.bintray" apply false
-}
-
 def bintray_user = project.buildSettings?.bintray?.user
 def bintray_key = project.buildSettings?.bintray?.key
 
@@ -17,7 +12,7 @@ if (bintray_user != null && bintray_key != null) {
 
     bintray {
         filesSpec {
-            from('../build/dist') {
+            from('../build/distributions') {
                 include "*$project.bintraySettings.js_artifact_version*"
             }
             into('.')

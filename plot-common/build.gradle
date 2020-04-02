@@ -3,10 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-}
+apply plugin: "org.jetbrains.kotlin.multiplatform"
+apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
 
 repositories {
     mavenCentral()
@@ -14,7 +12,9 @@ repositories {
 
 kotlin {
     jvm()
-    js()
+    js {
+        browser()
+    }
     
     sourceSets {
         commonMain {

@@ -5,14 +5,14 @@
 
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
-plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-}
+apply plugin: "org.jetbrains.kotlin.multiplatform"
+apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
 
 kotlin {
     jvm()
-    js()
+    js {
+        browser()
+    }
 
     if (project.buildSettings.build_python_extension) {
         def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()

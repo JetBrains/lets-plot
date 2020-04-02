@@ -1,8 +1,6 @@
-plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-//    id "com.moowork.node"
-}
+apply plugin: "org.jetbrains.kotlin.multiplatform"
+apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
+
 repositories {
     mavenCentral()
 }
@@ -11,20 +9,6 @@ repositories {
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
-
-//node {
-//    version = '10.16.3'
-//    npmVersion = '6.9.0'
-//    download = true
-//}
-
-//repositories.whenObjectAdded {
-//    if (it instanceof IvyArtifactRepository) {
-//        metadataSources {
-//            artifact()
-//        }
-//    }
-//}
 
 kotlin {
     jvm()

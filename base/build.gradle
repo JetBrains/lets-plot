@@ -3,21 +3,15 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-    id 'groovy'   // add 'test' task
-}
+apply plugin: "org.jetbrains.kotlin.multiplatform"
+apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
+apply plugin: "groovy"   // add 'test' task
+
 
 kotlin {
     jvm()
     js() {
-        browser {}   // required for js tests running (?)
-        compileKotlinJs {
-            kotlinOptions.sourceMap = true
-            kotlinOptions.sourceMapEmbedSources = "always"
-//            kotlinOptions.moduleKind = "umd"
-        }
+        browser {}
     }
 
     sourceSets {

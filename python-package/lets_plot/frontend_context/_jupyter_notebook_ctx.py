@@ -96,7 +96,6 @@ class JupyterNotebookContext(FrontendContext):
             <script type="text/javascript">
                 window.letsPlotCall = function(f) {{f();}};
                 console.log('Embedding: {js_name}');
-                
                 {js_code}
             </script>
             {success_message}

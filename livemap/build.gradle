@@ -3,21 +3,13 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-}
+apply plugin: "org.jetbrains.kotlin.multiplatform"
+apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
 
 kotlin {
     jvm()
     js () {
-        // browser {}
-        // /\
-        // ||
-        // ERROR in ./kotlin/lets-plot-livemap.js
-        // Module not found: Error: Can't resolve 'vis-canvas' in '/Users/ikupriyanov/Projects/lets-plot/build/js/packages/lets-plot-livemap/kotlin'
-        // @ ./kotlin/lets-plot-livemap.js 3:4-120
-        // @ multi ./kotlin/lets-plot-livemap.js source-map-support/browser-source-map-support.js
+        browser {}
     }
 
     sourceSets {

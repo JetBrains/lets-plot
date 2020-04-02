@@ -1,7 +1,6 @@
-plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-}
+apply plugin: "org.jetbrains.kotlin.multiplatform"
+apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
+
 repositories {
     mavenCentral()
 }
@@ -15,10 +14,7 @@ repositories {
 kotlin {
     jvm()
     js() {
-        compileKotlinJs {
-            kotlinOptions.sourceMap = true
-            kotlinOptions.sourceMapEmbedSources = "always"
-        }
+        browser()
     }
     sourceSets {
         commonMain {

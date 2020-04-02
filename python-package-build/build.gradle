@@ -1,8 +1,6 @@
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
-plugins {
-    id 'kotlin-multiplatform'
-}
+apply plugin: "org.jetbrains.kotlin.multiplatform"
 
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
