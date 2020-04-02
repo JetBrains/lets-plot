@@ -16,7 +16,7 @@ object HVLineBatik {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             PlotConfigDemoUtil.show(
-                "Rect tooltips plot",
+                "hline & vline plot",
                 plotSpecList,
                 BatikMapperDemoFactory(),
                 DoubleVector(600.0, 400.0)

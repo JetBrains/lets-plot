@@ -17,7 +17,7 @@ object HVLineJfx {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             PlotConfigDemoUtil.show(
-                "Rect",
+                "hline & vline plot",
                 plotSpecList,
                 SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
                 DoubleVector(600.0, 300.0)
