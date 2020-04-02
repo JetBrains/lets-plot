@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config.transform.encode
 
-import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.PlotSpecTransformUtil
 import jetbrains.datalore.plot.config.transform.SpecChange
@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.config.transform.SpecChange
 object DataSpecEncodeTransforms {
     private fun addDataChanges(builder: PlotSpecTransform.Builder, change: SpecChange, isGGBunch: Boolean): PlotSpecTransform.Builder {
 
-        val specSelectors = PlotSpecTransformUtil.getPlotAndLayersSpecSelectors(isGGBunch, Plot.DATA)
+        val specSelectors = PlotSpecTransformUtil.getPlotAndLayersSpecSelectors(isGGBunch, DATA)
         for (specSelector in specSelectors) {
             builder.change(specSelector, change)
         }

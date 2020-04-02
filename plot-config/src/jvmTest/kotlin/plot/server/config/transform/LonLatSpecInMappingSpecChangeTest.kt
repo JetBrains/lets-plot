@@ -7,11 +7,10 @@ package jetbrains.datalore.plot.server.config.transform
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.config.Option.GeomName
-import jetbrains.datalore.plot.config.Option.Layer.DATA
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Layer.MAPPING
-import jetbrains.datalore.plot.config.Option.Plot
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.SpecFinder
 import jetbrains.datalore.plot.server.config.transform.LonLatSpecInMappingSpecChange.Companion.GENERATED_LONLAT_COLUMN_NAME
@@ -49,7 +48,7 @@ class LonLatSpecInMappingSpecChangeTest {
 
         opt = HashMap()
         opt[LAYERS] = layers
-        opt[Plot.DATA] = plotData
+        opt[DATA] = plotData
     }
 
     @Test

@@ -59,10 +59,12 @@ object Option {
         }
     }
 
-    object Plot {
+    object PlotBase {
         const val DATA = "data"
-        // ToDo: merge 'data' options
         const val MAPPING = "mapping"
+    }
+
+    object Plot {
         const val LAYERS = "layers"
         const val SCALES = "scales"
         const val TITLE = "ggtitle"
@@ -76,8 +78,6 @@ object Option {
     object Layer {
         const val GEOM = "geom"
         const val STAT = "stat"
-        const val DATA = "data"
-        const val MAPPING = "mapping"
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"

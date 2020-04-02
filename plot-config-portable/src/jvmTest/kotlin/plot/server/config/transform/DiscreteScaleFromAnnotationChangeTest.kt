@@ -6,11 +6,12 @@
 package jetbrains.datalore.plot.server.config.transform
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Mapping.toOption
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation
+import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.DISCRETE
 import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.read
 import jetbrains.datalore.plot.config.sections
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
@@ -27,7 +28,7 @@ class DiscreteScaleFromAnnotationChangeTest {
         val plotSpec = dict {
             layers(
                 dict {
-                    write(Layer.MAPPING, toOption(Aes.COLOR)) { varName }
+                    write(MAPPING, toOption(Aes.COLOR)) { varName }
                 }
             )
         }
@@ -42,12 +43,12 @@ class DiscreteScaleFromAnnotationChangeTest {
         val plotSpec = dict {
             layers(
                 dict {
-                    write(Layer.MAPPING, toOption(Aes.COLOR)) { varName }
+                    write(MAPPING, toOption(Aes.COLOR)) { varName }
                     write(Meta.DATA_META, SeriesAnnotation.TAG) {
                         list(
                             dict {
                                 write(SeriesAnnotation.VARIABLE) { varName }
-                                write(SeriesAnnotation.ANNOTATION) { "discrete" }
+                                write(SeriesAnnotation.ANNOTATION) { DISCRETE }
                             }
                         )
                     }
@@ -75,12 +76,12 @@ class DiscreteScaleFromAnnotationChangeTest {
             )
             layers(
                 dict {
-                    write(Layer.MAPPING, toOption(Aes.COLOR)) { varName }
+                    write(MAPPING, toOption(Aes.COLOR)) { varName }
                     write(Meta.DATA_META, SeriesAnnotation.TAG) {
                         list(
                             dict {
                                 write(SeriesAnnotation.VARIABLE) { varName }
-                                write(SeriesAnnotation.ANNOTATION) { "discrete" }
+                                write(SeriesAnnotation.ANNOTATION) { DISCRETE }
                             }
                         )
                     }

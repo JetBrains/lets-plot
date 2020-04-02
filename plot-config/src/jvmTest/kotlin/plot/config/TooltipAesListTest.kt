@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import jetbrains.datalore.plot.server.config.SingleLayerAssert
 import kotlin.test.Test
@@ -21,7 +22,7 @@ class TooltipAesListTest {
     @Test
     fun noTooltipAesList() {
         val plotOpts = mutableMapOf(
-            Option.Plot.MAPPING to data,
+            MAPPING to data,
             Option.Plot.LAYERS to listOf(
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.POINT
@@ -36,7 +37,7 @@ class TooltipAesListTest {
     @Test
     fun withTooltipAesList() {
         val plotOpts = mutableMapOf(
-            Option.Plot.MAPPING to data,
+            MAPPING to data,
             Option.Plot.LAYERS to listOf(
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.POINT,
@@ -52,7 +53,7 @@ class TooltipAesListTest {
     @Test
     fun withEmptyTooltipAesList() {
         val plotOpts = mutableMapOf(
-            Option.Plot.MAPPING to data,
+            MAPPING to data,
             Option.Plot.LAYERS to listOf(
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.POINT,

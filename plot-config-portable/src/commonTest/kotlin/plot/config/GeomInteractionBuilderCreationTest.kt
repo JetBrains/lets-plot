@@ -9,6 +9,8 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.builder.map.GeoPositionField
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
@@ -28,7 +30,7 @@ class GeomInteractionBuilderCreationTest {
             Aes.COLOR.name to listOf('a')
         )
         val plotOpts = mutableMapOf(
-            Option.Plot.MAPPING to mappedData,
+            MAPPING to mappedData,
             Option.Plot.LAYERS to listOf(
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.HISTOGRAM
@@ -57,7 +59,7 @@ class GeomInteractionBuilderCreationTest {
            Aes.MAP_ID.name to listOf('a')
         )
         val plotOpts = mutableMapOf(
-            Option.Plot.MAPPING to mappedData,
+            MAPPING to mappedData,
             Option.Plot.LAYERS to listOf(
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.POINT
@@ -87,7 +89,7 @@ class GeomInteractionBuilderCreationTest {
        )
 
         val plotOpts = mutableMapOf(
-            Option.Plot.MAPPING to mappedData,
+            MAPPING to mappedData,
             Option.Plot.LAYERS to listOf(
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.POLYGON
@@ -120,7 +122,7 @@ class GeomInteractionBuilderCreationTest {
         )
 
         val plotOpts = mutableMapOf(
-            Option.Plot.MAPPING to mappedData,
+            MAPPING to mappedData,
             Option.Plot.LAYERS to listOf(
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.HISTOGRAM
@@ -166,9 +168,9 @@ class GeomInteractionBuilderCreationTest {
             Option.Plot.LAYERS to listOf(
                 mutableMapOf(
                     Option.Layer.GEOM to Option.GeomName.POLYGON,
-                    Option.Layer.DATA to geomData,
+                    DATA to geomData,
                     Option.Meta.DATA_META to GEO_DATA_FRAME_META,
-                    Option.Layer.MAPPING to mapOf(Aes.FILL.name to "name")
+                    MAPPING to mapOf(Aes.FILL.name to "name")
                 )
             )
         )

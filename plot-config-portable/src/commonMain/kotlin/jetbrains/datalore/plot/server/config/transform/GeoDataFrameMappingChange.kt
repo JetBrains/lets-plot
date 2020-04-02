@@ -10,13 +10,13 @@ import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_GEOMETRY_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_ID_COLUMN
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
-import jetbrains.datalore.plot.config.Option.Layer.DATA
-import jetbrains.datalore.plot.config.Option.Layer.MAPPING
 import jetbrains.datalore.plot.config.Option.Mapping.MAP_ID
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
 import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector
