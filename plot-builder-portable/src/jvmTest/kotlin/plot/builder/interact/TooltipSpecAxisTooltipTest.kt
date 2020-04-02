@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.X_AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory.Companion.AXIS_TOOLTIP_COLOR
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper() {
@@ -61,22 +60,6 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
 
         assertLines(0, fillMapping.shortTooltipText())
         assertLines(1, yMapping.shortTooltipText())
-    }
-
-    @Ignore
-    @Test
-    fun shouldNotDuplicateVarToAxisAndGenericTooltip() {
-        val var1 = variable().name("cylinders").value("4").isContinuous(true)
-        val var2 = variable().name("mpg").value("10")
-
-        addMappedData(var1.mapping(Aes.FILL))
-        val var1MappingX = addMappedData(var1.mapping(Aes.X))
-        val var2MappingY = addMappedData(var2.mapping(Aes.Y))
-
-        buildTooltipSpecs()
-
-        assertLines(0, var2MappingY.shortTooltipText())
-        assertLines(1, var1MappingX.shortTooltipText())
     }
 
     @Test
