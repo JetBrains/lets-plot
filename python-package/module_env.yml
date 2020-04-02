@@ -1,0 +1,14 @@
+---
+
+name: lets-plot-python-module
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7
+  - numpy
+  - jupyter
+  - pytest
+  - pip
+  - pip:
+      - pypng
