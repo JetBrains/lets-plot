@@ -55,7 +55,8 @@ class HVLine : PlotConfigDemoBase() {
                 "                   'geom': 'point', " +
                 "                   'mapping': {" +
                 "                                 'x': 'sepal length (cm)'," +
-                "                                 'y': 'sepal width (cm)'" +
+                "                                 'y': 'sepal width (cm)'," +
+                "                                 'color': 'target'" +
                 "                              }" +
                 "               }," +
                 "               { " +
