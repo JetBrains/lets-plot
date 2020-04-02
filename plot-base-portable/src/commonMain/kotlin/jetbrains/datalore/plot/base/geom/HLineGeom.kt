@@ -51,9 +51,9 @@ class HLineGeom : GeomBase() {
                     val line = helper.createLine(start, end, p)
                     lines.add(line)
 
-                    val h = max(AesScaling.strokeWidth(p), 2.0) * 2.0
-                    val origin = DoubleVector(0.0, intercept)
-                    val dimensions = DoubleVector(end.x, h)
+                    val h = max(AesScaling.strokeWidth(p), 4.0) * 2.0
+                    val origin = DoubleVector(0.0, intercept - h)
+                    val dimensions = DoubleVector(end.x, h * 2.0)
                     val rect = DoubleRectangle(origin, dimensions)
                     ctx.targetCollector.addRectangle(
                         p.index(),
