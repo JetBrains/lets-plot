@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.server.config.transform
 
 import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.Option.PlotBase
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.SpecSelector
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
@@ -25,15 +26,15 @@ object PlotConfigServerSideTransforms {
     fun entryTransform(): PlotSpecTransform {
         return PlotSpecTransform.builderForRawSpec()
             .change(
-                SpecSelector.of(Plot.DATA),
+                SpecSelector.of(PlotBase.DATA),
                 NumericDataVectorSpecChange()
             )
             .change(
-                SpecSelector.of(Plot.LAYERS, Layer.DATA),
+                SpecSelector.of(Plot.LAYERS, PlotBase.DATA),
                 NumericDataVectorSpecChange()
             )
             .change(
-                SpecSelector.of(Plot.LAYERS, Layer.GEOM, Layer.DATA),
+                SpecSelector.of(Plot.LAYERS, Layer.GEOM, PlotBase.DATA),
                 NumericDataVectorSpecChange()
             ) // ToDo: remove (and tests)
             .change(

@@ -7,11 +7,10 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.config.Option.GeomName
-import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Plot.DATA
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
-import jetbrains.datalore.plot.config.Option.Plot.MAPPING
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import kotlin.test.Test
 
 class DataVectorsInAesMappingTest {
@@ -65,7 +64,7 @@ class DataVectorsInAesMappingTest {
         val plotOpts = mutableMapOf<String, Any>(
                 LAYERS to listOf(mapOf(
                         GEOM to GeomName.POINT,
-                        Layer.MAPPING to aes
+                        MAPPING to aes
                 ))
         )
 
@@ -86,8 +85,8 @@ class DataVectorsInAesMappingTest {
         val plotOpts = mutableMapOf<String, Any>(
                 LAYERS to listOf(mapOf(
                         GEOM to GeomName.POINT,
-                        Layer.MAPPING to aes,
-                        Layer.DATA to data
+                        MAPPING to aes,
+                        DATA to data
                 ))
         )
 

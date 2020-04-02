@@ -7,6 +7,8 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.Test
@@ -25,8 +27,8 @@ class DataVectorsTransformTest(
         assertEquals(myExpected, transformed)
         if (myIdentityComparison) {
             // This only works for plot data located on the top level
-            val expectedData = myExpected[Plot.DATA] as Map<*, *>
-            val transformedData = transformed[Plot.DATA] as Map<*, *>
+            val expectedData = myExpected[DATA] as Map<*, *>
+            val transformedData = transformed[DATA] as Map<*, *>
             assertEquals(expectedData, transformedData)
             for (`var` in expectedData.keys) {
                 assertSame(expectedData[`var`], transformedData[`var`])
@@ -79,8 +81,8 @@ class DataVectorsTransformTest(
         private fun layerSpec(data: Map<*, *>): Map<String, Any> {
             return mapOf(
                     Layer.GEOM to "point",
-                    Layer.DATA to data,
-                    Layer.MAPPING to mappingFor(data)
+                    DATA to data,
+                    MAPPING to mappingFor(data)
             )
         }
 
@@ -94,8 +96,8 @@ class DataVectorsTransformTest(
 
         private fun plotSpec(data: Map<*, *>, layerSpec: Map<*, *>): Map<String, Any> {
             return mapOf(
-                    Plot.DATA to data,
-                    Plot.MAPPING to mappingFor(data),
+                    DATA to data,
+                    MAPPING to mappingFor(data),
                     Plot.LAYERS to listOf(layerSpec)
             )
         }

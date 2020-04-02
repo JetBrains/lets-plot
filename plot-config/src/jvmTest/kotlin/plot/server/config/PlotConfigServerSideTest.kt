@@ -7,11 +7,10 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.config.Option.GeomName
-import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Layer.MAPPING
-import jetbrains.datalore.plot.config.Option.Plot
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.transform.encode.DataFrameEncoding
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,13 +29,13 @@ class PlotConfigServerSideTest {
         val plotSpecTransformed = run {
             // top level
             val plotSpec = HashMap<String, Any>()
-            plotSpec[Plot.DATA] = createDataEntry(PLOT_VAR, plotValues)
+            plotSpec[DATA] = createDataEntry(PLOT_VAR, plotValues)
 
             // layers
             val layerSpec = HashMap<String, Any>()
 
             // data in layer
-            layerSpec[Layer.DATA] = createDataEntry(LAYER_VAR, layerValues)
+            layerSpec[DATA] = createDataEntry(LAYER_VAR, layerValues)
 
             val layers = listOf<Any>(layerSpec)
             plotSpec[LAYERS] = layers
@@ -51,13 +50,13 @@ class PlotConfigServerSideTest {
 
         // ====================
         // top level
-        assertDataEncoded(plotValues, plotSpecTransformed[Plot.DATA], PLOT_VAR)
+        assertDataEncoded(plotValues, plotSpecTransformed[DATA], PLOT_VAR)
 
         // layers
         val layers = plotSpecTransformed[LAYERS] as List<*>
         for (layerSpecObject in layers) {
             val layerSpec = layerSpecObject as Map<*, *>
-            assertDataEncoded(layerValues, layerSpec[Layer.DATA], LAYER_VAR)
+            assertDataEncoded(layerValues, layerSpec[DATA], LAYER_VAR)
         }
     }
 
@@ -67,7 +66,7 @@ class PlotConfigServerSideTest {
         run {
             // top level
             val plotSpec = HashMap<String, Any>()
-            plotSpec[Plot.DATA] = listOf(0.0, 1.0, 2.0, 3.0, 4.0)
+            plotSpec[DATA] = listOf(0.0, 1.0, 2.0, 3.0, 4.0)
 
             // histogram layer
             val layerSpec = HashMap<String, Any>()

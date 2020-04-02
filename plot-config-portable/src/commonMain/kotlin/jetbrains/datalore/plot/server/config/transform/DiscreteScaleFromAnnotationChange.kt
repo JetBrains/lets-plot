@@ -6,12 +6,12 @@
 package jetbrains.datalore.plot.server.config.transform
 
 import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation
 import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.ANNOTATION
 import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.VARIABLE
 import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.Option.Scale
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
@@ -21,7 +21,7 @@ class DiscreteScaleFromAnnotationChange : SpecChange {
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         val annotationScales = spec
             .sections(Plot.LAYERS)!!
-            .filter { it.has(DATA_META, SeriesAnnotation.TAG) && it.has(Layer.MAPPING) }
+            .filter { it.has(DATA_META, SeriesAnnotation.TAG) && it.has(MAPPING) }
             .flatMap(::scalesFromAnnotation)
 
         if (annotationScales.isNotEmpty()) {
@@ -31,7 +31,7 @@ class DiscreteScaleFromAnnotationChange : SpecChange {
 
     companion object {
         private fun scalesFromAnnotation(layer: Map<*, *>): List<Map<*, *>> {
-            val mapping = layer.section(Layer.MAPPING)!!.entries.associateBy({ it.value }, { it.key as String })
+            val mapping = layer.section(MAPPING)!!.entries.associateBy({ it.value }, { it.key as String })
 
             return layer.sections(DATA_META, SeriesAnnotation.TAG)!!
                 .filter { it.read(ANNOTATION) == SeriesAnnotation.DISCRETE }

@@ -15,13 +15,13 @@ import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.Kind
 import jetbrains.datalore.plot.config.Option.Plot.COORD
-import jetbrains.datalore.plot.config.Option.Plot.DATA
 import jetbrains.datalore.plot.config.Option.Plot.FACET
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
-import jetbrains.datalore.plot.config.Option.Plot.MAPPING
 import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.Plot.TITLE
 import jetbrains.datalore.plot.config.Option.Plot.TITLE_TEXT
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
 abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(
     opts,
