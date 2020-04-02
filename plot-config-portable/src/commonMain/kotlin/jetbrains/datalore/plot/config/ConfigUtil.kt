@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.Dummies
 import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation
-import jetbrains.datalore.plot.server.config.transform.DiscreteVariableFromAnnotationChange
 
 object ConfigUtil {
     fun featureName(options: Map<*, *>): String {
@@ -34,7 +33,7 @@ object ConfigUtil {
 
     fun getSeriesAnnotation(options: Map<*, *>): Map<String, String> {
         return options
-            .sections(SeriesAnnotation.TAG)
+            .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.read(SeriesAnnotation.VARIABLE) as String to it.read(SeriesAnnotation.ANNOTATION) as String }
             ?: emptyMap()
     }
@@ -157,11 +156,7 @@ object ConfigUtil {
         val dfVars = DataFrameUtil.variables(df)
         val b = df.builder()
         for ((varName, values) in data) {
-            val isDiscrete = DiscreteVariableFromAnnotationChange
-                .decodeName(varName) // var name in data encoded by SpecChange
-                ?.let { dataMeta[it] } // data meta keeps original var name
-                ?.let(SeriesAnnotation.DISCRETE::equals)
-
+            val isDiscrete = dataMeta[varName]?.let(SeriesAnnotation.DISCRETE::equals)
             val variable = dfVars[varName] ?: DataFrameUtil.createVariable(varName)
 
             @Suppress("UNCHECKED_CAST")

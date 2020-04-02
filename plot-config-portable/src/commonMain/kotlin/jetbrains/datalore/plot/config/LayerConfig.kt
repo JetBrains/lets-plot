@@ -25,10 +25,11 @@ import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
-class LayerConfig constructor(
+class LayerConfig(
     layerOptions: Map<*, *>,
     sharedData: DataFrame,
     plotMapping: Map<*, *>,
+    plotSeries: Map<String, String>,
     val geomProto: GeomProto,
     statProto: StatProto,
     scaleProviderByAes: TypedScaleProviderMap,
@@ -71,14 +72,9 @@ class LayerConfig constructor(
         }
 
     init {
+        val seriesOptions = plotSeries + ConfigUtil.getSeriesAnnotation(getMap(DATA_META))
 
-        // mapping (inherit from plot)
-        val mappingOptions = HashMap(plotMapping)
-        // update with 'layer' mapping
-        mappingOptions.putAll(getMap(MAPPING))
-
-        @Suppress("UNCHECKED_CAST")
-        val layerData = ConfigUtil.createDataFrame(get(DATA), ConfigUtil.getSeriesAnnotation(getMap(DATA_META)))
+        val layerData = ConfigUtil.createDataFrame(get(DATA), seriesOptions)
         var combinedData: DataFrame
         if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
             combinedData = DataFrameUtil.appendReplace(sharedData, layerData)
@@ -87,6 +83,9 @@ class LayerConfig constructor(
         } else {
             combinedData = sharedData
         }
+
+        // mapping (inherit from plot) + 'layer' mapping
+        val mappingOptions = plotMapping + getMap(MAPPING)
 
         var aesMapping: Map<Aes<*>, DataFrame.Variable>?
         if (GeoPositionsDataUtil.hasGeoPositionsData(this) && myClientSide) {

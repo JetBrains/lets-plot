@@ -10,7 +10,7 @@ fun Map<*, *>.read(vararg query: String): Any? {
 }
 
 fun Map<*, *>.read(path: List<String>, item: String): Any? {
-    return section(path)?.get(item)
+    return getMap(path)?.get(item)
 }
 
 fun Map<*, *>.write(vararg query: String, value: () -> Any) {
@@ -18,7 +18,7 @@ fun Map<*, *>.write(vararg query: String, value: () -> Any) {
 }
 
 fun Map<*, *>.write(path: List<String>, item: String, value: Any) {
-    provideSection(path)[item] = value
+    provideMap(path)[item] = value
 }
 
 fun Map<*, *>.remove(vararg query: String) {
@@ -26,7 +26,7 @@ fun Map<*, *>.remove(vararg query: String) {
 }
 
 fun Map<*, *>.remove(path: List<String>, item: String) {
-    section(path)?.asMutable()?.remove(item)
+    getMap(path)?.asMutable()?.remove(item)
 }
 
 fun Map<*, *>.has(vararg query: String): Boolean {
@@ -34,34 +34,34 @@ fun Map<*, *>.has(vararg query: String): Boolean {
 }
 
 fun Map<*, *>.has(path: List<String>, item: String): Boolean {
-    return section(path)?.containsKey(item) ?: false
+    return getMap(path)?.containsKey(item) ?: false
 }
 
-fun Map<*, *>.section(vararg query: String): Map<String, Any>? {
-    return section(query.toList())?.typed()
+fun Map<*, *>.getMap(vararg query: String): Map<String, Any>? {
+    return getMap(query.toList())?.typed()
 }
 
-fun Map<*, *>.section(path: List<String>): Map<String, Any>? {
+fun Map<*, *>.getMap(path: List<String>): Map<String, Any>? {
     return path.fold<String, Map<*, *>?>(this, { section, next -> section?.read(next)?.let { it as? Map<*, *> } ?: return@fold null } )?.typed()
 }
 
-fun Map<*, *>.list(vararg query: String): List<*>? {
-    return list(query.dropLast(1), query.last())
+fun Map<*, *>.getList(vararg query: String): List<*>? {
+    return getList(query.dropLast(1), query.last())
 }
 
-fun Map<*, *>.list(path: List<String>, item: String): List<*>? {
-    return section(path)?.get(item) as? List<*>
+fun Map<*, *>.getList(path: List<String>, item: String): List<*>? {
+    return getMap(path)?.get(item) as? List<*>
 }
 
-fun Map<*, *>.sections(vararg query: String): List<Map<*, *>>? {
-    return list(*query)?.mapNotNull { it as? Map<*, *> }?.toList()
+fun Map<*, *>.getMaps(vararg query: String): List<Map<*, *>>? {
+    return getList(*query)?.mapNotNull { it as? Map<*, *> }?.toList()
 }
 
-fun Map<*, *>.provideSection(vararg query: String): MutableMap<String, Any> {
-    return provideSection(query.toList())
+fun Map<*, *>.provideMap(vararg query: String): MutableMap<String, Any> {
+    return provideMap(query.toList())
 }
 
-fun Map<*, *>.provideSection(path: List<String>): MutableMap<String, Any> {
+fun Map<*, *>.provideMap(path: List<String>): MutableMap<String, Any> {
     return path.fold(
         this,
         { acc, next ->
@@ -73,13 +73,13 @@ fun Map<*, *>.provideSection(path: List<String>): MutableMap<String, Any> {
     ).asMutable()
 }
 
-fun Map<*, *>.provideSections(vararg query: String): MutableList<Map<*, *>> {
-    return provideSections(query.dropLast(1), query.last()).asMutable()
+fun Map<*, *>.provideMaps(vararg query: String): MutableList<Map<*, *>> {
+    return provideMaps(query.dropLast(1), query.last()).asMutable()
 }
 
-fun Map<*, *>.provideSections(path: List<String>, item: String): MutableList<Map<*, *>> {
+fun Map<*, *>.provideMaps(path: List<String>, item: String): MutableList<Map<*, *>> {
     @Suppress("UNCHECKED_CAST")
-    return provideSection(path).getOrPut(item, { mutableListOf<Map<*, *>>() }) as MutableList<Map<*, *>>
+    return provideMap(path).getOrPut(item, { mutableListOf<Map<*, *>>() }) as MutableList<Map<*, *>>
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -98,7 +98,7 @@ fun <T> List<T>.asMutable(): MutableList<T> {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun List<*>.asSections(): List<Map<*, *>> {
+fun List<*>.asMaps(): List<Map<*, *>> {
     return this as List<Map<*, *>>
 }
 

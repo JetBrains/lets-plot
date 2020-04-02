@@ -25,6 +25,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         layerOptions: Map<*, *>,
         sharedData: DataFrame?,
         plotMapping: Map<*, *>,
+        plotSeries: Map<String, String>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig {
 
@@ -34,6 +35,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             layerOptions,
             sharedData!!,
             plotMapping,
+            plotSeries,
             GeomProto(geomKind),
             StatProto(),
             scaleProviderByAes,

@@ -78,6 +78,8 @@ object Option {
     object Layer {
         const val GEOM = "geom"
         const val STAT = "stat"
+        const val DATA = "data"
+        const val MAPPING = "mapping"
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
@@ -211,16 +213,13 @@ object Option {
 
     object Mapping {
         const val GROUP = "group"
-        val MAP_ID =
-            toOption(Aes.MAP_ID)    // map_id is 'aes' but also used as option in geom_map()
+        val MAP_ID = toOption(Aes.MAP_ID)    // map_id is 'aes' but also used as option in geom_map()
         private val AES_BY_OPTION = HashMap<String, Aes<*>>()
         val REAL_AES_OPTION_NAMES: Iterable<String> = AES_BY_OPTION.keys
 
         init {
-            for (aes in Aes.values()) {
-                AES_BY_OPTION[toOption(
-                    aes
-                )] = aes
+            Aes.values().forEach { aes ->
+                AES_BY_OPTION[toOption(aes)] = aes
             }
             // aliases
             AES_BY_OPTION["colour"] = Aes.COLOR

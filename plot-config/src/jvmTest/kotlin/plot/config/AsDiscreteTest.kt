@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.config.PlotConfig.Companion.getErrorMessage
 import jetbrains.datalore.plot.config.PlotConfig.Companion.isFailure
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
-import jetbrains.datalore.plot.server.config.transform.DiscreteVariableFromAnnotationChange.Companion.encodeName
 import org.junit.Test
 import kotlin.math.pow
 import kotlin.test.assertEquals
@@ -237,6 +236,48 @@ class AsDiscreteTest {
     }
 
     @Test
+    fun smoothStatWithGroup() {
+        val smoothData = """
+            |{
+            |    "x": [0, 2, 5, 8, 9, 12, 16, 20, 40],
+            |    "y": [3, 1, 2, 7, 8, 9, 10, 10, 10],
+            |    "g": [0, 0, 0, 1, 1, 1, 2, 2, 2],
+            |    "d": ['0', '0', '0', '1', '1', '1', '2', '2', '2']
+            |}""".trimMargin()
+
+        val spec = """
+            |{
+            |  "data": $smoothData,
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y"
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "smooth",
+            |      "mapping": {
+            |        "color": "g",
+            |        "group": "g"
+            |      },
+            |      "data_meta": {
+            |        "series_annotation": [
+            |          {
+            |            "variable": "g",
+            |            "annotation": "discrete"
+            |          }
+            |        ]
+            |      },
+            |      "se": false
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        toClientPlotConfig(spec)
+            .assertDiscreteVar("g")
+    }
+
+    @Test
     fun mappingsAndDataMerging() {
         data class Case(val fooMapping: Storage, val fooData: Storage, val barData: Storage, val barMapping: Storage)
 
@@ -261,9 +302,9 @@ class AsDiscreteTest {
 
     private fun PlotConfigClientSide.assertDiscreteVar(name: String, msg: () -> String = { "" }): PlotConfigClientSide {
         layerConfigs.single()
-            .varBindings.firstOrNull { it.variable.name == encodeName(name) }
+            .varBindings.firstOrNull { it.variable.name == name }
             ?.let { assertFalse(it.scale!!.isContinuous, message = it.scale!!.toString()) }
-            ?: fail("Variable ${encodeName(name)} was not found. ${msg()}")
+            ?: fail("Variable $name was not found. ${msg()}")
         return this
     }
 
