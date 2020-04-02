@@ -5,17 +5,23 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.legend.HLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgLineElement
+import kotlin.math.max
 
 class HLineGeom : GeomBase() {
 
@@ -30,8 +36,8 @@ class HLineGeom : GeomBase() {
         ctx: GeomContext
     ) {
 
-        val helper = GeomHelper(pos, coord, ctx)
-            .createSvgElementHelper()
+        val geomHelper = GeomHelper(pos, coord, ctx)
+        val helper = geomHelper.createSvgElementHelper()
 
         val viewPort = aesViewPort(aesthetics)
 
@@ -44,6 +50,18 @@ class HLineGeom : GeomBase() {
                     val end = DoubleVector(viewPort.right, intercept)
                     val line = helper.createLine(start, end, p)
                     lines.add(line)
+
+                    val h = max(AesScaling.strokeWidth(p), 2.0) * 2.0
+                    val origin = DoubleVector(0.0, intercept)
+                    val dimensions = DoubleVector(end.x, h)
+                    val rect = DoubleRectangle(origin, dimensions)
+                    ctx.targetCollector.addRectangle(
+                        p.index(),
+                        geomHelper.toClient(rect, p),
+                        GeomTargetCollector.TooltipParams.params()
+                            .setColor(HintColorUtil.fromColor(p)),
+                        TipLayoutHint.Kind.CURSOR_TOOLTIP
+                    )
                 }
             }
         }

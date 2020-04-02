@@ -297,7 +297,7 @@ object PlotConfigClientSideUtil {
                 }
                 return builder.bivariateFunction(AREA_GEOM)
             }
-
+            GeomKind.H_LINE,
             GeomKind.TILE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
