@@ -7,7 +7,24 @@ kotlin {
     jvm("jvmBrowser")
     jvm("jvmJfxPlot")
     js() {
-        browser()
+        browser {
+            dceTask {
+                keep.addAll(
+                        "ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.barsDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.emptyLiveMapDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.featuresDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.linesDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.pathsDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.piesDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.pointsDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.polygonsDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.rasterTilesDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.rectDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.demo.textDemo",
+                )
+            }
+        }
     }
 
 
