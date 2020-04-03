@@ -18,11 +18,11 @@ kotlin {
         def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
         if (currentOs.isMacOsX()) {
-            macosX64()
+            macosX64("native")
         } else if (currentOs.isLinux()) {
-            linuxX64()
+            linuxX64("native")
         } else if (currentOs.isWindows()) {
-            mingwX64()
+            mingwX64("native")
         }
     }
 

@@ -16,37 +16,6 @@ buildscript {
     }
 }
 
-allprojects {
-    group = 'org.jetbrains.lets-plot'
-    version = "1.3.2-SNAPSHOT"
-    project.ext.js_artifact_version = "1.3.dev2"
-
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-}
-
-import org.yaml.snakeyaml.Yaml
-
-def build_settings_file = new File(rootDir, "build_settings.yml")
-if (!build_settings_file.canRead()) {
-    throw new GradleException("Couldn't read build_settings.yml")
-}
-def settings = new Yaml().load(build_settings_file.newInputStream())
-if (settings.build_python_extension) {
-    assert settings.python.include_path != null
-}
-if (settings.enable_python_package) {
-    assert settings.build_python_extension
-    assert settings.python.bin_path != null
-}
-
-settings.putIfAbsent("enable_livemap", false)
-
-project.ext.buildSettings = settings
-
-
 def include_sources_letsPlotJvmCommon = [
         'base-portable',
         'base',
@@ -70,10 +39,61 @@ def include_sources_letsPlotJvmJfx = [
         'vis-demo-common-jfx',
 ]
 
+
 configurations {
     letsPlotJvmCommonSources
     letsPlotJvmJfxSources
 }
+
+allprojects {
+    group = 'org.jetbrains.lets-plot'
+    version = "1.3.2-SNAPSHOT"
+    project.ext.js_artifact_version = "1.3.dev2"
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    // jar jvm sources of this project
+    if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx) {
+        apply plugin: 'kotlin-multiplatform'
+        kotlin.jvm {}   // for `jvmSourcesJar` task
+        build.dependsOn += jvmSourcesJar
+    }
+
+    // make build configuration depend on sources jars
+    def sources_jar_path = "${buildDir}/libs/${name}-jvm-${version}-sources.jar"
+    if (name in include_sources_letsPlotJvmCommon) {
+        rootProject.dependencies {
+            letsPlotJvmCommonSources files(sources_jar_path)
+        }
+    }
+    if (name in include_sources_letsPlotJvmJfx) {
+        rootProject.dependencies {
+            letsPlotJvmJfxSources files(sources_jar_path)
+        }
+    }
+}
+
+import org.yaml.snakeyaml.Yaml
+
+def build_settings_file = new File(rootDir, "build_settings.yml")
+if (!build_settings_file.canRead()) {
+    throw new GradleException("Couldn't read build_settings.yml")
+}
+def settings = new Yaml().load(build_settings_file.newInputStream())
+if (settings.build_python_extension) {
+    assert settings.python.include_path != null
+}
+if (settings.enable_python_package) {
+    assert settings.build_python_extension
+    assert settings.python.bin_path != null
+}
+
+settings.putIfAbsent("enable_livemap", false)
+
+project.ext.buildSettings = settings
 
 //subprojects {
 //    group = rootProject.group
