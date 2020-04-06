@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - `axis_tooltip` parameters for `theme()`.
  - polynomial regression for geom_smooth.
  - tooltip on `geom_hline`.
+ - Fix auto-detection of Kaggle environment.
 
 ## [1.3.0] - 2020-03-26
 ### Added

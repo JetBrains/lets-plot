@@ -58,7 +58,7 @@ def _detect_isolated_frame() -> bool:
         pass
 
     if os.path.exists("/kaggle/input"):
-        return True  # Kaggle -> iframe
+        return False  # Kaggle -> no iframe
 
     # Check if we're running in an Azure Notebook
     if "AZURE_NOTEBOOKS_HOST" in os.environ:
