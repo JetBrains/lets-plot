@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
@@ -19,7 +20,8 @@ import kotlin.math.min
 
 class LayoutManager(
     private val myViewport: DoubleRectangle,
-    private val myPreferredHorizontalAlignment: HorizontalAlignment
+    private val myPreferredHorizontalAlignment: HorizontalAlignment,
+    private val myTooltipAnchor: TooltipAnchor
 ) {
     private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)

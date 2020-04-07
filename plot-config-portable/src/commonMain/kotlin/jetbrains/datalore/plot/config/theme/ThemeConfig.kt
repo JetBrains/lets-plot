@@ -56,6 +56,9 @@ class ThemeConfig(options: Map<*, *>) {
 
         private fun getTooltipAnchor(options: Map<*, *>): TooltipAnchor {
             val opts = OptionsAccessor.over(options)
+            if (!opts.has(Option.Theme.TOOLTIP_ANCHOR))
+                return DEF.tooltipAnchor()
+
             val positionString = opts.getString(Option.Theme.TOOLTIP_ANCHOR)
             return when (positionString) {
                 "top_right" -> TooltipAnchor.TOP_RIGHT
