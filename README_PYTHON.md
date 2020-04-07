@@ -223,8 +223,9 @@ LetsPlot.setup_html(offline=True)
 ### Cloud-based notebooks are supported
 
 Example notebooks:
-* [Google Colab notebook](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-)
-* [Kaggle notebook](https://www.kaggle.com/alshan/lets-plot-quickstart)
+* [Google Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-)
+* [Kaggle](https://www.kaggle.com/alshan/lets-plot-quickstart)
+* [JetBrains Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP)
 
 ## Change Log
 
