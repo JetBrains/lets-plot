@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.Dummies
-import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation
 
 object ConfigUtil {
     fun featureName(options: Map<*, *>): String {
@@ -31,19 +30,10 @@ object ConfigUtil {
                 }
     }
 
-    fun getSeriesAnnotation(options: Map<*, *>): Map<String, String> {
-        return options
-            .getMaps(SeriesAnnotation.TAG)
-            ?.associate { it.read(SeriesAnnotation.VARIABLE) as String to it.read(SeriesAnnotation.ANNOTATION) as String }
-            ?: emptyMap()
-    }
 
-    internal fun createDataFrame(
-        rawData: Any?,
-        dataMeta: Map<String, String> = emptyMap()
-    ): DataFrame {
+    internal fun createDataFrame(rawData: Any?): DataFrame {
         val varNameMap = asVarNameMap(rawData)
-        return updateDataFrame(DataFrame.Builder.emptyFrame(), varNameMap, dataMeta)
+        return updateDataFrame(DataFrame.Builder.emptyFrame(), varNameMap)
     }
 
     /**
@@ -107,20 +97,18 @@ object ConfigUtil {
 
         val varNameMap = HashMap<String, List<*>>()
         if (data is Map<*, *>) {
-            val mapData = data as Map<*, *>?
-            for (k in mapData!!.keys) {
-                val v = mapData[k]
+            for (k in data.keys) {
+                val v = data[k]
                 if (v is List<*>) {
                     varNameMap[k.toString()] = v
                 }
             }
 
         } else if (data is List<*>) {
-            val list = data as List<*>?
             // check if this is a matrix - all elements are lists of the same size
             var matrix = true
             var rowSize = -1
-            for (row in list!!) {
+            for (row in data) {
                 if (row is List<*>) {
                     if (rowSize < 0 || row.size == rowSize) {
                         rowSize = row.size
@@ -132,9 +120,9 @@ object ConfigUtil {
             }
 
             if (matrix) {
-                val dummyNames = Dummies.dummyNames(list.size)
-                for (i in list.indices) {
-                    varNameMap[dummyNames[i]] = list[i] as List<*>
+                val dummyNames = Dummies.dummyNames(data.size)
+                for (i in data.indices) {
+                    varNameMap[dummyNames[i]] = data[i] as List<*>
                 }
             } else {
                 // simple data vector
@@ -148,23 +136,12 @@ object ConfigUtil {
         return varNameMap
     }
 
-    private fun updateDataFrame(
-        df: DataFrame,
-        data: Map<String, List<*>>,
-        dataMeta: Map<String, String>
-    ): DataFrame {
+    private fun updateDataFrame(df: DataFrame, data: Map<String, List<*>>): DataFrame {
         val dfVars = DataFrameUtil.variables(df)
         val b = df.builder()
         for ((varName, values) in data) {
-            val isDiscrete = dataMeta[varName]?.let(SeriesAnnotation.DISCRETE::equals)
             val variable = dfVars[varName] ?: DataFrameUtil.createVariable(varName)
-
-            @Suppress("UNCHECKED_CAST")
-            when (isDiscrete) {
-                true -> b.putDiscrete(variable, values as List<Double?>)
-                false -> b.putNumeric(variable, values as List<Double?>)
-                null -> b.put(variable, values)
-            }
+            b.put(variable, values)
         }
         return b.build()
     }

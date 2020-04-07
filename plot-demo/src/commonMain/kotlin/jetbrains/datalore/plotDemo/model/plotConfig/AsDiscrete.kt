@@ -51,9 +51,9 @@ class AsDiscrete : PlotConfigDemoBase() {
                 "color": "g"
               },
               "data_meta": {
-                "series_annotation": [
+                "mapping_annotation": [
                   {
-                    "variable": "g",
+                    "aes": "color",
                     "annotation": "discrete"
                   }
                 ]
@@ -85,9 +85,9 @@ class AsDiscrete : PlotConfigDemoBase() {
                     "color": "g"
                   },
                   "data_meta": {
-                    "series_annotation": [
+                    "mapping_annotation": [
                       {
-                        "variable": "g",
+                        "aes": "color",
                         "annotation": "discrete"
                       }
                     ]
@@ -116,9 +116,9 @@ class AsDiscrete : PlotConfigDemoBase() {
                     "color": "g"
                   },
                   "data_meta": {
-                    "series_annotation": [
+                    "mapping_annotation": [
                       {
-                        "variable": "g",
+                        "aes": "color",
                         "annotation": "discrete"
                       }
                     ]
@@ -147,9 +147,9 @@ class AsDiscrete : PlotConfigDemoBase() {
                     "group": "g"
                   },
                   "data_meta": {
-                    "series_annotation": [
+                    "mapping_annotation": [
                       {
-                        "variable": "g",
+                        "aes": "color",
                         "annotation": "discrete"
                       }
                     ]
@@ -173,7 +173,7 @@ class AsDiscrete : PlotConfigDemoBase() {
         "geom": "point", 
         "data": $data,
         "mapping": {"x": "x", "y": "y", "fill": "a", "color": "b"}, 
-        "data_meta": {"series_annotation": [{"variable": "a", "annotation": "discrete"}]},
+        "data_meta": {"mapping_annotation": [{"aes": "fill", "annotation": "discrete"}]},
         "shape": 21, 
         "size": 9
     }]
@@ -194,7 +194,7 @@ class AsDiscrete : PlotConfigDemoBase() {
     "layers": [{
         "geom": "point", 
         "mapping": {"fill": "a", "color": "b"}, 
-        "data_meta": {"series_annotation": [{"variable": "a", "annotation": "discrete"}]},
+        "data_meta": {"mapping_annotation": [{"aes": "fill", "annotation": "discrete"}]},
         "shape": 21, 
         "size": 9
     }]
@@ -214,9 +214,9 @@ class AsDiscrete : PlotConfigDemoBase() {
     "layers": [{
         "geom": "point", 
         "mapping": {"fill": "a", "color": "b"}, 
-        "data_meta": {"series_annotation": [
-            {"variable": "a", "annotation": "discrete"}, 
-            {"variable": "b", "annotation": "discrete"}
+        "data_meta": {"mapping_annotation": [
+            {"aes": "fill", "annotation": "discrete"}, 
+            {"aes": "color", "annotation": "discrete"}
         ]},
         "shape": 21, 
         "size": 9

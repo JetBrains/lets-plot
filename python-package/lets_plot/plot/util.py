@@ -35,7 +35,7 @@ def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
 
     # mapping
     mapping = {}
-    var_meta = []
+    mapping_meta = []
 
     if raw_mapping is not None:
         for key, variable in raw_mapping.as_dict().items():
@@ -44,12 +44,12 @@ def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
 
             if isinstance(variable, VariableMeta):
                 mapping[key] = variable.name
-                var_meta.append({ 'variable': variable.name, 'annotation': variable.kind })
+                mapping_meta.append({ 'aes': key, 'annotation': variable.kind })
             else:
                 mapping[key] = variable
 
-            if len(var_meta) > 0:
-                data_meta.update({ 'series_annotation': var_meta })
+            if len(mapping_meta) > 0:
+                data_meta.update({ 'mapping_annotation': mapping_meta })
 
     return data, aes(**mapping), {'data_meta': data_meta }
 

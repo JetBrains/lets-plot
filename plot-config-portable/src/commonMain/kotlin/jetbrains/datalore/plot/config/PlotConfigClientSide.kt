@@ -49,7 +49,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         layerOptions: Map<*, *>,
         sharedData: DataFrame?,
         plotMapping: Map<*, *>,
-        plotSeries: Map<String, String>,
+        plotDiscreteAes: Set<String>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig {
 
@@ -59,7 +59,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             layerOptions,
             sharedData!!,
             plotMapping,
-            plotSeries,
+            plotDiscreteAes,
             GeomProtoClientSide(geomKind),
             StatProto(),
             scaleProviderByAes, true

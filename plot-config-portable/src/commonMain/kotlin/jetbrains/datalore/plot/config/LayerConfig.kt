@@ -12,16 +12,17 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultAesAutoMapper
 import jetbrains.datalore.plot.builder.sampling.Sampling
+import jetbrains.datalore.plot.config.DataMetaUtil.processDiscreteData
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP
-import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
@@ -29,15 +30,12 @@ class LayerConfig(
     layerOptions: Map<*, *>,
     sharedData: DataFrame,
     plotMapping: Map<*, *>,
-    plotSeries: Map<String, String>,
+    plotDiscreteAes: Set<String>,
     val geomProto: GeomProto,
     statProto: StatProto,
     scaleProviderByAes: TypedScaleProviderMap,
     private val myClientSide: Boolean
-) : OptionsAccessor(
-    layerOptions,
-    initDefaultOptions(layerOptions, geomProto, statProto)
-) {
+) : OptionsAccessor(layerOptions, initDefaultOptions(layerOptions, geomProto, statProto)) {
 
     //    val geomProvider: GeomProvider
     val stat: Stat
@@ -72,9 +70,21 @@ class LayerConfig(
         }
 
     init {
-        val seriesOptions = plotSeries + ConfigUtil.getSeriesAnnotation(getMap(DATA_META))
+        val (discreteMappings, layerData) = processDiscreteData(
+            options = this,
+            commonData = sharedData,
+            commonDiscreteAes = plotDiscreteAes,
+            commonMapping = plotMapping,
+            isClientSide = myClientSide
+        )
 
-        val layerData = ConfigUtil.createDataFrame(get(DATA), seriesOptions)
+        if (discreteMappings.isNotEmpty()) {
+            update(MAPPING, getMap(MAPPING) + discreteMappings)
+        }
+
+        // mapping (inherit from plot) + 'layer' mapping
+        val mappingOptions = plotMapping + getMap(MAPPING)
+
         var combinedData: DataFrame
         if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
             combinedData = DataFrameUtil.appendReplace(sharedData, layerData)
@@ -84,8 +94,6 @@ class LayerConfig(
             combinedData = sharedData
         }
 
-        // mapping (inherit from plot) + 'layer' mapping
-        val mappingOptions = plotMapping + getMap(MAPPING)
 
         var aesMapping: Map<Aes<*>, DataFrame.Variable>?
         if (GeoPositionsDataUtil.hasGeoPositionsData(this) && myClientSide) {
@@ -171,7 +179,7 @@ class LayerConfig(
 
         if (fieldName == null && GeoPositionsDataUtil.hasGeoPositionsData(this)) {
             // 'default' group is important for 'geom_map'
-            val groupVar = DataFrameUtil.variables(data)["group"]
+            val groupVar = variables(data)["group"]
             if (groupVar != null) {
                 fieldName = groupVar.name
             }

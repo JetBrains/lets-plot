@@ -146,7 +146,7 @@ object DataFrameUtil {
         return when {
             TransformVar.isTransformVar(name) -> TransformVar[name]
             Stats.isStatVar(name) -> Stats.statVar(name)
-            Dummies.isDummyVar(name) -> return Dummies.newDummy(name)
+            Dummies.isDummyVar(name) -> Dummies.newDummy(name)
             else -> DataFrame.Variable(name, DataFrame.Variable.Source.ORIGIN, label)
         }
     }

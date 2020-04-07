@@ -39,9 +39,9 @@ object Option {
             const val OSM_ID = "id"
         }
 
-        object SeriesAnnotation {
-            const val TAG = "series_annotation"
-            const val VARIABLE = "variable"
+        object MappingAnnotation {
+            const val TAG = "mapping_annotation"
+            const val AES = "aes"
             const val ANNOTATION = "annotation"
             const val DISCRETE = "discrete"
         }
@@ -78,8 +78,6 @@ object Option {
     object Layer {
         const val GEOM = "geom"
         const val STAT = "stat"
-        const val DATA = "data"
-        const val MAPPING = "mapping"
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"

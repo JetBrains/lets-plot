@@ -12,11 +12,9 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
-import jetbrains.datalore.plot.config.ConfigUtil.getSeriesAnnotation
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.Kind
-import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.DISCRETE
 import jetbrains.datalore.plot.config.Option.Plot.COORD
 import jetbrains.datalore.plot.config.Option.Plot.FACET
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
@@ -27,11 +25,9 @@ import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.Option.Scale
 
-abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(
-    opts,
-    DEF_OPTIONS
-) {
-
+abstract class PlotConfig(
+    opts: Map<String, Any>
+) : OptionsAccessor(opts, DEF_OPTIONS) {
     val layerConfigs: List<LayerConfig>
     val facets: PlotFacets
     val scaleProvidersMap: TypedScaleProviderMap
@@ -47,43 +43,24 @@ abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(
         get() = false
 
     init {
-        sharedData = ConfigUtil.createDataFrame(get(DATA), getSeriesAnnotation(getMap(DATA_META)))
-        checkState(sharedData != null)
 
-        fun discreteScales(): List<ScaleConfig<Any>> {
-            // find discrete series from all layers
-            val discreteSeries = opts
-                .getMaps(LAYERS)
-                ?.asSequence()
-                ?.mapNotNull { it.getMap(DATA_META)?.let(::getSeriesAnnotation) }
-                ?.fold(mutableMapOf<String, String>()) { acc, series -> acc.apply { putAll(series) } } // series from all layers
-                ?.filter { (_, annotation) -> annotation == DISCRETE } // only discrete series
-                ?.map { (variable, _) -> variable } // take only name
-                ?.toSet()
-                ?: emptySet()
+        val (discreteMappings, plotData) = DataMetaUtil.processDiscreteData(
+            options = this,
+            commonData = DataFrame.Builder.emptyFrame(),
+            commonDiscreteAes = emptySet(),
+            commonMapping = emptyMap<Any, Any>(),
+            isClientSide = isClientSide
+        )
 
-            // find mappings to discrete series from all layers
-            val discreteMappings = opts
-                .getMaps(LAYERS)
-                ?.flatMap { it.getMap(MAPPING)?.entries ?: emptySet() } // all mappings from all layers
-                ?.filter { (_, variable) -> variable in discreteSeries } // discrete mapping once and forever
-                ?.map { (aes, _) -> aes } // take only aes
-                ?.filter { it != Option.Mapping.GROUP } // TODO: explain
-                ?: emptyList()
+        sharedData = plotData
 
-            return discreteMappings.map { aes ->
-                ScaleConfig<Any>(
-                    mutableMapOf<String, Any>(
-                        Scale.AES to aes,
-                        Scale.DISCRETE_DOMAIN to true
-                    )
-                )
-            }
+        if (discreteMappings.isNotEmpty()) {
+            update(MAPPING, getMap(MAPPING) + discreteMappings)
         }
 
-        scaleConfigs = createScaleConfigs() + discreteScales()
-
+        scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.processDiscreteScales(opts))
         scaleProvidersMap = PlotConfigUtil.createScaleProviders(scaleConfigs)
+
         layerConfigs = createLayerConfigs(sharedData, scaleProvidersMap)
 
         facets = if (has(FACET)) {
@@ -99,10 +76,9 @@ abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(
         }
     }
 
-    fun createScaleConfigs(): List<ScaleConfig<Any>> {
+    fun createScaleConfigs(scaleOptionsList: List<*>): List<ScaleConfig<Any>> {
         // merge options by 'aes'
         val mergedOpts = HashMap<Aes<*>, MutableMap<Any, Any>>()
-        val scaleOptionsList = getList(SCALES)
         for (opts in scaleOptionsList) {
             val optsMap = opts as Map<*, *>
             val aes = ScaleConfig.aesOrFail(optsMap)
@@ -137,7 +113,7 @@ abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(
                 layerOptions as Map<*, *>,
                 sharedData,
                 getMap(MAPPING),
-                getSeriesAnnotation(getMap(DATA_META)),
+                DataMetaUtil.getDiscreteAes(getMap(DATA_META)),
                 scaleProviderByAes
             )
             layerConfigs.add(layerConfig)
@@ -149,7 +125,7 @@ abstract class PlotConfig(opts: Map<String, Any>) : OptionsAccessor(
         layerOptions: Map<*, *>,
         sharedData: DataFrame?,
         plotMapping: Map<*, *>,
-        plotSeries: Map<String, String>,
+        plotDiscreteAes: Set<String>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig
 
