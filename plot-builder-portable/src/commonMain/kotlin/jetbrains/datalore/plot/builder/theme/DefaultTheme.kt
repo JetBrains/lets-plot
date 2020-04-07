@@ -24,7 +24,7 @@ class DefaultTheme : Theme {
     }
 
     override fun tooltipAnchor(): TooltipAnchor {
-        return TooltipAnchor.TOP_RIGHT
+        return TooltipAnchor.NONE
     }
 
     companion object {

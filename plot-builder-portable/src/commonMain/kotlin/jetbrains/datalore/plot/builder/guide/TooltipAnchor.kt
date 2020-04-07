@@ -9,5 +9,6 @@ enum class TooltipAnchor {
     TOP_RIGHT,
     TOP_LEFT,
     BOTTOM_RIGHT,
-    BOTTOM_LEFT
+    BOTTOM_LEFT,
+    NONE
 }

@@ -58,8 +58,15 @@ class LayoutManager(
             .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
             ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it, SHORT_STEM_LENGTH)) }
 
+        // add corner tooltips
+        var cornerTooltips = if (myTooltipAnchor != TooltipAnchor.NONE)
+            tooltips.filter { !it.tooltipSpec.isOutlier }
+        else
+            emptyList()
+        cornerTooltips.forEach { tooltip -> desiredPosition.add(calculatePlotCornerTooltipPosition(tooltip) ) }
+
         // all other tooltips (axis tooltips are ignored in this method)
-        desiredPosition.addAll(calculateDataTooltipsPosition(tooltips))
+        desiredPosition.addAll(calculateDataTooltipsPosition(tooltips - cornerTooltips))
 
         return rearrangeWithoutOverlapping(desiredPosition)
     }
@@ -245,6 +252,41 @@ class LayoutManager(
 
         val tooltipCoord = DoubleVector(tooltipX, tooltipY)
         return PositionedTooltip(measuredTooltip, tooltipCoord, myCursorCoord)
+    }
+
+    private fun calculateAnchorX(measuredTooltip: MeasuredTooltip, horizontalAlignment: HorizontalAlignment): Double {
+        return if (horizontalAlignment == HorizontalAlignment.RIGHT)
+            myHorizontalSpace.end() - measuredTooltip.size.x - NORMAL_STEM_LENGTH
+        else
+            NORMAL_STEM_LENGTH
+    }
+
+    private fun calculateAnchorY(measuredTooltip: MeasuredTooltip, vertivalAlignment: VerticalAlignment): Double {
+        return if (vertivalAlignment == TOP)
+            NORMAL_STEM_LENGTH
+        else
+            myVerticalSpace.end() - measuredTooltip.size.y - NORMAL_STEM_LENGTH
+    }
+
+    private fun calculatePlotCornerTooltipPosition(measuredTooltip: MeasuredTooltip): PositionedTooltip {
+        var tooltipX = calculateAnchorX(
+            measuredTooltip,
+            if (myTooltipAnchor == TooltipAnchor.TOP_RIGHT || myTooltipAnchor == TooltipAnchor.BOTTOM_RIGHT)
+                HorizontalAlignment.RIGHT
+            else
+                HorizontalAlignment.LEFT
+        )
+
+        var tooltipY = calculateAnchorY(
+            measuredTooltip,
+            if (myTooltipAnchor == TooltipAnchor.TOP_RIGHT || myTooltipAnchor == TooltipAnchor.TOP_LEFT)
+                TOP
+            else
+                BOTTOM
+        )
+
+        val tooltipCoord = DoubleVector(tooltipX, tooltipY)
+        return PositionedTooltip(measuredTooltip, tooltipCoord, tooltipCoord)
     }
 
     private fun overlapsCursorHorizontalRange(measuredTooltip: MeasuredTooltip, tooltipX: Double): Boolean {
