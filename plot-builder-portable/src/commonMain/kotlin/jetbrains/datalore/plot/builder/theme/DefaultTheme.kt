@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 
 
 class DefaultTheme : Theme {
@@ -20,6 +21,10 @@ class DefaultTheme : Theme {
 
     override fun legend(): LegendTheme {
         return LEGEND_THEME
+    }
+
+    override fun tooltipAnchor(): TooltipAnchor {
+        return TooltipAnchor.TOP_RIGHT
     }
 
     companion object {

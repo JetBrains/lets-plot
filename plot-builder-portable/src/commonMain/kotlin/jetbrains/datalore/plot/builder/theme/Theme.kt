@@ -5,10 +5,14 @@
 
 package jetbrains.datalore.plot.builder.theme
 
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor
+
 interface Theme {
     fun axisX(): AxisTheme
 
     fun axisY(): AxisTheme
 
     fun legend(): LegendTheme
+
+    fun tooltipAnchor(): TooltipAnchor
 }
