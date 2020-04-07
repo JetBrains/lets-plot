@@ -15,18 +15,18 @@ import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgElementListener
 import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
 import jetbrains.datalore.vis.svg.event.SvgEventSpec
+import org.apache.batik.anim.dom.SVGOMElement
 import org.apache.batik.dom.AbstractDocument
 import org.apache.batik.dom.events.DOMMouseEvent
-import org.apache.batik.dom.svg.SVGOMElement
 import org.apache.batik.util.SVGConstants
 import org.w3c.dom.events.EventListener
 import java.util.*
 
 internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGOMElement>(
-        source: SourceT,
-        target: TargetT,
-        doc: AbstractDocument,
-        peer: SvgBatikPeer
+    source: SourceT,
+    target: TargetT,
+    doc: AbstractDocument,
+    peer: SvgBatikPeer
 ) : SvgNodeMapper<SourceT, TargetT>(source, target, doc, peer) {
 
     private var myHandlerRegs: MutableMap<SvgEventSpec, Registration>? = null
@@ -64,7 +64,8 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGOMElement>(
             }
         })
 
-        conf.add(Synchronizers.forPropsOneWay(
+        conf.add(
+            Synchronizers.forPropsOneWay(
                 source.handlersSet(),
                 object : WritableProperty<Set<SvgEventSpec>?> {
                     override fun set(value: Set<SvgEventSpec>?) {
@@ -80,8 +81,14 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGOMElement>(
 
                             when (spec) {
                                 SvgEventSpec.MOUSE_CLICKED -> addMouseHandler(spec, SVGConstants.SVG_CLICK_EVENT_TYPE)
-                                SvgEventSpec.MOUSE_PRESSED -> addMouseHandler(spec, SVGConstants.SVG_MOUSEDOWN_EVENT_TYPE)
-                                SvgEventSpec.MOUSE_RELEASED -> addMouseHandler(spec, SVGConstants.SVG_MOUSEUP_EVENT_TYPE)
+                                SvgEventSpec.MOUSE_PRESSED -> addMouseHandler(
+                                    spec,
+                                    SVGConstants.SVG_MOUSEDOWN_EVENT_TYPE
+                                )
+                                SvgEventSpec.MOUSE_RELEASED -> addMouseHandler(
+                                    spec,
+                                    SVGConstants.SVG_MOUSEUP_EVENT_TYPE
+                                )
                                 SvgEventSpec.MOUSE_OVER -> addMouseHandler(spec, SVGConstants.SVG_MOUSEOVER_EVENT_TYPE)
                                 SvgEventSpec.MOUSE_MOVE -> addMouseHandler(spec, SVGConstants.SVG_MOUSEMOVE_EVENT_TYPE)
                                 SvgEventSpec.MOUSE_OUT -> addMouseHandler(spec, SVGConstants.SVG_MOUSEOUT_EVENT_TYPE)
@@ -94,17 +101,21 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGOMElement>(
                             myHandlerRegs = null
                         }
                     }
-                }))
+                })
+        )
     }
 
     private fun addMouseHandler(spec: SvgEventSpec, eventType: String) {
         val listener = EventListener { evt ->
             evt.stopPropagation()
             val e = evt as DOMMouseEvent
-            source.dispatch(spec, MouseEvent(e.clientX, e.clientY,
-                Utils.getButton(e),
-                Utils.getModifiers(e)
-            ))
+            source.dispatch(
+                spec, MouseEvent(
+                    e.clientX, e.clientY,
+                    Utils.getButton(e),
+                    Utils.getModifiers(e)
+                )
+            )
         }
 
         target.addEventListener(eventType, listener, false)

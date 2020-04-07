@@ -14,9 +14,9 @@ import jetbrains.datalore.vis.svg.event.SvgEventSpec
 import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 import jetbrains.datalore.vis.svg.slim.SvgSlimNode
 import jetbrains.datalore.vis.svgMapper.TargetPeer
+import org.apache.batik.anim.dom.*
 import org.apache.batik.dom.AbstractDocument
 import org.apache.batik.dom.events.DOMMouseEvent
-import org.apache.batik.dom.svg.*
 import org.apache.batik.util.SVGConstants
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -105,10 +105,13 @@ internal class BatikTargetPeer(private val doc: AbstractDocument) : TargetPeer<N
         val listener = EventListener { evt ->
             evt.stopPropagation()
             val e = evt as DOMMouseEvent
-            source.dispatch(spec, MouseEvent(e.clientX, e.clientY,
-                Utils.getButton(e),
-                Utils.getModifiers(e)
-            ))
+            source.dispatch(
+                spec, MouseEvent(
+                    e.clientX, e.clientY,
+                    Utils.getButton(e),
+                    Utils.getModifiers(e)
+                )
+            )
         }
         target.addEventListener(eventType, listener, false)
         return object : Registration() {
