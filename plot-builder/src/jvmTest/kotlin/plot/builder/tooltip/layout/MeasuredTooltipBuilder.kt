@@ -45,7 +45,7 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
 
     fun buildTooltip(): MeasuredTooltip {
         val hint = createHint()
-        return MeasuredTooltip(jetbrains.datalore.plot.builder.interact.TooltipSpec(hint, makeText(myText!!), myFill!!), mySize!!, TooltipBox())
+        return MeasuredTooltip(jetbrains.datalore.plot.builder.interact.TooltipSpec(hint, makeText(myText!!), myFill!!, true), mySize!!, TooltipBox())
     }
 
     private fun createHint(): TipLayoutHint {

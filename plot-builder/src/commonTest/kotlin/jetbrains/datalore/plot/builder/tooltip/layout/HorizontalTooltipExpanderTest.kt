@@ -192,7 +192,7 @@ class HorizontalTooltipExpanderTest {
             TipLayoutHint.cursorTooltip(
                 DoubleVector(0.0, 0.0),
                 Color.BLACK
-            ), listOf(text), Color.BLACK
+            ), listOf(text), Color.BLACK, true
         )
         return PositionedTooltip(
             MeasuredTooltip(spec, size, TooltipBox()),
