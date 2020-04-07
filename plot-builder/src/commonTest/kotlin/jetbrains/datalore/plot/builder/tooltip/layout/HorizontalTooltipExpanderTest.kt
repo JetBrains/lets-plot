@@ -189,10 +189,10 @@ class HorizontalTooltipExpanderTest {
 
     private fun newTooltip(text: String, size: DoubleVector, position: DoubleVector, pointer: DoubleVector): PositionedTooltip {
         val spec = jetbrains.datalore.plot.builder.interact.TooltipSpec(
-            TipLayoutHint.cursorTooltip(
+            layoutHint = TipLayoutHint.cursorTooltip(
                 DoubleVector(0.0, 0.0),
                 Color.BLACK
-            ), listOf(text), Color.BLACK, true
+            ), lines = listOf(text), fill = Color.BLACK, isOutlier = true
         )
         return PositionedTooltip(
             MeasuredTooltip(spec, size, TooltipBox()),

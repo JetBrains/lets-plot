@@ -74,10 +74,10 @@ class TooltipSpecFactory(
                     val text = makeText(listOf(aes))
                     tooltipSpecs.add(
                         TooltipSpec(
-                            layoutHint,
-                            text,
-                            layoutHint.color!!,
-                            true
+                            layoutHint = layoutHint,
+                            lines = text,
+                            fill = layoutHint.color!!,
+                            isOutlier = true
                         )
                     )
                 }
@@ -163,7 +163,7 @@ class TooltipSpecFactory(
 
             val text = makeText(aes)
             val fill = layoutHint.color ?: tipLayoutHint().color!!
-            tooltipSpecs.add(TooltipSpec(layoutHint, text, fill, isOutlier))
+            tooltipSpecs.add(TooltipSpec(layoutHint = layoutHint, lines = text, fill = fill, isOutlier = isOutlier))
             myAesWithoutHint.removeAll(aes)
         }
 
