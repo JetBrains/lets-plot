@@ -107,6 +107,9 @@ Try the following examples to study more features of the `Lets-Plot` library.
 * Tiles, contours, polygons, contourf:
 [contours.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/contours.ipynb)
  
+* Raster geom, Image geom:
+[image_fisher_boat.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_fisher_boat.ipynb) 
+ 
 * Various presentation options:
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
   
