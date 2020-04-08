@@ -98,7 +98,7 @@ class PlotBuilder(private val myTheme: Theme) {
         private val myAxisTitleBottom: String? = b.myAxisTitleBottom
         private val myAxisXTitleEnabled: Boolean = b.myTheme.axisX().showTitle()
         private val myAxisYTitleEnabled: Boolean = b.myTheme.axisY().showTitle()
-        private val myTooltipAnchor: TooltipAnchor = b.myTheme.tooltipAnchor()
+        private val myTooltipAnchor: TooltipAnchor = b.myTheme.tooltip().anchor()
 
         override val coordProvider: CoordProvider = b.myCoordProvider
 

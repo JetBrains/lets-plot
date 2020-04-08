@@ -23,8 +23,8 @@ class DefaultTheme : Theme {
         return LEGEND_THEME
     }
 
-    override fun tooltipAnchor(): TooltipAnchor {
-        return TooltipAnchor.NONE
+    override fun tooltip(): TooltipTheme {
+        return TOOLTIP_THEME
     }
 
     companion object {
@@ -58,6 +58,17 @@ class DefaultTheme : Theme {
 
             override fun backgroundFill(): Color {
                 return Color.WHITE
+            }
+        }
+
+        private val TOOLTIP_THEME: TooltipTheme = object :
+            TooltipTheme {
+            override fun isVisible(): Boolean {
+                return false
+            }
+
+            override fun anchor(): TooltipAnchor {
+                return TooltipAnchor.NONE
             }
         }
     }
