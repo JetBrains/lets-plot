@@ -48,7 +48,13 @@ class TooltipSpecFactory(
         }
 
         private fun initTooltipSpecs() {
-            aesTipLayoutHints().forEach { (aes, hint) -> applyTipLayoutHint(listOf(aes), hint, true) }
+            aesTipLayoutHints().forEach { (aes, hint) ->
+                applyTipLayoutHint(
+                    aes = listOf(aes),
+                    layoutHint = hint,
+                    isOutlier = true
+                )
+            }
 
             addAesTooltipSpec()
 
@@ -101,7 +107,7 @@ class TooltipSpecFactory(
 
             removeDiscreteDuplicatedMappings(aesListForTooltip)
 
-            applyTipLayoutHint(aesListForTooltip, tipLayoutHint(), false)
+            applyTipLayoutHint(aes = aesListForTooltip, layoutHint = tipLayoutHint(), isOutlier = false)
         }
 
         private fun removeDiscreteDuplicatedMappings(aesWithoutHint: MutableList<Aes<*>>) {
@@ -163,7 +169,7 @@ class TooltipSpecFactory(
 
             val text = makeText(aes)
             val fill = layoutHint.color ?: tipLayoutHint().color!!
-            tooltipSpecs.add(TooltipSpec(layoutHint = layoutHint, lines = text, fill = fill, isOutlier = isOutlier))
+            tooltipSpecs.add(TooltipSpec(layoutHint, text, fill, isOutlier))
             myAesWithoutHint.removeAll(aes)
         }
 
