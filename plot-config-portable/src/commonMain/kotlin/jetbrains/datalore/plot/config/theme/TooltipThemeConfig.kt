@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.config.OptionsAccessor
 internal class TooltipThemeConfig(options: Map<*, *>, defOptions: Map<*, *>) : OptionsAccessor(options, defOptions), TooltipTheme {
 
     override fun isVisible(): Boolean {
-        return anchor() != TooltipAnchor.NONE
+        return ThemeConfig.DEF.tooltip().isVisible()
     }
 
     override fun anchor(): TooltipAnchor {

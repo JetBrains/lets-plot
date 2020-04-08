@@ -64,7 +64,7 @@ class DefaultTheme : Theme {
         private val TOOLTIP_THEME: TooltipTheme = object :
             TooltipTheme {
             override fun isVisible(): Boolean {
-                return false
+                return true
             }
 
             override fun anchor(): TooltipAnchor {

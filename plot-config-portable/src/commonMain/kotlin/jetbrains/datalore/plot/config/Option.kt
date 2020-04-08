@@ -282,7 +282,7 @@ object Option {
         const val LEGEND_POSITION = "legend_position"
         const val LEGEND_JUSTIFICATION = "legend_justification"
         const val LEGEND_DIRECTION = "legend_direction"
-        // anchor for tooltip
+
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
     }
 
