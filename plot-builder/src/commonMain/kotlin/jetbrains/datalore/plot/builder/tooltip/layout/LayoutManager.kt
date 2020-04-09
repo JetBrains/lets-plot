@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
@@ -60,21 +61,26 @@ class LayoutManager(
             ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it, SHORT_STEM_LENGTH)) }
 
         // add corner tooltips
-        val cornerTooltips = if (myTooltipAnchor != TooltipAnchor.NONE)
-            tooltips.filter { !it.tooltipSpec.isOutlier }
-        else
-            emptyList()
+        tooltips
+            .filter { isCorner(it) }
+            .let { cornerTooltips ->
+                desiredPosition += calculateCornerTooltipsPosition(cornerTooltips)
+            }
 
-        // all other tooltips (axis tooltips are ignored in this method)
-        desiredPosition.addAll(calculateDataTooltipsPosition(tooltips - cornerTooltips))
+        // all other tooltips (axis and corner tooltips are ignored in this method)
+        desiredPosition += calculateDataTooltipsPosition(tooltips)
 
-        return rearrangeWithoutOverlapping(desiredPosition, calculateCornerTooltipsPosition(cornerTooltips))
+        return rearrangeWithoutOverlapping(desiredPosition)
     }
 
     private fun calculateDataTooltipsPosition(tooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
         val placementList = ArrayList<PositionedTooltip>()
 
         for (measuredTooltip in tooltips) {
+            if (isCorner(measuredTooltip))
+            // Corner tooltips should be processed separately to configure corner space.
+                continue
+
             when (measuredTooltip.hintKind) {
                 VERTICAL_TOOLTIP -> placementList.add(
                     calculateVerticalTooltipPosition(
@@ -130,10 +136,9 @@ class LayoutManager(
     }
 
     private fun rearrangeWithoutOverlapping(
-        tooltips: List<PositionedTooltip>,
-        fixTooltips: List<PositionedTooltip>
+        tooltips: List<PositionedTooltip>
     ): List<PositionedTooltip> {
-        if (tooltips.isEmpty() && fixTooltips.isEmpty()) {
+        if (tooltips.isEmpty()) {
             return tooltips
         }
 
@@ -145,10 +150,9 @@ class LayoutManager(
             restrictions.add(positionedTooltip.rect())
         }
 
-        fixTooltips.forEach(::fixate)
-
         // First add tooltips with pre-arranged position
         tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP).forEach(::fixate)
+        tooltips.selectCorner().forEach(::fixate)
 
         // Now try to space out other tooltips.
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.
@@ -305,7 +309,7 @@ class LayoutManager(
         if (isOverlapX && isOverlapY) {
             tooltipX = calculateAnchorX(
                 measuredTooltip,
-                if (horizontalAlignment == HorizontalAlignment.RIGHT) HorizontalAlignment.LEFT else HorizontalAlignment.RIGHT
+                horizontalAlignment.inversed()
             )
         }
 
@@ -332,13 +336,21 @@ class LayoutManager(
     enum class HorizontalAlignment {
         LEFT,
         RIGHT,
-        CENTER
+        CENTER;
+
+        fun inversed(): HorizontalAlignment {
+            return when (this) {
+                LEFT -> RIGHT
+                RIGHT -> LEFT
+                CENTER -> CENTER
+            }
+        }
     }
 
     class PositionedTooltip {
         val tooltipBox: TooltipBox
         internal val tooltipSize: DoubleVector
-        val tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec
+        val tooltipSpec: TooltipSpec
         val tooltipCoord: DoubleVector
         val stemCoord: DoubleVector
 
@@ -376,11 +388,11 @@ class LayoutManager(
     }
 
     class MeasuredTooltip(
-        internal val tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec,
+        internal val tooltipSpec: TooltipSpec,
         internal val size: DoubleVector,
         internal val tooltipBox: TooltipBox
     ) {
-        constructor(tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec, tooltipBox: TooltipBox)
+        constructor(tooltipSpec: TooltipSpec, tooltipBox: TooltipBox)
                 : this(tooltipSpec, tooltipBox.contentRect.dimension, tooltipBox)
 
         internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
@@ -426,6 +438,18 @@ class LayoutManager(
 
         private fun List<PositionedTooltip>.select(vararg kinds: Kind): List<PositionedTooltip> {
             return this.filter { kinds.contains(it.hintKind) }
+        }
+
+        private fun isCorner(tooltipSpec: TooltipSpec): Boolean {
+            return !tooltipSpec.isOutlier
+        }
+
+        private fun isCorner(tooltip: MeasuredTooltip): Boolean {
+            return isCorner(tooltip.tooltipSpec)
+        }
+
+        private fun List<PositionedTooltip>.selectCorner(): List<PositionedTooltip> {
+            return this.filter { isCorner(it.tooltipSpec) }
         }
     }
 }
