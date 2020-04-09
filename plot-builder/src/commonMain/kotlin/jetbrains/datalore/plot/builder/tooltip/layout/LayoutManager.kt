@@ -326,6 +326,26 @@ class LayoutManager(
         return verticalTooltipRange.overlaps(cursorVerticalRange)
     }
 
+    private fun useCornerTooltips(): Boolean {
+        return myTooltipAnchor != TooltipAnchor.NONE
+    }
+
+    private fun isCorner(tooltipSpec: TooltipSpec): Boolean {
+        return if (useCornerTooltips()) !tooltipSpec.isOutlier else false
+    }
+
+    private fun isCorner(tooltip: MeasuredTooltip): Boolean {
+        return isCorner(tooltip.tooltipSpec)
+    }
+
+    private fun isCorner(tooltip: PositionedTooltip): Boolean {
+        return isCorner(tooltip.tooltipSpec)
+    }
+
+    private fun List<PositionedTooltip>.selectCorner(): List<PositionedTooltip> {
+        return this.filter(::isCorner)
+    }
+
     internal enum class VerticalAlignment {
         TOP,
         BOTTOM
@@ -436,18 +456,6 @@ class LayoutManager(
 
         private fun List<PositionedTooltip>.select(vararg kinds: Kind): List<PositionedTooltip> {
             return this.filter { kinds.contains(it.hintKind) }
-        }
-
-        private fun isCorner(tooltipSpec: TooltipSpec): Boolean {
-            return !tooltipSpec.isOutlier
-        }
-
-        private fun isCorner(tooltip: MeasuredTooltip): Boolean {
-            return isCorner(tooltip.tooltipSpec)
-        }
-
-        private fun List<PositionedTooltip>.selectCorner(): List<PositionedTooltip> {
-            return this.filter { isCorner(it.tooltipSpec) }
         }
     }
 }
