@@ -62,10 +62,8 @@ class LayoutManager(
 
         // add corner tooltips
         tooltips
-            .filter { isCorner(it) }
-            .let { cornerTooltips ->
-                desiredPosition += calculateCornerTooltipsPosition(cornerTooltips)
-            }
+            .filter(::isCorner)
+            .let { desiredPosition += calculateCornerTooltipsPosition(it) }
 
         // all other tooltips (axis and corner tooltips are ignored in this method)
         desiredPosition += calculateDataTooltipsPosition(tooltips)
