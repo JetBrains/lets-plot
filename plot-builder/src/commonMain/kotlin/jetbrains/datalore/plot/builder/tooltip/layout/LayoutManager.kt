@@ -154,8 +154,10 @@ class LayoutManager(
 
         // Now try to space out other tooltips.
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.
+        // Include overlapped corner tooltips.
 
-        tooltips.select(HORIZONTAL_TOOLTIP).let { horizontalTooltips ->
+        tooltips.select(HORIZONTAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
+            .let { horizontalTooltips ->
             if (horizontalTooltips.sumByDouble(PositionedTooltip::height) < myVerticalSpace.length()) {
                 HorizontalTooltipExpander(myVerticalSpace).fixOverlapping(horizontalTooltips)
                     .forEach(::fixate)
@@ -167,7 +169,7 @@ class LayoutManager(
             }
         }
 
-        tooltips.select(VERTICAL_TOOLTIP)
+        tooltips.select(VERTICAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
             .let {
                 VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
                     it,
@@ -456,6 +458,15 @@ class LayoutManager(
 
         private fun List<PositionedTooltip>.select(vararg kinds: Kind): List<PositionedTooltip> {
             return this.filter { kinds.contains(it.hintKind) }
+        }
+
+        private fun List<PositionedTooltip>.isOverlapped(tooltip: PositionedTooltip): Boolean {
+           return this.find { it != tooltip && it.rect().intersects(tooltip.rect()) } != null
+        }
+
+        private fun List<PositionedTooltip>.withOverlapped(tooltips: List<PositionedTooltip>): List<PositionedTooltip> {
+           val overlapped = tooltips.filter { tooltip -> this.isOverlapped(tooltip) }
+           return this - tooltips + overlapped
         }
     }
 }
