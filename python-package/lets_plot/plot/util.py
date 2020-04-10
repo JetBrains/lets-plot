@@ -38,6 +38,7 @@ def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
     mapping_meta = []
 
     if raw_mapping is not None:
+        # ToDo: rename ket --> aes
         for key, variable in raw_mapping.as_dict().items():
             if key == 'name': # ignore FeatureSpec.name property
                 continue

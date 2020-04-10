@@ -79,6 +79,8 @@ class LayerConfig(
         )
 
         if (discreteMappings.isNotEmpty()) {
+            // ToDo: layer own mappings should override?
+            // ToDo: only necessary on server side?
             update(MAPPING, getMap(MAPPING) + discreteMappings)
         }
 

@@ -20,12 +20,14 @@ object DataMetaUtil {
         if (variable.startsWith(prefix)) {
             variable.removePrefix(prefix)
         } else {
+            // ToDo: why return null? Lets throw IllegalArgumentException
             null
         }
 
     /**
     @returns Map<aes, annotation>
      */
+    // ToDo: rename to getAesMappingAnnotations
     private fun getMappingAnnotation(options: Map<*, *>): Map<String, String> {
         return options
             .getMaps(MappingAnnotation.TAG)
@@ -36,10 +38,12 @@ object DataMetaUtil {
     /**
     @returns discrete aes
      */
+    // ToDo: rename to getAsDiscreteAesSet
     fun getDiscreteAes(options: Map<*, *>): Set<String> {
         return getMappingAnnotation(options).filterValues(DISCRETE::equals).keys
     }
 
+    // ToDo: rename to createScaleSpecs
     fun processDiscreteScales(plotOptions: Map<String, Any>): List<MutableMap<String, Any>> {
         val plotDiscreteAes = plotOptions
             .getMap(Option.Meta.DATA_META)
@@ -65,6 +69,7 @@ object DataMetaUtil {
     /**
      * returns new mappings to discrete variables and DataFrame with these discrete variables
      */
+    // ToDo: rename to createLayerDataFrame
     fun processDiscreteData(
         options: OptionsAccessor,
         commonData: DataFrame,
@@ -86,7 +91,9 @@ object DataMetaUtil {
         val insert: (b: DataFrame.Builder, name: String, values: List<*>) -> DataFrame.Builder =
             if (isClientSide) {
                 { b, name, values ->
+                    // ToDo: Why 'name' have to be present in data?
                     val variable = findVariableOrFail(data, name)
+                    // re-insert as discrete
                     b.remove(variable)
                     b.putDiscrete(variable, values)
                 }
@@ -104,14 +111,14 @@ object DataMetaUtil {
             // Special case: ggplot(aes(color=as_discrete('cyl'))) + geom_point(data=mpg)
             // Server side:
             //  - plot: ('color' to 'cyl') -> ('color' to '@as_discrete@cyl')
-            //  - layer: ('color' to '@as_discrete@cyl') -> ('color' to 'cyl')
+            //  - layer: ('color' to '@as_discrete@cyl') -> ('color' to 'cyl')   // ToDo: ???
             // Client side:
             //  - plot : ('color' to '@as_discrete@cyl') -> ('color' to '@as_discrete@cyl')
             //  - layer: ('color' to '@as_discrete@cyl') -> ('color' to '@as_discrete@cyl')
             val commonDiscreteMappings = commonMapping
                 .map { (aes, varName) -> aes as String to varName as String }.toMap()
                 .filterKeys { it in commonDiscreteAes } // common discrete mapping
-                .mapValues { (_, varName) -> decode(varName) }
+                .mapValues { (_, varName) -> decode(varName) }    // ToDo: is this server-specific?
 
             val combinedDiscreteMappingVars = (commonDiscreteMappings + ownDiscreteMappings).values
 
