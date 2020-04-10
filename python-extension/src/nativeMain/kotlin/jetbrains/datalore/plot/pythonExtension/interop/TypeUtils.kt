@@ -55,13 +55,13 @@ internal object TypeUtils {
             .toMutableList()
     }
 
-    fun pyDictToMap(dict: TPyObjPtr?): MutableMap<String, Any?> {
+    fun pyDictToMap(dict: TPyObjPtr?): MutableMap<Any?, Any?> {
         if (dict == null) {
             return mutableMapOf()
         }
 
         return asSequence(PyDict_Keys(dict)!!, ::PyList_Size, ::PyList_GetItem)
-            .associate { key -> pyStrToString(key!!)!! to pyObjectToKotlin(PyDict_GetItem(dict, key)) }
+            .associate { key -> pyObjectToKotlin(key!!) to pyObjectToKotlin(PyDict_GetItem(dict, key)) }
             .toMutableMap()
     }
 
