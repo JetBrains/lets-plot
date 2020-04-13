@@ -23,11 +23,16 @@ import kotlin.math.min
 class LayoutManager(
     private val myViewport: DoubleRectangle,
     private val myPreferredHorizontalAlignment: HorizontalAlignment,
+    geomAreaBounds: DoubleRectangle,
     private val myTooltipAnchor: TooltipAnchor
 ) {
     private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)
     private var myCursorCoord: DoubleVector = DoubleVector.ZERO
+    private val myHorizontalGeomSpace: DoubleRange =
+        DoubleRange.withStartAndLength(geomAreaBounds.origin.x, geomAreaBounds.dimension.x)
+    private val myVerticalGeomSpace: DoubleRange =
+        DoubleRange.withStartAndLength(geomAreaBounds.origin.y, geomAreaBounds.dimension.y)
     private lateinit var myVerticalAlignmentResolver: VerticalAlignmentResolver
 
     fun arrange(tooltips: List<MeasuredTooltip>, cursorCoord: DoubleVector): List<PositionedTooltip> {
@@ -118,9 +123,11 @@ class LayoutManager(
 
         val tooltipsHeight = cornerTooltips.sumByDouble { it.size.y } + MARGIN_BETWEEN_TOOLTIPS * cornerTooltips.size
         val verticalTooltipRange = when (myTooltipAnchor) {
+            //top
             TooltipAnchor.TOP_LEFT,
-            TooltipAnchor.TOP_RIGHT -> rightAligned(myVerticalSpace.start(), tooltipsHeight, MARGIN_BETWEEN_TOOLTIPS)
-            else -> leftAligned(myVerticalSpace.end(), tooltipsHeight, MARGIN_BETWEEN_TOOLTIPS)
+            TooltipAnchor.TOP_RIGHT -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
+            // bottom
+            else -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
         }
 
         var tooltipY = verticalTooltipRange.start()
@@ -285,8 +292,8 @@ class LayoutManager(
 
     private fun calculateAnchorX(measuredTooltip: MeasuredTooltip, horizontalAlignment: HorizontalAlignment): Double {
         return when (horizontalAlignment) {
-            HorizontalAlignment.RIGHT -> myHorizontalSpace.end() - measuredTooltip.size.x - NORMAL_STEM_LENGTH
-            else -> myHorizontalSpace.start() + NORMAL_STEM_LENGTH
+            HorizontalAlignment.RIGHT -> myHorizontalGeomSpace.end() - measuredTooltip.size.x
+            else -> myHorizontalSpace.start() + myHorizontalGeomSpace.start() + MARGIN_BETWEEN_TOOLTIPS
         }
     }
 
