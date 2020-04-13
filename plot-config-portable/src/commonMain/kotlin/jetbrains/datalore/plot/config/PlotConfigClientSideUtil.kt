@@ -236,11 +236,18 @@ object PlotConfigClientSideUtil {
         if (layerConfig.tooltipAes != null)
             return layerConfig.tooltipAes
 
+        fun isVariableContinuous(aes: Aes<*>): Boolean {
+            val scale = layerConfig.getScaleForAes(aes)
+            return scale?.isContinuous ?: false
+        }
+
         // remove axis mapping: if aes and axis are bound to the same data
         val aesListForTooltip = ArrayList(layerConfig.geomProto.renders() - axisAes)
         for (aes in axisAes) {
-            val axisVariable = layerConfig.getVariableForAes(aes)
-            aesListForTooltip.removeAll { layerConfig.getVariableForAes(it) == axisVariable }
+            if (isVariableContinuous(aes)) {
+                val axisVariable = layerConfig.getVariableForAes(aes)
+                aesListForTooltip.removeAll { layerConfig.getVariableForAes(it) == axisVariable }
+            }
         }
 
         // remove auto generated mappings

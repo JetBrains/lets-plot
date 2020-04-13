@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class GeomInteractionBuilderCreationTest {
@@ -74,6 +75,8 @@ class GeomInteractionBuilderCreationTest {
             false
         )
 
+        assertIsExistInAesList(builder.aesListForTooltip, Aes.MAP_ID, false)
+
         val expectedAxisList = listOf(Aes.X, Aes.Y)
         // without Aes.MAP_ID:
         val expectedAesListCount = (layerConfig.geomProto.renders() - expectedAxisList).size - 1
@@ -103,6 +106,8 @@ class GeomInteractionBuilderCreationTest {
             emptyList(),
             false
         )
+
+        assertIsExistInAesList(builder.aesListForTooltip, Aes.MAP_ID, false)
 
         // builder's axis tooltip visibility is false:
         val expectedAxisCount = 0
@@ -136,6 +141,8 @@ class GeomInteractionBuilderCreationTest {
             emptyList(),
             false
         )
+
+        assertIsExistInAesList(builder.aesListForTooltip, Aes.FILL, false)
 
         val expectedAxisList = listOf(Aes.X)
         // without duplicated Aes.FILL:
@@ -176,7 +183,8 @@ class GeomInteractionBuilderCreationTest {
         )
         val layerConfig = createLayerConfig(plotOpts)
 
-        assertTrue(layerConfig.hasVarBinding(GeoPositionField.DATA_JOIN_KEY_COLUMN))
+        val binding = layerConfig.varBindings.find { it.variable.name == GeoPositionField.DATA_JOIN_KEY_COLUMN }
+        assertNotNull(binding)
 
         val builder = PlotConfigClientSideUtil.createGeomInteractionBuilder(
             layerConfig,
@@ -184,13 +192,16 @@ class GeomInteractionBuilderCreationTest {
             false
         )
 
-        assertAesListCount(0, builder.axisAesListForTooltip)
-        assertAesListCount(1, builder.aesListForTooltip)
+        assertIsExistInAesList(builder.aesListForTooltip, binding.aes, false)
     }
 
     private fun createLayerConfig(plotOpts: MutableMap<String, Any>): LayerConfig {
         val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
         return PlotConfigServerSide(plotSpec).layerConfigs.first()
+    }
+
+    internal fun assertIsExistInAesList(aesList: List<Aes<*>>, aes: Aes<*>, isExist: Boolean) {
+        assertTrue { aesList.contains( aes ) == isExist }
     }
 
     internal fun assertAesListCount(expectedCount: Int, aesList: List<Aes<*>>) {
