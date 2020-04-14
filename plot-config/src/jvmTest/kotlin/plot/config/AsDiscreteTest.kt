@@ -6,8 +6,10 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
+import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
 import jetbrains.datalore.plot.config.DataMetaUtil.toDiscrete
@@ -15,9 +17,11 @@ import jetbrains.datalore.plot.config.PlotConfig.Companion.getErrorMessage
 import jetbrains.datalore.plot.config.PlotConfig.Companion.isFailure
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
+import org.junit.Ignore
 import org.junit.Test
 import kotlin.math.pow
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class AsDiscreteTest {
@@ -49,7 +53,7 @@ class AsDiscreteTest {
             |    "mapping_annotation": [
             |        {
             |            "aes": "color",
-            |            "annotation": "discrete"
+            |            "annotation": "as_discrete"
             |        }
             |    ]
             |},
@@ -79,8 +83,6 @@ class AsDiscreteTest {
         """.trimMargin()
     }
 
-
-
     @Test
     fun plot_LayerDataMapping_Geom() {
         val spec = makePlotSpec(
@@ -90,7 +92,8 @@ class AsDiscreteTest {
         )
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("g"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
 
     @Test
@@ -102,7 +105,8 @@ class AsDiscreteTest {
         )
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("g"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
 
     @Test
@@ -114,7 +118,8 @@ class AsDiscreteTest {
         )
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("g"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
 
     @Test
@@ -126,7 +131,8 @@ class AsDiscreteTest {
         )
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("g"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
 
     @Test
@@ -138,7 +144,8 @@ class AsDiscreteTest {
         )
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("g"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
 
     @Test
@@ -150,7 +157,8 @@ class AsDiscreteTest {
         )
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("g"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
 
     @Test
@@ -162,7 +170,8 @@ class AsDiscreteTest {
         )
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("g"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
 
     @Test
@@ -174,7 +183,8 @@ class AsDiscreteTest {
         )
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("g"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
 
     @Test
@@ -198,7 +208,7 @@ class AsDiscreteTest {
             |        "mapping_annotation": [
             |          {
             |            "aes": "color",
-            |            "annotation": "discrete"
+            |            "annotation": "as_discrete"
             |          }
             |        ]
             |      }
@@ -207,7 +217,44 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("g"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("g"), isDiscrete = true)
+    }
+
+    @Ignore
+    @Test
+    fun smoothAsDiscreteWithStatVar() {
+        val spec = """
+            |{
+            |  "data": $data,
+            |  "data_meta": {
+            |    "mapping_annotation": [
+            |      {
+            |        "aes": "color",
+            |        "annotation": "as_discrete"
+            |      }
+            |    ]
+            |  },
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y",
+            |    "color": "g"
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "smooth",
+            |      "mapping": {
+            |        "color": "g"
+            |      }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        toClientPlotConfig(spec)
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .hasVariable(Stats.GROUP)
+            .assertVariable(varName = "g", isDiscrete = false)
     }
 
     @Test
@@ -232,11 +279,11 @@ class AsDiscreteTest {
 
             val fooDataSpec = """"foo": [0, 0, 0, 1, 1, 1, 2, 2, 2]"""
             val fooMappingSpec = """"color": "foo""""
-            val fooAnnotationSpec = """{"aes": "color", "annotation": "discrete"}"""
+            val fooAnnotationSpec = """{"aes": "color", "annotation": "as_discrete"}"""
 
             val barDataSpec = """"bar": [3, 3, 3, 4, 4, 4, 5, 5, 5]"""
             val barMappingSpec = """"fill": "bar""""
-            val barAnnotationSpec = """{"aes": "fill", "annotation": "discrete"}"""
+            val barAnnotationSpec = """{"aes": "fill", "annotation": "as_discrete"}"""
 
             fun formatDataSpec(values: List<Pair<Storage, String>>, targetStorage: Storage): String? =
                 formatSpec(values, targetStorage) { """"data": {${it}}""" }
@@ -296,8 +343,11 @@ class AsDiscreteTest {
                 barMapping = case.barMapping
             )
                 .let(::toClientPlotConfig)
-                .assertDiscreteMapping(Aes.COLOR, toDiscrete("foo")) { case.toString() }
-                .assertDiscreteMapping(Aes.FILL, toDiscrete("bar")) { case.toString() }
+                .assertScale(Aes.COLOR, isDiscrete = true) { case.toString() }
+                .assertScale(Aes.FILL, isDiscrete = true) { case.toString() }
+                .assertVariable(toDiscrete("foo"), isDiscrete = true) { case.toString() }
+                .assertVariable(toDiscrete("bar"), isDiscrete = true) { case.toString() }
+
         }
     }
 
@@ -321,7 +371,8 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, "d")
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable("d", isDiscrete = true)
     }
 
     @Test
@@ -343,7 +394,7 @@ class AsDiscreteTest {
             |        "mapping_annotation": [
             |          {
             |            "aes": "color",
-            |            "annotation": "discrete"
+            |            "annotation": "as_discrete"
             |          }
             |        ]
             |      }
@@ -351,7 +402,8 @@ class AsDiscreteTest {
             |  ]
             |}""".trimMargin()
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("g"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
 
     @Test
@@ -375,7 +427,7 @@ class AsDiscreteTest {
             |        "mapping_annotation": [
             |          {
             |            "aes": "fill",
-            |            "annotation": "discrete"
+            |            "annotation": "as_discrete"
             |          }
             |        ]
             |      }
@@ -384,42 +436,10 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.FILL, toDiscrete("cyl"))
-            .assertContinuousMapping(Aes.COLOR, "cyl")
-
-    }
-
-    @Test
-    fun `ggplot(color=as_discrete('cyl')) + geom_point(color='cyl')`() {
-        val spec = """
-            |{
-            |  "data": $data,
-            |  "data_meta": {
-            |    "mapping_annotation": [
-            |      {
-            |        "aes": "color",
-            |        "annotation": "discrete"
-            |      }
-            |    ]
-            |  },
-            |  "mapping": {
-            |    "x": "x",
-            |    "y": "y",
-            |    "color": "cyl"
-            |  },
-            |  "kind": "plot",
-            |  "layers": [
-            |    {
-            |      "geom": "point",
-            |      "mapping": {
-            |        "color": "cyl"
-            |      }
-            |    }
-            |  ]
-            |}""".trimMargin()
-
-        toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("cyl"))
+            .assertScale(Aes.FILL, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = false)
+            .assertVariable(toDiscrete("cyl"), isDiscrete = true)
+            .assertVariable("cyl", isDiscrete = false)
     }
 
     @Test
@@ -443,7 +463,7 @@ class AsDiscreteTest {
             |        "mapping_annotation": [
             |          {
             |            "aes": "color",
-            |            "annotation": "discrete"
+            |            "annotation": "as_discrete"
             |          }
             |        ]
             |      }
@@ -452,14 +472,75 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         toClientPlotConfig(spec)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("cyl"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("cyl"), isDiscrete = true)
     }
 
     val cyl123 = "\"cyl\": [1, 2, 3]"
     val cyl456 = "\"cyl\": [4, 5, 6]"
 
     @Test
-    fun `overriding ggplot(cel123, color=cyl) + geom_point(cyl456, color=cyl)`() {
+    fun `mapping overriding ggplot(cyl123, color=as_discrete('cyl')) + geom_point()`() {
+        buildSpecWithOverriding(
+            geom = "point",
+            plotData = cyl123,
+            plotMapping = true,
+            plotAnnotation = true,
+            layerData = null,
+            layerMapping = false,
+            layerAnnotation = false
+        ).let(::toClientPlotConfig)
+            .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
+            .assertVariable(toDiscrete("cyl"), isDiscrete = true) // no overriding in layer
+    }
+
+    @Test
+    fun `mapping overriding ggplot(cyl123, color=as_discrete('cyl')) + geom_point(color=as_discrete('cyl'))`() {
+        buildSpecWithOverriding(
+            geom = "point",
+            plotData = cyl123,
+            plotMapping = true,
+            plotAnnotation = true,
+            layerData = null,
+            layerMapping = true,
+            layerAnnotation = true
+        ).let(::toClientPlotConfig)
+            .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
+            .assertVariable(toDiscrete("cyl"), isDiscrete = true) // as_discrete in layer
+    }
+
+    @Test
+    fun `mapping overriding ggplot(cyl123) + geom_point(color=as_discrete('cyl'))`() {
+        buildSpecWithOverriding(
+            geom = "point",
+            plotData = cyl123,
+            plotMapping = false,
+            plotAnnotation = false,
+            layerData = null,
+            layerMapping = true,
+            layerAnnotation = true
+        ).let(::toClientPlotConfig)
+            .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in layer
+            .assertVariable(toDiscrete("cyl"), isDiscrete = true) // as_discrete in layer
+    }
+
+    @Test
+    fun `mapping overriding ggplot(cyl123, color=as_discrete('cyl')) + geom_point(color='cyl')`() {
+        buildSpecWithOverriding(
+            geom = "point",
+            plotData = cyl123,
+            plotMapping = true,
+            plotAnnotation = true,
+            layerData = null,
+            layerMapping = true,
+            layerAnnotation = false
+        ).let(::toClientPlotConfig)
+            .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
+            .assertVariable("cyl", isDiscrete = false) // as is (numeric, overrided by layer)
+    }
+
+    @Test
+    fun `overriding ggplot(cyl123, color=cyl) + geom_point(cyl456, color=cyl)`() {
         buildSpecWithOverriding(
             geom = "point",
             plotData = cyl123,
@@ -470,7 +551,8 @@ class AsDiscreteTest {
             layerAnnotation = false
         )
             .let(::toClientPlotConfig)
-            .assertContinuousMapping(Aes.COLOR, "cyl")
+            .assertScale(Aes.COLOR, isDiscrete = false)
+            .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(4.0, 5.0, 6.0))
     }
 
@@ -486,7 +568,8 @@ class AsDiscreteTest {
             layerAnnotation = false
         )
             .let(::toClientPlotConfig)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("cyl"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("cyl"), isDiscrete = true)
             .assertValue(toDiscrete("cyl"), listOf(4.0, 5.0, 6.0))
     }
 
@@ -502,7 +585,8 @@ class AsDiscreteTest {
             layerAnnotation = true
         )
             .let(::toClientPlotConfig)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("cyl"))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable(toDiscrete("cyl"), isDiscrete = true)
             .assertValue(toDiscrete("cyl"), listOf(4.0, 5.0, 6.0))
     }
 
@@ -518,8 +602,9 @@ class AsDiscreteTest {
             layerAnnotation = false
         )
             .let(::toClientPlotConfig)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("cyl"))
-            .assertValue(toDiscrete("cyl"), listOf(4.0, 5.0, 6.0))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable("cyl", isDiscrete = false)
+            .assertValue("cyl", listOf(4.0, 5.0, 6.0))
     }
 
     @Test
@@ -534,9 +619,11 @@ class AsDiscreteTest {
             layerAnnotation = false
         )
             .let(::toClientPlotConfig)
-            .assertDiscreteMapping(Aes.COLOR, toDiscrete("cyl"))
-            .assertValue(toDiscrete("cyl"), listOf(1.0, 2.0, 3.0))
+            .assertScale(Aes.COLOR, isDiscrete = true)
+            .assertVariable("cyl", isDiscrete = false)
+            .assertValue("cyl", listOf(1.0, 2.0, 3.0))
     }
+
     @Test
     fun `overriding ggplot(cyl123, color=cyl) + geom_point(color=cyl)`() {
         buildSpecWithOverriding(
@@ -549,7 +636,8 @@ class AsDiscreteTest {
             layerAnnotation = false
         )
             .let(::toClientPlotConfig)
-            .assertContinuousMapping(Aes.COLOR, "cyl")
+            .assertScale(Aes.COLOR, isDiscrete = false)
+            .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(1.0, 2.0, 3.0))
     }
 }
@@ -560,37 +648,34 @@ private fun PlotConfigClientSide.assertValue(variable: String, values: List<*>):
     return this
 }
 
-private fun PlotConfigClientSide.assertDiscreteMapping(
-    aes: Aes<*>,
+private fun PlotConfigClientSide.assertVariable(
     varName: String,
+    isDiscrete: Boolean,
     msg: () -> String = { "" }
 ): PlotConfigClientSide {
-    assertAes(aes, varName, isContinuous = false, msg = msg)
+    val layer = layerConfigs.single()
+    if (!DataFrameUtil.hasVariable(layer.combinedData, varName)) {
+        fail("Variable $varName is not found in ${layer.combinedData.variables().map(DataFrame.Variable::name)}")
+    }
+    val dfVar = DataFrameUtil.findVariableOrFail(layer.combinedData, varName)
+    assertEquals(!isDiscrete, layer.combinedData.isNumeric(dfVar), msg())
     return this
 }
 
-private fun PlotConfigClientSide.assertContinuousMapping(
+private fun PlotConfigClientSide.assertScale(
     aes: Aes<*>,
-    varName: String,
-    msg: () -> String = { "" }
-): PlotConfigClientSide {
-    assertAes(aes, varName, isContinuous = true, msg = msg)
-    return this
-}
-
-private fun PlotConfigClientSide.assertAes(
-    aes: Aes<*>,
-    varName: String,
-    isContinuous: Boolean,
+    isDiscrete: Boolean,
     msg: () -> String = { "" }
 ): PlotConfigClientSide {
     val layer = layerConfigs.single()
     val binding = layer.varBindings.firstOrNull { it.aes == aes } ?: fail("$aes not found. ${msg()}")
-    assertEquals(isContinuous, binding.scale!!.isContinuous)
-    assertEquals(varName, binding.variable.name, varName)
+    assertEquals(!isDiscrete, binding.scale!!.isContinuous)
+    return this
+}
 
-    val dfVar = DataFrameUtil.findVariableOrFail(layer.combinedData, varName)
-    assertEquals(isContinuous, layer.combinedData.isNumeric(dfVar))
+private fun PlotConfigClientSide.hasVariable(variable: DataFrame.Variable): PlotConfigClientSide {
+    val layer = layerConfigs.single()
+    assertTrue(DataFrameUtil.hasVariable(layer.combinedData, variable.name))
     return this
 }
 
@@ -620,7 +705,7 @@ private fun buildSpecWithOverriding(
             .filter { (thisStorage, _) -> thisStorage == targetStorage }
             .takeIf { it.isNotEmpty() } // introduce nullability for easier string interpolation
             ?.let { it.joinToString { (_, str) -> str } }
-            ?.let { format.replace("%s", it)}
+            ?.let { format.replace("%s", it) }
     }
 
     val data = listOfNotNull(
@@ -635,7 +720,7 @@ private fun buildSpecWithOverriding(
         (LAYER to cylMappingSpec).takeIf { layerMapping }
     )
 
-    val cylAnnotationSpec = """{"aes": "color", "annotation": "discrete"}"""
+    val cylAnnotationSpec = """{"aes": "color", "annotation": "as_discrete"}"""
     val annotation = listOfNotNull(
         (PLOT to cylAnnotationSpec).takeIf { plotAnnotation },
         (LAYER to cylAnnotationSpec).takeIf { layerAnnotation }

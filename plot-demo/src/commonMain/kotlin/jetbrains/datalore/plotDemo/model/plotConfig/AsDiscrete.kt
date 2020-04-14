@@ -11,11 +11,11 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class AsDiscrete : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
+            plotData_DiscreteGroup(),
             fillFactor(),
             fillAndColorFactor(),
             fillFactorWithScaleColor(),
             layerData_DiscreteGroup(),
-            plotData_DiscreteGroup(),
             smoothStatAsDiscrete(),
             smoothStatWithGroup()
         )
@@ -54,7 +54,7 @@ class AsDiscrete : PlotConfigDemoBase() {
                 "mapping_annotation": [
                   {
                     "aes": "color",
-                    "annotation": "discrete"
+                    "annotation": "as_discrete"
                   }
                 ]
               },
@@ -88,7 +88,7 @@ class AsDiscrete : PlotConfigDemoBase() {
                     "mapping_annotation": [
                       {
                         "aes": "color",
-                        "annotation": "discrete"
+                        "annotation": "as_discrete"
                       }
                     ]
                   },
@@ -119,7 +119,7 @@ class AsDiscrete : PlotConfigDemoBase() {
                     "mapping_annotation": [
                       {
                         "aes": "color",
-                        "annotation": "discrete"
+                        "annotation": "as_discrete"
                       }
                     ]
                   },
@@ -150,7 +150,7 @@ class AsDiscrete : PlotConfigDemoBase() {
                     "mapping_annotation": [
                       {
                         "aes": "color",
-                        "annotation": "discrete"
+                        "annotation": "as_discrete"
                       }
                     ]
                   },
@@ -173,7 +173,7 @@ class AsDiscrete : PlotConfigDemoBase() {
         "geom": "point", 
         "data": $data,
         "mapping": {"x": "x", "y": "y", "fill": "a", "color": "b"}, 
-        "data_meta": {"mapping_annotation": [{"aes": "fill", "annotation": "discrete"}]},
+        "data_meta": {"mapping_annotation": [{"aes": "fill", "annotation": "as_discrete"}]},
         "shape": 21, 
         "size": 9
     }]
@@ -194,7 +194,7 @@ class AsDiscrete : PlotConfigDemoBase() {
     "layers": [{
         "geom": "point", 
         "mapping": {"fill": "a", "color": "b"}, 
-        "data_meta": {"mapping_annotation": [{"aes": "fill", "annotation": "discrete"}]},
+        "data_meta": {"mapping_annotation": [{"aes": "fill", "annotation": "as_discrete"}]},
         "shape": 21, 
         "size": 9
     }]
@@ -215,8 +215,8 @@ class AsDiscrete : PlotConfigDemoBase() {
         "geom": "point", 
         "mapping": {"fill": "a", "color": "b"}, 
         "data_meta": {"mapping_annotation": [
-            {"aes": "fill", "annotation": "discrete"}, 
-            {"aes": "color", "annotation": "discrete"}
+            {"aes": "fill", "annotation": "as_discrete"}, 
+            {"aes": "color", "annotation": "as_discrete"}
         ]},
         "shape": 21, 
         "size": 9

@@ -18,7 +18,7 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultAesAutoMapper
 import jetbrains.datalore.plot.builder.sampling.Sampling
-import jetbrains.datalore.plot.config.DataMetaUtil.processDiscreteData
+import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
@@ -70,7 +70,7 @@ class LayerConfig(
         }
 
     init {
-        val (discreteMappings, layerData) = processDiscreteData(
+        val (discreteMappings, layerData) = createDataFrame(
             options = this,
             commonData = sharedData,
             commonDiscreteAes = plotDiscreteAes,
@@ -79,8 +79,6 @@ class LayerConfig(
         )
 
         if (discreteMappings.isNotEmpty()) {
-            // ToDo: layer own mappings should override?
-            // ToDo: only necessary on server side?
             update(MAPPING, getMap(MAPPING) + discreteMappings)
         }
 

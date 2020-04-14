@@ -15,20 +15,17 @@ import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.DISCRETE
 object DataMetaUtil {
     private const val prefix = "@as_discrete@"
 
+    private fun isDiscrete(variable: String) = variable.startsWith(prefix)
     public fun toDiscrete(variable: String) = "$prefix$variable"
-    private fun fromDiscrete(variable: String): String? =
-        if (variable.startsWith(prefix)) {
-            variable.removePrefix(prefix)
-        } else {
-            // ToDo: why return null? Lets throw IllegalArgumentException
-            null
-        }
+    private fun fromDiscrete(variable: String): String {
+        require(isDiscrete(variable)) { "fromDiscrete() - ${variable} is not discrete" }
+        return variable.removePrefix(prefix)
+    }
 
     /**
     @returns Map<aes, annotation>
      */
-    // ToDo: rename to getAesMappingAnnotations
-    private fun getMappingAnnotation(options: Map<*, *>): Map<String, String> {
+    private fun getAesMappingAnnotations(options: Map<*, *>): Map<String, String> {
         return options
             .getMaps(MappingAnnotation.TAG)
             ?.associate { it.read(MappingAnnotation.AES) as String to it.read(MappingAnnotation.ANNOTATION) as String }
@@ -36,24 +33,22 @@ object DataMetaUtil {
     }
 
     /**
-    @returns discrete aes
+    @returns Set<aes> of discrete aes
      */
-    // ToDo: rename to getAsDiscreteAesSet
-    fun getDiscreteAes(options: Map<*, *>): Set<String> {
-        return getMappingAnnotation(options).filterValues(DISCRETE::equals).keys
+    fun getAsDiscreteAesSet(options: Map<*, *>): Set<String> {
+        return getAesMappingAnnotations(options).filterValues(DISCRETE::equals).keys
     }
 
-    // ToDo: rename to createScaleSpecs
-    fun processDiscreteScales(plotOptions: Map<String, Any>): List<MutableMap<String, Any>> {
+    fun createScaleSpecs(plotOptions: Map<String, Any>): List<MutableMap<String, Any>> {
         val plotDiscreteAes = plotOptions
             .getMap(Option.Meta.DATA_META)
-            ?.let(DataMetaUtil::getDiscreteAes)
+            ?.let(DataMetaUtil::getAsDiscreteAesSet)
             ?: emptySet<String>()
 
         val layersDiscreteAes = plotOptions
             .getMaps(Option.Plot.LAYERS)?.asSequence()
             ?.mapNotNull { it.getMap(Option.Meta.DATA_META) }
-            ?.map(DataMetaUtil::getDiscreteAes) // diascrete aes from all layers
+            ?.map(DataMetaUtil::getAsDiscreteAesSet) // diascrete aes from all layers
             ?.flatten()?.toSet() // List<Set<aes>> -> Set<aes>
             ?: emptySet<String>()
 
@@ -70,7 +65,7 @@ object DataMetaUtil {
      * returns new mappings to discrete variables and DataFrame with these discrete variables
      */
     // ToDo: rename to createLayerDataFrame
-    fun processDiscreteData(
+    fun createDataFrame(
         options: OptionsAccessor,
         commonData: DataFrame,
         commonDiscreteAes: Set<String>,
@@ -78,61 +73,67 @@ object DataMetaUtil {
         isClientSide: Boolean
     ): Pair<Map<*, *>, DataFrame> {
         val data = ConfigUtil.createDataFrame(options.get(Option.PlotBase.DATA))
-
-        // On server side:
-        // - create new mappings with new encoded discrete variables.
-        // - add new discrete varaibles to DataFrame
-        //
-        // On client side:
-        // - keep names (already encoded mappings and variables)
-        // - re-add variables to a DataFrame to mark variables as discrete
-        val encode: (varName: String) -> String = if (isClientSide) { { it } } else { { toDiscrete(it) } }
-        val decode: (varName: String) -> String? = if (isClientSide) { { it } } else { { fromDiscrete(it) } }
-        val insert: (b: DataFrame.Builder, name: String, values: List<*>) -> DataFrame.Builder =
-            if (isClientSide) {
-                { b, name, values ->
-                    // ToDo: Why 'name' have to be present in data?
-                    val variable = findVariableOrFail(data, name)
-                    // re-insert as discrete
-                    b.remove(variable)
-                    b.putDiscrete(variable, values)
-                }
-            } else {
-                { b, name, values -> b.putDiscrete(createVariable(name), values) }
-            }
-
+        val ownMappings = options.getMap(Option.PlotBase.MAPPING)
         val ownDiscreteMappings = run {
-            val ownDiscreteAes = getDiscreteAes(options.getMap(Option.Meta.DATA_META))
-            val combinedDiscreteAes = commonDiscreteAes + ownDiscreteAes
-            options.getMap(Option.PlotBase.MAPPING).filter { (aes, _) -> aes in combinedDiscreteAes }
+            val ownDiscreteAes = getAsDiscreteAesSet(options.getMap(Option.Meta.DATA_META))
+            ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
         }
+        val commonDiscreteMappings = commonMapping.filterKeys { it in commonDiscreteAes }
 
-        val combinedDiscreteDfVars = run {
-            // Special case: ggplot(aes(color=as_discrete('cyl'))) + geom_point(data=mpg)
-            // Server side:
-            //  - plot: ('color' to 'cyl') -> ('color' to '@as_discrete@cyl')
-            //  - layer: ('color' to '@as_discrete@cyl') -> ('color' to 'cyl')   // ToDo: ???
-            // Client side:
-            //  - plot : ('color' to '@as_discrete@cyl') -> ('color' to '@as_discrete@cyl')
-            //  - layer: ('color' to '@as_discrete@cyl') -> ('color' to '@as_discrete@cyl')
-            val commonDiscreteMappings = commonMapping
-                .map { (aes, varName) -> aes as String to varName as String }.toMap()
-                .filterKeys { it in commonDiscreteAes } // common discrete mapping
-                .mapValues { (_, varName) -> decode(varName) }    // ToDo: is this server-specific?
-
-            val combinedDiscreteMappingVars = (commonDiscreteMappings + ownDiscreteMappings).values
-
+        val combinedDfVars = run {
             val ownDfVars = variables(data).mapValues { (_, dfVar) -> data[dfVar] }
             val commonDfVars = variables(commonData).mapValues { (_, dfVar) -> commonData[dfVar] }
-            val combinedDiscreteDfVars = commonDfVars + ownDfVars
-            combinedDiscreteDfVars.filter { (dfVarName, _) -> dfVarName in combinedDiscreteMappingVars }
+            commonDfVars + ownDfVars
         }
 
-        return Pair(
-            ownDiscreteMappings.mapValues { (_, varName) -> encode(varName as String) },
-            combinedDiscreteDfVars.mapKeys { (dfVarName, _) -> encode(dfVarName) }
-                .entries.fold(DataFrame.Builder(data)) { acc, (varName, values) -> insert(acc, varName, values) }
-                .build()
-        )
+        if (isClientSide) {
+            val combinedDiscreteMappingVars = commonDiscreteMappings.variables() + ownDiscreteMappings.variables()
+
+            return Pair(
+                // no new discrete mappings, all job was done on server side
+                emptyMap<Any?, Any?>(),
+                // re-insert existing variables as discrete
+                combinedDfVars
+                    .filter { (varName, _) -> varName in combinedDiscreteMappingVars }
+                    .entries
+                    .fold(DataFrame.Builder(data)) { acc, (varName, values) ->
+                        val variable = findVariableOrFail(data, varName)
+                        // re-insert as discrete
+                        acc.remove(variable)
+                        acc.putDiscrete(variable, values)
+                    }
+                    .build()
+            )
+
+        } else { // server side
+            // Original (not encoded) discrete var names from both common and own mappings.
+            val combinedDiscreteMappingVars = mutableSetOf<String>()
+
+            // own names - not yet encoded, i.e. 'cyl'
+            combinedDiscreteMappingVars += ownDiscreteMappings.variables()
+            // common names - already encoded by PlotConfig, i.e. '@as_discrete@cyl'. Restore original name.
+            combinedDiscreteMappingVars += commonDiscreteMappings.variables().map(::fromDiscrete)
+            // minus own non-discrete mappings (layer overrides plot)
+            combinedDiscreteMappingVars -= ownMappings.variables() - ownDiscreteMappings.variables()
+
+            return Pair(
+                ownDiscreteMappings.mapValues { (_, varName) ->
+                    require(varName is String)
+                    require(!isDiscrete(varName)) { "Already encoded discrete mapping: $varName" }
+                    toDiscrete(varName)
+                },
+                combinedDfVars
+                    .filter { (dfVarName, _) -> dfVarName in combinedDiscreteMappingVars }
+                    .mapKeys { (dfVarName, _) -> createVariable(toDiscrete(dfVarName)) }
+                    .entries
+                    .fold(DataFrame.Builder(data)) { acc, (dfVar, values) -> acc.putDiscrete(dfVar, values)}
+                    .build()
+            )
+
+        }
     }
+}
+
+private fun Map<*, *>.variables(): Set<String> {
+    return values.map { it as String }.toSet()
 }

@@ -2,27 +2,25 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 
-# ToDo: remane to MappingMeta
-# ToDo: fields: `variable`, `annotation`
-class VariableMeta:
-    def __init__(self, name, kind):
-        if name is None:
-            raise ValueError("name can't be none")
+class MappingMeta:
+    def __init__(self, variable, annotation):
+        if variable is None:
+            raise ValueError("variable can't be none")
 
-        if kind is None:
-            raise ValueError("kind can't be none")
+        if annotation is None:
+            raise ValueError("annotation can't be none")
 
-        self.name = name
-        self.kind = kind
+        self.name = variable
+        self.kind = annotation
 
 
-def as_discrete(var_name):
+def as_discrete(variable):
     """
     Marks a numeric variable as categorical.
 
     Parameters
     ----------
-    var_name : string
+    variable : string
         The name of the variable
 
     Returns
@@ -45,8 +43,7 @@ def as_discrete(var_name):
     >>> }
     >>> ggplot(df, aes(x='x', y='y')) + geom_point(aes(color=pm.as_discrete('a')), size=9)
     """
-    if isinstance(var_name, str):
-        # ToDo: annotate with the function name: `as_discrete`
-        return VariableMeta(var_name, 'discrete')
-    # aes(x=factor([1, 2, 3])) - pass as is
-    return var_name
+    if isinstance(variable, str):
+        return MappingMeta(variable, 'as_discrete')
+    # aes(x=as_discrete([1, 2, 3])) - pass as is
+    return variable

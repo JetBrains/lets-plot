@@ -23,7 +23,6 @@ import jetbrains.datalore.plot.config.Option.Plot.TITLE
 import jetbrains.datalore.plot.config.Option.Plot.TITLE_TEXT
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
-import jetbrains.datalore.plot.config.Option.Scale
 
 abstract class PlotConfig(
     opts: Map<String, Any>
@@ -44,7 +43,7 @@ abstract class PlotConfig(
 
     init {
 
-        val (discreteMappings, plotData) = DataMetaUtil.processDiscreteData(
+        val (discreteMappings, plotData) = DataMetaUtil.createDataFrame(
             options = this,
             commonData = DataFrame.Builder.emptyFrame(),
             commonDiscreteAes = emptySet(),
@@ -58,7 +57,7 @@ abstract class PlotConfig(
             update(MAPPING, getMap(MAPPING) + discreteMappings)
         }
 
-        scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.processDiscreteScales(opts))
+        scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
         scaleProvidersMap = PlotConfigUtil.createScaleProviders(scaleConfigs)
 
         layerConfigs = createLayerConfigs(sharedData, scaleProvidersMap)
@@ -113,7 +112,7 @@ abstract class PlotConfig(
                 layerOptions as Map<*, *>,
                 sharedData,
                 getMap(MAPPING),
-                DataMetaUtil.getDiscreteAes(getMap(DATA_META)),
+                DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
                 scaleProviderByAes
             )
             layerConfigs.add(layerConfig)
