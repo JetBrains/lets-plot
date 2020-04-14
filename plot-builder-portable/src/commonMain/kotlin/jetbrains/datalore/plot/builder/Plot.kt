@@ -47,7 +47,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     private val myLaidOutSize = ValueProperty(DoubleVector.ZERO)
     private val myTooltipHelper = PlotTooltipHelper()
     private val myLiveMapFigures = ArrayList<SomeFig>()
-    private var myGeomAreaBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
 
     val mouseEventPeer = MouseEventPeer()
 
@@ -80,10 +79,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     fun laidOutSize(): ReadableProperty<DoubleVector> {
         return myLaidOutSize
-    }
-
-    fun geomAreaBounds(): DoubleRectangle {
-        return myGeomAreaBounds
     }
 
     protected abstract fun hasTitle(): Boolean
@@ -341,7 +336,6 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
                 LegendBoxesLayout(geomAreaBounds, legendTheme)
             boxesLayoutResult = legendBoxesLayout.doLayout(legendBoxInfos)
         }
-        this.myGeomAreaBounds = geomAreaBounds
 
         // build tiles
 
@@ -407,6 +401,10 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     fun createTooltipSpecs(plotCoord: DoubleVector): List<TooltipSpec> {
         return myTooltipHelper.createTooltipSpecs(plotCoord)
+    }
+
+    fun getGeomBounds(plotCoord: DoubleVector): DoubleRectangle? {
+        return myTooltipHelper.getGeomBounds(plotCoord)
     }
 
     companion object {
