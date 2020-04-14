@@ -15,7 +15,8 @@ import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 
 class GeomInteractionBuilderCreationTest {
 
@@ -74,6 +75,8 @@ class GeomInteractionBuilderCreationTest {
             false
         )
 
+        assertFalse { builder.aesListForTooltip.contains(Aes.MAP_ID) }
+
         val expectedAxisList = listOf(Aes.X, Aes.Y)
         // without Aes.MAP_ID:
         val expectedAesListCount = (layerConfig.geomProto.renders() - expectedAxisList).size - 1
@@ -103,6 +106,8 @@ class GeomInteractionBuilderCreationTest {
             emptyList(),
             false
         )
+
+        assertFalse { builder.aesListForTooltip.contains(Aes.MAP_ID) }
 
         // builder's axis tooltip visibility is false:
         val expectedAxisCount = 0
@@ -136,6 +141,8 @@ class GeomInteractionBuilderCreationTest {
             emptyList(),
             false
         )
+
+        assertFalse { builder.aesListForTooltip.contains(Aes.FILL) }
 
         val expectedAxisList = listOf(Aes.X)
         // without duplicated Aes.FILL:
@@ -176,7 +183,8 @@ class GeomInteractionBuilderCreationTest {
         )
         val layerConfig = createLayerConfig(plotOpts)
 
-        assertTrue(layerConfig.hasVarBinding(GeoPositionField.DATA_JOIN_KEY_COLUMN))
+        val binding = layerConfig.varBindings.find { it.variable.name == GeoPositionField.DATA_JOIN_KEY_COLUMN }
+        assertNotNull(binding)
 
         val builder = PlotConfigClientSideUtil.createGeomInteractionBuilder(
             layerConfig,
@@ -184,8 +192,7 @@ class GeomInteractionBuilderCreationTest {
             false
         )
 
-        assertAesListCount(0, builder.axisAesListForTooltip)
-        assertAesListCount(1, builder.aesListForTooltip)
+        assertFalse { builder.aesListForTooltip.contains(binding.aes) }
     }
 
     private fun createLayerConfig(plotOpts: MutableMap<String, Any>): LayerConfig {
