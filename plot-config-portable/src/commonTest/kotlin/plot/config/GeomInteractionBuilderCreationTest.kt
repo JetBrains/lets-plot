@@ -75,7 +75,7 @@ class GeomInteractionBuilderCreationTest {
             false
         )
 
-        assertIsExistInAesList(builder.aesListForTooltip, Aes.MAP_ID, false)
+        assertTrue { !builder.aesListForTooltip.contains(Aes.MAP_ID) }
 
         val expectedAxisList = listOf(Aes.X, Aes.Y)
         // without Aes.MAP_ID:
@@ -107,7 +107,7 @@ class GeomInteractionBuilderCreationTest {
             false
         )
 
-        assertIsExistInAesList(builder.aesListForTooltip, Aes.MAP_ID, false)
+        assertTrue { !builder.aesListForTooltip.contains(Aes.MAP_ID) }
 
         // builder's axis tooltip visibility is false:
         val expectedAxisCount = 0
@@ -142,7 +142,7 @@ class GeomInteractionBuilderCreationTest {
             false
         )
 
-        assertIsExistInAesList(builder.aesListForTooltip, Aes.FILL, false)
+        assertTrue { !builder.aesListForTooltip.contains(Aes.FILL) }
 
         val expectedAxisList = listOf(Aes.X)
         // without duplicated Aes.FILL:
@@ -192,16 +192,12 @@ class GeomInteractionBuilderCreationTest {
             false
         )
 
-        assertIsExistInAesList(builder.aesListForTooltip, binding.aes, false)
+        assertTrue { !builder.aesListForTooltip.contains(binding.aes) }
     }
 
     private fun createLayerConfig(plotOpts: MutableMap<String, Any>): LayerConfig {
         val plotSpec = PlotConfigServerSide.processTransform(plotOpts)
         return PlotConfigServerSide(plotSpec).layerConfigs.first()
-    }
-
-    internal fun assertIsExistInAesList(aesList: List<Aes<*>>, aes: Aes<*>, isExist: Boolean) {
-        assertTrue { aesList.contains( aes ) == isExist }
     }
 
     internal fun assertAesListCount(expectedCount: Int, aesList: List<Aes<*>>) {
