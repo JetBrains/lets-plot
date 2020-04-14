@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import kotlin.test.assertEquals
 
 object TestUtil {
@@ -18,7 +19,7 @@ object TestUtil {
     }
 
     fun getPlotData(plotSpec: Map<String, Any>): Map<String, Any> {
-        return getMap(plotSpec, Option.Plot.DATA)
+        return getMap(plotSpec, DATA)
     }
 
     fun getLayerData(plotSpec: Map<String, Any>, layer: Int): Map<String, Any> {
@@ -26,11 +27,12 @@ object TestUtil {
     }
 
     private fun layerDataList(plotSpec: Map<String, Any>): List<Map<String, Any>> {
+        @Suppress("UNCHECKED_CAST")
         val layers = plotSpec[Option.Plot.LAYERS] as List<Map<String, Any>>
 
         val result = ArrayList<Map<String, Any>>()
         for (layer in layers) {
-            val layerData = HashMap(getMap(layer, Option.Layer.DATA))
+            val layerData = HashMap(getMap(layer, DATA))
             result.add(layerData)
         }
         return result
@@ -38,6 +40,7 @@ object TestUtil {
 
     private fun getMap(opts: Map<String, Any>, key: String): Map<String, Any> {
         val map = opts[key]
+        @Suppress("UNCHECKED_CAST")
         return map as?  Map<String, Any> ?: emptyMap()
     }
 

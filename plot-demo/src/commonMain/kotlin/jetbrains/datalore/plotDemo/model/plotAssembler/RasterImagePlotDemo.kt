@@ -26,7 +26,7 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
 
     fun createPlots(): List<jetbrains.datalore.plot.builder.Plot> {
         return listOf(
-                createPlot(SharedPieces.rasterDataSimple())
+                createPlot(SharedPieces.rasterData_Blue())
         )
     }
 

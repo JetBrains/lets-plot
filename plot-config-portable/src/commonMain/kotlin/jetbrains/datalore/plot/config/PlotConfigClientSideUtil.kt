@@ -279,7 +279,7 @@ object PlotConfigClientSideUtil {
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE -> return builder.univariateFunction(LookupStrategy.HOVER)
             GeomKind.BOX_PLOT -> return builder.univariateFunction(LookupStrategy.HOVER)
-            GeomKind.V_LINE -> return builder.univariateFunction(LookupStrategy.NEAREST)
+            GeomKind.V_LINE -> return builder.univariateFunction(LookupStrategy.HOVER)
             GeomKind.SMOOTH,
             GeomKind.POINT,
             GeomKind.CONTOUR,

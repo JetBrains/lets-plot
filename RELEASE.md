@@ -87,6 +87,8 @@ run `./gradlew python-package-build:buildManylinuxWheels`
  
  - `./gradlew :jvm-package:jvm-publish-jfx:bintrayUpload`
  
+ - `./gradlew :jvm-package:jvm-publish-batik:bintrayUpload`
+ 
  
 ### Add the GitHub release:
  

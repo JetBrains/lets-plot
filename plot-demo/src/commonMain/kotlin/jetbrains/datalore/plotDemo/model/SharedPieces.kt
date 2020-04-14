@@ -10,7 +10,8 @@ import jetbrains.datalore.plot.parsePlotSpec
 
 object SharedPieces {
 
-    fun rasterDataSimple(): Map<String, List<*>> {
+    @Suppress("FunctionName")
+    fun rasterData_Blue(): Map<String, List<*>> {
         val x = ArrayList<Double>()
         val y = ArrayList<Double>()
         val fill = ArrayList<Double>()
@@ -27,6 +28,7 @@ object SharedPieces {
             }
         }
 
+        @Suppress("DuplicatedCode")
         val map = HashMap<String, List<*>>()
         map["x"] = x
         map["y"] = y
@@ -35,7 +37,8 @@ object SharedPieces {
         return map
     }
 
-    fun rasterDataRGB(): Map<String, List<*>> {
+    @Suppress("FunctionName")
+    fun rasterData_RGB(): Map<String, List<*>> {
         //  R  |  G  |  B    alpha = 1
         //  R  |  G  |  B    alpha = 0.5
         // .5  |  1  |  .5   <-- gray, alpha

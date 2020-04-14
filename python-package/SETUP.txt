@@ -1,3 +1,32 @@
 This module is not a gradle-based module.
 To work with python sources in IDEA create python module in this content root in IDEA.
-To run python tests in IDEA set `pytest` test runner for this module (Preferences|Tools|Python Integrated Tools).
+
+Setup module using Conda.
+-------------------------
+
+- Create conda environment named `lets-plot-python-module`:
+    conda env create -f lets-plot/python-package/module_env.yml
+
+- In IDEA
+    - Install IDEA `Python` plugin
+
+    - Create new Python module, content root: <path>/lets-plot/python-package
+
+    - Setup `lets-plot-python-module` conda environment as "Module SDK" for 'python-package' module.
+
+- To run python tests in IDEA set `pytest` test runner for 'python-package' module
+    See: Preferences|Tools|Python Integrated Tools
+
+Running tests.
+--------------
+
+Run tests against `lets-plot` package installed in the module environment.
+
+- Update `lets-plot-python-module` conda environment:
+    conda env update -f lets-plot/python-package/module_env.yml --prune
+
+- Change dir to `lets-plot/python-package`
+
+- Install dev version of Lets-Plot to `lets-plot-python-module` environment:
+    conda activate lets-plot-python-module
+    pip install --no-index --find-links=dist/ lets-plot --no-deps

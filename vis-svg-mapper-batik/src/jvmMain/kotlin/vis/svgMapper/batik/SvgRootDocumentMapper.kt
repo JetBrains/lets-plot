@@ -8,11 +8,12 @@ package jetbrains.datalore.vis.svgMapper.batik
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import org.apache.batik.dom.svg.SVGDOMImplementation
-import org.apache.batik.dom.svg.SVGOMDocument
-import org.apache.batik.dom.svg.SVGOMSVGElement
+import org.apache.batik.anim.dom.SVGDOMImplementation
+import org.apache.batik.anim.dom.SVGOMDocument
+import org.apache.batik.anim.dom.SVGOMSVGElement
 
-class SvgRootDocumentMapper(source: SvgSvgElement) : Mapper<SvgSvgElement, SVGOMDocument>(source,
+class SvgRootDocumentMapper(source: SvgSvgElement) : Mapper<SvgSvgElement, SVGOMDocument>(
+    source,
     createDocument()
 ) {
 

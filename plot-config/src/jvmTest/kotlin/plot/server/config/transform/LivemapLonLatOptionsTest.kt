@@ -7,10 +7,10 @@ package jetbrains.datalore.plot.server.config.transform
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.config.Option.GeomName
-import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Plot.DATA
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import jetbrains.datalore.plot.server.config.SingleLayerAssert.Companion.assertThat
 import jetbrains.datalore.plot.server.config.transform.LivemapLonLatOptionsTest.PlotWithLonLatData.Companion.LAT_DATA_KEY
@@ -109,7 +109,7 @@ class LivemapLonLatOptionsTest {
                             object : HashMap<String, Any>() {
                                 init {
                                     put(GEOM, GeomName.LIVE_MAP)
-                                    put(Layer.MAPPING, mapping)
+                                    put(MAPPING, mapping)
                                     if (dataInLayer) {
                                         put(DATA, data)
                                     }

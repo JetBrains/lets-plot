@@ -8,7 +8,6 @@ import random
 import string
 from typing import Dict
 
-# noinspection PyPackageRequirements
 from IPython.display import display_html
 
 from ._frontend_ctx import FrontendContext

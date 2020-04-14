@@ -11,15 +11,15 @@ import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_ID_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_REGION_COLUMN
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.GeomName
-import jetbrains.datalore.plot.config.Option.Layer.DATA
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Layer.MAPPING
 import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame
 import jetbrains.datalore.plot.config.Option.Meta.GeoReference
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.createLayerConfigsByLayerSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.geomPolygonSpec
 import jetbrains.datalore.plot.server.config.SingleLayerAssert.Companion.assertThat

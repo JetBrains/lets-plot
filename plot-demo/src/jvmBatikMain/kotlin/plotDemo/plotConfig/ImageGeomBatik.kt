@@ -5,22 +5,21 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
-import jetbrains.datalore.plotDemo.model.plotConfig.HVLine
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.plotDemo.model.plotConfig.BarPlot
+import jetbrains.datalore.plotDemo.model.plotConfig.ImageGeom
+import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
 
-object HVLineJfx {
+object ImageGeomBatik {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(HVLine()) {
+        with(ImageGeom()) {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             PlotConfigDemoUtil.show(
-                "hline & vline plot",
+                "image_geom",
                 plotSpecList,
-                SceneMapperDemoFactory(JFX_PLOT_STYLESHEET),
-                DoubleVector(600.0, 300.0)
+                BatikMapperDemoFactory(),
+                demoComponentSize
             )
         }
     }

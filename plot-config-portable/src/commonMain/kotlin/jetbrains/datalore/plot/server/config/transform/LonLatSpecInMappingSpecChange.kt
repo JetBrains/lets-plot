@@ -9,11 +9,11 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.spatial.MercatorUtils.checkLat
 import jetbrains.datalore.base.spatial.MercatorUtils.checkLon
 import jetbrains.datalore.plot.config.Option.GeomName
-import jetbrains.datalore.plot.config.Option.Layer.DATA
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Layer.MAPPING
 import jetbrains.datalore.plot.config.Option.Mapping
 import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecFinder
@@ -62,7 +62,7 @@ class LonLatSpecInMappingSpecChange : SpecChange {
             }
 
             if (dataSpec == null) {
-                val list = ctx.getSpecsAbsolute(Plot.DATA)
+                val list = ctx.getSpecsAbsolute(DATA)
                 if (list.isNotEmpty() && list[0].keys.containsAll(keys)) {
                     dataSpec = list[0] as MutableMap<String, Any>
                 }

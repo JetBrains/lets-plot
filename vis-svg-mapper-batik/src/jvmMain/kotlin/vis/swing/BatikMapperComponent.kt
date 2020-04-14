@@ -7,30 +7,36 @@ package jetbrains.datalore.vis.swing
 
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.MouseMotionListener
-import javax.swing.JComponent
+import javax.swing.JPanel
 
 class BatikMapperComponent(
     svgRoot: SvgSvgElement,
     messageCallback: BatikMessageCallback
-) : JComponent() {
+) : JPanel() {
 
     private val myHelper: BatikMapperComponentHelper
 
     init {
         isFocusable = true
+        background = Color.WHITE
 
         myHelper =
             BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
 
         myHelper.nodeContainer.addListener(object : SvgNodeContainerAdapter() {
             override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {
-                if (element === svgRoot && (SvgConstants.HEIGHT.equals(event.attrSpec.name, ignoreCase = true) || SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true))) {
+                if (element === svgRoot && (SvgConstants.HEIGHT.equals(
+                        event.attrSpec.name,
+                        ignoreCase = true
+                    ) || SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true))
+                ) {
                     this@BatikMapperComponent.invalidate()
                 }
                 this@BatikMapperComponent.repaint()

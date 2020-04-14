@@ -17,12 +17,12 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultAesAutoMapper
 import jetbrains.datalore.plot.builder.sampling.Sampling
-import jetbrains.datalore.plot.config.Option.Layer.DATA
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Layer.MAPPING
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP
+import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
 class LayerConfig constructor(
     layerOptions: Map<*, *>,

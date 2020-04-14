@@ -9,13 +9,28 @@ import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.LIST
 import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.NONE
 import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.STR
 import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.TUPLE
+import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.getPyObjectType
 import kotlinx.cinterop.*
 
 typealias TPyObjPtr = CPointer<PyObject>
 
+/**
+ * WARNING: Using of Python API functions on wrong Python objects (like calling PyDict_Keys on a str)
+ * will cause SEGFAULT and an interpreter crash (with Jupyter kernel) with no chance to prevent it.
+ */
 internal object TypeUtils {
-    private fun getPyObjectType(obj: TPyObjPtr?) =
-        PyObject_Type(obj)!!.reinterpret<PyTypeObject>().pointed.tp_name?.toKString()
+
+    fun pyDictToMap(dict: TPyObjPtr?): MutableMap<Any?, Any?> {
+        if (dict == null) {
+            return mutableMapOf()
+        }
+
+        require(getPyObjectType(dict) == DICT) { "pyDictToMap() - unexpceted type: ${getPyObjectType(dict)}" }
+
+        return asSequence(PyDict_Keys(dict)!!, ::PyList_Size, ::PyList_GetItem)
+            .associate { key -> pyObjectToKotlin(key!!) to pyObjectToKotlin(PyDict_GetItem(dict, key)) }
+            .toMutableMap()
+    }
 
     private fun pyObjectToKotlin(obj: TPyObjPtr?): Any? {
         if (obj == null) return null;
@@ -23,46 +38,16 @@ internal object TypeUtils {
         val objType = getPyObjectType(obj)
 
         return when (objType) {
-            STR -> pyStrToString(obj)
-            INT -> pyIntToLong(obj)
-            FLOAT -> pyFloatToDouble(obj)
-            BOOL -> pyBoolToBoolean(obj)
-            NONE -> null
-            LIST -> pyListToList(obj)
+            STR -> PyBytes_AsString(PyUnicode_AsUTF8String(obj))?.toKString()
+            INT -> PyLong_AsLong(obj).toLong()
+            FLOAT -> PyFloat_AsDouble(obj)
+            BOOL -> PyObject_IsTrue(obj) == 1
             DICT -> pyDictToMap(obj)
-            TUPLE -> pyTupleToList(obj)
-            else -> throw IllegalArgumentException("Wrong python type: $objType")
+            LIST -> asSequence(obj, ::PyList_Size, ::PyList_GetItem).map(::pyObjectToKotlin).toMutableList()
+            TUPLE -> asSequence(obj, ::PyTuple_Size, ::PyTuple_GetItem).map(::pyObjectToKotlin).toMutableList()
+            NONE -> null
+            else -> error("pyObjectToKotlin() - unexpected type: $objType")
         }
-    }
-
-    private fun pyStrToString(str: TPyObjPtr) = PyBytes_AsString(PyUnicode_AsUTF8String(str))?.toKString()
-
-    private fun pyIntToLong(int: TPyObjPtr): Long = PyLong_AsLong(int).toLong()
-
-    private fun pyFloatToDouble(float: TPyObjPtr): Double = PyFloat_AsDouble(float)
-
-    private fun pyBoolToBoolean(bool: TPyObjPtr): Boolean = PyObject_IsTrue(bool) == 1
-
-    private fun pyListToList(list: TPyObjPtr): List<Any?> {
-        return asSequence(list, ::PyList_Size, ::PyList_GetItem)
-            .map(::pyObjectToKotlin)
-            .toMutableList()
-    }
-
-    private fun pyTupleToList(tuple: TPyObjPtr): List<Any?> {
-        return asSequence(tuple, ::PyTuple_Size, ::PyTuple_GetItem)
-            .map(::pyObjectToKotlin)
-            .toMutableList()
-    }
-
-    fun pyDictToMap(dict: TPyObjPtr?): MutableMap<String, Any?> {
-        if (dict == null) {
-            return mutableMapOf()
-        }
-
-        return asSequence(PyDict_Keys(dict)!!, ::PyList_Size, ::PyList_GetItem)
-            .associate { key -> pyStrToString(key!!)!! to pyObjectToKotlin(PyDict_GetItem(dict, key)) }
-            .toMutableMap()
     }
 
     private fun asSequence(

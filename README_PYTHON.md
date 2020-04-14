@@ -107,6 +107,9 @@ Try the following examples to study more features of the `Lets-Plot` library.
 * Tiles, contours, polygons, contourf:
 [contours.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/contours.ipynb)
  
+* Raster geom, Image geom:
+[image_fisher_boat.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_fisher_boat.ipynb) 
+ 
 * Various presentation options:
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
   
@@ -217,9 +220,12 @@ from lets_plot import *
 LetsPlot.setup_html(offline=True)
 ```
 
-### Cloud-based notebooks are supported (like Google Colab, JetBrains Datalore)
+### Cloud-based notebooks are supported
 
-Example of Google Colab notebook: [quickstart.ipynb](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-)
+Example notebooks:
+* [Google Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-)
+* [Kaggle](https://www.kaggle.com/alshan/lets-plot-quickstart)
+* [JetBrains Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP)
 
 ## Change Log
 
