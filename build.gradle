@@ -71,9 +71,18 @@ def include_sources_letsPlotJvmJfx = [
         'vis-demo-common-jfx',
 ]
 
+def include_sources_letsPlotJvmBatik = [
+        'mapper-core',
+        'vis-svg-mapper',
+        'vis-svg-mapper-batik',
+        'vis-demo-common',
+        'vis-demo-common-batik',
+]
+
 configurations {
     letsPlotJvmCommonSources
     letsPlotJvmJfxSources
+    letsPlotJvmBatikSources
 }
 
 subprojects {
@@ -106,7 +115,7 @@ subprojects {
     }
 
     // jar jvm sources of this project
-    if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx) {
+    if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx || name in include_sources_letsPlotJvmBatik) {
         apply plugin: 'kotlin-multiplatform'
         kotlin.jvm {}   // for `jvmSourcesJar` task
         build.dependsOn += jvmSourcesJar
@@ -124,22 +133,27 @@ subprojects {
             letsPlotJvmJfxSources files(sources_jar_path)
         }
     }
+    if (name in include_sources_letsPlotJvmBatik) {
+        rootProject.dependencies {
+            letsPlotJvmBatikSources files(sources_jar_path)
+        }
+    }
 }
 
 
 // Bintray settings
 
 project.ext["bintraySettings"] = [
-        userOrg: 'jetbrains',
-        licenses: ['MIT'],
-        vcsUrl: 'https://github.com/JetBrains/lets-plot',
-        publish: true,
+        userOrg            : 'jetbrains',
+        licenses           : ['MIT'],
+        vcsUrl             : 'https://github.com/JetBrains/lets-plot',
+        publish            : true,
 
-        js_repo: "lets-plot",
-        js_pkg_name: 'lets-plot-js',
+        js_repo            : "lets-plot",
+        js_pkg_name        : 'lets-plot-js',
         js_artifact_version: js_artifact_version,
 
-        mvn_repo: 'lets-plot-maven',
-        mvn_pkg_name: 'lets-plot-jars',
+        mvn_repo           : 'lets-plot-maven',
+        mvn_pkg_name       : 'lets-plot-jars',
 ]
 
