@@ -29,7 +29,7 @@ open class TooltipAnchor : PlotConfigDemoBase() {
             val rating = DemoUtil.zip(ratingA, ratingB)
             val cond = DemoUtil.zip(DemoUtil.fill("a", count1), DemoUtil.fill("b", count2))
             val fill = DemoUtil.zip(ratingB, ratingA)
-            val color =  DemoUtil.zip(DemoUtil.fill("red", count1), DemoUtil.fill("blue", count2))
+            val color = DemoUtil.zip(DemoUtil.fill("red", count1), DemoUtil.fill("blue", count2))
             val map = HashMap<String, List<*>>()
             map["cond"] = cond
             map["rating"] = rating
@@ -54,23 +54,22 @@ open class TooltipAnchor : PlotConfigDemoBase() {
 
         fun top_right(): Map<String, Any> {
             val spec =
-                "{" + OUR_DATA + ","+
-                        "   'theme': {" +
-                        "       'tooltip_anchor': 'top_right'" +
-                        "     }"
-            "}"
+                "{" + OUR_DATA + "," +
+                        "   'ggtitle': {'text': 'top_right'}," +
+                        "   'theme':   {'tooltip_anchor': 'top_right'}" +
+                        "}"
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
         }
+
         fun top_left(): Map<String, Any> {
             val spec =
-                "{" + OUR_DATA + ","+
-                        "   'theme': {" +
-                        "       'tooltip_anchor': 'top_left'" +
-                        "     }"
-            "}"
+                "{" + OUR_DATA + "," +
+                        "   'ggtitle': {'text': 'top_left'}," +
+                        "   'theme':   {'tooltip_anchor': 'top_left'}" +
+                        "}"
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
@@ -79,11 +78,10 @@ open class TooltipAnchor : PlotConfigDemoBase() {
 
         fun bottom_right(): Map<String, Any> {
             val spec =
-                "{" + OUR_DATA + ","+
-                        "   'theme': {" +
-                        "       'tooltip_anchor': 'bottom_right'" +
-                        "     }"
-            "}"
+                "{" + OUR_DATA + "," +
+                        "   'ggtitle': {'text': 'bottom_right'}," +
+                        "   'theme':   {'tooltip_anchor': 'bottom_right'}" +
+                        "}"
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
@@ -92,11 +90,10 @@ open class TooltipAnchor : PlotConfigDemoBase() {
 
         fun bottom_left(): Map<String, Any> {
             val spec =
-                "{" + OUR_DATA + ","+
-                        "   'theme': {" +
-                        "       'tooltip_anchor': 'bottom_left'" +
-                        "     }"
-            "}"
+                "{" + OUR_DATA + "," +
+                        "   'ggtitle': {'text': 'bottom_left'}," +
+                        "   'theme':   {'tooltip_anchor': 'bottom_left'}" +
+                        "}"
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
@@ -113,7 +110,7 @@ open class TooltipAnchor : PlotConfigDemoBase() {
                     "             'fill': 'target'" +
                     "           }," +
                     "    'theme': {" +
-                    "       'tooltip_anchor': 'top_left'" +
+                    "       'tooltip_anchor': 'top_right'" +
                     "           }," +
                     "   'layers': [" +
                     "               {" +

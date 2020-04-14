@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.plotConfig.TooltipAnchor
 import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
@@ -19,7 +20,7 @@ object TooltipAnchorJfx {
                 "Anchor for tooltip",
                 plotSpecList,
                 SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET),
-                demoComponentSize
+                DoubleVector(600.0, 400.0)
             )
         }
     }
