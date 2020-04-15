@@ -5,10 +5,7 @@
 
 package jetbrains.datalore.plot.config.theme
 
-import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.builder.theme.DefaultTheme
-import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.builder.theme.*
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_DIRECTION
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.config.Option.Theme.LEGEND_POSITION
@@ -26,11 +23,13 @@ class ThemeConfig(options: Map<*, *>) {
         private val myAxisXTheme: AxisTheme
         private val myAxisYTheme: AxisTheme
         private val myLegendTheme: LegendTheme
+        private val myTooltipTheme: TooltipTheme
 
         init {
             myAxisXTheme = AxisThemeConfig.X(options, defOptions)
             myAxisYTheme = AxisThemeConfig.Y(options, defOptions)
             myLegendTheme = LegendThemeConfig(options, defOptions)
+            myTooltipTheme = TooltipThemeConfig(options, defOptions)
         }
 
         override fun axisX(): AxisTheme {
@@ -43,6 +42,10 @@ class ThemeConfig(options: Map<*, *>) {
 
         override fun legend(): LegendTheme {
             return myLegendTheme
+        }
+
+        override fun tooltip(): TooltipTheme {
+            return myTooltipTheme
         }
     }
 

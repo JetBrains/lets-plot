@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
@@ -210,7 +211,8 @@ internal open class TooltipLayoutTestBase {
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
                 override fun arrange(): List<PositionedTooltip> =
-                    LayoutManager(myViewport, myHorizontalAlignment).arrange(myTooltipData, myCursor)
+                    LayoutManager(myViewport, myHorizontalAlignment, TooltipAnchor.NONE)
+                        .arrange(myTooltipData, myCursor, geomBounds = null)
             }
         }
 

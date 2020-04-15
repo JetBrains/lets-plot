@@ -28,6 +28,7 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
@@ -64,6 +65,8 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
     protected abstract val legendBoxInfos: List<LegendBoxInfo>
 
     protected abstract val isAxisEnabled: Boolean
+
+    abstract fun tooltipAnchor(): TooltipAnchor
 
     abstract val isInteractionsEnabled: Boolean
 
@@ -398,6 +401,10 @@ abstract class Plot(private val theme: Theme) : SvgComponent() {
 
     fun createTooltipSpecs(plotCoord: DoubleVector): List<TooltipSpec> {
         return myTooltipHelper.createTooltipSpecs(plotCoord)
+    }
+
+    fun getGeomBounds(plotCoord: DoubleVector): DoubleRectangle? {
+        return myTooltipHelper.getGeomBounds(plotCoord)
     }
 
     companion object {

@@ -48,7 +48,13 @@ class TooltipSpecFactory(
         }
 
         private fun initTooltipSpecs() {
-            aesTipLayoutHints().forEach { (aes, hint) -> applyTipLayoutHint(listOf(aes), hint) }
+            aesTipLayoutHints().forEach { (aes, hint) ->
+                applyTipLayoutHint(
+                    aes = listOf(aes),
+                    layoutHint = hint,
+                    isOutlier = true
+                )
+            }
 
             addAesTooltipSpec()
 
@@ -74,9 +80,10 @@ class TooltipSpecFactory(
                     val text = makeText(listOf(aes))
                     tooltipSpecs.add(
                         TooltipSpec(
-                            layoutHint,
-                            text,
-                            layoutHint.color!!
+                            layoutHint = layoutHint,
+                            lines = text,
+                            fill = layoutHint.color!!,
+                            isOutlier = true
                         )
                     )
                 }
@@ -100,7 +107,7 @@ class TooltipSpecFactory(
 
             removeDiscreteDuplicatedMappings(aesListForTooltip)
 
-            applyTipLayoutHint(aesListForTooltip, tipLayoutHint())
+            applyTipLayoutHint(aes = aesListForTooltip, layoutHint = tipLayoutHint(), isOutlier = false)
         }
 
         private fun removeDiscreteDuplicatedMappings(aesWithoutHint: MutableList<Aes<*>>) {
@@ -155,14 +162,14 @@ class TooltipSpecFactory(
             throw IllegalArgumentException("Not an axis aes: $aes")
         }
 
-        private fun applyTipLayoutHint(aes: List<Aes<*>>, layoutHint: TipLayoutHint) {
+        private fun applyTipLayoutHint(aes: List<Aes<*>>, layoutHint: TipLayoutHint, isOutlier: Boolean) {
             if (aes.isEmpty()) {
                 return
             }
 
             val text = makeText(aes)
             val fill = layoutHint.color ?: tipLayoutHint().color!!
-            tooltipSpecs.add(TooltipSpec(layoutHint, text, fill))
+            tooltipSpecs.add(TooltipSpec(layoutHint, text, fill, isOutlier))
             myAesWithoutHint.removeAll(aes)
         }
 

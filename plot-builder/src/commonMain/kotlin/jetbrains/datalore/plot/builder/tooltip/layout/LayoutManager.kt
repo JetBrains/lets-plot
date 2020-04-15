@@ -9,7 +9,10 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
+import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
@@ -19,17 +22,24 @@ import kotlin.math.min
 
 class LayoutManager(
     private val myViewport: DoubleRectangle,
-    private val myPreferredHorizontalAlignment: HorizontalAlignment
+    private val myPreferredHorizontalAlignment: HorizontalAlignment,
+    private val myTooltipAnchor: TooltipAnchor
 ) {
     private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)
     private var myCursorCoord: DoubleVector = DoubleVector.ZERO
+    private var myHorizontalGeomSpace = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
+    private var myVerticalGeomSpace = DoubleRange.withStartAndEnd(myViewport.top, myViewport.bottom)
     private lateinit var myVerticalAlignmentResolver: VerticalAlignmentResolver
 
-    fun arrange(tooltips: List<MeasuredTooltip>, cursorCoord: DoubleVector): List<PositionedTooltip> {
+    fun arrange(tooltips: List<MeasuredTooltip>, cursorCoord: DoubleVector, geomBounds: DoubleRectangle?): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
         myVerticalSpace = DoubleRange.withStartAndEnd(myViewport.top, myViewport.bottom)
         myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
+        if (geomBounds != null) {
+            myHorizontalGeomSpace = DoubleRange.withStartAndLength(geomBounds.origin.x, geomBounds.dimension.x)
+            myVerticalGeomSpace = DoubleRange.withStartAndLength(geomBounds.origin.y, geomBounds.dimension.y)
+        }
 
         val desiredPosition = ArrayList<PositionedTooltip>()
 
@@ -56,8 +66,13 @@ class LayoutManager(
             .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
             ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it, SHORT_STEM_LENGTH)) }
 
-        // all other tooltips (axis tooltips are ignored in this method)
-        desiredPosition.addAll(calculateDataTooltipsPosition(tooltips))
+        // add corner tooltips
+        tooltips
+            .filter(::isCorner)
+            .let { desiredPosition += calculateCornerTooltipsPosition(it) }
+
+        // all other tooltips (axis and corner tooltips are ignored in this method)
+        desiredPosition += calculateDataTooltipsPosition(tooltips)
 
         return rearrangeWithoutOverlapping(desiredPosition)
     }
@@ -66,6 +81,10 @@ class LayoutManager(
         val placementList = ArrayList<PositionedTooltip>()
 
         for (measuredTooltip in tooltips) {
+            if (isCorner(measuredTooltip))
+            // Corner tooltips should be processed separately to configure corner space.
+                continue
+
             when (measuredTooltip.hintKind) {
                 VERTICAL_TOOLTIP -> placementList.add(
                     calculateVerticalTooltipPosition(
@@ -100,7 +119,31 @@ class LayoutManager(
         return placementList
     }
 
-    private fun rearrangeWithoutOverlapping(tooltips: List<PositionedTooltip>): List<PositionedTooltip> {
+    private fun calculateCornerTooltipsPosition(cornerTooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
+        val placementList = ArrayList<PositionedTooltip>()
+
+        val tooltipsHeight = cornerTooltips.sumByDouble { it.size.y } + MARGIN_BETWEEN_TOOLTIPS * cornerTooltips.size
+        val verticalTooltipRange = when (myTooltipAnchor) {
+            //top
+            TooltipAnchor.TOP_LEFT,
+            TooltipAnchor.TOP_RIGHT -> rightAligned(myVerticalGeomSpace.start(), tooltipsHeight, 0.0)
+            // bottom
+            else -> leftAligned(myVerticalGeomSpace.end(), tooltipsHeight, 0.0)
+        }
+
+        var tooltipY = verticalTooltipRange.start()
+        cornerTooltips.forEach { tooltip ->
+            val positionedTooltip = calculatePlotCornerTooltipPosition(tooltip, tooltipY, verticalTooltipRange)
+            placementList.add(positionedTooltip)
+            tooltipY += positionedTooltip.height + MARGIN_BETWEEN_TOOLTIPS
+        }
+
+        return placementList
+    }
+
+    private fun rearrangeWithoutOverlapping(
+        tooltips: List<PositionedTooltip>
+    ): List<PositionedTooltip> {
         if (tooltips.isEmpty()) {
             return tooltips
         }
@@ -115,11 +158,14 @@ class LayoutManager(
 
         // First add tooltips with pre-arranged position
         tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP).forEach(::fixate)
+        tooltips.selectCorner().forEach(::fixate)
 
         // Now try to space out other tooltips.
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.
+        // Include overlapped corner tooltips.
 
-        tooltips.select(HORIZONTAL_TOOLTIP).let { horizontalTooltips ->
+        tooltips.select(HORIZONTAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
+            .let { horizontalTooltips ->
             if (horizontalTooltips.sumByDouble(PositionedTooltip::height) < myVerticalSpace.length()) {
                 HorizontalTooltipExpander(myVerticalSpace).fixOverlapping(horizontalTooltips)
                     .forEach(::fixate)
@@ -131,7 +177,7 @@ class LayoutManager(
             }
         }
 
-        tooltips.select(VERTICAL_TOOLTIP)
+        tooltips.select(VERTICAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
             .let {
                 VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
                     it,
@@ -245,12 +291,70 @@ class LayoutManager(
         return PositionedTooltip(measuredTooltip, tooltipCoord, myCursorCoord)
     }
 
+    private fun calculateAnchorX(measuredTooltip: MeasuredTooltip, horizontalAlignment: HorizontalAlignment): Double {
+        return when (horizontalAlignment) {
+            HorizontalAlignment.RIGHT -> myHorizontalGeomSpace.end() - measuredTooltip.size.x
+            else -> myHorizontalSpace.start() + myHorizontalGeomSpace.start() + MARGIN_BETWEEN_TOOLTIPS
+        }
+    }
+
+    private fun calculatePlotCornerTooltipPosition(
+        measuredTooltip: MeasuredTooltip,
+        tooltipY: Double,
+        verticalTooltipRange: DoubleRange
+    ): PositionedTooltip {
+
+        val horizontalAlignment = when (myTooltipAnchor) {
+            TooltipAnchor.TOP_RIGHT, TooltipAnchor.BOTTOM_RIGHT -> HorizontalAlignment.RIGHT
+            else -> HorizontalAlignment.LEFT
+        }
+
+        var tooltipX = calculateAnchorX(measuredTooltip, horizontalAlignment)
+
+        // check position under cursor
+        val isOverlapX = overlapsCursorHorizontalRange(measuredTooltip, tooltipX)
+        val isOverlapY = overlapsCursorVerticalRange(verticalTooltipRange)
+        if (isOverlapX && isOverlapY) {
+            tooltipX = calculateAnchorX(
+                measuredTooltip,
+                horizontalAlignment.inversed()
+            )
+        }
+
+        val tooltipCoord = DoubleVector(tooltipX, tooltipY)
+        return PositionedTooltip(measuredTooltip, tooltipCoord, tooltipCoord)
+    }
+
     private fun overlapsCursorHorizontalRange(measuredTooltip: MeasuredTooltip, tooltipX: Double): Boolean {
         val horizontalTooltipRange = DoubleRange.withStartAndLength(tooltipX, measuredTooltip.size.x)
         val cursorHorizontalRange = DoubleRange.withStartAndLength(myCursorCoord.x, CURSOR_DIMENSION.x)
         return horizontalTooltipRange.overlaps(cursorHorizontalRange)
     }
 
+    private fun overlapsCursorVerticalRange(verticalTooltipRange: DoubleRange): Boolean {
+        val cursorVerticalRange = DoubleRange.withStartAndLength(myCursorCoord.y, CURSOR_DIMENSION.y)
+        return verticalTooltipRange.overlaps(cursorVerticalRange)
+    }
+
+    private fun useCornerTooltips(): Boolean {
+        return myTooltipAnchor != TooltipAnchor.NONE
+    }
+
+    private fun isCorner(tooltipSpec: TooltipSpec): Boolean {
+        return if (useCornerTooltips()) !tooltipSpec.isOutlier else false
+    }
+
+    private fun isCorner(tooltip: MeasuredTooltip): Boolean {
+        return isCorner(tooltip.tooltipSpec)
+    }
+
+    private fun isCorner(tooltip: PositionedTooltip): Boolean {
+        return isCorner(tooltip.tooltipSpec)
+    }
+
+    private fun List<PositionedTooltip>.selectCorner(): List<PositionedTooltip> {
+        return this.filter(::isCorner)
+    }
 
     internal enum class VerticalAlignment {
         TOP,
@@ -260,13 +364,21 @@ class LayoutManager(
     enum class HorizontalAlignment {
         LEFT,
         RIGHT,
-        CENTER
+        CENTER;
+
+        fun inversed(): HorizontalAlignment {
+            return when (this) {
+                LEFT -> RIGHT
+                RIGHT -> LEFT
+                CENTER -> CENTER
+            }
+        }
     }
 
     class PositionedTooltip {
         val tooltipBox: TooltipBox
         internal val tooltipSize: DoubleVector
-        val tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec
+        val tooltipSpec: TooltipSpec
         val tooltipCoord: DoubleVector
         val stemCoord: DoubleVector
 
@@ -304,11 +416,11 @@ class LayoutManager(
     }
 
     class MeasuredTooltip(
-        internal val tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec,
+        internal val tooltipSpec: TooltipSpec,
         internal val size: DoubleVector,
         internal val tooltipBox: TooltipBox
     ) {
-        constructor(tooltipSpec: jetbrains.datalore.plot.builder.interact.TooltipSpec, tooltipBox: TooltipBox)
+        constructor(tooltipSpec: TooltipSpec, tooltipBox: TooltipBox)
                 : this(tooltipSpec, tooltipBox.contentRect.dimension, tooltipBox)
 
         internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
@@ -354,6 +466,15 @@ class LayoutManager(
 
         private fun List<PositionedTooltip>.select(vararg kinds: Kind): List<PositionedTooltip> {
             return this.filter { kinds.contains(it.hintKind) }
+        }
+
+        private fun List<PositionedTooltip>.isOverlapped(tooltip: PositionedTooltip): Boolean {
+           return this.find { it != tooltip && it.rect().intersects(tooltip.rect()) } != null
+        }
+
+        private fun List<PositionedTooltip>.withOverlapped(tooltips: List<PositionedTooltip>): List<PositionedTooltip> {
+           val overlapped = tooltips.filter { tooltip -> this.isOverlapped(tooltip) }
+           return this - tooltips + overlapped
         }
     }
 }

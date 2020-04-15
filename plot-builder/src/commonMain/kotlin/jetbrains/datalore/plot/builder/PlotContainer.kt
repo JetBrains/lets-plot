@@ -43,12 +43,13 @@ class PlotContainer(
         checkState(plot.isInteractionsEnabled)
 
         val viewport = DoubleRectangle(DoubleVector.ZERO, plot.laidOutSize().get())
-        val tooltipLayer = TooltipLayer(myDecorationLayer, viewport)
+        val tooltipLayer = TooltipLayer(myDecorationLayer, viewport, plot.tooltipAnchor())
 
         val onMouseMoved = { e: MouseEvent ->
             val coord = DoubleVector(e.x.toDouble(), e.y.toDouble())
             val tooltipSpecs = plot.createTooltipSpecs(coord)
-            tooltipLayer.showTooltips(coord, tooltipSpecs)
+            val geomBounds = plot.getGeomBounds(coord)
+            tooltipLayer.showTooltips(coord, tooltipSpecs, geomBounds)
         }
         reg(plot.mouseEventPeer.addEventHandler(MOUSE_MOVED, object : EventHandler<MouseEvent> {
             override fun onEvent(event: MouseEvent) {
