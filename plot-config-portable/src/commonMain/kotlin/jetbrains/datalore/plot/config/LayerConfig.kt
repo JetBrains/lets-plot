@@ -70,7 +70,7 @@ class LayerConfig(
         }
 
     init {
-        val (discreteMappings, layerData) = createDataFrame(
+        val (layerMappings, layerData) = createDataFrame(
             options = this,
             commonData = sharedData,
             commonDiscreteAes = plotDiscreteAes,
@@ -78,10 +78,8 @@ class LayerConfig(
             isClientSide = myClientSide
         )
 
-        // ToDo: isNotEmpty check is not necessary
-        // ToDo: do 'update' only on server side.
-        if (discreteMappings.isNotEmpty()) {
-            update(MAPPING, getMap(MAPPING) + discreteMappings)
+        if (!myClientSide) {
+            update(MAPPING, layerMappings)
         }
 
         // mapping (inherit from plot) + 'layer' mapping

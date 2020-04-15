@@ -10,9 +10,8 @@ class MappingMeta:
         if annotation is None:
             raise ValueError("annotation can't be none")
 
-        # ToDo: rename name->variable, kind->annotation
-        self.name = variable
-        self.kind = annotation
+        self.variable = variable
+        self.annotation = annotation
 
 
 def as_discrete(variable):

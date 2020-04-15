@@ -43,7 +43,7 @@ abstract class PlotConfig(
 
     init {
 
-        val (discreteMappings, plotData) = DataMetaUtil.createDataFrame(
+        val (plotMappings, plotData) = DataMetaUtil.createDataFrame(
             options = this,
             commonData = DataFrame.Builder.emptyFrame(),
             commonDiscreteAes = emptySet(),
@@ -53,8 +53,8 @@ abstract class PlotConfig(
 
         sharedData = plotData
 
-        if (discreteMappings.isNotEmpty()) {
-            update(MAPPING, getMap(MAPPING) + discreteMappings)
+        if (plotMappings.isNotEmpty()) {
+            update(MAPPING, plotMappings)
         }
 
         scaleConfigs = createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
