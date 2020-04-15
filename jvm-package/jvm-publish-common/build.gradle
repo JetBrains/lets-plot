@@ -1,7 +1,9 @@
-apply plugin: "org.jetbrains.kotlin.multiplatform"
-apply plugin: "maven-publish"
-apply plugin: "com.jfrog.bintray"
-apply plugin: "com.github.johnrengelman.shadow"
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "maven-publish"
+    id "com.github.johnrengelman.shadow"
+    id "com.jfrog.bintray"
+}
 
 kotlin {
     jvm()

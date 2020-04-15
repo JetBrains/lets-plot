@@ -1,4 +1,7 @@
-apply plugin: "org.jetbrains.kotlin.js"
+
+plugins {
+    id "org.jetbrains.kotlin.js"
+}
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"

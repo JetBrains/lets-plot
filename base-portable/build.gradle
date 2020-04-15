@@ -5,9 +5,11 @@
 
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
-apply plugin: "org.jetbrains.kotlin.multiplatform"
-apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
-apply plugin: "groovy"   // add 'test' task
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
+    id "groovy"   // add 'test' task
+}
 
 kotlin {
     jvm()

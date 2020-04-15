@@ -1,19 +1,16 @@
 buildscript {
-    repositories {
-        jcenter()
-        maven { url "https://plugins.gradle.org/m2/" }
-    }
-
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-        classpath "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:$idea_ext_version"
-        classpath "com.github.jengelman.gradle.plugins:shadow:5.1.0"
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
         classpath "org.yaml:snakeyaml:1.25"
-
-//        id 'com.moowork.node' version '1.3.1' apply false
     }
+}
+
+plugins {
+    id "org.jetbrains.kotlin.multiplatform" version "$kotlin_version" apply false
+    id "org.jetbrains.gradle.plugin.idea-ext" version "$idea_ext_version" apply false
+    id "com.jfrog.bintray" version "1.8.4" apply false
+    id "com.github.johnrengelman.shadow" version "5.1.0" apply false
+//    id 'com.moowork.node' version '1.3.1' apply false
+    //classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
 }
 
 def include_sources_letsPlotJvmCommon = [
@@ -65,7 +62,7 @@ allprojects {
 
     // jar jvm sources of this project
     if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx || name in include_sources_letsPlotJvmBatik) {
-        apply plugin: 'kotlin-multiplatform'
+        apply plugin: "org.jetbrains.kotlin.multiplatform"
         kotlin.jvm {}   // for `jvmSourcesJar` task
         build.dependsOn += jvmSourcesJar
     }

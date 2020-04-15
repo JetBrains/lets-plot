@@ -1,5 +1,7 @@
-apply plugin: "org.jetbrains.kotlin.multiplatform"
-apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
+}
 
 repositories {
     mavenCentral()
