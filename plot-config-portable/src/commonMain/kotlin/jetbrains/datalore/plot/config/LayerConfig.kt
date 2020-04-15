@@ -78,6 +78,8 @@ class LayerConfig(
             isClientSide = myClientSide
         )
 
+        // ToDo: isNotEmpty check is not necessary
+        // ToDo: do 'update' only on server side.
         if (discreteMappings.isNotEmpty()) {
             update(MAPPING, getMap(MAPPING) + discreteMappings)
         }

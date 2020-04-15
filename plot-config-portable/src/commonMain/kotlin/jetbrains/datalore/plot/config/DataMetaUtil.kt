@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.DISCRETE
 object DataMetaUtil {
     private const val prefix = "@as_discrete@"
 
+    // ToDo: let's add an assert 'not isDiscrete(variable)'
     private fun isDiscrete(variable: String) = variable.startsWith(prefix)
     public fun toDiscrete(variable: String) = "$prefix$variable"
     private fun fromDiscrete(variable: String): String {
@@ -64,7 +65,6 @@ object DataMetaUtil {
     /**
      * returns new mappings to discrete variables and DataFrame with these discrete variables
      */
-    // ToDo: rename to createLayerDataFrame
     fun createDataFrame(
         options: OptionsAccessor,
         commonData: DataFrame,
@@ -78,14 +78,18 @@ object DataMetaUtil {
             val ownDiscreteAes = getAsDiscreteAesSet(options.getMap(Option.Meta.DATA_META))
             ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
         }
+
+        // ToDo: ownDiscreteMappings/commonDiscreteMappings - it seems you doesn't need maps, only sets of varnames.
         val commonDiscreteMappings = commonMapping.filterKeys { it in commonDiscreteAes }
 
         val combinedDfVars = run {
+            // ToDo: use DataFrameUtil.toMap
             val ownDfVars = variables(data).mapValues { (_, dfVar) -> data[dfVar] }
             val commonDfVars = variables(commonData).mapValues { (_, dfVar) -> commonData[dfVar] }
             commonDfVars + ownDfVars
         }
 
+        // ToDo: on client let's just 're-instert' all existing variables with name "@as_discrete@some_name"
         if (isClientSide) {
             val combinedDiscreteMappingVars = commonDiscreteMappings.variables() + ownDiscreteMappings.variables()
 

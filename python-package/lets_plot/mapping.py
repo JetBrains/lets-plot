@@ -10,6 +10,7 @@ class MappingMeta:
         if annotation is None:
             raise ValueError("annotation can't be none")
 
+        # ToDo: rename name->variable, kind->annotation
         self.name = variable
         self.kind = annotation
 
