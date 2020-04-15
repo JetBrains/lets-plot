@@ -53,6 +53,8 @@ abstract class PlotConfig(
 
         sharedData = plotData
 
+        // ToDo: 'update' on server side only.
+        // ToDo: not very sure about checking 'isNotEmpty', but the behavion should be the same here and in LayerConfig.
         if (plotMappings.isNotEmpty()) {
             update(MAPPING, plotMappings)
         }

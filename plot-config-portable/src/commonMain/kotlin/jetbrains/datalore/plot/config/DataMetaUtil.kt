@@ -66,6 +66,7 @@ object DataMetaUtil {
     }
 
     /**
+     * ToDo: update doc
      * returns new mappings to discrete variables and DataFrame with these discrete variables
      */
     fun createDataFrame(
@@ -75,15 +76,16 @@ object DataMetaUtil {
         commonMapping: Map<*, *>,
         isClientSide: Boolean
     ): Pair<Map<*, *>, DataFrame> {
+        // ToDo: rename to ownData
         val data = ConfigUtil.createDataFrame(options.get(Option.PlotBase.DATA))
         val combinedDfVars = DataFrameUtil.toMap(commonData) + DataFrameUtil.toMap(data)
 
         if (isClientSide) {
             return Pair(
                 // no new discrete mappings, all job was done on server side
-                emptyMap<Any?, Any?>(),
+                emptyMap<Any?, Any?>(),   // ToDo: return ownMappings
                 // re-insert existing variables as discrete
-                combinedDfVars
+                combinedDfVars    // ToDo: you don't need 'combined'. You are re-inserting vars in ownData only.
                     .filter { (varName, _) -> isDiscrete(varName) }
                     .entries
                     .fold(DataFrame.Builder(data)) { acc, (varName, values) ->
@@ -95,7 +97,7 @@ object DataMetaUtil {
                     .build()
             )
 
-        } else { // server side
+        } else { // server side     // ToDo: 'else' is not necessary
             val ownMappings = options.getMap(Option.PlotBase.MAPPING)
 
             // own names - not yet encoded, i.e. 'cyl'
@@ -108,11 +110,13 @@ object DataMetaUtil {
             val commonDiscreteVars = commonMapping.filterKeys { it in commonDiscreteAes }.variables().map(::fromDiscrete)
 
             // Original (not encoded) discrete var names from both common and own mappings.
-            val combinedDiscreteMappingVars = mutableSetOf<String>()
-            combinedDiscreteMappingVars += ownDiscreteMappings.variables()
-            combinedDiscreteMappingVars += commonDiscreteVars
+            val combinedDiscreteVars = mutableSetOf<String>()
+            combinedDiscreteVars += ownDiscreteMappings.variables()
+            combinedDiscreteVars += commonDiscreteVars
+
             // minus own non-discrete mappings (layer overrides plot)
-            combinedDiscreteMappingVars -= ownMappings.variables() - ownDiscreteMappings.variables()
+            val ownSimpleVars = ownMappings.variables() - ownDiscreteMappings.variables()
+            combinedDiscreteVars -= ownSimpleVars
 
             return Pair(
                 ownMappings + ownDiscreteMappings.mapValues { (_, varName) ->
@@ -121,7 +125,7 @@ object DataMetaUtil {
                     toDiscrete(varName)
                 },
                 combinedDfVars
-                    .filter { (dfVarName, _) -> dfVarName in combinedDiscreteMappingVars }
+                    .filter { (dfVarName, _) -> dfVarName in combinedDiscreteVars }
                     .mapKeys { (dfVarName, _) -> createVariable(toDiscrete(dfVarName)) }
                     .entries
                     .fold(DataFrame.Builder(data)) { acc, (dfVar, values) -> acc.putDiscrete(dfVar, values)}

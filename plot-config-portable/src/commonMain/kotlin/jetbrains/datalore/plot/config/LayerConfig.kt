@@ -70,6 +70,7 @@ class LayerConfig(
         }
 
     init {
+        // ToDo: use either "xxxMapping" or "xxxMappings" (now: plotMapping but layerMappings)
         val (layerMappings, layerData) = createDataFrame(
             options = this,
             commonData = sharedData,
@@ -79,10 +80,13 @@ class LayerConfig(
         )
 
         if (!myClientSide) {
+            // ToDo: actually, checking
             update(MAPPING, layerMappings)
         }
 
         // mapping (inherit from plot) + 'layer' mapping
+        // ToDo: replace: getMap(MAPPING) --> layerMappings
+        // ToDo: rename to 'combinedMappings' for consistency.
         val mappingOptions = plotMapping + getMap(MAPPING)
 
         var combinedData: DataFrame
@@ -134,6 +138,7 @@ class LayerConfig(
             }
         }
 
+        // ToDo: why we use "mappingOptions" here but "aesMapping" in getTooltipAesList(..)?
         // grouping
         explicitGroupingVarName = initGroupingVarName(combinedData, mappingOptions)
 
