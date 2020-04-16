@@ -21,6 +21,7 @@ object DataMetaUtil {
         require(!isDiscrete(variable)) { "toDiscrete() - variable already encoded: $variable" }
         return "$prefix$variable"
     }
+
     private fun fromDiscrete(variable: String): String {
         require(isDiscrete(variable)) { "fromDiscrete() - variable is not encoded: $variable" }
         return variable.removePrefix(prefix)
@@ -66,30 +67,28 @@ object DataMetaUtil {
     }
 
     /**
-     * ToDo: update doc
-     * returns new mappings to discrete variables and DataFrame with these discrete variables
+     * returns mappings and DataFrame extended with auto-generated discrete mappings and variables
      */
     fun createDataFrame(
         options: OptionsAccessor,
         commonData: DataFrame,
         commonDiscreteAes: Set<String>,
-        commonMapping: Map<*, *>,
+        commonMappings: Map<*, *>,
         isClientSide: Boolean
     ): Pair<Map<*, *>, DataFrame> {
-        // ToDo: rename to ownData
-        val data = ConfigUtil.createDataFrame(options.get(Option.PlotBase.DATA))
-        val combinedDfVars = DataFrameUtil.toMap(commonData) + DataFrameUtil.toMap(data)
+        val ownData = ConfigUtil.createDataFrame(options.get(Option.PlotBase.DATA))
+        val ownMappings = options.getMap(Option.PlotBase.MAPPING)
 
         if (isClientSide) {
             return Pair(
                 // no new discrete mappings, all job was done on server side
-                emptyMap<Any?, Any?>(),   // ToDo: return ownMappings
+                ownMappings,
                 // re-insert existing variables as discrete
-                combinedDfVars    // ToDo: you don't need 'combined'. You are re-inserting vars in ownData only.
+                DataFrameUtil.toMap(ownData)
                     .filter { (varName, _) -> isDiscrete(varName) }
                     .entries
-                    .fold(DataFrame.Builder(data)) { acc, (varName, values) ->
-                        val variable = findVariableOrFail(data, varName)
+                    .fold(DataFrame.Builder(ownData)) { acc, (varName, values) ->
+                        val variable = findVariableOrFail(ownData, varName)
                         // re-insert as discrete
                         acc.remove(variable)
                         acc.putDiscrete(variable, values)
@@ -97,44 +96,46 @@ object DataMetaUtil {
                     .build()
             )
 
-        } else { // server side     // ToDo: 'else' is not necessary
-            val ownMappings = options.getMap(Option.PlotBase.MAPPING)
-
-            // own names - not yet encoded, i.e. 'cyl'
-            val ownDiscreteMappings = run {
-                val ownDiscreteAes = getAsDiscreteAesSet(options.getMap(Option.Meta.DATA_META))
-                ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
-            }
-
-            // common names - already encoded by PlotConfig, i.e. '@as_discrete@cyl'. Restore original name.
-            val commonDiscreteVars = commonMapping.filterKeys { it in commonDiscreteAes }.variables().map(::fromDiscrete)
-
-            // Original (not encoded) discrete var names from both common and own mappings.
-            val combinedDiscreteVars = mutableSetOf<String>()
-            combinedDiscreteVars += ownDiscreteMappings.variables()
-            combinedDiscreteVars += commonDiscreteVars
-
-            // minus own non-discrete mappings (layer overrides plot)
-            val ownSimpleVars = ownMappings.variables() - ownDiscreteMappings.variables()
-            combinedDiscreteVars -= ownSimpleVars
-
-            return Pair(
-                ownMappings + ownDiscreteMappings.mapValues { (_, varName) ->
-                    require(varName is String)
-                    require(!isDiscrete(varName)) { "Already encoded discrete mapping: $varName" }
-                    toDiscrete(varName)
-                },
-                combinedDfVars
-                    .filter { (dfVarName, _) -> dfVarName in combinedDiscreteVars }
-                    .mapKeys { (dfVarName, _) -> createVariable(toDiscrete(dfVarName)) }
-                    .entries
-                    .fold(DataFrame.Builder(data)) { acc, (dfVar, values) -> acc.putDiscrete(dfVar, values)}
-                    .build()
-            )
-
         }
+
+        // server side
+
+        // own names not yet encoded, i.e. 'cyl'
+        val ownDiscreteMappings = run {
+            val ownDiscreteAes = getAsDiscreteAesSet(options.getMap(Option.Meta.DATA_META))
+            return@run ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
+        }
+
+        // Original (not encoded) discrete var names from both common and own mappings.
+        val combinedDiscreteVars = run {
+            // common names already encoded by PlotConfig, i.e. '@as_discrete@cyl'. Restore original name.
+            val commonDiscreteVars = commonMappings.filterKeys { it in commonDiscreteAes }.variables().map(::fromDiscrete)
+
+            val ownSimpleVars = ownMappings.variables() - ownDiscreteMappings.variables()
+
+            // minus own non-discrete mappings (simple layer var overrides discrete plot var)
+            return@run ownDiscreteMappings.variables() + commonDiscreteVars - ownSimpleVars
+        }
+
+        val combinedDfVars = DataFrameUtil.toMap(commonData) + DataFrameUtil.toMap(ownData)
+
+        return Pair(
+            ownMappings + ownDiscreteMappings.mapValues { (_, varName) ->
+                require(varName is String)
+                require(!isDiscrete(varName)) { "Already encoded discrete mapping: $varName" }
+                toDiscrete(varName)
+            },
+            combinedDfVars
+                .filter { (dfVarName, _) -> dfVarName in combinedDiscreteVars }
+                .mapKeys { (dfVarName, _) -> createVariable(toDiscrete(dfVarName)) }
+                .entries
+                .fold(DataFrame.Builder(ownData)) { acc, (dfVar, values) -> acc.putDiscrete(dfVar, values) }
+                .build()
+        )
     }
+
 }
+
 
 private fun Map<*, *>.variables(): Set<String> {
     return values.map { it as String }.toSet()

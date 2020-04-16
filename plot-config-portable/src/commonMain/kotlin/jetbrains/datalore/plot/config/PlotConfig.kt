@@ -47,15 +47,13 @@ abstract class PlotConfig(
             options = this,
             commonData = DataFrame.Builder.emptyFrame(),
             commonDiscreteAes = emptySet(),
-            commonMapping = emptyMap<Any, Any>(),
+            commonMappings = emptyMap<Any, Any>(),
             isClientSide = isClientSide
         )
 
         sharedData = plotData
 
-        // ToDo: 'update' on server side only.
-        // ToDo: not very sure about checking 'isNotEmpty', but the behavion should be the same here and in LayerConfig.
-        if (plotMappings.isNotEmpty()) {
+        if (!isClientSide) {
             update(MAPPING, plotMappings)
         }
 
@@ -125,7 +123,7 @@ abstract class PlotConfig(
     protected abstract fun createLayerConfig(
         layerOptions: Map<*, *>,
         sharedData: DataFrame?,
-        plotMapping: Map<*, *>,
+        plotMappings: Map<*, *>,
         plotDiscreteAes: Set<String>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig

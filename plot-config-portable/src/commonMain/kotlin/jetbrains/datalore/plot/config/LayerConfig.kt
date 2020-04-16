@@ -29,7 +29,7 @@ import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 class LayerConfig(
     layerOptions: Map<*, *>,
     sharedData: DataFrame,
-    plotMapping: Map<*, *>,
+    plotMappings: Map<*, *>,
     plotDiscreteAes: Set<String>,
     val geomProto: GeomProto,
     statProto: StatProto,
@@ -70,24 +70,20 @@ class LayerConfig(
         }
 
     init {
-        // ToDo: use either "xxxMapping" or "xxxMappings" (now: plotMapping but layerMappings)
         val (layerMappings, layerData) = createDataFrame(
             options = this,
             commonData = sharedData,
             commonDiscreteAes = plotDiscreteAes,
-            commonMapping = plotMapping,
+            commonMappings = plotMappings,
             isClientSide = myClientSide
         )
 
         if (!myClientSide) {
-            // ToDo: actually, checking
             update(MAPPING, layerMappings)
         }
 
         // mapping (inherit from plot) + 'layer' mapping
-        // ToDo: replace: getMap(MAPPING) --> layerMappings
-        // ToDo: rename to 'combinedMappings' for consistency.
-        val mappingOptions = plotMapping + getMap(MAPPING)
+        val combinedMappings = plotMappings + layerMappings
 
         var combinedData: DataFrame
         if (!(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount()) {
@@ -99,30 +95,30 @@ class LayerConfig(
         }
 
 
-        var aesMapping: Map<Aes<*>, DataFrame.Variable>?
+        var aesMappings: Map<Aes<*>, DataFrame.Variable>?
         if (GeoPositionsDataUtil.hasGeoPositionsData(this) && myClientSide) {
             // join dataset and geo-positions data
             val dataAndMapping = GeoPositionsDataUtil.initDataAndMappingForGeoPositions(
                 geomProto.geomKind,
                 combinedData,
                 GeoPositionsDataUtil.getGeoPositionsData(this),
-                mappingOptions
+                combinedMappings
             )
             combinedData = dataAndMapping.first
-            aesMapping = dataAndMapping.second
+            aesMappings = dataAndMapping.second
         } else {
-            aesMapping = ConfigUtil.createAesMapping(combinedData, mappingOptions)
+            aesMappings = ConfigUtil.createAesMapping(combinedData, combinedMappings)
         }
 
         // auto-map variables if necessary
-        if (aesMapping.isEmpty()) {
-            aesMapping = DefaultAesAutoMapper.forGeom(geomProto.geomKind).createMapping(combinedData)
+        if (aesMappings.isEmpty()) {
+            aesMappings = DefaultAesAutoMapper.forGeom(geomProto.geomKind).createMapping(combinedData)
             if (!myClientSide) {
                 // store used mapping options to pass to client.
                 val autoMappingOptions = HashMap<String, Any>()
-                for (aes in aesMapping.keys) {
+                for (aes in aesMappings.keys) {
                     val option = Option.Mapping.toOption(aes)
-                    val variable = aesMapping[aes]!!.name
+                    val variable = aesMappings[aes]!!.name
                     autoMappingOptions[option] = variable
                 }
                 update(MAPPING, autoMappingOptions)
@@ -132,15 +128,14 @@ class LayerConfig(
         // exclude constant aes from mapping
         val constants = LayerConfigUtil.initConstants(this)
         if (constants.isNotEmpty()) {
-            aesMapping = HashMap(aesMapping)
+            aesMappings = HashMap(aesMappings)
             for (aes in constants.keys) {
-                aesMapping.remove(aes)
+                aesMappings.remove(aes)
             }
         }
 
-        // ToDo: why we use "mappingOptions" here but "aesMapping" in getTooltipAesList(..)?
         // grouping
-        explicitGroupingVarName = initGroupingVarName(combinedData, mappingOptions)
+        explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappings)
 
         statKind = StatKind.safeValueOf(getString(STAT)!!)
         stat = statProto.createStat(statKind, mergedOptions)
@@ -156,11 +151,11 @@ class LayerConfig(
         }
 
         // tooltip aes list
-        this.tooltipAes = getTooltipAesList(aesMapping)
+        this.tooltipAes = getTooltipAesList(aesMappings)
 
         val varBindings = LayerConfigUtil.createBindings(
             combinedData,
-            aesMapping,
+            aesMappings,
             scaleProviderByAes,
             consumedAesSet
         )
@@ -225,26 +220,26 @@ class LayerConfig(
         return varBindings.find { it.aes == aes }?.scale
     }
 
-    private fun getTooltipAesList(aesMapping: Map<Aes<*>, DataFrame.Variable>): List<Aes<*>>? {
+    private fun getTooltipAesList(mappings: Map<Aes<*>, DataFrame.Variable>): List<Aes<*>>? {
         // tooltip list is not defined - will be used default tooltips
-        if (!has(TOOLTIP))
+        if (!has(TOOLTIP)) {
             return null
-
-        val aesStringList = getStringList(TOOLTIP)
-
-        // check if all elements of list are aes
-        (aesStringList - Aes.values().map { it.name }).firstOrNull {
-            error("${it} is not aes name ")
         }
 
+        val tooltipAesSpec = getStringList(TOOLTIP)
+
+        // check if all elements of list are aes
+        (tooltipAesSpec - Aes.values().map(Aes<*>::name)).firstOrNull { error("${it} is not aes name ") }
+
         // detach aes
-        val aesList = Aes.values().filter { aesStringList.contains(it.name) }
+        val tooltipAesList = Aes.values().filter { it.name in tooltipAesSpec }
 
         // check if aes list matches to mapping
-        if (!aesMapping.keys.containsAll(aesList))
-            error("Aes list does not match to mapping")
+        if (!mappings.keys.containsAll(tooltipAesList)) {
+            error("Tooltip aes list does not match mappings: [${(tooltipAesList - mappings.keys).joinToString()}]")
+        }
 
-        return aesList
+        return tooltipAesList
     }
 
     private companion object {
