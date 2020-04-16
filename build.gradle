@@ -104,44 +104,6 @@ settings.putIfAbsent("enable_livemap", false)
 
 project.ext.buildSettings = settings
 
-//subprojects {
-//    group = rootProject.group
-//    version = rootProject.version
-//
-//    repositories {
-//        mavenCentral()
-//        jcenter()
-//    }
-//
-//    tasks.all {
-//        if (name in ['compileKotlinJvm', 'compileTestKotlinJvm']) {
-//            kotlinOptions.jvmTarget = "1.8"
-//
-//        }
-//    }
-//
-//    // jar jvm sources of this project
-//    if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx) {
-//        apply plugin: 'kotlin-multiplatform'
-//        kotlin.jvm {}   // for `jvmSourcesJar` task
-//        build.dependsOn += jvmSourcesJar
-//    }
-//
-//    // make build configuration depend on sources jars
-//    def sources_jar_path = "${buildDir}/libs/${name}-jvm-${version}-sources.jar"
-//    if (name in include_sources_letsPlotJvmCommon) {
-//        rootProject.dependencies {
-//            letsPlotJvmCommonSources files(sources_jar_path)
-//        }
-//    }
-//    if (name in include_sources_letsPlotJvmJfx) {
-//        rootProject.dependencies {
-//            letsPlotJvmJfxSources files(sources_jar_path)
-//        }
-//    }
-//}
-
-
 // Bintray settings
 
 project.ext["bintraySettings"] = [
