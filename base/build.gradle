@@ -36,7 +36,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
-                api "com.google.code.gson:gson:$gson_version"
                 compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
                 compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
             }
