@@ -4,20 +4,16 @@
  */
 
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-    id 'groovy'   // add 'test' task
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
+    id "groovy"   // add 'test' task
 }
+
 
 kotlin {
     jvm()
     js() {
-        browser {}   // required for js tests running (?)
-        compileKotlinJs {
-            kotlinOptions.sourceMap = true
-            kotlinOptions.sourceMapEmbedSources = "always"
-//            kotlinOptions.moduleKind = "umd"
-        }
+        browser {}
     }
 
     sourceSets {

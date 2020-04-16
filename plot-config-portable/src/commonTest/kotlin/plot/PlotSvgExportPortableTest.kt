@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot
 
+import jetbrains.datalore.base.annotation.IgnoreJs
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.SvgUID
 import jetbrains.datalore.plot.testing.EXPECTED_BUNCH_SVG
@@ -22,6 +23,7 @@ internal class PlotSvgExportPortableTest {
     }
 
     @Test
+    @IgnoreJs
     fun svgFromSinglePlot() {
         val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
             plotSpec = rawSpec_SinglePlot(),
@@ -34,6 +36,7 @@ internal class PlotSvgExportPortableTest {
     }
 
     @Test
+    @IgnoreJs
     fun svgFromGGBunch() {
         val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
             plotSpec = rawSpec_GGBunch(),

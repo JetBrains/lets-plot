@@ -1,51 +1,15 @@
 buildscript {
     dependencies {
-        classpath("org.yaml:snakeyaml:1.25")
+        classpath "org.yaml:snakeyaml:1.25"
     }
 }
 
 plugins {
-    id 'kotlin-multiplatform' version '1.3.61' apply false
-//    id "org.jetbrains.kotlin.jvm" version "1.3.50" apply false
-    id 'org.jetbrains.gradle.plugin.idea-ext' version '0.5' apply false
-    // executing node scripts (adds support for Yarn. Also - NPM, Grunt and Gulp)
-    id 'com.moowork.node' version '1.3.1' apply false
-    id "com.jfrog.bintray" version '1.8.4' apply false
-    id 'com.github.johnrengelman.shadow' version '5.1.0' apply false
-}
-
-group 'org.jetbrains.lets-plot'
-version "1.3.2-SNAPSHOT"
-project.ext.js_artifact_version = "1.3.dev2"
-
-/*
- * Copyright (c) 2019. JetBrains s.r.o.
- * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
- */
-
-import org.yaml.snakeyaml.Yaml
-
-def build_settings_file = new File(rootDir, "build_settings.yml")
-if (!build_settings_file.canRead()) {
-    throw new GradleException("Couldn't read build_settings.yml")
-}
-def settings = new Yaml().load(build_settings_file.newInputStream())
-if (settings.build_python_extension) {
-    assert settings.python.include_path != null
-}
-if (settings.enable_python_package) {
-    assert settings.build_python_extension
-    assert settings.python.bin_path != null
-}
-
-settings.putIfAbsent("enable_livemap", false)
-
-project.ext.buildSettings = settings
-
-
-allprojects {
-//    println "--- project ---: $project.name $project.depth ${if(project.depth > 0) project.parent.rootDir else ''}"
-//    println "--- project ---: $project.name $project.rootDir"
+    id "org.jetbrains.kotlin.multiplatform" apply false
+    id "org.jetbrains.kotlin.js" apply false
+    id "org.jetbrains.gradle.plugin.idea-ext" apply false
+    id "com.jfrog.bintray" apply false
+    id "com.github.johnrengelman.shadow" apply false
 }
 
 def include_sources_letsPlotJvmCommon = [
@@ -85,38 +49,19 @@ configurations {
     letsPlotJvmBatikSources
 }
 
-subprojects {
-    group = rootProject.group
-    version = rootProject.version
+allprojects {
+    group = 'org.jetbrains.lets-plot'
+    version = "1.3.2-SNAPSHOT"
+    project.ext.js_artifact_version = "1.3.dev2"
 
     repositories {
         mavenCentral()
         jcenter()
     }
 
-    tasks.all {
-        if (name in ['compileKotlinJvm', 'compileTestKotlinJvm']) {
-            kotlinOptions.jvmTarget = "1.8"
-
-        }
-        if (name == 'jsJar') {
-            // add 'outgoing configuration'
-            configurations {
-                outputJsJar {
-                    canBeConsumed = true
-                    canBeResolved = false
-                }
-            }
-
-            artifacts {
-                outputJsJar(jsJar)
-            }
-        }
-    }
-
     // jar jvm sources of this project
     if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx || name in include_sources_letsPlotJvmBatik) {
-        apply plugin: 'kotlin-multiplatform'
+        apply plugin: "org.jetbrains.kotlin.multiplatform"
         kotlin.jvm {}   // for `jvmSourcesJar` task
         build.dependsOn += jvmSourcesJar
     }
@@ -139,6 +84,62 @@ subprojects {
         }
     }
 }
+
+import org.yaml.snakeyaml.Yaml
+
+def build_settings_file = new File(rootDir, "build_settings.yml")
+if (!build_settings_file.canRead()) {
+    throw new GradleException("Couldn't read build_settings.yml")
+}
+def settings = new Yaml().load(build_settings_file.newInputStream())
+if (settings.build_python_extension) {
+    assert settings.python.include_path != null
+}
+if (settings.enable_python_package) {
+    assert settings.build_python_extension
+    assert settings.python.bin_path != null
+}
+
+settings.putIfAbsent("enable_livemap", false)
+
+project.ext.buildSettings = settings
+
+//subprojects {
+//    group = rootProject.group
+//    version = rootProject.version
+//
+//    repositories {
+//        mavenCentral()
+//        jcenter()
+//    }
+//
+//    tasks.all {
+//        if (name in ['compileKotlinJvm', 'compileTestKotlinJvm']) {
+//            kotlinOptions.jvmTarget = "1.8"
+//
+//        }
+//    }
+//
+//    // jar jvm sources of this project
+//    if (name in include_sources_letsPlotJvmCommon || name in include_sources_letsPlotJvmJfx) {
+//        apply plugin: 'kotlin-multiplatform'
+//        kotlin.jvm {}   // for `jvmSourcesJar` task
+//        build.dependsOn += jvmSourcesJar
+//    }
+//
+//    // make build configuration depend on sources jars
+//    def sources_jar_path = "${buildDir}/libs/${name}-jvm-${version}-sources.jar"
+//    if (name in include_sources_letsPlotJvmCommon) {
+//        rootProject.dependencies {
+//            letsPlotJvmCommonSources files(sources_jar_path)
+//        }
+//    }
+//    if (name in include_sources_letsPlotJvmJfx) {
+//        rootProject.dependencies {
+//            letsPlotJvmJfxSources files(sources_jar_path)
+//        }
+//    }
+//}
 
 
 // Bintray settings

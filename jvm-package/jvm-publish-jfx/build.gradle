@@ -1,7 +1,7 @@
 plugins {
-    id 'kotlin-multiplatform'
-    id 'maven-publish'
-    id 'com.github.johnrengelman.shadow'
+    id "org.jetbrains.kotlin.multiplatform"
+    id "maven-publish"
+    id "com.github.johnrengelman.shadow"
     id "com.jfrog.bintray"
 }
 

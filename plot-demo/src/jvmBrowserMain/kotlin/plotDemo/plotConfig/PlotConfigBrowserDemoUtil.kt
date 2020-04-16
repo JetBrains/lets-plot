@@ -16,7 +16,7 @@ import java.io.StringWriter
 object PlotConfigBrowserDemoUtil {
     private const val DEMO_PROJECT = "plot-demo"
     private const val ROOT_ELEMENT_ID = "root"
-    private const val JS_DIST_PATH = "js-package/build/dist"
+    private const val JS_DIST_PATH = "js-package/build/distributions"
 
 
     fun show(

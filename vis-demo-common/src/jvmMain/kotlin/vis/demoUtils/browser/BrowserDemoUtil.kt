@@ -13,44 +13,9 @@ import java.io.FileWriter
 import java.io.StringWriter
 
 object BrowserDemoUtil {
-    val KOTLIN_LIBS = listOf(
-        "kotlin.js",
-        "kotlin-logging.js"
-    )
-
-    val BASE_MAPPER_LIBS = listOf(
-        "lets-plot-base-portable.js",          // base-portable
-        "lets-plot-base.js",                   // base
-        "mapper-core.js",
-        "vis-svg-portable.js",
-        "vis-svg-mapper.js"
-    )
-
-    val PLOT_LIBS = listOf(
-        "vis-canvas.js",     // required by plot-builder (get rid?)
-        "plot-common-portable.js",
-        "plot-common.js",
-        "plot-base-portable.js",
-        "plot-base.js",
-        "plot-builder-portable.js",
-        "plot-builder.js",
-        "kotlinx-io.js",
-        "kotlinx-coroutines-core.js",
-        "kotlinx-coroutines-io.js",
-        "ktor-ktor-utils.js",
-        "ktor-ktor-http.js",
-        "ktor-ktor-http-cio.js",
-        "ktor-ktor-client-core.js",
-        "gis.js",
-        "livemap.js",
-        "plot-config-portable.js",
-        "livemap-geom.js",
-        "plot-config.js"
-    )
-
     private const val ROOT_PROJECT = "lets-plot"
-    private const val JS_PATH = "js-package/build/js"
     private const val ROOT_ELEMENT_ID = "root"
+    private const val JS_DIST_PATH = "js-package/build/distributions"
 
     fun openInBrowser(demoProjectRelativePath: String, html: () -> String) {
         openInBrowser(demoProjectRelativePath, "index", ".html", html)
@@ -82,17 +47,21 @@ object BrowserDemoUtil {
         return projectRoot
     }
 
-    private fun projectJs(projectName: String) =
-        "${getRootPath()}/$projectName/build/classes/kotlin/js/main/$projectName.js"
+    private fun getPlotLibPath(): String {
+        val name = "lets-plot-latest.js"
+        return "${getRootPath()}/$JS_DIST_PATH/$name"
+    }
 
-    fun mapperDemoHtml(demoProject: String, callFun: String, libs: List<String>, title: String): String {
-        return mapperDemoHtml(demoProject, callFun, libs, null, title)
+    private fun projectJs(projectName: String) =
+        "${getRootPath()}/$projectName/build/distributions/$projectName.js"
+
+    fun mapperDemoHtml(demoProject: String, callFun: String, title: String): String {
+        return mapperDemoHtml(demoProject, callFun, null, title)
     }
 
     fun mapperDemoHtml(
         demoProject: String,
         callFun: String,
-        libs: List<String>,
         projectDeps: List<String>?,
         title: String
     ): String {
@@ -103,11 +72,10 @@ object BrowserDemoUtil {
                 title(title)
             }
             body {
-                for (lib in libs) {
-                    script {
-                        type = "text/javascript"
-                        src = "${getRootPath()}/$JS_PATH/$lib"
-                    }
+
+                script {
+                    type = "text/javascript"
+                    src = getPlotLibPath()
                 }
 
                 if (projectDeps != null) {

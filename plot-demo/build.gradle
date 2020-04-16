@@ -1,8 +1,8 @@
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
-//    id "com.moowork.node"
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
 }
+
 repositories {
     mavenCentral()
 }
@@ -12,29 +12,20 @@ repositories {
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-//node {
-//    version = '10.16.3'
-//    npmVersion = '6.9.0'
-//    download = true
-//}
-
-//repositories.whenObjectAdded {
-//    if (it instanceof IvyArtifactRepository) {
-//        metadataSources {
-//            artifact()
-//        }
-//    }
-//}
-
 kotlin {
     jvm()
     jvm("jvmBatik")
     jvm("jvmJfx")
     jvm("jvmBrowser")
-    js() {
-        compileKotlinJs {
-            kotlinOptions.sourceMap = true
-            kotlinOptions.sourceMapEmbedSources = "always"
+    js {
+        browser {
+            dceTask {
+                keep.addAll(
+                        "lets-plot-plot-demo.jetbrains.datalore.plotDemo.component.axisComponentDemo",
+                        "lets-plot-plot-demo.jetbrains.datalore.plotDemo.plotAssembler.linearRegressionDemo",
+                        "lets-plot-plot-demo.jetbrains.datalore.plotDemo.plotAssembler.loessRegressionDemo",
+                )
+            }
         }
     }
 

@@ -4,13 +4,14 @@
  */
 
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 kotlin {
     jvm()
     js () {
+        browser {}
         // browser {}
         // /\
         // ||

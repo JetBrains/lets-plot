@@ -4,8 +4,8 @@
  */
 
 plugins {
-    id 'kotlin-multiplatform'
-    id 'org.jetbrains.gradle.plugin.idea-ext'
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 repositories {
@@ -14,7 +14,9 @@ repositories {
 
 kotlin {
     jvm()
-    js()
+    js {
+        browser()
+    }
     
     sourceSets {
         commonMain {
