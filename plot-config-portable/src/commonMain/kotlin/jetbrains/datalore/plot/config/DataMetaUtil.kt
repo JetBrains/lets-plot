@@ -122,7 +122,6 @@ object DataMetaUtil {
         return Pair(
             ownMappings + ownDiscreteMappings.mapValues { (_, varName) ->
                 require(varName is String)
-                require(!isDiscrete(varName)) { "Already encoded discrete mapping: $varName" }
                 toDiscrete(varName)
             },
             combinedDfVars
