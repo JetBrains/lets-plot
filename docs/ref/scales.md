@@ -362,7 +362,7 @@ Position scales for date/time data. Automatically set when one of the variables 
  ggplot(data)+geom_line(aes(x='days',y='val'))+\
          scale_x_datetime()`
          
-![](assets/scale_all_datetime_1.png)
+![](assets/scale_x_datetime_1.png)
          
 `N = 1000
  seconds = [datetime(2017, 4,1, 12,int(s / 60), s % 60, tzinfo=timezone.utc).timestamp()*1000 for s in range(N)]
@@ -370,7 +370,7 @@ Position scales for date/time data. Automatically set when one of the variables 
  ggplot(data)+geom_line(aes(x='seconds',y='val'))+\
          scale_x_datetime('Time (min)')`    
 
-![](assets/scale_all_datetime_2.png)
+![](assets/scale_x_datetime_2.png)
 
 ###`scale_x_discrete(), scale_y_discrete()` 
 
