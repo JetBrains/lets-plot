@@ -44,7 +44,11 @@ def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
 
             if isinstance(variable, MappingMeta):
                 mapping[aesthetic] = variable.variable
-                mapping_meta.append({ 'aes': aesthetic, 'annotation': variable.annotation})
+                mapping_meta.append({
+                    'aes': aesthetic,
+                    'annotation': variable.annotation,
+                    'parameters': variable.parameters
+                })
             else:
                 mapping[aesthetic] = variable
 

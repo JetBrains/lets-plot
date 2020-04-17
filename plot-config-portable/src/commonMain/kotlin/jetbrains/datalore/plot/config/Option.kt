@@ -43,7 +43,9 @@ object Option {
             const val TAG = "mapping_annotation"
             const val AES = "aes"
             const val ANNOTATION = "annotation"
-            const val DISCRETE = "as_discrete"
+            const val AS_DISCRETE = "as_discrete"
+            const val PARAMETERS = "parameters"
+            const val LABEL = "label"
         }
     }
 

@@ -49,7 +49,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         layerOptions: Map<*, *>,
         sharedData: DataFrame?,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<String>,
+        plotDiscreteAes: Set<*>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig {
 

@@ -25,7 +25,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         layerOptions: Map<*, *>,
         sharedData: DataFrame?,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<String>,
+        plotDiscreteAes: Set<*>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig {
 

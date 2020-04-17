@@ -3,7 +3,7 @@
 
 
 class MappingMeta:
-    def __init__(self, variable, annotation):
+    def __init__(self, variable, annotation, **parameters):
         if variable is None:
             raise ValueError("variable can't be none")
 
@@ -12,9 +12,10 @@ class MappingMeta:
 
         self.variable = variable
         self.annotation = annotation
+        self.parameters = parameters
 
 
-def as_discrete(variable):
+def as_discrete(variable, label=None):
     """
     Marks a numeric variable as categorical.
 
@@ -22,6 +23,9 @@ def as_discrete(variable):
     ----------
     variable : string
         The name of the variable
+
+    label : string
+        The name of the scale - used as the axis label or the legend title
 
     Returns
     -------
@@ -44,6 +48,7 @@ def as_discrete(variable):
     >>> ggplot(df, aes(x='x', y='y')) + geom_point(aes(color=pm.as_discrete('a')), size=9)
     """
     if isinstance(variable, str):
-        return MappingMeta(variable, 'as_discrete')
+        label = variable if label is None else label
+        return MappingMeta(variable, 'as_discrete', label=label)
     # aes(x=as_discrete([1, 2, 3])) - pass as is
     return variable

@@ -640,7 +640,140 @@ class AsDiscreteTest {
             .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(1.0, 2.0, 3.0))
     }
+
+    @Test
+    fun `label ggplot() + geom_point(color=as_discrete('cyl', label='clndr'))`() {
+        val spec = """
+            |{
+            |  "data": $data,
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y",
+            |    "color": "cyl"
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "mapping": {
+            |        "color": "cyl"
+            |      },
+            |      "data_meta": {
+            |        "mapping_annotation": [
+            |          {
+            |            "aes": "color",
+            |            "annotation": "as_discrete",
+            |            "parameters": {
+            |               "label": "clndr"
+            |            }
+            |          }
+            |        ]
+            |      }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        toClientPlotConfig(spec)
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "clndr")
+            .assertVariable(toDiscrete("cyl"), isDiscrete = true)
+    }
+
+    @Test
+    fun `label ggplot(color=as_discrete('cyl', label='ndr')) + geom_point(color=as_discrete('cyl', label='clndr'))`() {
+        val spec = """
+            |{
+            |  "data": $data,
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y",
+            |    "color": "cyl"
+            |  },
+            |  "data_meta": {
+            |    "mapping_annotation": [
+            |      {
+            |        "aes": "color",
+            |        "annotation": "as_discrete",
+            |        "parameters": {
+            |           "label": "ndr"
+            |        }
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "mapping": {
+            |        "color": "cyl"
+            |      },
+            |      "data_meta": {
+            |        "mapping_annotation": [
+            |          {
+            |            "aes": "color",
+            |            "annotation": "as_discrete",
+            |            "parameters": {
+            |               "label": "clndr"
+            |            }
+            |          }
+            |        ]
+            |      }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        toClientPlotConfig(spec)
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "clndr")
+            .assertVariable(toDiscrete("cyl"), isDiscrete = true)
+    }
+
+
+    @Test
+    fun `label ggplot(color=as_discrete('cyl', label='ndr')) + geom_point(color=as_discrete('cyl'))`() {
+        val spec = """
+            |{
+            |  "data": $data,
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y",
+            |    "color": "cyl"
+            |  },
+            |  "data_meta": {
+            |    "mapping_annotation": [
+            |      {
+            |        "aes": "color",
+            |        "annotation": "as_discrete",
+            |        "parameters": {
+            |           "label": "ndr"
+            |        }
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "mapping": {
+            |        "color": "cyl"
+            |      },
+            |      "data_meta": {
+            |        "mapping_annotation": [
+            |          {
+            |            "aes": "color",
+            |            "annotation": "as_discrete"
+            |          }
+            |        ]
+            |      }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        toClientPlotConfig(spec)
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "ndr")
+            .assertVariable(toDiscrete("cyl"), isDiscrete = true)
+    }
 }
+
+
 
 private fun PlotConfigClientSide.assertValue(variable: String, values: List<*>): PlotConfigClientSide {
     val data = layerConfigs.single().combinedData
@@ -665,11 +798,13 @@ private fun PlotConfigClientSide.assertVariable(
 private fun PlotConfigClientSide.assertScale(
     aes: Aes<*>,
     isDiscrete: Boolean,
+    name: String? = null,
     msg: () -> String = { "" }
 ): PlotConfigClientSide {
     val layer = layerConfigs.single()
     val binding = layer.varBindings.firstOrNull { it.aes == aes } ?: fail("$aes not found. ${msg()}")
     assertEquals(!isDiscrete, binding.scale!!.isContinuous)
+    name?.let { assertEquals(it, binding.scale!!.name)}
     return this
 }
 

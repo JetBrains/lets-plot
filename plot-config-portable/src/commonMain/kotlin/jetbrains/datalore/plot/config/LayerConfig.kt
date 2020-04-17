@@ -30,7 +30,7 @@ class LayerConfig(
     layerOptions: Map<*, *>,
     sharedData: DataFrame,
     plotMappings: Map<*, *>,
-    plotDiscreteAes: Set<String>,
+    plotDiscreteAes: Set<*>,
     val geomProto: GeomProto,
     statProto: StatProto,
     scaleProviderByAes: TypedScaleProviderMap,

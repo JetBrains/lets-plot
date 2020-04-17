@@ -10,7 +10,12 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.createVariable
 import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation
-import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.DISCRETE
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AES
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ANNOTATION
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AS_DISCRETE
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.LABEL
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.PARAMETERS
+import jetbrains.datalore.plot.config.Option.Scale
 
 object DataMetaUtil {
     private const val prefix = "@as_discrete@"
@@ -27,42 +32,45 @@ object DataMetaUtil {
         return variable.removePrefix(prefix)
     }
 
-    /**
-    @returns Map<aes, annotation>
-     */
-    private fun getAesMappingAnnotations(options: Map<*, *>): Map<String, String> {
-        return options
-            .getMaps(MappingAnnotation.TAG)
-            ?.associate { it.read(MappingAnnotation.AES) as String to it.read(MappingAnnotation.ANNOTATION) as String }
-            ?: emptyMap()
+    private fun Map<*, *>.getMappingAnnotationsSpec(annotation: String): List<Map<*, *>> {
+        return this
+            .getMap(Option.Meta.DATA_META)
+            ?.getMaps(MappingAnnotation.TAG)
+            ?.filter { it.read(ANNOTATION) == annotation}
+            ?: emptyList()
     }
+
 
     /**
     @returns Set<aes> of discrete aes
      */
-    fun getAsDiscreteAesSet(options: Map<*, *>): Set<String> {
-        return getAesMappingAnnotations(options).filterValues(DISCRETE::equals).keys
+    fun getAsDiscreteAesSet(options: Map<*, *>): Set<Any> {
+        return options
+            .getMaps(MappingAnnotation.TAG)
+            ?.associate { it.read(AES)!! to it.read(ANNOTATION)!! }
+            ?.filterValues(AS_DISCRETE::equals)
+            ?.keys
+            ?: emptySet()
     }
 
-    fun createScaleSpecs(plotOptions: Map<String, Any>): List<MutableMap<String, Any>> {
-        val plotDiscreteAes = plotOptions
-            .getMap(Option.Meta.DATA_META)
-            ?.let(DataMetaUtil::getAsDiscreteAesSet)
-            ?: emptySet<String>()
+    fun createScaleSpecs(plotOptions: Map<String, Any>): List<MutableMap<String, Any?>> {
+        val plotDiscreteAnnotations = plotOptions.getMappingAnnotationsSpec(AS_DISCRETE)
 
-        val layersDiscreteAes = plotOptions
-            .getMaps(Option.Plot.LAYERS)?.asSequence()
-            ?.mapNotNull { it.getMap(Option.Meta.DATA_META) }
-            ?.map(DataMetaUtil::getAsDiscreteAesSet) // diascrete aes from all layers
-            ?.flatten()?.toSet() // List<Set<aes>> -> Set<aes>
-            ?: emptySet<String>()
+        val layersDiscreteAnnotations = plotOptions
+            .getMaps(Option.Plot.LAYERS)
+            ?.map { layerOptions -> layerOptions.getMappingAnnotationsSpec(AS_DISCRETE) }
+            ?.flatten()
+            ?: emptyList()
 
-
-        return (plotDiscreteAes + layersDiscreteAes).map { aes ->
-            mutableMapOf<String, Any>(
-                Option.Scale.AES to aes,
-                Option.Scale.DISCRETE_DOMAIN to true
-            )
+        return (plotDiscreteAnnotations + layersDiscreteAnnotations)
+            .groupBy ({ it.read(AES)!! }) { it.read(PARAMETERS, LABEL) } // {aes: [labels]}
+            .mapValues { (_, labels) -> labels.findLast { it != null } } // {aes: last_not_null_label}
+            .map { (aes, label) ->
+                mutableMapOf<String, Any?>(
+                    Scale.AES to aes,
+                    Scale.DISCRETE_DOMAIN to true,
+                    Scale.NAME to label
+                )
         }
     }
 
@@ -72,7 +80,7 @@ object DataMetaUtil {
     fun createDataFrame(
         options: OptionsAccessor,
         commonData: DataFrame,
-        commonDiscreteAes: Set<String>,
+        commonDiscreteAes: Set<*>,
         commonMappings: Map<*, *>,
         isClientSide: Boolean
     ): Pair<Map<*, *>, DataFrame> {

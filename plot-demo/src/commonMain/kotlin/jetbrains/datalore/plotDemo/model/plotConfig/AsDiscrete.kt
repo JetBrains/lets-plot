@@ -54,7 +54,8 @@ class AsDiscrete : PlotConfigDemoBase() {
                 "mapping_annotation": [
                   {
                     "aes": "color",
-                    "annotation": "as_discrete"
+                    "annotation": "as_discrete",
+                    "parameters": {"label": "clr"}
                   }
                 ]
               },

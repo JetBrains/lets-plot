@@ -46,7 +46,7 @@ abstract class PlotConfig(
         val (plotMappings, plotData) = DataMetaUtil.createDataFrame(
             options = this,
             commonData = DataFrame.Builder.emptyFrame(),
-            commonDiscreteAes = emptySet(),
+            commonDiscreteAes = emptySet<Any>(),
             commonMappings = emptyMap<Any, Any>(),
             isClientSide = isClientSide
         )
@@ -124,7 +124,7 @@ abstract class PlotConfig(
         layerOptions: Map<*, *>,
         sharedData: DataFrame?,
         plotMappings: Map<*, *>,
-        plotDiscreteAes: Set<String>,
+        plotDiscreteAes: Set<*>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig
 
