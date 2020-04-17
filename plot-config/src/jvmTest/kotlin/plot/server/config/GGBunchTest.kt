@@ -61,7 +61,8 @@ class GGBunchTest {
             val plotSpec =
                 mutableMapOf(
                     Option.Meta.KIND to Option.Meta.Kind.PLOT,
-                    Option.Plot.LAYERS to listOf(geom)
+                    Option.Meta.KIND to Option.Meta.Kind.PLOT,
+                    Option.PlotBase.MAPPING to emptyMap<Any, Any>()
                 )
 
             itemsList.add(

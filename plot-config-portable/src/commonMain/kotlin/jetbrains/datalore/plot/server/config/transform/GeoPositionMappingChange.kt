@@ -16,9 +16,9 @@ import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
 import jetbrains.datalore.plot.config.Option.Meta.GeoReference
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
 import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.getMap
 import jetbrains.datalore.plot.config.has
 import jetbrains.datalore.plot.config.read
-import jetbrains.datalore.plot.config.section
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector
@@ -27,7 +27,7 @@ import jetbrains.datalore.plot.config.write
 class GeoPositionMappingChange : SpecChange {
 
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
-        val mapSpec = spec.section(GEO_POSITIONS)!!
+        val mapSpec = spec.getMap(GEO_POSITIONS)!!
         spec.read(MAP_DATA_META, GeoDataFrame.TAG, GEOMETRY)
             ?.let {it as String }
             ?.let { geometry ->

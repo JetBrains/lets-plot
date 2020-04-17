@@ -30,6 +30,7 @@ object ConfigUtil {
                 }
     }
 
+
     internal fun createDataFrame(rawData: Any?): DataFrame {
         val varNameMap = asVarNameMap(rawData)
         return updateDataFrame(DataFrame.Builder.emptyFrame(), varNameMap)
@@ -96,20 +97,18 @@ object ConfigUtil {
 
         val varNameMap = HashMap<String, List<*>>()
         if (data is Map<*, *>) {
-            val mapData = data as Map<*, *>?
-            for (k in mapData!!.keys) {
-                val v = mapData[k]
+            for (k in data.keys) {
+                val v = data[k]
                 if (v is List<*>) {
                     varNameMap[k.toString()] = v
                 }
             }
 
         } else if (data is List<*>) {
-            val list = data as List<*>?
             // check if this is a matrix - all elements are lists of the same size
             var matrix = true
             var rowSize = -1
-            for (row in list!!) {
+            for (row in data) {
                 if (row is List<*>) {
                     if (rowSize < 0 || row.size == rowSize) {
                         rowSize = row.size
@@ -121,9 +120,9 @@ object ConfigUtil {
             }
 
             if (matrix) {
-                val dummyNames = Dummies.dummyNames(list.size)
-                for (i in list.indices) {
-                    varNameMap[dummyNames[i]] = list[i] as List<*>
+                val dummyNames = Dummies.dummyNames(data.size)
+                for (i in data.indices) {
+                    varNameMap[dummyNames[i]] = data[i] as List<*>
                 }
             } else {
                 // simple data vector
@@ -140,30 +139,20 @@ object ConfigUtil {
     private fun updateDataFrame(df: DataFrame, data: Map<String, List<*>>): DataFrame {
         val dfVars = DataFrameUtil.variables(df)
         val b = df.builder()
-        for (varName in data.keys) {
-            val variable: DataFrame.Variable
-            if (dfVars.containsKey(varName)) {
-                variable = dfVars[varName]!!
-            } else {
-                variable = DataFrameUtil.createVariable(varName)
-            }
-
-            b.put(variable, toList(data[varName]!!))
+        for ((varName, values) in data) {
+            val variable = dfVars[varName] ?: DataFrameUtil.createVariable(varName)
+            b.put(variable, values)
         }
         return b.build()
     }
 
     private fun toList(o: Any): List<*> {
-        if (o is List<*>) {
-            return o
+        return when (o) {
+            is List<*> -> o
+            is Number -> listOf(o.toDouble())
+            is Iterable<*> -> throw IllegalArgumentException("Can't cast/transform to list: " + o::class.simpleName)
+            else -> listOf(o.toString())
         }
-        if (o is Number) {
-            return listOf(o.toDouble())
-        }
-        if (o is Iterable<*>) {
-            throw IllegalArgumentException("Can't cast/transform to list: " + o::class.simpleName)
-        }
-        return listOf(o.toString())
     }
 
     internal fun createAesMapping(data: DataFrame, mapping: Map<*, *>?): Map<Aes<*>, DataFrame.Variable> {

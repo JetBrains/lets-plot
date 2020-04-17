@@ -5,7 +5,7 @@
 from collections import Iterable
 from typing import Any, Tuple
 
-from lets_plot.mapping import VariableMeta
+from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes
 
 
@@ -35,21 +35,21 @@ def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
 
     # mapping
     mapping = {}
-    var_meta = []
+    mapping_meta = []
 
     if raw_mapping is not None:
-        for key, variable in raw_mapping.as_dict().items():
-            if key == 'name': # ignore FeatureSpec.name property
+        for aesthetic, variable in raw_mapping.as_dict().items():
+            if aesthetic == 'name': # ignore FeatureSpec.name property
                 continue
 
-            if isinstance(variable, VariableMeta):
-                mapping[key] = variable.name
-                var_meta.append({ 'variable': variable.name, 'annotation': variable.kind })
+            if isinstance(variable, MappingMeta):
+                mapping[aesthetic] = variable.variable
+                mapping_meta.append({ 'aes': aesthetic, 'annotation': variable.annotation})
             else:
-                mapping[key] = variable
+                mapping[aesthetic] = variable
 
-            if len(var_meta) > 0:
-                data_meta.update({ 'series_annotation': var_meta })
+            if len(mapping_meta) > 0:
+                data_meta.update({ 'mapping_annotation': mapping_meta })
 
     return data, aes(**mapping), {'data_meta': data_meta }
 

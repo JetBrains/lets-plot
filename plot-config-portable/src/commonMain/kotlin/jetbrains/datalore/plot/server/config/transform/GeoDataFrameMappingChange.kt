@@ -25,7 +25,7 @@ class GeoDataFrameMappingChange : SpecChange {
 
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         val geometryColumnName = spec.read(DATA_META, GeoDataFrame.TAG, GEOMETRY) as String
-        val geometries = spec.list(DATA, geometryColumnName)!!
+        val geometries = spec.getList(DATA, geometryColumnName)!!
         val keys = geometries.indices.map(Int::toString)
 
         spec.remove(DATA, geometryColumnName)

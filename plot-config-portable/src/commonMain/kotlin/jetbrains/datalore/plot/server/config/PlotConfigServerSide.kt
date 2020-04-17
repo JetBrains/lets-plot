@@ -24,7 +24,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
     override fun createLayerConfig(
         layerOptions: Map<*, *>,
         sharedData: DataFrame?,
-        plotMapping: Map<*, *>,
+        plotMappings: Map<*, *>,
+        plotDiscreteAes: Set<String>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig {
 
@@ -33,7 +34,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         return LayerConfig(
             layerOptions,
             sharedData!!,
-            plotMapping,
+            plotMappings,
+            plotDiscreteAes,
             GeomProto(geomKind),
             StatProto(),
             scaleProviderByAes,

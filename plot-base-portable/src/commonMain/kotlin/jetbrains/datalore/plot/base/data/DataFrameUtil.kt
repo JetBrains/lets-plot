@@ -95,43 +95,31 @@ object DataFrameUtil {
         return LinkedHashSet(data[variable])
     }
 
-    fun hasValues(data: DataFrame, `var`: DataFrame.Variable): Boolean {
-        return data.has(`var`) && !data[`var`].isEmpty()
-    }
-
-    fun valuesOrNull(data: DataFrame, `var`: DataFrame.Variable): List<*>? {
-        return if (data.has(`var`)) {
-            data[`var`]
-        } else null
-    }
-
     fun sortedCopy(variables: Iterable<DataFrame.Variable>): List<DataFrame.Variable> {
         val ordering = Ordering.from(Comparator<DataFrame.Variable> { o1, o2 -> o1.name.compareTo(o2.name) })
         return ordering.sortedCopy(variables)
     }
 
     fun variables(df: DataFrame): Map<String, DataFrame.Variable> {
-        val vars = HashMap<String, DataFrame.Variable>()
-        for (`var` in df.variables()) {
-            vars[`var`.name] = `var`
-        }
-        return vars
+        return df.variables().associateBy { it.name }
     }
 
     fun appendReplace(df0: DataFrame, df1: DataFrame): DataFrame {
-        val df0Vars = variables(df0)
-
-        val builder = df0.builder()
-        for (df1Var in df1.variables()) {
-            var resultVar = df1Var
-            if (df0Vars.containsKey(df1Var.name)) {
-                val df0Var = df0Vars[df1Var.name]!!
-                builder.remove(df0Var)
-                resultVar = df0Var
+        fun DataFrame.Builder.put(destVars: Collection<DataFrame.Variable>, df: DataFrame) = apply {
+            destVars.forEach { destVar ->
+                val srcVar = findVariableOrFail(df, destVar.name)
+                when (df.isNumeric(srcVar)) {
+                    true -> putNumeric(destVar, df.getNumeric(srcVar))
+                    false -> putDiscrete(destVar, df[srcVar])
+                }
             }
-            builder.put(resultVar, df1[df1Var])
         }
-        return builder.build()
+
+        return DataFrame.Builder()
+            .put(df0.variables().filter { it.name !in variables(df1) }, df0) // df0 - df1, keep vars from df0
+            .put(df0.variables().filter { it.name in variables(df1) }, df1)  // df0 & df1, keep vars from df0
+            .put(df1.variables().filter { it.name !in variables(df0) }, df1) // df1 - df0, new vars from df1
+            .build()
     }
 
     fun toMap(df: DataFrame): Map<String, List<*>> {
@@ -155,16 +143,12 @@ object DataFrameUtil {
 
     @JvmOverloads
     fun createVariable(name: String, label: String = name): DataFrame.Variable {
-        val variable: DataFrame.Variable
-        when {
-            TransformVar.isTransformVar(name) -> variable = TransformVar[name]
-            Stats.isStatVar(name) -> variable = Stats.statVar(name)
-            Dummies.isDummyVar(name) -> return Dummies.newDummy(
-                name
-            )
-            else -> variable = DataFrame.Variable(name, DataFrame.Variable.Source.ORIGIN, label)
+        return when {
+            TransformVar.isTransformVar(name) -> TransformVar[name]
+            Stats.isStatVar(name) -> Stats.statVar(name)
+            Dummies.isDummyVar(name) -> Dummies.newDummy(name)
+            else -> DataFrame.Variable(name, DataFrame.Variable.Source.ORIGIN, label)
         }
-        return variable
     }
 
     fun getSummaryText(df: DataFrame): String {

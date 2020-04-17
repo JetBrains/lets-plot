@@ -39,11 +39,11 @@ object Option {
             const val OSM_ID = "id"
         }
 
-        object SeriesAnnotation {
-            const val TAG = "series_annotation"
-            const val VARIABLE = "variable"
+        object MappingAnnotation {
+            const val TAG = "mapping_annotation"
+            const val AES = "aes"
             const val ANNOTATION = "annotation"
-            const val DISCRETE = "discrete"
+            const val DISCRETE = "as_discrete"
         }
     }
 
@@ -211,16 +211,13 @@ object Option {
 
     object Mapping {
         const val GROUP = "group"
-        val MAP_ID =
-            toOption(Aes.MAP_ID)    // map_id is 'aes' but also used as option in geom_map()
+        val MAP_ID = toOption(Aes.MAP_ID)    // map_id is 'aes' but also used as option in geom_map()
         private val AES_BY_OPTION = HashMap<String, Aes<*>>()
         val REAL_AES_OPTION_NAMES: Iterable<String> = AES_BY_OPTION.keys
 
         init {
-            for (aes in Aes.values()) {
-                AES_BY_OPTION[toOption(
-                    aes
-                )] = aes
+            Aes.values().forEach { aes ->
+                AES_BY_OPTION[toOption(aes)] = aes
             }
             // aliases
             AES_BY_OPTION["colour"] = Aes.COLOR

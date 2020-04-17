@@ -48,7 +48,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
     override fun createLayerConfig(
         layerOptions: Map<*, *>,
         sharedData: DataFrame?,
-        plotMapping: Map<*, *>,
+        plotMappings: Map<*, *>,
+        plotDiscreteAes: Set<String>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig {
 
@@ -57,7 +58,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         return LayerConfig(
             layerOptions,
             sharedData!!,
-            plotMapping,
+            plotMappings,
+            plotDiscreteAes,
             GeomProtoClientSide(geomKind),
             StatProto(),
             scaleProviderByAes, true
