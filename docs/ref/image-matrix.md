@@ -25,7 +25,7 @@ X.fill(img)
 
 `gg_image_matrix(X)`
 
-![](/assets/docs/ggplot/imagematrix_1.png)
+![](assets/imagematrix_1.png)
 
 Change image sizes
 
@@ -36,4 +36,4 @@ Change image sizes
  
 `gg_image_matrix(X)`
 
-![](/assets/docs/ggplot/imagematrix_2.png)
+![](assets/imagematrix_2.png)

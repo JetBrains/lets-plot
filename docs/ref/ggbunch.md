@@ -35,7 +35,7 @@ Display plots within the `bunch` object in a grid.
  bunch.add_plot(path_map + theme(legend_position='none'), 0, 200)
  bunch.show()`
  
-![](/assets/docs/ggplot/ggbunch_1.png)
+![](assets/ggbunch_1.png)
  
  `survived_by_port = ggplot(titanic_df) \
           + geom_bar(aes('embarked', fill='survived'), position='dodge') \
@@ -44,4 +44,4 @@ Display plots within the `bunch` object in a grid.
   bunch.add_plot(survived_by_port, 600, 200, 380, 250)
   bunch.show()`
   
-![](/assets/docs/ggplot/ggbunch_2.png)
+![](assets/ggbunch_2.png)

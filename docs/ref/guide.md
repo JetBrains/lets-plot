@@ -24,19 +24,19 @@ mpg.head()`
 `p = ggplot(mpg, aes(x='displ', y='hwy')) + geom_point(aes(color='manufacturer'), size=5) 
  p`
  
-![](/assets/docs/ggplot/guide_legend_1.png)
+![](assets/guide_legend_1.png)
 
 `p + scale_color_discrete(guide=guide_legend(ncol=2))`
 
-![](/assets/docs/ggplot/guide_legend_2.png)
+![](assets/guide_legend_2.png)
 
 `p + scale_color_discrete(guide=guide_legend(ncol=2, byrow=True))`
 
-![](/assets/docs/ggplot/guide_legend_3.png)
+![](assets/guide_legend_3.png)
 
 `p + scale_color_discrete(guide=guide_legend(nrow=5)) + theme(legend_position='bottom')`
 
-![](/assets/docs/ggplot/guide_legend_4.png)
+![](assets/guide_legend_4.png)
 
 
 ### `guide_colorbar()`
@@ -67,20 +67,20 @@ Color bar is available with scale_fill and scale_color.
  p += geom_polygon(aes(fill='val', group='id'))
  p` 
  
-![](/assets/docs/ggplot/guide_colorbar_1.png)
+![](assets/guide_colorbar_1.png)
 
 `p + scale_fill_continuous(guide='legend')`
 
-![](/assets/docs/ggplot/guide_colorbar_2.png)
+![](assets/guide_colorbar_2.png)
  
 `p + scale_fill_continuous(guide=guide_colorbar(nbin=6))`
 
-![](/assets/docs/ggplot/guide_colorbar_3.png)
+![](assets/guide_colorbar_3.png)
 
 `p + scale_fill_continuous(guide=guide_colorbar(barheight=300))`
 
-![](/assets/docs/ggplot/guide_colorbar_4.png)
+![](assets/guide_colorbar_4.png)
 
 `p + scale_fill_continuous(guide=guide_colorbar(barheight=300, barwidth=10))`
 
-![](/assets/docs/ggplot/guide_colorbar_5.png)
+![](assets/guide_colorbar_5.png)

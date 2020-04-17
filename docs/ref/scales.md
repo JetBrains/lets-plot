@@ -158,11 +158,11 @@ Smooth gradient between two colors for fill/color aesthetic. Use `scale_*_gradie
  
 `p + scale_fill_gradient(low='blue', high='red')` 
 
-![](/assets/docs/ggplot/scale_fill_gradient_1.png)
+![](assets/scale_fill_gradient_1.png)
 
 `p + scale_fill_gradient2(low='blue', mid='white', high='red', midpoint=7)`
 
-![](/assets/docs/ggplot/scale_fill_gradient_2.png)
+![](assets/scale_fill_gradient_2.png)
 
 ### scale_*_brewer()
 
@@ -203,19 +203,19 @@ Sequential, diverging and qualitative color scales from colorbrewer.org for fill
 
 `p + scale_fill_brewer()`
 
-![](/assets/docs/ggplot/scale_fill_brewer_1.png)
+![](assets/scale_fill_brewer_1.png)
  
 `p + scale_fill_brewer(direction=-1)`
 
-![](/assets/docs/ggplot/scale_fill_brewer_2.png)
+![](assets/scale_fill_brewer_2.png)
 
 `p + scale_fill_brewer(type='div')`
 
-![](/assets/docs/ggplot/scale_fill_brewer_3.png)
+![](assets/scale_fill_brewer_3.png)
 
 `p + scale_fill_brewer(type='qual', palette='Paired')`  
 
-![](/assets/docs/ggplot/scale_fill_brewer_4.png)
+![](assets/scale_fill_brewer_4.png)
 
 ### scale_*_hue
 
@@ -249,11 +249,11 @@ Qualitative color scale with evenly spaced hues for color/fill aesthetic
  
 `p + scale_fill_hue()` 
 
-![](/assets/docs/ggplot/scale_fill_hue_1.png)
+![](assets/scale_fill_hue_1.png)
 
 `p + scale_fill_hue(c=20)`
 
-![](/assets/docs/ggplot/scale_fill_hue_2.png)
+![](assets/scale_fill_hue_2.png)
 
 ### scale_*_grey()
 
@@ -285,11 +285,11 @@ Sequential grey color scale for color/fill aesthetic
 
 `p + scale_fill_grey()` 
 
-![](/assets/docs/ggplot/scale_fill_grey_1.png)
+![](assets/scale_fill_grey_1.png)
  
 `p + scale_fill_grey(start=100, end=0)`
 
-![](/assets/docs/ggplot/scale_fill_grey_2.png)
+![](assets/scale_fill_grey_2.png)
 
 # X/Y location scales
 
@@ -329,11 +329,11 @@ Position scales for continuous data (x & y). For logarithmical data, adjusts axe
 
 `p + scale_y_log10()` 
 
-![](/assets/docs/ggplot/scale_all_log10_1.png)
+![](assets/scale_all_log10_1.png)
 
 `p + scale_y_log10() + scale_x_log10()`
 
-![](/assets/docs/ggplot/scale_all_log10_2.png)
+![](assets/scale_all_log10_2.png)
 
 ### `scale_x_datetime(),scale_y_datetime`
 
@@ -362,7 +362,7 @@ Position scales for date/time data. Automatically set when one of the variables 
  ggplot(data)+geom_line(aes(x='days',y='val'))+\
          scale_x_datetime()`
          
-![](/assets/docs/ggplot/scale_all_datetime_1.png)
+![](assets/scale_all_datetime_1.png)
          
 `N = 1000
  seconds = [datetime(2017, 4,1, 12,int(s / 60), s % 60, tzinfo=timezone.utc).timestamp()*1000 for s in range(N)]
@@ -370,7 +370,7 @@ Position scales for date/time data. Automatically set when one of the variables 
  ggplot(data)+geom_line(aes(x='seconds',y='val'))+\
          scale_x_datetime('Time (min)')`    
 
-![](/assets/docs/ggplot/scale_all_datetime_2.png)
+![](assets/scale_all_datetime_2.png)
 
 ###`scale_x_discrete(), scale_y_discrete()` 
 
@@ -472,7 +472,7 @@ p += geom_line(size=0.1)
 p += scale_shape(solid=True)
 p`
 
-![](/assets/docs/ggplot/scale_shape.png)
+![](assets/scale_shape.png)
 
 # Limits
 
@@ -501,17 +501,17 @@ Continuous data
 `p = ggplot(data) + geom_point(color='light_blue', size=10)
  p + scale_x_continuous(limits=[-100, 100])`
  
-![](/assets/docs/ggplot/scale_lims_1.png)
+![](assets/scale_lims_1.png)
  
 `p + scale_x_continuous(limits=[-10, 10], expand=[0, 10]) + geom_vline(aes(xintercept=[-10, 10]))`
 
-![](/assets/docs/ggplot/scale_lims_2.png)
+![](assets/scale_lims_2.png)
 
 `p + xlim(-10, 10) + ylim(6, 12)` 
 or
 `p + lims([-10, 10], [6, 12])` 
 
-![](/assets/docs/ggplot/scale_lims_3.png)
+![](assets/scale_lims_3.png)
 
 
 Discrete data 
