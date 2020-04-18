@@ -75,11 +75,6 @@ task jarLetsPlotJvmBatikClasses(type: ShadowJar) {
     // exclude something java (?)
     exclude 'java_cup/**/*'     // Construction of Useful Parsers and is an LALR parser generator for Java.
     exclude 'javax/**/*'
-
-//    relocate 'com', 'shade.com'
-//    relocate 'org', 'shade.org'
-//    relocate 'kotlin', 'shade.kotlin'
-//    relocate 'mu', 'shade.mu'
 }
 
 task jarLetsPlotJvmBatikSources(type: ShadowJar) {

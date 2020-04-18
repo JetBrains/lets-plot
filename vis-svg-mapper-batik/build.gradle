@@ -11,20 +11,7 @@ plugins {
 rootProject.ext {
     batikGroupId = "org.apache.xmlgraphics"
     batikArtifacts = [
-            "batik-anim",
-            "batik-awt-util",
-            "batik-bridge",
             "batik-codec",
-            "batik-css",
-            "batik-dom",
-            "batik-ext",
-            "batik-gvt",
-            "batik-parser",
-            "batik-script",
-            "batik-svg-dom",
-            "batik-swing",
-            "batik-util",
-            "batik-xml"
     ]
 }
 
