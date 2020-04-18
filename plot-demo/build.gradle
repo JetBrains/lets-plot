@@ -3,9 +3,6 @@ plugins {
     id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
-repositories {
-    mavenCentral()
-}
 
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
