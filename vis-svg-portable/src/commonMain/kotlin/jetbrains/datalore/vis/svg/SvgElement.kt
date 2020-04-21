@@ -144,7 +144,7 @@ abstract class SvgElement : SvgNode() {
     }
 
     override fun toString(): String {
-        return "<" + elementName + " " + myAttributes.toSvgString() + "/>"
+        return "<$elementName ${myAttributes.toSvgString()}></$elementName>"
     }
 
     private inner class AttributeMap {
