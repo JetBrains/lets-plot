@@ -39,8 +39,11 @@ kotlin {
                 keep.addAll(
                         "lets-plot-js-package.buildPlotFromRawSpecs",
                         "lets-plot-js-package.buildPlotFromProcessedSpecs",
-                        "ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io",
                 )
+
+                if (project.buildSettings.enable_livemap) {
+                    keep.addAll("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
+                }
             }
         }
     }
