@@ -97,7 +97,7 @@ object PlotResizeDemoUtil {
     ) {
         val plot = demo.createPlot(plotSizeProp)
 
-        val component = MonolithicAwt.buildPlotSvgComponent(
+        val component = MonolithicAwt.buildPlotComponent(
             plot,
             factory::createSvgComponent,
             factory.createPlotEdtExecutor()

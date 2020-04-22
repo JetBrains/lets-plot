@@ -61,7 +61,7 @@ object PlotHtmlExport {
             val attributes = ArrayList<String>()
             attributes.add("src='about:blank'")
             attributes.add("style='border:none !important;'")
-            val preferredSize = preferredPlotSize(plotSpec, plotSize)
+            val preferredSize = preferredPlotSizeFromRawSpec(plotSpec, plotSize)
             if (preferredSize != null) {
                 attributes.add("width='${round(preferredSize.x + 0.5).toInt()}'")
                 attributes.add("height='${round(preferredSize.y + 0.5).toInt()}'")
@@ -83,13 +83,13 @@ object PlotHtmlExport {
             .replace("\"", "&quot;")
     }
 
-    private fun preferredPlotSize(
+    private fun preferredPlotSizeFromRawSpec(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?
     ): DoubleVector? {
         try {
             @Suppress("NAME_SHADOWING")
-            val plotSpec = MonolithicCommon.processSpecs(plotSpec, frontendOnly = false)
+            val plotSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
             if (PlotConfig.isFailure(plotSpec)) {
                 return null
             }

@@ -30,7 +30,7 @@ object MonolithicCommon {
         computationMessagesHandler: ((List<String>) -> Unit)
     ): List<String> {
         @Suppress("NAME_SHADOWING")
-        val plotSpec = processSpecs(plotSpec, frontendOnly = false)
+        val plotSpec = processRawSpecs(plotSpec, frontendOnly = false)
         val buildResult = buildPlotsFromProcessedSpecs(plotSpec, plotSize)
         if (buildResult.isError) {
             val errorMessage = (buildResult as PlotsBuildResult.Error).error
@@ -158,8 +158,12 @@ object MonolithicCommon {
 //        throw IllegalStateException()   // Huh?
     }
 
+    /**
+     * Applies all transformations to plot specifications.
+     * @param plotSpec: raw specifications of a single plot or GGBunch
+     */
     @Suppress("DuplicatedCode")
-    internal fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
+    fun processRawSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             return plotSpec

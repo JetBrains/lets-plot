@@ -34,7 +34,7 @@ abstract class AwtPlotFactory(
 
     abstract fun buildPlotComponent(
         plotBuildInfo: MonolithicCommon.PlotBuildInfo
-    ) : JComponent
+    ): JComponent
 
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
@@ -42,9 +42,23 @@ abstract class AwtPlotFactory(
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
         return try {
-
             @Suppress("NAME_SHADOWING")
             val plotSpec = processSpecs(plotSpec, frontendOnly = false)
+            buildPlotFromProcessedSpecs(
+                plotSpec, plotSize, computationMessagesHandler
+            )
+        } catch (e: RuntimeException) {
+            handleException(e)
+        }
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun buildPlotFromProcessedSpecs(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector?,
+        computationMessagesHandler: ((List<String>) -> Unit)
+    ): JComponent {
+        return try {
             val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, plotSize)
             if (buildResult.isError) {
                 val errorMessage = (buildResult as MonolithicCommon.PlotsBuildResult.Error).error
@@ -62,11 +76,7 @@ abstract class AwtPlotFactory(
             return buildGGBunchComponent(success.buildInfos)
 
         } catch (e: RuntimeException) {
-            val failureInfo = FailureHandler.failureInfo(e)
-            if (failureInfo.isInternalError) {
-                LOG.error(e) {}
-            }
-            createErrorLabel(failureInfo.message)
+            handleException(e)
         }
     }
 
@@ -132,6 +142,14 @@ abstract class AwtPlotFactory(
         bunchComponent.minimumSize = bunchDimensions
         bunchComponent.maximumSize = bunchDimensions
         return bunchComponent
+    }
+
+    private fun handleException(e: RuntimeException): JComponent {
+        val failureInfo = FailureHandler.failureInfo(e)
+        if (failureInfo.isInternalError) {
+            LOG.error(e) {}
+        }
+        return createErrorLabel(failureInfo.message)
     }
 
     private fun createErrorLabel(s: String): JComponent {

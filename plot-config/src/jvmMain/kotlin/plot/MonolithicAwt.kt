@@ -24,7 +24,18 @@ object MonolithicAwt {
             .buildPlotFromRawSpecs(plotSpec, plotSize, computationMessagesHandler)
     }
 
-    fun buildPlotSvgComponent(
+    fun buildPlotFromProcessedSpecs(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector?,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+        executor: (() -> Unit) -> Unit,
+        computationMessagesHandler: ((List<String>) -> Unit)
+    ): JComponent {
+        return createPlotFactory(svgComponentFactory, executor)
+            .buildPlotFromProcessedSpecs(plotSpec, plotSize, computationMessagesHandler)
+    }
+
+    fun buildPlotComponent(
         plotContainer: PlotContainer,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit

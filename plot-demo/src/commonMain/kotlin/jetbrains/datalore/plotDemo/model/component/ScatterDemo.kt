@@ -218,6 +218,7 @@ open class ScatterDemo : SimpleDemoBase() {
         // see 'OutputColors'
         var scaleColor = Scales.continuousDomain("C", Aes.COLOR)
         run {
+            @Suppress("UNCHECKED_CAST")
             val rawC = data.getNumeric(varC) as List<Double>
             val minC = Ordering.natural<Double>().min(rawC)
             val maxC = Ordering.natural<Double>().max(rawC)

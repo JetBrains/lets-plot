@@ -11,8 +11,9 @@ import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.OptionsAccessor
+import jetbrains.datalore.plot.config.PlotConfig
 
-internal object PlotSizeHelper {
+object PlotSizeHelper {
     private const val ASPECT_RATIO = 3.0 / 2.0   // TODO: theme
     private const val DEF_PLOT_WIDTH = 500.0
     private const val DEF_LIVE_MAP_WIDTH = 800.0
@@ -104,5 +105,24 @@ internal object PlotSizeHelper {
                 acc.union(bounds)
             }
             .dimension
+    }
+
+    /**
+     * @param figureFpec Plot or plot bunch specification (can be 'raw' or processed).
+     * @return Figure dimatsions width/height ratio.
+     */
+    fun figureAspectRatio(figureFpec: Map<String, Any>): Double {
+        return when {
+            PlotConfig.isPlotSpec(figureFpec) -> {
+                // single plot
+                getSizeOptionOrNull(figureFpec)?.let { it.x / it.y } ?: ASPECT_RATIO
+            }
+            PlotConfig.isGGBunchSpec(figureFpec) -> {
+                // bunch
+                val bunchSize = plotBunchSize(bunchItemBoundsList(figureFpec))
+                bunchSize.x / bunchSize.y
+            }
+            else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(figureFpec))
+        }
     }
 }
