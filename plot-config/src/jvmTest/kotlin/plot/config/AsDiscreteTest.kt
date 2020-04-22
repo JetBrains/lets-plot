@@ -866,7 +866,7 @@ private fun buildSpecWithOverriding(
             |  "kind": "plot",
             |  ${"\"data\": {%s},".let { formatSpec(data, PLOT, it) } ?: ""}
             |  "splitter_qwe": "qwe",
-            |  ${"\"data_meta\": {\"mapping_annotation\": [%s]},".let { formatSpec(annotation, PLOT, it) } ?: ""}
+            |  ${"\"data_meta\": {\"mapping_annotations\": [%s]},".let { formatSpec(annotation, PLOT, it) } ?: ""}
             |  "delimiter_asd": "asd",
             |  ${"\"mapping\": {%s},".let { formatSpec(mapping, PLOT, it) } ?: ""}
             |  "delimiter_zxc": "zxc",
@@ -875,7 +875,7 @@ private fun buildSpecWithOverriding(
             |       "geom": "$geom",
             |       ${"\"data\": {%s},".let { formatSpec(data, LAYER, it) } ?: ""}
             |       "splitter_qwe": "qwe",
-            |       ${"\"data_meta\": {\"mapping_annotation\": [%s]},".let { formatSpec(annotation, LAYER, it) } ?: ""}
+            |       ${"\"data_meta\": {\"mapping_annotations\": [%s]},".let { formatSpec(annotation, LAYER, it) } ?: ""}
             |       "delimiter_asd": "asd",
             |       ${"\"mapping\": {%s},".let { formatSpec(mapping, LAYER, it) } ?: ""}
             |       "delimiter_zxc": "zxc"
