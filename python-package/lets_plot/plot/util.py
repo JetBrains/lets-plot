@@ -53,7 +53,7 @@ def as_annotated_data(raw_data: Any, raw_mapping: dict) -> Tuple:
                 mapping[aesthetic] = variable
 
             if len(mapping_meta) > 0:
-                data_meta.update({ 'mapping_annotation': mapping_meta })
+                data_meta.update({ 'mapping_annotations': mapping_meta })
 
     return data, aes(**mapping), {'data_meta': data_meta }
 

@@ -50,7 +50,7 @@ class AsDiscreteTest {
         val mapping = "\"color\": \"g\""
         val annotation = """
             |"data_meta": {
-            |    "mapping_annotation": [
+            |    "mapping_annotations": [
             |        {
             |            "aes": "color",
             |            "annotation": "as_discrete"
@@ -205,7 +205,7 @@ class AsDiscreteTest {
             |        "group": "g"
             |      },
             |      "data_meta": {
-            |        "mapping_annotation": [
+            |        "mapping_annotations": [
             |          {
             |            "aes": "color",
             |            "annotation": "as_discrete"
@@ -228,7 +228,7 @@ class AsDiscreteTest {
             |{
             |  "data": $data,
             |  "data_meta": {
-            |    "mapping_annotation": [
+            |    "mapping_annotations": [
             |      {
             |        "aes": "color",
             |        "annotation": "as_discrete"
@@ -292,7 +292,7 @@ class AsDiscreteTest {
                 formatSpec(values, targetStorage) { """"mapping": {${it}}""" }
 
             fun formatAnnotationSpec(values: List<Pair<Storage, String>>, targetStorage: Storage): String? =
-                formatSpec(values, targetStorage) { """"data_meta": {"mapping_annotation": [$it]}""" }
+                formatSpec(values, targetStorage) { """"data_meta": {"mapping_annotations": [$it]}""" }
 
             val data = listOf(fooData to fooDataSpec, barData to barDataSpec)
             val mapping = listOf(fooMapping to fooMappingSpec, barMapping to barMappingSpec)
@@ -391,7 +391,7 @@ class AsDiscreteTest {
             |        "color": "g"
             |      },
             |      "data_meta": {
-            |        "mapping_annotation": [
+            |        "mapping_annotations": [
             |          {
             |            "aes": "color",
             |            "annotation": "as_discrete"
@@ -424,7 +424,7 @@ class AsDiscreteTest {
             |        "fill": "cyl"
             |      },
             |      "data_meta": {
-            |        "mapping_annotation": [
+            |        "mapping_annotations": [
             |          {
             |            "aes": "fill",
             |            "annotation": "as_discrete"
@@ -460,7 +460,7 @@ class AsDiscreteTest {
             |        "color": "cyl"
             |      },
             |      "data_meta": {
-            |        "mapping_annotation": [
+            |        "mapping_annotations": [
             |          {
             |            "aes": "color",
             |            "annotation": "as_discrete"
@@ -659,7 +659,7 @@ class AsDiscreteTest {
             |        "color": "cyl"
             |      },
             |      "data_meta": {
-            |        "mapping_annotation": [
+            |        "mapping_annotations": [
             |          {
             |            "aes": "color",
             |            "annotation": "as_discrete",
@@ -689,7 +689,7 @@ class AsDiscreteTest {
             |    "color": "cyl"
             |  },
             |  "data_meta": {
-            |    "mapping_annotation": [
+            |    "mapping_annotations": [
             |      {
             |        "aes": "color",
             |        "annotation": "as_discrete",
@@ -707,7 +707,7 @@ class AsDiscreteTest {
             |        "color": "cyl"
             |      },
             |      "data_meta": {
-            |        "mapping_annotation": [
+            |        "mapping_annotations": [
             |          {
             |            "aes": "color",
             |            "annotation": "as_discrete",
@@ -738,7 +738,7 @@ class AsDiscreteTest {
             |    "color": "cyl"
             |  },
             |  "data_meta": {
-            |    "mapping_annotation": [
+            |    "mapping_annotations": [
             |      {
             |        "aes": "color",
             |        "annotation": "as_discrete",
@@ -756,7 +756,7 @@ class AsDiscreteTest {
             |        "color": "cyl"
             |      },
             |      "data_meta": {
-            |        "mapping_annotation": [
+            |        "mapping_annotations": [
             |          {
             |            "aes": "color",
             |            "annotation": "as_discrete"
