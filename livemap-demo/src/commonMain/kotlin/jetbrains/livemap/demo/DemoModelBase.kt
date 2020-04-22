@@ -31,20 +31,12 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
     internal fun basicLiveMap(block: LiveMapBuilder.() -> Unit): LiveMapBuilder {
         return liveMapConfig {
             size = dimension
-
-            tileService = internalTiles()
-
-            geocodingService = liveMapGeocoding {
-                host = "geo.datalore.io"
-                port = null
-            }
-
-            interactive = true
+            tileService = Services.dataloreTiles()
+            geocodingService = Services.dataloreGeocoding()
+            mapLocationConsumer = { Clipboard.copy(LiveMapLocation.getLocationString(it)) }
 
             projection {
                 kind = ProjectionType.MERCATOR
-                loopX = true
-                loopY = false
             }
 
 //            params(
@@ -53,9 +45,7 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
 //                DevParams.PERF_STATS.key to true
 //            )
 
-            mapLocationConsumer = { Clipboard.copy(LiveMapLocation.getLocationString(it)) }
-        }
-            .apply(block)
+        }.apply(block)
     }
 
     abstract fun createLiveMapSpec(): LiveMapBuilder

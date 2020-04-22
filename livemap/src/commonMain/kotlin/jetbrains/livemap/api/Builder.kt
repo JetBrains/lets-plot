@@ -7,6 +7,7 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs.constant
+import jetbrains.datalore.base.async.Asyncs.failure
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.*
@@ -312,50 +313,9 @@ fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
     }
 }
 
-fun internalTiles(): TileService {
-    return liveMapTiles {
-            theme = TileService.Theme.COLOR
-            host = "10.0.0.127"
-            port = 3933
-        }
-}
-
 fun liveMapTiles(block: LiveMapTileServiceBuilder.() -> Unit) =
     LiveMapTileServiceBuilder().apply(block).build()
 
 fun liveMapGeocoding(block: LiveMapGeocodingServiceBuilder.() -> Unit): GeocodingService {
     return LiveMapGeocodingServiceBuilder().apply(block).build()
 }
-
-val dummyGeocodingService: GeocodingService = GeocodingService(
-    object : GeoTransport {
-        override fun send(request: GeoRequest): Async<GeoResponse> {
-            UNSUPPORTED("dummyGeocodingService.send")
-        }
-    }
-)
-
-val dummyTileService: TileService = object : TileService(DummySocketBuilder(), Theme.COLOR) {
-    override fun getTileData(bbox: Rect<LonLat>, zoom: Int): Async<List<TileLayer>> {
-        return constant(emptyList())
-    }
-}
-
-internal class DummySocketBuilder : SocketBuilder {
-    override fun build(handler: SocketHandler): Socket {
-        return object : Socket {
-            override fun connect() {
-                UNSUPPORTED("DummySocketBuilder.connect")
-            }
-
-            override fun close() {
-                UNSUPPORTED("DummySocketBuilder.close")
-            }
-
-            override fun send(msg: String) {
-                UNSUPPORTED("DummySocketBuilder.send")
-            }
-        }
-    }
-}
-

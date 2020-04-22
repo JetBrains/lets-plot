@@ -27,7 +27,7 @@ import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
 import jetbrains.livemap.LiveMapConstants.MIN_ZOOM
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.api.liveMapGeocoding
+import jetbrains.livemap.api.Services
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
 import jetbrains.livemap.config.DevParams.Companion.DEBUG_TILES
@@ -93,10 +93,7 @@ internal class LiveMapSpecBuilder {
         layersConfigurators.addAll(myLayers.mapIndexed(geomLayersProcessor::createConfigurator))
 
         return LiveMapSpec(
-            geocodingService = liveMapGeocoding {
-                host = "geo.datalore.io"
-                port = null
-            },
+            geocodingService = Services.bogusGeocoding(),
             size = mySize,
             isScaled = myLiveMapOptions.scaled,
             isInteractive = myLiveMapOptions.interactive,
