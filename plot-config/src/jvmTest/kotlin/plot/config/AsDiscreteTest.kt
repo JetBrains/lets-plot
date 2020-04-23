@@ -302,18 +302,13 @@ class AsDiscreteTest {
             |{
             |  "kind": "plot",
             |  ${formatDataSpec(data, PLOT)?.let { it + "," } ?: ""}
-            |  "splitter_qwe": "qwe",
             |  ${formatAnnotationSpec(annotation, PLOT)?.let { it + "," } ?: ""}
-            |  "delimiter_asd": "asd",
             |  ${formatMappingSpec(mapping, PLOT)?.let { it + "," } ?: ""}
-            |  "delimiter_zxc": "zxc",
             |  "layers": [
             |    {
             |       "geom": "$geom",
             |       ${formatDataSpec(data, LAYER)?.let { it + "," } ?: ""}
-            |       "splitter_qwe": "qwe",
             |       ${formatAnnotationSpec(annotation, LAYER)?.let { it + "," } ?: ""}
-            |       "delimiter_asd": "asd",
             |       ${formatMappingSpec(mapping, LAYER)?.let { it + "," } ?: ""}
             |       "delimiter_zxc": "zxc"
             |    }
@@ -865,18 +860,13 @@ private fun buildSpecWithOverriding(
             |{
             |  "kind": "plot",
             |  ${"\"data\": {%s},".let { formatSpec(data, PLOT, it) } ?: ""}
-            |  "splitter_qwe": "qwe",
             |  ${"\"data_meta\": {\"mapping_annotations\": [%s]},".let { formatSpec(annotation, PLOT, it) } ?: ""}
-            |  "delimiter_asd": "asd",
             |  ${"\"mapping\": {%s},".let { formatSpec(mapping, PLOT, it) } ?: ""}
-            |  "delimiter_zxc": "zxc",
             |  "layers": [
             |    {
             |       "geom": "$geom",
             |       ${"\"data\": {%s},".let { formatSpec(data, LAYER, it) } ?: ""}
-            |       "splitter_qwe": "qwe",
             |       ${"\"data_meta\": {\"mapping_annotations\": [%s]},".let { formatSpec(annotation, LAYER, it) } ?: ""}
-            |       "delimiter_asd": "asd",
             |       ${"\"mapping\": {%s},".let { formatSpec(mapping, LAYER, it) } ?: ""}
             |       "delimiter_zxc": "zxc"
             |    }
