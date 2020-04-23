@@ -9,6 +9,10 @@ import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Group
 import javafx.scene.Scene
+import javafx.scene.paint.Color.TRANSPARENT
+import javafx.scene.paint.Color.WHITE
+import jetbrains.datalore.base.event.MouseEventSpec
+import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.AwtPlotFactory
@@ -21,7 +25,10 @@ import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
+import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import java.awt.Rectangle
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import javax.swing.JComponent
 
 object MonolithicAwtLM {
@@ -53,6 +60,16 @@ object MonolithicAwtLM {
                 val plotContainer = PlotContainer(plot, plotBuildInfo.size)
                 val plotComponent = buildPlotComponent(plotContainer)
 
+                // Move tooltip when map moved
+                plotComponent.addMouseMotionListener(object : MouseAdapter() {
+                    override fun mouseDragged(e: MouseEvent) {
+                        super.mouseDragged(e)
+                        executor {
+                            plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
+                        }
+                    }
+                })
+
                 return if (plotContainer.liveMapFigures.isNotEmpty()) {
                     @Suppress("UNCHECKED_CAST")
                     buildPlotLiveMapComponent(
@@ -73,12 +90,17 @@ object MonolithicAwtLM {
         size: DoubleVector
     ): JComponent {
         plotComponent.bounds = Rectangle(0,0, size.x.toInt(), size.y.toInt())
-        val panel = JFXPanel()
+
+        val panel = JFXPanel().apply {
+            scene = Scene(Group(), WHITE)
+        }
+
+        (plotComponent as SceneMapperJfxPanel).sceneFillColor = TRANSPARENT
 
         panel.add(plotComponent)
 
         liveMapFigures.forEach { canvasFigure ->
-            val canvasBounds = canvasFigure .bounds().get()
+            val canvasBounds = canvasFigure.bounds().get()
             val rootGroup = Group()
 
             JFXPanel()

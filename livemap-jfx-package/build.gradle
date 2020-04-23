@@ -21,6 +21,7 @@ kotlin {
                 implementation project(':plot-config')
                 implementation project(':plot-livemap')
                 implementation project(':vis-svg-portable')
+                implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-canvas')
                 implementation project(':vis-demo-common-jfx')
             }
