@@ -19,6 +19,9 @@ except ImportError:
 __all__ = ['geom_livemap']
 
 
+_default_tile_provider = {}
+
+
 def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None, sampling=None, level=None,
                  interactive=None, location=None,
                  zoom=None, within=None, magnifier=None, clustering=None, scaled=None, labels=None, theme=None,
@@ -70,6 +73,11 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
     labels : True (default) or False, optional
         Enables a drawing labels on map.
     tiles: string or dict, optional
+        If str - template string for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
+        If dict - parameters for a datalore tile provider
+            'host': str - server url
+            'port': int - server port
+            'theme': str - tiles theme ('color', 'light', 'dark')
     theme : string, optional
         Theme for the map.
         There are:
@@ -120,8 +128,7 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
     if location is not None:
         location = _prepare_location(location)
 
-    if tiles is not None:
-        tiles = _prepare_tiles(tiles)
+    tiles = _prepare_tiles(tiles)
 
     _display_mode = 'display_mode'
 
@@ -150,17 +157,28 @@ class RegionKind(Enum):
 
 
 def _prepare_tiles(tiles: Union[str, dict]) -> Optional[dict]:
-    if tiles is None:
-        return None
-
     if isinstance(tiles, str):
         return {'raster': tiles}
 
     if isinstance(tiles, dict):
         return {'vector': tiles}
 
-    else:
-        raise ValueError('Wrong tiles type: ' + tiles.__str__())
+    if _default_tile_provider.get('kind', None) == 'zxy':
+        return {'raster': _default_tile_provider['url']}
+
+    if _default_tile_provider.get('kind', None) == 'datalore':
+        return {
+            'vector': {
+                'host': _default_tile_provider['url'],
+                'port': _default_tile_provider.get('port', None),
+                'theme': _default_tile_provider.get('theme', None)
+            }
+        }
+
+    if (tiles is not None):
+        raise ValueError("Unsupported 'tiles' parameter type: " + type(tiles))
+
+    raise ValueError('Unknown default tile provider: ' + str(_default_tile_provider.get('kind', None)))
 
 
 def _prepare_location(location: Union[str, List[float]]) -> Optional[dict]:

@@ -11,12 +11,14 @@ from ._version import __version__
 from .plot import *
 from ._global_settings import LetsPlotSettings
 from .frontend_context import *
+from .plot import geom_livemap_
 
 __all__ = (plot.__all__ +
            frontend_context.__all__ +
            ['LetsPlotSettings', 'LetsPlot'])
 
 from .frontend_context import _configuration as cfg
+
 
 class LetsPlot:
     @classmethod
@@ -44,3 +46,42 @@ class LetsPlot:
             raise ValueError("'offline' argument is not boolean: {}".format(type(offline)))
 
         cfg._setup_html_context(isolated_frame, offline)
+
+    @classmethod
+    def setup_tile_provider(cls, kind: str = None, url: str = None, port=None, theme: str =  None, token: str = None):
+        """
+        Configures tile provider, used by geom_livemap.
+
+        :param kind: str
+            'zxy' - simple raster tile provider.
+            'datalore' - vector tiles for datalore users
+
+        :param url: str
+            If kind is 'zxy': template  for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
+            If kind is 'datalore': address of the tile server
+
+        :param port: int
+            If kind is 'zxy': port is not user
+            If kind is 'datalore': port of the tile server
+
+        :param theme: str
+            If kind is 'zxy': theme is not used
+            If kind is 'datalore': tiles theme
+
+        :param token: str
+            If kind is 'zxy': token is not used
+            If kind is 'datalore': token is not used
+        """
+        assert isinstance(kind, (str, type(None))), "'kind' argument is not str: {}".format(type(kind))
+        assert isinstance(url, (str, type(None))), "'url' argument is not str: {}".format(type(url))
+        assert isinstance(port, (int, type(None))), "'port' argument is not int: {}".format(type(port))
+        assert isinstance(theme, (str, type(None))), "'theme' argument is not str: {}".format(type(theme))
+        assert isinstance(token, (str, type(None))), "'token' argument is not str: {}".format(type(token))
+
+        geom_livemap_._default_tile_provider = {
+            'kind': kind,
+            'url': url,
+            'port': port,
+            'theme': theme,
+            'token': token
+        }
