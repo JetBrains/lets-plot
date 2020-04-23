@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.vis.swing
 
+import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
 import java.awt.Color
@@ -19,7 +20,7 @@ import javax.swing.JPanel
 class BatikMapperComponent(
     svgRoot: SvgSvgElement,
     messageCallback: BatikMessageCallback
-) : JPanel() {
+) : JPanel(), Disposable {
 
     private val myHelper: BatikMapperComponentHelper
 
@@ -91,6 +92,10 @@ class BatikMapperComponent(
 
     override fun getPreferredSize(): Dimension {
         return myHelper.preferredSize
+    }
+
+    override fun dispose() {
+        myHelper.clear()
     }
 
     companion object {

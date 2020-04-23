@@ -102,7 +102,7 @@ object PlotHtmlExport {
                     PlotSizeHelper.singlePlotSize(plotSpec, plotSize, assembler.facets, assembler.containsLiveMap)
                 }
                 PlotConfig.isGGBunchSpec(plotSpec) -> {
-                    PlotSizeHelper.plotBunchSize(PlotSizeHelper.bunchItemBoundsList(plotSpec))
+                    PlotSizeHelper.plotBunchSize(plotSpec)
                 }
                 else -> null
             }

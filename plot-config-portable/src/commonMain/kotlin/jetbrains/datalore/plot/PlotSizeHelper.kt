@@ -22,7 +22,7 @@ object PlotSizeHelper {
 
 
     fun singlePlotSize(
-        plotSpec: Map<String, Any>,
+        plotSpec: Map<*, *>,
         plotSize: DoubleVector?,
         facets: PlotFacets,
         containsLiveMap: Boolean
@@ -39,7 +39,7 @@ object PlotSizeHelper {
         }
     }
 
-    internal fun bunchItemBoundsList(bunchSpec: Map<String, Any>): List<DoubleRectangle> {
+    private fun bunchItemBoundsList(bunchSpec: Map<*, *>): List<DoubleRectangle> {
         val bunchConfig = BunchConfig(bunchSpec)
         if (bunchConfig.bunchItems.isEmpty()) {
             throw IllegalArgumentException("No plots in the bunch")
@@ -85,7 +85,7 @@ object PlotSizeHelper {
         return plotSize
     }
 
-    private fun getSizeOptionOrNull(singlePlotSpec: Map<String, Any>): DoubleVector? {
+    private fun getSizeOptionOrNull(singlePlotSpec: Map<*, *>): DoubleVector? {
         if (!singlePlotSpec.containsKey(Option.Plot.SIZE)) {
             return null
         }
@@ -99,19 +99,11 @@ object PlotSizeHelper {
         return DoubleVector(width, height)
     }
 
-    fun plotBunchSize(bunchItemBoundsIterable: Iterable<DoubleRectangle>): DoubleVector {
-        return bunchItemBoundsIterable
-            .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
-                acc.union(bounds)
-            }
-            .dimension
-    }
-
     /**
      * @param figureFpec Plot or plot bunch specification (can be 'raw' or processed).
      * @return Figure dimatsions width/height ratio.
      */
-    fun figureAspectRatio(figureFpec: Map<String, Any>): Double {
+    fun figureAspectRatio(figureFpec: Map<*, *>): Double {
         return when {
             PlotConfig.isPlotSpec(figureFpec) -> {
                 // single plot
@@ -119,10 +111,25 @@ object PlotSizeHelper {
             }
             PlotConfig.isGGBunchSpec(figureFpec) -> {
                 // bunch
-                val bunchSize = plotBunchSize(bunchItemBoundsList(figureFpec))
+                val bunchSize = plotBunchSize(figureFpec)
                 bunchSize.x / bunchSize.y
             }
             else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(figureFpec))
         }
+    }
+
+    fun plotBunchSize(plotBunchFpec: Map<*, *>): DoubleVector {
+        require(PlotConfig.isGGBunchSpec(plotBunchFpec)) {
+            "Plot Bunch is expected but was kind: ${PlotConfig.specKind(plotBunchFpec)}"
+        }
+        return plotBunchSize(bunchItemBoundsList(plotBunchFpec))
+    }
+
+    private fun plotBunchSize(bunchItemBoundsIterable: Iterable<DoubleRectangle>): DoubleVector {
+        return bunchItemBoundsIterable
+            .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
+                acc.union(bounds)
+            }
+            .dimension
     }
 }

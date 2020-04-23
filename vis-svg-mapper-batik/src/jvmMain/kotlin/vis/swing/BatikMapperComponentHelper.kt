@@ -65,7 +65,7 @@ class BatikMapperComponentHelper private constructor(
         createGraphicsNode()
     }
 
-    private fun clear() {
+    internal fun clear() {
         if (mySvgRoot != null) {
             mySvgRoot = null
             myUserAgent.eventDispatcher.rootNode = null
