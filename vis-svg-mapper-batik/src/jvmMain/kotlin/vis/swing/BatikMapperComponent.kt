@@ -97,8 +97,6 @@ class BatikMapperComponent(
 
     override fun dispose() {
         require(!myIsDisposed) { "Alreadey disposed." }
-//        // ToDo: remove
-//        println("BatikMapperComponent#dispose()")
         myHelper.clear()
     }
 
