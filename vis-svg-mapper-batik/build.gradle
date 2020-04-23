@@ -27,6 +27,8 @@ kotlin {
                 implementation project(':base')
                 implementation project(':mapper-core')
                 implementation project(':vis-svg-portable')
+
+                implementation project(':test-common')
             }
         }
         jvmMain {
@@ -44,6 +46,8 @@ kotlin {
             dependencies {
                 implementation kotlin('test')
                 implementation kotlin('test-junit')
+
+                implementation project(':plot-config')
             }
         }
     }

@@ -36,7 +36,6 @@ kotlin {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
-                implementation project(':test-common')
             }
         }
         jvmMain {
@@ -57,6 +56,8 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation "org.mockito:mockito-core:$mockito_version"
                 implementation "org.assertj:assertj-core:$assertj_version"
+
+                implementation project(':test-common')
             }
         }
         jsMain {

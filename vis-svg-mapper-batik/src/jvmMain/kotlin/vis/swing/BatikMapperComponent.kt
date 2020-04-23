@@ -23,6 +23,7 @@ class BatikMapperComponent(
 ) : JPanel(), Disposable {
 
     private val myHelper: BatikMapperComponentHelper
+    private var myIsDisposed: Boolean = false
 
     init {
         isFocusable = true
@@ -95,6 +96,9 @@ class BatikMapperComponent(
     }
 
     override fun dispose() {
+        require(!myIsDisposed) { "Alreadey disposed." }
+//        // ToDo: remove
+//        println("BatikMapperComponent#dispose()")
         myHelper.clear()
     }
 
