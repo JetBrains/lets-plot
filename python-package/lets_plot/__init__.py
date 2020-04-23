@@ -11,6 +11,7 @@ from ._version import __version__
 from .plot import *
 from ._global_settings import LetsPlotSettings
 from .frontend_context import *
+# ToDo: do not import livemap here
 from .plot import geom_livemap_
 
 __all__ = (plot.__all__ +
@@ -78,6 +79,7 @@ class LetsPlot:
         assert isinstance(theme, (str, type(None))), "'theme' argument is not str: {}".format(type(theme))
         assert isinstance(token, (str, type(None))), "'token' argument is not str: {}".format(type(token))
 
+        # ToDo: don't do this. Instead set global values using LetsPlotSettings.apply
         geom_livemap_._default_tile_provider = {
             'kind': kind,
             'url': url,
