@@ -49,10 +49,21 @@ The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-
 <a name="Installation" id="inst"></a>
 ## Installation
 
+#### 1. For Linux and Mac users:
 To install the Lets-Plot library, run the following command:
 ```shell script
 pip install lets-plot
 ```
+#### 2. For Windows users:
+Install Anaconda3 (or Miniconda3), then install MinGW toolchain to Conda:
+```shell script
+conda install m2w64-toolchain
+```
+Install the Lets-Plot library:
+```shell script
+pip install lets-plot
+```
+
 <a name="Quick start with Jupyter" id="start"></a>
 ## Quick start with Jupyter
 
