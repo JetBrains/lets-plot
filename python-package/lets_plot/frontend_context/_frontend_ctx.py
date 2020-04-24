@@ -11,3 +11,6 @@ class FrontendContext:
 
     def as_str(self, plot_spec: Dict) -> str:
         pass
+
+    def show(self, plot_spec: Dict) -> str:
+        pass

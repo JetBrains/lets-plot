@@ -6,6 +6,8 @@ from typing import Dict, Any
 
 from ._frontend_ctx import FrontendContext
 from ._html_contexts import _create_html_frontend_context, _use_isolated_frame
+from ._json_contexts import _create_json_frontend_context, _is_Intellij_Python_Lets_Plot_Plugin
+from ._mime_types import TEXT_HTML, LETS_PLOT_JSON
 from .._global_settings import get_global_bool
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
@@ -15,7 +17,11 @@ __all__ = [
 ]
 
 _frontend_contexts: Dict[str, FrontendContext] = {}
-_default_mimetype = "text/html"  # Just HTML as yet
+
+_default_mimetype = TEXT_HTML
+if _is_Intellij_Python_Lets_Plot_Plugin():
+    _default_mimetype = LETS_PLOT_JSON
+    _frontend_contexts[LETS_PLOT_JSON] = _create_json_frontend_context()
 
 
 def _setup_html_context(isolated_frame: bool = None, offline: bool = None) -> None:
@@ -36,7 +42,7 @@ def _setup_html_context(isolated_frame: bool = None, offline: bool = None) -> No
     embed = offline if offline is not None else get_global_bool('offline')
     ctx = _create_html_frontend_context(isolated_frame, embed)
     ctx.configure(verbose=True)
-    _frontend_contexts['html'] = ctx
+    _frontend_contexts[TEXT_HTML] = ctx
 
 
 def load_lets_plot_js(embed: bool = None):
@@ -74,7 +80,7 @@ def _display_plot(plot_spec: Any):
     if not (isinstance(plot_spec, PlotSpec) or isinstance(plot_spec, GGBunch)):
         raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot_spec)))
 
-    if _default_mimetype == "text/html":
+    if _default_mimetype == TEXT_HTML:
         plot_html = _as_html(plot_spec.as_dict())
         try:
             from IPython.display import display_html
@@ -86,7 +92,11 @@ def _display_plot(plot_spec: Any):
         # ToDo: show HTML is brawser window
         return
 
-    # fallback plain text
+    if _default_mimetype == LETS_PLOT_JSON:
+        _frontend_contexts[LETS_PLOT_JSON].show(plot_spec.as_dict())
+        return
+
+        # fallback plain text
     print(plot_spec.as_dict())
 
 
@@ -96,7 +106,7 @@ def _as_html(plot_spec: Dict) -> str:
 
     :param plot_spec: dict
     """
-    if 'html' not in _frontend_contexts:
+    if TEXT_HTML not in _frontend_contexts:
         if _use_isolated_frame():
             # 'Isolated' HTML context can be setup lazily.
             _setup_html_context(isolated_frame=True, offline=False)
@@ -108,4 +118,4 @@ def _as_html(plot_spec: Dict) -> str:
                 </div>    
                 """
 
-    return _frontend_contexts['html'].as_str(plot_spec)
+    return _frontend_contexts[TEXT_HTML].as_str(plot_spec)
