@@ -6,6 +6,8 @@ from enum import Enum
 from typing import Union, Optional, List
 
 from .geom import _geom
+from .._global_settings import has_global_value, get_global_val
+from .._global_settings import TILE_PROVIDER_KIND, TILE_PROVIDER_URL, TILE_PROVIDER_PORT, TILE_PROVIDER_THEME, TILE_PROVIDER_TOKEN
 
 try:
     import pandas
@@ -17,9 +19,6 @@ except ImportError:
 # from ..geo_data.livemap_helper import _prepare_tiles
 
 __all__ = ['geom_livemap']
-
-
-_default_tile_provider = {}
 
 
 def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None, sampling=None, level=None,
@@ -163,22 +162,26 @@ def _prepare_tiles(tiles: Union[str, dict]) -> Optional[dict]:
     if isinstance(tiles, dict):
         return {'vector': tiles}
 
-    if _default_tile_provider.get('kind', None) == 'zxy':
-        return {'raster': _default_tile_provider['url']}
+    if has_global_value(TILE_PROVIDER_KIND):
+        if get_global_val(TILE_PROVIDER_KIND) == 'zxy':
+            return {'raster': get_global_val(TILE_PROVIDER_URL)}
 
-    if _default_tile_provider.get('kind', None) == 'datalore':
-        return {
-            'vector': {
-                'host': _default_tile_provider['url'],
-                'port': _default_tile_provider.get('port', None),
-                'theme': _default_tile_provider.get('theme', None)
+        if get_global_val(TILE_PROVIDER_KIND) == 'datalore':
+            return {
+                'vector': {
+                    'host': get_global_val(TILE_PROVIDER_URL) if has_global_value(TILE_PROVIDER_URL) else None,
+                    'port': get_global_val(TILE_PROVIDER_PORT) if has_global_value(TILE_PROVIDER_PORT) else None,
+                    'theme': get_global_val(TILE_PROVIDER_THEME) if has_global_value(TILE_PROVIDER_THEME) else None
+                }
             }
-        }
 
-    if (tiles is not None):
+    if tiles is not None:
         raise ValueError("Unsupported 'tiles' parameter type: " + type(tiles))
 
-    raise ValueError('Unknown default tile provider: ' + str(_default_tile_provider.get('kind', None)))
+    if has_global_value(TILE_PROVIDER_KIND):
+        raise ValueError('Unknown default tile provider: ' + str(get_global_val(TILE_PROVIDER_KIND)))
+
+    raise ValueError('Tile provider is not set.')
 
 
 def _prepare_location(location: Union[str, List[float]]) -> Optional[dict]:

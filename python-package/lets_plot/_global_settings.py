@@ -15,6 +15,12 @@ ENV_DEV_OFFLINE = 'LETS_PLOT_DEV_OFFLINE'  # bool
 
 HTML_ISOLATED_FRAME = 'html_isolated_frame'
 
+TILE_PROVIDER_KIND = 'tile_provider_kind'
+TILE_PROVIDER_URL = 'tile_provider_url'
+TILE_PROVIDER_PORT = 'tile_provider_port'
+TILE_PROVIDER_THEME = 'tile_provider_theme'
+TILE_PROVIDER_TOKEN = 'tile_provider_token'
+
 
 def _init_value(actual_name: str, def_val: Any) -> Any:
     env_val = _get_env_val(actual_name)
