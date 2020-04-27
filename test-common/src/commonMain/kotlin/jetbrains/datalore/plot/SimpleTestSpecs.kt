@@ -25,12 +25,16 @@ object SimpleTestSpecs {
         )
     }
 
-    fun simplePlot(geoms: List<Map<String, Any?>>): MutableMap<String, Any> {
-        return mutableMapOf(
+    fun simplePlot(geoms: List<Map<String, Any?>>?): MutableMap<String, Any> {
+        val specs: MutableMap<String, Any> = mutableMapOf(
             Meta.KIND to Kind.PLOT,
-            PlotBase.MAPPING to emptyMap<Any, Any>(),
-            Plot.LAYERS to geoms
+            PlotBase.MAPPING to emptyMap<Any, Any>()
         )
+
+        if (geoms != null) {
+            specs[Plot.LAYERS] = geoms
+        }
+        return specs
     }
 
     fun simpleBunch(geoms: List<Map<String, Any?>>): MutableMap<String, Any> {

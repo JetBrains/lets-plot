@@ -9,15 +9,17 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.plot.SimpleTestSpecs.simpleBunch
 import jetbrains.datalore.plot.SimpleTestSpecs.simplePlot
 import jetbrains.datalore.plot.SimpleTestSpecs.simplePointLayer
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.swing.BatikMapperComponent
-import jetbrains.datalore.vis.swing.BatikMessageCallback
+import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
+import jetbrains.datalore.vis.swing.runOnFxThread
 import javax.swing.JComponent
 import javax.swing.JLabel
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class BatikPlotComponentTest {
+// ToDo: Make same test for LiveMap
+class JfxPlotComponentTest {
     @Test
     internal fun isDisposable_singlePlot() {
         val plotSpec = simplePlot(listOf(simplePointLayer()))
@@ -42,23 +44,15 @@ class BatikPlotComponentTest {
     }
 
     companion object {
-        private val BATIK_MESSAGE_CALLBACK = object : BatikMessageCallback {
-            override fun handleMessage(message: String) {
-                throw RuntimeException("Unexpected Batik message: $message")
-            }
-
-            override fun handleException(e: Exception) {
-                throw RuntimeException("Unexpected Batik exception", e)
-            }
-        }
-
         private val COMPONENT_FACTORY = { svg: SvgSvgElement ->
-            BatikMapperComponent(svg, BATIK_MESSAGE_CALLBACK)
+            SceneMapperJfxPanel(
+                svg,
+                listOf(Style.JFX_PLOT_STYLESHEET)
+            )
         }
 
         private val AWT_EDT_EXECUTOR = { runnable: () -> Unit ->
-            // Just invoke in the current thread.
-            runnable.invoke()
+            runOnFxThread(runnable)
         }
 
         private fun buildPlotFromRawSpecs(plotSpec: MutableMap<String, Any>): JComponent {

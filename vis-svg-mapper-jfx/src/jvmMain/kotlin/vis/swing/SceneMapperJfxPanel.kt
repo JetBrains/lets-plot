@@ -8,6 +8,7 @@ package jetbrains.datalore.vis.swing
 import javafx.scene.Parent
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.Vector
+import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgElementListener
@@ -21,7 +22,9 @@ import java.awt.Dimension
 class SceneMapperJfxPanel(
     private val svg: SvgSvgElement,
     stylesheets: List<String>
-) : AbstractJfxPanel(stylesheets) {
+) : AbstractJfxPanel(stylesheets), Disposable {
+
+    private var myIsDisposed: Boolean = false
 
     init {
         runOnFxThread {
@@ -56,5 +59,10 @@ class SceneMapperJfxPanel(
 
     private fun getSvgIntSize(): Vector {
         return Vector(svg.width().get()!!.toInt(), svg.height().get()!!.toInt())
+    }
+
+    override fun dispose() {
+        require(!myIsDisposed) { "Alreadey disposed." }
+        // Need to dispose something?
     }
 }

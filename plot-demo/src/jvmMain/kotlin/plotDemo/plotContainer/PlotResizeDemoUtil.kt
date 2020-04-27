@@ -72,11 +72,12 @@ object PlotResizeDemoUtil {
                             plotSizeProp.set(newPlotSize)
                             if (!plotCreated) {
                                 plotCreated = true
-                                createPlot(
-                                    demoModel,
-                                    plotSizeProp,
-                                    container,
-                                    swingFactory
+                                container.add(
+                                    createPlot(
+                                        demoModel,
+                                        plotSizeProp,
+                                        swingFactory
+                                    )
                                 )
                             }
 
@@ -92,9 +93,8 @@ object PlotResizeDemoUtil {
     private fun createPlot(
         demo: BarPlotResizeDemo,
         plotSizeProp: ReadableProperty<DoubleVector>,
-        container: JComponent,
         factory: SwingDemoFactory
-    ) {
+    ): JComponent {
         val plot = demo.createPlot(plotSizeProp)
 
         val component = MonolithicAwt.buildPlotComponent(
@@ -104,6 +104,6 @@ object PlotResizeDemoUtil {
         )
 
         component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
-        container.add(component)
+        return component
     }
 }
