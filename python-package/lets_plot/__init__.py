@@ -10,6 +10,8 @@ __path__ = extend_path(__path__, __name__)
 
 from .plot import *
 from ._global_settings import _settings
+from .frontend_context import *
+from .settings_utils import *
 
 __all__ = (plot.__all__ +
            frontend_context.__all__ +
