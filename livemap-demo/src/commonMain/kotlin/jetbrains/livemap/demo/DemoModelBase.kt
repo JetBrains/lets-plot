@@ -9,10 +9,14 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.livemap.LiveMapLocation
-import jetbrains.livemap.api.*
+import jetbrains.livemap.api.LiveMapBuilder
+import jetbrains.livemap.api.Services
+import jetbrains.livemap.api.liveMapConfig
+import jetbrains.livemap.api.projection
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 import jetbrains.livemap.config.LiveMapFactory
 import jetbrains.livemap.core.projections.ProjectionType
+import jetbrains.livemap.tiles.TileSystemProvider.RasterTileSystemProvider
 import jetbrains.livemap.ui.Clipboard
 
 abstract class DemoModelBase(private val dimension: DoubleVector) {
@@ -30,9 +34,16 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
 
     internal fun basicLiveMap(block: LiveMapBuilder.() -> Unit): LiveMapBuilder {
         return liveMapConfig {
+            // raster tiles without geocoding
+            tileSystemProvider = RasterTileSystemProvider("https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png")
+            geocodingService = Services.bogusGeocodingService()
+
+            // vector tiles and geocoding
+            //tileSystemProvider = VectorTileSystemProvider(Services.devTileProvider())
+            //geocodingService = Services.devGeocodingService()
+
+
             size = dimension
-            tileService = Services.dataloreTiles()
-            geocodingService = Services.dataloreGeocoding()
             mapLocationConsumer = { Clipboard.copy(LiveMapLocation.getLocationString(it)) }
 
             projection {

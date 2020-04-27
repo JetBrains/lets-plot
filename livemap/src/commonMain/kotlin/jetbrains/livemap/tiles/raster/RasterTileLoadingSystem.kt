@@ -29,9 +29,10 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 
 class RasterTileLoadingSystem(
-    private val myTileTransport: HttpTileTransport,
     private val myRequestFormat: String,
-    componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
+    componentManager: EcsComponentManager
+) : AbstractSystem<LiveMapContext>(componentManager) {
+    private val myTileTransport: HttpTileTransport = HttpTileTransport()
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         getSingleton<RequestTilesComponent>().requestTiles.forEach { cellKey ->

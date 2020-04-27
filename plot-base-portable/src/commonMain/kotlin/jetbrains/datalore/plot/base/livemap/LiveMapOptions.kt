@@ -5,7 +5,8 @@
 
 package jetbrains.datalore.plot.base.livemap
 
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.*
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
+import jetbrains.datalore.plot.base.livemap.LivemapConstants.Projection
 
 class LiveMapOptions(
     val zoom: Int?,
@@ -21,6 +22,6 @@ class LiveMapOptions(
     val labels: Boolean,
     val projection: Projection,
     val geodesic: Boolean,
-    val tiles: Map<*, *>,
+    val tileProvider: Map<*, *>,
     val devParams: Map<*, *>
 )

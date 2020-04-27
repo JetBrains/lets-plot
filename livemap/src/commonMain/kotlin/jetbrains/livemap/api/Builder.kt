@@ -5,21 +5,16 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.Asyncs.constant
-import jetbrains.datalore.base.async.Asyncs.failure
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
-import jetbrains.gis.geoprotocol.*
-import jetbrains.gis.tileprotocol.TileLayer
+import jetbrains.gis.geoprotocol.FeatureLevel
+import jetbrains.gis.geoprotocol.GeoTransportImpl
+import jetbrains.gis.geoprotocol.GeocodingService
+import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
-import jetbrains.gis.tileprotocol.socket.Socket
-import jetbrains.gis.tileprotocol.socket.SocketBuilder
-import jetbrains.gis.tileprotocol.socket.SocketHandler
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
 import jetbrains.livemap.LayerProvider
 import jetbrains.livemap.LayerProvider.EmptyLayerProvider
@@ -30,7 +25,6 @@ import jetbrains.livemap.camera.CenterChangedComponent
 import jetbrains.livemap.camera.ZoomChangedComponent
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.LiveMapSpec
-import jetbrains.livemap.config.TileParameters
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -41,8 +35,7 @@ import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projection.MapProjection
 import jetbrains.livemap.rendering.LayerEntitiesComponent
-import jetbrains.livemap.tiles.TileLoadingSystemFactory
-import jetbrains.livemap.tiles.TileLoadingSystemFactory.Companion.createTileLoadingFactory
+import jetbrains.livemap.tiles.TileSystemProvider
 import kotlin.math.abs
 
 @DslMarker
@@ -52,7 +45,8 @@ annotation class LiveMapDsl
 class LiveMapBuilder {
     lateinit var size: DoubleVector
     lateinit var geocodingService: GeocodingService
-    lateinit var tileService: TileService
+    lateinit var tileSystemProvider: TileSystemProvider
+
     var layerProvider: LayerProvider = EmptyLayerProvider()
 
     var zoom: Int? = null
@@ -67,11 +61,6 @@ class LiveMapBuilder {
 
     var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit }
 
-    var tileLoadingSystemFactory: TileLoadingSystemFactory = createTileLoadingFactory(
-        tiles = TileParameters(emptyMap<Any, Any>()),
-        debug = false,
-        quant = 1000
-    )
 
     var devParams: DevParams =
         DevParams(HashMap<String, Any>())
@@ -95,7 +84,7 @@ class LiveMapBuilder {
 
             mapLocationConsumer = mapLocationConsumer,
 
-            tileLoadingSystemFactory = tileLoadingSystemFactory,
+            tileSystemProvider = tileSystemProvider,
 
             devParams = devParams,
 
@@ -238,24 +227,20 @@ class Projection {
 
 @LiveMapDsl
 class LiveMapTileServiceBuilder {
-    var host = "localhost"
-    var port: Int? = null
+    lateinit var url: String
     var theme = TileService.Theme.COLOR
 
     fun build(): TileService {
-        return TileService(TileWebSocketBuilder(host, port), theme)
+        return TileService(TileWebSocketBuilder(url), theme)
     }
 }
 
 @LiveMapDsl
 class LiveMapGeocodingServiceBuilder {
-    private val subUrl = "/map_data/geocoding"
-
-    var host = "localhost"
-    var port: Int? = null
+    lateinit var url: String
 
     fun build(): GeocodingService {
-        return GeocodingService(GeoTransportImpl(host, port, subUrl))
+        return GeocodingService(GeoTransportImpl(url))
     }
 }
 
@@ -313,7 +298,7 @@ fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
     }
 }
 
-fun liveMapTiles(block: LiveMapTileServiceBuilder.() -> Unit) =
+fun liveMapVectorTiles(block: LiveMapTileServiceBuilder.() -> Unit) =
     LiveMapTileServiceBuilder().apply(block).build()
 
 fun liveMapGeocoding(block: LiveMapGeocodingServiceBuilder.() -> Unit): GeocodingService {

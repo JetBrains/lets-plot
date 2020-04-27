@@ -22,7 +22,7 @@ import jetbrains.gis.tileprotocol.socket.SocketHandler
 
 object Services {
 
-    fun bogusGeocoding(): GeocodingService = GeocodingService(
+    fun bogusGeocodingService(): GeocodingService = GeocodingService(
         object : GeoTransport {
             override fun send(request: GeoRequest): Async<GeoResponse> {
                 return Asyncs.failure(RuntimeException("Geocoding is disabled."))
@@ -30,7 +30,7 @@ object Services {
         }
     )
 
-    fun bogusTiles(): TileService {
+    fun bogusTileProvider(): TileService {
         class DummySocketBuilder : SocketBuilder {
             override fun build(handler: SocketHandler): Socket {
                 return object : Socket {
@@ -48,17 +48,11 @@ object Services {
         }
     }
 
-
-    fun dataloreGeocoding() = liveMapGeocoding {
-        host = "geo.datalore.io"
-        port = null
+    fun devGeocodingService() = liveMapGeocoding {
+        url = "http://10.0.0.127:3020/map_data/geocoding"
     }
 
-    fun dataloreTiles(): TileService {
-        return liveMapTiles {
-            theme = TileService.Theme.COLOR
-            host = "10.0.0.127"
-            port = 3933
-        }
+    fun devTileProvider() = liveMapVectorTiles {
+        url = "ws://10.0.0.127:3933"
     }
 }

@@ -7,7 +7,10 @@ package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.api.*
+import jetbrains.livemap.api.LiveMapBuilder
+import jetbrains.livemap.api.layers
+import jetbrains.livemap.api.pie
+import jetbrains.livemap.api.pies
 import jetbrains.livemap.model.Cities
 import jetbrains.livemap.model.coord
 
@@ -19,7 +22,7 @@ class PiesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                 pies {
                     pie {
                         indices = listOf(0, 1, 2)
-                        mapId = "Sweden"
+                        coord(Cities.FRISCO)
                         radius = 20.0
                         values = listOf(-2.0, 5.0, 1.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)

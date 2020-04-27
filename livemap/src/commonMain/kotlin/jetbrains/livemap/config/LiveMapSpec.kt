@@ -13,7 +13,7 @@ import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.LayerProvider
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.core.projections.ProjectionType
-import jetbrains.livemap.tiles.TileLoadingSystemFactory
+import jetbrains.livemap.tiles.TileSystemProvider
 
 class LiveMapSpec(
     val geocodingService: GeocodingService,
@@ -34,6 +34,6 @@ class LiveMapSpec(
     val isLoopX: Boolean,
     val isLoopY: Boolean,
     val mapLocationConsumer: (DoubleRectangle) -> Unit,
-    val tileLoadingSystemFactory: TileLoadingSystemFactory,
+    val tileSystemProvider: TileSystemProvider,
     val devParams: DevParams
 )

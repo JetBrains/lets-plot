@@ -22,19 +22,21 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMAX
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.MapRegion
+import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.LayerProvider.LayerProviderImpl
 import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
 import jetbrains.livemap.LiveMapConstants.MIN_ZOOM
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.api.Services
+import jetbrains.livemap.api.liveMapVectorTiles
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
 import jetbrains.livemap.config.DevParams.Companion.DEBUG_TILES
 import jetbrains.livemap.config.LiveMapSpec
-import jetbrains.livemap.config.TileParameters
 import jetbrains.livemap.core.projections.ProjectionType
-import jetbrains.livemap.tiles.TileLoadingSystemFactory.Companion.createTileLoadingFactory
+import jetbrains.livemap.tiles.TileSystemProvider
+import jetbrains.livemap.tiles.TileSystemProvider.*
 
 
 internal class LiveMapSpecBuilder {
@@ -93,7 +95,7 @@ internal class LiveMapSpecBuilder {
         layersConfigurators.addAll(myLayers.mapIndexed(geomLayersProcessor::createConfigurator))
 
         return LiveMapSpec(
-            geocodingService = Services.bogusGeocoding(),
+            geocodingService = Services.bogusGeocodingService(),
             size = mySize,
             isScaled = myLiveMapOptions.scaled,
             isInteractive = myLiveMapOptions.interactive,
@@ -111,8 +113,8 @@ internal class LiveMapSpecBuilder {
             isLoopX = CYLINDRICAL_PROJECTIONS.contains(projectionType),
             isLoopY = DEFAULT_LOOP_Y,
             mapLocationConsumer = myMapLocationConsumer,
-            tileLoadingSystemFactory = createTileLoadingFactory(
-                TileParameters(myLiveMapOptions.tiles),
+            tileSystemProvider = createTileLoadingFactory(
+                myLiveMapOptions.tileProvider,
                 myDevParams.isSet(DEBUG_TILES),
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
             ),
@@ -127,6 +129,18 @@ internal class LiveMapSpecBuilder {
         private const val REGION_TYPE_IDS = "region_ids"
         private const val REGION_TYPE_COORDINATES = "coordinates"
         private const val REGION_TYPE_DATAFRAME = "data_frame"
+
+        object VectorTile {
+            const val KIND = "vector_livemap"
+            const val URL = "url"
+            const val THEME = "theme"
+        }
+
+        object RasterTile {
+            const val KIND = "raster_zxy"
+            const val URL = "url"
+        }
+
         private const val DEFAULT_SHOW_TILES = true
         private const val DEFAULT_LOOP_Y = false
         private val CYLINDRICAL_PROJECTIONS = setOf(
@@ -227,7 +241,7 @@ internal class LiveMapSpecBuilder {
                     val handlerMap = HashMap<String, (Any) -> MapRegion>()
                     handlerMap[REGION_TYPE_NAME] = { data -> MapRegion.withName(data as String) }
                     handlerMap[REGION_TYPE_IDS] = { getWithIdList(it) }
-                    handleRegionObject((region as Map<*, *>?)!!, handlerMap)
+                    handleRegionObject(region, handlerMap)
                 }
                 else -> throw IllegalArgumentException("Expected: parent" + " = [String]")
             }
@@ -242,7 +256,7 @@ internal class LiveMapSpecBuilder {
                     handlerMap[REGION_TYPE_IDS] = { data -> MapLocation.create(getWithIdList(data)) }
                     handlerMap[REGION_TYPE_COORDINATES] = { data -> MapLocation.create(calculateGeoRectangle(data as List<*>)) }
                     handlerMap[REGION_TYPE_DATAFRAME] = { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
-                    handleRegionObject((location as Map<*, *>?)!!, handlerMap)
+                    handleRegionObject(location, handlerMap)
                 }
                 else -> throw IllegalArgumentException("Expected: location" + " = [String|Array|DataFrame]")
             }
@@ -259,6 +273,29 @@ internal class LiveMapSpecBuilder {
             }
 
             throw IllegalArgumentException("Invalid map region type: $regionType")
+        }
+
+        fun createTileLoadingFactory(options: Map<*, *>, debug: Boolean, quant: Int): TileSystemProvider {
+            fun parseTheme(theme: String): TileService.Theme {
+                try {
+                    return TileService.Theme.valueOf(theme.toUpperCase())
+                } catch (ignored: Exception) {
+                    throw IllegalArgumentException("Unknown theme type: $theme")
+                }
+            }
+
+            return when {
+                debug -> EmptyTileSystemProvider()
+                options["kind"] == RasterTile.KIND -> RasterTileSystemProvider(options[RasterTile.URL] as String)
+                options["kind"] == VectorTile.KIND -> VectorTileSystemProvider(
+                    myQuantumIterations = quant,
+                    myTileService = liveMapVectorTiles {
+                        options[VectorTile.URL]?.let { url = it as String }
+                        options[VectorTile.THEME]?.let { theme = parseTheme(it as String) }
+                    }
+                )
+                else -> throw IllegalArgumentException("Unknown tile provider settings. Expected ['raster_zxy', 'vector_livemap'].")
+            }
         }
     }
 

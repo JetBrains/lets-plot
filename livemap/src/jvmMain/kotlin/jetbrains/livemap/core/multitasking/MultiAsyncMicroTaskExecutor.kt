@@ -21,30 +21,29 @@ class MultiAsyncMicroTaskExecutor internal constructor() : MicroTaskExecutor {
     override fun start() {}
 
     override fun updateAndGetFinished(tasks: MutableSet<MicroThreadComponent>): Set<MicroThreadComponent> {
-        val finishedTasks = HashSet<MicroThreadComponent>()
+        val finishedMicroThreads = HashSet<MicroThreadComponent>()
 
-        myRunningTasks.entries.removeIf {
-            if (it.value.isDone) {
-                finishedTasks.add(it.key)
-                return@removeIf true
+        myRunningTasks.entries.removeIf { (microThread, microTask) ->
+            when {
+                microTask.isDone -> true.also { finishedMicroThreads += microThread }
+                microThread !in tasks -> true.also { microTask.cancel() }
+                else -> false
             }
-
-            if (!tasks.contains(it.key)) {
-                it.value.cancel()
-                return@removeIf true
-            }
-
-            return@removeIf false
         }
 
         tasks.removeAll(myRunningTasks.keys)
-        tasks.forEach { microThreadComponent ->
-            val task = Task(microThreadComponent.microTask)
-            myExecutorService.submit(task)
-            myRunningTasks[microThreadComponent] = task
+
+        // On error LiveMapPresenter closed, controller finishing updates, triggering tasks update with closed ExecutorService
+        // ToDo: properly handle mid-update systems stop command (break updates cycle, or ignore in systems/controller)
+        if (!myExecutorService.isShutdown && !myExecutorService.isTerminated) {
+            tasks.forEach { microThreadComponent ->
+                val task = Task(microThreadComponent.microTask)
+                myExecutorService.submit(task)
+                myRunningTasks[microThreadComponent] = task
+            }
         }
 
-        return finishedTasks
+        return finishedMicroThreads
     }
 
     override fun stop() {

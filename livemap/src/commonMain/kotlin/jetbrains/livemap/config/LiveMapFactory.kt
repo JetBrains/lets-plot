@@ -46,7 +46,7 @@ class LiveMapFactory(
                 myMapProjection,
                 myViewport,
                 myLiveMapSpec.layerProvider,
-                myLiveMapSpec.tileLoadingSystemFactory,
+                myLiveMapSpec.tileSystemProvider,
                 newFragmentProvider(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
                 myLiveMapSpec.devParams,
                 myLiveMapSpec.mapLocationConsumer,

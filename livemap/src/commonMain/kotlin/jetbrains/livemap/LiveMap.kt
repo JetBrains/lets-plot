@@ -75,9 +75,10 @@ import jetbrains.livemap.searching.SEARCH_COMPONENTS
 import jetbrains.livemap.searching.SearchResult
 import jetbrains.livemap.services.FragmentProvider
 import jetbrains.livemap.services.GeocodingProvider
-import jetbrains.livemap.tiles.TileLoadingSystemFactory
 import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.tiles.TileRequestSystem
+import jetbrains.livemap.tiles.TileSystemProvider
+import jetbrains.livemap.tiles.TileSystemProvider.VectorTileSystemProvider
 import jetbrains.livemap.tiles.raster.RasterTileLayerComponent
 import jetbrains.livemap.tiles.vector.debug.DebugDataSystem
 import jetbrains.livemap.ui.LiveMapUiSystem
@@ -89,7 +90,7 @@ class LiveMap(
     private val myMapProjection: MapProjection,
     private val viewport: Viewport,
     private val myLayerProvider: LayerProvider,
-    private val myTileLoadingSystemBuilder: TileLoadingSystemFactory,
+    private val myTileSystemProvider: TileSystemProvider,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
@@ -241,7 +242,7 @@ class LiveMap(
 
                 CellStateUpdateSystem(componentManager),
                 TileRequestSystem(componentManager),
-                myTileLoadingSystemBuilder.build(componentManager),
+                myTileSystemProvider.create(componentManager),
 
                 TileRemovingSystem(myDevParams.read(TILE_CACHE_LIMIT), componentManager),
                 DebugDataSystem(componentManager),
@@ -316,7 +317,7 @@ class LiveMap(
             .createEntity("layers_order")
             .addComponents { + myLayerManager.createLayersOrderComponent() }
 
-        if (myTileLoadingSystemBuilder is TileLoadingSystemFactory.VectorTileLoadingSystemFactory) {
+        if (myTileSystemProvider is VectorTileSystemProvider) {
             componentManager
                 .createEntity("vector_layer_ground")
                 .addComponents {
@@ -342,7 +343,7 @@ class LiveMap(
             myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d
         )
 
-        if (myTileLoadingSystemBuilder is TileLoadingSystemFactory.VectorTileLoadingSystemFactory) {
+        if (myTileSystemProvider is VectorTileSystemProvider) {
             componentManager
                 .createEntity("vector_layer_labels")
                 .addComponents {
