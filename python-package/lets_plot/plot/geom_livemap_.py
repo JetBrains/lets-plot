@@ -7,7 +7,7 @@ from typing import Union, Optional, List
 
 from .geom import _geom
 from .._global_settings import has_global_value, get_global_val
-from .._global_settings import TILE_PROVIDER_KIND, TILE_PROVIDER_URL, TILE_PROVIDER_PORT, TILE_PROVIDER_THEME, TILE_PROVIDER_TOKEN
+from ..settings_utils import _TILE_PROVIDER_SETTINGS, raster_zxy_tiles
 
 try:
     import pandas
@@ -157,29 +157,19 @@ class RegionKind(Enum):
 
 def _prepare_tiles(tiles: Union[str, dict]) -> Optional[dict]:
     if isinstance(tiles, str):
-        return {'raster': tiles}
+        tiles = raster_zxy_tiles(tiles) # tiles is a dict now, take settings by _TILE_PROVIDER_SETTINGS key in a next step
 
     if isinstance(tiles, dict):
-        return {'vector': tiles}
-
-    if has_global_value(TILE_PROVIDER_KIND):
-        if get_global_val(TILE_PROVIDER_KIND) == 'zxy':
-            return {'raster': get_global_val(TILE_PROVIDER_URL)}
-
-        if get_global_val(TILE_PROVIDER_KIND) == 'datalore':
-            return {
-                'vector': {
-                    'host': get_global_val(TILE_PROVIDER_URL) if has_global_value(TILE_PROVIDER_URL) else None,
-                    'port': get_global_val(TILE_PROVIDER_PORT) if has_global_value(TILE_PROVIDER_PORT) else None,
-                    'theme': get_global_val(TILE_PROVIDER_THEME) if has_global_value(TILE_PROVIDER_THEME) else None
-                }
-            }
+        if _TILE_PROVIDER_SETTINGS in tiles:
+            # extract settings from functions like raster_zxy_tiles(url='...')
+            return tiles[_TILE_PROVIDER_SETTINGS]
+        return tiles # raw settings
 
     if tiles is not None:
         raise ValueError("Unsupported 'tiles' parameter type: " + type(tiles))
 
-    if has_global_value(TILE_PROVIDER_KIND):
-        raise ValueError('Unknown default tile provider: ' + str(get_global_val(TILE_PROVIDER_KIND)))
+    if has_global_value(_TILE_PROVIDER_SETTINGS):
+        return get_global_val(_TILE_PROVIDER_SETTINGS)
 
     raise ValueError('Tile provider is not set.')
 
