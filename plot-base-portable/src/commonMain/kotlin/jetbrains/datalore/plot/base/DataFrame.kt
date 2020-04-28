@@ -15,6 +15,7 @@ class DataFrame private constructor(builder: Builder) {
 
     // volatile variables (yet)
     private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
+    private val myDistinctValues = HashMap<Variable, Set<*>>()
 
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()
@@ -81,6 +82,11 @@ class DataFrame private constructor(builder: Builder) {
         assertNumeric(variable)
         @Suppress("UNCHECKED_CAST")
         return list as List<Double?>
+    }
+
+    fun distinctValues(variable: Variable): Collection<Any?> {
+        assertDefined(variable)
+        return myDistinctValues.getOrPut(variable) { LinkedHashSet(get(variable)) }
     }
 
     fun variables(): Set<Variable> {

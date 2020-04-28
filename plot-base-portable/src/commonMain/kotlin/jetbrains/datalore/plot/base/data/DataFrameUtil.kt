@@ -88,11 +88,8 @@ object DataFrameUtil {
         return data.isNumeric(findVariableOrFail(data, varName))
     }
 
-    /**
-     * ToDo: Cache in DataFrame (similar to 'factor')
-     */
     fun distinctValues(data: DataFrame, variable: DataFrame.Variable): Collection<Any?> {
-        return LinkedHashSet(data[variable])
+        return data.distinctValues(variable)
     }
 
     fun sortedCopy(variables: Iterable<DataFrame.Variable>): List<DataFrame.Variable> {
