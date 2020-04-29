@@ -1,12 +1,18 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-_TILE_PROVIDER_SETTINGS = 'tile_provider_settings'
+ENV_TILES_PROVIDER_KIND = 'tiles_kind'
+ENV_TILES_PROVIDER_URL = 'tiles_url'
+ENV_TILES_PROVIDER_THEME = 'tiles_theme'
 
-__all__ = ['vector_livemap_tiles', 'raster_zxy_tiles']
+
+_VECTOR_LETS_PLOT = 'vector_lets_plot'
+_RASTER_ZXY = 'raster_zxy'
+
+__all__ = ['tiles_provider_lets_plot', 'tiles_provider_zxy']
 
 
-def vector_livemap_tiles(url: str, theme: str = None) -> dict:
+def tiles_provider_lets_plot(url: str, theme: str = None) -> dict:
     """
     :param url: str
         If kind is 'datalore': address of the tile server
@@ -21,15 +27,13 @@ def vector_livemap_tiles(url: str, theme: str = None) -> dict:
     assert isinstance(theme, (str, type(None))), "'theme' argument is not str: {}".format(type(theme))
 
     return {
-        _TILE_PROVIDER_SETTINGS: {
-            'kind': 'vector_livemap',
-            'url': url,
-            'theme': theme
-        }
+        ENV_TILES_PROVIDER_KIND: _VECTOR_LETS_PLOT,
+        ENV_TILES_PROVIDER_URL: url,
+        ENV_TILES_PROVIDER_THEME: theme
     }
 
 
-def raster_zxy_tiles(url: str) -> dict:
+def tiles_provider_zxy(url: str) -> dict:
     """
     :param url:
             Template for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
@@ -39,8 +43,6 @@ def raster_zxy_tiles(url: str) -> dict:
     assert isinstance(url, (str, type(None))), "'url' argument is not str: {}".format(type(url))
 
     return {
-        _TILE_PROVIDER_SETTINGS: {
-            'kind': 'raster_zxy',
-            'url': url
-        }
+        ENV_TILES_PROVIDER_KIND: _RASTER_ZXY,
+        ENV_TILES_PROVIDER_URL: url
     }

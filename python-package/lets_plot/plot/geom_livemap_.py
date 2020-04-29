@@ -7,7 +7,7 @@ from typing import Union, Optional, List
 
 from .geom import _geom
 from .._global_settings import has_global_value, get_global_val
-from ..settings_utils import _TILE_PROVIDER_SETTINGS, raster_zxy_tiles
+from ..settings_utils import ENV_TILES_PROVIDER_KIND, ENV_TILES_PROVIDER_URL, ENV_TILES_PROVIDER_THEME, _RASTER_ZXY, _VECTOR_LETS_PLOT, tiles_provider_zxy
 
 try:
     import pandas
@@ -148,6 +148,11 @@ LOCATION_DATAFRAME_ERROR_MESSAGE = "Expected: location = DataFrame with [{}] or 
     .format(', '.join(LOCATION_COORDINATE_COLUMNS), ', '.join(LOCATION_RECTANGLE_COLUMNS))
 
 
+OPTIONS_TILES_PROVIDER_KIND = 'kind'
+OPTIONS_TILES_PROVIDER_URL = 'url'
+OPTIONS_TILES_PROVIDER_THEME = 'theme'
+
+
 class RegionKind(Enum):
     region_ids = 'region_ids'
     region_name = 'region_name'
@@ -157,19 +162,42 @@ class RegionKind(Enum):
 
 def _prepare_tiles(tiles: Union[str, dict]) -> Optional[dict]:
     if isinstance(tiles, str):
-        tiles = raster_zxy_tiles(tiles) # tiles is a dict now, take settings by _TILE_PROVIDER_SETTINGS key in a next step
+        return {
+            OPTIONS_TILES_PROVIDER_KIND: _RASTER_ZXY,
+            OPTIONS_TILES_PROVIDER_URL: tiles
+        }
 
     if isinstance(tiles, dict):
-        if _TILE_PROVIDER_SETTINGS in tiles:
-            # extract settings from functions like raster_zxy_tiles(url='...')
-            return tiles[_TILE_PROVIDER_SETTINGS]
-        return tiles # raw settings
+        if tiles.get(ENV_TILES_PROVIDER_KIND, None) == _RASTER_ZXY:
+            return {
+                OPTIONS_TILES_PROVIDER_KIND: _RASTER_ZXY,
+                OPTIONS_TILES_PROVIDER_URL: tiles.get(ENV_TILES_PROVIDER_URL, None)
+            }
+        elif tiles.get(ENV_TILES_PROVIDER_KIND, None) == _VECTOR_LETS_PLOT:
+            return {
+                OPTIONS_TILES_PROVIDER_KIND: _VECTOR_LETS_PLOT,
+                OPTIONS_TILES_PROVIDER_URL: tiles.get(ENV_TILES_PROVIDER_URL, None),
+                OPTIONS_TILES_PROVIDER_THEME: tiles.get(ENV_TILES_PROVIDER_THEME, None),
+            }
+        else:
+            raise ValueError("Unsupported 'tiles' kind: " + tiles.get(ENV_TILES_PROVIDER_KIND, None))
 
     if tiles is not None:
         raise ValueError("Unsupported 'tiles' parameter type: " + type(tiles))
 
-    if has_global_value(_TILE_PROVIDER_SETTINGS):
-        return get_global_val(_TILE_PROVIDER_SETTINGS)
+    if has_global_value(ENV_TILES_PROVIDER_KIND):
+        if get_global_val(ENV_TILES_PROVIDER_KIND) == _RASTER_ZXY:
+            return {
+                OPTIONS_TILES_PROVIDER_KIND: _RASTER_ZXY,
+                OPTIONS_TILES_PROVIDER_URL: get_global_val(ENV_TILES_PROVIDER_URL)
+            }
+
+        if get_global_val(ENV_TILES_PROVIDER_KIND) == _VECTOR_LETS_PLOT:
+            return {
+                OPTIONS_TILES_PROVIDER_KIND: _VECTOR_LETS_PLOT,
+                OPTIONS_TILES_PROVIDER_URL: get_global_val(ENV_TILES_PROVIDER_URL) if has_global_value(ENV_TILES_PROVIDER_URL) else None,
+                OPTIONS_TILES_PROVIDER_THEME: get_global_val(ENV_TILES_PROVIDER_THEME) if has_global_value(ENV_TILES_PROVIDER_THEME) else None
+            }
 
     raise ValueError('Tile provider is not set.')
 

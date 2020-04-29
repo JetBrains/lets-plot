@@ -9,7 +9,7 @@ from typing import Dict
 __path__ = extend_path(__path__, __name__)
 
 from .plot import *
-from ._global_settings import _settings
+from ._global_settings import _settings, is_production
 from .frontend_context import *
 from .settings_utils import *
 
@@ -49,6 +49,8 @@ class LetsPlot:
         cfg._setup_html_context(isolated_frame, offline)
 
     @classmethod
-    def apply_settings(cls, settings: Dict):
-        _settings.update(settings)
-        _settings.update({'dev_' + key: value for key, value in settings.items()}) # TODO: find better solution
+    def set(cls, settings: Dict):
+        if is_production():
+            _settings.update(settings)
+        else:
+            _settings.update({'dev_' + key: value for key, value in settings.items()})

@@ -130,15 +130,13 @@ internal class LiveMapSpecBuilder {
         private const val REGION_TYPE_COORDINATES = "coordinates"
         private const val REGION_TYPE_DATAFRAME = "data_frame"
 
-        object VectorTile {
-            const val KIND = "vector_livemap"
+        object Tile {
+            const val KIND = "kind"
             const val URL = "url"
             const val THEME = "theme"
-        }
 
-        object RasterTile {
-            const val KIND = "raster_zxy"
-            const val URL = "url"
+            const val VECTOR_LETS_PLOT = "vector_lets_plot"
+            const val RASTER_ZXY = "raster_zxy"
         }
 
         private const val DEFAULT_SHOW_TILES = true
@@ -286,12 +284,12 @@ internal class LiveMapSpecBuilder {
 
             return when {
                 debug -> EmptyTileSystemProvider()
-                options["kind"] == RasterTile.KIND -> RasterTileSystemProvider(options[RasterTile.URL] as String)
-                options["kind"] == VectorTile.KIND -> VectorTileSystemProvider(
+                options[Tile.KIND] == Tile.RASTER_ZXY -> RasterTileSystemProvider(options[Tile.URL] as String)
+                options[Tile.KIND] == Tile.VECTOR_LETS_PLOT -> VectorTileSystemProvider(
                     myQuantumIterations = quant,
                     myTileService = liveMapVectorTiles {
-                        options[VectorTile.URL]?.let { url = it as String }
-                        options[VectorTile.THEME]?.let { theme = parseTheme(it as String) }
+                        options[Tile.URL]?.let { url = it as String }
+                        options[Tile.THEME]?.let { theme = parseTheme(it as String) }
                     }
                 )
                 else -> throw IllegalArgumentException("Unknown tile provider settings. Expected ['raster_zxy', 'vector_livemap'].")
