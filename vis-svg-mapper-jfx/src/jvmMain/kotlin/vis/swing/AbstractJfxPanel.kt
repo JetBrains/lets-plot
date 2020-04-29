@@ -8,8 +8,7 @@ package jetbrains.datalore.vis.swing
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Parent
 import javafx.scene.Scene
-import javafx.scene.paint.Color.WHITE
-import javafx.scene.paint.Paint
+import javafx.scene.paint.Color.TRANSPARENT
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
@@ -20,11 +19,6 @@ abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPane
 
     // BEGIN HACK
     private var scaleUpdated = false
-    var sceneFillColor: Paint = WHITE
-        set(value) {
-            field = value
-            runOnFxThread { revalidateScene() }
-        }
 
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
@@ -57,7 +51,7 @@ abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPane
 
         // Don't do 'transparent'.
         // This distorts colors on plot when alpha < 1 even if parent component has WHITE background.
-        val scene = Scene(createSceneParent(), sceneFillColor)
+        val scene = Scene(createSceneParent(), TRANSPARENT)
         scene.stylesheets.addAll(stylesheets)
         setScene(scene)
     }

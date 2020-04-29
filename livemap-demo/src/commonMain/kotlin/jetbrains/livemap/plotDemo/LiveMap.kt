@@ -33,7 +33,7 @@ class LiveMap : PlotConfigDemoBase() {
                         "position": null, 
                         "show_legend": null, 
                         "sampling": null, 
-                        display_mode": null, 
+                        "display_mode": null, 
                         "level": null, 
                         "within": null, 
                         "interactive": null, 

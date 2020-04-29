@@ -67,17 +67,46 @@ abstract class AwtPlotFactory(
 
             val success = buildResult as MonolithicCommon.PlotsBuildResult.Success
             val computationMessages = success.buildInfos.flatMap { it.computationMessages }
+
             computationMessagesHandler(computationMessages)
-            if (success.buildInfos.size == 1) {
-                // a single plot
-                return buildPlotComponent(success.buildInfos[0])
+
+            JPanel(null).apply {
+                background = Color.WHITE
+
+                for (plotInfo in success.buildInfos) {
+                    val plotComponent = buildPlotComponent(plotInfo)
+                    plotComponent.bounds = plotInfo.bounds().run {
+                        Rectangle(
+                            origin.x.toInt(),
+                            origin.y.toInt(),
+                            dimension.x.toInt(),
+                            dimension.y.toInt()
+                        )
+                    }
+
+                    add(plotComponent)
+                }
+
+                val dimensions = getPlotDimension(success.buildInfos)
+                preferredSize = dimensions
+                minimumSize = dimensions
+                maximumSize = dimensions
             }
-            // ggbunch
-            return buildGGBunchComponent(success.buildInfos)
 
         } catch (e: RuntimeException) {
             handleException(e)
         }
+    }
+
+    private fun getPlotDimension(plotInfos: List<MonolithicCommon.PlotBuildInfo>): Dimension {
+        return plotInfos
+            .map { it.bounds() }
+            .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
+                acc.union(bounds)
+            }
+            .run {
+                Dimension(width.toInt(), height.toInt())
+            }
     }
 
     fun buildPlotComponent(
@@ -106,42 +135,6 @@ abstract class AwtPlotFactory(
         })
 
         return plotComponent
-    }
-
-
-    private fun buildGGBunchComponent(
-        plotInfos: List<MonolithicCommon.PlotBuildInfo>
-    ): JComponent {
-
-        val bunchComponent = JPanel(null)
-        bunchComponent.border = null
-
-        for (plotInfo in plotInfos) {
-            val plotComponent = buildPlotComponent(plotInfo)
-            val bounds = plotInfo.bounds()
-            plotComponent.bounds = Rectangle(
-                bounds.origin.x.toInt(),
-                bounds.origin.y.toInt(),
-                bounds.dimension.x.toInt(),
-                bounds.dimension.y.toInt()
-            )
-            bunchComponent.add(plotComponent)
-        }
-
-        val bunchBounds = plotInfos.map { it.bounds() }
-            .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
-                acc.union(bounds)
-            }
-
-        val bunchDimensions = Dimension(
-            bunchBounds.width.toInt(),
-            bunchBounds.height.toInt()
-        )
-
-        bunchComponent.preferredSize = bunchDimensions
-        bunchComponent.minimumSize = bunchDimensions
-        bunchComponent.maximumSize = bunchDimensions
-        return bunchComponent
     }
 
     private fun handleException(e: RuntimeException): JComponent {

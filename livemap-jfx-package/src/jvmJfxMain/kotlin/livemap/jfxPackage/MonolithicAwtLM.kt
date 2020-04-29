@@ -9,7 +9,6 @@ import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Group
 import javafx.scene.Scene
-import javafx.scene.paint.Color.TRANSPARENT
 import javafx.scene.paint.Color.WHITE
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
@@ -25,7 +24,6 @@ import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import java.awt.Rectangle
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -94,8 +92,6 @@ object MonolithicAwtLM {
         val panel = JFXPanel().apply {
             scene = Scene(Group(), WHITE)
         }
-
-        (plotComponent as SceneMapperJfxPanel).sceneFillColor = TRANSPARENT
 
         panel.add(plotComponent)
 
