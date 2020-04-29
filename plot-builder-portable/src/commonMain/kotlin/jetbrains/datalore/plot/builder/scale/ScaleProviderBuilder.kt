@@ -51,7 +51,10 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         return this
     }
 
-    fun minorBreaks_NI(minorBreaks: List<Double>): ScaleProviderBuilder<T> {
+    @Suppress("FunctionName")
+    fun minorBreaks_NI(
+        @Suppress("UNUSED_PARAMETER") minorBreaks: List<Double>
+    ): ScaleProviderBuilder<T> {
         // continuous scale
         throw IllegalStateException("Not implemented")
     }
@@ -78,11 +81,17 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         return this
     }
 
-    fun rescaler_NI(v: Any): ScaleProviderBuilder<T> {
+    @Suppress("FunctionName")
+    fun rescaler_NI(
+        @Suppress("UNUSED_PARAMETER") v: Any
+    ): ScaleProviderBuilder<T> {
         throw IllegalStateException("Not implemented")
     }
 
-    fun oob_NI(v: Any): ScaleProviderBuilder<T> {
+    @Suppress("FunctionName")
+    fun oob_NI(
+        @Suppress("UNUSED_PARAMETER") v: Any
+    ): ScaleProviderBuilder<T> {
         throw IllegalStateException("Not implemented")
     }
 
@@ -91,7 +100,10 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         return this
     }
 
-    fun guide_NI(v: Any): ScaleProviderBuilder<T> {
+    @Suppress("FunctionName")
+    fun guide_NI(
+        @Suppress("UNUSED_PARAMETER") v: Any
+    ): ScaleProviderBuilder<T> {
         // Name of guide object, or object itself.
         throw IllegalStateException("Not implemented")
     }
@@ -133,7 +145,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
                 val mapper = if (data.isEmpty(variable)) {
                     absentMapper(variable)
                 } else {
-                    { v -> myMapperProvider!!.createDiscreteMapper(data, variable).apply(v) }
+                    myMapperProvider!!.createDiscreteMapper(data, variable)::apply
                 }
 
                 val domainValues = DataFrameUtil.distinctValues(data, variable).filterNotNull()
