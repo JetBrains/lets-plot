@@ -38,26 +38,27 @@ class LiveMapOptionsParser {
         private fun parseLivemapOptions(opts: OptionsAccessor): LiveMapOptions {
 
             return LiveMapOptions(
-                opts.getInteger(LiveMap.ZOOM),
-                opts.get(LiveMap.LOCATION),
-                opts.getDouble(LiveMap.STROKE),
-                opts.getBoolean(LiveMap.INTERACTIVE, true),
-                opts.getBoolean(LiveMap.MAGNIFIER, false),
-                opts.getString(LiveMap.DISPLAY_MODE)?.let(::parseDisplayMode) ?: DisplayMode.POLYGON,
-                opts.getString(LiveMap.FEATURE_LEVEL),
-                opts.get(LiveMap.PARENT),
-                opts.getBoolean(LiveMap.SCALED, false),
-                opts.getBoolean(LiveMap.CLUSTERING, false),
-                opts.getBoolean(LiveMap.LABELS, true),
-                opts.getString(LiveMap.PROJECTION)?.let(::parseProjection) ?: Projection.EPSG3857,
-                opts.getBoolean(LiveMap.GEODESIC, true),
-                opts.getMap(LiveMap.TILES),
-                opts.getMap(LiveMap.DEV_PARAMS)
+                zoom = opts.getInteger(LiveMap.ZOOM),
+                location = opts.get(LiveMap.LOCATION),
+                stroke = opts.getDouble(LiveMap.STROKE),
+                interactive = opts.getBoolean(LiveMap.INTERACTIVE, true),
+                magnifier = opts.getBoolean(LiveMap.MAGNIFIER, false),
+                displayMode = opts.getString(LiveMap.DISPLAY_MODE)?.let(::parseDisplayMode) ?: DisplayMode.POLYGON,
+                featureLevel = opts.getString(LiveMap.FEATURE_LEVEL),
+                parent = opts.get(LiveMap.PARENT),
+                scaled = opts.getBoolean(LiveMap.SCALED, false),
+                clustering = opts.getBoolean(LiveMap.CLUSTERING, false),
+                labels = opts.getBoolean(LiveMap.LABELS, true),
+                projection = opts.getString(LiveMap.PROJECTION)?.let(::parseProjection) ?: Projection.EPSG3857,
+                geodesic = opts.getBoolean(LiveMap.GEODESIC, true),
+                geocodingService = opts.getMap(LiveMap.GEOCODING),
+                tileProvider = opts.getMap(LiveMap.TILES),
+                devParams = opts.getMap(LiveMap.DEV_PARAMS)
             )
         }
 
         private fun <ValueT : Enum<ValueT>> formatValues(values: Array<ValueT>): String {
-            return values.joinToString("|", "=[", "]") { "'${it.name.toLowerCase()}'" }
+            return values.joinToString(prefix = "=[", separator = "|", postfix = "]") { "'${it.name.toLowerCase()}'" }
         }
 
         private fun parseDisplayMode(displayMode: String): DisplayMode {

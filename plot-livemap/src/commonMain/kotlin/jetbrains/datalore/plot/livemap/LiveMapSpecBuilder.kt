@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMIN
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMAX
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
 import jetbrains.gis.geoprotocol.FeatureLevel
+import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.LayerProvider.LayerProviderImpl
@@ -29,6 +30,7 @@ import jetbrains.livemap.LiveMapConstants.MIN_ZOOM
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.api.Services
+import jetbrains.livemap.api.liveMapGeocoding
 import jetbrains.livemap.api.liveMapVectorTiles
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
@@ -95,7 +97,6 @@ internal class LiveMapSpecBuilder {
         layersConfigurators.addAll(myLayers.mapIndexed(geomLayersProcessor::createConfigurator))
 
         return LiveMapSpec(
-            geocodingService = Services.bogusGeocodingService(),
             size = mySize,
             isScaled = myLiveMapOptions.scaled,
             isInteractive = myLiveMapOptions.interactive,
@@ -113,7 +114,8 @@ internal class LiveMapSpecBuilder {
             isLoopX = CYLINDRICAL_PROJECTIONS.contains(projectionType),
             isLoopY = DEFAULT_LOOP_Y,
             mapLocationConsumer = myMapLocationConsumer,
-            tileSystemProvider = createTileLoadingFactory(
+            geocodingService = createGeocodingService(myLiveMapOptions.geocodingService),
+            tileSystemProvider = createTileSystemProvider(
                 myLiveMapOptions.tileProvider,
                 myDevParams.isSet(DEBUG_TILES),
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
@@ -137,6 +139,10 @@ internal class LiveMapSpecBuilder {
 
             const val VECTOR_LETS_PLOT = "vector_lets_plot"
             const val RASTER_ZXY = "raster_zxy"
+        }
+
+        object Geocoding {
+            const val URL = "url"
         }
 
         private const val DEFAULT_SHOW_TILES = true
@@ -273,7 +279,7 @@ internal class LiveMapSpecBuilder {
             throw IllegalArgumentException("Invalid map region type: $regionType")
         }
 
-        fun createTileLoadingFactory(options: Map<*, *>, debug: Boolean, quant: Int): TileSystemProvider {
+        fun createTileSystemProvider(options: Map<*, *>, debug: Boolean, quant: Int): TileSystemProvider {
             fun parseTheme(theme: String): TileService.Theme {
                 try {
                     return TileService.Theme.valueOf(theme.toUpperCase())
@@ -294,6 +300,12 @@ internal class LiveMapSpecBuilder {
                 )
                 else -> throw IllegalArgumentException("Unknown tile provider settings. Expected ['raster_zxy', 'vector_livemap'].")
             }
+        }
+
+        private fun createGeocodingService(options: Map<*, *>): GeocodingService {
+            return options[Geocoding.URL]
+                ?.let { liveMapGeocoding { url = it as String } }
+                ?: Services.bogusGeocodingService()
         }
     }
 

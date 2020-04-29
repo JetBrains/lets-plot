@@ -7,7 +7,7 @@ from typing import Union, Optional, List
 
 from .geom import _geom
 from .._global_settings import has_global_value, get_global_val
-from ..settings_utils import ENV_TILES_PROVIDER_KIND, ENV_TILES_PROVIDER_URL, ENV_TILES_PROVIDER_THEME, _RASTER_ZXY, _VECTOR_LETS_PLOT, tiles_provider_zxy
+from ..settings_utils import ENV_TILES_PROVIDER_KIND, ENV_TILES_PROVIDER_URL, ENV_TILES_PROVIDER_THEME, ENV_GEOCODING_PROVIDER_URL, _RASTER_ZXY, _VECTOR_LETS_PLOT, tiles_provider_zxy
 
 try:
     import pandas
@@ -128,6 +128,7 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
         location = _prepare_location(location)
 
     tiles = _prepare_tiles(tiles)
+    geocoding = _prepare_geocoding()
 
     _display_mode = 'display_mode'
 
@@ -138,7 +139,7 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
                  display_mode=geom, level=level,
                  within=within, interactive=interactive, location=location, zoom=zoom, magnifier=magnifier,
                  clustering=clustering, scaled=scaled, labels=labels, theme=theme, projection=projection,
-                 geodesic=geodesic, tiles=tiles, **other_args)
+                 geodesic=geodesic, tiles=tiles, geocoding=geocoding, **other_args)
 
 
 LOCATION_COORDINATE_COLUMNS = {'lon', 'lat'}
@@ -152,12 +153,23 @@ OPTIONS_TILES_PROVIDER_KIND = 'kind'
 OPTIONS_TILES_PROVIDER_URL = 'url'
 OPTIONS_TILES_PROVIDER_THEME = 'theme'
 
+OPTIONS_GEOCODING_PROVIDER_URL = 'url'
+
 
 class RegionKind(Enum):
     region_ids = 'region_ids'
     region_name = 'region_name'
     coordinates = 'coordinates'
     data_frame = 'data_frame'
+
+
+def _prepare_geocoding():
+    if has_global_value(ENV_GEOCODING_PROVIDER_URL):
+        return {
+            OPTIONS_GEOCODING_PROVIDER_URL: get_global_val(ENV_GEOCODING_PROVIDER_URL)
+        }
+
+    return {}
 
 
 def _prepare_tiles(tiles: Union[str, dict]) -> Optional[dict]:

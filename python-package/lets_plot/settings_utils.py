@@ -4,21 +4,22 @@
 ENV_TILES_PROVIDER_KIND = 'tiles_kind'
 ENV_TILES_PROVIDER_URL = 'tiles_url'
 ENV_TILES_PROVIDER_THEME = 'tiles_theme'
+ENV_GEOCODING_PROVIDER_URL = 'geocoding_url'
 
 
 _VECTOR_LETS_PLOT = 'vector_lets_plot'
 _RASTER_ZXY = 'raster_zxy'
 
-__all__ = ['tiles_provider_lets_plot', 'tiles_provider_zxy']
+__all__ = ['tiles_provider_lets_plot', 'tiles_provider_zxy', 'geocoding_service']
 
 
 def tiles_provider_lets_plot(url: str, theme: str = None) -> dict:
     """
     :param url: str
-        If kind is 'datalore': address of the tile server
+        Address of the tile server
 
     :param theme: ['color', 'light', 'dark', None]
-        If kind is 'datalore': tiles theme
+        Ttiles theme
 
     :return:
         Tile provider settings
@@ -35,8 +36,8 @@ def tiles_provider_lets_plot(url: str, theme: str = None) -> dict:
 
 def tiles_provider_zxy(url: str) -> dict:
     """
-    :param url:
-            Template for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
+    :param url: str
+        Address of the tile server
     :return:
         Tile provider settings
     """
@@ -45,4 +46,17 @@ def tiles_provider_zxy(url: str) -> dict:
     return {
         ENV_TILES_PROVIDER_KIND: _RASTER_ZXY,
         ENV_TILES_PROVIDER_URL: url
+    }
+
+def geocoding_service(url: str):
+    """
+    :param url:
+        Address of the geocoding server
+    :return:
+        Geocoding service settings
+    """
+    assert isinstance(url, (str, type(None))), "'url' argument is not str: {}".format(type(url))
+
+    return {
+        ENV_GEOCODING_PROVIDER_URL: url
     }
