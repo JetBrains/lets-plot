@@ -4,16 +4,13 @@ plugins {
 }
 
 kotlin {
-    jvm("jvmJfx")
+    jvm()
 
     sourceSets {
-
-        allJvm {
+        commonMain {
             dependencies {
-                implementation kotlin('stdlib-jdk8')
-                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                implementation kotlin('stdlib-common')
                 implementation project(':base-portable')
-                implementation project(':base')
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
                 implementation project(':plot-base-portable')
@@ -25,8 +22,11 @@ kotlin {
                 implementation project(':vis-demo-common-jfx')
             }
         }
-        jvmJfxMain {
-            dependsOn allJvm
+
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+            }
         }
     }
 }
@@ -34,7 +34,7 @@ kotlin {
 idea {
     module {
         settings {
-            packagePrefix["src/jvmJfxMain/kotlin"] = "jetbrains.datalore"
+            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
         }
     }
 }

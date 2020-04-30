@@ -298,7 +298,7 @@ internal class LiveMapSpecBuilder {
                         options[Tile.THEME]?.let { theme = parseTheme(it as String) }
                     }
                 )
-                else -> throw IllegalArgumentException("Unknown tile provider settings. Expected ['raster_zxy', 'vector_livemap'].")
+                else -> throw IllegalArgumentException("Tile provider is not set.")
             }
         }
 

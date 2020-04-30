@@ -6,7 +6,7 @@
 package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.livemap.jfxPackage.MonolithicAwtLM
+import jetbrains.datalore.livemap.jvmPackage.MonolithicAwtLM
 import jetbrains.datalore.plotDemo.plotConfig.PlotConfigDemoUtil.create
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
 import javax.swing.JComponent

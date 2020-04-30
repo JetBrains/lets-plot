@@ -43,16 +43,8 @@ kotlin {
                 implementation project(':vis-canvas')
                 implementation project(':vis-demo-common')
                 implementation project(':plot-builder-portable')
-                implementation project(':plot-builder')
-                implementation project(':plot-base-portable')
-                implementation project(':plot-base')
                 implementation project(':plot-config-portable')
-                implementation project(':plot-config')
-                implementation project(':plot-common-portable')
                 implementation project(':plot-demo-common')
-                implementation project(':mapper-core')
-                implementation project(':plot-livemap')
-                implementation project(':vis-svg-mapper')
             }
         }
         allJvm {
@@ -73,8 +65,7 @@ kotlin {
             dependsOn allJvm
             dependencies {
                 implementation project(':vis-demo-common-jfx')
-                implementation project(':vis-svg-mapper-jfx')
-                implementation project(':livemap-jfx-package')
+                implementation project(':livemap-jvm-package')
             }
         }
         jvmRawJfxMain {
