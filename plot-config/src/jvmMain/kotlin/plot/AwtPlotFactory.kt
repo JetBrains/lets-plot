@@ -11,6 +11,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
@@ -85,8 +86,14 @@ abstract class AwtPlotFactory(
         plotContainer: PlotContainer
     ): JComponent {
         plotContainer.ensureContentBuilt()
+        val svg = plotContainer.svg
 
-        val plotComponent: JComponent = svgComponentFactory(plotContainer.svg)
+        if (plotContainer.isLiveMap) {
+            // Plot transparent for live-map base layer to be visible.
+            svg.addClass(Style.PLOT_TRANSPARENT)
+        }
+
+        val plotComponent: JComponent = svgComponentFactory(svg)
 
         plotComponent.addMouseListener(object : MouseAdapter() {
             override fun mouseExited(e: MouseEvent) {

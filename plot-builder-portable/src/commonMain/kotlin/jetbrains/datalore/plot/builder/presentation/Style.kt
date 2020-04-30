@@ -5,22 +5,27 @@
 
 package jetbrains.datalore.plot.builder.presentation
 
+import jetbrains.datalore.plot.builder.presentation.Defaults.BACKDROP_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE
-import jetbrains.datalore.plot.builder.presentation.SelectorType.LINE
-import jetbrains.datalore.plot.builder.presentation.SelectorType.TEXT
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
+import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
+import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_MEDIUM
+import jetbrains.datalore.plot.builder.presentation.Defaults.TEXT_COLOR
 
 /**
  * Duplicating stylesheet for JavaFX platform is defined in
  * plot-builder/src/jvmMain/resources/svgMapper/jfx/plot.css
- *
- * ToDo: revert this code back to plane readable text.
  */
 object Style {
     const val JFX_PLOT_STYLESHEET = "/svgMapper/jfx/plot.css"
 
+    // classes
     const val PLOT_CONTAINER = "plt-container"
     const val PLOT = "plt-plot"
     const val PLOT_TITLE = "plt-plot-title"
+
+    const val PLOT_TRANSPARENT = "plt-transparent"
+    const val PLOT_BACKDROP = "plt-backdrop"
 
     const val AXIS = "plt-axis"
 
@@ -35,44 +40,36 @@ object Style {
 
     const val PLOT_DATA_TOOLTIP = "plt-data-tooltip"
     const val PLOT_AXIS_TOOLTIP = "plt-axis-tooltip"
-    val CSS = CssResourceBuilder()
-        .add(
-            SelectorBuilder(PLOT_CONTAINER)
-            .fontFamily(Defaults.FONT_FAMILY_NORMAL)
-            .cursor(CursorValue.CROSSHAIR)
-            .userSelect(UserSelectValue.NONE)
-        )
-        .add(
-            SelectorBuilder(TEXT)
-            .fontSize(
-                Defaults.FONT_MEDIUM,
-                SizeMeasure.PX
-            )
-            .fill(Defaults.TEXT_COLOR)
-        )
-        .add(
-            SelectorBuilder(PLOT_DATA_TOOLTIP)
-            .innerSelector(TEXT)
-            .fontSize(
-                Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE,
-                SizeMeasure.PX
-            )
-        )
-        .add(
-            SelectorBuilder(PLOT_AXIS_TOOLTIP).innerSelector(TEXT)
-            .fontSize(AXIS_TOOLTIP_FONT_SIZE,
-                SizeMeasure.PX
-            )
-        )
-        .add(
-            SelectorBuilder(AXIS).innerSelector(LINE)
-            .shapeRendering(ShapeRenderingValue.CRISPEDGES)
-        )
-        .add(
-            SelectorBuilder("highlight")
-            .fillOpacity(0.75f)
-        )
-        .build()
+
+    private val CSS = """
+        |.$PLOT_CONTAINER {
+        |	font-family: $FONT_FAMILY_NORMAL;
+        |	cursor: crosshair;
+        |	user-select: none;
+        |	-webkit-user-select: none;
+        |	-moz-user-select: none;
+        |	-ms-user-select: none;
+        |}
+        |.$PLOT_BACKDROP {
+        |   fill: $BACKDROP_COLOR;
+        |}
+        |.$PLOT_TRANSPARENT .$PLOT_BACKDROP {
+        |   visibility: hidden;
+        |}
+        |text {
+        |	font-size: ${FONT_MEDIUM}px;
+        |	fill: $TEXT_COLOR;
+        |}
+        |.$PLOT_DATA_TOOLTIP text {
+        |	font-size: ${DATA_TOOLTIP_FONT_SIZE}px;
+        |}
+        |.$PLOT_AXIS_TOOLTIP text {
+        |	font-size: ${AXIS_TOOLTIP_FONT_SIZE}px;
+        |}
+        |.$AXIS line {
+        |	shape-rendering: crispedges;
+        |}
+    """.trimMargin()
 
     val css: String
         get() {

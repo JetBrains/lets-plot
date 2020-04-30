@@ -8,7 +8,7 @@ package jetbrains.datalore.vis.swing
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Parent
 import javafx.scene.Scene
-import javafx.scene.paint.Color.WHITE
+import javafx.scene.paint.Color.TRANSPARENT
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
@@ -49,10 +49,14 @@ abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPane
         myRegFx.dispose()
         myRegFx = CompositeRegistration()
 
-        // Don't do 'transparent'.
-        // This distorts colors on plot when alpha < 1 even if parent component has WHITE background.
-//        val scene = Scene(createSceneParent(), TRANSPARENT)
-        val scene = Scene(createSceneParent(), WHITE)
+        // Create 'transparent' scene to let CSS to compute its background color.
+        // (see: 'resources/svgMapper/jfx/plot.css' in plot-builder)
+        // Note: Semi-transparent colors (alpha < 1) only look correct when
+        // the background is WHITE (or other non-transparent color).
+        // But in the case of live-map we need plot transparency to let
+        // the map base layer to be visible.
+        val scene = Scene(createSceneParent(), TRANSPARENT)
+
         scene.stylesheets.addAll(stylesheets)
         setScene(scene)
     }

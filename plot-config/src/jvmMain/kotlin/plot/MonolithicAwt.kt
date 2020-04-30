@@ -56,7 +56,7 @@ object MonolithicAwt {
                 val plot = assembler.createPlot()
                 val plotContainer = PlotContainer(plot, plotBuildInfo.size)
 
-                require(plotContainer.liveMapFigures.isEmpty()) { "geom_livemap is not enabled" }
+                require(!plotContainer.isLiveMap) { "geom_livemap is not enabled" }
 
                 return buildPlotComponent(plotContainer)
             }

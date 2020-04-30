@@ -16,6 +16,12 @@ val SINGLE_PLOT_STYLE_ELEMENT = """
         |	-moz-user-select: none;
         |	-ms-user-select: none;
         |}
+        |.plt-backdrop {
+        |   fill: white;
+        |}
+        |.plt-transparent .plt-backdrop {
+        |   visibility: hidden;
+        |}
         |text {
         |	font-size: 12px;
         |	fill: #3d3d3d;
@@ -29,10 +35,6 @@ val SINGLE_PLOT_STYLE_ELEMENT = """
         |.plt-axis line {
         |	shape-rendering: crispedges;
         |}
-        |.highlight {
-        |	fill-opacity: 0.75;
-        |}
-        |
         |.plt-plot-title {
         |
         |  font-size: 16.0px;
@@ -66,6 +68,8 @@ val SINGLE_PLOT_STYLE_ELEMENT = """
 val EXPECTED_SINGLE_PLOT_SVG = """
         |<svg xmlns="http://www.w3.org/2000/svg" class="plt-container" width="400.0" height="300.0">
         |$SINGLE_PLOT_STYLE_ELEMENT
+        |  <rect class="plt-backdrop" width="100%" height="100%">
+        |  </rect>
         |  <g class="plt-plot">
         |    <g transform="translate(20.0 10.0 ) ">
         |      <g transform="translate(29.1 251.0 ) " class="plt-axis">
@@ -191,6 +195,8 @@ val EXPECTED_SINGLE_PLOT_SVG = """
 fun expectedSingleBunchItemSvg(index: Int) = """
         |<svg xmlns="http://www.w3.org/2000/svg" class="plt-container" width="150.0" height="150.0">
         |$SINGLE_PLOT_STYLE_ELEMENT
+        |  <rect class="plt-backdrop" width="100%" height="100%">
+        |  </rect>
         |  <g class="plt-plot">
         |    <g transform="translate(20.0 10.0 ) ">
         |      <g transform="translate(15.7 101.0 ) " class="plt-axis">
@@ -301,6 +307,12 @@ val EXPECTED_BUNCH_SVG = """
         |	-moz-user-select: none;
         |	-ms-user-select: none;
         |}
+        |.plt-backdrop {
+        |   fill: white;
+        |}
+        |.plt-transparent .plt-backdrop {
+        |   visibility: hidden;
+        |}
         |text {
         |	font-size: 12px;
         |	fill: #3d3d3d;
@@ -314,10 +326,6 @@ val EXPECTED_BUNCH_SVG = """
         |.plt-axis line {
         |	shape-rendering: crispedges;
         |}
-        |.highlight {
-        |	fill-opacity: 0.75;
-        |}
-        |
         |.plt-plot-title {
         |
         |  font-size: 16.0px;

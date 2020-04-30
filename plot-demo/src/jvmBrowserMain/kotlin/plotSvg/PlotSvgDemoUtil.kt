@@ -47,6 +47,9 @@ object PlotSvgDemoUtil {
                                 margin: 20px;
                                 display: inline-block;
                             }
+                            body { 
+                                background-color:lightgrey
+                            }
                         """.trimIndent()
                     }
                 }

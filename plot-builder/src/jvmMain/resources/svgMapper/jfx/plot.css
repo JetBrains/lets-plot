@@ -21,6 +21,16 @@ None JavaFX platforms use SVG embedded stylesheet defined in Style.kt
     See: ...plot.builder.presentation.LabelMetrics.kt
     */
     -fx-font-family: "Helvetica";
+
+    -fx-background-color: white;
+}
+
+.plt-container.plt-transparent {
+    -fx-background-color: transparent;
+}
+
+.plt-backdrop {
+    -fx-visibility: hidden;
 }
 
 Text {
@@ -44,38 +54,28 @@ Text {
     -fx-shape-rendering: crispedges;
 }
 
-.highlight {
-    -fx-fill-opacity: 0.75;
-}
-
 .plt-plot-title {
-
     -fx-font-size: 16.0px;
     -fx-font-weight: bold;
 }
 
 .plt-axis .tick Text {
-
     -fx-font-size: 10.0px;
 }
 
 .plt-axis.small-tick-font .tick Text {
-
     -fx-font-size: 8.0px;
 }
 
 .plt-axis-title Text {
-
     -fx-font-size: 12.0px;
 }
 
 .plt_legend .legend-title Text {
-
     -fx-font-size: 12.0px;
     -fx-font-weight: bold;
 }
 
 .plt_legend Text {
-
     -fx-font-size: 10.0px;
 }

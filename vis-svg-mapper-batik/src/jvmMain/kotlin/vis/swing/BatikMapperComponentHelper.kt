@@ -58,7 +58,7 @@ class BatikMapperComponentHelper private constructor(
         }
     }
 
-    fun setSvg(svgRoot: SvgSvgElement) {
+    private fun setSvg(svgRoot: SvgSvgElement) {
         clear()
         checkArgument(svgRoot.isAttached(), "SvgSvgElement must be attached to SvgNodeContainer")
         mySvgRoot = svgRoot
@@ -88,9 +88,11 @@ class BatikMapperComponentHelper private constructor(
         myBridgeContext = BridgeContext(myUserAgent)
         myBridgeContext!!.isDynamic = true
 
+        // Build Batik SVG model.
         myMapper = SvgRootDocumentMapper(mySvgRoot!!)
         myMapper!!.attachRoot()
 
+        // Build graphic nodes
         val builder = GVTBuilder()
         myGraphicsNode = builder.build(myBridgeContext, myMapper!!.target)
 

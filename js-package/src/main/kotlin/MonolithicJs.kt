@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.config.OptionsAccessor
@@ -203,9 +204,14 @@ private fun buildPlotSvg(
         eventTarget.appendChild(liveMapDiv)
     }
 
-    val svgRoot = plotContainer.svg
-    val mapper = SvgRootDocumentMapper(svgRoot)
-    SvgNodeContainer(svgRoot)
+    val svg = plotContainer.svg
+    if (plotContainer.isLiveMap) {
+        // Plot - transparent for live-map base layer to be visible.
+        svg.addClass(Style.PLOT_TRANSPARENT)
+    }
+
+    val mapper = SvgRootDocumentMapper(svg)
+    SvgNodeContainer(svg)
     mapper.attachRoot()
     return mapper.target
 }
