@@ -21,14 +21,8 @@ dependencies {
     implementation project(':plot-builder')
     implementation project(':plot-config-portable')
     implementation project(':plot-config')
-
-    if (project.buildSettings.enable_livemap) {
-        implementation project(':gis')
-        implementation project(':plot-livemap')
-    } else {
-        implementation project(':plot-livemap-stub')
-    }
-
+    implementation project(':gis')
+    implementation project(':plot-livemap')
     implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
 }
 
@@ -39,11 +33,8 @@ kotlin {
                 keep.addAll(
                         "lets-plot-js-package.buildPlotFromRawSpecs",
                         "lets-plot-js-package.buildPlotFromProcessedSpecs",
+                        "ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io",
                 )
-
-                if (project.buildSettings.enable_livemap) {
-                    keep.addAll("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
-                }
             }
         }
     }
