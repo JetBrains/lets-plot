@@ -36,8 +36,8 @@ def maptiles_lets_plot(url: str, theme: str = None) -> dict:
 
 def maptiles_zxy(url: str) -> dict:
     """
-    :param url: str
-        Address of the tile server
+    :param url:
+        Template for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
     :return:
         Tile provider settings
     """
