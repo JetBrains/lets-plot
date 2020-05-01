@@ -37,14 +37,21 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
                 implementation project(':base-portable')
                 implementation project(':base')
-                implementation project(':gis')
-                implementation project(':livemap')
+                implementation project(':mapper-core')
+                implementation project(':plot-base-portable')
+                implementation project(':plot-common-portable')
+                implementation project(':plot-builder-portable')
+                implementation project(':plot-builder')
+                implementation project(':plot-config-portable')
+                implementation project(':plot-config')
                 implementation project(':vis-svg-portable')
+                implementation project(':vis-svg-mapper')
                 implementation project(':vis-canvas')
                 implementation project(':vis-demo-common')
-                implementation project(':plot-builder-portable')
-                implementation project(':plot-config-portable')
                 implementation project(':plot-demo-common')
+                implementation project(':gis')
+                implementation project(':livemap')
+                implementation project(':plot-livemap')
             }
         }
         allJvm {
@@ -55,15 +62,13 @@ kotlin {
                 implementation "io.ktor:ktor-client-cio:$ktor_version"
             }
         }
-        jvmMain {
-            dependsOn allJvm
-        }
         jvmJfxMain {
             dependsOn allJvm
         }
         jvmJfxPlotMain {
             dependsOn allJvm
             dependencies {
+                implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-demo-common-jfx')
                 implementation project(':livemap-jvm-package')
             }
