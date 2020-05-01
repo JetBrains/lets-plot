@@ -7,7 +7,7 @@ from typing import Union, Optional, List
 
 from .geom import _geom
 from .._global_settings import has_global_value, get_global_val
-from ..settings_utils import ENV_TILES_PROVIDER_KIND, ENV_TILES_PROVIDER_URL, ENV_TILES_PROVIDER_THEME, ENV_GEOCODING_PROVIDER_URL, _RASTER_ZXY, _VECTOR_LETS_PLOT, tiles_provider_zxy
+from ..settings_utils import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, GEOCODING_PROVIDER_URL, _RASTER_ZXY, _VECTOR_LETS_PLOT, maptiles_zxy
 
 try:
     import pandas
@@ -149,9 +149,9 @@ LOCATION_DATAFRAME_ERROR_MESSAGE = "Expected: location = DataFrame with [{}] or 
     .format(', '.join(LOCATION_COORDINATE_COLUMNS), ', '.join(LOCATION_RECTANGLE_COLUMNS))
 
 
-OPTIONS_TILES_PROVIDER_KIND = 'kind'
-OPTIONS_TILES_PROVIDER_URL = 'url'
-OPTIONS_TILES_PROVIDER_THEME = 'theme'
+OPTIONS_MAPTILES_KIND = 'kind'
+OPTIONS_MAPTILES_URL = 'url'
+OPTIONS_MAPTILES_THEME = 'theme'
 
 OPTIONS_GEOCODING_PROVIDER_URL = 'url'
 
@@ -164,9 +164,9 @@ class RegionKind(Enum):
 
 
 def _prepare_geocoding():
-    if has_global_value(ENV_GEOCODING_PROVIDER_URL):
+    if has_global_value(GEOCODING_PROVIDER_URL):
         return {
-            OPTIONS_GEOCODING_PROVIDER_URL: get_global_val(ENV_GEOCODING_PROVIDER_URL)
+            OPTIONS_GEOCODING_PROVIDER_URL: get_global_val(GEOCODING_PROVIDER_URL)
         }
 
     return {}
@@ -175,40 +175,40 @@ def _prepare_geocoding():
 def _prepare_tiles(tiles: Union[str, dict]) -> Optional[dict]:
     if isinstance(tiles, str):
         return {
-            OPTIONS_TILES_PROVIDER_KIND: _RASTER_ZXY,
-            OPTIONS_TILES_PROVIDER_URL: tiles
+            OPTIONS_MAPTILES_KIND: _RASTER_ZXY,
+            OPTIONS_MAPTILES_URL: tiles
         }
 
     if isinstance(tiles, dict):
-        if tiles.get(ENV_TILES_PROVIDER_KIND, None) == _RASTER_ZXY:
+        if tiles.get(MAPTILES_KIND, None) == _RASTER_ZXY:
             return {
-                OPTIONS_TILES_PROVIDER_KIND: _RASTER_ZXY,
-                OPTIONS_TILES_PROVIDER_URL: tiles.get(ENV_TILES_PROVIDER_URL, None)
+                OPTIONS_MAPTILES_KIND: _RASTER_ZXY,
+                OPTIONS_MAPTILES_URL: tiles.get(MAPTILES_URL, None)
             }
-        elif tiles.get(ENV_TILES_PROVIDER_KIND, None) == _VECTOR_LETS_PLOT:
+        elif tiles.get(MAPTILES_KIND, None) == _VECTOR_LETS_PLOT:
             return {
-                OPTIONS_TILES_PROVIDER_KIND: _VECTOR_LETS_PLOT,
-                OPTIONS_TILES_PROVIDER_URL: tiles.get(ENV_TILES_PROVIDER_URL, None),
-                OPTIONS_TILES_PROVIDER_THEME: tiles.get(ENV_TILES_PROVIDER_THEME, None),
+                OPTIONS_MAPTILES_KIND: _VECTOR_LETS_PLOT,
+                OPTIONS_MAPTILES_URL: tiles.get(MAPTILES_URL, None),
+                OPTIONS_MAPTILES_THEME: tiles.get(MAPTILES_THEME, None),
             }
         else:
-            raise ValueError("Unsupported 'tiles' kind: " + tiles.get(ENV_TILES_PROVIDER_KIND, None))
+            raise ValueError("Unsupported 'tiles' kind: " + tiles.get(MAPTILES_KIND, None))
 
     if tiles is not None:
         raise ValueError("Unsupported 'tiles' parameter type: " + type(tiles))
 
-    if has_global_value(ENV_TILES_PROVIDER_KIND):
-        if get_global_val(ENV_TILES_PROVIDER_KIND) == _RASTER_ZXY:
+    if has_global_value(MAPTILES_KIND):
+        if get_global_val(MAPTILES_KIND) == _RASTER_ZXY:
             return {
-                OPTIONS_TILES_PROVIDER_KIND: _RASTER_ZXY,
-                OPTIONS_TILES_PROVIDER_URL: get_global_val(ENV_TILES_PROVIDER_URL)
+                OPTIONS_MAPTILES_KIND: _RASTER_ZXY,
+                OPTIONS_MAPTILES_URL: get_global_val(MAPTILES_URL)
             }
 
-        if get_global_val(ENV_TILES_PROVIDER_KIND) == _VECTOR_LETS_PLOT:
+        if get_global_val(MAPTILES_KIND) == _VECTOR_LETS_PLOT:
             return {
-                OPTIONS_TILES_PROVIDER_KIND: _VECTOR_LETS_PLOT,
-                OPTIONS_TILES_PROVIDER_URL: get_global_val(ENV_TILES_PROVIDER_URL) if has_global_value(ENV_TILES_PROVIDER_URL) else None,
-                OPTIONS_TILES_PROVIDER_THEME: get_global_val(ENV_TILES_PROVIDER_THEME) if has_global_value(ENV_TILES_PROVIDER_THEME) else None
+                OPTIONS_MAPTILES_KIND: _VECTOR_LETS_PLOT,
+                OPTIONS_MAPTILES_URL: get_global_val(MAPTILES_URL) if has_global_value(MAPTILES_URL) else None,
+                OPTIONS_MAPTILES_THEME: get_global_val(MAPTILES_THEME) if has_global_value(MAPTILES_THEME) else None
             }
 
     raise ValueError('Tile provider is not set.')
