@@ -71,12 +71,9 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
         If True, the specified size is equal to the size at zero zoom.
     labels : True (default) or False, optional
         Enables a drawing labels on map.
-    tiles: string or dict, optional
-        If str - template string for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
-        If dict - parameters for a datalore tile provider
-            'host': str - server url
-            'port': int - server port
-            'theme': str - tiles theme ('color', 'light', 'dark')
+    tiles: string, optional
+        Tiles provider, either as a string - URL for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards
+        (e.g. 'http://my.tile.com/{z}/{x}/{y}.png') or the result of a call to a maptiles_xxx functions
     theme : string, optional
         Theme for the map.
         There are:
