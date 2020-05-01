@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
+import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
@@ -126,7 +127,7 @@ fun buildGGBunchComponent(plotInfos: List<PlotBuildInfo>, parentElement: HTMLEle
 
     parentElement.setAttribute(
         "style",
-        "position: relative; width: ${bunchBounds.width}px; height: ${bunchBounds.height}px;"
+        "position: relative; width: ${bunchBounds.width}px; height: ${bunchBounds.height}px; background-color: ${Defaults.BACKDROP_COLOR};"
     )
 }
 
