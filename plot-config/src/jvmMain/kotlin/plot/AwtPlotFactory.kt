@@ -10,7 +10,9 @@ import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Disposable
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
@@ -134,6 +136,14 @@ abstract class AwtPlotFactory(
         }
 
         bunchComponent.border = null
+        bunchComponent.background = Colors.parseColor(Defaults.BACKDROP_COLOR).let {
+            Color(
+                it.red,
+                it.green,
+                it.blue,
+                it.alpha
+            )
+        }
 
         for (plotInfo in plotInfos) {
             val plotComponent = buildPlotComponent(plotInfo)

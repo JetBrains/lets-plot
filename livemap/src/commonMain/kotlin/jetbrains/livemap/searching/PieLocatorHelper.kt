@@ -7,7 +7,7 @@ package jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Color.Companion.parseColor
+import jetbrains.datalore.base.values.Color.Companion.parseRGB
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.placement.ScreenLoopComponent
 import jetbrains.livemap.projection.Client
@@ -29,7 +29,7 @@ class PieLocatorHelper : LocatorHelper {
     }
 
     override fun getColor(target: EcsEntity): Color? {
-        return target.get<StyleComponent>().fillColor?.let(::parseColor)
+        return target.get<StyleComponent>().fillColor?.let(::parseRGB)
     }
 
     private fun isCoordinateInPieSector(coord: Vec<Client>, origin: Vec<Client>, pieSector: PieSectorComponent): Boolean {

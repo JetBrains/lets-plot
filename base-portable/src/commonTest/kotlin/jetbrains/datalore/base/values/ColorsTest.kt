@@ -24,4 +24,34 @@ class ColorsTest {
             Colors.forName("unknown")
         }
     }
+
+    @Test
+    fun parseHex() {
+        assertEquals(Color.RED, Colors.parseColor(Color.RED.toHexColor()))
+    }
+
+    @Test
+    fun parseRGB() {
+        assertEquals(Color.RED, Colors.parseColor("rgb(255,0,0)"))
+    }
+
+    @Test
+    fun parseRGBA() {
+        assertEquals(Color(0,255,0,37), Colors.parseColor("rgba(0,255,0,37)"))
+    }
+
+    @Test
+    fun parseColRGB() {
+        assertEquals(Color.BLUE, Colors.parseColor("color(0,0,255)"))
+    }
+
+    @Test
+    fun parseColRGBA() {
+        assertEquals(Color(0,0,255,37), Colors.parseColor("color(0,0,255,37)"))
+    }
+
+    @Test
+    fun parseColName() {
+        assertEquals(Color.MAGENTA, Colors.parseColor("magenta"))
+    }
 }

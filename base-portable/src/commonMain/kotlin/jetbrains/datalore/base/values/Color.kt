@@ -95,7 +95,7 @@ class Color @JvmOverloads constructor(
         private const val COLOR = "color"
         private const val RGBA = "rgba"
 
-        fun parseColor(text: String): Color {
+        fun parseRGB(text: String): Color {
             val firstParen = findNext(text, "(", 0)
             val prefix = text.substring(0, firstParen)
 
@@ -139,11 +139,11 @@ class Color @JvmOverloads constructor(
             @Suppress("NAME_SHADOWING")
             var hexColor = hexColor
             if (!hexColor.startsWith("#")) {
-                throw IllegalArgumentException()
+                throw IllegalArgumentException("Not a HEX value: $hexColor")
             }
             hexColor = hexColor.substring(1)
             if (hexColor.length != 6) {
-                throw IllegalArgumentException()
+                throw IllegalArgumentException("Not a HEX value: $hexColor")
             }
             val r = hexColor.substring(0, 2).toInt(16)
             val g = hexColor.substring(2, 4).toInt(16)

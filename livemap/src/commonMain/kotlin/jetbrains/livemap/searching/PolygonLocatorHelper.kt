@@ -17,7 +17,7 @@ import jetbrains.livemap.rendering.StyleComponent
 class PolygonLocatorHelper : LocatorHelper {
 
     override fun getColor(target: EcsEntity): Color? {
-        return target.get<StyleComponent>().fillColor?.let(Color.Companion::parseColor)
+        return target.get<StyleComponent>().fillColor?.let(Color.Companion::parseRGB)
     }
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {

@@ -7,7 +7,7 @@ package jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Color.Companion.parseColor
+import jetbrains.datalore.base.values.Color.Companion.parseRGB
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.placement.ScreenDimensionComponent
 import jetbrains.livemap.placement.ScreenLoopComponent
@@ -18,7 +18,7 @@ class PointLocatorHelper : LocatorHelper {
 
     override fun getColor(target: EcsEntity): Color? {
         return target.get<StyleComponent>().run {
-            (strokeColor ?: fillColor)?.let(::parseColor)
+            (strokeColor ?: fillColor)?.let(::parseRGB)
         }
     }
 
