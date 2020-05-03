@@ -12,31 +12,40 @@ import kotlin.random.Random
 object Colors {
     private const val DEFAULT_FACTOR = 0.7
 
+    private val variantColors = mapOf<String, Color>(
+        "dark_blue" to Color.DARK_BLUE,
+        "dark_green" to Color.DARK_GREEN,
+        "dark_magenta" to Color.DARK_MAGENTA,
+        "light_blue" to Color.LIGHT_BLUE,
+        "light_gray" to Color.LIGHT_GRAY,
+        "light_green" to Color.LIGHT_GREEN,
+        "light_yellow" to Color.LIGHT_YELLOW,
+        "light_magenta" to Color.LIGHT_MAGENTA,
+        "light_cyan" to Color.LIGHT_CYAN,
+        "light_pink" to Color.LIGHT_PINK,
+        "very_light_gray" to Color.VERY_LIGHT_GRAY,
+        "very_light_yellow" to Color.VERY_LIGHT_YELLOW
+    )
     private val namedColors = mapOf<String, Color>(
         "white" to Color.WHITE,
         "black" to Color.BLACK,
-        "light-gray" to Color.LIGHT_GRAY,
-        "very-light-gray" to Color.VERY_LIGHT_GRAY,
         "gray" to Color.GRAY,
         "red" to Color.RED,
-        "light-green" to Color.LIGHT_GREEN,
         "green" to Color.GREEN,
-        "dark-green" to Color.DARK_GREEN,
         "blue" to Color.BLUE,
-        "dark-blue" to Color.DARK_BLUE,
-        "light-blue" to Color.LIGHT_BLUE,
         "yellow" to Color.YELLOW,
-        "light-yellow" to Color.LIGHT_YELLOW,
-        "very-light-yellow" to Color.VERY_LIGHT_YELLOW,
         "magenta" to Color.MAGENTA,
-        "light-magenta" to Color.LIGHT_MAGENTA,
-        "dark-magenta" to Color.DARK_MAGENTA,
         "cyan" to Color.CYAN,
-        "light-cyan" to Color.LIGHT_CYAN,
         "orange" to Color.ORANGE,
-        "pink" to Color.PINK,
-        "light-pink" to Color.LIGHT_PINK
-    )
+        "pink" to Color.PINK
+    ) +
+            // light_gray
+            variantColors +
+            // light-gray
+            variantColors.mapKeys { it.key.replace('_', '-') } +
+            // lightgray
+            variantColors.mapKeys { it.key.replace("_", "") }
+
 
     /**
      * @param c color string to parse. Accepted formats:

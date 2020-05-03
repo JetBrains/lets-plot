@@ -25,7 +25,8 @@ object GuideMappers {
         data: DataFrame,
         variable: DataFrame.Variable,
         outputValues: List<TargetT>,
-        naValue: TargetT): GuideMapper<TargetT> {
+        naValue: TargetT
+    ): GuideMapper<TargetT> {
 
         val domainValues = DataFrameUtil.distinctValues(data, variable)
         return discreteToDiscrete(
@@ -35,25 +36,28 @@ object GuideMappers {
         )
     }
 
-    fun <TargetT> discreteToDiscrete(
-            domainValues: Collection<*>,
-            outputValues: List<TargetT>,
-            naValue: TargetT): GuideMapper<TargetT> {
+    private fun <TargetT> discreteToDiscrete(
+        domainValues: Collection<*>,
+        outputValues: List<TargetT>,
+        naValue: TargetT
+    ): GuideMapper<TargetT> {
 
         val mapper = Mappers.discrete(outputValues, naValue)
+
+        // ToDo: duplicates discreteToDiscrete2 (?)
         val breaks = ArrayList<GuideBreak<*>>()
         for (domainValue in domainValues) {
-            // ToDo: label formatter?
-            breaks.add(GuideBreak(domainValue!!, domainValue.toString()))
+            breaks.add(GuideBreak(domainValue, domainValue?.toString() ?: "n/a"))
         }
 
         return GuideMapperWithGuideBreaks(mapper, breaks)
     }
 
     fun <TargetT> discreteToDiscrete2(
-            domainValues: List<*>,
-            outputValues: List<TargetT>,
-            naValue: TargetT): GuideMapper<TargetT> {
+        domainValues: List<*>,
+        outputValues: List<TargetT>,
+        naValue: TargetT
+    ): GuideMapper<TargetT> {
 
         //Function<Double, TargetT> f = Mappers.discrete(outputValues, naValue);
         // ToDo: this works better with identity scales for 'numeric' input (when indices-based discrete mapper doesn't work)
@@ -79,14 +83,17 @@ object GuideMappers {
 
         val breaks = ArrayList<GuideBreak<*>>()
         for (domainValue in domainValues) {
-            // ToDo: label formatter?
-            breaks.add(GuideBreak(domainValue!!, domainValue.toString()))
+            breaks.add(GuideBreak(domainValue, domainValue?.toString() ?: "n/a"))
         }
 
         return GuideMapperWithGuideBreaks(mapper, breaks)
     }
 
-    fun <TargetT> continuousToDiscrete(domain: ClosedRange<Double>?, outputValues: List<TargetT>, naValue: TargetT): GuideMapper<TargetT> {
+    fun <TargetT> continuousToDiscrete(
+        domain: ClosedRange<Double>?,
+        outputValues: List<TargetT>,
+        naValue: TargetT
+    ): GuideMapper<TargetT> {
         // quantized
         val f = Mappers.quantized(domain, outputValues, naValue)
 
@@ -115,9 +122,10 @@ object GuideMappers {
     }
 
     fun discreteToContinuous(
-            domainValues: Collection<*>,
-            outputRange: ClosedRange<Double>,
-            naValue: Double): GuideMapper<Double> {
+        domainValues: Collection<*>,
+        outputRange: ClosedRange<Double>,
+        naValue: Double
+    ): GuideMapper<Double> {
 
         val mapper = Mappers.discreteToContinuous(domainValues, outputRange, naValue)
         val breaks = ArrayList<GuideBreak<*>>()
@@ -129,7 +137,11 @@ object GuideMappers {
         return GuideMapperWithGuideBreaks(mapper, breaks)
     }
 
-    fun continuousToContinuous(domain: ClosedRange<Double>, range: ClosedRange<Double>, naValue: Double?): GuideMapper<Double> {
+    fun continuousToContinuous(
+        domain: ClosedRange<Double>,
+        range: ClosedRange<Double>,
+        naValue: Double?
+    ): GuideMapper<Double> {
         return adaptContinuous(
             Mappers.linear(
                 domain,

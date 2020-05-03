@@ -12,7 +12,6 @@ import kotlin.test.Test
 
 class ScaleProviderHelperTest {
 
-    @Ignore("Temp to not break a build")
     @Test()
     fun nullValuesInDataFrame() {
         val region = DataFrame.Variable("region")
