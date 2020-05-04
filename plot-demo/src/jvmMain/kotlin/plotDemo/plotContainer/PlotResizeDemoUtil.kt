@@ -17,7 +17,6 @@ import java.awt.FlowLayout
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.util.concurrent.atomic.AtomicInteger
-import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.SwingUtilities
 import javax.swing.border.LineBorder
@@ -97,13 +96,10 @@ object PlotResizeDemoUtil {
     ): JComponent {
         val plot = demo.createPlot(plotSizeProp)
 
-        val component = MonolithicAwt.buildPlotComponent(
+        return MonolithicAwt.buildPlotComponent(
             plot,
             factory::createSvgComponent,
             factory.createPlotEdtExecutor()
         )
-
-        component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
-        return component
     }
 }

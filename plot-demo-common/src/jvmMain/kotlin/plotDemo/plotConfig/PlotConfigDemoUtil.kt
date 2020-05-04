@@ -12,7 +12,10 @@ import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Label
-import javax.swing.*
+import javax.swing.Box
+import javax.swing.BoxLayout
+import javax.swing.JComponent
+import javax.swing.JPanel
 
 object PlotConfigDemoUtil {
     fun show(
@@ -22,7 +25,7 @@ object PlotConfigDemoUtil {
         plotSize: DoubleVector?
     ) {
 
-        fun rawSpecPlotBuilder(plotSpec: MutableMap<String, Any>): JComponent  {
+        fun rawSpecPlotBuilder(plotSpec: MutableMap<String, Any>): JComponent {
             return MonolithicAwt.buildPlotFromRawSpecs(
                 plotSpec,
                 plotSize,
@@ -68,9 +71,6 @@ object PlotConfigDemoUtil {
 
             for (plotSpec in plotSpecList) {
                 val component = rawSpecPlotBuilder(plotSpec)
-
-                component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
-
                 if (plotSize != null) {
                     component.minimumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
                     component.maximumSize = Dimension(plotSize.x.toInt(), plotSize.y.toInt())
