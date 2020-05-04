@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
  - as_discrete() function.
- - `tooltip` parameter for geoms.
- - `axis_tooltip` parameters for `theme()`.
+ - (?) `tooltip` parameter for geoms.
+ - `theme`: `axis_tooltip`='blank' (also `axis_tooltip_x`, `axis_tooltip_x`)
  - polynomial regression for geom_smooth.
  - tooltip on `geom_hline`.
  - Fix auto-detection of Kaggle environment.
