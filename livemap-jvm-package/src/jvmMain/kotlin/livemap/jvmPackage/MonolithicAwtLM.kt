@@ -15,7 +15,6 @@ import jetbrains.datalore.plot.AwtPlotFactory
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
-import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
@@ -110,7 +109,7 @@ object MonolithicAwtLM {
         plotAssembler: PlotAssembler,
         processedPlotSpec: MutableMap<String, Any>
     ) {
-        LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(processedPlotSpec))
+        LiveMapOptionsParser.parseFromPlotSpec(processedPlotSpec)
             ?.let {
                 LiveMapUtil.injectLiveMapProvider(
                     plotAssembler.layersByTile,

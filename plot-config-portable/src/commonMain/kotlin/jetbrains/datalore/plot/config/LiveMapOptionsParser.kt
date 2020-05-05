@@ -9,33 +9,25 @@ import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.Projection
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap
+import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 
 class LiveMapOptionsParser {
     companion object {
 
-        fun parseFromLayerOptions(liveMapLayerOptions: OptionsAccessor): LiveMapOptions {
-            return parseLivemapOptions(liveMapLayerOptions)
+        fun parseFromPlotSpec(plotSpec: Map<String, Any>): LiveMapOptions? {
+            fun Map<*, *>.isLiveMap(): Boolean = this[Option.Layer.GEOM] == Option.GeomName.LIVE_MAP
+
+            val layers = plotSpec.getMaps(LAYERS)!!
+            if (layers.any { it.isLiveMap() }) {
+                require(layers.count { it.isLiveMap() } == 1) { "Only one geom_livemap is allowed per plot" }
+                require(layers.first().isLiveMap()) { "geom_livemap should be a first geom" }
+                return parseFromLayerOptions(OptionsAccessor(layers.first()))
+            }
+
+            return null
         }
 
-        fun parseFromPlotOptions(plotOptions: OptionsAccessor): LiveMapOptions? {
-            if (!plotOptions.has(Option.Plot.LAYERS)) {
-                return null
-            }
-
-            val layersList = plotOptions.getList(Option.Plot.LAYERS)
-            if (layersList.isEmpty() || layersList[0] !is Map<*, *>) {
-                return null
-            }
-
-            val layerOptions = layersList[0] as Map<*, *>
-            if (Option.GeomName.LIVE_MAP != layerOptions[Option.Layer.GEOM]) {
-                return null
-            }
-
-            return parseLivemapOptions(OptionsAccessor(layerOptions))
-        }
-
-        private fun parseLivemapOptions(opts: OptionsAccessor): LiveMapOptions {
+        fun parseFromLayerOptions(opts: OptionsAccessor): LiveMapOptions {
 
             return LiveMapOptions(
                 zoom = opts.getInteger(LiveMap.ZOOM),
@@ -65,9 +57,7 @@ class LiveMapOptionsParser {
             try {
                 return DisplayMode.valueOf(displayMode.toUpperCase())
             } catch (ignored: Exception) {
-                throw IllegalArgumentException("geom" + formatValues(
-                    DisplayMode.values()
-                ))
+                throw IllegalArgumentException("geom" + formatValues(DisplayMode.values()))
             }
         }
 

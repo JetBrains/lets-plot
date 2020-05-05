@@ -28,14 +28,11 @@ object LiveMapUtil {
 
     fun injectLiveMapProvider(plotTiles: List<List<GeomLayer>>, liveMapOptions: LiveMapOptions) {
         plotTiles.forEach { tileLayers ->
-            tileLayers
-                .firstOrNull { it.isLiveMap }
-                ?.setLiveMapProvider(
-                    MyLiveMapProvider(
-                        tileLayers,
-                        liveMapOptions
-                    )
-                )
+            if (tileLayers.any(GeomLayer::isLiveMap)) {
+                require(tileLayers.count(GeomLayer::isLiveMap) == 1)
+                require(tileLayers.first().isLiveMap)
+                tileLayers.first().setLiveMapProvider(MyLiveMapProvider(tileLayers, liveMapOptions))
+            }
         }
     }
 
@@ -135,9 +132,9 @@ object LiveMapUtil {
             // liveMap uses raw positions, so no mappings needed
             val newLiveMapRendererData = { layer: GeomLayer ->
                 LayerRendererUtil.createLayerRendererData(
-                    layer,
-                    emptyMap(),
-                    emptyMap()
+                    layer = layer,
+                    sharedNumericMappers = emptyMap(),
+                    overallNumericDomains = emptyMap()
                 )
             }
 

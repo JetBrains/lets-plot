@@ -149,7 +149,7 @@ private fun injectLivemapProvider(
     plotAssembler: PlotAssembler,
     processedPlotSpec: MutableMap<String, Any>
 ) {
-    LiveMapOptionsParser.parseFromPlotOptions(OptionsAccessor(processedPlotSpec))
+    LiveMapOptionsParser.parseFromPlotSpec(processedPlotSpec)
         ?.let {
             LiveMapUtil.injectLiveMapProvider(
                 plotAssembler.layersByTile,

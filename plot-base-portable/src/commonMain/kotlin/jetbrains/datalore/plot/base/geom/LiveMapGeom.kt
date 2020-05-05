@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 
 
 class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
-    private var myMapProvider: LiveMapProvider? = null
+    private lateinit var myMapProvider: LiveMapProvider
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() {
@@ -42,7 +42,7 @@ class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
     }
 
     fun createCanvasFigure(bounds: DoubleRectangle): LiveMapProvider.LiveMapData {
-        return myMapProvider?.createLiveMap(bounds) ?: error("geom_livemap is not enabled")
+        return myMapProvider.createLiveMap(bounds)
     }
 
     companion object {
