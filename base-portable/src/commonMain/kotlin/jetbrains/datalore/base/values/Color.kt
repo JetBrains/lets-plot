@@ -6,6 +6,7 @@
 package jetbrains.datalore.base.values
 
 import kotlin.jvm.JvmOverloads
+import kotlin.math.roundToInt
 
 class Color @JvmOverloads constructor(
         val red: Int,
@@ -121,7 +122,7 @@ class Color @JvmOverloads constructor(
                 alpha = 255
             } else {
                 blue = text.substring(secondComma + 1, thirdComma).trim { it <= ' ' }.toInt()
-                alpha = text.substring(thirdComma + 1, lastParen).trim { it <= ' ' }.toInt()
+                alpha = (text.substring(thirdComma + 1, lastParen).trim { it <= ' ' }.toFloat() * 255).roundToInt()
             }
 
             return Color(red, green, blue, alpha)

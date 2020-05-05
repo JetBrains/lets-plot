@@ -71,7 +71,7 @@ class ScaleConfigTest {
                 listOf("red", "green", "blue"),
                 listOf("#ff0000", "#00ff00", "#0000ff"),
                 listOf("rgb(255,0,0)", "rgb(0,255,0)", "rgb(0,0,255)"),
-                listOf("rgba(255,0,0,255)", "rgba(0,255,0,255)", "rgba(0,0,255,255)"),
+                listOf("rgba(255,0,0,1.0)", "rgba(0,255,0,1.0)", "rgba(0,0,255,1.0)"),
                 listOf(0xff0000, 0x00ff00, 0x0000ff),
                 listOf(0xff0000.toDouble(), 0x00ff00.toDouble(), 0x0000ff.toDouble())
         )

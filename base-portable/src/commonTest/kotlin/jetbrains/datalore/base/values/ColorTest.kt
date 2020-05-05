@@ -23,7 +23,7 @@ class ColorTest {
 
     @Test
     fun parseRGBA() {
-        assertEquals(Color.RED, Color.parseRGB("rgba(255,0,0,255)"))
+        assertEquals(Color.RED, Color.parseRGB("rgba(255,0,0,1.0)"))
     }
 
     @Test
@@ -33,7 +33,7 @@ class ColorTest {
 
     @Test
     fun parseColRGBA() {
-        assertEquals(Color.BLUE, Color.parseRGB("color(0,0,255,255)"))
+        assertEquals(Color.BLUE, Color.parseRGB("color(0,0,255,1.0)"))
     }
 
     @Test
