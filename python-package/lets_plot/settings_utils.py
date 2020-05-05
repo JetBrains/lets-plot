@@ -10,7 +10,7 @@ GEOCODING_PROVIDER_URL = 'geocoding_url'
 _VECTOR_LETS_PLOT = 'vector_lets_plot'
 _RASTER_ZXY = 'raster_zxy'
 
-__all__ = ['maptiles_lets_plot', 'maptiles_zxy', 'geocoding_service']
+__all__ = ['maptiles_zxy']
 
 
 def maptiles_lets_plot(url: str, theme: str = None) -> dict:
