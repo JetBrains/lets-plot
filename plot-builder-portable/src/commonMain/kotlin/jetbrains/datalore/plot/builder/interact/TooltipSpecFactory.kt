@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X1
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y1
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 
 class TooltipSpecFactory(
     contextualMapping: ContextualMapping,
@@ -214,8 +215,7 @@ class TooltipSpecFactory(
                 POINT_X,
                 POINT_X1,
                 POINT_Y,
-                POINT_Y1)
-
-        val AXIS_TOOLTIP_COLOR = Color.GRAY
+                POINT_Y1
+        )
     }
 }

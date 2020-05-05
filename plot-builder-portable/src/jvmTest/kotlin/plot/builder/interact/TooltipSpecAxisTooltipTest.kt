@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.X_AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
-import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory.Companion.AXIS_TOOLTIP_COLOR
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 

@@ -11,7 +11,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.guide.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_STEM_LENGTH
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.*
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import kotlin.test.assertEquals
@@ -104,16 +104,16 @@ internal open class TooltipLayoutTestBase {
         return when (verticalAlignment) {
 
             VerticalAlignment.TOP ->
-                tooltip.cfgHintCoord().y - tooltip.size().y - SHORT_STEM_LENGTH
+                tooltip.cfgHintCoord().y - tooltip.size().y - AXIS_STEM_LENGTH
             VerticalAlignment.BOTTOM ->
-                tooltip.cfgHintCoord().y + SHORT_STEM_LENGTH
+                tooltip.cfgHintCoord().y + AXIS_STEM_LENGTH
 
             else -> throw IllegalArgumentException("Placement is not supported: $verticalAlignment")
         }
     }
 
     fun expectedAxisTipX(tooltipKey: String, alignment: HorizontalAlignment): Double {
-        return expectedHorizontalX(tooltipKey, alignment, SHORT_STEM_LENGTH)
+        return expectedHorizontalX(tooltipKey, alignment, AXIS_STEM_LENGTH)
     }
 
     private fun <T> shouldCheck(v: T?): Boolean {

@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.NORMAL_STEM_LENGTH
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_STEM_LENGTH
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
@@ -47,7 +47,7 @@ class LayoutManager(
         tooltips
             .firstOrNull { it.hintKind === X_AXIS_TOOLTIP }
             ?.let { xAxisTooltip ->
-                val positionedTooltip = calculateVerticalTooltipPosition(xAxisTooltip, BOTTOM, SHORT_STEM_LENGTH, true)
+                val positionedTooltip = calculateVerticalTooltipPosition(xAxisTooltip, BOTTOM, AXIS_STEM_LENGTH, true)
                 desiredPosition.add(positionedTooltip)
 
                 // Limit available vertical space for other tooltips by the axis or top side of the tooltip (if not fit under the axis)
@@ -64,7 +64,7 @@ class LayoutManager(
         // y-axis tooltip
         tooltips
             .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
-            ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it, SHORT_STEM_LENGTH)) }
+            ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it, AXIS_STEM_LENGTH)) }
 
         // add corner tooltips
         tooltips

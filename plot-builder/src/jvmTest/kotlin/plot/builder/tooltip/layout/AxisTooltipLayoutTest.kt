@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.SHORT_STEM_LENGTH
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_STEM_LENGTH
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
@@ -29,10 +29,10 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
     fun whenXAxisTooltipPresented_AndSideTipUnderAxis_ShouldAlignSideTipAboveAxis() {
         val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
                 .addTooltip(
-                        defaultHorizontalTip(coord(TooltipLayoutTestBase.VIEWPORT.center.x, TooltipLayoutTestBase.VIEWPORT.bottom)).buildTooltip()
+                        defaultHorizontalTip(coord(VIEWPORT.center.x, VIEWPORT.bottom)).buildTooltip()
                 )
                 .addTooltip(
-                        xAxisTip(TooltipLayoutTestBase.VIEWPORT.center.x)
+                        xAxisTip(VIEWPORT.center.x)
                                 .size(DEFAULT_FIT_TOOLTIP_SIZE)
                                 .buildTooltip()
                 )
@@ -48,14 +48,14 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
 
     @Test
     fun whenXAxisTooltipPresented_AndDirectedDown_ShouldAlignSideTipAboveAxisTooltip() {
-        val targetCoord = coord(TooltipLayoutTestBase.VIEWPORT.center.x, DEFAULT_AXIS_ORIGIN.y - TooltipLayoutTestBase.DEFAULT_TOOLTIP_SIZE.y / 2)
+        val targetCoord = coord(VIEWPORT.center.x, DEFAULT_AXIS_ORIGIN.y - DEFAULT_TOOLTIP_SIZE.y / 2)
 
         val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
                 .addTooltip(
                         defaultHorizontalTip(targetCoord).buildTooltip()
                 )
                 .addTooltip(
-                        xAxisTip(TooltipLayoutTestBase.VIEWPORT.center.x)
+                        xAxisTip(VIEWPORT.center.x)
                                 .size(DEFAULT_NON_FIT_TOOLTIP_SIZE)
                                 .buildTooltip()
                 )
@@ -76,12 +76,12 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
                         defaultHorizontalTip(coord(150.0, 150.0)).buildTooltip()
                 )
                 .addTooltip(
-                        xAxisTip(TooltipLayoutTestBase.VIEWPORT.center.x)
+                        xAxisTip(VIEWPORT.center.x)
                                 .size(DEFAULT_FIT_TOOLTIP_SIZE)
                                 .buildTooltip()
                 )
                 .addTooltip(
-                        xAxisTip(TooltipLayoutTestBase.VIEWPORT.center.x)
+                        xAxisTip(VIEWPORT.center.x)
                                 .text("another x axis tooltip should not be added")
                                 .size(DEFAULT_FIT_TOOLTIP_SIZE)
                                 .buildTooltip()
@@ -100,10 +100,10 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
     fun whenXAxisTooltipPresented_AndCoveredByCursor_ShouldNotMoveTooltipUp() {
         val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
                 .cursor(
-                        coord(TooltipLayoutTestBase.VIEWPORT.center.x, DEFAULT_AXIS_ORIGIN.y)
+                        coord(VIEWPORT.center.x, DEFAULT_AXIS_ORIGIN.y)
                 )
                 .addTooltip(
-                        xAxisTip(TooltipLayoutTestBase.VIEWPORT.center.x)
+                        xAxisTip(VIEWPORT.center.x)
                                 .size(DEFAULT_FIT_TOOLTIP_SIZE)
                                 .buildTooltip()
                 )
@@ -120,7 +120,7 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
     fun yAxisTooltip_WhenFit_ShouldBeAlignedToLeft() {
         val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
                 .addTooltip(
-                        yAxisTip(TooltipLayoutTestBase.VIEWPORT.center.y)
+                        yAxisTip(VIEWPORT.center.y)
                                 .size(DEFAULT_FIT_TOOLTIP_SIZE)
                                 .buildTooltip()
                 )
@@ -160,12 +160,12 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
 
         private val DEFAULT_AXIS_ORIGIN = point(
                 DEFAULT_X_AXIS_PADDING,
-                TooltipLayoutTestBase.VIEWPORT.bottom - DEFAULT_Y_AXIS_PADDING
+                VIEWPORT.bottom - DEFAULT_Y_AXIS_PADDING
         )
 
         private val DEFAULT_FIT_TOOLTIP_SIZE = size(
-                DEFAULT_Y_AXIS_PADDING - SHORT_STEM_LENGTH - EXTRA_PADDING,
-                DEFAULT_X_AXIS_PADDING - SHORT_STEM_LENGTH - EXTRA_PADDING
+                DEFAULT_Y_AXIS_PADDING - AXIS_STEM_LENGTH - EXTRA_PADDING,
+                DEFAULT_X_AXIS_PADDING - AXIS_STEM_LENGTH - EXTRA_PADDING
         )
 
         private val DEFAULT_NON_FIT_TOOLTIP_SIZE = size(
