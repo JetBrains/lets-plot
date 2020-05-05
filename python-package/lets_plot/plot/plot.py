@@ -7,6 +7,7 @@ import numbers
 from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.util import as_annotated_data
+from .._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT
 
 __all__ = ['ggplot', 'ggsize', 'GGBunch']
 
@@ -99,6 +100,13 @@ def ggsize(width, height):
     """
     assert isinstance(width, numbers.Number), "'width' must be numeric"
     assert isinstance(height, numbers.Number), "'height' must be numeric"
+
+    max_width = get_global_val(MAX_WIDTH) if has_global_value(MAX_WIDTH) else 10_000
+    max_height = get_global_val(MAX_HEIGHT) if has_global_value(MAX_HEIGHT) else 10_000
+
+    assert width <= max_width, "'width' must be less than or equal to " + str(max_width)
+    assert height <= max_height, "'height' must be less than or equal to " + str(max_height)
+
     return FeatureSpec('ggsize', name=None, width=width, height=height)
 
 
