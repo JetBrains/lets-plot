@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X1
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y
 import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y1
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_RADIUS
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 
 class TooltipSpecFactory(
@@ -148,19 +149,20 @@ class TooltipSpecFactory(
         }
 
         private fun createHintForAxis(aes: Aes<*>): TipLayoutHint {
-            if (aes === Aes.X) {
-                return TipLayoutHint.xAxisTooltip(DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
-                    AXIS_TOOLTIP_COLOR
+            return when(aes) {
+                 Aes.X -> TipLayoutHint.xAxisTooltip(
+                     coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
+                     color = AXIS_TOOLTIP_COLOR,
+                     axisRadius = AXIS_RADIUS
+                 )
+                Aes.Y -> TipLayoutHint.yAxisTooltip(
+                    coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
+                    color = AXIS_TOOLTIP_COLOR,
+                    axisRadius = AXIS_RADIUS
                 )
+                else -> error("Not an axis aes: $aes")
             }
 
-            if (aes === Aes.Y) {
-                return TipLayoutHint.yAxisTooltip(DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
-                    AXIS_TOOLTIP_COLOR
-                )
-            }
-
-            throw IllegalArgumentException("Not an axis aes: $aes")
         }
 
         private fun applyTipLayoutHint(aes: List<Aes<*>>, layoutHint: TipLayoutHint, isOutlier: Boolean) {

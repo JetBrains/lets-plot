@@ -51,28 +51,28 @@ open class TipLayoutHint(
 
         fun cursorTooltip(coord: DoubleVector?, color: Color?): TipLayoutHint {
             return TipLayoutHint(
-                Kind.CURSOR_TOOLTIP,
-                coord,
-                0.0,
-                color
+                kind = Kind.CURSOR_TOOLTIP,
+                coord = coord,
+                objectRadius = 0.0,
+                color = color
             )
         }
 
-        fun xAxisTooltip(coord: DoubleVector?, color: Color?): TipLayoutHint {
+        fun xAxisTooltip(coord: DoubleVector?, color: Color?, axisRadius: Double = 0.0): TipLayoutHint {
             return TipLayoutHint(
-                Kind.X_AXIS_TOOLTIP,
-                coord,
-                0.0,
-                color
+                kind = Kind.X_AXIS_TOOLTIP,
+                coord = coord,
+                objectRadius = axisRadius,
+                color = color
             )
         }
 
-        fun yAxisTooltip(coord: DoubleVector?, color: Color?): TipLayoutHint {
+        fun yAxisTooltip(coord: DoubleVector?, color: Color?, axisRadius: Double = 0.0): TipLayoutHint {
             return TipLayoutHint(
-                Kind.Y_AXIS_TOOLTIP,
-                coord,
-                0.0,
-                color
+                kind = Kind.Y_AXIS_TOOLTIP,
+                coord = coord,
+                objectRadius = axisRadius,
+                color = color
             )
         }
     }

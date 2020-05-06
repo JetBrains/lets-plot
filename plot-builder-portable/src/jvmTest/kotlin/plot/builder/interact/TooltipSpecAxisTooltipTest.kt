@@ -33,9 +33,10 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
 
         buildTooltipSpecs()
 
-        assertHint(X_AXIS_TOOLTIP,
-            TARGET_X_AXIS_COORD,
-            DEFAULT_OBJECT_RADIUS
+        assertHint(
+            expectedHintKind = X_AXIS_TOOLTIP,
+            expectedHintCoord = TARGET_X_AXIS_COORD,
+            expectedObjectRadius = 1.5
         )
         assertFill(AXIS_TOOLTIP_COLOR)
         assertLines(0, xMapping.shortTooltipText())
