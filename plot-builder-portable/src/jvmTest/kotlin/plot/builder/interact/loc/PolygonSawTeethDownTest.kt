@@ -17,58 +17,41 @@ import kotlin.test.Test
 class PolygonSawTeethDownTest {
 
     private val polygonLocator: GeomTargetLocator
-        get() = createLocator(
-            GeomTargetLocator.LookupStrategy.HOVER, GeomTargetLocator.LookupSpace.XY,
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.TARGET
-        )
+        get() = createLocator(GeomTargetLocator.LookupStrategy.HOVER, GeomTargetLocator.LookupSpace.XY, TARGET)
 
     @Test
     fun whenBetweenTeeth_ShouldFindNothing() {
         val locator = polygonLocator
 
-        assertEmpty(locator, point(
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.MIDDLE_MAX,
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.BOTTOM
-        ))
+        assertEmpty(locator, point(MIDDLE_MAX, BOTTOM))
     }
 
     @Test
     fun whenBeforeFirstTooth_ShouldFindNothing() {
         val locator = polygonLocator
 
-        assertEmpty(locator, point(
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.LEFT_MAX,
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.BOTTOM
-        ))
+        assertEmpty(locator, point(LEFT_MAX, BOTTOM))
     }
 
     @Test
     fun whenAfterLastTooth_ShouldFindNothing() {
         val locator = polygonLocator
 
-        assertEmpty(locator, point(
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.RIGHT_MAX,
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.BOTTOM
-        ))
+        assertEmpty(locator, point(RIGHT_MAX, BOTTOM))
     }
 
     @Test
     fun whenOnSecondToothPeekPoint_ShouldFindNothing() {
         val locator = polygonLocator
 
-        assertEmpty(locator, point(
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.SECOND_TOOTH_PEEK_X,
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.BOTTOM
-        ))
+        assertEmpty(locator, point(SECOND_TOOTH_PEEK_X, BOTTOM))
     }
 
     @Test
     fun whenInsideSecondToothPeek_ShouldFindPolygon() {
         val locator = polygonLocator
 
-        assertObjects(locator, point(jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.SECOND_TOOTH_PEEK_X, jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.BOTTOM + 1.0),
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.POLYGON_KEY
-        )
+        assertObjects(locator, point(SECOND_TOOTH_PEEK_X, BOTTOM + 1.0), POLYGON_KEY)
     }
 
     companion object {
@@ -92,23 +75,14 @@ class PolygonSawTeethDownTest {
         private const val MIDDLE_MAX = 100.0
 
         private val POLYGON = polygon(
-                point(0.0, jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.TOP),
-                point(
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.FIRST_TOOTH_PEEK_X,
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.BOTTOM
-                ),
-                point(100.0, jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.TOP),
-                point(
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.SECOND_TOOTH_PEEK_X,
-                    jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.BOTTOM
-                ),
-                point(200.0, jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.TOP)
+                point(0.0, TOP),
+                point(FIRST_TOOTH_PEEK_X, BOTTOM),
+                point(100.0, TOP),
+                point(SECOND_TOOTH_PEEK_X, BOTTOM),
+                point(200.0, TOP)
         )
 
         private const val POLYGON_KEY = 1
-        private val TARGET = polygonTarget(
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.POLYGON_KEY,
-            jetbrains.datalore.plot.builder.interact.loc.PolygonSawTeethDownTest.Companion.POLYGON
-        )
+        private val TARGET = polygonTarget(POLYGON_KEY, POLYGON)
     }
 }

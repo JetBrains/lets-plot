@@ -20,16 +20,16 @@ class TooltipSpecFactoryHintShapeTest : jetbrains.datalore.plot.builder.interact
         init()
 
         // Add mapping otherwise hint will not be created
-        addMappedData(variable().mapping(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.AES_WIDTH))
+        addMappedData(variable().mapping(AES_WIDTH))
     }
 
     @Test
     fun withPointHitShape_ShouldAddHintAroundPoint() {
-        createTooltipSpecs(geomTargetBuilder.withPointHitShape(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD, 0.0).build())
+        createTooltipSpecs(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
 
         assertHint(VERTICAL_TOOLTIP,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.DEFAULT_OBJECT_RADIUS
+            TARGET_HIT_COORD,
+            DEFAULT_OBJECT_RADIUS
         )
     }
 
@@ -38,18 +38,18 @@ class TooltipSpecFactoryHintShapeTest : jetbrains.datalore.plot.builder.interact
         createTooltipSpecs(geomTargetBuilder.withPathHitShape().build())
 
         assertHint(HORIZONTAL_TOOLTIP,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.DEFAULT_OBJECT_RADIUS
+            TARGET_HIT_COORD,
+            DEFAULT_OBJECT_RADIUS
         )
     }
 
     @Test
     fun withPolygonHitShape_ShouldAddHintUnderCursor() {
-        createTooltipSpecs(geomTargetBuilder.withPolygonHitShape(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.CURSOR_COORD).build())
+        createTooltipSpecs(geomTargetBuilder.withPolygonHitShape(CURSOR_COORD).build())
 
         assertHint(CURSOR_TOOLTIP,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.CURSOR_COORD,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.DEFAULT_OBJECT_RADIUS
+            CURSOR_COORD,
+            DEFAULT_OBJECT_RADIUS
         )
     }
 
@@ -57,29 +57,29 @@ class TooltipSpecFactoryHintShapeTest : jetbrains.datalore.plot.builder.interact
     fun withRectHitShape_ShouldAddHintMiddleAtY() {
         val dim = size(10.0, 12.0)
 
-        createTooltipSpecs(geomTargetBuilder.withRectHitShape(rect(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD, dim)).build())
+        createTooltipSpecs(geomTargetBuilder.withRectHitShape(rect(TARGET_HIT_COORD, dim)).build())
 
         val radius = dim.x / 2
         assertHint(HORIZONTAL_TOOLTIP,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD, radius)
+            TARGET_HIT_COORD, radius)
     }
 
     @Test
     fun withLayoutHint_ShouldCopyDataFromHint() {
-        addMappedData(variable().mapping(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.AES_WIDTH))
+        addMappedData(variable().mapping(AES_WIDTH))
 
         createTooltipSpecs(geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(
-                    jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.AES_WIDTH, TipLayoutHint.verticalTooltip(
-                        jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD,
-                        jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.OBJECT_RADIUS,
-                        jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.FILL_COLOR
+                    AES_WIDTH, TipLayoutHint.verticalTooltip(
+                        TARGET_HIT_COORD,
+                        OBJECT_RADIUS,
+                        FILL_COLOR
                     ))
                 .build())
 
         assertHint(VERTICAL_TOOLTIP,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD,
-            jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.OBJECT_RADIUS
+            TARGET_HIT_COORD,
+            OBJECT_RADIUS
         )
     }
 }

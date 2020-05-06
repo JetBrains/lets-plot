@@ -56,7 +56,7 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle,
         return TooltipBox().apply { myTooltipLayer.children().add(rootGroup) }
     }
 
-    private val jetbrains.datalore.plot.builder.interact.TooltipSpec.style get() = when (this.layoutHint.kind) {
+    private val TooltipSpec.style get() = when (this.layoutHint.kind) {
         X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP -> Style.PLOT_AXIS_TOOLTIP
         else -> Style.PLOT_DATA_TOOLTIP
     }

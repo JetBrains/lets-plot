@@ -25,13 +25,13 @@ abstract class TargetLocatorPathXTestBase {
 
     @BeforeTest
     fun setUp() {
-        val builder = PathPointsBuilder().defaultY(jetbrains.datalore.plot.builder.interact.loc.TargetLocatorPathXTestBase.Companion.Y)
+        val builder = PathPointsBuilder().defaultY(Y)
         p0 = builder.x(100.0)
         p1 = builder.x(200.0)
         p2 = builder.x(300.0)
 
         locator = createLocator(LookupStrategy.HOVER, LookupSpace.X,
-                pathTarget(jetbrains.datalore.plot.builder.interact.loc.TargetLocatorPathXTestBase.Companion.FIRST_PATH_KEY, p0, p1, p2)
+                pathTarget(FIRST_PATH_KEY, p0, p1, p2)
         )
     }
 

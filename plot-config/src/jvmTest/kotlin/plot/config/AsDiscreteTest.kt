@@ -817,6 +817,7 @@ private fun toClientPlotConfig(spec: String): PlotConfigClientSide {
 }
 
 
+@Suppress("ComplexRedundantLet")
 private fun buildSpecWithOverriding(
     geom: String,
     plotData: String?,

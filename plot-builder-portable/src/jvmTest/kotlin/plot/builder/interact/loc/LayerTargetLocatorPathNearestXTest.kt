@@ -22,7 +22,7 @@ class LayerTargetLocatorPathNearestXTest : jetbrains.datalore.plot.builder.inter
     fun nearestX_WhenCloserToLeft() {
         assertThat(
                 findTargets(rightFrom(p1,
-                    jetbrains.datalore.plot.builder.interact.loc.TargetLocatorPathXTestBase.Companion.THIS_POINT_DISTANCE
+                    THIS_POINT_DISTANCE
                 ))
         ).first().has(HitIndex.equalTo(p1.hitIndex))
     }
@@ -32,7 +32,7 @@ class LayerTargetLocatorPathNearestXTest : jetbrains.datalore.plot.builder.inter
     fun nearestX_WhenCloserToRight() {
         assertThat(
                 findTargets(rightFrom(p1,
-                    jetbrains.datalore.plot.builder.interact.loc.TargetLocatorPathXTestBase.Companion.NEXT_POINT_DISTANCE
+                    NEXT_POINT_DISTANCE
                 ))
         ).first().has(HitIndex.equalTo(p2.hitIndex))
     }
@@ -41,7 +41,7 @@ class LayerTargetLocatorPathNearestXTest : jetbrains.datalore.plot.builder.inter
     fun nearestX_WhenInTheMiddle_ShouldSelectSecondPoint() {
         assertThat(
                 findTargets(rightFrom(p1,
-                    jetbrains.datalore.plot.builder.interact.loc.TargetLocatorPathXTestBase.Companion.MIDDLE_POINTS_DISTANCE
+                    MIDDLE_POINTS_DISTANCE
                 ))
         ).first().has(HitIndex.equalTo(p1.hitIndex))
     }
@@ -51,7 +51,7 @@ class LayerTargetLocatorPathNearestXTest : jetbrains.datalore.plot.builder.inter
     fun nearestX_WhenOutOfPath_ShouldFindNothing() {
         assertThat(
                 findTargets(leftFrom(p0,
-                    jetbrains.datalore.plot.builder.interact.loc.TargetLocatorPathXTestBase.Companion.NEXT_POINT_DISTANCE
+                    NEXT_POINT_DISTANCE
                 ))
         ).isEmpty()
     }

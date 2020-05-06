@@ -21,20 +21,20 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
 
     @Test
     fun whenAesFromTooltipListIsNotMapped_ShouldNotThrowException() {
-        createTooltipSpecs(geomTargetBuilder.withPointHitShape(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD, 0.0).build())
+        createTooltipSpecs(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
     }
 
     @Test
     fun shouldNotDuplicateAesFromHintsToBigTooltip() {
-        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.AES_WIDTH))
+        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
         val colorMapping = addMappedData(variable().name("cyl").value("4").mapping(Aes.COLOR))
 
         createTooltipSpecs(geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(
-                    jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.AES_WIDTH, TipLayoutHint.verticalTooltip(
-                        jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD,
-                        jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.OBJECT_RADIUS,
-                        jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.FILL_COLOR
+                    AES_WIDTH, TipLayoutHint.verticalTooltip(
+                        TARGET_HIT_COORD,
+                        OBJECT_RADIUS,
+                        FILL_COLOR
                     ))
                 .build())
 
@@ -44,7 +44,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
 
     @Test
     fun shouldNotAddSemicolonIfLabelIsEmpty() {
-        val widthMapping = addMappedData(variable().value("sedan").mapping(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.AES_WIDTH))
+        val widthMapping = addMappedData(variable().value("sedan").mapping(AES_WIDTH))
 
         buildTooltipSpecs()
 
@@ -54,7 +54,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
 
     @Test
     fun whenFillColorProvided_ShouldUseItForTooltip() {
-        addMappedData(variable().value("sedan").mapping(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.AES_WIDTH))
+        addMappedData(variable().value("sedan").mapping(AES_WIDTH))
 
         createTooltipSpecs(geomTargetBuilder.withPathHitShape()
                 .withFill(Color.RED)
@@ -65,14 +65,14 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
 
     @Test
     fun withLayoutHint_ShouldUseHintColor() {
-        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.AES_WIDTH))
+        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
 
         val hintFill = Color.DARK_GREEN
         createTooltipSpecs(geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(
-                    jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.AES_WIDTH, TipLayoutHint.verticalTooltip(
-                        jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.TARGET_HIT_COORD,
-                        jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper.Companion.OBJECT_RADIUS, hintFill))
+                    AES_WIDTH, TipLayoutHint.verticalTooltip(
+                        TARGET_HIT_COORD,
+                        OBJECT_RADIUS, hintFill))
                 .withFill(Color.RED)
                 .build())
 

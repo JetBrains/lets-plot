@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.interact.loc
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.builder.interact.TestUtil
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.between
@@ -22,43 +23,34 @@ import kotlin.test.Test
 class MultiPolygonTest {
 
     private val polygonLocator: GeomTargetLocator
-        get() = createLocator(
-            GeomTargetLocator.LookupStrategy.HOVER, GeomTargetLocator.LookupSpace.XY,
-            jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.FIRST_TARGET
-        )
+        get() = createLocator(GeomTargetLocator.LookupStrategy.HOVER, GeomTargetLocator.LookupSpace.XY, FIRST_TARGET)
 
     @Test
     fun pointInsideFirst_NotInHole_ShouldFindPolygon() {
         val locator = polygonLocator
 
-        assertObjects(locator, between(
-            jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.FIRST_POLYGON_RECT,
-            jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.HOLE_RECT
-        ), jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.FIRST_POLYGON_KEY
-        )
+        assertObjects(locator, between(FIRST_POLYGON_RECT, HOLE_RECT), FIRST_POLYGON_KEY)
     }
 
     @Test
     fun pointInsideFirst_InsideHole_ShouldFindNothing() {
         val locator = polygonLocator
 
-        assertEmpty(locator, inside(jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.HOLE_RECT))
+        assertEmpty(locator, inside(HOLE_RECT))
     }
 
     @Test
     fun pointInsideSecond_ShouldFindPolygon() {
         val locator = polygonLocator
 
-        assertObjects(locator, inside(jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.SECOND_POLYGON_RECT),
-            jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.FIRST_POLYGON_KEY
-        )
+        assertObjects(locator, inside(SECOND_POLYGON_RECT), FIRST_POLYGON_KEY)
     }
 
     @Test
     fun pointRightFromSecond_ShouldFindNothing() {
         val locator = polygonLocator
 
-        assertEmpty(locator, outsideX(jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.SECOND_POLYGON_RECT))
+        assertEmpty(locator, outsideX(SECOND_POLYGON_RECT))
     }
 
     companion object {
@@ -76,17 +68,14 @@ class MultiPolygonTest {
         private val SECOND_POLYGON_RECT = DoubleRectangle(400.0, 150.0, 100.0, 100.0)
         private val FIRST_POLYGON_RECT = DoubleRectangle(0.0, 0.0, 200.0, 200.0)
 
-        private val FIRST_POLYGON = jetbrains.datalore.plot.builder.interact.TestUtil.multipolygon(
-            jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.polygonFromRect(jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.HOLE_RECT),
-            jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.polygonFromRect(jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.SECOND_POLYGON_RECT),
-            jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.polygonFromRect(jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.FIRST_POLYGON_RECT)
+        private val FIRST_POLYGON = TestUtil.multipolygon(
+            polygonFromRect(HOLE_RECT),
+            polygonFromRect(SECOND_POLYGON_RECT),
+            polygonFromRect(FIRST_POLYGON_RECT)
         )
 
         private const val FIRST_POLYGON_KEY = 1
-        private val FIRST_TARGET = polygonTarget(
-            jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.FIRST_POLYGON_KEY,
-            jetbrains.datalore.plot.builder.interact.loc.MultiPolygonTest.Companion.FIRST_POLYGON
-        )
+        private val FIRST_TARGET = polygonTarget(FIRST_POLYGON_KEY, FIRST_POLYGON)
 
         private fun polygonFromRect(rect: DoubleRectangle): MutableList<DoubleVector> {
 

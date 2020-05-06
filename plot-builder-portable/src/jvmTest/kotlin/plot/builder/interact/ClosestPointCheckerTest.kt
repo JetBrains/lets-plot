@@ -85,12 +85,12 @@ class ClosestPointCheckerTest {
         )
     }
 
-    private fun check(coord: DoubleVector): jetbrains.datalore.plot.builder.interact.ClosestPointCheckerTest.Expectation<Boolean> {
-        return jetbrains.datalore.plot.builder.interact.ClosestPointCheckerTest.Expectation { cp!!.check(coord) }
+    private fun check(coord: DoubleVector): Expectation<Boolean> {
+        return Expectation { cp!!.check(coord) }
     }
 
-    private fun compare(coord: DoubleVector): jetbrains.datalore.plot.builder.interact.ClosestPointCheckerTest.Expectation<COMPARE_RESULT> {
-        return jetbrains.datalore.plot.builder.interact.ClosestPointCheckerTest.Expectation { cp!!.compare(coord) }
+    private fun compare(coord: DoubleVector): Expectation<COMPARE_RESULT> {
+        return Expectation { cp!!.compare(coord) }
     }
 
     private fun assertCall(vararg assertions: Runnable) {
@@ -102,7 +102,7 @@ class ClosestPointCheckerTest {
     private class Expectation<TRes> internal constructor(private val myCall: () -> TRes) : Runnable {
         private var myExpectedResult: TRes? = null
 
-        internal fun assertResult(expected: TRes): jetbrains.datalore.plot.builder.interact.ClosestPointCheckerTest.Expectation<TRes> {
+        internal fun assertResult(expected: TRes): Expectation<TRes> {
             myExpectedResult = expected
             return this
         }

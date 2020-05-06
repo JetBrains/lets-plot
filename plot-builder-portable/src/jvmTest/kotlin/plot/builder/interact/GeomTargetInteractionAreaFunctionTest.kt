@@ -31,7 +31,7 @@ class GeomTargetInteractionAreaFunctionTest {
         assertNoTooltips(targetTooltipSpec)
     }
 
-    private fun createBuilder(): jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder {
-        return jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder.Companion.areaFunctionBuilder()
+    private fun createBuilder(): TestingTooltipSpecsBuilder {
+        return TestingTooltipSpecsBuilder.areaFunctionBuilder()
     }
 }

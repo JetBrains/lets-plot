@@ -50,14 +50,17 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
         val fillMapping = addMappedData(v.mapping(Aes.FILL))
         val yMapping = addMappedData(v.mapping(Aes.Y))
 
-        createTooltipSpecs(geomTargetBuilder.withPathHitShape()
+        createTooltipSpecs(
+            geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(
                     Aes.FILL, TipLayoutHint.verticalTooltip(
-                    TARGET_HIT_COORD,
-                    OBJECT_RADIUS,
-                    FILL_COLOR
-                ))
-                .build())
+                        TARGET_HIT_COORD,
+                        OBJECT_RADIUS,
+                        FILL_COLOR
+                    )
+                )
+                .build()
+        )
 
         assertLines(0, fillMapping.shortTooltipText())
         assertLines(1, yMapping.shortTooltipText())

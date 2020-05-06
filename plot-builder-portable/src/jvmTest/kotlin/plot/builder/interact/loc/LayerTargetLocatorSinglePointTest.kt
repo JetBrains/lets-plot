@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.interact.loc
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.plot.builder.interact.TestUtil
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertEmpty
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.offsetX
@@ -22,60 +23,42 @@ class LayerTargetLocatorSinglePointTest {
     fun hoverXy() {
         val locator = createLocator(LookupStrategy.HOVER, LookupSpace.XY)
 
-        assertObjects(locator,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT_KEY
-        )
-
-        assertEmpty(locator, offsetX(jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT))
+        assertObjects(locator, POINT, POINT_KEY)
+        assertEmpty(locator, offsetX(POINT))
     }
 
     @Test
     fun nearestXy() {
         val locator = createLocator(LookupStrategy.NEAREST, LookupSpace.XY)
 
-        assertObjects(locator,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT_KEY
-        )
-        assertObjects(locator, offsetX(jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT),
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT_KEY
-        )
+        assertObjects(locator, POINT, POINT_KEY)
+        assertObjects(locator, offsetX(POINT), POINT_KEY)
     }
 
     @Test
     fun hoverX() {
         val locator = createLocator(LookupStrategy.HOVER, LookupSpace.X)
 
-        assertObjects(locator,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT_KEY
-        )
-        assertObjects(locator, offsetY(jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT),
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT_KEY
-        )
+        assertObjects(locator, POINT, POINT_KEY)
+        assertObjects(locator, offsetY(POINT), POINT_KEY)
 
-        assertEmpty(locator, offsetX(jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT))
+        assertEmpty(locator, offsetX(POINT))
     }
 
     @Test
     fun nearestX() {
         val locator = createLocator(LookupStrategy.NEAREST, LookupSpace.X)
 
-        assertObjects(locator,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT_KEY
-        )
-        assertObjects(locator, offsetY(jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT),
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT_KEY
-        )
+        assertObjects(locator, POINT, POINT_KEY)
+        assertObjects(locator, offsetY(POINT), POINT_KEY)
 
-        assertEmpty(locator, offsetX(jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT))
+        assertEmpty(locator, offsetX(POINT))
     }
 
     private fun createLocator(strategy: LookupStrategy, space: LookupSpace): GeomTargetLocator {
-        return jetbrains.datalore.plot.builder.interact.TestUtil.createLocator(strategy, space,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.TARGET
+        return TestUtil.createLocator(
+            strategy, space,
+            TARGET
         )
     }
 
@@ -83,8 +66,8 @@ class LayerTargetLocatorSinglePointTest {
         private val POINT = point(100.0, 100.0)
         private const val POINT_KEY = 1
         private val TARGET = pointTarget(
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT_KEY,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePointTest.Companion.POINT
+            POINT_KEY,
+            POINT
         )
     }
 }

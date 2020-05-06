@@ -23,36 +23,26 @@ class LayerTargetLocatorSinglePolygonTest {
 
     @Test
     fun pointInsidePolygon_ShouldReturnPolygonKey() {
-        locator = createLocator(LookupStrategy.HOVER, LookupSpace.XY,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePolygonTest.Companion.TARGET
-        )
-        assertObjects(locator, point(50.0, 50.0),
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePolygonTest.Companion.POLYGON_KEY
-        )
+        locator = createLocator(LookupStrategy.HOVER, LookupSpace.XY, TARGET)
+        assertObjects(locator, point(50.0, 50.0), POLYGON_KEY)
     }
 
 
     @Test
     fun pointInside_WithNearestStrategy_ShouldReturnZeroDistance() {
-        locator = createLocator(LookupStrategy.NEAREST, LookupSpace.XY,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePolygonTest.Companion.TARGET
-        )
+        locator = createLocator(LookupStrategy.NEAREST, LookupSpace.XY, TARGET)
         assertThat(distanceFor(point(50.0, 50.0))).isZero()
     }
 
     @Test
     fun pointOutside_WithNearestStrategy_ShouldReturnNoTargets() {
-        locator = createLocator(LookupStrategy.NEAREST, LookupSpace.XY,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePolygonTest.Companion.TARGET
-        )
+        locator = createLocator(LookupStrategy.NEAREST, LookupSpace.XY, TARGET)
         assertEmpty(locator, point(150.0, 0.0))
     }
 
     @Test
     fun pointInside_WithHoverStrategy_ShouldReturnZeroDistance() {
-        locator = createLocator(LookupStrategy.HOVER, LookupSpace.XY,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePolygonTest.Companion.TARGET
-        )
+        locator = createLocator(LookupStrategy.HOVER, LookupSpace.XY, TARGET)
         assertThat(distanceFor(point(50.0, 50.0))).isZero()
     }
 
@@ -65,12 +55,10 @@ class LayerTargetLocatorSinglePolygonTest {
                 point(0.0, 0.0),
                 point(100.0, 0.0),
                 point(100.0, 100.0),
-                point(0.0, 100.0))
+                point(0.0, 100.0)
+        )
 
         private const val POLYGON_KEY = 1
-        private val TARGET = polygonTarget(
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePolygonTest.Companion.POLYGON_KEY,
-            jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocatorSinglePolygonTest.Companion.POLYGON
-        )
+        private val TARGET = polygonTarget(POLYGON_KEY, POLYGON)
     }
 }

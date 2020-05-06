@@ -81,8 +81,8 @@ class GeomTargetInteractionUnivariateFunctionTest {
         assertText(targetTooltipSpec, mapping.longTooltipText())
     }
 
-    private fun createUnivariateFunctionBuilder(): jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder {
-        return jetbrains.datalore.plot.builder.interact.TestingTooltipSpecsBuilder.Companion.univariateFunctionBuilder()
+    private fun createUnivariateFunctionBuilder(): TestingTooltipSpecsBuilder {
+        return TestingTooltipSpecsBuilder.univariateFunctionBuilder()
     }
 
 }

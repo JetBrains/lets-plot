@@ -23,11 +23,11 @@ class MappedDataAccessMock {
                 .thenReturn(getMappedAes())
     }
 
-    fun <T> add(mapping: jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping<T>): jetbrains.datalore.plot.builder.interact.MappedDataAccessMock {
+    fun <T> add(mapping: Mapping<T>): MappedDataAccessMock {
         return add(mapping, null)
     }
 
-    fun <T> add(mapping: jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping<T>, index: Int?): jetbrains.datalore.plot.builder.interact.MappedDataAccessMock {
+    fun <T> add(mapping: Mapping<T>, index: Int?): MappedDataAccessMock {
         val aes = mapping.aes
 
         if (index == null) {
@@ -82,31 +82,31 @@ class MappedDataAccessMock {
         private var value = ""
         private var isContinuous: Boolean = false
 
-        fun name(v: String): jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Variable {
+        fun name(v: String): Variable {
             this.name = v
             return this
         }
 
-        fun value(v: String): jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Variable {
+        fun value(v: String): Variable {
             this.value = v
             return this
         }
 
-        fun isContinuous(v: Boolean): jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Variable {
+        fun isContinuous(v: Boolean): Variable {
             this.isContinuous = v
             return this
         }
 
-        fun <T> mapping(aes: Aes<T>): jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping<T> {
-            return jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping(aes, name, value, isContinuous)
+        fun <T> mapping(aes: Aes<T>): Mapping<T> {
+            return Mapping(aes, name, value, isContinuous)
         }
 
     }
 
     companion object {
 
-        fun variable(): jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Variable {
-            return jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Variable()
+        fun variable(): Variable {
+            return Variable()
         }
     }
 }
