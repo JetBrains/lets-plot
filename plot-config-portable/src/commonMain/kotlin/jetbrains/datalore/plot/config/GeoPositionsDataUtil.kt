@@ -66,7 +66,7 @@ object GeoPositionsDataUtil {
         var layerData = layerData
 
         val leftMapId = mappingOptions[Option.Mapping.MAP_ID]
-        checkState(leftMapId != null || mappingOptions.isEmpty(), "'map_id' aesthetic is required to show data on map")
+        checkState(leftMapId != null || mappingOptions.isEmpty(), "'map_join' parameter is required if 'map' parameter is used")
 
         return when {
             leftMapId != null -> {
