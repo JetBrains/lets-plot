@@ -1,12 +1,14 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.sampling.method
+package jetbrains.datalore.plot.base.method
 
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.builder.data.generateData
+import jetbrains.datalore.plot.base.sampling.method.RandomSampling
+import jetbrains.datalore.plot.base.sampling.method.SystematicSampling
+import jetbrains.datalore.plot.base.data.generateData
 import kotlin.math.floor
 import kotlin.test.*
 
@@ -27,7 +29,11 @@ class SystematicSamplingTest {
         assertThat(N + 1).isNotApplicable
         assertThat(N).isNotApplicable
         assertThat(N - 1).isNotApplicable
-        assertThat(sampleSize(1.1)).isNotApplicable
+        assertThat(
+            sampleSize(
+                1.1
+            )
+        ).isNotApplicable
 
         // applicable with steps >= 1.5
         assertThat(N / 2).isApplicable
@@ -43,7 +49,11 @@ class SystematicSamplingTest {
     @Test
     fun exactStep() {
         // step 3 is a perfect fit when last data index in 9, 99... (i.e. that size of data is 10, 100...)
-        assertThat(sampleSize(3.0))
+        assertThat(
+            sampleSize(
+                3.0
+            )
+        )
                 .hasRowCount(
                     sampleSize(
                         3.0
@@ -87,7 +97,11 @@ class SystematicSamplingTest {
 
     @Test
     fun unfitStep() {
-        assertThat(sampleSize(2.0))
+        assertThat(
+            sampleSize(
+                2.0
+            )
+        )
                 .hasRowCount(
                     sampleSize(
                         2.0

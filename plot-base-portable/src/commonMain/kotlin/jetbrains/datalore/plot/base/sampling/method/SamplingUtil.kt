@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.sampling.method
+package jetbrains.datalore.plot.base.sampling.method
 
 import jetbrains.datalore.base.algorithms.calculateArea
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.base.util.MutableDouble
 import jetbrains.datalore.plot.base.util.MutableInteger
-import jetbrains.datalore.plot.builder.sampling.method.VertexSampling.DoubleVectorComponentsList
+import jetbrains.datalore.plot.base.sampling.method.VertexSampling.DoubleVectorComponentsList
 import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -88,9 +88,13 @@ internal object SamplingUtil {
         var start = -1
 
         @Suppress("UNCHECKED_CAST")
-        val xValues = population[xVar(population)] as List<Any>
+        val xValues = population[xVar(
+            population
+        )] as List<Any>
         @Suppress("UNCHECKED_CAST")
-        val yValues = population[yVar(population)] as List<Any>
+        val yValues = population[yVar(
+            population
+        )] as List<Any>
         val points = DoubleVectorComponentsList(xValues, yValues)
         for (i in points.indices) {
             val point = points[i]
@@ -130,7 +134,11 @@ internal object SamplingUtil {
                 )
 
                 if (limit >= 4) {
-                    areaProceed.getAndAdd(getRingArea(p))
+                    areaProceed.getAndAdd(
+                        getRingArea(
+                            p
+                        )
+                    )
                     pointsProceed.getAndAdd(limit)
                 } else {
                     limit = 0
@@ -138,7 +146,11 @@ internal object SamplingUtil {
 
                 Pair(getRingIndex(p), limit)
             }
-            .sortedWith(compareBy { getRingIndex(it) })
+            .sortedWith(compareBy {
+                getRingIndex(
+                    it
+                )
+            })
             .map { getRingLimit(it) }
             .toList()
     }

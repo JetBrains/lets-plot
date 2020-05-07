@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.scale.ScaleProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 
 object ScaleProviderHelper {

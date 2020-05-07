@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil.transformVarFor
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.base.VarBinding
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 
 object GeomLayerBuilderUtil {

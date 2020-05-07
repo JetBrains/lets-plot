@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.base.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class StitchedPlotLayers(layers: List<jetbrains.datalore.plot.builder.GeomLayer>) {

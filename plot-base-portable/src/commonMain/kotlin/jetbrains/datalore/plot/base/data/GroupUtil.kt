@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.data
+package jetbrains.datalore.plot.base.data
 
 object GroupUtil {
     internal val SINGLE_GROUP = { _: Int -> 0 }

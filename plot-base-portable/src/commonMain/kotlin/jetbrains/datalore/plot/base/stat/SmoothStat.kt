@@ -14,8 +14,8 @@ import jetbrains.datalore.plot.base.stat.regression.LinearRegression
 import jetbrains.datalore.plot.base.stat.regression.LocalPolynomialRegression
 import jetbrains.datalore.plot.base.stat.regression.PolynomialRegression
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.builder.sampling.Sampling
-import jetbrains.datalore.plot.builder.sampling.Samplings
+//import jetbrains.datalore.plot.builder.sampling.Sampling
+//import jetbrains.datalore.plot.builder.sampling.Samplings
 
 
 /**
@@ -124,8 +124,9 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     }
 
     fun doSampling(data: DataFrame): DataFrame {
-        val sampling = Samplings.random(loessCriticalSize, seed)
-        return sampling.apply(data)
+//        val sampling = Samplings.random(loessCriticalSize, seed)
+//        return sampling.apply(data)
+        return data
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {

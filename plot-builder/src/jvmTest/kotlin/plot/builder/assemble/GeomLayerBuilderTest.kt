@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.base.VarBinding
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.Companion
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
@@ -59,7 +59,7 @@ class GeomLayerBuilderTest {
             )
         )
 
-        val histogramLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+        val histogramLayer = GeomLayerBuilder.demoAndTest()
                 .stat(stat)
                 .geom(geomProvider)
                 .pos(posProvider)
