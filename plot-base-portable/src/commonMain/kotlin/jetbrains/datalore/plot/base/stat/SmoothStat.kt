@@ -13,6 +13,9 @@ import jetbrains.datalore.plot.base.stat.regression.LinearRegression
 import jetbrains.datalore.plot.base.stat.regression.LocalPolynomialRegression
 import jetbrains.datalore.plot.base.stat.regression.PolynomialRegression
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.builder.sampling.Sampling
+import jetbrains.datalore.plot.builder.sampling.Samplings
+
 
 /**
  * See doc for stat_smooth / geom_smooth
@@ -65,6 +68,9 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     var isDisplayConfidenceInterval = DEF_DISPLAY_CONFIDENCE_INTERVAL
     var span = DEF_SPAN
     var deg: Int = DEF_DEG // default degree for polynomial regression
+    var loessCriticalSize = DEF_LOESS_CRITICAL_SIZE
+    var seed = DEF_SAMPLING_SEED
+
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
@@ -100,6 +106,8 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         private const val DEF_DISPLAY_CONFIDENCE_INTERVAL = true
         private const val DEF_SPAN = 0.5
         private const val DEF_DEG = 1
+        private const val DEF_LOESS_CRITICAL_SIZE = 1_000
+        private const val DEF_SAMPLING_SEED = 37
     }
 
 
@@ -107,10 +115,30 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         return listOf<Aes<*>>(Aes.Y)
     }
 
+    fun needSampling(rowCount: Int): Boolean {
+        var ret = smoothingMethod == Method.LOESS
+        ret = ret && rowCount > loessCriticalSize
+
+        return ret
+    }
+
+    fun doSampling(data: DataFrame): DataFrame {
+        val sampling = Samplings.random(loessCriticalSize, seed)
+        return sampling.apply(data)
+    }
+
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
         if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
+
+        @Suppress("NAME_SHADOWING")
+        var data = data
+
+        if (needSampling(data.rowCount())) {
+            data = doSampling(data)
+        }
+
 
         val valuesY = data.getNumeric(TransformVar.Y)
         if (valuesY.size < 3) {  // at least 3 data points required
