@@ -284,7 +284,7 @@ class GeomLayerBuilder {
                             stat,
                             builder.myBindings,
                             groupingContext, null, null, statCtx
-                        )
+                        ) {}
 
                         dataAndGroupingContext.data
                     }

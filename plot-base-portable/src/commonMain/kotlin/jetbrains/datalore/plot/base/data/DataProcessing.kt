@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.data
 
+import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.Iterables
@@ -15,6 +16,7 @@ import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.base.VarBinding
+import jetbrains.datalore.plot.base.stat.SmoothStat
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object DataProcessing {
@@ -40,7 +42,7 @@ object DataProcessing {
 
     fun buildStatData(
         data: DataFrame, stat: Stat, bindings: List<VarBinding>, groupingContext: GroupingContext,
-        facetXVar: String?, facetYVar: String?, statCtx: StatContext
+        facetXVar: String?, facetYVar: String?, statCtx: StatContext, samplingExpressionConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
             return DataAndGroupingContext(
@@ -62,7 +64,8 @@ object DataProcessing {
                 bindings,
                 facetXVar,
                 facetYVar,
-                statCtx
+                statCtx,
+                samplingExpressionConsumer
             )
             groupSizeListAfterStat.add(sd.rowCount())
             for (variable in sd.variables()) {
@@ -79,7 +82,8 @@ object DataProcessing {
                     bindings,
                     facetXVar,
                     facetYVar,
-                    statCtx
+                    statCtx,
+                    samplingExpressionConsumer
                 )
                 if (sd.isEmpty) {
                     continue
@@ -170,12 +174,25 @@ object DataProcessing {
     /**
      * Server-side only
      */
+
+    private fun processStatMessage( stat : Stat, compMessageConsumer: Consumer<String> ) {
+        if ( stat is SmoothStat ) {
+            val msg = stat.computationalMessage
+
+            if ( !msg.isEmpty() )
+                compMessageConsumer(msg)
+        }
+    }
+
     private fun applyStat(
         data: DataFrame, stat: Stat, bindings: List<VarBinding>,
-        facetXVarName: String?, facetYVarName: String?, statCtx: StatContext
+        facetXVarName: String?, facetYVarName: String?, statCtx: StatContext,
+        compMessageConsumer: Consumer<String>
     ): DataFrame {
 
         var statData = stat.apply(data, statCtx)
+        processStatMessage( stat, compMessageConsumer )
+
         val statVariables = statData.variables()
         if (statVariables.isEmpty()) {
             return statData

@@ -13,8 +13,7 @@ import jetbrains.datalore.plot.base.stat.regression.LinearRegression
 import jetbrains.datalore.plot.base.stat.regression.LocalPolynomialRegression
 import jetbrains.datalore.plot.base.stat.regression.PolynomialRegression
 import jetbrains.datalore.plot.common.data.SeriesUtil
-//import jetbrains.datalore.plot.builder.sampling.Sampling
-//import jetbrains.datalore.plot.builder.sampling.Samplings
+import jetbrains.datalore.plot.base.sampling.Samplings
 
 
 /**
@@ -69,8 +68,10 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     var span = DEF_SPAN
     var deg: Int = DEF_DEG // default degree for polynomial regression
     var loessCriticalSize = DEF_LOESS_CRITICAL_SIZE
-    var seed = DEF_SAMPLING_SEED
+    var seed: Long? = DEF_SAMPLING_SEED
 
+    var computationalMessage: String = ""
+        private set
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
@@ -107,7 +108,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         private const val DEF_SPAN = 0.5
         private const val DEF_DEG = 1
         private const val DEF_LOESS_CRITICAL_SIZE = 1_000
-        private const val DEF_SAMPLING_SEED = 37
+        private const val DEF_SAMPLING_SEED = 37L
     }
 
 
@@ -122,10 +123,13 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         return ret
     }
 
-    fun doSampling(data: DataFrame): DataFrame {
-//        val sampling = Samplings.random(loessCriticalSize, seed)
-//        return sampling.apply(data)
-        return data
+    fun applySampling(data: DataFrame): DataFrame {
+        val sampling = Samplings.random(loessCriticalSize, seed)
+
+        computationalMessage = "Random sampling with max_n = $loessCriticalSize " +
+                (if (seed != null) ", seed=$seed" else "")
+
+        return sampling.apply(data)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
@@ -137,9 +141,8 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         var data = data
 
         if (needSampling(data.rowCount())) {
-            data = doSampling(data)
+            data = applySampling(data)
         }
-
 
         val valuesY = data.getNumeric(TransformVar.Y)
         if (valuesY.size < 3) {  // at least 3 data points required

@@ -243,7 +243,13 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         groupingContext,
                         facets.xVar,
                         facets.yVar,
-                        statCtx
+                        statCtx,
+                        { message ->
+                            layerIndexAndSamplingMessage(
+                                layerIndex,
+                                createSamplingMessage(message, layerConfig)
+                            )
+                        }
                     )
 
                     tileLayerDataAfterStat = tileLayerDataAndGroupingContextAfterStat.data
