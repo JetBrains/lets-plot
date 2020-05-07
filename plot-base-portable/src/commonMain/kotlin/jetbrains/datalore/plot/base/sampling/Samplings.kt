@@ -3,12 +3,18 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.sampling
+package jetbrains.datalore.plot.base.sampling
 
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.builder.sampling.method.*
-import jetbrains.datalore.plot.builder.sampling.method.VertexSampling.VertexDpSampling
-import jetbrains.datalore.plot.builder.sampling.method.VertexSampling.VertexVwSampling
+import jetbrains.datalore.plot.base.sampling.method.GroupRandomSampling
+import jetbrains.datalore.plot.base.sampling.method.GroupSystematicSampling
+import jetbrains.datalore.plot.base.sampling.method.PickSampling
+import jetbrains.datalore.plot.base.sampling.method.RandomSampling
+import jetbrains.datalore.plot.base.sampling.method.RandomStratifiedSampling
+import jetbrains.datalore.plot.base.sampling.method.SystematicSampling
+//import jetbrains.datalore.plot.builder.sampling.method.*
+import jetbrains.datalore.plot.base.sampling.method.VertexSampling.VertexDpSampling
+import jetbrains.datalore.plot.base.sampling.method.VertexSampling.VertexVwSampling
 
 object Samplings {
     const val RANDOM = RandomSampling.ALIAS
@@ -52,7 +58,11 @@ object Samplings {
     }
 
     fun randomStratified(sampleSize: Int, seed: Long?, minSubSample: Int?): Sampling {
-        return RandomStratifiedSampling(sampleSize, seed, minSubSample)
+        return RandomStratifiedSampling(
+            sampleSize,
+            seed,
+            minSubSample
+        )
     }
 
     private class NoneSampling : PointSampling {

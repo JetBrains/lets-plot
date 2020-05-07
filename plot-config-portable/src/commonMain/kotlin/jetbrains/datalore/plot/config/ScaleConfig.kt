@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.scale.Mappers.nullable
+import jetbrains.datalore.plot.base.scale.ScaleProvider
 import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.*

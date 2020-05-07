@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
-import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.base.VarBinding
 import jetbrains.datalore.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo

@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.sampling.method
+package jetbrains.datalore.plot.base.method
 
-import jetbrains.datalore.plot.builder.data.generateData
+import jetbrains.datalore.plot.base.sampling.method.RandomSampling
+import jetbrains.datalore.plot.base.data.generateData
 import kotlin.test.*
 
 class RandomSamplingTest {
@@ -38,7 +39,10 @@ class RandomSamplingTest {
     }
 
     private fun assertRowCount(sampleSize: Int) {
-        val sampleData = RandomSampling(sampleSize, null).apply(myData)
+        val sampleData = RandomSampling(
+            sampleSize,
+            null
+        ).apply(myData)
         assertEquals(sampleSize, sampleData.rowCount(), "Row count")
     }
 

@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.builder.assemble.geom
 
-import jetbrains.datalore.plot.builder.sampling.Samplings.pick
-import jetbrains.datalore.plot.builder.sampling.Samplings.random
-import jetbrains.datalore.plot.builder.sampling.Samplings.systematic
-import jetbrains.datalore.plot.builder.sampling.Samplings.systematicGroup
-import jetbrains.datalore.plot.builder.sampling.Samplings.vertexDp
+import jetbrains.datalore.plot.base.sampling.Samplings.pick
+import jetbrains.datalore.plot.base.sampling.Samplings.random
+import jetbrains.datalore.plot.base.sampling.Samplings.systematic
+import jetbrains.datalore.plot.base.sampling.Samplings.systematicGroup
+import jetbrains.datalore.plot.base.sampling.Samplings.vertexDp
 
 /*
  None:

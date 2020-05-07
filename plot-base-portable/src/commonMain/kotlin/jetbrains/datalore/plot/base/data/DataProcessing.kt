@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.data
+package jetbrains.datalore.plot.base.data
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
@@ -12,10 +12,9 @@ import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.DataFrame.Builder
 import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.base.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object DataProcessing {
@@ -326,11 +325,17 @@ object DataProcessing {
     }
 
     internal fun computeGroups(data: DataFrame, bindings: List<VarBinding>, groupingVar: Variable?): (Int) -> Int {
-        val groupingVariables = getGroupingVariables(data, bindings, groupingVar)
+        val groupingVariables =
+            getGroupingVariables(
+                data,
+                bindings,
+                groupingVar
+            )
 
         var currentGroups: List<Int>? = null
         if (groupingVar != null) {
-            currentGroups = computeGroups(data[groupingVar])
+            currentGroups =
+                computeGroups(data[groupingVar])
         }
 
         for (`var` in groupingVariables) {
@@ -345,7 +350,10 @@ object DataProcessing {
                 currentGroups.size == groups.size,
                 "Data series used to compute groups must be equal in size (encountered sizes: " + currentGroups.size + ", " + groups.size + ")"
             )
-            val dummies = computeDummyValues(currentGroups, groups)
+            val dummies = computeDummyValues(
+                currentGroups,
+                groups
+            )
             currentGroups = computeGroups(dummies)
         }
 
@@ -398,7 +406,12 @@ object DataProcessing {
             val variable = binding.variable
             if (!result.contains(variable)) {
                 if (variable.isOrigin) {
-                    if (variable == explicitGroupingVar || isDefaultGroupingVariable(data, binding.aes, variable)) {
+                    if (variable == explicitGroupingVar || isDefaultGroupingVariable(
+                            data,
+                            binding.aes,
+                            variable
+                        )
+                    ) {
                         result.add(variable)
                     }
                 }
