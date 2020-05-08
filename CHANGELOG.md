@@ -11,17 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.0] - 
 ### Added
- - Interactive maps support.
- - `as_discrete()` function.
- - Polynomial regression of arbitrary degree (`lm` smoothing method) in *geom_smooth*.
+ - Support for interactive maps.
+ - The `as_discrete()` function.
+ - Polynomial regression of an arbitrary degree (the`lm` smoothing method) in *geom_smooth*.
  - `axis_tooltip`, `axis_tooltip_x`, `axis_tooltip_y` parameters in `theme()`
  - Kaggle and Datalore notebook demos.
 
 ### Fixed
  - Severe performance degradation when using discrete scales [[#119](https://github.com/JetBrains/lets-plot/issues/119)].
- - Opaque backgrpund to better support PyCharm dark theme [[#121](https://github.com/JetBrains/lets-plot/issues/121)].
- - Auto-detection of Kaggle environment.
- - Limits on maximun plot size [[#115](https://github.com/JetBrains/lets-plot/issues/115)].
+ - Opaque background to better support PyCharm dark theme [[#121](https://github.com/JetBrains/lets-plot/issues/121)].
+ - Auto-detection of a Kaggle environment.
+ - Limits on the maximum plot size [[#115](https://github.com/JetBrains/lets-plot/issues/115)].
  - Installation instructions for Windows users [[#118 MinGW](https://github.com/JetBrains/lets-plot/issues/118)].
 
 ### Changed
