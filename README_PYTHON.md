@@ -31,7 +31,7 @@
 - [Examples](#examples)
 - [SVG/HTML export to file](#export)
 - [Offline mode](#offline)
-- [What is new in 1.3.0](#new)
+- [What is new in 1.4.0](#new)
 
 <a name="Implementation Overview" id="overview"></a>
 ## Implementation Overview
