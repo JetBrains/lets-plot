@@ -6,9 +6,9 @@
 package plot.config
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.builder.map.GeoPositionField
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option
+import jetbrains.datalore.plot.config.Option.Meta.MapJoin
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
@@ -167,7 +167,7 @@ class GeomInteractionBuilderCreationTest {
         )
         val GEO_DATA_FRAME_META = mapOf(
             Option.Meta.GeoDataFrame.TAG to mapOf(
-                Option.Meta.GeoDataFrame.GEOMETRY to "coord"
+                Option.Meta.GeoDataFrame.GEOMETRY_COLUMN_NAME to "coord"
             )
         )
         val plotOpts = mutableMapOf(
@@ -183,7 +183,7 @@ class GeomInteractionBuilderCreationTest {
         )
         val layerConfig = createLayerConfig(plotOpts)
 
-        val binding = layerConfig.varBindings.find { it.variable.name == GeoPositionField.DATA_JOIN_KEY_COLUMN }
+        val binding = layerConfig.varBindings.find { it.variable.name == MapJoin.ID }
         assertNotNull(binding)
 
         val builder = PlotConfigClientSideUtil.createGeomInteractionBuilder(

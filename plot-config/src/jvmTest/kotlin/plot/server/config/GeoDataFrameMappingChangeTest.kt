@@ -6,8 +6,6 @@
 package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.builder.map.GeoPositionField
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_ID_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_REGION_COLUMN
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.GeomName
@@ -18,6 +16,7 @@ import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame
 import jetbrains.datalore.plot.config.Option.Meta.GeoReference
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
+import jetbrains.datalore.plot.config.Option.Meta.MapJoin
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.createLayerConfigsByLayerSpec
@@ -43,9 +42,9 @@ class GeoDataFrameMappingChangeTest {
         val expectedIdList = listOf("0", "1", "2", "3", "4")
 
         assertThat(cfg)
-                .haveBinding(Aes.MAP_ID, GeoPositionField.DATA_JOIN_KEY_COLUMN)
+                .haveBinding(Aes.MAP_ID, MapJoin.ID)
                 .haveDataVectors(mapOf(
-                        GeoPositionField.DATA_JOIN_KEY_COLUMN to expectedIdList,
+                    MapJoin.ID to expectedIdList,
                         NAME_COLUMN to MAP_DATA_WITH_IDS[NAME_COLUMN] as List<*>))
                 .haveMapIds(expectedIdList)
                 .haveMapGeometries(MAP_DATA_WITH_IDS[GEOMETRY_COLUMN] as List<*>)
@@ -99,7 +98,7 @@ class GeoDataFrameMappingChangeTest {
             DATA_FRAME + mapOf(
                 GeoReference.REQUEST to MAP_DATA_REQUESTS,
                 MAP_REGION_COLUMN to MAP_DATA_REGIONS,
-                MAP_JOIN_ID_COLUMN to MAP_DATA_JOIN_KEYS,
+                MapJoin.ID to MAP_DATA_JOIN_KEYS,
                 GEOMETRY_COLUMN to GEOMETRIES
         )
 
@@ -110,7 +109,7 @@ class GeoDataFrameMappingChangeTest {
 
         private val GEO_DATA_FRAME_META = mapOf(
                 GeoDataFrame.TAG to mapOf(
-                        GeoDataFrame.GEOMETRY to GEOMETRY_COLUMN
+                        GeoDataFrame.GEOMETRY_COLUMN_NAME to GEOMETRY_COLUMN
                 )
         )
     }
