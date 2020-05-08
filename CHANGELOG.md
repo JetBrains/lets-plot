@@ -6,12 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
- - as_discrete() function.
- - (?) `tooltip` parameter for geoms.
- - `theme`: `axis_tooltip`='blank' (also `axis_tooltip_x`, `axis_tooltip_x`)
+ - corner tooltips.
  - polynomial regression for geom_smooth.
- - tooltip on `geom_hline`.
- - Fix auto-detection of Kaggle environment.
+
+## [1.4.0] - 
+### Added
+ - Interactive maps support.
+ - `as_discrete()` function.
+ - Polynomial regression of arbitrary degree (`lm` smoothing method) in *geom_smooth*.
+ - `axis_tooltip`, `axis_tooltip_x`, `axis_tooltip_y` parameters in `theme()`
+ - Kaggle and Datalore notebook demos.
+
+### Fixed
+ - Severe performance degradation when using discrete scales [[#119](https://github.com/JetBrains/lets-plot/issues/119)].
+ - Opaque backgrpund to better support PyCharm dark theme [[#121](https://github.com/JetBrains/lets-plot/issues/121)].
+ - Auto-detection of Kaggle environment.
+ - Limits on maximun plot size [[#115](https://github.com/JetBrains/lets-plot/issues/115)].
+ - Installation instructions for Windows users [[#118 MinGW](https://github.com/JetBrains/lets-plot/issues/118)].
+
+### Changed
+ - More slick shape for tooltips on the axis.
 
 ## [1.3.0] - 2020-03-26
 ### Added
@@ -23,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - JVM Maven artefacts released.
  
  ### Fixed
- - No tooltip on `geom_rect` and `geom_vline`.
+ - Tooltip on `geom_rect` and `geom_vline`.
  - Error when date-time series contains `NaT` value.
  
  ### Changed
