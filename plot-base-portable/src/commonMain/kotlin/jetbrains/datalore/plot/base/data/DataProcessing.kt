@@ -176,11 +176,11 @@ object DataProcessing {
      * Server-side only
      */
 
-    private fun processStatMessage( stat : Stat, compMessageConsumer: Consumer<String> ) {
-        if ( stat is SmoothStat ) {
+    private fun processStatMessage(stat: Stat, compMessageConsumer: Consumer<String>) {
+        if (stat is SmoothStat) {
             val msg = stat.computationalMessage
 
-            if ( !msg.isEmpty() )
+            if (!msg.isEmpty())
                 compMessageConsumer(msg)
         }
     }
@@ -192,7 +192,7 @@ object DataProcessing {
     ): DataFrame {
 
         var statData = stat.apply(data, statCtx)
-        processStatMessage( stat, compMessageConsumer )
+        processStatMessage(stat, compMessageConsumer)
 
         val statVariables = statData.variables()
         if (statVariables.isEmpty()) {
