@@ -12,8 +12,6 @@ import jetbrains.datalore.plot.config.GeoPositionsDataUtil.isGeomSupported
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.asMutable
-import jetbrains.datalore.plot.config.getMap
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 
@@ -30,10 +28,10 @@ abstract class GeometryFromGeoPositionsChange : SpecChange {
     }
 
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
-        changeGeoPositions(
-            mapSpec = spec.getMap(GEO_POSITIONS)!!.asMutable(),
-            geoDataKind = getGeoDataKind(getGeomKind(spec))
-        )
+        @Suppress("UNCHECKED_CAST")
+        val mapSpec = spec[GEO_POSITIONS] as MutableMap<String, Any>
+        val geoDataKind: GeoPositionsDataUtil.GeoDataKind = getGeoDataKind(getGeomKind(spec))
+        changeGeoPositions(mapSpec, geoDataKind)
     }
 
     abstract val geoPositionsKeys: Set<String>

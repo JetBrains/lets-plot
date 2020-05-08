@@ -18,8 +18,8 @@ import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.AREA_GEOM
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.NON_AREA_GEOM
+import jetbrains.datalore.plot.builder.map.GeoPositionField
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.plot.config.Option.Meta.MapJoin
 
 object PlotConfigClientSideUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -251,7 +251,7 @@ object PlotConfigClientSideUtil {
         }
 
         // remove auto generated mappings
-        aesListForTooltip.removeAll { layerConfig.getScaleForAes(it)?.name == MapJoin.ID }
+        aesListForTooltip.removeAll { layerConfig.getScaleForAes(it)?.name == GeoPositionField.DATA_JOIN_KEY_COLUMN }
 
         // remove map_id mapping
         aesListForTooltip.removeAll { it === Aes.MAP_ID }

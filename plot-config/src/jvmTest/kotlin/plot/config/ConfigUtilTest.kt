@@ -7,7 +7,8 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.config.Option.Meta.MapJoin.ID
+import jetbrains.datalore.plot.builder.map.GeoPositionField
+import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_ID_COLUMN
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,30 +22,30 @@ class ConfigUtilTest {
         val dataValues = listOf("a", "b", "c", "d")
 
         val data = DataFrame.Builder()
-                .put(Variable(ID), idList)
-                .put(Variable("foo"), dataValues)
+                .put(Variable(GeoPositionField.DATA_JOIN_KEY_COLUMN), idList)
+                .put(Variable(MAP_JOIN_ID_COLUMN), dataValues)
                 .build()
 
         val map = DataFrame.Builder()
-                .put(Variable(ID), idList)
+                .put(Variable(MAP_JOIN_ID_COLUMN), idList)
                 .put(Variable("lon"), listOf(13.0, 24.0, -65.0, 117.0))
                 .put(Variable("lat"), listOf(42.0, 21.0, -12.0, 77.0))
                 .build()
 
-        val joinedDf = ConfigUtil.rightJoin(data, ID, map, ID)
+        val joinedDf = ConfigUtil.rightJoin(data, GeoPositionField.DATA_JOIN_KEY_COLUMN, map, MAP_JOIN_ID_COLUMN)
 
         assertThat(joinedDf.variables().map { it.toString() })
-                .containsExactlyInAnyOrder(ID, "foo", "lon", "lat")
+                .containsExactlyInAnyOrder(GeoPositionField.DATA_JOIN_KEY_COLUMN, MAP_JOIN_ID_COLUMN, "lon", "lat")
 
-        var dataVar: Variable? = null
+        var dataIdVar: Variable? = null
         for (variable in joinedDf.variables()) {
-            if ("foo" == variable.name) {
-                dataVar = variable
+            if (MAP_JOIN_ID_COLUMN == variable.name) {
+                dataIdVar = variable
                 break
             }
         }
 
-        assertNotNull(dataVar)
-        assertEquals(dataValues, joinedDf[dataVar])
+        assertNotNull(dataIdVar)
+        assertEquals(joinedDf[dataIdVar], dataValues)
     }
 }
