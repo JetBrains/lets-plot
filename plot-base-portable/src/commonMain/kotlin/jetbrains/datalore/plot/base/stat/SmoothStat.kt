@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
+import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -71,9 +71,6 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     var loessCriticalSize = DEF_LOESS_CRITICAL_SIZE
     var seed: Long? = DEF_SAMPLING_SEED
 
-    var computationalMessage: String = ""
-        private set
-
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
                 aes == Aes.YMIN && isDisplayConfidenceInterval ||
@@ -124,16 +121,17 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         return ret
     }
 
-    fun applySampling(data: DataFrame): DataFrame {
+    fun applySampling(data: DataFrame, compMessageConsumer: Consumer<String>): DataFrame {
         val sampling = Samplings.random(loessCriticalSize, seed)
 
-        computationalMessage = "Random sampling with max_n = $loessCriticalSize " +
+        val msg = "Random sampling with max_n = $loessCriticalSize " +
                 (if (seed != null) ", seed=$seed" else "")
+        compMessageConsumer(msg)
 
         return sampling.apply(data)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: Consumer<String>): DataFrame {
         if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
@@ -142,7 +140,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         var data = data
 
         if (needSampling(data.rowCount())) {
-            data = applySampling(data)
+            data = applySampling(data, compMessageConsumer)
         }
 
         val valuesY = data.getNumeric(TransformVar.Y)
@@ -192,14 +190,24 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     }
 
     /* About five methods
-     * Linear Regression: DONE
-     * Loess: DONE, SE used bootstrap method, but too many strikes. Refer to www.netlib.org/a/cloess.ps Page 45
-     * Generalized Linear Model: https://spark.apache.org/docs/latest/ml-classification-regression.html#generalized-linear-regression
-     * Robust Linear Model: Unfortunately no Java Library
-     * Generalized Additive Model: Unknown
-     */
+   * Linear Regression: DONE
+   * Loess: DONE, SE used bootstrap method, but too many strikes. Refer to www.netlib.org/a/cloess.ps Page 45
+   * Generalized Linear Model: https://spark.apache.org/docs/latest/ml-classification-regression.html#generalized-linear-regression
+   * Robust Linear Model: Unfortunately no Java Library
+   * Generalized Additive Model: Unknown
+   * */
 
     private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
+        val regression = when (smoothingMethod) {
+            Method.LM -> if (deg == 1)
+                LinearRegression(valuesX, valuesY, confidenceLevel)
+            else
+                PolynomialRegression(valuesX, valuesY, confidenceLevel, deg)
+            Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
+            else -> throw IllegalArgumentException(
+                "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
+            )
+        }
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
         val statMinY = ArrayList<Double>()
@@ -212,28 +220,6 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         result[Stats.Y_MIN] = statMinY
         result[Stats.Y_MAX] = statMaxY
         result[Stats.SE] = statSE
-
-        val regression = when (smoothingMethod) {
-            Method.LM -> {
-                Preconditions.checkArgument(
-                    deg >= 1,
-                    "Degree of polynomial regression must be at least 1"
-                )
-                if (deg == 1) {
-                    LinearRegression(valuesX, valuesY, confidenceLevel)
-                } else {
-                    if (PolynomialRegression.canBeComputed(valuesX, valuesY, deg)) {
-                        PolynomialRegression(valuesX, valuesY, confidenceLevel, deg)
-                    } else {
-                        return result   // empty stat data
-                    }
-                }
-            }
-            Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
-            else -> throw IllegalArgumentException(
-                "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
-            )
-        }
 
         val rangeX = SeriesUtil.range(valuesX) ?: return result
 

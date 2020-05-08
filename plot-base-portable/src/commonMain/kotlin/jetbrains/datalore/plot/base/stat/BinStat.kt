@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.Aes
@@ -41,7 +42,7 @@ internal class BinStat(
         return listOf(Aes.X, Aes.WEIGHT)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: Consumer<String>): DataFrame {
         if (!hasRequiredValues(data, Aes.X)) {
             return withEmptyStatValues()
         }

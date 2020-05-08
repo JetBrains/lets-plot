@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -14,7 +15,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class Density2dStat internal constructor() : AbstractDensity2dStat() {
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: Consumer<String>): DataFrame {
         if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
             return withEmptyStatValues()
         }

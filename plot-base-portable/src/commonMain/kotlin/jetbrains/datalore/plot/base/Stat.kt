@@ -5,8 +5,10 @@
 
 package jetbrains.datalore.plot.base
 
+import jetbrains.datalore.base.function.Consumer
+
 interface Stat {
-    fun apply(data: DataFrame, statCtx: StatContext): DataFrame
+    fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: Consumer<String> = {}): DataFrame
 
     fun consumes(): List<Aes<*>>
 
