@@ -115,10 +115,13 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     }
 
     fun needSampling(rowCount: Int): Boolean {
-        var ret = smoothingMethod == Method.LOESS
-        ret = ret && rowCount > loessCriticalSize
+        if (smoothingMethod != Method.LOESS)
+            return false
 
-        return ret
+        if (rowCount <= loessCriticalSize)
+            return false
+
+        return true
     }
 
     fun applySampling(data: DataFrame, compMessageConsumer: Consumer<String>): DataFrame {

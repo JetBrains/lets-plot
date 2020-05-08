@@ -29,11 +29,7 @@ class SystematicSamplingTest {
         assertThat(N + 1).isNotApplicable
         assertThat(N).isNotApplicable
         assertThat(N - 1).isNotApplicable
-        assertThat(
-            sampleSize(
-                1.1
-            )
-        ).isNotApplicable
+        assertThat(sampleSize(1.1)).isNotApplicable
 
         // applicable with steps >= 1.5
         assertThat(N / 2).isApplicable
@@ -49,16 +45,7 @@ class SystematicSamplingTest {
     @Test
     fun exactStep() {
         // step 3 is a perfect fit when last data index in 9, 99... (i.e. that size of data is 10, 100...)
-        assertThat(
-            sampleSize(
-                3.0
-            )
-        )
-                .hasRowCount(
-                    sampleSize(
-                        3.0
-                    )
-                )
+        assertThat(sampleSize(3.0)).hasRowCount(sampleSize(3.0))
     }
 
     @Test
@@ -66,16 +53,7 @@ class SystematicSamplingTest {
         // rounded to closest lesser int
         val targetStep = 3.1
         val expectedStep = 3
-        assertThat(
-            sampleSize(
-                targetStep
-            )
-        )
-                .hasRowCount(
-                    sampleSize(
-                        expectedStep.toDouble()
-                    )
-                )
+        assertThat(sampleSize(targetStep)).hasRowCount(sampleSize(expectedStep.toDouble()))
     }
 
     @Test
@@ -83,30 +61,12 @@ class SystematicSamplingTest {
         // rounded to closest greater int
         val targetStep = 2.9
         val expectedStep = 3
-        assertThat(
-            sampleSize(
-                targetStep
-            )
-        )
-                .hasRowCount(
-                    sampleSize(
-                        expectedStep.toDouble()
-                    )
-                )
+        assertThat(sampleSize(targetStep)).hasRowCount(sampleSize(expectedStep.toDouble()))
     }
 
     @Test
     fun unfitStep() {
-        assertThat(
-            sampleSize(
-                2.0
-            )
-        )
-                .hasRowCount(
-                    sampleSize(
-                        2.0
-                    )
-                )
+        assertThat(sampleSize(2.0)).hasRowCount(sampleSize(2.0))
     }
 
 
@@ -145,10 +105,7 @@ class SystematicSamplingTest {
         private const val N = 100
 
         private fun sampleSize(step: Double): Int {
-            return sampleSize(
-                step,
-                N
-            )
+            return sampleSize(step, N)
         }
 
         internal fun sampleSize(step: Double, popSize: Int): Int {
