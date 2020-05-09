@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil.allFinineAreEqual
 
 object DataProcessing {
 
@@ -201,7 +202,7 @@ object DataProcessing {
             if (!isNullOrEmpty(facetVarName)) {
                 val facetVar = DataFrameUtil.findVariableOrFail(data, facetVarName!!)
                 facetVars.add(facetVar)
-                if (!data[facetVar].isEmpty()) {
+                if (data[facetVar].isNotEmpty()) {
                     val facetLevel = data[facetVar][0]
                     // generate series for 'facet' variable
                     statData = statData
@@ -239,12 +240,22 @@ object DataProcessing {
             } else {
                 // Do not override series obtained via 'default stat var'
                 if (!newInputSeries.containsKey(variable)) {
-                    val value: Any?
-                    if (data.isNumeric(variable)) {
-                        value = SeriesUtil.mean(data.getNumeric(variable), null)
-                    } else {
-                        value = SeriesUtil.firstNotNull(data[variable], null)
-                    }
+                    val value =
+                        if (data.isNumeric(variable)) {
+                            val values = data.getNumeric(variable)
+                            if (allFinineAreEqual(values)) {
+                                // ToDo: This is a patch for "is_discrete: a rounding error. #135"
+                                //  (https://github.com/JetBrains/lets-plot/issues/135)
+                                //  Expectations: data.isNumeric(variable) should return False.
+                                //  But it returns True and as a result we get a rounding error
+                                //  when computing `mean` value.
+                                SeriesUtil.firstFinine(values, 0.0)
+                            } else {
+                                SeriesUtil.mean(values, null)
+                            }
+                        } else {
+                            SeriesUtil.firstNotNull(data[variable], null)
+                        }
                     val newInputSerie = List(statDataSize) { value }
                     newInputSeries[variable] = newInputSerie
                 }
