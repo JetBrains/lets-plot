@@ -69,7 +69,7 @@ def has_global_value(name: str) -> bool:
         return True
     if isinstance(val, str) and not val.strip():
         return False
-    return val
+    return bool(val)
 
 
 def get_global_val(name: str) -> Any:
