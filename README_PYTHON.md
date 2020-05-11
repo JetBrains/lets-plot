@@ -40,7 +40,7 @@ The Lets-Plot python extension includes native backend and a Python API, which w
 
 R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who want to learn the grammar of graphics. 
 
-Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new features](https://github.com/JetBrains/lets-plot/blob/master/README_PYTHON.md#new_to_experienced_users) to our Python API.
+Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new features](#nonstandard) to our Python API.
 
 You can try the Lets-Plot library in [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/). Lets-Plot is available in Datalore out-of-the-box and is almost identical to the one we ship as PyPI package. This is because Lets-Plot is an offshoot of the Datalore project from which it was extracted to a separate plotting library.
 
@@ -114,6 +114,9 @@ Try the following examples to study more features of the `Lets-Plot` library.
 * Smoothing: linear, [LOESS](https://en.wikipedia.org/wiki/Local_regression):
 [geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb) 
  
+* `as_discrete()` function:
+[geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb) 
+ 
 * Points, density2d, polygons, density2df, bin2d:
 [density_2d.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/density_2d.ipynb)
  
@@ -140,6 +143,7 @@ GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_po
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="473" height="327"><br><br>
 
   
+<a name="Nonstandard plotting functions" id="nonstandard"></a>
 ### Nonstandard plotting functions  
   
 The following features of `Lets-Plot` are not available or have different implementation in other `Grammar of Graphics` libraries.
@@ -211,6 +215,8 @@ from lets_plot.export.simple import export_svg
 export_svg(p, "p.svg")
 ```
  
+Note: The `simple.export_svg()` function do not save images of an `interactive map`.
+ 
 `export_html` function takes plot specification and filename as parameters and saves dynamic HTML to a file in the current 
 working directory.
 When viewing this content the internet connection is required.
@@ -248,6 +254,8 @@ LetsPlot.setup_html(offline=True)
 
 Function `geom_livemap()` enables a researcher to visualize geospatial information on interactive map.
 
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/map_path.png" alt="Couldn't load map_path.png" width="436" height="267"><br><br>
+
 When building interactive geospatial visualizations with *Lets-Plot* the visualisation workflow remains the 
 same as when building a regular `ggplot2` plot.
 
@@ -275,15 +283,22 @@ The following `ggplot2` geometry can be used with interactive maps:
 
 Examples:
 
-* [map_quickstart.ipynb] TBD
-* [map_california_housing.ipynb] TBD
+* [map_quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_quickstart.ipynb)
+* [map_california_housing.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map-california-housing/map_california_housing.ipynb)
 
 ### Function `as_discrete()`
 
 The function `as_discrete()` is used to annotate a numeric data series as `categorical` data for the 
 purposes of given visualization. 
 
-Code example: TBD
+Code example:
+
+```python
+from lets_plot.mapping import as_discrete
+
+mpg_plot + geom_point(aes(color='cyl'))\
+         + geom_smooth(aes(color=as_discrete('cyl')), method='lm', deg=2, size=1)
+```
 
 Example notebook: [geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb)
 
