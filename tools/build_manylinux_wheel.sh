@@ -19,7 +19,7 @@ for pybin in /opt/python/${python_bin_version}/bin; do
 done
 
 # Bundle external shared libraries into the wheels
-for whl in ${dist_dir}/*.whl; do
+for whl in ${dist_dir}/lets_plot*.whl; do
     auditwheel repair "$whl" --plat ${PLAT} -w ${dist_dir}
 done
 

@@ -231,6 +231,29 @@ object SeriesUtil {
         return defaultValue
     }
 
+    fun firstFinine(list: List<Double?>, defaultValue: Double): Double {
+        for (v in list) {
+            if (isFinite(v)) {
+                return v!!
+            }
+        }
+        return defaultValue
+    }
+
+    fun allFinineAreEqual(list: List<Double?>): Boolean {
+        var firstFinite = Double.NaN
+        for (v in list) {
+            if (isFinite(v)) {
+                if (firstFinite.isNaN()) {
+                    firstFinite = v!!
+                } else if (v != firstFinite) {
+                    return false
+                }
+            }
+        }
+        return !firstFinite.isNaN()
+    }
+
     fun mean(values: List<Double?>, defaultValue: Double?): Double? {
         var result = 0.0
         var i = -1.0

@@ -8,9 +8,8 @@ package jetbrains.datalore.plot.base.stat.regression
 import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.plot.base.stat.math3.ForsythePolynomialGenerator
 import jetbrains.datalore.plot.base.stat.math3.PolynomialFunction
-import jetbrains.datalore.plot.base.stat.math3.times
 import jetbrains.datalore.plot.base.stat.math3.TDistribution
-import kotlin.math.max
+import jetbrains.datalore.plot.base.stat.math3.times
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -102,5 +101,13 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
             yHat + halfConfidenceInterval,
             se
         )
+    }
+
+    companion object {
+        fun canBeComputed(xs: List<Double?>, ys: List<Double?>, deg: Int): Boolean {
+            // ToDo: duplicates the constructor code
+            val (xVals, yVals) = averageByX(xs, ys)
+            return xVals.size > deg
+        }
     }
 }

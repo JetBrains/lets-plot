@@ -6,7 +6,7 @@ Activities described in this document are mandatory for RC releases only.
 
 ### Smoke testing
 
-##### 1. Edit binder/environment.yml file.
+##### 1. Edit `binder/environment.yml` file.
 
 Upgrade `Lets-Plot` version to just released RC version:
 
