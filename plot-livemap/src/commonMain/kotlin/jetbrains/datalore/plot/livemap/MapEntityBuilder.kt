@@ -58,7 +58,11 @@ internal class MapEntityBuilder {
     val speed get() = myP.speed()!!
     val flow get() = myP.flow()!!
     val fillColor get() = colorWithAlpha(myP.fill()!!)
-    val strokeColor get() = colorWithAlpha(myP.color()!!)
+    val strokeColor get() = when(myLayerKind) {
+        POLYGON -> myP.color()!!
+        else -> colorWithAlpha(myP.color()!!)
+    }
+
     val label get() = myP.label()
     val family get() = myP.family()
     val hjust get() = hjust(myP.hjust())
