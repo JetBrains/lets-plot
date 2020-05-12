@@ -14,7 +14,8 @@ import jetbrains.datalore.plot.base.stat.regression.LinearRegression
 import jetbrains.datalore.plot.base.stat.regression.LocalPolynomialRegression
 import jetbrains.datalore.plot.base.stat.regression.PolynomialRegression
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.base.sampling.Samplings
+import jetbrains.datalore.plot.base.sampling.method.SamplingUtil
+import kotlin.random.Random
 
 
 /**
@@ -125,12 +126,18 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     }
 
     fun applySampling(data: DataFrame, compMessageConsumer: Consumer<String>): DataFrame {
-        val sampling = Samplings.random(loessCriticalSize, seed)
         val msg = "LOESS drew a random sample with max_n = $loessCriticalSize " +
                 (if (seed != null) ", seed=$seed" else "") + " in "
+        
         compMessageConsumer(msg)
 
-        return sampling.apply(data)
+        val rand = seed?.let { Random(it) } ?: Random.Default
+
+        return SamplingUtil.sampleWithoutReplacement(data.rowCount(),
+            loessCriticalSize,
+            rand,
+            { data.selectIndices(it) },
+            { data.dropIndices(it) })
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: Consumer<String>): DataFrame {
