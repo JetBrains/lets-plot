@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+ - geom_livemap(). Displays an interactive map.
  - as_discrete() function.
  - (?) `tooltip` parameter for geoms.
  - `theme`: `axis_tooltip`='blank' (also `axis_tooltip_x`, `axis_tooltip_x`)
