@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - corner tooltips.
  - polynomial regression for geom_smooth.
 
-## [1.4.0] - 2020-05-13
+## [1.4.0] - 2020-05-13
 ### Added
  - Support for interactive maps.
  - The `as_discrete()` function.
