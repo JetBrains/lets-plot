@@ -51,8 +51,8 @@ configurations {
 
 allprojects {
     group = 'org.jetbrains.lets-plot'
-    version = "1.3.4-SNAPSHOT"
-    project.ext.js_artifact_version = "1.3.4.dev1"
+    version = "1.4.1-SNAPSHOT"
+    project.ext.js_artifact_version = "1.4.1.dev1"
     // see also: python-package/lets_plot/_version.py
 
     repositories {
