@@ -43,7 +43,7 @@ object DataProcessing {
 
     fun buildStatData(
         data: DataFrame, stat: Stat, bindings: List<VarBinding>, groupingContext: GroupingContext,
-        facetXVar: String?, facetYVar: String?, statCtx: StatContext, samplingExpressionConsumer: Consumer<String>
+        facetXVar: String?, facetYVar: String?, statCtx: StatContext, messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
             return DataAndGroupingContext(
@@ -66,7 +66,7 @@ object DataProcessing {
                 facetXVar,
                 facetYVar,
                 statCtx,
-                samplingExpressionConsumer
+                messageConsumer
             )
             groupSizeListAfterStat.add(sd.rowCount())
             for (variable in sd.variables()) {
@@ -84,7 +84,7 @@ object DataProcessing {
                     facetXVar,
                     facetYVar,
                     statCtx,
-                    samplingExpressionConsumer
+                    messageConsumer
                 )
                 if (sd.isEmpty) {
                     continue

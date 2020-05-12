@@ -126,9 +126,8 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
 
     fun applySampling(data: DataFrame, compMessageConsumer: Consumer<String>): DataFrame {
         val sampling = Samplings.random(loessCriticalSize, seed)
-
-        val msg = "Random sampling with max_n = $loessCriticalSize " +
-                (if (seed != null) ", seed=$seed" else "")
+        val msg = "LOESS drew a random sample with max_n = $loessCriticalSize " +
+                (if (seed != null) ", seed=$seed" else "") + " in "
         compMessageConsumer(msg)
 
         return sampling.apply(data)

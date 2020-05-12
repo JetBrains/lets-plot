@@ -247,7 +247,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                         { message ->
                             layerIndexAndSamplingMessage(
                                 layerIndex,
-                                createSamplingMessage(message, layerConfig)
+                                createSmoothingSamplingMessage(message, layerConfig)
                             )
                         }
                     )
@@ -275,14 +275,26 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         return result
     }
 
-    private fun createSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
-        val geomKind = layerConfig.geomProto.geomKind
-
+    private fun getStatName(layerConfig: LayerConfig): String {
         var stat: String = layerConfig.stat::class.simpleName!!
         stat = stat.replace("Stat", " stat")
         stat = stat.replace("([a-z])([A-Z]+)".toRegex(), "$1_$2").toLowerCase()
 
+        return stat
+    }
+
+    private fun createSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
+        val geomKind = layerConfig.geomProto.geomKind
+        val stat = getStatName(layerConfig)
+
         return samplingExpression + " was applied to [" + geomKind.name.toLowerCase() + "/" + stat + "] layer"
+    }
+
+    private fun createSmoothingSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
+        val geomKind = layerConfig.geomProto.geomKind
+        val stat = getStatName(layerConfig)
+
+        return samplingExpression + "  [" + geomKind.name.toLowerCase() + "/" + stat + "] layer"
     }
 
     companion object {
