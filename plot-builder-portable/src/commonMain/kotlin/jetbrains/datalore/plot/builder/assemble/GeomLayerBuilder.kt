@@ -21,13 +21,13 @@ import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PosProviderContext
-import jetbrains.datalore.plot.base.VarBinding
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
-import jetbrains.datalore.plot.base.data.DataProcessing
-import jetbrains.datalore.plot.base.data.GroupingContext
+import jetbrains.datalore.plot.builder.data.DataProcessing
+import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
-import jetbrains.datalore.plot.base.scale.ScaleProvider
+import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
 class GeomLayerBuilder {
     private val myBindings = ArrayList<VarBinding>()

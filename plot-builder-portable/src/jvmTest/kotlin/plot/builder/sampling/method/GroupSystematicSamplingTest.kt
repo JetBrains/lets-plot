@@ -1,13 +1,12 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.method
+package jetbrains.datalore.plot.builder.sampling.method
 
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.sampling.method.GroupSystematicSampling
-import jetbrains.datalore.plot.base.sampling.GroupAwareSampling
+import jetbrains.datalore.plot.builder.sampling.GroupAwareSampling
 import kotlin.test.*
 
 internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {
@@ -99,8 +98,7 @@ internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {
             }
 
         init {
-            sampling =
-                GroupSystematicSampling(sampleSize)
+            sampling = GroupSystematicSampling(sampleSize)
             if (sampling.isApplicable(data!!, groupMapper!!)) {
                 mySample = sampling.apply(data!!, groupMapper!!)
             } else {

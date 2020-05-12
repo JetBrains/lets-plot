@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
-import jetbrains.datalore.plot.base.scale.ScaleProvider
+import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.config.PlotConfig.Companion.PLOT_COMPUTATION_MESSAGES
 
 object PlotConfigUtil {

@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.base.VarBinding
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
-import jetbrains.datalore.plot.base.sampling.Sampling
+import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.SAMPLING

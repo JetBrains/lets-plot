@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.server.config
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling.SAFETY_SAMPLING
-import jetbrains.datalore.plot.base.sampling.GroupAwareSampling
-import jetbrains.datalore.plot.base.sampling.PointSampling
-import jetbrains.datalore.plot.base.sampling.Sampling
-import jetbrains.datalore.plot.base.sampling.Samplings
+import jetbrains.datalore.plot.builder.sampling.GroupAwareSampling
+import jetbrains.datalore.plot.builder.sampling.PointSampling
+import jetbrains.datalore.plot.builder.sampling.Sampling
+import jetbrains.datalore.plot.builder.sampling.Samplings
 
 internal object PlotSampling {
 

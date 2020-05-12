@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.sampling.method
+package jetbrains.datalore.plot.builder.sampling.method
 
 import jetbrains.datalore.base.algorithms.isClosed
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
@@ -11,11 +11,11 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.util.MutableInteger
-import jetbrains.datalore.plot.base.sampling.PointSampling
-import jetbrains.datalore.plot.base.sampling.method.SamplingUtil.calculateRingLimits
-import jetbrains.datalore.plot.base.sampling.method.SamplingUtil.getRingIndex
-import jetbrains.datalore.plot.base.sampling.method.SamplingUtil.getRingLimit
-import jetbrains.datalore.plot.base.sampling.method.SamplingUtil.splitRings
+import jetbrains.datalore.plot.builder.sampling.PointSampling
+import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.calculateRingLimits
+import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.getRingIndex
+import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.getRingLimit
+import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.splitRings
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.geometry.PolylineSimplifier
 

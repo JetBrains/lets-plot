@@ -11,7 +11,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.VarBinding
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 internal object PlotGuidesAssemblerUtil {

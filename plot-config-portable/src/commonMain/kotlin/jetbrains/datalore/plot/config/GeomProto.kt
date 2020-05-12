@@ -13,8 +13,8 @@ import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling
-import jetbrains.datalore.plot.base.sampling.Sampling
-import jetbrains.datalore.plot.base.sampling.Samplings
+import jetbrains.datalore.plot.builder.sampling.Sampling
+import jetbrains.datalore.plot.builder.sampling.Samplings
 
 open class GeomProto constructor(val geomKind: GeomKind) {
 

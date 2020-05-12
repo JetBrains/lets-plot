@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.data
+package jetbrains.datalore.plot.builder.data
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.base.VarBinding
-import jetbrains.datalore.plot.base.data.DataProcessing.findOptionalVariable
+import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.data.DataProcessing.findOptionalVariable
 
 class GroupingContext(
     private val myData: DataFrame,
@@ -47,9 +47,7 @@ class GroupingContext(
                 return GroupUtil.SINGLE_GROUP
             } else {
                 val groupByPointIndex =
-                    toIndexMap(
-                        myGroupSizeList!!
-                    )
+                    toIndexMap(myGroupSizeList!!)
                 return GroupUtil.wrap(groupByPointIndex)
             }
         } else if (myExpectMultiple) {
@@ -64,8 +62,7 @@ class GroupingContext(
 
     companion object {
         internal fun withOrderedGroups(data: DataFrame, groupSizeList: List<Int>): GroupingContext {
-            val groupingContext =
-                GroupingContext(data, emptyList(), null, false)
+            val groupingContext = GroupingContext(data, emptyList(), null, false)
             groupingContext.myGroupSizeList = ArrayList(groupSizeList)
             return groupingContext
         }

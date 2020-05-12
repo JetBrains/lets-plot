@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.method
+package jetbrains.datalore.plot.builder.sampling.method
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Builder
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.rectToGeometry
-import jetbrains.datalore.plot.base.data.RingAssertion.Companion.assertThatRing
-import jetbrains.datalore.plot.base.data.createCircle
-import jetbrains.datalore.plot.base.sampling.method.SamplingUtil.splitRings
-import jetbrains.datalore.plot.base.sampling.method.VertexSampling.VertexDpSampling
-import jetbrains.datalore.plot.base.sampling.method.VertexSampling.VertexVwSampling
+import jetbrains.datalore.plot.builder.data.RingAssertion.Companion.assertThatRing
+import jetbrains.datalore.plot.builder.data.createCircle
+import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.splitRings
+import jetbrains.datalore.plot.builder.sampling.method.VertexSampling.VertexDpSampling
+import jetbrains.datalore.plot.builder.sampling.method.VertexSampling.VertexVwSampling
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 

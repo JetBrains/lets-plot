@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.base.VarBinding
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
@@ -34,7 +34,7 @@ open class AreaPlotDemo: SimpleDemoBase() {
             .put(varTarget, targetColumn.data.toList())
             .build()
 
-        val scaleTargetColor = Scales.pureDiscrete("Y", listOf("Iris-setosa", "Iris-versicolor", "Iris-virginica"), listOf(Color.RED, Color.GREEN, Color.BLUE),  Color.BLACK)
+        var scaleTargetColor = Scales.pureDiscrete("Y", listOf("Iris-setosa", "Iris-versicolor", "Iris-virginica"), listOf(Color.RED, Color.GREEN, Color.BLUE),  Color.BLACK)
 
         val layer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
             .stat(Stats.density())

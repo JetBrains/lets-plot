@@ -1,14 +1,12 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.method
+package jetbrains.datalore.plot.builder.sampling.method
 
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.sampling.method.RandomSampling
-import jetbrains.datalore.plot.base.sampling.method.SystematicSampling
-import jetbrains.datalore.plot.base.data.generateData
+import jetbrains.datalore.plot.builder.data.generateData
 import kotlin.math.floor
 import kotlin.test.*
 

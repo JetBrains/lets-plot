@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.base.VarBinding
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider

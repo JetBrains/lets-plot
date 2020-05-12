@@ -3,9 +3,13 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.data
+package jetbrains.datalore.plot.builder.data
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataFrame
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 fun generateData(rowCount: Int, varNames: Collection<String>): DataFrame {
     val variables = varNames.map { DataFrame.Variable(it) }
@@ -30,3 +34,21 @@ fun indices(count: Int): List<Int> {
 fun toSerie(prefix: String, ints: Collection<Int>): List<*> {
     return ints.map { v -> prefix + v }
 }
+
+fun createCircle(pointsCount: Int, r: Double): List<DoubleVector> {
+    @Suppress("NAME_SHADOWING")
+    var pointsCount = pointsCount
+    val circle = ArrayList<DoubleVector>()
+    val step = 2 * PI / pointsCount++
+    var angle = 0.0
+    while (pointsCount-- > 0) {
+        circle.add(DoubleVector(r * cos(angle), r * sin(angle)))
+        angle += step
+    }
+
+    circle[circle.size - 1] = circle[0]
+
+    return circle
+}
+
+

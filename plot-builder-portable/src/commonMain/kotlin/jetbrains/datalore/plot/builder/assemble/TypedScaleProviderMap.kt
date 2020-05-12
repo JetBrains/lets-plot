@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.scale.ScaleProvider
+import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
 class TypedScaleProviderMap constructor(map: Map<Aes<*>, ScaleProvider<*>>) {
     private var myMap: Map<Aes<*>, ScaleProvider<*>> = map.toMap()

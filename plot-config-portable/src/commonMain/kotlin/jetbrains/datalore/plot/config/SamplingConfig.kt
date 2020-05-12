@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.sampling.Sampling
-import jetbrains.datalore.plot.base.sampling.Samplings
+import jetbrains.datalore.plot.builder.sampling.Sampling
+import jetbrains.datalore.plot.builder.sampling.Samplings
 import jetbrains.datalore.plot.config.Option.Sampling.NONE
 
 internal object SamplingConfig {

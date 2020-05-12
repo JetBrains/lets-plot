@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.scale.ScaleProvider
 import jetbrains.datalore.plot.base.scale.Scales
 
 /**

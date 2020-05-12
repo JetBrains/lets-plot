@@ -70,7 +70,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     var span = DEF_SPAN
     var deg: Int = DEF_DEG // default degree for polynomial regression
     var loessCriticalSize = DEF_LOESS_CRITICAL_SIZE
-    var seed: Long? = DEF_SAMPLING_SEED
+    var seed: Long = DEF_SAMPLING_SEED
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
@@ -126,16 +126,12 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     }
 
     fun applySampling(data: DataFrame, compMessageConsumer: Consumer<String>): DataFrame {
-        val msg = "LOESS drew a random sample with max_n = $loessCriticalSize " +
-                (if (seed != null) ", seed=$seed" else "") + " in "
-        
+        val msg = "LOESS drew a random sample with max_n = $loessCriticalSize, seed=$seed in "
         compMessageConsumer(msg)
-
-        val rand = seed?.let { Random(it) } ?: Random.Default
 
         return SamplingUtil.sampleWithoutReplacement(data.rowCount(),
             loessCriticalSize,
-            rand,
+            Random(seed),
             { data.selectIndices(it) },
             { data.dropIndices(it) })
     }

@@ -11,8 +11,8 @@ import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
-import jetbrains.datalore.plot.base.data.DataProcessing
-import jetbrains.datalore.plot.base.data.GroupingContext
+import jetbrains.datalore.plot.builder.data.DataProcessing
+import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform

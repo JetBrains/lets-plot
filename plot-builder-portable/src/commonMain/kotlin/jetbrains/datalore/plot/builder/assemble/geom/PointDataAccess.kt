@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.scale.ScaleUtil.getBreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleUtil.labelByBreak
-import jetbrains.datalore.plot.base.VarBinding
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureNotZeroRange
 
 internal class PointDataAccess(
