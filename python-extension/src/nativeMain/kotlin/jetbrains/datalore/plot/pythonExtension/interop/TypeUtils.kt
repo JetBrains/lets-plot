@@ -39,7 +39,7 @@ internal object TypeUtils {
 
         return when (objType) {
             STR -> PyBytes_AsString(PyUnicode_AsUTF8String(obj))?.toKString()
-            INT -> PyLong_AsLong(obj).toLong()
+            INT -> PyLong_AsLongLong(obj).toLong()
             FLOAT -> PyFloat_AsDouble(obj)
             BOOL -> PyObject_IsTrue(obj) == 1
             DICT -> pyDictToMap(obj)
