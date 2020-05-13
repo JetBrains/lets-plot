@@ -58,6 +58,7 @@ class TileRequestSystem(componentManager: EcsComponentManager) : AbstractSystem<
         val layerTileMap = HashMap<CellLayerKind, MutableMap<CellKey, Tile>>()
 
         for (entity in getEntities(TileLoadingSystem.TILE_COMPONENT_LIST)) {
+            if (entity.get<TileComponent>().nonCacheable) { continue } // don't use error tiles as donors
             val tile = entity.get<TileComponent>().tile ?: continue
 
             val layerKind = entity.get<KindComponent>().layerKind

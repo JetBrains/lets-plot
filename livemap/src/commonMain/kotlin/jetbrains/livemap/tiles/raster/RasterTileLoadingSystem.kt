@@ -64,7 +64,6 @@ class RasterTileLoadingSystem(
             getTileLayerEntities(cellKey).forEach { httpTileEntity ->
                 microThreads.add(
                     MicroTaskUtil.create {
-
                         if (response.errorCode != null) {
                             val errorText = response.errorCode!!.message ?: "Unknown error"
                             val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMESION)
@@ -74,8 +73,9 @@ class RasterTileLoadingSystem(
                                 if (textDim < TILE_PIXEL_SIZE) {
                                     TILE_PIXEL_SIZE / 2 - textDim / 2
                                 } else {
-                                    0.0
+                                    4.0
                                 }
+                            tileCtx.setFont("10.0px sherif")
                             tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
                             tileCanvas.takeSnapshot()
                         } else {
@@ -83,7 +83,10 @@ class RasterTileLoadingSystem(
                         }
                             .onSuccess { snapshot ->
                                 runLaterBySystem(httpTileEntity) { theEntity ->
-                                    theEntity.get<TileComponent>().tile = Tile.SnapshotTile(snapshot)
+                                    theEntity.get<TileComponent>().apply {
+                                        nonCacheable = response.errorCode != null
+                                        tile = Tile.SnapshotTile(snapshot)
+                                    }
                                     ParentLayerComponent.tagDirtyParentLayer(theEntity)
                                 }
                         }

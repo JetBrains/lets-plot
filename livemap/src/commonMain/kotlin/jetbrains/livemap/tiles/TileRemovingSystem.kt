@@ -19,7 +19,7 @@ import jetbrains.livemap.tiles.RendererCacheComponent.Companion.NULL_RENDERER
 class TileRemovingSystem(private val myTileCacheLimit: Int, componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
 
-    private val myTileCacheList = ArrayList<CellKey>()
+    private val myCache = ArrayList<CellKey>()
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val cellState: CellStateComponent = getSingletonEntity(CELL_STATE_REQUIRED_COMPONENTS).get()
@@ -37,23 +37,34 @@ class TileRemovingSystem(private val myTileCacheLimit: Int, componentManager: Ec
             }
         }
 
-        myTileCacheList.removeAll(cellState.visibleCells::contains)
-        cellState.cellsToRemove.forEach { myTileCacheList.add(it) }
+        val cellsToKill = HashSet<CellKey>()
 
-        removeTiles()
-    }
+        myCache.removeAll(cellState.visibleCells::contains) // do not remove visible tiles
+        myCache += cellState.cellsToRemove // chance to survive or die
 
-    private fun removeTiles() {
-        val tilesToRemove = HashSet<CellKey>()
-
-        while (!myTileCacheList.isEmpty() && myTileCacheList.size > myTileCacheLimit) {
-            tilesToRemove.add(myTileCacheList.removeAt(0))
+        // non-cacheable cells can't survive
+        getEntities<TileComponent>().forEach { entity ->
+            if (entity.get<TileComponent>().nonCacheable) {
+                val nonCacheableCell = entity.get<CellComponent>().cellKey
+                if (nonCacheableCell in cellState.cellsToRemove) {
+                    cellsToKill += nonCacheableCell // no chance
+                    myCache -= nonCacheableCell // sync items
+                }
+            }
         }
 
+        while (!myCache.isEmpty() && myCache.size > myTileCacheLimit) {
+            cellsToKill.add(myCache.removeAt(0))
+        }
+
+        removeCells(cellsToKill)
+    }
+
+    private fun removeCells(cellsToKill: Set<CellKey>) {
         val layers = getEntities(LayerEntitiesComponent::class).toList()
 
         getEntities(CellComponent::class)
-            .filter { tilesToRemove.contains(it.get<CellComponent>().cellKey) }
+            .filter { cellsToKill.contains(it.get<CellComponent>().cellKey) }
             .forEach { cellEntity ->
                 layers.forEach { it.get<LayerEntitiesComponent>().remove(cellEntity.id) }
                 cellEntity.remove()

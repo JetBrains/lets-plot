@@ -67,6 +67,7 @@ class RendererCacheComponent : EcsComponent {
 
 class TileComponent : EcsComponent {
     var tile: Tile? = null
+    var nonCacheable: Boolean = false // for error tile
 }
 
 class RequestTilesComponent : EcsComponent {
