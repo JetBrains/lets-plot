@@ -167,8 +167,8 @@ class StatProto {
         options["span"]?.let { stat.span = it.asDouble() }
         options["deg"]?.let { stat.deg = it.asInt() }
 
-        options["seed"]?.let {stat.seed = it.asLong()}
-        options["max_n"]?.let {stat.loessCriticalSize = it.asInt()}
+        options["seed"]?.let { stat.seed = it.asLong() }
+        options["max_n"]?.let { stat.loessCriticalSize = it.asInt() }
 
 
         return stat

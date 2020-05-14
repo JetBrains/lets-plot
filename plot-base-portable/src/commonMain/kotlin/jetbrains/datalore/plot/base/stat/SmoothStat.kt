@@ -117,16 +117,18 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     }
 
     fun needSampling(rowCount: Int): Boolean {
-        if (smoothingMethod != Method.LOESS)
+        if (smoothingMethod != Method.LOESS) {
             return false
+        }
 
-        if (rowCount <= loessCriticalSize)
+        if (rowCount <= loessCriticalSize) {
             return false
+        }
 
         return true
     }
 
-    fun applySampling(data: DataFrame, compMessageConsumer: Consumer<String>): DataFrame {
+    fun applySampling(data: DataFrame, compMessageConsumer: (s: String) -> Unit): DataFrame {
         val msg = "LOESS drew a random sample with max_n = $loessCriticalSize, seed=$seed in "
         compMessageConsumer(msg)
 
