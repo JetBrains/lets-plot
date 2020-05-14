@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -203,16 +204,6 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
    * */
 
     private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
-        val regression = when (smoothingMethod) {
-            Method.LM -> if (deg == 1)
-                LinearRegression(valuesX, valuesY, confidenceLevel)
-            else
-                PolynomialRegression(valuesX, valuesY, confidenceLevel, deg)
-            Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
-            else -> throw IllegalArgumentException(
-                "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
-            )
-        }
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
         val statMinY = ArrayList<Double>()
@@ -225,6 +216,28 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         result[Stats.Y_MIN] = statMinY
         result[Stats.Y_MAX] = statMaxY
         result[Stats.SE] = statSE
+
+        val regression = when (smoothingMethod) {
+            Method.LM -> {
+                Preconditions.checkArgument(
+                    deg >= 1,
+                    "Degree of polynomial regression must be at least 1"
+                )
+                if (deg == 1) {
+                    LinearRegression(valuesX, valuesY, confidenceLevel)
+                } else {
+                    if (PolynomialRegression.canBeComputed(valuesX, valuesY, deg)) {
+                        PolynomialRegression(valuesX, valuesY, confidenceLevel, deg)
+                    } else {
+                        return result   // empty stat data
+                    }
+                }
+            }
+            Method.LOESS -> LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
+            else -> throw IllegalArgumentException(
+                "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
+            )
+        }
 
         val rangeX = SeriesUtil.range(valuesX) ?: return result
 
