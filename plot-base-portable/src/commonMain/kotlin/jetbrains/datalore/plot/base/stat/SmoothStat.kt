@@ -137,7 +137,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
             { data.dropIndices(it) })
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: Consumer<String>): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }

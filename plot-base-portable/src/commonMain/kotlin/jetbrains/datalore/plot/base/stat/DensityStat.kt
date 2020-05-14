@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -52,7 +51,7 @@ class DensityStat : BaseStat(DEF_MAPPING) {
         return listOf(Aes.X, Aes.WEIGHT)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: Consumer<String>): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.X)) {
             return withEmptyStatValues()
         }

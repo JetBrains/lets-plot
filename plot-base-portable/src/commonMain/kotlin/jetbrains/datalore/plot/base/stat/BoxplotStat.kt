@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
 import jetbrains.datalore.plot.base.DataFrame
@@ -63,7 +62,7 @@ class BoxplotStat : BaseStat(DEF_MAPPING) {
         return listOf(Aes.X, Aes.Y)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: Consumer<String>): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
             return withEmptyStatValues()
         }

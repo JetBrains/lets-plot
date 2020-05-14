@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.stat.DensityStat
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.random.Random
 import kotlin.test.Test

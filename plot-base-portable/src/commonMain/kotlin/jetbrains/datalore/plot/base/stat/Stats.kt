@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -118,7 +117,7 @@ object Stats {
 
     private class IdentityStat internal constructor() : BaseStat(emptyMap()) {
 
-        override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: Consumer<String>): DataFrame {
+        override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: (s: String) -> Unit): DataFrame {
             return DataFrame.Builder.emptyFrame()
         }
 
