@@ -27,11 +27,7 @@ internal class RandomSampling(sampleSize: Int, private val mySeed: Long?) : Samp
         checkArgument(isApplicable(population))
         val rand = mySeed?.let { Random(it) } ?: Random.Default
 
-        return SamplingUtil.sampleWithoutReplacement(population.rowCount(),
-            sampleSize,
-            rand,
-            { population.selectIndices(it) },
-            { population.dropIndices(it) })
+        return SamplingUtil.sampleWithoutReplacement(sampleSize, rand, population)
     }
 
     companion object {
