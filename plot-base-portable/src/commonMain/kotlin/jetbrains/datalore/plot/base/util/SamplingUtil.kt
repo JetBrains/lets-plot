@@ -1,12 +1,14 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.sampling.method
+package jetbrains.datalore.plot.base.util
+import jetbrains.datalore.plot.base.DataFrame
 import kotlin.random.Random
 
 object SamplingUtil {
+
     fun <T> sampleWithoutReplacement(popSize: Int, sampleSize: Int, rand: Random, onPick: (Set<Int>) -> T,
                                      onDrop: (Set<Int>) -> T): T {
         val pick = sampleSize <= popSize / 2

@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
-import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -15,7 +14,7 @@ import jetbrains.datalore.plot.base.stat.regression.LinearRegression
 import jetbrains.datalore.plot.base.stat.regression.LocalPolynomialRegression
 import jetbrains.datalore.plot.base.stat.regression.PolynomialRegression
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.base.sampling.method.SamplingUtil
+import jetbrains.datalore.plot.base.util.SamplingUtil
 import kotlin.random.Random
 
 
