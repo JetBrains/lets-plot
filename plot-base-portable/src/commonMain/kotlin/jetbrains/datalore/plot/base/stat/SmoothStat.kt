@@ -129,7 +129,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     }
 
     fun applySampling(data: DataFrame, compMessageConsumer: (s: String) -> Unit): DataFrame {
-        val msg = "LOESS drew a random sample with max_n = $loessCriticalSize, seed=$seed in "
+        val msg = "LOESS drew a random sample with max_n = $loessCriticalSize, seed=$seed"
         compMessageConsumer(msg)
 
         return SamplingUtil.sampleWithoutReplacement(data.rowCount(),
