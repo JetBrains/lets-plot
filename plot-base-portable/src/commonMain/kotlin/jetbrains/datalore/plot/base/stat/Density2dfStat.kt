@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class Density2dfStat internal constructor() : AbstractDensity2dStat() {
 
-    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: (s: String) -> Unit): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
             return withEmptyStatValues()
         }

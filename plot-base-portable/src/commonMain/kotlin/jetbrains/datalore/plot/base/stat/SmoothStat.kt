@@ -127,14 +127,14 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         return true
     }
 
-    fun applySampling(data: DataFrame, compMessageConsumer: (s: String) -> Unit): DataFrame {
+    fun applySampling(data: DataFrame, messageConsumer: (s: String) -> Unit): DataFrame {
         val msg = "LOESS drew a random sample with max_n=$loessCriticalSize, seed=$seed"
-        compMessageConsumer(msg)
+        messageConsumer(msg)
 
         return SamplingUtil.sampleWithoutReplacement(loessCriticalSize, Random(seed), data)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext, compMessageConsumer: (s: String) -> Unit): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
@@ -143,7 +143,7 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         var data = data
 
         if (needSampling(data.rowCount())) {
-            data = applySampling(data, compMessageConsumer)
+            data = applySampling(data, messageConsumer)
         }
 
         val valuesY = data.getNumeric(TransformVar.Y)
