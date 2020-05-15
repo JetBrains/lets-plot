@@ -74,6 +74,9 @@ def as_annotated_map_data(raw_map: Any) -> dict:
     if is_geo_data_frame(raw_map):
         return {'map_data_meta': get_geo_data_frame_meta(raw_map)}
 
+    if isinstance(raw_map, dict):
+        return {'map_data_meta': {'geodict': {}}}
+
     return {}
 
 

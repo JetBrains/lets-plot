@@ -14,9 +14,10 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMIN
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMAX
 import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.GeoDataKind
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_GEOMETRY_COLUMN
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_JOIN_ID_COLUMN
 import jetbrains.datalore.plot.config.Option
+import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame
+import jetbrains.datalore.plot.config.Option.Meta.MapJoin
+import jetbrains.datalore.plot.config.getList
 import jetbrains.datalore.plot.config.transform.SpecSelector
 
 
@@ -25,7 +26,7 @@ class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange() {
         get() = GEO_DATA_FRAME_KEYS
 
     override fun changeGeoPositions(mapSpec: MutableMap<String, Any>, geoDataKind: GeoDataKind) {
-        val geometryTables = (mapSpec[MAP_GEOMETRY_COLUMN] as List<*>).map { parseGeometry(it as String, geoDataKind) }
+        val geometryTables = mapSpec.getList(GeoDataFrame.GEOMETRIES)!!.map { parseGeometry(it as String, geoDataKind) }
 
         if (geometryTables.sumBy { it.rowCount } == 0) {
             error(
@@ -39,12 +40,12 @@ class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange() {
             )
         }
 
-        val dataTable = (mapSpec[MAP_JOIN_ID_COLUMN] as? List<*>)
+        val dataTable = mapSpec.getList(MapJoin.ID)
             ?.zip(geometryTables)
             ?.fold(mutableMapOf<String, MutableList<Any>>(), { dataFrame, (id, geometryTable) ->
                 dataFrame
                     .concat(geometryTable)
-                    .concat(MAP_JOIN_ID_COLUMN, MutableList(geometryTable.rowCount) { id as String })
+                    .concat(MapJoin.ID, MutableList(geometryTable.rowCount) { id!! })
             })
             ?: geometryTables.fold(mutableMapOf<String, MutableList<Any>>(), { dataFrame, geometryTable ->
                 dataFrame.concat(geometryTable)
@@ -103,7 +104,7 @@ class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange() {
             }
         )
 
-        private val GEO_DATA_FRAME_KEYS: Set<String> = setOf(MAP_GEOMETRY_COLUMN)
+        private val GEO_DATA_FRAME_KEYS: Set<String> = setOf(GeoDataFrame.GEOMETRIES)
 
         internal fun defaultConsumer(config: SimpleFeature.Consumer<LonLat>.() -> Unit) =
             SimpleFeature.Consumer<LonLat>(
@@ -123,8 +124,8 @@ private fun <T> MutableMap<String, MutableList<T>>.concat(other: Map<String, Lis
     other.forEach { (key, value) -> getOrPut(key, { ArrayList() }).addAll(value) }
 }
 
-private fun <T> MutableMap<String, MutableList<T>>.concat(key: String, values: List<T>) = apply {
-    concat(mutableMapOf(key to values))
+private fun <T> MutableMap<String, MutableList<T>>.concat(column: String, values: List<T>) = apply {
+    concat(mutableMapOf(column to values))
 }
 
 private fun MutableMap<String, MutableList<Double>>.append(key: String, value: Double) {
