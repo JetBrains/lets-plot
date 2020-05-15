@@ -51,7 +51,7 @@ class DensityStat : BaseStat(DEF_MAPPING) {
         return listOf(Aes.X, Aes.WEIGHT)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.X)) {
             return withEmptyStatValues()
         }

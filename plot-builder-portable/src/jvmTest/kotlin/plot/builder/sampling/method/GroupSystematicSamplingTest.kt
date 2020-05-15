@@ -34,9 +34,7 @@ internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {
         // applicable with steps >= 1.5
         assertThat(N_GROUPS / 2).isApplicable
 
-        val napSampling = assertThat(N_GROUPS)
-                .isNotApplicable
-                .sampling
+        val napSampling = assertThat(N_GROUPS).isNotApplicable.sampling
 
         assertFailsWith(RuntimeException::class) {
             napSampling.apply(data!!, groupMapper!!)
@@ -47,13 +45,9 @@ internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {
     fun exactStep() {
         // step 3 is a perfect fit when last data index in 9, 99... (i.e. that size of data is 10, 100...)
         assertThat(sampleSize(3.0))
-                .hasGroupCount(
-                    sampleSize(
-                        3.0
-                    )
-                )
-                .hasGroup(0)
-                .hasGroup(N_GROUPS - 1)
+            .hasGroupCount(sampleSize(3.0))
+            .hasGroup(0)
+            .hasGroup(N_GROUPS - 1)
     }
 
     @Test
@@ -61,18 +55,10 @@ internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {
         // rounded to closest lesser int
         val targetStep = 3.1
         val expectedStep = 3
-        assertThat(
-            sampleSize(
-                targetStep
-            )
-        )
-                .hasGroupCount(
-                    sampleSize(
-                        expectedStep.toDouble()
-                    )
-                )
-                .hasGroup(0)
-                .hasGroup(N_GROUPS - 1)
+        assertThat(sampleSize(targetStep))
+            .hasGroupCount(sampleSize(expectedStep.toDouble()))
+            .hasGroup(0)
+            .hasGroup(N_GROUPS - 1)
     }
 
     @Test
@@ -80,30 +66,18 @@ internal class GroupSystematicSamplingTest : GroupSamplingTestBase() {
         // rounded to closest greater int
         val targetStep = 2.9
         val expectedStep = 3
-        assertThat(
-            sampleSize(
-                targetStep
-            )
-        )
-                .hasGroupCount(
-                    sampleSize(
-                        expectedStep.toDouble()
-                    )
-                )
-                .hasGroup(0)
-                .hasGroup(N_GROUPS - 1)
+        assertThat(sampleSize(targetStep))
+            .hasGroupCount(sampleSize(expectedStep.toDouble()))
+            .hasGroup(0)
+            .hasGroup(N_GROUPS - 1)
     }
 
     @Test
     fun unfitStep() {
         assertThat(sampleSize(2.0))
-                .hasGroupCount(
-                    sampleSize(
-                        2.0
-                    )
-                )
-                .hasGroup(0)
-                .hasNoGroup(N_GROUPS - 1)
+            .hasGroupCount(sampleSize(2.0))
+            .hasGroup(0)
+            .hasNoGroup(N_GROUPS - 1)
     }
 
 

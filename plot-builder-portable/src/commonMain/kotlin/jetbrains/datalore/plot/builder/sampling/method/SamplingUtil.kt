@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.base.util.MutableInteger
 import jetbrains.datalore.plot.builder.sampling.method.VertexSampling.DoubleVectorComponentsList
 import kotlin.math.min
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 internal object SamplingUtil {
 
@@ -48,21 +47,6 @@ internal object SamplingUtil {
     //  }
     //  return indices;
     //}
-
-    fun <T> sampleWithoutReplacement(popSize: Int, sampleSize: Int, rand: Random, onPick: (Set<Int>) -> T,
-                                     onDrop: (Set<Int>) -> T): T {
-        val pick = sampleSize <= popSize / 2
-        val indexCount = if (pick) sampleSize else popSize - sampleSize
-
-        //Set<Integer> s = randomIndices(popSize, indexCount, rand);
-
-        val indexSet = HashSet<Int>()
-        while (indexSet.size < indexCount) {
-            indexSet.add(rand.nextInt(popSize))
-        }
-
-        return if (pick) onPick(indexSet) else onDrop(indexSet)
-    }
 
     fun xVar(data: DataFrame): Variable {
         if (data.has(Stats.X)) {

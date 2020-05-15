@@ -14,6 +14,9 @@ import jetbrains.datalore.plot.base.stat.regression.LinearRegression
 import jetbrains.datalore.plot.base.stat.regression.LocalPolynomialRegression
 import jetbrains.datalore.plot.base.stat.regression.PolynomialRegression
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.base.util.SamplingUtil
+import kotlin.random.Random
+
 
 /**
  * See doc for stat_smooth / geom_smooth
@@ -66,6 +69,8 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     var isDisplayConfidenceInterval = DEF_DISPLAY_CONFIDENCE_INTERVAL
     var span = DEF_SPAN
     var deg: Int = DEF_DEG // default degree for polynomial regression
+    var loessCriticalSize = DEF_LOESS_CRITICAL_SIZE
+    var seed: Long = DEF_SAMPLING_SEED
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
@@ -101,6 +106,8 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         private const val DEF_DISPLAY_CONFIDENCE_INTERVAL = true
         private const val DEF_SPAN = 0.5
         private const val DEF_DEG = 1
+        private const val DEF_LOESS_CRITICAL_SIZE = 1_000
+        private const val DEF_SAMPLING_SEED = 37L
     }
 
 
@@ -108,9 +115,35 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
         return listOf<Aes<*>>(Aes.Y)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
+    fun needSampling(rowCount: Int): Boolean {
+        if (smoothingMethod != Method.LOESS) {
+            return false
+        }
+
+        if (rowCount <= loessCriticalSize) {
+            return false
+        }
+
+        return true
+    }
+
+    fun applySampling(data: DataFrame, messageConsumer: (s: String) -> Unit): DataFrame {
+        val msg = "LOESS drew a random sample with max_n=$loessCriticalSize, seed=$seed"
+        messageConsumer(msg)
+
+        return SamplingUtil.sampleWithoutReplacement(loessCriticalSize, Random(seed), data)
+    }
+
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
+        }
+
+        @Suppress("NAME_SHADOWING")
+        var data = data
+
+        if (needSampling(data.rowCount())) {
+            data = applySampling(data, messageConsumer)
         }
 
         val valuesY = data.getNumeric(TransformVar.Y)
@@ -160,12 +193,12 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
     }
 
     /* About five methods
-     * Linear Regression: DONE
-     * Loess: DONE, SE used bootstrap method, but too many strikes. Refer to www.netlib.org/a/cloess.ps Page 45
-     * Generalized Linear Model: https://spark.apache.org/docs/latest/ml-classification-regression.html#generalized-linear-regression
-     * Robust Linear Model: Unfortunately no Java Library
-     * Generalized Additive Model: Unknown
-     */
+   * Linear Regression: DONE
+   * Loess: DONE, SE used bootstrap method, but too many strikes. Refer to www.netlib.org/a/cloess.ps Page 45
+   * Generalized Linear Model: https://spark.apache.org/docs/latest/ml-classification-regression.html#generalized-linear-regression
+   * Robust Linear Model: Unfortunately no Java Library
+   * Generalized Additive Model: Unknown
+   * */
 
     private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
         val statX = ArrayList<Double>()

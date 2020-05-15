@@ -44,7 +44,7 @@ class Bin2dStat(
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
             return withEmptyStatValues()
         }
@@ -60,16 +60,16 @@ class Bin2dStat(
         val xRangeInit = adjustRangeInitial(xRange)
         val yRangeInit = adjustRangeInitial(yRange)
 
-        var xCountAndWidthInit = BinStatUtil.binCountAndWidth(SeriesUtil.span(xRangeInit), binOptionsX)
-        var yCountAndWidthInit = BinStatUtil.binCountAndWidth(SeriesUtil.span(yRangeInit), binOptionsY)
+        val xCountAndWidthInit = BinStatUtil.binCountAndWidth(SeriesUtil.span(xRangeInit), binOptionsX)
+        val yCountAndWidthInit = BinStatUtil.binCountAndWidth(SeriesUtil.span(yRangeInit), binOptionsY)
 
         // final bin width and count
 
         val xRangeFinal = adjustRangeFinal(xRange, xCountAndWidthInit.width)
         val yRangeFinal = adjustRangeFinal(yRange, yCountAndWidthInit.width)
 
-        var xCountAndWidthFinal = BinStatUtil.binCountAndWidth(SeriesUtil.span(xRangeFinal), binOptionsX)
-        var yCountAndWidthFinal = BinStatUtil.binCountAndWidth(SeriesUtil.span(yRangeFinal), binOptionsY)
+        val xCountAndWidthFinal = BinStatUtil.binCountAndWidth(SeriesUtil.span(xRangeFinal), binOptionsX)
+        val yCountAndWidthFinal = BinStatUtil.binCountAndWidth(SeriesUtil.span(yRangeFinal), binOptionsY)
 
         val countTotal = xCountAndWidthFinal.count * yCountAndWidthFinal.count
         val densityNormalizingFactor =

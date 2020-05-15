@@ -133,6 +133,8 @@ class StatProto {
         //  se (TRUE ) - display confidence interval around smooth?
         //  level (0.95) - level of confidence interval to use
         //  deg ( >= 1 ) - degree of polynomial for regression
+        // seed  - random seed for LOESS sampling
+        // max_n (1000)  - maximum points in DF for LOESS
         val stat = Stats.smooth()
 
         if (options.containsKey("n")) {
@@ -163,8 +165,11 @@ class StatProto {
         }
 
         options["span"]?.let { stat.span = it.asDouble() }
-
         options["deg"]?.let { stat.deg = it.asInt() }
+
+        options["seed"]?.let { stat.seed = it.asLong() }
+        options["max_n"]?.let { stat.loessCriticalSize = it.asInt() }
+
 
         return stat
     }
@@ -228,6 +233,8 @@ class StatProto {
     private fun Any?.asDouble() = (this as Number).toDouble()
 
     private fun Any?.asInt() = (this as Number).toInt()
+
+    private fun Any?.asLong() = (this as Number).toLong()
 
     companion object {
         private val DEFAULTS = HashMap<String, Map<String, Any>>()

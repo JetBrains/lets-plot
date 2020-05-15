@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.data
 
+import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.base.gcommon.base.Strings.isNullOrEmpty
 import jetbrains.datalore.base.gcommon.collect.Iterables
@@ -42,7 +43,7 @@ object DataProcessing {
 
     fun buildStatData(
         data: DataFrame, stat: Stat, bindings: List<VarBinding>, groupingContext: GroupingContext,
-        facetXVar: String?, facetYVar: String?, statCtx: StatContext
+        facetXVar: String?, facetYVar: String?, statCtx: StatContext, messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
             return DataAndGroupingContext(
@@ -64,7 +65,8 @@ object DataProcessing {
                 bindings,
                 facetXVar,
                 facetYVar,
-                statCtx
+                statCtx,
+                messageConsumer
             )
             groupSizeListAfterStat.add(sd.rowCount())
             for (variable in sd.variables()) {
@@ -81,7 +83,8 @@ object DataProcessing {
                     bindings,
                     facetXVar,
                     facetYVar,
-                    statCtx
+                    statCtx,
+                    messageConsumer
                 )
                 if (sd.isEmpty) {
                     continue
@@ -172,12 +175,15 @@ object DataProcessing {
     /**
      * Server-side only
      */
+
     private fun applyStat(
         data: DataFrame, stat: Stat, bindings: List<VarBinding>,
-        facetXVarName: String?, facetYVarName: String?, statCtx: StatContext
+        facetXVarName: String?, facetYVarName: String?, statCtx: StatContext,
+        compMessageConsumer: Consumer<String>
     ): DataFrame {
 
-        var statData = stat.apply(data, statCtx)
+        var statData = stat.apply(data, statCtx, compMessageConsumer)
+
         val statVariables = statData.variables()
         if (statVariables.isEmpty()) {
             return statData

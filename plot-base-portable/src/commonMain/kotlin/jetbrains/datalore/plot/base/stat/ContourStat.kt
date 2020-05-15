@@ -51,7 +51,7 @@ internal class ContourStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPP
         return listOf(Aes.X, Aes.Y, Aes.Z)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.X, Aes.Y, Aes.Z)) {
             return withEmptyStatValues()
         }

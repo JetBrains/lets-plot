@@ -75,7 +75,7 @@ abstract class AbstractDensity2dStat : BaseStat(DEF_MAPPING) {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
-    override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
+    override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         // ToDo: ???
         throw IllegalStateException("'density2d' statistic can't be executed on the client side")
     }

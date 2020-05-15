@@ -9,7 +9,6 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameAssert
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.stat.BinStat
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import kotlin.test.Test

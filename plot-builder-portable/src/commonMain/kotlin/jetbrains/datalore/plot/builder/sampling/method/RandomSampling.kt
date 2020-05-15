@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.sampling.method
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.sampling.PointSampling
+import jetbrains.datalore.plot.base.util.SamplingUtil
 import kotlin.random.Random
 
 /**
@@ -26,11 +27,7 @@ internal class RandomSampling(sampleSize: Int, private val mySeed: Long?) : Samp
         checkArgument(isApplicable(population))
         val rand = mySeed?.let { Random(it) } ?: Random.Default
 
-        return SamplingUtil.sampleWithoutReplacement(population.rowCount(),
-            sampleSize,
-            rand,
-            { population.selectIndices(it) },
-            { population.dropIndices(it) })
+        return SamplingUtil.sampleWithoutReplacement(sampleSize, rand, population)
     }
 
     companion object {

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base
 
 interface Stat {
-    fun apply(data: DataFrame, statCtx: StatContext): DataFrame
+    fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit = {}): DataFrame
 
     fun consumes(): List<Aes<*>>
 

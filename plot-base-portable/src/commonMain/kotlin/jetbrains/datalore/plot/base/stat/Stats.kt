@@ -117,7 +117,7 @@ object Stats {
 
     private class IdentityStat internal constructor() : BaseStat(emptyMap()) {
 
-        override fun apply(data: DataFrame, statCtx: StatContext): DataFrame {
+        override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
             return DataFrame.Builder.emptyFrame()
         }
 
