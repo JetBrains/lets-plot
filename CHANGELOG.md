@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
  - corner tooltips.
- - polynomial regression for geom_smooth.
+ - sampling for LOESS smoothing method.
 
 ## [1.4.0] - 2020-05-13
 ### Added
