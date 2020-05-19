@@ -10,8 +10,9 @@ import javafx.embed.swing.JFXPanel
 import javafx.scene.Group
 import javafx.scene.Scene
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.AwtPlotFactory
+import jetbrains.datalore.plot.DisposableJPanel
+import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
@@ -20,10 +21,20 @@ import jetbrains.datalore.vis.canvas.awt.AwtEventPeer
 import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgSvgElement
+import java.awt.Color
+import java.awt.Dimension
 import java.awt.Rectangle
 import javax.swing.JComponent
 
 object MonolithicAwtLM {
+
+    private val mappers: MutableList<() -> Unit> = ArrayList()
+
+    fun mapsToCanvas() {
+        Platform.runLater {
+            mappers.forEach { it() }
+        }
+    }
 
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
@@ -71,8 +82,13 @@ object MonolithicAwtLM {
         plotComponent: JComponent,
         size: DoubleVector
     ): JComponent {
-        plotComponent.bounds = Rectangle(0,0, size.x.toInt(), size.y.toInt())
-        val panel = JFXPanel()
+        val plotBounds = Rectangle(0,0, size.x.toInt(), size.y.toInt())
+
+        plotComponent.bounds = plotBounds
+
+        // Fix background color for jfx
+        val panel = DisposableJPanel()
+        panel.background = Color.WHITE
 
         panel.add(plotComponent)
 
@@ -98,9 +114,21 @@ object MonolithicAwtLM {
                 1.0,
                 AwtEventPeer(plotComponent, canvasBounds)
             ).let {
-                Platform.runLater{ canvasFigure.mapToCanvas(it) }
+                mappers.add {
+                    canvasFigure.mapToCanvas(it)
+                }
             }
         }
+
+        // Fixed panel minimum size for scroll pane
+        val plotDimensions = Dimension(
+            plotBounds.width,
+            plotBounds.height
+        )
+
+        panel.preferredSize = plotDimensions
+        panel.minimumSize = plotDimensions
+        panel.maximumSize = plotDimensions
 
         return panel
     }

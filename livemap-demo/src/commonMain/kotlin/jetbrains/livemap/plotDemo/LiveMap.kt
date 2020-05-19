@@ -11,13 +11,12 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            fourPointsTwoLayers()
-//            basic()
-//            bunch()
-//            facet()
+            fourPointsTwoLayers(),
+            basic(),
+            bunch(),
+            facet()
         )
     }
-
 
     companion object {
 

@@ -41,7 +41,7 @@ object PlotConfigDemoUtil {
         create(title, plotSpecList, factory, plotSize, ::rawSpecPlotBuilder)
     }
 
-    fun create(
+    private fun create(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
         factory: SwingDemoFactory,
@@ -61,7 +61,7 @@ object PlotConfigDemoUtil {
         }
     }
 
-    private fun addPlots(
+    fun addPlots(
         panel: JPanel,
         plotSpecList: List<MutableMap<String, Any>>,
         plotSize: DoubleVector?,
