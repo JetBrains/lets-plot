@@ -15,6 +15,11 @@ from .. import _kbridge as kbr
 from .._global_settings import get_global_str, has_global_value, is_production
 from .._version import __version__
 
+# Data-attributes used to store extra information about the meaning of 'script' elements
+_ATT_SCRIPT_KIND = 'data-lets-plot-script'
+_SCRIPT_KIND_LIB_LOADING = 'library'
+_SCRIPT_KIND_PLOT = 'plot'
+
 
 class JupyterNotebookContext(FrontendContext):
 
@@ -53,7 +58,7 @@ class JupyterNotebookContext(FrontendContext):
 
         return """
             <div id="{id}"></div>
-            <script type="text/javascript">
+            <script type="text/javascript" {data_attr}="{script_kind}">
                 if(!window.letsPlotCallQueue) {{
                     window.letsPlotCallQueue = [];
                 }}; 
@@ -82,7 +87,12 @@ class JupyterNotebookContext(FrontendContext):
                     e.appendChild(script);
                 }})()
             </script>
-            """.format(id=output_id, url=url, success_message=success_message)
+            """.format(
+            data_attr=_ATT_SCRIPT_KIND,
+            script_kind=_SCRIPT_KIND_LIB_LOADING,
+            id=output_id,
+            url=url,
+            success_message=success_message)
 
     @staticmethod
     def _configure_embedded_script(verbose: bool) -> str:
@@ -92,13 +102,18 @@ class JupyterNotebookContext(FrontendContext):
         success_message = '<div style="color:darkblue;">Lets-Plot JS is embedded.</div>' if verbose else ""
 
         return """
-            <script type="text/javascript">
+            <script type="text/javascript" {data_attr}="{script_kind}">
                 window.letsPlotCall = function(f) {{f();}};
                 console.log('Embedding: {js_name}');
                 {js_code}
             </script>
             {success_message}
-            """.format(js_code=js_code, js_name=js_name, success_message=success_message)
+            """.format(
+            data_attr=_ATT_SCRIPT_KIND,
+            script_kind=_SCRIPT_KIND_LIB_LOADING,
+            js_code=js_code,
+            js_name=js_name,
+            success_message=success_message)
 
     @staticmethod
     def _rand_string(size=6) -> str:

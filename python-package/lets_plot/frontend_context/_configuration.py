@@ -24,7 +24,7 @@ if _is_Intellij_Python_Lets_Plot_Plugin():
     _frontend_contexts[LETS_PLOT_JSON] = _create_json_frontend_context()
 
 
-def _setup_html_context(isolated_frame: bool = None, offline: bool = None) -> None:
+def _setup_html_context(isolated_frame: bool = None, offline: bool = None, hide_status: bool = False) -> None:
     """
     Configures Lets-Plot HTML output.
 
@@ -38,10 +38,14 @@ def _setup_html_context(isolated_frame: bool = None, offline: bool = None) -> No
         If `True`, full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
         to work with notebook without the Internet connection.
         If `False`, load Lets-Plot JS library from CDN.
+
+        hide_status : bool
+            Whether to show status of loading of the Lets-Plot JS library.
+            Only applicable when the Lets-Plot JS library is preloaded.
     """
     embed = offline if offline is not None else get_global_bool('offline')
     ctx = _create_html_frontend_context(isolated_frame, embed)
-    ctx.configure(verbose=True)
+    ctx.configure(verbose=not hide_status)
     _frontend_contexts[TEXT_HTML] = ctx
 
 
@@ -69,7 +73,7 @@ def load_lets_plot_js(embed: bool = None):
     except ImportError:
         pass
 
-    _setup_html_context(None, embed)
+    _setup_html_context(None, embed, hide_status=False)
 
 
 def _display_plot(plot_spec: Any):
@@ -109,7 +113,7 @@ def _as_html(plot_spec: Dict) -> str:
     if TEXT_HTML not in _frontend_contexts:
         if _use_isolated_frame():
             # 'Isolated' HTML context can be setup lazily.
-            _setup_html_context(isolated_frame=True, offline=False)
+            _setup_html_context(isolated_frame=True, offline=False, hide_status=True)
         else:
             return """\
                 <div style="color:darkred;">

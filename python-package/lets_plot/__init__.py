@@ -23,7 +23,7 @@ from .frontend_context import _configuration as cfg
 
 class LetsPlot:
     @classmethod
-    def setup_html(cls, isolated_frame: bool = None, offline: bool = None) -> None:
+    def setup_html(cls, isolated_frame: bool = None, offline: bool = None, hide_status: bool = False) -> None:
         """
         Configures Lets-Plot HTML output.
         Depending on the usage LetsPlot generates different HTML to show plots.
@@ -40,13 +40,17 @@ class LetsPlot:
             If `True`, full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
             to work with notebook without the Internet connection.
             If `False`, load Lets-Plot JS library from CDN.
+
+        hide_status : bool, optional, default False
+            Whether to show status of loading of the Lets-Plot JS library.
+            Only applicable when the Lets-Plot JS library is preloaded.
         """
         if not (isinstance(isolated_frame, bool) or isolated_frame is None):
             raise ValueError("'isolated' argument is not boolean: {}".format(type(isolated_frame)))
         if not (isinstance(offline, bool) or offline is None):
             raise ValueError("'offline' argument is not boolean: {}".format(type(offline)))
 
-        cfg._setup_html_context(isolated_frame, offline)
+        cfg._setup_html_context(isolated_frame, offline, hide_status)
 
     @classmethod
     def set(cls, settings: Dict):

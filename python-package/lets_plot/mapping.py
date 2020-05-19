@@ -37,9 +37,6 @@ def as_discrete(variable, label=None):
     It is similar to the factor() function from R but works differently - there is no data transformation.
     Examples
     ---------
-    >>> from lets_plot import *
-    >>> import lets_plot.mapping as pm
-    >>> load_lets_plot_js()
     >>> df = {
     >>>       'x': [0, 5, 10, 15],
     >>>       'y': [0, 5, 10, 15],

@@ -11,6 +11,12 @@ import jetbrains.datalore.base.random.RandomString.randomString
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 
 object PlotHtmlHelper {
+    // Data-attributes used to store extra information about the meaning of 'script' elements
+    // See also: python-package/lets_plot/frontend_context/_jupyter_notebook_ctx.py
+    // Duplication?
+    private const val ATT_SCRIPT_KIND = "data-lets-plot-script"
+    private const val SCRIPT_KIND_LIB_LOADING = "library"
+    private const val SCRIPT_KIND_PLOT = "plot"
 
     fun scriptUrl(
         version: String,
@@ -32,7 +38,7 @@ object PlotHtmlHelper {
 
         return """
             |   <div id="$outputId"></div>
-            |   <script type="text/javascript">
+            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_LIB_LOADING">
             |       if(!window.letsPlotCallQueue) {
             |           window.letsPlotCallQueue = [];
             |       }; 
@@ -78,7 +84,7 @@ object PlotHtmlHelper {
         val dim = if (size == null) "-1, -1" else "${size.x}, ${size.y}"
         return """
             |   <div id="$outputId"></div>
-            |   <script type="text/javascript">
+            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
             |       (function() {
             |           var plotSpec=$plotSpecAsJsObjectInitializer;
             |           var plotContainer = document.getElementById("$outputId");
@@ -91,7 +97,7 @@ object PlotHtmlHelper {
     }
 
     fun getStaticConfigureHtml(scriptUrl: String): String {
-        return "<script type=\"text/javascript\" src=\"$scriptUrl\"></script>"
+        return "<script type=\"text/javascript\" $ATT_SCRIPT_KIND=\"$SCRIPT_KIND_LIB_LOADING\" src=\"$scriptUrl\"></script>"
     }
 
     fun getStaticDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>, size: DoubleVector? = null): String {
@@ -110,7 +116,7 @@ object PlotHtmlHelper {
         val dim = if (size == null) "-1, -1" else "${size.x}, ${size.y}"
         return """
             |   <div id="$outputId"></div>
-            |   <script type="text/javascript">
+            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
             |       var plotSpec=$plotSpecAsJsObjectInitializer;
             |       var plotContainer = document.getElementById("$outputId");
             |       LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer);
