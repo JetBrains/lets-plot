@@ -12,9 +12,7 @@ from .._global_settings import get_global_bool
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
 
-__all__ = [
-    # 'load_lets_plot_js'  # deprecated
-]
+__all__ = []
 
 _frontend_contexts: Dict[str, FrontendContext] = {}
 
@@ -47,33 +45,6 @@ def _setup_html_context(isolated_frame: bool = None, offline: bool = None, show_
     ctx = _create_html_frontend_context(isolated_frame, embed)
     ctx.configure(verbose=show_status)
     _frontend_contexts[TEXT_HTML] = ctx
-
-
-# def load_lets_plot_js(embed: bool = None):
-#     """
-#     Deprecated since v.1.3: instead use LetsPlot.setup_html()
-#
-#     Loads Lets-Plot javascript library into current frontend context.
-#
-#     Parameters
-#     ----------
-#     embed : bool, optional
-#         True - embed JS which is bundled with Lets-Plot PyPI package. This is useful for off-line notebooks.
-#         False - load JS from CDN.
-#         default - load JS from CDN.
-#     """
-#     try:
-#         from IPython.display import display_html
-#         display_html("""\
-#             <div style="color:darkred;">
-#                 Method `load_lets_plot_js()` is deprecated since v.1.3 and will be removed soon.<br>
-#                 Try to use `LetsPlot.setup_html()` instead.
-#             </div>
-#         """, raw=True)
-#     except ImportError:
-#         pass
-#
-#     _setup_html_context(None, embed, hide_status=False)
 
 
 def _display_plot(plot_spec: Any):
