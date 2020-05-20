@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
  - corner tooltips.
  - sampling for LOESS smoothing method.
+ 
+## [1.4.1] - 2020-05-20
+### Added
+ - PyCharm support
 
 ## [1.4.0] - 2020-05-13
 ### Added
