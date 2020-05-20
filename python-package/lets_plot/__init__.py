@@ -8,8 +8,10 @@ from typing import Dict
 # To handle the situation when 'datalore' package is shared my modules in different locations.
 __path__ = extend_path(__path__, __name__)
 
-from .plot import *
+from ._version import __version__
 from ._global_settings import _settings, is_production
+
+from .plot import *
 from .frontend_context import *
 from .settings_utils import *
 
