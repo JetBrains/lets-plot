@@ -9,7 +9,6 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.presentation.Defaults
@@ -27,7 +26,6 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
 import javax.swing.JLabel
-import javax.swing.JPanel
 
 private val LOG = KotlinLogging.logger {}
 
@@ -123,17 +121,7 @@ abstract class AwtPlotFactory(
         plotInfos: List<MonolithicCommon.PlotBuildInfo>
     ): JComponent {
 
-        val bunchComponent = object : JPanel(null), Disposable {
-            private var isDisposed: Boolean = false
-            override fun dispose() {
-                require(!isDisposed) { "Alreadey disposed." }
-                isDisposed = true;
-                components.forEach {
-                    // We aexpect all children are disposable
-                    (it as Disposable).dispose()
-                }
-            }
-        }
+        val bunchComponent = DisposableJPanel()
 
         bunchComponent.border = null
         bunchComponent.background = Colors.parseColor(Defaults.BACKDROP_COLOR).let {

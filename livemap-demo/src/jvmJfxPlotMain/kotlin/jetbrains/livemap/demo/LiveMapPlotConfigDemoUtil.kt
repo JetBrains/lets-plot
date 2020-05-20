@@ -7,8 +7,11 @@ package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.livemap.jvmPackage.MonolithicAwtLM
-import jetbrains.datalore.plotDemo.plotConfig.PlotConfigDemoUtil.create
+import jetbrains.datalore.plotDemo.plotConfig.PlotConfigDemoUtil
 import jetbrains.datalore.vis.demoUtils.swing.SwingDemoFactory
+import java.awt.Dimension
+import javax.swing.Box
+import javax.swing.BoxLayout
 import javax.swing.JComponent
 
 object LiveMapPlotConfigDemoUtil {
@@ -31,6 +34,29 @@ object LiveMapPlotConfigDemoUtil {
             }
         }
 
-        create(title,plotSpecList, factory, plotSize, ::rawSpecPlotBuilder)
+        create(title, plotSpecList, factory, plotSize, ::rawSpecPlotBuilder, MonolithicAwtLM::mapsToCanvas)
+    }
+
+    private fun create(
+        title: String,
+        plotSpecList: List<MutableMap<String, Any>>,
+        factory: SwingDemoFactory,
+        plotSize: DoubleVector?,
+        rawSpecPlotBuilder: (plotSpec: MutableMap<String, Any>) -> JComponent,
+        runAfterShow: () -> Unit
+    ) {
+        factory.createDemoFrame(title).show {
+            val panel = this
+            panel.removeAll()
+
+            panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+            panel.add(Box.createRigidArea(Dimension(50, 0)))
+
+            PlotConfigDemoUtil.addPlots(panel, plotSpecList, plotSize, rawSpecPlotBuilder)
+
+            panel.add(Box.createRigidArea(Dimension(0, 5)))
+
+            runAfterShow()
+        }
     }
 }
