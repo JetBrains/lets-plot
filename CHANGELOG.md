@@ -7,11 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
  - corner tooltips.
- - sampling for LOESS smoothing method.
  
 ## [1.4.1] - 2020-05-20
 ### Added
- - PyCharm support
+ - `geom_smooth`: automatic sampling when n>1000 and the method is LOESS.
+ 
+### Fixed 
+ - 'map_join' fails when the `map` argument is a dictionary [[#130](https://github.com/JetBrains/lets-plot/issues/130)]
+ 
+### Changed
+ - HTML output was modified allow better integration with PyCharm.
+ 
+### Removed
+ - The deprecated method 'load_lets_plot_js()'.  
+
 
 ## [1.4.0] - 2020-05-13
 ### Added
