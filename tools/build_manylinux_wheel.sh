@@ -7,6 +7,7 @@ set -e -x
 
 
 working_dir="/tmp/python-package/"
+build_dir="build/"
 dist_dir="dist/"
 python_bin_version="cp3[6-8]*"
 
@@ -27,5 +28,6 @@ done
 shopt -s extglob
 rm ${dist_dir}*-linux_*
 
-# Change folder ownership to user (uid: 1000)
-chown -R 1000:1000 ${working_dir}${dist_dir}
+# Change folder ownership to user
+chown -R $USER_ID:$GROUP_ID ${working_dir}${dist_dir}
+chown -R $USER_ID:$GROUP_ID ${working_dir}${build_dir}
