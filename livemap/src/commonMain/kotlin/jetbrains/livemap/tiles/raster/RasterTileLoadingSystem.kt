@@ -117,9 +117,9 @@ class RasterTileLoadingSystem(
                 .let { cellKey.projectOrigin(it) }
                 .let {
                     format
-                        .replace("{z}", cellKey.length.toString(), false)
-                        .replace("{x}", it.x.roundToInt().toString(), false)
-                        .replace("{y}", it.y.roundToInt().toString(), false)
+                        .replace("{z}", cellKey.length.toString(),  ignoreCase = true)
+                        .replace("{x}", it.x.roundToInt().toString(), ignoreCase = true)
+                        .replace("{y}", it.y.roundToInt().toString(), ignoreCase = true)
                 }
         }
         val TILE_PIXEL_DIMESION = Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt())
