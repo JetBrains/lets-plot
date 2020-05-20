@@ -21,10 +21,9 @@ except ImportError:
 __all__ = ['geom_livemap']
 
 
-def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None, sampling=None, level=None,
-                 interactive=None, location=None,
-                 zoom=None, within=None, magnifier=None, clustering=None, scaled=None, labels=None, theme=None,
-                 projection=None, geodesic=None, tiles=None, **other_args):
+def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None, sampling=None,
+                 level=None, location=None, zoom=None, within=None, projection=None, geodesic=None, tiles=None,
+                 **other_args):
     """
     Display a live map.
     Parameters
@@ -45,17 +44,12 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
         - 'polygon' for colored areas (default).
         - 'point' for circles of different size and color.
         - 'pie' for pie charts.
-        - 'heatmap' for heatmap (color spots).
         - 'bar' for bar charts.
     level : string, optional
         The administrative level of the displayed data.
         There are 'country', 'state', 'county', 'city', None (default).
     within : string, optional
         Data can be filtered by within name, for example 'USA'.
-    interactive : True (default) or False, optional
-        Enables user interaction with the map.
-    magnifier : True or False (default), optional
-        Enables a magnifier when you click on overlapping point. Applicable for 'point'.
     location : string or array, optional
         Initial position of the map. If not set, displays the United States.
         There are id | [lon1, lat1, lon2, lat2,..., lonN, latN].
@@ -64,21 +58,9 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
         - lat1, lat2,..., latN are latitudes in degrees (positive in the Northern hemisphere).
     zoom : integer, optional
         Zoom of the map in the range 1 - 15.
-    clustering : True or False (default), optional
-        Enables a clustering for overlapping points. Applicable for 'point'.
-    scaled : True or False (default), optional
-        Enables a scaling for heatmap.
-        If True, the specified size is equal to the size at zero zoom.
-    labels : True (default) or False, optional
-        Enables a drawing labels on map.
     tiles: string, optional
         Tiles provider, either as a string - URL for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards
         (e.g. 'http://my.tile.com/{z}/{x}/{y}.png') or the result of a call to a maptiles_xxx functions
-    theme : string, optional
-        Theme for the map.
-        There are:
-        - 'color' for default mode.
-        - 'light' for less colored mode.
     projection : string, optional
         The map projection. There are:
         - 'epsg3857' for Mercator projection (default).
@@ -107,7 +89,6 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
     - size : line width for polygon, radius for point, pie chart and color spot (heatmap).
     - x : value order for pie chart and bar chart.
     - y : value specifying the sector size for pie chart and the heigth for bar chart.
-    - frame : timestamp for time-varying heatmap.
     - group : how to group points into polygons (grouping tag). Default: all points belong to one polygon.
 
     Examples
@@ -133,10 +114,9 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
         other_args.pop(_display_mode)
 
     return _geom('livemap', mapping, data, stat, None, show_legend, sampling=sampling,
-                 display_mode=geom, level=level,
-                 within=within, interactive=interactive, location=location, zoom=zoom, magnifier=magnifier,
-                 clustering=clustering, scaled=scaled, labels=labels, theme=theme, projection=projection,
-                 geodesic=geodesic, tiles=tiles, geocoding=geocoding, **other_args)
+                 display_mode=geom, level=level, within=within, location=location, zoom=zoom,
+                 projection=projection, geodesic=geodesic, tiles=tiles, geocoding=geocoding,
+                 **other_args)
 
 
 LOCATION_COORDINATE_COLUMNS = {'lon', 'lat'}
