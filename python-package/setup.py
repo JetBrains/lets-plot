@@ -11,7 +11,7 @@ root_dir = os.path.dirname(this_dir)
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_bridge.c')
 
 this_system = platform.system()
-binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'native', 'debugStatic')
+binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'native', 'releaseStatic')
 
 python_package = "lets_plot"
 
