@@ -12,13 +12,15 @@ import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.DataFrame.Builder
+import jetbrains.datalore.plot.base.DataFrame.Builder.Companion.emptyFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.data.GroupUtil.indicesByGroup
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.common.data.SeriesUtil.allFinineAreEqual
+import jetbrains.datalore.plot.common.data.SeriesUtil.pickAtIndices
 
 object DataProcessing {
 
@@ -46,10 +48,7 @@ object DataProcessing {
         facetXVar: String?, facetYVar: String?, statCtx: StatContext, messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         if (stat === Stats.IDENTITY) {
-            return DataAndGroupingContext(
-                Builder.emptyFrame(),
-                groupingContext
-            )
+            return DataAndGroupingContext(emptyFrame(), groupingContext)
         }
 
         val groups = groupingContext.groupMapper
@@ -59,15 +58,7 @@ object DataProcessing {
 
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
-            val sd = applyStat(
-                data,
-                stat,
-                bindings,
-                facetXVar,
-                facetYVar,
-                statCtx,
-                messageConsumer
-            )
+            val sd = applyStat(data, stat, bindings, facetXVar, facetYVar, statCtx, messageConsumer)
             groupSizeListAfterStat.add(sd.rowCount())
             for (variable in sd.variables()) {
                 @Suppress("UNCHECKED_CAST")
@@ -77,15 +68,7 @@ object DataProcessing {
         } else { // add offset to each group
             var lastStatGroupEnd = -1
             for (d in splitByGroup(data, groups)) {
-                var sd = applyStat(
-                    d,
-                    stat,
-                    bindings,
-                    facetXVar,
-                    facetYVar,
-                    statCtx,
-                    messageConsumer
-                )
+                var sd = applyStat(d, stat, bindings, facetXVar, facetYVar, statCtx, messageConsumer)
                 if (sd.isEmpty) {
                     continue
                 }
@@ -110,7 +93,7 @@ object DataProcessing {
                 } else { // if stat has ..group.. then groupingVar won't be checked, so no need to update
                     val groupingVar = groupingContext.optionalGroupingVar
                     if (groupingVar != null) {
-                        val size = sd[sd.variables().iterator().next()].size
+                        val size = sd[sd.variables().first()].size
                         val v = d[groupingVar][0]
                         sd = sd.builder().put(groupingVar, List(size) { v }).build()
                     }
@@ -153,23 +136,14 @@ object DataProcessing {
     }
 
     private fun splitByGroup(data: DataFrame, groups: (Int) -> Int): List<DataFrame> {
-        val dataSize = data.rowCount()
-
-        val result = ArrayList<DataFrame>()
-        val indicesByGroup = GroupUtil.indicesByGroup(dataSize, groups)
-        for (group in indicesByGroup.keys) {
-            val indices = indicesByGroup[group]!!
-            val b = Builder()
-
-            for (`var` in data.variables()) {
-                val serie = data[`var`]
-                b.put(`var`, SeriesUtil.pickAtIndices(serie, indices))
+        return indicesByGroup(data.rowCount(), groups).values.map { indices ->
+            data.variables().fold(Builder()) { b, variable ->
+                when (data.isNumeric(variable)) {
+                    true -> b.putNumeric(variable, pickAtIndices(data.getNumeric(variable), indices))
+                    false -> b.putDiscrete(variable, pickAtIndices(data[variable], indices))
+                }
             }
-
-            result.add(b.build())
-        }
-
-        return result
+        }.map(Builder::build)
     }
 
     /**
@@ -246,22 +220,10 @@ object DataProcessing {
             } else {
                 // Do not override series obtained via 'default stat var'
                 if (!newInputSeries.containsKey(variable)) {
-                    val value =
-                        if (data.isNumeric(variable)) {
-                            val values = data.getNumeric(variable)
-                            if (allFinineAreEqual(values)) {
-                                // ToDo: This is a patch for "is_discrete: a rounding error. #135"
-                                //  (https://github.com/JetBrains/lets-plot/issues/135)
-                                //  Expectations: data.isNumeric(variable) should return False.
-                                //  But it returns True and as a result we get a rounding error
-                                //  when computing `mean` value.
-                                SeriesUtil.firstFinine(values, 0.0)
-                            } else {
-                                SeriesUtil.mean(values, null)
-                            }
-                        } else {
-                            SeriesUtil.firstNotNull(data[variable], null)
-                        }
+                    val value = when (data.isNumeric(variable)) {
+                        true -> SeriesUtil.mean(data.getNumeric(variable), defaultValue = null)
+                        false -> SeriesUtil.firstNotNull(data[variable], defaultValue = null)
+                    }
                     val newInputSerie = List(statDataSize) { value }
                     newInputSeries[variable] = newInputSerie
                 }
