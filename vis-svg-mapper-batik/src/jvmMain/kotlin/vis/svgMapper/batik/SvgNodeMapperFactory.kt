@@ -19,7 +19,6 @@ internal class SvgNodeMapperFactory(private val myDoc: AbstractDocument, private
 
     override fun createMapper(source: SvgNode): Mapper<out SvgNode, out Node> {
         var src = source
-        val result: Mapper<out SvgNode, out Node>
         val target = Utils.newBatikNode(src, myDoc)
 
         if (src is SvgImageElementEx) {
@@ -36,14 +35,10 @@ internal class SvgNodeMapperFactory(private val myDoc: AbstractDocument, private
             src = sourceBatik
         }
 
-        when (src) {
-            is SvgElement -> result =
-                SvgElementMapper(src, target as SVGOMElement, myDoc, myPeer)
-            is SvgTextNode -> result =
-                SvgTextNodeMapper(src, target as Text, myDoc, myPeer)
-            else -> throw IllegalArgumentException("Unsupported SvgElement: " + src::class.simpleName)
+        return when (src) {
+            is SvgElement -> SvgElementMapper(src, target as SVGOMElement, myDoc, myPeer)
+            is SvgTextNode -> SvgTextNodeMapper(src, target as Text, myDoc, myPeer)
+            else -> (throw IllegalArgumentException("Unsupported SvgElement: " + src::class.simpleName))
         }
-
-        return result
     }
 }

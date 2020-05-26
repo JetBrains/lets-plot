@@ -78,7 +78,6 @@ constructor(type: String?, palette: Any?, direction: Double?, naValue: Color) : 
             ColorPalette.Type.SEQUENTIAL -> ColorPalette.Sequential.values() as Array<ColorScheme>
             ColorPalette.Type.DIVERGING -> ColorPalette.Diverging.values() as Array<ColorScheme>
             ColorPalette.Type.QUALITATIVE -> ColorPalette.Qualitative.values() as Array<ColorScheme>
-            else -> throw IllegalArgumentException("Unexpected palette type: $paletteType")
         }
 
         return values[index % values.size]

@@ -73,18 +73,20 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
         tickLabelHorizontalAnchor = ValueProperty(defTickLabelHorizontalAnchor(orientation))
         tickLabelVerticalAnchor = ValueProperty(defTickLabelVerticalAnchor(orientation))
 
-        EventSources.composite(
-                this.length as EventSource<PropertyChangeEvent<*>>,
-                this.orientation as EventSource<PropertyChangeEvent<*>>,
-                breaks as EventSource<PropertyChangeEvent<*>>,
-                labels as EventSource<PropertyChangeEvent<*>>,
-                gridLineLength as EventSource<PropertyChangeEvent<*>>,
+        @Suppress("UNCHECKED_CAST")
+        fun <T> EventSource<in PropertyChangeEvent<T>>.asPropertyChangedEventSource() = this as EventSource<PropertyChangeEvent<*>>
 
-                tickLabelOffsets as EventSource<PropertyChangeEvent<*>>,
-                tickLabelHorizontalAnchor as EventSource<PropertyChangeEvent<*>>,
-                tickLabelVerticalAnchor as EventSource<PropertyChangeEvent<*>>,
-                tickLabelRotationDegree as EventSource<PropertyChangeEvent<*>>,
-                tickLabelSmallFont as EventSource<PropertyChangeEvent<*>>
+        EventSources.composite(
+            this.length.asPropertyChangedEventSource(),
+            this.orientation.asPropertyChangedEventSource(),
+            breaks.asPropertyChangedEventSource(),
+            labels.asPropertyChangedEventSource(),
+            gridLineLength.asPropertyChangedEventSource(),
+            tickLabelOffsets.asPropertyChangedEventSource(),
+            tickLabelHorizontalAnchor.asPropertyChangedEventSource(),
+            tickLabelVerticalAnchor.asPropertyChangedEventSource(),
+            tickLabelRotationDegree.asPropertyChangedEventSource(),
+            tickLabelSmallFont.asPropertyChangedEventSource()
         ).addHandler(rebuildHandler())
     }
 

@@ -68,8 +68,8 @@ class Incrementor
      */
     private val maxCountCallback: MaxCountExceededCallback = object : MaxCountExceededCallback {
         /** {@inheritDoc}  */
-        override fun trigger(max: Int) {
-            error("MaxCountExceeded: $max")
+        override fun trigger(maximalCount: Int) {
+            error("MaxCountExceeded: $maximalCount")
         }
     }
 ) {

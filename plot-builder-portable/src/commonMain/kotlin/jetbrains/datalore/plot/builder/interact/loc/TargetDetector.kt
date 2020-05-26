@@ -119,16 +119,9 @@ internal class TargetDetector(
             LookupSpace.XY -> {
                 val targetPointCoord = pointProjection.xy()
                 return when (locatorLookupStrategy) {
-
-                    LookupStrategy.HOVER -> MathUtil.areEqual(targetPointCoord, cursorCoord,
-                        POINT_AREA_EPSILON
-                    )
-
+                    LookupStrategy.HOVER -> MathUtil.areEqual(targetPointCoord, cursorCoord, POINT_AREA_EPSILON)
                     LookupStrategy.NEAREST -> closestPointChecker.check(targetPointCoord)
-
                     LookupStrategy.NONE -> false
-
-                    else -> throw IllegalStateException()
                 }
             }
 

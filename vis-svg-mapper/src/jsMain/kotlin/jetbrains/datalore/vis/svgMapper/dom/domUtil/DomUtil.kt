@@ -109,7 +109,7 @@ object DomUtil {
     fun checkbox(element: HTMLInputElement): Property<Boolean> {
         return object : Property<Boolean> {
             private var myTimerRegistration: Registration? = null
-            private val myListeners: Listeners<EventHandler<in PropertyChangeEvent<Boolean>>> = Listeners()
+            private val myListeners: Listeners<EventHandler<PropertyChangeEvent<Boolean>>> = Listeners()
 
             override val propExpr: String
                 get() = "checkbox($element)"
@@ -120,14 +120,14 @@ object DomUtil {
                 element.checked = value
             }
 
-            override fun addHandler(handler: EventHandler<in PropertyChangeEvent<out Boolean>>): Registration {
+            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out Boolean>>): Registration {
                 if (myListeners.isEmpty) {
                     val value: Value<Boolean> = Value(element.checked)
                     val timer = window.setInterval({
                         val currentValue = element.checked
                         if (currentValue != value.get()) {
-                            myListeners.fire(object : ListenerCaller<EventHandler<in PropertyChangeEvent<Boolean>>> {
-                                override fun call(l: EventHandler<in PropertyChangeEvent<Boolean>>) {
+                            myListeners.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<Boolean>>> {
+                                override fun call(l: EventHandler<PropertyChangeEvent<Boolean>>) {
                                     l.onEvent(PropertyChangeEvent(value.get(), currentValue))
                                 }
                             })
@@ -254,6 +254,7 @@ object DomUtil {
                 else -> throw IllegalStateException("Unsupported SvgSlimNode ${source::class}")
             }
 
+    @Suppress("UNUSED_PARAMETER")
     fun generateTextElement(source: SvgTextNode): Text = document.createTextNode("")
 
     private fun createSVGElement(name: String): SVGElement =

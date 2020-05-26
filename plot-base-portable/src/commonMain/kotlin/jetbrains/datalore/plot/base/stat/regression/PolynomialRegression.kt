@@ -106,7 +106,7 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
     companion object {
         fun canBeComputed(xs: List<Double?>, ys: List<Double?>, deg: Int): Boolean {
             // ToDo: duplicates the constructor code
-            val (xVals, yVals) = averageByX(xs, ys)
+            val (xVals, _) = averageByX(xs, ys)
             return xVals.size > deg
         }
     }
