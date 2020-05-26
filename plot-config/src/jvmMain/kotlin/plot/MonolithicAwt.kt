@@ -76,9 +76,9 @@ object MonolithicAwt {
     )
 
     fun buildSvgImagesFromRawSpecs(
-        plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?,
-        computationMessagesHandler: ((List<String>) -> Unit)
+        @Suppress("UNUSED_PARAMETER") plotSpec: MutableMap<String, Any>,
+        @Suppress("UNUSED_PARAMETER") plotSize: DoubleVector?,
+        @Suppress("UNUSED_PARAMETER") computationMessagesHandler: ((List<String>) -> Unit)
     ): List<String> {
         UNSUPPORTED("was replaced with PlotSvgExport.buildSvgImageFromRawSpecs")
     }

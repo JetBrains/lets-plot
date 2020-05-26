@@ -116,6 +116,7 @@ object Beta {
             val fraction = object : ContinuedFraction() {
 
                 override fun getB(n: Int, x: Double): Double {
+                    @Suppress("NAME_SHADOWING")
                     val ret: Double
                     val m: Double
                     if (n % 2 == 0) { // even
@@ -161,8 +162,8 @@ object Beta {
     @JvmOverloads
     fun logBeta(
         a: Double, b: Double,
-        epsilon: Double = DEFAULT_EPSILON,
-        maxIterations: Int = Int.MAX_VALUE
+        @Suppress("UNUSED_PARAMETER") epsilon: Double = DEFAULT_EPSILON,
+        @Suppress("UNUSED_PARAMETER") maxIterations: Int = Int.MAX_VALUE
     ): Double {
         val ret: Double
 

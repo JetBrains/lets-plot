@@ -9,6 +9,8 @@ package jetbrains.datalore.base.datetime
 import jetbrains.datalore.base.datetime.DateTimeUtil.BASE_YEAR
 import jetbrains.datalore.base.datetime.tz.TimeZone
 
+// TODO: Better to replace java.util.Date with java.time
+@Suppress("DEPRECATION")
 object JvmDateTimeUtil {
     fun toJavaDate(time: DateTime?): java.util.Date? {
         return if (time == null) null else java.util.Date(

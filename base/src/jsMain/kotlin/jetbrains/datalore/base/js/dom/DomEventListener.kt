@@ -10,6 +10,7 @@ import org.w3c.dom.events.EventListener
 
 class DomEventListener<EventT : DomBaseEvent>(private val handler: (EventT) -> Boolean) : EventListener {
     override fun handleEvent(event: Event) {
+        @Suppress("UNCHECKED_CAST")
         handler(event as EventT)
     }
 }

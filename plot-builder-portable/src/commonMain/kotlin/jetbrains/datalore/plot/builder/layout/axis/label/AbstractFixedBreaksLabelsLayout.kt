@@ -25,7 +25,11 @@ internal abstract class AbstractFixedBreaksLabelsLayout(orientation: jetbrains.d
 
     protected abstract fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle
 
-    fun labelsBounds(tickPositions: List<Double>, tickLabels: List<String>, toTickLocation: (Double) -> DoubleVector): DoubleRectangle? {
+    fun labelsBounds(
+        tickPositions: List<Double>,
+        @Suppress("UNUSED_PARAMETER") tickLabels: List<String>,
+        toTickLocation: (Double) -> DoubleVector
+    ): DoubleRectangle? {
         val boundsList = labelBoundsList(tickPositions, breaks.labels, toTickLocation)
         var bounds: DoubleRectangle? = null
         for (labelBounds in boundsList) {

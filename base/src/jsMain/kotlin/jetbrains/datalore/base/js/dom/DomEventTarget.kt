@@ -81,5 +81,6 @@ fun <EventT : DomBaseEvent> DomEventTarget.on(event: DomEventType<EventT>, selec
 }
 
 fun <T> DomEventTarget.cast(): T {
+    @Suppress("UNCHECKED_CAST")
     return this as T
 }
