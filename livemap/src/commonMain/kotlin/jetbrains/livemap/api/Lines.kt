@@ -64,7 +64,6 @@ class LineBuilder(
     private val myFactory: MapEntityFactory,
     private val myMapProjection: MapProjection
 ) {
-    var mapId: String? = null
     var point: Vec<LonLat>? = null
 
     var lineDash: List<Double> = emptyList()
@@ -76,12 +75,8 @@ class LineBuilder(
     ): EcsEntity {
 
         return when {
-            point != null ->
-                myFactory.createStaticEntity("map_ent_s_line", point!!)
-            mapId != null ->
-                myFactory.createDynamicEntity("map_ent_d_line_$mapId", mapId!!)
-            else ->
-                error("Can't create line entity. [point] and [mapId] is null.")
+            point != null -> myFactory.createStaticEntity("map_ent_s_line", point!!)
+            else -> error("Can't create line entity. Coord is null.")
         }
             .setInitializer { worldPoint ->
                 val line = createLineGeometry(worldPoint, horizontal, myMapProjection.mapRect)

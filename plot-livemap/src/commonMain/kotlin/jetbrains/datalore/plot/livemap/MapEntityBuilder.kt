@@ -69,11 +69,6 @@ internal class MapEntityBuilder {
     val vjust get() = vjust(myP.vjust())
     val angle get() = myP.angle()!!
 
-    private val mapId get() = when (val mapId = myP.mapId()) {
-        AesInitValue[Aes.MAP_ID] -> null
-        else -> mapId.toString()
-    }
-
     val fontface get() = when (val fontface = myP.fontface()) {
         AesInitValue[Aes.FONTFACE] -> ""
         else -> fontface
@@ -129,7 +124,6 @@ internal class MapEntityBuilder {
         return {
             layerIndex = this@MapEntityBuilder.layerIndex
             index = this@MapEntityBuilder.index
-            mapId =this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
             label = this@MapEntityBuilder.label
             animation = this@MapEntityBuilder.animation
@@ -145,7 +139,6 @@ internal class MapEntityBuilder {
         return {
             layerIndex = this@MapEntityBuilder.layerIndex
             index = this@MapEntityBuilder.index
-            mapId = this@MapEntityBuilder.mapId
 
             multiPolygon = this@MapEntityBuilder.geometry
 
@@ -177,7 +170,6 @@ internal class MapEntityBuilder {
 
     fun toLineBuilder(): (LineBuilder.() -> Unit)? {
         return {
-            mapId = this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
             lineDash = this@MapEntityBuilder.lineDash
             strokeColor = this@MapEntityBuilder.strokeColor
@@ -188,7 +180,6 @@ internal class MapEntityBuilder {
     fun toChartBuilder(): (ChartSource.() -> Unit)? {
         return {
             layerIndex = this@MapEntityBuilder.layerIndex
-            mapId = this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
 
             radius = this@MapEntityBuilder.radius
@@ -205,7 +196,6 @@ internal class MapEntityBuilder {
     fun toTextBuilder(): (TextBuilder.() -> Unit)? {
         return {
             index = this@MapEntityBuilder.index
-            mapId =this@MapEntityBuilder.mapId
             point = this@MapEntityBuilder.point
             fillColor = this@MapEntityBuilder.strokeColor // Text is filled by strokeColor
             strokeColor = this@MapEntityBuilder.strokeColor

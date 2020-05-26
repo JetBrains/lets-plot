@@ -13,18 +13,16 @@ import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.projection.World
 import jetbrains.livemap.projection.WorldPoint
 
-class MapIdComponent(val mapId: String) : EcsComponent
-
 class RegionIdComponent(var regionId: String) : EcsComponent
 
-class NeedCentroidComponent : EcsComponent
-class WaitCentroidComponent : EcsComponent
+object NeedCentroidComponent : EcsComponent
+object WaitCentroidComponent : EcsComponent
 
-class NeedLocationComponent : EcsComponent
-class NeedGeocodeLocationComponent : EcsComponent
-class WaitGeocodeLocationComponent : EcsComponent
+object NeedLocationComponent : EcsComponent
+object NeedGeocodeLocationComponent : EcsComponent
+object WaitGeocodeLocationComponent : EcsComponent
 
-class NeedCalculateLocationComponent : EcsComponent
+object NeedCalculateLocationComponent : EcsComponent
 
 class LocationComponent: EcsComponent {
     private var myWaitingCount: Int? = null
@@ -45,10 +43,10 @@ class LocationComponent: EcsComponent {
 
 class LonLatComponent(val point: LonLatPoint): EcsComponent
 
-class WaitingGeocodingComponent : EcsComponent
+object WaitingGeocodingComponent : EcsComponent
 
-class NeedBboxComponent : EcsComponent
-class WaitBboxComponent : EcsComponent
+object NeedBboxComponent : EcsComponent
+object WaitBboxComponent : EcsComponent
 
 class RegionBBoxComponent(val bbox: GeoRectangle) : EcsComponent
 

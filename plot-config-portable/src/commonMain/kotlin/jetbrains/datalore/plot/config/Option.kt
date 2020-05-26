@@ -155,11 +155,8 @@ object Option {
         }
 
         object LiveMap {
-            const val PARENT = "within"
             const val DISPLAY_MODE = "display_mode"
-            const val FEATURE_LEVEL = "level"
             const val INTERACTIVE = "interactive"
-            const val MAGNIFIER = "magnifier"
             const val LOCATION = "location"
             const val ZOOM = "zoom"
             const val STROKE = "stroke"

@@ -47,7 +47,6 @@ class TextBuilder(
     private val myFactory: MapEntityFactory
 ) {
     var index: Int = 0
-    var mapId: String? = null
     var point: Vec<LonLat>? = null
 
     var fillColor: Color = Color.BLACK
@@ -68,12 +67,8 @@ class TextBuilder(
         val textSpec = createTextSpec(textMeasurer)
 
         return when {
-            point != null ->
-                myFactory.createStaticEntityWithLocation("map_ent_s_text", point!!)
-            mapId != null ->
-                myFactory.createDynamicEntityWithLocation("map_ent_d_text_$mapId", mapId!!)
-            else ->
-                error("Can't create text entity. [point] and [mapId] is null.")
+            point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_text", point!!)
+            else -> error("Can't create text entity. Coord is null.")
         }
             .setInitializer { worldPoint ->
                 + WorldOriginComponent(worldPoint)

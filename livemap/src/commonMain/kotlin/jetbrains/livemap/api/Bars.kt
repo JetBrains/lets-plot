@@ -67,12 +67,8 @@ class BarsFactory(
             splitMapBarChart(source, maxAbsValue) {index, barOffset, barDimension, color->
                 result.add(
                     when {
-                        source.point != null ->
-                            myFactory.createStaticEntityWithLocation("map_ent_s_bar", source.point!!)
-                        source.mapId != null ->
-                            myFactory.createDynamicEntityWithLocation("map_ent_d_bar_${source.mapId}", source.mapId!!)
-                        else ->
-                            error("Can't create bar entity. [point] and [mapId] is null.")
+                        source.point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_bar", source.point!!)
+                        else -> error("Can't create bar entity. Coord is null.")
                     }.setInitializer { worldPoint ->
                         if (source.layerIndex != null) {
                             + IndexComponent(source.layerIndex!!, index)

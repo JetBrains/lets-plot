@@ -200,7 +200,10 @@ internal interface Symbolizer {
         }
     }
 
-    class ShieldTextSymbolizer internal constructor(style: Style, labelBounds: List<DoubleRectangle>) : Symbolizer {
+    class ShieldTextSymbolizer internal constructor(
+        @Suppress("UNUSED_PARAMETER") style: Style,
+        @Suppress("UNUSED_PARAMETER") labelBounds: List<DoubleRectangle>
+    ) : Symbolizer {
 
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             return emptyList()
@@ -211,7 +214,10 @@ internal interface Symbolizer {
         }
     }
 
-    class LineTextSymbolizer internal constructor(style: Style, labelBounds: List<DoubleRectangle>) : Symbolizer {
+    class LineTextSymbolizer internal constructor(
+        @Suppress("UNUSED_PARAMETER") style: Style,
+        @Suppress("UNUSED_PARAMETER") labelBounds: List<DoubleRectangle>
+    ) : Symbolizer {
 
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             return emptyList()

@@ -100,7 +100,6 @@ internal class LiveMapSpecBuilder {
             size = mySize,
             isScaled = myLiveMapOptions.scaled,
             isInteractive = myLiveMapOptions.interactive,
-            isEnableMagnifier = myLiveMapOptions.magnifier,
             isClustering = myLiveMapOptions.clustering,
             isLabels = myLiveMapOptions.labels,
             isTiles = DEFAULT_SHOW_TILES,
@@ -108,8 +107,6 @@ internal class LiveMapSpecBuilder {
             projectionType = projectionType,
             location = createMapLocation(myLiveMapOptions.location),
             zoom = checkZoom(myLiveMapOptions.zoom),
-            level = getFeatureLevel(myLiveMapOptions.featureLevel),
-            parent = createMapRegion(myLiveMapOptions.parent),
             layerProvider = LayerProviderImpl(myDevParams) { layersConfigurators.forEach { it() } },
             isLoopX = CYLINDRICAL_PROJECTIONS.contains(projectionType),
             isLoopY = DEFAULT_LOOP_Y,
@@ -224,18 +221,6 @@ internal class LiveMapSpecBuilder {
                 LivemapConstants.Projection.AZIMUTHAL -> ProjectionType.AZIMUTHAL_EQUAL_AREA
                 LivemapConstants.Projection.CONIC -> ProjectionType.CONIC_EQUAL_AREA
             }
-        }
-
-        private fun getFeatureLevel(level: String?): FeatureLevel? {
-            if (level == null) {
-                return null
-            }
-            try {
-                return FeatureLevel.valueOf(level.toUpperCase())
-            } catch (ignored: Exception) {
-                throw IllegalArgumentException("FeatureLevel: " + FeatureLevel.values())
-            }
-
         }
 
         private fun createMapRegion(region: Any?): MapRegion? {

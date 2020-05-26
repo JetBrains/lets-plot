@@ -6,17 +6,18 @@
 package jetbrains.livemap.geocoding
 
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.POSITION
+import jetbrains.gis.geoprotocol.GeoRequestBuilder
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
+import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.services.GeocodingProvider
 import jetbrains.livemap.services.MapLocationGeocoder.Companion.convertToWorldRects
 
 class LocationGeocodingSystem(
     componentManager: EcsComponentManager,
-    private val myGeocodingProvider: GeocodingProvider
+    private val myGeocodingService: GeocodingService
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
     private lateinit var myLocation: LocationComponent
@@ -37,12 +38,16 @@ class LocationGeocodingSystem(
             .map { it.get<RegionIdComponent>().regionId }
             .distinct()
 
-        myGeocodingProvider
-            .featuresByRegionIds(regionIds, listOf(POSITION))
+        GeoRequestBuilder.ExplicitRequestBuilder()
+            .setIds(regionIds)
+            .setFeatures(listOf(POSITION))
+            .build()
+            .run(myGeocodingService::execute)
+            .map { features -> features.associateBy(GeocodedFeature::request) { it } }
             .map(::parseLocationMap)
 
         entities.forEach {
-            it.add(WaitGeocodeLocationComponent())
+            it.add(WaitGeocodeLocationComponent)
             it.remove<NeedGeocodeLocationComponent>()
         }
     }

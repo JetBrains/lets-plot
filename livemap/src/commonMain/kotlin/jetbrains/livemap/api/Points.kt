@@ -72,7 +72,6 @@ class PointBuilder(
 ) {
     var layerIndex: Int? = null
     var index: Int? = null
-    var mapId: String? = null
     var point: Vec<LonLat>? = null
 
     var radius: Double = 4.0
@@ -93,12 +92,8 @@ class PointBuilder(
         val size = radius * 2.0
 
         return when {
-                point != null ->
-                    myFactory.createStaticEntityWithLocation("map_ent_s_point", point!!)
-                mapId != null ->
-                    myFactory.createDynamicEntityWithLocation("map_ent_d_point_$mapId", mapId!!)
-                else ->
-                    error("Can't create point entity. [point] and [mapId] is null.")
+                point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_point", point!!)
+                else -> error("Can't create point entity. Coord is null.")
             }.run {
                 setInitializer { worldPoint ->
                     if (layerIndex != null && index != null) {

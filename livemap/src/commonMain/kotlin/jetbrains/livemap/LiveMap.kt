@@ -23,6 +23,7 @@ import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
+import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
 import jetbrains.livemap.camera.*
@@ -74,7 +75,6 @@ import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.SEARCH_COMPONENTS
 import jetbrains.livemap.searching.SearchResult
 import jetbrains.livemap.services.FragmentProvider
-import jetbrains.livemap.services.GeocodingProvider
 import jetbrains.livemap.tiles.TileRemovingSystem
 import jetbrains.livemap.tiles.TileRequestSystem
 import jetbrains.livemap.tiles.TileSystemProvider
@@ -94,7 +94,7 @@ class LiveMap(
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
-    private val myGeocodingProvider: GeocodingProvider,
+    private val myGeocodingService: GeocodingService,
     private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?
 ) : Disposable {
@@ -221,12 +221,11 @@ class LiveMap(
 
                 MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
 
-                RegionIdGeocodingSystem(componentManager, myGeocodingProvider),
-                CentroidGeocodingSystem(componentManager, myGeocodingProvider),
-                BBoxGeocodingSystem(componentManager, myGeocodingProvider),
+                CentroidGeocodingSystem(componentManager, myGeocodingService),
+                BBoxGeocodingSystem(componentManager, myGeocodingService),
 
                 LocationCounterSystem(componentManager, myMapLocationRect == null),
-                LocationGeocodingSystem(componentManager, myGeocodingProvider),
+                LocationGeocodingSystem(componentManager, myGeocodingService),
                 LocationCalculateSystem(componentManager),
                 MapLocationInitializationSystem(componentManager, myZoom?.toDouble(), myMapLocationRect),
 

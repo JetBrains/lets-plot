@@ -203,7 +203,7 @@ object ProjectionUtil {
     private fun <InT, OutT> transform(
         path: List<Vec<InT>>,
         transform: (Vec<InT>) -> Vec<OutT>,
-        epsilon: Double
+        @Suppress("UNUSED_PARAMETER") epsilon: Double
     ): List<Vec<OutT>> {
         val res = ArrayList<Vec<OutT>>(path.size)
         for (p in path) {

@@ -65,7 +65,6 @@ class PolygonsBuilder(
 ) {
     var layerIndex: Int? = null
     var index: Int? = null
-    var mapId: String? = null
 
     var lineDash: List<Double> = emptyList()
     var strokeColor: Color = Color.BLACK
@@ -78,7 +77,6 @@ class PolygonsBuilder(
 
         return when {
             multiPolygon != null -> createStaticEntity()
-            mapId != null -> createDynamicEntity()
             else -> null
         }
     }
@@ -107,32 +105,8 @@ class PolygonsBuilder(
                     setStrokeColor(this@PolygonsBuilder.strokeColor)
                     setStrokeWidth(this@PolygonsBuilder.strokeWidth)
                 }
-                + NeedLocationComponent()
-                + NeedCalculateLocationComponent()
-                + LocatorComponent(PolygonLocatorHelper())
-            }
-    }
-
-    private fun createDynamicEntity(): EcsEntity {
-        return myFactory
-            .createMapEntity("map_ent_d_polygon_$mapId")
-            .addComponents {
-                if (layerIndex != null && index != null) {
-                    + IndexComponent(layerIndex!!, index!!)
-                }
-                + MapIdComponent(mapId!!)
-                + NeedBboxComponent()
-                + RegionFragmentsComponent()
-                + RendererComponent(RegionRenderer())
-                + ScreenLoopComponent().apply { origins = listOf(Coordinates.ZERO_CLIENT_POINT) }
-                + ScreenOriginComponent()
-                + StyleComponent().apply {
-                    setFillColor(this@PolygonsBuilder.fillColor)
-                    setStrokeColor(this@PolygonsBuilder.strokeColor)
-                    setStrokeWidth(this@PolygonsBuilder.strokeWidth)
-                }
-                + NeedLocationComponent()
-                + NeedGeocodeLocationComponent()
+                + NeedLocationComponent
+                + NeedCalculateLocationComponent
                 + LocatorComponent(PolygonLocatorHelper())
             }
     }

@@ -90,27 +90,13 @@ fun createLineBBox(
 
 fun MapEntityFactory.createStaticEntityWithLocation(name: String, point: LonLatPoint): EcsEntity =
     createStaticEntity(name, point).addComponents {
-        + NeedLocationComponent()
-        + NeedCalculateLocationComponent()
-    }
-
-fun MapEntityFactory.createDynamicEntityWithLocation(name: String, mapId: String): EcsEntity =
-    createDynamicEntity(name, mapId).addComponents {
-        + NeedLocationComponent()
-        + NeedGeocodeLocationComponent()
+        + NeedLocationComponent
+        + NeedCalculateLocationComponent
     }
 
 fun MapEntityFactory.createStaticEntity(name: String, point: LonLatPoint): EcsEntity =
     createMapEntity(name)
         .add(LonLatComponent(point))
-
-
-fun MapEntityFactory.createDynamicEntity(name: String, mapId: String): EcsEntity =
-    createMapEntity(name)
-        .addComponents {
-            + NeedCentroidComponent()
-            + MapIdComponent(mapId)
-        }
 
 
 internal fun EcsEntity.setInitializer(block: ComponentsList.(worldPoint: WorldPoint) -> Unit): EcsEntity {

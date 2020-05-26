@@ -14,7 +14,6 @@ import jetbrains.livemap.camera.Viewport
 import jetbrains.livemap.camera.ViewportHelper
 import jetbrains.livemap.core.projections.MapRuler
 import jetbrains.livemap.projection.*
-import jetbrains.livemap.services.GeocodingProvider
 import jetbrains.livemap.services.MapLocationGeocoder
 import jetbrains.livemap.services.newFragmentProvider
 
@@ -43,19 +42,15 @@ class LiveMapFactory(
 
         return Asyncs.constant(
             LiveMap(
-                myMapProjection,
-                myViewport,
-                myLiveMapSpec.layerProvider,
-                myLiveMapSpec.tileSystemProvider,
-                newFragmentProvider(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
-                myLiveMapSpec.devParams,
-                myLiveMapSpec.mapLocationConsumer,
-                GeocodingProvider(
-                    myLiveMapSpec.geocodingService,
-                    myLiveMapSpec.level,
-                    myLiveMapSpec.parent
-                ),
-                myLiveMapSpec.location
+                myMapProjection = myMapProjection,
+                viewport = myViewport,
+                myLayerProvider = myLiveMapSpec.layerProvider,
+                myTileSystemProvider = myLiveMapSpec.tileSystemProvider,
+                myFragmentProvider = newFragmentProvider(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
+                myDevParams = myLiveMapSpec.devParams,
+                myMapLocationConsumer = myLiveMapSpec.mapLocationConsumer,
+                myGeocodingService = myLiveMapSpec.geocodingService,
+                myMapLocationRect = myLiveMapSpec.location
                     ?.getBBox(
                         MapLocationGeocoder(
                             myLiveMapSpec.geocodingService,
@@ -63,7 +58,7 @@ class LiveMapFactory(
                             myMapProjection
                         )
                     ),
-                myLiveMapSpec.zoom
+                myZoom = myLiveMapSpec.zoom
             )
         )
     }

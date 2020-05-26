@@ -52,8 +52,6 @@ class LiveMapBuilder {
     var zoom: Int? = null
     var interactive: Boolean = true
     var mapLocation: MapLocation? = null
-    var level: FeatureLevel? = null
-    var parent: MapRegion? = null
 
     var projectionType: ProjectionType = ProjectionType.MERCATOR
     var isLoopX: Boolean = true
@@ -72,9 +70,7 @@ class LiveMapBuilder {
             isInteractive = interactive,
             layerProvider = layerProvider,
 
-            level = level,
             location = mapLocation,
-            parent = parent,
 
             projectionType = projectionType,
             isLoopX = isLoopX,
@@ -90,7 +86,6 @@ class LiveMapBuilder {
 
             // deprecated
             isClustering = false,
-            isEnableMagnifier = false,
             isLabels = true,
             isScaled = false,
             isTiles = true,
@@ -111,7 +106,6 @@ class LayersBuilder(
 @LiveMapDsl
 class ChartSource {
     var layerIndex: Int? = null
-    var mapId: String? = null
     var point: Vec<LonLat>? = null
 
     var radius: Double = 0.0
@@ -278,8 +272,6 @@ fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
 
 fun LiveMapBuilder.location(block: Location.() -> Unit) {
     Location().apply(block).let { location ->
-        level = location.hint?.level
-        parent = location.hint?.parent
         mapLocation = location.mapLocation
     }
 }

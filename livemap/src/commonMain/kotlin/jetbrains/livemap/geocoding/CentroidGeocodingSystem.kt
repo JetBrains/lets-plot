@@ -8,16 +8,17 @@ package jetbrains.livemap.geocoding
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.gis.geoprotocol.GeoRequest.FeatureOption.CENTROID
+import jetbrains.gis.geoprotocol.GeoRequestBuilder
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
+import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.projection.WorldPoint
-import jetbrains.livemap.services.GeocodingProvider
 
 class CentroidGeocodingSystem(
     componentManager: EcsComponentManager,
-    private val myGeocodingProvider: GeocodingProvider
+    private val myGeocodingService: GeocodingService
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myProject: (LonLatPoint) -> WorldPoint
 
@@ -34,12 +35,16 @@ class CentroidGeocodingSystem(
             .map { it.get<RegionIdComponent>().regionId }
             .distinct()
 
-        myGeocodingProvider
-            .featuresByRegionIds(regionIds, listOf(CENTROID))
+        GeoRequestBuilder.ExplicitRequestBuilder()
+            .setIds(regionIds)
+            .setFeatures(listOf(CENTROID))
+            .build()
+            .run(myGeocodingService::execute)
+            .map { features -> features.associateBy(GeocodedFeature::request) { it } }
             .map(::parseCentroidMap)
 
         entities.forEach {
-            it.add(WaitCentroidComponent())
+            it.add(WaitCentroidComponent)
             it.remove<NeedCentroidComponent>()
         }
     }

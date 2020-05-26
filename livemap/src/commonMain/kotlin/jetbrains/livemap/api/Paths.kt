@@ -69,7 +69,6 @@ class PathBuilder(
 ) {
     var layerIndex: Int? = null
     var index: Int? = null
-    var mapId: String = ""
     var regionId: String = ""
 
     var lineDash: List<Double> = emptyList()
@@ -105,8 +104,8 @@ class PathBuilder(
                             strokeWidth = this@PathBuilder.strokeWidth
                             lineDash = this@PathBuilder.lineDash.toDoubleArray()
                         }
-                        + NeedLocationComponent()
-                        + NeedCalculateLocationComponent()
+                        + NeedLocationComponent
+                        + NeedCalculateLocationComponent
                         if (!nonInteractive) {
                             + LocatorComponent(PathLocatorHelper())
                         }

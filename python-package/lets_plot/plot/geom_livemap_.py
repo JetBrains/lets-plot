@@ -21,8 +21,8 @@ except ImportError:
 __all__ = ['geom_livemap']
 
 
-def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None, sampling=None,
-                 level=None, location=None, zoom=None, within=None, projection=None, geodesic=None, tiles=None,
+def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, sampling=None,
+                 location=None, zoom=None, projection=None, geodesic=None, tiles=None,
                  **other_args):
     """
     Display a live map.
@@ -34,26 +34,14 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
     data : dictionary or pandas DataFrame, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : string, optional
-        The statistical transformation to use on the data for this layer, as a string. Supported transformations:
-        "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
-        "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
-        linear default)
-    geom : string, optional
-        The mode of the displayed data. There are:
-        - 'polygon' for colored areas (default).
+    symbol : string, optional
+        The marker used for displaying the data. There are:
         - 'point' for circles of different size and color.
         - 'pie' for pie charts.
         - 'bar' for bar charts.
-    level : string, optional
-        The administrative level of the displayed data.
-        There are 'country', 'state', 'county', 'city', None (default).
-    within : string, optional
-        Data can be filtered by within name, for example 'USA'.
     location : string or array, optional
         Initial position of the map. If not set, displays the United States.
-        There are id | [lon1, lat1, lon2, lat2,..., lonN, latN].
-        - id (string, for example 'Texas').
+        There are [lon1, lat1, lon2, lat2,..., lonN, latN].
         - lon1, lon2,..., lonN are longitudes in degrees (positive in the Eastern hemisphere).
         - lat1, lat2,..., latN are latitudes in degrees (positive in the Northern hemisphere).
     zoom : integer, optional
@@ -78,8 +66,6 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
     -----
     geom_livemap draws map, which can be moved and zoomed.
     geom_livemap understands the following aesthetics mappings:
-    - map_id : geographical id or string in format 'lon, lat' used to join data with map coordinates.
-               You can use function lon_lat('lon', 'lat') to concatenate coordinates.
     - alpha : transparency level of a layer
         Understands numbers between 0 and 1.
     - color (colour) : color of a geometry lines
@@ -94,9 +80,7 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
     Examples
     --------
     >>> from lets_plot import *
-    >>> data = {'state': ['Nevada', 'TEXAS', 'FL'], 'val': [2000, 2200, 1800]}
-    >>> p = ggplot(data) + geom_livemap(aes(map_id='state', fill='val'), within='USA')
-    >>> p += scale_fill_gradient(low='red')
+    >>> p = ggplot() + geom_livemap()
     >>> p += ggtitle('Live Map')
     """
     # if within is not None:
@@ -113,8 +97,8 @@ def geom_livemap(mapping=None, data=None, geom=None, stat=None, show_legend=None
     if _display_mode in other_args.keys():
         other_args.pop(_display_mode)
 
-    return _geom('livemap', mapping, data, stat, None, show_legend, sampling=sampling,
-                 display_mode=geom, level=level, within=within, location=location, zoom=zoom,
+    return _geom('livemap', mapping, data, stat=None, position=None, show_legend=show_legend, sampling=sampling,
+                 display_mode=symbol, location=location, zoom=zoom,
                  projection=projection, geodesic=geodesic, tiles=tiles, geocoding=geocoding,
                  **other_args)
 

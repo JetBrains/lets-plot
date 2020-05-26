@@ -71,12 +71,8 @@ class PiesFactory(
             val endAngle = currentAngle + angles[i]
             result.add(
                 when {
-                    source.point != null ->
-                        myFactory.createStaticEntityWithLocation("map_ent_s_pie_sector", source.point!!)
-                    source.mapId != null ->
-                        myFactory.createDynamicEntityWithLocation("map_ent_d_pie_sector_${source.mapId}", source.mapId!!)
-                    else ->
-                        error("Can't create pieSector entity. [point] and [mapId] is null.")
+                    source.point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_pie_sector", source.point!!)
+                    else -> error("Can't create pieSector entity. Coord is null.")
                 }.setInitializer { worldPoint ->
                     if (source.layerIndex != null) {
                         + IndexComponent(source.layerIndex!!, source.indices[i])
