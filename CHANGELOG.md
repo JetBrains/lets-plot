@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
  - corner tooltips.
+ - Fixed importing of `__version__`
+ - Performance improvement (up to 3X)
+ - [Lets-Plot in SciView](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview) for IntelliJ IDEA / PyCharm is available. 
+ 
  
 ## [1.4.1] - 2020-05-20
 ### Added
