@@ -127,6 +127,7 @@ class ListItemPropertyTest {
         list[3] = 12
 
         assertThat(p1Handler, noEvents())
+        @Suppress("UNCHECKED_CAST")
         val singleEvent: Matcher<EventMatchers.MatchingHandler<PropertyChangeEvent<out Int?>>> = singleEvent(
                 allOf(oldValueIs(2), newValueIs(12)) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p2Handler, singleEvent)
@@ -137,6 +138,7 @@ class ListItemPropertyTest {
     fun firesOnTrackedItemRemove() {
         list.removeAt(2)
 
+        @Suppress("UNCHECKED_CAST")
         val singleEvent = singleEvent(
                 allOf(oldValueIs(2), newValue(nullValue(Int::class.java))) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p2indexHandler, singleEvent)
@@ -151,6 +153,7 @@ class ListItemPropertyTest {
 
         p2.set(12)
 
+        @Suppress("UNCHECKED_CAST")
         val singleEvent = singleEvent(
                 allOf(oldValueIs(2), newValueIs(12)) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p2handler, singleEvent)
@@ -161,6 +164,7 @@ class ListItemPropertyTest {
         list.add(2, 22)
 
         assertThat(p1indexHandler, noEvents())
+        @Suppress("UNCHECKED_CAST")
         val singleEvent = singleEvent(
                 allOf(oldValueIs(2), newValueIs(3)) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p2indexHandler, singleEvent)
@@ -171,9 +175,11 @@ class ListItemPropertyTest {
         list.removeAt(2)
 
         assertThat(p1indexHandler, noEvents())
+        @Suppress("UNCHECKED_CAST")
         val singleEvent = singleEvent(
                 allOf(oldValueIs(2), newValue(nullValue(Int::class.java))) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p2indexHandler, singleEvent)
+        @Suppress("UNCHECKED_CAST")
         val singleEvent1 = singleEvent(
                 allOf(oldValueIs(3), newValueIs(2)) as Matcher<PropertyChangeEvent<out Int?>>)
         assertThat(p3indexHandler, singleEvent1)

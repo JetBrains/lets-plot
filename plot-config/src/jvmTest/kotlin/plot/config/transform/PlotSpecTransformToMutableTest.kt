@@ -32,6 +32,7 @@ class PlotSpecTransformToMutableTest {
         assertEquals(2, (mm["b"] as List<*>).size)
 
         run {
+            @Suppress("UNCHECKED_CAST")
             val list = mm["b"] as MutableList<Any>
             // maps become mutable but lists do not!
             assertFailsWith(UnsupportedOperationException::class) {
@@ -41,12 +42,14 @@ class PlotSpecTransformToMutableTest {
 
         assertEquals(0, (mm["c"] as Map<*, *>)["c_"])
         assertDoesNotFail {
+            @Suppress("UNCHECKED_CAST")
             val map = mm["c"] as MutableMap<Any, Any>
             map["c_"] = 1
         }
 
         assertEquals(0, ((mm["d"] as List<*>)[0] as Map<*, *>)["d0_"])
         assertDoesNotFail {
+            @Suppress("UNCHECKED_CAST")
             val map = (mm["d"] as List<*>)[0] as MutableMap<Any, Any>
             map["do_"] = 1
         }

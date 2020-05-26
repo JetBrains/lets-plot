@@ -105,15 +105,12 @@ class ListMapTest {
             assertEquals(map.size, list.size())
         }
         assertEquals(map.keys, list.keySet())
-        val mapValues = ArrayList(map.values) as ArrayList<String>
-        mapValues.sort()
-        val listValues = ArrayList(list.values()) as ArrayList<String>
-        listValues.sort()
+        val mapValues = map.values.requireNoNulls().sorted()
+        val listValues = list.values().requireNoNulls().sorted()
         assertEquals(mapValues, listValues)
 
         assertEquals(map.keys, entriesToKeys(list.entrySet()))
-        val listValuesFromEntries = entriesToValues(list.entrySet()) as MutableList<String>
-        listValuesFromEntries.sort()
+        val listValuesFromEntries = entriesToValues(list.entrySet()).requireNoNulls().sorted()
         assertEquals(mapValues, listValuesFromEntries)
     }
 

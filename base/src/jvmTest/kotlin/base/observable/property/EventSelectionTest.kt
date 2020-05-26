@@ -19,6 +19,7 @@ class EventSelectionTest {
 
     private val result = Properties.selectEvent(prop) { source -> if (source) es1 else es2 }
 
+    @Suppress("UNCHECKED_CAST")
     private val handler: EventHandler<Any?> = Mockito.mock(EventHandler::class.java) as EventHandler<Any?>
     private var reg: Registration? = null
 

@@ -39,6 +39,7 @@ class UpdatablePropertyTest {
     fun getWithListenersDoesntGetWithoutUpdate() {
         value = "a"
         val handler = Mockito.mock(EventHandler::class.java)
+        @Suppress("UNCHECKED_CAST")
         property!!.addHandler(handler as EventHandler<PropertyChangeEvent<out String?>>)
         value = "b"
 
@@ -48,6 +49,7 @@ class UpdatablePropertyTest {
     @Test
     fun updateFiresEvent() {
         val handler = Mockito.mock(EventHandler::class.java)
+        @Suppress("UNCHECKED_CAST")
         property!!.addHandler(handler as EventHandler<PropertyChangeEvent<out String?>>)
         value = "z"
 
@@ -59,6 +61,7 @@ class UpdatablePropertyTest {
     @Test
     fun updateWithoutChangeDoesntFireEvent() {
         val handler = Mockito.mock(EventHandler::class.java)
+        @Suppress("UNCHECKED_CAST")
         property!!.addHandler(handler as EventHandler<PropertyChangeEvent<out String?>>)
 
         property!!.update()
@@ -70,6 +73,7 @@ class UpdatablePropertyTest {
     @Test
     fun removeAllListenersReturnsToSimpleMode() {
         val handler = Mockito.mock(EventHandler::class.java)
+        @Suppress("UNCHECKED_CAST")
         property!!.addHandler(handler as EventHandler<PropertyChangeEvent<out String?>>).remove()
 
         value = "c"

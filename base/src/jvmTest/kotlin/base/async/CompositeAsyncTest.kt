@@ -74,6 +74,7 @@ class CompositeAsyncTest {
     fun resultListOrder() {
         second.success(1)
         first.success(0)
+        @Suppress("UNCHECKED_CAST")
         val valueMatcher = Matchers.contains(0, 1) as Matcher<List<Int>>
         assertThat(composite, AsyncMatchers.result(valueMatcher))
     }

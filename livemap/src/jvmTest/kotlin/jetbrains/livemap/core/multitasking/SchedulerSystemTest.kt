@@ -22,6 +22,7 @@ class SchedulerSystemTest : LiveMapTestBase() {
     override fun setUp() {
         super.setUp()
 
+        @Suppress("UNCHECKED_CAST")
         val microThread = Mockito.mock(MicroTask::class.java) as MicroTask<Unit>
         createEntity(SINGLE_IT, MicroThreadComponent(microThread, 1))
     }

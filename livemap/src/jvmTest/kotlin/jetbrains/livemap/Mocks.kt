@@ -186,10 +186,6 @@ object Mocks {
             myDownloaded = HashMap()
             return this
         }
-
-        fun downloading(fragmentFoo0: FragmentSpec): MockSpec? {
-            return null
-        }
     }
 
     class FragmentsResponseAsync(

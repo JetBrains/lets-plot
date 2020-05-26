@@ -28,6 +28,7 @@ class PropertyTest {
 
         val handler = mock(EventHandler::class.java)
 
+        @Suppress("UNCHECKED_CAST")
         derived.addHandler(handler as EventHandler<PropertyChangeEvent<out Int>>)
 
         prop.set("")

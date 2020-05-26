@@ -12,6 +12,7 @@ import kotlin.test.assertTrue
 
 internal object ScaleTestUtil {
     fun assertExpandValuesPreservedInCopy(scale: Scale<*>) {
+        @Suppress("NAME_SHADOWING")
         var scale = scale
         scale = scale.with()
                 .multiplicativeExpand(0.777)

@@ -12,5 +12,6 @@ fun <T> eq(value: T): T {
     return uninitialized()
 }
 
-private fun <T> uninitialized(): T = null as T
+@Suppress("UNCHECKED_CAST")
+private fun <T> uninitialized() = null as T
 
