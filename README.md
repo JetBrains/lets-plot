@@ -34,6 +34,17 @@ Besides Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into
 To learn more about creating plots in a JVM environment see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) in
 [Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub.
 
+## "Lets-Plot in SciView" plugin for IntelliJ IDEA / PyCharm
+
+The plugin adds support for interactive plots in IntelliJ-based IDEs with the enabled _Scientific mode_.
+
+The _Scientific mode_ in PyCharm or in IntelliJ IDEA Python plugin provides support for interactive scientific computing and data visualization.
+
+To learn more about _Scientific mode_ check these help pages:
+* [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
+* [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
+
+To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview). 
 
 ## License
 
