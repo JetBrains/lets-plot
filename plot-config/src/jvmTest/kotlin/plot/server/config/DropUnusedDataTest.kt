@@ -154,30 +154,6 @@ class DropUnusedDataTest {
     }
 
     @Test
-    fun defaultMapping_point() {
-        val data = "{" +
-                "  'x': [0,0,1,1]" +
-                "}"
-
-        val spec = "{" +
-                "   'layers': [" +
-                "               {" +
-                "                  'geom':  {" +
-                "                             'name': 'point'," +
-                "                             'data': " + data +
-                "                           }" +
-                "               }" +
-                "           ]" +
-                "}"
-
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
-
-        assertEmptyPlotData(opts)
-        checkSingleLayerData(opts, 1, mapOf("x" to 4))
-    }
-
-    @Test
     fun plot_clear_layer_addX_continuous_barCount() {
         val data = "{" +
                 "  'x': [0,0,1,1]" +

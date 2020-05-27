@@ -60,41 +60,6 @@ class PlotConfigServerSideTest {
         }
     }
 
-    @Test
-    fun autoMapping() {
-        val plotSpecTransformed: Map<String, Any>
-        run {
-            // top level
-            val plotSpec = HashMap<String, Any>()
-            plotSpec[DATA] = listOf(0.0, 1.0, 2.0, 3.0, 4.0)
-
-            // histogram layer
-            val layerSpec = HashMap<String, Any>()
-            layerSpec[GEOM] = GeomName.HISTOGRAM
-
-            val layers = listOf<Any>(layerSpec)
-            plotSpec[LAYERS] = layers
-
-            // ====================
-            plotSpecTransformed = PlotConfigServerSideJvm.processTransformWithEncoding(plotSpec)
-        }
-
-        // Expecting 'auto-mapping': x -> __0
-
-        // layers
-        val layers = plotSpecTransformed[LAYERS] as List<*>
-        assertEquals(1, layers.size.toLong())
-        for (layerSpec in layers) {
-            // top level in layer
-            val spec = layerSpec as Map<*, *>
-            val mapping = spec[MAPPING] as Map<*, *>
-
-            assertEquals(1, mapping.size.toLong())
-            assertTrue(mapping.containsKey("x"))
-            assertEquals("__0", mapping["x"])
-        }
-    }
-
     companion object {
         private const val PLOT_VAR = "plot-var"
         private const val LAYER_VAR = "layer-var"
