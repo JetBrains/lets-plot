@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
-import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.Companion
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -59,7 +58,7 @@ class GeomLayerBuilderTest {
             )
         )
 
-        val histogramLayer = jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder.demoAndTest()
+        val histogramLayer = GeomLayerBuilder.demoAndTest()
                 .stat(stat)
                 .geom(geomProvider)
                 .pos(posProvider)

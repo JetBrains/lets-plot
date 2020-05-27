@@ -5,11 +5,16 @@
 
 package jetbrains.datalore.plot.base.interact
 
-import jetbrains.datalore.plot.base.Aes
-
 // `open` for Mockito tests
 open class ContextualMapping(
-    val tooltipAes: List<Aes<*>>,
-    val axisAes: List<Aes<*>>,
-    val dataAccess: MappedDataAccess
-)
+    val dataContext: DataContext,
+    private val tooltipValueSources: List<ValueSource>?
+) {
+    // TODO Remove outlierAes (it should be existed in tooltipValueSources)
+    fun getDataPoints(index: Int, outliers: List<ValueSource>): List<ValueSource.DataPoint> {
+        if (tooltipValueSources == null) {
+            return emptyList()
+        }
+        return tooltipValueSources.mapNotNull { it.getDataPoint(index) } + outliers.mapNotNull { it.getDataPoint(index) }
+    }
+}

@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
@@ -19,7 +20,9 @@ import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.AREA_GEOM
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.NON_AREA_GEOM
 import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.builder.tooltip.CompositeValue
 import jetbrains.datalore.plot.config.Option.Meta.MapJoin
+import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
 
 object PlotConfigClientSideUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -105,7 +108,7 @@ object PlotConfigClientSideUtil {
         layerBuilder
             .locatorLookupSpec(geomInteraction.createLookupSpec())
             .contextualMappingProvider(geomInteraction)
-    }
+     }
 
     private fun createLayerBuilder(
         layerConfig: LayerConfig,
@@ -191,10 +194,11 @@ object PlotConfigClientSideUtil {
         // Set aes lists
         val hiddenAesList = createHiddenAesList(layerConfig.geomProto.geomKind) + axisWithoutTooltip
         val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind) - hiddenAesList
-        val aesList = createTooltipAesList(layerConfig, builder.getAxisFromFunctionKind ) -  hiddenAesList
+        val aesList = createTooltipAesList(layerConfig, builder.getAxisFromFunctionKind) - hiddenAesList
 
         builder.axisAes(axisAes)
-               .tooltipAes(aesList)
+            .tooltipAes(aesList)
+            .tooltipValueSources(createTooltipValueSourceList(layerConfig.tooltips))
 
         return builder
     }
@@ -232,10 +236,6 @@ object PlotConfigClientSideUtil {
         axisAes: List<Aes<*>>
     ): List<Aes<*>> {
 
-        // return the predefined list
-        if (layerConfig.tooltipAes != null)
-            return layerConfig.tooltipAes
-
         fun isVariableContinuous(aes: Aes<*>): Boolean {
             val scale = layerConfig.getScaleForAes(aes)
             return scale?.isContinuous ?: false
@@ -257,6 +257,28 @@ object PlotConfigClientSideUtil {
         aesListForTooltip.removeAll { it === Aes.MAP_ID }
 
         return aesListForTooltip
+    }
+
+    private fun createTooltipValueSourceList(tooltipLineSpecifications: List<TooltipLineSpecification>?): List<ValueSource>? {
+        if (tooltipLineSpecifications == null) {
+            return null
+        }
+
+        val tooltipValueSourceList = mutableListOf<ValueSource>()
+        tooltipLineSpecifications.forEach { tooltipLineSpecification ->
+            if (tooltipLineSpecification.data.size == 1) {
+                tooltipValueSourceList.add(tooltipLineSpecification.data.single())
+            } else {
+                tooltipValueSourceList.add(
+                    CompositeValue(
+                        tooltipLineSpecification.data,
+                        tooltipLineSpecification.label,
+                        tooltipLineSpecification.format
+                    )
+                )
+            }
+        }
+        return tooltipValueSourceList
     }
 
     private fun initGeomInteractionBuilder(

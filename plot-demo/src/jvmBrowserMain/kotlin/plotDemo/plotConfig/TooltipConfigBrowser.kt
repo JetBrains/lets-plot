@@ -5,15 +5,15 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.TooltipAesList
+import jetbrains.datalore.plotDemo.model.plotConfig.TooltipConfig
 
-object TooltipAesListBrowser {
+object TooltipConfigBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(TooltipAesList()) {
+        with(TooltipConfig()) {
             @Suppress("UNCHECKED_CAST")
             (PlotConfigBrowserDemoUtil.show(
-                "Area plot",
+                "Tooltip config plot",
                 plotSpecList() as List<MutableMap<String, Any>>,
                 demoComponentSize
             ))

@@ -30,7 +30,7 @@ class PointRange : PlotConfigDemoBase() {
             | 'layers': [
             |             {
             |                'geom': 'pointrange',
-            |                'mapping': {'x': 'drink', 'y'='mean', 'ymin'='lower', 'ymax'='upper', 'fill'='mean'},
+            |                'mapping': {'x': 'drink', 'y': 'mean', 'ymin': 'lower', 'ymax': 'upper', 'fill': 'mean'},
             |                'fatten': 10
             |             }
             |         ]

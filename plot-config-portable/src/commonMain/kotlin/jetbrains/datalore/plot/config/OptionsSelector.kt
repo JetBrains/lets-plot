@@ -37,6 +37,14 @@ fun Map<*, *>.has(path: List<String>, item: String): Boolean {
     return getMap(path)?.containsKey(item) ?: false
 }
 
+fun Map<*, *>.getString(vararg query: String): String? {
+    return getString(query.dropLast(1), query.last())
+}
+
+fun Map<*, *>.getString(path: List<String>, item: String): String? {
+    return getMap(path)?.get(item) as? String
+}
+
 fun Map<*, *>.getMap(vararg query: String): Map<String, Any>? {
     return getMap(query.toList())?.typed()
 }

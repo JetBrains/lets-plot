@@ -7,17 +7,17 @@ package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plotDemo.model.plotConfig.TooltipAesList
+import jetbrains.datalore.plotDemo.model.plotConfig.TooltipConfig
 import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
 
-object TooltipAesListJfx {
+object TooltipConfigJfx {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(TooltipAesList()) {
+        with(TooltipConfig()) {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             PlotConfigDemoUtil.show(
-                "Tooltip aes list plot",
+                "Tooltip config plot",
                 plotSpecList,
                 SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET),
                 DoubleVector(600.0, 400.0)

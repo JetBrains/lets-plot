@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.livemap
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
@@ -17,6 +18,7 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil
+import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.*
 import jetbrains.livemap.config.DevParams
@@ -114,7 +116,12 @@ object LiveMapUtil {
         aesList.removeAll(
             getHiddenAes(geomKind)
         )
-        return ContextualMapping(aesList, emptyList(), dataAccess)
+        return GeomInteraction.createContextualMapping(
+            aesListForTooltip = aesList,
+            axisAes = emptyList(),
+            dataAccess = dataAccess,
+            dataFrame = DataFrame.Builder().build()
+        )
     }
 
     private class MyLiveMapProvider internal constructor(

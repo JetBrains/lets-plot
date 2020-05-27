@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import jetbrains.datalore.plot.server.config.SingleLayerAssert
 import kotlin.test.Test
 
-class TooltipAesListTest {
+class TooltipConfigTest {
 
     private val data = mapOf(
         Aes.X.name to listOf(0.5, 1.0, 1.5),
@@ -20,7 +20,7 @@ class TooltipAesListTest {
     )
 
     @Test
-    fun noTooltipAesList() {
+    fun noTooltipList() {
         val plotOpts = mutableMapOf(
             MAPPING to data,
             Option.Plot.LAYERS to listOf(
@@ -31,7 +31,7 @@ class TooltipAesListTest {
         )
         val layerConfigs = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
         SingleLayerAssert.assertThat(layerConfigs)
-            .haveTooltipAesList(null)
+            .haveTooltipList(null)
     }
 
     @Test
@@ -41,28 +41,57 @@ class TooltipAesListTest {
             Option.Plot.LAYERS to listOf(
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.POINT,
-                    Option.Layer.TOOLTIP to listOf(Aes.COLOR.name, Aes.FILL.name)
+                    Option.Layer.TOOLTIPS to mapOf(
+                        Option.LayerTooltips.LINES to listOf("aes@" + Aes.COLOR.name, "aes@" + Aes.FILL.name)
+                    )
                 )
             )
         )
         val layerConfigs = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
         SingleLayerAssert.assertThat(layerConfigs)
-            .haveTooltipAesList(listOf(Aes.COLOR, Aes.FILL))
+            .haveTooltipList(listOf(Aes.COLOR.name, Aes.FILL.name))
     }
 
     @Test
-    fun withEmptyTooltipAesList() {
+    fun withEmptyTooltipList() {
         val plotOpts = mutableMapOf(
             MAPPING to data,
             Option.Plot.LAYERS to listOf(
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.POINT,
-                    Option.Layer.TOOLTIP to emptyList<String>()
+                    Option.Layer.TOOLTIPS to mapOf(
+                            Option.LayerTooltips.LINES to emptyList<String>()
+                    )
                 )
             )
         )
         val layerConfigs = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
         SingleLayerAssert.assertThat(layerConfigs)
-            .haveTooltipAesList(listOf())
+            .haveTooltipList(listOf())
     }
+
+
+    @Test
+    fun withVariables() {
+        val dataVars = data + mapOf(
+            "VAR1" to listOf("text1", "text2", "text3"),
+            "VAR2" to listOf(2.0, 2.5, 3.0)
+        )
+
+        val plotOpts = mutableMapOf(
+            MAPPING to dataVars,
+            Option.Plot.LAYERS to listOf(
+                mapOf(
+                    Option.Layer.GEOM to Option.GeomName.POINT,
+                    Option.Layer.TOOLTIPS to mapOf(
+                        Option.LayerTooltips.LINES to listOf("aes@" + Aes.COLOR.name, "aes@" + Aes.FILL.name,  "VAR1",  "VAR2")
+                    )
+                )
+            )
+        )
+        val layerConfigs = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
+        SingleLayerAssert.assertThat(layerConfigs)
+            .haveTooltipList(listOf(Aes.COLOR.name, Aes.FILL.name, "VAR1", "VAR2"))
+    }
+
 }

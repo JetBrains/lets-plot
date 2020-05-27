@@ -5,19 +5,20 @@
 
 package jetbrains.datalore.plot.builder.interact
 
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 
 interface ContextualMappingProvider {
-    fun createContextualMapping(dataAccess: MappedDataAccess): ContextualMapping
+    fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping
 
     companion object {
         val NONE = object : ContextualMappingProvider {
-            override fun createContextualMapping(dataAccess: MappedDataAccess): ContextualMapping {
+            override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
                 return ContextualMapping(
-                    emptyList(),
-                    emptyList(),
-                    dataAccess
+                    DataContext(dataFrame, dataAccess),
+                    tooltipValueSources = null
                 )
             }
         }
