@@ -179,13 +179,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 varNamesToKeep.add(`var`.name)
             }
             varNamesToKeep.add(Stats.GROUP.name)
-            val facets = facets
-            if (facets.xVar != null) {
-                varNamesToKeep.add(facets.xVar!!)
-            }
-            if (facets.yVar != null) {
-                varNamesToKeep.add(facets.yVar!!)
-            }
+            facets.xVar?.let(varNamesToKeep::add)
+            facets.yVar?.let(varNamesToKeep::add)
 
             if (layerConfig.hasExplicitGrouping()) {
                 varNamesToKeep.add(layerConfig.explicitGroupingVarName!!)

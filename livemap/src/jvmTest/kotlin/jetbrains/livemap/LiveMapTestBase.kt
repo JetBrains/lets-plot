@@ -79,7 +79,7 @@ abstract class LiveMapTestBase {
         val entity = componentManager.createEntity(name)
         componentTypes.forEach { aType ->
             try {
-                entity.addComponents{ + aType.newInstance() }
+                entity.addComponents{ + aType.getDeclaredConstructor().newInstance() }
             } catch (e: InstantiationException) {
                 throw IllegalStateException(e)
             } catch (e: IllegalAccessException) {
