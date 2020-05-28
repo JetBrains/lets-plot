@@ -29,8 +29,17 @@
 - [Installation](#inst)
 - [Quick start with Jupyter](#start)
 - [Examples](#examples)
+    - [Quickstart and more](#quickstart)
+    - [GeoPandas support](#geopandas)
+    - [Nonstandard plotting functions](#nonstandard)
+    - [GGBanch](#ggbanch)
+    - [Data sampling](#sampling)
+    - [Cloud-based notebooks](#cloud_based)
+    - [Interesting demos](#interesting)
+
 - [SVG/HTML export to file](#export)
 - [Offline mode](#offline)
+- [Scientific mode in IntelliJ IDEA / PyCharm](#pycharm)
 - [What is new in 1.4.0](#new)
 
 <a name="Implementation Overview" id="overview"></a>
@@ -100,6 +109,9 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 
 Try the following examples to study more features of the `Lets-Plot` library.
 
+<a name="Quickstart" id="quickstart"></a>
+### Quickstart and more
+
 * Quickstart in Jupyter: [quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb)
 
 * Histogram, density plot, box plot and facets:
@@ -130,6 +142,7 @@ Try the following examples to study more features of the `Lets-Plot` library.
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
   
   
+<a name="GeoPandas" id="geopandas"></a>
 ### GeoDataFrame support ([Shapely](https://pypi.org/project/Shapely/) and [GeoPandas](https://geopandas.org)). 
   
 GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
@@ -167,6 +180,7 @@ The following features of `Lets-Plot` are not available or have different implem
 
     Example: [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb)
 
+<a name="GGBanch" id="ggbanch"></a>
 ### GGBanch
 
 GGBunch allows to show a collection of plots on one figure. Each plot in the collection can have arbitrary location and size. There is no automatic layout inside the bunch.
@@ -177,6 +191,7 @@ Examples:
 * [scatter_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/scatter_matrix.ipynb)
 
 
+<a name="Data sampling" id="sampling"></a>
 ### Data sampling 
 
 Sampling is a special technique of data transformation, which helps dealing with large datasets and overplotting.
@@ -184,6 +199,7 @@ Sampling is a special technique of data transformation, which helps dealing with
 [Learn more](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md) about sampling in Lets-Plot. 
   
 
+<a name="Cloud-based notebooks" id="cloud_based"></a>
 ### Cloud-based notebooks
 
 Examples:
@@ -193,6 +209,7 @@ Examples:
 * [JetBrains Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP)
   
 
+<a name="Interesting demos" id="interesting"></a>
 ### Interesting demos
 
 A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) using `Lets-Plot` library for visualization.    
@@ -246,6 +263,17 @@ from lets_plot import *
 
 LetsPlot.setup_html(offline=True)
 ```
+ 
+  
+<a name="Scientific mode in PyCharm" id="pycharm"></a>
+## Scientific mode in IntelliJ IDEA / PyCharm
+
+Plugin "Lets-Plot in SciView" is available at the JetBrains Plugin Repository.
+
+The plugin adds support for interactive plots in IntelliJ-based IDEs with the enabled _Scientific mode_.
+
+To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview).
+
 
 <a name="What is new" id="new"></a>
 ## What is new in 1.4.0

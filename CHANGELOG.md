@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
  - corner tooltips.
- - Fixed importing of `__version__`
- - Performance improvement (up to 3X)
- - [Lets-Plot in SciView](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview) for IntelliJ IDEA / PyCharm is available. 
  
  
+## [1.4.2] - 2020-05-28
+### Added
+ - Plugin for IntelliJ IDEA / PyCharm is available. For more info see the plugin homepage: [Lets-Plot in SciView](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview).  
+
+### Changed
+ - Plots build time reduced (up to 4X)
+
+
 ## [1.4.1] - 2020-05-20
 ### Added
  - `geom_smooth`: automatic sampling when n>1000 and the method is LOESS.
