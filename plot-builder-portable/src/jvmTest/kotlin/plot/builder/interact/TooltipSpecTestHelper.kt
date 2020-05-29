@@ -9,6 +9,7 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
@@ -81,7 +82,8 @@ open class TooltipSpecTestHelper {
             GeomInteraction.createContextualMapping(
                 tipAes,
                 if (axisTooltipEnabled) axisAes else emptyList(),
-                mappedDataAccessMock.mappedDataAccess
+                mappedDataAccessMock.mappedDataAccess,
+                DataFrame.Builder().build()
             ),
             DoubleVector.ZERO
         ).create(geomTarget)

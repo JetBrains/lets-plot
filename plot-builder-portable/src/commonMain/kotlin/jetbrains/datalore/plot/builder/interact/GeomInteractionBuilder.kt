@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.interact
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
+import jetbrains.datalore.plot.base.interact.ValueSource
 
 class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     lateinit var locatorLookupSpace: LookupSpace
@@ -17,11 +18,12 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     private var myAxisTooltipVisibilityFromFunctionKind: Boolean = false
     private var myAxisTooltipVisibilityFromConfig: Boolean? = null
     private var myAxisAesFromFunctionKind: List<Aes<*>>? = null
-    private lateinit var myToolipAxisAes: List<Aes<*>>
+    private lateinit var myTooltipAxisAes: List<Aes<*>>
     private lateinit var myTooltipAes: List<Aes<*>>
+    private var myTooltipValueSources: List<ValueSource>? = null
 
     val axisAesListForTooltip: List<Aes<*>>
-        get() = myToolipAxisAes
+        get() = myTooltipAxisAes
 
     val aesListForTooltip: List<Aes<*>>
         get() = myTooltipAes
@@ -35,6 +37,9 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         else
             myAxisTooltipVisibilityFromConfig!!
 
+    val valueSourcesForTooltip: List<ValueSource>?
+        get() = myTooltipValueSources
+
     fun showAxisTooltip(isTrue: Boolean): GeomInteractionBuilder {
         myAxisTooltipVisibilityFromConfig = isTrue
         return this
@@ -46,7 +51,12 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     }
 
     fun axisAes(axisAes: List<Aes<*>>): GeomInteractionBuilder {
-        myToolipAxisAes = axisAes
+        myTooltipAxisAes = axisAes
+        return this
+    }
+
+    fun tooltipValueSources(tooltipValueSources: List<ValueSource>?): GeomInteractionBuilder {
+        myTooltipValueSources = tooltipValueSources
         return this
     }
 
@@ -90,7 +100,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     }
 
     private fun initDefaultTooltips() {
-        myToolipAxisAes = if (!isAxisTooltipEnabled) emptyList() else getAxisFromFunctionKind
+        myTooltipAxisAes = if (!isAxisTooltipEnabled) emptyList() else getAxisFromFunctionKind
         myTooltipAes = mySupportedAesList - getAxisFromFunctionKind
     }
 

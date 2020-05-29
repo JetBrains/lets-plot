@@ -17,11 +17,12 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.sampling.Sampling
+import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP
+import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
@@ -45,7 +46,7 @@ class LayerConfig(
     val constantsMap: Map<Aes<*>, Any>
     val statKind: StatKind
     private val mySamplings: List<Sampling>?
-    val tooltipAes: List<Aes<*>>?
+    val tooltips: List<TooltipLineSpecification>?
 
     var ownData: DataFrame? = null
         private set
@@ -134,8 +135,12 @@ class LayerConfig(
             consumedAesSet.addAll(stat.consumes())
         }
 
-        // tooltip aes list
-        this.tooltipAes = getTooltipAesList(aesMappings)
+        // tooltip list
+        tooltips = if (has(TOOLTIPS)) {
+            TooltipConfig(getMap(TOOLTIPS)).createTooltips()
+        } else {
+            null
+        }
 
         val varBindings = LayerConfigUtil.createBindings(
             combinedData,
@@ -202,28 +207,6 @@ class LayerConfig(
 
     fun getScaleForAes(aes: Aes<*>): Scale<*>? {
         return varBindings.find { it.aes == aes }?.scale
-    }
-
-    private fun getTooltipAesList(mappings: Map<Aes<*>, DataFrame.Variable>): List<Aes<*>>? {
-        // tooltip list is not defined - will be used default tooltips
-        if (!has(TOOLTIP)) {
-            return null
-        }
-
-        val tooltipAesSpec = getStringList(TOOLTIP)
-
-        // check if all elements of list are aes
-        (tooltipAesSpec - Aes.values().map(Aes<*>::name)).firstOrNull { error("${it} is not aes name ") }
-
-        // detach aes
-        val tooltipAesList = Aes.values().filter { it.name in tooltipAesSpec }
-
-        // check if aes list matches to mapping
-        if (!mappings.keys.containsAll(tooltipAesList)) {
-            error("Tooltip aes list does not match mappings: [${(tooltipAesList - mappings.keys).joinToString()}]")
-        }
-
-        return tooltipAesList
     }
 
     private companion object {

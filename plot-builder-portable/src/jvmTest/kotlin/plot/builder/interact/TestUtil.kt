@@ -81,7 +81,6 @@ object TestUtil {
         val geomKind = GeomKind.POINT
         val lookupSpec = LookupSpec(lookupSpace, lookupStrategy)
         val contextualMapping = mock(ContextualMapping::class.java)
-
         return jetbrains.datalore.plot.builder.interact.loc.LayerTargetLocator(
             geomKind,
             lookupSpec,

@@ -13,6 +13,8 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
+import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
+import jetbrains.datalore.plot.builder.tooltip.VariableValue
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
@@ -112,21 +114,30 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 val layerData = layerConfig.ownData
 
                 if (!DataFrameUtil.variables(layerData!!).containsKey(varName)) {
-                    // don't drop if used in mapping
-                    if (layerConfig.hasVarBinding(varName) || layerConfig.isExplicitGrouping(varName)) {
-                        dropPlotVar = false
-                    }
-                    // don't drop if used for facets
-                    val facets = facets
-                    if (varName == facets.xVar) {
-                        dropPlotVar = false
-                    }
-                    if (varName == facets.yVar) {
-                        dropPlotVar = false
+                    dropPlotVar = when {
+                        // don't drop if used in mapping
+                        layerConfig.hasVarBinding(varName) -> false
+                        layerConfig.isExplicitGrouping(varName) -> false
+                        // don't drop if used for facets
+                        varName == facets.xVar -> false
+                        varName == facets.yVar -> false
+                        else -> true
                     }
                     if (!dropPlotVar) {
                         break
                     }
+                }
+
+                // keep vars used in tooltips
+                val userTooltipVars = layerConfig.tooltips
+                    ?.flatMap(TooltipLineSpecification::data)
+                    ?.filterIsInstance<VariableValue>()
+                    ?.map(VariableValue::getVariableName)
+                    ?: emptyList()
+
+                if (userTooltipVars.contains(varName)) {
+                    dropPlotVar = false
+                    break
                 }
             }
 

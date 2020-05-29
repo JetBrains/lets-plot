@@ -7,6 +7,8 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.builder.tooltip.MappedAes
+import jetbrains.datalore.plot.builder.tooltip.VariableValue
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_OSM_ID_COLUMN
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
@@ -15,7 +17,6 @@ import jetbrains.datalore.plot.config.Option.Meta.MapJoin.ID
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -58,14 +59,15 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
-    fun haveTooltipAesList(expectedAesList : List<Aes<*>>?): SingleLayerAssert {
-        if (expectedAesList != null) {
-            assertTooltipAesListCount(expectedAesList.size)
-            for (aes in expectedAesList)
-                assertAesTooltip(aes)
+    fun haveTooltipList(expectedNames : List<String>?): SingleLayerAssert {
+        if (expectedNames != null) {
+            assertTooltipListCount(expectedNames.size)
+            for (aes in expectedNames)
+                assertExpectedTooltip(aes)
         }
         else {
-            assertNull(myLayer.tooltipAes)
+            val tooltipNames = getUserTooltipNames()
+            assertTrue(tooltipNames.isNullOrEmpty())
         }
         return this
     }
@@ -106,12 +108,31 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         fail("No binding $aes -> $varName")
     }
 
-    private fun assertAesTooltip(aes: Aes<*>) {
-        myLayer.tooltipAes?.contains(aes)?.let { assertTrue(it, "No tooltip for '${aes.name}' aes") }
+    private fun getUserAesTooltipNames(): List<String> {
+        return myLayer.tooltips
+            ?.flatMap { it.data }
+            ?.filterIsInstance<MappedAes>()
+            ?.map(MappedAes::getAesName)
+            ?: emptyList()
     }
 
-    private fun assertTooltipAesListCount(expectedCount: Int) {
-        assertEquals(expectedCount, myLayer.tooltipAes?.size, "Wrong size of tooltip aes list")
+    private fun getUserVariableNames(): List<String> {
+        return myLayer.tooltips
+            ?.flatMap { it.data }
+            ?.filterIsInstance<VariableValue>()?.map(VariableValue::getVariableName)
+            ?: emptyList()
+    }
+
+    private fun getUserTooltipNames(): List<String> {
+        return getUserAesTooltipNames() + getUserVariableNames()
+    }
+
+    private fun assertExpectedTooltip(name: String) {
+        assertTrue(getUserTooltipNames().contains(name), "No tooltip for var with name: '$name'")
+    }
+
+    private fun assertTooltipListCount(expectedCount: Int) {
+        assertEquals(expectedCount, getUserTooltipNames().size, "Wrong size of tooltip list")
     }
 
     companion object {

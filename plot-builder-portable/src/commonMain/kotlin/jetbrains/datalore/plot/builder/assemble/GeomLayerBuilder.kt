@@ -140,8 +140,7 @@ class GeomLayerBuilder {
         // (!) Positional aes scales have undefined `mapper` at this time because
         // dimensions of plot are not yet known.
         // Data Access shouldn't use aes mapper (!)
-        val dataAccess =
-            PointDataAccess(data, replacementBindings)
+        val dataAccess = PointDataAccess(data, replacementBindings)
 
         return MyGeomLayer(
             data,
@@ -154,7 +153,7 @@ class GeomLayerBuilder {
             myConstantByAes,
             dataAccess,
             myLocatorLookupSpec,
-            myContextualMappingProvider.createContextualMapping(dataAccess),
+            myContextualMappingProvider.createContextualMapping(dataAccess, data),
             myIsLegendDisabled
         )
     }
