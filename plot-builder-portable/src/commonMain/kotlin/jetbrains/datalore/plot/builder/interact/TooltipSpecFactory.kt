@@ -131,7 +131,11 @@ class TooltipSpecFactory(
                 myDataPoints.filterNot(DataPoint::isOutlier).mapNotNull(DataPoint::aes) - outlierAesList()
             )
             return myDataPoints.filter { dataPoint ->
-                dataPoint.aes == null || dataPoint.aes!! in generalAesList
+                when (dataPoint.aes){
+                    null -> true                // get all not aes (variables, text)
+                    in generalAesList -> true   // get all existed in prepared aes list (mapped aes)
+                    else -> false               // skip others (axis, outliers)
+                }
             }
         }
 
