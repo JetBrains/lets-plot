@@ -29,8 +29,7 @@ object GeomMeta {
         Aes.COLOR,
         Aes.FILL,
         Aes.ALPHA,
-        Aes.SHAPE,
-        Aes.MAP_ID
+        Aes.SHAPE
         // strokeWidth
     )
 
@@ -40,7 +39,6 @@ object GeomMeta {
         Aes.LINETYPE,
         Aes.COLOR,
         Aes.ALPHA,
-        Aes.MAP_ID,
         Aes.SPEED,
         Aes.FLOW
     )
@@ -51,8 +49,7 @@ object GeomMeta {
         Aes.LINETYPE,
         Aes.COLOR,
         Aes.FILL,
-        Aes.ALPHA,
-        Aes.MAP_ID
+        Aes.ALPHA
     )
 
     private val AREA = listOf(
@@ -167,8 +164,7 @@ object GeomMeta {
                 Aes.LINETYPE,
                 Aes.COLOR,
                 Aes.FILL,
-                Aes.ALPHA,
-                Aes.MAP_ID
+                Aes.ALPHA
             )
 
             GeomKind.AB_LINE -> listOf(
@@ -237,8 +233,7 @@ object GeomMeta {
                 Aes.LINETYPE,
                 Aes.COLOR,
                 Aes.FILL,
-                Aes.ALPHA,
-                Aes.MAP_ID
+                Aes.ALPHA
             )
 
             GeomKind.SEGMENT -> listOf(
@@ -262,12 +257,10 @@ object GeomMeta {
                 Aes.FONTFACE,
                 Aes.HJUST,
                 Aes.VJUST,
-                Aes.ANGLE,
-                Aes.MAP_ID
+                Aes.ANGLE
             )
 
             GeomKind.LIVE_MAP -> listOf( // ToDo: not static - depends on 'display mode'
-                Aes.MAP_ID,
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.FILL,
@@ -275,7 +268,9 @@ object GeomMeta {
                 Aes.SHAPE,
                 Aes.FRAME,
                 Aes.X,
-                Aes.Y
+                Aes.Y,
+                Aes.SYM_X,
+                Aes.SYM_Y
             )
 
             GeomKind.RASTER -> listOf(

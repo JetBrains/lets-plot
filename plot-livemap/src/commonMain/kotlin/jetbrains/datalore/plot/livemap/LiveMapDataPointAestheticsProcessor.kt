@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
@@ -14,9 +12,9 @@ import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayersConfigurator
+import jetbrains.datalore.plot.livemap.MapLayerKind.POINT
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.datalore.plot.livemap.MapLayerKind.POINT
 
 internal class LiveMapDataPointAestheticsProcessor(
     private val myAesthetics: Aesthetics,
@@ -25,17 +23,12 @@ internal class LiveMapDataPointAestheticsProcessor(
     private val myLayerKind: MapLayerKind = getLayerKind(liveMapOptions.displayMode)
     private val myGeodesic: Boolean = liveMapOptions.geodesic
     private val myFrameSpecified: Boolean = allAesMatch(myAesthetics, ::isFrameSet)
-    private val myLonLatInsideMapIdSpecified: Boolean = allAesMatch(myAesthetics, ::isLiveMapWithLonLat)
 
     val mapEntityBuilders: List<MapEntityBuilder>
         get() = (if (useMultiDataPoint()) processMultiDataPoints() else processDataPoints()).onEach { it.layerIndex = 0 }
 
     private fun isFrameSet(p: DataPointAesthetics): Boolean {
         return p.frame() != AesInitValue[Aes.FRAME]
-    }
-
-    private fun isLiveMapWithLonLat(p: DataPointAesthetics): Boolean {
-        return LonLatParser.parse(p.mapId().toString()) != null
     }
 
     private fun getLayerKind(displayMode: LivemapConstants.DisplayMode): MapLayerKind {
@@ -62,35 +55,21 @@ internal class LiveMapDataPointAestheticsProcessor(
 
     private fun processDataPoints(): List<MapEntityBuilder> {
         return myAesthetics.dataPoints()
-            .map { MapEntityBuilder(it, myLayerKind).apply { setIfNeeded(it) } }
+            .map { MapEntityBuilder(it, myLayerKind).apply { setIfNeeded() } }
     }
 
     private fun processMultiDataPoints(): List<MapEntityBuilder> {
         return MultiDataPointHelper
             .getPoints(myAesthetics, getSortingMode(myLayerKind))
-            .map { MapEntityBuilder(it, myLayerKind).apply { setIfNeeded(it.aes) } }
+            .map { MapEntityBuilder(it, myLayerKind).apply { setIfNeeded() } }
     }
 
     private fun useMultiDataPoint(): Boolean {
         return myLayerKind === MapLayerKind.PIE || myLayerKind === MapLayerKind.BAR
     }
 
-    private fun MapEntityBuilder.setIfNeeded(
-        p: DataPointAesthetics
-    ) {
-        setGeometryPointIfNeeded(p, this)
+    private fun MapEntityBuilder.setIfNeeded() {
         setGeodesicIfNeeded(this)
-    }
-
-    private fun setGeometryPointIfNeeded(p: DataPointAesthetics, mapEntityBuilder: MapEntityBuilder) {
-        var lonlat: Vec<LonLat>? = null
-        if (myLonLatInsideMapIdSpecified) {
-            lonlat = LonLatParser.parse(p.mapId().toString())
-        }
-
-        if (lonlat != null) {
-            mapEntityBuilder.setGeometryPoint(lonlat)
-        }
     }
 
     private fun setGeodesicIfNeeded(mapEntityBuilder: MapEntityBuilder) {

@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.config.TestUtil
+import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -554,28 +555,38 @@ class DropUnusedDataTest {
     }
 
     @Test
-    fun shouldNotDropMapIdMappingData() {
-        val spec = "{" +
-                "   'layers': [" +
-                "               {" +
-                "                  'data': {" +
-                "                             'name': ['New York']" +
-                "                          }," +
-                "                  'geom':  {" +
-                "                             'name': 'polygon'," +
-                "                             'mapping': {" +
-                "                                        'map_id': 'name'" +
-                "                                      }" +
-                "                           }" +
-                "               }" +
-                "           ]" +
-                "}"
+    fun shouldNotDropMapJoin() {
+        val spec = """
+{
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "polygon",
+      "data": {
+        "name": ["A", "B", "C"],
+        "value": [42, 23, 87]
+      },
+      "mapping": { "fill": "value" },
+      "map_data_meta": {
+        "geodataframe": {
+          "geometry": "coord"
+        }
+      },
+      "map": {
+        "id": ["A", "B", "C"],
+        "coord": [
+          "{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}",
+          "{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}",
+          "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"
+        ]
+      },
+      "map_join": ["name", "id"]
+    }
+  ]
+}
+}"""
 
-
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec,
-                mapOf(
-                        "name" to listOf("New York"))
-        )
+        val opts = parsePlotSpec(spec)
 
         TestUtil.checkOptionsClientSide(opts, 1)
 

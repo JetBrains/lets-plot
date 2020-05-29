@@ -40,12 +40,12 @@ class GeometryFromGeoDataFrameChange : GeometryFromGeoPositionsChange() {
             )
         }
 
-        val dataTable = mapSpec.getList(MapJoin.ID)
+        val dataTable = mapSpec.getList(MapJoin.MAP_ID)
             ?.zip(geometryTables)
-            ?.fold(mutableMapOf<String, MutableList<Any>>(), { dataFrame, (id, geometryTable) ->
+            ?.fold(mutableMapOf<String, MutableList<Any>>(), { dataFrame, (mapId, geometryTable) ->
                 dataFrame
                     .concat(geometryTable)
-                    .concat(MapJoin.ID, MutableList(geometryTable.rowCount) { id!! })
+                    .concat(MapJoin.DATA_ID, MutableList(geometryTable.rowCount) { mapId!! })
             })
             ?: geometryTables.fold(mutableMapOf<String, MutableList<Any>>(), { dataFrame, geometryTable ->
                 dataFrame.concat(geometryTable)

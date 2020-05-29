@@ -48,9 +48,13 @@ object Option {
         }
 
         object MapJoin {
-            // Column with keys used for join
-            const val ID = "__id__"
             const val MAP_JOIN_COLUMN = "__map_join_column__"
+            const val DATA_JOIN_COLUMN = "__data_join_column__"
+
+            // column in map used for join with data
+            const val MAP_ID = "__map_id__"
+            // generated data column for joined geometries from map
+            const val DATA_ID = "__data_id__"
         }
 
         object MappingAnnotation {
@@ -236,7 +240,6 @@ object Option {
 
     object Mapping {
         const val GROUP = "group"
-        val MAP_ID = toOption(Aes.MAP_ID)    // map_id is 'aes' but also used as option in geom_map()
         private val AES_BY_OPTION = HashMap<String, Aes<*>>()
         val REAL_AES_OPTION_NAMES: Iterable<String> = AES_BY_OPTION.keys
 

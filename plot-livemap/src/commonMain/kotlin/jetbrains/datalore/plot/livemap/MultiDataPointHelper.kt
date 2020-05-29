@@ -17,7 +17,7 @@ internal class MultiDataPointHelper private constructor(
             val builders = HashMap<Any, MultiDataPointBuilder>()
 
             fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder =
-                builders.getOrPut(p.mapId(), { MultiDataPointBuilder(p, sortingMode) })
+                builders.getOrPut(p.group()!!, { MultiDataPointBuilder(p, sortingMode) })
 
             aesthetics.dataPoints().forEach { fetchBuilder(it).add(it) }
             return builders.values.map { it.build() }
@@ -37,7 +37,7 @@ internal class MultiDataPointHelper private constructor(
         private var myUsesOrder: Boolean = false
 
         internal fun add(p: DataPointAesthetics) {
-            if (p.x() != 0.0) {
+            if (p.symX() != 0.0) {
                 myUsesOrder = true
             }
 
@@ -54,7 +54,7 @@ internal class MultiDataPointHelper private constructor(
             return MultiDataPoint(
                 aes = myAes,
                 indices = myPoints.map { it.index() },
-                values = myPoints.map { it.y()!! },
+                values = myPoints.map { it.symY()!! },
                 colors = myPoints.map { it.fill()!! }
             )
         }
@@ -72,8 +72,8 @@ internal class MultiDataPointHelper private constructor(
         }
 
         companion object {
-            private val BY_ORDER: (DataPointAesthetics) -> Double = { it.x()!! }
-            private val BY_VALUE: (DataPointAesthetics) -> Double = { it.y()!! }
+            private val BY_ORDER: (DataPointAesthetics) -> Double = { it.symX()!! }
+            private val BY_VALUE: (DataPointAesthetics) -> Double = { it.symY()!! }
         }
     }
 

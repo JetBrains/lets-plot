@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
+import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
@@ -96,13 +97,15 @@ class LayerConfig(
 
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>?
-        if (GeoPositionsDataUtil.hasGeoPositionsData(this) && myClientSide) {
+        if (has(GEO_POSITIONS) && myClientSide) {
             // join dataset and geo-positions data
             val dataAndMapping = GeoPositionsDataUtil.initDataAndMappingForGeoPositions(
                 geomProto.geomKind,
                 combinedData,
                 GeoPositionsDataUtil.getGeoPositionsData(this),
-                combinedMappings
+                combinedMappings,
+                getString(MapJoin.DATA_JOIN_COLUMN)!!,
+                getString(MapJoin.MAP_JOIN_COLUMN)!!
             )
             combinedData = dataAndMapping.first
             aesMappings = dataAndMapping.second
@@ -166,7 +169,7 @@ class LayerConfig(
         else
             null
 
-        if (fieldName == null && GeoPositionsDataUtil.hasGeoPositionsData(this)) {
+        if (fieldName == null && has(GEO_POSITIONS)) {
             // 'default' group is important for 'geom_map'
             val groupVar = variables(data)["group"]
             if (groupVar != null) {

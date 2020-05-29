@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.AestheticsDataHelper
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.MULTIPOLYGON
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
@@ -36,7 +35,8 @@ class PolygonConverterTest {
 
     @Test
     fun withMapIdAndGeometry_ShouldUseGeometry() {
-        aesData.builder().mapId(constant("New York City"))
+        aesData.builder()
+            // .mapId(constant("New York City")) // TODO: Fix MAP_ID
 
         matcher.geometry(geometryEq(Boundary.create(MULTIPOLYGON)))
 

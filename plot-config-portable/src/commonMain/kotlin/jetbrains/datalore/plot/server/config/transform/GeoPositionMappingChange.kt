@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.server.config.transform
 
-import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_OSM_ID_COLUMN
 import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_REGION_COLUMN
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
@@ -16,9 +15,13 @@ import jetbrains.datalore.plot.config.Option.Meta.GeoReference
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.MapJoin
 import jetbrains.datalore.plot.config.Option.Plot
+import jetbrains.datalore.plot.config.getMap
+import jetbrains.datalore.plot.config.has
+import jetbrains.datalore.plot.config.read
 import jetbrains.datalore.plot.config.transform.SpecChange
 import jetbrains.datalore.plot.config.transform.SpecChangeContext
 import jetbrains.datalore.plot.config.transform.SpecSelector
+import jetbrains.datalore.plot.config.write
 
 class GeoPositionMappingChange : SpecChange {
 
@@ -32,7 +35,7 @@ class GeoPositionMappingChange : SpecChange {
                 mapJoinIds, // user defined column via parameter `map_join`
                 mapSpec.read(GeoReference.REQUEST), // Regions object from our geocoding
                 mapSpec.read(MAP_REGION_COLUMN) // ???
-            ).firstOrNull()?.let { mapSpec.write(MapJoin.ID) { it } }
+            ).firstOrNull()?.let { mapSpec.write(MapJoin.MAP_ID) { it } }
 
             spec.read(MAP_DATA_META, GeoDataFrame.TAG, GEOMETRY_COLUMN_NAME)
                 ?.let { geometryColumnName -> mapSpec.read(geometryColumnName as String)!! }
@@ -40,12 +43,12 @@ class GeoPositionMappingChange : SpecChange {
         }
 
         if (spec.has(MAP_DATA_META, GeoReference.TAG)) {
-            mapSpec.write(MapJoin.ID) { mapSpec.read(GeoReference.REQUEST)!! }
+            mapSpec.write(MapJoin.MAP_ID) { mapSpec.read(GeoReference.REQUEST)!! }
             mapSpec.write(MAP_OSM_ID_COLUMN) { mapSpec.read(GeoReference.OSM_ID)!! }
         }
 
         if (spec.has(MAP_DATA_META, GeoDict.TAG)) {
-            mapJoinIds?.let { mapSpec.write(MapJoin.ID) { it } }
+            mapJoinIds?.let { mapSpec.write(MapJoin.MAP_ID) { it } }
         }
     }
 

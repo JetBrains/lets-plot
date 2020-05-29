@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
 import jetbrains.datalore.plot.builder.tooltip.VariableValue
 import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
 
@@ -185,17 +186,11 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             varsToKeep.removeAll(notRenderedVars)
             varsToKeep.addAll(renderedVars)
 
-            val varNamesToKeep = HashSet<String>()
-            for (`var` in varsToKeep) {
-                varNamesToKeep.add(`var`.name)
-            }
-            varNamesToKeep.add(Stats.GROUP.name)
-            facets.xVar?.let(varNamesToKeep::add)
-            facets.yVar?.let(varNamesToKeep::add)
-
-            if (layerConfig.hasExplicitGrouping()) {
-                varNamesToKeep.add(layerConfig.explicitGroupingVarName!!)
-            }
+            val varNamesToKeep = HashSet<String>() +
+                    varsToKeep.map(Variable::name) +
+                    Stats.GROUP.name +
+                    listOfNotNull(layerConfig.mergedOptions.getList(MAP_JOIN)?.get(0) as? String) +
+                    listOfNotNull(facets.xVar, facets.yVar, layerConfig.explicitGroupingVarName)
 
             layerData = DataFrameUtil.removeAllExcept(layerData!!, varNamesToKeep)
             layerConfig.replaceOwnData(layerData)

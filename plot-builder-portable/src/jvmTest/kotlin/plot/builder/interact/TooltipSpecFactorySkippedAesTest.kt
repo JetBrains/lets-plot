@@ -34,15 +34,4 @@ class TooltipSpecFactorySkippedAesTest : jetbrains.datalore.plot.builder.interac
         assertTooltipsCount(1)
         assertLines(0, widthMapping.longTooltipText())
     }
-
-    @Test
-    fun shouldNotSkipMapIdMappingVar_whenOtherMappingWithSameVarExists() {
-        val commonLabel = "foo"
-        addMappedData(variable().name(commonLabel).mapping(Aes.MAP_ID))
-        addMappedData(variable().name(commonLabel).mapping(Aes.FILL))
-
-        buildTooltipSpecs()
-
-        assertTooltipsCount(1)
-    }
 }

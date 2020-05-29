@@ -251,10 +251,7 @@ object PlotConfigClientSideUtil {
         }
 
         // remove auto generated mappings
-        aesListForTooltip.removeAll { layerConfig.getScaleForAes(it)?.name == MapJoin.ID }
-
-        // remove map_id mapping
-        aesListForTooltip.removeAll { it === Aes.MAP_ID }
+        aesListForTooltip.removeAll { layerConfig.getScaleForAes(it)?.name == MapJoin.MAP_ID }
 
         return aesListForTooltip
     }

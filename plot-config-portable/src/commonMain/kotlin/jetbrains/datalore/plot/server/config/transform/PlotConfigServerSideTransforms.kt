@@ -46,10 +46,6 @@ object PlotConfigServerSideTransforms {
                 MapJoinChange()
             )
             .change(
-                LonLatSpecInMappingSpecChange.specSelector(),
-                LonLatSpecInMappingSpecChange()
-            )
-            .change(
                 GeoDataFrameMappingChange.specSelector(),
                 GeoDataFrameMappingChange()
             )
