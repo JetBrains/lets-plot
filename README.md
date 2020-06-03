@@ -36,6 +36,9 @@ To learn more about creating plots in a JVM environment see [README_DEV.md](http
 
 ## "Lets-Plot in SciView" plugin for IntelliJ IDEA and PyCharm
 
+[![JetBrains Plugins](https://img.shields.io/jetbrains/plugin/v/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
+[![JetBrains plugins](https://img.shields.io/jetbrains/plugin/d/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
+
 The plugin adds support for interactive plots in IntelliJ-based IDEs with the enabled _Scientific mode_.
 
 The _Scientific mode_ in PyCharm and in IntelliJ IDEA Python plugin provides support for interactive scientific computing and data visualization.
@@ -45,6 +48,8 @@ To learn more about _Scientific mode_ check these help pages:
 * [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
 To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview). 
+
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_quickstart.png" alt="Couldn't load pycharm_quickstart.png" width="537" height="188"/>
 
 ## License
 

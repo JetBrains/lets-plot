@@ -268,11 +268,16 @@ LetsPlot.setup_html(offline=True)
 <a name="Scientific mode in PyCharm" id="pycharm"></a>
 ## Scientific mode in IntelliJ IDEA / PyCharm
 
+[![JetBrains Plugins](https://img.shields.io/jetbrains/plugin/v/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
+[![JetBrains plugins](https://img.shields.io/jetbrains/plugin/d/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
+
 Plugin "Lets-Plot in SciView" is available at the JetBrains Plugin Repository.
 
 The plugin adds support for interactive plots in IntelliJ-based IDEs with the enabled _Scientific mode_.
 
 To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview).
+
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_quickstart.png" alt="Couldn't load pycharm_quickstart.png" width="537" height="188"/>
 
 
 <a name="What is new" id="new"></a>
