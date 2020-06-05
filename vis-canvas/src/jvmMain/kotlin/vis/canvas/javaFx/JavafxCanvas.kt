@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.vis.canvas.javaFx
 
-import javafx.embed.swing.JFXPanel
 import javafx.scene.image.Image
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.geometry.Vector
@@ -25,12 +24,6 @@ private constructor(
                 pixelRatio) {
 
     companion object {
-        init {
-            //initialize Toolkit
-            // ToDo: remove when switching to SwingJfxPanel
-            JFXPanel()
-        }
-
         fun create(size: Vector, pixelRatio: Double): JavafxCanvas {
             return JavafxCanvas(NativeCanvas(), size, pixelRatio)
         }
