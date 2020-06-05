@@ -12,7 +12,6 @@ object GeoPositionField {
     // fixed columns in 'boundaries' of 'centroids' data frames
     const val POINT_X = "lon"
     const val POINT_X1 = "longitude"
-    const val POINT_X2 = "long"
     const val POINT_Y = "lat"
     const val POINT_Y1 = "latitude"
 

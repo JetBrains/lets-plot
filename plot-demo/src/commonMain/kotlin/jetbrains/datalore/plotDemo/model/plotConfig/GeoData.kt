@@ -12,30 +12,64 @@ class GeoData : PlotConfigDemoBase() {
 
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            mapJoinDict(),
-            mapJoinPair(),
-            mapIdAndMapJoinNoneString(),
-            emptyDataGdf(),
-            emptyMapGdf(),
-            geomText(),
-            mixedShapesGeom("polygon"),
-            mixedShapesGeom("point"),
-            mixedShapesGeom("path"),
-            mapRegionId()
+            ttt()
+//            mapGeoDataFrame_MapJoin(),
+//            mapGeoDataFrame_NoMapJoin_MixedShapes("polygon"),
+//            mapGeoDataFrame_NoMapJoin_MixedShapes("point"),
+//            mapGeoDataFrame_NoMapJoin_MixedShapes("path"),
+//            mapGeoDataFrame_Empty(),
+//            mapGeoDict_MapJoin(),
+//            dataGeoDataFrame_Empty(),
+//            dataGeoDataFrame_NoMapJoin_GeomText()
         )
     }
 
     companion object {
-        private const val pointA = """{\"type\": \"Point\", \"coordinates\": [12.0, 22.0]}"""
-        private const val pointB = """{\"type\": \"Point\", \"coordinates\": [25.0, 11.0]}"""
+        private const val pointA = """{\"type\": \"Point\", \"coordinates\": [0.0, 0.0]}"""
+        private const val pointB = """{\"type\": \"Point\", \"coordinates\": [10.0, 10.0]}"""
         private const val lineA = """{\"type\": \"LineString\", \"coordinates\": [[15.0, 21.0], [29, 14], [33, 19]]}"""
         private const val lineB = """{\"type\": \"LineString\", \"coordinates\": [[3.0, 3.0], [7, 7], [10, 10]]}"""
         private const val multipolygon =
             """{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"""
 
-        private fun mapJoinDict(): Map<String, Any> {
+
+        fun ttt(): MutableMap<String, Any> {
+            val point = """{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}"""
+            val multiPoint = """{\"type\": \"MultiPoint\", \"coordinates\": [[3.0, 15.0], [6.0, 13.0]]}"""
+            val lineString = """{\"type\": \"LineString\", \"coordinates\": [[0.0, 0.0], [5.0, 5.0]]}"""
+            val multiLineString = """{\"type\": \"MultiLineString\", \"coordinates\": [[[10.0, 0.0], [15.0, 5.0]], [[10.0, 5.0], [15.0, 0.0]]]}"""
+            val polygon = """{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}"""
+            val multipolygon = """{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"""
+            val gdf = """
+{
+    "kind": ["Point", "MPoint", "Line", "MLine", "Polygon", "MPolygon"],
+    "coord": ["$point", "$multiPoint", "$lineString", "$multiLineString", "$polygon", "$multipolygon"]
+}
+"""
+            val spec = """
+            |{
+            |    "kind": "plot", 
+            |    "layers": [{
+            |        "geom": "polygon",
+            |        "data": {
+            |            "fig": ["Polygon", "MPolygon", "C"],
+            |            "value": [42, 23, 66]
+            |        },
+            |        "mapping": {"fill": "value"},
+            |        "map": $gdf,
+            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |        "map_join": ["fig", "kind"]
+            |    }]
+            |}
+        """.trimMargin()
+            return parsePlotSpec(spec)
+
+        }
+
+        private fun mapGeoDict_MapJoin(): Map<String, Any> {
             val spec = """
 {
+  "ggtitle": {"text": "mapJoinDict"},
   "ggsize": {
     "width": 500,
     "height": 300
@@ -64,9 +98,10 @@ class GeoData : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        private fun mapJoinPair(): Map<String, Any> {
+        private fun mapGeoDataFrame_MapJoin(): Map<String, Any> {
             val spec = """
             |{
+            |    "ggtitle": {"text": "mapGeoDataFrame_MapJoin"},
             |    "kind": "plot", 
             |    "layers": [{
             |        "geom": "point", 
@@ -85,33 +120,10 @@ class GeoData : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        private fun mapIdAndMapJoinNoneString(): Map<String, Any> {
-            val spec = """
-            |{
-            |    "kind": "plot", 
-            |    "layers": [{
-            |        "geom": "point", 
-            |        "data": {"labels": ["A", "B"], "values": [12, 3]}, 
-            |        "mapping": {
-            |            "color": "values", 
-            |            "map_id": "labels"
-            |        }, 
-            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}}, 
-            |        "map_join": [null, "map_names"], 
-            |        "map": {
-            |            "map_names": ["A", "B"], 
-            |            "coord": ["$pointA", "$pointB"]
-            |        }
-            |    }]
-            |}            
-        """.trimMargin()
-
-            return parsePlotSpec(spec)
-        }
-
-        fun emptyDataGdf(): MutableMap<String, Any> {
+        fun dataGeoDataFrame_Empty(): MutableMap<String, Any> {
             val spec = """
                 |{
+                |   "ggtitle": {"text": "emptyDataGdf"},
                 |    "kind": "plot", 
                 |    "layers": [{
                 |        "geom": "polygon", 
@@ -127,9 +139,10 @@ class GeoData : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun emptyMapGdf(): MutableMap<String, Any> {
+        fun mapGeoDataFrame_Empty(): MutableMap<String, Any> {
             val spec = """
                 |{
+                |   "ggtitle": {"text": "mapGeoDataFrame_Empty"},
                 |    "kind": "plot", 
                 |    "layers": [{
                 |        "geom": "polygon", 
@@ -145,9 +158,10 @@ class GeoData : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun geomText(): MutableMap<String, Any> {
+        fun dataGeoDataFrame_NoMapJoin_GeomText(): MutableMap<String, Any> {
             val spec = """
                 |{
+                |   "ggtitle": {"text": "dataGeoDataFrame_GeomText"},
                 |    "kind": "plot", 
                 |    "layers": [{
                 |        "geom": "text", 
@@ -163,38 +177,10 @@ class GeoData : PlotConfigDemoBase() {
             return parsePlotSpec(spec)
         }
 
-        fun mapRegionId(): MutableMap<String, Any> {
-            val spec = """
-                |{
-                |    "kind": "plot", 
-                |    "layers": [{
-                |        "geom": "point", 
-                |        "map_data_meta": {"geodataframe": {"geometry": "coord"}}, 
-                |        "map_join": ["labels", "map_names"],
-                |        "mapping": {
-                |            "color": "values", 
-                |            "map_id": "labels"
-                |        }, 
-                |        "data": {
-                |            "labels": ["A", "B"], 
-                |            "values": [12, 3]
-                |        }, 
-                |        "map": {
-                |            "map_names": ["A", "B"], 
-                |            "coord": [
-                |                "$pointA", 
-                |                "$pointB"
-                |            ]
-                |        }
-                |    }]
-                |}
-                """.trimMargin()
-            return parsePlotSpec(spec)
-        }
-
-        fun mixedShapesGeom(geomName: String): MutableMap<String, Any> {
+        fun mapGeoDataFrame_NoMapJoin_MixedShapes(geomName: String): MutableMap<String, Any> {
             val plotSpec = """
                 |{
+                |   "ggtitle": {"text": "mapGeoDataFrame_MixedShapes geom_$geomName"},
                 |    "kind": "plot", 
                 |    "layers": [{
                 |        "geom": "$geomName", 

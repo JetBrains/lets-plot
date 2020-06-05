@@ -9,7 +9,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.tooltip.MappedAes
 import jetbrains.datalore.plot.builder.tooltip.VariableValue
-import jetbrains.datalore.plot.config.GeoPositionsDataUtil.MAP_OSM_ID_COLUMN
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRIES
@@ -83,10 +82,6 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
 
     internal fun haveMapGeometries(expectedGeometries: List<*>): SingleLayerAssert {
         return haveMapValues(GEOMETRIES, expectedGeometries)
-    }
-
-    internal fun haveMapGeocode(expectedGeocode: List<*>): SingleLayerAssert {
-        return haveMapValues(MAP_OSM_ID_COLUMN, expectedGeocode)
     }
 
     private fun haveMapValues(key: String, expectedMapValues: List<*>): SingleLayerAssert {

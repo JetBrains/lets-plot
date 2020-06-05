@@ -29,18 +29,11 @@ object Option {
         }
 
         object GeoDataFrame {
-            const val TAG = "geodataframe"
-            const val GEOMETRY_COLUMN_NAME = "geometry"
+            const val GDF = "geodataframe"
+            const val GEOMETRY = "geometry"
 
             // Column with geometries extracted from GeoDataFrame. Can be used either in DATA and MAP
             const val GEOMETRIES = "__geometry__"
-        }
-
-        object GeoReference {
-            const val TAG = "georeference"
-            const val REQUEST = "request"
-            const val MAP_REGION_COLUMN = "region"
-            const val OSM_ID = "id"
         }
 
         object GeoDict {
@@ -48,13 +41,8 @@ object Option {
         }
 
         object MapJoin {
-            const val MAP_JOIN_COLUMN = "__map_join_column__"
-            const val DATA_JOIN_COLUMN = "__data_join_column__"
-
             // column in map used for join with data
             const val MAP_ID = "__map_id__"
-            // generated data column for joined geometries from map
-            const val DATA_ID = "__data_id__"
         }
 
         object MappingAnnotation {

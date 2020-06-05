@@ -41,18 +41,6 @@ object PlotConfigServerSideTransforms {
                 ReplaceDataVectorsInAesMappingChange.specSelector(),
                 ReplaceDataVectorsInAesMappingChange()
             )
-            .change(
-                MapJoinChange.specSelector(),
-                MapJoinChange()
-            )
-            .change(
-                GeoDataFrameMappingChange.specSelector(),
-                GeoDataFrameMappingChange()
-            )
-            .change(
-                GeoPositionMappingChange.specSelector(),
-                GeoPositionMappingChange()
-            )
             .build()
     }
 }

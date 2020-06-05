@@ -21,8 +21,8 @@ import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder.Companion.NON_AREA_GEOM
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.builder.tooltip.CompositeValue
-import jetbrains.datalore.plot.config.Option.Meta.MapJoin
 import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
+import jetbrains.datalore.plot.config.Option.Meta.MapJoin
 
 object PlotConfigClientSideUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -131,6 +131,10 @@ object PlotConfigClientSideUtil {
 
         if (layerConfig.hasExplicitGrouping()) {
             layerBuilder.groupingVarName(layerConfig.explicitGroupingVarName!!)
+        }
+
+        layerConfig.mergedOptions.dataJoinVariable()?.let {
+            layerBuilder.pathIdVarName(it)
         }
 
         // variable bindings

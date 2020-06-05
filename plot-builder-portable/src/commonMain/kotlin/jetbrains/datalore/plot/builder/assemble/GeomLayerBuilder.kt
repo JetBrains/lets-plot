@@ -36,6 +36,7 @@ class GeomLayerBuilder {
     private lateinit var myPosProvider: PosProvider
     private lateinit var myGeomProvider: GeomProvider
     private var myGroupingVarName: String? = null
+    private var myPathIdVarName: String? = null
     private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
 
     private var myDataPreprocessor: ((DataFrame) -> DataFrame)? = null
@@ -71,6 +72,11 @@ class GeomLayerBuilder {
 
     fun groupingVarName(v: String): GeomLayerBuilder {
         myGroupingVarName = v
+        return this
+    }
+
+    fun pathIdVarName(v: String): GeomLayerBuilder {
+        myPathIdVarName = v
         return this
     }
 
@@ -148,7 +154,7 @@ class GeomLayerBuilder {
             myPosProvider,
 //            handledAes(),
             myGeomProvider.renders(),
-            GroupingContext(data, myBindings, myGroupingVarName, handlesGroups()).groupMapper,
+            GroupingContext(data, myBindings, myGroupingVarName, myPathIdVarName, handlesGroups()).groupMapper,
             replacementBindings.values,
             myConstantByAes,
             dataAccess,
@@ -276,6 +282,7 @@ class GeomLayerBuilder {
                                 transformedData,
                                 builder.myBindings,
                                 builder.myGroupingVarName,
+                                builder.myPathIdVarName,
                                 true
                             )
                         val dataAndGroupingContext = DataProcessing.buildStatData(
