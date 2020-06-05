@@ -1666,6 +1666,7 @@ def geom_density(mapping=None, data=None, stat=None, position=None, show_legend=
         Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
         5 = "longdash", 6 = "twodash"
     - fill : color of geometry filling
+    - weight : used by "density" stat to compute weighted density.
 
     Examples
     ---------
