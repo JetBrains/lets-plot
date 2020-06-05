@@ -29,15 +29,13 @@ open class Histogram : PlotConfigDemoBase() {
         private val DATA =
             data()  // make it stable between calls
 
-        private fun data(): Map<String, List<*>> {
+        fun data(): Map<String, List<*>> {
             val count = 100
 
             val xs = DemoUtil.gauss(count, 12, 0.0, 5.0)
             val weights = ArrayList<Double>()
             for (x in xs) {
                 weights.add(if (x < 0.0) 2.0 else 0.5);
-//                weights.add(2.0);
-//                weights.add(abs(x))
             }
             val map = HashMap<String, List<*>>()
             map["x"] = xs
