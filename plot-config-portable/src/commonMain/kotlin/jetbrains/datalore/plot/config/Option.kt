@@ -13,6 +13,7 @@ object Option {
 
     object Meta {
         const val KIND = "kind"
+        const val NAME = "name"
         const val DATA_META = "data_meta"
         const val MAP_DATA_META = "map_data_meta"
 
@@ -183,7 +184,7 @@ object Option {
     }
 
     object Scale {
-        const val NAME = "name"
+        const val NAME = Meta.NAME
         const val AES = "aesthetic"
         const val BREAKS = "breaks"
         const val LABELS = "labels"
@@ -229,7 +230,7 @@ object Option {
     }
 
     object Facet {
-        const val NAME = "name"
+        const val NAME = Meta.NAME
         const val X = "x"
         const val Y = "y"
     }
