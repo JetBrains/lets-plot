@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
@@ -12,7 +13,6 @@ import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayersConfigurator
-import jetbrains.datalore.plot.livemap.MapLayerKind.POINT
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
 import jetbrains.livemap.api.LayersBuilder
 
@@ -34,7 +34,7 @@ internal class LiveMapDataPointAestheticsProcessor(
     private fun getLayerKind(displayMode: LivemapConstants.DisplayMode): MapLayerKind {
         return when (displayMode) {
             LivemapConstants.DisplayMode.POLYGON -> MapLayerKind.POLYGON
-            LivemapConstants.DisplayMode.POINT -> POINT
+            LivemapConstants.DisplayMode.POINT -> MapLayerKind.POINT
             LivemapConstants.DisplayMode.PIE -> MapLayerKind.PIE
             LivemapConstants.DisplayMode.HEATMAP -> MapLayerKind.HEATMAP
             LivemapConstants.DisplayMode.BAR -> MapLayerKind.BAR
@@ -55,21 +55,26 @@ internal class LiveMapDataPointAestheticsProcessor(
 
     private fun processDataPoints(): List<MapEntityBuilder> {
         return myAesthetics.dataPoints()
-            .map { MapEntityBuilder(it, myLayerKind).apply { setIfNeeded() } }
+            .map { MapEntityBuilder(it, myLayerKind).apply { setIfNeeded(it) } }
     }
 
     private fun processMultiDataPoints(): List<MapEntityBuilder> {
         return MultiDataPointHelper
             .getPoints(myAesthetics, getSortingMode(myLayerKind))
-            .map { MapEntityBuilder(it, myLayerKind).apply { setIfNeeded() } }
+            .map { MapEntityBuilder(it, myLayerKind).apply { setIfNeeded(it.aes) } }
     }
 
     private fun useMultiDataPoint(): Boolean {
         return myLayerKind === MapLayerKind.PIE || myLayerKind === MapLayerKind.BAR
     }
 
-    private fun MapEntityBuilder.setIfNeeded() {
+    private fun MapEntityBuilder.setIfNeeded(p: DataPointAesthetics) {
+        setGeometryPointIfNeeded(p, this)
         setGeodesicIfNeeded(this)
+    }
+
+    private fun setGeometryPointIfNeeded(p: DataPointAesthetics, mapEntityBuilder: MapEntityBuilder) {
+        mapEntityBuilder.setGeometryPoint(explicitVec(p.x()!!, p.y()!!))
     }
 
     private fun setGeodesicIfNeeded(mapEntityBuilder: MapEntityBuilder) {

@@ -5,6 +5,9 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
@@ -14,10 +17,12 @@ internal class MultiDataPointHelper private constructor(
 
     companion object {
         fun getPoints(aesthetics: Aesthetics, sortingMode: SortingMode): List<MultiDataPoint> {
-            val builders = HashMap<Any, MultiDataPointBuilder>()
+            val builders = HashMap<Vec<LonLat>, MultiDataPointBuilder>()
 
-            fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder =
-                builders.getOrPut(p.group()!!, { MultiDataPointBuilder(p, sortingMode) })
+            fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder {
+                val coord = explicitVec<LonLat>(p.x()!!, p.y()!!)
+                return builders.getOrPut(coord, { MultiDataPointBuilder(p, sortingMode) })
+            }
 
             aesthetics.dataPoints().forEach { fetchBuilder(it).add(it) }
             return builders.values.map { it.build() }
