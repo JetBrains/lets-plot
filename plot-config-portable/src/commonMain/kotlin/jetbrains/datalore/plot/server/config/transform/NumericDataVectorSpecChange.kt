@@ -25,12 +25,11 @@ internal class NumericDataVectorSpecChange : SpecChange {
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         val keys = HashSet(spec.keys)
         for (key in keys) {
-            val dat = spec[key]
-            if (dat is List<*>) {
-                if (needChange(dat)) {
-                    spec[key] = dat.map { o: Any? ->
-                        if (o is Number) o.toDouble() else o
-                    }
+            val dat = spec[key]!!
+            require(dat is List<*>) { "The value of data variable [$key] must be a list but was ${dat::class.simpleName}" }
+            if (needChange(dat)) {
+                spec[key] = dat.map { o: Any? ->
+                    if (o is Number) o.toDouble() else o
                 }
             }
         }
