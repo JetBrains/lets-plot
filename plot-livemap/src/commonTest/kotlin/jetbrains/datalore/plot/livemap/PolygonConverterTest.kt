@@ -34,16 +34,6 @@ class PolygonConverterTest {
     }
 
     @Test
-    fun withMapIdAndGeometry_ShouldUseGeometry() {
-        aesData.builder()
-            // .mapId(constant("New York City")) // TODO: Fix MAP_ID
-
-        matcher.geometry(geometryEq(Boundary.create(MULTIPOLYGON)))
-
-        assertMapObject()
-    }
-
-    @Test
     fun twoRings_ShouldContainOneBoundingBox() {
         matcher.locationBoundingBoxes(sizeEq(1))
 

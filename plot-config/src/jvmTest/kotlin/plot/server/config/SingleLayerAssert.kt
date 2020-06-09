@@ -11,8 +11,6 @@ import jetbrains.datalore.plot.builder.tooltip.MappedAes
 import jetbrains.datalore.plot.builder.tooltip.VariableValue
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
-import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRIES
-import jetbrains.datalore.plot.config.Option.Meta.MapJoin.MAP_ID
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
 import kotlin.test.assertEquals
@@ -74,14 +72,6 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
     internal fun haveMapVectors(expectedMapVectors: Map<String, List<*>>): SingleLayerAssert {
         Assertions.assertThat(expectedMapVectors).isEqualTo(myLayer[GEO_POSITIONS])
         return this
-    }
-
-    internal fun haveMapIds(expectedIds: List<*>): SingleLayerAssert {
-        return haveMapValues(MAP_ID, expectedIds)
-    }
-
-    internal fun haveMapGeometries(expectedGeometries: List<*>): SingleLayerAssert {
-        return haveMapValues(GEOMETRIES, expectedGeometries)
     }
 
     private fun haveMapValues(key: String, expectedMapValues: List<*>): SingleLayerAssert {

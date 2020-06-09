@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode.BAR
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode.PIE_CHART
 import jetbrains.datalore.plot.livemap.MultiDataPointHelperTest.MultiDataBuilder.DataPointBuilder
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,7 +23,6 @@ class MultiDataPointHelperTest {
 
     private var myMultiDataBuilder = MultiDataBuilder()
 
-    @Ignore // TODO: Fix MAP_ID
     @Test
     fun whenSortingModePieChart_AndPointOrderSet_ShouldSortByOrder() {
         val dataPointBuilders = listOf(
@@ -42,7 +40,6 @@ class MultiDataPointHelperTest {
         )
     }
 
-    @Ignore // TODO: Fix MAP_ID
     @Test
     fun whenSortingModePieChart_AndPointOrderNotSet_ShouldUseSpecialSortingByValue() {
         assertPointsOrder(
@@ -67,7 +64,6 @@ class MultiDataPointHelperTest {
         )
     }
 
-    @Ignore // TODO: Fix MAP_ID
     @Test
     fun whenDataNotSorted_AndSortingModeBar_ShouldSortByOrder() {
         assertPointsOrder(
@@ -125,15 +121,16 @@ class MultiDataPointHelperTest {
         private fun build(): Aesthetics {
             val values = ArrayList<Double>()
             val order = ArrayList<Double>()
-            val mapId = ArrayList<Any>()
+            val coord = ArrayList<Vec<LonLat>>()
             for (pointBuilder in myPoints) {
                 values.add(pointBuilder.myValue)
                 order.add(pointBuilder.myOrder)
-                mapId.add(pointBuilder.myCoord)
+                coord.add(pointBuilder.myCoord)
             }
 
             myBuilder
-                //.mapId(collection(mapId)) // TODO: Fix MAP_ID
+                .x(collection(coord.map(Vec<LonLat>::x)))
+                .y(collection(coord.map(Vec<LonLat>::y)))
                 .symX(collection(order))
                 .symY(collection(values))
                 .dataPointCount(order.size)

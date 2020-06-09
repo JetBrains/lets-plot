@@ -31,18 +31,10 @@ object Option {
         object GeoDataFrame {
             const val GDF = "geodataframe"
             const val GEOMETRY = "geometry"
-
-            // Column with geometries extracted from GeoDataFrame. Can be used either in DATA and MAP
-            const val GEOMETRIES = "__geometry__"
         }
 
         object GeoDict {
             const val TAG = "geodict"
-        }
-
-        object MapJoin {
-            // column in map used for join with data
-            const val MAP_ID = "__map_id__"
         }
 
         object MappingAnnotation {

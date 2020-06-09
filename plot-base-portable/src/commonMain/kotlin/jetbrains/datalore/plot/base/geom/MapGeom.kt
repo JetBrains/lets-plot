@@ -18,8 +18,6 @@ class MapGeom : PolygonGeom() {
 //                Aes.COLOR,
 //                Aes.FILL,
 //                Aes.ALPHA,
-//
-//                Aes.MAP_ID
 //        )
 
         const val HANDLES_GROUPS = true

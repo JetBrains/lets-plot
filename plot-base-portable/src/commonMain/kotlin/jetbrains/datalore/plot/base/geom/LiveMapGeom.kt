@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.legend.GenericLegendKeyElementFactory
@@ -49,7 +47,6 @@ class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
 
         // ToDo: not static, depends on 'display mode'
 //        val RENDERS = listOf(
-//                Aes.MAP_ID,
 //                Aes.ALPHA,
 //                Aes.COLOR,
 //                Aes.FILL,

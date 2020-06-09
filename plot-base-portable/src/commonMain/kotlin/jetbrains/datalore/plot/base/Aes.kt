@@ -147,6 +147,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == ANGLE ||
                     aes == FAMILY ||
                     aes == FONTFACE ||
+                    aes == SYM_X ||
+                    aes == SYM_Y ||
                     isPositional(aes)
         }
 

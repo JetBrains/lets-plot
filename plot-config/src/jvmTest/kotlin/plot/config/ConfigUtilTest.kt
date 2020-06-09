@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.config.Option.Meta.MapJoin.MAP_ID
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,20 +20,20 @@ class ConfigUtilTest {
         val dataValues = listOf("a", "b", "c", "d")
 
         val data = DataFrame.Builder()
-                .put(Variable(MAP_ID), idList)
+                .put(Variable("id"), idList)
                 .put(Variable("foo"), dataValues)
                 .build()
 
         val map = DataFrame.Builder()
-                .put(Variable(MAP_ID), idList)
+                .put(Variable("id"), idList)
                 .put(Variable("lon"), listOf(13.0, 24.0, -65.0, 117.0))
                 .put(Variable("lat"), listOf(42.0, 21.0, -12.0, 77.0))
                 .build()
 
-        val joinedDf = ConfigUtil.rightJoin(data, MAP_ID, map, MAP_ID)
+        val joinedDf = ConfigUtil.rightJoin(data, "id", map, "id")
 
         assertThat(joinedDf.variables().map { it.toString() })
-                .containsExactlyInAnyOrder(MAP_ID, "foo", "lon", "lat")
+                .containsExactlyInAnyOrder("id", "foo", "lon", "lat")
 
         var dataVar: Variable? = null
         for (variable in joinedDf.variables()) {
