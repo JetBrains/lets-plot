@@ -122,11 +122,9 @@ internal class LiveMapSpecBuilder {
         private const val REGION_TYPE_COORDINATES = "coordinates"
         private const val REGION_TYPE_DATAFRAME = "data_frame"
 
-        // fixed columns in 'boundaries' of 'centroids' data frames
         private const val POINT_X = "lon"
         private const val POINT_Y = "lat"
 
-        // fixed columns in 'limits'
         private const val RECT_XMIN = "lonmin"
         private const val RECT_XMAX = "lonmax"
         private const val RECT_YMIN = "latmin"
