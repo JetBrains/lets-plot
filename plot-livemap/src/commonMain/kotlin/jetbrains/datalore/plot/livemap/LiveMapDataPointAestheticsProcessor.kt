@@ -33,10 +33,8 @@ internal class LiveMapDataPointAestheticsProcessor(
 
     private fun getLayerKind(displayMode: LivemapConstants.DisplayMode): MapLayerKind {
         return when (displayMode) {
-            LivemapConstants.DisplayMode.POLYGON -> MapLayerKind.POLYGON
             LivemapConstants.DisplayMode.POINT -> MapLayerKind.POINT
             LivemapConstants.DisplayMode.PIE -> MapLayerKind.PIE
-            LivemapConstants.DisplayMode.HEATMAP -> MapLayerKind.HEATMAP
             LivemapConstants.DisplayMode.BAR -> MapLayerKind.BAR
         }
     }

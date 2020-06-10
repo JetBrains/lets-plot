@@ -233,7 +233,7 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
         ): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.LIVE_MAP,
-                AestheticsDefaults.livemap(options.displayMode, options.scaled),
+                AestheticsDefaults.livemap(options.displayMode),
                 LiveMapGeom.HANDLES_GROUPS,
                 myGeomSupplier = { LiveMapGeom(options.displayMode) }
             ).build()

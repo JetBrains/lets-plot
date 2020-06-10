@@ -14,13 +14,6 @@ import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.base.livemap.LivemapConstants
-import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_X
-import jetbrains.datalore.plot.builder.map.GeoPositionField.POINT_Y
-import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMAX
-import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_XMIN
-import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMAX
-import jetbrains.datalore.plot.builder.map.GeoPositionField.RECT_YMIN
-import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
@@ -128,6 +121,16 @@ internal class LiveMapSpecBuilder {
         private const val REGION_TYPE_IDS = "region_ids"
         private const val REGION_TYPE_COORDINATES = "coordinates"
         private const val REGION_TYPE_DATAFRAME = "data_frame"
+
+        // fixed columns in 'boundaries' of 'centroids' data frames
+        private const val POINT_X = "lon"
+        private const val POINT_Y = "lat"
+
+        // fixed columns in 'limits'
+        private const val RECT_XMIN = "lonmin"
+        private const val RECT_XMAX = "lonmax"
+        private const val RECT_YMIN = "latmin"
+        private const val RECT_YMAX = "latmax"
 
         object Tile {
             const val KIND = "kind"
@@ -342,4 +345,5 @@ internal class LiveMapSpecBuilder {
             )
         }
     }
+
 }

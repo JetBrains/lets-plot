@@ -34,7 +34,7 @@ class LiveMapOptionsParser {
                 location = opts.get(LiveMap.LOCATION),
                 stroke = opts.getDouble(LiveMap.STROKE),
                 interactive = opts.getBoolean(LiveMap.INTERACTIVE, true),
-                displayMode = opts.getString(LiveMap.DISPLAY_MODE)?.let(::parseDisplayMode) ?: DisplayMode.POLYGON,
+                displayMode = opts.getString(LiveMap.DISPLAY_MODE)?.let(::parseDisplayMode) ?: DisplayMode.POINT,
                 scaled = opts.getBoolean(LiveMap.SCALED, false),
                 clustering = opts.getBoolean(LiveMap.CLUSTERING, false),
                 labels = opts.getBoolean(LiveMap.LABELS, true),

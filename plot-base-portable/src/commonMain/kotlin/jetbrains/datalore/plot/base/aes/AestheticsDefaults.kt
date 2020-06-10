@@ -152,9 +152,8 @@ open class AestheticsDefaults {
             return crossBar()
         }
 
-        fun livemap(displayMode: LivemapConstants.DisplayMode, scaled: Boolean): AestheticsDefaults {
+        fun livemap(displayMode: LivemapConstants.DisplayMode): AestheticsDefaults {
             return when (displayMode) {
-                LivemapConstants.DisplayMode.POLYGON -> polygon()
                 LivemapConstants.DisplayMode.POINT -> point()
                     .updateInLegend(Aes.SIZE, 5.0)
                 LivemapConstants.DisplayMode.BAR -> base()
@@ -164,7 +163,6 @@ open class AestheticsDefaults {
                     .update(Aes.SIZE, 20.0)
                     .update(Aes.COLOR, Color.TRANSPARENT)
                     .updateInLegend(Aes.SIZE, 5.0)
-                LivemapConstants.DisplayMode.HEATMAP -> base().update(Aes.SIZE, if (scaled) 0.01 else 10.0)
             }
         }
 
