@@ -9,6 +9,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
+import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 
 class VariableValue(
     private val name: String,
@@ -18,19 +19,27 @@ class VariableValue(
 
     private val myFormatter = if (format.isEmpty()) null else LineFormatter(format)
     private lateinit var myDataFrame: DataFrame
+    private lateinit var myVariable: DataFrame.Variable
+    private var myIsContinuous: Boolean = false
 
     override fun setDataContext(dataContext: DataContext) {
         myDataFrame = dataContext.dataFrame
+
+        val variable = myDataFrame.variables().find { it.name == name }
+        if (variable != null) {
+            myVariable = variable
+            myIsContinuous = myDataFrame.isNumeric(myVariable)
+        }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        val variable = myDataFrame.variables().find { it.name == name } ?: return null
-        val originalValue = myDataFrame[variable][index]
-        val isContinuous = myDataFrame.isNumeric(variable)
+        checkState(::myVariable.isInitialized, "Not initialized variable $name")
+
+        val originalValue = myDataFrame[myVariable][index]
         return DataPoint(
             label = LineFormatter.chooseLabel(dataLabel = name, userLabel = label),
-            value = format(originalValue, isContinuous),
-            isContinuous = isContinuous,
+            value = format(originalValue, myIsContinuous),
+            isContinuous = myIsContinuous,
             aes = null,
             isAxis = false,
             isOutlier = false
