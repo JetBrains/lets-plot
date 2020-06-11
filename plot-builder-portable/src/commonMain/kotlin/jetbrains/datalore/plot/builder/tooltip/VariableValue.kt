@@ -19,7 +19,7 @@ class VariableValue(
     private val myFormatter = if (format.isEmpty()) null else LineFormatter(format)
     private lateinit var myDataFrame: DataFrame
 
-    override fun setDataPointProvider(dataContext: DataContext) {
+    override fun setDataContext(dataContext: DataContext) {
         myDataFrame = dataContext.dataFrame
     }
 

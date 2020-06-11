@@ -17,8 +17,8 @@ class CompositeValue(
 
     private val myFormatter = if (format.isEmpty()) null else LineFormatter(format)
 
-    override fun setDataPointProvider(dataContext: DataContext) {
-        values.forEach { it.setDataPointProvider(dataContext) }
+    override fun setDataContext(dataContext: DataContext) {
+        values.forEach { it.setDataContext(dataContext) }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {

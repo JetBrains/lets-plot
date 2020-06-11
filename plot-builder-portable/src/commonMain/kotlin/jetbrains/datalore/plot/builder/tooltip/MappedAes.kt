@@ -20,7 +20,7 @@ open class MappedAes(
 
     private lateinit var myDataAccess: MappedDataAccess
 
-    override fun setDataPointProvider(dataContext: DataContext) {
+    override fun setDataContext(dataContext: DataContext) {
         myDataAccess = dataContext.mappedDataAccess
     }
 

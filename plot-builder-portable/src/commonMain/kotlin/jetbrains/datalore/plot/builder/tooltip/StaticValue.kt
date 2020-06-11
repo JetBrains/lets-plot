@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
 
 class StaticValue(private val text: String) : ValueSource {
 
-    override fun setDataPointProvider(dataContext: DataContext) {
+    override fun setDataContext(dataContext: DataContext) {
     }
 
     override fun getDataPoint(index: Int): DataPoint? {

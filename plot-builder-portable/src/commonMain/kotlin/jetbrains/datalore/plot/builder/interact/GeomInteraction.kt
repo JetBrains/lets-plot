@@ -66,7 +66,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
             val valueSources = if (tooltipValueSources.isNotEmpty()) {
-                tooltipValueSources.forEach { it.setDataPointProvider(dataContext) }
+                tooltipValueSources.forEach { it.setDataContext(dataContext) }
                 tooltipValueSources + axisValueSources(dataContext, axisAes)
             } else {
                 null

@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 
 interface ValueSource {
 
-    fun setDataPointProvider(dataContext: DataContext)
+    fun setDataContext(dataContext: DataContext)
 
     fun getDataPoint(index: Int): DataPoint?
 
