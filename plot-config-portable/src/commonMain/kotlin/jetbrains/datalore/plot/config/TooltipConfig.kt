@@ -27,7 +27,7 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
                 is String -> TooltipLineSpecification.singleValueLine(
                     label = "",
                     format = "",
-                    datum = createValueSource(tooltipLine, label = "", format = "")
+                    datum = createValueSource(tooltipLine)
                 )
                 is Map<*, *> -> parseMap(tooltipLine)
                 else -> error("Error tooltip_line parsing")
@@ -41,27 +41,25 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
             is List<*> -> value.mapNotNull(Any?::toString)
             else -> error("Unsupported tooltip format type")
         }
-        val label = tooltipLine.getString(TooltipLine.LABEL) ?: ""
+        val label = tooltipLine.getString(TooltipLine.LABEL)
         val format = tooltipLine.getString(TooltipLine.FORMAT) ?: ""
 
         return if (value.size == 1) {
-            val valueSource = createValueSource(name = value.single(), label = label, format = format)
             TooltipLineSpecification.singleValueLine(
                 label = "",
                 format = "",
-                datum = valueSource
+                datum = createValueSource(name = value.single(), label = label, format = format)
             )
         } else {
-            val values = value.map { createValueSource(it, label = "", format = "") }
             TooltipLineSpecification.multiValueLine(
-                label = label,
+                label = label ?: "",
                 format = format,
-                data = values
+                data = value.map { createValueSource(it) }
             )
         }
     }
 
-    private fun createValueSource(name: String, label: String, format: String): ValueSource {
+    private fun createValueSource(name: String, label: String? = null, format: String = ""): ValueSource {
         fun getAesByName(aesName: String): Aes<*> {
             return Aes.values().find { it.name == aesName } ?: error("$aesName is not aes name")
         }
@@ -71,11 +69,11 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
             name.startsWith("aes@") -> {
                 val aes = getAesByName(name.removePrefix("aes@"))
                 when {
-                    format.isNotEmpty() || label.isNotEmpty() -> ConstantAes(aes, label, format)
-                    else -> MappedAes(aes)
+                    format.isEmpty() && label == null -> MappedAes(aes)
+                    else -> ConstantAes(aes, label ?: "", format)
                 }
             }
-            else -> VariableValue(name, label, format)
+            else -> VariableValue(name, label ?: "", format)
         }
     }
 }
