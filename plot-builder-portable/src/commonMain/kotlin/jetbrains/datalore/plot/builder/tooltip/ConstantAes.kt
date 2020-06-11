@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
 
 class ConstantAes(
     aes: Aes<*>,
@@ -16,19 +15,12 @@ class ConstantAes(
 
     private val myFormatter = if (format.isEmpty()) null else LineFormatter(format)
 
-    override fun getMappedDataPoint(index: Int): DataPoint? {
-        val mappedData = super.getMappedDataPoint(index) ?: return null
-
-        val value = myFormatter?.format(mappedData.value, mappedData.isContinuous)
-            ?: mappedData.value
-        val label = LineFormatter.chooseLabel(dataLabel = mappedData.label, userLabel = label)
-        return DataPoint(
-            label = label,
-            value = value,
-            isContinuous = mappedData.isContinuous,
-            aes = mappedData.aes,
-            isAxis = mappedData.isAxis,
-            isOutlier = mappedData.isOutlier
-        )
+    override fun initLabel(): String {
+        return LineFormatter.chooseLabel(dataLabel = getMappedDataLabel(), userLabel = label)
     }
+
+    override fun getMappedDataPointValue(index: Int): String {
+        val value = super.getMappedDataPointValue(index)
+        return myFormatter?.format(value, myIsContinuous) ?: value
+      }
 }

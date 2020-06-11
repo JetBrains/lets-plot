@@ -32,7 +32,11 @@ class MappedDataAccessMock {
 
         if (index == null) {
             `when`(mappedDataAccess.getMappedData(eq(aes), anyInt()))
-                    .thenReturn(mapping.createMappedData())
+                .thenReturn(mapping.createMappedData())
+            `when`(mappedDataAccess.getMappedDataLabel(eq(aes)))
+                .thenReturn(mapping.label)
+            `when`(mappedDataAccess.getMappedDataIsContinuous(eq(aes)))
+                .thenReturn(mapping.isContinuous)
         } else {
             `when`(mappedDataAccess.getMappedData(eq(aes), eq(index)))
                     .thenReturn(mapping.createMappedData())
@@ -61,9 +65,9 @@ class MappedDataAccessMock {
     }
 
     class Mapping<T> internal constructor(internal val aes: Aes<T>,
-                                          private val label: String,
+                                          internal val label: String,
                                           private val value: String,
-                                          private val isContinuous: Boolean) {
+                                          internal val isContinuous: Boolean) {
         fun longTooltipText(): String {
             return "$label: $value"
         }
