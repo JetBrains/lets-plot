@@ -35,7 +35,7 @@ class MappedDataAccessMock {
                 .thenReturn(mapping.createMappedData())
             `when`(mappedDataAccess.getMappedDataLabel(eq(aes)))
                 .thenReturn(mapping.label)
-            `when`(mappedDataAccess.getMappedDataIsContinuous(eq(aes)))
+            `when`(mappedDataAccess.isMappedDataContinuous(eq(aes)))
                 .thenReturn(mapping.isContinuous)
         } else {
             `when`(mappedDataAccess.getMappedData(eq(aes), eq(index)))

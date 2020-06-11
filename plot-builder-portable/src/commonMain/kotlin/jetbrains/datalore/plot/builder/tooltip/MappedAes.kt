@@ -26,14 +26,14 @@ open class MappedAes(
     override fun setDataContext(dataContext: DataContext) {
         myDataAccess = dataContext.mappedDataAccess
 
-        if (myDataAccess.isMapped(aes)) {
-            myLabel = initLabel()
-            myIsContinuous = myDataAccess.getMappedDataIsContinuous(aes)
-            myIsTooltipAllowed = when {
-                !isAxis -> true
-                MAP_COORDINATE_NAMES.contains(getMappedDataLabel()) -> false
-                else -> myIsContinuous
-            }
+        require(myDataAccess.isMapped(aes)) { "$aes have to be mapped" }
+
+        myLabel = initLabel()
+        myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
+        myIsTooltipAllowed = when {
+            !isAxis -> true
+            MAP_COORDINATE_NAMES.contains(getMappedDataLabel()) -> false
+            else -> myIsContinuous
         }
     }
 

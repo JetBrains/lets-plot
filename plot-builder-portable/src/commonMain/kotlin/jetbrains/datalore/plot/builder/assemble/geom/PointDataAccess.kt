@@ -51,7 +51,7 @@ internal class PointDataAccess(
         return scale.name
     }
 
-    override fun <T> getMappedDataIsContinuous(aes: Aes<T>): Boolean {
+    override fun <T> isMappedDataContinuous(aes: Aes<T>): Boolean {
         checkArgument(isMapped(aes), "Not mapped: $aes")
         val binding = myBindings.getValue(aes)
         val scale = binding.scale!!

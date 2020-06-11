@@ -9,7 +9,6 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
-import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 
 class VariableValue(
     private val name: String,
@@ -26,14 +25,13 @@ class VariableValue(
         myDataFrame = dataContext.dataFrame
 
         val variable = myDataFrame.variables().find { it.name == name }
-        if (variable != null) {
-            myVariable = variable
-            myIsContinuous = myDataFrame.isNumeric(myVariable)
-        }
+        requireNotNull(variable) { "Undefined variable with name '$name'" }
+
+        myVariable = variable
+        myIsContinuous = myDataFrame.isNumeric(myVariable)
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        checkState(::myVariable.isInitialized, "Not initialized variable $name")
 
         val originalValue = myDataFrame[myVariable][index]
         return DataPoint(
@@ -46,7 +44,7 @@ class VariableValue(
         )
     }
 
-    private fun format(originalValue: Any?, isContinuous:Boolean): String {
+    private fun format(originalValue: Any?, isContinuous: Boolean): String {
         // todo Need proper formatter.
         val strValue = originalValue.toString()
         return myFormatter?.format(strValue, isContinuous) ?: strValue
