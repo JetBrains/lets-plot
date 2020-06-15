@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createPlotAssembl
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class GeoConfigTest {
     private val point = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
@@ -227,8 +228,8 @@ class GeoConfigTest {
             |    "layers": [{
             |        "geom": "polygon",
             |        "data": {
-            |            "fig": ["Polygon", "MPolygon", "C"],
-            |            "value": [42, 23, 66]
+            |            "fig": ["Polygon", "MPolygon"],
+            |            "value": [42, 23]
             |        },
             |        "mapping": {"fill": "value"},
             |        "map": $gdf,
@@ -259,5 +260,33 @@ class GeoConfigTest {
             |}""".trimMargin()
         )
         )
+    }
+
+
+    @Test
+    fun `should show data key missing in map`() {
+        val spec = """
+            |{
+            |    "kind": "plot", 
+            |    "layers": [{
+            |        "geom": "polygon",
+            |        "data": {
+            |            "fig": ["Polygon", "MPolygon", "Missing_Key"],
+            |            "value": [42, 23, 66]
+            |        },
+            |        "mapping": {"fill": "value"},
+            |        "map": $gdf,
+            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |        "map_join": ["fig", "kind"]
+            |    }]
+            |}
+        """.trimMargin()
+
+        try {
+            createPlotAssembler(parsePlotSpec(spec))
+            fail("'Missing_Key' is missing in map - should throw exception")
+        } catch (e: Exception) {
+            assertEquals("'Missing_Key' not found in map", e.localizedMessage)
+        }
     }
 }

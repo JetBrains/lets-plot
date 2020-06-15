@@ -12,15 +12,14 @@ class GeoData : PlotConfigDemoBase() {
 
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            ttt()
-//            mapGeoDataFrame_MapJoin(),
-//            mapGeoDataFrame_NoMapJoin_MixedShapes("polygon"),
-//            mapGeoDataFrame_NoMapJoin_MixedShapes("point"),
-//            mapGeoDataFrame_NoMapJoin_MixedShapes("path"),
-//            mapGeoDataFrame_Empty(),
-//            mapGeoDict_MapJoin(),
-//            dataGeoDataFrame_Empty(),
-//            dataGeoDataFrame_NoMapJoin_GeomText()
+            mapGeoDataFrame_MapJoin(),
+            mapGeoDataFrame_NoMapJoin_MixedShapes("polygon"),
+            mapGeoDataFrame_NoMapJoin_MixedShapes("point"),
+            mapGeoDataFrame_NoMapJoin_MixedShapes("path"),
+            mapGeoDataFrame_Empty(),
+            mapGeoDict_MapJoin(),
+            dataGeoDataFrame_Empty(),
+            dataGeoDataFrame_NoMapJoin_GeomText()
         )
     }
 
@@ -31,40 +30,6 @@ class GeoData : PlotConfigDemoBase() {
         private const val lineB = """{\"type\": \"LineString\", \"coordinates\": [[3.0, 3.0], [7, 7], [10, 10]]}"""
         private const val multipolygon =
             """{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"""
-
-
-        fun ttt(): MutableMap<String, Any> {
-            val point = """{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}"""
-            val multiPoint = """{\"type\": \"MultiPoint\", \"coordinates\": [[3.0, 15.0], [6.0, 13.0]]}"""
-            val lineString = """{\"type\": \"LineString\", \"coordinates\": [[0.0, 0.0], [5.0, 5.0]]}"""
-            val multiLineString = """{\"type\": \"MultiLineString\", \"coordinates\": [[[10.0, 0.0], [15.0, 5.0]], [[10.0, 5.0], [15.0, 0.0]]]}"""
-            val polygon = """{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}"""
-            val multipolygon = """{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"""
-            val gdf = """
-{
-    "kind": ["Point", "MPoint", "Line", "MLine", "Polygon", "MPolygon"],
-    "coord": ["$point", "$multiPoint", "$lineString", "$multiLineString", "$polygon", "$multipolygon"]
-}
-"""
-            val spec = """
-            |{
-            |    "kind": "plot", 
-            |    "layers": [{
-            |        "geom": "polygon",
-            |        "data": {
-            |            "fig": ["Polygon", "MPolygon", "C"],
-            |            "value": [42, 23, 66]
-            |        },
-            |        "mapping": {"fill": "value"},
-            |        "map": $gdf,
-            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
-            |        "map_join": ["fig", "kind"]
-            |    }]
-            |}
-        """.trimMargin()
-            return parsePlotSpec(spec)
-
-        }
 
         private fun mapGeoDict_MapJoin(): Map<String, Any> {
             val spec = """

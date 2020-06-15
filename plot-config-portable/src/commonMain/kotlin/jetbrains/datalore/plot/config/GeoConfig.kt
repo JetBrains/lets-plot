@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
+import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.ConfigUtil.createDataFrame
@@ -51,12 +52,12 @@ class GeoConfig(
             return geoDataFrame.getList(geoColumn)?.map { it as String } ?: error("$geoColumn not found in $gdfLocation")
         }
 
-        val joinIds: List<Any>
-        val dataJoinColumn: String
-        val mapJoinColumn: String
+        val mapKeys: List<Any>
+        val dataKeyColumn: String
+        val mapKeyColumn: String
         val geoJson: List<String>
         val dataFrame: DataFrame
-        val autoId = "__gdf_id__"
+        val autoId = "__id__"
 
         when {
             // (aes(color='cyl'), data=data, map=gdf) - how to join without `map_join`?
@@ -71,9 +72,15 @@ class GeoConfig(
                 geoJson = getGeoJson(GEO_POSITIONS)
 
                 val mapJoin = layerOptions.getList(MAP_JOIN) ?: error("require map_join parameter")
-                dataJoinColumn = mapJoin[0] as String
-                mapJoinColumn = mapJoin[1] as String
-                joinIds = layerOptions.getMap(GEO_POSITIONS)?.getList(mapJoinColumn)?.requireNoNulls() ?: error("MapJoinColumn '$mapJoinColumn' is not found")
+                dataKeyColumn = mapJoin[0] as String
+                mapKeyColumn = mapJoin[1] as String
+                mapKeys = layerOptions.getMap(GEO_POSITIONS)?.getList(mapKeyColumn)?.requireNoNulls() ?: error("'$mapKeyColumn' is not found in map")
+
+                // All data keys should be present in map
+                data.get(findVariableOrFail(data, dataKeyColumn))
+                    .firstOrNull { dataKey -> dataKey !in mapKeys }
+                    ?.let { error("'$it' not found in map") }
+
                 dataFrame = data
             }
 
@@ -82,10 +89,10 @@ class GeoConfig(
                 require(layerOptions.has(GEO_POSITIONS)) { "'map' parameter is mandatory with MAP_DATA_META" }
                 geoJson = getGeoJson(GEO_POSITIONS)
 
-                dataJoinColumn = autoId
-                mapJoinColumn = autoId
-                joinIds = geoJson.indices.map(Int::toString)
-                dataFrame = DataFrame.Builder(data).put(DataFrame.Variable(dataJoinColumn), joinIds).build()
+                dataKeyColumn = autoId
+                mapKeyColumn = autoId
+                mapKeys = geoJson.indices.map(Int::toString)
+                dataFrame = DataFrame.Builder(data).put(DataFrame.Variable(dataKeyColumn), mapKeys).build()
             }
 
             // (data=gdf)
@@ -93,10 +100,10 @@ class GeoConfig(
                 require(layerOptions.has(DATA)) { "'data' parameter is mandatory with DATA_META" }
                 geoJson = getGeoJson(DATA)
 
-                dataJoinColumn = autoId
-                mapJoinColumn = autoId
-                joinIds = geoJson.indices.map(Int::toString)
-                dataFrame = DataFrame.Builder(data).put(DataFrame.Variable(dataJoinColumn), joinIds).build()
+                dataKeyColumn = autoId
+                mapKeyColumn = autoId
+                mapKeys = geoJson.indices.map(Int::toString)
+                dataFrame = DataFrame.Builder(data).put(DataFrame.Variable(dataKeyColumn), mapKeys).build()
             }
 
             else -> error("GeoDataFrame not found in data or map")
@@ -112,13 +119,13 @@ class GeoConfig(
 
         coordinatesCollector
             .append(geoJson)
-            .setIdColumn(columnName = mapJoinColumn, values = joinIds)
+            .setIdColumn(columnName = mapKeyColumn, values = mapKeys)
 
         dataAndCoordinates = rightJoin(
             left = dataFrame,
-            leftKey = dataJoinColumn,
+            leftKey = dataKeyColumn,
             right = createDataFrame(coordinatesCollector.buildCoordinatesMap()),
-            rightKey = mapJoinColumn
+            rightKey = mapKeyColumn
         )
 
         val coordinatesAutoMapping = coordinatesCollector.mappings
@@ -138,12 +145,12 @@ class GeoConfig(
     }
 }
 
-const val POINT_X = "__gdf_x__"
-const val POINT_Y = "__gdf_y__"
-const val RECT_XMIN = "__gdf_xmin__"
-const val RECT_YMIN = "__gdf_ymin__"
-const val RECT_XMAX = "__gdf_xmax__"
-const val RECT_YMAX = "__gdf_ymax__"
+const val POINT_X = "__x__"
+const val POINT_Y = "__y__"
+const val RECT_XMIN = "__xmin__"
+const val RECT_YMIN = "__ymin__"
+const val RECT_XMAX = "__xmax__"
+const val RECT_YMAX = "__ymax__"
 
 internal abstract class CoordinatesCollector(
     val mappings: Map<Aes<*>, String>
