@@ -21,37 +21,28 @@ open class MappedAes(
     private var myIsTooltipAllowed: Boolean = false
     private lateinit var myDataAccess: MappedDataAccess
     private lateinit var myLabel: String
-    protected var myIsContinuous: Boolean = false
+    private var myIsContinuous: Boolean = false
 
     override fun setDataContext(dataContext: DataContext) {
         myDataAccess = dataContext.mappedDataAccess
 
         require(myDataAccess.isMapped(aes)) { "$aes have to be mapped" }
 
-        myLabel = initLabel()
+        val axisLabels = listOf(Aes.X, Aes.Y)
+            .filter(myDataAccess::isMapped)
+            .map { myDataAccess.getMappedDataLabel(it) }
+        val dataLabel = myDataAccess.getMappedDataLabel(aes)
+        myLabel = when {
+            isAxis -> ""
+            dataLabel.isEmpty() -> ""
+            dataLabel in axisLabels -> ""
+            else -> dataLabel
+        }
         myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
         myIsTooltipAllowed = when {
             !isAxis -> true
-            MAP_COORDINATE_NAMES.contains(getMappedDataLabel()) -> false
+            MAP_COORDINATE_NAMES.contains(dataLabel) -> false
             else -> myIsContinuous
-        }
-    }
-
-    protected open fun initLabel(): String {
-        fun getAxisLabels() = listOf(Aes.X, Aes.Y).mapNotNull { axisAes ->
-            if (myDataAccess.isMapped(axisAes)) {
-                myDataAccess.getMappedDataLabel(axisAes)
-            } else {
-                null
-            }
-        }
-
-        val dataLabel = getMappedDataLabel()
-        return when {
-            isAxis -> ""
-            dataLabel.isEmpty() -> ""
-            dataLabel in getAxisLabels() -> ""
-            else -> dataLabel
         }
     }
 
@@ -61,21 +52,13 @@ open class MappedAes(
         } else {
             DataPoint(
                 label = myLabel,
-                value = getMappedDataPointValue(index),
+                value = myDataAccess.getMappedData(aes, index).value,
                 isContinuous = myIsContinuous,
                 aes = aes,
                 isAxis = isAxis,
                 isOutlier = isOutlier
             )
         }
-    }
-
-    protected fun getMappedDataLabel(): String {
-        return myDataAccess.getMappedDataLabel(aes)
-    }
-
-    protected open fun getMappedDataPointValue(index: Int): String {
-        return myDataAccess.getMappedData(aes, index).value
     }
 
     /* For tests only */

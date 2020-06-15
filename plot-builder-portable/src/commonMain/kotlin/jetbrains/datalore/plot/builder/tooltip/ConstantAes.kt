@@ -6,21 +6,41 @@
 package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.DataContext
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.interact.ValueSource
 
 class ConstantAes(
-    aes: Aes<*>,
-    private val label: String,
+    private val aes: Aes<*>,
+    label: String,
     format: String
-) : MappedAes(aes) {
+) : ValueSource {
 
+    private lateinit var myDataAccess: MappedDataAccess
     private val myFormatter = if (format.isEmpty()) null else LineFormatter(format)
+    private var myLabel: String = label
+    private var myIsContinuous: Boolean = false
 
-    override fun initLabel(): String {
-        return LineFormatter.chooseLabel(dataLabel = getMappedDataLabel(), userLabel = label)
+    override fun setDataContext(dataContext: DataContext) {
+        myDataAccess = dataContext.mappedDataAccess
+        require(myDataAccess.isMapped(aes)) { "$aes have to be mapped" }
+
+        myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
+        myLabel = LineFormatter.chooseLabel(
+            dataLabel = myDataAccess.getMappedDataLabel(aes),
+            userLabel = myLabel
+        )
     }
 
-    override fun getMappedDataPointValue(index: Int): String {
-        val value = super.getMappedDataPointValue(index)
-        return myFormatter?.format(value, myIsContinuous) ?: value
-      }
+    override fun getDataPoint(index: Int): ValueSource.DataPoint? {
+        val mappedValue = myDataAccess.getMappedData(aes, index).value
+        return ValueSource.DataPoint(
+            label = myLabel,
+            value = myFormatter?.format(mappedValue, myIsContinuous) ?: mappedValue,
+            isContinuous = myIsContinuous,
+            aes = aes,
+            isAxis = false,
+            isOutlier = false
+        )
+    }
 }

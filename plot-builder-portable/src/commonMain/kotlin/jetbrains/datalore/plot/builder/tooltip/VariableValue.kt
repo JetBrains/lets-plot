@@ -12,13 +12,14 @@ import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
 
 class VariableValue(
     private val name: String,
-    private val label: String = "",
+    label: String = "",
     format: String = ""
 ) : ValueSource {
 
     private val myFormatter = if (format.isEmpty()) null else LineFormatter(format)
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
+    private val myLabel = LineFormatter.chooseLabel(dataLabel = name, userLabel = label)
     private var myIsContinuous: Boolean = false
 
     override fun setDataContext(dataContext: DataContext) {
@@ -35,7 +36,7 @@ class VariableValue(
 
         val originalValue = myDataFrame[myVariable][index]
         return DataPoint(
-            label = LineFormatter.chooseLabel(dataLabel = name, userLabel = label),
+            label = myLabel,
             value = format(originalValue, myIsContinuous),
             isContinuous = myIsContinuous,
             aes = null,
