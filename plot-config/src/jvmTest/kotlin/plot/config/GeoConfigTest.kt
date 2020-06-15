@@ -289,4 +289,28 @@ class GeoConfigTest {
             assertEquals("'Missing_Key' not found in map", e.localizedMessage)
         }
     }
+
+    @Test
+    fun `should not fail if map has extra entries`() {
+        val spec = """
+            |{
+            |    "kind": "plot", 
+            |    "layers": [{
+            |        "geom": "polygon",
+            |        "data": {
+            |            "fig": ["Polygon"],
+            |            "value": [42]
+            |        },
+            |        "mapping": {"fill": "value"},
+            |        "map": $gdf,
+            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |        "map_join": ["fig", "kind"]
+            |    }]
+            |}
+        """.trimMargin()
+
+        val plotAssembler = createPlotAssembler(parsePlotSpec(spec))
+        val aesthetics = createLayerRendererData(plotAssembler.layersByTile.single().single(), emptyMap(), emptyMap()).aesthetics
+        assertEquals((0..14).map { 0 }, aesthetics.dataPoints().map(DataPointAesthetics::group))
+    }
 }
