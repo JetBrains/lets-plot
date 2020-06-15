@@ -20,12 +20,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
-import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
@@ -125,9 +126,6 @@ abstract class AesVisitor<T> {
         if (aes == UPPER) {
             return upper()
         }
-        if (aes == MAP_ID) {
-            return mapId()
-        }
         if (aes == FRAME) {
             return frame()
         }
@@ -166,6 +164,14 @@ abstract class AesVisitor<T> {
         }
         if (aes == ANGLE) {
             return angle()
+        }
+
+        if (aes == SYM_X) {
+            return symX()
+        }
+
+        if (aes == SYM_Y) {
+            return symY()
         }
 
         throw IllegalArgumentException("Unexpected aes: $aes")
@@ -213,8 +219,6 @@ abstract class AesVisitor<T> {
 
     protected abstract fun upper(): T
 
-    protected abstract fun mapId(): T
-
     protected abstract fun frame(): T
 
     protected abstract fun speed(): T
@@ -240,4 +244,8 @@ abstract class AesVisitor<T> {
     protected abstract fun vjust(): T
 
     protected abstract fun angle(): T
+
+    protected abstract fun symX(): T
+
+    protected abstract fun symY(): T
 }

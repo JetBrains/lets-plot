@@ -84,10 +84,7 @@ object LiveMapUtil {
     }
 
     private fun getHiddenAes(geomKind: GeomKind): List<Aes<*>> {
-        val hiddenAes = ArrayList<Aes<*>>()
-        hiddenAes.add(Aes.MAP_ID)
-
-        when (geomKind) {
+        return when (geomKind) {
             POINT,
             POLYGON,
             CONTOUR,
@@ -98,17 +95,14 @@ object LiveMapUtil {
             TILE,
             BIN_2D,
             V_LINE,
-            H_LINE -> hiddenAes.addAll(listOf(Aes.X, Aes.Y))
+            H_LINE -> listOf(Aes.X, Aes.Y)
 
-            RECT -> hiddenAes.addAll(listOf(Aes.YMIN, Aes.YMAX, Aes.XMIN, Aes.XMAX))
+            RECT -> listOf(Aes.YMIN, Aes.YMAX, Aes.XMIN, Aes.XMAX)
 
-            SEGMENT -> hiddenAes.addAll(listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND))
+            SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
 
-            else -> {
-            }
+            else -> emptyList()
         }
-
-        return hiddenAes
     }
 
     fun createContextualMapping(geomKind: GeomKind, dataAccess: MappedDataAccess): ContextualMapping {

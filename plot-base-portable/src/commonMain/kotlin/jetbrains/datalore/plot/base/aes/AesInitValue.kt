@@ -23,12 +23,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
-import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
@@ -73,7 +74,6 @@ object AesInitValue {
         VALUE_MAP[LOWER] = Double.NaN
         VALUE_MAP[MIDDLE] = Double.NaN
         VALUE_MAP[UPPER] = Double.NaN
-        VALUE_MAP[MAP_ID] = "empty map_id"
         VALUE_MAP[FRAME] = "empty frame"
         VALUE_MAP[SPEED] = 10.0
         VALUE_MAP[FLOW] = 0.1
@@ -87,6 +87,8 @@ object AesInitValue {
         VALUE_MAP[HJUST] = 0.5  // 'middle'
         VALUE_MAP[VJUST] = 0.5  // 'middle'
         VALUE_MAP[ANGLE] = 0.0
+        VALUE_MAP[SYM_X] = 0.0
+        VALUE_MAP[SYM_Y] = 0.0
     }
 
     /**

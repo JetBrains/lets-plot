@@ -16,6 +16,10 @@ import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
 import jetbrains.datalore.plot.builder.tooltip.VariableValue
 import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
+import jetbrains.datalore.plot.config.Option.Meta.DATA_META
+import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
+import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
 
@@ -115,12 +119,10 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
                 if (!DataFrameUtil.variables(layerData!!).containsKey(varName)) {
                     dropPlotVar = when {
-                        // don't drop if used in mapping
-                        layerConfig.hasVarBinding(varName) -> false
+                        layerConfig.hasVarBinding(varName) -> false // don't drop if used in mapping
                         layerConfig.isExplicitGrouping(varName) -> false
-                        // don't drop if used for facets
-                        varName == facets.xVar -> false
-                        varName == facets.yVar -> false
+                        varName == facets.xVar -> false // don't drop if used for facets
+                        varName == facets.yVar -> false // don't drop if used for facets
                         else -> true
                     }
                     if (!dropPlotVar) {
@@ -185,17 +187,12 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             varsToKeep.removeAll(notRenderedVars)
             varsToKeep.addAll(renderedVars)
 
-            val varNamesToKeep = HashSet<String>()
-            for (`var` in varsToKeep) {
-                varNamesToKeep.add(`var`.name)
-            }
-            varNamesToKeep.add(Stats.GROUP.name)
-            facets.xVar?.let(varNamesToKeep::add)
-            facets.yVar?.let(varNamesToKeep::add)
-
-            if (layerConfig.hasExplicitGrouping()) {
-                varNamesToKeep.add(layerConfig.explicitGroupingVarName!!)
-            }
+            val varNamesToKeep = HashSet<String>() +
+                    varsToKeep.map(Variable::name) +
+                    Stats.GROUP.name +
+                    listOfNotNull(layerConfig.mergedOptions.getString(DATA_META, GDF, GEOMETRY)) +
+                    listOfNotNull(layerConfig.mergedOptions.getList(MAP_JOIN)?.get(0) as? String) +
+                    listOfNotNull(facets.xVar, facets.yVar, layerConfig.explicitGroupingVarName)
 
             layerData = DataFrameUtil.removeAllExcept(layerData!!, varNamesToKeep)
             layerConfig.replaceOwnData(layerData)
@@ -231,8 +228,11 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 val tileLayerInputData = inputDataByTileByLayer[tileIndex][layerIndex]
                 val varBindings = layerConfig.varBindings
                 val groupingContext = GroupingContext(
-                    tileLayerInputData,
-                    varBindings, layerConfig.explicitGroupingVarName, true
+                    myData = tileLayerInputData,
+                    bindings = varBindings,
+                    groupingVarName = layerConfig.explicitGroupingVarName,
+                    pathIdVarName = null, // only on client side
+                    myExpectMultiple = true
                 )
 
                 val groupingContextAfterStat: GroupingContext

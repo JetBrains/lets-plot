@@ -5,6 +5,9 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
@@ -14,10 +17,12 @@ internal class MultiDataPointHelper private constructor(
 
     companion object {
         fun getPoints(aesthetics: Aesthetics, sortingMode: SortingMode): List<MultiDataPoint> {
-            val builders = HashMap<Any, MultiDataPointBuilder>()
+            val builders = HashMap<Vec<LonLat>, MultiDataPointBuilder>()
 
-            fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder =
-                builders.getOrPut(p.mapId(), { MultiDataPointBuilder(p, sortingMode) })
+            fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder {
+                val coord = explicitVec<LonLat>(p.x()!!, p.y()!!)
+                return builders.getOrPut(coord, { MultiDataPointBuilder(p, sortingMode) })
+            }
 
             aesthetics.dataPoints().forEach { fetchBuilder(it).add(it) }
             return builders.values.map { it.build() }
@@ -37,7 +42,7 @@ internal class MultiDataPointHelper private constructor(
         private var myUsesOrder: Boolean = false
 
         internal fun add(p: DataPointAesthetics) {
-            if (p.x() != 0.0) {
+            if (p.symX() != 0.0) {
                 myUsesOrder = true
             }
 
@@ -54,7 +59,7 @@ internal class MultiDataPointHelper private constructor(
             return MultiDataPoint(
                 aes = myAes,
                 indices = myPoints.map { it.index() },
-                values = myPoints.map { it.y()!! },
+                values = myPoints.map { it.symY()!! },
                 colors = myPoints.map { it.fill()!! }
             )
         }
@@ -72,8 +77,8 @@ internal class MultiDataPointHelper private constructor(
         }
 
         companion object {
-            private val BY_ORDER: (DataPointAesthetics) -> Double = { it.x()!! }
-            private val BY_VALUE: (DataPointAesthetics) -> Double = { it.y()!! }
+            private val BY_ORDER: (DataPointAesthetics) -> Double = { it.symX()!! }
+            private val BY_VALUE: (DataPointAesthetics) -> Double = { it.symY()!! }
         }
     }
 

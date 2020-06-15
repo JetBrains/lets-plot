@@ -30,28 +30,12 @@ object Option {
         }
 
         object GeoDataFrame {
-            const val TAG = "geodataframe"
-            const val GEOMETRY_COLUMN_NAME = "geometry"
-
-            // Column with geometries extracted from GeoDataFrame. Can be used either in DATA and MAP
-            const val GEOMETRIES = "__geometry__"
-        }
-
-        object GeoReference {
-            const val TAG = "georeference"
-            const val REQUEST = "request"
-            const val MAP_REGION_COLUMN = "region"
-            const val OSM_ID = "id"
+            const val GDF = "geodataframe"
+            const val GEOMETRY = "geometry"
         }
 
         object GeoDict {
             const val TAG = "geodict"
-        }
-
-        object MapJoin {
-            // Column with keys used for join
-            const val ID = "__id__"
-            const val MAP_JOIN_COLUMN = "__map_join_column__"
         }
 
         object MappingAnnotation {
@@ -237,7 +221,6 @@ object Option {
 
     object Mapping {
         const val GROUP = "group"
-        val MAP_ID = toOption(Aes.MAP_ID)    // map_id is 'aes' but also used as option in geom_map()
         private val AES_BY_OPTION = HashMap<String, Aes<*>>()
         val REAL_AES_OPTION_NAMES: Iterable<String> = AES_BY_OPTION.keys
 

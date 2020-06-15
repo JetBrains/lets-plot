@@ -94,13 +94,6 @@ class PointConverterTest {
         assertMapObject(1)
     }
 
-    @Test
-    fun whenMapIdSet_ShouldUseGeometry() {
-        aesData.builder().mapId(constant("New York City"))
-
-        assertPointGeometryDataArray()
-    }
-
     private fun assertMapObject(index: Int) {
         val mapObjectList = aesData.buildConverter().toPoint(PointGeom())
         assertEquals(2, mapObjectList.size.toLong())

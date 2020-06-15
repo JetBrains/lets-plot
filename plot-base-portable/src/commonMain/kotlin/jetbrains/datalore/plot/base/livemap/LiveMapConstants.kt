@@ -7,10 +7,8 @@ package jetbrains.datalore.plot.base.livemap
 
 interface LivemapConstants {
     enum class DisplayMode {
-        POLYGON,
         POINT,
         PIE,
-        HEATMAP,
         BAR
     }
 

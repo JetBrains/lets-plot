@@ -6,23 +6,14 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
 import jetbrains.datalore.plot.config.DataMetaUtil.toDiscrete
-import jetbrains.datalore.plot.config.PlotConfig.Companion.getErrorMessage
-import jetbrains.datalore.plot.config.PlotConfig.Companion.isFailure
-import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import org.junit.Ignore
 import org.junit.Test
 import kotlin.math.pow
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class AsDiscreteTest {
 
@@ -91,7 +82,7 @@ class AsDiscreteTest {
             mappingStorage = LAYER
         )
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
@@ -104,7 +95,7 @@ class AsDiscreteTest {
             mappingStorage = PLOT
         )
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
@@ -117,7 +108,7 @@ class AsDiscreteTest {
             mappingStorage = LAYER
         )
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
@@ -130,7 +121,7 @@ class AsDiscreteTest {
             mappingStorage = PLOT
         )
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
@@ -143,7 +134,7 @@ class AsDiscreteTest {
             mappingStorage = LAYER
         )
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
@@ -156,7 +147,7 @@ class AsDiscreteTest {
             mappingStorage = PLOT
         )
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
@@ -169,7 +160,7 @@ class AsDiscreteTest {
             mappingStorage = LAYER
         )
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
@@ -182,7 +173,7 @@ class AsDiscreteTest {
             mappingStorage = PLOT
         )
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
@@ -216,7 +207,7 @@ class AsDiscreteTest {
             |  ]
             |}""".trimMargin()
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
@@ -251,7 +242,7 @@ class AsDiscreteTest {
             |  ]
             |}""".trimMargin()
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .hasVariable(Stats.GROUP)
             .assertVariable(varName = "g", isDiscrete = false)
@@ -337,7 +328,7 @@ class AsDiscreteTest {
                 barData = case.barData,
                 barMapping = case.barMapping
             )
-                .let(::toClientPlotConfig)
+                .let(::transformToClientPlotConfig)
                 .assertScale(Aes.COLOR, isDiscrete = true) { case.toString() }
                 .assertScale(Aes.FILL, isDiscrete = true) { case.toString() }
                 .assertVariable(toDiscrete("foo"), isDiscrete = true) { case.toString() }
@@ -365,7 +356,7 @@ class AsDiscreteTest {
             |  ]
             |}""".trimMargin()
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("d", isDiscrete = true)
     }
@@ -396,7 +387,7 @@ class AsDiscreteTest {
             |    }
             |  ]
             |}""".trimMargin()
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("g"), isDiscrete = true)
     }
@@ -430,7 +421,7 @@ class AsDiscreteTest {
             |  ]
             |}""".trimMargin()
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.FILL, isDiscrete = true)
             .assertScale(Aes.COLOR, isDiscrete = false)
             .assertVariable(toDiscrete("cyl"), isDiscrete = true)
@@ -466,7 +457,7 @@ class AsDiscreteTest {
             |  ]
             |}""".trimMargin()
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("cyl"), isDiscrete = true)
     }
@@ -484,7 +475,7 @@ class AsDiscreteTest {
             layerData = null,
             layerMapping = false,
             layerAnnotation = false
-        ).let(::toClientPlotConfig)
+        ).let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
             .assertVariable(toDiscrete("cyl"), isDiscrete = true) // no overriding in layer
     }
@@ -499,7 +490,7 @@ class AsDiscreteTest {
             layerData = null,
             layerMapping = true,
             layerAnnotation = true
-        ).let(::toClientPlotConfig)
+        ).let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
             .assertVariable(toDiscrete("cyl"), isDiscrete = true) // as_discrete in layer
     }
@@ -514,7 +505,7 @@ class AsDiscreteTest {
             layerData = null,
             layerMapping = true,
             layerAnnotation = true
-        ).let(::toClientPlotConfig)
+        ).let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in layer
             .assertVariable(toDiscrete("cyl"), isDiscrete = true) // as_discrete in layer
     }
@@ -529,7 +520,7 @@ class AsDiscreteTest {
             layerData = null,
             layerMapping = true,
             layerAnnotation = false
-        ).let(::toClientPlotConfig)
+        ).let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
             .assertVariable("cyl", isDiscrete = false) // as is (numeric, overrided by layer)
     }
@@ -545,7 +536,7 @@ class AsDiscreteTest {
             layerMapping = true,
             layerAnnotation = false
         )
-            .let(::toClientPlotConfig)
+            .let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = false)
             .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(4.0, 5.0, 6.0))
@@ -562,7 +553,7 @@ class AsDiscreteTest {
             layerMapping = false,
             layerAnnotation = false
         )
-            .let(::toClientPlotConfig)
+            .let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("cyl"), isDiscrete = true)
             .assertValue(toDiscrete("cyl"), listOf(4.0, 5.0, 6.0))
@@ -579,7 +570,7 @@ class AsDiscreteTest {
             layerMapping = true,
             layerAnnotation = true
         )
-            .let(::toClientPlotConfig)
+            .let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable(toDiscrete("cyl"), isDiscrete = true)
             .assertValue(toDiscrete("cyl"), listOf(4.0, 5.0, 6.0))
@@ -596,7 +587,7 @@ class AsDiscreteTest {
             layerMapping = true,
             layerAnnotation = false
         )
-            .let(::toClientPlotConfig)
+            .let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(4.0, 5.0, 6.0))
@@ -613,7 +604,7 @@ class AsDiscreteTest {
             layerMapping = true,
             layerAnnotation = false
         )
-            .let(::toClientPlotConfig)
+            .let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(1.0, 2.0, 3.0))
@@ -630,7 +621,7 @@ class AsDiscreteTest {
             layerMapping = true,
             layerAnnotation = false
         )
-            .let(::toClientPlotConfig)
+            .let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = false)
             .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(1.0, 2.0, 3.0))
@@ -668,7 +659,7 @@ class AsDiscreteTest {
             |  ]
             |}""".trimMargin()
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true, name = "clndr")
             .assertVariable(toDiscrete("cyl"), isDiscrete = true)
     }
@@ -716,7 +707,7 @@ class AsDiscreteTest {
             |  ]
             |}""".trimMargin()
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true, name = "clndr")
             .assertVariable(toDiscrete("cyl"), isDiscrete = true)
     }
@@ -762,60 +753,11 @@ class AsDiscreteTest {
             |  ]
             |}""".trimMargin()
 
-        toClientPlotConfig(spec)
+        transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true, name = "ndr")
             .assertVariable(toDiscrete("cyl"), isDiscrete = true)
     }
 }
-
-
-
-private fun PlotConfigClientSide.assertValue(variable: String, values: List<*>): PlotConfigClientSide {
-    val data = layerConfigs.single().combinedData
-    assertEquals(values, data.get(variables(data)[variable]!!))
-    return this
-}
-
-private fun PlotConfigClientSide.assertVariable(
-    varName: String,
-    isDiscrete: Boolean,
-    msg: () -> String = { "" }
-): PlotConfigClientSide {
-    val layer = layerConfigs.single()
-    if (!DataFrameUtil.hasVariable(layer.combinedData, varName)) {
-        fail("Variable $varName is not found in ${layer.combinedData.variables().map(DataFrame.Variable::name)}")
-    }
-    val dfVar = DataFrameUtil.findVariableOrFail(layer.combinedData, varName)
-    assertEquals(!isDiscrete, layer.combinedData.isNumeric(dfVar), msg())
-    return this
-}
-
-private fun PlotConfigClientSide.assertScale(
-    aes: Aes<*>,
-    isDiscrete: Boolean,
-    name: String? = null,
-    msg: () -> String = { "" }
-): PlotConfigClientSide {
-    val layer = layerConfigs.single()
-    val binding = layer.varBindings.firstOrNull { it.aes == aes } ?: fail("$aes not found. ${msg()}")
-    assertEquals(!isDiscrete, binding.scale!!.isContinuous)
-    name?.let { assertEquals(it, binding.scale!!.name)}
-    return this
-}
-
-private fun PlotConfigClientSide.hasVariable(variable: DataFrame.Variable): PlotConfigClientSide {
-    val layer = layerConfigs.single()
-    assertTrue(DataFrameUtil.hasVariable(layer.combinedData, variable.name))
-    return this
-}
-
-private fun toClientPlotConfig(spec: String): PlotConfigClientSide {
-    return parsePlotSpec(spec)
-        .let(ServerSideTestUtil::serverTransformWithoutEncoding)
-        .also { require(!isFailure(it)) { getErrorMessage(it) } }
-        .let(TestUtil::assertClientWontFail)
-}
-
 
 @Suppress("ComplexRedundantLet")
 private fun buildSpecWithOverriding(

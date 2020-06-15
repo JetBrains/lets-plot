@@ -20,12 +20,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
-import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
@@ -71,7 +72,6 @@ internal class TypedOptionConverterMap {
         this.put(MIDDLE, DOUBLE_CVT)
         this.put(UPPER, DOUBLE_CVT)
 
-        this.put(MAP_ID, IDENTITY_O_CVT)
         this.put(FRAME, IDENTITY_S_CVT)
 
         this.put(SPEED, DOUBLE_CVT)
@@ -88,6 +88,9 @@ internal class TypedOptionConverterMap {
         this.put(HJUST, IDENTITY_O_CVT)   // text horizontal justification (numbers [0..1] or predefined strings, DOUBLE_CVT; not positional)
         this.put(VJUST, IDENTITY_O_CVT)   // text vertical justification (numbers [0..1] or predefined strings, not positional)
         this.put(ANGLE, DOUBLE_CVT)
+
+        this.put(SYM_X, DOUBLE_CVT)
+        this.put(SYM_Y, DOUBLE_CVT)
     }
 
     private fun <T> put(aes: Aes<T>, value: (Any?) -> T?) {

@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
-import jetbrains.datalore.plot.builder.map.GeoPositionField
 
 open class MappedAes(
     protected val aes: Aes<*>,
@@ -28,7 +27,7 @@ open class MappedAes(
         val mappedDataPoint = getMappedDataPoint(index) ?: return null
 
         val label2value: Pair<String, String> = when {
-            isAxis && !isAxisTooltipAllowed(mappedDataPoint) -> null
+            isAxis && !mappedDataPoint.isContinuous -> null
             isAxis -> "" to mappedDataPoint.value
             else -> createLabeledValue(
                 index = index,
@@ -62,13 +61,6 @@ open class MappedAes(
         )
     }
 
-    private fun isAxisTooltipAllowed(sourceDataPoint: DataPoint): Boolean {
-        return when {
-            MAP_COORDINATE_NAMES.contains(sourceDataPoint.label) -> false
-            else -> sourceDataPoint.isContinuous
-        }
-    }
-
     private fun createLabeledValue(
         index: Int,
         value: String,
@@ -85,7 +77,6 @@ open class MappedAes(
         }
 
         fun shortText() = "" to value
-
         fun fullText() = label to value
 
         return when {
@@ -101,13 +92,6 @@ open class MappedAes(
     }
 
     companion object {
-        private val MAP_COORDINATE_NAMES = setOf(
-            GeoPositionField.POINT_X,
-            GeoPositionField.POINT_X1,
-            GeoPositionField.POINT_Y,
-            GeoPositionField.POINT_Y1
-        )
-
         fun createMappedAxis(aes: Aes<*>, dataContext: DataContext): ValueSource =
             MappedAes(aes, isOutlier = true, isAxis = true).also { it.setDataPointProvider(dataContext) }
 
