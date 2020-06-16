@@ -19,7 +19,6 @@ open class MappedAes(
     format: String? = null
 ) : ValueSource {
 
-    private var myIsTooltipAllowed: Boolean = false
     private lateinit var myDataAccess: MappedDataAccess
     private lateinit var myDataLabel: String
     private var myIsContinuous: Boolean = false
@@ -41,15 +40,11 @@ open class MappedAes(
             else -> dataLabel
         }
         myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
-        myIsTooltipAllowed = when {
-            !isAxis -> true
-            MAP_COORDINATE_NAMES.contains(dataLabel) -> false
-            else -> myIsContinuous
-        }
+
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        return if (!myIsTooltipAllowed) {
+        return if (isAxis && !myIsContinuous) {
             null
         } else {
             val mappedDataValue = myDataAccess.getMappedData(aes, index).value
