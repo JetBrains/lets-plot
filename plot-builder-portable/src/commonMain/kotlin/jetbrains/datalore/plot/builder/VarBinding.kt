@@ -27,14 +27,7 @@ open class VarBinding(
         throw IllegalStateException("Not a deferred var binding")
     }
 
-    override fun toString(): String {
-        return "VarBinding{" +
-                "variable=" + variable +
-                ", aes=" + aes +
-                ", scale=" + scale +
-                ", deferred=" + isDeferred +
-                '}'.toString()
-    }
+    override fun toString() = "VarBinding{variable=${variable}, aes=${aes}, scale=$scale, deferred=$isDeferred}"
 
     companion object {
         fun deferred(variable: DataFrame.Variable, aes: Aes<*>, scaleProvider: ScaleProvider<*>): VarBinding {
