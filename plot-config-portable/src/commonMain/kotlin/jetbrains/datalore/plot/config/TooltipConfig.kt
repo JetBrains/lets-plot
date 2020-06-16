@@ -45,7 +45,7 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
             DEFAULT_LABEL -> null
             else -> labelValue
         }
-        val format = tooltipLine.getString(TooltipLine.FORMAT) ?: ""
+        val format = tooltipLine.getString(TooltipLine.FORMAT)
 
         return if (value.size == 1) {
             TooltipLineSpecification.singleValueLine(
@@ -56,13 +56,13 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
         } else {
             TooltipLineSpecification.multiValueLine(
                 label = label ?: "",
-                format = format,
+                format = format ?: "",
                 data = value.map { createValueSource(it) }
             )
         }
     }
 
-    private fun createValueSource(name: String, label: String? = null, format: String = ""): ValueSource {
+    private fun createValueSource(name: String, label: String? = null, format: String? = null): ValueSource {
         fun getAesByName(aesName: String): Aes<*> {
             return Aes.values().find { it.name == aesName } ?: error("$aesName is not aes name")
         }

@@ -15,7 +15,7 @@ class CompositeValue(
     format: String
 ) : ValueSource {
 
-    private val myFormatter = if (format.isEmpty()) null else LineFormatter(format)
+    private val myFormatter = LineFormatter(format)
 
     override fun setDataContext(dataContext: DataContext) {
         values.forEach { it.setDataContext(dataContext) }
@@ -27,16 +27,11 @@ class CompositeValue(
         }
         return DataPoint(
             label = label,
-            value = combine(dataValues),
+            value = myFormatter.format(dataValues),
             isContinuous = false,
             aes = null,
             isAxis = false,
             isOutlier = false
         )
-    }
-
-    private fun combine(dataValuePoints: List<DataPoint>): String {
-        return myFormatter?.format(dataValuePoints)
-            ?: dataValuePoints.joinToString(transform = DataPoint::line)
     }
 }

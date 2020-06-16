@@ -9,20 +9,29 @@ import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.interact.ValueSource
 
 class LineFormatter(
-    private val formatPattern: String
+    private val formatPattern: String?
 ) {
+    // composite string with a single value source
     fun format(value: String, isContinuous: Boolean): String {
-        return RE_PATTERN.replace(formatPattern) { match ->
-            val pattern = match.groupValues[MATCHED_INDEX]
-            when {
-                isContinuous -> NumberFormat(pattern).apply(value.toFloat())
-                else -> value
+        return if (formatPattern != null) {
+            RE_PATTERN.replace(formatPattern) { match ->
+                val pattern = match.groupValues[MATCHED_INDEX]
+                when {
+                    isContinuous -> NumberFormat(pattern).apply(value.toFloat())
+                    else -> value
+                }
             }
+        } else {
+            value
         }
     }
 
-    // use for composite string
+    // composite string with a multiple sources
     fun format(valuePoints: List<ValueSource.DataPoint>): String {
+        if (formatPattern == null) {
+            return valuePoints.joinToString(transform = ValueSource.DataPoint::line)
+        }
+
         val myFormatList = RE_PATTERN.findAll(formatPattern).map { it.groupValues[MATCHED_INDEX] }.toList()
         if (myFormatList.size != valuePoints.size) {
             return ""

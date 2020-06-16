@@ -17,14 +17,14 @@ open class MappedAes(
     private val isOutlier: Boolean = false,
     private val isAxis: Boolean = false,
     private val label: String? = null,
-    format: String = ""
+    format: String? = null
 ) : ValueSource {
 
     private var myIsTooltipAllowed: Boolean = false
     private lateinit var myDataAccess: MappedDataAccess
     private lateinit var myDataLabel: String
     private var myIsContinuous: Boolean = false
-    private val myFormatter = if (format.isEmpty()) null else LineFormatter(format)
+    private val myFormatter = LineFormatter(format)
 
     override fun setDataContext(dataContext: DataContext) {
         myDataAccess = dataContext.mappedDataAccess
@@ -56,7 +56,7 @@ open class MappedAes(
             val mappedDataValue = myDataAccess.getMappedData(aes, index).value
             DataPoint(
                 label = label ?: myDataLabel,
-                value =  myFormatter?.format(mappedDataValue, myIsContinuous) ?: mappedDataValue,
+                value = myFormatter.format(mappedDataValue, myIsContinuous),
                 isContinuous = myIsContinuous,
                 aes = aes,
                 isAxis = isAxis,
