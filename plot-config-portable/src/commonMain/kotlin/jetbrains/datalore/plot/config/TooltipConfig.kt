@@ -41,7 +41,10 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
             is List<*> -> value.mapNotNull(Any?::toString)
             else -> error("Unsupported tooltip format type")
         }
-        val label = tooltipLine.getString(TooltipLine.LABEL)
+        val label = when (val labelValue = tooltipLine.getString(TooltipLine.LABEL)) {
+            DEFAULT_LABEL -> null
+            else -> labelValue
+        }
         val format = tooltipLine.getString(TooltipLine.FORMAT) ?: ""
 
         return if (value.size == 1) {
@@ -68,12 +71,13 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
             name.startsWith("text@") -> StaticValue((name.removePrefix("text@")))
             name.startsWith("aes@") -> {
                 val aes = getAesByName(name.removePrefix("aes@"))
-                when {
-                    format.isEmpty() && label == null -> MappedAes(aes)
-                    else -> ConstantAes(aes, label ?: "", format)
-                }
+                MappedAes(aes, label = label, format = format)
             }
-            else -> VariableValue(name, label ?: "", format)
+            else -> VariableValue(name, label, format)
         }
+    }
+
+    companion object {
+        private const val DEFAULT_LABEL = "{}"
     }
 }

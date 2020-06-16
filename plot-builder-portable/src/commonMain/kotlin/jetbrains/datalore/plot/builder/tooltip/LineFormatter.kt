@@ -21,6 +21,7 @@ class LineFormatter(
         }
     }
 
+    // use for composite string
     fun format(valuePoints: List<ValueSource.DataPoint>): String {
         val myFormatList = RE_PATTERN.findAll(formatPattern).map { it.groupValues[MATCHED_INDEX] }.toList()
         if (myFormatList.size != valuePoints.size) {
@@ -40,14 +41,5 @@ class LineFormatter(
     companion object {
         val RE_PATTERN = """\{([^{}]*)}""".toRegex()
         private const val MATCHED_INDEX = 1
-
-        private const val DEFAULT_LABEL = "{}"
-        fun chooseLabel(dataLabel: String, userLabel: String): String {
-            return if (userLabel == DEFAULT_LABEL) {
-                dataLabel
-            } else {
-                userLabel
-            }
-        }
     }
 }

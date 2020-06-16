@@ -12,23 +12,19 @@ import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
 
 class VariableValue(
     private val name: String,
-    label: String = "",
+    private val label: String? = "",
     format: String = ""
 ) : ValueSource {
 
     private val myFormatter = if (format.isEmpty()) null else LineFormatter(format)
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
-    private val myLabel = LineFormatter.chooseLabel(dataLabel = name, userLabel = label)
     private var myIsContinuous: Boolean = false
 
     override fun setDataContext(dataContext: DataContext) {
         myDataFrame = dataContext.dataFrame
 
-        val variable = myDataFrame.variables().find { it.name == name }
-        requireNotNull(variable) { "Undefined variable with name '$name'" }
-
-        myVariable = variable
+        myVariable = myDataFrame.variables().find { it.name == name } ?: error("Undefined variable with name '$name'")
         myIsContinuous = myDataFrame.isNumeric(myVariable)
     }
 
@@ -36,8 +32,8 @@ class VariableValue(
 
         val originalValue = myDataFrame[myVariable][index]
         return DataPoint(
-            label = myLabel,
-            value = format(originalValue, myIsContinuous),
+            label = label ?: name,
+            value = format(originalValue),
             isContinuous = myIsContinuous,
             aes = null,
             isAxis = false,
@@ -45,10 +41,10 @@ class VariableValue(
         )
     }
 
-    private fun format(originalValue: Any?, isContinuous: Boolean): String {
+    private fun format(originalValue: Any?): String {
         // todo Need proper formatter.
         val strValue = originalValue.toString()
-        return myFormatter?.format(strValue, isContinuous) ?: strValue
+        return myFormatter?.format(strValue, myIsContinuous) ?: strValue
     }
 
     fun getVariableName(): String {

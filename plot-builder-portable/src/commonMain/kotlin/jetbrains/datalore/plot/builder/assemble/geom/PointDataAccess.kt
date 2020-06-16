@@ -44,18 +44,14 @@ internal class PointDataAccess(
         )
     }
 
-    override fun <T> getMappedDataLabel(aes: Aes<T>): String {
-        checkArgument(isMapped(aes), "Not mapped: $aes")
-        val binding = myBindings.getValue(aes)
-        val scale = binding.scale!!
-        return scale.name
-    }
+    override fun getMappedDataLabel(aes: Aes<*>): String = getScale(aes).name
 
-    override fun <T> isMappedDataContinuous(aes: Aes<T>): Boolean {
+    override fun isMappedDataContinuous(aes: Aes<*>): Boolean = getScale(aes).isContinuous
+
+    private fun getScale(aes: Aes<*>): Scale<*> {
         checkArgument(isMapped(aes), "Not mapped: $aes")
         val binding = myBindings.getValue(aes)
-        val scale = binding.scale!!
-        return scale.isContinuous
+        return binding.scale!!
     }
 
     private fun <T> formatter(aes: Aes<T>): (Any?) -> String {

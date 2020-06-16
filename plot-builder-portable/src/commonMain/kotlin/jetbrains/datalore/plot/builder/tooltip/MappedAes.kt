@@ -15,13 +15,16 @@ import jetbrains.datalore.plot.builder.map.GeoPositionField
 open class MappedAes(
     protected val aes: Aes<*>,
     private val isOutlier: Boolean = false,
-    private val isAxis: Boolean = false
+    private val isAxis: Boolean = false,
+    private val label: String? = null,
+    format: String = ""
 ) : ValueSource {
 
     private var myIsTooltipAllowed: Boolean = false
     private lateinit var myDataAccess: MappedDataAccess
-    private lateinit var myLabel: String
+    private lateinit var myDataLabel: String
     private var myIsContinuous: Boolean = false
+    private val myFormatter = if (format.isEmpty()) null else LineFormatter(format)
 
     override fun setDataContext(dataContext: DataContext) {
         myDataAccess = dataContext.mappedDataAccess
@@ -30,9 +33,9 @@ open class MappedAes(
 
         val axisLabels = listOf(Aes.X, Aes.Y)
             .filter(myDataAccess::isMapped)
-            .map { myDataAccess.getMappedDataLabel(it) }
+            .map(myDataAccess::getMappedDataLabel)
         val dataLabel = myDataAccess.getMappedDataLabel(aes)
-        myLabel = when {
+        myDataLabel = when {
             isAxis -> ""
             dataLabel.isEmpty() -> ""
             dataLabel in axisLabels -> ""
@@ -50,9 +53,10 @@ open class MappedAes(
         return if (!myIsTooltipAllowed) {
             null
         } else {
+            val mappedDataValue = myDataAccess.getMappedData(aes, index).value
             DataPoint(
-                label = myLabel,
-                value = myDataAccess.getMappedData(aes, index).value,
+                label = label ?: myDataLabel,
+                value =  myFormatter?.format(mappedDataValue, myIsContinuous) ?: mappedDataValue,
                 isContinuous = myIsContinuous,
                 aes = aes,
                 isAxis = isAxis,
