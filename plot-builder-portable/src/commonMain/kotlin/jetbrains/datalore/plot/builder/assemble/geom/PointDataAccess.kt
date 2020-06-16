@@ -30,7 +30,7 @@ internal class PointDataAccess(
         checkArgument(isMapped(aes), "Not mapped: $aes")
 
         val binding = myBindings.getValue(aes)
-        val scale = binding.scale!!
+        val scale = getScale(aes)
 
         val originalValue = binding
             .variable
@@ -49,14 +49,12 @@ internal class PointDataAccess(
     override fun isMappedDataContinuous(aes: Aes<*>): Boolean = getScale(aes).isContinuous
 
     private fun getScale(aes: Aes<*>): Scale<*> {
-        checkArgument(isMapped(aes), "Not mapped: $aes")
-        val binding = myBindings.getValue(aes)
-        return binding.scale!!
+        return myBindings.getValue(aes).scale ?: error("getScale() - scale is null")
     }
 
     private fun <T> formatter(aes: Aes<T>): (Any?) -> String {
-        val scale = myBindings.getValue(aes).scale
-        return myFormatters.getOrPut(aes, defaultValue = { createFormatter(aes, scale!!) })
+        val scale = getScale(aes)
+        return myFormatters.getOrPut(aes, defaultValue = { createFormatter(aes, scale) })
     }
 
     private fun createFormatter(aes: Aes<*>, scale: Scale<*>): (Any?) -> String {
