@@ -33,7 +33,6 @@ object TransformVar {
     val LOWER = DataFrame.Variable("transform.LOWER", TRANSFORM)
     val MIDDLE = DataFrame.Variable("transform.MIDDLE", TRANSFORM)
     val UPPER = DataFrame.Variable("transform.UPPER", TRANSFORM)
-    val MAP_ID = DataFrame.Variable("transform.MAP_ID", TRANSFORM)
     val FRAME = DataFrame.Variable("transform.FRAME", TRANSFORM)
     val SPEED = DataFrame.Variable("transform.SPEED", TRANSFORM)
     val FLOW = DataFrame.Variable("transform.FLOW", TRANSFORM)
@@ -47,6 +46,8 @@ object TransformVar {
     val HJUST = DataFrame.Variable("transform.HJUST", TRANSFORM)
     val VJUST = DataFrame.Variable("transform.VJUST", TRANSFORM)
     val ANGLE = DataFrame.Variable("transform.ANGLE", TRANSFORM)
+    val SYM_X = DataFrame.Variable("transform.SYM_X", TRANSFORM)
+    val SYM_Y = DataFrame.Variable("transform.SYM_Y", TRANSFORM)
 
     private val VAR_BY_AES = TransformVarByAes()
     private val VARS: Map<String, DataFrame.Variable>
@@ -160,11 +161,6 @@ object TransformVar {
             return UPPER
         }
 
-
-        override fun mapId(): DataFrame.Variable {
-            return MAP_ID
-        }
-
         override fun frame(): DataFrame.Variable {
             return FRAME
         }
@@ -215,6 +211,14 @@ object TransformVar {
 
         override fun angle(): DataFrame.Variable {
             return ANGLE
+        }
+
+        override fun symX(): DataFrame.Variable {
+            return SYM_X
+        }
+
+        override fun symY(): DataFrame.Variable {
+            return SYM_Y
         }
     }
 }

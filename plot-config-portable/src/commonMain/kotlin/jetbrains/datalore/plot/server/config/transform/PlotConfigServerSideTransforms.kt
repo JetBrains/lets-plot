@@ -36,26 +36,10 @@ object PlotConfigServerSideTransforms {
             .change(
                 SpecSelector.of(Plot.LAYERS, Layer.GEOM, PlotBase.DATA),
                 NumericDataVectorSpecChange()
-            ) // ToDo: remove (and tests)
+            )
             .change(
                 ReplaceDataVectorsInAesMappingChange.specSelector(),
                 ReplaceDataVectorsInAesMappingChange()
-            )
-            .change(
-                MapJoinChange.specSelector(),
-                MapJoinChange()
-            )
-            .change(
-                LonLatSpecInMappingSpecChange.specSelector(),
-                LonLatSpecInMappingSpecChange()
-            )
-            .change(
-                GeoDataFrameMappingChange.specSelector(),
-                GeoDataFrameMappingChange()
-            )
-            .change(
-                GeoPositionMappingChange.specSelector(),
-                GeoPositionMappingChange()
             )
             .build()
     }

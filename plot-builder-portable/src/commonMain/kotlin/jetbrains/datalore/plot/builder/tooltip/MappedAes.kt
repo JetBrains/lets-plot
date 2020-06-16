@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
-import jetbrains.datalore.plot.builder.map.GeoPositionField
 
 open class MappedAes(
     protected val aes: Aes<*>,
@@ -71,13 +70,6 @@ open class MappedAes(
     }
 
     companion object {
-        private val MAP_COORDINATE_NAMES = setOf(
-            GeoPositionField.POINT_X,
-            GeoPositionField.POINT_X1,
-            GeoPositionField.POINT_Y,
-            GeoPositionField.POINT_Y1
-        )
-
         fun createMappedAxis(aes: Aes<*>, dataContext: DataContext): ValueSource =
             MappedAes(aes, isOutlier = true, isAxis = true).also { it.setDataContext(dataContext) }
 

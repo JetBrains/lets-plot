@@ -102,10 +102,6 @@ open class DataPointAestheticsDelegate(private val p: DataPointAesthetics) :
         return p.upper()
     }
 
-    override fun mapId(): Any {
-        return p.mapId()
-    }
-
     override fun frame(): String {
         return p.frame()
     }
@@ -156,6 +152,14 @@ open class DataPointAestheticsDelegate(private val p: DataPointAesthetics) :
 
     override fun angle(): Double? {
         return p.angle()
+    }
+
+    override fun symX(): Double? {
+        return p.symX()
+    }
+
+    override fun symY(): Double? {
+        return p.symY()
     }
 
     override fun group(): Int? {

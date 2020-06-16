@@ -82,6 +82,7 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
 
     fun getNumQPair(option: String): Pair<Number?, Number?> {
         val list = getNumList(option) { it == null || it is Number }
+        require(list.size >= 2) { "$option requires a list of 2 but was ${list.size}" }
         return Pair(list[0], list[1])
     }
 

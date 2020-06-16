@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.sampling.Samplings
+import jetbrains.datalore.plot.config.Option.Meta
 
 open class GeomProto constructor(val geomKind: GeomKind) {
 
@@ -159,14 +160,14 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun crossBarDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "identity"
-            defaults["position"] = mapOf("name" to "dodge", "width" to 0.95)
+            defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to 0.95)
             return defaults
         }
 
         private fun boxplotDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "boxplot"
-            defaults["position"] = mapOf("name" to "dodge", "width" to 0.95)
+            defaults["position"] = mapOf(Meta.NAME to "dodge", "width" to 0.95)
             return defaults
         }
 

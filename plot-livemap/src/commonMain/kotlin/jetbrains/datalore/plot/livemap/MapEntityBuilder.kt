@@ -20,8 +20,8 @@ import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.svg.TextLabel.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
-import jetbrains.livemap.api.*
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
+import jetbrains.livemap.api.*
 import kotlin.math.ceil
 
 internal class MapEntityBuilder {
@@ -109,7 +109,7 @@ internal class MapEntityBuilder {
         }
 
     private fun allZeroes(values: List<Double>): Boolean {
-        return values.all { value -> value == 0.0 }
+        return values.all(0.0::equals)
     }
 
     private fun createNaColorList(size: Int): List<Color> {

@@ -5,8 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
@@ -16,7 +15,6 @@ import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.livemap.LiveMapUtil.createLayersConfigurator
 import jetbrains.datalore.plot.livemap.MultiDataPointHelper.SortingMode
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.datalore.plot.livemap.MapLayerKind.POINT
 
 internal class LiveMapDataPointAestheticsProcessor(
     private val myAesthetics: Aesthetics,
@@ -25,7 +23,6 @@ internal class LiveMapDataPointAestheticsProcessor(
     private val myLayerKind: MapLayerKind = getLayerKind(liveMapOptions.displayMode)
     private val myGeodesic: Boolean = liveMapOptions.geodesic
     private val myFrameSpecified: Boolean = allAesMatch(myAesthetics, ::isFrameSet)
-    private val myLonLatInsideMapIdSpecified: Boolean = allAesMatch(myAesthetics, ::isLiveMapWithLonLat)
 
     val mapEntityBuilders: List<MapEntityBuilder>
         get() = (if (useMultiDataPoint()) processMultiDataPoints() else processDataPoints()).onEach { it.layerIndex = 0 }
@@ -34,16 +31,10 @@ internal class LiveMapDataPointAestheticsProcessor(
         return p.frame() != AesInitValue[Aes.FRAME]
     }
 
-    private fun isLiveMapWithLonLat(p: DataPointAesthetics): Boolean {
-        return LonLatParser.parse(p.mapId().toString()) != null
-    }
-
     private fun getLayerKind(displayMode: LivemapConstants.DisplayMode): MapLayerKind {
         return when (displayMode) {
-            LivemapConstants.DisplayMode.POLYGON -> MapLayerKind.POLYGON
-            LivemapConstants.DisplayMode.POINT -> POINT
+            LivemapConstants.DisplayMode.POINT -> MapLayerKind.POINT
             LivemapConstants.DisplayMode.PIE -> MapLayerKind.PIE
-            LivemapConstants.DisplayMode.HEATMAP -> MapLayerKind.HEATMAP
             LivemapConstants.DisplayMode.BAR -> MapLayerKind.BAR
         }
     }
@@ -75,22 +66,13 @@ internal class LiveMapDataPointAestheticsProcessor(
         return myLayerKind === MapLayerKind.PIE || myLayerKind === MapLayerKind.BAR
     }
 
-    private fun MapEntityBuilder.setIfNeeded(
-        p: DataPointAesthetics
-    ) {
+    private fun MapEntityBuilder.setIfNeeded(p: DataPointAesthetics) {
         setGeometryPointIfNeeded(p, this)
         setGeodesicIfNeeded(this)
     }
 
     private fun setGeometryPointIfNeeded(p: DataPointAesthetics, mapEntityBuilder: MapEntityBuilder) {
-        var lonlat: Vec<LonLat>? = null
-        if (myLonLatInsideMapIdSpecified) {
-            lonlat = LonLatParser.parse(p.mapId().toString())
-        }
-
-        if (lonlat != null) {
-            mapEntityBuilder.setGeometryPoint(lonlat)
-        }
+        mapEntityBuilder.setGeometryPoint(explicitVec(p.x()!!, p.y()!!))
     }
 
     private fun setGeodesicIfNeeded(mapEntityBuilder: MapEntityBuilder) {

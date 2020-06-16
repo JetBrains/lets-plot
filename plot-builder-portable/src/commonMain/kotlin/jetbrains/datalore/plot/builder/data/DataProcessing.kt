@@ -304,8 +304,8 @@ object DataProcessing {
         return inverseTransformedStatSeries
     }
 
-    internal fun computeGroups(data: DataFrame, bindings: List<VarBinding>, groupingVar: Variable?): (Int) -> Int {
-        val groupingVariables = getGroupingVariables(data, bindings, groupingVar)
+    internal fun computeGroups(data: DataFrame, bindings: List<VarBinding>, groupingVar: Variable?, pathIdVar: Variable?): (Int) -> Int {
+        val groupingVariables = getGroupingVariables(data, bindings, groupingVar) + listOfNotNull(pathIdVar)
 
         var currentGroups: List<Int>? = null
         if (groupingVar != null) {

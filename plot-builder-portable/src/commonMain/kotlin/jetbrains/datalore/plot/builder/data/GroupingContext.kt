@@ -15,11 +15,13 @@ class GroupingContext(
     private val myData: DataFrame,
     bindings: List<VarBinding>,
     groupingVarName: String?,
+    pathIdVarName: String?,
     private val myExpectMultiple: Boolean
 ) {
 
-    private val myBindings: List<VarBinding>
-    internal val optionalGroupingVar: Variable?
+    private val myBindings: List<VarBinding> = ArrayList(bindings)
+    internal val optionalGroupingVar: Variable? = findOptionalVariable(myData, groupingVarName)
+    private val pathIdVar: Variable? = findOptionalVariable(myData, pathIdVarName)
 
     private var myGroupSizeList: List<Int>? = null
     private var myGroupMapper: ((Int) -> Int)? = null
@@ -32,11 +34,6 @@ class GroupingContext(
             }
             myGroupMapper!!(index)
         }
-
-    init {
-        myBindings = ArrayList(bindings)
-        optionalGroupingVar = findOptionalVariable(myData, groupingVarName)
-    }
 
     private fun computeGroups(): (Int) -> Int {
         if (myData.has(Stats.GROUP)) {
@@ -54,7 +51,8 @@ class GroupingContext(
             return DataProcessing.computeGroups(
                 myData,
                 myBindings,
-                optionalGroupingVar
+                optionalGroupingVar,
+                pathIdVar
             )
         }
         return GroupUtil.SINGLE_GROUP
@@ -62,7 +60,7 @@ class GroupingContext(
 
     companion object {
         internal fun withOrderedGroups(data: DataFrame, groupSizeList: List<Int>): GroupingContext {
-            val groupingContext = GroupingContext(data, emptyList(), null, false)
+            val groupingContext = GroupingContext(data, emptyList(), null, null, false)
             groupingContext.myGroupSizeList = ArrayList(groupSizeList)
             return groupingContext
         }

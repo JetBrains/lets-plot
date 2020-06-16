@@ -249,7 +249,8 @@ class LiveMap : PlotConfigDemoBase() {
                     {
                         "geom":"livemap",
                         "mapping":{
-                            "map_id":"lonlat",
+                            "x":"x",
+                            "y":"y",
                             "color":"label"
                         },
                         "display_mode":"point",

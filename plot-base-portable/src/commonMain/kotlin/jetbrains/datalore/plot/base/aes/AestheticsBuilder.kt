@@ -26,12 +26,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
-import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
@@ -123,10 +124,6 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return aes(WEIGHT, v)
     }
 
-    fun mapId(v: (Int) -> Any?): AestheticsBuilder {
-        return aes(MAP_ID, v)
-    }
-
     fun frame(v: (Int) -> String?): AestheticsBuilder {
         return aes(FRAME, v)
     }
@@ -182,6 +179,14 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun ymax(v: (Int) -> Double?): AestheticsBuilder {
         return aes(YMAX, v)
+    }
+
+    fun symX(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(SYM_X, v)
+    }
+
+    fun symY(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(SYM_Y, v)
     }
 
     fun <T> constantAes(aes: Aes<T>, v: T): AestheticsBuilder {
@@ -438,10 +443,6 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return get(UPPER)
         }
 
-        override fun mapId(): Any {
-            return get(MAP_ID)
-        }
-
         override fun frame(): String {
             return get(FRAME)
         }
@@ -492,6 +493,14 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
         override fun angle(): Double? {
             return get(ANGLE)
+        }
+
+        override fun symX(): Double? {
+            return get(SYM_X)
+        }
+
+        override fun symY(): Double? {
+            return get(SYM_Y)
         }
 
         override fun group(): Int? {

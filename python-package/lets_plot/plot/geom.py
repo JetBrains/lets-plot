@@ -48,7 +48,6 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         Codes and names: 0 = "none" (default), 1 = "ripple".
     map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint)
         Data containing coordinates of points.
-        Can be used with aesthetic parameter 'map_id' for joining data and map coordinates.
         Dictionary and DataFrame object must contain keys/columns:
         1. 'x' or 'lon' or 'long'
         2. 'y' or 'lat'
@@ -70,7 +69,6 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
     or two categorical variables.
 
     geom_point understands the following aesthetics mappings:
-    - map_id : name used to join data with map coordinates
     - x : x-axis value
     - y : y-axis value
     - alpha : transparency level of the point
@@ -127,7 +125,6 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
     animation : type of the animation, optional
         Codes and names: 0 = "none" (default), 1 = "dash", 2 = "plane", 3 = "circle".
     map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes LineString and MultiLineString)
-        Can be used with aesthetic parameter 'map_id' for joining data and map coordinates.
 
         Dictionary and DataFrame object must contain keys/columns:
         1. 'x' or 'lon' or 'long'
@@ -149,7 +146,6 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
     geom_path lets you explore how two variables are related over time.
 
     geom_path understands the following aesthetics mappings:
-    - map_id : name used to join data with map coordinates
     - x : x-axis value
     - y : y-axis value
     - alpha : transparency level of a point
@@ -1110,7 +1106,6 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         position adjustment function.
     map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon)
         Data (Dictionary, DataFrame or GeoDataFrame object) contains coordinates of polygon vertices on map.
-        Can be used with aesthetic parameter 'map_id' for joining data and map coordinates.
         Dictionary and DataFrame object must contain keys/columns:
         1. 'x' or 'lon' or 'long'
         2. 'y' or 'lat'
@@ -1130,7 +1125,6 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         geom_polygon draws polygons, which are filled paths. Each vertex of the polygon requires a separate row in the
          data.
      geom_polygon understands the following aesthetics mappings:
-    - map_id : name used to join data with map coordinates
     - x : x-axis coordinates of the vertices of the polygon.
     - y : y-axis coordinates of the vertices of the polygon.
     - alpha : transparency level of a layer
@@ -1202,10 +1196,9 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
     -----
         geom_map draws polygons which boundaries are specified by 'map' parameter.
         Aesthetics of ploygons (fill etc.) are computed basing on input data and mapping
-        (see 'data' and 'mapping' arguments, 'map_id' aesthetic).
+        (see 'data' and 'mapping' arguments).
 
      geom_map understands the following aesthetics:
-    - map_id : name used to join data with map coordinates (region boundaries).
     - alpha : transparency level of a layer
         Understands numbers between 0 and 1.
     - color (colour) : color of a geometry lines
@@ -2059,7 +2052,6 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
     geom_rect draws rectangles
 
     geom_rect understands the following aesthetics mappings:
-    - map_id : name used to join data with map coordinates
     - xmin : x-axis value
     - xmax : x-axis value
     - ymin : y-axis value
@@ -2191,7 +2183,6 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
     Adds text directly to the plot.
 
     geom_text understands the following aesthetics mappings:
-    - map_id : name used to join data with map coordinates
     - x : x-axis value
     - y : y-axis value
     - label : text to add to plot

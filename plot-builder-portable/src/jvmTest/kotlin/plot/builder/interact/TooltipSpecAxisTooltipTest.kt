@@ -65,19 +65,4 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
         assertLines(0, fillMapping.shortTooltipText())
         assertLines(1, yMapping.shortTooltipText())
     }
-
-    @Test
-    fun mapVarsShouldNotBeAddedToAxisTooltip() {
-        val namesToIgnore = listOf("lon", "longitude", "lat", "latitude")
-
-        for (name in namesToIgnore) {
-            val var1 = variable().name(name).value("0").isContinuous(true)
-
-            addMappedData(var1.mapping(Aes.X))
-
-            buildTooltipSpecs()
-
-            assertTooltipsCount(0)
-        }
-    }
 }

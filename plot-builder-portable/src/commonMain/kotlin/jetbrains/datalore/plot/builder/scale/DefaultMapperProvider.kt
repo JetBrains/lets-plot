@@ -20,12 +20,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
-import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
+import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
@@ -74,17 +75,13 @@ object DefaultMapperProvider {
 
         init {
             for (aes in Aes.allPositional()) {
-                put(aes,
-                    NUMERIC_UNDEFINED
-                )
+                put(aes, NUMERIC_UNDEFINED)
             }
 
             this.put(X, NUMERIC_IDENTITY)
             this.put(Y, NUMERIC_IDENTITY)
 
-            this.put(Z,
-                NUMERIC_IDENTITY
-            )
+            this.put(Z, NUMERIC_IDENTITY)
             this.put(YMIN, NUMERIC_IDENTITY)
             this.put(YMAX, NUMERIC_IDENTITY)
             this.put(COLOR, createColor())
@@ -94,15 +91,9 @@ object DefaultMapperProvider {
             this.put(LINETYPE, createWithDiscreteOutput(LineTypeMapper.allLineTypes(), LineTypeMapper.NA_VALUE))
 
             this.put(SIZE, SizeMapperProvider.DEFAULT)
-            this.put(WIDTH,
-                NUMERIC_IDENTITY
-            )
-            this.put(HEIGHT,
-                NUMERIC_IDENTITY
-            )
-            this.put(WEIGHT,
-                NUMERIC_IDENTITY
-            )
+            this.put(WIDTH, NUMERIC_IDENTITY)
+            this.put(HEIGHT, NUMERIC_IDENTITY)
+            this.put(WEIGHT, NUMERIC_IDENTITY)
             this.put(INTERCEPT, NUMERIC_IDENTITY)
             this.put(SLOPE, NUMERIC_IDENTITY)
             this.put(XINTERCEPT, NUMERIC_IDENTITY)
@@ -111,15 +102,10 @@ object DefaultMapperProvider {
             this.put(MIDDLE, NUMERIC_IDENTITY)
             this.put(UPPER, NUMERIC_IDENTITY)
 
-            this.put(MAP_ID, createObjectIdentityDiscrete(MAP_ID))
             this.put(FRAME, createStringIdentity(FRAME))
 
-            this.put(SPEED,
-                NUMERIC_IDENTITY
-            )
-            this.put(FLOW,
-                NUMERIC_IDENTITY
-            )
+            this.put(SPEED, NUMERIC_IDENTITY)
+            this.put(FLOW, NUMERIC_IDENTITY)
 
             this.put(XMIN, NUMERIC_IDENTITY)
             this.put(XMAX, NUMERIC_IDENTITY)
@@ -135,9 +121,10 @@ object DefaultMapperProvider {
 
             // text vertical justification (numbers [0..1] or predefined strings, not positional)
             this.put(VJUST, createObjectIdentityDiscrete(VJUST))
-            this.put(ANGLE,
-                NUMERIC_IDENTITY
-            )
+            this.put(ANGLE, NUMERIC_IDENTITY)
+
+            this.put(SYM_X, NUMERIC_IDENTITY)
+            this.put(SYM_Y, NUMERIC_IDENTITY)
         }
 
         internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {

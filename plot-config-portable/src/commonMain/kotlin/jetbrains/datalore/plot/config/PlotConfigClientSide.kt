@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot.COORD
 import jetbrains.datalore.plot.config.Option.Plot.THEME
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createGuideOptionsMap
-import jetbrains.datalore.plot.config.geo.GeometryFromGeoDataFrameChange
 import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
@@ -73,7 +72,6 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
             val isGGBunch = isGGBunchSpec(plotSpec)
 
             plotSpec = PlotSpecTransform.builderForRawSpec()
-                .change(GeometryFromGeoDataFrameChange.specSelector(isGGBunch), GeometryFromGeoDataFrameChange())
                 .build()
                 .apply(plotSpec)
 

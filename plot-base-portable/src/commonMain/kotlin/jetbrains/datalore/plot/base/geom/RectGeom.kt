@@ -40,7 +40,6 @@ class RectGeom : GeomBase() {
 //                Aes.COLOR,
 //                Aes.FILL,
 //                Aes.ALPHA,
-//                Aes.MAP_ID
 //        )
         //rectangle groups are used in geom_livemap
         const val HANDLES_GROUPS = true

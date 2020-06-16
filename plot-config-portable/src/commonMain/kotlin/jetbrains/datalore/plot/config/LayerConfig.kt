@@ -18,7 +18,9 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
+import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
+import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
@@ -96,28 +98,23 @@ class LayerConfig(
 
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>?
-        if (GeoPositionsDataUtil.hasGeoPositionsData(this) && myClientSide) {
-            // join dataset and geo-positions data
-            val dataAndMapping = GeoPositionsDataUtil.initDataAndMappingForGeoPositions(
+        if (myClientSide && GeoConfig.isApplicable(layerOptions)) {
+            val geoConfig = GeoConfig(
                 geomProto.geomKind,
                 combinedData,
-                GeoPositionsDataUtil.getGeoPositionsData(this),
+                layerOptions,
                 combinedMappings
             )
-            combinedData = dataAndMapping.first
-            aesMappings = dataAndMapping.second
+            combinedData = geoConfig.dataAndCoordinates
+            aesMappings = geoConfig.mappings
+
         } else {
-            aesMappings = ConfigUtil.createAesMapping(combinedData, combinedMappings)
+            aesMappings = createAesMapping(combinedData, combinedMappings)
         }
 
         // exclude constant aes from mapping
-        val constants = LayerConfigUtil.initConstants(this)
-        if (constants.isNotEmpty()) {
-            aesMappings = HashMap(aesMappings)
-            for (aes in constants.keys) {
-                aesMappings.remove(aes)
-            }
-        }
+        constantsMap = LayerConfigUtil.initConstants(this)
+        aesMappings = aesMappings - constantsMap.keys
 
         // grouping
         explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappings)
@@ -128,7 +125,6 @@ class LayerConfig(
             this,
             geomProto.preferredPositionAdjustments(this)
         )
-        constantsMap = constants
 
         val consumedAesSet = HashSet(geomProto.renders())
         if (!myClientSide) {
@@ -166,7 +162,7 @@ class LayerConfig(
         else
             null
 
-        if (fieldName == null && GeoPositionsDataUtil.hasGeoPositionsData(this)) {
+        if (fieldName == null && has(GEO_POSITIONS)) {
             // 'default' group is important for 'geom_map'
             val groupVar = variables(data)["group"]
             if (groupVar != null) {

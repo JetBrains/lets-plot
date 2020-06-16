@@ -98,7 +98,7 @@ object DataFrameUtil {
     }
 
     fun variables(df: DataFrame): Map<String, DataFrame.Variable> {
-        return df.variables().associateBy { it.name }
+        return df.variables().associateBy(DataFrame.Variable::name)
     }
 
     fun appendReplace(df0: DataFrame, df1: DataFrame): DataFrame {
@@ -169,3 +169,5 @@ object DataFrameUtil {
         return b.build()
     }
 }
+
+

@@ -10,10 +10,11 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.Dummies
+import jetbrains.datalore.plot.config.Option.Meta
 
 object ConfigUtil {
     fun featureName(options: Map<*, *>): String {
-        return options["name"].toString()
+        return options[Meta.NAME].toString()
     }
 
     internal fun isFeatureList(options: Map<*, *>): Boolean {
@@ -24,10 +25,10 @@ object ConfigUtil {
         val list = OptionsAccessor.over(options).getList("feature-list")
 
         return list
-                .map { o: Any? ->
-                    val featureOptionsByKind = o as Map<*, *>
-                    featureOptionsByKind.values.iterator().next() as Map<*, *>
-                }
+            .map { o: Any? ->
+                val featureOptionsByKind = o as Map<*, *>
+                featureOptionsByKind.values.iterator().next() as Map<*, *>
+            }
     }
 
 

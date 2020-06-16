@@ -34,10 +34,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val COLOR: Aes<Color> = Aes("color", false)
         val FILL: Aes<Color> = Aes("fill", false)
         val ALPHA: Aes<Double> = Aes("alpha")
-        val SHAPE: Aes<PointShape> =
-            Aes("shape", false)
-        val LINETYPE: Aes<LineType> =
-            Aes("linetype", false)
+        val SHAPE: Aes<PointShape> = Aes("shape", false)
+        val LINETYPE: Aes<LineType> = Aes("linetype", false)
 
         val SIZE: Aes<Double> = Aes("size")
         val WIDTH: Aes<Double> = Aes("width")
@@ -58,7 +56,6 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val XEND: Aes<Double> = Aes("xend")
         val YEND: Aes<Double> = Aes("yend")
 
-        val MAP_ID: Aes<Any> = Aes("map_id", false)
         val FRAME: Aes<String> = Aes("frame", false)
 
         val SPEED: Aes<Double> = Aes("speed")
@@ -75,6 +72,9 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val VJUST = Aes<Any>("vjust", false)
 
         val ANGLE: Aes<Double> = Aes("angle")
+
+        val SYM_X: Aes<Double> = Aes("sym_x")
+        val SYM_Y: Aes<Double> = Aes("sym_y")
 
 
         fun numeric(unfiltered: Iterable<Aes<*>>): Iterable<Aes<Double>> {
@@ -135,8 +135,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun noGuideNeeded(aes: Aes<*>): Boolean {
-            return aes == MAP_ID ||
-                    aes == FRAME ||
+            return aes == FRAME ||
                     aes == SPEED ||
                     aes == FLOW ||
                     aes == LABEL ||
@@ -148,6 +147,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == ANGLE ||
                     aes == FAMILY ||
                     aes == FONTFACE ||
+                    aes == SYM_X ||
+                    aes == SYM_Y ||
                     isPositional(aes)
         }
 
