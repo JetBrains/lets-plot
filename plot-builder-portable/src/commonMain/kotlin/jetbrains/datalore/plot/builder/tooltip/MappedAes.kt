@@ -14,75 +14,48 @@ import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
 open class MappedAes(
     protected val aes: Aes<*>,
     private val isOutlier: Boolean = false,
-    private val isAxis: Boolean = false
+    private val isAxis: Boolean = false,
+    private val label: String? = null,
+    format: String? = null
 ) : ValueSource {
 
     private lateinit var myDataAccess: MappedDataAccess
+    private lateinit var myDataLabel: String
+    private var myIsContinuous: Boolean = false
+    private val myFormatter = LineFormatter(format)
 
-    override fun setDataPointProvider(dataContext: DataContext) {
+    override fun setDataContext(dataContext: DataContext) {
         myDataAccess = dataContext.mappedDataAccess
+
+        require(myDataAccess.isMapped(aes)) { "$aes have to be mapped" }
+
+        val axisLabels = listOf(Aes.X, Aes.Y)
+            .filter(myDataAccess::isMapped)
+            .map(myDataAccess::getMappedDataLabel)
+        val dataLabel = myDataAccess.getMappedDataLabel(aes)
+        myDataLabel = when {
+            isAxis -> ""
+            dataLabel.isEmpty() -> ""
+            dataLabel in axisLabels -> ""
+            else -> dataLabel
+        }
+        myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
+
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        val mappedDataPoint = getMappedDataPoint(index) ?: return null
-
-        val label2value: Pair<String, String> = when {
-            isAxis && !mappedDataPoint.isContinuous -> null
-            isAxis -> "" to mappedDataPoint.value
-            else -> createLabeledValue(
-                index = index,
-                value = mappedDataPoint.value,
-                label = mappedDataPoint.label
+        return if (isAxis && !myIsContinuous) {
+            null
+        } else {
+            val mappedDataValue = myDataAccess.getMappedData(aes, index).value
+            DataPoint(
+                label = label ?: myDataLabel,
+                value = myFormatter.format(mappedDataValue, myIsContinuous),
+                isContinuous = myIsContinuous,
+                aes = aes,
+                isAxis = isAxis,
+                isOutlier = isOutlier
             )
-        } ?: return null
-
-        return DataPoint(
-            label = label2value.first,
-            value = label2value.second,
-            isContinuous = mappedDataPoint.isContinuous,
-            aes = mappedDataPoint.aes,
-            isAxis = mappedDataPoint.isAxis,
-            isOutlier = mappedDataPoint.isOutlier
-        )
-    }
-
-    protected open fun getMappedDataPoint(index: Int): DataPoint? {
-        if (!myDataAccess.isMapped(aes)) {
-            return null
-        }
-        val mappedData = myDataAccess.getMappedData(aes, index)
-        return DataPoint(
-            label = mappedData.label,
-            value = mappedData.value,
-            isContinuous = mappedData.isContinuous,
-            aes = aes,
-            isAxis = isAxis,
-            isOutlier = isOutlier
-        )
-    }
-
-    private fun createLabeledValue(
-        index: Int,
-        value: String,
-        label: String
-    ): Pair<String, String> {
-
-        val axisLabels = listOf(Aes.X, Aes.Y).mapNotNull { axisAes ->
-            if (myDataAccess.isMapped(axisAes)) {
-                val mappedData = myDataAccess.getMappedData(axisAes, index)
-                mappedData.label
-            } else {
-                null
-            }
-        }
-
-        fun shortText() = "" to value
-        fun fullText() = label to value
-
-        return when {
-            label.isEmpty() -> shortText()
-            label in axisLabels -> shortText()
-            else -> fullText()
         }
     }
 
@@ -93,9 +66,9 @@ open class MappedAes(
 
     companion object {
         fun createMappedAxis(aes: Aes<*>, dataContext: DataContext): ValueSource =
-            MappedAes(aes, isOutlier = true, isAxis = true).also { it.setDataPointProvider(dataContext) }
+            MappedAes(aes, isOutlier = true, isAxis = true).also { it.setDataContext(dataContext) }
 
         fun createMappedAes(aes: Aes<*>, isOutlier: Boolean, dataContext: DataContext): ValueSource =
-            MappedAes(aes, isOutlier = isOutlier, isAxis = false).also { it.setDataPointProvider(dataContext) }
+            MappedAes(aes, isOutlier = isOutlier, isAxis = false).also { it.setDataContext(dataContext) }
     }
 }

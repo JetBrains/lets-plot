@@ -27,7 +27,7 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
                 is String -> TooltipLineSpecification.singleValueLine(
                     label = "",
                     format = "",
-                    datum = createValueSource(tooltipLine, label = "", format = "")
+                    datum = createValueSource(tooltipLine)
                 )
                 is Map<*, *> -> parseMap(tooltipLine)
                 else -> error("Error tooltip_line parsing")
@@ -41,27 +41,28 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
             is List<*> -> value.mapNotNull(Any?::toString)
             else -> error("Unsupported tooltip format type")
         }
-        val label = tooltipLine.getString(TooltipLine.LABEL) ?: ""
-        val format = tooltipLine.getString(TooltipLine.FORMAT) ?: ""
+        val label = when (val labelValue = tooltipLine.getString(TooltipLine.LABEL)) {
+            DEFAULT_LABEL -> null
+            else -> labelValue
+        }
+        val format = tooltipLine.getString(TooltipLine.FORMAT)
 
         return if (value.size == 1) {
-            val valueSource = createValueSource(name = value.single(), label = label, format = format)
             TooltipLineSpecification.singleValueLine(
                 label = "",
                 format = "",
-                datum = valueSource
+                datum = createValueSource(name = value.single(), label = label, format = format)
             )
         } else {
-            val values = value.map { createValueSource(it, label = "", format = "") }
             TooltipLineSpecification.multiValueLine(
-                label = label,
-                format = format,
-                data = values
+                label = label ?: "",
+                format = format ?: "",
+                data = value.map { createValueSource(it) }
             )
         }
     }
 
-    private fun createValueSource(name: String, label: String, format: String): ValueSource {
+    private fun createValueSource(name: String, label: String? = null, format: String? = null): ValueSource {
         fun getAesByName(aesName: String): Aes<*> {
             return Aes.values().find { it.name == aesName } ?: error("$aesName is not aes name")
         }
@@ -70,12 +71,13 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
             name.startsWith("text@") -> StaticValue((name.removePrefix("text@")))
             name.startsWith("aes@") -> {
                 val aes = getAesByName(name.removePrefix("aes@"))
-                when {
-                    format.isNotEmpty() || label.isNotEmpty() -> ConstantAes(aes, label, format)
-                    else -> MappedAes(aes)
-                }
+                MappedAes(aes, label = label, format = format)
             }
             else -> VariableValue(name, label, format)
         }
+    }
+
+    companion object {
+        private const val DEFAULT_LABEL = "{}"
     }
 }

@@ -15,6 +15,10 @@ interface MappedDataAccess {
 
     fun <T> getMappedData(aes: Aes<T>, index: Int): MappedData<T>
 
+    fun getMappedDataLabel(aes: Aes<*>): String
+
+    fun isMappedDataContinuous(aes: Aes<*>): Boolean
+
     class MappedData<T>(
         val label: String,
         val value: String,

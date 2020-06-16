@@ -53,8 +53,9 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataFrame: DataFrame
         ): ContextualMapping {
             val showInTip = aesListForTooltip.filter(dataAccess::isMapped)
+            val showAxisInTip = axisAes.filter(dataAccess::isMapped)
             val dataContext = DataContext(dataFrame, dataAccess)
-            val valueSources = defaultValueSources(dataContext, showInTip) + axisValueSources(dataContext, axisAes)
+            val valueSources = defaultValueSources(dataContext, showInTip) + axisValueSources(dataContext, showAxisInTip)
             return ContextualMapping(dataContext, valueSources)
         }
 
@@ -66,7 +67,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
             val valueSources = if (tooltipValueSources.isNotEmpty()) {
-                tooltipValueSources.forEach { it.setDataPointProvider(dataContext) }
+                tooltipValueSources.forEach { it.setDataContext(dataContext) }
                 tooltipValueSources + axisValueSources(dataContext, axisAes)
             } else {
                 null
