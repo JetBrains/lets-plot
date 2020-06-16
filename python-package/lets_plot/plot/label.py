@@ -121,7 +121,7 @@ def ylab(label):
 
 def labs(**kwargs):
     """
-    Change axis labels and legend titles
+    Change plot title, axis labels and legend titles.
 
     Parameters
     ----------

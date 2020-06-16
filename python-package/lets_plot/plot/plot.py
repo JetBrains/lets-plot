@@ -83,7 +83,7 @@ def ggsize(width, height):
     ----------
     width  : number
         Width of plot in px.
-    height :
+    height : number
         Height of plot in px.
      Returns
     -------

@@ -13,7 +13,7 @@ actual object PortableLogging {
         val kl = KotlinLogging.logger(cl.simpleName ?: "<anonymous>")
         return object : Logger {
             override fun error(e: Throwable, message: () -> String) {
-                kl.error(message)
+                kl.error(e, message)
             }
 
             override fun info(message: () -> String) {

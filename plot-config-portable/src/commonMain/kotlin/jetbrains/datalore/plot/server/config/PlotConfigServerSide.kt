@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.server.config
 
+import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
@@ -22,8 +23,6 @@ import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.entryTransform
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms.migrationTransform
-
-//import mu.KotlinLogging
 
 open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
@@ -304,7 +303,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
     }
 
     companion object {
-//        private val LOG = KotlinLogging.logger {}
+        private val LOG = PortableLogging.logger(PlotConfigServerSide::class)
 
         fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
             return try {
@@ -316,9 +315,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
             } catch (e: RuntimeException) {
                 val failureInfo = FailureHandler.failureInfo(e)
                 if (failureInfo.isInternalError) {
-                    // ToDo: print to STDERR
-//                    LOG.error(e) {}
-                    println(e)
+                    LOG.error(e) { failureInfo.message }
                 }
                 HashMap(failure(failureInfo.message))
             }
