@@ -30,7 +30,7 @@ import kotlin.math.sqrt
  */
 class BoxplotStat : BaseStat(DEF_MAPPING) {
 
-    private var myWhiskerIQRRatio: Double = 0.toDouble()          // ggplot: 'coef'
+    private var myWhiskerIQRRatio: Double = 0.0          // ggplot: 'coef'
     private var myComputeWidth = false    // ggplot: 'varWidth'
 
     /**

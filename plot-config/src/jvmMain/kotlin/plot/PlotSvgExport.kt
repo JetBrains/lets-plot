@@ -15,22 +15,12 @@ object PlotSvgExport {
 
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
-     */
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun buildSvgImageFromRawSpecs(
-        plotSpec: MutableMap<String, Any>
-    ): String {
-        return PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpec, null, JVM_SVG_STR_MAPPER)
-    }
-
-    /**
-     * @param plotSpec Raw specification of a plot or GGBunch.
      * @param plotSize Desired plot size. Has no effect on GGBunch.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?
+        plotSize: DoubleVector? = null
     ): String {
         return PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpec, plotSize, JVM_SVG_STR_MAPPER)
     }

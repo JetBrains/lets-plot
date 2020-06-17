@@ -13,6 +13,8 @@ import kotlin.math.max
 internal object BoxplotStatUtil {
     /**
      * @return max num of observations in this group for all X
+     * ToDo: implement 'weight'
+     * ToDo: the 'group' is alvays 0. Do we need it?
      */
     fun buildStat(xs: List<Double?>, ys: List<Double?>, whiskerIQRRatio: Double, group: Int, collector: MutableMap<DataFrame.Variable, MutableList<Double>>): Int {
         if (collector.isEmpty()) {
