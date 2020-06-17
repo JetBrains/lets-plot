@@ -46,6 +46,12 @@
 
 run `./gradlew build`
 
+For Linux without graphical environment add parameter to exclude JFX test:
+
+`/gradlew build -x :vis-svg-mapper-jfx:jvmTest`
+
+or tests will stuck in running state.
+
 _As the result you will get artifacts for js-package and python-package (python wheel file built with Python 3.6)_
 
 ##### 5. Build python wheels with Python 3.7 and 3.8:
