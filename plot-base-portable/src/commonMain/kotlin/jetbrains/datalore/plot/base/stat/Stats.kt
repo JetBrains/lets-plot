@@ -28,6 +28,9 @@ object Stats {
     val UPPER = DataFrame.Variable("..upper..", STAT, "upper")
     val WIDTH = DataFrame.Variable("..width..", STAT, "width")
 
+    val CORR = DataFrame.Variable("..corr..", STAT, "corr")
+    val CORR_ABS = DataFrame.Variable("..corr_abs..", STAT, "corr_abs")
+
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
     val GROUP = DataFrame.Variable("..group..", STAT, "group")
@@ -49,7 +52,9 @@ object Stats {
             UPPER,
             WIDTH,
             SCALED,
-            GROUP
+            GROUP,
+            CORR,
+            CORR_ABS
         )
 
         val result = HashMap<String, DataFrame.Variable>()
@@ -89,6 +94,10 @@ object Stats {
 
     fun smooth(): SmoothStat {
         return SmoothStat()
+    }
+
+    fun corr(): CorrelationStat {
+        return CorrelationStat()
     }
 
     fun contour(): ContourStatBuilder {
