@@ -20,6 +20,7 @@ except ImportError:
 
 try:
     import shapely
+    import shapely.geometry
 except ImportError:
     shapely = None
 
