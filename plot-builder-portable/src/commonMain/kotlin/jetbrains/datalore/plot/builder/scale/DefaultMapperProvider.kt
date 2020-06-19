@@ -112,7 +112,7 @@ object DefaultMapperProvider {
             this.put(XEND, NUMERIC_IDENTITY)
             this.put(YEND, NUMERIC_IDENTITY)
 
-            this.put(LABEL, createStringIdentity(LABEL))
+            this.put(LABEL, createObjectIdentityDiscrete(LABEL))
             this.put(FAMILY, createStringIdentity(FAMILY))
             this.put(FONTFACE, createStringIdentity(FONTFACE))
 

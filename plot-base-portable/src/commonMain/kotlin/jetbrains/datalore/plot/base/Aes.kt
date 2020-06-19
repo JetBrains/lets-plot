@@ -61,7 +61,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val SPEED: Aes<Double> = Aes("speed")
         val FLOW: Aes<Double> = Aes("flow")
 
-        val LABEL: Aes<String> = Aes("label", false)
+        val LABEL: Aes<Any> = Aes("label", false)
         val FAMILY: Aes<String> = Aes("family", false)
         val FONTFACE: Aes<String> = Aes("fontface", false)
 

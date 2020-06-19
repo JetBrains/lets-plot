@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.gcommon.base.Strings
+import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
@@ -17,6 +18,13 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class TextGeom : GeomBase() {
+    var label_format = DEF_LABEL_FORMAT
+        set(new_format: String ) {
+            field = new_format
+            formatter = NumberFormat(label_format)
+        }
+
+    private lateinit var formatter : NumberFormat
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory()
@@ -26,7 +34,7 @@ class TextGeom : GeomBase() {
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
-            val text = p.label()
+            val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && !Strings.isNullOrEmpty(text)) {
                 val label = TextLabel(text)
                 GeomHelper.decorate(label, p)
@@ -38,7 +46,19 @@ class TextGeom : GeomBase() {
         }
     }
 
+    fun toString( label: Any ) : String {
+        if ( label is String )
+            return label
+
+        if ( label is Double ) {
+            return formatter.apply(label)
+        }
+
+        error("Unacceptable label type.")
+    }
+
     companion object {
+        val DEF_LABEL_FORMAT = ".2f"
 //        val RENDERS = listOf(
 //                Aes.X,
 //                Aes.Y,

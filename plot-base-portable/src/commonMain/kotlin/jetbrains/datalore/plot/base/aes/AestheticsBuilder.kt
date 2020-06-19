@@ -471,7 +471,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return get(YEND)
         }
 
-        override fun label(): String {
+        override fun label(): Any {
             return get(LABEL)
         }
 

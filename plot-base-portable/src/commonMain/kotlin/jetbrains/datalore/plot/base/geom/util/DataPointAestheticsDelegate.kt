@@ -130,7 +130,7 @@ open class DataPointAestheticsDelegate(private val p: DataPointAesthetics) :
         return p.yend()
     }
 
-    override fun label(): String {
+    override fun label(): Any {
         return p.label()
     }
 
