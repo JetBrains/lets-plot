@@ -11,7 +11,10 @@ import jetbrains.datalore.plot.builder.tooltip.*
 import jetbrains.datalore.plot.config.Option.LayerTooltips.LINES
 import jetbrains.datalore.plot.config.Option.TooltipLine
 
-class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
+class TooltipConfig(
+    private val constantsMap: Map<Aes<*>, Any>,
+    opts: Map<*, *>
+) : OptionsAccessor(opts) {
 
     fun createTooltips(): List<TooltipLineSpecification>? {
         return if (!has(LINES)) {
@@ -71,7 +74,10 @@ class TooltipConfig(opts: Map<*, *>) : OptionsAccessor(opts) {
             name.startsWith("text@") -> StaticValue((name.removePrefix("text@")))
             name.startsWith("aes@") -> {
                 val aes = getAesByName(name.removePrefix("aes@"))
-                MappedAes(aes, label = label, format = format)
+                if (constantsMap.contains(aes))
+                    ConstantValue(label, constantsMap.getValue(aes), format)
+                else
+                    MappedAes(aes, label = label, format = format)
             }
             else -> VariableValue(name, label, format)
         }
