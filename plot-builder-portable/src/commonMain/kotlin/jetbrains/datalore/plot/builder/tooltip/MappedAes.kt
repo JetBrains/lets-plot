@@ -11,8 +11,8 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
 
-open class MappedAes(
-    protected val aes: Aes<*>,
+class MappedAes(
+    private val aes: Aes<*>,
     private val isOutlier: Boolean = false,
     private val isAxis: Boolean = false,
     private val label: String? = null,
