@@ -149,10 +149,8 @@ object DefaultMapperProvider {
                     return GuideMappers.UNDEFINED
                 }
 
-                override fun createContinuousMapper(
-                    data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                    trans: Transform?
-                ): GuideMapper<Double> {
+                override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
+                                                    trans: Transform?): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
                 }
             }
@@ -163,10 +161,8 @@ object DefaultMapperProvider {
                     return GuideMappers.IDENTITY
                 }
 
-                override fun createContinuousMapper(
-                    data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                    trans: Transform?
-                ): GuideMapper<Double> {
+                override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
+                                                    trans: Transform?): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
             }

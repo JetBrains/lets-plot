@@ -58,8 +58,7 @@ internal class MapEntityBuilder {
     val speed get() = myP.speed()!!
     val flow get() = myP.flow()!!
     val fillColor get() = colorWithAlpha(myP.fill()!!)
-    val strokeColor
-        get() = when (myLayerKind) {
+    val strokeColor get() = when (myLayerKind) {
             POLYGON -> myP.color()!!
             else -> colorWithAlpha(myP.color()!!)
         }
@@ -70,21 +69,18 @@ internal class MapEntityBuilder {
     val vjust get() = vjust(myP.vjust())
     val angle get() = myP.angle()!!
 
-    val fontface
-        get() = when (val fontface = myP.fontface()) {
+    val fontface get() = when (val fontface = myP.fontface()) {
             AesInitValue[Aes.FONTFACE] -> ""
             else -> fontface
         }
 
-    val radius: Double
-        get() = when (myLayerKind) {
+    val radius: Double get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE, POINT, PIE, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
             HEATMAP -> myP.size()!!
             TEXT -> 0.0
         }
 
-    val strokeWidth
-        get() = when (myLayerKind) {
+    val strokeWidth get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
             POINT, PIE, BAR -> 1.0
             TEXT, HEATMAP -> 0.0

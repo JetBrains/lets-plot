@@ -23,13 +23,7 @@ class TextGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory()
 
-    override fun buildIntern(
-        root: SvgRoot,
-        aesthetics: Aesthetics,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
-        ctx: GeomContext
-    ) {
+    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val helper = GeomHelper(pos, coord, ctx)
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
