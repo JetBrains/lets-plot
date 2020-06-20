@@ -46,6 +46,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createColor
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentityDiscrete
+import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createObjectIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createStringIdentity
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProviderUtil.createWithDiscreteOutput
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
@@ -112,7 +113,7 @@ object DefaultMapperProvider {
             this.put(XEND, NUMERIC_IDENTITY)
             this.put(YEND, NUMERIC_IDENTITY)
 
-            this.put(LABEL, createObjectIdentityDiscrete(LABEL))
+            this.put(LABEL, createObjectIdentity(LABEL))
             this.put(FAMILY, createStringIdentity(FAMILY))
             this.put(FONTFACE, createStringIdentity(FONTFACE))
 
@@ -148,8 +149,10 @@ object DefaultMapperProvider {
                     return GuideMappers.UNDEFINED
                 }
 
-                override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                                                    trans: Transform?): GuideMapper<Double> {
+                override fun createContinuousMapper(
+                    data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
+                    trans: Transform?
+                ): GuideMapper<Double> {
                     return GuideMappers.UNDEFINED
                 }
             }
@@ -160,8 +163,10 @@ object DefaultMapperProvider {
                     return GuideMappers.IDENTITY
                 }
 
-                override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
-                                                    trans: Transform?): GuideMapper<Double> {
+                override fun createContinuousMapper(
+                    data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?,
+                    trans: Transform?
+                ): GuideMapper<Double> {
                     return GuideMappers.IDENTITY
                 }
             }

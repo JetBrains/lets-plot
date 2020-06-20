@@ -18,18 +18,18 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class TextGeom : GeomBase() {
-    var label_format = DEF_LABEL_FORMAT
-        set(new_format: String ) {
-            field = new_format
-            formatter = NumberFormat(label_format)
-        }
-
-    private lateinit var formatter : NumberFormat
+    var formatter: NumberFormat? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory()
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val helper = GeomHelper(pos, coord, ctx)
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
@@ -46,19 +46,18 @@ class TextGeom : GeomBase() {
         }
     }
 
-    fun toString( label: Any ) : String {
-        if ( label is String )
+    private fun toString(label: Any): String {
+        if (label is String)
             return label
 
-        if ( label is Double ) {
-            return formatter.apply(label)
+        if (label is Double) {
+            return formatter?.apply(label) ?: label.toString()
         }
 
-        error("Unacceptable label type.")
+        throw IllegalStateException("Unacceptable label type.")
     }
 
     companion object {
-        val DEF_LABEL_FORMAT = ".2f"
 //        val RENDERS = listOf(
 //                Aes.X,
 //                Aes.Y,

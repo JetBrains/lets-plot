@@ -145,8 +145,10 @@ object Option {
 
         object Image {
             const val HREF = "href"
+        }
 
-
+        object Text {
+            const val LABEL_FORMAT = "label_format"
         }
 
         object LiveMap {
@@ -185,28 +187,34 @@ object Option {
 
         // discrete scale output values
         const val OUTPUT_VALUES = "values"
+
         // shape scale
         const val SHAPE_SOLID = "solid"
+
         // gradient scale
         const val LOW = "low"
         const val MID = "mid"
         const val HIGH = "high"
         const val MIDPOINT = "midpoint"
+
         // hue scale
         const val HUE_RANGE = "h"
         const val CHROMA = "c"
         const val LUMINANCE = "l"
         const val START_HUE = "h_start"
         const val DIRECTION = "direction"
+
         // grey scale
         const val START = "start"
         const val END = "end"
+
         // color brewer
         const val PALETTE_TYPE = "type"
         const val PALETTE = "palette"
 
         // range
         const val RANGE = "range"
+
         // max_size for scale_size_area
         const val MAX_SIZE = "max_size"
 
@@ -283,6 +291,7 @@ object Option {
         const val AXIS_TICKS = "axis_ticks"
         const val AXIS_TEXT = "axis_text"
         const val AXIS_TOOLTIP = "axis_tooltip"
+
         // tick labels
         const val AXIS_TITLE = "axis_title"
         const val LEGEND_POSITION = "legend_position"
