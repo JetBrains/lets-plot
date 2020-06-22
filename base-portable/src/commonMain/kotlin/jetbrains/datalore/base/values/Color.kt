@@ -8,12 +8,21 @@ package jetbrains.datalore.base.values
 import kotlin.jvm.JvmOverloads
 import kotlin.math.roundToInt
 
+// ToDo: ubyte?
 class Color @JvmOverloads constructor(
-        val red: Int,
-        val green: Int,
-        val blue: Int,
-        val alpha: Int = 255
+    val red: Int,
+    val green: Int,
+    val blue: Int,
+    val alpha: Int = 255
 ) {
+    init {
+        require(
+            0 <= red && red <= 255 &&
+                    0 <= green && green <= 255 &&
+                    0 <= blue && blue <= 255 &&
+                    0 <= alpha && alpha <= 255
+        ) { "Color components out of range: $this" }
+    }
 
     fun changeAlpha(newAlpha: Int): Color {
         return Color(red, green, blue, newAlpha)
@@ -154,7 +163,7 @@ class Color @JvmOverloads constructor(
 
         private fun toColorPart(value: Int): String {
             if (value < 0 || value > 255) {
-                throw IllegalArgumentException()
+                throw IllegalArgumentException("RGB color part must be in range [0..255] but was $value")
             }
 
             val result = value.toString(16)

@@ -80,6 +80,11 @@ object Colors {
         return rgbFromHsv(360 * Random.nextDouble(), s, v)
     }
 
+    /**
+     * @param h hue, [0, 360] degree
+     * @param s saturation, [0, 1]
+     * @param v value, [0, 1]
+     */
     @JvmOverloads
     fun rgbFromHsv(h: Double, s: Double, v: Double = 1.0): Color {
         val hd = h / 60

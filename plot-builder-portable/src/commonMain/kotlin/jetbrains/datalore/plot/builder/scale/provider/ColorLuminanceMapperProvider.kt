@@ -21,8 +21,11 @@ class ColorLuminanceMapperProvider(start: Double?, end: Double?, naValue: Color)
         val value0 = start ?: DEF_START
         val value1 = end ?: DEF_END
 
-        myLowHSV = doubleArrayOf(0.0, 0.0, value0 / 100)
-        myHighHSV = doubleArrayOf(0.0, 0.0, value1 / 100)
+        require(value0 in (0.0..1.0)) { "Value of 'start' must be in range: [0,1]: $start" }
+        require(value1 in (0.0..1.0)) { "Value of 'end' must be in range: [0,1]: $end" }
+
+        myLowHSV = doubleArrayOf(0.0, 0.0, value0)
+        myHighHSV = doubleArrayOf(0.0, 0.0, value1)
     }
 
     override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Color> {
@@ -30,19 +33,20 @@ class ColorLuminanceMapperProvider(start: Double?, end: Double?, naValue: Color)
         return createDiscreteMapper(domainValues, myLowHSV, myHighHSV)
     }
 
-    override fun createContinuousMapper(data: DataFrame,
-                                        variable: DataFrame.Variable,
-                                        lowerLimit: Double?,
-                                        upperLimit: Double?,
-                                        trans: Transform?): GuideMapper<Color> {
+    override fun createContinuousMapper(
+        data: DataFrame,
+        variable: DataFrame.Variable,
+        lowerLimit: Double?,
+        upperLimit: Double?,
+        trans: Transform?
+    ): GuideMapper<Color> {
 
         val domain = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
         return createContinuousMapper(domain, myLowHSV, myHighHSV)
     }
 
     companion object {
-        // https://ggplot2.tidyverse.org/reference/scale_hue.html
-        private const val DEF_START = 20.0
-        private const val DEF_END = 80.0
+        private const val DEF_START = 0.2
+        private const val DEF_END = 0.8
     }
 }

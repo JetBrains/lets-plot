@@ -16,8 +16,8 @@ class ColorMapperTest {
     fun gradientHSV_Hue() {
         val lowHue = 0.0
         val highHue = 360.0
-        val saturation = 50.0
-        val value = 90.0
+        val saturation = 0.5
+        val value = 0.9
 
         val f = ColorMapper.gradientHSV(
                 ClosedRange.closed(0.0, 1.0),

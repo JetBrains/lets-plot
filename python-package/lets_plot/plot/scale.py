@@ -1154,15 +1154,16 @@ def scale_fill_grey(start=None, end=None, direction=None,
                     name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
                     trans=None):
     """
-    Sequential grey color scale for fill aesthetic
+    Sequential grey color scale for fill aesthetic.
+    The palette is computed using HSV (hue, saturation, value) color model.
 
     Parameters
     ----------
 
     start : numeric
-        Gray value at low end of palette in range (0,100)
+        Gray value at low end of palette in range [0,1]
     end : numeric
-        Gray value at high end of palette in range (0,100)
+        Gray value at high end of palette in range [0,1]
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1186,8 +1187,10 @@ def scale_fill_grey(start=None, end=None, direction=None,
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
     >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) \
-    ...     + scale_fill_grey(start=50, end=10)
+    ...     + scale_fill_grey(start=0.5, end=0.1)
     """
+    start, end = _greyscale_check_parameters(start, end)
+
     return _scale('fill', name, breaks, labels, limits, expand, na_value, guide, trans, start=start, end=end,
                   direction=direction,
                   scale_mapper_kind='color_grey')
@@ -1197,15 +1200,16 @@ def scale_color_grey(start=None, end=None, direction=None,
                      name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
                      trans=None):
     """
-    Sequential grey color scale for color aesthetic
+    Sequential grey color scale for color aesthetic.
+    The palette is computed using HSV (hue, saturation, value) color model.
 
     Parameters
     ----------
 
     start : numeric
-        Gray value at low end of palette in range (0,100)
+        Gray value at low end of palette in range [0,1]
     end : numeric
-        Gray value at high end of palette in range (0,100)
+        Gray value at high end of palette in range [0,1]
     name : string
         The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
@@ -1229,11 +1233,34 @@ def scale_color_grey(start=None, end=None, direction=None,
     ---------
     >>> dat = {'x': [v for v in range(-16, 16)]}
     >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) \
-    ...     + scale_color_grey(start=50, end=10)
+    ...     + scale_color_grey(start=0.5, end=0.1)
+
     """
+    start, end = _greyscale_check_parameters(start, end)
+
     return _scale('color', name, breaks, labels, limits, expand, na_value, guide, trans, start=start, end=end,
                   direction=direction,
                   scale_mapper_kind='color_grey')
+
+
+def _greyscale_check_parameters(start=None, end=None):
+    # Up to v.1.4.2 start/end values were in range [0,100]
+    # Since v.1.4.3 start/end values are in range [0,1]
+    if start != None and start not in [0, 1]:
+        start = start / 100
+        print("WARN: Value of 'start' has been scaled down to range: [0,1] : {}".format(start))
+
+    if end != None and end not in [0, 1]:
+        end = end / 100
+        print("WARN: Value of 'end' has been scaled down to range: [0,1] : {}".format(end))
+
+    if start != None and start not in [0, 1]:
+        raise ValueError("Value of 'start' must be in range: [0,1]")
+
+    if end != None and end not in [0, 1]:
+        raise ValueError("Value of 'end' must be in range: [0,1]")
+
+    return (start, end)
 
 
 def scale_fill_brewer(type=None, palette=None, direction=None,
