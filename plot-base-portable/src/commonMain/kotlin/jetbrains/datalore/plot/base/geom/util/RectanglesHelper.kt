@@ -34,7 +34,10 @@ class RectanglesHelper(private val myAesthetics: Aesthetics, pos: PositionAdjust
                                  iterator: (DataPointAesthetics, DoubleRectangle) -> Unit) {
         for (index in 0 until myAesthetics.dataPointCount()) {
             val p = myAesthetics.dataPointAt(index)
-            iterator(p, toClientRect(p, rectangleByDataPoint)!!)
+            val rect = toClientRect(p, rectangleByDataPoint)
+
+            if ( rect != null )
+                iterator(p, rect)
         }
     }
 
