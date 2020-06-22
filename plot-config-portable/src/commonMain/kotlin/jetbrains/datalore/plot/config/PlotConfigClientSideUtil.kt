@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.builder.GeomLayer
@@ -132,6 +133,12 @@ object PlotConfigClientSideUtil {
             layerBuilder.groupingVarName(layerConfig.explicitGroupingVarName!!)
         }
 
+        // no map_join, data=gdf or map=gdf - group values and geometries by AUTO_ID
+        variables(layerConfig.combinedData)[GeoConfig.AUTO_ID]?.let {
+            layerBuilder.pathIdVarName(GeoConfig.AUTO_ID)
+        }
+
+        // with map_join use data variable to group values and geometries
         layerConfig.mergedOptions.dataJoinVariable()?.let {
             layerBuilder.pathIdVarName(it)
         }

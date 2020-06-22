@@ -7,12 +7,20 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData
 import jetbrains.datalore.plot.config.GeoConfig.Companion.MAP_JOIN_REQUIRED_MESSAGE
+import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_X
+import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_Y
+import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_XMAX
+import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_XMIN
+import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_YMAX
+import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_YMIN
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createPlotAssembler
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class GeoConfigTest {
@@ -48,7 +56,7 @@ class GeoConfigTest {
 |   ]
 |}""".trimMargin()
 
-    private val multipolygon = """
+    private val multiPolygon = """
 |{
 |    \"type\": \"MultiPolygon\", 
 |    \"coordinates\": [
@@ -63,10 +71,15 @@ class GeoConfigTest {
 |   ]
 |}""".trimMargin()
 
+
+    private fun polygonGroup(groupId: Int) = (0..14).map { groupId }
+    private fun multiPolygonGroup(groupId: Int) = (0..3).map { groupId }
+
     private val gdf = """
         |{
         |    "kind": ["Point", "MPoint", "Line", "MLine", "Polygon", "MPolygon"],
-        |    "coord": ["$point", "$multiPoint", "$lineString", "$multiLineString", "$polygon", "$multipolygon"]
+        |    "coord": ["$point", "$multiPoint", "$lineString", "$multiLineString", "$polygon", "$multiPolygon"],
+        |    "points": [1, 2, 2, 4, 15, 4]
         |}
         """.trimMargin()
 
@@ -76,8 +89,9 @@ class GeoConfigTest {
         |   "value": [1, 2, 3, 4, 5, 6]
         |}
         """.trimMargin()
-    private fun `aes(color='kind'), data=gdf`(geom: String): PlotConfigClientSide {
-        return transformToClientPlotConfig("""
+
+    private fun `aes(color='kind'), data=gdf`(geom: String): GeomLayer {
+        return singleGeomLayer("""
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -115,6 +129,7 @@ class GeoConfigTest {
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "kind")
+            .assertGroups(polygonGroup(0) + multiPolygonGroup(1))
     }
 
     @Test
@@ -125,8 +140,8 @@ class GeoConfigTest {
             .assertBinding(Aes.COLOR, "kind")
     }
 
-    private fun `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom: String): PlotConfigClientSide {
-        return transformToClientPlotConfig("""
+    private fun `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom: String): GeomLayer {
+        return singleGeomLayer("""
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -138,7 +153,8 @@ class GeoConfigTest {
             |        "map_join": ["fig", "kind"]
             |    }]
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
     }
 
     @Test
@@ -155,6 +171,8 @@ class GeoConfigTest {
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "value")
+            .assertGroups(polygonGroup(0) + multiPolygonGroup(1))
+
     }
 
     @Test
@@ -175,8 +193,8 @@ class GeoConfigTest {
             .assertBinding(Aes.COLOR, "value")
     }
 
-    private fun `map=gdf`(geom: String): PlotConfigClientSide {
-        val spec = """
+    private fun `map=gdf`(geom: String): GeomLayer {
+        return singleGeomLayer("""
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -185,10 +203,11 @@ class GeoConfigTest {
             |        "map_data_meta": {"geodataframe": {"geometry": "coord"}}
             |    }]
             |}
-        """.trimMargin()
-
-        return transformToClientPlotConfig(spec)
+        """.trimMargin())
     }
+
+    private fun singleGeomLayer(spec: String) =
+        createPlotAssembler(parsePlotSpec(spec)).layersByTile.single().single()
 
     @Test
     fun `geom_point(map=gdf)`() {
@@ -218,30 +237,6 @@ class GeoConfigTest {
             .assertBinding(Aes.XMAX, RECT_XMAX)
             .assertBinding(Aes.YMIN, RECT_YMIN)
             .assertBinding(Aes.YMAX, RECT_YMAX)
-    }
-
-    @Test
-    fun `with map_join=('fig', 'kind') should group by 'fig'`() {
-        val spec = """
-            |{
-            |    "kind": "plot", 
-            |    "layers": [{
-            |        "geom": "polygon",
-            |        "data": {
-            |            "fig": ["Polygon", "MPolygon"],
-            |            "value": [42, 23]
-            |        },
-            |        "mapping": {"fill": "value"},
-            |        "map": $gdf,
-            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
-            |        "map_join": ["fig", "kind"]
-            |    }]
-            |}
-        """.trimMargin()
-
-        val plotAssembler = createPlotAssembler(parsePlotSpec(spec))
-        val aesthetics = createLayerRendererData(plotAssembler.layersByTile.single().single(), emptyMap(), emptyMap()).aesthetics
-        assertEquals((0..14).map { 0 } + (0..3).map { 1 } , aesthetics.dataPoints().map(DataPointAesthetics::group))
     }
 
     @Test
@@ -292,7 +287,7 @@ class GeoConfigTest {
 
     @Test
     fun `should not fail if map has extra entries`() {
-        val spec = """
+        singleGeomLayer("""
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -308,9 +303,19 @@ class GeoConfigTest {
             |    }]
             |}
         """.trimMargin()
+        ).assertGroups(polygonGroup(0))
+    }
 
-        val plotAssembler = createPlotAssembler(parsePlotSpec(spec))
-        val aesthetics = createLayerRendererData(plotAssembler.layersByTile.single().single(), emptyMap(), emptyMap()).aesthetics
-        assertEquals((0..14).map { 0 }, aesthetics.dataPoints().map(DataPointAesthetics::group))
+    private fun GeomLayer.assertBinding(aes: Aes<*>, variable: String): GeomLayer {
+        assertTrue(hasBinding(aes), "Binding for aes $aes was not found")
+        assertEquals(variable, getBinding(aes).scale!!.name)
+        return this
+    }
+
+
+    private fun GeomLayer.assertGroups(expected: Collection<*>) {
+        val actualGroups = createLayerRendererData(this, emptyMap(), emptyMap())
+            .aesthetics.dataPoints().map(DataPointAesthetics::group)
+        assertEquals(expected, actualGroups,"Aes valeus didn't match")
     }
 }

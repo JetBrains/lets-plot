@@ -6,7 +6,10 @@
 package plot.config
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_X
+import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_Y
+import jetbrains.datalore.plot.config.LayerConfig
+import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.Option.GeomName.POINT
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
@@ -16,6 +19,8 @@ import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
+import jetbrains.datalore.plot.config.PlotConfigClientSide
+import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.server.config.PlotConfigServerSide
 import kotlin.test.Test
 import kotlin.test.assertEquals

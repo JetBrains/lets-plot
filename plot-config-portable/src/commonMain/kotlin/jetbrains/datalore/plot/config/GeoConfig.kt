@@ -148,6 +148,13 @@ class GeoConfig(
     }
 
     companion object {
+        const val AUTO_ID = "__id__"
+        const val POINT_X = "__x__"
+        const val POINT_Y = "__y__"
+        const val RECT_XMIN = "__xmin__"
+        const val RECT_YMIN = "__ymin__"
+        const val RECT_XMAX = "__xmax__"
+        const val RECT_YMAX = "__ymax__"
         const val MAP_JOIN_REQUIRED_MESSAGE = "map_join is required when both data and map parameters used"
 
         fun isApplicable(layerOptions: Map<*, *>): Boolean {
@@ -156,14 +163,6 @@ class GeoConfig(
         }
     }
 }
-
-const val AUTO_ID = "__id__"
-const val POINT_X = "__x__"
-const val POINT_Y = "__y__"
-const val RECT_XMIN = "__xmin__"
-const val RECT_YMIN = "__ymin__"
-const val RECT_XMAX = "__xmax__"
-const val RECT_YMAX = "__ymax__"
 
 internal abstract class CoordinatesCollector(
     val mappings: Map<Aes<*>, String>
@@ -265,27 +264,27 @@ internal abstract class CoordinatesCollector(
     companion object {
 
         val POINT_COLUMNS = mapOf<Aes<*>, String>(
-            Aes.X to POINT_X,
-            Aes.Y to POINT_Y
+            Aes.X to GeoConfig.POINT_X,
+            Aes.Y to GeoConfig.POINT_Y
         )
 
         val RECT_MAPPINGS = mapOf<Aes<*>, String>(
-            Aes.XMIN to RECT_XMIN,
-            Aes.YMIN to RECT_YMIN,
-            Aes.XMAX to RECT_XMAX,
-            Aes.YMAX to RECT_YMAX
+            Aes.XMIN to GeoConfig.RECT_XMIN,
+            Aes.YMIN to GeoConfig.RECT_YMIN,
+            Aes.XMAX to GeoConfig.RECT_XMAX,
+            Aes.YMAX to GeoConfig.RECT_YMAX
         )
 
         internal fun Map<String, MutableList<Any>>.append(p: Vec<LonLat>) {
-            append(POINT_X, p.x)
-            append(POINT_Y, p.y)
+            append(GeoConfig.POINT_X, p.x)
+            append(GeoConfig.POINT_Y, p.y)
         }
 
         internal fun Map<String, MutableList<Any>>.append(rect: Rect<LonLat>) {
-            append(RECT_XMIN, rect.left)
-            append(RECT_XMAX, rect.right)
-            append(RECT_YMIN, rect.top)
-            append(RECT_YMAX, rect.bottom)
+            append(GeoConfig.RECT_XMIN, rect.left)
+            append(GeoConfig.RECT_XMAX, rect.right)
+            append(GeoConfig.RECT_YMIN, rect.top)
+            append(GeoConfig.RECT_YMAX, rect.bottom)
         }
 
         private fun Map<String, MutableList<Any>>.append(key: String, value: Double) {
