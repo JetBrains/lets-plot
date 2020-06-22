@@ -41,14 +41,11 @@ class TextGeom : GeomBase() {
     }
 
     private fun toString(label: Any): String {
-        if (label is String)
-            return label
-
         if (label is Double) {
-            return formatter?.apply(label) ?: label.toString()
+            formatter?.let { return it.apply(label) }
         }
 
-        throw IllegalStateException("Unacceptable label type.")
+        return label.toString()
     }
 
     companion object {
