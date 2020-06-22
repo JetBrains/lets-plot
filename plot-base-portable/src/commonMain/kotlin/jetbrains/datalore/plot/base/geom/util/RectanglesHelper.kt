@@ -12,7 +12,12 @@ import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 import jetbrains.datalore.vis.svg.slim.SvgSlimGroup
 
-class RectanglesHelper(private val myAesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) : GeomHelper(pos, coord, ctx) {
+class RectanglesHelper(
+    private val myAesthetics: Aesthetics,
+    pos: PositionAdjustment,
+    coord: CoordinateSystem,
+    ctx: GeomContext
+) : GeomHelper(pos, coord, ctx) {
 
     fun createRectangles(rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?): MutableList<SvgNode> {
         val result = ArrayList<SvgNode>()
@@ -30,11 +35,17 @@ class RectanglesHelper(private val myAesthetics: Aesthetics, pos: PositionAdjust
         return result
     }
 
-    fun iterateRectangleGeometry(rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?,
-                                 iterator: (DataPointAesthetics, DoubleRectangle) -> Unit) {
+    fun iterateRectangleGeometry(
+        rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?,
+        iterator: (DataPointAesthetics, DoubleRectangle) -> Unit
+    ) {
         for (index in 0 until myAesthetics.dataPointCount()) {
             val p = myAesthetics.dataPointAt(index)
-            iterator(p, toClientRect(p, rectangleByDataPoint)!!)
+            val rect = toClientRect(p, rectangleByDataPoint)
+
+            rect?.let {
+                iterator(p, rect)
+            }
         }
     }
 
