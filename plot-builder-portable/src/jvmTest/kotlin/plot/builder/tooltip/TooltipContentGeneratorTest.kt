@@ -45,6 +45,7 @@ class TooltipContentGeneratorTest {
                     MappedAes(Aes.Y)
                 )
             )
+            .addTooltipLine(ConstantValue(value = 3, format = "constant = {.3f}"))
 
         val geomLayer = buildGeomLayer(tooltipValueSourcesProvider)
 
@@ -55,7 +56,8 @@ class TooltipContentGeneratorTest {
             "15.00 (mpg)",
             "US",
             "dodge car (1996)",
-            "x/y: 1.600 x 160.0"
+            "x/y: 1.600 x 160.0",
+            "constant = 3.000"
         )
 
         assertEquals(expectedLines.size, lines.size, "Wrong lines count in the tooltip")
