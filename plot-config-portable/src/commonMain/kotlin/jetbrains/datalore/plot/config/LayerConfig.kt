@@ -133,7 +133,7 @@ class LayerConfig(
 
         // tooltip list
         tooltips = if (has(TOOLTIPS)) {
-            TooltipConfig(constantsMap, getMap(TOOLTIPS)).createTooltips()
+            TooltipConfig(getMap(TOOLTIPS), constantsMap).createTooltips()
         } else {
             null
         }
