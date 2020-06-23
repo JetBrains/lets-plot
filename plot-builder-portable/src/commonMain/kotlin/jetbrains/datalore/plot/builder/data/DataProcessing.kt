@@ -335,11 +335,11 @@ object DataProcessing {
 
     private fun computeGroups(values: List<*>): List<Int> {
         val groups = ArrayList<Int>()
-        val groupByVal = HashMap<Any, Int>()
+        val groupByVal = HashMap<Any?, Int>()
         var count = 0
         for (v in values) {
             if (!groupByVal.containsKey(v)) {
-                groupByVal[v!!] = count++
+                groupByVal[v] = count++
             }
             groups.add(groupByVal.get(v)!!)
         }
