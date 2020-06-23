@@ -82,7 +82,7 @@ internal class TypedOptionConverterMap {
         this.put(XEND, DOUBLE_CVT)
         this.put(YEND, DOUBLE_CVT)
 
-        this.put(LABEL, IDENTITY_S_CVT)
+        this.put(LABEL, IDENTITY_O_CVT)
         this.put(FAMILY, IDENTITY_S_CVT)
         this.put(FONTFACE, IDENTITY_S_CVT)
         this.put(HJUST, IDENTITY_O_CVT)   // text horizontal justification (numbers [0..1] or predefined strings, DOUBLE_CVT; not positional)

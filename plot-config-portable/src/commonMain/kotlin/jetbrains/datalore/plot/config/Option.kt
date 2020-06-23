@@ -145,8 +145,11 @@ object Option {
 
         object Image {
             const val HREF = "href"
+        }
 
-
+        object Text {
+            const val LABEL_FORMAT = "label_format"
+            const val NA_VALUE = "na_value"
         }
 
         object LiveMap {
@@ -204,7 +207,6 @@ object Option {
         // color brewer
         const val PALETTE_TYPE = "type"
         const val PALETTE = "palette"
-
         // range
         const val RANGE = "range"
         // max_size for scale_size_area
@@ -283,6 +285,7 @@ object Option {
         const val AXIS_TICKS = "axis_ticks"
         const val AXIS_TEXT = "axis_text"
         const val AXIS_TOOLTIP = "axis_tooltip"
+
         // tick labels
         const val AXIS_TITLE = "axis_title"
         const val LEGEND_POSITION = "legend_position"

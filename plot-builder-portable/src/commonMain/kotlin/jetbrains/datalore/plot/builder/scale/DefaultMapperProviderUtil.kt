@@ -27,8 +27,7 @@ object DefaultMapperProviderUtil {
                 return discrete.createDiscreteMapper(data, variable)
             }
 
-            override fun createContinuousMapper(
-                data: DataFrame, variable: Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
+            override fun createContinuousMapper(data: DataFrame, variable: Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
                 return continuous.createContinuousMapper(data, variable, lowerLimit, upperLimit, trans)
             }
         }
@@ -42,18 +41,26 @@ object DefaultMapperProviderUtil {
 
             override fun createContinuousMapper(data: DataFrame, variable: Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<T> {
                 return GuideMappers.continuousToDiscrete(
-                        MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans),
-                        outputValues, naValue
+                    MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans),
+                    outputValues, naValue
                 )
             }
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
+    internal fun createObjectIdentity(aes: Aes<Any?>): MapperProvider<Any?> {
+        return object : IdentityDiscreteMapperProvider<Any?>({it}, null ) {
+            override fun createContinuousMapper(data: DataFrame, variable: Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Any?> {
+                return GuideMappers.adaptContinuous { it }
+            }
+        }
+    }
+
     internal fun createObjectIdentityDiscrete(aes: Aes<Any>): MapperProvider<Any> {
-        val converter = { it: Any? -> it }
         return createIdentityMapperProvider(
             aes,
-            converter,
+            { it },
             null
         )
     }

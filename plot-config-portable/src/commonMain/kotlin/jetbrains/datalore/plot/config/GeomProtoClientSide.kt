@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
+import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
@@ -18,6 +19,7 @@ import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Image
 import jetbrains.datalore.plot.config.Option.Geom.Path
 import jetbrains.datalore.plot.config.Option.Geom.Point
+import jetbrains.datalore.plot.config.Option.Geom.Text
 import jetbrains.datalore.plot.config.Option.Geom.PointRange
 import jetbrains.datalore.plot.config.Option.Geom.Segment
 import jetbrains.datalore.plot.config.Option.Geom.Step
@@ -121,7 +123,27 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.TEXT -> return GeomProvider.text {
                 val geom = TextGeom()
-                // ToDo: geom_text options here
+
+                if (opts.has(Text.LABEL_FORMAT)) {
+                    val labelFormat = opts[Text.LABEL_FORMAT] as? String
+
+                    if (labelFormat != null) {
+                        geom.formatter = NumberFormat(labelFormat)
+                    } else {
+                        throw IllegalArgumentException("Expected: label_format = 'format string'")
+                    }
+                }
+
+                if (opts.has(Text.NA_VALUE)) {
+                    val naValue = opts[Text.NA_VALUE] as? String
+
+                    if (naValue != null) {
+                        geom.naValue = naValue
+                    }else {
+                        throw IllegalArgumentException("Expected: na_value = 'some string'")
+                    }
+                }
+
                 geom
             }
 
