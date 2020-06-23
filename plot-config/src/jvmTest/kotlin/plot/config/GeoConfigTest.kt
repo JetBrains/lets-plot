@@ -303,7 +303,78 @@ class GeoConfigTest {
             |    }]
             |}
         """.trimMargin()
-        ).assertGroups(polygonGroup(0))
+        ).assertGroups(polygonGroup(0) + multiPolygonGroup(1))
+    }
+
+    @Test
+    fun `right join special case - should add rows from map to data`() {
+        val foo1 = """
+            |{
+            |    \"type\": \"Polygon\", 
+            |    \"coordinates\": [
+            |       [
+            |               [1.0, 2.0], 
+            |               [3.0, 4.0], 
+            |               [5.0, 3.0], 
+            |               [1.0, 2.0]
+            |       ]
+            |   ]
+            |}""".trimMargin()
+
+        val foo2 = """
+            |{
+            |    \"type\": \"Polygon\", 
+            |    \"coordinates\": [
+            |       [
+            |               [21.0, 22.0], 
+            |               [23.0, 24.0], 
+            |               [25.0, 23.0], 
+            |               [21.0, 22.0]
+            |       ]
+            |   ]
+            |}""".trimMargin()
+
+        val bar1 = """
+            |{
+            |    \"type\": \"Polygon\", 
+            |    \"coordinates\": [
+            |       [
+            |               [31.0, 32.0], 
+            |               [33.0, 34.0], 
+            |               [35.0, 33.0], 
+            |               [31.0, 32.0]
+            |       ]
+            |   ]
+            |}""".trimMargin()
+
+
+        singleGeomLayer("""
+            |{
+            |    "kind": "plot", 
+            |    "layers": [{
+            |        "geom": "rect",
+            |        "data": {
+            |            "continent": ["Europe", "Asia"],
+            |            "temp": [8.6, 16.6]
+            |        },
+            |        "mapping": {"fill": "continent"},
+            |        "map": {
+            |            "country": ["Germany", "France", "China"],
+            |            "cont": ["Europe", "Europe", "Asia"],
+            |            "coord": ["$foo1", "$foo2", "$bar1"]
+            |        },
+            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |        "map_join": ["continent", "cont"]
+            |    }]
+            |}
+        """.trimMargin()
+        )
+            .assertBinding(Aes.XMIN, RECT_XMIN)
+            .assertBinding(Aes.XMAX, RECT_XMAX)
+            .assertBinding(Aes.YMIN, RECT_YMIN)
+            .assertBinding(Aes.YMAX, RECT_YMAX)
+            .assertGroups(listOf(0, 0, 1)) // RECTs of Germany, France, China
+
     }
 
     private fun GeomLayer.assertBinding(aes: Aes<*>, variable: String): GeomLayer {

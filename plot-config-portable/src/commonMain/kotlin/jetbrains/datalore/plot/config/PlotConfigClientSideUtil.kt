@@ -133,9 +133,9 @@ object PlotConfigClientSideUtil {
             layerBuilder.groupingVarName(layerConfig.explicitGroupingVarName!!)
         }
 
-        // no map_join, data=gdf or map=gdf - group values and geometries by AUTO_ID
-        variables(layerConfig.combinedData)[GeoConfig.AUTO_ID]?.let {
-            layerBuilder.pathIdVarName(GeoConfig.AUTO_ID)
+        // no map_join, data=gdf or map=gdf - group values and geometries by GEO_ID
+        variables(layerConfig.combinedData)[GeoConfig.GEO_ID]?.let {
+            layerBuilder.pathIdVarName(GeoConfig.GEO_ID)
         }
 
         // with map_join use data variable to group values and geometries
