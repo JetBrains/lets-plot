@@ -49,21 +49,6 @@ class TextGeom : GeomBase() {
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.Y,
-//                Aes.SIZE,
-//                Aes.COLOR,
-//                Aes.ALPHA,
-//
-//                Aes.LABEL,
-//                Aes.FAMILY,
-//                Aes.FONTFACE,
-//                Aes.HJUST,
-//                Aes.VJUST,
-//                Aes.ANGLE
-//        )
-
         val HANDLES_GROUPS = false
     }
 }// How 'just' and 'angle' works together
