@@ -48,12 +48,13 @@ object DefaultMapperProviderUtil {
         }
     }
 
-    internal fun createObjectIdentity(aes: Aes<Any>): MapperProvider<Any> {
-        return createIdentityMapperProvider(
-            aes,
-            { it },
-            { it }
-        )
+    @Suppress("UNUSED_PARAMETER")
+    internal fun createObjectIdentity(aes: Aes<Any?>): MapperProvider<Any?> {
+        return object : IdentityDiscreteMapperProvider<Any?>({it}, null ) {
+            override fun createContinuousMapper(data: DataFrame, variable: Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Any?> {
+                return GuideMappers.adaptContinuous { it }
+            }
+        }
     }
 
     internal fun createObjectIdentityDiscrete(aes: Aes<Any>): MapperProvider<Any> {

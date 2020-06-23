@@ -125,12 +125,22 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 val geom = TextGeom()
 
                 if (opts.has(Text.LABEL_FORMAT)) {
-                    val label_format = opts[Text.LABEL_FORMAT] as? String
+                    val labelFormat = opts[Text.LABEL_FORMAT] as? String
 
-                    if (label_format != null) {
-                        geom.formatter = NumberFormat(label_format)
+                    if (labelFormat != null) {
+                        geom.formatter = NumberFormat(labelFormat)
                     } else {
                         throw IllegalArgumentException("Expected: label_format = 'format string'")
+                    }
+                }
+
+                if (opts.has(Text.NA_VALUE)) {
+                    val naValue = opts[Text.NA_VALUE] as? String
+
+                    if (naValue != null) {
+                        geom.naValue = naValue
+                    }else {
+                        throw IllegalArgumentException("Expected: na_value = 'some string'")
                     }
                 }
 

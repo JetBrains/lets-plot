@@ -68,7 +68,7 @@ interface DataPointAesthetics {
 
     fun yend(): Double?
 
-    fun label(): Any
+    fun label(): Any?
 
     fun family(): String
 

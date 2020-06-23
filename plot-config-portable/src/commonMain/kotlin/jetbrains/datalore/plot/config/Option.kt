@@ -149,6 +149,7 @@ object Option {
 
         object Text {
             const val LABEL_FORMAT = "label_format"
+            const val NA_VALUE = "na_value"
         }
 
         object LiveMap {

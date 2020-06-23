@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class TextGeom : GeomBase() {
     var formatter: NumberFormat? = null
+    var naValue = DEF_NA_VALUE
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory()
@@ -40,7 +41,11 @@ class TextGeom : GeomBase() {
         }
     }
 
-    private fun toString(label: Any): String {
+    private fun toString(label: Any?): String {
+        if (label == null) {
+            return naValue
+        }
+
         if (label is Double) {
             formatter?.let { return it.apply(label) }
         }
@@ -49,9 +54,12 @@ class TextGeom : GeomBase() {
     }
 
     companion object {
+        val DEF_NA_VALUE = "n/a"
         val HANDLES_GROUPS = false
     }
-}// How 'just' and 'angle' works together
+}
+
+// How 'just' and 'angle' works together
 // https://stackoverflow.com/questions/7263849/what-do-hjust-and-vjust-do-when-making-a-plot-using-ggplot
 // ToDo: lineheight (aes)
 // ToDo: nudge_x, nudge_y

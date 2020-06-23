@@ -63,7 +63,7 @@ internal class MapEntityBuilder {
             else -> colorWithAlpha(myP.color()!!)
         }
 
-    val label get() = myP.label().toString()
+    val label get() = myP.label()?.toString() ?: "n/a"
     val family get() = myP.family()
     val hjust get() = hjust(myP.hjust())
     val vjust get() = vjust(myP.vjust())
