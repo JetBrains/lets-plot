@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 
-class ColorLuminanceMapperProvider(start: Double?, end: Double?, naValue: Color) : HSVColorMapperProvider(naValue) {
+class GreyscaleLightnessMapperProvider(start: Double?, end: Double?, naValue: Color) : HSVColorMapperProvider(naValue) {
 
     private val myLowHSV: DoubleArray
     private val myHighHSV: DoubleArray

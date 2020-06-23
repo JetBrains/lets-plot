@@ -122,7 +122,7 @@ class ScaleConfig<T>(options: Map<*, *>) : OptionsAccessor(options) {
                     getDouble(DIRECTION), naValue as Color
                 )
             COLOR_GREY ->
-                mapperProvider = ColorLuminanceMapperProvider(
+                mapperProvider = GreyscaleLightnessMapperProvider(
                     getDouble(START),
                     getDouble(END),
                     naValue as Color
