@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
  - corner tooltips.
+ - CoorelationStat
+ - label_format
  
  
 ## [1.4.2] - 2020-05-28
