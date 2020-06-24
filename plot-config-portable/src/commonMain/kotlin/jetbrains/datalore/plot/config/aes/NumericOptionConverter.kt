@@ -13,7 +13,7 @@ internal class NumericOptionConverter : Function<Any?, Double?> {
             return null
         }
         if (value is Number) {
-            return value as? Double ?: value.toDouble()
+            return value.toDouble()
         }
         try {
             return value.toString().toDouble()
