@@ -257,7 +257,8 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
                     myDataPointCount <= 0 ->
                         ClosedRange.closed(0.0, 0.0)
                     myConstantAes.contains(aes) -> {
-                        val v = numericValues(aes).iterator().next()
+                        // constant should not be null
+                        val v = numericValues(aes).iterator().next()!!
                         ClosedRange.closed(v, v)
                     }
                     else -> {
@@ -291,7 +292,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return myResolutionByAes[aes]!!
         }
 
-        override fun numericValues(aes: Aes<Double>): Iterable<Double> {
+        override fun numericValues(aes: Aes<Double>): Iterable<Double?> {
             checkArgument(aes.isNumeric, "Numeric aes is expected: $aes")
             return object : Iterable<Double> {
                 override fun iterator(): Iterator<Double> {

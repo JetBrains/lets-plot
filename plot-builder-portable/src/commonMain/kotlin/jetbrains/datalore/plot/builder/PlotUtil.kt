@@ -198,8 +198,8 @@ object PlotUtil {
             val loc = locations.next()
             val size = sizes.next()
             if (isFinite(loc) && isFinite(size)) {
-                val expand = resolution * (size / 2)
-                updateExpandedMinMax(loc, expand, minMax)
+                val expand = resolution * (size!! / 2)
+                updateExpandedMinMax(loc!!, expand, minMax)
             }
         }
 

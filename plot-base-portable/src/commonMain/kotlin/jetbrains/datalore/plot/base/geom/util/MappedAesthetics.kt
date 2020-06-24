@@ -43,7 +43,7 @@ class MappedAesthetics(
         throw IllegalStateException("MappedAesthetics.resolution: not implemented $aes")
     }
 
-    override fun numericValues(aes: Aes<Double>): Iterable<Double> {
+    override fun numericValues(aes: Aes<Double>): Iterable<Double?> {
         throw IllegalStateException("MappedAesthetics.numericValues: not implemented $aes")
     }
 

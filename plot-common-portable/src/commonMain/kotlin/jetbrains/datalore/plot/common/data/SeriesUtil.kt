@@ -17,7 +17,7 @@ import kotlin.math.min
 object SeriesUtil {
     const val TINY = 1e-50
 
-    private val REAL_NUMBER = { it: Double -> isFinite(it) }
+    private val REAL_NUMBER = { it: Double? -> isFinite(it) }
 
     val NEGATIVE_NUMBER = { input: Double -> input < 0 }
 
@@ -89,7 +89,7 @@ object SeriesUtil {
             null
     }
 
-    fun resolution(values: Iterable<Double>, naValue: Double): Double {
+    fun resolution(values: Iterable<Double?>, naValue: Double): Double {
 
         // check if this is a row of a regular grid
         val rowDetector = RegularMeshDetector.tryRow(values)
@@ -101,13 +101,15 @@ object SeriesUtil {
         val columnDetector = RegularMeshDetector.tryColumn(values)
         return if (columnDetector.isMesh) {
             columnDetector.resolution
-        } else resolutionFullScan(values, naValue)
-
-        // use brut force method to find data resolution
+        } else {
+            // use brut force method to find data resolution
+            resolutionFullScan(values, naValue)
+        }
     }
 
-    private fun resolutionFullScan(values: Iterable<Double>, naValue: Double): Double {
-        val goodDataVector = filter(values, REAL_NUMBER)
+    private fun resolutionFullScan(values: Iterable<Double?>, naValue: Double): Double {
+        @Suppress("UNCHECKED_CAST")
+        val goodDataVector = filter(values, REAL_NUMBER) as Iterable<Double>
         if (Iterables.isEmpty(goodDataVector)) {
             return naValue
         }

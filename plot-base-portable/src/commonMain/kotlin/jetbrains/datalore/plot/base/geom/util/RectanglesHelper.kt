@@ -50,7 +50,7 @@ class RectanglesHelper(
     }
 
 
-    fun createSlimRectangles(rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle): SvgSlimGroup {
+    fun createSlimRectangles(rectangleByDataPoint: (DataPointAesthetics) -> DoubleRectangle?): SvgSlimGroup {
         val pointCount = myAesthetics.dataPointCount()
         val group = SvgSlimElements.g(pointCount)
 
