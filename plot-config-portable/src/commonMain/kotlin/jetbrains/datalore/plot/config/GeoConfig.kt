@@ -121,7 +121,7 @@ class GeoConfig(
 
         val coordinatesCollector = when(geomKind) {
             MAP, POLYGON -> BoundaryCoordinatesCollector()
-            POINT, TEXT -> PointCoordinatesCollector()
+            LIVE_MAP, POINT, TEXT -> PointCoordinatesCollector()
             RECT -> BboxCoordinatesCollector()
             PATH -> PathCoordinatesCollector()
             else -> error("Unsupported geom: $geomKind")
