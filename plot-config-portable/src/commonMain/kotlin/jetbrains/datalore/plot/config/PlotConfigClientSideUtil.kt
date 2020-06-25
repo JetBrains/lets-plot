@@ -343,7 +343,7 @@ object PlotConfigClientSideUtil {
             GeomKind.MAP -> return builder.bivariateFunction(AREA_GEOM)
             GeomKind.RECT -> return builder.bivariateFunction(AREA_GEOM)
 
-            GeomKind.LIVE_MAP -> return builder.multilayerLookupStrategy()
+            GeomKind.LIVE_MAP -> return builder.bivariateFunction(NON_AREA_GEOM)
 
             else -> return builder.none()
         }

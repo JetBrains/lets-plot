@@ -12,10 +12,11 @@ class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             antiMeridian()
-//            fourPointsTwoLayers(),
-//            basic(),
-//            bunch(),
-//            facet()
+            //tooltips(),
+            //fourPointsTwoLayers(),
+            //basic(),
+            //bunch(),
+            //facet()
         )
     }
 

@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.GeomKind.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,7 +16,7 @@ class PlotConfigClientSideUtilTest {
     fun shouldShowAxisTooltip() {
         val layerSettingsList = ArrayList<Pair<GeomKind, StatKind>>()
 
-        values()
+        GeomKind.values()
             .filter { geomKind -> !WITHOUT_AXIS_TOOLTIP.contains(geomKind) }
             .forEach { geomKind -> layerSettingsList.add(Pair(geomKind,
                 StatKind.IDENTITY
@@ -28,7 +27,7 @@ class PlotConfigClientSideUtilTest {
             StatKind.CONTOURF,
             StatKind.DENSITY2D
         )
-            .forEach { statKind -> layerSettingsList.add(Pair(PATH, statKind)) }
+            .forEach { statKind -> layerSettingsList.add(Pair(GeomKind.PATH, statKind)) }
 
         assertAxisTooltipEnabled(layerSettingsList, true)
     }
@@ -67,6 +66,6 @@ class PlotConfigClientSideUtilTest {
     }
 
     companion object {
-        private val WITHOUT_AXIS_TOOLTIP = listOf(PATH, MAP, DENSITY2DF, CONTOURF, POLYGON, TILE, BIN_2D, LIVE_MAP, RECT, H_LINE)
+        private val WITHOUT_AXIS_TOOLTIP = listOf(GeomKind.PATH, GeomKind.MAP, GeomKind.DENSITY2DF, GeomKind.CONTOURF, GeomKind.POLYGON, GeomKind.TILE, GeomKind.BIN_2D, GeomKind.RECT, GeomKind.H_LINE)
     }
 }
