@@ -85,6 +85,7 @@ object LiveMapUtil {
 
     private fun getHiddenAes(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
+            LIVE_MAP,
             POINT,
             POLYGON,
             CONTOUR,
