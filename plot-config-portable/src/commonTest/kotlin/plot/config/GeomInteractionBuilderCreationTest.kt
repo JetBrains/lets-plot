@@ -5,27 +5,8 @@
 
 package plot.config
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_X
-import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_Y
-import jetbrains.datalore.plot.config.LayerConfig
-import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.Option.GeomName.POINT
-import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Meta.DATA_META
-import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame
-import jetbrains.datalore.plot.config.Option.Meta.KIND
-import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
-import jetbrains.datalore.plot.config.Option.Plot.LAYERS
-import jetbrains.datalore.plot.config.Option.PlotBase.DATA
-import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
-import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-
+// TODO: don't test private functions
+/*
 class GeomInteractionBuilderCreationTest {
 
     private val data = mapOf(
@@ -48,10 +29,11 @@ class GeomInteractionBuilderCreationTest {
         )
         val layerConfig = createLayerConfig(plotOpts)
 
-        val builder = PlotConfigClientSideUtil.createGeomInteractionBuilder(
+        val builder = GeomInteractionUtil.configGeomTargets(
             layerConfig,
-            emptyList(),
-            false
+            false,
+            false,
+            DefaultTheme()
         )
 
         val expectedAxisList = listOf(Aes.X)
@@ -78,7 +60,7 @@ class GeomInteractionBuilderCreationTest {
         )
         val layerConfig = createLayerConfig(plotOpts)
 
-        val builder = PlotConfigClientSideUtil.createGeomInteractionBuilder(
+        val builder = GeomInteractionUtil.createGeomInteractionBuilder(
             layerConfig,
             emptyList(),
             false
@@ -131,7 +113,7 @@ class GeomInteractionBuilderCreationTest {
         val pointX = layerConfig.varBindings.find { it.variable.name == POINT_X }
         val pointY = layerConfig.varBindings.find { it.variable.name == POINT_Y }
 
-        val builder = PlotConfigClientSideUtil.createGeomInteractionBuilder(
+        val builder = GeomInteractionUtil.createGeomInteractionBuilder(
             layerConfig,
             emptyList(),
             false
@@ -149,4 +131,4 @@ class GeomInteractionBuilderCreationTest {
     private fun assertAesListCount(expectedCount: Int, aesList: List<Aes<*>>) {
         assertEquals(expectedCount, aesList.size)
     }
-}
+}*/

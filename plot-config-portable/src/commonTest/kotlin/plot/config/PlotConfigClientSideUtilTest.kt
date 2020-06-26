@@ -5,11 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.values.Pair
-import jetbrains.datalore.plot.base.GeomKind
-import kotlin.test.Test
-import kotlin.test.assertEquals
-
+// TODO: don't test private functions
+/*
 class PlotConfigClientSideUtilTest {
 
     @Test
@@ -55,7 +52,7 @@ class PlotConfigClientSideUtilTest {
             val statKind = settings.second
 
             val builder =
-                PlotConfigClientSideUtil.createGeomInteractionBuilder(
+                GeomInteractionUtil.createGeomInteractionBuilder(
                     emptyList(),
                     geomKind,
                     statKind,
@@ -69,3 +66,4 @@ class PlotConfigClientSideUtilTest {
         private val WITHOUT_AXIS_TOOLTIP = listOf(GeomKind.PATH, GeomKind.MAP, GeomKind.DENSITY2DF, GeomKind.CONTOURF, GeomKind.POLYGON, GeomKind.TILE, GeomKind.BIN_2D, GeomKind.RECT, GeomKind.H_LINE)
     }
 }
+*/
