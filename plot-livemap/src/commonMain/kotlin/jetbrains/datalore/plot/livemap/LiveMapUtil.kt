@@ -7,18 +7,12 @@ package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Rectangle
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.livemap.LiveMapOptions
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil
-import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.*
 import jetbrains.livemap.config.DevParams
@@ -37,12 +31,6 @@ object LiveMapUtil {
             }
         }
     }
-
-//    internal fun createTooltipAesSpec(geomKind: GeomKind, dataAccess: MappedDataAccess): TooltipAesSpec {
-//        val aesList = ArrayList(dataAccess.getMappedAes())
-//        aesList.removeAll(getHiddenAes(geomKind))
-//        return TooltipAesSpec.create(aesList, emptyList<T>(), dataAccess)
-//    }
 
     internal fun createLayersConfigurator(
         layerKind: MapLayerKind,
@@ -83,42 +71,6 @@ object LiveMapUtil {
         }
     }
 
-    private fun getHiddenAes(geomKind: GeomKind): List<Aes<*>> {
-        return when (geomKind) {
-            LIVE_MAP,
-            POINT,
-            POLYGON,
-            CONTOUR,
-            CONTOURF,
-            DENSITY2D,
-            DENSITY2DF,
-            PATH,
-            TILE,
-            BIN_2D,
-            V_LINE,
-            H_LINE -> listOf(Aes.X, Aes.Y)
-
-            RECT -> listOf(Aes.YMIN, Aes.YMAX, Aes.XMIN, Aes.XMAX)
-
-            SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
-
-            else -> emptyList()
-        }
-    }
-
-    fun createContextualMapping(geomKind: GeomKind, dataAccess: MappedDataAccess): ContextualMapping {
-        val aesList: MutableList<Aes<*>> = ArrayList(dataAccess.mappedAes)
-        aesList.removeAll(
-            getHiddenAes(geomKind)
-        )
-        return GeomInteraction.createContextualMapping(
-            aesListForTooltip = aesList,
-            axisAes = emptyList(),
-            dataAccess = dataAccess,
-            dataFrame = DataFrame.Builder().build()
-        )
-    }
-
     private class MyLiveMapProvider internal constructor(
         geomLayers: List<GeomLayer>,
         private val myLiveMapOptions: LiveMapOptions
@@ -142,10 +94,9 @@ object LiveMapUtil {
 
             geomLayers
                 .map(newLiveMapRendererData)
-                .forEachIndexed {layerIndex, layer ->
-                    val contextualMapping = createContextualMapping(layer.geomKind, layer.dataAccess)
-                    layer.aesthetics.dataPoints().forEach {
-                        myTargetSource[layerIndex to it.index()] = contextualMapping
+                .forEachIndexed {layerIndex, rendererData ->
+                    rendererData.aesthetics.dataPoints().forEach {
+                        myTargetSource[layerIndex to it.index()] = rendererData.contextualMapping
                     }
             }
 
