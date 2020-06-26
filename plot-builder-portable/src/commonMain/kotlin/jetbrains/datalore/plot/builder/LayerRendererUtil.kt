@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 
 object LayerRendererUtil {
@@ -25,21 +26,22 @@ object LayerRendererUtil {
         )
         val pos = PlotUtil.createLayerPos(layer, aesthetics)
         return LayerRendererData(
-            layer.geom,
-            layer.geomKind,
+            layer,
             aesthetics,
             aestheticMappers,
-            pos,
-            layer.dataAccess
+            pos
         )
     }
 
     class LayerRendererData(
-        val geom: Geom,
-        val geomKind: GeomKind,
+        layer: GeomLayer,
         val aesthetics: Aesthetics,
         val aestheticMappers: Map<Aes<*>, (Double?) -> Any?>,
-        val pos: PositionAdjustment,
-        val dataAccess: MappedDataAccess
-    )
+        val pos: PositionAdjustment
+    ) {
+        val geom: Geom = layer.geom
+        val geomKind: GeomKind = layer.geomKind
+        val dataAccess: MappedDataAccess = layer.dataAccess
+        val contextualMapping: ContextualMapping = layer.contextualMapping
+    }
 }
