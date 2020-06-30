@@ -12,13 +12,16 @@ class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             antiMeridian()
-            //tooltips(),
-            //fourPointsTwoLayers(),
-            //basic(),
-            //bunch(),
-            //facet()
+//            tooltips()
+//            symbol_point(),
+//            geom_point()
+//            fourPointsTwoLayers(),
+//            basic(),
+//            bunch(),
+//            facet()
         )
     }
+
 
     private fun antiMeridian(): MutableMap<String, Any> {
         val spec = """{
@@ -74,35 +77,45 @@ class LiveMap : PlotConfigDemoBase() {
         "url": "ws://10.0.0.127:3933",
         "theme": null
       },
-      "geocoding": {
-        "url": "http://10.0.0.127:3020"
-      }
+      "geocoding": {}
     },
     {
       "geom": "rect",
       "stat": null,
       "data": {
         "request": [
+          "Russia",
+          "Russia",
           "USA",
           "USA"
         ],
         "lonmin": [
+          19.6389412879944,
+          -180.0,
           144.618412256241,
           -180.0
         ],
         "latmin": [
+          41.1850968003273,
+          41.1850968003273,
           -14.3735490739346,
           -14.3735490739346
         ],
         "lonmax": [
           180.0,
+          -168.997978270054,
+          180.0,
           -64.564847946167
         ],
         "latmax": [
+          81.8587204813957,
+          81.8587204813957,
           71.3878083229065,
           71.3878083229065
         ],
         "found name": [
+          "\u0420\u043e\u0441\u0441\u0438\u044f",
+          "\u0420\u043e\u0441\u0441\u0438\u044f",
           "United States of America",
           "United States of America"
         ]
@@ -127,8 +140,6 @@ class LiveMap : PlotConfigDemoBase() {
     }
   ]
 }""".trimIndent()
-        return parsePlotSpec(spec)
-    }
 
     private fun tooltips(): MutableMap<String, Any> {
         val spec = """
@@ -174,8 +185,6 @@ class LiveMap : PlotConfigDemoBase() {
 
         return parsePlotSpec(spec)
     }
-
-    companion object {
 
         fun symbol_point(): MutableMap<String, Any> {
             val spec = """

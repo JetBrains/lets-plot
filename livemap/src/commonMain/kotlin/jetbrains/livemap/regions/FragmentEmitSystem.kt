@@ -9,6 +9,7 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.gis.geoprotocol.GeometryUtil
@@ -24,6 +25,7 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
+import jetbrains.livemap.core.projections.MapRuler
 import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.geometry.GeometryTransform
@@ -40,6 +42,7 @@ import jetbrains.livemap.regions.Utils.zoom
 import jetbrains.livemap.scaling.ScaleComponent
 
 class FragmentEmitSystem(
+    private val mapRuler: MapRuler<World>,
     private val myProjectionQuant: Int,
     componentManager: EcsComponentManager
 ) :
