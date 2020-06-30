@@ -65,6 +65,12 @@ task jarLetsPlotJvmCommonClasses(type: ShadowJar) {
     exclude '**/*.kotlin_module'
     exclude '**/*.kotlin_builtins'
 
+    exclude 'kotlin/**/*'
+    exclude 'mu/**/*'      // kotlin logging
+    exclude 'org/slf4j/**/*'
+    exclude 'org/intellij/lang/annotations/**/*'
+    exclude 'org/jetbrains/annotations/**/*'
+
 //    relocate 'com', 'shade.com'
 //    relocate 'org', 'shade.org'
 //    relocate 'kotlin', 'shade.kotlin'
@@ -109,6 +115,39 @@ publishing {
                 }
                 scm {
                     url = "https://github.com/JetBrains/lets-plot"
+                }
+                // Dependencies
+                withXml {
+                    def deps = asNode().appendNode('dependencies')
+                    // Kotlin std lib
+                    deps.appendNode('dependency')
+                            .appendNode('groupId', 'org.jetbrains.kotlin')
+                            .appendNode('artifactId', 'kotlin-stdlib-jdk8')
+                            .appendNode('version', kotlin_version)
+                    // Kotlin reflection
+                    deps.appendNode('dependency')
+                            .appendNode('groupId', 'org.jetbrains.kotlin')
+                            .appendNode('artifactId', 'kotlin-reflect')
+                            .appendNode('version', kotlin_version)
+                    // Kotlin test
+                    deps.appendNode('dependency')
+                            .appendNode('groupId', 'org.jetbrains.kotlin')
+                            .appendNode('artifactId', 'kotlin-test')
+                            .appendNode('version', kotlin_version)
+                    deps.appendNode('dependency')
+                            .appendNode('groupId', 'org.jetbrains.kotlin')
+                            .appendNode('artifactId', 'kotlin-test-junit')
+                            .appendNode('version', kotlin_version)
+                    // Kotlin logging
+                    deps.appendNode('dependency')
+                            .appendNode('groupId', 'io.github.microutils')
+                            .appendNode('artifactId', 'kotlin-logging')
+                            .appendNode('version', kotlinLogging_version)
+                    // Console logging
+                    deps.appendNode('dependency')
+                            .appendNode('groupId', 'org.slf4j')
+                            .appendNode('artifactId', 'slf4j-simple')
+                            .appendNode('version', slf4j_version)
                 }
             }
         }
