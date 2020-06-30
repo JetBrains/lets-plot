@@ -114,7 +114,7 @@ publishing {
                 withXml {
                     def deps = asNode().appendNode('dependencies')
                     // Lets-Plot common
-                    dep = deps.appendNode('dependency')
+                    def dep = deps.appendNode('dependency')
                     dep.appendNode('groupId', artifactGroupId)
                     dep.appendNode('artifactId', 'lets-plot-common')
                     dep.appendNode('version', artifactVersion)
