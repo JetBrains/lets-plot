@@ -104,9 +104,6 @@ SNAPSHOT's and RC's will be uploaded to the `lets-plot-jars-dev` package.
  * Fill `Tag version` and `Release title` with released version `vX.X.X`
  * Fill a description field with the new changes from the CHANGELOG.md
  
-
-
-
 ### After release
 
  - remove build directory `lets-plot-release`
