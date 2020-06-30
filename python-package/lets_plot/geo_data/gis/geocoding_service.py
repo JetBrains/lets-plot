@@ -1,5 +1,4 @@
 import json
-import os
 import urllib.parse
 import urllib.request
 from urllib.error import URLError
@@ -8,13 +7,16 @@ from .json_request import RequestFormatter
 from .json_response import ResponseParser
 from .request import Request
 from .response import Response, ResponseBuilder, Status
-
-GEOTEST_SERVER_URL = 'http://10.0.0.127:3020'
+from ..._global_settings import has_global_value, get_global_val
+from ...settings_utils import GEOCODING_PROVIDER_URL
 
 
 class GeocodingService:
     def do_request(self, request: Request) -> Response:
-        url = '{}/{}'.format(self._get_server_url(), 'map_data/geocoding')
+        if not has_global_value(GEOCODING_PROVIDER_URL):
+            raise ValueError('Geocoding server url is not defined')
+
+        url = '{}/{}'.format(get_global_val(GEOCODING_PROVIDER_URL), 'map_data/geocoding')
         try:
             r_str = self._get_entity(url, RequestFormatter().format(request).to_dict())
             return ResponseParser().parse(json.loads(r_str))
@@ -31,12 +33,3 @@ class GeocodingService:
         request = urllib.request.Request(url, data=bytearray(json.dumps(body), 'utf-8'), headers=headers, method='POST')
         response = urllib.request.urlopen(request)
         return response.read().decode('utf-8')
-
-    @staticmethod
-    def _get_server_url() -> str:
-        geoserver_url = GEOTEST_SERVER_URL
-
-        if os.environ.get('GEOSERVER_URL'):
-            geoserver_url = os.environ.get('GEOSERVER_URL')
-
-        return geoserver_url
