@@ -95,6 +95,8 @@ run `./gradlew python-package-build:buildManylinuxWheels`
  
  - `./gradlew :jvm-package:jvm-publish-batik:bintrayUpload`
  
+Note that release versions will be uploaded to the `lets-plot-jars` package.    
+SNAPSHOT's and RC's will be uploaded to the `lets-plot-jars-dev` package.
  
 ### Add the GitHub release:
  
