@@ -131,21 +131,20 @@ publishing {
 
                     // Other dependencies
                     // Lets-Plot common
-                    deps.appendNode('dependency')
-                            .appendNode('groupId', artifactGroupId)
-                            .appendNode('artifactId', 'lets-plot-common')
-                            .appendNode('version', artifactVersion)
+                    dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', artifactGroupId)
+                    dep.appendNode('artifactId', 'lets-plot-common')
+                    dep.appendNode('version', artifactVersion)
                     // Kotlin HTML
-                    deps.appendNode('dependency')
-                            .appendNode('groupId', 'org.jetbrains.kotlinx')
-                            .appendNode('artifactId', 'kotlinx-html-jvm')
-                            .appendNode('version', kotlinx_html_version)
+                    dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', 'org.jetbrains.kotlinx')
+                    dep.appendNode('artifactId', 'kotlinx-html-jvm')
+                    dep.appendNode('version', kotlinx_html_version)
                     // Hamcrest tests
-                    deps.appendNode('dependency')
-                            .appendNode('groupId', 'org.hamcrest')
-                            .appendNode('artifactId', 'hamcrest-core')
-                            .appendNode('version', hamcrest_version)
-
+                    dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', 'org.hamcrest')
+                    dep.appendNode('artifactId', 'hamcrest-core')
+                    dep.appendNode('version', hamcrest_version)
                 }
             }
         }
