@@ -64,7 +64,6 @@ kotlin {
             dependsOn allJvm
             dependsOn jvmMain
             dependencies {
-                implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation project(':vis-svg-mapper-batik')
                 implementation project(':vis-demo-common-batik')
             }
@@ -73,7 +72,6 @@ kotlin {
             dependsOn allJvm
             dependsOn jvmMain
             dependencies {
-                implementation "org.apache.commons:commons-math3:$math3_version"
                 implementation project(':vis-canvas')
                 implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-demo-common-jfx')
