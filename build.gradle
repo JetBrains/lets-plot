@@ -105,6 +105,13 @@ project.ext.buildSettings = settings
 
 // Bintray settings
 
+// define the package name in the Bintray Maven repository depending on the version name
+if (version.contains('SNAPSHOT') || version.contains('rc')) {
+    project.ext.bintray_mvn_pkg_name = 'lets-plot-jars-dev'
+} else {
+    project.ext.bintray_mvn_pkg_name = 'lets-plot-jars'
+}
+
 project.ext["bintraySettings"] = [
         userOrg            : 'jetbrains',
         licenses           : ['MIT'],
@@ -116,6 +123,5 @@ project.ext["bintraySettings"] = [
         js_artifact_version: js_artifact_version,
 
         mvn_repo           : 'lets-plot-maven',
-        mvn_pkg_name       : 'lets-plot-jars',
 ]
 

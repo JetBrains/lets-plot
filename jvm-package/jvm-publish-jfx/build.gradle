@@ -138,7 +138,7 @@ if (bintray_user != null && bintray_key != null) {
 
         pkg {
             repo = project.bintraySettings.mvn_repo
-            name = project.bintraySettings.mvn_pkg_name
+            name = project.bintray_mvn_pkg_name
             userOrg = project.bintraySettings.userOrg
             licenses = project.bintraySettings.licenses
             vcsUrl = project.bintraySettings.vcsUrl
