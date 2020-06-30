@@ -61,16 +61,14 @@ task jarLetsPlotJvmJfxClasses(type: ShadowJar) {
     // exclude classes that duplicates `lets-plot-common.jar`
     exclude 'com/google/**/*'
     exclude 'kotlin/**/*'
-//    exclude 'kotlinx/**/*'
+    exclude 'kotlinx/**/*'
     exclude 'mu/**/*'
-    exclude 'org/intellij/**/*'
+    exclude 'org/intellij/lang/annotations/**/*'
     exclude 'org/jetbrains/annotations/**/*'
     exclude 'org/slf4j/**/*'
-
-//    relocate 'com', 'shade.com'
-//    relocate 'org', 'shade.org'
-//    relocate 'kotlin', 'shade.kotlin'
-//    relocate 'mu', 'shade.mu'
+    exclude 'junit/**/*'
+    exclude 'org/junit/**/*'
+    exclude 'org/hamcrest/**/*'
 }
 
 task jarLetsPlotJvmJfxSources(type: ShadowJar) {
@@ -111,6 +109,25 @@ publishing {
                 }
                 scm {
                     url = "https://github.com/JetBrains/lets-plot"
+                }
+                // Dependencies
+                withXml {
+                    def deps = asNode().appendNode('dependencies')
+                    // Lets-Plot common
+                    deps.appendNode('dependency')
+                            .appendNode('groupId', artifactGroupId)
+                            .appendNode('artifactId', 'lets-plot-common')
+                            .appendNode('version', artifactVersion)
+                    // Kotlin HTML
+                    deps.appendNode('dependency')
+                            .appendNode('groupId', 'org.jetbrains.kotlinx')
+                            .appendNode('artifactId', 'kotlinx-html-jvm')
+                            .appendNode('version', kotlinx_html_version)
+                    // Hamcrest tests
+                    deps.appendNode('dependency')
+                            .appendNode('groupId', 'org.hamcrest')
+                            .appendNode('artifactId', 'hamcrest-core')
+                            .appendNode('version', hamcrest_version)
                 }
             }
         }
