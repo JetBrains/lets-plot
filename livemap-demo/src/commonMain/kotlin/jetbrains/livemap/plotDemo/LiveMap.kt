@@ -11,14 +11,243 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            fourPointsTwoLayers(),
-            basic(),
-            bunch(),
-            facet()
+            antiMeridian()
+//            fourPointsTwoLayers(),
+//            basic(),
+//            bunch(),
+//            facet()
         )
     }
 
+    private fun antiMeridian(): MutableMap<String, Any> {
+        val spec = """{
+  "data": null,
+  "mapping": {
+    "x": null,
+    "y": null
+  },
+  "data_meta": {},
+  "theme": {
+    "axis_title": null,
+    "axis_title_x": null,
+    "axis_title_y": null,
+    "axis_text": null,
+    "axis_text_x": null,
+    "axis_text_y": null,
+    "axis_ticks": null,
+    "axis_ticks_x": null,
+    "axis_ticks_y": null,
+    "axis_line": null,
+    "axis_line_x": null,
+    "axis_line_y": null,
+    "legend_position": "none",
+    "legend_justification": null,
+    "legend_direction": null,
+    "axis_tooltip": null,
+    "axis_tooltip_x": null,
+    "axis_tooltip_y": null
+  },
+  "kind": "plot",
+  "scales": [],
+  "layers": [
+    {
+      "geom": "livemap",
+      "stat": null,
+      "data": null,
+      "mapping": {
+        "x": null,
+        "y": null
+      },
+      "position": null,
+      "show_legend": null,
+      "tooltips": null,
+      "data_meta": {},
+      "sampling": null,
+      "display_mode": null,
+      "location": null,
+      "zoom": null,
+      "projection": null,
+      "geodesic": null,
+      "tiles": {
+        "kind": "vector_lets_plot",
+        "url": "ws://10.0.0.127:3933",
+        "theme": null
+      },
+      "geocoding": {}
+    },
+    {
+      "geom": "rect",
+      "stat": null,
+      "data": {
+        "request": [
+          "Russia",
+          "Russia",
+          "USA",
+          "USA"
+        ],
+        "lonmin": [
+          19.6389412879944,
+          -180.0,
+          144.618412256241,
+          -180.0
+        ],
+        "latmin": [
+          41.1850968003273,
+          41.1850968003273,
+          -14.3735490739346,
+          -14.3735490739346
+        ],
+        "lonmax": [
+          180.0,
+          -168.997978270054,
+          180.0,
+          -64.564847946167
+        ],
+        "latmax": [
+          81.8587204813957,
+          81.8587204813957,
+          71.3878083229065,
+          71.3878083229065
+        ],
+        "found name": [
+          "\u0420\u043e\u0441\u0441\u0438\u044f",
+          "\u0420\u043e\u0441\u0441\u0438\u044f",
+          "United States of America",
+          "United States of America"
+        ]
+      },
+      "mapping": {
+        "x": null,
+        "y": null,
+        "xmin": "lonmin",
+        "xmax": "lonmax",
+        "ymin": "latmin",
+        "ymax": "latmax",
+        "fill": "found name"
+      },
+      "position": null,
+      "show_legend": null,
+      "tooltips": null,
+      "data_meta": {},
+      "sampling": null,
+      "map": null,
+      "map_join": null,
+      "alpha": 0.3
+    }
+  ]
+}""".trimIndent()
+        return parsePlotSpec(spec)
+    }
+
+    private fun tooltips(): MutableMap<String, Any> {
+        val spec = """
+            {
+              "data": {
+                "request": ["Texas", "Nevada", "Iowa"],
+                "lon": [-99.6829525269137, -116.666956541192, -93.1514127397129],
+                "lat": [31.1685702949762, 38.5030842572451, 41.9395130127668],
+                "found name": ["Texas", "Nevada", "Iowa"]
+              },
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "livemap",
+                  "tiles": {
+                    "kind": "vector_lets_plot",
+                    "url": "ws://10.0.0.127:3933",
+                    "theme": null
+                  },
+                  "geocoding": {}
+                },
+                {
+                  "geom": "point",
+                  "mapping": {
+                    "x": "lon",
+                    "y": "lat"
+                  },
+                  "tooltips": {
+                    "lines": [
+                      {
+                        "value": "aes@x",
+                        "label": null,
+                        "format": "mean = {.4f}"
+                      }
+                    ]
+                  },
+                  "symbol": "point",
+                  "size": 50
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
+    }
+
     companion object {
+
+        fun symbol_point(): MutableMap<String, Any> {
+            val spec = """
+                {
+                  "data": {
+                    "request": ["Texas", "Nevada", "Iowa"],
+                    "lon": [-99.6829525269137, -116.666956541192, -93.1514127397129],
+                    "lat": [31.1685702949762, 38.5030842572451, 41.9395130127668],
+                    "found name": ["Texas", "Nevada", "Iowa"]
+                  },
+                  "kind": "plot",
+                  "layers": [
+                    {
+                      "geom": "livemap",
+                      "mapping": {
+                        "x": "lon",
+                        "y": "lat"
+                      },
+                      "symbol": "point",
+                      "tiles": {
+                        "kind": "vector_lets_plot",
+                        "url": "ws://10.0.0.127:3933",
+                        "theme": null
+                      },
+                      "size": 50
+                    }
+                  ]
+                }
+            """.trimIndent()
+            return parsePlotSpec(spec)
+        }
+
+        private fun geom_point(): MutableMap<String, Any> {
+            val spec = """{
+  "data": {
+    "request": ["Texas", "Nevada", "Iowa"],
+    "lon": [-99.6829525269137, -116.666956541192, -93.1514127397129],
+    "lat": [31.1685702949762, 38.5030842572451, 41.9395130127668],
+    "found name": ["Texas", "Nevada", "Iowa"]
+  },
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "livemap",
+      "tiles": {
+        "kind": "vector_lets_plot",
+        "url": "ws://10.0.0.127:3933",
+        "theme": null
+      }
+    },
+    {
+      "geom": "point",
+      "mapping": {
+        "x": "lon",
+        "y": "lat"
+      },
+      "symbol": "point",
+      "size": 50
+    }
+  ]
+}"""
+            return parsePlotSpec(spec)
+        }
 
         fun basic(): Map<String, Any> {
             val spec = """

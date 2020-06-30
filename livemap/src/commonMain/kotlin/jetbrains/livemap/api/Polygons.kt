@@ -8,22 +8,22 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.datalore.base.values.Color
-import jetbrains.gis.geoprotocol.GeometryUtil
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.projections.MapRuler
 import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.core.rendering.layers.LayerGroup
-import jetbrains.livemap.geocoding.*
+import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
+import jetbrains.livemap.geocoding.NeedLocationComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.placement.ScreenLoopComponent
 import jetbrains.livemap.placement.ScreenOriginComponent
 import jetbrains.livemap.placement.WorldDimensionComponent
 import jetbrains.livemap.placement.WorldOriginComponent
-import jetbrains.livemap.projection.Coordinates
 import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.regions.RegionFragmentsComponent
-import jetbrains.livemap.regions.RegionRenderer
+import jetbrains.livemap.projection.World
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.PolygonRenderer
 import jetbrains.livemap.scaling.ScaleComponent
@@ -34,8 +34,9 @@ import jetbrains.livemap.searching.PolygonLocatorHelper
 @LiveMapDsl
 class Polygons(
     val factory: MapEntityFactory,
-    val mapProjection: MapProjection
-)
+    val mapProjection: MapProjection,
+    val mapRuler: MapRuler<World>
+    )
 
 fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
 
@@ -48,12 +49,13 @@ fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
 
     Polygons(
         MapEntityFactory(layerEntity),
-        mapProjection
+        mapProjection,
+        mapRuler
     ).apply(block)
 }
 
 fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
-    PolygonsBuilder(factory, mapProjection)
+    PolygonsBuilder(factory, mapProjection, mapRuler)
         .apply(block)
         .build()
 }
@@ -61,7 +63,8 @@ fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
 @LiveMapDsl
 class PolygonsBuilder(
     private val myFactory: MapEntityFactory,
-    private val myMapProjection: MapProjection
+    private val myMapProjection: MapProjection,
+    private val myMapRuler: MapRuler<World>
 ) {
     var layerIndex: Int? = null
     var index: Int? = null
@@ -85,7 +88,7 @@ class PolygonsBuilder(
         val geometry = multiPolygon!!
             .run { ProjectionUtil.transformMultiPolygon(this, myMapProjection::project) }
 
-        val bbox = GeometryUtil.bbox(geometry) ?: error("")
+        val bbox = myMapRuler.calculateBoundingBox(geometry.limit())
 
         return myFactory
             .createMapEntity("map_ent_s_polygon")

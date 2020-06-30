@@ -9,9 +9,9 @@ import jetbrains.datalore.base.gcommon.base.Preconditions.checkArgument
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.reinterpret
-import jetbrains.gis.geoprotocol.GeometryUtil.bbox
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraListenerComponent
 import jetbrains.livemap.camera.CenterChangedComponent
@@ -24,6 +24,7 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
+import jetbrains.livemap.core.projections.MapRuler
 import jetbrains.livemap.core.projections.ProjectionUtil
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.geometry.GeometryTransform
@@ -31,15 +32,19 @@ import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.placement.ScreenLoopComponent
 import jetbrains.livemap.placement.WorldDimensionComponent
 import jetbrains.livemap.placement.WorldOriginComponent
+import jetbrains.livemap.projection.Client
+import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.projection.World
 import jetbrains.livemap.regions.Utils.RegionsIndex
 import jetbrains.livemap.regions.Utils.entityName
 import jetbrains.livemap.regions.Utils.zoom
 import jetbrains.livemap.scaling.ScaleComponent
-import jetbrains.livemap.projection.Client
-import jetbrains.livemap.projection.MapProjection
-import jetbrains.livemap.projection.World
 
-class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: EcsComponentManager) :
+class FragmentEmitSystem(
+    private val mapRuler: MapRuler<World>,
+    private val myProjectionQuant: Int,
+    componentManager: EcsComponentManager
+) :
     AbstractSystem<LiveMapContext>(componentManager) {
     private val myRegionIndex: RegionsIndex = RegionsIndex(componentManager)
     private val myWaitingForScreenGeometry = HashMap<FragmentKey, EcsEntity>()
@@ -127,7 +132,8 @@ class FragmentEmitSystem(private val myProjectionQuant: Int, componentManager: E
         val projector = GeometryTransform
             .resampling(boundaries, mapProjection::project)
             .flatMap { worldMultiPolygon: MultiPolygon<World> ->
-                val bbox = bbox(worldMultiPolygon) ?: error("")
+
+                val bbox = mapRuler.calculateBoundingBox(worldMultiPolygon.limit())
                 runLaterBySystem(
                     fragmentEntity
                 ) { theEntity ->

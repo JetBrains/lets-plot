@@ -16,9 +16,6 @@ import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
-import jetbrains.livemap.LayerProvider
-import jetbrains.livemap.LayerProvider.EmptyLayerProvider
-import jetbrains.livemap.LayerProvider.LayerProviderImpl
 import jetbrains.livemap.MapLocation
 import jetbrains.livemap.camera.CameraListenerComponent
 import jetbrains.livemap.camera.CenterChangedComponent
@@ -28,12 +25,14 @@ import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
+import jetbrains.livemap.core.projections.MapRuler
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.core.projections.createArcPath
 import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.projection.MapProjection
+import jetbrains.livemap.projection.World
 import jetbrains.livemap.rendering.LayerEntitiesComponent
 import jetbrains.livemap.tiles.TileSystemProvider
 import kotlin.math.abs
@@ -47,7 +46,7 @@ class LiveMapBuilder {
     lateinit var geocodingService: GeocodingService
     lateinit var tileSystemProvider: TileSystemProvider
 
-    var layerProvider: LayerProvider = EmptyLayerProvider()
+    var layers: List<LayersBuilder.() -> Unit> = emptyList()
 
     var zoom: Int? = null
     var interactive: Boolean = true
@@ -68,7 +67,7 @@ class LiveMapBuilder {
             size = size,
             zoom = zoom,
             isInteractive = interactive,
-            layerProvider = layerProvider,
+            layers = layers,
 
             location = mapLocation,
 
@@ -99,6 +98,7 @@ class LayersBuilder(
     val myComponentManager: EcsComponentManager,
     val layerManager: LayerManager,
     val mapProjection: MapProjection,
+    val mapRuler: MapRuler<World>,
     val pointScaling: Boolean,
     val textMeasurer: TextMeasurer
 )
@@ -267,7 +267,7 @@ class MapEntityFactory(layerEntity: EcsEntity) {
 fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
 
 fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
-    layerProvider = LayerProviderImpl(devParams, block)
+    layers = listOf(block)
 }
 
 fun LiveMapBuilder.location(block: Location.() -> Unit) {

@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.gis.tileprotocol.TileService
-import jetbrains.livemap.LayerProvider.LayerProviderImpl
 import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
 import jetbrains.livemap.LiveMapConstants.MIN_ZOOM
 import jetbrains.livemap.MapLocation
@@ -100,7 +99,7 @@ internal class LiveMapSpecBuilder {
             projectionType = projectionType,
             location = createMapLocation(myLiveMapOptions.location),
             zoom = checkZoom(myLiveMapOptions.zoom),
-            layerProvider = LayerProviderImpl(myDevParams) { layersConfigurators.forEach { it() } },
+            layers = layersConfigurators,
             isLoopX = CYLINDRICAL_PROJECTIONS.contains(projectionType),
             isLoopY = DEFAULT_LOOP_Y,
             mapLocationConsumer = myMapLocationConsumer,
