@@ -1260,6 +1260,12 @@ def _greyscale_check_parameters(start=None, end=None):
     if end != None and end not in [0, 1]:
         raise ValueError("Value of 'end' must be in range: [0,1]")
 
+    # ToDo: scale_xxx_grey
+    # Tmp scale values back to [0, 100] range
+    # Remove before next RC release
+    start = start * 100
+    end = end * 100
+
     return (start, end)
 
 

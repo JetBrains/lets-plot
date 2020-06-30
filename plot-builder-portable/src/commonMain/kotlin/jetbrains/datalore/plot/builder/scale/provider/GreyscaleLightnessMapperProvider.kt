@@ -21,11 +21,19 @@ class GreyscaleLightnessMapperProvider(start: Double?, end: Double?, naValue: Co
         val value0 = start ?: DEF_START
         val value1 = end ?: DEF_END
 
-        require(value0 in (0.0..1.0)) { "Value of 'start' must be in range: [0,1]: $start" }
-        require(value1 in (0.0..1.0)) { "Value of 'end' must be in range: [0,1]: $end" }
+        // ToDo: scale_xxx_grey
+        // Tmp desable range checking
+        // Enable before next RC release
+//        require(value0 in (0.0..1.0)) { "Value of 'start' must be in range: [0,1]: $start" }
+//        require(value1 in (0.0..1.0)) { "Value of 'end' must be in range: [0,1]: $end" }
+        // ToDo: scale_xxx_grey
+        // Tmp apply range scaling
+        // Remove before next RC release
+        myLowHSV = doubleArrayOf(0.0, 0.0, value0 / 100)
+        myHighHSV = doubleArrayOf(0.0, 0.0, value1 / 100)
+//        myLowHSV = doubleArrayOf(0.0, 0.0, value0)
+//        myHighHSV = doubleArrayOf(0.0, 0.0, value1)
 
-        myLowHSV = doubleArrayOf(0.0, 0.0, value0)
-        myHighHSV = doubleArrayOf(0.0, 0.0, value1)
     }
 
     override fun createDiscreteMapper(data: DataFrame, variable: DataFrame.Variable): GuideMapper<Color> {
@@ -46,7 +54,12 @@ class GreyscaleLightnessMapperProvider(start: Double?, end: Double?, naValue: Co
     }
 
     companion object {
-        private const val DEF_START = 0.2
-        private const val DEF_END = 0.8
+        // ToDo: scale_xxx_grey
+        // Tmp use old value range [0,100] as a default
+        // Change to [0,1] range before next RC release
+//        private const val DEF_START = 0.2
+//        private const val DEF_END = 0.8
+        private const val DEF_START = 20.0
+        private const val DEF_END = 80.0
     }
 }
