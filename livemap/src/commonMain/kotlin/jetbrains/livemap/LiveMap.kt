@@ -230,7 +230,7 @@ class LiveMap(
 
                 LocationCounterSystem(componentManager, myMapLocationRect == null),
                 LocationGeocodingSystem(componentManager, myGeocodingService),
-                LocationCalculateSystem(componentManager),
+                LocationCalculateSystem(myMapRuler, componentManager),
                 MapLocationInitializationSystem(componentManager, myZoom?.toDouble(), myMapLocationRect),
 
                 ApplyPointSystem(componentManager),
@@ -257,7 +257,7 @@ class LiveMap(
                     myFragmentProvider,
                     componentManager
                 ),
-                FragmentEmitSystem(myMapRuler, myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
+                FragmentEmitSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
                 RegionEmitSystem(componentManager),
                 FragmentsRemovingSystem(myDevParams.read(FRAGMENT_CACHE_LIMIT), componentManager),
 
