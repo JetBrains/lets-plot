@@ -86,8 +86,8 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         internal var myLabels: List<String>?
         internal var myMapper: (Double?) -> T?
 
-        internal var myMultiplicativeExpand: Double = 0.toDouble()
-        internal var myAdditiveExpand: Double = 0.toDouble()
+        internal var myMultiplicativeExpand: Double = 0.0
+        internal var myAdditiveExpand: Double = 0.0
 
         init {
             myTransform = scale.myTransform
