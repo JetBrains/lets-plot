@@ -35,6 +35,7 @@ import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.Companion.DEVICE_PIXEL_RATIO
 import org.w3c.dom.*
+import org.w3c.dom.events.Event
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
@@ -71,49 +72,41 @@ class DomCanvasControl(
     }
 
     override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
-        return createSnapshot(dataUrl, null)
-    }
-
-    override fun createSnapshot(bytes: ByteArray): Async<Canvas.Snapshot> {
-        return Blob(arrayOf(bytes), BlobPropertyBag("image/png"))
-            .let(URL.Companion::createObjectURL)
-            .let(::createSnapshot)
-    }
-
-    private fun createSnapshot(dataUrl: String, size: Vector?): Async<Canvas.Snapshot> {
-        val async = SimpleAsync<Canvas.Snapshot>()
-
-        val image = Image()
-
-        image.onload = {
-
-            val screenSize = size?.let { it * DEVICE_PIXEL_RATIO.toInt() } ?: Vector(image.width, image.height)
-            val domCanvas = DomCanvas.create(screenSize, 1.0)
-            val ctx = domCanvas.canvasElement.getContext("2d") as CanvasRenderingContext2D
-            ctx.drawImage(
-                image,
-                0.0,
-                0.0,
-                image.width.toDouble(),
-                image.height.toDouble(),
-                0.0,
-                0.0,
-                screenSize.x.toDouble(),
-                screenSize.y.toDouble()
-            )
-
-            domCanvas.takeSnapshot().onSuccess { async.success(it) }
-        }
-
-        image.src = dataUrl
-
-        return async
+        return createSnapshotAsync(dataUrl, null)
     }
 
     override fun createSnapshot(bytes: ByteArray, size: Vector): Async<Canvas.Snapshot> {
         return Blob(arrayOf(bytes), BlobPropertyBag("image/png"))
             .let { URL.createObjectURL(it) }
-            .let { createSnapshot(it, size) }
+            .let { createSnapshotAsync(it, size) }
+    }
+
+    private fun createSnapshotAsync(dataUrl: String, size: Vector? = null): Async<Canvas.Snapshot> {
+        return SimpleAsync<Canvas.Snapshot>().apply {
+            with(Image()) {
+                onload = onLoad(this, size, ::success)
+                src = dataUrl
+            }
+        }
+    }
+
+    private fun onLoad(image: Image, size: Vector?, consumer: (Canvas.Snapshot) -> Unit) = { _: Event ->
+
+        val domCanvas = size
+            ?.let {createCanvas(it) as DomCanvas}
+            ?: DomCanvas.create(Vector(image.width, image.height), 1.0)
+
+        val ctx = domCanvas.canvasElement.getContext("2d") as CanvasRenderingContext2D
+
+        ctx.drawImage(
+            image,
+            0.0,
+            0.0,
+            domCanvas.canvasElement.width.toDouble(),
+            domCanvas.canvasElement.height.toDouble()
+        )
+
+        domCanvas.takeSnapshot().onSuccess { consumer(it) }
     }
 
     override fun addChild(canvas: Canvas) {

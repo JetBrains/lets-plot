@@ -60,10 +60,10 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
     ) {
         myContext2d.drawImage(
             snapshot,
-            sx,
-            sy,
-            sw,
-            sh,
+            scaled(sx),
+            scaled(sy),
+            scaled(sw),
+            scaled(sh),
             scaled(dx),
             scaled(dy),
             scaled(dw),
