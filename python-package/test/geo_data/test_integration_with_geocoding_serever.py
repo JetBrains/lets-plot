@@ -11,7 +11,6 @@ from shapely.geometry import Point
 
 import lets_plot.geo_data as geodata
 from lets_plot.geo_data import DF_FOUND_NAME, DF_ID, DF_REQUEST
-from lets_plot.geo_data.to_data_frame import DF_LON, DF_LAT
 
 ShapelyPoint = shapely.geometry.Point
 
@@ -45,10 +44,12 @@ def assert_row(df: DataFrame, request: str = None, found_name: str = None, index
         assert df[DF_ID][index] == id
 
     if lon is not None:
-        assert df[DF_LON][index] == lon
+        actual_lon = ShapelyPoint(df.geometry[index]).x
+        assert actual_lon == lon
 
     if lat is not None:
-        assert df[DF_LAT][index] == lat
+        actual_lat = ShapelyPoint(df.geometry[index]).y
+        assert actual_lat == lat
 
 
 TURN_OFF_INTERACTION_TEST = not run_intergration_tests()
@@ -230,6 +231,7 @@ def test_ambiguity_near_boston_by_coord():
 def test_ambiguity_near_boston_by_box():
     boston = geodata.regions_city('boston').centroids().iloc[[0]]
     buffer = 0.6
+    boston_centroid = ShapelyPoint(boston.geometry.x, boston.geometry.y)
 
     r = geodata.regions_builder(
         level='city',
@@ -237,10 +239,10 @@ def test_ambiguity_near_boston_by_box():
     ) \
         .where('Warwick',
                within=shapely.geometry.box(
-                   boston[DF_LON][0] - buffer,
-                   boston[DF_LAT][0] - buffer,
-                   boston[DF_LON][0] + buffer,
-                   boston[DF_LAT][0] + buffer
+                   boston_centroid.x - buffer,
+                   boston_centroid.y - buffer,
+                   boston_centroid.x + buffer,
+                   boston_centroid.y + buffer
                )) \
         .build()
 

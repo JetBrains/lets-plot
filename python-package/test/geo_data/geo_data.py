@@ -4,12 +4,14 @@
 import json
 from typing import List, Union
 
+from lets_plot.geo_data import DF_REQUEST, DF_FOUND_NAME
 from lets_plot.geo_data.gis.geometry import Ring, Polygon, Multipolygon
 from lets_plot.geo_data.gis.json_response import ResponseField, GeometryKind
 from lets_plot.geo_data.gis.response import GeocodedFeature, FeatureBuilder, LevelKind, Status, GeoRect, GeoPoint, \
-    Response, \
-    SuccessResponse, AmbiguousResponse, ErrorResponse, ResponseBuilder
+    Response, SuccessResponse, AmbiguousResponse, ErrorResponse, ResponseBuilder
 from lets_plot.geo_data.regions import Regions
+
+from pandas import DataFrame
 
 GEOJSON_TYPE = ResponseField.boundary_type.value
 GEOJSON_COORDINATES = ResponseField.boundary_coordinates.value
@@ -187,3 +189,38 @@ def get_data_meta(plotSpec, layerIdx: int) -> dict:
 
 def get_map_data_meta(plotSpec, layerIdx: int) -> dict:
     return plotSpec.as_dict()['layers'][layerIdx]['map_data_meta']
+
+
+
+def assert_names(df: DataFrame, index: int, name=NAME, found_name=FOUND_NAME):
+    assert name == df[DF_REQUEST][index]
+    assert found_name == df[DF_FOUND_NAME][index]
+
+
+def assert_limit(limit: DataFrame, index: int, name=NAME, found_name=FOUND_NAME):
+    assert_names(limit, index, name, found_name)
+
+    min_lon = limit['lonmin'][index]
+    min_lat = limit['latmin'][index]
+    max_lon = limit['lonmax'][index]
+    max_lat = limit['latmax'][index]
+    assert GEO_RECT_MIN_LON == min_lon
+    assert GEO_RECT_MIN_LAT == min_lat
+    assert GEO_RECT_MAX_LON == max_lon
+    assert GEO_RECT_MAX_LAT == max_lat
+
+
+def assert_centroid(centroid: DataFrame, index: int, name=NAME, found_name=FOUND_NAME, lon=CENTROID_LON, lat=CENTROID_LAT):
+    assert_names(centroid, index, name, found_name)
+    assert_point(centroid, index, lon, lat)
+
+
+def assert_boundary(boundary: DataFrame, index: int, points: List[GJPoint], name=NAME, found_name=FOUND_NAME):
+    assert_names(boundary, index, name, found_name)
+    for i, point in enumerate(points):
+        assert_point(boundary, index + i, lon(point), lat(point))
+
+
+def assert_point(df: DataFrame, index: int, lon: float, lat: float):
+    assert lon == df[DF_LON][index]
+    assert lat == df[DF_LAT][index]

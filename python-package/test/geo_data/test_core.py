@@ -307,3 +307,4 @@ def test_regions_to_dict():
     assert REQUEST == regions_dict[DF_REQUEST][0]
     assert REGION_ID == regions_dict[DF_ID][0]
     assert REGION_NAME == regions_dict[DF_FOUND_NAME][0]
+

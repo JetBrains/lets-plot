@@ -1,7 +1,7 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from geo_data.test_to_data_frame import assert_names
+from geo_data.geo_data import assert_names
 from geopandas import GeoDataFrame
 
 from lets_plot.geo_data.gis.response import SuccessResponse, FeatureBuilder

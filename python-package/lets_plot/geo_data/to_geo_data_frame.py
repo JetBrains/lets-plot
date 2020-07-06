@@ -17,12 +17,17 @@ ShapelyMultiPolygon = shapely.geometry.MultiPolygon
 def _create_geo_data_frame(data, geometry) -> DataFrame:
     return GeoDataFrame(
         data,
-        #crs={'init': 'epsg:4326'}, # causes warning. Everything looks fine w/o. Related issue: https://github.com/geopandas/geopandas/issues/1245
+        #crs={'init': 'epsg:4326'}, # causes warning in Jupyter. Everything looks fine w/o. Related issue: https://github.com/geopandas/geopandas/issues/1245
         geometry=geometry
     )
 
 
 class RectGeoDataFrame(DataFrameProvider):
+
+    @staticmethod
+    def intersected_by_antimeridian(lonmin: float, lonmax: float):
+        return lonmin > lonmax
+
     @staticmethod
     def limit2geometry(lonmin: float, latmin: float, lonmax: float, latmax: float):
         return box(lonmin, latmin, lonmax, latmax)
@@ -42,18 +47,29 @@ class RectGeoDataFrame(DataFrameProvider):
 
     def _calc_common_data(self, features: List[GeocodedFeature]) -> dict:
         for feature in features:
-            rect: GeoRect = self._select_rect(feature)
-            self._lonmin.append(rect.min_lon)
-            self._latmin.append(rect.min_lat)
-            self._lonmax.append(rect.max_lon)
-            self._latmax.append(rect.max_lat)
-            self._request.extend([(self._get_request(feature))] * 1)
-            self._found_name.extend([self._get_found_name(feature)] * 1)
+            rects: GeoRect = self._read_rect(feature)
+            for rect in rects:
+                self._lonmin.append(rect.min_lon)
+                self._latmin.append(rect.min_lat)
+                self._lonmax.append(rect.max_lon)
+                self._latmax.append(rect.max_lat)
+                self._request.append(self._get_request(feature))
+                self._found_name.append(self._get_found_name(feature))
 
         return {
             DF_REQUEST: self._request,
             DF_FOUND_NAME: self._found_name
         }
+
+    def _read_rect(self, feature: GeocodedFeature) -> List[GeoRect]:
+        rect: GeoRect = self._select_rect(feature)
+        if RectGeoDataFrame.intersected_by_antimeridian(rect.min_lon, rect.max_lon):
+            return [
+                GeoRect(min_lon=rect.min_lon, max_lon=180., min_lat=rect.min_lat, max_lat=rect.max_lat),
+                GeoRect(min_lon=-180., max_lon=rect.max_lon, min_lat=rect.min_lat, max_lat=rect.max_lat)
+            ]
+        else:
+            return [rect]
 
     @abstractmethod
     def _select_rect(self, feature: GeocodedFeature) -> GeoRect:
@@ -83,8 +99,6 @@ class CentroidsGeoDataFrame(DataFrameProvider):
 class BoundariesGeoDataFrame(DataFrameProvider):
     def __init__(self):
         super().__init__()
-        self._lon_list: List[float] = []
-        self._lat_list: List[float] = []
 
     def to_data_frame(self, features: List[GeocodedFeature]) -> DataFrame:
         geometry = []

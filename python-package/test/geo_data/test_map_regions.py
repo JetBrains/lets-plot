@@ -6,8 +6,7 @@ from unittest import mock
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, RequestBuilder, RequestKind
 from lets_plot.geo_data.gis.response import FeatureBuilder, GeoPoint
-from lets_plot.geo_data.regions import _to_resolution, Regions, DF_ID, DF_FOUND_NAME
-from lets_plot.geo_data.to_data_frame import DF_REQUEST
+from lets_plot.geo_data.regions import _to_resolution, Regions, DF_ID, DF_FOUND_NAME, DF_REQUEST
 from lets_plot.plot import ggplot, geom_polygon
 from .geo_data import make_region, make_success_response, get_map_data_meta
 

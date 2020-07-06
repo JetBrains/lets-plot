@@ -39,7 +39,7 @@ def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, samplin
         - 'point' for circles of different size and color.
         - 'pie' for pie charts.
         - 'bar' for bar charts.
-    location : string or array, optional
+    location : array, optional
         Initial position of the map. If not set, displays the United States.
         There are [lon1, lat1, lon2, lat2,..., lonN, latN].
         - lon1, lon2,..., lonN are longitudes in degrees (positive in the Eastern hemisphere).
@@ -72,10 +72,9 @@ def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, samplin
         Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill  : color of a geometry internals
         Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : line width for polygon, radius for point, pie chart and color spot (heatmap).
-    - x : value order for pie chart and bar chart.
-    - y : value specifying the sector size for pie chart and the heigth for bar chart.
-    - group : how to group points into polygons (grouping tag). Default: all points belong to one polygon.
+    - size : radius for point, pie chart.
+    - sym_x : value order for pie chart and bar chart.
+    - sym_y : value specifying the sector size for pie chart and the heigth for bar chart.
 
     Examples
     --------

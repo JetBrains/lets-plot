@@ -17,13 +17,7 @@ DF_REQUEST = 'request'
 DF_ID = 'id'
 DF_FOUND_NAME = 'found name'
 DF_HIGHLIGHTS = 'highlights'
-DF_LON = 'lon'
-DF_LAT = 'lat'
 DF_GROUP = 'group'
-DF_LONMIN = 'lonmin'
-DF_LATMIN = 'latmin'
-DF_LONMAX = 'lonmax'
-DF_LATMAX = 'latmax'
 
 
 class DataFrameProvider():
@@ -72,44 +66,7 @@ class Regions(CanToDataFrame):
         seen_add = seen.add
         return [feature.id for feature in self._geocoded_features if not (feature.id in seen or seen_add(feature.id))]
 
-    def boundaries(self, resolution: Optional[int] = None) -> DataFrame:
-        from lets_plot.geo_data.to_data_frame import BoundariesDataFrame
-        return self._execute(
-            self._request_builder(PayloadKind.boundaries)
-                .set_resolution(_to_resolution(resolution)),
-            BoundariesDataFrame()
-        )
-
-    def limits(self) -> DataFrame:
-        from lets_plot.geo_data.to_data_frame import LimitsDataFrame
-        return self._execute(
-            self._request_builder(PayloadKind.limits),
-            LimitsDataFrame()
-        )
-
-    def centroids(self) -> DataFrame:
-        """
-        Create a DataFrame of centroid coordinates.
-
-        centroids()
-
-        Returns
-        -------
-            Centroid of GeocodedRegion object
-
-        Examples
-        ---------
-        >>> from lets_plot.geo_data import *
-        >>> r = regions_city(request='New York', scope='United States')
-        >>> r.centroids()
-        """
-        from lets_plot.geo_data.to_data_frame import CentroidsDataFrame
-        return self._execute(
-            self._request_builder(PayloadKind.centroids),
-            CentroidsDataFrame()
-        )
-
-    def geo_boundaries(self, resolution=None):
+    def boundaries(self, resolution=None):
         from lets_plot.geo_data.to_geo_data_frame import BoundariesGeoDataFrame
         return self._execute(
             self._request_builder(PayloadKind.boundaries)
@@ -117,14 +74,14 @@ class Regions(CanToDataFrame):
             BoundariesGeoDataFrame()
         )
 
-    def geo_limits(self):
+    def limits(self):
         from lets_plot.geo_data.to_geo_data_frame import LimitsGeoDataFrame
         return self._execute(
             self._request_builder(PayloadKind.limits),
             LimitsGeoDataFrame()
         )
 
-    def geo_centroids(self):
+    def centroids(self):
         from lets_plot.geo_data.to_geo_data_frame import CentroidsGeoDataFrame
         return self._execute(
             self._request_builder(PayloadKind.centroids),

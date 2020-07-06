@@ -140,7 +140,8 @@ class LiveMap : PlotConfigDemoBase() {
     }
   ]
 }""".trimIndent()
-
+        return parsePlotSpec(spec)
+    }
     private fun tooltips(): MutableMap<String, Any> {
         val spec = """
             {
@@ -555,5 +556,5 @@ class LiveMap : PlotConfigDemoBase() {
             }"""
             return parsePlotSpec(spec)
         }
-    }
+
 }

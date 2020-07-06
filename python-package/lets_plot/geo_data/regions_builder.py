@@ -6,7 +6,7 @@ from .gis.request import MapRegion, RegionQuery, RequestBuilder, RequestKind, Pa
     IgnoringStrategyKind
 from .gis.response import LevelKind, Response, SuccessResponse, GeoRect
 from .regions import _to_level_kind, request_types, scope_types, Regions, _raise_exception, \
-    _ensure_is_list, _to_scope, DF_LON, DF_LAT
+    _ensure_is_list, _to_scope
 
 NAMESAKE_MAX_COUNT = 10
 
@@ -19,8 +19,22 @@ def _to_near_coord(near: Optional[Union[Regions, ShapelyPointType]]) -> Optional
         return None
 
     if isinstance(near, Regions):
-        centroid_df = near.as_list()[0].centroids()
-        return GeoPoint(lon=centroid_df[DF_LON][0], lat=centroid_df[DF_LAT][0])
+        near_id = near.as_list()[0].unique_ids()
+        assert len(near_id) == 1
+
+        request = RequestBuilder() \
+            .set_request_kind(RequestKind.explicit) \
+            .set_requested_payload([PayloadKind.centroids]) \
+            .set_ids(near_id) \
+            .build()
+
+        response: Response = GeocodingService().do_request(request)
+        if isinstance(response, SuccessResponse):
+            assert len(response.features) == 1
+            centroid = response.features[0].centroid
+            return GeoPoint(lon=centroid.lon, lat=centroid.lat)
+        else:
+            raise ValueError("Unexpected geocoding response for id " + str(near_id[0]))
 
     if ShapelyWrapper.is_point(near):
         return GeoPoint(lon=near.x, lat=near.y)
