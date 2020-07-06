@@ -141,10 +141,10 @@ publishing {
                     dep.appendNode('artifactId', 'kotlinx-html-jvm')
                     dep.appendNode('version', kotlinx_html_version)
                     // Hamcrest tests
-                    dep = deps.appendNode('dependency')
-                    dep.appendNode('groupId', 'org.hamcrest')
-                    dep.appendNode('artifactId', 'hamcrest-core')
-                    dep.appendNode('version', hamcrest_version)
+//                    dep = deps.appendNode('dependency')
+//                    dep.appendNode('groupId', 'org.hamcrest')
+//                    dep.appendNode('artifactId', 'hamcrest-core')
+//                    dep.appendNode('version', hamcrest_version)
                 }
             }
         }
