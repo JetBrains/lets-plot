@@ -13,10 +13,13 @@ from ...settings_utils import GEOCODING_PROVIDER_URL
 
 class GeocodingService:
     def do_request(self, request: Request) -> Response:
-        if not has_global_value(GEOCODING_PROVIDER_URL):
-            raise ValueError('Geocoding server url is not defined')
+        if has_global_value(GEOCODING_PROVIDER_URL):
+            geocoding_server = get_global_val(GEOCODING_PROVIDER_URL)
+        else:
+            geocoding_server = "https://geo.datalore.io"
 
-        url = '{}/{}'.format(get_global_val(GEOCODING_PROVIDER_URL), 'map_data/geocoding')
+
+        url = '{}/{}'.format(geocoding_server, 'map_data/geocoding')
         try:
             r_str = self._get_entity(url, RequestFormatter().format(request).to_dict())
             return ResponseParser().parse(json.loads(r_str))
