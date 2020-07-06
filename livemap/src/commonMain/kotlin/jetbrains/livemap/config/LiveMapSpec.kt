@@ -7,11 +7,9 @@ package jetbrains.livemap.config
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeocodingService
-import jetbrains.gis.geoprotocol.MapRegion
-import jetbrains.livemap.LayerProvider
 import jetbrains.livemap.MapLocation
+import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.tiles.TileSystemProvider
 
@@ -27,7 +25,7 @@ class LiveMapSpec(
     val projectionType: ProjectionType,
     val location: MapLocation?,
     val zoom: Int?,
-    val layerProvider: LayerProvider,
+    val layers: List<LayersBuilder.() -> Unit>,
     val isLoopX: Boolean,
     val isLoopY: Boolean,
     val mapLocationConsumer: (DoubleRectangle) -> Unit,

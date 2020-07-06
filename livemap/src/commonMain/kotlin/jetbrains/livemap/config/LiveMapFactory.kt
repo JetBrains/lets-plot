@@ -42,9 +42,10 @@ class LiveMapFactory(
 
         return Asyncs.constant(
             LiveMap(
+                myMapRuler = myMapRuler,
                 myMapProjection = myMapProjection,
                 viewport = myViewport,
-                myLayerProvider = myLiveMapSpec.layerProvider,
+                layers = myLiveMapSpec.layers,
                 myTileSystemProvider = myLiveMapSpec.tileSystemProvider,
                 myFragmentProvider = newFragmentProvider(myLiveMapSpec.geocodingService, myLiveMapSpec.size),
                 myDevParams = myLiveMapSpec.devParams,

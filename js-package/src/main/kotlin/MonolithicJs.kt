@@ -23,7 +23,6 @@ import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
-import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.livemap.LiveMapUtil
 import jetbrains.datalore.plot.server.config.PlotConfigClientSideJvmJs
@@ -162,6 +161,17 @@ private fun buildPlotSvg(
     plotContainer: PlotContainer,
     eventTarget: Element
 ): SVGSVGElement {
+    plotContainer.ensureContentBuilt()
+
+    val svg = plotContainer.svg
+    if (plotContainer.isLiveMap) {
+        // Plot - transparent for live-map base layer to be visible.
+        svg.addClass(Style.PLOT_TRANSPARENT)
+    }
+
+    val mapper = SvgRootDocumentMapper(svg)
+    SvgNodeContainer(svg)
+    mapper.attachRoot()
 
     eventTarget.addEventListener(DomEventType.MOUSE_DOWN.name, { e: Event ->
         e.preventDefault()
@@ -170,18 +180,16 @@ private fun buildPlotSvg(
     eventTarget.addEventListener(DomEventType.MOUSE_MOVE.name, { e: Event ->
         plotContainer.mouseEventPeer.dispatch(
             MouseEventSpec.MOUSE_MOVED,
-            DomEventUtil.translateInTargetCoord(e as MouseEvent, eventTarget)
+            DomEventUtil.translateInTargetCoord(e as MouseEvent, mapper.target)
         )
     })
 
     eventTarget.addEventListener(DomEventType.MOUSE_LEAVE.name, { e: Event ->
         plotContainer.mouseEventPeer.dispatch(
             MouseEventSpec.MOUSE_LEFT,
-            DomEventUtil.translateInTargetCoord(e as MouseEvent, eventTarget)
+            DomEventUtil.translateInTargetCoord(e as MouseEvent, mapper.target)
         )
     })
-
-    plotContainer.ensureContentBuilt()
 
     plotContainer.liveMapFigures.forEach { liveMapFigure ->
         val bounds = (liveMapFigure as CanvasFigure).bounds().get()
@@ -198,22 +206,13 @@ private fun buildPlotSvg(
         val canvasControl = DomCanvasControl(
             liveMapDiv,
             bounds.dimension,
-            DomCanvasControl.DomEventPeer(eventTarget, bounds)
+            DomCanvasControl.DomEventPeer(mapper.target, bounds)
         )
 
         liveMapFigure.mapToCanvas(canvasControl)
         eventTarget.appendChild(liveMapDiv)
     }
 
-    val svg = plotContainer.svg
-    if (plotContainer.isLiveMap) {
-        // Plot - transparent for live-map base layer to be visible.
-        svg.addClass(Style.PLOT_TRANSPARENT)
-    }
-
-    val mapper = SvgRootDocumentMapper(svg)
-    SvgNodeContainer(svg)
-    mapper.attachRoot()
     return mapper.target
 }
 

@@ -26,6 +26,7 @@ import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
+import jetbrains.livemap.api.LayersBuilder
 import jetbrains.livemap.camera.*
 import jetbrains.livemap.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.cells.CellLayerComponent
@@ -52,6 +53,8 @@ import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.MicroTaskExecutor
 import jetbrains.livemap.core.multitasking.MicroTaskMultiThreadedExecutorFactory
 import jetbrains.livemap.core.multitasking.SchedulerSystem
+import jetbrains.livemap.core.projections.MapRuler
+import jetbrains.livemap.core.rendering.TextMeasurer
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.LayerManager
 import jetbrains.livemap.core.rendering.layers.LayerManagers.createLayerManager
@@ -87,9 +90,10 @@ import jetbrains.livemap.ui.UiRenderingTaskSystem
 import jetbrains.livemap.ui.UiService
 
 class LiveMap(
+    private val myMapRuler: MapRuler<World>,
     private val myMapProjection: MapProjection,
     private val viewport: Viewport,
-    private val myLayerProvider: LayerProvider,
+    private val layers: List<LayersBuilder.() -> Unit>,
     private val myTileSystemProvider: TileSystemProvider,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
@@ -226,7 +230,7 @@ class LiveMap(
 
                 LocationCounterSystem(componentManager, myMapLocationRect == null),
                 LocationGeocodingSystem(componentManager, myGeocodingService),
-                LocationCalculateSystem(componentManager),
+                LocationCalculateSystem(myMapRuler, componentManager),
                 MapLocationInitializationSystem(componentManager, myZoom?.toDouble(), myMapLocationRect),
 
                 ApplyPointSystem(componentManager),
@@ -253,7 +257,7 @@ class LiveMap(
                     myFragmentProvider,
                     componentManager
                 ),
-                FragmentEmitSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
+                FragmentEmitSystem(myMapRuler, myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
                 RegionEmitSystem(componentManager),
                 FragmentsRemovingSystem(myDevParams.read(FRAGMENT_CACHE_LIMIT), componentManager),
 
@@ -335,12 +339,18 @@ class LiveMap(
                 }
         }
 
-        myLayerProvider.provide(
+        val layersBuilder = LayersBuilder(
             componentManager,
             myLayerManager,
             myMapProjection,
-            myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d
+            myMapRuler,
+            myDevParams.isSet(DevParams.POINT_SCALING),
+            TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
         )
+
+        layers.forEach {
+            layersBuilder.apply(it)
+        }
 
         if (myTileSystemProvider is VectorTileSystemProvider) {
             componentManager
