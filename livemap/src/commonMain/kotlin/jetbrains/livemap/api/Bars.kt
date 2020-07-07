@@ -7,13 +7,14 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.placement.*
+import jetbrains.livemap.projection.Client
 import jetbrains.livemap.rendering.*
 import jetbrains.livemap.rendering.Renderers.BarRenderer
-import jetbrains.livemap.projection.Client
 import jetbrains.livemap.searching.BarLocatorHelper
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
 import kotlin.math.abs
+import kotlin.math.sign
 
 @LiveMapDsl
 class Bars(
@@ -70,9 +71,7 @@ class BarsFactory(
                         source.point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_bar", source.point!!)
                         else -> error("Can't create bar entity. Coord is null.")
                     }.setInitializer { worldPoint ->
-                        if (source.layerIndex != null) {
-                            + IndexComponent(source.layerIndex!!, index)
-                        }
+                        source.layerIndex?.let { + IndexComponent(layerIndex = it, index = index) }
                         + RendererComponent(BarRenderer())
                         + WorldOriginComponent(worldPoint)
                         + ScreenLoopComponent()
@@ -94,20 +93,28 @@ class BarsFactory(
     }
 }
 
-fun splitMapBarChart(source: ChartSource, maxAbsValue: Double, consumer: (Int, Vec<Client>, Vec<Client>, Color) -> Unit) {
-    val percents = transformValues2Percents(source.values, maxAbsValue)
+private const val MIN_HEIGHT = 0.05
 
-    val radius = source.radius
-    val barCount = percents.size
-    val spacing = 0.1 * radius
-    val barWidth = (2 * radius - (barCount - 1) * spacing) / barCount
+fun splitMapBarChart(chart: ChartSource, maxAbsValue: Double, consumer: (Int, Vec<Client>, Vec<Client>, Color) -> Unit) {
+    val heights = chart.values.map { barValue ->
+        val height = when (maxAbsValue) {
+            0.0 -> 0.0
+            else -> barValue / maxAbsValue
+        }
 
-    for (i in percents.indices) {
-        val barDimension =  explicitVec<Client>(barWidth, radius * abs(percents[i]))
+        when {
+            abs(height) >= MIN_HEIGHT -> height //
+            else -> height.sign * MIN_HEIGHT
+        }
+    }
+    val barWidth = (2 * chart.radius) / chart.values.size
+
+    heights.forEachIndexed { index, height ->
+        val barDimension =  explicitVec<Client>(barWidth, chart.radius * abs(height))
         val barOffset = explicitVec<Client>(
-            (barWidth + spacing) * i - radius,
-            if (percents[i] > 0) -barDimension.y else 0.0
+            x = barWidth * index - chart.radius,
+            y = if (height > 0) -barDimension.y else 0.0
         )
-        consumer(source.indices[i], barOffset, barDimension, source.colors[i])
+        consumer(chart.indices[index], barOffset, barDimension, chart.colors[index])
     }
 }
