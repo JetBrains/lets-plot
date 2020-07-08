@@ -93,7 +93,7 @@ class DomCanvasControl(
     private fun onLoad(image: Image, size: Vector?, consumer: (Canvas.Snapshot) -> Unit) = { _: Event ->
 
         val domCanvas = size
-            ?.let {createCanvas(it) as DomCanvas}
+            ?.let { createCanvas(it) as DomCanvas }
             ?: DomCanvas.create(Vector(image.width, image.height), 1.0)
 
         val ctx = domCanvas.canvasElement.getContext("2d") as CanvasRenderingContext2D

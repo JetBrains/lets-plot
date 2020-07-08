@@ -23,15 +23,17 @@ class PiesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                     pie {
                         indices = listOf(0, 1, 2)
                         coord(Cities.FRISCO)
-                        radius = 20.0
+                        radius = 50.0
                         values = listOf(-2.0, 5.0, 1.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
+                        strokeColor = Color.RED
+                        strokeWidth = 4.0
                     }
 
                     pie {
                         indices = listOf(0, 1, 2)
                         coord(Cities.NEW_YORK)
-                        radius = 20.0
+                        radius = 50.0
                         values = listOf(3.0, 1.0, 2.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
                     }
