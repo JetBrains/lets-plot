@@ -601,6 +601,46 @@ class DropUnusedDataTest {
     }
 
     @Test
+    fun `map_join with GeoDataFrame should not drop ggplot data variable`() {
+        val spec = """
+{
+  "kind": "plot",
+    "data": {
+    "name": ["A", "B", "C"],
+    "value": [42, 23, 87]
+  },
+  "layers": [
+    {
+      "geom": "polygon",
+
+      "mapping": { "fill": "value" },
+      "map_data_meta": {
+        "geodataframe": {
+          "geometry": "coord"
+        }
+      },
+      "map": {
+        "id": ["A", "B", "C"],
+        "coord": [
+          "{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}",
+          "{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}",
+          "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"
+        ]
+      },
+      "map_join": ["name", "id"]
+    }
+  ]
+}
+}"""
+
+        parsePlotSpec(spec)
+            .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+            .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
+            .let(TestUtil::assertClientWontFail)
+
+    }
+
+    @Test
     fun `should not drop geometry column when GeoDataFrame in data`() {
         val spec = """
 {

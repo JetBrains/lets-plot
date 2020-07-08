@@ -22,6 +22,7 @@ import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
+import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
@@ -203,6 +204,20 @@ class LayerConfig(
 
     fun getScaleForAes(aes: Aes<*>): Scale<*>? {
         return varBindings.find { it.aes == aes }?.scale
+    }
+
+    fun getMapJoin(): Pair<String, String>? {
+        if (!hasOwn(MAP_JOIN)) {
+            return null
+        }
+
+        val mapJoin = getList(MAP_JOIN)
+        require(mapJoin.size == 2) { "map_join require 2 parameters" }
+
+        val (dataVar, mapVar) = mapJoin
+        require(dataVar is String && mapVar is String) { "map_join parameters type should be a String" }
+
+        return Pair(dataVar, mapVar)
     }
 
     private companion object {

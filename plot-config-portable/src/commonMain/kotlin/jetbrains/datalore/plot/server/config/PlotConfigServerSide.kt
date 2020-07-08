@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
 import jetbrains.datalore.plot.builder.tooltip.VariableValue
 import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
@@ -136,6 +135,12 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     ?.map(VariableValue::getVariableName)
                     ?: emptyList()
 
+                // keep vars used in map_join
+                if (layerConfig.getMapJoin()?.first == varName) {
+                    dropPlotVar = false
+                    break
+                }
+
                 if (userTooltipVars.contains(varName)) {
                     dropPlotVar = false
                     break
@@ -190,7 +195,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                     varsToKeep.map(Variable::name) +
                     Stats.GROUP.name +
                     listOfNotNull(layerConfig.mergedOptions.getString(DATA_META, GDF, GEOMETRY)) +
-                    listOfNotNull(layerConfig.mergedOptions.getList(MAP_JOIN)?.get(0) as? String) +
+                    listOfNotNull(layerConfig.getMapJoin()?.first) +
                     listOfNotNull(facets.xVar, facets.yVar, layerConfig.explicitGroupingVarName)
 
             layerData = DataFrameUtil.removeAllExcept(layerData!!, varNamesToKeep)
