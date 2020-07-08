@@ -257,7 +257,7 @@ class LiveMap(
                     myFragmentProvider,
                     componentManager
                 ),
-                FragmentEmitSystem(myMapRuler, myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
+                FragmentEmitSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
                 RegionEmitSystem(componentManager),
                 FragmentsRemovingSystem(myDevParams.read(FRAGMENT_CACHE_LIMIT), componentManager),
 
