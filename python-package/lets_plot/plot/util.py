@@ -77,7 +77,7 @@ def as_annotated_map_data(raw_map: Any) -> dict:
     if is_geo_data_frame(raw_map):
         return {'map_data_meta': get_geo_data_frame_meta(raw_map)}
 
-    raise ValueError('Unsupported map parameter type: ' + str(type(raw_map)))
+    raise ValueError('Unsupported map parameter type: ' + str(type(raw_map)) + '. Should be a GeoDataFrame.')
 
 
 def is_geo_data_regions(data: Any) -> bool:
