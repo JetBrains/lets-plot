@@ -68,16 +68,16 @@ def is_data_pub_stream(data: Any) -> bool:
 
 
 def as_annotated_map_data(raw_map: Any) -> dict:
+    if raw_map is None:
+        return {}
+
     if is_geo_data_regions(raw_map):
         return {'map_data_meta': {'georeference': {}}}
 
     if is_geo_data_frame(raw_map):
         return {'map_data_meta': get_geo_data_frame_meta(raw_map)}
 
-    if isinstance(raw_map, dict):
-        return {'map_data_meta': {'geodict': {}}}
-
-    return {}
+    raise ValueError('Unsupported map parameter type: ' + str(type(raw_map)))
 
 
 def is_geo_data_regions(data: Any) -> bool:
