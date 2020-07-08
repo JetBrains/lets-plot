@@ -125,8 +125,17 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.lineTo(x, y)
     }
 
-    override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double) {
-        myContext2d.arc(x, y, radius, radius, -toDegrees(startAngle), toDegrees(startAngle) - toDegrees(endAngle))
+    override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        var s = toDegrees(startAngle) % 360
+        var e = toDegrees(endAngle) % 360
+
+        if (anticlockwise) {
+            s = if (s < e) s + 360 else s
+        } else {
+            e = if (e < s) e + 360 else e
+        }
+
+        myContext2d.arc(x, y, radius, radius, -s, s - e )
     }
 
     override fun save() {

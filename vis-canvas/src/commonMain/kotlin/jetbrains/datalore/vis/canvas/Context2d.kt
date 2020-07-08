@@ -33,7 +33,7 @@ interface Context2d {
     fun fillRect(x: Double, y: Double, w: Double, h: Double)
     fun moveTo(x: Double, y: Double)
     fun lineTo(x: Double, y: Double)
-    fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double)
+    fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean = false)
     fun save()
     fun restore()
     fun setFillStyle(color: String?)

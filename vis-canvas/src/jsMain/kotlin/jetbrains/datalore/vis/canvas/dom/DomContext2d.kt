@@ -113,8 +113,8 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         myContext2d.lineTo(x, y)
     }
 
-    override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double) {
-        myContext2d.arc(x, y, radius, startAngle, endAngle)
+    override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        myContext2d.arc(x, y, radius, startAngle, endAngle, anticlockwise)
     }
 
     override fun save() {

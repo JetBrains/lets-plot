@@ -16,6 +16,7 @@ import jetbrains.livemap.placement.ScreenDimensionComponent
 import jetbrains.livemap.rendering.Utils.drawPath
 import jetbrains.livemap.scaling.ScaleComponent
 import jetbrains.livemap.projection.Client
+import kotlin.math.floor
 
 object Renderers {
 
@@ -137,10 +138,19 @@ object Renderers {
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val style = entity.get<StyleComponent>()
             val sector = entity.get<PieSectorComponent>()
+            val holeRadius = floor(sector.radius / 2.5)
 
             if (style.strokeColor != null && style.strokeWidth > 0.0) {
+                val holeWithStroke: Double = (holeRadius - style.strokeWidth / 2).takeIf { it >= 0 } ?: 0.0
+
                 ctx.setStrokeStyle(style.strokeColor)
                 ctx.setLineWidth(style.strokeWidth)
+                ctx.beginPath()
+                ctx.arc(0.0, 0.0,
+                    holeWithStroke,
+                    sector.startAngle, sector.endAngle
+                )
+                ctx.stroke()
                 ctx.beginPath()
                 ctx.arc(
                     0.0, 0.0,
@@ -154,7 +164,8 @@ object Renderers {
                 ctx.setFillStyle(style.fillColor)
                 ctx.beginPath()
                 ctx.moveTo(0.0, 0.0)
-                ctx.arc(0.0, 0.0, sector.radius, sector.startAngle, sector.endAngle)
+                ctx.arc(0.0, 0.0, holeRadius, sector.startAngle, sector.endAngle)
+                ctx.arc(0.0, 0.0, sector.radius, sector.endAngle, sector.startAngle, true)
                 ctx.fill()
             }
         }
