@@ -13,7 +13,7 @@ import jetbrains.livemap.placement.ScreenLoopComponent
 import jetbrains.livemap.placement.ScreenOriginComponent
 import jetbrains.livemap.placement.WorldOriginComponent
 import jetbrains.livemap.rendering.*
-import jetbrains.livemap.rendering.Renderers.PieSectorRenderer
+import jetbrains.livemap.rendering.Renderers.DonutSectorRenderer
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.PieLocatorHelper
@@ -77,7 +77,7 @@ class PiesFactory(
                     if (source.layerIndex != null) {
                         + IndexComponent(source.layerIndex!!, source.indices[i])
                     }
-                    + RendererComponent(PieSectorRenderer())
+                    + RendererComponent(DonutSectorRenderer())
                     + WorldOriginComponent(worldPoint)
                     + PieSectorComponent().apply {
                         this.radius = source.radius

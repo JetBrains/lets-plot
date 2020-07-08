@@ -13,10 +13,11 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.rendering.TransformComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.placement.ScreenDimensionComponent
+import jetbrains.livemap.projection.Client
 import jetbrains.livemap.rendering.Utils.drawPath
 import jetbrains.livemap.scaling.ScaleComponent
-import jetbrains.livemap.projection.Client
 import kotlin.math.floor
+import kotlin.math.max
 
 object Renderers {
 
@@ -138,19 +139,10 @@ object Renderers {
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val style = entity.get<StyleComponent>()
             val sector = entity.get<PieSectorComponent>()
-            val holeRadius = floor(sector.radius / 2.5)
 
             if (style.strokeColor != null && style.strokeWidth > 0.0) {
-                val holeWithStroke: Double = (holeRadius - style.strokeWidth / 2).takeIf { it >= 0 } ?: 0.0
-
                 ctx.setStrokeStyle(style.strokeColor)
                 ctx.setLineWidth(style.strokeWidth)
-                ctx.beginPath()
-                ctx.arc(0.0, 0.0,
-                    holeWithStroke,
-                    sector.startAngle, sector.endAngle
-                )
-                ctx.stroke()
                 ctx.beginPath()
                 ctx.arc(
                     0.0, 0.0,
@@ -164,8 +156,51 @@ object Renderers {
                 ctx.setFillStyle(style.fillColor)
                 ctx.beginPath()
                 ctx.moveTo(0.0, 0.0)
+                ctx.arc(0.0, 0.0, sector.radius, sector.startAngle, sector.endAngle)
+                ctx.fill()
+            }
+        }
+    }
+
+    class DonutSectorRenderer : Renderer {
+
+        override fun render(entity: EcsEntity, ctx: Context2d) {
+            val style = entity.get<StyleComponent>()
+            val sector = entity.get<PieSectorComponent>()
+            val holeRadius = floor(sector.radius * 0.55)
+
+            if (style.strokeColor != null && style.strokeWidth > 0.0) {
+
+                ctx.setStrokeStyle(style.strokeColor)
+                ctx.setLineWidth(style.strokeWidth)
+
+                // draw inner arc
+                ctx.beginPath()
+                ctx.arc(
+                    x = 0.0, y = 0.0,
+                    radius = max(0.0, holeRadius - style.strokeWidth / 2),
+                    startAngle = sector.startAngle,
+                    endAngle = sector.endAngle
+                )
+                ctx.stroke()
+
+                // draw outer arc
+                ctx.beginPath()
+                ctx.arc(
+                    x = 0.0, y = 0.0,
+                    radius = sector.radius + style.strokeWidth / 2,
+                    startAngle = sector.startAngle,
+                    endAngle = sector.endAngle
+                )
+                ctx.stroke()
+            }
+
+            // fill sector
+            if (style.fillColor != null) {
+                ctx.setFillStyle(style.fillColor)
+                ctx.beginPath()
                 ctx.arc(0.0, 0.0, holeRadius, sector.startAngle, sector.endAngle)
-                ctx.arc(0.0, 0.0, sector.radius, sector.endAngle, sector.startAngle, true)
+                ctx.arc(0.0, 0.0, sector.radius, sector.endAngle, sector.startAngle, anticlockwise = true)
                 ctx.fill()
             }
         }
