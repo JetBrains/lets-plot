@@ -1,2 +1,10 @@
 ﻿Dataset:	usgs_dept_by_state_2019.csv
-Source:		https://www.kaggle.com/morra1996/usgs-debt-by-state?select=usgs_state_2019.csv
+Source:     https://www.kaggle.com/morra1996/usgs-debt-by-state?select=usgs_state_2019.csv
+
+Dataset:	pop_by_state.csv
+Source:     https://www.kaggle.com/lucasvictor/us-state-populations-2018
+
+Dataset:	titanic.csv
+Source:     https://www.kaggle.com/jamesleslie/titanic-cleaned-data?select=train_clean.csv
+Info:       embarked: C='Cherbourg' Q='Cobh' S='Southampton'
+
