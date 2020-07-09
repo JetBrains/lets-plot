@@ -165,6 +165,7 @@ class LayoutManager(
         // Include overlapped corner tooltips.
 
         tooltips.select(HORIZONTAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
+            .let { fixVerticalOverlapping(it, restrictions) }
             .let { horizontalTooltips ->
             if (horizontalTooltips.sumByDouble(PositionedTooltip::height) < myVerticalSpace.length()) {
                 HorizontalTooltipExpander(myVerticalSpace).fixOverlapping(horizontalTooltips)
@@ -187,6 +188,18 @@ class LayoutManager(
             .forEach(::fixate)
 
         return separatedTooltips
+    }
+
+    private fun fixVerticalOverlapping(
+        tooltips: List<PositionedTooltip>,
+        restrictions: ArrayList<DoubleRectangle>
+    ): List<PositionedTooltip> {
+        val result = mutableListOf<PositionedTooltip>()
+        tooltips.forEach { tooltip ->
+            val lowerOverlapRect = restrictions.sortedBy { it.bottom }.firstOrNull { it.intersects(tooltip.rect()) }
+            result += tooltip.moveTo(DoubleVector(tooltip.left, lowerOverlapRect?.bottom ?: tooltip.top))
+        }
+        return result
     }
 
     private fun calculateVerticalTooltipPosition(
