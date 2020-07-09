@@ -85,8 +85,8 @@ internal class LiveMapSpecBuilder {
         val geomLayersProcessor = LayerDataPointAestheticsProcessor(myLiveMapOptions.geodesic)
 
         val layersConfigurators: ArrayList<LayersBuilder.() -> Unit> = ArrayList()
-        layersConfigurators.add(liveMapLayerProcessor.createConfigurator())
         layersConfigurators.addAll(myLayers.mapIndexed(geomLayersProcessor::createConfigurator))
+        layersConfigurators.add(liveMapLayerProcessor.createConfigurator())
 
         return LiveMapSpec(
             size = mySize,
