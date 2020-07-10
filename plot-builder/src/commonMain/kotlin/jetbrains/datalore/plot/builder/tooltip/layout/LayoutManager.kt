@@ -194,12 +194,11 @@ class LayoutManager(
         tooltips: List<PositionedTooltip>,
         restrictions: ArrayList<DoubleRectangle>
     ): List<PositionedTooltip> {
-        val result = mutableListOf<PositionedTooltip>()
-        tooltips.forEach { tooltip ->
-            val lowerOverlapRect = restrictions.sortedBy { it.bottom }.firstOrNull { it.intersects(tooltip.rect()) }
-            result += tooltip.moveTo(DoubleVector(tooltip.left, lowerOverlapRect?.bottom ?: tooltip.top))
+        return tooltips.map { tooltip ->
+            restrictions.filter { it.intersects(tooltip.rect()) }.minBy { it.bottom }?.bottom?.let { topLimit ->
+                tooltip.moveTo(DoubleVector(tooltip.left, topLimit))
+            } ?: tooltip
         }
-        return result
     }
 
     private fun calculateVerticalTooltipPosition(
