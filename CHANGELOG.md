@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  ### Fixed 
  - NPE on geom_tile when data contains null-s.
  - The order of values in the `limits` parameter on discrete scales is ignored.
+ - Livemap is not shown in GGBunch.
  
 ## [1.4.2] - 2020-05-28
 ### Added

@@ -124,10 +124,13 @@ fun buildGGBunchComponent(plotInfos: List<PlotBuildInfo>, parentElement: HTMLEle
             acc.union(bounds)
         }
 
-    parentElement.setAttribute(
-        "style",
-        "position: relative; width: ${bunchBounds.width}px; height: ${bunchBounds.height}px; background-color: ${Defaults.BACKDROP_COLOR};"
-    )
+    var style = "position: relative; width: ${bunchBounds.width}px; height: ${bunchBounds.height}px;"
+
+    // 'background-color' makes livemap disappear - set only if no livemaps in the bunch.
+    if (!plotInfos.any { it.plotAssembler.containsLiveMap }) {
+        style = "$style background-color: ${Defaults.BACKDROP_COLOR};"
+    }
+    parentElement.setAttribute("style", style)
 }
 
 private fun buildSinglePlotComponent(
