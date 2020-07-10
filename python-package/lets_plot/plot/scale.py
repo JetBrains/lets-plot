@@ -1246,19 +1246,19 @@ def scale_color_grey(start=None, end=None, direction=None,
 def _greyscale_check_parameters(start=None, end=None):
     # Up to v.1.4.2 start/end values were in range [0,100]
     # Since v.1.4.3 start/end values are in range [0,1]
-    if start != None and start not in [0, 1]:
+    if start != None and not (0 <= start <= 1):
         start = start / 100
         print("WARN: Value of 'start' has been scaled down to range: [0,1] : {}".format(start))
 
-    if end != None and end not in [0, 1]:
+    if end != None and not (0 <= end <= 1):
         end = end / 100
         print("WARN: Value of 'end' has been scaled down to range: [0,1] : {}".format(end))
 
-    if start != None and start not in [0, 1]:
-        raise ValueError("Value of 'start' must be in range: [0,1]")
+    if start != None and not (0 <= start <= 1):
+        raise ValueError("Value of 'start' must be in range: [0,1] : {}".format(start))
 
-    if end != None and end not in [0, 1]:
-        raise ValueError("Value of 'end' must be in range: [0,1]")
+    if end != None and not (0 <= end <= 1):
+        raise ValueError("Value of 'end' must be in range: [0,1] : {}".format(end))
 
     # ToDo: scale_xxx_grey
     # Tmp scale values back to [0, 100] range
