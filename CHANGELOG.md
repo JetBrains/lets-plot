@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - label_format
  
  ### Fixed 
- - NPE on geom_tile when data contains null-s
+ - NPE on geom_tile when data contains null-s.
+ - The order of values in the `limits` parameter on discrete scales is ignored.
  
 ## [1.4.2] - 2020-05-28
 ### Added
