@@ -46,4 +46,46 @@ class ConfigUtilTest {
         assertNotNull(dataVar)
         assertEquals(dataValues, joinedDf[dataVar])
     }
+
+    @Test
+    fun joinWithDuplicatedKeys() {
+        val items = listOf(
+            "State Debt", "Local Debt", "Gross State Product",
+            "State Debt", "Local Debt", "Gross State Product",
+            "State Debt", "Local Debt", "Gross State Product"
+        )
+
+        val state = listOf(
+            "Alabama", "Alabama", "Alabama",
+            "Alaska", "Alaska", "Alaska",
+            "Arizona", "Arizona", "Arizona"
+        )
+
+        val value = listOf(
+            10.7, 26.1, 228.0,
+            5.9, 3.5, 55.7,
+            13.3, 30.5, 361.1
+        )
+
+        val data = DataFrame.Builder()
+            .put(Variable("item"), items)
+            .put(Variable("state"), state)
+            .put(Variable("value"), value)
+            .build()
+
+
+        val y = listOf(32.806671, 61.370716, 33.729759)
+        val x = listOf(-86.79113000000001, -152.404419, -111.431221)
+        val geoId = listOf("Alabama", "Alaska", "Arizona")
+
+        val geo = DataFrame.Builder()
+            .put(Variable("__x__"), x)
+            .put(Variable("__y__"), y)
+            .put(Variable("__geo_id__"), geoId)
+            .build()
+
+        val res = ConfigUtil.rightJoin(data, "state", geo, "__geo_id__")
+        assertEquals(3, res.rowCount()) // TODO: should be 9, not 3
+    }
+
 }
