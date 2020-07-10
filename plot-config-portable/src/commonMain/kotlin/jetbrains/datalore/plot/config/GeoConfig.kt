@@ -12,8 +12,8 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
-import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
+import jetbrains.datalore.plot.base.data.getOrFail
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.ConfigUtil.createDataFrame
 import jetbrains.datalore.plot.config.ConfigUtil.rightJoin
@@ -132,12 +132,41 @@ class GeoConfig(
             .buildCoordinatesMap()
             .let(::createDataFrame)
 
-        dataAndCoordinates = rightJoin(
-            left = dataFrame,
-            leftKey = dataKeyColumn,
-            right = geoFrame,
-            rightKey = GEO_ID
-        )
+
+        // no duplicates in data key -> no subgroups
+        if (dataFrame.getOrFail(dataKeyColumn).size == dataFrame.getOrFail(dataKeyColumn).distinct().size) {
+            // common case -
+            dataAndCoordinates = rightJoin(
+                left = dataFrame,
+                leftKey = dataKeyColumn,
+                right = geoFrame,
+                rightKey = GEO_ID
+            )
+        } else {
+            // keys are duplicaetd in data -> subgroups like ("fruit", "nutrients") for bar/pie. rightJoin will shrink subgroups to a single entry
+            // handle only in livemap, where we have pie/bar
+            require(geomKind in setOf(LIVE_MAP)) { "Only map_join for livemap supports subgroups" }
+
+            val coordData = mutableMapOf<String, MutableList<Any?>>()
+
+            geoFrame.variables()
+                .map(Variable::name)
+                .filterNot(GEO_ID::equals) // keep only coordinates
+                .forEach { coord -> coordData[coord] = mutableListOf() } // init coord lists
+
+            dataFrame.getOrFail(dataKeyColumn)
+                .forEachIndexed { index, dataKey ->
+                    val geoIndex = geoFrame.getOrFail(GEO_ID).indexOf(dataKey)
+                    geoFrame.variables()
+                        .filterNot{ it.name == GEO_ID } // keep only coordinates
+                        .forEach { coord -> coordData[coord.name]!!.add(index, geoFrame.get(coord)[geoIndex]) }
+            }
+
+            // Extend dataFrame with corresponding coordinates
+            dataAndCoordinates = coordData.entries.fold(DataFrame.Builder(dataFrame)) {
+                    builder, (coordName, values) -> builder.put(Variable(coordName), values)
+            }.build()
+        }
 
         val coordinatesAutoMapping = coordinatesCollector.mappings
             .filterValues { coordName -> coordName in variables(dataAndCoordinates) }
@@ -288,5 +317,4 @@ internal abstract class CoordinatesCollector(
 
 
 fun Map<*, *>.dataJoinVariable() = getList(MAP_JOIN)?.get(0) as? String
-private fun DataFrame.getOrFail(varName: String) = this.get(findVariableOrFail(this, varName))
 private val <K, V> Map<K, V>.indicies get() = (values.firstOrNull() as? List<*>)?.indices

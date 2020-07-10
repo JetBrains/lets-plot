@@ -11,7 +11,8 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            antiMeridian()
+            mapJoinBar()
+//            antiMeridian()
 //            tooltips()
 //            symbol_point(),
 //            geom_point()
@@ -20,6 +21,53 @@ class LiveMap : PlotConfigDemoBase() {
 //            bunch(),
 //            facet()
         )
+    }
+
+    private fun mapJoinBar(): MutableMap<String, Any> {
+        val spec = """{
+  "data": {
+    "State": ["Alabama", "Alabama", "Alabama", "Alaska", "Alaska", "Alaska", "Arizona", "Arizona", "Arizona"],
+    "Item": [ "State Debt", "Local Debt", "Gross State Product", "State Debt", "Local Debt", "Gross State Product", "State Debt", "Local Debt", "Gross State Product"],
+    "$ B": [ 10.7, 26.1, 228.0, 5.9, 3.5, 55.7, 13.3, 30.5, 361.1]
+  },
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "livemap",
+      "mapping": {
+        "sym_x": "Item",
+        "sym_y": "$ B",
+        "fill": "Item"
+      },
+      "map_data_meta": {
+        "geodataframe": {
+          "geometry": "geometry"
+        }
+      },
+      "display_mode": "pie",
+      "tiles": {
+        "kind": "raster_zxy",
+        "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}@2x.png"
+      },
+      "geocoding": {
+        "url": "http://10.0.0.127:3020"
+      },
+      "map": {
+        "State": [ "Alabama", "Alaska", "Arizona"],
+        "Latitude": [ 32.806671, 61.370716, 33.729759],
+        "Longitude": [ -86.79113000000001, -152.404419, -111.431221],
+        "geometry": [
+          "{\"type\": \"Point\", \"coordinates\": [-86.79113000000001, 32.806671]}",
+          "{\"type\": \"Point\", \"coordinates\": [-152.404419, 61.370716]}",
+          "{\"type\": \"Point\", \"coordinates\": [-111.431221, 33.729759]}"
+        ]
+      },
+      "map_join": ["State", "State"]
+    }
+  ]
+}""".trimIndent()
+
+        return parsePlotSpec(spec)
     }
 
 

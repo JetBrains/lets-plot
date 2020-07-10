@@ -7,6 +7,8 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.base.data.getOrFail
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData
 import jetbrains.datalore.plot.config.GeoConfig.Companion.MAP_JOIN_REQUIRED_MESSAGE
@@ -377,9 +379,54 @@ class GeoConfigTest {
 
     }
 
+    @Test
+    fun `geom_livemap(symbol='bar', map_join=( ))`() {
+        val orangeCoord = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
+        val appleCoord = """{\"type\": \"Point\", \"coordinates\": [3.0, 4.0]}"""
+
+        singleGeomLayer(
+            """
+            |{
+            |    "kind": "plot", 
+            |    "layers": [{
+            |        "geom": "livemap",
+            |        "data": {
+            |            "fruit": ["Apple", "Apple", "Orange", "Orange"],
+            |            "nutrients": ["Fiber", "Carbs", "Fiber", "Carbs"],
+            |            "values": [4.0, 25.0, 2.4, 12.0]
+            |        },
+            |        "symbol": "bar",
+            |        "mapping": {
+            |           "sym_x": "fruit",
+            |           "sym_y": "values",
+            |           "fill": "nutrients"
+            |        },
+            |        "map": {
+            |            "name": ["Orange", "Apple"],
+            |            "coord": ["$orangeCoord", "$appleCoord"]
+            |        },
+            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |        "map_join": ["fruit", "name"]
+            |    }]
+            |}
+        """.trimMargin()
+        )
+            .assertValues("fruit", listOf("Apple", "Apple", "Orange", "Orange"))
+            .assertValues("nutrients", listOf("Fiber", "Carbs", "Fiber", "Carbs"))
+            .assertValues("values", listOf(4.0, 25.0, 2.4, 12.0))
+            .assertValues("__x__", listOf(3.0, 3.0, 1.0, 1.0))
+            .assertValues("__y__", listOf(4.0, 4.0, 2.0, 2.0))
+    }
+
     private fun GeomLayer.assertBinding(aes: Aes<*>, variable: String): GeomLayer {
         assertTrue(hasBinding(aes), "Binding for aes $aes was not found")
         assertEquals(variable, getBinding(aes).scale!!.name)
+        return this
+    }
+
+
+    private fun GeomLayer.assertValues(variable: String, values: List<*>): GeomLayer {
+        assertEquals(values, dataFrame.getOrFail(variable))
         return this
     }
 
