@@ -85,7 +85,7 @@ interface Scale<T> {
         /**
          * Limits for scale with discrete domain
          */
-        fun limits(domainValues: Set<*>): Builder<T>
+        fun limits(domainValues: List<Any>): Builder<T>
 
         fun breaks(l: List<*>): Builder<T>
 

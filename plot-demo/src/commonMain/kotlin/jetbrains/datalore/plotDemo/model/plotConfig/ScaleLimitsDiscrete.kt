@@ -11,7 +11,8 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 open class ScaleLimitsDiscrete : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            tiles()
+            tiles(),
+            tilesReversed()
         )
     }
 
@@ -19,16 +20,25 @@ open class ScaleLimitsDiscrete : PlotConfigDemoBase() {
     companion object {
 
         fun tiles(): Map<String, Any> {
+            return getSpec("{'x':['a', 'b', 'c', 'd', 'e']}", "['b', 'c', 'e']")
+        }
+
+        fun tilesReversed(): Map<String, Any> {
+            return getSpec("{'x':['a', 'b', 'c', 'd', 'e']}", "['e', 'c', 'b']")
+        }
+
+
+        fun getSpec(data: String, limits: String): Map<String, Any> {
             val spec = """
 {
     'mapping':{}, 
-    'data':{'x':['a', 'b', 'c', 'd', 'e']}, 
+    'data':$data, 
     'kind':'plot', 
     'scales':
         [
             {
                 'aesthetic':'x', 
-                'limits':['b', 'c', 'e']
+                'limits':$limits
             }
         ], 
     'layers':

@@ -157,7 +157,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
 
                 if (myLimits != null) {
                     scale = scale.with()
-                            .limits(HashSet(myLimits))
+                            .limits(myLimits.filterNotNull())
                             .build()
                 }
 
