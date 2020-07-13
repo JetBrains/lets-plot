@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
+import kotlin.math.max
 import kotlin.math.min
 
 class LayoutManager(
@@ -61,10 +62,20 @@ class LayoutManager(
                 myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
             }
 
+        var limitedHorizontalSpace = myHorizontalSpace
         // y-axis tooltip
         tooltips
             .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
-            ?.let { desiredPosition.add(calculateHorizontalTooltipPosition(it, AXIS_STEM_LENGTH)) }
+            ?.let { yAxisTooltip ->
+                val positionedTooltip = calculateHorizontalTooltipPosition(yAxisTooltip, AXIS_STEM_LENGTH, myHorizontalSpace)
+                desiredPosition.add(positionedTooltip)
+
+                // Limit available horizontal space for horizontal tooltips by the axis tooltip
+                limitedHorizontalSpace = DoubleRange.withStartAndLength(
+                    max(limitedHorizontalSpace.start(), positionedTooltip.right),
+                    limitedHorizontalSpace.length()
+                )
+            }
 
         // add corner tooltips
         tooltips
@@ -72,12 +83,15 @@ class LayoutManager(
             .let { desiredPosition += calculateCornerTooltipsPosition(it) }
 
         // all other tooltips (axis and corner tooltips are ignored in this method)
-        desiredPosition += calculateDataTooltipsPosition(tooltips)
+        desiredPosition += calculateDataTooltipsPosition(tooltips, limitedHorizontalSpace)
 
         return rearrangeWithoutOverlapping(desiredPosition)
     }
 
-    private fun calculateDataTooltipsPosition(tooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
+    private fun calculateDataTooltipsPosition(
+        tooltips: List<MeasuredTooltip>,
+        limitedHorizontalSpace: DoubleRange
+    ): List<PositionedTooltip> {
         val placementList = ArrayList<PositionedTooltip>()
 
         for (measuredTooltip in tooltips) {
@@ -98,7 +112,8 @@ class LayoutManager(
                 HORIZONTAL_TOOLTIP -> placementList.add(
                     calculateHorizontalTooltipPosition(
                         measuredTooltip,
-                        NORMAL_STEM_LENGTH
+                        NORMAL_STEM_LENGTH,
+                        limitedHorizontalSpace
                     )
                 )
 
@@ -165,7 +180,6 @@ class LayoutManager(
         // Include overlapped corner tooltips.
 
         tooltips.select(HORIZONTAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
-            .let { fixVerticalOverlapping(it, restrictions) }
             .let { horizontalTooltips ->
             if (horizontalTooltips.sumByDouble(PositionedTooltip::height) < myVerticalSpace.length()) {
                 HorizontalTooltipExpander(myVerticalSpace).fixOverlapping(horizontalTooltips)
@@ -188,17 +202,6 @@ class LayoutManager(
             .forEach(::fixate)
 
         return separatedTooltips
-    }
-
-    private fun fixVerticalOverlapping(
-        tooltips: List<PositionedTooltip>,
-        restrictions: ArrayList<DoubleRectangle>
-    ): List<PositionedTooltip> {
-        return tooltips.map { tooltip ->
-            restrictions.filter { it.intersects(tooltip.rect()) }.minBy { it.bottom }?.bottom?.let { topLimit ->
-                tooltip.moveTo(DoubleVector(tooltip.left, topLimit))
-            } ?: tooltip
-        }
     }
 
     private fun calculateVerticalTooltipPosition(
@@ -248,7 +251,8 @@ class LayoutManager(
 
     private fun calculateHorizontalTooltipPosition(
         measuredTooltip: MeasuredTooltip,
-        stemLength: Double
+        stemLength: Double,
+        limitedHorizontalSpace: DoubleRange
     ): PositionedTooltip {
         val tooltipY = centerInsideRange(measuredTooltip.hintCoord.y, measuredTooltip.size.y, myVerticalSpace)
 
@@ -263,8 +267,8 @@ class LayoutManager(
             val leftTooltipPlacement = leftAligned(targetCoordX, tooltipWidth, margin)
             val rightTooltipPlacement = rightAligned(targetCoordX, tooltipWidth, margin)
 
-            val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace)
-            val canFitRight = rightTooltipPlacement.inside(myHorizontalSpace)
+            val canFitLeft = leftTooltipPlacement.inside(limitedHorizontalSpace)
+            val canFitRight = rightTooltipPlacement.inside(limitedHorizontalSpace)
 
             if (!(canFitLeft || canFitRight)) {
                 tooltipX = 0.0
