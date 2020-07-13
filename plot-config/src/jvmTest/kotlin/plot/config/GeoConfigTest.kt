@@ -7,8 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.data.getOrFail
+import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData
 import jetbrains.datalore.plot.config.GeoConfig.Companion.MAP_JOIN_REQUIRED_MESSAGE
@@ -20,10 +19,10 @@ import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_YMAX
 import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_YMIN
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createPlotAssembler
 import jetbrains.datalore.plot.parsePlotSpec
+import org.junit.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class GeoConfigTest {
     private val point = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
@@ -261,8 +260,8 @@ class GeoConfigTest {
 
 
     @Test
-    fun `should show data key missing in map`() {
-        val spec = """
+    fun `should not throw error on data key missing in map`() {
+        singleGeomLayer("""
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -278,13 +277,7 @@ class GeoConfigTest {
             |    }]
             |}
         """.trimMargin()
-
-        try {
-            createPlotAssembler(parsePlotSpec(spec))
-            fail("'Missing_Key' is missing in map - should throw exception")
-        } catch (e: Exception) {
-            assertEquals("'Missing_Key' not found in map", e.localizedMessage)
-        }
+        )
     }
 
     @Test
@@ -379,6 +372,7 @@ class GeoConfigTest {
 
     }
 
+    @Ignore
     @Test
     fun `geom_livemap(symbol='bar', map_join=( ))`() {
         val orangeCoord = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
@@ -426,7 +420,7 @@ class GeoConfigTest {
 
 
     private fun GeomLayer.assertValues(variable: String, values: List<*>): GeomLayer {
-        assertEquals(values, dataFrame.getOrFail(variable))
+        assertEquals(values, dataFrame.get(findVariableOrFail(dataFrame, variable)))
         return this
     }
 

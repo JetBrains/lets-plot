@@ -169,4 +169,5 @@ object DataFrameUtil {
         return b.build()
     }
 }
-fun DataFrame.getOrFail(varName: String) = this.get(DataFrameUtil.findVariableOrFail(this, varName))
+
+
