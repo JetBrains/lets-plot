@@ -7,11 +7,13 @@ package jetbrains.livemap.plotDemo
 
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
+import kotlin.random.Random
 
 class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            mapJoinBar()
+            multiLayerTooltips()
+//            mapJoinBar()
 //            antiMeridian()
 //            tooltips()
 //            symbol_point(),
@@ -21,6 +23,57 @@ class LiveMap : PlotConfigDemoBase() {
 //            bunch(),
 //            facet()
         )
+    }
+
+    private fun multiLayerTooltips(): Map<String, Any> {
+        val n = 10
+        val rnd = Random(0)
+        val data = """
+            {
+                "x": [${ (0..n).map { rnd.nextDouble(-2.0, 2.0) }.joinToString() }],
+                "y": [${ (0..n).map { rnd.nextDouble(-2.0, 2.0) }.joinToString() }],
+                "v": [${ (0..n).map { rnd.nextDouble(0.0, 200_000.0) }.joinToString() }],
+                "age": [${ (0..n).map { rnd.nextInt(0, 70) }.joinToString() }]
+            }
+        """.trimIndent()
+
+        val poly = """
+            {
+                "x": [-5.0, 5.0, 5.0, -5.0, -5.0],
+                "y": [5.0, 5.0, -5.0, -5.0, 5.0]
+            }
+        """.trimIndent()
+
+        val spec = """{
+            "data": $data,
+            "kind": "plot",
+            "layers": [
+                {
+                    "geom": "livemap",
+                    "tiles": {
+                        "kind": "vector_lets_plot",
+                        "url": "ws://10.0.0.127:3933",
+                        "theme": null
+                    }
+                },
+                {
+                    "geom": "polygon",
+                    "data": $poly,
+                    "mapping": { "x": "x", "y": "y" },
+                    "fill": "#F8F4F0", 
+                    "color": "#B71234",
+                    "alpha": 0.5
+                },
+                {
+                    "geom": "point",
+                    "data": $data,
+                    "mapping": { "x": "x", "y": "y", "size": "v", "color": "age" }
+                }
+            ]
+        },
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
     }
 
     private fun mapJoinBar(): MutableMap<String, Any> {

@@ -160,18 +160,17 @@ class LiveMap(
     }
 
     fun search(coord: DoubleVector): SearchResult? {
-        myComponentManager.getEntities(SEARCH_COMPONENTS).forEach { entity ->
-            entity.get<LocatorComponent>().locatorHelper.run {
-                if (isCoordinateInTarget(explicitVec(coord.x, coord.y), entity)) {
-
-                    val indexComponent = entity.get<IndexComponent>()
-
-                    return SearchResult(indexComponent.layerIndex, indexComponent.index, getColor(entity))
-                }
+        return myComponentManager.getEntities(SEARCH_COMPONENTS)
+            .filter { it.get<LocatorComponent>().locatorHelper.isCoordinateInTarget(explicitVec(coord.x, coord.y), it) }
+            .sortedByDescending { it.get<IndexComponent>().layerIndex }
+            .firstOrNull()
+            ?.let {
+                SearchResult(
+                    layerIndex = it.get<IndexComponent>().layerIndex,
+                    index = it.get<IndexComponent>().index,
+                    color = it.get<LocatorComponent>().locatorHelper.getColor(it)
+                )
             }
-        }
-
-        return null
     }
 
     private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {

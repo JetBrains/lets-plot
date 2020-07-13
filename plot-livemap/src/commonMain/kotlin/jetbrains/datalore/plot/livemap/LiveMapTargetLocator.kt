@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.cursorTooltip
 import jetbrains.livemap.LiveMap
 
 class LiveMapTargetLocator(
@@ -25,17 +25,21 @@ class LiveMapTargetLocator(
     }
 
     override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
-       return myLiveMap?.search(coord)?.run {
-           GeomTargetLocator.LookupResult(
-               listOf(GeomTarget(index, TipLayoutHint.cursorTooltip(coord, color), HashMap())),
-               TARGET_DISTANCE,
-               GeomKind.LIVE_MAP,
-               myTargetSource[layerIndex to index] ?: error("Can't find target.")
+       return myLiveMap
+           ?.search(coord)
+           ?.let {
+               GeomTargetLocator.LookupResult(
+                   targets = listOf(
+                       GeomTarget(
+                           hitIndex = it.index,
+                           tipLayoutHint = cursorTooltip(coord, it.color),
+                           aesTipLayoutHints = emptyMap()
+                       )
+                   ),
+                   distance = 0.0, // livemap shows tooltip only on hover
+                   geomKind = GeomKind.LIVE_MAP,
+                   contextualMapping = myTargetSource[it.layerIndex to it.index] ?: error("Can't find target.")
            )
        }
-    }
-
-    companion object {
-        const val TARGET_DISTANCE = 0.0
     }
 }
