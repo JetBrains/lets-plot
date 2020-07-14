@@ -155,7 +155,6 @@ scope_types = Optional[Union[str, List[str], Regions, List[Regions]]]
 
 def _raise_exception(response: Response):
     msg = _format_error_message(response)
-    print(msg)
     raise ValueError(msg)
 
 
