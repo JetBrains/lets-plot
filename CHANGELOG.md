@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
  - corner tooltips.
- - CoorelationStat
+ - CorrelationStat
  - label_format
+ - scale_x_reverse / scale_y_reverse
  
  ### Fixed 
  - NPE on geom_tile when data contains null-s.
