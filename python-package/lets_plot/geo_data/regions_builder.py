@@ -132,7 +132,7 @@ class RegionsBuilder:
               near: Optional[Union[Regions, ShapelyPointType]] = None) -> 'RegionsBuilder':
         """
         If request is not exist - append it to a list with specified scope.
-        If request is already exist in the list - specify scope exactly for that thet request.
+        If request is already exist in the list - specify scope exactly for that request.
 
         where(request, scope)
 
@@ -142,8 +142,8 @@ class RegionsBuilder:
             Data can be filtered by full names at any level (only exact matching).
             For 'state' level:
             -'US-48' returns continental part of United States (48 states) in a compact form.
-        within : [string | None]
-            Data can be filtered by scope name.
+        within : [array | string | Regions | shapely.Polygon | None]
+            Data can be filtered by scope name or polygon.
             'US-48' includes continental part of United States (48 states).
         near: [Regions | None]
             Resolve ambiguity by taking object closest to a 'near' object.

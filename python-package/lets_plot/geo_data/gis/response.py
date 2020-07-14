@@ -95,7 +95,7 @@ class AmbiguousResponse(Response):
         super().__init__(message)
 
         assert_type(message, str)
-        assert_type(level, LevelKind)
+        assert_optional_type(level, LevelKind)
         assert_list_type(features, AmbiguousFeature)
 
         self.level: LevelKind = level

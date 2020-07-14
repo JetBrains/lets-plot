@@ -106,31 +106,33 @@ def regions_builder(level=None, request=None, within=None, highlights=False) -> 
 
 def regions(level=None, request=None, within=None) -> Regions:
     """
-    Create a GeocodedRegion class by level and request.
+    Create a Regions class by level and request.
 
     regions(level, request, within)
 
     Parameters
     ----------
-    level : ['country' | 'macrostate' | 'state' | 'macrocounty' | 'county' | 'city' | None]
-        The level of administrative division. Default is a 'state'.
+    level : ['country' | 'state' | 'county' | 'city' | None]
+        The level of administrative division. None is for autodetection, falls back to a 'state' in case of ambiguity.
     request : [array | string | None]
         Data can be filtered by full names at any level (only exact matching).
+        None with explicit level returns all corresponding regions, like all countries i.e. regions(level='country').
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
-    within : [array | string | None]
+    within : [array | string | Regions| None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
+        If within is Regions then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-        GeocodedRegion object
+        Regions object
 
     Notes
     -----
     regions() is used to get name and object id by level and request.
-    If the given names are not found, it returns GeocodedRegion class of the objects that have similar (the closest) requests.
+    If the given names are not found exception will be thrown.
 
     Examples
     ---------
@@ -142,7 +144,7 @@ def regions(level=None, request=None, within=None) -> Regions:
 
 def regions_country(request=None):
     """
-    Create a GeocodedRegion class for country level by request.
+    Create a Regions class for country level by request.
 
     regions_country(request)
 
@@ -153,12 +155,12 @@ def regions_country(request=None):
 
     Returns
     -------
-        GeocodedRegion object
+        Regions object
 
     Notes
     -----
     regions_country() is used to get name and object id by request.
-    If the given names are not found, it returns GeocodedRegion class of the objects that have similar (the closest) requests.
+    If the given names are not found exception will be thrown.
     See also regions().
 
     Examples
@@ -171,7 +173,7 @@ def regions_country(request=None):
 
 def regions_state(request=None, within=None):
     """
-    Create a GeocodedRegion class for state level by request.
+    Create a Regions class for state level by request.
 
     regions_state(request, within)
 
@@ -181,19 +183,20 @@ def regions_state(request=None, within=None):
         Data can be filtered by full names at any level (only exact matching).
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
-    within : [array | string | None]
+    within : [array | string | Regions| None]
         Data can be filtered by within name.
         If within is array then filter and within will be merged positionally (size should be equal).
+        If within is Regions then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-        GeocodedRegion object
+        Regions object
 
     Notes
     -----
     regions_state() is used to get name and object id by request.
-    If the given names are not found, it returns GeocodedRegion class of the objects that have similar (the closest) requests.
+    If the given names are not found exception will be thrown.
     See also regions().
 
     Examples
@@ -206,7 +209,7 @@ def regions_state(request=None, within=None):
 
 def regions_county(request=None, within=None):
     """
-    Create a GeocodedRegion class for county level by request.
+    Create a Regions class for county level by request.
 
     regions_county(request, within)
 
@@ -214,19 +217,20 @@ def regions_county(request=None, within=None):
     ----------
     request : [array | string | None]
         Data can be filtered by full names at any level (only exact matching).
-    within : [array | string | None]
+    within : [array | string | Regions| None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
+        If within is Regions then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-        GeocodedRegion object
+        Regions object
 
     Notes
     -----
     regions_county() is used to get name and object id by request.
-    If the given names are not found, it returns GeocodedRegion class of the objects that have similar (the closest) requests.
+    If the given names are not found exception will be thrown.
     See also regions().
 
     Examples
@@ -239,7 +243,7 @@ def regions_county(request=None, within=None):
 
 def regions_city(request=None, within=None):
     """
-    Create a GeocodedRegion class for city level by request.
+    Create a Regions class for city level by request.
 
     regions_city(request, within)
 
@@ -247,19 +251,20 @@ def regions_city(request=None, within=None):
     ----------
     request : [array | string | None]
         Data can be filtered by full names at any level (only exact matching).
-    within : [array | string | None]
+    within : [array | string | Regions| None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
+        If within is Regions then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
     -------
-        GeocodedRegion object
+        Regions object
 
     Notes
     -----
     regions_city() is used to get name and object id by request.
-    If the given names are not found, it returns GeocodedRegion class of the objects that have similar (the closest) requests.
+    If the given names are not found exception will be thrown.
     See also regions().
 
     Examples
