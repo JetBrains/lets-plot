@@ -13,6 +13,7 @@ __all__ = ['scale_shape',
            'scale_x_discrete', 'scale_y_discrete',
            'scale_x_continuous', 'scale_y_continuous',
            'scale_x_log10', 'scale_y_log10',
+           'scale_x_reverse', 'scale_y_reverse',
            'scale_color_manual', 'scale_fill_manual', 'scale_size_manual',
            'scale_shape_manual', 'scale_linetype_manual', 'scale_alpha_manual',
            'scale_fill_gradient', 'scale_fill_continuous', 'scale_color_gradient', 'scale_color_continuous',
@@ -248,6 +249,98 @@ def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
     >>> p + scale_y_log10() + scale_x_log10()
     """
     return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'log10')
+
+
+def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+    """
+    Continuous position scales (x) where trans='reverse'
+
+    Parameters
+    ----------
+    name : string
+        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list of numerics
+        A numeric vector of positions (of ticks)
+    labels : list of strings
+        A vector of labels (on ticks)
+    limits : list of numerics
+        A numeric vector of length two providing limits of the scale.
+    expand :
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+    na_value :
+        Missing values will be replaced with this value.
+    Returns
+    -------
+        scale specification
+    Notes
+    -----
+        Continuous position scales.
+
+    Examples
+        --------
+        >>> import pandas as pd
+        >>> N = 21
+        >>> x = [v for v in range(N)]
+        >>> y0 = [pow(10, v / 10.) for v in range(N)]
+        >>> y1 = [v * 5 for v in range(N)]
+        >>> formula = ['10^(x/10)'] * N + ['5*x'] * N
+        >>> data = dict(x=x * 2, y=y0 + y1, formula=formula)
+        >>> ### Linear scales (default)
+        >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) + \
+        ...     scale_size_manual(values=[7, 3])
+        >>> ### reverse scale on X axis
+        >>> p + scale_x_reverse()
+
+    """
+
+    return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'reverse')
+
+
+def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+    """
+    Continuous position scales (y) where trans='reverse'
+
+    Parameters
+    ----------
+    name : string
+        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list of numerics
+        A numeric vector of positions (of ticks)
+    labels : list of strings
+        A vector of labels (on ticks)
+    limits : list of numerics
+        A numeric vector of length two providing limits of the scale.
+    expand :
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+    na_value :
+        Missing values will be replaced with this value.
+    Returns
+    -------
+        scale specification
+    Notes
+    -----
+        Continuous position scales.
+
+    Examples
+        --------
+        >>> import pandas as pd
+        >>> N = 21
+        >>> x = [v for v in range(N)]
+        >>> y0 = [pow(10, v / 10.) for v in range(N)]
+        >>> y1 = [v * 5 for v in range(N)]
+        >>> formula = ['10^(x/10)'] * N + ['5*x'] * N
+        >>> data = dict(x=x * 2, y=y0 + y1, formula=formula)
+        >>> ### Linear scales (default)
+        >>> p = ggplot(data) + geom_point(aes('x', 'y', color='formula', size='formula')) + \
+        ...     scale_size_manual(values=[7, 3])
+        >>> ### reverse scale on Y axis
+        >>> p + scale_y_reverse()
+
+    """
+
+    return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'reverse')
 
 
 #
