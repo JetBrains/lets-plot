@@ -4,7 +4,7 @@
 #
 from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, geo_data_frame_to_lon_lat, as_pair
-from ..geo_data.regions import Regions
+
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
 #
@@ -93,7 +93,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
     >>> p += geom_point(shape=21, color='red', fill='green', size=5, stat='smooth')
     """
 
-    if isinstance(map, Regions):
+    if _is_regions(map):
         map = map.centroids()
 
     return _geom('point', mapping, data, stat, position, show_legend, sampling=sampling,
@@ -1156,7 +1156,7 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
     >>> ggplot(dat, aes('x', 'y')) + geom_polygon(aes(group='id'), alpha=0.5)
     """
 
-    if isinstance(map, Regions):
+    if _is_regions(map):
         map = map.boundaries()
 
     return _geom('polygon', mapping, data, stat, position, show_legend, sampling=sampling,
@@ -1246,7 +1246,7 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
     # elif not is_geo_data_frame(data):
     #     raise TypeError("geom_map() missing 1 required keyword-only argument: 'map'")
 
-    if isinstance(map, Regions):
+    if _is_regions(map):
         map = map.boundaries()
 
     return _geom('map', mapping, data, stat, None, show_legend, sampling=sampling,
@@ -2085,7 +2085,7 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
 
     """
 
-    if isinstance(map, Regions):
+    if _is_regions(map):
         map = map.limits()
 
     return _geom('rect', mapping, data, stat, position, show_legend, sampling=sampling,
@@ -2222,7 +2222,7 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
     >>> ggplot() + geom_text(aes(x=[1], y=[1], label=['Text'], angle=[30], family=['mono']), size = 10)
     """
 
-    if isinstance(map, Regions):
+    if _is_regions(map):
         map = map.centroids()
 
     return _geom('text', mapping, data, stat, position, show_legend, sampling=sampling,
@@ -2274,3 +2274,7 @@ def _geom(name, mapping=None, data=None, stat=None, position=None, show_legend=N
 
     return LayerSpec(geom=name, stat=stat, data=data, mapping=mapping, position=position, show_legend=show_legend,
                      tooltips=tooltips, **data_meta, **map_data_meta, **kwargs)
+
+def _is_regions(map):
+    # do not import Regions directly to suppress OSM attribution from geo_data package
+    return map is not None and type(map).__name__ == 'Regions'
