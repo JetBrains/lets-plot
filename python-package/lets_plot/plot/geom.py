@@ -4,7 +4,7 @@
 #
 from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, geo_data_frame_to_lon_lat, as_pair
-
+from ..geo_data.regions import Regions
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
 #
@@ -92,6 +92,10 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
     >>> p = ggplot(dat) + geom_point(aes(x='x', y='y', color='y', shape='class', fill='x', size='y'))
     >>> p += geom_point(shape=21, color='red', fill='green', size=5, stat='smooth')
     """
+
+    if isinstance(map, Regions):
+        map = map.centroids()
+
     return _geom('point', mapping, data, stat, position, show_legend, sampling=sampling,
                  map=map, map_join=map_join,
                  animation=animation,
@@ -1151,6 +1155,10 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
     >>> dat = dict(id=id3, val=val3, x=x, y=y)
     >>> ggplot(dat, aes('x', 'y')) + geom_polygon(aes(group='id'), alpha=0.5)
     """
+
+    if isinstance(map, Regions):
+        map = map.boundaries()
+
     return _geom('polygon', mapping, data, stat, position, show_legend, sampling=sampling,
                  map=map, map_join=map_join, tooltips=tooltips,
                  **other_args)
@@ -1237,6 +1245,9 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
     #
     # elif not is_geo_data_frame(data):
     #     raise TypeError("geom_map() missing 1 required keyword-only argument: 'map'")
+
+    if isinstance(map, Regions):
+        map = map.boundaries()
 
     return _geom('map', mapping, data, stat, None, show_legend, sampling=sampling,
                  map=map, map_join=map_join, tooltips=tooltips,
@@ -2073,6 +2084,10 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
     >>> ggplot() + geom_rect(aes(xmin=[3], xmax=[4], ymin=[6], ymax=[10]))
 
     """
+
+    if isinstance(map, Regions):
+        map = map.limits()
+
     return _geom('rect', mapping, data, stat, position, show_legend, sampling=sampling,
                  map=map, map_join=map_join, tooltips=tooltips,
                  **other_args)
@@ -2206,6 +2221,10 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
     >>> from lets_plot import *
     >>> ggplot() + geom_text(aes(x=[1], y=[1], label=['Text'], angle=[30], family=['mono']), size = 10)
     """
+
+    if isinstance(map, Regions):
+        map = map.centroids()
+
     return _geom('text', mapping, data, stat, position, show_legend, sampling=sampling,
                  map=map, map_join=map_join, tooltips=tooltips,
                  **other_args)
