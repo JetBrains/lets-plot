@@ -77,15 +77,16 @@ def regions_builder(level=None, request=None, within=None, highlights=False) -> 
 
     Parameters
     ----------
-    level : ['country' | 'macro_state' | 'state' | 'macro_county' | 'county' | 'city' | None]
+    level : ['country' | 'state' | 'county' | 'city' | None]
         The level of administrative division. Default is a 'state'.
     request : [array | string | None]
         Data can be filtered by full names at any level (only exact matching).
         For 'state' level:
         -'US-48' returns continental part of United States (48 states) in a compact form.
-    within : [array | string | None]
+    within : [array | string | Regions | None]
         Data can be filtered by within name.
         If within is array then request and within will be merged positionally (size should be equal).
+        If within is Regions then request will be searched in any of these regions.
         'US-48' includes continental part of United States (48 states).
 
     Returns
