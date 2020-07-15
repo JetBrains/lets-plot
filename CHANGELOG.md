@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - label_format
  - scale_x_reverse / scale_y_reverse
  
+ ### Added
+ - geocoding package
+ 
  ### Fixed 
  - NPE on geom_tile when data contains null-s.
  - The order of values in the `limits` parameter on discrete scales is ignored.
