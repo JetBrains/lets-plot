@@ -11,10 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - label_format
  - scale_x_reverse / scale_y_reverse
  
- ### Added
+## [1.5.0] - 2020-07-15
+### Added
  - geocoding package
  
- ### Fixed 
+### Fixed 
  - NPE on geom_tile when data contains null-s.
  - The order of values in the `limits` parameter on discrete scales is ignored.
  - Livemap is not shown in GGBunch.
@@ -25,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
  - Plots build time reduced (up to 4X)
-
 
 ## [1.4.1] - 2020-05-20
 ### Added
@@ -39,7 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
 ### Removed
  - The deprecated method 'load_lets_plot_js()'.  
-
 
 ## [1.4.0] - 2020-05-13
 ### Added
