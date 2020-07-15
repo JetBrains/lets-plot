@@ -46,11 +46,8 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         position adjustment function.
     animation : type of the animation, optional
         Codes and names: 0 = "none" (default), 1 = "ripple".
-    map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint)
+    map : GeoDataFrame (supported shapes Point and MultiPoint)  or Regions (implicitly invoke centroids())
         Data containing coordinates of points.
-        Dictionary and DataFrame object must contain keys/columns:
-        1. 'x' or 'lon' or 'long'
-        2. 'y' or 'lat'
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
         str or first value in pair - column in data
@@ -128,11 +125,8 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         position adjustment function.
     animation : type of the animation, optional
         Codes and names: 0 = "none" (default), 1 = "dash", 2 = "plane", 3 = "circle".
-    map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes LineString and MultiLineString)
-
-        Dictionary and DataFrame object must contain keys/columns:
-        1. 'x' or 'lon' or 'long'
-        2. 'y' or 'lat'
+    map : GeoDataFrame (supported shapes LineString and MultiLineString)
+        Data containing coordinates of lines.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
         str or first value in pair - column in data
@@ -1108,11 +1102,8 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
-    map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon)
-        Data (Dictionary, DataFrame or GeoDataFrame object) contains coordinates of polygon vertices on map.
-        Dictionary and DataFrame object must contain keys/columns:
-        1. 'x' or 'lon' or 'long'
-        2. 'y' or 'lat'
+    map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Regions (implicitly invoke boundaries())
+        Data contains coordinates of polygon vertices on map.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
         str or first value in pair - column in data
@@ -1184,11 +1175,8 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
         "identity" (leaves the data unchanged), "count" (counts number of points with same x-axis coordinate),
         "bin" (counts number of points with x-axis coordinate in the same bin), "smooth" (performs smoothing -
         linear default)
-    map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Polygon and MultiPolygon)
+    map : GeoDataFrame (supported shapes Polygon and MultiPolygon) or Regions (implicitly invoke boundaries())
         Data containing region boundaries (coordinates of polygon vertices on map).
-        It must contain columns:
-         1. 'x' or 'lon' or 'long'
-         2. 'y' or 'lat'
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
         str or first value in pair - column in data
@@ -2042,11 +2030,8 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
-    map : dictionary, pandas DataFrame or GeoDataFrame (shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon)
+    map : GeoDataFrame (shapes MultiPoint, Line, MultiLine, Polygon and MultiPolygon) or Regions (implicitly invoke limits())
         Bounding boxes of geometries will be drawn.
-        Data must contain columns:
-         1. 'x' or 'lon' or 'long'
-         2. 'y' or 'lat'
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
         str or first value in pair - column in data
@@ -2178,10 +2163,8 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
-    map : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint)
-        Data must contain columns:
-         1. 'x' or 'lon' or 'long'
-         2. 'y' or 'lat'
+    map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
+        Data containing coordinates of points.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
         str or first value in pair - column in data
