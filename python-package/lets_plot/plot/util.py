@@ -81,11 +81,8 @@ def as_annotated_map_data(raw_map: Any) -> dict:
 
 
 def is_geo_data_regions(data: Any) -> bool:
-    try:
-        from lets_plot.geo_data import Regions
-        return isinstance(data, Regions)
-    except ImportError:
-        return False  # no geo_data in standalone deployment
+    # do not import Regions directly to suppress OSM attribution from geo_data package
+    return data is not None and type(data).__name__ == 'Regions'
 
 
 def is_geo_data_frame(data: Any) -> bool:

@@ -5,9 +5,10 @@
 from enum import Enum
 from typing import Union, Optional, List
 
-from .geom import _geom, _is_regions
+from .geom import _geom
+from .util import is_geo_data_regions
 from .._global_settings import has_global_value, get_global_val
-from ..settings_utils import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, GEOCODING_PROVIDER_URL, _RASTER_ZXY, _VECTOR_LETS_PLOT, maptiles_zxy
+from ..settings_utils import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, GEOCODING_PROVIDER_URL, _RASTER_ZXY, _VECTOR_LETS_PLOT
 
 try:
     import pandas
@@ -98,7 +99,7 @@ def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, samplin
     if _display_mode in other_args.keys():
         other_args.pop(_display_mode)
 
-    if _is_regions(map):
+    if is_geo_data_regions(map):
         map = map.centroids()
 
     return _geom('livemap', mapping, data, map=map, show_legend=show_legend, sampling=sampling,
