@@ -5,7 +5,7 @@
 from enum import Enum
 from typing import Union, Optional, List
 
-from .geom import _geom
+from .geom import _geom, _is_regions
 from .._global_settings import has_global_value, get_global_val
 from ..settings_utils import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, GEOCODING_PROVIDER_URL, _RASTER_ZXY, _VECTOR_LETS_PLOT, maptiles_zxy
 
@@ -23,7 +23,7 @@ __all__ = ['geom_livemap']
 
 def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, sampling=None,
                  location=None, zoom=None, projection=None, geodesic=None, tiles=None,
-                 **other_args):
+                 map=None, **other_args):
     """
     Display a live map.
     Parameters
@@ -34,6 +34,8 @@ def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, samplin
     data : dictionary or pandas DataFrame, optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
+    map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
+        Data containing coordinates of points.
     symbol : string, optional
         The marker used for displaying the data. There are:
         - 'point' for circles of different size and color.
@@ -96,7 +98,10 @@ def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, samplin
     if _display_mode in other_args.keys():
         other_args.pop(_display_mode)
 
-    return _geom('livemap', mapping, data, stat=None, position=None, show_legend=show_legend, sampling=sampling,
+    if _is_regions(map):
+        map = map.centroids()
+
+    return _geom('livemap', mapping, data, map=map, show_legend=show_legend, sampling=sampling,
                  display_mode=symbol, location=location, zoom=zoom,
                  projection=projection, geodesic=geodesic, tiles=tiles, geocoding=geocoding,
                  **other_args)
