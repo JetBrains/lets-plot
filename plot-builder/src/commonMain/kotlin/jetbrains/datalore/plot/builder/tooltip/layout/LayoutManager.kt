@@ -260,7 +260,9 @@ class LayoutManager(
             val leftTooltipPlacement = leftAligned(targetCoordX, tooltipWidth, margin)
             val rightTooltipPlacement = rightAligned(targetCoordX, tooltipWidth, margin)
 
-            // can fit in horizontal space and does not overlap with restrictions
+            // The tooltip should fit in horizontal space and not intersect restrictions,
+            // restrictions are expected to contain only y-axis tooltip.
+            // Don't change canFitRight as it is not affected by restrictions (as long as y-axis is on the left side).
             val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace) && restrictions.all {
                 val tooltipRect = DoubleRectangle(
                     DoubleVector(leftTooltipPlacement.start(), tooltipY), measuredTooltip.size
