@@ -83,7 +83,7 @@ class LayoutManager(
 
     private fun calculateDataTooltipsPosition(
         tooltips: List<MeasuredTooltip>,
-        horizontalRestrictions: List<DoubleRectangle>
+        restrictions: List<DoubleRectangle>
     ): List<PositionedTooltip> {
         val placementList = ArrayList<PositionedTooltip>()
 
@@ -106,7 +106,7 @@ class LayoutManager(
                     calculateHorizontalTooltipPosition(
                         measuredTooltip,
                         NORMAL_STEM_LENGTH,
-                        horizontalRestrictions
+                        restrictions
                     )
                 )
 
@@ -245,7 +245,7 @@ class LayoutManager(
     private fun calculateHorizontalTooltipPosition(
         measuredTooltip: MeasuredTooltip,
         stemLength: Double,
-        horizontalRestrictions: List<DoubleRectangle> = emptyList()
+        restrictions: List<DoubleRectangle> = emptyList()
     ): PositionedTooltip {
         val tooltipY = centerInsideRange(measuredTooltip.hintCoord.y, measuredTooltip.size.y, myVerticalSpace)
 
@@ -258,39 +258,15 @@ class LayoutManager(
             val margin = hintSize + stemLength
 
             val leftTooltipPlacement = leftAligned(targetCoordX, tooltipWidth, margin)
-                .let { leftTooltipPlacement ->
-                    // if overlapped with restrictions - move it to the left
-                    val tooltipRect = DoubleRectangle(
-                        DoubleVector(leftTooltipPlacement.start(), tooltipY),
-                        measuredTooltip.size
-                    )
-                    horizontalRestrictions
-                        .filter { it.intersects(tooltipRect) }
-                        .minBy { it.left }?.left
-                        ?.let { limit ->
-                            val limitRange = DoubleRange.withStartAndEnd(leftTooltipPlacement.start(), limit)
-                            moveIntoLimit(leftTooltipPlacement, limitRange)
-                        }
-                        ?: leftTooltipPlacement
-                }
             val rightTooltipPlacement = rightAligned(targetCoordX, tooltipWidth, margin)
-                .let { rightTooltipPlacement ->
-                    // if overlapped with restrictions - move it to the right
-                    val tooltipRect = DoubleRectangle(
-                        DoubleVector(rightTooltipPlacement.start(), tooltipY),
-                        measuredTooltip.size
-                    )
-                    horizontalRestrictions
-                        .filter { it.intersects(tooltipRect) }
-                        .maxBy { it.right }?.right
-                        ?.let { limit ->
-                            val limitRange = DoubleRange.withStartAndEnd(limit, rightTooltipPlacement.end())
-                            moveIntoLimit(rightTooltipPlacement, limitRange)
-                        }
-                        ?: rightTooltipPlacement
-                }
 
-            val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace)
+            // can fit in horizontal space and does not overlap with restrictions
+            val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace) && restrictions.all {
+                val tooltipRect = DoubleRectangle(
+                    DoubleVector(leftTooltipPlacement.start(), tooltipY), measuredTooltip.size
+                )
+                !it.intersects(tooltipRect)
+            }
             val canFitRight = rightTooltipPlacement.inside(myHorizontalSpace)
 
             if (!(canFitLeft || canFitRight)) {
