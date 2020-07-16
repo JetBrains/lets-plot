@@ -31,6 +31,7 @@
 - [Examples](#examples)
     - [Quickstart and more](#quickstart)
     - [GeoPandas support](#geopandas)
+    - [Interactive Maps](#livemap)
     - [Nonstandard plotting functions](#nonstandard)
     - [GGBanch](#ggbanch)
     - [Data sampling](#sampling)
@@ -40,7 +41,7 @@
 - [SVG/HTML export to file](#export)
 - [Offline mode](#offline)
 - [Scientific mode in IntelliJ IDEA / PyCharm](#pycharm)
-- [What is new in 1.4.0](#new)
+- [What is new in 1.5.0](#new)
 
 <a name="Implementation Overview" id="overview"></a>
 ## Implementation Overview
@@ -154,6 +155,16 @@ GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_po
 [geopandas_kotlin_isl.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geopandas_kotlin_isl.ipynb)
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/kotlin_island.png" alt="Couldn't load kotlin_island.png" width="473" height="327"><br><br>
+
+<a name="Interactive Maps" id="livemap"></a>
+### Interactive Maps. 
+  
+The interactive map allows zooming in and out and panning around geospatial data that can be added to the base-map layer 
+using regular ggplot geoms.
+
+The basemap layer is created by the `geom livemap` geom which in addition can also work as scatter plot - similar to `geom_point`.  
+
+[Learn more](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md) about interactive maps support in Lets-Plot. 
 
   
 <a name="Nonstandard plotting functions" id="nonstandard"></a>
@@ -283,86 +294,84 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 </div>
 
 <a name="What is new" id="new"></a>
-## What is new in 1.4.0
+## What is new in 1.5.0
 
-### Interactive maps
+### Gepcoding API
 
-Function `geom_livemap()` enables a researcher to visualize geospatial information on interactive map.
+Geocoding is the process of converting names of places into geographic coordinates.
 
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/map_path.png" alt="Couldn't load map_path.png" width="436" height="267"><br><br>
+*Lets-Plot* now offers geocoding API covering the following administrative levels:
+- country
+- state
+- county
+- city
 
-When building interactive geospatial visualizations with *Lets-Plot* the visualisation workflow remains the 
-same as when building a regular `ggplot2` plot.
+*Lets-Plot* geocoding API allows a user to execute single and batch geocoding queries and handle possible 
+names ambiguity.
 
-However, `geom_livemap()` creates an interactive base-map super-layer and certain limitations do apply 
-comparing to a regular `ggplot2` geom-layer:
+Relatively simple geocoding queries are executed using `regions_xxx()` functions family. For example:
+```python
+from lets_plot.geo_data import *
+regions_country(['usa', 'canada'])
+```
+returns the `Regions` object containing internal IDs for Canada and the US:
+```
+  request       id                found name
+0     usa   297677  United States of America
+1  canada  2856251                    Canada 
+```
+More complex geocoding queries can be created with the help of `regions_builder()` function which
+returns the `RegionsBuilder` object and allows chaining its various methods in order to specify 
+how to handle a geocoding ambiguities.
 
-* `geom_livemap()` must be added as a 1-st layer in plot;
-* Maximum one `geom_livemap()` layer is alloed per plot;
-* Not any type of *geometry* can be combined with interactive map layer in one plot;
-* Internet connection to *map tiles provider* is required.
+For example:
+```python
+regions_builder(request='warwick', level='city')  \
+    .allow_ambiguous()  \
+    .build()
+```    
+returns the `Regions` object containing IDs of all cities matching "warwick":
+```
+    request        id                   found name
+0   warwick    785807                      Warwick
+1   warwick    363189                      Warwick
+2   warwick    352173                      Warwick
+3   warwick  15994531                      Warwick
+4   warwick    368499                      Warwick
+5   warwick    239553                      Warwick
+6   warwick    352897                      Warwick
+7   warwick   3679247                      Warwick
+8   warwick   8144841                      Warwick
+9   warwick    382429                 West Warwick
+10  warwick   7042961             Warwick Township
+11  warwick   6098747             Warwick Township
+12  warwick  15994533  Sainte-Élizabeth-de-Warwick
+``` 
+```python
+boston_us = regions(request='boston', within='us')
+regions_builder(request='warwick', level='city') \
+    .where('warwick', near=boston_us) \
+    .build()
+```    
+returns the `Regions` object containing ID of one particular "warwick" near Boston (US):
+```
+   request      id found name
+0  warwick  785807    Warwick
+```
+Once the `Regions` object is available it can be passed to any *Lets-Plot* geom 
+supporting the `map` parameter.
 
-The following `ggplot2` geometry can be used with interactive maps:
+If necessary the `Regions` object can be transformed to a regular pandas DataFrame using `to_data_frame()` method
+or to a geopandas GeoDataFrame using one of `centroids()`, `boundaries()` or `limits()` methods.
 
-* `geom_point`
-* `geom_rect`
-* `geom_path`
-* `geom_polygon`
-* `geom_segment`
-* `geom_text`
-* `geom_tile`
-* `geom_vline`, `geon_hline`
-* `geom_bin2d`
-* `geom_contour`, `geom_contourf`
-* `geom_density2d`, `geom_density2df`
+All coordinates are in EPSG:4326 coordinate reference system (CRS). 
+
+Note what executing geocoding queries requires a internet connection.
 
 Examples:
 
-* [map_quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_quickstart.ipynb)
-* [map_california_housing.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map-california-housing/map_california_housing.ipynb)
-
-### Function `as_discrete()`
-
-The function `as_discrete()` is used to annotate a numeric data series as `categorical` data for the 
-purposes of given visualization. 
-
-Code example:
-
-```python
-from lets_plot.mapping import as_discrete
-
-mpg_plot + geom_point(aes(color='cyl'))\
-         + geom_smooth(aes(color=as_discrete('cyl')), method='lm', deg=2, size=1)
-```
-
-Example notebook: [geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb)
-
-### Polynomial regression of arbitrary degree in `geom_smooth`
-
-New parameter `deg` in `geom_smooth()` allows to adjust the degree of the model polynomial when
-using `linear model` smoothing method.
-
-Code example:
-
-```python
-# Apply 2nd degree polynomial regression 
-p + geom_smooth(method='lm', deg=2)
-```
-
-Example notebook: [geom_smooth.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/geom_smooth.ipynb)
-
-
-### Hiding tooltips on axis
-
-There are new parameters `axis_tooltip`, `axis_tooltip_x` and `axis_tooltip_y` in the function `theme()`
-which allow to hide tooltip on axis X, axis Y or on the both axis.
-
-Code example:
-
-```python
-# Hide tooltips on both axis.
-p + theme(axis_tooltip='blank')
-```
+* [map_titanic.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_titanic.ipynb)
+ 
 
 ## Change Log
 
