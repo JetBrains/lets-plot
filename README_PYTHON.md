@@ -296,7 +296,7 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 <a name="What is new" id="new"></a>
 ## What is new in 1.5.0
 
-### Gepcoding API
+### Geocoding API
 
 Geocoding is the process of converting names of places into geographic coordinates.
 
