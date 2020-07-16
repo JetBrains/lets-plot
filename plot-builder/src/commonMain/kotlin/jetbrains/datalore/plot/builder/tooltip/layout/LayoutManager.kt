@@ -72,12 +72,19 @@ class LayoutManager(
             .let { desiredPosition += calculateCornerTooltipsPosition(it) }
 
         // all other tooltips (axis and corner tooltips are ignored in this method)
-        desiredPosition += calculateDataTooltipsPosition(tooltips)
+        desiredPosition += calculateDataTooltipsPosition(
+            tooltips,
+            // limit horizontal tooltips by y-axis tooltips
+            desiredPosition.select(Y_AXIS_TOOLTIP).map { it.rect() }
+        )
 
         return rearrangeWithoutOverlapping(desiredPosition)
     }
 
-    private fun calculateDataTooltipsPosition(tooltips: List<MeasuredTooltip>): List<PositionedTooltip> {
+    private fun calculateDataTooltipsPosition(
+        tooltips: List<MeasuredTooltip>,
+        restrictions: List<DoubleRectangle>
+    ): List<PositionedTooltip> {
         val placementList = ArrayList<PositionedTooltip>()
 
         for (measuredTooltip in tooltips) {
@@ -98,7 +105,8 @@ class LayoutManager(
                 HORIZONTAL_TOOLTIP -> placementList.add(
                     calculateHorizontalTooltipPosition(
                         measuredTooltip,
-                        NORMAL_STEM_LENGTH
+                        NORMAL_STEM_LENGTH,
+                        restrictions
                     )
                 )
 
@@ -236,7 +244,8 @@ class LayoutManager(
 
     private fun calculateHorizontalTooltipPosition(
         measuredTooltip: MeasuredTooltip,
-        stemLength: Double
+        stemLength: Double,
+        restrictions: List<DoubleRectangle> = emptyList()
     ): PositionedTooltip {
         val tooltipY = centerInsideRange(measuredTooltip.hintCoord.y, measuredTooltip.size.y, myVerticalSpace)
 
@@ -251,7 +260,15 @@ class LayoutManager(
             val leftTooltipPlacement = leftAligned(targetCoordX, tooltipWidth, margin)
             val rightTooltipPlacement = rightAligned(targetCoordX, tooltipWidth, margin)
 
-            val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace)
+            // The tooltip should fit in horizontal space and not intersect restrictions,
+            // restrictions are expected to contain only y-axis tooltip.
+            // Don't change canFitRight as it is not affected by restrictions (as long as y-axis is on the left side).
+            val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace) && restrictions.all {
+                val tooltipRect = DoubleRectangle(
+                    DoubleVector(leftTooltipPlacement.start(), tooltipY), measuredTooltip.size
+                )
+                !it.intersects(tooltipRect)
+            }
             val canFitRight = rightTooltipPlacement.inside(myHorizontalSpace)
 
             if (!(canFitLeft || canFitRight)) {
