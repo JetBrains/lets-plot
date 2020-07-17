@@ -284,7 +284,8 @@ LetsPlot.setup_html(offline=True)
 
 Plugin "Lets-Plot in SciView" is available at the JetBrains Plugin Repository.
 
-The plugin adds support for interactive plots in IntelliJ-based IDEs with the enabled _Scientific mode_.
+The plugin adds support for interactive plots in IntelliJ-based IDEs with the enabled 
+[Scientific mode](https://www.jetbrains.com/help/pycharm/matplotlib-support.html).
 
 To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](https://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview).
 
@@ -306,10 +307,10 @@ Geocoding is the process of converting names of places into geographic coordinat
 - county
 - city
 
-*Lets-Plot* geocoding API allows a user to execute single and batch geocoding queries and handle possible 
+*Lets-Plot* geocoding API allows a user to execute a single and batch geocoding queries, and handle possible 
 names ambiguity.
 
-Relatively simple geocoding queries are executed using `regions_xxx()` functions family. For example:
+Relatively simple geocoding queries are executed using the `regions_xxx()` functions family. For example:
 ```python
 from lets_plot.geo_data import *
 regions_country(['usa', 'canada'])
@@ -320,9 +321,9 @@ returns the `Regions` object containing internal IDs for Canada and the US:
 0     usa   297677  United States of America
 1  canada  2856251                    Canada 
 ```
-More complex geocoding queries can be created with the help of `regions_builder()` function which
+More complex geocoding queries can be created with the help of the `regions_builder()` function that
 returns the `RegionsBuilder` object and allows chaining its various methods in order to specify 
-how to handle a geocoding ambiguities.
+how to handle geocoding ambiguities.
 
 For example:
 ```python
@@ -330,7 +331,7 @@ regions_builder(request='warwick', level='city')  \
     .allow_ambiguous()  \
     .build()
 ```    
-returns the `Regions` object containing IDs of all cities matching "warwick":
+This sample returns the `Regions` object containing IDs of all cities matching "warwick":
 ```
     request        id                   found name
 0   warwick    785807                      Warwick
@@ -353,18 +354,18 @@ regions_builder(request='warwick', level='city') \
     .where('warwick', near=boston_us) \
     .build()
 ```    
-returns the `Regions` object containing ID of one particular "warwick" near Boston (US):
+This example returns the `Regions` object containing the ID of one particular "warwick" near Boston (US):
 ```
    request      id found name
 0  warwick  785807    Warwick
 ```
-Once the `Regions` object is available it can be passed to any *Lets-Plot* geom 
+Once the `Regions` object is available, it can be passed to any *Lets-Plot* geom 
 supporting the `map` parameter.
 
-If necessary the `Regions` object can be transformed to a regular pandas DataFrame using `to_data_frame()` method
-or to a geopandas GeoDataFrame using one of `centroids()`, `boundaries()` or `limits()` methods.
+If necessary, the `Regions` object can be transformed into a regular pandas `DataFrame` using `to_data_frame()` method
+or to a geopandas `GeoDataFrame` using one of `centroids()`, `boundaries()`, or `limits()` methods.
 
-All coordinates are in EPSG:4326 coordinate reference system (CRS). 
+All coordinates are in the EPSG:4326 coordinate reference system (CRS). 
 
 Note what executing geocoding queries requires a internet connection.
 
