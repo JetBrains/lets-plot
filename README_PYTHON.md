@@ -367,7 +367,7 @@ or to a geopandas `GeoDataFrame` using one of `centroids()`, `boundaries()`, or 
 
 All coordinates are in the EPSG:4326 coordinate reference system (CRS). 
 
-Note what executing geocoding queries requires a internet connection.
+Note what executing geocoding queries requires an internet connection.
 
 Examples:
 
