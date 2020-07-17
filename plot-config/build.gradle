@@ -8,6 +8,14 @@ plugins {
     id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
+rootProject.ext {
+    batikGroupId = "org.apache.xmlgraphics"
+    batikArtifacts = [
+            "batik-transcoder",
+            "batik-codec"
+    ]
+}
+
 kotlin {
     jvm()
     js {
@@ -45,6 +53,10 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
                 implementation project(':vis-svg-mapper')
+
+                batikArtifacts.forEach {
+                    api "${batikGroupId}:$it:$batik_version"
+                }
             }
         }
         jvmTest {
