@@ -1,11 +1,14 @@
-/*
- * Copyright (c) 2019. JetBrains s.r.o.
- * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
- */
-
 plugins {
     id "org.jetbrains.kotlin.multiplatform"
     id "org.jetbrains.gradle.plugin.idea-ext"
+}
+
+rootProject.ext {
+    batikGroupId = "org.apache.xmlgraphics"
+    batikArtifacts = [
+            "batik-transcoder",
+            "batik-codec"
+    ]
 }
 
 kotlin {
@@ -45,6 +48,10 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
                 implementation project(':vis-svg-mapper')
+
+                batikArtifacts.forEach {
+                    api "${batikGroupId}:$it:$batik_version"
+                }
             }
         }
         jvmTest {
