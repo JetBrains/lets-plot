@@ -9,19 +9,116 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
-import java.awt.Graphics
+import java.awt.*
+import java.awt.AlphaComposite.SRC_OVER
+import java.awt.font.GlyphVector
+import java.awt.geom.AffineTransform
+import java.awt.geom.Arc2D
+import java.awt.geom.Arc2D.OPEN
+import java.awt.geom.GeneralPath
+import java.awt.geom.Rectangle2D
 
-internal class AwtContext2d(private val myContext2d: Graphics) : Context2d {
+internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
+    private var currentPath: GeneralPath? = null
+    private var strokeColor: Color = Color.BLACK
+    private var fillColor: Color = Color.BLACK
+    private var stroke: BasicStroke = BasicStroke()
+    private var textBaseline: Context2d.TextBaseline = Context2d.TextBaseline.ALPHABETIC
+    private var textAlign: Context2d.TextAlign = Context2d.TextAlign.START
+    private var font: Font = Font(Font.SERIF, Font.PLAIN, 10)
+    private var globalAlpha: Float = 1f
+
+    private fun convertLineJoin(lineJoin: Context2d.LineJoin): Int {
+        return when (lineJoin) {
+            Context2d.LineJoin.BEVEL -> BasicStroke.JOIN_BEVEL
+            Context2d.LineJoin.MITER -> BasicStroke.JOIN_MITER
+            Context2d.LineJoin.ROUND -> BasicStroke.JOIN_ROUND
+        }
+    }
+
+    private fun convertLineCap(lineCap: Context2d.LineCap): Int {
+        return when (lineCap) {
+            Context2d.LineCap.BUTT -> BasicStroke.CAP_BUTT
+            Context2d.LineCap.ROUND -> BasicStroke.CAP_ROUND
+            Context2d.LineCap.SQUARE -> BasicStroke.CAP_SQUARE
+        }
+    }
+
+    private fun BasicStroke.change(
+        width: Float? = null,
+        join: Int? = null,
+        cap: Int? = null,
+        miterlimit: Float? = null,
+        dash: FloatArray? = null,
+        dashPhase: Float? = null
+    ): BasicStroke {
+        return BasicStroke(
+            width ?: this.lineWidth,
+            cap ?: this.endCap,
+            join ?: this.lineJoin,
+            miterlimit ?: this.miterLimit,
+            dash ?: this.dashArray,
+            dashPhase ?: this.dashPhase
+        )
+    }
+
+    private fun Graphics2D.glyphVector(str: String): GlyphVector {
+        return font.createGlyphVector(
+            fontRenderContext,
+            str
+        )
+    }
+
+    private fun textPosition(glyphVector: GlyphVector, x: Double, y: Double): DoubleVector {
+        val box: Rectangle2D = glyphVector.visualBounds
+        val fm = graphics.fontMetrics
+
+        val offsetX = when(textAlign) {
+            Context2d.TextAlign.START,
+            Context2d.TextAlign.LEFT -> x
+
+            Context2d.TextAlign.CENTER -> x - box.width / 2
+
+            Context2d.TextAlign.END,
+            Context2d.TextAlign.RIGHT -> x - box.width
+        }
+
+        val offsetY = when(textBaseline) {
+            Context2d.TextBaseline.ALPHABETIC -> y -  (fm.leading + fm.ascent)
+            Context2d.TextBaseline.BOTTOM -> y - fm.height
+            Context2d.TextBaseline.HANGING -> TODO()
+            Context2d.TextBaseline.IDEOGRAPHIC -> TODO()
+            Context2d.TextBaseline.MIDDLE -> y - (fm.leading + fm.ascent / 2)
+            Context2d.TextBaseline.TOP -> y
+        }
+
+        return DoubleVector(offsetX, offsetY)
+    }
+
+    private fun paintText(text: String, x: Double, y: Double, painter: (Shape) -> Unit) {
+        val savedTransform = graphics.transform
+        val gv = graphics.glyphVector(text)
+
+        val position = textPosition(gv, x, y)
+        graphics.translate(position.x, position.y)
+
+        painter(gv.outline)
+
+        graphics.transform = savedTransform
+    }
+
     override fun clearRect(rect: DoubleRectangle) {
-        TODO("Not yet implemented")
+        graphics.clearRect(rect.left.toInt(), rect.top.toInt(), rect.width.toInt(), rect.height.toInt())
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
-        TODO("Not yet implemented")
+        val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
+        graphics.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), null)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
-        TODO("Not yet implemented")
+        val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
+        graphics.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), dw.toInt(), dh.toInt(), null)
     }
 
     override fun drawImage(
@@ -35,23 +132,28 @@ internal class AwtContext2d(private val myContext2d: Graphics) : Context2d {
         dw: Double,
         dh: Double
     ) {
-        TODO("Not yet implemented")
+        val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
+        graphics.drawImage(awtSnapshot.image,
+            sx.toInt(), sy.toInt(), sw.toInt(), sh.toInt(),
+            dx.toInt(), dy.toInt(), dw.toInt(), dh.toInt(), null)
     }
 
     override fun beginPath() {
-        TODO("Not yet implemented")
+        currentPath = GeneralPath()
     }
 
     override fun closePath() {
-        TODO("Not yet implemented")
+        currentPath?.closePath() ?: error("Can't find path")
     }
 
     override fun stroke() {
-        TODO("Not yet implemented")
+        graphics.color = strokeColor
+        graphics.draw(currentPath)
     }
 
     override fun fill() {
-        TODO("Not yet implemented")
+        graphics.color = fillColor
+        graphics.fill(currentPath)
     }
 
     override fun fillEvenOdd() {
@@ -59,15 +161,15 @@ internal class AwtContext2d(private val myContext2d: Graphics) : Context2d {
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
-        TODO("Not yet implemented")
+        graphics.fillRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
     }
 
     override fun moveTo(x: Double, y: Double) {
-        TODO("Not yet implemented")
+        currentPath?.moveTo(x, y)
     }
 
     override fun lineTo(x: Double, y: Double) {
-        TODO("Not yet implemented")
+        currentPath?.lineTo(x, y)
     }
 
     override fun arc(
@@ -78,7 +180,9 @@ internal class AwtContext2d(private val myContext2d: Graphics) : Context2d {
         endAngle: Double,
         anticlockwise: Boolean
     ) {
-        TODO("Not yet implemented")
+        Arc2D.Double(x, y, radius * 2, radius * 2, startAngle, endAngle, OPEN).let {
+            currentPath?.append(it, true)
+        }
     }
 
     override fun save() {
@@ -90,55 +194,61 @@ internal class AwtContext2d(private val myContext2d: Graphics) : Context2d {
     }
 
     override fun setFillStyle(color: String?) {
-        TODO("Not yet implemented")
+        fillColor = Color.getColor(color)
     }
 
     override fun setStrokeStyle(color: String?) {
-        TODO("Not yet implemented")
+        strokeColor = Color.getColor(color)
     }
 
     override fun setGlobalAlpha(alpha: Double) {
-        TODO("Not yet implemented")
+        globalAlpha = alpha.toFloat()
+        graphics.composite = AlphaComposite.getInstance(SRC_OVER, globalAlpha)
     }
 
     override fun setFont(f: String) {
-        TODO("Not yet implemented")
+        font = Font.getFont(f)
+        graphics.font = font
     }
 
     override fun setLineWidth(lineWidth: Double) {
-        TODO("Not yet implemented")
+        stroke = stroke.change(
+            width = lineWidth.toFloat()
+        )
+
+        graphics.stroke = stroke
     }
 
     override fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
-        TODO("Not yet implemented")
+        graphics.drawRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
     }
 
     override fun strokeText(text: String, x: Double, y: Double) {
-        TODO("Not yet implemented")
+        paintText(text, x, y, graphics::draw)
     }
 
     override fun fillText(text: String, x: Double, y: Double) {
-        TODO("Not yet implemented")
+        paintText(text, x, y, graphics::fill)
     }
 
     override fun scale(x: Double, y: Double) {
-        TODO("Not yet implemented")
+        graphics.scale(x, y)
     }
 
     override fun rotate(angle: Double) {
-        TODO("Not yet implemented")
+        graphics.rotate(angle)
     }
 
     override fun translate(x: Double, y: Double) {
-        TODO("Not yet implemented")
+        graphics.translate(x, y)
     }
 
     override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        TODO("Not yet implemented")
+        graphics.transform(AffineTransform(m11, m12, m21, m22, dx, dy))
     }
 
     override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) {
-        TODO("Not yet implemented")
+        currentPath?.curveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
     override fun quadraticCurveTo(cpx: Double, cpy: Double, x: Double, y: Double) {
@@ -146,35 +256,46 @@ internal class AwtContext2d(private val myContext2d: Graphics) : Context2d {
     }
 
     override fun setLineJoin(lineJoin: Context2d.LineJoin) {
-        TODO("Not yet implemented")
+        stroke = stroke.change(
+            join = convertLineJoin(lineJoin)
+        )
+
+        graphics.stroke = stroke
     }
 
     override fun setLineCap(lineCap: Context2d.LineCap) {
-        TODO("Not yet implemented")
+        stroke = stroke.change(
+            join = convertLineCap(lineCap)
+        )
+
+        graphics.stroke = stroke
     }
 
     override fun setTextBaseline(baseline: Context2d.TextBaseline) {
-        TODO("Not yet implemented")
+        textBaseline = baseline
     }
 
     override fun setTextAlign(align: Context2d.TextAlign) {
-        TODO("Not yet implemented")
+        textAlign = align
     }
 
     override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        TODO("Not yet implemented")
+        graphics.transform = AffineTransform(m11, m12, m21, m22, dx, dy)
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
-        TODO("Not yet implemented")
+        stroke = stroke.change(
+            dash = lineDash.map { it.toFloat() }.toFloatArray()
+        )
+
+        graphics.stroke = stroke
     }
 
     override fun measureText(str: String): Double {
-        TODO("Not yet implemented")
+        return graphics.glyphVector(str).visualBounds.width
     }
 
     override fun measureText(str: String, font: String): DoubleVector {
         TODO("Not yet implemented")
     }
-
 }

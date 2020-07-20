@@ -10,8 +10,6 @@ import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.ScaledCanvas
-import sun.java2d.SunGraphics2D
-import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Image
 import java.awt.image.BufferedImage
@@ -22,7 +20,7 @@ private constructor(
     val image: Image,
     size: Vector,
     pixelRatio: Double
-) : ScaledCanvas(AwtContext2d(image.graphics), size, pixelRatio) {
+) : ScaledCanvas(AwtContext2d(image.graphics as Graphics2D), size, pixelRatio) {
 
     companion object {
         fun create(size: Vector, pixelRatio: Double) {
