@@ -17,14 +17,14 @@ import java.awt.image.BufferedImage.TYPE_INT_ARGB
 
 internal class AwtCanvas
 private constructor(
-    val image: Image,
+    val image: BufferedImage,
     size: Vector,
     pixelRatio: Double
-) : ScaledCanvas(AwtContext2d(image.graphics as Graphics2D), size, pixelRatio) {
+) : ScaledCanvas(AwtContext2d(image.createGraphics() as Graphics2D), size, pixelRatio) {
 
     companion object {
-        fun create(size: Vector, pixelRatio: Double) {
-            AwtCanvas(BufferedImage(size.x, size.y, TYPE_INT_ARGB), size, pixelRatio)
+        fun create(size: Vector, pixelRatio: Double): Canvas {
+            return AwtCanvas(BufferedImage(size.x, size.y, TYPE_INT_ARGB), size, pixelRatio)
         }
     }
 

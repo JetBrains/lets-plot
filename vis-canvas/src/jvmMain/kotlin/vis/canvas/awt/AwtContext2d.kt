@@ -194,11 +194,11 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun setFillStyle(color: String?) {
-        fillColor = Color.getColor(color)
+        fillColor = Color.getColor(color) ?: Color.BLACK
     }
 
     override fun setStrokeStyle(color: String?) {
-        strokeColor = Color.getColor(color)
+        strokeColor = Color.getColor(color) ?: Color.BLACK
     }
 
     override fun setGlobalAlpha(alpha: Double) {
