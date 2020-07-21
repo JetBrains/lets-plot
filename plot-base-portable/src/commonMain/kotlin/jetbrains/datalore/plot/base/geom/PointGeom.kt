@@ -49,8 +49,8 @@ open class PointGeom : GeomBase() {
 
             if (SeriesUtil.allFinite(x, y)) {
                 val location = helper.toClient(DoubleVector(x!!, y!!), p)
-                val shape = p.shape()!!
                 val scale = getScale(ctx, p)
+                val shape = p.shape()!!
 
                 targetCollector.addPoint(
                     i, location, scale * shape.size(p) / 2,
