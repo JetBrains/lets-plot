@@ -105,6 +105,7 @@ object GeomUtil {
         return ORDERING_X.sortedCopy(dataPoints)
     }
 
+    @Suppress("FunctionName")
     fun ordered_Y(dataPoints: Iterable<DataPointAesthetics>, reversed: Boolean): Iterable<DataPointAesthetics> {
         val ordering = if (reversed) ORDERING_Y.reverse() else ORDERING_Y
         if (ordering.isOrdered(dataPoints)) {

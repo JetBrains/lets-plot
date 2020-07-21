@@ -139,6 +139,7 @@ object Option {
 
         object Point {
             const val ANIMATION = "animation"
+            const val SIZE_UNIT = "size_unit"
         }
 
         object Image {
