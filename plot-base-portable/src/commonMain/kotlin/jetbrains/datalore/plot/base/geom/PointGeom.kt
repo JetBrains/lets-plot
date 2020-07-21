@@ -24,6 +24,7 @@ import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 open class PointGeom : GeomBase() {
 
     var animation: Any? = null
+    var sizeUnit: String? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -47,16 +48,27 @@ open class PointGeom : GeomBase() {
 
             if (SeriesUtil.allFinite(x, y)) {
                 val location = helper.toClient(DoubleVector(x!!, y!!), p)
+                val scale = getScaleBySizeUnit(ctx)
 
                 val shape = p.shape()!!
-                targetCollector.addPoint(i, location, shape.size(p) / 2,
+                targetCollector.addPoint(
+                    i, location, scale * shape.size(p) / 2,
                     tooltipParams(p)
                 )
-                val o = PointShapeSvg.create(shape, location, p)
+                val o = PointShapeSvg.create(shape, location, p, scale)
                 o.appendTo(slimGroup)
             }
         }
         root.add(wrap(slimGroup))
+    }
+
+    private fun getScaleBySizeUnit(ctx: GeomContext): Double {
+        sizeUnit?.let {
+            val aes = Aes.get(sizeUnit!!) as Aes<Double>
+            return ctx.getUnitResolution(aes)
+        }
+
+        return 1.0
     }
 
     companion object {

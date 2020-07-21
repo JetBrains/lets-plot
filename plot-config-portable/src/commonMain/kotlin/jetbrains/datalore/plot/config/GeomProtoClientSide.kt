@@ -118,6 +118,19 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.has(Point.ANIMATION)) {
                     geom.animation = opts[Point.ANIMATION]
                 }
+
+                if (opts.has(Point.SIZE_UNIT)) {
+                    val sz_unit = opts.getString(Point.SIZE_UNIT)
+
+                    if (sz_unit!= null) {
+                        if (sz_unit != "x" && sz_unit!= "y") {
+                            throw IllegalArgumentException("Expected: size_unit = 'x' or size_unit = 'y'")
+                        }
+
+                        geom.sizeUnit = sz_unit
+                    }
+
+                }
                 geom
             }
 
@@ -143,7 +156,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
                     if (naValue != null) {
                         geom.naValue = naValue
-                    }else {
+                    } else {
                         throw IllegalArgumentException("Expected: na_value = 'some string'")
                     }
                 }
