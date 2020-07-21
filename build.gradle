@@ -25,6 +25,7 @@ def include_sources_letsPlotJvmCommon = [
         'plot-builder',
         'plot-config-portable',
         'plot-config',
+        'plot-image-export',
 ]
 
 def include_sources_letsPlotJvmJfx = [
