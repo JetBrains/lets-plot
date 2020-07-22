@@ -16,6 +16,7 @@ import javafx.scene.text.TextAlignment
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toDegrees
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.CssFontParser
@@ -66,6 +67,10 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         val family = parser.fontFamily
         val size = parser.fontSize
         return if (size == null) Font.font(family) else Font.font(family, size)
+    }
+
+    private fun Color.toJavafxColor(): JavafxColor {
+        return JavafxColor(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0)
     }
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
@@ -146,12 +151,12 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.restore()
     }
 
-    override fun setFillStyle(color: String?) {
-        myContext2d.fill = if (color != null) JavafxColor.valueOf(color) else null
+    override fun setFillStyle(color: Color?) {
+        myContext2d.fill = color?.toJavafxColor() ?: JavafxColor.BLACK
     }
 
-    override fun setStrokeStyle(color: String?) {
-        myContext2d.stroke = if (color != null) JavafxColor.valueOf(color) else null
+    override fun setStrokeStyle(color: Color?) {
+        myContext2d.stroke = color?.toJavafxColor() ?: JavafxColor.BLACK
     }
 
     override fun setGlobalAlpha(alpha: Double) {

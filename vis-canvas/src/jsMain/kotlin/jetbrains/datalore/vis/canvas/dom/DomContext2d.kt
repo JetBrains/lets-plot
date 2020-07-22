@@ -11,6 +11,7 @@ import jetbrains.datalore.base.js.css.enumerables.CssLineCap
 import jetbrains.datalore.base.js.css.enumerables.CssLineJoin
 import jetbrains.datalore.base.js.css.enumerables.CssTextAlign
 import jetbrains.datalore.base.js.css.enumerables.CssTextBaseLine
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.CssFontParser
@@ -125,12 +126,12 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         myContext2d.restore()
     }
 
-    override fun setFillStyle(color: String?) {
-        myContext2d.fillStyle = color
+    override fun setFillStyle(color: Color?) {
+        myContext2d.fillStyle = color?.toCssColor()
     }
 
-    override fun setStrokeStyle(color: String?) {
-        myContext2d.strokeStyle = color
+    override fun setStrokeStyle(color: Color?) {
+        myContext2d.strokeStyle = color?.toCssColor()
     }
 
     override fun setGlobalAlpha(alpha: Double) {

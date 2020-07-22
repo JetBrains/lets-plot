@@ -7,6 +7,7 @@ package jetbrains.datalore.vis.canvas
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 
 internal class ScaledContext2d(private val myContext2d: Context2d, private val myScale: Double) :
@@ -111,11 +112,11 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.restore()
     }
 
-    override fun setFillStyle(color: String?) {
+    override fun setFillStyle(color: Color?) {
         myContext2d.setFillStyle(color)
     }
 
-    override fun setStrokeStyle(color: String?) {
+    override fun setStrokeStyle(color: Color?) {
         myContext2d.setStrokeStyle(color)
     }
 

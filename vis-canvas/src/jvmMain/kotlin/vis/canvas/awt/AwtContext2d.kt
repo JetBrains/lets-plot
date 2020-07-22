@@ -7,6 +7,7 @@ package jetbrains.datalore.vis.canvas.awt
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
 import java.awt.*
@@ -17,11 +18,12 @@ import java.awt.geom.Arc2D
 import java.awt.geom.Arc2D.OPEN
 import java.awt.geom.GeneralPath
 import java.awt.geom.Rectangle2D
+import java.awt.Color as AwtColor
 
 internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     private var currentPath: GeneralPath? = null
-    private var strokeColor: Color = Color.BLACK
-    private var fillColor: Color = Color.BLACK
+    private var strokeColor: AwtColor = AwtColor.BLACK
+    private var fillColor: AwtColor = AwtColor.BLACK
     private var stroke: BasicStroke = BasicStroke()
     private var textBaseline: Context2d.TextBaseline = Context2d.TextBaseline.ALPHABETIC
     private var textAlign: Context2d.TextAlign = Context2d.TextAlign.START
@@ -105,6 +107,10 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         painter(gv.outline)
 
         graphics.transform = savedTransform
+    }
+
+    private fun Color.toAwtColor(): AwtColor {
+        return AwtColor(red, green, blue, alpha)
     }
 
     override fun clearRect(rect: DoubleRectangle) {
@@ -193,12 +199,12 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         TODO("Not yet implemented")
     }
 
-    override fun setFillStyle(color: String?) {
-        fillColor = Color.getColor(color) ?: Color.BLACK
+    override fun setFillStyle(color: Color?) {
+        fillColor = color?.toAwtColor() ?: AwtColor.BLACK
     }
 
-    override fun setStrokeStyle(color: String?) {
-        strokeColor = Color.getColor(color) ?: Color.BLACK
+    override fun setStrokeStyle(color: Color?) {
+        strokeColor = color?.toAwtColor() ?: AwtColor.BLACK
     }
 
     override fun setGlobalAlpha(alpha: Double) {

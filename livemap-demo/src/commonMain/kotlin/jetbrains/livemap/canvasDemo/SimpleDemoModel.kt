@@ -11,8 +11,8 @@ import jetbrains.datalore.vis.canvas.Canvas
 class SimpleDemoModel(canvas: Canvas) {
     init {
         with(canvas.context2d) {
-            setFillStyle(Color.BLUE.toCssColor())
-            setStrokeStyle(Color.RED.toCssColor())
+            setFillStyle(Color.BLUE)
+            setStrokeStyle(Color.RED)
 
             beginPath()
             moveTo(20.0, 20.0)

@@ -74,7 +74,7 @@ internal interface Symbolizer {
         }
 
         override fun applyTo(ctx: Context2d) {
-            myStyle.stroke?.let { ctx.setStrokeStyle(it.toCssColor()) }
+            myStyle.stroke?.let { ctx.setStrokeStyle(it) }
             myStyle.strokeWidth?.let(ctx::setLineWidth)
 
             myStyle.lineCap?.let { ctx.setLineCap(stringToLineCap(it)) }
@@ -321,8 +321,8 @@ internal interface Symbolizer {
 
         fun setBaseStyle(ctx: Context2d, style: Style) {
             style.strokeWidth?.let(ctx::setLineWidth)
-            style.fill?.let { ctx.setFillStyle(it.toCssColor()) }
-            style.stroke?.let { ctx.setStrokeStyle(it.toCssColor()) }
+            style.fill?.let { ctx.setFillStyle(it) }
+            style.stroke?.let { ctx.setStrokeStyle(it) }
         }
     }
 }

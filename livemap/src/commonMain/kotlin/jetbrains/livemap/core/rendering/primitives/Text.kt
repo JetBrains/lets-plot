@@ -34,7 +34,7 @@ class Text : RenderBox {
             isDirty = false
         }
 
-        ctx.setFillStyle(color.toHexColor())
+        ctx.setFillStyle(color)
 
         var y = fontHeight
         for (s in text) {
