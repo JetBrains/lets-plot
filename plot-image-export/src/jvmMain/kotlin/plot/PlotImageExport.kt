@@ -35,7 +35,7 @@ object PlotImageExport {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector? = null,
         format: Format = PNG(),
-        scaleFactor: Number = 1.0
+        scaleFactor: Double = 1.0
     ): ByteArray {
         require(scaleFactor == 1.0 || plotSize != null) { "plotSize should be set when scaleFactor != 1.0 ($scaleFactor)" }
 
@@ -62,7 +62,7 @@ object PlotImageExport {
             }
         }
 
-        val imageSize = plotSize?.mul(scaleFactor.toDouble())
+        val imageSize = plotSize?.mul(scaleFactor)
         if (imageSize != null) {
             transcoder.apply {
                 addTranscodingHint(ImageTranscoder.KEY_WIDTH, imageSize.x.toFloat())
@@ -70,7 +70,7 @@ object PlotImageExport {
             }
         }
         // adds only metadata, doesn't affect resolution/presentation
-        transcoder.addTranscodingHint(ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER, 25.4f / (96.0f * scaleFactor.toFloat()))
+        transcoder.addTranscodingHint(ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER, (25.4 / (96.0 * scaleFactor)).toFloat())
 
         val svg = buildSvgImageFromRawSpecs(plotSpec, plotSize).let(::StringReader)
         val image = ByteArrayOutputStream()

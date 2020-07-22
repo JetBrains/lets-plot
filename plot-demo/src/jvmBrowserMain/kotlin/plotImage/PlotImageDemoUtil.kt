@@ -30,7 +30,25 @@ object PlotImageDemoUtil {
             getHtml(
                 title,
                 plotSpecList,
-                plotSize
+                plotSize,
+                MutableList(plotSpecList.size) { SCALE_FACTOR }
+            )
+        }
+    }
+
+    // Render same plot with different scales
+    fun showScaled(
+        title: String,
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector,
+        scaleFactors: List<Double>
+    ) {
+        BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
+            getHtml(
+                title,
+                MutableList(scaleFactors.size) { plotSpec },
+                plotSize,
+                scaleFactors
             )
         }
     }
@@ -38,8 +56,10 @@ object PlotImageDemoUtil {
     private fun getHtml(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
-        plotSize: DoubleVector
+        plotSize: DoubleVector,
+        scaleFactors: List<Double>
     ): String {
+        require(scaleFactors.size == plotSpecList.size) { "plots count (${plotSpecList.size}) and scales count (${scaleFactors.size}) should be equal." }
 
         val writer = StringWriter().appendHTML().html {
             lang = "en"
@@ -61,13 +81,13 @@ object PlotImageDemoUtil {
                 }
             }
             body {
-                for (plotSpec in plotSpecList) {
+                plotSpecList.zip(scaleFactors).forEach { (plotSpec, scaleFactor) ->
                     val image = PlotImageExport
                         .buildImageFromRawSpecs(
                             plotSpec = plotSpec,
                             plotSize = plotSize,
                             format = FORMAT,
-                            scaleFactor = SCALE_FACTOR
+                            scaleFactor = scaleFactor
                         )
 
                     val imgSrc = when(IMG_AS_DATA_URI) {
@@ -76,7 +96,10 @@ object PlotImageDemoUtil {
                     }
 
                     div("demo") {
-                        unsafe { + ("<img src=\"$imgSrc\" width=\"${plotSize.x}\" height=\"${plotSize.y}\"/>") }
+                        if (scaleFactors.distinct().size != 1) {
+                            p { + "scaleFactor: $scaleFactor" }
+                        }
+                        unsafe { + "<img src=\"$imgSrc\" width=\"${plotSize.x}\" height=\"${plotSize.y}\"/>" }
                     }
                 }
             }
