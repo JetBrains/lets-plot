@@ -268,17 +268,25 @@ class AxisComponent(length: Double, orientation: Orientation) : SvgComponent() {
         return g
     }
 
-    fun tickLabelDistance(): Double {
-        return tickMarkLength.get() + tickMarkPadding.get()
+    private fun tickMarkLength(): Double {
+        return if (myTickMarksEnabled.get()) {
+            tickMarkLength.get()
+        } else {
+            0.0
+        }
     }
 
-    fun tickLabelBaseOffset(): DoubleVector {
+    private fun tickLabelDistance(): Double {
+        return tickMarkLength() + tickMarkPadding.get()
+    }
+
+    private fun tickLabelBaseOffset(): DoubleVector {
         val distance = tickLabelDistance()
-        when (orientation.get()) {
-            Orientation.LEFT -> return DoubleVector(-distance, 0.0)
-            Orientation.RIGHT -> return DoubleVector(distance, 0.0)
-            Orientation.TOP -> return DoubleVector(0.0, -distance)
-            Orientation.BOTTOM -> return DoubleVector(0.0, distance)
+        return when (orientation.get()) {
+            Orientation.LEFT -> DoubleVector(-distance, 0.0)
+            Orientation.RIGHT -> DoubleVector(distance, 0.0)
+            Orientation.TOP -> DoubleVector(0.0, -distance)
+            Orientation.BOTTOM -> DoubleVector(0.0, distance)
             else -> throw RuntimeException("Unexpected orientation:" + orientation.get())
         }
     }
