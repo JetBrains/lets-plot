@@ -33,11 +33,10 @@ class IgnoringStrategyKind(enum.Enum):
 
 class LevelKind(enum.Enum):
     country = 'country'
-    macro_state = 'macro_state'
     state = 'state'
-    macro_county = 'macro_county'
     county = 'county'
     city = 'city'
+
 
 
 MODE_BY_GEOCODING = 'by_geocoding'

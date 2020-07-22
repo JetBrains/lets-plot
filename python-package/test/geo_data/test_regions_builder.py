@@ -120,7 +120,7 @@ def test_with_regions():
     actual = \
         regions_builder(
             request=names(FOO),
-            within=Regions([FOO.feature])) \
+            within=Regions(LevelKind.city, [FOO.feature])) \
             ._get_queries()
 
     expected = [
@@ -476,14 +476,10 @@ def names(*queries: Query) -> List[str]:
 
 
 def single_region(*queries: Query) -> Regions:
-    return Regions(
-        [
-            query.feature for query in queries
-        ]
-    )
+    return Regions(LevelKind.city, [query.feature for query in queries])
 
 
 def regions_list(*queries: Query) -> List[Regions]:
     return [
-        Regions([query.feature]) for query in queries
+        Regions(LevelKind.city, [query.feature]) for query in queries
     ]

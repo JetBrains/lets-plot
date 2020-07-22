@@ -65,7 +65,7 @@ def regions_xy(lon, lat, level, within=None):
     if not isinstance(response, SuccessResponse):
         _raise_exception(response)
 
-    return Regions(response.features, False)
+    return Regions(response.level, response.features, False)
 
 
 def regions_builder(level=None, request=None, within=None, highlights=False) -> RegionsBuilder:

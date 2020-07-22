@@ -45,8 +45,8 @@ GEO_RECT_MAX_LON: float = 9
 GEO_RECT_MAX_LAT: float = 7
 
 
-def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str]) -> Regions:
-    return Regions([make_region(request, name, geo_object_id, highlights)])
+def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str], level_kind: LevelKind = LevelKind.city) -> Regions:
+    return Regions(level_kind, [make_region(request, name, geo_object_id, highlights)])
 
 
 def make_region(request: str, name: str, geo_object_id: str, highlights: List[str]) -> GeocodedFeature:

@@ -15,7 +15,7 @@ from lets_plot.geo_data.gis.request import MapRegion, RegionQuery, GeocodingRequ
 from lets_plot.geo_data.gis.response import LevelKind, FeatureBuilder, GeoPoint
 from lets_plot.geo_data.livemap_helper import _prepare_location, RegionKind, _prepare_parent, \
     LOCATION_LIST_ERROR_MESSAGE, LOCATION_DATAFRAME_ERROR_MESSAGE
-from lets_plot.geo_data.regions import _to_scope, _to_resolution, _ensure_is_list, Regions, DF_REQUEST, DF_ID, \
+from lets_plot.geo_data.regions import _to_scope, _coerce_resolution, _ensure_is_list, Regions, DF_REQUEST, DF_ID, \
     DF_FOUND_NAME
 from .geo_data import make_geocode_region, make_region, make_success_response
 
@@ -101,6 +101,7 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
 
     # single region
     (Regions(
+        LEVEL_KIND,
         [
             FOO,
             BAR
@@ -120,8 +121,8 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
 
     # list of regions
     ([
-         Regions([FOO]),
-         Regions([BAR])
+         Regions(LEVEL_KIND, [FOO]),
+         Regions(LEVEL_KIND, [BAR])
      ],
 
      [
@@ -133,7 +134,7 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
     # mix of strings and regions
     ([
          'foo',
-         Regions([BAR]),
+         Regions(LEVEL_KIND, [BAR]),
      ],
      [
          MapRegion.with_name(FOO.query),
@@ -154,6 +155,7 @@ def test_to_parent_with_id():
 def test_request_remove_duplicated_ids(mock_request):
     try:
         Regions(
+            LEVEL_KIND,
             [
                 make_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS),
                 make_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS)
@@ -196,7 +198,7 @@ def test_geocode_boundary(mock_request):
         ExplicitRequest(
             requested_payload=[PayloadKind.boundaries],
             ids=REGION_LIST,
-            resolution=_to_resolution(RESOLUTION)
+            resolution=_coerce_resolution(RESOLUTION)
         )
     )
 
@@ -228,6 +230,7 @@ def test_reorder_for_centroids_should_happen(mock_request):
     ).build()
 
     df = Regions(
+        LevelKind.city,
         [
             make_region('Los Angeles', 'Los Angeles', '1', []),
             make_region('New York', 'New York', '2', []),
@@ -246,10 +249,9 @@ def test_reorder_for_centroids_should_happen(mock_request):
     (9, 9),
     (12, 12),
     (15, 15),
-    (None, None),
 ])
-def test_to_resolution(arg: Union[str, int], expected_resolution: int):
-    assert expected_resolution == _to_resolution(arg)
+def test_coerce_resolution(arg: int, expected_resolution: int):
+    assert expected_resolution == _coerce_resolution(arg)
 
 
 @pytest.mark.parametrize('location,expected_type,expected_data', [

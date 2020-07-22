@@ -1,3 +1,4 @@
+import enum
 from abc import abstractmethod
 from typing import List, Dict, Optional, Union
 
@@ -20,6 +21,24 @@ DF_HIGHLIGHTS = 'highlights'
 DF_GROUP = 'group'
 
 
+class Resolution(enum.Enum):
+    city_high = 15
+    city_medium = 14
+    city_low = 13
+    county_high = 12
+    county_medium = 11
+    county_low = 10
+    state_high = 9
+    state_medium = 8
+    state_low = 7
+    country_high = 6
+    country_medium = 5
+    country_low = 4
+    world_high = 3
+    world_medium = 2
+    world_low = 1
+
+
 def select_not_empty_name(feature: GeocodedFeature) -> str:
     return feature.name if feature.query is None or feature.query == '' else feature.query
 
@@ -35,7 +54,8 @@ class DataFrameProvider():
 
 
 class Regions(CanToDataFrame):
-    def __init__(self, features: List[GeocodedFeature], highlights: bool = False):
+    def __init__(self, level_kind: LevelKind, features: List[GeocodedFeature], highlights: bool = False):
+        self._level_kind: LevelKind = level_kind
         self._geocoded_features: List[GeocodedFeature] = features
         self._highlights: bool = highlights
 
@@ -43,18 +63,60 @@ class Regions(CanToDataFrame):
         return self.to_data_frame().to_string()
 
     def as_list(self) -> List['Regions']:
-        return [Regions([feature], self._highlights) for feature in self._geocoded_features]
+        return [Regions(self._level_kind, [feature], self._highlights) for feature in self._geocoded_features]
 
     def unique_ids(self) -> List[str]:
         seen = set()
         seen_add = seen.add
         return [feature.id for feature in self._geocoded_features if not (feature.id in seen or seen_add(feature.id))]
 
-    def boundaries(self, resolution=None):
+
+    def boundaries(self, resolution: Optional[Union[int, str, Resolution]] = None):
+        """
+        Download boundaries for given regions in form of GeoDataFrame.
+
+        Parameters
+        ----------
+        resolution: [str | int | None]
+            Boundaries resolution.
+            str: ['city', 'county', 'state', 'country', 'world']
+            Kind of objects expceted to be displayed. It highly depends on number of objects - 1 state
+            can use 'state' resolution, but for 50 states it is better
+            to use 'country', like when you see all states of the country.
+            'city' is for max details, 'world' is for max performance.
+            It is allowed to use any kind of resoltuin for any regions, i.e. to use 'city' for state to see more
+            detailed boundary (when need to show zoomed part), or 'world' (when used for small preview).
+
+            int: [1-15]
+            15 - maximum quality, 1 - minimum:
+            1-3 for world view
+            4-6 for countries view
+            7-9 for states view
+            10-12 for counties view
+            13-15 for cities view
+
+            None:
+            Autodetection. It uses level_kind and number of objects to try to keep
+            balance between quality and performance.
+        """
         from lets_plot.geo_data.to_geo_data_frame import BoundariesGeoDataFrame
+
+        if resolution is None:
+            autodetected_resolution = _autodetect_resolution(self._level_kind, len(self._geocoded_features))
+            print('autodetected resolution: ' + str(autodetected_resolution))
+            int_resolution = _coerce_resolution(autodetected_resolution.value)
+        elif isinstance(resolution, int):
+            int_resolution = _coerce_resolution(resolution)
+        elif isinstance(resolution, Resolution):
+            int_resolution = _coerce_resolution(resolution.value)
+        elif isinstance(resolution, str):
+            int_resolution = _coerce_resolution(_parse_resolution(resolution).value)
+        else:
+            raise ValueError('Invalid resolution: ' + type(resolution).__name__)
+
         return self._execute(
             self._request_builder(PayloadKind.boundaries)
-                .set_resolution(_to_resolution(resolution)),
+                .set_resolution(int_resolution),
             BoundariesGeoDataFrame()
         )
 
@@ -205,6 +267,28 @@ def _to_level_kind(level_kind: Optional[Union[str, LevelKind]]) -> Optional[Leve
     raise ValueError('Invalid level kind')
 
 
+def _parse_resolution(resolution: str) -> Resolution:
+    if isinstance(resolution, str):
+        if resolution == 'city':
+            return Resolution.city_medium
+
+        if resolution == 'county':
+            return Resolution.county_medium
+
+        if resolution == 'state':
+            return Resolution.state_medium
+
+        if resolution == 'country':
+            return Resolution.country_medium
+
+        if resolution == 'world':
+            return Resolution.world_high # high! very bad quality with meidum/low
+
+        return Resolution[resolution]
+
+    raise ValueError('Invalid resolution type: ' + type(resolution).__name__)
+
+
 def _to_scope(location: scope_types) -> Optional[Union[List[MapRegion], MapRegion]]:
     if location is None:
         return None
@@ -240,12 +324,45 @@ def _ensure_is_list(obj: request_types) -> Optional[List[str]]:
     raise ValueError("Wrong type")
 
 
-def _to_resolution(res: Optional[int]) -> Optional[int]:
-    if res is None:
-        return None
-
+def _coerce_resolution(res: int) -> int:
     if isinstance(res, int):
         if 1 <= res <= 15:
             return res
+        else:
+            raise ValueError("Invalid resolution value: " + str(res))
 
-    raise ValueError("Invalid resolution value: " + str(res))
+    raise ValueError("Unsupported resolution type: " + type(res).__name__)
+
+
+def _autodetect_resolution(level: LevelKind, count: int) -> Resolution:
+    if level == LevelKind.city:
+        if count < 10:
+            return Resolution.city_medium
+        elif count < 100:
+            return Resolution.country_low
+        else:
+            return Resolution.world_low
+
+    if level == LevelKind.county:
+        if count < 10:
+            return Resolution.county_medium
+        elif count < 100:
+            return Resolution.state_low
+        else:
+            return Resolution.country_low
+
+    if level == LevelKind.state:
+        if count < 10:
+            return Resolution.state_medium
+        if count < 50:
+            return Resolution.country_low
+        else:
+            return Resolution.world_low
+
+    if level == LevelKind.country:
+        if count < 3:
+            return Resolution.country_medium
+        elif count < 10:
+            return Resolution.country_low
+        else:
+            return Resolution.world_low

@@ -195,7 +195,7 @@ class RegionsBuilder:
         if not isinstance(response, SuccessResponse):
             _raise_exception(response)
 
-        return Regions(response.features, self._highlights)
+        return Regions(response.level, response.features, self._highlights)
 
     def _get_queries(self) -> List[RegionQuery]:
         for overriding in self._overridings:

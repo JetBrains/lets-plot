@@ -2,11 +2,12 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 from unittest import mock
+import pytest
 
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
-from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, RequestBuilder, RequestKind
+from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, LevelKind, RequestBuilder, RequestKind
 from lets_plot.geo_data.gis.response import FeatureBuilder, GeoPoint
-from lets_plot.geo_data.regions import _to_resolution, Regions, DF_ID, DF_FOUND_NAME, DF_REQUEST
+from lets_plot.geo_data.regions import _coerce_resolution, _parse_resolution, Regions, Resolution, DF_ID, DF_FOUND_NAME, DF_REQUEST
 from lets_plot.plot import ggplot, geom_polygon
 from .geo_data import make_region, make_success_response, get_map_data_meta
 
@@ -62,9 +63,20 @@ class TestMapRegions:
             ExplicitRequest(
                 requested_payload=[PayloadKind.boundaries],
                 ids=[USA_ID, RUSSIA_ID],
-                resolution=_to_resolution(RESOLUTION)
+                resolution=_coerce_resolution(RESOLUTION)
             )
         )
+
+    @pytest.mark.parametrize('str,expected', [
+        pytest.param('city', Resolution.city_medium),
+        pytest.param('county', Resolution.county_medium),
+        pytest.param('state', Resolution.state_medium),
+        pytest.param('country', Resolution.country_medium),
+        pytest.param('world', Resolution.world_medium),
+        pytest.param('city_high', Resolution.city_high)
+    ])
+    def test_parse_resolution(self, str, expected):
+        assert expected == _parse_resolution(str)
 
     @mock.patch.object(GeocodingService, 'do_request')
     def test_limits(self, mock_request):
@@ -96,6 +108,7 @@ class TestMapRegions:
 
     def test_to_dataframe(self):
         df = Regions(
+            LevelKind.city,
             [
                 self.foo.set_query('').set_id('123').build_geocoded(),
                 self.bar.set_query('').set_id('456').build_geocoded(),
@@ -106,6 +119,7 @@ class TestMapRegions:
 
     def test_as_list(self):
         regions = Regions(
+            LevelKind.city,
             [
                 self.foo.build_geocoded(),
                 self.bar.build_geocoded()
@@ -122,6 +136,7 @@ class TestMapRegions:
         foo_id = '123'
         foo_name = 'foo'
         geocoding_result = Regions(
+            LevelKind.city,
             [
                 FeatureBuilder().set_id(foo_id).set_query('').set_name(foo_name).build_geocoded()
             ]
@@ -130,7 +145,8 @@ class TestMapRegions:
         mock_request.return_value = make_success_response() \
             .set_geocoded_features(
             [
-                FeatureBuilder().set_id(foo_id).set_query(foo_id).set_name(foo_name).set_centroid(GeoPoint(0, 1)).build_geocoded()
+                FeatureBuilder().set_id(foo_id).set_query(foo_id).set_name(foo_name).set_centroid(
+                    GeoPoint(0, 1)).build_geocoded()
             ]
         ).build()
 
@@ -150,6 +166,7 @@ class TestMapRegions:
     def test_df_rows_order(self, mock_request):
 
         geocoding_result = Regions(
+            LevelKind.city,
             [
                 self.foo.set_query('').build_geocoded(),
                 self.bar.set_query('').build_geocoded(),
@@ -187,6 +204,7 @@ class TestMapRegions:
         bar_name = 'bar'
 
         geocoding_result = Regions(
+            LevelKind.city,
             [
                 self.foo.set_query('').build_geocoded(),
                 self.bar.set_query('').build_geocoded(),
@@ -214,16 +232,49 @@ class TestMapRegions:
 
         assert [self.foo.name, self.bar.name, self.foo.name] == df[DF_REQUEST].tolist()
 
-    def test_plot_should_has_meta_map_for_georeference(self):
+    # python invokes geocoding functions when Regions objects detected in map
+    # changed from previous version, where client invoked these functions
+    @mock.patch.object(GeocodingService, 'do_request')
+    def test_plot_should_have_geometries_when_regions_in_map_parameter(self, mock_request):
+
+        mock_request.return_value = make_success_response() \
+            .set_geocoded_features(
+            [
+                FeatureBuilder() \
+                    .set_query(USA_REQUEST) \
+                    .set_id(USA_ID) \
+                    .set_name(USA_NAME) \
+                    .set_boundary(GeoPoint(0, 1))
+                    .build_geocoded(),
+                FeatureBuilder() \
+                    .set_query(RUSSIA_REQUEST) \
+                    .set_id(RUSSIA_ID) \
+                    .set_name(RUSSIA_NAME) \
+                    .set_boundary(GeoPoint(0, 1))
+                    .build_geocoded()
+
+            ]
+        ).build()
+
         plotSpec = ggplot() + geom_polygon(map=self.make_regions())
 
+        # previous behaviour
+        # expected_map_data_meta = {
+        #    'georeference': {}
+        # }
+
         expected_map_data_meta = {
-            'georeference': {}
+            'geodataframe': {'geometry': 'geometry'}
         }
 
         assert expected_map_data_meta == get_map_data_meta(plotSpec, 0)
 
     def make_regions(self) -> Regions:
-        regions = Regions([make_region(USA_REQUEST, USA_NAME, USA_ID, USA_HIGHLIGHTS),
-                           make_region(RUSSIA_REQUEST, RUSSIA_NAME, RUSSIA_ID, RUSSIA_HIGHLIGHTS)])
+        regions = Regions(
+            LevelKind.country,
+            [
+                make_region(USA_REQUEST, USA_NAME, USA_ID, USA_HIGHLIGHTS),
+                make_region(RUSSIA_REQUEST, RUSSIA_NAME, RUSSIA_ID, RUSSIA_HIGHLIGHTS)
+            ]
+        )
         return regions
