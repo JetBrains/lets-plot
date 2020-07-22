@@ -20,6 +20,10 @@ DF_HIGHLIGHTS = 'highlights'
 DF_GROUP = 'group'
 
 
+def select_not_empty_name(feature: GeocodedFeature) -> str:
+    return feature.name if feature.query is None or feature.query == '' else feature.query
+
+
 class DataFrameProvider():
     def __init__(self):
         self._request: List[str] = []
@@ -29,28 +33,8 @@ class DataFrameProvider():
     def to_data_frame(self, features: List[GeocodedFeature]) -> DataFrame:
         raise ValueError('Not implemented')
 
-    def _extend_names(self, query: str, name: str, size: int):
-        query = self._select_not_empty_string(query, name)
-        self._request.extend([query] * size)
-        self._found_name.extend([name] * size)
-
-    def _get_request(self, feature: GeocodedFeature) -> str:
-        return feature.query
-
-    def _get_found_name(self, feature: GeocodedFeature) -> str:
-        return feature.name
-
-    def _select_not_empty_string(self, first: str, second: str) -> str:
-        if first is None or first == '':
-            return second
-        return first
-
 
 class Regions(CanToDataFrame):
-    @staticmethod
-    def _select_not_empty_name(feature: GeocodedFeature) -> str:
-        return feature.name if feature.query is None or feature.query == '' else feature.query
-
     def __init__(self, features: List[GeocodedFeature], highlights: bool = False):
         self._geocoded_features: List[GeocodedFeature] = features
         self._highlights: bool = highlights
@@ -91,7 +75,7 @@ class Regions(CanToDataFrame):
     # implements abstract in CanToDataFrame
     def to_data_frame(self) -> DataFrame:
         keyMappers: Dict = {
-            DF_REQUEST: lambda feature: self._select_not_empty_name(feature),
+            DF_REQUEST: lambda feature: select_not_empty_name(feature),
             DF_ID: lambda feature: feature.id,
             DF_FOUND_NAME: lambda feature: feature.name,
             DF_HIGHLIGHTS: lambda feature: feature.highlights

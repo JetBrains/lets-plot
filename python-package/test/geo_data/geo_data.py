@@ -86,7 +86,7 @@ def make_point_boundary(lon: float, lat: float) -> Multipolygon:
     )
 
 
-def make_single_point_boundary(lon: float, lat: float) -> GeoPoint:
+def make_single_point_boundary(lon: float = 0, lat: float = 0) -> GeoPoint:
     return GeoPoint(lon, lat)
 
 

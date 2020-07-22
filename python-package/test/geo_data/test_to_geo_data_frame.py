@@ -19,6 +19,36 @@ NAMED_FEATURE_BUILDER = FeatureBuilder() \
     .set_name(FOUND_NAME)
 
 
+def test_requestless_boundaries():
+    gdf = BoundariesGeoDataFrame().to_data_frame([
+        FeatureBuilder()
+            .set_id(ID)
+            .set_name(FOUND_NAME)
+            .set_boundary(make_single_point_boundary()) # dummy geometry to not fail on None property
+    ])
+    assert_names(gdf, 0, FOUND_NAME, FOUND_NAME)
+
+
+def test_requestless_centroids():
+    gdf = CentroidsGeoDataFrame().to_data_frame([
+        FeatureBuilder()
+            .set_id(ID)
+            .set_name(FOUND_NAME)
+            .set_centroid(make_centroid_point())
+    ])
+    assert_names(gdf, 0, FOUND_NAME, FOUND_NAME)
+
+
+def test_requestless_limits():
+    gdf = LimitsGeoDataFrame().to_data_frame([
+        FeatureBuilder()
+            .set_id(ID)
+            .set_name(FOUND_NAME)
+            .set_limit(make_limit_rect())
+    ])
+    assert_names(gdf, 0, FOUND_NAME, FOUND_NAME)
+
+
 def test_geo_limit_response():
     response: SuccessResponse = make_success_response() \
         .set_geocoded_features(

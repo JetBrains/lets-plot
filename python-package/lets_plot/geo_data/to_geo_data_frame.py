@@ -5,7 +5,7 @@ from geopandas import GeoDataFrame
 from pandas import DataFrame
 from shapely.geometry import box
 
-from lets_plot.geo_data import DataFrameProvider, DF_REQUEST, DF_FOUND_NAME, abstractmethod
+from lets_plot.geo_data import DataFrameProvider, select_not_empty_name, DF_REQUEST, DF_FOUND_NAME, abstractmethod
 from lets_plot.geo_data.gis.response import GeocodedFeature, GeoRect, Boundary, Multipolygon, Polygon, GeoPoint
 
 ShapelyPoint = shapely.geometry.Point
@@ -53,8 +53,8 @@ class RectGeoDataFrame(DataFrameProvider):
                 self._latmin.append(rect.min_lat)
                 self._lonmax.append(rect.max_lon)
                 self._latmax.append(rect.max_lat)
-                self._request.append(self._get_request(feature))
-                self._found_name.append(self._get_found_name(feature))
+                self._request.append(select_not_empty_name(feature))
+                self._found_name.append(feature.name)
 
         return {
             DF_REQUEST: self._request,
@@ -86,7 +86,8 @@ class CentroidsGeoDataFrame(DataFrameProvider):
         for feature in features:
             self._lons.append(feature.centroid.lon)
             self._lats.append(feature.centroid.lat)
-            self._extend_names(feature.query, feature.name, 1)
+            self._request.append(select_not_empty_name(feature))
+            self._found_name.append(feature.name)
 
         data = {
             DF_REQUEST: self._request,
@@ -103,7 +104,7 @@ class BoundariesGeoDataFrame(DataFrameProvider):
     def to_data_frame(self, features: List[GeocodedFeature]) -> DataFrame:
         geometry = []
         for feature in features:
-            self._request.append(feature.query)
+            self._request.append(select_not_empty_name(feature))
             self._found_name.append(feature.name)
             geometry.append(self._geo_parse_geometry(feature.boundary))
 
