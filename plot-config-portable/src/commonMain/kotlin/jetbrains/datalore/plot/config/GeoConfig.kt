@@ -145,12 +145,12 @@ class GeoConfig(
 
     companion object {
         const val GEO_ID = "__geo_id__"
-        const val POINT_X = "__x__"
-        const val POINT_Y = "__y__"
-        const val RECT_XMIN = "__xmin__"
-        const val RECT_YMIN = "__ymin__"
-        const val RECT_XMAX = "__xmax__"
-        const val RECT_YMAX = "__ymax__"
+        const val POINT_X = "lon"
+        const val POINT_Y = "lat"
+        const val RECT_XMIN = "lonmin"
+        const val RECT_YMIN = "latmin"
+        const val RECT_XMAX = "lonmax"
+        const val RECT_YMAX = "latmax"
         const val MAP_JOIN_REQUIRED_MESSAGE = "map_join is required when both data and map parameters used"
 
         fun isApplicable(layerOptions: Map<*, *>): Boolean {
