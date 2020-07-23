@@ -38,7 +38,6 @@ class LevelKind(enum.Enum):
     city = 'city'
 
 
-
 MODE_BY_GEOCODING = 'by_geocoding'
 MODE_BY_ID = 'by_id'
 
@@ -318,12 +317,14 @@ class RequestBuilder:
             return ExplicitRequest(self.requested_payload, self.ids, self.resolution)
 
         elif self.request_kind == RequestKind.geocoding:
-            return GeocodingRequest(self.requested_payload, self.resolution, self.region_queries, self.level, self.namesake_limit)
+            return GeocodingRequest(self.requested_payload, self.resolution, self.region_queries, self.level,
+                                    self.namesake_limit)
 
         elif self.request_kind == RequestKind.reverse:
             assert self.reverse_coordinates is not None
             assert self.level is not None
-            return ReverseGeocodingRequest(self.reverse_coordinates, self.level, self.reverse_scope, self.requested_payload, self.resolution)
+            return ReverseGeocodingRequest(self.reverse_coordinates, self.level, self.reverse_scope,
+                                           self.requested_payload, self.resolution)
 
         else:
             raise ValueError('Unknown mode: ' + str(self.request_kind))

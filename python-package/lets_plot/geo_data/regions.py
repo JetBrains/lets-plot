@@ -70,7 +70,6 @@ class Regions(CanToDataFrame):
         seen_add = seen.add
         return [feature.id for feature in self._geocoded_features if not (feature.id in seen or seen_add(feature.id))]
 
-
     def boundaries(self, resolution: Optional[Union[int, str, Resolution]] = None):
         """
         Download boundaries for given regions in form of GeoDataFrame.
@@ -103,7 +102,6 @@ class Regions(CanToDataFrame):
 
         if resolution is None:
             autodetected_resolution = _autodetect_resolution(self._level_kind, len(self._geocoded_features))
-            print('autodetected resolution: ' + str(autodetected_resolution))
             int_resolution = _coerce_resolution(autodetected_resolution.value)
         elif isinstance(resolution, int):
             int_resolution = _coerce_resolution(resolution)
@@ -282,7 +280,7 @@ def _parse_resolution(resolution: str) -> Resolution:
             return Resolution.country_medium
 
         if resolution == 'world':
-            return Resolution.world_high # high! very bad quality with meidum/low
+            return Resolution.world_high  # high! very bad quality with meidum/low
 
         return Resolution[resolution]
 
