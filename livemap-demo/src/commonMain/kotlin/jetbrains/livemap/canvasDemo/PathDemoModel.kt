@@ -7,6 +7,7 @@ package jetbrains.livemap.canvasDemo
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.datalore.vis.canvas.Context2d
 
 class PathDemoModel(canvas: Canvas) {
     init {
@@ -14,38 +15,33 @@ class PathDemoModel(canvas: Canvas) {
             setFillStyle(Color.BLUE)
             setStrokeStyle(Color.RED)
 
-            beginPath()
-            moveTo(20.0, 20.0)
-            lineTo(80.0,20.0)
-            lineTo(80.0, 100.0)
-            lineTo(60.0, 100.0)
-            lineTo(60.0, 40.0)
-            lineTo(40.0, 40.0)
-            lineTo(40.0, 60.0)
-            lineTo(100.0, 60.0)
-            lineTo(100.0, 80.0)
-            lineTo(20.0, 80.0)
-
-            closePath()
+            q()
 
             fill()
             stroke()
 
-            beginPath()
-            moveTo(120.0, 20.0)
-            lineTo(180.0,20.0)
-            lineTo(180.0, 100.0)
-            lineTo(160.0, 100.0)
-            lineTo(160.0, 40.0)
-            lineTo(140.0, 40.0)
-            lineTo(140.0, 60.0)
-            lineTo(200.0, 60.0)
-            lineTo(200.0, 80.0)
-            lineTo(120.0, 80.0)
-            closePath()
+            translate(150.0, 0.0)
+
+            q()
 
             fillEvenOdd()
             stroke()
         }
+    }
+
+    private fun Context2d.q() {
+        beginPath()
+        moveTo(20.0, 20.0)
+        lineTo(80.0,20.0)
+        lineTo(80.0, 100.0)
+        lineTo(60.0, 100.0)
+        lineTo(60.0, 40.0)
+        lineTo(40.0, 40.0)
+        lineTo(40.0, 60.0)
+        lineTo(100.0, 60.0)
+        lineTo(100.0, 80.0)
+        bezierCurveTo(80.0, 100.0, 40.0, 100.0, 20.0, 80.0)
+
+        closePath()
     }
 }

@@ -50,7 +50,6 @@ interface Context2d {
     fun translate(x: Double, y: Double)
     fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
     fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double)
-    fun quadraticCurveTo(cpx: Double, cpy: Double, x: Double, y: Double)
     fun setLineJoin(lineJoin: LineJoin)
     fun setLineCap(lineCap: LineCap)
     fun setTextBaseline(baseline: TextBaseline)

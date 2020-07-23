@@ -260,10 +260,6 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         currentPath?.curveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
-    override fun quadraticCurveTo(cpx: Double, cpy: Double, x: Double, y: Double) {
-        TODO("Not yet implemented")
-    }
-
     override fun setLineJoin(lineJoin: Context2d.LineJoin) {
         stroke = stroke.change(
             join = convertLineJoin(lineJoin)

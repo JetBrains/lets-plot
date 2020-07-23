@@ -178,10 +178,6 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         myContext2d.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
-    override fun quadraticCurveTo(cpx: Double, cpy: Double, x: Double, y: Double) {
-        myContext2d.quadraticCurveTo(cpx, cpy, x, y)
-    }
-
     override fun setLineJoin(lineJoin: Context2d.LineJoin) {
         myContext2d.lineJoin = convertLineJoin(lineJoin)
     }

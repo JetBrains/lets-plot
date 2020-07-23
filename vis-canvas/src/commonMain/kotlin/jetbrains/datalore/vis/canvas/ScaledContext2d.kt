@@ -164,10 +164,6 @@ internal class ScaledContext2d(private val myContext2d: Context2d, private val m
         myContext2d.bezierCurveTo(scaled(cp1x), scaled(cp1y), scaled(cp2x), scaled(cp2y), scaled(x), scaled(y))
     }
 
-    override fun quadraticCurveTo(cpx: Double, cpy: Double, x: Double, y: Double) {
-        myContext2d.quadraticCurveTo(scaled(cpx), scaled(cpy), scaled(x), scaled(y))
-    }
-
     override fun setLineJoin(lineJoin: Context2d.LineJoin) {
         myContext2d.setLineJoin(lineJoin)
     }
