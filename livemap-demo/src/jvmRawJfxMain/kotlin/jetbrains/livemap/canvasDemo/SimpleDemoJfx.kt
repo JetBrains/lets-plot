@@ -17,18 +17,9 @@ import jetbrains.datalore.vis.canvas.javaFx.JavafxEventPeer
 class SimpleDemoJfx : Application() {
 
     override fun start(theStage: Stage) {
-        val dim = Vector(800, 600)
-        val group = Group()
-        val javafxCanvasControl = JavafxCanvasControl(group, dim, 1.0, JavafxEventPeer(group, Rectangle(Vector.ZERO, dim)))
-
-        val canvas = javafxCanvasControl.createCanvas(dim)
-        SimpleDemoModel(canvas)
-        javafxCanvasControl.addChild(canvas)
-
-        theStage.title = "Javafx Simple Demo"
-        theStage.scene = Scene(group)
-
-        theStage.show()
+        BaseCanvasDemoJfx { canvas, _ ->
+            SimpleDemoModel(canvas)
+        }.start(theStage)
     }
 
     companion object {

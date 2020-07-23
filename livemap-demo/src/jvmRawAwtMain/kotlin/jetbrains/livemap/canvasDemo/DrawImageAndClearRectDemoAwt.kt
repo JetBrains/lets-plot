@@ -5,13 +5,12 @@
 
 package jetbrains.livemap.canvasDemo
 
-
-class SimpleDemoAwt {
+class DrawImageAndClearRectDemoAwt {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            baseCanvasDemo { canvas, _ ->
-                SimpleDemoModel(canvas)
+            baseCanvasDemo { canvas, createSnapshot ->
+                DrawImageAndClearRectDemoModel(canvas, createSnapshot)
             }
         }
     }

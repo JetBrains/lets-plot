@@ -14,6 +14,7 @@ import java.awt.Graphics2D
 import java.awt.Image
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_INT_ARGB
+import java.awt.image.BufferedImage.TYPE_INT_ARGB_PRE
 
 internal class AwtCanvas
 private constructor(
@@ -24,7 +25,7 @@ private constructor(
 
     companion object {
         fun create(size: Vector, pixelRatio: Double): Canvas {
-            return AwtCanvas(BufferedImage(size.x, size.y, TYPE_INT_ARGB), size, pixelRatio)
+            return AwtCanvas(BufferedImage(size.x, size.y, TYPE_INT_ARGB_PRE), size, pixelRatio)
         }
     }
 

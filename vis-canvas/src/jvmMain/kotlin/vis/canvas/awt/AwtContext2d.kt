@@ -30,6 +30,10 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     private var font: Font = Font(Font.SERIF, Font.PLAIN, 10)
     private var globalAlpha: Float = 1f
 
+    init {
+        graphics.background = Color.TRANSPARENT.toAwtColor()
+    }
+
     private fun convertLineJoin(lineJoin: Context2d.LineJoin): Int {
         return when (lineJoin) {
             Context2d.LineJoin.BEVEL -> BasicStroke.JOIN_BEVEL
@@ -140,8 +144,8 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     ) {
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
         graphics.drawImage(awtSnapshot.image,
-            sx.toInt(), sy.toInt(), sw.toInt(), sh.toInt(),
-            dx.toInt(), dy.toInt(), dw.toInt(), dh.toInt(), null)
+            dx.toInt(), dy.toInt(), dw.toInt() + dx.toInt(), dh.toInt() + dy.toInt(),
+            sx.toInt(), sy.toInt(), sw.toInt() + sx.toInt(), sh.toInt() + sy.toInt(), null)
     }
 
     override fun beginPath() {

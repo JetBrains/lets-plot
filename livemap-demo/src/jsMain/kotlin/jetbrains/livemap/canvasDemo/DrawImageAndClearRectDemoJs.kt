@@ -6,9 +6,9 @@
 package jetbrains.livemap.canvasDemo
 
 @Suppress("unused")
-@JsName("simpleDemo")
-fun simpleDemo() {
-    baseCanvasDemo { canvas, _ ->
-        SimpleDemoModel(canvas)
+@JsName("drawImageDemo")
+fun drawImageDemo() {
+    baseCanvasDemo { canvas, createSnapshot ->
+        DrawImageAndClearRectDemoModel(canvas, createSnapshot)
     }
 }

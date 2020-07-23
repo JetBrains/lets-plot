@@ -26,6 +26,7 @@ kotlin {
                         "lets-plot-livemap-demo.jetbrains.livemap.demo.rectDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.demo.textDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.simpleDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.drawImageDemo",
                 )
             }
         }
