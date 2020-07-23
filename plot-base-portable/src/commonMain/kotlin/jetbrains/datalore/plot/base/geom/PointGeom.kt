@@ -25,7 +25,7 @@ open class PointGeom : GeomBase() {
 
     var animation: Any? = null
     var sizeUnit: String? = null
-    private var sizeUnitScale: Double? = null
+    var sizeUnitScale: Double? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -46,11 +46,19 @@ open class PointGeom : GeomBase() {
             val p = aesthetics.dataPointAt(i)
             val x = p.x()
             val y = p.y()
+            val range = aesthetics.range(Aes.SIZE)
+            val ox_range = aesthetics.overallRange(Aes.X)
+            val oy_range = aesthetics.overallRange(Aes.Y)
 
             if (SeriesUtil.allFinite(x, y)) {
                 val location = helper.toClient(DoubleVector(x!!, y!!), p)
-                val scale = getScale(ctx, p)
+
                 val shape = p.shape()!!
+                val sz = shape.size(p)
+                val p_sz = p.size()!!
+                var scale = getScaleBySizeUnit(ctx, p)
+                scale /= 12.0
+
 
                 targetCollector.addPoint(
                     i, location, scale * shape.size(p) / 2,
@@ -63,24 +71,22 @@ open class PointGeom : GeomBase() {
         root.add(wrap(slimGroup))
     }
 
-    private fun getScale(ctx: GeomContext, p: DataPointAesthetics): Double {
+
+    private fun getScaleBySizeUnit(ctx: GeomContext, p: DataPointAesthetics): Double {
         sizeUnitScale?.let { return sizeUnitScale!! }
+        sizeUnitScale = 1.0
 
         sizeUnit?.let {
-            val pointSize = p.size() ?: return 1.0
-
-            val aes = GeomHelper.getSizeUnitAes(sizeUnit!!)
+            val aes = Aes.get(sizeUnit!!) as Aes<Double>
             val shape = p.shape()!!
-            val size = shape.size(p)
 
-            if (size == 0.0)
-                return 1.0
+            val res = ctx.getResolution(aes)
+            val ures = ctx.getUnitResolution(aes)
 
-            sizeUnitScale = ctx.getUnitResolution(aes) * pointSize / size
-            return sizeUnitScale!!
+            sizeUnitScale = (p.size()?.div(shape.size(p)) ?: 1.0) * ctx.getUnitResolution(aes)
         }
 
-        return 1.0
+        return sizeUnitScale!!
     }
 
     companion object {
