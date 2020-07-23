@@ -274,7 +274,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
     override fun setLineCap(lineCap: Context2d.LineCap) {
         stroke = stroke.change(
-            join = convertLineCap(lineCap)
+            cap = convertLineCap(lineCap)
         )
 
         graphics.stroke = stroke
