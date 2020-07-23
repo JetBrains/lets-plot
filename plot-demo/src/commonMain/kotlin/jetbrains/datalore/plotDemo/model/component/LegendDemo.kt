@@ -67,7 +67,7 @@ open class LegendDemo : SimpleDemoBase() {
             breaks.add(GuideBreak(v, l))
         }
 
-        val domain = ClosedRange.closed(0.0, 4.0)
+        val domain = ClosedRange(0.0, 4.0)
 
         val mapper = ColorMapper.gradientDefault(domain)
         val scale = Scales.continuousDomain("color", mapper, true)

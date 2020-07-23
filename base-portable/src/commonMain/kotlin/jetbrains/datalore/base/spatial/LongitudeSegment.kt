@@ -74,11 +74,11 @@ internal class LongitudeSegment(start: Double, end: Double) {
             max: Double
         ) : List<ClosedRange<Double>> {
             return if (start <= end) {
-                listOf(ClosedRange.closed(start, end))
+                listOf(ClosedRange(start, end))
             } else {
                 listOf(
-                    ClosedRange.closed(start, max),
-                    ClosedRange.closed(min, end)
+                    ClosedRange(start, max),
+                    ClosedRange(min, end)
                 )
             }
         }

@@ -21,7 +21,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
     constructor(name: String, mapper: ((Double?) -> T?), continuousOutput: Boolean) : super(name, mapper) {
         isContinuous = continuousOutput
-        domainLimits = ClosedRange.closed(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+        domainLimits = ClosedRange(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for continuous scale.
@@ -31,7 +31,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
 
     private constructor(b: MyBuilder<T>) : super(b) {
         isContinuous = b.myContinuousOutput
-        domainLimits = ClosedRange.closed(b.myLowerLimit, b.myUpperLimit)
+        domainLimits = ClosedRange(b.myLowerLimit, b.myUpperLimit)
     }
 
     override fun isInDomainLimits(v: Any): Boolean {

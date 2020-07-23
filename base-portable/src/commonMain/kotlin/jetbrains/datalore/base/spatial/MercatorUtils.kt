@@ -14,10 +14,10 @@ import kotlin.math.*
 object MercatorUtils {
     private const val MAX_LONGITUDE = 180.0
     private const val MAX_LATITUDE = 85.0511287798
-    val VALID_LONGITUDE_RANGE = ClosedRange.closed(-MAX_LONGITUDE,
+    val VALID_LONGITUDE_RANGE = ClosedRange(-MAX_LONGITUDE,
         MAX_LONGITUDE
     )
-    val VALID_LATITUDE_RANGE = ClosedRange.closed(-MAX_LATITUDE,
+    val VALID_LATITUDE_RANGE = ClosedRange(-MAX_LATITUDE,
         MAX_LATITUDE
     )
 

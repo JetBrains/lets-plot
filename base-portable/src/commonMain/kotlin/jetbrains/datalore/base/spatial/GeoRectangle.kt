@@ -25,7 +25,7 @@ class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Do
         require(minLatitude <= maxLatitude) { "Invalid latitude range: [$minLatitude..$maxLatitude]" }
 
         myLongitudeSegment = LongitudeSegment(startLongitude, endLongitude)
-        myLatitudeRange = ClosedRange.closed(minLatitude, maxLatitude)
+        myLatitudeRange = ClosedRange(minLatitude, maxLatitude)
     }
 
     fun startLongitude(): Double = myLongitudeSegment.start()

@@ -56,7 +56,7 @@ class GeoBoundingBoxCalculator<TypeT>(
         return if (loop) {
             calculateLoopLimitRange(segments, mapRange)
         } else {
-            ClosedRange.closed(
+            ClosedRange(
                 segments.map(Segment::start).min()!!,
                 segments.map(Segment::end).max()!!
             )
@@ -83,7 +83,7 @@ class GeoBoundingBoxCalculator<TypeT>(
             return if (mapRange.contains((range.upperEndpoint() + range.lowerEndpoint()) / 2)) {
                 range
             } else {
-                ClosedRange.closed(
+                ClosedRange(
                     range.lowerEndpoint() - mapRange.length(),
                     range.upperEndpoint() - mapRange.length()
                 )
@@ -95,7 +95,7 @@ class GeoBoundingBoxCalculator<TypeT>(
             var prevUpper = sortedRanges.maxBy(ClosedRange<Double>::upperEndpoint)!!.upperEndpoint()
             var nextLower = sortedRanges.first().lowerEndpoint()
             val gapRight = max(width + nextLower, prevUpper)
-            var maxGapRange = ClosedRange.closed(prevUpper, gapRight)
+            var maxGapRange = ClosedRange(prevUpper, gapRight)
 
             val it = sortedRanges.iterator()
             prevUpper = it.next().upperEndpoint()
@@ -105,7 +105,7 @@ class GeoBoundingBoxCalculator<TypeT>(
 
                 nextLower = range.lowerEndpoint()
                 if (nextLower > prevUpper && nextLower - prevUpper > maxGapRange.length()) {
-                    maxGapRange = ClosedRange.closed(prevUpper, nextLower)
+                    maxGapRange = ClosedRange(prevUpper, nextLower)
                 }
                 prevUpper = max(prevUpper, range.upperEndpoint())
             }
@@ -114,11 +114,11 @@ class GeoBoundingBoxCalculator<TypeT>(
 
         private fun invertRange(range: ClosedRange<Double>, width: Double): ClosedRange<Double> {
             // Fix for rounding error for invertRange introduced by math with width.
-            fun safeRange(first: Double, second: Double) = ClosedRange.closed(min(first, second), max(first, second))
+            fun safeRange(first: Double, second: Double) = ClosedRange(min(first, second), max(first, second))
 
             return when {
                 range.length() > width ->
-                    ClosedRange.closed(range.lowerEndpoint(), range.lowerEndpoint())
+                    ClosedRange(range.lowerEndpoint(), range.lowerEndpoint())
                 range.upperEndpoint() > width ->
                     safeRange(range.upperEndpoint() - width, range.lowerEndpoint())
                 else ->

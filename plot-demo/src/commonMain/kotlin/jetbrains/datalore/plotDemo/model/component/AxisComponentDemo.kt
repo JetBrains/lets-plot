@@ -38,11 +38,11 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         groupComponent.add(background)
 
 
-        val domainX = ClosedRange.closed(0.0, 1000.0)
-        val domainY = ClosedRange.closed(0.0, 1000.0)
+        val domainX = ClosedRange(0.0, 1000.0)
+        val domainY = ClosedRange(0.0, 1000.0)
 
-        val rangeX = ClosedRange.closed(0.0, CENTER_SQUARE_SIZE.x)
-        val rangeY = ClosedRange.closed(0.0, CENTER_SQUARE_SIZE.y)
+        val rangeX = ClosedRange(0.0, CENTER_SQUARE_SIZE.x)
+        val rangeY = ClosedRange(0.0, CENTER_SQUARE_SIZE.y)
 
         var scaleX = Scales.continuousDomain("X", Mappers.linear(domainX, rangeX), true)
         var scaleY = Scales.continuousDomain("Y", Mappers.linear(domainY, rangeY), true)

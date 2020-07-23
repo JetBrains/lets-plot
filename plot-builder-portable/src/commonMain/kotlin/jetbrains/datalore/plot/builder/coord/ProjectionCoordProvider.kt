@@ -74,7 +74,7 @@ internal class ProjectionCoordProvider private constructor(
         ): Scale<Double> {
 
             val validDomain = projection.toValidDomain(domain)
-            val validDomainProjected = ClosedRange.closed(
+            val validDomainProjected = ClosedRange(
                 projection.apply(validDomain.lowerEndpoint()),
                 projection.apply(validDomain.upperEndpoint())
             )

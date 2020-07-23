@@ -15,7 +15,7 @@ class AlphaMapperProvider(
         LinearNormalizingMapperProvider(range, naValue) {
 
     companion object {
-        private val DEF_RANGE = ClosedRange.closed(0.1, 1.0)
+        private val DEF_RANGE = ClosedRange(0.1, 1.0)
 
         val DEFAULT = AlphaMapperProvider(
             DEF_RANGE,

@@ -34,8 +34,8 @@ class ColorGradient2MapperProvider(low: Color?, mid: Color?, high: Color?, midpo
     override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Color> {
         val domain = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans)
 
-        val lowDomain = ClosedRange.closed(domain.lowerEndpoint(), max(myMidpoint!!, domain.lowerEndpoint()))
-        val highDomain = ClosedRange.closed(min(myMidpoint, domain.upperEndpoint()), domain.upperEndpoint())
+        val lowDomain = ClosedRange(domain.lowerEndpoint(), max(myMidpoint!!, domain.lowerEndpoint()))
+        val highDomain = ClosedRange(min(myMidpoint, domain.upperEndpoint()), domain.upperEndpoint())
 
         val lowMapper = ColorMapper.gradient(lowDomain, myLow, myMid, naValue)
         val highMapper = ColorMapper.gradient(highDomain, myMid, myHigh, naValue)

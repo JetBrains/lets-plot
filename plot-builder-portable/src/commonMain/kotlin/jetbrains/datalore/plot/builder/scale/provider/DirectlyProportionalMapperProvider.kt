@@ -20,6 +20,6 @@ open class DirectlyProportionalMapperProvider
 
     override fun createContinuousMapper(data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): GuideMapper<Double> {
         val dataMax = MapperUtil.rangeWithLimitsAfterTransform(data, variable, lowerLimit, upperLimit, trans).upperEndpoint()
-        return GuideMappers.continuousToContinuous(ClosedRange.closed(0.0, dataMax), ClosedRange.closed(0.0, myMax), naValue)
+        return GuideMappers.continuousToContinuous(ClosedRange(0.0, dataMax), ClosedRange(0.0, myMax), naValue)
     }
 }

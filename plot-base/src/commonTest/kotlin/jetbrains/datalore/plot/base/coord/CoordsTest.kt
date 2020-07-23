@@ -51,11 +51,11 @@ class CoordsTest {
 
         private const val Y_LOWER = 200.0
         private const val Y_UPPER = 600.0
-        private val X_RANGE = ClosedRange.closed(
+        private val X_RANGE = ClosedRange(
             X_LOWER,
             X_UPPER
         )
-        private val Y_RANGE = ClosedRange.closed(
+        private val Y_RANGE = ClosedRange(
             Y_LOWER,
             Y_UPPER
         )

@@ -56,7 +56,7 @@ class LinearBreaksHelper(
         }
 
         // auto format
-        val range = ClosedRange.closed(start, end)
+        val range = ClosedRange(start, end)
         labelFormatter = QuantitativeTickFormatterFactory.forLinearScale()
             .getFormatter(range, step)
 

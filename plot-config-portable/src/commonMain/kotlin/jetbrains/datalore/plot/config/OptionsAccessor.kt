@@ -134,7 +134,7 @@ open class OptionsAccessor protected constructor(private val myOptions: Map<*, *
         val upper = (pair.last() as Number).toDouble()
 
         return try {
-            ClosedRange.closed(lower, upper)
+            ClosedRange(lower, upper)
         } catch (ex: Throwable) {
             null
         }

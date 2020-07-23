@@ -84,7 +84,7 @@ object SeriesUtil {
             }
         }
         return if (inited)
-            ClosedRange.closed(min, max)
+            ClosedRange(min, max)
         else
             null
     }
@@ -139,11 +139,11 @@ object SeriesUtil {
 
     fun ensureNotZeroRange(range: ClosedRange<Double>?): ClosedRange<Double> {
         if (range == null) {
-            return ClosedRange.closed(-1.0, 1.0)
+            return ClosedRange(-1.0, 1.0)
         }
         if (range.lowerEndpoint() == range.upperEndpoint()) {
             val median = range.lowerEndpoint()
-            return ClosedRange.closed(median - 1, median + 1)
+            return ClosedRange(median - 1, median + 1)
         }
         return range
     }
@@ -163,7 +163,7 @@ object SeriesUtil {
     }
 
     fun expand(range: ClosedRange<Double>, lowerExpand: Double, upperExpand: Double): ClosedRange<Double> {
-        return ClosedRange.closed(range.lowerEndpoint() - lowerExpand, range.upperEndpoint() + upperExpand)
+        return ClosedRange(range.lowerEndpoint() - lowerExpand, range.upperEndpoint() + upperExpand)
     }
 
     fun isFinite(range: ClosedRange<Double>?): Boolean {

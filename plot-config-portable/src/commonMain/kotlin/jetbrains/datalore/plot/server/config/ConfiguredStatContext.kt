@@ -66,7 +66,7 @@ internal class ConfiguredStatContext(
                 domainLimits.upperEndpoint()
             else
                 range!!.upperEndpoint()
-            range = ClosedRange.closed(lowerEnd, upperEnd)
+            range = ClosedRange(lowerEnd, upperEnd)
         }
         return range
     }

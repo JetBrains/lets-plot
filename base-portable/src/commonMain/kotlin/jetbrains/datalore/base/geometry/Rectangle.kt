@@ -83,11 +83,11 @@ class Rectangle(val origin: Vector, val dimension: Vector) {
     }
 
     fun xRange(): ClosedRange<Int> {
-        return ClosedRange.closed(origin.x, origin.x + dimension.x)
+        return ClosedRange(origin.x, origin.x + dimension.x)
     }
 
     fun yRange(): ClosedRange<Int> {
-        return ClosedRange.closed(origin.y, origin.y + dimension.y)
+        return ClosedRange(origin.y, origin.y + dimension.y)
     }
 
     override fun hashCode(): Int {

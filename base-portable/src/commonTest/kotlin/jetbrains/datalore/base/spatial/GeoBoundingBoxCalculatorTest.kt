@@ -154,8 +154,8 @@ class GeoBoundingBoxCalculatorTest {
 
     @Test
     fun calculateLoopLimitRangeForSingleRange() {
-        val mapRange = ClosedRange.closed(0.0, 255.99999999999997)
-        val range = ClosedRange.closed(100.0, 100.0)
+        val mapRange = ClosedRange(0.0, 255.99999999999997)
+        val range = ClosedRange(100.0, 100.0)
         val segments = sequenceOf(
             Segment(
                 range.lowerEndpoint(),

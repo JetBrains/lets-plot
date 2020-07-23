@@ -22,33 +22,33 @@ class QuantizeScale<T> : WithFiniteOrderedOutput<T> {
     override val outputValues: List<T>
         get() = myOutputValues
 
-    //return Arrays.asList(ClosedRange.closedOpen(myDomainStart, myDomainEnd));
+    //return Arrays.asList(ClosedRangeOpen(myDomainStart, myDomainEnd));
     //    double error = bucketSize / 10;   // prevent creating of 1 extra bucket
     /*
     double upperBound = myDomainStart;
     while (upperBound < myDomainEnd - error) {
       double lowerBound = upperBound;
       upperBound = lowerBound + bucketSize;
-      ClosedRange<Double> bucket = ClosedRange.closedOpen(lowerBound, upperBound);
+      ClosedRange<Double> bucket = ClosedRangeOpen(lowerBound, upperBound);
       list.add(bucket);
     }
-*///ClosedRange<Double> bucket = ClosedRange.closedOpen(myDomainStart + bucketSize * i, myDomainStart + bucketSize * (i + 1));
+*///ClosedRange<Double> bucket = ClosedRangeOpen(myDomainStart + bucketSize * i, myDomainStart + bucketSize * (i + 1));
     // ToDo: move inside the cycle
     // last bucket - closed
     val domainQuantized: List<ClosedRange<Double>>
         get() {
             if (myDomainStart == myDomainEnd) {
-                return listOf(ClosedRange.closed(myDomainStart, myDomainEnd))
+                return listOf(ClosedRange(myDomainStart, myDomainEnd))
             }
 
             val list = ArrayList<ClosedRange<Double>>()
             val numBuckets = myOutputValues.size
             val bucketSize = bucketSize()
             for (i in 0 until numBuckets - 1) {
-                val bucket = ClosedRange.closed(myDomainStart + bucketSize * i, myDomainStart + bucketSize * (i + 1))
+                val bucket = ClosedRange(myDomainStart + bucketSize * i, myDomainStart + bucketSize * (i + 1))
                 list.add(bucket)
             }
-            val bucket = ClosedRange.closed(myDomainStart + bucketSize * (numBuckets - 1), myDomainEnd)
+            val bucket = ClosedRange(myDomainStart + bucketSize * (numBuckets - 1), myDomainEnd)
             list.add(bucket)
             return list
         }

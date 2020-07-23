@@ -15,7 +15,7 @@ object MapperUtil {
     fun map(r: ClosedRange<Double>, mapper: (Double?) -> Double?): ClosedRange<Double> {
         val a = mapper(r.lowerEndpoint())!!
         val b = mapper(r.upperEndpoint())!!
-        return ClosedRange.closed(min(a, b), max(a, b))
+        return ClosedRange(min(a, b), max(a, b))
     }
 
     fun mapDiscreteDomainValuesToNumbers(values: Collection<*>): Map<Any, Double> {

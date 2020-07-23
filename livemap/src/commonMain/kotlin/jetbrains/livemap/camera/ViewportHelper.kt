@@ -139,7 +139,7 @@ class ViewportHelper(
             if (lower < mapRange.lowerEndpoint()) {
                 if (loop && upper < mapRange.upperEndpoint()) {
                     val newLeft = max(lower + length(mapRange), upper)
-                    xRanges.add(ClosedRange.closed(newLeft, mapRange.upperEndpoint()))
+                    xRanges.add(ClosedRange(newLeft, mapRange.upperEndpoint()))
                 }
                 lower = mapRange.lowerEndpoint()
             }
@@ -147,12 +147,12 @@ class ViewportHelper(
             if (mapRange.upperEndpoint() < upper) {
                 if (loop && mapRange.lowerEndpoint() < lower) {
                     val newRight = min(upper - length(mapRange), lower)
-                    xRanges.add(ClosedRange.closed(mapRange.lowerEndpoint(), newRight))
+                    xRanges.add(ClosedRange(mapRange.lowerEndpoint(), newRight))
                 }
                 upper = mapRange.upperEndpoint()
             }
 
-            xRanges.add(ClosedRange.closed(lower, upper))
+            xRanges.add(ClosedRange(lower, upper))
             return xRanges
         }
 

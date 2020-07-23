@@ -20,7 +20,7 @@ class ColorMapperTest {
         val value = 0.9
 
         val f = ColorMapper.gradientHSV(
-                ClosedRange.closed(0.0, 1.0),
+                ClosedRange(0.0, 1.0),
                 doubleArrayOf(lowHue, saturation, value),
                 doubleArrayOf(highHue, saturation, value),
                 false,

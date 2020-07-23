@@ -57,7 +57,7 @@ internal class HorizontalMultilineLabelsLayout(
 
                 var shelfBounds = boundsByShelfIndex[shelfIndex]!!
                 // not overlapped?
-                if (!shelfBounds.xRange().isConnected(ClosedRange.closed(labelBounds.left - MIN_DISTANCE, labelBounds.right + MIN_DISTANCE))) {
+                if (!shelfBounds.xRange().isConnected(ClosedRange(labelBounds.left - MIN_DISTANCE, labelBounds.right + MIN_DISTANCE))) {
                     myShelfIndexForTickIndex.add(shelfIndex)
                     shelfBounds = shelfBounds.union(labelBounds)
                     boundsByShelfIndex[shelfIndex] = shelfBounds

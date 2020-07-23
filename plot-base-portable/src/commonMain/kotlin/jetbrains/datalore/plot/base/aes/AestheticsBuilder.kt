@@ -255,11 +255,11 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             if (!myRangeByNumericAes.containsKey(aes)) {
                 val r = when {
                     myDataPointCount <= 0 ->
-                        ClosedRange.closed(0.0, 0.0)
+                        ClosedRange(0.0, 0.0)
                     myConstantAes.contains(aes) -> {
                         // constant should not be null
                         val v = numericValues(aes).iterator().next()!!
-                        ClosedRange.closed(v, v)
+                        ClosedRange(v, v)
                     }
                     else -> {
                         val values = numericValues(aes)

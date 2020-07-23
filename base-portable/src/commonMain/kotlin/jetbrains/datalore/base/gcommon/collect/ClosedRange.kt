@@ -90,10 +90,6 @@ class ClosedRange<T : Comparable<T>>(private val myLower: T, private val myUpper
     }
 
     companion object {
-        fun <T : Comparable<T>> closed(lower: T, upper: T): ClosedRange<T> {
-            return ClosedRange(lower, upper)
-        }
-
         fun <T : Comparable<T>> singleton(v: T): ClosedRange<T> {
             return ClosedRange(v, v)
         }

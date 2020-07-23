@@ -138,12 +138,12 @@ object PlotUtil {
 
         // X range
         val xRange = if (rangesInited)
-            ClosedRange.closed(adjustedMinX, adjustedMaxX)
+            ClosedRange(adjustedMinX, adjustedMaxX)
         else
             null
 
         val yRange = if (rangesInited)
-            ClosedRange.closed(adjustedMinY, adjustedMaxY)
+            ClosedRange(adjustedMinY, adjustedMaxY)
         else
             null
         return Pair(xRange, yRange)
@@ -204,7 +204,7 @@ object PlotUtil {
         }
 
         return if (minMax[0] <= minMax[1])
-            ClosedRange.closed(minMax[0], minMax[1])
+            ClosedRange(minMax[0], minMax[1])
         else
             null
     }
@@ -265,7 +265,7 @@ object PlotUtil {
         aesBuilder.group(layer.group)
         for ((aes, domain) in overallNumericDomains) {
             sharedMappers[aes]?.let { mapper ->
-                val range = ClosedRange.closed(
+                val range = ClosedRange(
                     mapper(domain.lowerEndpoint()) as Double,
                     mapper(domain.upperEndpoint()) as Double
                 )
@@ -373,7 +373,7 @@ object PlotUtil {
             }
         }
 
-        return ClosedRange.closed(lowerEndpoint - lowerExpand, upperEndpoint + upperExpand)
+        return ClosedRange(lowerEndpoint - lowerExpand, upperEndpoint + upperExpand)
     }
 
     private fun getMultiplicativeExpand(layer: GeomLayer, aes: Aes<Double>): Double {

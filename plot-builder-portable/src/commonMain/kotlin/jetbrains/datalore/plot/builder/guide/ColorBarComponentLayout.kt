@@ -63,7 +63,7 @@ abstract class ColorBarComponentLayout(
 
     private fun doLayout() {
         val guideBarLength = guideBarLength
-        val targetRange = ClosedRange.closed(0.0 + barLengthExpand, guideBarLength - barLengthExpand)
+        val targetRange = ClosedRange(0.0 + barLengthExpand, guideBarLength - barLengthExpand)
         val mapper = Mappers.linear(myDomain, targetRange)
 
         for (br in breaks) {

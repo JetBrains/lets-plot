@@ -13,7 +13,7 @@ class VerticalAxisLayouter(orientation: jetbrains.datalore.plot.builder.guide.Or
 
     override fun toAxisMapper(axisLength: Double): (Double?) -> Double? {
         val scaleMapper = toScaleMapper(axisLength)
-        val cartesianY = Coords.toClientOffsetY(ClosedRange.closed(0.0, axisLength))
+        val cartesianY = Coords.toClientOffsetY(ClosedRange(0.0, axisLength))
         return { v ->
             val mapped = scaleMapper(v)
             if (mapped != null) cartesianY(mapped) else null
