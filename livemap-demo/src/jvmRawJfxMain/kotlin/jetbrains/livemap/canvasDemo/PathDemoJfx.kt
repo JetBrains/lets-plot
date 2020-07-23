@@ -6,26 +6,20 @@
 package jetbrains.livemap.canvasDemo
 
 import javafx.application.Application
-import javafx.scene.Group
-import javafx.scene.Scene
 import javafx.stage.Stage
-import jetbrains.datalore.base.geometry.Rectangle
-import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
-import jetbrains.datalore.vis.canvas.javaFx.JavafxEventPeer
 
-class SimpleDemoJfx : Application() {
+class PathDemoJfx : Application() {
 
     override fun start(theStage: Stage) {
         BaseCanvasDemoJfx { canvas, _ ->
-            SimpleDemoModel(canvas)
+            PathDemoModel(canvas)
         }.start(theStage)
     }
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            launch(SimpleDemoJfx::class.java, *args)
+            launch(PathDemoJfx::class.java, *args)
         }
     }
 }

@@ -13,11 +13,8 @@ import jetbrains.datalore.vis.canvas.Context2d
 import java.awt.*
 import java.awt.AlphaComposite.SRC_OVER
 import java.awt.font.GlyphVector
-import java.awt.geom.AffineTransform
-import java.awt.geom.Arc2D
+import java.awt.geom.*
 import java.awt.geom.Arc2D.OPEN
-import java.awt.geom.GeneralPath
-import java.awt.geom.Rectangle2D
 import java.awt.Color as AwtColor
 
 internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
@@ -167,7 +164,9 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun fillEvenOdd() {
-        TODO("Not yet implemented")
+        graphics.color = fillColor
+        currentPath?.windingRule = Path2D.WIND_EVEN_ODD
+        graphics.fill(currentPath)
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {

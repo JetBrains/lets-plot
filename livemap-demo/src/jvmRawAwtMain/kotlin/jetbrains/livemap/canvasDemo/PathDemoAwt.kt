@@ -6,12 +6,12 @@
 package jetbrains.livemap.canvasDemo
 
 
-class SimpleDemoAwt {
+class PathDemoAwt {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
             baseCanvasDemo { canvas, _ ->
-                SimpleDemoModel(canvas)
+                PathDemoModel(canvas)
             }
         }
     }

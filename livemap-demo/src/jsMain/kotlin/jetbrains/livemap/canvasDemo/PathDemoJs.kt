@@ -6,9 +6,9 @@
 package jetbrains.livemap.canvasDemo
 
 @Suppress("unused")
-@JsName("simpleDemo")
-fun simpleDemo() {
+@JsName("pathDemo")
+fun pathDemo() {
     baseCanvasDemo { canvas, _ ->
-        SimpleDemoModel(canvas)
+        PathDemoModel(canvas)
     }
 }
