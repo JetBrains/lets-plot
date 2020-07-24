@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.scale
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform
+import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 import kotlin.math.max
 import kotlin.math.min
 
@@ -19,23 +20,6 @@ object MapperUtil {
     }
 
     fun mapDiscreteDomainValuesToNumbers(values: Collection<*>): Map<Any, Double> {
-        // Rollback this improvement due to:
-        // DP-4956 Discrete scale looks strange
-        /*
-    SeriesUtil.CheckedDoubleIterable checkedDoubles = SeriesUtil.checkedDoubles(values);
-    if (checkedDoubles.notEmptyAndCanBeCast()) {
-      // if serie contain numbers then preserve original values because
-      // if this serie is also bound with another aes and continuous mapper is created elsewhere
-      // then those two mappers (scales) will work consistently (transform/inverseTransform)
-      Map<Object, Double> result = new LinkedHashMap<>();
-      for (Double v : checkedDoubles.cast()) {
-        if (v != null) {
-          result.put(v, v);
-        }
-      }
-      return result;
-    }
-    */
         return mapDiscreteDomainValuesToIndices(values)
     }
 
@@ -51,12 +35,12 @@ object MapperUtil {
     }
 
     fun rangeWithLimitsAfterTransform(
-        data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): ClosedRange<Double> {
-        val lower = lowerLimit ?: data.range(variable)!!.lowerEnd
-        val upper = upperLimit ?: data.range(variable)!!.upperEnd
-        val limits = ArrayList<Double>()
-        limits.add(lower)
-        limits.add(upper)
+        data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?
+    ): ClosedRange<Double> {
+        val dataRange = ensureApplicableRange(data.range(variable))
+        val lower = lowerLimit ?: dataRange.lowerEnd
+        val upper = upperLimit ?: dataRange.upperEnd
+        val limits = listOf(lower, upper)
         return ClosedRange.encloseAll(trans?.apply(limits) ?: limits)
     }
 }
