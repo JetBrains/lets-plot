@@ -91,7 +91,7 @@ internal object BreakLabelsLayoutUtil {
     }
 
     fun mapToAxis(breaks: List<Double>, axisDomain: ClosedRange<Double>, axisMapper: (Double?) -> Double?): List<Double> {
-        val axisMin = axisDomain.lowerEndpoint()
+        val axisMin = axisDomain.lowerEnd
         val axisBreaks = ArrayList<Double>()
         for (v in breaks) {
             val mapped = axisMapper(v - axisMin)

@@ -20,7 +20,7 @@ import kotlin.math.max
 
     override fun getFormatter(range: ClosedRange<Double>, step: Double): (Any) -> String {
         // avoid 0 values because log10(0) = - Infinity
-        var referenceValue = max(abs(range.lowerEndpoint()), range.upperEndpoint())
+        var referenceValue = max(abs(range.lowerEnd), range.upperEnd)
         if (referenceValue == 0.0) {
             referenceValue = 1.0
         }

@@ -158,14 +158,14 @@ class GeoBoundingBoxCalculatorTest {
         val range = ClosedRange(100.0, 100.0)
         val segments = sequenceOf(
             Segment(
-                range.lowerEndpoint(),
-                range.upperEndpoint()
+                range.lowerEnd,
+                range.upperEnd
             )
         )
 
         val limitRange = calculateLoopLimitRange(segments, mapRange)
-        assertDoubleEquals(range.lowerEndpoint(), limitRange.lowerEndpoint())
-        assertDoubleEquals(range.upperEndpoint(), limitRange.upperEndpoint())
+        assertDoubleEquals(range.lowerEnd, limitRange.lowerEnd)
+        assertDoubleEquals(range.upperEnd, limitRange.upperEnd)
     }
 
     private fun expectNoCoordinatesException(block: () -> Unit) {

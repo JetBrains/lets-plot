@@ -12,6 +12,9 @@ import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.util.MutableDouble
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
+import jetbrains.datalore.plot.common.data.SeriesUtil.expand
+import jetbrains.datalore.plot.common.data.SeriesUtil.isSubTiny
 import kotlin.math.floor
 
 /**
@@ -78,8 +81,8 @@ class Bin2dStat(
         val binsData = computeBins(
             data.getNumeric(TransformVar.X),
             data.getNumeric(TransformVar.Y),
-            xRangeFinal.lowerEndpoint(),
-            yRangeFinal.lowerEndpoint(),
+            xRangeFinal.lowerEnd,
+            yRangeFinal.lowerEnd,
             xCountAndWidthFinal.count,
             yCountAndWidthFinal.count,
             xCountAndWidthFinal.width,
@@ -177,22 +180,18 @@ class Bin2dStat(
 
         private fun adjustRangeInitial(r: ClosedRange<Double>): ClosedRange<Double> {
             // span can't be 0
-            return if (SeriesUtil.span(r) <= SeriesUtil.TINY) {
-                ClosedRange(r.lowerEndpoint() - 0.5, r.lowerEndpoint() + 0.5)
-            } else {
-                r
-            }
+            return ensureApplicableRange(r)
         }
 
         private fun adjustRangeFinal(r: ClosedRange<Double>, binWidth: Double): ClosedRange<Double> {
-            return if (SeriesUtil.span(r) <= SeriesUtil.TINY) {
-                // 0 span allways becomes 0
-                ClosedRange(r.lowerEndpoint() - 0.5, r.lowerEndpoint() + 0.5)
+            return if (isSubTiny(r)) {
+                // 0 span allways becomes 1
+                expand(r, 0.5, 0.5)
             } else {
                 // Expand range by half of bin width (arbitrary choise - can be any positive num) to
                 // avoid data-points on the marginal bin margines.
                 val exp = binWidth / 2.0
-                ClosedRange(r.lowerEndpoint() - exp, r.upperEndpoint() + exp)
+                expand(r, exp, exp)
             }
         }
 

@@ -39,16 +39,6 @@ open class ClosedRange<T : Comparable<T>>(
         require(lowerEnd <= upperEnd) { "`lower` must be less or equal to `upper`: lower=$lowerEnd upper=$upperEnd" }
     }
 
-    // ToDo: remove
-    fun lowerEndpoint(): T {
-        return lowerEnd
-    }
-
-    // ToDo: remove
-    fun upperEndpoint(): T {
-        return upperEnd
-    }
-
     operator fun contains(v: T): Boolean {
         return lse(lowerEnd, v) && lse(v, upperEnd)
     }

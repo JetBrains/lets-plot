@@ -13,8 +13,8 @@ import kotlin.math.min
 
 object MapperUtil {
     fun map(r: ClosedRange<Double>, mapper: (Double?) -> Double?): ClosedRange<Double> {
-        val a = mapper(r.lowerEndpoint())!!
-        val b = mapper(r.upperEndpoint())!!
+        val a = mapper(r.lowerEnd)!!
+        val b = mapper(r.upperEnd)!!
         return ClosedRange(min(a, b), max(a, b))
     }
 
@@ -52,8 +52,8 @@ object MapperUtil {
 
     fun rangeWithLimitsAfterTransform(
         data: DataFrame, variable: DataFrame.Variable, lowerLimit: Double?, upperLimit: Double?, trans: Transform?): ClosedRange<Double> {
-        val lower = lowerLimit ?: data.range(variable)!!.lowerEndpoint()
-        val upper = upperLimit ?: data.range(variable)!!.upperEndpoint()
+        val lower = lowerLimit ?: data.range(variable)!!.lowerEnd
+        val upper = upperLimit ?: data.range(variable)!!.upperEnd
         val limits = ArrayList<Double>()
         limits.add(lower)
         limits.add(upper)

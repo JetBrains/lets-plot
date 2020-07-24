@@ -72,8 +72,8 @@ open class LegendDemo : SimpleDemoBase() {
         val mapper = ColorMapper.gradientDefault(domain)
         val scale = Scales.continuousDomain("color", mapper, true)
                 .with()
-                .lowerLimit(domain.lowerEndpoint())
-                .upperLimit(domain.upperEndpoint())
+                .lowerLimit(domain.lowerEnd)
+                .upperLimit(domain.upperEnd)
                 .build()
 
         val spec = ColorBarAssembler.createColorBarSpec("Color Bar", domain, breaks, scale, theme.legend())

@@ -44,11 +44,11 @@ object Coords {
     }
 
     private fun originX(xRange: ClosedRange<Double>): Double {
-        return -xRange.lowerEndpoint()
+        return -xRange.lowerEnd
     }
 
     private fun originY(yRange: ClosedRange<Double>): Double {
-        return yRange.upperEndpoint()
+        return yRange.upperEnd
     }
 
     private fun toClientOffsetX(originX: Double): (Double) -> Double {

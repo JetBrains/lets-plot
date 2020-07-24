@@ -18,7 +18,7 @@ class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Do
         get() = myLongitudeSegment.isEmpty && latitudeRangeIsEmpty(myLatitudeRange)
 
     private fun latitudeRangeIsEmpty(range: ClosedRange<Double>): Boolean {
-        return range.upperEndpoint() == range.lowerEndpoint()
+        return range.upperEnd == range.lowerEnd
     }
 
     init {
@@ -31,8 +31,8 @@ class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Do
     fun startLongitude(): Double = myLongitudeSegment.start()
     fun endLongitude(): Double = myLongitudeSegment.end()
 
-    fun minLatitude(): Double = myLatitudeRange.lowerEndpoint()
-    fun maxLatitude(): Double = myLatitudeRange.upperEndpoint()
+    fun minLatitude(): Double = myLatitudeRange.lowerEnd
+    fun maxLatitude(): Double = myLatitudeRange.upperEnd
 
     fun encloses(rect: GeoRectangle): Boolean {
         return myLongitudeSegment.encloses(rect.myLongitudeSegment) && myLatitudeRange.encloses(rect.myLatitudeRange)
@@ -45,8 +45,8 @@ class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Do
         for (longitudeRange in longitudeRanges) {
             rects.add(
                 newSpanRectangle(
-                    Vec(longitudeRange.lowerEndpoint(), myLatitudeRange.lowerEndpoint()),
-                    Vec(longitudeRange.upperEndpoint(), myLatitudeRange.upperEndpoint())
+                    Vec(longitudeRange.lowerEnd, myLatitudeRange.lowerEnd),
+                    Vec(longitudeRange.upperEnd, myLatitudeRange.upperEnd)
                 )
             )
         }

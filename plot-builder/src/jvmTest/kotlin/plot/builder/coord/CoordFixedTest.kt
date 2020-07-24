@@ -260,8 +260,8 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
     private fun ClosedRange<Double>.equals(other: ClosedRange<Double>, epsilon: Double = 0.00001): Boolean {
         fun doubleEquals(expected: Double, actual: Double, epsilon: Double) = abs(expected - actual) < epsilon
 
-        return doubleEquals(lowerEndpoint(), other.lowerEndpoint(), epsilon) &&
-                doubleEquals(upperEndpoint(), other.upperEndpoint(), epsilon)
+        return doubleEquals(lowerEnd, other.lowerEnd, epsilon) &&
+                doubleEquals(upperEnd, other.upperEnd, epsilon)
     }
 
     private fun assertEquals(expected: ClosedRange<Double>, actual: ClosedRange<Double>, epsilon: Double = 0.001) {

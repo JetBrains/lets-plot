@@ -75,8 +75,8 @@ internal class ProjectionCoordProvider private constructor(
 
             val validDomain = projection.toValidDomain(domain)
             val validDomainProjected = ClosedRange(
-                projection.apply(validDomain.lowerEndpoint()),
-                projection.apply(validDomain.upperEndpoint())
+                projection.apply(validDomain.lowerEnd),
+                projection.apply(validDomain.upperEnd)
             )
 
             val projectionInverse = Mappers.linear(validDomainProjected, validDomain)

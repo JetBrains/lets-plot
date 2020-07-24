@@ -41,8 +41,8 @@ class GeoBoundingBoxCalculator<TypeT>(
             myLoopY
         )
         return Rect(
-            xRange.lowerEndpoint(),
-            yRange.lowerEndpoint(),
+            xRange.lowerEnd,
+            yRange.lowerEnd,
             xRange.length(),
             yRange.length()
         )
@@ -69,8 +69,8 @@ class GeoBoundingBoxCalculator<TypeT>(
                 .map {
                     splitSegment(
                         it.start, it.end,
-                        mapRange.lowerEndpoint(),
-                        mapRange.upperEndpoint()
+                        mapRange.lowerEnd,
+                        mapRange.upperEnd
                     )
                 }
                 .flatten()
@@ -80,34 +80,34 @@ class GeoBoundingBoxCalculator<TypeT>(
         }
 
         private fun normalizeCenter(range: ClosedRange<Double>, mapRange: ClosedRange<Double>): ClosedRange<Double> {
-            return if (mapRange.contains((range.upperEndpoint() + range.lowerEndpoint()) / 2)) {
+            return if (mapRange.contains((range.upperEnd + range.lowerEnd) / 2)) {
                 range
             } else {
                 ClosedRange(
-                    range.lowerEndpoint() - mapRange.length(),
-                    range.upperEndpoint() - mapRange.length()
+                    range.lowerEnd - mapRange.length(),
+                    range.upperEnd - mapRange.length()
                 )
             }
         }
 
         private fun findMaxGapBetweenRanges(ranges: Sequence<ClosedRange<Double>>, width: Double): ClosedRange<Double> {
-            val sortedRanges = ranges.sortedBy(ClosedRange<Double>::lowerEndpoint)
-            var prevUpper = sortedRanges.maxBy(ClosedRange<Double>::upperEndpoint)!!.upperEndpoint()
-            var nextLower = sortedRanges.first().lowerEndpoint()
+            val sortedRanges = ranges.sortedBy(ClosedRange<Double>::lowerEnd)
+            var prevUpper = sortedRanges.maxBy(ClosedRange<Double>::upperEnd)!!.upperEnd
+            var nextLower = sortedRanges.first().lowerEnd
             val gapRight = max(width + nextLower, prevUpper)
             var maxGapRange = ClosedRange(prevUpper, gapRight)
 
             val it = sortedRanges.iterator()
-            prevUpper = it.next().upperEndpoint()
+            prevUpper = it.next().upperEnd
 
             while (it.hasNext()) {
                 val range = it.next()
 
-                nextLower = range.lowerEndpoint()
+                nextLower = range.lowerEnd
                 if (nextLower > prevUpper && nextLower - prevUpper > maxGapRange.length()) {
                     maxGapRange = ClosedRange(prevUpper, nextLower)
                 }
-                prevUpper = max(prevUpper, range.upperEndpoint())
+                prevUpper = max(prevUpper, range.upperEnd)
             }
             return maxGapRange
         }
@@ -118,16 +118,16 @@ class GeoBoundingBoxCalculator<TypeT>(
 
             return when {
                 range.length() > width ->
-                    ClosedRange(range.lowerEndpoint(), range.lowerEndpoint())
-                range.upperEndpoint() > width ->
-                    safeRange(range.upperEndpoint() - width, range.lowerEndpoint())
+                    ClosedRange(range.lowerEnd, range.lowerEnd)
+                range.upperEnd > width ->
+                    safeRange(range.upperEnd - width, range.lowerEnd)
                 else ->
-                    safeRange(range.upperEndpoint(), width + range.lowerEndpoint())
+                    safeRange(range.upperEnd, width + range.lowerEnd)
             }
         }
 
         private fun ClosedRange<Double>.length(): Double {
-            return upperEndpoint() - lowerEndpoint()
+            return upperEnd - lowerEnd
         }
     }
 }

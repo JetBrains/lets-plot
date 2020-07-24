@@ -24,10 +24,10 @@ object GeometryUtil {
     }
 
     fun doubleRange(xRange: ClosedRange<Double>, yRange: ClosedRange<Double>): DoubleRectangle {
-        val xOrigin = xRange.lowerEndpoint()
-        val yOrigin = yRange.lowerEndpoint()
-        val xSpan = xRange.upperEndpoint() - xRange.lowerEndpoint()
-        val ySpan = yRange.upperEndpoint() - yRange.lowerEndpoint()
+        val xOrigin = xRange.lowerEnd
+        val yOrigin = yRange.lowerEnd
+        val xSpan = xRange.upperEnd - xRange.lowerEnd
+        val ySpan = yRange.upperEnd - yRange.lowerEnd
         return DoubleRectangle(xOrigin, yOrigin, xSpan, ySpan)
     }
 

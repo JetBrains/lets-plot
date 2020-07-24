@@ -27,8 +27,8 @@ class LinearBreaksGen : BreaksGenerator {
         targetCount: Int
     ): LinearBreaksHelper {
         val helper = LinearBreaksHelper(
-            domainAfterTransform.lowerEndpoint(),
-            domainAfterTransform.upperEndpoint(),
+            domainAfterTransform.lowerEnd,
+            domainAfterTransform.upperEnd,
             targetCount
         )
         return helper

@@ -113,7 +113,7 @@ class ColorBarComponent(spec: ColorBarComponentSpec) : LegendBox(spec) {
         val domainSpan = SeriesUtil.span(domain)
         val stepCount = max(2, numBins)
         val step = domainSpan / stepCount
-        val v = domain.lowerEndpoint() + step / 2
+        val v = domain.lowerEnd + step / 2
         val domainValues = ArrayList<Double>()
         for (i in 0 until stepCount) {
             domainValues.add(v + step * i)

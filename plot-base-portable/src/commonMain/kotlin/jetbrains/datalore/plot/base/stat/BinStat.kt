@@ -70,8 +70,8 @@ internal class BinStat(
         rangeX: ClosedRange<Double>,
         valuesX: List<Double?>
     ): BinStatUtil.BinsData {
-        var startX: Double? = rangeX.lowerEndpoint()
-        var spanX = rangeX.upperEndpoint() - startX!!
+        var startX: Double? = rangeX.lowerEnd
+        var spanX = rangeX.upperEnd - startX!!
 
         // initial bin count/width
         var b: BinStatUtil.CountAndWidth = BinStatUtil.binCountAndWidth(spanX, binOptions)

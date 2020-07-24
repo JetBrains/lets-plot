@@ -25,6 +25,10 @@ object SeriesUtil {
         return value < TINY
     }
 
+    fun isSubTiny(range: ClosedRange<Double>): Boolean {
+        return isFinite(range) && span(range) < TINY
+    }
+
     fun checkedDoubles(values: Iterable<*>): CheckedDoubleIterable {
         return CheckedDoubleIterable(values)
     }
@@ -137,20 +141,20 @@ object SeriesUtil {
         return resolution
     }
 
-    fun ensureNotZeroRange(range: ClosedRange<Double>?): ClosedRange<Double> {
+    fun ensureApplicableRange(range: ClosedRange<Double>?): ClosedRange<Double> {
         if (range == null) {
-            return ClosedRange(-1.0, 1.0)
+            return ClosedRange(-0.5, 0.5)
         }
-//        if (range.lowerEndpoint() == range.upperEndpoint()) {
-        if (isSubTiny(span(range))) {
-            val median = range.lowerEndpoint()
-            return ClosedRange(median - 1, median + 1)
+        if (isSubTiny(range)) {
+            val median = range.lowerEnd
+            return ClosedRange(median - 0.5, median + 0.5)
         }
         return range
     }
 
     fun span(range: ClosedRange<Double>): Double {
-        return range.upperEndpoint() - range.lowerEndpoint()
+        require(isFinite(range)) { "range must be finite: $range" }
+        return range.upperEnd - range.lowerEnd
     }
 
     fun span(range0: ClosedRange<Double>?, range1: ClosedRange<Double>?): ClosedRange<Double>? {
@@ -164,7 +168,7 @@ object SeriesUtil {
     }
 
     fun expand(range: ClosedRange<Double>, lowerExpand: Double, upperExpand: Double): ClosedRange<Double> {
-        return ClosedRange(range.lowerEndpoint() - lowerExpand, range.upperEndpoint() + upperExpand)
+        return ClosedRange(range.lowerEnd - lowerExpand, range.upperEnd + upperExpand)
     }
 
     fun isFinite(range: ClosedRange<Double>): Boolean {

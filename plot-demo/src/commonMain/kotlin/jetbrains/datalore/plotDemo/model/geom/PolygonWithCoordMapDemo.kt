@@ -55,8 +55,8 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
         val coordsY = KANSAS_Y.toList()
         val domainX = SeriesUtil.range(coordsX)!!
         val domainY = SeriesUtil.range(coordsY)!!
-        val spanX = domainX.upperEndpoint() - domainX.lowerEndpoint()
-        val spanY = domainY.upperEndpoint() - domainY.lowerEndpoint()
+        val spanX = domainX.upperEnd - domainX.lowerEnd
+        val spanY = domainY.upperEnd - domainY.lowerEnd
         val clientW = demoInnerSize.x
         val clientH = demoInnerSize.y
         val ratioX = spanX / clientW

@@ -342,7 +342,7 @@ internal object PlotAssemblerUtil {
 
         // validate XY ranges
         for (aes in listOf(Aes.X, Aes.Y)) {
-            rangeByAes[aes] = SeriesUtil.ensureNotZeroRange(rangeByAes[aes])
+            rangeByAes[aes] = SeriesUtil.ensureApplicableRange(rangeByAes[aes])
         }
 
         return rangeByAes

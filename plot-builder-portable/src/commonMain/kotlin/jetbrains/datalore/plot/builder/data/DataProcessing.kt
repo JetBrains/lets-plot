@@ -80,8 +80,8 @@ object DataProcessing {
                     val range = sd.range(Stats.GROUP)
                     if (range != null) {
                         val start = lastStatGroupEnd + 1
-                        val offset = start - range.lowerEndpoint().toInt()
-                        lastStatGroupEnd = range.upperEndpoint().toInt() + offset
+                        val offset = start - range.lowerEnd.toInt()
+                        lastStatGroupEnd = range.upperEnd.toInt() + offset
                         if (offset != 0) {
                             val newG = ArrayList<Double>()
                             for (g in sd.getNumeric(Stats.GROUP)) {

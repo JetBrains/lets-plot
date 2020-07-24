@@ -76,7 +76,7 @@ abstract class GeomBase : Geom {
 
         private fun rect(rangeX: ClosedRange<Double>, rangeY: ClosedRange<Double>): DoubleRectangle {
             return DoubleRectangle(
-                rangeX.lowerEndpoint(), rangeY.lowerEndpoint(),
+                rangeX.lowerEnd, rangeY.lowerEnd,
                 SeriesUtil.span(rangeX), SeriesUtil.span(rangeY)
             )
         }

@@ -266,8 +266,8 @@ object PlotUtil {
         for ((aes, domain) in overallNumericDomains) {
             sharedMappers[aes]?.let { mapper ->
                 val range = ClosedRange(
-                    mapper(domain.lowerEndpoint()) as Double,
-                    mapper(domain.upperEndpoint()) as Double
+                    mapper(domain.lowerEnd) as Double,
+                    mapper(domain.upperEnd) as Double
                 )
                 aesBuilder.overallRange(aes, range)
             }
@@ -353,8 +353,8 @@ object PlotUtil {
         // see: https://ggplot2.tidyverse.org/current/scale_continuous.html - expand
         val mulExp = getMultiplicativeExpand(layer, aes)
         val addExp = getAdditiveExpand(layer, aes)
-        val lowerEndpoint = range.lowerEndpoint()
-        val upperEndpoint = range.upperEndpoint()
+        val lowerEndpoint = range.lowerEnd
+        val upperEndpoint = range.upperEnd
 
         val length = upperEndpoint - lowerEndpoint
         var lowerExpand = addExp + length * mulExp

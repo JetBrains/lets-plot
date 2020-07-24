@@ -30,8 +30,8 @@ internal class MercatorProjection : GeoProjection {
 
     companion object {
         private val VALID_RECTANGLE = newSpanRectangle(
-            explicitVec<LonLat>(VALID_LONGITUDE_RANGE.lowerEndpoint(), VALID_LATITUDE_RANGE.lowerEndpoint()),
-            explicitVec<LonLat>(VALID_LONGITUDE_RANGE.upperEndpoint(), VALID_LATITUDE_RANGE.upperEndpoint())
+            explicitVec<LonLat>(VALID_LONGITUDE_RANGE.lowerEnd, VALID_LATITUDE_RANGE.lowerEnd),
+            explicitVec<LonLat>(VALID_LONGITUDE_RANGE.upperEnd, VALID_LATITUDE_RANGE.upperEnd)
         )
     }
 }

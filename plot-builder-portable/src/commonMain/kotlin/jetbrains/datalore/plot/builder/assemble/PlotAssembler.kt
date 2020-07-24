@@ -109,10 +109,10 @@ class PlotAssembler private constructor(
         val yDomain = rangeByAes[Aes.Y]
         checkState(xDomain != null, "X domain not defined")
         checkState(yDomain != null, "Y domain not defined")
-        checkState(SeriesUtil.isFinite(xDomain!!.lowerEndpoint()), "X domain lower end: " + xDomain.lowerEndpoint())
-        checkState(SeriesUtil.isFinite(xDomain.upperEndpoint()), "X domain upper end: " + xDomain.upperEndpoint())
-        checkState(SeriesUtil.isFinite(yDomain!!.lowerEndpoint()), "Y domain lower end: " + yDomain.lowerEndpoint())
-        checkState(SeriesUtil.isFinite(yDomain.upperEndpoint()), "Y domain upper end: " + yDomain.upperEndpoint())
+        checkState(SeriesUtil.isFinite(xDomain!!.lowerEnd), "X domain lower end: " + xDomain.lowerEnd)
+        checkState(SeriesUtil.isFinite(xDomain.upperEnd), "X domain upper end: " + xDomain.upperEnd)
+        checkState(SeriesUtil.isFinite(yDomain!!.lowerEnd), "Y domain lower end: " + yDomain.lowerEnd)
+        checkState(SeriesUtil.isFinite(yDomain.upperEnd), "Y domain upper end: " + yDomain.upperEnd)
 
         val xAxisLayout: AxisLayout
         val yAxisLayout: AxisLayout

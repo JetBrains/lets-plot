@@ -90,11 +90,11 @@ internal open class CoordTestBase {
         }
 
         fun expand(range: ClosedRange<Double>, ratio: Double): ClosedRange<Double> {
-            val span = range.upperEndpoint() - range.lowerEndpoint()
+            val span = range.upperEnd - range.lowerEnd
             val expand = span * (ratio - 1) / 2.0
             return ClosedRange(
-                    range.lowerEndpoint() - expand,
-                    range.upperEndpoint() + expand
+                    range.lowerEnd - expand,
+                    range.upperEnd + expand
             )
         }
 

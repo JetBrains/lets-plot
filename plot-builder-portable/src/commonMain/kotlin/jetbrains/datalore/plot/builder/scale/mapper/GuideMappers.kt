@@ -106,7 +106,7 @@ object GuideMappers {
             val formatter = QuantitativeTickFormatterFactory.forLinearScale().getFormatter(domain, step)
 
             for (i in 0 until breakCount) {
-                val `val` = domain.lowerEndpoint() + step / 2 + i * step
+                val `val` = domain.lowerEnd + step / 2 + i * step
                 breakValues.add(`val`)
                 breakLabels.add(formatter(`val`))
             }

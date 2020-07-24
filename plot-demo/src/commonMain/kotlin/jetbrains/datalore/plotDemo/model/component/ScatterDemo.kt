@@ -246,7 +246,7 @@ open class ScatterDemo : SimpleDemoBase() {
             val breaks = ArrayList<Double>()
             val labels = ArrayList<String>()
             for (range in mappedValuesQuantized) {
-                val br = (range.lowerEndpoint() + range.upperEndpoint()) / 2
+                val br = (range.lowerEnd + range.upperEnd) / 2
                 breaks.add(br)
                 labels.add("" + br)
             }

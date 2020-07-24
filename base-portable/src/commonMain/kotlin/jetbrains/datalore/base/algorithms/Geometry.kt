@@ -46,7 +46,7 @@ private fun <T> findRingIntervals(path: List<T>): List<ClosedRange<Int>> {
 }
 
 private fun <T> List<T>.sublist(range: ClosedRange<Int>): List<T> {
-    return this.subList(range.lowerEndpoint(), range.upperEndpoint())
+    return this.subList(range.lowerEnd, range.upperEnd)
 }
 
 

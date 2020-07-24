@@ -73,8 +73,8 @@ internal object BoxplotStatUtil {
             if (SeriesUtil.isFinite(lowerFence) && SeriesUtil.isFinite(upperFence)) {
                 val range = SeriesUtil.range(filter(bin) { y -> y >= lowerFence && y <= upperFence })
                 if (range != null) {
-                    lowerWhisker = range.lowerEndpoint()
-                    upperWhisker = range.upperEndpoint()
+                    lowerWhisker = range.lowerEnd
+                    upperWhisker = range.upperEnd
                 }
             }
 

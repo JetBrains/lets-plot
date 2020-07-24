@@ -25,7 +25,7 @@ fun <GeometryT, QuadT> calculateQuadKeys(
     val tileCount = calulateQuadsCount(zoom)
 
     fun calcQuadNum(value: Double, range: ClosedRange<Double>, tileCount: Int): Int {
-        val position = (value - range.lowerEndpoint()) / (range.upperEndpoint() - range.lowerEndpoint())
+        val position = (value - range.lowerEnd) / (range.upperEnd - range.lowerEnd)
         return max(0.0, min(position * tileCount, (tileCount - 1).toDouble())).toInt()
     }
 

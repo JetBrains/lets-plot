@@ -238,13 +238,13 @@ class SmoothStat internal constructor() : BaseStat(DEF_MAPPING) {
 
         val rangeX = SeriesUtil.range(valuesX) ?: return result
 
-        val startX = rangeX.lowerEndpoint()
-        val spanX = rangeX.upperEndpoint() - startX
+        val startX = rangeX.lowerEnd
+        val spanX = rangeX.upperEnd - startX
         val stepX = spanX / (smootherPointCount - 1)
 
         for (i in 0 until smootherPointCount) {
             val x = startX + i * stepX
-            val eval = regression.evalX(x.coerceIn(rangeX.lowerEndpoint(), rangeX.upperEndpoint()))
+            val eval = regression.evalX(x.coerceIn(rangeX.lowerEnd, rangeX.upperEnd))
             statX.add(x)
             statY.add(eval.y)
             statMinY.add(eval.ymin)
