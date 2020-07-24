@@ -30,6 +30,7 @@ kotlin {
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.scaleRotateTranslateDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.lineJoinLineCapDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.fillRectStrokeRectDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.lineDashDemo",
                 )
             }
         }
