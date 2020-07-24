@@ -259,7 +259,9 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
                     myConstantAes.contains(aes) -> {
                         // constant should not be null
                         val v = numericValues(aes).iterator().next()!!
-                        ClosedRange(v, v)
+                        if (v.isFinite()) {
+                            ClosedRange(v, v)
+                        } else null
                     }
                     else -> {
                         val values = numericValues(aes)

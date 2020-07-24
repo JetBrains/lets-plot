@@ -35,7 +35,7 @@ interface Scale<T> {
 
     val isContinuousDomain: Boolean
 
-    val domainLimits: ClosedRange<Double>
+    val domainLimits: ClosedRange<Double>?
 
     val multiplicativeExpand: Double
 

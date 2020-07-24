@@ -27,10 +27,10 @@ class ContinuousScaleTest {
         val additiveExpand = 777.0
         var scale = createScale()
         scale = scale.with()
-                .multiplicativeExpand(multiplicativeExpand)
-                .additiveExpand(additiveExpand)
-                .upperLimit(10.0)
-                .build()
+            .multiplicativeExpand(multiplicativeExpand)
+            .additiveExpand(additiveExpand)
+            .upperLimit(10.0)
+            .build()
 
         assertEquals(multiplicativeExpand, scale.multiplicativeExpand, 0.0)
         assertEquals(additiveExpand, scale.additiveExpand, 0.0)
@@ -68,9 +68,9 @@ class ContinuousScaleTest {
     fun withDomainLimits() {
         var scale = createScale()
         scale = scale.with()
-                .lowerLimit(-10.0)
-                .upperLimit(10.0)
-                .build()
+            .lowerLimit(-10.0)
+            .upperLimit(10.0)
+            .build()
 
         assertTrue(scale.hasDomainLimits())
         assertValuesInLimits(scale, -10, 0.0, 10.0)
@@ -81,8 +81,8 @@ class ContinuousScaleTest {
     fun withDomainLimits_Lower() {
         var scale = createScale()
         scale = scale.with()
-                .lowerLimit(-10.0)
-                .build()
+            .lowerLimit(-10.0)
+            .build()
 
         assertTrue(scale.hasDomainLimits())
         assertValuesInLimits(scale, -10, 0.0, 10.0, 11)
@@ -93,8 +93,8 @@ class ContinuousScaleTest {
     fun withDomainLimits_Upper() {
         var scale = createScale()
         scale = scale.with()
-                .upperLimit(10.0)
-                .build()
+            .upperLimit(10.0)
+            .build()
 
         assertTrue(scale.hasDomainLimits())
         assertValuesInLimits(scale, -11, -10, 0.0, 10.0)
@@ -105,9 +105,9 @@ class ContinuousScaleTest {
     fun withDomainLimits_SameInCopy() {
         var scale = createScale()
         scale = scale.with()
-                .lowerLimit(-10.0)
-                .upperLimit(10.0)
-                .build()
+            .lowerLimit(-10.0)
+            .upperLimit(10.0)
+            .build()
 
         val domainLimits = scale.domainLimits
 

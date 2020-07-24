@@ -68,7 +68,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
             }
         }
 
-    override val domainLimits: ClosedRange<Double>
+    override val domainLimits: ClosedRange<Double>?
         get() = throw IllegalStateException("Not applicable to scale with discrete domain '$name'")
 
     constructor(name: String, domainValues: Collection<Any?>, mapper: ((Double?) -> T?)) : super(name, mapper) {

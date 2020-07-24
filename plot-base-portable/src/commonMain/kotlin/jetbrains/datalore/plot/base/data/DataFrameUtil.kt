@@ -25,12 +25,17 @@ object DataFrameUtil {
         return applyTransform(data, `var`, transformVar, scale)
     }
 
-    private fun applyTransform(data: DataFrame, variable: DataFrame.Variable, transformVar: DataFrame.Variable, scale: Scale<*>): DataFrame {
+    private fun applyTransform(
+        data: DataFrame,
+        variable: DataFrame.Variable,
+        transformVar: DataFrame.Variable,
+        scale: Scale<*>
+    ): DataFrame {
         val transformSource = getTransformSource(data, variable, scale)
         val transformResult = ScaleUtil.transform(transformSource, scale)
         return data.builder()
-                .putNumeric(transformVar, transformResult)
-                .build()
+            .putNumeric(transformVar, transformResult)
+            .build()
     }
 
     private fun getTransformSource(data: DataFrame, variable: DataFrame.Variable, scale: Scale<*>): List<*> {
@@ -38,15 +43,6 @@ object DataFrameUtil {
             return data[variable]
         }
 
-        if (scale.isContinuousDomain) {
-            val limits = scale.domainLimits
-            return filterTransformSource(data.getNumeric(variable)) { input: Double? ->
-                // keep null(s)
-                input == null || limits.contains(input)   // faster then 'scale.isInDomainLimits(Object v)'
-            }
-        }
-
-        // discrete domain
         return filterTransformSource(data[variable]) { input: Any? ->
             // keep null(s)
             input == null || scale.isInDomainLimits(input)
@@ -131,8 +127,14 @@ object DataFrameUtil {
     fun fromMap(map: Map<*, *>): DataFrame {
         val frameBuilder = DataFrame.Builder()
         for ((key, value) in map) {
-            checkArgument(key is String, "Map to data-frame: key expected a String but was " + key!!::class.simpleName + " : " + key)
-            checkArgument(key is String, "Map to data-frame: value expected a List but was " + value!!::class.simpleName + " : " + value)
+            checkArgument(
+                key is String,
+                "Map to data-frame: key expected a String but was " + key!!::class.simpleName + " : " + key
+            )
+            checkArgument(
+                key is String,
+                "Map to data-frame: value expected a List but was " + value!!::class.simpleName + " : " + value
+            )
             frameBuilder.put(createVariable(key as String), value as List<*>)
         }
         return frameBuilder.build()
@@ -152,9 +154,9 @@ object DataFrameUtil {
         val sb = StringBuilder()
         for (variable in df.variables()) {
             sb.append(variable.toSummaryString())
-                    .append(" numeric: " + df.isNumeric(variable))
-                    .append(" size: " + df[variable].size)
-                    .append('\n')
+                .append(" numeric: " + df.isNumeric(variable))
+                .append(" size: " + df[variable].size)
+                .append('\n')
         }
         return sb.toString()
     }

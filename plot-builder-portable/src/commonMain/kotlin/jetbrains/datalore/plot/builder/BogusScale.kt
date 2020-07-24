@@ -25,7 +25,7 @@ internal class BogusScale : Scale<Double> {
     override val isContinuousDomain: Boolean
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
-    override val domainLimits: ClosedRange<Double>
+    override val domainLimits: ClosedRange<Double>?
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
     override val multiplicativeExpand: Double

@@ -141,7 +141,8 @@ object SeriesUtil {
         if (range == null) {
             return ClosedRange(-1.0, 1.0)
         }
-        if (range.lowerEndpoint() == range.upperEndpoint()) {
+//        if (range.lowerEndpoint() == range.upperEndpoint()) {
+        if (isSubTiny(span(range))) {
             val median = range.lowerEndpoint()
             return ClosedRange(median - 1, median + 1)
         }
@@ -166,11 +167,8 @@ object SeriesUtil {
         return ClosedRange(range.lowerEndpoint() - lowerExpand, range.upperEndpoint() + upperExpand)
     }
 
-    fun isFinite(range: ClosedRange<Double>?): Boolean {
-        return range != null &&
-                isFinite(range.lowerEndpoint()) && isFinite(
-            range.upperEndpoint()
-        )
+    fun isFinite(range: ClosedRange<Double>): Boolean {
+        return !(range.lowerEnd.isInfinite() || range.upperEnd.isInfinite())
     }
 
     fun matchingIndices(list: List<*>, matchedValue: Any?): MutableList<Int> {

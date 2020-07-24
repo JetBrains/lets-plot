@@ -28,50 +28,58 @@ import jetbrains.datalore.base.gcommon.collect.Comparables.lse
 import jetbrains.datalore.base.gcommon.collect.Comparables.max
 import jetbrains.datalore.base.gcommon.collect.Comparables.min
 
-class ClosedRange<T : Comparable<T>>(private val myLower: T, private val myUpper: T) {
-
-    val isEmpty: Boolean
-        get() = myLower.compareTo(myUpper) == 0
+open class ClosedRange<T : Comparable<T>>(
+    val lowerEnd: T,
+    val upperEnd: T
+) {
 
     init {
-        if (myLower > myUpper) {
-            throw IllegalArgumentException("`lower` must be less or equal to `upper` (lower=$myLower upper=$myUpper")
-        }
+        (lowerEnd as? Double)?.run { require(!isNaN()) { "ends can't be None: lower=$lowerEnd upper=$upperEnd" } }
+        (upperEnd as? Double)?.run { require(!isNaN()) { "ends can't be None: lower=$lowerEnd upper=$upperEnd" } }
+        require(lowerEnd <= upperEnd) { "`lower` must be less or equal to `upper`: lower=$lowerEnd upper=$upperEnd" }
     }
 
+    // ToDo: remove
     fun lowerEndpoint(): T {
-        return myLower
+        return lowerEnd
     }
 
+    // ToDo: remove
     fun upperEndpoint(): T {
-        return myUpper
+        return upperEnd
     }
 
     operator fun contains(v: T): Boolean {
-        return lse(myLower, v) && lse(v, myUpper)
+        return lse(lowerEnd, v) && lse(v, upperEnd)
     }
 
     fun span(other: ClosedRange<T>): ClosedRange<T> {
         if (encloses(other)) return this
-        return if (other.encloses(this)) other else ClosedRange(min(myLower, other.myLower), max(myUpper, other.myUpper))
+        return if (other.encloses(this)) other else ClosedRange(
+            min(lowerEnd, other.lowerEnd),
+            max(upperEnd, other.upperEnd)
+        )
     }
 
     fun encloses(other: ClosedRange<T>): Boolean {
-        return lse(myLower, other.myLower) && gte(myUpper, other.myUpper)
+        return lse(lowerEnd, other.lowerEnd) && gte(upperEnd, other.upperEnd)
     }
 
     fun isConnected(other: ClosedRange<T>): Boolean {
-        return !(gt(myLower, other.myUpper) || ls(myUpper, other.myLower))
+        return !(gt(lowerEnd, other.upperEnd) || ls(upperEnd, other.lowerEnd))
     }
 
     fun intersection(other: ClosedRange<T>): ClosedRange<T> {
         if (!isConnected(other)) throw IllegalArgumentException("Ranges are not connected: this=$this other=$other")
         if (encloses(other)) return other
-        return if (other.encloses(this)) this else ClosedRange(max(myLower, other.myLower), min(myUpper, other.myUpper))
+        return if (other.encloses(this)) this else ClosedRange(
+            max(lowerEnd, other.lowerEnd),
+            min(upperEnd, other.upperEnd)
+        )
     }
 
     override fun toString(): String {
-        return "ClosedRange[$myLower, $myUpper]"
+        return "ClosedRange[$lowerEnd, $upperEnd]"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -80,13 +88,13 @@ class ClosedRange<T : Comparable<T>>(private val myLower: T, private val myUpper
 
         other as ClosedRange<*>
 
-        if (myLower != other.myLower) return false
-        if (myUpper != other.myUpper) return false
+        if (lowerEnd != other.lowerEnd) return false
+        if (upperEnd != other.upperEnd) return false
         return true
     }
 
     override fun hashCode(): Int {
-        return myLower.hashCode() + 31 * myUpper.hashCode()
+        return lowerEnd.hashCode() + 31 * upperEnd.hashCode()
     }
 
     companion object {

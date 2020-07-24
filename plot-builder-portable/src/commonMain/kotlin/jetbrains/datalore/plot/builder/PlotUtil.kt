@@ -68,8 +68,8 @@ object PlotUtil {
         var result: ClosedRange<Double>? = null
         for (aes in aesList) {
             val range = aesthetics.range(aes)
-            if (isFinite(range)) {
-                result = result?.span(range!!) ?: range
+            if (range != null) {
+                result = result?.span(range) ?: range
             }
         }
         return result
