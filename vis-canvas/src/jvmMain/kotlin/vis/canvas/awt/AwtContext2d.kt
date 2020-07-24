@@ -29,6 +29,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
     init {
         graphics.background = Color.TRANSPARENT.toAwtColor()
+        setLineCap(Context2d.LineCap.BUTT)
     }
 
     private fun convertLineJoin(lineJoin: Context2d.LineJoin): Int {
@@ -170,6 +171,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
+        graphics.color = fillColor
         graphics.fillRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
     }
 
@@ -229,6 +231,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
+        graphics.color = strokeColor
         graphics.drawRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
     }
 

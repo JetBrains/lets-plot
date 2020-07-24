@@ -23,6 +23,11 @@ import jetbrains.datalore.vis.canvas.CssFontParser
 import javafx.scene.paint.Color as JavafxColor
 
 internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Context2d {
+
+    init {
+        setLineCap(Context2d.LineCap.BUTT)
+    }
+
     private fun convertLineJoin(lineJoin: Context2d.LineJoin): StrokeLineJoin {
         return when (lineJoin) {
             Context2d.LineJoin.BEVEL -> StrokeLineJoin.BEVEL
