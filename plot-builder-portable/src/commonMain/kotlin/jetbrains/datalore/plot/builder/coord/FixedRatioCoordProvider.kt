@@ -79,24 +79,22 @@ internal open class FixedRatioCoordProvider(
         }
 
         fun limitOrth(orig: ClosedRange<Double>, lim: ClosedRange<Double>, orth: ClosedRange<Double>):ClosedRange<Double> {
-            val scale = span(orig) / span(orth)
-            val lowerExpand = (orig.lowerEndpoint() - lim.lowerEndpoint()) * scale
-            val upperExpand = (lim.upperEndpoint() - orig.upperEndpoint()) * scale
-            return SeriesUtil.expand(orth, lowerExpand, upperExpand)
+            val origExpandRatio = span(lim) / span(orig)
+            val orthogonalExpand = span(orth) * origExpandRatio
+            return SeriesUtil.expand(orth, orthogonalExpand / 2, orthogonalExpand / 2)
         }
 
         if (xLim != null) {
-            val newSpan = displayH * (span(xLim) / displayW)
             val yLim = limitOrth(xDomain, xLim, yDomain)
+            val newSpan = displayH * (span(xLim) / displayW)
             return Pair(xLim, SeriesUtil.expand(yLim, newSpan))
 
         } else if (yLim != null) {
-            val newSpan = displayW * (span(yLim) / displayH)
             val xLim = limitOrth(yDomain, yLim, xDomain)
+            val newSpan = displayW * (span(yLim) / displayH)
             return Pair(SeriesUtil.expand(xLim, newSpan), yLim)
-
         } else {
-            error("Impossible")
+            error("xLim and yLim are null - missed branch earlier?")
         }
     }
 }

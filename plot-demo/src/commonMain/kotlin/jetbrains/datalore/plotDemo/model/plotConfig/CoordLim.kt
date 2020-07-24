@@ -12,9 +12,9 @@ class CoordLim : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             fixed(),
-            fixedXLim(7, 17),
-            fixedYLim(7, 17),
-            fixedLims(xMin = -1, xMax = 7, yMin = -1, yMax = 15)
+            fixedXLim(107, 117),
+            fixedYLim(470, 570),
+            fixedLims(xMin = 65, xMax = 165, yMin = 370, yMax = 570)
         )
     }
 
@@ -30,8 +30,8 @@ class CoordLim : PlotConfigDemoBase() {
             |       'geom': 'line', 
             |       'stat': null, 
             |       'data': {
-            |           'x': [0, 5, 10, 15, 20, 25], 
-            |           'y': [0, 5, 10, 15, 20, 25], 
+            |           'x': [100, 105, 110, 115, 120, 125], 
+            |           'y': [400, 450, 500, 550, 600, 650], 
             |           'g': ['a', 'a', 'b', 'b', 'c', 'c']
             |       },
             |       'mapping': {
