@@ -85,6 +85,16 @@ def is_geo_data_regions(data: Any) -> bool:
     return data is not None and type(data).__name__ == 'Regions'
 
 
+def map_join_regions(map_join: Any):
+    if isinstance(map_join, str):
+        return [map_join, 'request']
+
+    if isinstance(map_join, Iterable) and len(map_join) == 1:
+        return [map_join[0], 'request']
+
+    return map_join
+
+
 def is_geo_data_frame(data: Any) -> bool:
     try:
         from geopandas import GeoDataFrame

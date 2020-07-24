@@ -3,7 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geo_data_regions, geo_data_frame_to_lon_lat, as_pair
+from .util import as_annotated_data, as_annotated_map_data, is_geo_data_frame, is_geo_data_regions, map_join_regions, geo_data_frame_to_lon_lat, as_pair
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -46,11 +46,12 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         position adjustment function.
     animation : type of the animation, optional
         Codes and names: 0 = "none" (default), 1 = "ripple".
-    map : GeoDataFrame (supported shapes Point and MultiPoint)  or Regions (implicitly invoke centroids())
+    map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
         Data containing coordinates of points.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or first value in pair - column in data
+        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to the layer. These are often aesthetics settings used to set an aesthetic to a fixed
@@ -92,6 +93,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
 
     if is_geo_data_regions(map):
         map = map.centroids()
+        map_join = map_join_regions(map_join)
 
     return _geom('point', mapping, data, stat, position, show_legend, sampling=sampling,
                  map=map, map_join=map_join,
@@ -129,7 +131,8 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         Data containing coordinates of lines.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or first value in pair - column in data
+        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -1106,7 +1109,8 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
         Data contains coordinates of polygon vertices on map.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or first value in pair - column in data
+        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -1149,6 +1153,7 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
 
     if is_geo_data_regions(map):
         map = map.boundaries()
+        map_join = map_join_regions(map_join)
 
     return _geom('polygon', mapping, data, stat, position, show_legend, sampling=sampling,
                  map=map, map_join=map_join, tooltips=tooltips,
@@ -1179,7 +1184,8 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
         Data containing region boundaries (coordinates of polygon vertices on map).
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or first value in pair - column in data
+        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -1236,6 +1242,7 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
 
     if is_geo_data_regions(map):
         map = map.boundaries()
+        map_join = map_join_regions(map_join)
 
     return _geom('map', mapping, data, stat, None, show_legend, sampling=sampling,
                  map=map, map_join=map_join, tooltips=tooltips,
@@ -2034,7 +2041,8 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
         Bounding boxes of geometries will be drawn.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or first value in pair - column in data
+        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -2072,6 +2080,7 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
 
     if is_geo_data_regions(map):
         map = map.limits()
+        map_join = map_join_regions(map_join)
 
     return _geom('rect', mapping, data, stat, position, show_legend, sampling=sampling,
                  map=map, map_join=map_join, tooltips=tooltips,
@@ -2167,7 +2176,8 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
         Data containing coordinates of points.
     map_join : str, pair, optional
         Pair of names used to join map coordinates with data.
-        str or first value in pair - column in data
+        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        first value in pair - column in data
         second value in pair - column in map
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
@@ -2207,6 +2217,7 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
 
     if is_geo_data_regions(map):
         map = map.centroids()
+        map_join = map_join_regions(map_join)
 
     return _geom('text', mapping, data, stat, position, show_legend, sampling=sampling,
                  map=map, map_join=map_join, tooltips=tooltips,

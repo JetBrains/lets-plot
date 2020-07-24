@@ -6,7 +6,7 @@ from enum import Enum
 from typing import Union, Optional, List
 
 from .geom import _geom
-from .util import is_geo_data_regions
+from .util import is_geo_data_regions, map_join_regions
 from .._global_settings import has_global_value, get_global_val
 from ..settings_utils import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, GEOCODING_PROVIDER_URL, _RASTER_ZXY, _VECTOR_LETS_PLOT
 
@@ -37,6 +37,11 @@ def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, samplin
         is inherited from the plot data as specified in the call to ggplot.
     map : GeoDataFrame (supported shapes Point and MultiPoint) or Regions (implicitly invoke centroids())
         Data containing coordinates of points.
+    map_join : str, pair, optional
+        Pair of names used to join map coordinates with data.
+        str is allowed only when used with Regions object - map key 'request' will be automatically added.
+        first value in pair - column in data
+        second value in pair - column in map
     symbol : string, optional
         The marker used for displaying the data. There are:
         - 'point' for circles of different size and color.
@@ -101,6 +106,7 @@ def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, samplin
 
     if is_geo_data_regions(map):
         map = map.centroids()
+        map_join = map_join_regions(map_join)
 
     return _geom('livemap', mapping, data, map=map, show_legend=show_legend, sampling=sampling,
                  display_mode=symbol, location=location, zoom=zoom,
