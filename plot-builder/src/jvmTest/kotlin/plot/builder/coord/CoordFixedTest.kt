@@ -70,6 +70,26 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
                 assertEquals(ClosedRange(-3.75, 3.75), adjustedYDomain)
             }
 
+            // limit larger than x-domain with zero length y-domain
+            squareCoord(
+                xDomain = ClosedRange(100.0, 120.0),
+                yDomain = ClosedRange(0.0, 0.0),
+                xLim = ClosedRange(80.0, 140.0)
+            ).let { (adjustedXDomain, adjustedYDomain) ->
+                assertEquals(ClosedRange(80.0, 140.0), adjustedXDomain)
+                assertEquals(ClosedRange(-22.5, 22.5), adjustedYDomain)
+            }
+
+            // limit larger than x-domain with non-zero length y-domain
+            squareCoord(
+                xDomain = ClosedRange(100.0, 120.0),
+                yDomain = ClosedRange(-5.0, 5.0),
+                xLim = ClosedRange(80.0, 140.0)
+            ).let { (adjustedXDomain, adjustedYDomain) ->
+                assertEquals(ClosedRange(80.0, 140.0), adjustedXDomain)
+                assertEquals(ClosedRange(-22.5, 22.5), adjustedYDomain)
+            }
+
             // xLim in range
             squareCoord(xLim = ClosedRange(1.0, 4.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
