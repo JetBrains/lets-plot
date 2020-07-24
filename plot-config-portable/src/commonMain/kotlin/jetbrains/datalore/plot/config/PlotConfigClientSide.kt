@@ -46,7 +46,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
 
     override fun createLayerConfig(
         layerOptions: Map<*, *>,
-        sharedData: DataFrame?,
+        sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDiscreteAes: Set<*>,
         scaleProviderByAes: TypedScaleProviderMap
@@ -56,7 +56,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         val geomKind = Option.GeomName.toGeomKind(geomName)
         return LayerConfig(
             layerOptions,
-            sharedData!!,
+            sharedData,
             plotMappings,
             plotDiscreteAes,
             GeomProtoClientSide(geomKind),

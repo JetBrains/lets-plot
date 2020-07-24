@@ -32,7 +32,7 @@ abstract class PlotConfig(
     val scaleProvidersMap: TypedScaleProviderMap
     protected val scaleConfigs: List<ScaleConfig<*>>
 
-    protected var sharedData: DataFrame? = null
+    protected var sharedData: DataFrame
         private set
 
     val title: String?
@@ -97,7 +97,7 @@ abstract class PlotConfig(
     }
 
     private fun createLayerConfigs(
-        sharedData: DataFrame?,
+        sharedData: DataFrame,
         scaleProviderByAes: TypedScaleProviderMap
     ): List<LayerConfig> {
 
@@ -122,18 +122,17 @@ abstract class PlotConfig(
 
     protected abstract fun createLayerConfig(
         layerOptions: Map<*, *>,
-        sharedData: DataFrame?,
+        sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDiscreteAes: Set<*>,
         scaleProviderByAes: TypedScaleProviderMap
     ): LayerConfig
 
 
-    protected fun replaceSharedData(plotData: DataFrame?) {
+    protected fun replaceSharedData(plotData: DataFrame) {
         checkState(!isClientSide)   // This class is immutable on client-side
-        checkArgument(plotData != null)
         sharedData = plotData
-        update(DATA, DataFrameUtil.toMap(plotData!!))
+        update(DATA, DataFrameUtil.toMap(plotData))
     }
 
     companion object {

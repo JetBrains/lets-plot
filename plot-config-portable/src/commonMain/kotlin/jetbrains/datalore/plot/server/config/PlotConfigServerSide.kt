@@ -27,7 +27,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
     override fun createLayerConfig(
         layerOptions: Map<*, *>,
-        sharedData: DataFrame?,
+        sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDiscreteAes: Set<*>,
         scaleProviderByAes: TypedScaleProviderMap
@@ -37,7 +37,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
         val geomKind = Option.GeomName.toGeomKind(geomName)
         return LayerConfig(
             layerOptions,
-            sharedData!!,
+            sharedData,
             plotMappings,
             plotDiscreteAes,
             GeomProto(geomKind),
@@ -108,7 +108,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {
         var plotData = sharedData
-        val plotVars = DataFrameUtil.variables(plotData!!)
+        val plotVars = DataFrameUtil.variables(plotData)
         val plotVarsToKeep = HashSet<String>()
         for (varName in plotVars.keys) {
             var dropPlotVar = true
