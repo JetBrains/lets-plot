@@ -72,7 +72,7 @@ class TestMapRegions:
         pytest.param('county', Resolution.county_medium),
         pytest.param('state', Resolution.state_medium),
         pytest.param('country', Resolution.country_medium),
-        pytest.param('world', Resolution.world_high),
+        pytest.param('world', Resolution.world_medium),
         pytest.param('city_high', Resolution.city_high)
     ])
     def test_parse_resolution(self, str, expected):

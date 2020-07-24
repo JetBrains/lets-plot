@@ -72,19 +72,18 @@ class Regions(CanToDataFrame):
 
     def boundaries(self, resolution: Optional[Union[int, str, Resolution]] = None):
         """
-        Download boundaries for given regions in form of GeoDataFrame.
+        Return boundaries for given regions in form of GeoDataFrame.
 
         Parameters
         ----------
         resolution: [str | int | None]
             Boundaries resolution.
             str: ['city', 'county', 'state', 'country', 'world']
-            Kind of objects expceted to be displayed. It highly depends on number of objects - 1 state
-            can use 'state' resolution, but for 50 states it is better
-            to use 'country', like when you see all states of the country.
+            Kind of area expected to be displayed. It highly depends on number of objects - for one state objcet 'state'
+            resolution can be used, but for 50 states it is better to use 'country', like you see whole country.
             'city' is for max details, 'world' is for max performance.
-            It is allowed to use any kind of resoltuin for any regions, i.e. to use 'city' for state to see more
-            detailed boundary (when need to show zoomed part), or 'world' (when used for small preview).
+            It is allowed to use any kind of resolutin for any regions, i.e. 'city' for state to see more detailed
+            boundary (when need to show zoomed part), or 'world' (when used for small preview).
 
             int: [1-15]
             15 - maximum quality, 1 - minimum:
@@ -95,8 +94,7 @@ class Regions(CanToDataFrame):
             13-15 for cities view
 
             None:
-            Autodetection. It uses level_kind and number of objects to try to keep
-            balance between quality and performance.
+            Autodetection. It uses level_kind and number of objects to try to balance quality and performance.
         """
         from lets_plot.geo_data.to_geo_data_frame import BoundariesGeoDataFrame
 
@@ -119,6 +117,18 @@ class Regions(CanToDataFrame):
         )
 
     def limits(self):
+        """
+        Return bboxes (Polygon geometry) for given regions in form of GeoDataFrame. For regions intersecting
+        anti-meridian bbox will be divided into two and stored as two rows.
+        Example:
+
+            regions_country(['germany', 'russia']).limits()
+
+            request	found name	geometry
+            0	germany	Deutschland	POLYGON ((15.04193 47.27011, 15.04193 55.05857...
+            1	russia	Россия	POLYGON ((180 41.1850968003273, 180 81.85872048139569, 19.6389412879944 81.85872048139569w
+            2	russia	Россия	POLYGON ((-168.997978270054 41.1850968003273, -168.997978270054 81.85872048139569, -180 81.85872048139569
+        """
         from lets_plot.geo_data.to_geo_data_frame import LimitsGeoDataFrame
         return self._execute(
             self._request_builder(PayloadKind.limits),
@@ -126,6 +136,10 @@ class Regions(CanToDataFrame):
         )
 
     def centroids(self):
+        """
+        Return centroids (Point geometry) for given regions in form of GeoDataFrame.
+        :return:
+        """
         from lets_plot.geo_data.to_geo_data_frame import CentroidsGeoDataFrame
         return self._execute(
             self._request_builder(PayloadKind.centroids),
@@ -280,7 +294,7 @@ def _parse_resolution(resolution: str) -> Resolution:
             return Resolution.country_medium
 
         if resolution == 'world':
-            return Resolution.world_high  # high! very bad quality with meidum/low
+            return Resolution.world_medium
 
         return Resolution[resolution]
 
@@ -337,30 +351,30 @@ def _autodetect_resolution(level: LevelKind, count: int) -> Resolution:
         if count < 10:
             return Resolution.city_medium
         elif count < 100:
-            return Resolution.country_low
+            return Resolution.country_medium
         else:
-            return Resolution.world_low
+            return Resolution.world_medium
 
     if level == LevelKind.county:
         if count < 10:
             return Resolution.county_medium
         elif count < 100:
-            return Resolution.state_low
+            return Resolution.state_medium
         else:
-            return Resolution.country_low
+            return Resolution.country_medium
 
     if level == LevelKind.state:
         if count < 10:
             return Resolution.state_medium
         if count < 50:
-            return Resolution.country_low
+            return Resolution.country_medium
         else:
-            return Resolution.world_low
+            return Resolution.world_medium
 
     if level == LevelKind.country:
         if count < 3:
             return Resolution.country_medium
         elif count < 10:
-            return Resolution.country_low
+            return Resolution.country_medium
         else:
-            return Resolution.world_low
+            return Resolution.world_medium
