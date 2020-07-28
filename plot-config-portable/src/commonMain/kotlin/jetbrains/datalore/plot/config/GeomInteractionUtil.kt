@@ -35,9 +35,11 @@ object GeomInteractionUtil {
         val hiddenAesList = createHiddenAesList(layerConfig.geomProto.geomKind) + axisWithoutTooltip
         val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind) - hiddenAesList
         val aesList = createTooltipAesList(layerConfig, builder.getAxisFromFunctionKind) - hiddenAesList
+        val outlierAesList = (layerConfig.geomProto as GeomProtoClientSide).geomProvider(layerConfig).outliers()
 
         return builder.axisAes(axisAes)
             .tooltipAes(aesList)
+            .tooltipOutliers(outlierAesList)
             .tooltipValueSources(createTooltipValueSourceList(layerConfig.tooltips))
             .showAxisTooltip(!isLiveMap)
             .build()

@@ -21,6 +21,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
     private val myAesListForTooltip: List<Aes<*>> = builder.aesListForTooltip
     private val myAxisAes: List<Aes<*>> = builder.axisAesListForTooltip
+    private val myOutliers: List<Aes<*>> = builder.outlierAesListForTooltip
     private var myValueSourcesForTooltip: List<ValueSource>? = builder.valueSourcesForTooltip
 
     fun createLookupSpec(): LookupSpec {
@@ -32,6 +33,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             createUserDefinedContextualMapping(
                 myValueSourcesForTooltip!!,
                 myAxisAes,
+                myOutliers,
                 dataAccess,
                 dataFrame
             )
@@ -39,6 +41,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             createContextualMapping(
                 myAesListForTooltip,
                 myAxisAes,
+                myOutliers,
                 dataAccess,
                 dataFrame
             )
@@ -49,29 +52,54 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
         fun createContextualMapping(
             aesListForTooltip: List<Aes<*>>,
             axisAes: List<Aes<*>>,
+            outliers: List<Aes<*>>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame
         ): ContextualMapping {
             val showInTip = aesListForTooltip.filter(dataAccess::isMapped)
             val showAxisInTip = axisAes.filter(dataAccess::isMapped)
+            val showOutlierInTip = outliers.filter(dataAccess::isMapped)
+
             val dataContext = DataContext(dataFrame, dataAccess)
-            val valueSources = defaultValueSources(dataContext, showInTip) + axisValueSources(dataContext, showAxisInTip)
+            val valueSources = defaultValueSources(dataContext, showInTip) +
+                    outlierValueSources(dataContext, showOutlierInTip) +
+                    axisValueSources(dataContext, showAxisInTip)
             return ContextualMapping(dataContext, valueSources)
         }
 
         private fun createUserDefinedContextualMapping(
             tooltipValueSources: List<ValueSource>,
             axisAes: List<Aes<*>>,
+            outliers: List<Aes<*>>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
-            val showAxisInTip = axisAes.filter(dataAccess::isMapped)
             val valueSources = if (tooltipValueSources.isNotEmpty()) {
                 tooltipValueSources.forEach { it.setDataContext(dataContext) }
-                tooltipValueSources + axisValueSources(dataContext, showAxisInTip)
+
+                // use formatted settings for outliers and exclude them from the general value sources list
+                val withoutOutliers = tooltipValueSources.toMutableList()
+                val outlierValueSources = outliers
+                    .filter(dataAccess::isMapped)
+                    .map { outlier ->
+                        val formattedValueSource = withoutOutliers.find {
+                            it is MappedAes && it.getAesName() == outlier.name
+                        }
+
+                        if (formattedValueSource != null) {
+                            withoutOutliers.remove(formattedValueSource)
+                            (formattedValueSource as MappedAes).changeOutlier(true)
+                        } else {
+                            outlierValueSource(dataContext, outlier)
+                        }
+                    }
+
+                withoutOutliers +
+                        outlierValueSources +
+                        axisValueSources(dataContext, axisAes.filter(dataAccess::isMapped))
             } else {
-                null
+                emptyList()
             }
             return ContextualMapping(dataContext, valueSources)
         }
@@ -91,6 +119,14 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 .map { aes ->
                     MappedAes.createMappedAxis(aes, dataContext)
                 }
+        }
+
+        private fun outlierValueSources(dataContext: DataContext, outlierAesList: List<Aes<*>>): List<ValueSource> {
+            return outlierAesList.map { outlierValueSource(dataContext, it) }
+        }
+
+        private fun outlierValueSource(dataContext: DataContext, outlierAes: Aes<*>): ValueSource {
+            return MappedAes.createMappedAes(aes = outlierAes, isOutlier = true, dataContext = dataContext)
         }
     }
 }

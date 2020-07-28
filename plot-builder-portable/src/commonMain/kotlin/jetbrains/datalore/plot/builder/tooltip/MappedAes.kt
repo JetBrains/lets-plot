@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
 
 class MappedAes(
     private val aes: Aes<*>,
-    private val isOutlier: Boolean = false,
+    private var isOutlier: Boolean = false,
     private val isAxis: Boolean = false,
     private val label: String? = null,
     format: String? = null
@@ -62,6 +62,11 @@ class MappedAes(
     /* For tests only */
     fun getAesName(): String {
         return aes.name
+    }
+
+    fun changeOutlier(b: Boolean) : MappedAes{
+        isOutlier = b
+        return this
     }
 
     companion object {
