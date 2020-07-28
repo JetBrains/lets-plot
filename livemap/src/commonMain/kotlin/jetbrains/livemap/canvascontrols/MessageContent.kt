@@ -51,9 +51,14 @@ internal class MessageContent(private val message: String) : CanvasContent {
             fillRect(0.0, 0.0, dimension.x, dimension.y)
 
             setTextBaseline(TextBaseline.TOP)
-            setTextAlign(TextAlign.LEFT)
+            setTextAlign(TextAlign.START)
             setFillStyle(FONT_COLOR)
-            setFont("400 " + FONT_SIZE + "px/" + FONT_HEIGHT + "px Helvetica, Arial, sans-serif")
+            setFont(
+                Context2d.Font(
+                    fontSize = FONT_SIZE,
+                    fontFamily = "Helvetica, Arial, sans-serif"
+                )
+            )
 
             val height = FONT_HEIGHT * lines.size
             var width = 0.0

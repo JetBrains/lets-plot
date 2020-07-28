@@ -10,16 +10,13 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.shape.FillRule
 import javafx.scene.shape.StrokeLineCap
 import javafx.scene.shape.StrokeLineJoin
-import javafx.scene.text.Font
-import javafx.scene.text.Text
-import javafx.scene.text.TextAlignment
+import javafx.scene.text.*
+import javafx.scene.text.Font.font
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toDegrees
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.CssFontParser
 import javafx.scene.paint.Color as JavafxColor
 
 internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Context2d {
@@ -46,10 +43,8 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
 
     private fun convertTextBaseline(baseline: Context2d.TextBaseline): VPos {
         return when (baseline) {
-            Context2d.TextBaseline.ALPHABETIC -> VPos.BOTTOM
+            Context2d.TextBaseline.ALPHABETIC -> VPos.BASELINE
             Context2d.TextBaseline.BOTTOM -> VPos.BOTTOM
-            Context2d.TextBaseline.HANGING -> VPos.TOP
-            Context2d.TextBaseline.IDEOGRAPHIC -> VPos.BOTTOM
             Context2d.TextBaseline.MIDDLE -> VPos.CENTER
             Context2d.TextBaseline.TOP -> VPos.TOP
         }
@@ -59,19 +54,8 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         return when (align) {
             Context2d.TextAlign.CENTER -> TextAlignment.CENTER
             Context2d.TextAlign.END -> TextAlignment.RIGHT
-            Context2d.TextAlign.LEFT -> TextAlignment.LEFT
-            Context2d.TextAlign.RIGHT -> TextAlignment.RIGHT
             Context2d.TextAlign.START -> TextAlignment.LEFT
         }
-    }
-
-    private fun convertCssFont(fontString: String): Font {
-        val parser = CssFontParser.create(fontString)
-                ?: throw IllegalStateException("Could not parse css font string: $fontString")
-
-        val family = parser.fontFamily
-        val size = parser.fontSize
-        return if (size == null) Font.font(family) else Font.font(family, size)
     }
 
     private fun Color.toJavafxColor(): JavafxColor {
@@ -168,8 +152,22 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.globalAlpha = alpha
     }
 
-    override fun setFont(f: String) {
-        myContext2d.font = convertCssFont(f)
+    private fun Context2d.Font.toJavaFxFont(): Font {
+        val weight: FontWeight = when (fontWeight) {
+            Context2d.Font.FontWeight.NORMAL -> FontWeight.NORMAL
+            Context2d.Font.FontWeight.BOLD -> FontWeight.BOLD
+        }
+
+        val posture: FontPosture = when (fontStyle) {
+            Context2d.Font.FontStyle.NORMAL -> FontPosture.REGULAR
+            Context2d.Font.FontStyle.ITALIC -> FontPosture.ITALIC
+        }
+
+        return font(fontFamily, weight, posture, fontSize)
+    }
+
+    override fun setFont(f: Context2d.Font) {
+        myContext2d.font = f.toJavaFxFont()
     }
 
     override fun setLineWidth(lineWidth: Double) {
@@ -236,12 +234,6 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         val text = Text(str)
         text.font = myContext2d.font
         return text.layoutBounds.width
-    }
-
-    override fun measureText(str: String, font: String): DoubleVector {
-        val text = Text(str)
-        text.font = convertCssFont(font)
-        return DoubleVector(text.layoutBounds.width, text.layoutBounds.height)
     }
 
     override fun clearRect(rect: DoubleRectangle) {

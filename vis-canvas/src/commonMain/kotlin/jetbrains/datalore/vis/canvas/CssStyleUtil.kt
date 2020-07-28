@@ -10,6 +10,24 @@ object CssStyleUtil {
     private val FONT_ATTRIBUTE = Regex("font:(.+);")
     private const val FONT = 1
 
+    fun String.extractFontStyle(): Context2d.Font.FontStyle {
+        val italicRegex ="italic".toRegex(RegexOption.IGNORE_CASE)
+
+        return if (italicRegex.containsMatchIn(this))
+            Context2d.Font.FontStyle.ITALIC
+        else
+            Context2d.Font.FontStyle.NORMAL
+    }
+
+    fun String.extractFontWeight(): Context2d.Font.FontWeight {
+        val boldRegex = "600|700|800|900|bold".toRegex(RegexOption.IGNORE_CASE)
+
+        return if (boldRegex.containsMatchIn(this))
+            Context2d.Font.FontWeight.BOLD
+        else
+            Context2d.Font.FontWeight.NORMAL
+    }
+
     fun extractStyleFont(style: String?): String? {
         if (style == null) {
             return null

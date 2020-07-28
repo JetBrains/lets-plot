@@ -22,11 +22,11 @@ class Text : RenderBox {
         }
     var color: Color = Color.WHITE
     var isDirty = true; private set
-    var fontHeight: Double = 10.0
+    var fontSize: Double = 10.0
     var fontFamily = "serif"
 
     override fun render(ctx: Context2d) {
-        ctx.setFont(fontHeight.toString() + "px " + fontFamily)
+        ctx.setFont(Context2d.Font(fontSize = fontSize, fontFamily = fontFamily))
         ctx.setTextBaseline(Context2d.TextBaseline.BOTTOM)
 
         if (isDirty) {
@@ -36,17 +36,17 @@ class Text : RenderBox {
 
         ctx.setFillStyle(color)
 
-        var y = fontHeight
+        var y = fontSize
         for (s in text) {
             ctx.fillText(s, 0.0, y)
-            y += fontHeight
+            y += fontSize
         }
     }
 
     fun measureText(ctx: Context2d): DoubleVector {
         if (isDirty) {
             ctx.save()
-            ctx.setFont(fontHeight.toString() + "px " + fontFamily)
+            ctx.setFont(Context2d.Font(fontSize = fontSize, fontFamily = fontFamily))
             ctx.setTextBaseline(Context2d.TextBaseline.BOTTOM)
 
             dimension = calculateDimension(ctx)
@@ -63,6 +63,6 @@ class Text : RenderBox {
             maxWidth = max(maxWidth, ctx.measureText(s))
         }
 
-        return DoubleVector(maxWidth, text.size * fontHeight)
+        return DoubleVector(maxWidth, text.size * fontSize)
     }
 }

@@ -47,8 +47,11 @@ internal class SpinnerContent : CanvasContent {
 
     private fun Context2d.drawStaticElements() {
         save()
+        setFont(Context2d.Font(
+            fontSize = FONT_SIZE,
+            fontFamily = "Helvetica, Arial, sans-serif")
+        )
 
-        setFont("400 " + FONT_SIZE + "px Helvetica, Arial, sans-serif")
         val textWidth = measureText(LOADING_TEXT)
 
         val spinnerWidth = 2 * RADIUS + LINE_WIDTH
@@ -60,7 +63,7 @@ internal class SpinnerContent : CanvasContent {
         fillRect(0.0, 0.0, dimension.x.toDouble(), dimension.y.toDouble())
 
         setTextBaseline(Context2d.TextBaseline.MIDDLE)
-        setTextAlign(Context2d.TextAlign.LEFT)
+        setTextAlign(Context2d.TextAlign.START)
         setFillStyle(FONT_COLOR)
         fillText(LOADING_TEXT, (dimension.x + width) / 2 - textWidth, dimension.y / 2.0)
 

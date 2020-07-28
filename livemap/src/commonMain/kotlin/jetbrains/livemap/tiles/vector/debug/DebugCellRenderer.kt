@@ -27,7 +27,7 @@ class DebugCellRenderer : Renderer {
         ctx.setFillStyle(Color.RED)
         ctx.setStrokeStyle(Color.RED)
         ctx.setLineWidth(LINE_WIDTH)
-        ctx.setFont(FONT_STYLE)
+        ctx.setFont(FONT)
 
         ctx.strokeRect(ZERO_CLIENT_POINT, cellDimension)
 
@@ -52,6 +52,6 @@ class DebugCellRenderer : Renderer {
     companion object {
         private const val LINE_WIDTH = 2.0
         private const val LINE_HEIGHT = 20.0
-        private const val FONT_STYLE = "12px serif"
+        private val FONT = Context2d.Font(fontSize = 12.0)
     }
 }

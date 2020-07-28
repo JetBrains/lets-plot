@@ -15,6 +15,7 @@ import java.awt.AlphaComposite.SRC_OVER
 import java.awt.font.GlyphVector
 import java.awt.geom.*
 import java.awt.geom.Arc2D.OPEN
+import java.lang.Integer.max
 import java.awt.Color as AwtColor
 
 internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
@@ -78,22 +79,18 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         val fm = graphics.fontMetrics
 
         val offsetX = when(textAlign) {
-            Context2d.TextAlign.START,
-            Context2d.TextAlign.LEFT -> x
+            Context2d.TextAlign.START -> x
 
             Context2d.TextAlign.CENTER -> x - box.width / 2
 
-            Context2d.TextAlign.END,
-            Context2d.TextAlign.RIGHT -> x - box.width
+            Context2d.TextAlign.END -> x - box.width
         }
 
         val offsetY = when(textBaseline) {
-            Context2d.TextBaseline.ALPHABETIC -> y -  (fm.leading + fm.ascent)
-            Context2d.TextBaseline.BOTTOM -> y - fm.height
-            Context2d.TextBaseline.HANGING -> TODO()
-            Context2d.TextBaseline.IDEOGRAPHIC -> TODO()
-            Context2d.TextBaseline.MIDDLE -> y - (fm.leading + fm.ascent / 2)
-            Context2d.TextBaseline.TOP -> y
+            Context2d.TextBaseline.ALPHABETIC -> y
+            Context2d.TextBaseline.BOTTOM -> y - fm.descent
+            Context2d.TextBaseline.MIDDLE -> y + (fm.leading + fm.ascent - fm.descent) / 2
+            Context2d.TextBaseline.TOP -> y + fm.leading + fm.ascent
         }
 
         return DoubleVector(offsetX, offsetY)
@@ -217,8 +214,23 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.composite = AlphaComposite.getInstance(SRC_OVER, globalAlpha)
     }
 
-    override fun setFont(f: String) {
-        font = Font.getFont(f)
+    private fun Context2d.Font.toAwtFont(): Font {
+        val weight = when (fontWeight) {
+            Context2d.Font.FontWeight.NORMAL -> Font.PLAIN
+            Context2d.Font.FontWeight.BOLD -> Font.BOLD
+        }
+
+        val style = when (fontStyle) {
+            Context2d.Font.FontStyle.NORMAL -> Font.PLAIN
+            Context2d.Font.FontStyle.ITALIC -> Font.ITALIC
+        }
+
+        // In AWT, font cannot be bold and italic at the same time.
+        return Font(fontFamily, max(weight, style), fontSize.toInt())
+    }
+
+    override fun setFont(f: Context2d.Font) {
+        font = f.toAwtFont()
         graphics.font = font
     }
 
@@ -236,10 +248,12 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun strokeText(text: String, x: Double, y: Double) {
+        graphics.color = strokeColor
         paintText(text, x, y, graphics::draw)
     }
 
     override fun fillText(text: String, x: Double, y: Double) {
+        graphics.color = fillColor
         paintText(text, x, y, graphics::fill)
     }
 
@@ -301,9 +315,5 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
     override fun measureText(str: String): Double {
         return graphics.glyphVector(str).visualBounds.width
-    }
-
-    override fun measureText(str: String, font: String): DoubleVector {
-        TODO("Not yet implemented")
     }
 }

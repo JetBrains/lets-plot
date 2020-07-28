@@ -84,7 +84,7 @@ open class Diagnostics {
             metrics = Text().apply {
                 color = Color.DARK_GREEN
                 fontFamily = "Courier New"
-                fontHeight = 12.0
+                fontSize = 12.0
             }
 
             val metricsLabel = Label(DoubleVector(0.0, 150.0), metrics).apply {

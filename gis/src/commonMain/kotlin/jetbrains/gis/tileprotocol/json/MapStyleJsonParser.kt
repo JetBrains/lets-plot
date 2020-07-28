@@ -158,7 +158,7 @@ object MapStyleJsonParser {
                     .getExistingString(LINE_JOIN) { style.lineJoin = it }
                     .getExistingString(LABEL_FIELD) { style.labelField = it }
                     .getExistingString(FONT_STYLE) { style.fontStyle = it }
-                    .getExistingString(FONT_FACE) { style.fontface = it }
+                    .getExistingString(FONT_FACE) { style.fontFamily = it }
                     .getExistingString(TEXT_TRANSFORM) { style.textTransform = it }
                     .getExistingDouble(SIZE) { style.size = it }
                     .getExistingDouble(WRAP_WIDTH) { style.wrapWidth = it }

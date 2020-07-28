@@ -6,7 +6,6 @@
 package jetbrains.datalore.vis.canvas.dom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.js.css.enumerables.CssLineCap
 import jetbrains.datalore.base.js.css.enumerables.CssLineJoin
 import jetbrains.datalore.base.js.css.enumerables.CssTextAlign
@@ -14,7 +13,6 @@ import jetbrains.datalore.base.js.css.enumerables.CssTextBaseLine
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.CssFontParser
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.DomSnapshot
 import org.w3c.dom.*
 
@@ -40,8 +38,6 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         return when (baseline) {
             Context2d.TextBaseline.ALPHABETIC -> CssTextBaseLine.ALPHABETIC
             Context2d.TextBaseline.BOTTOM -> CssTextBaseLine.BOTTOM
-            Context2d.TextBaseline.HANGING -> CssTextBaseLine.HANGING
-            Context2d.TextBaseline.IDEOGRAPHIC -> CssTextBaseLine.IDEOGRAPHIC
             Context2d.TextBaseline.MIDDLE -> CssTextBaseLine.MIDDLE
             Context2d.TextBaseline.TOP -> CssTextBaseLine.TOP
         }
@@ -51,8 +47,6 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         return when (align) {
             Context2d.TextAlign.CENTER -> CssTextAlign.CENTER
             Context2d.TextAlign.END -> CssTextAlign.END
-            Context2d.TextAlign.LEFT -> CssTextAlign.LEFT
-            Context2d.TextAlign.RIGHT -> CssTextAlign.RIGHT
             Context2d.TextAlign.START -> CssTextAlign.START
         }
     }
@@ -138,8 +132,22 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
         myContext2d.globalAlpha = alpha
     }
 
-    override fun setFont(f: String) {
-        myContext2d.font = f
+    private fun Context2d.Font.toCssString(): String {
+        val weight: String = when (fontWeight) {
+            Context2d.Font.FontWeight.NORMAL -> "normal"
+            Context2d.Font.FontWeight.BOLD -> "bold"
+        }
+
+        val style: String = when (fontStyle) {
+            Context2d.Font.FontStyle.NORMAL -> "normal"
+            Context2d.Font.FontStyle.ITALIC -> "italic"
+        }
+
+        return "$style $weight ${fontSize}px $fontFamily"
+    }
+
+    override fun setFont(f: Context2d.Font) {
+        myContext2d.font = f.toCssString()
     }
 
     override fun setLineWidth(lineWidth: Double) {
@@ -204,18 +212,6 @@ internal class DomContext2d(private val myContext2d: CanvasRenderingContext2D) :
 
     override fun measureText(str: String): Double {
         return myContext2d.measureText(str).width
-    }
-
-    override fun measureText(str: String, font: String): DoubleVector {
-        val parser = CssFontParser.create(font) ?: throw IllegalStateException("Could not parse css font string: $font")
-        val height = parser.fontSize ?: 10.0
-
-        myContext2d.save()
-        myContext2d.font = font
-        val width = myContext2d.measureText(str).width
-        myContext2d.restore()
-
-        return DoubleVector(width, height)
     }
 
     override fun clearRect(rect: DoubleRectangle) {

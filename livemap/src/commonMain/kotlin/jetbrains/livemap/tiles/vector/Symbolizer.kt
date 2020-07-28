@@ -12,6 +12,8 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Ring
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.CssStyleUtil.extractFontStyle
+import jetbrains.datalore.vis.canvas.CssStyleUtil.extractFontWeight
 import jetbrains.gis.tileprotocol.mapConfig.Style
 import jetbrains.livemap.projection.Client
 import kotlin.math.round
@@ -187,12 +189,14 @@ internal interface Symbolizer {
             }
 
         override fun applyTo(ctx: Context2d) {
-            val builder = FontBuilder()
-            myStyle.fontStyle?.let(builder::setFontStyle)
-            myStyle.size?.let(builder::setSize)
-            myStyle.fontface?.let(builder::setFontFace)
-
-            ctx.setFont(builder.build())
+            ctx.setFont(
+                Context2d.Font(
+                    myStyle.fontStyle?.extractFontStyle(),
+                    myStyle.fontStyle?.extractFontWeight(),
+                    myStyle.size,
+                    myStyle.fontFamily
+                )
+            )
             ctx.setTextAlign(Context2d.TextAlign.CENTER)
             ctx.setTextBaseline(Context2d.TextBaseline.MIDDLE)
 
@@ -225,28 +229,6 @@ internal interface Symbolizer {
 
         override fun applyTo(ctx: Context2d) {
 
-        }
-    }
-
-    class FontBuilder internal constructor() {
-        private var myFontStyle: String = ""
-        private var mySize: String = ""
-        private var myFontFace: String = ""
-
-        internal fun build(): String {
-            return "$myFontStyle $mySize $myFontFace"
-        }
-
-        internal fun setFontStyle(fontStyle: String) {
-            myFontStyle = fontStyle
-        }
-
-        internal fun setSize(size: Double) {
-            mySize = "${size}px"
-        }
-
-        internal fun setFontFace(fontFace: String) {
-            myFontFace = fontFace
         }
     }
 
