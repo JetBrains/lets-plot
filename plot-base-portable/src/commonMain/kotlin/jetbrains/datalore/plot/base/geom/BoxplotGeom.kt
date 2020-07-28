@@ -29,6 +29,9 @@ class BoxplotGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
 
+    override val outlierAesList: List<Aes<Double>>
+        get() = HINT_AES_LIST
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -43,7 +46,7 @@ class BoxplotGeom : GeomBase() {
         buildLines(root, aesthetics, pos, coord, ctx)
         buildOutliers(root, aesthetics, pos, coord, ctx)
         BarTooltipHelper.collectRectangleTargets(
-            listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
+            outlierAesList,
             aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx),
             { HintColorUtil.fromColor(it) }
@@ -168,6 +171,7 @@ class BoxplotGeom : GeomBase() {
 
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
         private val OUTLIER_DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
+        private val HINT_AES_LIST = listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
 
         private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->

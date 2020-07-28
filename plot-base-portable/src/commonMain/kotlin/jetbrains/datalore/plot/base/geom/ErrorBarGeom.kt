@@ -28,6 +28,9 @@ class ErrorBarGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = MyLegendKeyElementFactory()
 
+    override val outlierAesList: List<Aes<Double>>
+        get() = listOf(Aes.YMAX, Aes.YMIN)
+
     private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
         return GeomUtil.with_X(aesthetics.dataPoints())
     }
@@ -81,10 +84,9 @@ class ErrorBarGeom : GeomBase() {
             .defaultX(p.x()!!)
             .defaultKind(HORIZONTAL_TOOLTIP)
 
-        val hints = HintsCollection(p, geomHelper)
-            .addHint(hint.create(Aes.YMAX))
-            .addHint(hint.create(Aes.YMIN))
-            .hints
+        val hints = outlierAesList.fold(HintsCollection(p, geomHelper)) { hintsCollection, aes ->
+            hintsCollection.addHint(hint.create(aes))
+        }.hints
 
         ctx.targetCollector.addRectangle(
             p.index(), clientRect,

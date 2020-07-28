@@ -24,6 +24,9 @@ abstract class GeomBase : Geom {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = GenericLegendKeyElementFactory()
 
+    override val outlierAesList: List<Aes<*>>
+        get() = emptyList()
+
     override fun build(
         root: SvgRoot,
         aesthetics: Aesthetics,

@@ -23,6 +23,9 @@ class SmoothGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
+    override val outlierAesList: List<Aes<Double>>
+        get() = listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,

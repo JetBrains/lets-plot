@@ -29,6 +29,8 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 
     abstract fun handlesGroups(): Boolean
 
+    abstract fun outliers(): List<Aes<*>>
+
     private class GeomProviderBuilder internal constructor(
         private val myKind: GeomKind,
         private val myAestheticsDefaults: AestheticsDefaults,
@@ -48,6 +50,10 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 
                 override fun handlesGroups(): Boolean {
                     return myHandlesGroups
+                }
+
+                override fun outliers(): List<Aes<*>> {
+                    return myGeomSupplier().outlierAesList
                 }
             }
         }
