@@ -16,6 +16,7 @@ import org.apache.batik.transcoder.image.ImageTranscoder
 import org.apache.batik.transcoder.image.JPEGTranscoder
 import org.apache.batik.transcoder.image.PNGTranscoder
 import org.apache.batik.transcoder.image.TIFFTranscoder
+import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.io.StringReader
 import kotlin.math.ceil
@@ -80,14 +81,11 @@ object PlotImageExport {
 
         val svg = buildSvgImageFromRawSpecs(plotSpec)
 
-        @Suppress("NAME_SHADOWING")
         val plotSize = fetchPlotSizeFromSvg(svg)
 
         val imageSize = plotSize.mul(scaleFactor)
-        transcoder.apply {
-            addTranscodingHint(ImageTranscoder.KEY_WIDTH, imageSize.x.toFloat())
-            addTranscodingHint(ImageTranscoder.KEY_HEIGHT, imageSize.y.toFloat())
-        }
+        transcoder.addTranscodingHint(ImageTranscoder.KEY_WIDTH, imageSize.x.toFloat())
+        transcoder.addTranscodingHint(ImageTranscoder.KEY_HEIGHT, imageSize.y.toFloat())
 
         // adds only metadata, doesn't affect resolution/presentation
         val dpi = ceil(scaleFactor * 72).toInt()
@@ -96,6 +94,8 @@ object PlotImageExport {
             ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER,
             millimeterPerDot.toFloat()
         )
+
+        transcoder.addTranscodingHint(ImageTranscoder.KEY_BACKGROUND_COLOR, Color.white)
 
         val image = ByteArrayOutputStream()
         transcoder.transcode(TranscoderInput(StringReader(svg)), TranscoderOutput(image))
