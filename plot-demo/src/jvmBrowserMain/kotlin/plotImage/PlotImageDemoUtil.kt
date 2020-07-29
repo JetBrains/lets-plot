@@ -77,7 +77,7 @@ object PlotImageDemoUtil {
                     val imgSrc = imgFile.toURI()
 
                     div("demo") {
-                        p { +"scaleFactor: $scaleFactor, DPI: ${image.DPI} ${format.defFileExt}" }
+                        p { +"${format} scaleFactor: $scaleFactor, DPI: ${image.DPI}" }
                         unsafe { +"<img src=\"$imgSrc\" width=\"${image.plotSize.x}\" height=\"${image.plotSize.y}\"/>" }
                     }
                 }

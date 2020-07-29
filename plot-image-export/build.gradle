@@ -53,6 +53,9 @@ kotlin {
                 batikArtifacts.forEach {
                     api "${batikGroupId}:$it:$batik_version"
                 }
+
+                // TIFF support
+                implementation "com.twelvemonkeys.imageio:imageio-tiff:$twelvemonkeys_imageio_version"
             }
         }
         jvmTest {

@@ -33,6 +33,14 @@ object PlotImageExport {
                 }
             }
 
+        override fun toString(): String {
+            return when (this) {
+                is PNG -> "PNG"
+                is TIFF -> "TIFF"
+                is JPEG -> "JPG(quality=${quality})"
+            }
+        }
+
         object PNG : Format()
         object TIFF : Format()
         class JPEG(val quality: Double = 0.8) : Format()
