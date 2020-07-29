@@ -5,20 +5,21 @@
 
 package jetbrains.datalore.plotImage
 
+import jetbrains.datalore.plot.PlotImageExport
 import jetbrains.datalore.plot.PlotImageExport.Format
-import jetbrains.datalore.plotDemo.model.plotConfig.Density2df
+import jetbrains.datalore.plotDemo.model.plotConfig.Area
 
 @Suppress("ClassName")
-object Density2dfPNG_varDPI {
+object Area_PNG_Resolutions {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(Density2df()) {
+        with(Area()) {
             @Suppress("UNCHECKED_CAST")
             (PlotImageDemoUtil.show(
-                "Density2df plot",
+                "Area plot",
                 plotSpecList().first() as MutableMap<String, Any>,
                 scaleFactors = listOf(1.0, 2.0, 4.0),
-                formats = MutableList(3) { Format.PNG }
+                formats = MutableList(3) { Format.PNG}
             ))
         }
     }

@@ -7,16 +7,16 @@ package jetbrains.datalore.plotImage
 
 import jetbrains.datalore.plot.PlotImageExport
 import jetbrains.datalore.plot.PlotImageExport.Format
-import jetbrains.datalore.plotDemo.model.plotConfig.Area
+import jetbrains.datalore.plotDemo.model.plotConfig.CoordLim
 
 @Suppress("ClassName")
-object AreaPNG_varDPI {
+object CoordLim_PNG_Resolutions {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(Area()) {
+        with(CoordLim()) {
             @Suppress("UNCHECKED_CAST")
             (PlotImageDemoUtil.show(
-                "Area plot",
+                "coord x/y limits",
                 plotSpecList().first() as MutableMap<String, Any>,
                 scaleFactors = listOf(1.0, 2.0, 4.0),
                 formats = MutableList(3) { Format.PNG}

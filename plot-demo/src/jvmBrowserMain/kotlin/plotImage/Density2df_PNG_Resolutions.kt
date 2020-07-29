@@ -1,26 +1,25 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2020. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package jetbrains.datalore.plotImage
 
 import jetbrains.datalore.plot.PlotImageExport.Format
-import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
+import jetbrains.datalore.plotDemo.model.plotConfig.Density2df
 
 @Suppress("ClassName")
-object GGBunchPNG_varDPI {
+object Density2df_PNG_Resolutions {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(GGBunch()) {
+        with(Density2df()) {
             @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
-            PlotImageDemoUtil.show(
-                "GGBunch",
-                plotSpecList.first(),
+            (PlotImageDemoUtil.show(
+                "Density2df plot",
+                plotSpecList().first() as MutableMap<String, Any>,
                 scaleFactors = listOf(1.0, 2.0, 4.0),
                 formats = MutableList(3) { Format.PNG }
-            )
+            ))
         }
     }
 }
