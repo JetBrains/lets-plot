@@ -5,9 +5,11 @@
 
 package jetbrains.datalore.plotImage
 
+import jetbrains.datalore.plot.PlotImageExport.Format
 import jetbrains.datalore.plotDemo.model.plotConfig.Density2df
 
-object Density2dfImage {
+@Suppress("ClassName")
+object Density2dfPNG_varDPI {
     @JvmStatic
     fun main(args: Array<String>) {
         with(Density2df()) {
@@ -15,7 +17,8 @@ object Density2dfImage {
             (PlotImageDemoUtil.show(
                 "Density2df plot",
                 plotSpecList().first() as MutableMap<String, Any>,
-                scaleFactors = listOf(1.0, 2.0, 4.0)
+                scaleFactors = listOf(1.0, 2.0, 4.0),
+                formats = MutableList(3) { Format.PNG }
             ))
         }
     }

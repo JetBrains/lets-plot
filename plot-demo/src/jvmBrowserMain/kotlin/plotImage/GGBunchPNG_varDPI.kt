@@ -5,9 +5,11 @@
 
 package jetbrains.datalore.plotImage
 
+import jetbrains.datalore.plot.PlotImageExport.Format
 import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
 
-object GGBunchImage {
+@Suppress("ClassName")
+object GGBunchPNG_varDPI {
     @JvmStatic
     fun main(args: Array<String>) {
         with(GGBunch()) {
@@ -16,7 +18,8 @@ object GGBunchImage {
             PlotImageDemoUtil.show(
                 "GGBunch",
                 plotSpecList.first(),
-                scaleFactors = listOf(1.0, 2.0, 4.0)
+                scaleFactors = listOf(1.0, 2.0, 4.0),
+                formats = MutableList(3) { Format.PNG }
             )
         }
     }

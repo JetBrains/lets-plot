@@ -14,28 +14,33 @@ import java.io.StringWriter
 
 object PlotImageDemoUtil {
     private const val DEMO_PROJECT = "plot-demo"
-    private val FORMAT = PlotImageExport.Format.PNG
 
     fun show(
         title: String,
         plotSpec: MutableMap<String, Any>,
-        scaleFactors: List<Double>
+        scaleFactors: List<Double>,
+        formats: List<PlotImageExport.Format>
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
             getHtml(
                 title,
-                MutableList(scaleFactors.size) { plotSpec },
-                scaleFactors
+                plotSpec,
+                scaleFactors,
+                formats
             )
         }
     }
 
     private fun getHtml(
         title: String,
-        plotSpecList: List<MutableMap<String, Any>>,
-        scaleFactors: List<Double>
+        plotSpec: MutableMap<String, Any>,
+        scaleFactors: List<Double>,
+        formats: List<PlotImageExport.Format>
     ): String {
-        require(scaleFactors.size == plotSpecList.size) { "plots count (${plotSpecList.size}) and scales count (${scaleFactors.size}) should be equal." }
+        require(formats.isNotEmpty()) { "Formats are not specified." }
+        require(scaleFactors.size == formats.size) {
+            "Parameters `scaleFactors` and `formats` must be a lists of equal sizes. Was: ${scaleFactors.size} and ${formats.size}."
+        }
 
         val writer = StringWriter().appendHTML().html {
             lang = "en"
@@ -57,22 +62,22 @@ object PlotImageDemoUtil {
                 }
             }
             body {
-                plotSpecList.zip(scaleFactors).forEach { (plotSpec, scaleFactor) ->
+                formats.zip(scaleFactors).forEach { (format, scaleFactor) ->
                     val image = PlotImageExport
                         .buildImageFromRawSpecs(
                             plotSpec = plotSpec,
-                            format = FORMAT,
+                            format = format,
                             scaleFactor = scaleFactor
                         )
 
                     val titleTrimmed = Regex("[^a-z0-9_]").replace(title.toLowerCase(), "_")
                     val namePrexix = "${titleTrimmed}_scale_${scaleFactor}_"
-                    val imgFile = createDemoFile(DEMO_PROJECT, namePrexix, FORMAT.defFileExt)
+                    val imgFile = createDemoFile(DEMO_PROJECT, namePrexix, format.defFileExt)
                     imgFile.writeBytes(image.bytes)
                     val imgSrc = imgFile.toURI()
 
                     div("demo") {
-                        p { +"scaleFactor: $scaleFactor, DPI: ${image.DPI}" }
+                        p { +"scaleFactor: $scaleFactor, DPI: ${image.DPI} ${format.defFileExt}" }
                         unsafe { +"<img src=\"$imgSrc\" width=\"${image.plotSize.x}\" height=\"${image.plotSize.y}\"/>" }
                     }
                 }
