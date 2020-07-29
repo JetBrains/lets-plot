@@ -14,7 +14,8 @@ object Density2dfImage {
             @Suppress("UNCHECKED_CAST")
             (PlotImageDemoUtil.show(
                 "Density2df plot",
-                plotSpecList() as List<MutableMap<String, Any>>
+                plotSpecList().first() as MutableMap<String, Any>,
+                scaleFactors = listOf(1.0, 2.0, 4.0)
             ))
         }
     }

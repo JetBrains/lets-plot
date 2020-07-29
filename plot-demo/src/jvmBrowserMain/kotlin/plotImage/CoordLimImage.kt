@@ -14,7 +14,8 @@ object CoordLimImage {
             @Suppress("UNCHECKED_CAST")
             (PlotImageDemoUtil.show(
                 "coord x/y limits",
-                plotSpecList() as List<MutableMap<String, Any>>
+                plotSpecList().first() as MutableMap<String, Any>,
+                scaleFactors = listOf(1.0, 2.0, 4.0)
             ))
         }
     }

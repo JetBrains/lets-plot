@@ -15,7 +15,8 @@ object GGBunchImage {
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             PlotImageDemoUtil.show(
                 "GGBunch",
-                plotSpecList
+                plotSpecList.first(),
+                scaleFactors = listOf(1.0, 2.0, 4.0)
             )
         }
     }

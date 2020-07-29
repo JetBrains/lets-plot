@@ -14,7 +14,8 @@ object AreaImage {
             @Suppress("UNCHECKED_CAST")
             (PlotImageDemoUtil.show(
                 "Area plot",
-                plotSpecList() as List<MutableMap<String, Any>>
+                plotSpecList().first() as MutableMap<String, Any>,
+                scaleFactors = listOf(1.0, 2.0, 4.0)
             ))
         }
     }

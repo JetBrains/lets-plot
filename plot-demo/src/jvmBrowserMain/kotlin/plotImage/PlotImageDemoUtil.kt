@@ -18,20 +18,6 @@ object PlotImageDemoUtil {
 
     fun show(
         title: String,
-        plotSpecList: List<MutableMap<String, Any>>
-    ) {
-        BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
-            getHtml(
-                title,
-                plotSpecList,
-                scaleFactors = MutableList(plotSpecList.size) { 1.0 }
-            )
-        }
-    }
-
-    // Render same plot with different scales
-    fun showScaled(
-        title: String,
         plotSpec: MutableMap<String, Any>,
         scaleFactors: List<Double>
     ) {
@@ -79,7 +65,8 @@ object PlotImageDemoUtil {
                             scaleFactor = scaleFactor
                         )
 
-                    val namePrexix = "${title.toLowerCase().replace(' ', '_')}_scale_${scaleFactor}_"
+                    val titleTrimmed = Regex("[^a-z0-9_]").replace(title.toLowerCase(), "_")
+                    val namePrexix = "${titleTrimmed}_scale_${scaleFactor}_"
                     val imgFile = createDemoFile(DEMO_PROJECT, namePrexix, FORMAT.defFileExt)
                     imgFile.writeBytes(image.bytes)
                     val imgSrc = imgFile.toURI()
