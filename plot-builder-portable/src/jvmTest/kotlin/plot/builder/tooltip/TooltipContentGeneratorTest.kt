@@ -94,17 +94,18 @@ class TooltipContentGeneratorTest {
         val geomLayer = buildBoxplotLayer(null)
 
         val lines = getOutlierLines(geomLayer)
-        val expectedLines = listOf(
-            "y max: 11.50",
-            "upper: 8.65",
-            "middle: 6.85",
-            "lower: 6.10",
-            "y min: 4.20"
+        val expectedLines = mapOf(
+            Aes.YMAX to "y max: 11.50",
+            Aes.UPPER to "upper: 8.65",
+            Aes.MIDDLE to "middle: 6.85",
+            Aes.LOWER to "lower: 6.10",
+            Aes.YMIN to "y min: 4.20"
         )
-        assertEquals(expectedLines.size, lines.size, "Wrong lines count in the tooltip")
 
-        for (index in lines.indices) {
-            assertEquals(expectedLines[index], lines[index], "Wrong line #$index in the general tooltip")
+        assertEquals(expectedLines.size, lines.size, "Wrong count of outlier tooltips")
+
+        for (aes in lines.keys) {
+            assertEquals(expectedLines[aes], lines[aes], "Wrong line for ${aes.name} in the outliers")
         }
     }
 
@@ -119,18 +120,18 @@ class TooltipContentGeneratorTest {
 
         val lines = getOutlierLines(geomLayer)
 
-        val expectedLines = listOf(
-            "max: 11.5",
-            "upper: 8.65",
-            "6.8500",
-            "lower: 6.10",
-            "min: 4.2"
+        val expectedLines = mapOf(
+            Aes.YMAX to "max: 11.5",
+            Aes.UPPER to "upper: 8.65",
+            Aes.MIDDLE to "6.8500",
+            Aes.LOWER to "lower: 6.10",
+            Aes.YMIN to "min: 4.2"
         )
 
         assertEquals(expectedLines.size, lines.size, "Wrong count of outlier tooltips")
 
-        for (index in lines.indices) {
-            assertEquals(expectedLines[index], lines[index], "Wrong line #$index in the outliers")
+        for (aes in lines.keys) {
+            assertEquals(expectedLines[aes], lines[aes], "Wrong line for ${aes.name} in the outliers")
         }
     }
 
@@ -144,9 +145,9 @@ class TooltipContentGeneratorTest {
         return dataPoints.filter(ValueSource.DataPoint::isAxis)
     }
 
-    private fun getOutlierLines(geomLayer: GeomLayer): List<String> {
+    private fun getOutlierLines(geomLayer: GeomLayer): Map<Aes<*>, String> {
         val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-        return dataPoints.filter { it.isOutlier && !it.isAxis }.map(ValueSource.DataPoint::line)
+        return dataPoints.filter { it.isOutlier && !it.isAxis }.associateBy({ it.aes!! }, { it.line })
     }
 
     private fun buildGeomLayer(tooltipValueSourcesProvider: TooltipValueSourcesProvider?): GeomLayer {
@@ -194,7 +195,7 @@ class TooltipContentGeneratorTest {
             .putNumeric(varY, listOf(4.2, 11.5, 7.3, 5.8, 6.4, 10.0))
             .build()
 
-        val outlierAesList = GeomProvider.boxplot {  BoxplotGeom() }.outliers()
+        val outlierAesList = GeomProvider.boxplot { BoxplotGeom() }.outliers()
 
         val geomInteraction = GeomInteractionBuilder(Aes.values())
             .univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)

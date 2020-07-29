@@ -78,26 +78,25 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             val valueSources = if (tooltipValueSources.isNotEmpty()) {
                 tooltipValueSources.forEach { it.setDataContext(dataContext) }
 
-                // use formatted settings for outliers and exclude them from the general value sources list
-                val withoutOutliers = tooltipValueSources.toMutableList()
-                val outlierValueSources = outliers
+                val valueSourcesWithOutliers = tooltipValueSources.toMutableList()
+                // Add outliers to the tooltip value source list
+                outliers
                     .filter(dataAccess::isMapped)
-                    .map { outlier ->
-                        val formattedValueSource = withoutOutliers.find {
-                            it is MappedAes && it.getAesName() == outlier.name
-                        }
+                    .forEach { outlier ->
+                        val formattedMappedAes = valueSourcesWithOutliers
+                            .filterIsInstance<MappedAes>()
+                            .find { it.getAesName() == outlier.name }
 
-                        if (formattedValueSource != null) {
-                            withoutOutliers.remove(formattedValueSource)
-                            (formattedValueSource as MappedAes).changeOutlier(true)
+                        if (formattedMappedAes != null) {
+                            // use formatted value source as outlier
+                            formattedMappedAes.changeOutlier(true)
                         } else {
-                            outlierValueSource(dataContext, outlier)
+                            // add new value source for outlier
+                            valueSourcesWithOutliers.add(outlierValueSource(dataContext, outlier))
                         }
                     }
 
-                withoutOutliers +
-                        outlierValueSources +
-                        axisValueSources(dataContext, axisAes.filter(dataAccess::isMapped))
+                valueSourcesWithOutliers + axisValueSources(dataContext, axisAes.filter(dataAccess::isMapped))
             } else {
                 emptyList()
             }
