@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plotImage
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
 
 object GGBunchImage {
@@ -16,8 +15,7 @@ object GGBunchImage {
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             PlotImageDemoUtil.show(
                 "GGBunch",
-                plotSpecList,
-                DoubleVector(600.0, 600.0)
+                plotSpecList
             )
         }
     }

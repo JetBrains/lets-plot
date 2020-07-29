@@ -18,24 +18,48 @@ object BrowserDemoUtil {
     private const val JS_DIST_PATH = "js-package/build/distributions"
 
     fun openInBrowser(demoProjectRelativePath: String, html: () -> String) {
-        openInBrowser(demoProjectRelativePath, "index", ".html", html)
-    }
+        val file = createDemoFile(
+            demoProjectRelativePath,
+            "index", "html"
+        )
 
-    fun openInBrowser(demoProjectRelativePath: String, filePref: String, fileSuff: String, html: () -> String) {
-
-        val rootPath = getRootPath()
-        println("Project root: $rootPath")
-        val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
-        val file = File.createTempFile(filePref, fileSuff, tmpDir)
-        println(file.canonicalFile)
-
+        val content = html()
         FileWriter(file).use {
-            it.write(html())
+            it.write(content)
         }
 
         val desktop = Desktop.getDesktop()
         desktop.browse(file.toURI())
     }
+
+    fun createDemoFile(
+        demoProjectRelativePath: String,
+        filenamePrefix: String,
+        filenameExtension: String
+    ): File {
+        val rootPath = getRootPath()
+        println("Project root: $rootPath")
+        val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
+        val file = File.createTempFile(filenamePrefix, ".$filenameExtension", tmpDir)
+        println(file.canonicalFile)
+        return file
+    }
+
+//    private fun openInBrowser(demoProjectRelativePath: String, filePref: String, fileSuff: String, html: () -> String) {
+//
+//        val rootPath = getRootPath()
+//        println("Project root: $rootPath")
+//        val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
+//        val file = File.createTempFile(filePref, fileSuff, tmpDir)
+//        println(file.canonicalFile)
+//
+//        FileWriter(file).use {
+//            it.write(html())
+//        }
+//
+//        val desktop = Desktop.getDesktop()
+//        desktop.browse(file.toURI())
+//    }
 
     fun getRootPath(): String {
         // works when launching from IDEA

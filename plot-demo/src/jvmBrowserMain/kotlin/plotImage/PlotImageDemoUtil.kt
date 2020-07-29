@@ -5,33 +5,26 @@
 
 package jetbrains.datalore.plotImage
 
-import jetbrains.datalore.base.encoding.Base64
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.toPngDataUri
 import jetbrains.datalore.plot.PlotImageExport
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
+import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.createDemoFile
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
-import java.io.File
 import java.io.StringWriter
 
 object PlotImageDemoUtil {
     private const val DEMO_PROJECT = "plot-demo"
-    private const val IMG_AS_DATA_URI = false
-    private const val SCALE_FACTOR = 2.0
-    private val FORMAT = PlotImageExport.PNG()
+    private val FORMAT = PlotImageExport.Format.PNG
 
     fun show(
         title: String,
-        plotSpecList: List<MutableMap<String, Any>>,
-        plotSize: DoubleVector
+        plotSpecList: List<MutableMap<String, Any>>
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
             getHtml(
                 title,
                 plotSpecList,
-                plotSize,
-                MutableList(plotSpecList.size) { SCALE_FACTOR }
+                scaleFactors = MutableList(plotSpecList.size) { 1.0 }
             )
         }
     }
@@ -40,14 +33,12 @@ object PlotImageDemoUtil {
     fun showScaled(
         title: String,
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector,
         scaleFactors: List<Double>
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
             getHtml(
                 title,
                 MutableList(scaleFactors.size) { plotSpec },
-                plotSize,
                 scaleFactors
             )
         }
@@ -56,7 +47,6 @@ object PlotImageDemoUtil {
     private fun getHtml(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
-        plotSize: DoubleVector,
         scaleFactors: List<Double>
     ): String {
         require(scaleFactors.size == plotSpecList.size) { "plots count (${plotSpecList.size}) and scales count (${scaleFactors.size}) should be equal." }
@@ -85,21 +75,18 @@ object PlotImageDemoUtil {
                     val image = PlotImageExport
                         .buildImageFromRawSpecs(
                             plotSpec = plotSpec,
-                            plotSize = plotSize,
                             format = FORMAT,
                             scaleFactor = scaleFactor
                         )
 
-                    val imgSrc = when(IMG_AS_DATA_URI) {
-                        true -> toPngDataUri(Base64.encode(image))
-                        false -> File.createTempFile("lets_plot_export", "img").apply { writeBytes(image) }.path
-                    }
+                    val namePrexix = "${title.toLowerCase().replace(' ', '_')}_scale_${scaleFactor}_"
+                    val imgFile = createDemoFile(DEMO_PROJECT, namePrexix, FORMAT.defFileExt)
+                    imgFile.writeBytes(image.bytes)
+                    val imgSrc = imgFile.toURI()
 
                     div("demo") {
-                        if (scaleFactors.distinct().size != 1) {
-                            p { + "scaleFactor: $scaleFactor" }
-                        }
-                        unsafe { + "<img src=\"$imgSrc\" width=\"${plotSize.x}\" height=\"${plotSize.y}\"/>" }
+                        p { +"scaleFactor: $scaleFactor, DPI: ${image.DPI}" }
+                        unsafe { +"<img src=\"$imgSrc\" width=\"${image.plotSize.x}\" height=\"${image.plotSize.y}\"/>" }
                     }
                 }
             }

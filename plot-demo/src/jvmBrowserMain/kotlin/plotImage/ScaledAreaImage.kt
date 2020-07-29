@@ -16,8 +16,7 @@ object ScaledAreaImage {
             (PlotImageDemoUtil.showScaled(
                 "Scaled Area plot",
                 plotSpecList().first() as MutableMap<String, Any>,
-                demoComponentSize,
-                listOf(1.0, 2.0, 4.0)
+                scaleFactors = listOf(1.0, 2.0, 4.0)
             ))
         }
     }

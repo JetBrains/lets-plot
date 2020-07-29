@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.PlotSizeHelper.fetchPlotSizeFromSvg
 import jetbrains.datalore.plot.PlotSvgExport.buildSvgImageFromRawSpecs
 import org.apache.batik.transcoder.ErrorHandler
 import org.apache.batik.transcoder.TranscoderException
@@ -17,37 +18,52 @@ import org.apache.batik.transcoder.image.PNGTranscoder
 import org.apache.batik.transcoder.image.TIFFTranscoder
 import java.io.ByteArrayOutputStream
 import java.io.StringReader
+import kotlin.math.ceil
 
 
 object PlotImageExport {
-    interface Format
-    class PNG: Format
-    class TIFF: Format
-    class JPEG(val quality: Double = 0.8): Format
+    sealed class Format {
+        val defFileExt: String
+            get() {
+                return when (this) {
+                    is PNG -> "png"
+                    is TIFF -> "tiff"
+                    is JPEG -> "jpg"
+                }
+            }
+
+        object PNG : Format()
+        object TIFF : Format()
+        class JPEG(val quality: Double = 0.8) : Format()
+    }
+
+    class ImageData(
+        val bytes: ByteArray,
+        val plotSize: DoubleVector,
+        val DPI: Int
+    )
 
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
-     * @param plotSize Desired plot size. Has no effect on GGBunch.
      * @param format Output image format. PNG, TIFF or JPEG (supports quality parameter).
      * @param scaleFactor factor for output image resolution.
      */
     fun buildImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector? = null,
-        format: Format = PNG(),
-        scaleFactor: Double = 1.0
-    ): ByteArray {
-        require(scaleFactor == 1.0 || plotSize != null) { "plotSize should be set when scaleFactor != 1.0 ($scaleFactor)" }
+        format: Format = Format.PNG,
+        scaleFactor: Double
+    ): ImageData {
+        require(scaleFactor >= .1) { "scale factor is too small: $scaleFactor, must be in range [0.1, 10.0]" }
+        require(scaleFactor < 10.0) { "scale factor is too large: $scaleFactor, must be in range [0.1, 10.0]" }
 
-        val transcoder = when(format) {
-            is TIFF -> TIFFTranscoder()
-            is PNG -> PNGTranscoder()
-            is JPEG -> {
+        val transcoder = when (format) {
+            is Format.TIFF -> TIFFTranscoder()
+            is Format.PNG -> PNGTranscoder()
+            is Format.JPEG -> {
                 JPEGTranscoder().apply {
                     addTranscodingHint(JPEGTranscoder.KEY_QUALITY, format.quality.toFloat())
                 }
             }
-            else -> error("Unsupported format: $format")
         }
         transcoder.errorHandler = object : ErrorHandler {
             override fun warning(ex: TranscoderException?) {
@@ -62,20 +78,27 @@ object PlotImageExport {
             }
         }
 
-        val imageSize = plotSize?.mul(scaleFactor)
-        if (imageSize != null) {
-            transcoder.apply {
-                addTranscodingHint(ImageTranscoder.KEY_WIDTH, imageSize.x.toFloat())
-                addTranscodingHint(ImageTranscoder.KEY_HEIGHT, imageSize.y.toFloat())
-            }
+        val svg = buildSvgImageFromRawSpecs(plotSpec)
+
+        @Suppress("NAME_SHADOWING")
+        val plotSize = fetchPlotSizeFromSvg(svg)
+
+        val imageSize = plotSize.mul(scaleFactor)
+        transcoder.apply {
+            addTranscodingHint(ImageTranscoder.KEY_WIDTH, imageSize.x.toFloat())
+            addTranscodingHint(ImageTranscoder.KEY_HEIGHT, imageSize.y.toFloat())
         }
+
         // adds only metadata, doesn't affect resolution/presentation
-        transcoder.addTranscodingHint(ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER, (25.4 / (96.0 * scaleFactor)).toFloat())
+        val dpi = ceil(scaleFactor * 72).toInt()
+        val millimeterPerDot = 25.4 / dpi
+        transcoder.addTranscodingHint(
+            ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER,
+            millimeterPerDot.toFloat()
+        )
 
-        val svg = buildSvgImageFromRawSpecs(plotSpec, plotSize).let(::StringReader)
         val image = ByteArrayOutputStream()
-
-        transcoder.transcode(TranscoderInput(svg), TranscoderOutput(image))
-        return image.toByteArray()
+        transcoder.transcode(TranscoderInput(StringReader(svg)), TranscoderOutput(image))
+        return ImageData(image.toByteArray(), plotSize, dpi)
     }
 }
