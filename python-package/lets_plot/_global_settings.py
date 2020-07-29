@@ -38,12 +38,12 @@ _settings = {
     'offline': _init_value('offline', False),  # default: download from CDN
     'js_base_url': 'https://dl.bintray.com/jetbrains/lets-plot',
     'js_name': '',  # default: lets-plot-<version>.min.js
-    'geocoding_url': _init_value('geocoding_url', 'https://geo.datalore.io'),
+    'geocoding_url': _init_value('geocoding_url', 'https://geo.datalore.jetbrains.com'),
 
     'dev_offline': _init_value('dev_offline', True),  # default: embed js into the notebook
     'dev_js_base_url': "http://0.0.0.0:8080",
     'dev_js_name': '',  # default: lets-plot-<version>.js
-    'dev_geocoding_url': _init_value('dev_geocoding_url', 'https://geo.datalore.io')
+    'dev_geocoding_url': _init_value('dev_geocoding_url', 'https://geo.datalore.jetbrains.com')
 }
 
 
