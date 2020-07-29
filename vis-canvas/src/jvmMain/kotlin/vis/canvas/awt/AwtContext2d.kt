@@ -7,6 +7,7 @@ package jetbrains.datalore.vis.canvas.awt
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.math.toDegrees
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
@@ -188,7 +189,29 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         endAngle: Double,
         anticlockwise: Boolean
     ) {
-        Arc2D.Double(x, y, radius * 2, radius * 2, startAngle, endAngle, OPEN).let {
+        var start = toDegrees(startAngle) % 360
+        var end = toDegrees(endAngle) % 360
+        var length: Double
+
+        if (start == end && startAngle != endAngle) {
+            length = 360.0
+        } else {
+            if (start > end && end < 0) {
+                end += 360
+            } else if (start > end && end >=0 ) {
+                start -= 360
+            }
+
+            length = end - start
+        }
+
+        if (anticlockwise) {
+            if (length != 0.0 && length != 360.0) {
+                length -= 360
+            }
+        }
+
+        Arc2D.Double(x - radius, y - radius, radius * 2, radius * 2, -start, -length, OPEN).let {
             currentPath?.append(it, true)
         }
     }
