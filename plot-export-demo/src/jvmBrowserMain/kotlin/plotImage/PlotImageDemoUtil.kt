@@ -18,15 +18,17 @@ object PlotImageDemoUtil {
     fun show(
         title: String,
         plotSpec: MutableMap<String, Any>,
-        scaleFactors: List<Double>,
+        scalingFactors: List<Double>,
+        targetDPIs: List<Number>,
         formats: List<PlotImageExport.Format>
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
             getHtml(
                 title,
                 plotSpec,
-                scaleFactors,
-                formats
+                formats,
+                scalingFactors,
+                targetDPIs
             )
         }
     }
@@ -34,8 +36,9 @@ object PlotImageDemoUtil {
     private fun getHtml(
         title: String,
         plotSpec: MutableMap<String, Any>,
+        formats: List<PlotImageExport.Format>,
         scaleFactors: List<Double>,
-        formats: List<PlotImageExport.Format>
+        targetDPIs: List<Number>
     ): String {
         require(formats.isNotEmpty()) { "Formats are not specified." }
         require(scaleFactors.size == formats.size) {
@@ -62,22 +65,26 @@ object PlotImageDemoUtil {
                 }
             }
             body {
-                formats.zip(scaleFactors).forEach { (format, scaleFactor) ->
+                val zip = formats.zip(scaleFactors.zip(targetDPIs))
+                zip.forEach { (format, scaleAndDPI) ->
+                    val scalingFactor = scaleAndDPI.first
+                    val targetDPI = scaleAndDPI.second
                     val image = PlotImageExport
                         .buildImageFromRawSpecs(
                             plotSpec = plotSpec,
                             format = format,
-                            scaleFactor = scaleFactor
+                            scalingFactor = scalingFactor,
+                            targetDPI = targetDPI.toDouble()
                         )
 
                     val titleTrimmed = Regex("[^a-z0-9_]").replace(title.toLowerCase(), "_")
-                    val namePrexix = "${titleTrimmed}_scale_${scaleFactor}_"
-                    val imgFile = createDemoFile(DEMO_PROJECT, namePrexix, format.defFileExt)
+                    val namePrefix = "${titleTrimmed}_scale_${scalingFactor}_"
+                    val imgFile = createDemoFile(DEMO_PROJECT, namePrefix, format.defFileExt)
                     imgFile.writeBytes(image.bytes)
                     val imgSrc = imgFile.toURI()
 
                     div("demo") {
-                        p { +"${format} scaleFactor: $scaleFactor, DPI: ${image.DPI}" }
+                        p { +"${format} scaleFactor: $scalingFactor, DPI: ${targetDPI}" }
                         unsafe { +"<img src=\"$imgSrc\" width=\"${image.plotSize.x}\" height=\"${image.plotSize.y}\"/>" }
                     }
                 }

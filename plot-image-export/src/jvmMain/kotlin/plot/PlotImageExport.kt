@@ -19,8 +19,6 @@ import org.apache.batik.transcoder.image.TIFFTranscoder
 import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.io.StringReader
-import kotlin.math.ceil
-
 
 object PlotImageExport {
     sealed class Format {
@@ -48,24 +46,24 @@ object PlotImageExport {
 
     class ImageData(
         val bytes: ByteArray,
-        val plotSize: DoubleVector,
-        val DPI: Int
+        val plotSize: DoubleVector
     )
-
 
 
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
      * @param format Output image format. PNG, TIFF or JPEG (supports quality parameter).
-     * @param scaleFactor factor for output image resolution.
+     * @param scalingFactor Factor for output image resolution.
+     * @param targetDPI A resolution value to put in the output image metadata. NaN - leave the metadata empty.
      */
     fun buildImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         format: Format,
-        scaleFactor: Double
+        scalingFactor: Double,
+        targetDPI: Double
     ): ImageData {
-        require(scaleFactor >= .1) { "scale factor is too small: $scaleFactor, must be in range [0.1, 10.0]" }
-        require(scaleFactor < 10.0) { "scale factor is too large: $scaleFactor, must be in range [0.1, 10.0]" }
+        require(scalingFactor >= .1) { "scaling factor is too small: $scalingFactor, must be in range [0.1, 10.0]" }
+        require(scalingFactor < 10.0) { "scaling factor is too large: $scalingFactor, must be in range [0.1, 10.0]" }
 
         val transcoder = when (format) {
             is Format.TIFF -> TIFFTranscoder()
@@ -93,22 +91,30 @@ object PlotImageExport {
 
         val plotSize = fetchPlotSizeFromSvg(svg)
 
-        val imageSize = plotSize.mul(scaleFactor)
+        val imageSize = plotSize.mul(scalingFactor)
         transcoder.addTranscodingHint(ImageTranscoder.KEY_WIDTH, imageSize.x.toFloat())
         transcoder.addTranscodingHint(ImageTranscoder.KEY_HEIGHT, imageSize.y.toFloat())
 
-        // adds only metadata, doesn't affect resolution/presentation
-        val dpi = ceil(scaleFactor * 72).toInt()
+/*
+        val dpi = ceil(scalingFactor * 72).toInt()
         val millimeterPerDot = 25.4 / dpi
         transcoder.addTranscodingHint(
             ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER,
             millimeterPerDot.toFloat()
         )
+*/
+        if (targetDPI.isFinite()) {
+            val millimeterPerDot = 25.4 / targetDPI
+            transcoder.addTranscodingHint(
+                ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER,
+                millimeterPerDot.toFloat()
+            )
+        }
 
         transcoder.addTranscodingHint(ImageTranscoder.KEY_BACKGROUND_COLOR, Color.white)
 
         val image = ByteArrayOutputStream()
         transcoder.transcode(TranscoderInput(StringReader(svg)), TranscoderOutput(image))
-        return ImageData(image.toByteArray(), plotSize, dpi)
+        return ImageData(image.toByteArray(), plotSize)
     }
 }

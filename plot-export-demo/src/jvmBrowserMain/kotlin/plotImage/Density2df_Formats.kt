@@ -17,7 +17,8 @@ object Density2df_Formats {
             (PlotImageDemoUtil.show(
                 "Density2df plot",
                 plotSpecList().first() as MutableMap<String, Any>,
-                scaleFactors = listOf(2.0, 2.0, 2.0),
+                scalingFactors = listOf(2.0, 2.0, 2.0),
+                targetDPIs = listOf(144, 144, 144),
                 formats = listOf(Format.PNG, Format.TIFF, Format.JPEG())
             ))
         }
