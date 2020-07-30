@@ -13,26 +13,39 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
 import java.awt.*
 import java.awt.AlphaComposite.SRC_OVER
+import java.awt.RenderingHints
 import java.awt.font.GlyphVector
 import java.awt.geom.*
 import java.awt.geom.Arc2D.OPEN
 import java.lang.Integer.max
 import java.awt.Color as AwtColor
 
+
 internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     private var currentPath: GeneralPath? = null
-    private var strokeColor: AwtColor = AwtColor.BLACK
-    private var fillColor: AwtColor = AwtColor.BLACK
-    private var stroke: BasicStroke = BasicStroke()
-    private var textBaseline: Context2d.TextBaseline = Context2d.TextBaseline.ALPHABETIC
-    private var textAlign: Context2d.TextAlign = Context2d.TextAlign.START
-    private var font: Font = Font(Font.SERIF, Font.PLAIN, 10)
-    private var globalAlpha: Float = 1f
+    private var state = ContextState()
+    private val stack = ArrayList<ContextState>()
 
     init {
+        RenderingHints(
+            RenderingHints.KEY_ANTIALIASING,
+            RenderingHints.VALUE_ANTIALIAS_ON
+        ).let(graphics::setRenderingHints)
+
         graphics.background = Color.TRANSPARENT.toAwtColor()
         setLineCap(Context2d.LineCap.BUTT)
     }
+
+    private data class ContextState(
+        var strokeColor: AwtColor = AwtColor.BLACK,
+        var fillColor: AwtColor = AwtColor.BLACK,
+        var stroke: BasicStroke = BasicStroke(),
+        var textBaseline: Context2d.TextBaseline = Context2d.TextBaseline.ALPHABETIC,
+        var textAlign: Context2d.TextAlign = Context2d.TextAlign.START,
+        var font: Font = Font(Font.SERIF, Font.PLAIN, 10),
+        var globalAlpha: Float = 1f,
+        var transform: AffineTransform = AffineTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+    )
 
     private fun convertLineJoin(lineJoin: Context2d.LineJoin): Int {
         return when (lineJoin) {
@@ -51,21 +64,14 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     private fun BasicStroke.change(
-        width: Float? = null,
-        join: Int? = null,
-        cap: Int? = null,
-        miterlimit: Float? = null,
-        dash: FloatArray? = null,
-        dashPhase: Float? = null
+        width: Float = this.lineWidth,
+        join: Int = this.lineJoin,
+        cap: Int = this.endCap,
+        miterlimit: Float = this.miterLimit,
+        dash: FloatArray? = this.dashArray,
+        dashPhase: Float = this.dashPhase
     ): BasicStroke {
-        return BasicStroke(
-            width ?: this.lineWidth,
-            cap ?: this.endCap,
-            join ?: this.lineJoin,
-            miterlimit ?: this.miterLimit,
-            dash ?: this.dashArray,
-            dashPhase ?: this.dashPhase
-        )
+        return BasicStroke(width, cap, join, miterlimit, dash, dashPhase)
     }
 
     private fun Graphics2D.glyphVector(str: String): GlyphVector {
@@ -79,7 +85,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         val box: Rectangle2D = glyphVector.visualBounds
         val fm = graphics.fontMetrics
 
-        val offsetX = when(textAlign) {
+        val offsetX = when(state.textAlign) {
             Context2d.TextAlign.START -> x
 
             Context2d.TextAlign.CENTER -> x - box.width / 2
@@ -87,7 +93,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
             Context2d.TextAlign.END -> x - box.width
         }
 
-        val offsetY = when(textBaseline) {
+        val offsetY = when(state.textBaseline) {
             Context2d.TextBaseline.ALPHABETIC -> y
             Context2d.TextBaseline.BOTTOM -> y - fm.descent
             Context2d.TextBaseline.MIDDLE -> y + (fm.leading + fm.ascent - fm.descent) / 2
@@ -111,6 +117,21 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
     private fun Color.toAwtColor(): AwtColor {
         return AwtColor(red, green, blue, alpha)
+    }
+
+    private fun Context2d.Font.toAwtFont(): Font {
+        val weight = when (fontWeight) {
+            Context2d.Font.FontWeight.NORMAL -> Font.PLAIN
+            Context2d.Font.FontWeight.BOLD -> Font.BOLD
+        }
+
+        val style = when (fontStyle) {
+            Context2d.Font.FontStyle.NORMAL -> Font.PLAIN
+            Context2d.Font.FontStyle.ITALIC -> Font.ITALIC
+        }
+
+        // In AWT, font cannot be bold and italic at the same time.
+        return Font(fontFamily, max(weight, style), fontSize.toInt())
     }
 
     override fun clearRect(rect: DoubleRectangle) {
@@ -153,23 +174,23 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun stroke() {
-        graphics.color = strokeColor
+        graphics.color = state.strokeColor
         graphics.draw(currentPath)
     }
 
     override fun fill() {
-        graphics.color = fillColor
+        graphics.color = state.fillColor
         graphics.fill(currentPath)
     }
 
     override fun fillEvenOdd() {
-        graphics.color = fillColor
+        graphics.color = state.fillColor
         currentPath?.windingRule = Path2D.WIND_EVEN_ODD
         graphics.fill(currentPath)
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
-        graphics.color = fillColor
+        graphics.color = state.fillColor
         graphics.fillRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
     }
 
@@ -217,83 +238,82 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun save() {
-        TODO("Not yet implemented")
+        stack.add(state.copy())
     }
 
     override fun restore() {
-        TODO("Not yet implemented")
+        stack.lastOrNull()
+            ?.let {
+                state = it
+
+                graphics.transform = state.transform
+                graphics.stroke = state.stroke
+                graphics.font = state.font
+                graphics.composite = AlphaComposite.getInstance(SRC_OVER, state.globalAlpha)
+
+                stack.removeAt(stack.lastIndex)
+            }
     }
 
     override fun setFillStyle(color: Color?) {
-        fillColor = color?.toAwtColor() ?: AwtColor.BLACK
+        state.fillColor = color?.toAwtColor() ?: AwtColor.BLACK
     }
 
     override fun setStrokeStyle(color: Color?) {
-        strokeColor = color?.toAwtColor() ?: AwtColor.BLACK
+        state.strokeColor = color?.toAwtColor() ?: AwtColor.BLACK
     }
 
     override fun setGlobalAlpha(alpha: Double) {
-        globalAlpha = alpha.toFloat()
-        graphics.composite = AlphaComposite.getInstance(SRC_OVER, globalAlpha)
-    }
-
-    private fun Context2d.Font.toAwtFont(): Font {
-        val weight = when (fontWeight) {
-            Context2d.Font.FontWeight.NORMAL -> Font.PLAIN
-            Context2d.Font.FontWeight.BOLD -> Font.BOLD
-        }
-
-        val style = when (fontStyle) {
-            Context2d.Font.FontStyle.NORMAL -> Font.PLAIN
-            Context2d.Font.FontStyle.ITALIC -> Font.ITALIC
-        }
-
-        // In AWT, font cannot be bold and italic at the same time.
-        return Font(fontFamily, max(weight, style), fontSize.toInt())
+        state.globalAlpha = alpha.toFloat()
+        graphics.composite = AlphaComposite.getInstance(SRC_OVER, state.globalAlpha)
     }
 
     override fun setFont(f: Context2d.Font) {
-        font = f.toAwtFont()
-        graphics.font = font
+        state.font = f.toAwtFont()
+        graphics.font = state.font
     }
 
     override fun setLineWidth(lineWidth: Double) {
-        stroke = stroke.change(
+        state.stroke = state.stroke.change(
             width = lineWidth.toFloat()
         )
 
-        graphics.stroke = stroke
+        graphics.stroke = state.stroke
     }
 
     override fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
-        graphics.color = strokeColor
+        graphics.color = state.strokeColor
         graphics.drawRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
     }
 
     override fun strokeText(text: String, x: Double, y: Double) {
-        graphics.color = strokeColor
+        graphics.color = state.strokeColor
         paintText(text, x, y, graphics::draw)
     }
 
     override fun fillText(text: String, x: Double, y: Double) {
-        graphics.color = fillColor
+        graphics.color = state.fillColor
         paintText(text, x, y, graphics::fill)
     }
 
     override fun scale(x: Double, y: Double) {
         graphics.scale(x, y)
+        state.transform = graphics.transform
     }
 
     override fun rotate(angle: Double) {
         graphics.rotate(angle)
+        state.transform = graphics.transform
     }
 
     override fun translate(x: Double, y: Double) {
         graphics.translate(x, y)
+        state.transform = graphics.transform
     }
 
     override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
         graphics.transform(AffineTransform(m11, m12, m21, m22, dx, dy))
+        state.transform = graphics.transform
     }
 
     override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) {
@@ -301,39 +321,40 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun setLineJoin(lineJoin: Context2d.LineJoin) {
-        stroke = stroke.change(
+        state.stroke = state.stroke.change(
             join = convertLineJoin(lineJoin)
         )
 
-        graphics.stroke = stroke
+        graphics.stroke = state.stroke
     }
 
     override fun setLineCap(lineCap: Context2d.LineCap) {
-        stroke = stroke.change(
+        state.stroke = state.stroke.change(
             cap = convertLineCap(lineCap)
         )
 
-        graphics.stroke = stroke
+        graphics.stroke = state.stroke
     }
 
     override fun setTextBaseline(baseline: Context2d.TextBaseline) {
-        textBaseline = baseline
+        state.textBaseline = baseline
     }
 
     override fun setTextAlign(align: Context2d.TextAlign) {
-        textAlign = align
+        state.textAlign = align
     }
 
     override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
         graphics.transform = AffineTransform(m11, m12, m21, m22, dx, dy)
+        state.transform = graphics.transform
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
-        stroke = stroke.change(
-            dash = lineDash.map { it.toFloat() }.toFloatArray()
+        state.stroke = state.stroke.change(
+            dash = if (lineDash.isEmpty()) null else lineDash.map { it.toFloat() }.toFloatArray()
         )
 
-        graphics.stroke = stroke
+        graphics.stroke = state.stroke
     }
 
     override fun measureText(str: String): Double {

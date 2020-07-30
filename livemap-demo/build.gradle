@@ -33,6 +33,7 @@ kotlin {
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.lineDashDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.drawTextDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.sectorDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.saveRestoreDemo",
                 )
             }
         }
