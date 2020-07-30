@@ -13,7 +13,7 @@ import kotlinx.html.stream.appendHTML
 import java.io.StringWriter
 
 object PlotImageDemoUtil {
-    private const val DEMO_PROJECT = "plot-demo"
+    private const val DEMO_PROJECT = "plot-export-demo"
 
     fun show(
         title: String,
