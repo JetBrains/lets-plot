@@ -19,8 +19,8 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plotDemo.model.KansasPolygon.KANSAS_X
-import jetbrains.datalore.plotDemo.model.KansasPolygon.KANSAS_Y
+import jetbrains.datalore.plotDemo.data.KansasPolygon.KANSAS_X
+import jetbrains.datalore.plotDemo.data.KansasPolygon.KANSAS_Y
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import kotlin.math.*
 

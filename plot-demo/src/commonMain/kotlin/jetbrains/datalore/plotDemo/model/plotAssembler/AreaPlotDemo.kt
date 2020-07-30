@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
-import jetbrains.datalore.plotDemo.model.Iris
+import jetbrains.datalore.plotDemo.data.Iris
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
 open class AreaPlotDemo: SimpleDemoBase() {
