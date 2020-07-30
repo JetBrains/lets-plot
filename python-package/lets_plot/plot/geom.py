@@ -301,8 +301,8 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
        Default - 0.5
     deg : degree of polynomial for linear regression model. Default - 1
     seed : random seed for LOESS sampling.
-    max_n : maximum points in DF for LOESS. If this quantity is exceeded randioom sampling is applied to data.
-        Default - 1000
+    max_n : maximum number of data-points for LOESS method. If this quantity exceeded random sampling
+        is applied to data. Default - 1000
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
