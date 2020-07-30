@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plotDemo.model
+package jetbrains.datalore.plotDemo.data
 
 object AutoMpg {
     data class Column<T>(val name: String, val data: List<T>)
