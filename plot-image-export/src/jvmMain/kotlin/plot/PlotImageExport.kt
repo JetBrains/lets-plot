@@ -52,6 +52,8 @@ object PlotImageExport {
         val DPI: Int
     )
 
+
+
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
      * @param format Output image format. PNG, TIFF or JPEG (supports quality parameter).
@@ -59,7 +61,7 @@ object PlotImageExport {
      */
     fun buildImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
-        format: Format = Format.PNG,
+        format: Format,
         scaleFactor: Double
     ): ImageData {
         require(scaleFactor >= .1) { "scale factor is too small: $scaleFactor, must be in range [0.1, 10.0]" }

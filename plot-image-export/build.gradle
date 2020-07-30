@@ -13,9 +13,6 @@ rootProject.ext {
 
 kotlin {
     jvm()
-    js {
-        browser()
-    }
 
     sourceSets {
         commonMain {
@@ -69,20 +66,6 @@ kotlin {
                 implementation "org.assertj:assertj-core:$assertj_version"
 
                 implementation project(':test-common')
-            }
-        }
-        jsMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
-
-                implementation project(':mapper-core')
-                implementation project(':vis-svg-mapper')
-            }
-        }
-        jsTest {
-            dependencies {
-                implementation kotlin('test-js')
             }
         }
     }

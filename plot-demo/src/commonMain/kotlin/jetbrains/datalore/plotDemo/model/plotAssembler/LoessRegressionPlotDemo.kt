@@ -23,7 +23,7 @@ import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.theme.DefaultTheme
 import jetbrains.datalore.plotDemo.model.AutoMpg
-import jetbrains.datalore.plotDemo.model.Diamonds
+import jetbrains.datalore.plotDemo.Diamonds
 import jetbrains.datalore.plotDemo.model.Iris
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import kotlin.math.PI
