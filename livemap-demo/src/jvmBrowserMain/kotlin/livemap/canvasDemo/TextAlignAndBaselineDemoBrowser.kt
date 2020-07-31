@@ -8,10 +8,10 @@ package jetbrains.livemap.canvasDemo
 import jetbrains.livemap.demo.BrowserDemoUtil
 
 private const val DEMO_PROJECT = "livemap-demo"
-private const val CALL_FUN = "jetbrains.livemap.canvasDemo.drawTextDemo"
+private const val CALL_FUN = "jetbrains.livemap.canvasDemo.textAlignAndBaselineDemo"
 
 fun main() {
     BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
-        BrowserDemoUtil.mapperDemoHtml(DEMO_PROJECT, CALL_FUN, "Draw Text Demo")
+        BrowserDemoUtil.mapperDemoHtml(DEMO_PROJECT, CALL_FUN, "Text align and baseline Demo")
     }
 }

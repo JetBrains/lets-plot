@@ -176,6 +176,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
             Context2d.Font.FontStyle.ITALIC -> FontPosture.ITALIC
         }
 
+        // In Javafx FontPosture will not work, for fonts without italics
         return font(fontFamily, weight, posture, fontSize)
     }
 

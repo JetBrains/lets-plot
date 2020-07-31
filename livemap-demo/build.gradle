@@ -31,7 +31,8 @@ kotlin {
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.lineJoinLineCapDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.fillRectStrokeRectDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.lineDashDemo",
-                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.drawTextDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.textAlignAndBaselineDemo",
+                        "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.textStyleDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.sectorDemo",
                         "lets-plot-livemap-demo.jetbrains.livemap.canvasDemo.saveRestoreDemo",
                 )

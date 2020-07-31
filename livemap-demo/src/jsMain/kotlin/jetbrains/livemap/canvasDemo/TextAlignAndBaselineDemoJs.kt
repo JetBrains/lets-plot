@@ -5,12 +5,10 @@
 
 package jetbrains.livemap.canvasDemo
 
-import jetbrains.datalore.base.js.dom.DomContext2d
-
 @Suppress("unused")
-@JsName("drawTextDemo")
-fun drawTextDemo() {
+@JsName("textAlignAndBaselineDemo")
+fun textAlignAndBaselineDemo() {
     baseCanvasDemo { canvas, _ ->
-        DrawTextDemoModel(canvas)
+        TextAlignAndBaselineDemoModel(canvas)
     }
 }

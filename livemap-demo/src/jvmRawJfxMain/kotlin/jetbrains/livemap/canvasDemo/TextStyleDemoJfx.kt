@@ -8,18 +8,18 @@ package jetbrains.livemap.canvasDemo
 import javafx.application.Application
 import javafx.stage.Stage
 
-class DrawTextDemoJfx : Application() {
+class TextStyleDemoJfx : Application() {
 
     override fun start(theStage: Stage) {
         BaseCanvasDemoJfx { canvas, _ ->
-            DrawTextDemoModel(canvas)
+            TextStyleDemoModel(canvas)
         }.start(theStage)
     }
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            launch(DrawTextDemoJfx::class.java, *args)
+            launch(TextStyleDemoJfx::class.java, *args)
         }
     }
 }

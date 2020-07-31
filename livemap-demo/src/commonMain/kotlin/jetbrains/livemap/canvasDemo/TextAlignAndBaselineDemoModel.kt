@@ -10,7 +10,7 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
 import kotlin.math.PI
 
-class DrawTextDemoModel(canvas: Canvas) {
+class TextAlignAndBaselineDemoModel(canvas: Canvas) {
 
     init {
         with(canvas.context2d) {

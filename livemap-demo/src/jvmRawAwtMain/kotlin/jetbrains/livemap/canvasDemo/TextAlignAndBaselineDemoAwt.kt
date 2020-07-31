@@ -5,12 +5,12 @@
 
 package jetbrains.livemap.canvasDemo
 
-class DrawTextDemoAwt {
+class TextAlignAndBaselineDemoAwt {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
             baseCanvasDemo { canvas, _ ->
-                DrawTextDemoModel(canvas)
+                TextAlignAndBaselineDemoModel(canvas)
             }
         }
     }
