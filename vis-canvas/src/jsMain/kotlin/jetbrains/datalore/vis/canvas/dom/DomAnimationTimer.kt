@@ -6,10 +6,9 @@
 package jetbrains.datalore.vis.canvas.dom
 
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer
-import org.w3c.dom.Element
 import kotlinx.browser.window
 
-internal abstract class DomAnimationTimer(private val myElement: Element) : AnimationTimer {
+internal abstract class DomAnimationTimer : AnimationTimer {
     private var myHandle: Int? = null
     private var myIsStarted: Boolean = false
 
@@ -37,7 +36,7 @@ internal abstract class DomAnimationTimer(private val myElement: Element) : Anim
         window.cancelAnimationFrame(myHandle!!)
     }
 
-    fun execute(millisTime: Double) {
+    private fun execute(millisTime: Double) {
         if (!myIsStarted) {
             return
         }

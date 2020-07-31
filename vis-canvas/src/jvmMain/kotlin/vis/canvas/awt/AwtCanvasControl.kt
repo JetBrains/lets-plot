@@ -11,13 +11,16 @@ import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.observable.event.EventHandler
+import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.AnimationProvider
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
+import java.awt.EventQueue.invokeLater
 import java.awt.Graphics2D
 import java.awt.Image
+import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -28,29 +31,46 @@ import javax.swing.ImageIcon
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-
 class AwtCanvasControl(
     private val myRoot: JPanel,
     override val size: Vector,
     private val myPixelRatio: Double,
     private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>
 ) : CanvasControl {
+    private val myChildren = HashMap<Canvas, JLabel>()
+
     override fun addChild(canvas: Canvas) {
         ImageIcon((canvas as AwtCanvas).image)
             .run(::JLabel)
-            .run(myRoot::add)
+            .also {
+                it.bounds = Rectangle(0,0, canvas.size.x, canvas.size.y)
+                myChildren[canvas] = it
+            }
+            .run { myRoot.add(this, myRoot.componentCount) }
     }
 
     override fun addChild(index: Int, canvas: Canvas) {
-        TODO("Not yet implemented")
+        ImageIcon((canvas as AwtCanvas).image)
+            .run(::JLabel)
+            .also {
+                myChildren[canvas] = it
+                it.bounds = Rectangle(0,0, canvas.size.x, canvas.size.y)
+            }
+            .run { myRoot.add(this, myRoot.componentCount - index) }
     }
 
     override fun removeChild(canvas: Canvas) {
-        TODO("Not yet implemented")
+        myRoot.remove(myChildren[canvas])
+        myChildren.remove(canvas)
     }
 
     override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationProvider.AnimationTimer {
-        TODO("Not yet implemented")
+        return object : AwtAnimationTimer() {
+            override fun handle(millisTime: Long) {
+                eventHandler.onEvent(millisTime)
+                myRoot.repaint()
+            }
+        }
     }
 
     override fun createCanvas(size: Vector): Canvas {
@@ -89,10 +109,15 @@ class AwtCanvasControl(
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-        TODO("Not yet implemented")
+        return myEventPeer.addEventHandler(
+            eventSpec,
+            handler {
+                eventHandler.onEvent(it)
+            }
+        )
     }
 
     override fun <T> schedule(f: () -> T) {
-        TODO("Not yet implemented")
+        invokeLater { f() }
     }
 }

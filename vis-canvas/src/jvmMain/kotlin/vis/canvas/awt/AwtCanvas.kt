@@ -25,7 +25,11 @@ private constructor(
 
     companion object {
         fun create(size: Vector, pixelRatio: Double): Canvas {
-            return AwtCanvas(BufferedImage(size.x, size.y, TYPE_INT_ARGB_PRE), size, pixelRatio)
+            val s = if (size == Vector.ZERO) {
+                Vector(1, 1)
+            } else size
+
+            return AwtCanvas(BufferedImage(s.x, s.y, TYPE_INT_ARGB_PRE), s, pixelRatio)
         }
     }
 
