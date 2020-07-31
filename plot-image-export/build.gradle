@@ -1,14 +1,20 @@
 plugins {
     id "org.jetbrains.kotlin.multiplatform"
     id "org.jetbrains.gradle.plugin.idea-ext"
+    id "maven-publish"
+    id "com.jfrog.bintray"
 }
 
-rootProject.ext {
+project.ext {
     batikGroupId = "org.apache.xmlgraphics"
     batikArtifacts = [
             "batik-transcoder",
             "batik-codec"
     ]
+
+    tiffioGroupId = "com.twelvemonkeys.imageio"
+    tiffioArtifact = "imageio-tiff"
+    tiffioVersion = twelvemonkeys_imageio_version
 }
 
 kotlin {
@@ -21,14 +27,14 @@ kotlin {
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
                 implementation project(':base-portable')
-                implementation project(':base')
-                implementation project(':vis-svg-portable')
-                implementation project(':plot-base-portable')
-                implementation project(':plot-base')
-                implementation project(':plot-common-portable')
-                implementation project(':plot-common')
-                implementation project(':plot-builder-portable')
-                implementation project(':plot-builder')
+//                implementation project(':base')
+//                implementation project(':vis-svg-portable')
+//                implementation project(':plot-base-portable')
+//                implementation project(':plot-base')
+//                implementation project(':plot-common-portable')
+//                implementation project(':plot-common')
+//                implementation project(':plot-builder-portable')
+//                implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
             }
@@ -48,11 +54,11 @@ kotlin {
                 implementation project(':vis-svg-mapper')
 
                 batikArtifacts.forEach {
-                    api "${batikGroupId}:$it:$batik_version"
+                    api "$batikGroupId:$it:$batik_version"
                 }
 
                 // TIFF support
-                implementation "com.twelvemonkeys.imageio:imageio-tiff:$twelvemonkeys_imageio_version"
+                implementation "$tiffioGroupId:$tiffioArtifact:$tiffioVersion"
             }
         }
         jvmTest {
@@ -79,3 +85,130 @@ idea {
         }
     }
 }
+
+// Publishing
+
+def artifactBaseName = 'lets-plot-image-export'
+def artifactGroupId = project.group
+def artifactVersion = project.version
+
+//def task_group = 'lets plot'
+
+// *****
+jvmJar {
+    archiveName "$artifactBaseName-${artifactVersion}.jar"
+}
+
+jvmSourcesJar {
+    archiveName "$artifactBaseName-$artifactVersion-sources.jar"
+}
+// *****
+
+//def classesJarFilename = "${artifactBaseName}-${artifactVersion}.jar"
+//def sourcesJarFilename = "${artifactBaseName}-${artifactVersion}-sources.jar"
+//
+//task renameClassesJar(type: Copy) {
+//    group task_group
+//    from jvmJar
+//    into "$buildDir/libs"
+//    rename { classesJarFilename }
+//}
+//
+//task renameSourcesJar(type: Copy) {
+//    group task_group
+//    from jvmSourcesJar
+//    into "$buildDir/libs"
+//    rename { sourcesJarFilename }
+//}
+
+publishing {
+    publications {
+        letsPlotImageExport(MavenPublication) {
+            groupId artifactGroupId
+            artifactId artifactBaseName
+            version artifactVersion
+
+//            artifact "$buildDir/libs/$classesJarFilename"
+//            artifact("$buildDir/libs/$sourcesJarFilename") {
+//                classifier 'sources'
+//            }
+            artifact jvmJar
+            artifact jvmSourcesJar
+
+            pom {
+                name = "Lets-Plot raster image export"
+                description = "Exporting a plot to a raster image (PNG,JPG or TIFF)."
+                url = "https://github.com/JetBrains/lets-plot"
+                licenses {
+                    license {
+                        name = "MIT"
+                        url = "https://opensource.org/licenses/MIT"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "jetbrains"
+                        name = "JetBrains"
+                        email = "lets-plot@jetbrains.com"
+                    }
+                }
+                scm {
+                    url = "https://github.com/JetBrains/lets-plot"
+                }
+                // Dependencies
+                withXml {
+                    def deps = asNode().appendNode('dependencies')
+                    // Apache Batik dependencies
+                    batikArtifacts.forEach {
+                        def dep = deps.appendNode('dependency')
+                        dep.appendNode('groupId', batikGroupId)
+                        dep.appendNode('artifactId', it)
+                        dep.appendNode('version', batik_version)
+                    }
+
+                    def dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', tiffioGroupId)
+                    dep.appendNode('artifactId', tiffioArtifact)
+                    dep.appendNode('version', tiffioVersion)
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+//            url = uri("$rootDir/.maven-publish-dev-repo")
+            url = uri("https://jetbrains.bintray.com/lets-plot-maven")
+        }
+    }
+}
+
+//generatePomFileForLetsPlotImageExportPublication.dependsOn += renameClassesJar
+//generatePomFileForLetsPlotImageExportPublication.dependsOn += renameSourcesJar
+
+// Provide Bintray-specific Information
+def bintray_user = project.buildSettings?.bintray?.user
+def bintray_key = project.buildSettings?.bintray?.key
+
+if (bintray_user != null && bintray_key != null) {
+    bintray {
+        publications = ['letsPlotImageExport']
+        override = true
+
+        user = bintray_user
+        key = bintray_key
+        publish = project.bintraySettings.publish
+
+        pkg {
+            repo = project.bintraySettings.mvn_repo
+            name = project.bintraySettings.mvn_pkg_name
+            userOrg = project.bintraySettings.userOrg
+            licenses = project.bintraySettings.licenses
+            vcsUrl = project.bintraySettings.vcsUrl
+            version {
+                name = artifactVersion
+            }
+        }
+    }
+}
+
+
