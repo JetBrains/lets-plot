@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.BoxplotGeom
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.ValueSource
@@ -22,6 +23,7 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
+import jetbrains.datalore.plot.config.GeomInteractionUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -195,7 +197,7 @@ class TooltipContentGeneratorTest {
             .putNumeric(varY, listOf(4.2, 11.5, 7.3, 5.8, 6.4, 10.0))
             .build()
 
-        val outlierAesList = GeomProvider.boxplot { BoxplotGeom() }.outliers()
+        val outlierAesList = GeomInteractionUtil.createOutlierAesList(GeomKind.BOX_PLOT)
 
         val geomInteraction = GeomInteractionBuilder(Aes.values())
             .univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)

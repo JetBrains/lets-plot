@@ -25,9 +25,6 @@ class LiveMapGeom(private val myDisplayMode: DisplayMode) : Geom {
             }
         }
 
-    override val outlierAesList: List<Aes<*>>
-        get() = emptyList()
-
     override fun build(
         root: SvgRoot,
         aesthetics: Aesthetics,

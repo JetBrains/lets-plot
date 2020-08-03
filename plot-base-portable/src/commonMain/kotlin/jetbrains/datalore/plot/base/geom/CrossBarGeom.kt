@@ -21,9 +21,6 @@ class CrossBarGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
 
-    override val outlierAesList: List<Aes<Double>>
-        get() = listOf(Aes.YMAX, Aes.YMIN)
-
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -37,7 +34,7 @@ class CrossBarGeom : GeomBase() {
         )
         CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
         BarTooltipHelper.collectRectangleTargets(
-            outlierAesList,
+            listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx, true),
             { HintColorUtil.fromColor(it) }

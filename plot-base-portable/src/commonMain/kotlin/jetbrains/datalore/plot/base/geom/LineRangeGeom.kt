@@ -22,9 +22,6 @@ class LineRangeGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = VLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
-    override val outlierAesList: List<Aes<Double>>
-        get() = listOf(Aes.YMAX, Aes.YMIN)
-
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -47,7 +44,7 @@ class LineRangeGeom : GeomBase() {
         }
 
         BarTooltipHelper.collectRectangleTargets(
-            outlierAesList,
+            listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             rectangleByDataPoint(),
             { HintColorUtil.fromColor(it) }

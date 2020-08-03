@@ -28,9 +28,6 @@ class PointRangeGeom : GeomBase() {
             PointLegendKeyElementFactory(DEF_FATTEN)
         )
 
-    override val outlierAesList: List<Aes<Double>>
-        get() = listOf(Aes.YMAX, Aes.YMIN)
-
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -67,7 +64,7 @@ class PointRangeGeom : GeomBase() {
         }
 
         BarTooltipHelper.collectRectangleTargets(
-            outlierAesList,
+            listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             rectangleByDataPoint(fattenMidPoint),
             { HintColorUtil.fromColor(it) }
