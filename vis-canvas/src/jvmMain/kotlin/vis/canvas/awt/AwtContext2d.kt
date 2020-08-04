@@ -17,7 +17,6 @@ import java.awt.RenderingHints
 import java.awt.font.GlyphVector
 import java.awt.geom.*
 import java.awt.geom.Arc2D.OPEN
-import java.lang.Integer.max
 import java.awt.Color as AwtColor
 
 
@@ -130,8 +129,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
             Context2d.Font.FontStyle.ITALIC -> Font.ITALIC
         }
 
-        // In AWT, font cannot be bold and italic at the same time.
-        return Font(fontFamily, max(weight, style), fontSize.toInt())
+        return Font(fontFamily,weight or style, fontSize.toInt())
     }
 
     override fun clearRect(rect: DoubleRectangle) {
