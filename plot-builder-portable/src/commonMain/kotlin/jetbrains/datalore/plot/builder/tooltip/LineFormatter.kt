@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.builder.tooltip
 import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.interact.ValueSource
 
-class LineFormatter(
-    private val formatPattern: String?
+internal class LineFormatter(
+    val formatPattern: String?
 ) {
     // composite string with a single value source
     fun format(value: String, isContinuous: Boolean): String {

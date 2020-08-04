@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
 
 class MappedAes(
-    private val aes: Aes<*>,
+    val aes: Aes<*>,
     private val isOutlier: Boolean = false,
     private val isAxis: Boolean = false,
     private val label: String? = null,
@@ -64,11 +64,13 @@ class MappedAes(
         return aes.name
     }
 
-    companion object {
-        fun createMappedAxis(aes: Aes<*>, dataContext: DataContext): ValueSource =
-            MappedAes(aes, isOutlier = true, isAxis = true).also { it.setDataContext(dataContext) }
-
-        fun createMappedAes(aes: Aes<*>, isOutlier: Boolean, dataContext: DataContext): ValueSource =
-            MappedAes(aes, isOutlier = isOutlier, isAxis = false).also { it.setDataContext(dataContext) }
+    fun toOutlier() : MappedAes{
+        return MappedAes(
+            aes = aes,
+            isOutlier = true,
+            isAxis = isAxis,
+            label = label,
+            format = myFormatter.formatPattern
+        )
     }
 }

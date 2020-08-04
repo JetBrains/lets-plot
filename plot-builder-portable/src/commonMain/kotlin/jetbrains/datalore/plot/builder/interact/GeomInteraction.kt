@@ -19,78 +19,52 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
 
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
-    private val myAesListForTooltip: List<Aes<*>> = builder.aesListForTooltip
-    private val myAxisAes: List<Aes<*>> = builder.axisAesListForTooltip
-    private var myValueSourcesForTooltip: List<ValueSource>? = builder.valueSourcesForTooltip
+    private var myValueSourcesForTooltip: List<ValueSource> = builder.valueSourcesForTooltip
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
     }
 
     override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
-        return if (myValueSourcesForTooltip != null) {
-            createUserDefinedContextualMapping(
-                myValueSourcesForTooltip!!,
-                myAxisAes,
-                dataAccess,
-                dataFrame
-            )
-        } else {
-            createContextualMapping(
-                myAesListForTooltip,
-                myAxisAes,
-                dataAccess,
-                dataFrame
-            )
-        }
+        return createContextualMapping(
+            myValueSourcesForTooltip,
+            dataAccess,
+            dataFrame
+        )
     }
 
     companion object {
         fun createContextualMapping(
             aesListForTooltip: List<Aes<*>>,
             axisAes: List<Aes<*>>,
+            outliers: List<Aes<*>>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame
         ): ContextualMapping {
-            val showInTip = aesListForTooltip.filter(dataAccess::isMapped)
-            val showAxisInTip = axisAes.filter(dataAccess::isMapped)
-            val dataContext = DataContext(dataFrame, dataAccess)
-            val valueSources = defaultValueSources(dataContext, showInTip) + axisValueSources(dataContext, showAxisInTip)
-            return ContextualMapping(dataContext, valueSources)
+            val valueSources = GeomInteractionBuilder.defaultValueSourceList(
+                aesListForTooltip,
+                axisAes,
+                outliers
+            )
+            return createContextualMapping(valueSources, dataAccess, dataFrame)
         }
 
-        private fun createUserDefinedContextualMapping(
+        private fun createContextualMapping(
             tooltipValueSources: List<ValueSource>,
-            axisAes: List<Aes<*>>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
-            val showAxisInTip = axisAes.filter(dataAccess::isMapped)
-            val valueSources = if (tooltipValueSources.isNotEmpty()) {
-                tooltipValueSources.forEach { it.setDataContext(dataContext) }
-                tooltipValueSources + axisValueSources(dataContext, showAxisInTip)
-            } else {
-                null
-            }
-            return ContextualMapping(dataContext, valueSources)
-        }
 
-        private fun defaultValueSources(
-            dataContext: DataContext,
-            aesListForTooltip: List<Aes<*>>
-        ): List<ValueSource> {
-            return aesListForTooltip.map { aes ->
-                MappedAes.createMappedAes(aes, isOutlier = false, dataContext = dataContext)
-            }
-        }
-
-        private fun axisValueSources(dataContext: DataContext, axisTooltipAes: List<Aes<*>>): List<ValueSource> {
-            return axisTooltipAes
-                .filter { listOf(Aes.X, Aes.Y).contains(it) }
-                .map { aes ->
-                    MappedAes.createMappedAxis(aes, dataContext)
+            val mappedValueSources = tooltipValueSources.filter { valueSource ->
+                when (valueSource) {
+                    is MappedAes -> dataAccess.isMapped(valueSource.aes)
+                    else -> true
                 }
+            }
+            mappedValueSources.forEach { it.setDataContext(dataContext) }
+
+            return ContextualMapping(dataContext, mappedValueSources)
         }
     }
 }
