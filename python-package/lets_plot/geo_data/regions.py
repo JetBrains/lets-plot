@@ -245,7 +245,7 @@ def _format_error_message(response: Response) -> str:
         return 'Invalid bad feature'
 
     if isinstance(response, ErrorResponse):
-        return 'Error: ' + response.message
+        return response.message
 
     return 'Unsupported error response status: ' + str(response.__class__)
 
