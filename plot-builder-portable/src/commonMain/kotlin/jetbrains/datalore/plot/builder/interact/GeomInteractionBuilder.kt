@@ -121,7 +121,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                 val geomOutliers = myTooltipOutlierAesList.toMutableList()
 
                 val tooltipValueSourceList = myUserTooltipValueSources!!.map { valueSource ->
-                    if (valueSource is MappedAes && myTooltipOutlierAesList.contains(valueSource.aes)) {
+                    if (valueSource is MappedAes && valueSource.aes in myTooltipOutlierAesList) {
                         // use formatted mapped aes as outlier and exclude its aes from the outlier aes list
                         geomOutliers.remove(valueSource.aes)
                         valueSource.toOutlier()
