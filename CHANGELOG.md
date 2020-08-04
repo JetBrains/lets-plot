@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - CorrelationStat
  - label_format
  - scale_x_reverse / scale_y_reverse
+
+
+## [1.5.1] - TBD
+
+### Added
+ - Mnemonics for `boundaries()` parameter `resolution`
+
+### Fixed
+ - Exception when using `coord_map` with `xlim` [[#173](https://github.com/JetBrains/lets-plot/issues/173)]
+ - Clipped tooltip [[#155](https://github.com/JetBrains/lets-plot/issues/155)]
+ - Text on axis is clipped after hiding the tick-marks in theme [[#160](https://github.com/JetBrains/lets-plot/issues/160)]
+ - Tooltip on x axis with no title shouldn't be above the axis line [[#161](https://github.com/JetBrains/lets-plot/issues/161)]
+ - NPE while creating scale mapper when data series contains only nulls
+ - Geocoding server url
+
  
 ## [1.5.0] - 2020-07-15
 ### Added
