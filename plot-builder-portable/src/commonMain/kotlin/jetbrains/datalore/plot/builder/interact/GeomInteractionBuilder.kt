@@ -9,6 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.base.interact.ValueSource
+import jetbrains.datalore.plot.builder.tooltip.MappedAes
 
 class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     lateinit var locatorLookupSpace: LookupSpace
@@ -20,17 +21,8 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     private var myAxisAesFromFunctionKind: List<Aes<*>>? = null
     private lateinit var myTooltipAxisAes: List<Aes<*>>
     private lateinit var myTooltipAes: List<Aes<*>>
-    private var myTooltipOutlierAesList: List<Aes<*>>? = null
-    private var myTooltipValueSources: List<ValueSource>? = null
-
-    val axisAesListForTooltip: List<Aes<*>>
-        get() = myTooltipAxisAes
-
-    val aesListForTooltip: List<Aes<*>>
-        get() = myTooltipAes
-
-    val outlierAesListForTooltip: List<Aes<*>>
-        get() = myTooltipOutlierAesList ?: emptyList()
+    private lateinit var myTooltipOutlierAesList: List<Aes<*>>
+    private var myUserTooltipValueSources: List<ValueSource>? = null
 
     val getAxisFromFunctionKind: List<Aes<*>>
         get() = myAxisAesFromFunctionKind ?: emptyList()
@@ -41,8 +33,8 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         else
             myAxisTooltipVisibilityFromConfig!!
 
-    val valueSourcesForTooltip: List<ValueSource>?
-        get() = myTooltipValueSources
+    val valueSourcesForTooltip: List<ValueSource>
+        get() = prepareTooltipValueSources()
 
     fun showAxisTooltip(isTrue: Boolean): GeomInteractionBuilder {
         myAxisTooltipVisibilityFromConfig = isTrue
@@ -65,7 +57,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     }
 
     fun tooltipValueSources(tooltipValueSources: List<ValueSource>?): GeomInteractionBuilder {
-        myTooltipValueSources = tooltipValueSources
+        myUserTooltipValueSources = tooltipValueSources
         return this
     }
 
@@ -111,6 +103,38 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     private fun initDefaultTooltips() {
         myTooltipAxisAes = if (!isAxisTooltipEnabled) emptyList() else getAxisFromFunctionKind
         myTooltipAes = mySupportedAesList - getAxisFromFunctionKind
+        myTooltipOutlierAesList = emptyList()
+    }
+
+    private fun prepareTooltipValueSources(): List<ValueSource> {
+        return when {
+            myUserTooltipValueSources == null -> {
+                // No user list => use default tooltips
+                defaultValueSourceList(myTooltipAes, myTooltipAxisAes, myTooltipOutlierAesList)
+            }
+            myUserTooltipValueSources!!.isEmpty() -> {
+                // User list is empty => no tooltips
+                emptyList()
+            }
+            else -> {
+                // Form value sources: user list + axis + outliers
+                val geomOutliers = myTooltipOutlierAesList.toMutableList()
+
+                val tooltipValueSourceList = myUserTooltipValueSources!!.map { valueSource ->
+                    if (valueSource is MappedAes && myTooltipOutlierAesList.contains(valueSource.aes)) {
+                        // use formatted mapped aes as outlier and exclude its aes from the outlier aes list
+                        geomOutliers.remove(valueSource.aes)
+                        valueSource.toOutlier()
+                    } else {
+                        valueSource
+                    }
+                }
+                val axisValueSources = myTooltipAxisAes.map { aes -> MappedAes(aes, isOutlier = true, isAxis = true) }
+                val geomOutlierValueSources = geomOutliers.map { aes -> MappedAes(aes, isOutlier = true) }
+
+                tooltipValueSourceList + axisValueSources + geomOutlierValueSources
+            }
+        }
     }
 
     fun build(): GeomInteraction {
@@ -123,5 +147,16 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
 
         private val AES_X = listOf(Aes.X)
         private val AES_XY = listOf(Aes.X, Aes.Y)
+
+        fun defaultValueSourceList(
+            aesListForTooltip: List<Aes<*>>,
+            axisAes: List<Aes<*>>,
+            outliers: List<Aes<*>>
+        ): List<ValueSource> {
+            val axisValueSources = axisAes.map { aes -> MappedAes(aes, isOutlier = true, isAxis = true) }
+            val outlierValueSources = outliers.map { aes -> MappedAes(aes, isOutlier = true) }
+            val aesValueSources = aesListForTooltip.map { aes -> MappedAes(aes) }
+            return aesValueSources + axisValueSources + outlierValueSources
+        }
     }
 }

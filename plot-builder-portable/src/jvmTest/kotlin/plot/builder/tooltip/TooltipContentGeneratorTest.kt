@@ -197,12 +197,10 @@ class TooltipContentGeneratorTest {
             .putNumeric(varY, listOf(4.2, 11.5, 7.3, 5.8, 6.4, 10.0))
             .build()
 
-        val outlierAesList = GeomInteractionUtil.createOutlierAesList(GeomKind.BOX_PLOT)
-
         val geomInteraction = GeomInteractionBuilder(Aes.values())
             .univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
+            .tooltipOutliers(GeomInteractionUtil.createOutlierAesList(GeomKind.BOX_PLOT))
             .tooltipValueSources(tooltipValueSourcesProvider?.tooltipValueSourceList)
-            .tooltipOutliers(outlierAesList)
             .build()
 
         return demoAndTest()

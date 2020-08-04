@@ -9,7 +9,7 @@ import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.interact.ValueSource
 
 internal class LineFormatter(
-    private val formatPattern: String?
+    val formatPattern: String?
 ) {
     // composite string with a single value source
     fun format(value: String, isContinuous: Boolean): String {
