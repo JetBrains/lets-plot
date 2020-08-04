@@ -5,32 +5,19 @@
 
 package jetbrains.livemap.demo
 
-import javafx.embed.swing.JFXPanel
-import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
+import jetbrains.datalore.vis.demoUtils.BatikMapperDemoFactory
 import jetbrains.livemap.plotDemo.LiveMap
-import java.util.concurrent.CountDownLatch
-import javax.swing.SwingUtilities
 
-
-object LiveMapJfx {
+object LiveMapBatik {
     @JvmStatic
     fun main(args: Array<String>) {
-
-        val latch = CountDownLatch(1)
-        SwingUtilities.invokeLater {
-            JFXPanel() // initializes JavaFX environment
-            latch.countDown()
-        }
-        latch.await()
-
         with(LiveMap()) {
             @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList() as List<MutableMap<String, Any>>
             LiveMapPlotConfigDemoUtil.show(
-                "LiveMap Jfx",
+                "LiveMap Batik",
                 plotSpecList,
-                SceneMapperDemoFactory(Style.JFX_PLOT_STYLESHEET),
+                BatikMapperDemoFactory(),
                 demoComponentSize
             )
         }

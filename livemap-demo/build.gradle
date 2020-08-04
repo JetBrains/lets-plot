@@ -4,11 +4,13 @@ plugins {
 }
 
 kotlin {
+    jvm()
     jvm("jvmJfx")
     jvm("jvmRawJfx")
     jvm("jvmRawAwt")
     jvm("jvmBrowser")
     jvm("jvmJfxPlot")
+    jvm("jvmBaticPlot")
     js() {
         browser {
             dceTask {
@@ -73,15 +75,28 @@ kotlin {
                 implementation "io.ktor:ktor-client-cio:$ktor_version"
             }
         }
+        jvmMain {
+            dependsOn allJvm
+            dependencies {
+                implementation project(':livemap-jvm-package')
+            }
+        }
+
         jvmJfxMain {
             dependsOn allJvm
         }
         jvmJfxPlotMain {
-            dependsOn allJvm
+            dependsOn jvmMain
             dependencies {
                 implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-demo-common-jfx')
-                implementation project(':livemap-jvm-package')
+            }
+        }
+        jvmBaticPlotMain {
+            dependsOn jvmMain
+            dependencies {
+                implementation project(':vis-demo-common-batik')
+                implementation project(':vis-svg-mapper-batik')
             }
         }
         jvmRawJfxMain {

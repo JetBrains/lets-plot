@@ -6,25 +6,15 @@
 package jetbrains.datalore.vis.canvas.awt
 
 import jetbrains.datalore.vis.canvas.AnimationProvider
-import java.util.*
 
-internal abstract class AwtAnimationTimer : AnimationProvider.AnimationTimer {
-    private val myTimer: Timer = Timer()
-    private val myTimerTask = object : TimerTask() {
-        override fun run() {
-            this@AwtAnimationTimer.handle(System.currentTimeMillis())
-        }
-    }
-
+internal abstract class AwtAnimationTimer(private val myTimer: AwtRepaintTimer) : AnimationProvider.AnimationTimer {
     internal abstract fun handle(millisTime: Long)
 
     override fun start() {
-        myTimer.scheduleAtFixedRate(
-            myTimerTask, 0, 1000 / 30
-        )
+        myTimer.addHandler(::handle)
     }
 
     override fun stop() {
-        myTimer.cancel()
+        myTimer.removeHandler(::handle)
     }
 }

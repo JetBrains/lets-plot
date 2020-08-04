@@ -13,15 +13,15 @@ class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             multiLayerTooltips(),
-            mapJoinBar()
-//            antiMeridian()
-//            tooltips()
+//            mapJoinBar(),
+//            antiMeridian(),
+//            tooltips(),
 //            symbol_point(),
 //            geom_point()
 //            fourPointsTwoLayers(),
 //            basic(),
 //            bunch(),
-//            facet()
+//           facet()
         )
     }
 

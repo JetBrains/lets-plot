@@ -35,7 +35,8 @@ class AwtCanvasControl(
     private val myRoot: JPanel,
     override val size: Vector,
     private val myPixelRatio: Double,
-    private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>
+    private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>,
+    private val myTimer: AwtRepaintTimer
 ) : CanvasControl {
     private val myChildren = HashMap<Canvas, JLabel>()
 
@@ -65,10 +66,9 @@ class AwtCanvasControl(
     }
 
     override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationProvider.AnimationTimer {
-        return object : AwtAnimationTimer() {
+        return object : AwtAnimationTimer(myTimer) {
             override fun handle(millisTime: Long) {
                 eventHandler.onEvent(millisTime)
-                myRoot.repaint()
             }
         }
     }
