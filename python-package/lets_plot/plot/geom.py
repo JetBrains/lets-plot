@@ -291,8 +291,18 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
     position : string, optional
         Position adjustment, either as a string ("identity", "stack", "dodge",...), or the result of a call to a
         position adjustment function.
+    method :  smoothing method: lm (Linear Model) or loess (Locally Estimated Scatterplot Smoothing). Default - 'lm'
+    n : number of points to evaluate smoother at.
+    se : boolean, to display confidence interval around smooth. Default - True
+    level : level of confidence interval to use. Default - 0.95
     span : number, optional
-        Amount of smoothing. A sensible value is usually 0.25 to 0.5.
+       Only for LOESS method. The fraction of source points closest to the current point
+       is taken into account for computing a least-squares regression. A sensible value is usually 0.25 to 0.5.
+       Default - 0.5
+    deg : degree of polynomial for linear regression model. Default - 1
+    seed : random seed for LOESS sampling.
+    max_n : maximum number of data-points for LOESS method. If this quantity exceeded random sampling
+        is applied to data. Default - 1000
     other_args :
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
