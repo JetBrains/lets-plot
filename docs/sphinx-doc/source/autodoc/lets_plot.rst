@@ -1,4 +1,4 @@
-lets\_plot
+lets\_plot package
 ==================
 
 Subpackages
@@ -8,6 +8,7 @@ Subpackages
 
    lets_plot.export
    lets_plot.frontend_context
+   lets_plot.geo_data
    lets_plot.plot
 
 Submodules

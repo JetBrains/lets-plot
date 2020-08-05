@@ -3,20 +3,21 @@ lets\_plot.frontend\_context package
 
 Submodules
 ----------
+.. The block below is commented
+..
+    lets\_plot.frontend\_context.sandbox module
+    -------------------------------------------
 
-lets\_plot.frontend\_context.sandbox module
--------------------------------------------
-
-.. automodule:: lets_plot.frontend_context.sandbox
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    .. automodule:: lets_plot.frontend_context.sandbox
+       :members:
+       :undoc-members:
+       :show-inheritance:
 
 
-Module contents
----------------
+    Module contents
+    ---------------
 
-.. automodule:: lets_plot.frontend_context
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    .. automodule:: lets_plot.frontend_context
+       :members:
+       :undoc-members:
+       :show-inheritance:

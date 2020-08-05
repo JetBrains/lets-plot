@@ -3,14 +3,14 @@ lets\_plot.plot package
 
 Submodules
 ----------
-..
-    lets\_plot.plot.coord module
-    ----------------------------
 
-    .. automodule:: lets_plot.plot.coord
-       :members:
-       :undoc-members:
-       :show-inheritance:
+lets\_plot.plot.coord module
+----------------------------
+
+.. automodule:: lets_plot.plot.coord
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 lets\_plot.plot.core module
 ---------------------------
@@ -144,6 +144,14 @@ lets\_plot.plot.theme\_ module
 ------------------------------
 
 .. automodule:: lets_plot.plot.theme_
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+lets\_plot.plot.tooltip module
+------------------------------
+
+.. automodule:: lets_plot.plot.tooltip
    :members:
    :undoc-members:
    :show-inheritance:
