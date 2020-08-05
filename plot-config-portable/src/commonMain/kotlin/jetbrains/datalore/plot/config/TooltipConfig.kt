@@ -30,7 +30,7 @@ class TooltipConfig(
                 is String -> TooltipLineSpecification.singleValueLine(
                     label = "",
                     format = "",
-                    datum = createValueSource(tooltipLine)
+                    datum = createValueSource(getValueSourceName(tooltipLine))
                 )
                 is Map<*, *> -> parseMap(tooltipLine)
                 else -> error("Error tooltip_line parsing")
@@ -39,28 +39,37 @@ class TooltipConfig(
     }
 
     private fun parseMap(tooltipLine: Map<*, *>): TooltipLineSpecification {
-        val value: List<String> = when (val value = tooltipLine[TooltipLine.VALUE]) {
+        val values: List<String> = when (val value = tooltipLine[TooltipLine.VALUE]) {
             is String -> listOf(value)
             is List<*> -> value.mapNotNull(Any?::toString)
             else -> error("Unsupported tooltip format type")
         }
+        val valueSourceNames = values.map(::getValueSourceName)
         val label = when (val labelValue = tooltipLine.getString(TooltipLine.LABEL)) {
             DEFAULT_LABEL -> null
             else -> labelValue
         }
         val format = tooltipLine.getString(TooltipLine.FORMAT)
 
-        return if (value.size == 1) {
+        return createTooltipLineSpecification(valueSourceNames, label, format)
+    }
+
+    private fun createTooltipLineSpecification(
+        values: List<String>,
+        label: String?,
+        format: String?
+    ): TooltipLineSpecification {
+        return if (values.size == 1) {
             TooltipLineSpecification.singleValueLine(
                 label = "",
                 format = "",
-                datum = createValueSource(name = value.single(), label = label, format = format)
+                datum = createValueSource(name = values.single(), label = label, format = format)
             )
         } else {
             TooltipLineSpecification.multiValueLine(
                 label = label ?: "",
                 format = format ?: "",
-                data = value.map { createValueSource(it) }
+                data = values.map { createValueSource(it) }
             )
         }
     }
@@ -72,18 +81,28 @@ class TooltipConfig(
 
         return when {
             name.startsWith("text@") -> StaticValue((name.removePrefix("text@")))
-            name.startsWith("aes@") -> {
-                val aes = getAesByName(name.removePrefix("aes@"))
-                when(val constant = constantsMap[aes]) {
+            name.startsWith("var@") -> VariableValue(name.removePrefix("var@"), label, format)
+            else -> {
+                val aes = getAesByName(name)
+                when (val constant = constantsMap[aes]) {
                     null -> MappedAes(aes, label = label, format = format)
                     else -> ConstantValue(label, constant, format)
                 }
             }
-            else -> VariableValue(name, label, format)
         }
     }
 
     companion object {
         private const val DEFAULT_LABEL = "{}"
+        private const val VALUE_SOURCE_PREFIX = "$"
+
+        private fun getValueSourceName(value: String): String {
+            return if (value.startsWith(VALUE_SOURCE_PREFIX)) {
+                value.removePrefix(VALUE_SOURCE_PREFIX).removeSurrounding("{", "}")
+            } else {
+                // mark as the text
+                "text@$value"
+            }
+        }
     }
 }
