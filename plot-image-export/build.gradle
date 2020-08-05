@@ -27,14 +27,6 @@ kotlin {
                 implementation "io.github.microutils:kotlin-logging-common:$kotlinLogging_version"
 
                 implementation project(':base-portable')
-//                implementation project(':base')
-//                implementation project(':vis-svg-portable')
-//                implementation project(':plot-base-portable')
-//                implementation project(':plot-base')
-//                implementation project(':plot-common-portable')
-//                implementation project(':plot-common')
-//                implementation project(':plot-builder-portable')
-//                implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':plot-config')
             }
@@ -92,9 +84,6 @@ def artifactBaseName = 'lets-plot-image-export'
 def artifactGroupId = project.group
 def artifactVersion = project.version
 
-//def task_group = 'lets plot'
-
-// *****
 jvmJar {
     archiveName "$artifactBaseName-${artifactVersion}.jar"
 }
@@ -102,24 +91,6 @@ jvmJar {
 jvmSourcesJar {
     archiveName "$artifactBaseName-$artifactVersion-sources.jar"
 }
-// *****
-
-//def classesJarFilename = "${artifactBaseName}-${artifactVersion}.jar"
-//def sourcesJarFilename = "${artifactBaseName}-${artifactVersion}-sources.jar"
-//
-//task renameClassesJar(type: Copy) {
-//    group task_group
-//    from jvmJar
-//    into "$buildDir/libs"
-//    rename { classesJarFilename }
-//}
-//
-//task renameSourcesJar(type: Copy) {
-//    group task_group
-//    from jvmSourcesJar
-//    into "$buildDir/libs"
-//    rename { sourcesJarFilename }
-//}
 
 publishing {
     publications {
@@ -128,10 +99,6 @@ publishing {
             artifactId artifactBaseName
             version artifactVersion
 
-//            artifact "$buildDir/libs/$classesJarFilename"
-//            artifact("$buildDir/libs/$sourcesJarFilename") {
-//                classifier 'sources'
-//            }
             artifact jvmJar
             artifact jvmSourcesJar
 
@@ -176,14 +143,10 @@ publishing {
     }
     repositories {
         maven {
-//            url = uri("$rootDir/.maven-publish-dev-repo")
             url = uri("https://jetbrains.bintray.com/lets-plot-maven")
         }
     }
 }
-
-//generatePomFileForLetsPlotImageExportPublication.dependsOn += renameClassesJar
-//generatePomFileForLetsPlotImageExportPublication.dependsOn += renameSourcesJar
 
 // Provide Bintray-specific Information
 def bintray_user = project.buildSettings?.bintray?.user
