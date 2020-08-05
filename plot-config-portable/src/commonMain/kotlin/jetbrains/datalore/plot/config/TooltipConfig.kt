@@ -17,10 +17,15 @@ class TooltipConfig(
 ) : OptionsAccessor(opts) {
 
     fun createTooltips(): List<TooltipLineSpecification>? {
-        return if (!has(LINES)) {
-            null
-        } else {
-            getList(LINES).let(::parseLines)
+        return when {
+            has(LINES) -> getList(LINES).let(::parseLines)  // config with "tooltips" parameter
+            has(Option.Layer.TOOLTIP_LINES) -> {            // config with "tooltip_lines"/"tooltip_formats" parameters
+                TooltipConfigParseHelper(
+                    getStringList(Option.Layer.TOOLTIP_LINES),
+                    getMap(Option.Layer.TOOLTIP_FORMATS)
+                ).parse()
+            }
+            else -> null
         }
     }
 
@@ -46,7 +51,7 @@ class TooltipConfig(
         }
         val valueSourceNames = values.map(::getValueSourceName)
         val label = when (val labelValue = tooltipLine.getString(TooltipLine.LABEL)) {
-            DEFAULT_LABEL -> null
+            DEFAULT_VALUE_PATTERN -> null
             else -> labelValue
         }
         val format = tooltipLine.getString(TooltipLine.FORMAT)
@@ -92,9 +97,62 @@ class TooltipConfig(
         }
     }
 
+    // Config with "tooltip_lines"/"tooltip_formats" parameters
+    private inner class TooltipConfigParseHelper(
+        private val tooltipLines: List<String>,
+        private val tooltipFormats: Map<*, *>
+    ) {
+        internal fun parse(): List<TooltipLineSpecification> {
+            return tooltipLines.map(::parseLine)
+        }
+
+        private fun parseLine(tooltipLine: String): TooltipLineSpecification {
+            val label = detachLabel(tooltipLine)
+            val valueString = tooltipLine.substringAfter(LABEL_SEPARATOR)
+
+            val matchResult = SOURCE_RE_PATTERN.findAll(valueString).map {
+                it.groupValues[MATCHED_INDEX]
+            }.toList()
+
+            var index = 0
+            val linePattern = SOURCE_RE_PATTERN.replace(valueString) {
+                createFormatPattern(matchResult[index++])
+            }
+
+            val valueSourceNames = if (matchResult.isNotEmpty()) {
+                matchResult
+            } else {
+                listOf(valueString)
+            }.map(::getValueSourceName)
+
+            return createTooltipLineSpecification(
+                valueSourceNames, label, linePattern
+            )
+        }
+
+        private fun createFormatPattern(name: String): String {
+            val format = tooltipFormats[name] as String? ?: ""
+            return if (format.isNotEmpty()) {
+                "{$format}"
+            } else {
+                DEFAULT_VALUE_PATTERN
+            }
+        }
+
+        private fun detachLabel(tooltipLine: String): String? {
+            val labelPart = tooltipLine.substringBefore(LABEL_SEPARATOR, "")
+            return if (labelPart == USE_DEFAULT_LABEL) null else labelPart
+        }
+    }
+
     companion object {
-        private const val DEFAULT_LABEL = "{}"
+        private const val DEFAULT_VALUE_PATTERN = "{}"
         private const val VALUE_SOURCE_PREFIX = "$"
+        private const val LABEL_SEPARATOR = "|"
+        private const val USE_DEFAULT_LABEL = "@"
+
+        private val SOURCE_RE_PATTERN = Regex("""\$(((\w+@)?\w+)|(\{(\w+@)?[\w\s]+}))""")
+        private const val MATCHED_INDEX = 0
 
         private fun getValueSourceName(value: String): String {
             return if (value.startsWith(VALUE_SOURCE_PREFIX)) {

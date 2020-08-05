@@ -133,10 +133,9 @@ class LayerConfig(
         }
 
         // tooltip list
-        tooltips = if (has(TOOLTIPS)) {
-            TooltipConfig(getMap(TOOLTIPS), constantsMap).createTooltips()
-        } else {
-            null
+        tooltips = when {
+            has(TOOLTIPS) -> TooltipConfig(getMap(TOOLTIPS), constantsMap).createTooltips()
+            else -> TooltipConfig(layerOptions, constantsMap).createTooltips()
         }
 
         val varBindings = LayerConfigUtil.createBindings(
