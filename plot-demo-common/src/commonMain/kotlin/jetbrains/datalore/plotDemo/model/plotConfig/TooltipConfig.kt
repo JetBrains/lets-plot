@@ -21,7 +21,13 @@ class TooltipConfig: PlotConfigDemoBase()  {
         )
     }
 
-    private fun mpg(): Map<String, Any> {
+    private val aesX =  "\$x"
+    private val aesY =  "\$y"
+    private val aesColor =  "\$color"
+    private val aesFill =  "\$fill"
+    private val vehicleName = "\${var@vehicle name}"
+    private val modelYear =  "\${var@model year}"
+    private val originCar = "\${var@origin of car}"
 
         val spec = """
         {
@@ -38,12 +44,12 @@ class TooltipConfig: PlotConfigDemoBase()  {
                            'geom': 'point',
                             'tooltips': { 
                                 'lines': [
-                                           { 'value':[ 'aes@x', 'aes@y'], 'label' : 'x/y', 'format': '{.1f} x {.2f}' },
-                                           { 'value':'aes@color', 'format': '{.2f} (miles per gallon)' },
-                                           { 'value': ['vehicle name', 'origin of car'], 'format' : 'car \'{}\' ({})'},
-                                           { 'value': 'model year', 'label': '{}', 'format': '19{d}'},              
-                                           'origin of car',
-                                           { 'value' : 'text@#mpg data set' }
+                                           { 'value':[ '$aesX', '$aesY'], 'label' : 'x/y', 'format': '{.1f} x {.2f}' },
+                                           { 'value':'$aesColor', 'label': '', 'format': '{.2f} (miles per gallon)' },
+                                           { 'value': ['$vehicleName', '$originCar'], 'format' : 'car \'{}\' ({})'},
+                                           { 'value': '$modelYear', 'label': '{}', 'format': '19{d}'},              
+                                           '$originCar',
+                                           '#mpg data set'
                                 ]
                             }
                         }
@@ -94,10 +100,10 @@ class TooltipConfig: PlotConfigDemoBase()  {
                            'geom': 'area',
                            'tooltips': {
                                          'lines': [
-                                                     'aes@fill', 
-                                                     { 'value':'aes@x', 'label' : 'length (x)' },
-                                                     { 'value':'aes@y', 'label' : 'density (y)' },
-                                                     { 'value':'aes@color', 'label' : '' }
+                                                     '$aesFill', 
+                                                     { 'value':'$aesX', 'label' : 'length (x)' },
+                                                     { 'value':'$aesY', 'label' : 'density (y)' },
+                                                     { 'value':'$aesColor', 'label' : '' }
                                                   ]
                                        },
                            'stat': 'density'

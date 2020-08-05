@@ -42,7 +42,7 @@ class TooltipConfigTest {
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.POINT,
                     Option.Layer.TOOLTIPS to mapOf(
-                        Option.LayerTooltips.LINES to listOf("aes@" + Aes.COLOR.name, "aes@" + Aes.FILL.name)
+                        Option.LayerTooltips.LINES to listOf("\$" + Aes.COLOR.name, "\$" + Aes.FILL.name)
                     )
                 )
             )
@@ -84,7 +84,7 @@ class TooltipConfigTest {
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.POINT,
                     Option.Layer.TOOLTIPS to mapOf(
-                        Option.LayerTooltips.LINES to listOf("aes@" + Aes.COLOR.name, "aes@" + Aes.FILL.name,  "VAR1",  "VAR2")
+                        Option.LayerTooltips.LINES to listOf("\$" + Aes.COLOR.name, "\$" + Aes.FILL.name,  "\${var@VAR1}",  "\${var@VAR2}")
                     )
                 )
             )
