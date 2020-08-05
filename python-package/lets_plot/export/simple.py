@@ -22,8 +22,10 @@ def export_svg(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
             Plot specification to export.
     filename: str
             Filename to save SVG under.
-     Returns
+
+    Returns
     -------
+    str
         Absolute pathname of created SVG file.
 
     """
@@ -49,8 +51,10 @@ def export_html(plot: Union[PlotSpec, GGBunch], filename: str, iframe: bool = Fa
             Filename to save HTML page under.
     iframe: bool
             Whether to wrap HTML page into a iFrame. Default value is False.
-     Returns
+
+    Returns
     -------
+    str
         Absolute pathname of created HTML file.
 
     """

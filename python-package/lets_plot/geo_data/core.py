@@ -300,9 +300,9 @@ def distance(lon0, lat0, lon1, lat1, units='km'):
 
     Returns
     -------
-        float object
+    object : float
 
-    Notes
+    Note
     -----
     distance() calculates the distance between two points.
 
