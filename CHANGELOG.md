@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - label_format
 
 
-## [1.5.1] - TBD
+## [1.5.1] - 2020-08-06
 
 ### Added
  - scale_x_reverse() / scale_y_reverse()
