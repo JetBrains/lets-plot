@@ -11,8 +11,9 @@ dependencies:
   - matplotlib
   - pip
   - pip:                            # Packages installed from PyPI
-      - lets-plot==1.5.0
+      - lets-plot==1.5.1
       - pypng
+      - pillow
       - scikit-datasets
       - geopandas
       - requests
