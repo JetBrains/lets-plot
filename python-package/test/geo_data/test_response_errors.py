@@ -42,7 +42,7 @@ def error(message: str) -> ErrorResponse:
 
     (error(
         ERROR_MESSAGE),
-     'Error: error msg'
+     'error msg'
     ),
 ])
 def test_args_that_fail(response, expected_message):
