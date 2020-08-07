@@ -32,7 +32,7 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
-    fun haveBindings(expectedBindings: Map<Aes<*>, String>): SingleLayerAssert {
+    private fun haveBindings(expectedBindings: Map<Aes<*>, String>): SingleLayerAssert {
         for (aes in expectedBindings.keys) {
             assertBinding(aes, expectedBindings[aes]!!)
         }
@@ -44,7 +44,7 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
-    fun haveDataVectors(expectedDataVectors: Map<String, List<*>>): SingleLayerAssert {
+    private fun haveDataVectors(expectedDataVectors: Map<String, List<*>>): SingleLayerAssert {
         val df = myLayer.combinedData
         val layerData = DataFrameUtil.toMap(df)
         for (`var` in expectedDataVectors.keys) {
@@ -56,15 +56,22 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
-    fun haveTooltipList(expectedNames : List<String>?): SingleLayerAssert {
-        if (expectedNames != null) {
-            assertTooltipListCount(expectedNames.size)
-            for (aes in expectedNames)
-                assertExpectedTooltip(aes)
-        }
-        else {
-            val tooltipNames = getUserTooltipNames()
-            assertTrue(tooltipNames.isNullOrEmpty())
+    fun haveAesNamesInTooltips(expectedNames: List<String>): SingleLayerAssert {
+        return haveSourceNamesInTooltips(expectedNames, getAesNamesInTooltips(), "aes")
+    }
+
+    fun haveVariableNamesInTooltips(expectedNames: List<String>): SingleLayerAssert {
+        return haveSourceNamesInTooltips(expectedNames, getVariableNamesInTooltips(), "variable")
+    }
+
+    private fun haveSourceNamesInTooltips(
+        expectedNames: List<String>,
+        actualNames: List<String>,
+        nameType: String = "source"
+    ): SingleLayerAssert {
+        assertEquals(expectedNames.size, actualNames.size, "Incorrect number of $nameType names used in tooltips")
+        expectedNames.forEach { name ->
+            assertTrue(name in actualNames, "No tooltip for $nameType with name: '$name'")
         }
         return this
     }
@@ -93,7 +100,7 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         fail("No binding $aes -> $varName")
     }
 
-    private fun getUserAesTooltipNames(): List<String> {
+    private fun getAesNamesInTooltips(): List<String> {
         return myLayer.tooltips
             ?.flatMap { it.data }
             ?.filterIsInstance<MappedAes>()
@@ -101,23 +108,11 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
             ?: emptyList()
     }
 
-    private fun getUserVariableNames(): List<String> {
+    private fun getVariableNamesInTooltips(): List<String> {
         return myLayer.tooltips
             ?.flatMap { it.data }
             ?.filterIsInstance<VariableValue>()?.map(VariableValue::getVariableName)
             ?: emptyList()
-    }
-
-    private fun getUserTooltipNames(): List<String> {
-        return getUserAesTooltipNames() + getUserVariableNames()
-    }
-
-    private fun assertExpectedTooltip(name: String) {
-        assertTrue(getUserTooltipNames().contains(name), "No tooltip for var with name: '$name'")
-    }
-
-    private fun assertTooltipListCount(expectedCount: Int) {
-        assertEquals(expectedCount, getUserTooltipNames().size, "Wrong size of tooltip list")
     }
 
     companion object {

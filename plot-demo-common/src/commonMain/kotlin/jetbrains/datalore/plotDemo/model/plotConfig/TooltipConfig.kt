@@ -14,10 +14,10 @@ class TooltipConfig : PlotConfigDemoBase() {
 
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            mpgOldFormat(), mpg(),
+            mpg(),
             basic(),
-            tooltipAesListOldFormat(), tooltipAesList(),
-            tooltipEmptyListOldFormat(), tooltipEmptyList()
+            tooltipAesList(),
+            tooltipEmptyList()
         )
     }
 
@@ -29,38 +29,6 @@ class TooltipConfig : PlotConfigDemoBase() {
     private val modelYear = "\${var@model year}"
     private val originCar = "\${var@origin of car}"
 
-    private fun mpgOldFormat(): Map<String, Any> {
-        val spec = """
-        {
-           'kind': 'plot',
-           'ggtitle': {'text' : 'Tooltip configuration'},
-           'mapping': {
-                         'x': 'engine displacement (cu. inches)',
-                         'y':  'engine horsepower',
-                         'color': 'miles per gallon',
-                         'shape': 'origin of car'
-                      },
-           'layers': [
-                        {
-                           'geom': 'point',
-                            'tooltips': { 
-                                'lines': [
-                                           { 'value':[ '$aesX', '$aesY'], 'label' : 'x/y', 'format': '{.1f} x {.2f}' },
-                                           { 'value':'$aesColor', 'label': '', 'format': '{.2f} (miles per gallon)' },
-                                           { 'value': ['$vehicleName', '$originCar'], 'format' : 'car \'{}\' ({})'},
-                                           { 'value': '$modelYear', 'label': '{}', 'format': '19{d}'},              
-                                           '$originCar',
-                                           '#mpg data set'
-                                ]
-                            }
-                        }
-                     ]
-        }
-        """.trimIndent()
-        val plotSpec = HashMap(parsePlotSpec(spec))
-        plotSpec["data"] = AutoMpg.df
-        return plotSpec
-    }
 
     private fun mpg(): Map<String, Any> {
         val spec = """
@@ -122,38 +90,6 @@ class TooltipConfig : PlotConfigDemoBase() {
         return plotSpec
     }
 
-    private fun tooltipAesListOldFormat(): Map<String, Any> {
-        val spec = """
-        {
-           'kind': 'plot',
-           'ggtitle': {'text' : 'Tooltip aes list'},
-           'mapping': {
-                         'x': 'sepal length (cm)',
-                         'color': 'sepal width (cm)',
-                         'fill': 'target'
-                      },
-           'layers': [
-                        {
-                           'geom': 'area',
-                           'tooltips': {
-                                         'lines': [
-                                                     '$aesFill', 
-                                                     { 'value':'$aesX', 'label' : 'length (x)' },
-                                                     { 'value':'$aesY', 'label' : 'density (y)' },
-                                                     { 'value':'$aesColor', 'label' : '' }
-                                                  ]
-                                       },
-                           'stat': 'density'
-                        }
-                     ]
-        }
-        """.trimIndent()
-
-        val plotSpec = HashMap(parsePlotSpec(spec))
-        plotSpec["data"] = Iris.df
-        return plotSpec
-    }
-
     private fun tooltipAesList(): Map<String, Any> {
         val spec = """
         {
@@ -173,33 +109,6 @@ class TooltipConfig : PlotConfigDemoBase() {
                                 'density (y)|$aesY',
                                 '$aesColor' 
                             ],
-                           'stat': 'density'
-                        }
-                     ]
-        }
-        """.trimIndent()
-
-        val plotSpec = HashMap(parsePlotSpec(spec))
-        plotSpec["data"] = Iris.df
-        return plotSpec
-    }
-
-    private fun tooltipEmptyListOldFormat(): Map<String, Any> {
-        val spec = """
-        {
-           'kind': 'plot',
-           'ggtitle': {'text' : 'Tooltip list = []'},
-           'mapping': {
-                         'x': 'sepal length (cm)',
-                         'color': 'sepal width (cm)',
-                         'fill': 'target'
-                      },
-           'layers': [
-                        {
-                           'geom': { 
-                               'name': 'area',
-                               'tooltips': { 'lines': []}
-                            },
                            'stat': 'density'
                         }
                      ]

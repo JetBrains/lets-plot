@@ -8,8 +8,6 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.builder.tooltip.*
-import jetbrains.datalore.plot.config.Option.LayerTooltips.LINES
-import jetbrains.datalore.plot.config.Option.TooltipLine
 
 class TooltipConfig(
     opts: Map<*, *>,
@@ -17,87 +15,16 @@ class TooltipConfig(
 ) : OptionsAccessor(opts) {
 
     fun createTooltips(): List<TooltipLineSpecification>? {
-        return when {
-            has(LINES) -> getList(LINES).let(::parseLines)  // config with "tooltips" parameter
-            has(Option.Layer.TOOLTIP_LINES) -> {            // config with "tooltip_lines"/"tooltip_formats" parameters
-                TooltipConfigParseHelper(
-                    getStringList(Option.Layer.TOOLTIP_LINES),
-                    getMap(Option.Layer.TOOLTIP_FORMATS)
-                ).parse()
-            }
-            else -> null
-        }
-    }
-
-    private fun parseLines(tooltipLines: List<*>): List<TooltipLineSpecification> {
-        return tooltipLines.map { tooltipLine ->
-            when (tooltipLine) {
-                is String -> TooltipLineSpecification.singleValueLine(
-                    label = "",
-                    format = "",
-                    datum = createValueSource(getValueSourceName(tooltipLine))
-                )
-                is Map<*, *> -> parseMap(tooltipLine)
-                else -> error("Error tooltip_line parsing")
-            }
-        }
-    }
-
-    private fun parseMap(tooltipLine: Map<*, *>): TooltipLineSpecification {
-        val values: List<String> = when (val value = tooltipLine[TooltipLine.VALUE]) {
-            is String -> listOf(value)
-            is List<*> -> value.mapNotNull(Any?::toString)
-            else -> error("Unsupported tooltip format type")
-        }
-        val valueSourceNames = values.map(::getValueSourceName)
-        val label = when (val labelValue = tooltipLine.getString(TooltipLine.LABEL)) {
-            DEFAULT_VALUE_PATTERN -> null
-            else -> labelValue
-        }
-        val format = tooltipLine.getString(TooltipLine.FORMAT)
-
-        return createTooltipLineSpecification(valueSourceNames, label, format)
-    }
-
-    private fun createTooltipLineSpecification(
-        values: List<String>,
-        label: String?,
-        format: String?
-    ): TooltipLineSpecification {
-        return if (values.size == 1) {
-            TooltipLineSpecification.singleValueLine(
-                label = "",
-                format = "",
-                datum = createValueSource(name = values.single(), label = label, format = format)
-            )
+        return if (has(Option.Layer.TOOLTIP_LINES)) {
+            TooltipConfigParseHelper(
+                getStringList(Option.Layer.TOOLTIP_LINES),
+                getMap(Option.Layer.TOOLTIP_FORMATS)
+            ).parse()
         } else {
-            TooltipLineSpecification.multiValueLine(
-                label = label ?: "",
-                format = format ?: "",
-                data = values.map { createValueSource(it) }
-            )
+            null
         }
     }
 
-    private fun createValueSource(name: String, label: String? = null, format: String? = null): ValueSource {
-        fun getAesByName(aesName: String): Aes<*> {
-            return Aes.values().find { it.name == aesName } ?: error("$aesName is not aes name")
-        }
-
-        return when {
-            name.startsWith("text@") -> StaticValue((name.removePrefix("text@")))
-            name.startsWith("var@") -> VariableValue(name.removePrefix("var@"), label, format)
-            else -> {
-                val aes = getAesByName(name)
-                when (val constant = constantsMap[aes]) {
-                    null -> MappedAes(aes, label = label, format = format)
-                    else -> ConstantValue(label, constant, format)
-                }
-            }
-        }
-    }
-
-    // Config with "tooltip_lines"/"tooltip_formats" parameters
     private inner class TooltipConfigParseHelper(
         private val tooltipLines: List<String>,
         private val tooltipFormats: Map<*, *>
@@ -139,6 +66,48 @@ class TooltipConfig(
             }
         }
 
+        private fun createTooltipLineSpecification(
+            values: List<String>,
+            label: String?,
+            format: String?
+        ): TooltipLineSpecification {
+            return if (values.size == 1) {
+                TooltipLineSpecification.singleValueLine(
+                    label = "",
+                    format = "",
+                    datum = createValueSource(name = values.single(), label = label, format = format)
+                )
+            } else {
+                TooltipLineSpecification.multiValueLine(
+                    label = label ?: "",
+                    format = format ?: "",
+                    data = values.map { createValueSource(it) }
+                )
+            }
+        }
+
+        private fun createValueSource(name: String, label: String? = null, format: String? = null): ValueSource {
+            fun getAesByName(aesName: String): Aes<*> {
+                return Aes.values().find { it.name == aesName } ?: error("$aesName is not aes name")
+            }
+
+            return when {
+                name.startsWith("text@") -> StaticValue((name.removePrefix("text@")))
+                name.startsWith("var@") -> {
+                    val varName = name.removePrefix("var@")
+                    if (varName.isEmpty()) error("Variable name cannot be empty")
+                    VariableValue(varName, label, format)
+                }
+                else -> {
+                    val aes = getAesByName(name)
+                    when (val constant = constantsMap[aes]) {
+                        null -> MappedAes(aes, label = label, format = format)
+                        else -> ConstantValue(label, constant, format)
+                    }
+                }
+            }
+        }
+
         private fun detachLabel(tooltipLine: String): String? {
             val labelPart = tooltipLine.substringBefore(LABEL_SEPARATOR, "")
             return if (labelPart == USE_DEFAULT_LABEL) null else labelPart
@@ -151,7 +120,7 @@ class TooltipConfig(
         private const val LABEL_SEPARATOR = "|"
         private const val USE_DEFAULT_LABEL = "@"
 
-        private val SOURCE_RE_PATTERN = Regex("""\$(((\w+@)?\w+)|(\{(\w+@)?[\w\s]+}))""")
+        private val SOURCE_RE_PATTERN = Regex("""\$(([^\s{}()'"]+)|(\{(.*?)}))""")
         private const val MATCHED_INDEX = 0
 
         private fun getValueSourceName(value: String): String {
