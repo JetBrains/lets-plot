@@ -108,7 +108,7 @@ def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, samplin
         map = map.centroids()
         map_join = map_join_regions(map_join)
 
-    return _geom('livemap', mapping, data, map=map, show_legend=show_legend, sampling=sampling,
+    return _geom('livemap', mapping, data, map=map, map_join=map_join, show_legend=show_legend, sampling=sampling,
                  display_mode=symbol, location=location, zoom=zoom,
                  projection=projection, geodesic=geodesic, tiles=tiles, geocoding=geocoding,
                  **other_args)
