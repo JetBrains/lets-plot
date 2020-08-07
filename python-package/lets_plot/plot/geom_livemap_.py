@@ -24,7 +24,7 @@ __all__ = ['geom_livemap']
 
 def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, sampling=None,
                  location=None, zoom=None, projection=None, geodesic=None, tiles=None,
-                 map=None, **other_args):
+                 map=None, map_join=None, **other_args):
     """
     Display a live map.
     Parameters
