@@ -94,7 +94,27 @@ class Regions(CanToDataFrame):
             13-15 for cities view
 
             None:
-            Autodetection. It uses level_kind and number of objects to try to balance quality and performance.
+            Autodetection. Uses level_kind and number of objects, prefers performance over qulity. It's expected to get
+            pixelated geometries with autodetection. Use explicit resolution for better quality.
+
+            Resolution for level kind city:
+            If n < 10 => 'city'
+            If n < 100 => 'country'
+            else => 'world'
+
+            Resolution for level kind county
+            If n < 10 => 'county'
+            If n < 100 => 'state'
+            else => 'world'
+
+            Resolution for level kind state
+            If n < 10 => 'state'
+            If n < 50 => 'country'
+            else => 'world'
+
+            Resolution for level kind country
+            If n < 4 => 'country'
+            else => 'world'
         """
         from lets_plot.geo_data.to_geo_data_frame import BoundariesGeoDataFrame
 
@@ -372,9 +392,7 @@ def _autodetect_resolution(level: LevelKind, count: int) -> Resolution:
             return Resolution.world_medium
 
     if level == LevelKind.country:
-        if count < 3:
-            return Resolution.country_medium
-        elif count < 10:
+        if count < 4:
             return Resolution.country_medium
         else:
             return Resolution.world_medium
