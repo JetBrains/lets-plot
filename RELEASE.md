@@ -48,7 +48,7 @@ run `./gradlew build`
 
 For Linux without graphical environment add parameter to exclude JFX test:
 
-`/gradlew build -x :vis-svg-mapper-jfx:jvmTest`
+`./gradlew build -x :vis-svg-mapper-jfx:jvmTest`
 
 or tests will stuck in running state.
 
