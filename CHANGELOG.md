@@ -11,14 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - label_format
 
 
-## [1.5.2] - TBD
-
+## [1.5.2] - 2020-08-10
 ### Fixed
 - map_titanic.ipynb : UnboundLocalError: local variable 'map_join' referenced before assignment [[#182](https://github.com/JetBrains/lets-plot/issues/182)]
 - Add the `map_join` parameter to all geoms which support `map` parameter (py) [[#183](https://github.com/JetBrains/lets-plot/issues/183)]
 
 ## [1.5.1] - 2020-08-06
-
 ### Added
  - scale_x_reverse() / scale_y_reverse()
  - Mnemonics for the `resolution` parameter in the `regions.boundaries()` function. 
