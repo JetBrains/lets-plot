@@ -6,6 +6,9 @@
 package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.spatial.MercatorUtils
+import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.coord.Projection
 import jetbrains.datalore.plot.base.scale.Mappers
@@ -13,12 +16,13 @@ import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ProjectionCoordProvider private constructor(
-    private val myProjectionX: Projection?,
-    private val myProjectionY: Projection?,
+    private val myProjectionX: Projection,
+    private val myProjectionY: Projection,
     xLim: ClosedRange<Double>?,
     yLim: ClosedRange<Double>?
 )// square grid
-    : FixedRatioCoordProvider(1.0, xLim, yLim) {
+//    : FixedRatioCoordProvider(1.0, xLim, yLim) {
+    : CoordProviderBase(xLim, yLim) {
 
     override fun buildAxisScaleX(
         scaleProto: Scale<Double>,
@@ -26,15 +30,13 @@ internal class ProjectionCoordProvider private constructor(
         axisLength: Double,
         breaks: GuideBreaks
     ): Scale<Double> {
-        return if (myProjectionX != null) {
-            buildAxisScaleWithProjection(
-                myProjectionX,
-                scaleProto,
-                domain,
-                axisLength,
-                breaks
-            )
-        } else super.buildAxisScaleX(scaleProto, domain, axisLength, breaks)
+        return buildAxisScaleWithProjection(
+            myProjectionX,
+            scaleProto,
+            domain,
+            axisLength,
+            breaks
+        )
     }
 
     override fun buildAxisScaleY(
@@ -43,25 +45,59 @@ internal class ProjectionCoordProvider private constructor(
         axisLength: Double,
         breaks: GuideBreaks
     ): Scale<Double> {
-        return if (myProjectionY != null) {
-            buildAxisScaleWithProjection(
-                myProjectionY,
-                scaleProto,
-                domain,
-                axisLength,
-                breaks
-            )
-        } else super.buildAxisScaleY(scaleProto, domain, axisLength, breaks)
+        return buildAxisScaleWithProjection(
+            myProjectionY,
+            scaleProto,
+            domain,
+            axisLength,
+            breaks
+        )
+    }
+
+
+    override fun adjustDomainsImpl(
+        xDomain: ClosedRange<Double>,
+        yDomain: ClosedRange<Double>,
+        displaySize: DoubleVector
+    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        val dx  = myProjectionX.apply(180.0) - myProjectionX.apply(-180.0)
+        val dy  = myProjectionY.apply(85.0) - myProjectionY.apply(-85.0)
+        val orig_dx = 360.0
+        val orig_dy = 170.0
+        val ratio = (dy/dx ) / (orig_dy/orig_dx)
+
+        val prvd = FixedRatioCoordProvider(  ratio, null, null )
+        return prvd.adjustDomains(xDomain, yDomain, displaySize)
+
+//        val newDomainX = ClosedRange( myProjectionX.apply(-180.0), myProjectionX.apply(180.0))
+//        val newDomainY = ClosedRange( myProjectionY.apply(-85.0), myProjectionY.apply(85.0))
+//        val prvd = FixedRatioCoordProvider(  1.0 , null, null )
+
+//        return prvd.adjustDomains(newDomainX, newDomainY, displaySize)
     }
 
     companion object {
-        fun withProjectionY(
+//        fun withProjectionY(
+//            projectionY: Projection,
+//            xLim: ClosedRange<Double>?,
+//            yLim: ClosedRange<Double>?
+//        ): CoordProvider {
+//            return ProjectionCoordProvider(
+//                null,
+//                projectionY,
+//                xLim,
+//                yLim
+//            )
+//        }
+
+        fun withProjectionXY(
+            projectionX: Projection,
             projectionY: Projection,
             xLim: ClosedRange<Double>?,
             yLim: ClosedRange<Double>?
         ): CoordProvider {
             return ProjectionCoordProvider(
-                null,
+                projectionX,
                 projectionY,
                 xLim,
                 yLim
