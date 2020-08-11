@@ -91,9 +91,9 @@ def regions_builder(level=None, request=None, within=None, highlights=False) -> 
 
     Returns
     -------
-        RegionsBuilder object
+    RegionsBuilder object :
 
-    Notes
+    Note
     -----
     regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
 
@@ -128,9 +128,9 @@ def regions(level=None, request=None, within=None) -> Regions:
 
     Returns
     -------
-        Regions object
+    Regions object :
 
-    Notes
+    Note
     -----
     regions() is used to get name and object id by level and request.
     If the given names are not found exception will be thrown.
