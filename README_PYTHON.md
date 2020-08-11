@@ -33,7 +33,7 @@
     - [GeoPandas support](#geopandas)
     - [Interactive Maps](#livemap)
     - [Nonstandard plotting functions](#nonstandard)
-    - [GGBanch](#ggbanch)
+    - [GGBanch](#ggbunch)
     - [Data sampling](#sampling)
     - [Cloud-based notebooks](#cloud_based)
     - [Interesting demos](#interesting)
@@ -191,8 +191,8 @@ The following features of `Lets-Plot` are not available or have different implem
 
     Example: [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb)
 
-<a name="GGBanch" id="ggbanch"></a>
-### GGBanch
+<a name="GGBunch" id="ggbunch"></a>
+### GGBunch
 
 GGBunch allows to show a collection of plots on one figure. Each plot in the collection can have arbitrary location and size. There is no automatic layout inside the bunch.
 
