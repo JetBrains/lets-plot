@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -17,6 +18,10 @@ import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createGuideOption
 import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.common.data.SeriesUtil.span
+import jetbrains.datalore.base.spatial.MercatorUtils.getMercatorX
+import jetbrains.datalore.base.spatial.MercatorUtils.getMercatorY
 
 class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotConfig(opts) {
 
@@ -28,20 +33,83 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         get() = true
 
     init {
+        coordProvider = createCoordProvider()
+        guideOptionsMap = createGuideOptionsMap(this.scaleConfigs)
+    }
 
+    private fun createCoordProvider(): CoordProvider {
         val coord = CoordConfig.create(get(COORD)!!)
         var coordProvider = coord.coord
         if (!hasOwn(COORD)) {
             // if coord wasn't set explicitly then geom can provide its own preferred coord system
             for (layerConfig in layerConfigs) {
                 val geomProtoClientSide = layerConfig.geomProto as GeomProtoClientSide
-                if (geomProtoClientSide.hasPreferredCoordinateSystem()) {
+                if (layerConfig.geomProto.geomKind == GeomKind.MAP) {
+                    val data = layerConfig.combinedData
+                    val varX = layerConfig.getVariableForAes(Aes.X)
+                    val varY = layerConfig.getVariableForAes(Aes.Y)
+
+                    if (varX != null && varY != null) {
+                        val xRange = data.range(varX)
+                        val yRange = data.range(varY)
+
+                        val xLim = getRangeOrNull(CoordProto.X_LIM)
+                        val yLim = getRangeOrNull(CoordProto.Y_LIM)
+
+                        coordProvider = getMapCoordinateProvider(xRange!!, yRange!!, xLim, yLim)
+                    }
+                } else if (geomProtoClientSide.hasPreferredCoordinateSystem()) {
                     coordProvider = geomProtoClientSide.preferredCoordinateSystem()
                 }
             }
         }
-        this.coordProvider = coordProvider
-        guideOptionsMap = createGuideOptionsMap(this.scaleConfigs)
+
+        return coordProvider
+    }
+
+    private fun getMapCoordinateProvider(
+        xDomain: ClosedRange<Double>,
+        yDomain: ClosedRange<Double>,
+        xLim: ClosedRange<Double>?,
+        yLim: ClosedRange<Double>?
+    ): CoordProvider {
+        val projDX = span(
+            doProjection({ getMercatorX(it) }, xDomain)!!
+        )
+
+        val projDY = span(
+            doProjection({ getMercatorY(it) }, yDomain)!!
+        )
+
+        val dx = span(xDomain)
+        val dy = span(yDomain)
+
+        val ratio = (projDY / projDX) / (dy / dx)
+
+        @Suppress("NAME_SHADOWING")
+        val xLim = doProjection({ getMercatorX(it) }, xLim)
+        @Suppress("NAME_SHADOWING")
+        val yLim = doProjection({ getMercatorY(it) }, yLim)
+
+        val opts: MutableMap<String, Any> = mutableMapOf(
+            Option.Meta.NAME to Option.CoordName.MAP,
+            CoordProto.RATIO to ratio
+        )
+
+        if (xLim != null) {
+            opts[CoordProto.X_LIM] = xLim
+        }
+
+        if (yLim != null) {
+            opts[CoordProto.Y_LIM] = yLim
+        }
+
+
+        return CoordConfig.create(opts).coord
+    }
+
+    private fun doProjection(proj: ((Double) -> Double), range: ClosedRange<Double>?) = range?.let {
+        ClosedRange(proj(range.lowerEnd), proj(range.upperEnd))
     }
 
     override fun createLayerConfig(

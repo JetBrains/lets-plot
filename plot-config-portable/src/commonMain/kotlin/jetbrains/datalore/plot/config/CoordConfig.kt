@@ -27,5 +27,7 @@ class CoordConfig private constructor(name: String, options: Map<String, Any>) :
         private fun createForName(name: String, options: Map<String, Any>): CoordConfig {
             return CoordConfig(name, options)
         }
+
+
     }
 }

@@ -56,7 +56,7 @@ internal class CoordMapTest : jetbrains.datalore.plot.builder.coord.CoordTestBas
     }
 
     companion object {
-        private val PROVIDER = CoordProviders.map()
+        private val PROVIDER = CoordProviders.map(1.0)
 
         private val DATA_SPAN = DoubleVector(10.0, 10.0)
     }

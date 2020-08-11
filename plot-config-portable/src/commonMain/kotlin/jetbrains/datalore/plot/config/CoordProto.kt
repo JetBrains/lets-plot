@@ -14,9 +14,9 @@ import jetbrains.datalore.plot.config.Option.CoordName.MAP
 internal object CoordProto {
 
     // option names
-    private const val X_LIM = "xlim"
-    private const val Y_LIM = "ylim"
-    private const val RATIO = "ratio"
+    const val X_LIM = "xlim"
+    const val Y_LIM = "ylim"
+    const val RATIO = "ratio"
     private const val EXPAND = "expand"  // todo
     private const val ORIENTATION = "orientation" // todo
     private const val PROJECTION = "projection"   // todo
@@ -27,7 +27,7 @@ internal object CoordProto {
         return when (coordName) {
             CARTESIAN -> CoordProviders.cartesian(xLim, yLim)
             FIXED -> CoordProviders.fixed(options.getDouble(RATIO) ?: 1.0, xLim, yLim)
-            MAP -> CoordProviders.map(xLim, yLim)
+            MAP -> CoordProviders.map(options.getDouble(RATIO) ?: 1.0, xLim, yLim)
             else -> throw IllegalArgumentException("Unknown coordinate system name: '$coordName'")
         }
     }
