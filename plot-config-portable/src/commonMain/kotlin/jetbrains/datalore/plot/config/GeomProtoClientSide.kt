@@ -35,8 +35,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
         GeomKind.RASTER,
         GeomKind.IMAGE -> CoordProviders.fixed(1.0)
 
-//        GeomKind.MAP -> CoordProviders.map()
-
         else -> null
     }
 
