@@ -33,14 +33,14 @@ internal class PlotSvgExportTest {
 
         assertEquals(EXPECTED_SINGLE_PLOT_SVG, svgImage)
     }
-
-    @Test
-    fun svgFromGGBunch() {
-        val svg = PlotSvgExport.buildSvgImageFromRawSpecs(
-            plotSpec = rawSpec_GGBunch(),
-            plotSize = DoubleVector(400.0, 300.0)  // Ignored
-        )
-
-        kotlin.test.assertEquals(EXPECTED_BUNCH_SVG, svg)
-    }
+//
+//    @Test
+//    fun svgFromGGBunch() {
+//        val svg = PlotSvgExport.buildSvgImageFromRawSpecs(
+//            plotSpec = rawSpec_GGBunch(),
+//            plotSize = DoubleVector(400.0, 300.0)  // Ignored
+//        )
+//
+//        kotlin.test.assertEquals(EXPECTED_BUNCH_SVG, svg)
+//    }
 }
