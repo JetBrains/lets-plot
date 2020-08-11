@@ -75,7 +75,7 @@ internal class ProjectionCoordProvider private constructor(
             )
         }
 
-            private fun buildAxisScaleWithProjection(
+        private fun buildAxisScaleWithProjection(
             projection: Projection, scaleProto: Scale<Double>,
             domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks
         ): Scale<Double> {

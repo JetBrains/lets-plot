@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.getMapCoordinateProvider
 import jetbrains.datalore.plotDemo.data.KansasPolygon.KANSAS_X
 import jetbrains.datalore.plotDemo.data.KansasPolygon.KANSAS_Y
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -81,9 +82,10 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
                 .alpha(constant(0.5))
                 .build()
 
-
-        val coord = CoordProviders.map(1.0)         // FIX ME!
+        val coord = getMapCoordinateProvider(domainX, domainY, null, null)
                 .createCoordinateSystem(domainX, lengthX, domainY, lengthY)
+
+
         val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
             aes,
             PolygonGeom(),

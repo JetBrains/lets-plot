@@ -18,10 +18,7 @@ import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createGuideOption
 import jetbrains.datalore.plot.config.theme.ThemeConfig
 import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.plot.common.data.SeriesUtil.span
-import jetbrains.datalore.base.spatial.MercatorUtils.getMercatorX
-import jetbrains.datalore.base.spatial.MercatorUtils.getMercatorY
+import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.getMapCoordinateProvider
 
 class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotConfig(opts) {
 
@@ -65,51 +62,6 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) : PlotCon
         }
 
         return coordProvider
-    }
-
-    private fun getMapCoordinateProvider(
-        xDomain: ClosedRange<Double>,
-        yDomain: ClosedRange<Double>,
-        xLim: ClosedRange<Double>?,
-        yLim: ClosedRange<Double>?
-    ): CoordProvider {
-        val projDX = span(
-            doProjection({ getMercatorX(it) }, xDomain)!!
-        )
-
-        val projDY = span(
-            doProjection({ getMercatorY(it) }, yDomain)!!
-        )
-
-        val dx = span(xDomain)
-        val dy = span(yDomain)
-
-        val ratio = (projDY / projDX) / (dy / dx)
-
-        @Suppress("NAME_SHADOWING")
-        val xLim = doProjection({ getMercatorX(it) }, xLim)
-        @Suppress("NAME_SHADOWING")
-        val yLim = doProjection({ getMercatorY(it) }, yLim)
-
-        val opts: MutableMap<String, Any> = mutableMapOf(
-            Option.Meta.NAME to Option.CoordName.MAP,
-            CoordProto.RATIO to ratio
-        )
-
-        if (xLim != null) {
-            opts[CoordProto.X_LIM] = xLim
-        }
-
-        if (yLim != null) {
-            opts[CoordProto.Y_LIM] = yLim
-        }
-
-
-        return CoordConfig.create(opts).coord
-    }
-
-    private fun doProjection(proj: ((Double) -> Double), range: ClosedRange<Double>?) = range?.let {
-        ClosedRange(proj(range.lowerEnd), proj(range.upperEnd))
     }
 
     override fun createLayerConfig(

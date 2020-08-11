@@ -6,6 +6,8 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions.checkState
+import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.spatial.MercatorUtils
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
@@ -15,7 +17,9 @@ import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
+import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
 object PlotConfigClientSideUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -68,7 +72,8 @@ object PlotConfigClientSideUtil {
 
                 if (layerBuilders.size == layerIndex) {
                     val layerConfig = cfg.layerConfigs[layerIndex]
-                    val geomInteraction = GeomInteractionUtil.configGeomTargets(layerConfig, isMultilayer, isLiveMap, cfg.theme)
+                    val geomInteraction =
+                        GeomInteractionUtil.configGeomTargets(layerConfig, isMultilayer, isLiveMap, cfg.theme)
 
                     layerBuilders.add(createLayerBuilder(layerConfig, scaleProvidersMap, geomInteraction))
                 }
@@ -136,5 +141,50 @@ object PlotConfigClientSideUtil {
             .contextualMappingProvider(geomInteraction)
 
         return layerBuilder
+    }
+
+    private fun doProjection(proj: ((Double) -> Double), range: ClosedRange<Double>?) = range?.let {
+        ClosedRange(proj(range.lowerEnd), proj(range.upperEnd))
+    }
+
+    fun getMapCoordinateProvider(
+        xDomain: ClosedRange<Double>,
+        yDomain: ClosedRange<Double>,
+        xLim: ClosedRange<Double>?,
+        yLim: ClosedRange<Double>?
+    ): CoordProvider {
+        val projDX = SeriesUtil.span(
+            doProjection({ MercatorUtils.getMercatorX(it) }, xDomain)!!
+        )
+
+        val projDY = SeriesUtil.span(
+            doProjection({ MercatorUtils.getMercatorY(it) }, yDomain)!!
+        )
+
+        val dx = SeriesUtil.span(xDomain)
+        val dy = SeriesUtil.span(yDomain)
+
+        val ratio = (projDY / projDX) / (dy / dx)
+
+        @Suppress("NAME_SHADOWING")
+        val xLim = doProjection({ MercatorUtils.getMercatorX(it) }, xLim)
+
+        @Suppress("NAME_SHADOWING")
+        val yLim = doProjection({ MercatorUtils.getMercatorY(it) }, yLim)
+
+        val opts: MutableMap<String, Any> = mutableMapOf(
+            Option.Meta.NAME to Option.CoordName.MAP,
+            CoordProto.RATIO to ratio
+        )
+
+        if (xLim != null) {
+            opts[CoordProto.X_LIM] = xLim
+        }
+
+        if (yLim != null) {
+            opts[CoordProto.Y_LIM] = yLim
+        }
+
+        return CoordConfig.create(opts).coord
     }
 }

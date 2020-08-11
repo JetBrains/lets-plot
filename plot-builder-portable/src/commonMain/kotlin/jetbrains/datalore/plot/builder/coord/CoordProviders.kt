@@ -33,13 +33,5 @@ object CoordProviders {
             xLim,
             yLim
         )
-
-//        return ProjectionCoordProvider.withProjectionXY(
-//            MercatorProjectionX(),
-//            MercatorProjectionY(),
-//            ratio,
-//            xLim,
-//            yLim
-//        )
     }
 }
