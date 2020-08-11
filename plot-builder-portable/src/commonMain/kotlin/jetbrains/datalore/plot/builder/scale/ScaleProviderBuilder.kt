@@ -30,6 +30,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
     private var myTransform: Transform? = null
 
     private var myDiscreteDomain = false
+    private var myReverse = false
 
 
     init {
@@ -113,6 +114,11 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         return this
     }
 
+    fun reverse(b: Boolean) : ScaleProviderBuilder<T> {
+        myReverse = b
+        return this
+    }
+
     fun build(): ScaleProvider<T> {
         Preconditions.checkState(myMapperProvider != null, "Mapper Provider is not specified")
         return MyScaleProvider(this)
@@ -128,6 +134,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myLimits: List<*>? = if (b.myLimits == null) null else ArrayList(b.myLimits!!)
         private val myDiscreteDomain: Boolean = b.myDiscreteDomain
+        private val myReverse: Boolean = b.myReverse
         private val myContinuousTransform: Transform? = b.myTransform
 
         private val myAes: Aes<T> = b.myAes
@@ -148,7 +155,12 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
                     myMapperProvider!!.createDiscreteMapper(data, variable)::apply
                 }
 
-                val domainValues = DataFrameUtil.distinctValues(data, variable).filterNotNull()
+                var domainValues = DataFrameUtil.distinctValues(data, variable).filterNotNull()
+
+                if (myReverse) {
+                    domainValues = domainValues.reversed()
+                }
+
                 scale = Scales.discreteDomain(
                         name,
                         domainValues,

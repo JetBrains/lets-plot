@@ -347,7 +347,7 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
 # Discrete Scales
 #
 
-def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None):
     """
     Discrete position scales (x)
 
@@ -386,10 +386,10 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     >>> ggplot(dat, aes('x', group='class')) + geom_bar(stat='count') \
     ...     + scale_x_continuous(name='discretised x', breaks=breaks, labels=labels)
     """
-    return _scale('x', name, breaks, labels, limits, expand, na_value, None, None, discrete=True)
+    return _scale('x', name, breaks, labels, limits, expand, na_value, reverse, None, None, discrete=True)
 
 
-def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None):
     """
     Discrete position scales (y)
 
@@ -430,7 +430,7 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     >>> ggplot(dat, aes('x', 'y', group='class')) + geom_bar(stat='count') \
     ...     + scale_y_discrete(breaks=y_breaks, labels=y_labels)
     """
-    return _scale('y', name, breaks, labels, limits, expand, na_value, None, None, discrete=True)
+    return _scale('y', name, breaks, labels, limits, expand, na_value, reverse, None, None, discrete=True)
 
 
 #
@@ -1691,7 +1691,8 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
                   scale_mapper_kind='size_area')
 
 
-def _scale(aesthetic, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
+def _scale(aesthetic, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None,
+           guide=None,
            trans=None, **other):
     """
     Create a scale (discrete or continuous)
