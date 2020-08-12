@@ -11,6 +11,7 @@ from .util import as_boolean
 
 __all__ = ['scale_shape',
            'scale_x_discrete', 'scale_y_discrete',
+           'scale_x_discrete_reversed', 'scale_y_discrete_reversed',
            'scale_x_continuous', 'scale_y_continuous',
            'scale_x_log10', 'scale_y_log10',
            'scale_x_reverse', 'scale_y_reverse',
@@ -364,6 +365,9 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         A vector specifying the data range for the scale. and the default order of their display in guides.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+    reverse: boolean
+        When True the scale reversed. Default: None
+
     Returns
     -------
         scale specification
@@ -384,9 +388,38 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     >>> breaks = [-3, -2, -1, 0, 1, 2, 3]
     >>> labels = ['-3', '-2', '-1', '0', '1', '2', '3']
     >>> ggplot(dat, aes('x', group='class')) + geom_bar(stat='count') \
-    ...     + scale_x_continuous(name='discretised x', breaks=breaks, labels=labels)
+    ...     + scale_x_discrete(name='discretised x', breaks=breaks, labels=labels)
     """
     return _scale('x', name, breaks, labels, limits, expand, na_value, reverse, None, None, discrete=True)
+
+
+def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+    """
+    Reversed discrete position scales (x)
+
+    Parameters
+    ----------
+    name : string
+        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list of numerics
+        A numeric vector of positions (of ticks)
+    labels : list of strings
+        A vector of labels (on ticks)
+    limits : list
+        A vector specifying the data range for the scale. and the default order of their display in guides.
+    expand :
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+
+    Returns
+    -------
+        scale specification
+    Notes
+    -----
+        Reversed discrete position scales.
+    """
+
+    return scale_x_discrete(name, breaks, labels, limits, expand, na_value, True)
 
 
 def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None):
@@ -406,6 +439,8 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         A vector specifying the data range for the scale. and the default order of their display in guides.
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
+    reverse: boolean
+        When True the scale reversed. Default: None
     Returns
     -------
         scale specification
@@ -431,6 +466,34 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     ...     + scale_y_discrete(breaks=y_breaks, labels=y_labels)
     """
     return _scale('y', name, breaks, labels, limits, expand, na_value, reverse, None, None, discrete=True)
+
+
+def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
+    """
+    Reversed discrete position scales (y)
+
+    Parameters
+    ----------
+    name : string
+        The name of the scale - used as the axis label or the legend title. If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list of numerics
+        A numeric vector of positions (of ticks)
+    labels : list of strings
+        A vector of labels (on ticks)
+    limits : list
+        A vector specifying the data range for the scale. and the default order of their display in guides.
+    expand :
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+    Returns
+    -------
+        scale specification
+    Notes
+    -----
+        Reversed discrete position scales.
+    """
+
+    return scale_y_discrete(name, breaks, labels, limits, expand, na_value, True)
 
 
 #
