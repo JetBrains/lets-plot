@@ -366,7 +366,7 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
     reverse: boolean
-        When True the scale reversed. Default: None
+        When True the scale reversed.
 
     Returns
     -------
@@ -390,7 +390,9 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     >>> ggplot(dat, aes('x', group='class')) + geom_bar(stat='count') \
     ...     + scale_x_discrete(name='discretised x', breaks=breaks, labels=labels)
     """
-    return _scale('x', name, breaks, labels, limits, expand, na_value, reverse, None, None, discrete=True)
+
+    reverse = as_boolean(reverse, default=False)
+    return _scale('x', name, breaks, labels, limits, expand, na_value, None, None, discrete=True, reverse=reverse)
 
 
 def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
@@ -419,7 +421,7 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         Reversed discrete position scales.
     """
 
-    return scale_x_discrete(name, breaks, labels, limits, expand, na_value, True)
+    return scale_x_discrete(name, breaks, labels, limits, expand, na_value, reverse=True)
 
 
 def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None):
@@ -440,7 +442,8 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     expand :
         A numeric vector of length two giving multiplicative and additive expansion constants.
     reverse: boolean
-        When True the scale reversed. Default: None
+        When True the scale reversed.
+
     Returns
     -------
         scale specification
@@ -465,7 +468,8 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     >>> ggplot(dat, aes('x', 'y', group='class')) + geom_bar(stat='count') \
     ...     + scale_y_discrete(breaks=y_breaks, labels=y_labels)
     """
-    return _scale('y', name, breaks, labels, limits, expand, na_value, reverse, None, None, discrete=True)
+    reverse = as_boolean(reverse, default=False)
+    return _scale('y', name, breaks, labels, limits, expand, na_value, None, None, discrete=True, reverse=reverse)
 
 
 def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
@@ -493,7 +497,7 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         Reversed discrete position scales.
     """
 
-    return scale_y_discrete(name, breaks, labels, limits, expand, na_value, True)
+    return scale_y_discrete(name, breaks, labels, limits, expand, na_value, reverse=True)
 
 
 #
@@ -1754,8 +1758,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
                   scale_mapper_kind='size_area')
 
 
-def _scale(aesthetic, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None,
-           guide=None,
+def _scale(aesthetic, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
            trans=None, **other):
     """
     Create a scale (discrete or continuous)
