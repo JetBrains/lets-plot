@@ -30,7 +30,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
     private var myTransform: Transform? = null
 
     private var myDiscreteDomain = false
-    private var myReverse = false
+    private var myDiscreteDomainReverse = false
 
 
     init {
@@ -114,8 +114,8 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         return this
     }
 
-    fun reverse(b: Boolean) : ScaleProviderBuilder<T> {
-        myReverse = b
+    fun discreteDomainReverse(b: Boolean) : ScaleProviderBuilder<T> {
+        myDiscreteDomainReverse = b
         return this
     }
 
@@ -134,7 +134,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myLimits: List<*>? = if (b.myLimits == null) null else ArrayList(b.myLimits!!)
         private val myDiscreteDomain: Boolean = b.myDiscreteDomain
-        private val myReverse: Boolean = b.myReverse
+        private val myDiscreteDomainReverse: Boolean = b.myDiscreteDomainReverse
         private val myContinuousTransform: Transform? = b.myTransform
 
         private val myAes: Aes<T> = b.myAes
@@ -157,7 +157,7 @@ class ScaleProviderBuilder<T>(private val myAes: Aes<T>) {
 
                 var domainValues = DataFrameUtil.distinctValues(data, variable).filterNotNull()
 
-                if (myReverse) {
+                if (myDiscreteDomainReverse) {
                     domainValues = domainValues.reversed()
                 }
 
