@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - corner tooltips.
  - CorrelationStat
  - label_format
+ - scale_x_discrete_reversed / scale_y_discrete_reversed
 
 
 ## [1.5.2] - 2020-08-10
