@@ -42,6 +42,8 @@
 - [Offline mode](#offline)
 - [Scientific mode in IntelliJ IDEA / PyCharm](#pycharm)
 - [What is new in 1.5.0](#new)
+- [Change log](#change_log)
+- [License](#license)
 
 <a name="Implementation Overview" id="overview"></a>
 ## Implementation Overview
@@ -374,11 +376,13 @@ Examples:
 * [map_titanic.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_titanic.ipynb)
  
 
+<a id="change_log"></a>
 ## Change Log
 
 See [Lets-Plot at Github](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md).
 
 
+<a id="license"></a>
 ## License
 
 Code and documentation released under the [MIT license](https://github.com/JetBrains/lets-plot/blob/master/LICENSE).
