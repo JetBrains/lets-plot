@@ -14,12 +14,20 @@ The design of Lets-Plot library is heavily influenced by Leland Wilkinson work [
 
 Due to the unique multi-platform nature of Kotlin programming language, you can obtain the plotting functionality that is packaged as a JavaScript library, JVM library, and a native Python extension.
 
-## Python Extension 
-<a href="https://pypi.org/project/lets-plot/"/>
-<img src="https://badge.fury.io/py/lets-plot.svg"/>
+## Lets-Plot for Python 
+<a href="https://pypi.org/project/lets-plot/">
+<img src="https://badge.fury.io/py/lets-plot.svg"/></a>
+<br>
 <br>
 
-[Learn](README_PYTHON.md) how to create plots using the `Lets-Plot` python package.
+
+The `Lets-Plot for Python` package offers a ggplot-like API for data visualization in [Jupyter](https://jupyter-notebook.readthedocs.io/en/stable/) notebooks 
+as well as in other notebooks like [Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP), 
+[Kaggle](https://www.kaggle.com/alshan/lets-plot-quickstart) or [Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-).
+  
+You can even craete plots using Python editor in PyCharm or IntelliJ IDEA (Scientific mode, the [Lets-Plot in SciView plugin](#pycharm_plugin) is required).   
+  
+Read [Lets-Plot for Python](README_PYTHON.md) documentation to learn more about the package installation and usage.
 
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/quickstart.png" alt="Couldn't load quickstart.png" width="505" height="260"/>
 
@@ -29,11 +37,12 @@ Due to the unique multi-platform nature of Kotlin programming language, you can 
 
 [Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) adds Grammar-of-Graphics plotting capabilities to Kotlin kernels for Jupyter notebooks.
 
-Besides Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into a JVM-based application.
+Apart from Jupyter notebooks, **Lets-Plot Kotlin** API enables embedding plots into a JVM-based application.
 
-To learn more about creating plots in a JVM environment see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) in
-[Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub.
+To learn more about creating plots in a JVM environment see [README_DEV.md](https://github.com/JetBrains/lets-plot-kotlin/blob/master/README_DEV.md) 
+in the [Lets-Plot Kotlin](https://github.com/JetBrains/lets-plot-kotlin) project on GitHub.
 
+<a id="pycharm_plugin"></a>
 ## "Lets-Plot in SciView" plugin for IntelliJ IDEA and PyCharm
 
 [![JetBrains Plugins](https://img.shields.io/jetbrains/plugin/v/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
