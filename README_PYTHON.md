@@ -56,9 +56,14 @@ R `ggplot2` has extensive documentation and a multitude of examples and therefor
 Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new features](#nonstandard) to our Python API.
 
 You can try the Lets-Plot library in [Datalore](https://datalore.jetbrains.com). 
-Lets-Plot is available in Datalore out-of-the-box. Begin with the [quickstart in Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP) notebook to learn more about Datalore notebooks. 
+Lets-Plot is available in Datalore out-of-the-box (i.e. you can ignore the [Installation](#inst) chapter below). 
 
 The advantage of [Datalore](https://datalore.jetbrains.com) as a learning tool in comparison to Jupyter is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
+
+Begin with the [quickstart in Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP) notebook to learn more about Datalore notebooks. 
+
+Watch the [Datalore Getting Started Tutorial](https://youtu.be/MjvFQxqNSe0) video for a quick introduction to Datalore.   
+
 
 <a id="inst"></a>
 ## Installation
