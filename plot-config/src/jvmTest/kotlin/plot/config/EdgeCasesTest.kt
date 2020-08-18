@@ -71,6 +71,40 @@ class EdgeCasesTest {
     }
 
     @Test
+    fun pointWithOnlyNullsInColorSeries() {
+        val data = """
+            {
+                "x": [1],
+                "y": [1],
+                "c": [null]
+            }
+        """.trimIndent()
+
+        val spec = """
+             {
+                "kind": "plot",
+                "data": $data,
+                "layers": [
+                            {
+                               "geom":  {
+                                          "name": "point"
+                                        },
+                               "mapping": {
+                                           "x": "x",
+                                           "y": "y",
+                                           "fill": "c"
+                                          }
+                            }
+                        ]
+             }
+        """.trimIndent()
+
+
+        val opts = parsePlotSpec(spec)
+        assertDoesNotFail { DemoAndTest.createPlot(opts) }
+    }
+
+    @Test
     fun allWithNaNInXYSeries() {
         for (geomName in GeomName.values()) {
             if (GeomName.LIVE_MAP == geomName || GeomName.IMAGE == geomName) {
