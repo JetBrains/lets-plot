@@ -20,7 +20,12 @@ internal abstract class CoordProviderBase(
     private val yLim: ClosedRange<Double>?
 ) : CoordProvider {
 
-    override fun buildAxisScaleX(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
+    override fun buildAxisScaleX(
+        scaleProto: Scale<Double>,
+        domain: ClosedRange<Double>,
+        axisLength: Double,
+        breaks: GuideBreaks
+    ): Scale<Double> {
         return buildAxisScaleDefault(
             scaleProto,
             domain,
@@ -29,7 +34,12 @@ internal abstract class CoordProviderBase(
         )
     }
 
-    override fun buildAxisScaleY(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
+    override fun buildAxisScaleY(
+        scaleProto: Scale<Double>,
+        domain: ClosedRange<Double>,
+        axisLength: Double,
+        breaks: GuideBreaks
+    ): Scale<Double> {
         return buildAxisScaleDefault(
             scaleProto,
             domain,
@@ -38,31 +48,25 @@ internal abstract class CoordProviderBase(
         )
     }
 
-    override fun createCoordinateSystem(xDomain: ClosedRange<Double>, xAxisLength: Double, yDomain: ClosedRange<Double>, yAxisLength: Double): CoordinateSystem {
-        return Coords.create(
-                MapperUtil.map(xDomain,
-                    axisMapper(
-                        xDomain,
-                        xAxisLength
-                    )
-                ),
-                MapperUtil.map(yDomain,
-                    axisMapper(
-                        yDomain,
-                        yAxisLength
-                    )
-                ))
-    }
-
-    final override fun adjustDomains(
+    override fun createCoordinateSystem(
         xDomain: ClosedRange<Double>,
+        xAxisLength: Double,
         yDomain: ClosedRange<Double>,
-        displaySize: DoubleVector
-    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
-        return adjustDomainsImpl(xDomain, yDomain, displaySize)
+        yAxisLength: Double
+    ): CoordinateSystem {
+        return Coords.create(
+            MapperUtil.map(
+                xDomain,
+                axisMapper(xDomain, xAxisLength)
+            ),
+            MapperUtil.map(
+                yDomain,
+                axisMapper(yDomain, yAxisLength)
+            )
+        )
     }
 
-    protected open fun adjustDomainsImpl(
+    override fun adjustDomains(
         xDomain: ClosedRange<Double>,
         yDomain: ClosedRange<Double>,
         displaySize: DoubleVector
@@ -75,23 +79,29 @@ internal abstract class CoordProviderBase(
             return Mappers.mul(domain, axisLength)
         }
 
-        private fun buildAxisScaleDefault(scaleProto: Scale<Double>, domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks): Scale<Double> {
+        private fun buildAxisScaleDefault(
+            scaleProto: Scale<Double>,
+            domain: ClosedRange<Double>,
+            axisLength: Double,
+            breaks: GuideBreaks
+        ): Scale<Double> {
             return buildAxisScaleDefault(
                 scaleProto,
-                axisMapper(
-                    domain,
-                    axisLength
-                ),
+                axisMapper(domain, axisLength),
                 breaks
             )
         }
 
-        fun buildAxisScaleDefault(scaleProto: Scale<Double>, axisMapper: (Double?) -> Double?, breaks: GuideBreaks): Scale<Double> {
+        fun buildAxisScaleDefault(
+            scaleProto: Scale<Double>,
+            axisMapper: (Double?) -> Double?,
+            breaks: GuideBreaks
+        ): Scale<Double> {
             return scaleProto.with()
-                    .breaks(breaks.domainValues)
-                    .labels(breaks.labels)
-                    .mapper(axisMapper)
-                    .build()
+                .breaks(breaks.domainValues)
+                .labels(breaks.labels)
+                .mapper(axisMapper)
+                .build()
         }
     }
 }

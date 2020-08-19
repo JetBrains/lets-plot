@@ -18,12 +18,12 @@ import jetbrains.datalore.plot.common.data.SeriesUtil.span
  * Ratios higher than one make units on the y axis longer than units on the x-axis, and vice versa.
  */
 internal open class FixedRatioCoordProvider(
-    private val myRatio: Double,
+    private val ratio: Double,
     private val xLim: ClosedRange<Double>?,
     private val yLim: ClosedRange<Double>?
 ) : CoordProviderBase(xLim, yLim) {
 
-    override fun adjustDomainsImpl(
+    override fun adjustDomains(
         xDomain: ClosedRange<Double>,
         yDomain: ClosedRange<Double>,
         displaySize: DoubleVector
@@ -36,10 +36,10 @@ internal open class FixedRatioCoordProvider(
         // ratio == 1 -> X-units equal Y-units
         // ratio > 1 -> Y-units are longer
         // ratio < 1 -> X-units are longer
-        if (myRatio > 1) {
-            displayW *= myRatio
+        if (ratio > 1) {
+            displayW *= ratio
         } else {
-            displayH *= 1 / myRatio
+            displayH *= 1 / ratio
         }
 
         if (
@@ -48,6 +48,7 @@ internal open class FixedRatioCoordProvider(
         ) {
             @Suppress("NAME_SHADOWING")
             var xDomain = xDomain
+
             @Suppress("NAME_SHADOWING")
             var yDomain = yDomain
 
@@ -78,7 +79,11 @@ internal open class FixedRatioCoordProvider(
             return Pair(xDomain, yDomain)
         }
 
-        fun limitOrth(orig: ClosedRange<Double>, lim: ClosedRange<Double>, orth: ClosedRange<Double>):ClosedRange<Double> {
+        fun limitOrth(
+            orig: ClosedRange<Double>,
+            lim: ClosedRange<Double>,
+            orth: ClosedRange<Double>
+        ): ClosedRange<Double> {
             val origExpandRatio = span(lim) / span(orig)
             val orthogonalExpand = span(orth) * origExpandRatio
             return SeriesUtil.expand(orth, orthogonalExpand / 2, orthogonalExpand / 2)
