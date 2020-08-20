@@ -78,23 +78,24 @@ class Regions(CanToDataFrame):
         ----------
         resolution: [str | int | None]
             Boundaries resolution.
+
             str: ['city', 'county', 'state', 'country', 'world']
-            Kind of area expected to be displayed. It highly depends on number of objects - for one state objcet 'state'
-            resolution can be used, but for 50 states it is better to use 'country', like you see whole country.
-            'city' is for max details, 'world' is for max performance.
-            It is allowed to use any kind of resolutin for any regions, i.e. 'city' for state to see more detailed
-            boundary (when need to show zoomed part), or 'world' (when used for small preview).
+                Kind of area expected to be displayed. It highly depends on number of objects - for one state objcet 'state'
+                resolution can be used, but for 50 states it is better to use 'country', like you see whole country.
+                'city' is for max details, 'world' is for max performance.
+                It is allowed to use any kind of resolutin for any regions, i.e. 'city' for state to see more detailed
+                boundary (when need to show zoomed part), or 'world' (when used for small preview).
 
             int: [1-15]
-            15 - maximum quality, 1 - minimum:
-            1-3 for world view
-            4-6 for countries view
-            7-9 for states view
-            10-12 for counties view
-            13-15 for cities view
+                15 - maximum quality, 1 - minimum:
+                 - 1-3 for world view
+                 - 4-6 for countries view
+                 - 7-9 for states view
+                 - 10-12 for counties view
+                 - 13-15 for cities view
 
             None:
-            Autodetection. It uses level_kind and number of objects to try to balance quality and performance.
+                Autodetection. It uses level_kind and number of objects to try to balance quality and performance.
         """
         from lets_plot.geo_data.to_geo_data_frame import BoundariesGeoDataFrame
 
@@ -120,14 +121,13 @@ class Regions(CanToDataFrame):
         """
         Return bboxes (Polygon geometry) for given regions in form of GeoDataFrame. For regions intersecting
         anti-meridian bbox will be divided into two and stored as two rows.
-        Example:
 
-            regions_country(['germany', 'russia']).limits()
+        Examples
+        ---------
+        .. jupyter-execute::
 
-            request	found name	geometry
-            0	germany	Deutschland	POLYGON ((15.04193 47.27011, 15.04193 55.05857...
-            1	russia	Россия	POLYGON ((180 41.1850968003273, 180 81.85872048139569, 19.6389412879944 81.85872048139569w
-            2	russia	Россия	POLYGON ((-168.997978270054 41.1850968003273, -168.997978270054 81.85872048139569, -180 81.85872048139569
+            >>> from lets_plot.geo_data import *
+            >>> regions_country(['germany', 'russia']).limits()
         """
         from lets_plot.geo_data.to_geo_data_frame import LimitsGeoDataFrame
         return self._execute(
@@ -138,7 +138,6 @@ class Regions(CanToDataFrame):
     def centroids(self):
         """
         Return centroids (Point geometry) for given regions in form of GeoDataFrame.
-        :return:
         """
         from lets_plot.geo_data.to_geo_data_frame import CentroidsGeoDataFrame
         return self._execute(
