@@ -57,11 +57,11 @@ internal abstract class CoordProviderBase(
         return Coords.create(
             MapperUtil.map(
                 xDomain,
-                axisMapper(xDomain, xAxisLength)
+                linearMapper(xDomain, xAxisLength)
             ),
             MapperUtil.map(
                 yDomain,
-                axisMapper(yDomain, yAxisLength)
+                linearMapper(yDomain, yAxisLength)
             )
         )
     }
@@ -75,7 +75,7 @@ internal abstract class CoordProviderBase(
     }
 
     companion object {
-        fun axisMapper(domain: ClosedRange<Double>, axisLength: Double): (Double?) -> Double? {
+        fun linearMapper(domain: ClosedRange<Double>, axisLength: Double): (Double?) -> Double? {
             return Mappers.mul(domain, axisLength)
         }
 
@@ -87,7 +87,7 @@ internal abstract class CoordProviderBase(
         ): Scale<Double> {
             return buildAxisScaleDefault(
                 scaleProto,
-                axisMapper(domain, axisLength),
+                linearMapper(domain, axisLength),
                 breaks
             )
         }

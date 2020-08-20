@@ -11,6 +11,8 @@ import jetbrains.datalore.base.spatial.MercatorUtils.getMercatorY
 import jetbrains.datalore.plot.base.coord.Projection
 
 class MercatorProjectionY : Projection {
+    override val nonlinear = true
+
     override fun apply(v: Double): Double {
         return getMercatorY(v)
     }

@@ -14,7 +14,9 @@ class CoordLim : PlotConfigDemoBase() {
             fixed(),
             fixedXLim(107, 117),
             fixedYLim(470, 570),
-            fixedLims(xMin = 65, xMax = 165, yMin = 370, yMax = 570)
+            fixedLims(xMin = 65, xMax = 165, yMin = 370, yMax = 570),
+            cartesian(),
+            cartesianXLim(107, 117)
         )
     }
 
@@ -59,7 +61,7 @@ class CoordLim : PlotConfigDemoBase() {
             |   }
         """.trimMargin()
         )
-        spec["ggtitle"] = mapOf("text" to "coord_fixed(x_lim=[$min, $max])")
+        spec["ggtitle"] = mapOf("text" to "coord_fixed(xlim=[$min, $max])")
         return spec
     }
 
@@ -73,7 +75,7 @@ class CoordLim : PlotConfigDemoBase() {
             |   }
         """.trimMargin()
         )
-        spec["ggtitle"] = mapOf("text" to "coord_fixed(y_lim=[$min, $max])")
+        spec["ggtitle"] = mapOf("text" to "coord_fixed(ylim=[$min, $max])")
         return spec
     }
 
@@ -87,7 +89,7 @@ class CoordLim : PlotConfigDemoBase() {
             |   }
         """.trimMargin()
         )
-        spec["ggtitle"] = mapOf("text" to "coord_fixed(x_lim=[$xMin, $xMax], y_lim=[$yMin, $yMax])")
+        spec["ggtitle"] = mapOf("text" to "coord_fixed(xlim=[$xMin, $xMax], ylim=[$yMin, $yMax])")
         return spec
     }
 
@@ -104,4 +106,33 @@ class CoordLim : PlotConfigDemoBase() {
         spec["ggtitle"] = mapOf("text" to "coord_fixed()")
         return spec
     }
+
+    private fun cartesian(): Map<String, Any> {
+        val spec = createSpec(
+            """
+            |   'coord': {
+            |       'name': 'cartesian', 
+            |       'xlim': null, 
+            |       'ylim': null
+            |   }
+        """.trimMargin()
+        )
+        spec["ggtitle"] = mapOf("text" to "coord_cartesian()")
+        return spec
+    }
+
+    private fun cartesianXLim(min: Number, max: Number): Map<String, Any> {
+        val spec = createSpec(
+            """
+            |   'coord': {
+            |       'name': 'cartesian', 
+            |       'xlim': [$min, $max], 
+            |       'ylim': null
+            |   }
+        """.trimMargin()
+        )
+        spec["ggtitle"] = mapOf("text" to "coord_cartesian(xlim=[$min, $max])")
+        return spec
+    }
+
 }
