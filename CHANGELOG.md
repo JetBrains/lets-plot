@@ -6,11 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
  - corner tooltips.
  - CorrelationStat
  - label_format
  - scale_x_discrete_reversed / scale_y_discrete_reversed
 
+### Fixed
+ - Mercator projection (`geom_map(), coord_map()`)
+ - Handling of `xlim,ylim` in `coord_fixed(), coord_map()`  
 
 ## [1.5.2] - 2020-08-10
 ### Fixed
