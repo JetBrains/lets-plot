@@ -10,29 +10,12 @@ Lets-Plot
 
 It is implemented using the `Kotlin programming language <https://kotlinlang.org>`_.
 
+Documentation
+-------------
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Usage:
-   :name: usage
-
-   usage/install
-   usage/quickstart
-   usage/svg_export
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Reference:
-   :name: ref
-
-   ref/ggbunch
-   ref/ggsize
-   ref/geom_point
-   ref/geom_raster
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Autodoc:
+   :maxdepth: 4
+   :caption: Contents:
    :name: autodoc
 
    autodoc/lets_plot

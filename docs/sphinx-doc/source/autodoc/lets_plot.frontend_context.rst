@@ -1,8 +1,6 @@
 lets\_plot.frontend\_context package
 ====================================
 
-Submodules
-----------
 .. The block below is commented
 ..
     lets\_plot.frontend\_context.sandbox module

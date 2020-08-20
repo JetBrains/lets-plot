@@ -1,9 +1,6 @@
 lets\_plot.export package
 =========================
 
-Submodules
-----------
-
 lets\_plot.export.simple module
 -------------------------------
 

@@ -1,9 +1,6 @@
 lets\_plot.geo\_data.gis package
 ================================
 
-Submodules
-----------
-
 lets\_plot.geo\_data.gis.fluent\_dict module
 --------------------------------------------
 

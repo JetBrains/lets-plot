@@ -20,14 +20,6 @@ lets\_plot.geo\_data.core module
    :undoc-members:
    :show-inheritance:
 
-lets\_plot.geo\_data.livemap\_helper module
--------------------------------------------
-
-.. automodule:: lets_plot.geo_data.livemap_helper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 lets\_plot.geo\_data.map\_geometry module
 -----------------------------------------
 

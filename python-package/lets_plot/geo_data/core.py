@@ -156,9 +156,9 @@ def regions_country(request=None):
 
     Returns
     -------
-        Regions object
+    Regions object :
 
-    Notes
+    Note
     -----
     regions_country() is used to get name and object id by request.
     If the given names are not found exception will be thrown.
@@ -192,9 +192,9 @@ def regions_state(request=None, within=None):
 
     Returns
     -------
-        Regions object
+    Regions object :
 
-    Notes
+    Note
     -----
     regions_state() is used to get name and object id by request.
     If the given names are not found exception will be thrown.
@@ -226,9 +226,9 @@ def regions_county(request=None, within=None):
 
     Returns
     -------
-        Regions object
+    Regions object :
 
-    Notes
+    Note
     -----
     regions_county() is used to get name and object id by request.
     If the given names are not found exception will be thrown.
@@ -260,9 +260,9 @@ def regions_city(request=None, within=None):
 
     Returns
     -------
-        Regions object
+    Regions object :
 
-    Notes
+    Note
     -----
     regions_city() is used to get name and object id by request.
     If the given names are not found exception will be thrown.
