@@ -20,16 +20,18 @@ def aes(x=None, y=None, **other):
     -------
         aesthetic mapping specification
 
-    Notes
+    Note
     -----
         Generates aesthetic mappings that describe how variables in the data are projected to visual properties
         (aesthetics) of geometries. This function also standardizes aesthetic names by, for example, converting
-         colour to color.
-         Aesthetic mappings are not to be confused with aesthetic settings; the latter are used to set aesthetics to
-         some constant values, e.g. make all points red in the plot. If one wants to make the color of a point
-         depend on the value of a variable, he/she should project this variable to the color aesthetic via
-         aesthetic mapping.
-     Examples
+        colour to color.
+
+        Aesthetic mappings are not to be confused with aesthetic settings; the latter are used to set aesthetics to
+        some constant values, e.g. make all points red in the plot. If one wants to make the color of a point
+        depend on the value of a variable, he/she should project this variable to the color aesthetic via
+        aesthetic mapping.
+
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -37,8 +39,8 @@ def aes(x=None, y=None, **other):
     >>> y = np.random.normal(size=100)
     >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
     >>> dat['class'] = ['0' if dat['x'][i] < 0 else '1' for i in range(100)]
-    >>> ggplot(dat) + geom_point(aes(x='x', y='y', color='y', shape='class', fill='x', size='y')) + \
-    >>>     geom_point(shape=21, color='red', fill='green', size=5, stat='smooth')
+    >>> ggplot(dat) + geom_point(aes(x='x', y='y', color='y', shape='class', fill='x', size='y')) +
+    ... geom_point(shape=21, color='red', fill='green', size=5, stat='smooth')
     """
 
     return FeatureSpec('mapping', name=None, x=x, y=y, **other)
@@ -71,14 +73,16 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
         paired geom/stat.
 
-     Returns
+    Returns
     -------
         geom object specification
-    Notes
+
+    Note
     -----
         A layer is a combination of data, stat and geom with a potential position adjustment. Usually layers are created
         using geom_* or stat_* calls but they can be created directly using this function.
-     Examples
+
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
