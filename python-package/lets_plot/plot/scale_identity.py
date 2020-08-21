@@ -58,7 +58,17 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
     >>> dat = pd.DataFrame({'x': x, 'y': y, 'c': c})
     >>> ggplot(dat, aes('x', 'y', color='c')) + geom_point(size=15) + scale_color_identity()
     """
-    return _scale('color', name, breaks, labels, limits, None, na_value, guide, None, scale_mapper_kind='identity')
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  scale_mapper_kind='identity')
 
 
 def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
@@ -102,7 +112,17 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
     >>> dat = pd.DataFrame({'x': x, 'y': y, 'c': c})
     >>> ggplot(dat, aes('x', 'y', fill='c')) + geom_tile() + scale_fill_identity()
     """
-    return _scale('fill', name, breaks, labels, limits, None, na_value, guide, None, scale_mapper_kind='identity')
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  scale_mapper_kind='identity')
 
 
 def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
@@ -143,7 +163,18 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
     >>> dat = pd.DataFrame({'x': x, 'y': y, 's': s})
     >>> ggplot(dat, aes('x', 'y', shape='s')) + geom_point(size=5) + scale_shape_identity()
     """
-    return _scale('shape', name, breaks, labels, limits, None, na_value, guide, None, solid=None, scale_mapper_kind='identity', discrete=True)
+    return _scale('shape',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  solid=None,
+                  scale_mapper_kind='identity', discrete=True)
 
 
 def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
@@ -186,7 +217,16 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
     >>> dat = pd.DataFrame({'x': x, 'y': y, 'xend':xend, 'l': l})
     >>> ggplot(dat, aes('x', 'y', xend='xend', yend='y', linetype='l')) + geom_segment(size=2) + scale_linetype_identity()
     """
-    return _scale('linetype', name, breaks, labels, limits, None, na_value, guide, None,
+    return _scale('linetype',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
                   scale_mapper_kind='identity', discrete=True)
 
 
@@ -228,7 +268,17 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
     >>> dat = pd.DataFrame({'x': x, 'y': y, 'a': a})
     >>> ggplot(dat, aes('x', 'y', alpha='a')) + geom_point(size=15) + scale_alpha_identity()
     """
-    return _scale('alpha', name, breaks, labels, limits, None, na_value, guide, None, scale_mapper_kind='identity')
+    return _scale('alpha',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=None,
+                  trans=None,
+                  #
+                  scale_mapper_kind='identity')
 
 
 def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
@@ -269,4 +319,14 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
     >>> dat = pd.DataFrame({'x': x, 'y': y, 's': s})
     >>> ggplot(dat, aes('x', 'y', size='s')) + geom_point() + scale_size_identity()
     """
-    return _scale('size', name, breaks, labels, limits, None, na_value, guide, None, scale_mapper_kind='identity')
+    return _scale('size',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  #
+                  scale_mapper_kind='identity')
