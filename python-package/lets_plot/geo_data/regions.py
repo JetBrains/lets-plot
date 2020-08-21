@@ -80,50 +80,51 @@ class Regions(CanToDataFrame):
             Boundaries resolution.
 
             int: [1-15]
-            15 - maximum quality, 1 - maximum performance:
-            1-3 for world scale view
-            4-6 for country scale view
-            7-9 for state scale view
-            10-12 for county scale view
-            13-15 for city scale view
+                15 - maximum quality, 1 - maximum performance:
+                 - 1-3 for world scale view
+                 - 4-6 for country scale view
+                 - 7-9 for state scale view
+                 - 10-12 for county scale view
+                 - 13-15 for city scale view
 
             str: ['world', 'country', 'state', 'county', 'city']
-            'city' - maximum quality, 'world'  - maximum performance.
-            Corresponding numeric resolutions:
-            'world' - 2
-            'country' - 5
-            'state' - 8
-            'county' - 11
-            'city' - 14
+                'city' - maximum quality, 'world'  - maximum performance.
+                Corresponding numeric resolutions:
+                 - 'world' - 2
+                 - 'country' - 5
+                 - 'state' - 8
+                 - 'county' - 11
+                 - 'city' - 14
 
             Kind of area expected to be displayed. Resolution depends on a number of objects - single state is a 'state'
             scale view, while 50 states is a 'country' scale view.
-            It is allowed to use any kind of resolutin for any regions, i.e. 'city' for state to see more detailed
+
+            It is allowed to use any kind of resolution for any regions, i.e. 'city' for state to see more detailed
             boundary (when need to show zoomed part), or 'world' (when used for small preview).
 
             None:
-            Autodetection. Uses level_kind that was used for geocoding this regions object and number of objects in it.
-            Prefers performance over qulity. It's expected to get pixelated geometries with autodetection.
-            Use explicit resolution for better quality.
+                Autodetection. Uses level_kind that was used for geocoding this regions object and number of objects in it.
+                Prefers performance over qulity. It's expected to get pixelated geometries with autodetection.
+                Use explicit resolution for better quality.
 
-            Resolution for countries:
-            If n < 3 => 3
-            else => 1
+                Resolution for countries:
+                    If n < 3 => 3
+                    else => 1
 
-            Resolution for states:
-            If n < 3 => 7
-            If n < 10 => 4
-            else => 2
+                Resolution for states:
+                    If n < 3 => 7
+                    If n < 10 => 4
+                    else => 2
 
-            Resolution for counties:
-            If n < 5 => 10
-            If n < 20 => 8
-            else => 3
+                Resolution for counties:
+                    If n < 5 => 10
+                    If n < 20 => 8
+                    else => 3
 
-            Resolution for cities:
-            If n < 5 => 13
-            If n < 50 => 4
-            else => 3
+                Resolution for cities:
+                    If n < 5 => 13
+                    If n < 50 => 4
+                    else => 3
         """
         from lets_plot.geo_data.to_geo_data_frame import BoundariesGeoDataFrame
 
