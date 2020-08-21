@@ -25,8 +25,8 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
     @Test
     fun limits() {
         fun squareCoord(
-            xDomain: ClosedRange<Double> = ClosedRange(0.0, 25.0),
-            yDomain: ClosedRange<Double> = ClosedRange(0.0, 25.0),
+            xDomain: ClosedRange<Double>,// = ClosedRange(0.0, 25.0),
+            yDomain: ClosedRange<Double>,// = ClosedRange(0.0, 25.0),
             xLim: ClosedRange<Double>? = null,
             yLim: ClosedRange<Double>? = null,
             displaySize: DoubleVector = DoubleVector(800.0, 600.0)
@@ -36,28 +36,41 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
                 .adjustDomains(xDomain, yDomain, displaySize)
         }
 
+        fun squareCoord_0_25(
+            xLim: ClosedRange<Double>? = null,
+            yLim: ClosedRange<Double>? = null,
+            displaySize: DoubleVector = DoubleVector(800.0, 600.0)
+        ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+            return squareCoord(
+                ClosedRange(0.0, 25.0),
+                ClosedRange(0.0, 25.0),
+                xLim, yLim, displaySize
+            )
+        }
+
+
         // xLim
         run {
             // rectangular domain
             squareCoord(
                 xDomain = ClosedRange(0.0, 40.0),
-                yDomain = ClosedRange(0.0,20.0),
+                yDomain = ClosedRange(0.0, 20.0),
                 xLim = ClosedRange(0.0, 10.0),
                 displaySize = DoubleVector(40.0, 40.0)
             ).let { (adjustedXDomain, adjustedYDomain) ->
-                assertEquals(ClosedRange(0.0, 10.0), adjustedXDomain)
-                assertEquals(ClosedRange(5.0, 15.0), adjustedYDomain)
+                assertEquals(ClosedRange(-5.0, 15.0), adjustedXDomain) // adjusted to square
+                assertEquals(ClosedRange(0.0, 20.0), adjustedYDomain) // unchanged
             }
 
             // rectangular domain with wide range from negative to positive
             squareCoord(
-                xDomain = ClosedRange(-192.93730128989847, 195.64188153543947),
-                yDomain = ClosedRange(-61.15901229903106, 86.57141452655196),
+                xDomain = ClosedRange(-193.0, 195.0),
+                yDomain = ClosedRange(-61.0, 86.0),
                 xLim = ClosedRange(-130.0, 20.0),
                 displaySize = DoubleVector(394.3, 291.0)
             ).let { (adjustedXDomain, adjustedYDomain) ->
-                assertEquals(ClosedRange(-130.0, 20.0), adjustedXDomain)
-                assertEquals(ClosedRange(-42.645054275537035, 68.05745650305794), adjustedYDomain)
+                assertEquals(ClosedRange(-154.59123711340206, 44.59123711340206), adjustedXDomain) // adjusted to square
+                assertEquals(ClosedRange(-61.0, 86.0), adjustedYDomain) // unchanged
             }
 
             // zero length y-domain
@@ -66,8 +79,8 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
                 yDomain = ClosedRange(0.0, 0.0),
                 xLim = ClosedRange(5.0, 15.0)
             ).let { (adjustedXDomain, adjustedYDomain) ->
-                assertEquals(ClosedRange(5.0, 15.0), adjustedXDomain)
-                assertEquals(ClosedRange(-3.75, 3.75), adjustedYDomain)
+                assertEquals(ClosedRange(5.0, 15.0), adjustedXDomain)  // lims
+                assertEquals(ClosedRange(0.0, 0.0), adjustedYDomain)   // unchanged
             }
 
             // limit larger than x-domain with zero length y-domain
@@ -76,8 +89,8 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
                 yDomain = ClosedRange(0.0, 0.0),
                 xLim = ClosedRange(80.0, 140.0)
             ).let { (adjustedXDomain, adjustedYDomain) ->
-                assertEquals(ClosedRange(80.0, 140.0), adjustedXDomain)
-                assertEquals(ClosedRange(-22.5, 22.5), adjustedYDomain)
+                assertEquals(ClosedRange(80.0, 140.0), adjustedXDomain) // lims
+                assertEquals(ClosedRange(0.0, 0.0), adjustedYDomain)   // unchanged
             }
 
             // limit larger than x-domain with non-zero length y-domain
@@ -86,53 +99,53 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
                 yDomain = ClosedRange(-5.0, 5.0),
                 xLim = ClosedRange(80.0, 140.0)
             ).let { (adjustedXDomain, adjustedYDomain) ->
-                assertEquals(ClosedRange(80.0, 140.0), adjustedXDomain)
-                assertEquals(ClosedRange(-22.5, 22.5), adjustedYDomain)
+                assertEquals(ClosedRange(80.0, 140.0), adjustedXDomain)  // lims
+                assertEquals(ClosedRange(-22.5, 22.5), adjustedYDomain)  // adjusted to square
             }
 
             // xLim in range
-            squareCoord(xLim = ClosedRange(1.0, 4.0))
+            squareCoord_0_25(xLim = ClosedRange(1.0, 4.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(1.0, 4.0), adjustedXDomain)
-                    assertEquals(ClosedRange(11.375, 13.625), adjustedYDomain)
+                    assertEquals(ClosedRange(-14.166666666666664, 19.166666666666664), adjustedXDomain) // adjusted to square
+                    assertEquals(ClosedRange(0.0, 25.0), adjustedYDomain) // unchanged
                 }
 
             // xLim wider than range
-            squareCoord(xLim = ClosedRange(-3.0, 4.0))
+            squareCoord_0_25(xLim = ClosedRange(-3.0, 4.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(-3.0, 4.0), adjustedXDomain)
-                    assertEquals(ClosedRange(9.875, 15.125), adjustedYDomain)
+                    assertEquals(ClosedRange(-16.166666666666664, 17.166666666666664), adjustedXDomain) // adjusted to square
+                    assertEquals(ClosedRange(0.0, 25.0), adjustedYDomain) // unchanged
                 }
 
             // xLim out of range
-            squareCoord(xLim = ClosedRange(-9.0, -4.0))
+            squareCoord_0_25(xLim = ClosedRange(-9.0, -4.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(-9.0, -4.0), adjustedXDomain)
-                    assertEquals(ClosedRange(10.625, 14.375), adjustedYDomain)
+                    assertEquals(ClosedRange(-23.166666666666664, 10.166666666666664), adjustedXDomain)
+                    assertEquals(ClosedRange(0.0, 25.0), adjustedYDomain) // unchanged
                 }
         }
 
         // yLim
         run {
             // yLim in range
-            squareCoord(yLim = ClosedRange(1.0, 4.0))
+            squareCoord_0_25(yLim = ClosedRange(1.0, 4.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(10.5, 14.5), adjustedXDomain)
-                    assertEquals(ClosedRange(1.0, 4.0), adjustedYDomain)
+                    assertEquals(ClosedRange(0.0, 25.0), adjustedXDomain) // unchanged
+                    assertEquals(ClosedRange(-6.875, 11.875), adjustedYDomain)  // adjusted to square
                 }
 
             // yLim wider than range
-            squareCoord(yLim = ClosedRange(-3.0, 6.0))
+            squareCoord_0_25(yLim = ClosedRange(-3.0, 6.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(6.5, 18.5), adjustedXDomain)
-                    assertEquals(ClosedRange(-3.0, 6.0), adjustedYDomain)
+                    assertEquals(ClosedRange(0.0, 25.0), adjustedXDomain) // unchanged
+                    assertEquals(ClosedRange(-7.875, 10.875), adjustedYDomain) // adjusted to square
                 }
 
             // yLim out of range
-            squareCoord(yLim = ClosedRange(-9.0, -6.0))
+            squareCoord_0_25(yLim = ClosedRange(-9.0, -6.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(10.5, 14.5), adjustedXDomain)
-                    assertEquals(ClosedRange(-9.0, -6.0), adjustedYDomain)
+                    assertEquals(ClosedRange(0.0, 25.0), adjustedXDomain) // unchanged
+                    assertEquals(ClosedRange(-16.875, 1.875), adjustedYDomain)   // adjusted to square
                 }
         }
 
@@ -140,28 +153,28 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
         // xLim && yLim
         run {
             // intersecting, wider yLim wins
-            squareCoord(xLim = ClosedRange(10.0, 15.0), yLim = ClosedRange(9.0, 16.0))
+            squareCoord_0_25(xLim = ClosedRange(10.0, 15.0), yLim = ClosedRange(9.0, 16.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
                     assertEquals(ClosedRange(7.833, 17.166), adjustedXDomain)
                     assertEquals(ClosedRange(9.0, 16.0), adjustedYDomain)
                 }
 
             // intersecting, wider xLim wins
-            squareCoord(xLim = ClosedRange(9.0, 16.0), yLim = ClosedRange(12.0, 14.0))
+            squareCoord_0_25(xLim = ClosedRange(9.0, 16.0), yLim = ClosedRange(12.0, 14.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
                     assertEquals(ClosedRange(9.0, 16.0), adjustedXDomain)
                     assertEquals(ClosedRange(10.375, 15.625), adjustedYDomain)
                 }
 
             // non-intersecting, wider xLim wins
-            squareCoord(xLim = ClosedRange(9.0, 16.0), yLim = ClosedRange(19.0, 22.0))
+            squareCoord_0_25(xLim = ClosedRange(9.0, 16.0), yLim = ClosedRange(19.0, 22.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
                     assertEquals(ClosedRange(9.0, 16.0), adjustedXDomain)
                     assertEquals(ClosedRange(17.875, 23.125), adjustedYDomain)
                 }
 
             // non-intersecting, wider yLim wins
-            squareCoord(xLim = ClosedRange(15.0, 16.0), yLim = ClosedRange(18.0, 22.0))
+            squareCoord_0_25(xLim = ClosedRange(15.0, 16.0), yLim = ClosedRange(18.0, 22.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
                     assertEquals(ClosedRange(12.833, 18.166), adjustedXDomain)
                     assertEquals(ClosedRange(18.0, 22.0), adjustedYDomain)
@@ -176,20 +189,25 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
         val rangeX = dataBounds.xRange()
         val rangeY = dataBounds.yRange()
 
-        tryAdjustDomains(2.0,
+        tryAdjustDomains(
+            2.0,
             PROVIDER_EQUAL_XY, rangeX,
             expand(rangeY, 2.0)
         )
-        tryAdjustDomains(0.5,
+        tryAdjustDomains(
+            0.5,
             PROVIDER_EQUAL_XY,
-            expand(rangeX, 2.0), rangeY)
+            expand(rangeX, 2.0), rangeY
+        )
 
         // stretched Y
         run {
             // two ratios compensate
             val ratio = 2.0
-            tryAdjustDomains(ratio,
-                PROVIDER_2x_Y, rangeX, rangeY)
+            tryAdjustDomains(
+                ratio,
+                PROVIDER_2x_Y, rangeX, rangeY
+            )
         }
         run {
             // two ratios multiply
@@ -198,8 +216,10 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
                 rangeX,
                 2.0 * (1 / ratio)
             )  // coord system (2) + display (2)
-            tryAdjustDomains(ratio,
-                PROVIDER_2x_Y, expectedX, rangeY)
+            tryAdjustDomains(
+                ratio,
+                PROVIDER_2x_Y, expectedX, rangeY
+            )
         }
 
         // stretched X
@@ -210,8 +230,10 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
                 rangeX,
                 2.0 * ratio
             )  // coord system (2) + display (2)
-            tryAdjustDomains(ratio,
-                PROVIDER_2x_X, rangeX, expectedY)
+            tryAdjustDomains(
+                ratio,
+                PROVIDER_2x_X, rangeX, expectedY
+            )
         }
         run {
             // two ratios multiply
@@ -220,36 +242,52 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
                 rangeX,
                 2.0 * (1 / ratio)
             ) // coord system (2) + display (2)
-            tryAdjustDomains(ratio,
-                PROVIDER_2x_Y, expectedX, rangeY)
+            tryAdjustDomains(
+                ratio,
+                PROVIDER_2x_Y, expectedX, rangeY
+            )
         }
     }
 
     @Test
     fun applyScales() {
         // Square grid fit into the display
-        tryApplyScales(2.0,
-            PROVIDER_EQUAL_XY, DoubleVector(1.0, 1.0))
-        tryApplyScales(.5,
-            PROVIDER_EQUAL_XY, DoubleVector(1.0, 1.0))
+        tryApplyScales(
+            2.0,
+            PROVIDER_EQUAL_XY, DoubleVector(1.0, 1.0)
+        )
+        tryApplyScales(
+            .5,
+            PROVIDER_EQUAL_XY, DoubleVector(1.0, 1.0)
+        )
 
-        tryApplyScales(2.0,
-            PROVIDER_2x_Y, DoubleVector(1.0, 2.0))
-        tryApplyScales(.5,
-            PROVIDER_2x_Y, DoubleVector(.5, 1.0))
+        tryApplyScales(
+            2.0,
+            PROVIDER_2x_Y, DoubleVector(1.0, 2.0)
+        )
+        tryApplyScales(
+            .5,
+            PROVIDER_2x_Y, DoubleVector(.5, 1.0)
+        )
 
-        tryApplyScales(2.0,
-            PROVIDER_2x_X, DoubleVector(1.0, .5))
-        tryApplyScales(.5,
-            PROVIDER_2x_X, DoubleVector(2.0, 1.0))
+        tryApplyScales(
+            2.0,
+            PROVIDER_2x_X, DoubleVector(1.0, .5)
+        )
+        tryApplyScales(
+            .5,
+            PROVIDER_2x_X, DoubleVector(2.0, 1.0)
+        )
     }
 
     private fun tryApplyScales(ratio: Double, provider: CoordProvider, multiplier: DoubleVector) {
         val shortSide = shortSideOfDisplay(ratio)
-        tryApplyScales(ratio, provider,
-                DoubleVector(0.0, 0.0),
-                DoubleVector(shortSide * multiplier.x, shortSide * multiplier.y),
-                DoubleVector.ZERO)
+        tryApplyScales(
+            ratio, provider,
+            DoubleVector(0.0, 0.0),
+            DoubleVector(shortSide * multiplier.x, shortSide * multiplier.y),
+            DoubleVector.ZERO
+        )
     }
 
     private fun shortSideOfDisplay(ratio: Double): Double {

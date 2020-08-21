@@ -13,9 +13,13 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.theme.LegendTheme
+import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
 internal object PlotGuidesAssemblerUtil {
-    fun mappedRenderedAesToCreateGuides(layerTiles: StitchedPlotLayers, guideOptionsMap: Map<Aes<*>, GuideOptions>): List<Aes<*>> {
+    fun mappedRenderedAesToCreateGuides(
+        layerTiles: StitchedPlotLayers,
+        guideOptionsMap: Map<Aes<*>, GuideOptions>
+    ): List<Aes<*>> {
         if (layerTiles.isLegendDisabled) {
             // ToDo: add support for
             // show_legend = True     : show all aesthetics in legend
@@ -55,7 +59,10 @@ internal object PlotGuidesAssemblerUtil {
         return result
     }
 
-    fun guideDataRangeByAes(stitchedLayers: StitchedPlotLayers, guideOptionsMap: Map<Aes<*>, GuideOptions>): Map<Aes<*>, ClosedRange<Double>> {
+    fun guideDataRangeByAes(
+        stitchedLayers: StitchedPlotLayers,
+        guideOptionsMap: Map<Aes<*>, GuideOptions>
+    ): Map<Aes<*>, ClosedRange<Double>> {
         val m = HashMap<Aes<*>, ClosedRange<Double>>()
         val aesSet =
             mappedRenderedAesToCreateGuides(
@@ -65,25 +72,29 @@ internal object PlotGuidesAssemblerUtil {
         for (aes in aesSet) {
             val binding = stitchedLayers.getBinding(aes)
             if (stitchedLayers.isNumericData(binding.variable)) {
-                val dataRange = stitchedLayers.getDataRange(binding.variable)!!
-                m[aes] = dataRange
+                val dataRange = stitchedLayers.getDataRange(binding.variable)
+                if (dataRange != null) {
+                    m[aes] = dataRange
+                }
             }
         }
 
         return m
     }
 
-    fun createColorBarAssembler(scaleName: String,
-                                aes: Aes<*>, dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
-                                scale: Scale<Color>,
-                                options: ColorBarOptions?,
-                                theme: LegendTheme): ColorBarAssembler {
+    fun createColorBarAssembler(
+        scaleName: String,
+        aes: Aes<*>, dataRangeByAes: Map<Aes<*>, ClosedRange<Double>>,
+        scale: Scale<Color>,
+        options: ColorBarOptions?,
+        theme: LegendTheme
+    ): ColorBarAssembler {
 
         val domain = dataRangeByAes[aes]
-        checkState(domain != null, "Data range is not defined for aes $aes")
+//        checkState(domain != null, "Data range is not defined for aes $aes")
         val result = ColorBarAssembler(
             scaleName,
-            domain!!,
+            ensureApplicableRange(domain),
             scale,
             theme
         )
@@ -98,6 +109,9 @@ internal object PlotGuidesAssemblerUtil {
     fun checkFitsColorBar(binding: VarBinding) {
         val aes = binding.aes
         checkState(aes.isColor, "Color-bar is not applicable to $aes aesthetic")
-        checkState(binding.scale!!.isContinuous, "Color-bar is only applicable when both domain and color palette are continuous")
+        checkState(
+            binding.scale!!.isContinuous,
+            "Color-bar is only applicable when both domain and color palette are continuous"
+        )
     }
 }

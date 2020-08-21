@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,7 +9,6 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.common.data.SeriesUtil.span
 
 /**
  * A fixed scale coordinate system forces a specified ratio between the physical representation of data units on the axes.
@@ -18,16 +17,32 @@ import jetbrains.datalore.plot.common.data.SeriesUtil.span
  * Ratios higher than one make units on the y axis longer than units on the x-axis, and vice versa.
  */
 internal open class FixedRatioCoordProvider(
-    private val myRatio: Double,
-    private val xLim: ClosedRange<Double>?,
-    private val yLim: ClosedRange<Double>?
+    private val ratio: Double,
+    xLim: ClosedRange<Double>?,
+    yLim: ClosedRange<Double>?
 ) : CoordProviderBase(xLim, yLim) {
 
-    override fun adjustDomainsImpl(
+    override fun adjustDomains(
         xDomain: ClosedRange<Double>,
         yDomain: ClosedRange<Double>,
         displaySize: DoubleVector
     ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+
+        // account for limits
+        val adjusted = super.adjustDomains(xDomain, yDomain, displaySize)
+
+        @Suppress("NAME_SHADOWING")
+        var xDomain = adjusted.first
+
+        @Suppress("NAME_SHADOWING")
+        var yDomain = adjusted.second
+
+        val spanX = SeriesUtil.span(xDomain)
+        val spanY = SeriesUtil.span(yDomain)
+        if (spanX < SeriesUtil.TINY || spanY < SeriesUtil.TINY) {
+            return Pair(xDomain, yDomain) // don't touch
+        }
+
         // fit the data into the display
         var displayW = displaySize.x
         var displayH = displaySize.y
@@ -36,65 +51,25 @@ internal open class FixedRatioCoordProvider(
         // ratio == 1 -> X-units equal Y-units
         // ratio > 1 -> Y-units are longer
         // ratio < 1 -> X-units are longer
-        if (myRatio > 1) {
-            displayW *= myRatio
+        if (ratio > 1) {
+            displayW *= ratio
         } else {
-            displayH *= 1 / myRatio
+            displayH *= 1 / ratio
         }
 
-        if (
-            listOf(xLim, yLim).all { it == null } ||
-            listOf(xLim, yLim).all { it != null }
-        ) {
-            @Suppress("NAME_SHADOWING")
-            var xDomain = xDomain
-            @Suppress("NAME_SHADOWING")
-            var yDomain = yDomain
+        val ratioX = spanX / displayW
+        val ratioY = spanY / displayH
 
-            if (listOf(xLim, yLim).all { it != null }) {
-                xDomain = xLim!!
-                yDomain = yLim!!
-            }
-
-            val spanX = span(xDomain)
-            val spanY = span(yDomain)
-            if (spanX < SeriesUtil.TINY || spanY < SeriesUtil.TINY) {
-                return Pair(xDomain, yDomain) // don't touch
-            }
-
-            val ratioX = spanX / displayW
-            val ratioY = spanY / displayH
-
-            // Take bigger ratio and apply to ortogonal domain (axis) so that
-            // ratio: (data range) / (axis length) is the same for both X and Y.
-            if (ratioX > ratioY) {
-                val spanAdjusted = displayH * ratioX
-                yDomain = SeriesUtil.expand(yDomain, spanAdjusted)
-            } else {
-                val spanAdjusted = displayW * ratioY
-                xDomain = SeriesUtil.expand(xDomain, spanAdjusted)
-            }
-
-            return Pair(xDomain, yDomain)
-        }
-
-        fun limitOrth(orig: ClosedRange<Double>, lim: ClosedRange<Double>, orth: ClosedRange<Double>):ClosedRange<Double> {
-            val origExpandRatio = span(lim) / span(orig)
-            val orthogonalExpand = span(orth) * origExpandRatio
-            return SeriesUtil.expand(orth, orthogonalExpand / 2, orthogonalExpand / 2)
-        }
-
-        if (xLim != null) {
-            val yLim = limitOrth(xDomain, xLim, yDomain)
-            val newSpan = displayH * (span(xLim) / displayW)
-            return Pair(xLim, SeriesUtil.expand(yLim, newSpan))
-
-        } else if (yLim != null) {
-            val xLim = limitOrth(yDomain, yLim, xDomain)
-            val newSpan = displayW * (span(yLim) / displayH)
-            return Pair(SeriesUtil.expand(xLim, newSpan), yLim)
+        // Take bigger ratio and apply to ortogonal domain (axis) so that
+        // ratio: (data range) / (axis length) is the same for both X and Y.
+        if (ratioX > ratioY) {
+            val spanAdjusted = displayH * ratioX
+            yDomain = SeriesUtil.expand(yDomain, spanAdjusted)
         } else {
-            error("xLim and yLim are null - missed branch earlier?")
+            val spanAdjusted = displayW * ratioY
+            xDomain = SeriesUtil.expand(xDomain, spanAdjusted)
         }
+
+        return Pair(xDomain, yDomain)
     }
 }

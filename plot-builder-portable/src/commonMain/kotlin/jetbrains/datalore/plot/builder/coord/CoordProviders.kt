@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.plot.builder.coord.map.MercatorProjectionX
 import jetbrains.datalore.plot.builder.coord.map.MercatorProjectionY
 
 object CoordProviders {
@@ -25,8 +26,9 @@ object CoordProviders {
         xLim: ClosedRange<Double>? = null,
         yLim: ClosedRange<Double>? = null
     ): CoordProvider {
-        // Mercator projection is cylindrical thus we don't really need 'projection X'
-        return ProjectionCoordProvider.withProjectionY(
+        // Only Mercator so far.
+        return ProjectionCoordProvider(
+            MercatorProjectionX(),
             MercatorProjectionY(),
             xLim,
             yLim

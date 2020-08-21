@@ -106,6 +106,8 @@ class RegionsBuilder:
                  request: request_types = None,
                  scope: scope_types = None,
                  highlights: bool = False,
+                 progress_callback = None,
+                 chunk_size = None
                  ):
 
         self._level: Optional[LevelKind] = _to_level_kind(level)
@@ -113,6 +115,8 @@ class RegionsBuilder:
         self._default_ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty()
         self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver)
         self._highlights: bool = highlights
+        self._on_progress = progress_callback
+        self._chunk_size = chunk_size
 
     def drop_not_found(self) -> 'RegionsBuilder':
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_missing)
@@ -124,6 +128,11 @@ class RegionsBuilder:
 
     def allow_ambiguous(self) -> 'RegionsBuilder':
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.take_namesakes)
+        return self
+
+    def chunk_request(self, on_progress=None, chunk_size=40):
+        self._chunk_size = chunk_size
+        self._on_progress = on_progress
         return self
 
     def where(self,
@@ -190,7 +199,11 @@ class RegionsBuilder:
             .set_namesake_limit(NAMESAKE_MAX_COUNT) \
             .build()
 
-        response: Response = GeocodingService().do_request(request)
+        # Too many queries - can fail with timeout. Chunk queries.
+        if len(self._get_queries()) > 100 and self._chunk_size is None:
+            self.chunk_request(self._on_progress, 40)
+
+        response: Response = GeocodingService().do_request(request, self._chunk_size, self._on_progress)
 
         if not isinstance(response, SuccessResponse):
             _raise_exception(response)

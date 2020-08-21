@@ -7,9 +7,13 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.XYPlotLayoutUtil.maxTickLabelsBounds
 
-internal class XYPlotTileLayout(private val myXAxisLayout: AxisLayout, private val myYAxisLayout: AxisLayout) : TileLayoutBase() {
+internal class XYPlotTileLayout(
+    private val myXAxisLayout: AxisLayout,
+    private val myYAxisLayout: AxisLayout
+) : TileLayoutBase() {
 
     override fun doLayout(preferredSize: DoubleVector): TileLayoutInfo {
         var xAxisThickness = myXAxisLayout.initialThickness()
@@ -31,7 +35,12 @@ internal class XYPlotTileLayout(private val myXAxisLayout: AxisLayout, private v
             run {
                 val axisLength = geomBounds.dimension.x
                 val stretch = axisLength * AXIS_STRETCH_RATIO
-                val maxTickLabelsBounds = maxTickLabelsBounds(jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM, stretch, geomBounds, preferredSize)
+                val maxTickLabelsBounds = maxTickLabelsBounds(
+                    Orientation.BOTTOM,
+                    stretch,
+                    geomBounds,
+                    preferredSize
+                )
                 xAxisInfo = myXAxisLayout.doLayout(geomBounds.dimension, maxTickLabelsBounds)
                 val axisThicknessNew = xAxisInfo!!.axisBounds().dimension.y
                 if (axisThicknessNew > xAxisThickness) {
@@ -64,23 +73,36 @@ internal class XYPlotTileLayout(private val myXAxisLayout: AxisLayout, private v
 
         // X-axis labels bounds may exceed axis length - adjust
         run {
-            val maxTickLabelsBounds = maxTickLabelsBounds(jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM, 0.0, geomBounds, preferredSize)
+            val maxTickLabelsBounds = maxTickLabelsBounds(
+                Orientation.BOTTOM,
+                0.0,
+                geomBounds,
+                preferredSize
+            )
             val tickLabelsBounds = xAxisInfo!!.tickLabelsBounds
             val leftOverflow = maxTickLabelsBounds.left - tickLabelsBounds!!.origin.x
             val rightOverflow = tickLabelsBounds.origin.x + tickLabelsBounds.dimension.x - maxTickLabelsBounds.right
             if (leftOverflow > 0) {
                 geomBounds = DoubleRectangle(
-                        geomBounds.origin.x + leftOverflow, geomBounds.origin.y, geomBounds.dimension.x - leftOverflow, geomBounds.dimension.y
+                    geomBounds.origin.x + leftOverflow,
+                    geomBounds.origin.y,
+                    geomBounds.dimension.x - leftOverflow,
+                    geomBounds.dimension.y
                 )
             }
             if (rightOverflow > 0) {
-                geomBounds = DoubleRectangle(geomBounds.origin.x, geomBounds.origin.y, geomBounds.dimension.x - rightOverflow, geomBounds.dimension.y)
+                geomBounds = DoubleRectangle(
+                    geomBounds.origin.x,
+                    geomBounds.origin.y,
+                    geomBounds.dimension.x - rightOverflow,
+                    geomBounds.dimension.y
+                )
             }
         }
 
-        geomBounds = geomBounds.union(DoubleRectangle(geomBounds.origin,
-            GEOM_MIN_SIZE
-        ))
+        geomBounds = geomBounds.union(
+            DoubleRectangle(geomBounds.origin, GEOM_MIN_SIZE)
+        )
 
         // Combine geom area and x/y axis
         val geomWithAxisBounds =
@@ -104,19 +126,24 @@ internal class XYPlotTileLayout(private val myXAxisLayout: AxisLayout, private v
     }
 
     companion object {
-        private val AXIS_STRETCH_RATIO = 0.1  // allow 10% axis flexibility (on each end)
+        private const val AXIS_STRETCH_RATIO = 0.1  // allow 10% axis flexibility (on each end)
 
-        private fun tileBounds(xAxisBounds: DoubleRectangle, yAxisBounds: DoubleRectangle, geomBounds: DoubleRectangle): DoubleRectangle {
+        private fun tileBounds(
+            xAxisBounds: DoubleRectangle,
+            yAxisBounds: DoubleRectangle,
+            geomBounds: DoubleRectangle
+        ): DoubleRectangle {
             // Can't just union bounds because
             // x-axis has zero origin
             // y-axis has negative origin
             val leftTop = DoubleVector(
-                    geomBounds.left - yAxisBounds.width,
-                    geomBounds.top - GEOM_MARGIN
+                geomBounds.left - yAxisBounds.width,
+                geomBounds.top - GEOM_MARGIN
             )
             val rightBottom = DoubleVector(
-                    geomBounds.right + GEOM_MARGIN,
-                    geomBounds.bottom + xAxisBounds.height)
+                geomBounds.right + GEOM_MARGIN,
+                geomBounds.bottom + xAxisBounds.height
+            )
             return DoubleRectangle(leftTop, rightBottom.subtract(leftTop))
         }
     }

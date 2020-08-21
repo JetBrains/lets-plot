@@ -79,23 +79,51 @@ class Regions(CanToDataFrame):
         resolution: [str | int | None]
             Boundaries resolution.
 
-            str: ['city', 'county', 'state', 'country', 'world']
-                Kind of area expected to be displayed. It highly depends on number of objects - for one state objcet 'state'
-                resolution can be used, but for 50 states it is better to use 'country', like you see whole country.
-                'city' is for max details, 'world' is for max performance.
-                It is allowed to use any kind of resolutin for any regions, i.e. 'city' for state to see more detailed
-                boundary (when need to show zoomed part), or 'world' (when used for small preview).
-
             int: [1-15]
-                15 - maximum quality, 1 - minimum:
-                 - 1-3 for world view
-                 - 4-6 for countries view
-                 - 7-9 for states view
-                 - 10-12 for counties view
-                 - 13-15 for cities view
+            15 - maximum quality, 1 - maximum performance:
+            1-3 for world scale view
+            4-6 for country scale view
+            7-9 for state scale view
+            10-12 for county scale view
+            13-15 for city scale view
+
+            str: ['world', 'country', 'state', 'county', 'city']
+            'city' - maximum quality, 'world'  - maximum performance.
+            Corresponding numeric resolutions:
+            'world' - 2
+            'country' - 5
+            'state' - 8
+            'county' - 11
+            'city' - 14
+
+            Kind of area expected to be displayed. Resolution depends on a number of objects - single state is a 'state'
+            scale view, while 50 states is a 'country' scale view.
+            It is allowed to use any kind of resolutin for any regions, i.e. 'city' for state to see more detailed
+            boundary (when need to show zoomed part), or 'world' (when used for small preview).
 
             None:
-                Autodetection. It uses level_kind and number of objects to try to balance quality and performance.
+            Autodetection. Uses level_kind that was used for geocoding this regions object and number of objects in it.
+            Prefers performance over qulity. It's expected to get pixelated geometries with autodetection.
+            Use explicit resolution for better quality.
+
+            Resolution for countries:
+            If n < 3 => 3
+            else => 1
+
+            Resolution for states:
+            If n < 3 => 7
+            If n < 10 => 4
+            else => 2
+
+            Resolution for counties:
+            If n < 5 => 10
+            If n < 20 => 8
+            else => 3
+
+            Resolution for cities:
+            If n < 5 => 13
+            If n < 50 => 4
+            else => 3
         """
         from lets_plot.geo_data.to_geo_data_frame import BoundariesGeoDataFrame
 
@@ -346,34 +374,32 @@ def _coerce_resolution(res: int) -> int:
 
 
 def _autodetect_resolution(level: LevelKind, count: int) -> Resolution:
-    if level == LevelKind.city:
+    if level == LevelKind.country:
+        if count < 3:
+            return Resolution.world_high
+        else:
+            return Resolution.world_low
+
+    if level == LevelKind.state:
+        if count < 3:
+            return Resolution.state_low
         if count < 10:
-            return Resolution.city_medium
-        elif count < 100:
-            return Resolution.country_medium
+            return Resolution.country_low
         else:
             return Resolution.world_medium
 
     if level == LevelKind.county:
-        if count < 10:
-            return Resolution.county_medium
-        elif count < 100:
+        if count < 5:
+            return Resolution.county_low
+        elif count < 20:
             return Resolution.state_medium
         else:
-            return Resolution.country_medium
+            return Resolution.world_high
 
-    if level == LevelKind.state:
-        if count < 10:
-            return Resolution.state_medium
-        if count < 50:
-            return Resolution.country_medium
+    if level == LevelKind.city:
+        if count < 5:
+            return Resolution.city_low
+        elif count < 50:
+            return Resolution.country_low
         else:
-            return Resolution.world_medium
-
-    if level == LevelKind.country:
-        if count < 3:
-            return Resolution.country_medium
-        elif count < 10:
-            return Resolution.country_medium
-        else:
-            return Resolution.world_medium
+            return Resolution.world_high

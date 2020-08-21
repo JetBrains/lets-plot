@@ -25,7 +25,8 @@
     </tr>
 </table>
 
-- [Implementation Overview](#overview)
+
+- [Overview](#overview)
 - [Installation](#inst)
 - [Quick start with Jupyter](#start)
 - [Examples](#examples)
@@ -33,7 +34,7 @@
     - [GeoPandas support](#geopandas)
     - [Interactive Maps](#livemap)
     - [Nonstandard plotting functions](#nonstandard)
-    - [GGBanch](#ggbanch)
+    - [GGBanch](#ggbunch)
     - [Data sampling](#sampling)
     - [Cloud-based notebooks](#cloud_based)
     - [Interesting demos](#interesting)
@@ -42,23 +43,29 @@
 - [Offline mode](#offline)
 - [Scientific mode in IntelliJ IDEA / PyCharm](#pycharm)
 - [What is new in 1.5.0](#new)
+- [Change log](#change_log)
+- [License](#license)
 
-<a name="Implementation Overview" id="overview"></a>
-## Implementation Overview
+<a id="overview"></a>
+## Overview
 
-The Lets-Plot python extension includes native backend and a Python API, which was mostly based on the [`ggplot2`](https://ggplot2.tidyverse.org/) package well-known to data scientists who use R.
+The `Lets-Plot for Python` library includes a native backend and a Python API, which was mostly based on the [`ggplot2`](https://ggplot2.tidyverse.org/) package well-known to data scientists who use R.
 
 R `ggplot2` has extensive documentation and a multitude of examples and therefore is an excellent resource for those who want to learn the grammar of graphics. 
 
 Note that the Python API being very similar yet is different in detail from R. Although we have not implemented the entire ggplot2 API in our Python package, we have added a few [new features](#nonstandard) to our Python API.
 
-You can try the Lets-Plot library in [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/). Lets-Plot is available in Datalore out-of-the-box and is almost identical to the one we ship as PyPI package. This is because Lets-Plot is an offshoot of the Datalore project from which it was extracted to a separate plotting library.
+You can try the Lets-Plot library in [Datalore](https://datalore.jetbrains.com). 
+Lets-Plot is available in Datalore out-of-the-box (i.e. you can ignore the [Installation](#inst) chapter below). 
 
-One important difference is that the python package in Datalore is named **datalore.plot** and the package you install from PyPI has name **lets_plot**.
+The advantage of [Datalore](https://datalore.jetbrains.com) as a learning tool in comparison to Jupyter is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
 
-The advantage of [Datalore](https://blog.jetbrains.com/blog/2018/10/17/datalore-1-0-intelligent-web-application-for-data-analysis/) as a learning tool in comparison to Jupyter is that it is equipped with very friendly Python editor which comes with auto-completion, intentions, and other useful coding assistance features.
+Begin with the [quickstart in Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP) notebook to learn more about Datalore notebooks. 
 
-<a name="Installation" id="inst"></a>
+Watch the [Datalore Getting Started Tutorial](https://youtu.be/MjvFQxqNSe0) video for a quick introduction to Datalore.   
+
+
+<a id="inst"></a>
 ## Installation
 
 #### 1. For Linux and Mac users:
@@ -76,7 +83,7 @@ Install the Lets-Plot library:
 pip install lets-plot
 ```
 
-<a name="Quick start with Jupyter" id="start"></a>
+<a id="start"></a>
 ## Quick start with Jupyter
 
 To evaluate the plotting capabilities of Lets-Plot, add the following code to a Jupyter notebook:
@@ -104,13 +111,12 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <br>
 <br>
 
-<a name="Examples" id="examples"></a>
+<a id="examples"></a>
 ## Example Notebooks
-
 
 Try the following examples to study more features of the `Lets-Plot` library.
 
-<a name="Quickstart" id="quickstart"></a>
+<a id="quickstart"></a>
 ### Quickstart and more
 
 * Quickstart in Jupyter: [quickstart.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb)
@@ -143,7 +149,7 @@ Try the following examples to study more features of the `Lets-Plot` library.
 [legend_and_axis.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/legend_and_axis.ipynb)
   
   
-<a name="GeoPandas" id="geopandas"></a>
+<a id="geopandas"></a>
 ### GeoDataFrame support ([Shapely](https://pypi.org/project/Shapely/) and [GeoPandas](https://geopandas.org)). 
   
 GeoPandas `GeoDataFrame` is supported by the following geometry layers: `geom_polygon`, `geom_map`, `geom_point`, `geom_text`, `geom_rect`.
@@ -167,7 +173,7 @@ The basemap layer is created by the `geom livemap` geom which in addition can al
 [Learn more](https://github.com/JetBrains/lets-plot/blob/master/docs/interactive_maps.md) about interactive maps support in Lets-Plot. 
 
   
-<a name="Nonstandard plotting functions" id="nonstandard"></a>
+<a id="nonstandard"></a>
 ### Nonstandard plotting functions  
   
 The following features of `Lets-Plot` are not available or have different implementation in other `Grammar of Graphics` libraries.
@@ -191,8 +197,8 @@ The following features of `Lets-Plot` are not available or have different implem
 
     Example: [image_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/image_matrix.ipynb)
 
-<a name="GGBanch" id="ggbanch"></a>
-### GGBanch
+<a id="ggbunch"></a>
+### GGBunch
 
 GGBunch allows to show a collection of plots on one figure. Each plot in the collection can have arbitrary location and size. There is no automatic layout inside the bunch.
 
@@ -202,7 +208,7 @@ Examples:
 * [scatter_matrix.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/scatter_matrix.ipynb)
 
 
-<a name="Data sampling" id="sampling"></a>
+<a id="sampling"></a>
 ### Data sampling 
 
 Sampling is a special technique of data transformation, which helps dealing with large datasets and overplotting.
@@ -210,17 +216,17 @@ Sampling is a special technique of data transformation, which helps dealing with
 [Learn more](https://github.com/JetBrains/lets-plot/blob/master/docs/sampling.md) about sampling in Lets-Plot. 
   
 
-<a name="Cloud-based notebooks" id="cloud_based"></a>
+<a id="cloud_based"></a>
 ### Cloud-based notebooks
 
 Examples:
 
-* [Google Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-)
+* [Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP)
 * [Kaggle](https://www.kaggle.com/alshan/lets-plot-quickstart)
-* [JetBrains Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP)
+* [Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-)
   
 
-<a name="Interesting demos" id="interesting"></a>
+<a id="interesting"></a>
 ### Interesting demos
 
 A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-examples/blob/master/README.md) using `Lets-Plot` library for visualization.    
@@ -228,7 +234,7 @@ A set of [interesting notebooks](https://github.com/denisvstepanov/lets-plot-exa
 <br>
   
 
-<a name="SVG/HTML export to file" id="export"></a>
+<a id="export"></a>
 ## SVG/HTML export to file
 
 `export_svg` function takes plot specification and filename as parameters and saves SVG representation of the plot to
@@ -263,7 +269,7 @@ export_html(p, "p.htm")
 Example notebook: [export_SVG_HTML](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/export_SVG_HTML.ipynb)
  
   
-<a name="Offline mode" id="offline"></a>
+<a id="offline"></a>
 ## Offline mode
 
 In classic Jupyter notebook the `LetsPlot.setup_html()` statement by default pre-loads `Lets-Plot` JS library from CDN. 
@@ -276,7 +282,7 @@ LetsPlot.setup_html(offline=True)
 ```
  
   
-<a name="Scientific mode in PyCharm" id="pycharm"></a>
+<a id="pycharm"></a>
 ## Scientific mode in IntelliJ IDEA / PyCharm
 
 [![JetBrains Plugins](https://img.shields.io/jetbrains/plugin/v/14379-lets-plot-in-sciview.svg)](http://plugins.jetbrains.com/plugin/14379-lets-plot-in-sciview)
@@ -294,7 +300,7 @@ To learn more about the plugin check: [Lets-Plot in SciView plugin homepage](htt
 <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/pycharm_logo.png" alt="Couldn't load pycharm_logo.png" width="50" height="50"/>
 </div>
 
-<a name="What is new" id="new"></a>
+<a id="new"></a>
 ## What is new in 1.5.0
 
 ### Geocoding API
@@ -374,11 +380,13 @@ Examples:
 * [map_titanic.ipynb](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/map_titanic.ipynb)
  
 
+<a id="change_log"></a>
 ## Change Log
 
 See [Lets-Plot at Github](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md).
 
 
+<a id="license"></a>
 ## License
 
 Code and documentation released under the [MIT license](https://github.com/JetBrains/lets-plot/blob/master/LICENSE).

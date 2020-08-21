@@ -8,6 +8,6 @@ package jetbrains.datalore.plot.builder.coord
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
 
 internal class CartesianCoordProvider(
-    private val xLim: ClosedRange<Double>?,
-    private val yLim: ClosedRange<Double>?
+    xLim: ClosedRange<Double>?,
+    yLim: ClosedRange<Double>?
 ) : CoordProviderBase(xLim, yLim)

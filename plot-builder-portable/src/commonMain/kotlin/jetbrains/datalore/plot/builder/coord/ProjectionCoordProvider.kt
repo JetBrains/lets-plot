@@ -6,19 +6,65 @@
 package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Pair
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.coord.Projection
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.layout.axis.GuideBreaks
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-internal class ProjectionCoordProvider private constructor(
-    private val myProjectionX: Projection?,
-    private val myProjectionY: Projection?,
+internal class ProjectionCoordProvider(
+    private val projectionX: Projection,
+    private val projectionY: Projection,
     xLim: ClosedRange<Double>?,
     yLim: ClosedRange<Double>?
-)// square grid
-    : FixedRatioCoordProvider(1.0, xLim, yLim) {
+) : CoordProviderBase(xLim, yLim) {
+
+    override fun adjustDomains(
+        xDomain: ClosedRange<Double>,
+        yDomain: ClosedRange<Double>,
+        displaySize: DoubleVector
+    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+
+        // account for limits
+        val adjusted = super.adjustDomains(xDomain, yDomain, displaySize)
+
+        @Suppress("NAME_SHADOWING")
+        val xDomain = projectionX.toValidDomain(adjusted.first)
+
+        @Suppress("NAME_SHADOWING")
+        val yDomain = projectionY.toValidDomain(adjusted.second)
+
+        // compute projected ratio
+        val spanX = SeriesUtil.span(xDomain)
+        val spanY = SeriesUtil.span(yDomain)
+        val domainSquare: Pair<ClosedRange<Double>, ClosedRange<Double>> =
+            if (spanX > spanY) {
+                val center = xDomain.lowerEnd + spanX / 2
+                val halfSpan = spanY / 2
+                Pair(
+                    ClosedRange(center - halfSpan, center + halfSpan),
+                    yDomain
+                )
+            } else {
+                val center = yDomain.lowerEnd + spanY / 2
+                val halfSpan = spanX / 2
+                Pair(
+                    xDomain,
+                    ClosedRange(center - halfSpan, center + halfSpan)
+                )
+            }
+
+        val projectedXMin = projectionX.apply(domainSquare.first.lowerEnd)
+        val projectedXMax = projectionX.apply(domainSquare.first.upperEnd)
+        val projectedYMin = projectionY.apply(domainSquare.second.lowerEnd)
+        val projectedYMax = projectionY.apply(domainSquare.second.upperEnd)
+
+        val ratio = (projectedYMax - projectedYMin) / (projectedXMax - projectedXMin)
+        val fixedCoord = FixedRatioCoordProvider(ratio, null, null)
+        return fixedCoord.adjustDomains(xDomain, yDomain, displaySize)
+    }
 
     override fun buildAxisScaleX(
         scaleProto: Scale<Double>,
@@ -26,15 +72,17 @@ internal class ProjectionCoordProvider private constructor(
         axisLength: Double,
         breaks: GuideBreaks
     ): Scale<Double> {
-        return if (myProjectionX != null) {
+        return if (projectionX.nonlinear) {
             buildAxisScaleWithProjection(
-                myProjectionX,
+                projectionX,
                 scaleProto,
                 domain,
                 axisLength,
                 breaks
             )
-        } else super.buildAxisScaleX(scaleProto, domain, axisLength, breaks)
+        } else {
+            super.buildAxisScaleX(scaleProto, domain, axisLength, breaks)
+        }
     }
 
     override fun buildAxisScaleY(
@@ -43,34 +91,25 @@ internal class ProjectionCoordProvider private constructor(
         axisLength: Double,
         breaks: GuideBreaks
     ): Scale<Double> {
-        return if (myProjectionY != null) {
+        return if (projectionY.nonlinear) {
             buildAxisScaleWithProjection(
-                myProjectionY,
+                projectionY,
                 scaleProto,
                 domain,
                 axisLength,
                 breaks
             )
-        } else super.buildAxisScaleY(scaleProto, domain, axisLength, breaks)
+        } else {
+            super.buildAxisScaleY(scaleProto, domain, axisLength, breaks)
+        }
     }
 
     companion object {
-        fun withProjectionY(
-            projectionY: Projection,
-            xLim: ClosedRange<Double>?,
-            yLim: ClosedRange<Double>?
-        ): CoordProvider {
-            return ProjectionCoordProvider(
-                null,
-                projectionY,
-                xLim,
-                yLim
-            )
-        }
-
         private fun buildAxisScaleWithProjection(
             projection: Projection, scaleProto: Scale<Double>,
-            domain: ClosedRange<Double>, axisLength: Double, breaks: GuideBreaks
+            domain: ClosedRange<Double>,
+            axisLength: Double,
+            breaks: GuideBreaks
         ): Scale<Double> {
 
             val validDomain = projection.toValidDomain(domain)
@@ -81,22 +120,19 @@ internal class ProjectionCoordProvider private constructor(
 
             val projectionInverse = Mappers.linear(validDomainProjected, validDomain)
 
-            val linearMapper =
-                axisMapper(
-                    domain,
-                    axisLength
-                )
-            val scaleMapper =
-                twistScaleMapper(
-                    projection,
-                    projectionInverse,
-                    linearMapper
-                )
-            val validBreaks =
-                validateBreaks(
-                    validDomain,
-                    breaks
-                )
+            val linearMapper = linearMapper(
+                domain,
+                axisLength
+            )
+            val scaleMapper = twistScaleMapper(
+                projection,
+                projectionInverse,
+                linearMapper
+            )
+            val validBreaks = validateBreaks(
+                validDomain,
+                breaks
+            )
             return buildAxisScaleDefault(
                 scaleProto,
                 scaleMapper,
@@ -133,9 +169,11 @@ internal class ProjectionCoordProvider private constructor(
             scaleMapper: (Double?) -> Double?
         ): (Double?) -> Double? {
             return { v ->
-                val projected = projection.apply(v!!)
-                val unProjected = projectionInverse(projected)
-                scaleMapper(unProjected)
+                v?.run {
+                    val projected = projection.apply(v)
+                    val unProjected = projectionInverse(projected)
+                    scaleMapper(unProjected)
+                }
             }
         }
     }
