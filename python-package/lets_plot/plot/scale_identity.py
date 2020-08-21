@@ -17,7 +17,7 @@ __all__ = ['scale_color_identity',
            ]
 
 
-def scale_color_identity(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide='none'):
+def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -34,8 +34,6 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, expan
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
     guide :
         Guide to use for this scale. Defaults to "none".
 
@@ -60,10 +58,10 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, expan
     >>> dat = pd.DataFrame({'x': x, 'y': y, 'c': c})
     >>> ggplot(dat, aes('x', 'y', color='c')) + geom_point(size=15) + scale_color_identity()
     """
-    return _scale('color', name, breaks, labels, limits, expand, na_value, guide, None, scale_mapper_kind='identity')
+    return _scale('color', name, breaks, labels, limits, None, na_value, guide, None, scale_mapper_kind='identity')
 
 
-def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide='none'):
+def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -80,8 +78,6 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, expand
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
     guide :
         Guide to use for this scale. Defaults to "none".
 
@@ -106,10 +102,10 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, expand
     >>> dat = pd.DataFrame({'x': x, 'y': y, 'c': c})
     >>> ggplot(dat, aes('x', 'y', fill='c')) + geom_tile() + scale_fill_identity()
     """
-    return _scale('fill', name, breaks, labels, limits, expand, na_value, guide, None, scale_mapper_kind='identity')
+    return _scale('fill', name, breaks, labels, limits, None, na_value, guide, None, scale_mapper_kind='identity')
 
 
-def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide='none'):
+def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -126,8 +122,6 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, expan
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
     guide :
         Guide to use for this scale. Defaults to "none".
 
@@ -149,10 +143,10 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, expan
     >>> dat = pd.DataFrame({'x': x, 'y': y, 's': s})
     >>> ggplot(dat, aes('x', 'y', shape='s')) + geom_point(size=5) + scale_shape_identity()
     """
-    return _scale('shape', name, breaks, labels, limits, expand, na_value, guide, None, solid=None, scale_mapper_kind='identity', discrete=True)
+    return _scale('shape', name, breaks, labels, limits, None, na_value, guide, None, solid=None, scale_mapper_kind='identity', discrete=True)
 
 
-def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide='none'):
+def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -169,8 +163,6 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, ex
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
     guide :
         Guide to use for this scale. Defaults to "none".
 
@@ -194,10 +186,11 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, ex
     >>> dat = pd.DataFrame({'x': x, 'y': y, 'xend':xend, 'l': l})
     >>> ggplot(dat, aes('x', 'y', xend='xend', yend='y', linetype='l')) + geom_segment(size=2) + scale_linetype_identity()
     """
-    return _scale('linetype', name, breaks, labels, limits, expand, na_value, guide, None, scale_mapper_kind='identity', discrete=True)
+    return _scale('linetype', name, breaks, labels, limits, None, na_value, guide, None,
+                  scale_mapper_kind='identity', discrete=True)
 
 
-def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide='none'):
+def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -214,8 +207,6 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, expan
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
     guide :
         Guide to use for this scale. Defaults to "none".
 
@@ -237,10 +228,10 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, expan
     >>> dat = pd.DataFrame({'x': x, 'y': y, 'a': a})
     >>> ggplot(dat, aes('x', 'y', alpha='a')) + geom_point(size=15) + scale_alpha_identity()
     """
-    return _scale('alpha', name, breaks, labels, limits, expand, na_value, guide, None, scale_mapper_kind='identity')
+    return _scale('alpha', name, breaks, labels, limits, None, na_value, guide, None, scale_mapper_kind='identity')
 
 
-def scale_size_identity(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide='none'):
+def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none'):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that ggplot2 can handle directly.
@@ -257,8 +248,6 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, expand
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale. and the default order of their display in guides.
-    expand :
-        A numeric vector of length two giving multiplicative and additive expansion constants.
     guide :
         Guide to use for this scale. Defaults to "none".
 
@@ -280,4 +269,4 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, expand
     >>> dat = pd.DataFrame({'x': x, 'y': y, 's': s})
     >>> ggplot(dat, aes('x', 'y', size='s')) + geom_point() + scale_size_identity()
     """
-    return _scale('size', name, breaks, labels, limits, expand, na_value, guide, None, scale_mapper_kind='identity')
+    return _scale('size', name, breaks, labels, limits, None, na_value, guide, None, scale_mapper_kind='identity')
