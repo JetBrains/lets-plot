@@ -677,7 +677,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
     """
     return _scale('size', name, breaks, labels, limits, None, na_value, guide, None, values=values)
 
-
+0
 def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None):
     """
     Create your own discrete scale for shape aesthetic
@@ -895,7 +895,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
     >>> ggplot(dat) + geom_tile(aes('x', fill='x'), width=1.05) \
     ...     + scale_fill_gradient(low='green', high='red')
     """
-    return scale_fill_continuous(low, high, name, breaks, labels, limits, None, na_value, guide, trans)
+    return scale_fill_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
 
 
 def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None,
@@ -969,7 +969,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
     >>> ggplot(dat) + geom_tile(aes('x', fill='x', color='x'), width=1.05, size=2) \
     ...     + scale_color_gradient(low='green', high='red')
     """
-    return scale_color_continuous(low, high, name, breaks, labels, limits, None, na_value, guide, trans)
+    return scale_color_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans)
 
 
 def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
@@ -1172,8 +1172,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
     ...     + scale_color_hue(c=20, l=90)
     """
     return _scale('color', name, breaks, labels, limits, None, na_value, guide, trans, h=h, c=c, l=l, h_start=h_start,
-                  direction=direction,
-                  scale_mapper_kind='color_hue')
+                  direction=direction, scale_mapper_kind='color_hue')
 
 
 def scale_fill_discrete(h=None, c=None, l=None, h_start=None, direction=None,
@@ -1216,8 +1215,7 @@ def scale_fill_discrete(h=None, c=None, l=None, h_start=None, direction=None,
     """
     # same as scale_fill_hue but always 'discrete'
     return _scale('fill', name, breaks, labels, limits, None, na_value, guide, None, h=h, c=c, l=l, h_start=h_start,
-                  direction=direction,
-                  discrete=True)
+                  direction=direction, discrete=True)
 
 
 def scale_color_discrete(h=None, c=None, l=None, h_start=None, direction=None,
@@ -1260,8 +1258,7 @@ def scale_color_discrete(h=None, c=None, l=None, h_start=None, direction=None,
     """
     # same as scale_color_hue but always 'discrete'
     return _scale('color', name, breaks, labels, limits, None, na_value, guide, None, h=h, c=c, l=l, h_start=h_start,
-                  direction=direction,
-                  discrete=True)
+                  direction=direction, discrete=True)
 
 
 def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
