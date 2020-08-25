@@ -108,13 +108,14 @@ lets\_plot.plot.sampling module
    :undoc-members:
    :show-inheritance:
 
-lets\_plot.plot.sandbox\_ module
---------------------------------
+..
+    lets\_plot.plot.sandbox\_ module
+    --------------------------------
 
-.. automodule:: lets_plot.plot.sandbox_
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    .. automodule:: lets_plot.plot.sandbox_
+       :members:
+       :undoc-members:
+       :show-inheritance:
 
 lets\_plot.plot.scale module
 ----------------------------
