@@ -49,9 +49,9 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     It doesn't support color scales either.
 
     The following images will be rendered depending on the input array:
-    N x M       - gray-scale
-    N x M x 3   - RGB
-    N x M x 4   - RGBA
+     - N x M       - gray-scale
+     - N x M x 3   - RGB
+     - N x M x 4   - RGBA
 
     The type of values in array can be int, uint or float of any size.
     The value for each component of integer arrays should be in the range [0,255].
