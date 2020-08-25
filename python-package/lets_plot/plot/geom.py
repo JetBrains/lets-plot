@@ -326,18 +326,19 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
      - ymin : lower pointwise confidence interval around the mean
      - ymax : upper pointwise confidence interval around the mean
      - se : standard error
+
     geom_smooth understands the following aesthetics mappings:
      - x : x-axis value
      - y : y-axis value
      - alpha : transparency level of a layer
-        Understands numbers between 0 and 1.
+       Understands numbers between 0 and 1.
      - color (colour) : color of a geometry
-        Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+       Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
      - linetype : type of the line of conditional mean line
-        Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
-        5 = "longdash", 6 = "twodash"
+       Codes and names: 0 = "blank", 1 = "solid", 2 = "dashed", 3 = "dotted", 4 = "dotdash",
+       5 = "longdash", 6 = "twodash"
      - size : lines width
-        Defines line width for conditional mean and confidence bounds lines.
+       Defines line width for conditional mean and confidence bounds lines.
 
     Examples
     ---------
@@ -1010,8 +1011,8 @@ def geom_contour(mapping=None, data=None, stat=None, position=None, show_legend=
     Note
     -----
     geom_contour() displays contours of a 3d surface in 2d.
-    Computed variables:
-        level : height of a contour
+        Computed variables:
+            level : height of a contour
     geom_contour understands the following aesthetics mappings:
      - x : x-axis coordinates of the center of rectangles, forming a tessellation.
      - y : y-axis coordinates of the center of rectangles, forming a tessellation.
