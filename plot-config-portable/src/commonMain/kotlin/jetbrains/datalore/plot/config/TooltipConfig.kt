@@ -25,12 +25,27 @@ class TooltipConfig(
         }
     }
 
+    fun getSourceFormatters(): List<ValueSource>? {
+        return TooltipConfigParseHelper(
+            emptyList(),
+            getMap(Option.Layer.TOOLTIP_FORMATS)
+        ).buildFormatters()
+    }
+
     private inner class TooltipConfigParseHelper(
         private val tooltipLines: List<String>,
         private val tooltipFormats: Map<*, *>
     ) {
         internal fun parse(): List<TooltipLineSpecification> {
             return tooltipLines.map(::parseLine)
+        }
+
+        internal fun buildFormatters(): List<ValueSource> {
+            return tooltipFormats.map {
+                val value = getValueSourceName(it.key as String)
+                val format = "{${it.value}}"
+                createValueSource(name = value, label = null, format = format)
+            }
         }
 
         private fun parseLine(tooltipLine: String): TooltipLineSpecification {

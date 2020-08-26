@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
+import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
@@ -50,6 +51,7 @@ class LayerConfig(
     val statKind: StatKind
     private val mySamplings: List<Sampling>?
     val tooltips: List<TooltipLineSpecification>?
+    var tooltipSourceFormatters: List<ValueSource>? = null
 
     var ownData: DataFrame? = null
         private set
@@ -134,7 +136,9 @@ class LayerConfig(
 
         // tooltip list
         tooltips = if (has(TOOLTIPS)) {
-            TooltipConfig(getMap(TOOLTIPS), constantsMap).createTooltips()
+            val tooltipConfig = TooltipConfig(getMap(TOOLTIPS), constantsMap)
+            tooltipSourceFormatters = tooltipConfig.getSourceFormatters()
+            tooltipConfig.createTooltips()
         } else {
             null
         }
