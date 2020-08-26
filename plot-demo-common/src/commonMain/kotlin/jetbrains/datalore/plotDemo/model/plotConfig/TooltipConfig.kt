@@ -16,6 +16,7 @@ class TooltipConfig : PlotConfigDemoBase() {
         return listOf(
             mpg(),
             basic(),
+            redefineDefaults(),
             tooltipAesList(),
             tooltipEmptyList()
         )
@@ -65,6 +66,35 @@ class TooltipConfig : PlotConfigDemoBase() {
         """.trimIndent()
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = AutoMpg.df
+        return plotSpec
+    }
+
+    private fun redefineDefaults(): Map<String, Any> {
+        val spec = """
+        {
+           'kind': 'plot',
+           'ggtitle': {'text' : 'Define format for default tooltips'},
+           'mapping': {
+                         'x': 'sepal length (cm)',
+                         'color': 'sepal width (cm)',
+                         'fill': 'target'
+                      },
+           'layers': [
+                        {
+                           'geom': 'area',
+                           'stat': 'density',
+                           'tooltips' : {
+                                'tooltip_formats': {
+                                    '$aesColor': '.4f'
+                                 }
+                            }
+                        }
+                     ]
+        }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
         return plotSpec
     }
 

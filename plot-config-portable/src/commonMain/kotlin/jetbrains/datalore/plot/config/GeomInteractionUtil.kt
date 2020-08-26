@@ -41,9 +41,9 @@ object GeomInteractionUtil {
             .tooltipAes(aesList)
             .tooltipOutliers(outlierAesList)
             .tooltipValueSources(createTooltipValueSourceList(layerConfig.tooltips))
+            .tooltipFormatters(layerConfig.tooltipSourceFormatters)
             .showAxisTooltip(!isLiveMap)
             .build()
-
     }
 
     private fun createGeomInteractionBuilder(
