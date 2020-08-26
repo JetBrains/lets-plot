@@ -57,11 +57,23 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
     }
 
     fun haveAesNamesInTooltips(expectedNames: List<String>): SingleLayerAssert {
-        return haveSourceNamesInTooltips(expectedNames, getAesNamesInTooltips(), "aes")
+        return haveSourceNamesInTooltips(expectedNames, getAesNamesInTooltips(), nameType = "aes")
     }
 
     fun haveVariableNamesInTooltips(expectedNames: List<String>): SingleLayerAssert {
-        return haveSourceNamesInTooltips(expectedNames, getVariableNamesInTooltips(), "variable")
+        return haveSourceNamesInTooltips(expectedNames, getVariableNamesInTooltips(), nameType = "variable")
+    }
+
+    fun haveNameWithLabelsInTooltips(expectedNameToLabels: Map<String, String>): SingleLayerAssert {
+        val actualNameToLabels = getNameToLabelsInTooltips()
+        assertEquals(expectedNameToLabels.size, actualNameToLabels.size, "Incorrect number of tooltip lines")
+        expectedNameToLabels.forEach { pair ->
+            val expectedName = pair.key
+            val expectedLabel = pair.value
+            val actualLabel = actualNameToLabels[expectedName]
+            assertEquals(expectedLabel, actualLabel, "Incorrect label for the source with name '$expectedName'")
+        }
+        return this
     }
 
     private fun haveSourceNamesInTooltips(
@@ -111,8 +123,24 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
     private fun getVariableNamesInTooltips(): List<String> {
         return myLayer.tooltips
             ?.flatMap { it.data }
-            ?.filterIsInstance<VariableValue>()?.map(VariableValue::getVariableName)
+            ?.filterIsInstance<VariableValue>()
+            ?.map(VariableValue::getVariableName)
             ?: emptyList()
+    }
+
+    private fun getNameToLabelsInTooltips(): Map<String, String> {
+        return myLayer.tooltips
+            ?.flatMap { it.data }
+            ?.filterIsInstance<MappedAes>()
+            ?.associate { it.getAesName() to it.getLabel() }
+            ?.plus(
+                myLayer.tooltips
+                    ?.flatMap { it.data }
+                    ?.filterIsInstance<VariableValue>()
+                    ?.associate { it.getVariableName() to it.getLabel() }
+                    ?: emptyMap()
+            )
+            ?: emptyMap()
     }
 
     companion object {

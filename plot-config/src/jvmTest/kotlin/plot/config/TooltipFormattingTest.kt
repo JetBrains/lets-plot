@@ -11,12 +11,15 @@ import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import jetbrains.datalore.plot.server.config.SingleLayerAssert
 import kotlin.test.Test
 
-class TooltipConfigTest {
+class TooltipFormattingTest {
 
     // Tooltip lines parsing tests
 
     @Test
     fun checkVariableNameWithSpace() {
+        // Formatting for a variable with a space in its name:
+        //  'variable name' -> ${var@variable name}
+
         val variableName = "variable name"
         val configName = configVariableName(variableName)
         configLayerWithTooltips(configTooltipLines = listOf(configName))
@@ -25,6 +28,11 @@ class TooltipConfigTest {
 
     @Test
     fun checkVariableNamesWithDollarSymbol() {
+        // Formatting variables with '$' inside names:
+        //  variable$ -> $var@variable$
+        //  $variable -> $var@$variable
+        //  vari$able -> $var@vari$able
+
         val variableNames = listOf(
             "variable$", "\$variable", "vari\$able"
         )
@@ -34,6 +42,10 @@ class TooltipConfigTest {
 
     @Test
     fun checkVariableNamesEqualToAesNames() {
+        // Variables with names which match to the names of aes:
+        //  color -> $var@color
+        //  fill  -> $var@fill
+
         val variableNames = listOf(
             Aes.COLOR.name, Aes.FILL.name
         )
@@ -44,6 +56,10 @@ class TooltipConfigTest {
 
     @Test
     fun checkAesNamesInTooltips() {
+        // Aes names are prefixed with '$':
+        //  color -> $color
+        //  fill  -> $fill
+
         val aesNames = listOf(
             Aes.COLOR.name, Aes.FILL.name
         )
@@ -54,6 +70,9 @@ class TooltipConfigTest {
 
     @Test
     fun checkBothTypeNamesInTooltips() {
+        //  color -> $color     - aes
+        //  fill  -> $var@fill  - variable name
+
         val configNames = listOf(
             configAesName(Aes.COLOR.name),
             configVariableName(Aes.FILL.name)
@@ -64,7 +83,37 @@ class TooltipConfigTest {
     }
 
     @Test
+    fun configValueSourceLabelsInTooltips() {
+        val variableNames = listOf(
+            "variable1",
+            "variable2",
+            "variable3",
+            "variable4"
+        )
+        val tooltipLines = listOf(
+            "\$var@variable1",          // no label
+            "|\$var@variable2",         // empty label (no it's the same as 'no label')
+            "@|\$var@variable3",        // default label = the variable name
+            "MyLabel|\$var@variable4"   // set value for the label
+
+        )
+        configLayerWithTooltips(configTooltipLines = tooltipLines)
+            .haveNameWithLabelsInTooltips(
+                mapOf(
+                    variableNames[0] to "",
+                    variableNames[1] to "",
+                    variableNames[2] to variableNames[2],
+                    variableNames[3] to "MyLabel"
+                )
+            )
+    }
+
+    @Test
     fun checkNamesInComplicatedTooltipLines() {
+        // Tooltips with multiple sources in the line:
+        //  $x and $y
+        //  ${var@variable name #1} '${var@variable name #2}' ($var@variable#3)
+
         val configAesX = configAesName(Aes.X.name)
         val configAesY = configAesName(Aes.Y.name)
 
@@ -76,7 +125,7 @@ class TooltipConfigTest {
         val configVarNames = variableNames.map(::configVariableName)
 
         val tooltipLines = listOf(
-            "x and y|$configAesX and $configAesY",
+            "$configAesX and $configAesY",
             "${configVarNames[0]} '${configVarNames[1]}' (${configVarNames[2]})"
         )
 
@@ -94,9 +143,9 @@ class TooltipConfigTest {
 
     @Test
     fun withEmptyTooltipList() {
-         configLayerWithTooltips(configTooltipLines = emptyList())
-             .haveAesNamesInTooltips(emptyList())
-             .haveVariableNamesInTooltips(emptyList())
+        configLayerWithTooltips(configTooltipLines = emptyList())
+            .haveAesNamesInTooltips(emptyList())
+            .haveVariableNamesInTooltips(emptyList())
     }
 
     private fun configLayerWithTooltips(configTooltipLines: List<String>?): SingleLayerAssert {
@@ -105,7 +154,9 @@ class TooltipConfigTest {
             Option.Plot.LAYERS to listOf(
                 mapOf(
                     Option.Layer.GEOM to Option.GeomName.POINT,
-                    Option.Layer.TOOLTIP_LINES to configTooltipLines
+                    Option.Layer.TOOLTIPS to mapOf(
+                        Option.Layer.TOOLTIP_LINES to configTooltipLines
+                    )
                 )
             )
         )

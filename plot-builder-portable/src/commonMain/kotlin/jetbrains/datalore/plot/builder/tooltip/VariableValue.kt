@@ -31,7 +31,7 @@ class VariableValue(
     override fun getDataPoint(index: Int): DataPoint? {
         val originalValue = myDataFrame[myVariable][index]
         return DataPoint(
-            label = label ?: name,
+            label = getLabel(),
             value = format(originalValue),
             isContinuous = myIsContinuous,
             aes = null,
@@ -48,5 +48,9 @@ class VariableValue(
 
     fun getVariableName(): String {
         return name
+    }
+
+    fun getLabel(): String {
+        return label ?: name
     }
 }
