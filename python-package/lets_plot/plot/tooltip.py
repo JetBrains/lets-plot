@@ -21,9 +21,9 @@ class layer_tooltips(FeatureSpec):
     tooltip_lines : list of string - lines to show in the tooltip
         The string describes the content of the tooltip line.
         The description can contain names of aes, variable, constant value and static text.
-        Aas names are prefixed with '$' symbol, variable names have prefix "$var@".
+        Aes names are prefixed with the '$' symbol, variable names have prefix "$var@".
         If variable name contains spaces, curly brackets are used.
-        The Label is separated with '|' symbol. The '@' symbol as label value means the default label.
+        The Label is separated with the '|' symbol. The '@' symbol as label value means the default label.
 
     tooltip_formats : map <source name> to <format>
         Specifies the format of displayed variables

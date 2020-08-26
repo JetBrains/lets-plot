@@ -44,18 +44,20 @@ class TooltipConfig : PlotConfigDemoBase() {
            'layers': [
                         {
                            'geom': 'point',
-                           'tooltip_lines': [  
-                                'x/y|$aesX x $aesY', 
-                                '$aesColor (miles per gallon)',
-                                'car \'$vehicleName\' ($originCar)',
-                                '@|19$modelYear',
-                                '@|$originCar',
-                                '#mpg data set'
-                           ],
-                           'tooltip_formats': {
-                                '$aesX': '.1f', 
-                                '$aesY': '.2f', 
-                                '$aesColor': '.2f'
+                           'tooltips' : {
+                               'tooltip_lines': [  
+                                    'x/y|$aesX x $aesY', 
+                                    '$aesColor (miles per gallon)',
+                                    'car \'$vehicleName\' ($originCar)',
+                                    '@|19$modelYear',
+                                    '@|$originCar',
+                                    '#mpg data set'
+                               ],
+                               'tooltip_formats': {
+                                    '$aesX': '.1f', 
+                                    '$aesY': '.2f', 
+                                    '$aesColor': '.2f'
+                               }
                            }
                         }
                      ]
@@ -103,12 +105,14 @@ class TooltipConfig : PlotConfigDemoBase() {
            'layers': [
                         {
                            'geom': 'area',
-                           'tooltip_lines': [  
-                                '@|$aesFill',   
-                                'length (x)|$aesX',
-                                'density (y)|$aesY',
-                                '$aesColor' 
-                            ],
+                           'tooltips' : {
+                               'tooltip_lines': [  
+                                    '@|$aesFill',   
+                                    'length (x)|$aesX',
+                                    'density (y)|$aesY',
+                                    '$aesColor' 
+                                ]
+                           },
                            'stat': 'density'
                         }
                      ]
@@ -134,7 +138,7 @@ class TooltipConfig : PlotConfigDemoBase() {
                         {
                            'geom': { 
                                'name': 'area',
-                               'tooltip_lines': []
+                               'tooltips' : { 'tooltip_lines': [] }
                             },
                            'stat': 'density'
                         }

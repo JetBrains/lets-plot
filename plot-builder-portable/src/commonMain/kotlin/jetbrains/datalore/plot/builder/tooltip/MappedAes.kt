@@ -49,7 +49,7 @@ class MappedAes(
         } else {
             val mappedDataValue = myDataAccess.getMappedData(aes, index).value
             DataPoint(
-                label = label ?: myDataLabel,
+                label = getLabel(),
                 value = myFormatter.format(mappedDataValue, myIsContinuous),
                 isContinuous = myIsContinuous,
                 aes = aes,
@@ -57,6 +57,10 @@ class MappedAes(
                 isOutlier = isOutlier
             )
         }
+    }
+
+    fun getLabel(): String {
+        return label ?: myDataLabel
     }
 
     /* For tests only */
