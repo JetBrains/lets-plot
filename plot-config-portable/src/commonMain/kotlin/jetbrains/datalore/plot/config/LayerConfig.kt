@@ -24,6 +24,7 @@ import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
+import jetbrains.datalore.plot.config.Option.Layer.NONE
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
@@ -136,9 +137,20 @@ class LayerConfig(
 
         // tooltip list
         tooltips = if (has(TOOLTIPS)) {
-            val tooltipConfig = TooltipConfig(getMap(TOOLTIPS), constantsMap)
-            tooltipSourceFormatters = tooltipConfig.getSourceFormatters()
-            tooltipConfig.createTooltips()
+            when (get(TOOLTIPS)) {
+                is Map<*, *> -> {
+                    val tooltipConfigParser = TooltipConfig(getMap(TOOLTIPS), constantsMap)
+                    tooltipSourceFormatters = tooltipConfigParser.getSourceFormatters()
+                    tooltipConfigParser.createTooltips()
+                }
+                NONE -> {
+                    // reset tooltips
+                    emptyList()
+                }
+                else -> {
+                    error("Incorrect tooltips specification")
+                }
+            }
         } else {
             null
         }

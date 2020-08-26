@@ -28,6 +28,8 @@ class layer_tooltips(FeatureSpec):
     tooltip_formats : map <source name> to <format>
         Specifies the format of displayed variables
 
+    Use "none" to reset tooltips.
+
     Returns
     -------
         layer tooltips specification

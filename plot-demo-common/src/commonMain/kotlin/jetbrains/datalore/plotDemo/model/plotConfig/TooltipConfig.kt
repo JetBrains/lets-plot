@@ -158,7 +158,7 @@ class TooltipConfig : PlotConfigDemoBase() {
         val spec = """
         {
            'kind': 'plot',
-           'ggtitle': {'text' : 'Tooltip list = []'},
+           'ggtitle': {'text' : 'No tooltips'},
            'mapping': {
                          'x': 'sepal length (cm)',
                          'color': 'sepal width (cm)',
@@ -168,7 +168,7 @@ class TooltipConfig : PlotConfigDemoBase() {
                         {
                            'geom': { 
                                'name': 'area',
-                               'tooltips' : { 'tooltip_lines': [] }
+                               'tooltips': 'none'
                             },
                            'stat': 'density'
                         }
