@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -40,6 +41,9 @@ class TooltipConfigTest {
         )
         val lines = getGeneralTooltipLines(geomLayer)
         assertTooltipLines(expectedLines, lines)
+
+        val axisTooltips = getAxisTooltips(geomLayer)
+        assertEquals(2, axisTooltips.size, "Wrong number of axis tooltips")
     }
 
     @Test
@@ -48,40 +52,42 @@ class TooltipConfigTest {
 
         val lines = getGeneralTooltipLines(geomLayer)
         assertTooltipLines(emptyList(), lines)
+
+        val axisTooltips = getAxisTooltips(geomLayer)
+        assertEquals(0, axisTooltips.size, "Wrong number of axis tooltips")
     }
 
     @Test
     fun useNamesToConfigTooltipLines() {
         val myData = data + mapOf(
-            "shape" to listOf("var shape value"),
-            "variable$" to listOf("variable\$ value"),
-            "\$variable" to listOf("\$variable value"),
-            "vari\$able" to listOf("vari\$able value")
+            "shape" to listOf("shape"),
+            "foo$" to listOf("foo"),
+            "\$bar" to listOf("bar"),
+            "foo\$bar" to listOf("foobar")
         )
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
-                "\$shape",                 // aes
-                "\$var@shape",             // variable with name that match to the name of aes
-                "\${var@model name}",      // space in the name
-                "\$var@variable$",         // with '$' at the end
-                "\$var@\$variable",        // with '$' at the beginning
-                "\$var@vari\$able"         // with '$' at the middle
+                "\$shape",              // aes
+                "\$var@shape",          // variable with name that match to the name of aes
+                "\${var@model name}",   // space in the name
+                "\$var@foo$",           // with '$' at the end
+                "\$var@\$bar",          // with '$' at the beginning
+                "\$var@foo\$bar"        // with '$' at the middle
             )
         )
         val geomLayer = buildGeomPointLayer(myData, mapping, tooltips = tooltipConfig)
 
         val expectedLines = listOf(
             "suv",
-            "var shape value",
+            "shape",
             "dodge",
-            "variable\$ value",
-            "\$variable value",
-            "vari\$able value"
+            "foo",
+            "bar",
+            "foobar"
         )
         val lines = getGeneralTooltipLines(geomLayer)
         assertTooltipLines(expectedLines, lines)
     }
-
 
     @Test
     fun changeFormatForTheDefault() {
@@ -149,6 +155,78 @@ class TooltipConfigTest {
         assertTooltipLines(expectedLines, lines)
     }
 
+    // Outliers
+    private val boxPlotData = mapOf(
+        "x" to List(6) { 'A' },
+        "y" to listOf(4.2, 11.5, 7.3, 5.8, 6.4, 10.0)
+    )
+
+    @Test
+    fun defaultOutlierTooltips() {
+        val geomLayer = buildGeomLayer(
+            geom = "boxplot",
+            data = boxPlotData,
+            mapping = mapOf(
+                Aes.X.name to "x",
+                Aes.Y.name to "y"
+            ),
+            tooltips = null
+        )
+        val expectedLines = mapOf(
+            Aes.YMAX to "y max: 11.50",
+            Aes.UPPER to "upper: 8.65",
+            Aes.MIDDLE to "middle: 6.85",
+            Aes.LOWER to "lower: 6.10",
+            Aes.YMIN to "y min: 4.20"
+        )
+        val lines = getOutlierLines(geomLayer)
+
+        assertEquals(expectedLines.size, lines.size, "Wrong number of outlier tooltips")
+        for (aes in lines.keys) {
+            assertEquals(expectedLines[aes], lines[aes], "Wrong line for ${aes.name} in the outliers")
+        }
+    }
+
+    @Test
+    fun configOutlierTooltips() {
+        val tooltipConfig = mapOf(
+            Option.Layer.TOOLTIP_LINES to listOf(
+                "min|\$ymin",
+                "\$middle",
+                "max|\$ymax"
+            ),
+            Option.Layer.TOOLTIP_FORMATS to mapOf(
+                "\$ymin" to ".1f",
+                "\$middle" to ".4f",
+                "\$ymax" to ".1f"
+            )
+        )
+
+        val geomLayer = buildGeomLayer(
+            geom = "boxplot",
+            data = boxPlotData,
+            mapping = mapOf(
+                Aes.X.name to "x",
+                Aes.Y.name to "y"
+            ),
+            tooltips = tooltipConfig
+        )
+        val expectedLines = mapOf(
+            Aes.YMAX to "max: 11.5",
+            Aes.UPPER to "upper: 8.65",
+            Aes.MIDDLE to "6.8500",
+            Aes.LOWER to "lower: 6.10",
+            Aes.YMIN to "min: 4.2"
+        )
+        val lines = getOutlierLines(geomLayer)
+
+        assertEquals(expectedLines.size, lines.size, "Wrong number of outlier tooltips")
+        for (aes in lines.keys) {
+            assertEquals(expectedLines[aes], lines[aes], "Wrong line for ${aes.name} in the outliers")
+        }
+    }
+
+
     companion object {
 
         private fun buildGeomPointLayer(
@@ -156,22 +234,42 @@ class TooltipConfigTest {
             mapping: Map<String, String>,
             tooltips: Any?
         ): GeomLayer {
-            val plotOpts = mapOf(
+            return buildGeomLayer(Option.GeomName.POINT, data, mapping, tooltips)
+        }
+
+        private fun buildGeomLayer(
+            geom: String,
+            data: Map<String, Any?>,
+            mapping: Map<String, String>,
+            tooltips: Any?
+        ): GeomLayer {
+            val plotOpts = mutableMapOf(
                 Option.PlotBase.DATA to data,
                 Option.PlotBase.MAPPING to mapping,
                 Option.Plot.LAYERS to listOf(
                     mapOf(
-                        Option.Layer.GEOM to Option.GeomName.POINT,
+                        Option.Layer.GEOM to geom,
                         Option.Layer.TOOLTIPS to tooltips
                     )
                 )
             )
-            return PlotConfigClientSideUtil.createPlotAssembler(plotOpts).layersByTile.single().single()
+            val transformed = ServerSideTestUtil.serverTransformWithoutEncoding(plotOpts)
+            return PlotConfigClientSideUtil.createPlotAssembler(transformed).layersByTile.single().single()
         }
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<String> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
             return dataPoints.filterNot(ValueSource.DataPoint::isOutlier).map(ValueSource.DataPoint::line)
+        }
+
+        private fun getAxisTooltips(geomLayer: GeomLayer): List<ValueSource.DataPoint> {
+            val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
+            return dataPoints.filter(ValueSource.DataPoint::isAxis)
+        }
+
+        private fun getOutlierLines(geomLayer: GeomLayer): Map<Aes<*>, String> {
+            val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
+            return dataPoints.filter { it.isOutlier && !it.isAxis }.associateBy({ it.aes!! }, { it.line })
         }
 
         private fun assertTooltipLines(expectedLines: List<String>, actualLines: List<String>) {
