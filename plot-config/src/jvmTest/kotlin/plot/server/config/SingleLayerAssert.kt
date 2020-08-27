@@ -7,8 +7,6 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.builder.tooltip.MappedAes
-import jetbrains.datalore.plot.builder.tooltip.VariableValue
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import org.assertj.core.api.AbstractAssert
@@ -56,38 +54,6 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
-    fun haveAesNamesInTooltips(expectedNames: List<String>): SingleLayerAssert {
-        return haveSourceNamesInTooltips(expectedNames, getAesNamesInTooltips(), nameType = "aes")
-    }
-
-    fun haveVariableNamesInTooltips(expectedNames: List<String>): SingleLayerAssert {
-        return haveSourceNamesInTooltips(expectedNames, getVariableNamesInTooltips(), nameType = "variable")
-    }
-
-    fun haveNameWithLabelsInTooltips(expectedNameToLabels: Map<String, String>): SingleLayerAssert {
-        val actualNameToLabels = getNameToLabelsInTooltips()
-        assertEquals(expectedNameToLabels.size, actualNameToLabels.size, "Incorrect number of tooltip lines")
-        expectedNameToLabels.forEach { pair ->
-            val expectedName = pair.key
-            val expectedLabel = pair.value
-            val actualLabel = actualNameToLabels[expectedName]
-            assertEquals(expectedLabel, actualLabel, "Incorrect label for the source with name '$expectedName'")
-        }
-        return this
-    }
-
-    private fun haveSourceNamesInTooltips(
-        expectedNames: List<String>,
-        actualNames: List<String>,
-        nameType: String = "source"
-    ): SingleLayerAssert {
-        assertEquals(expectedNames.size, actualNames.size, "Incorrect number of $nameType names used in tooltips")
-        expectedNames.forEach { name ->
-            assertTrue(name in actualNames, "No tooltip for $nameType with name: '$name'")
-        }
-        return this
-    }
-
     internal fun haveMapVectors(expectedMapVectors: Map<String, List<*>>): SingleLayerAssert {
         Assertions.assertThat(expectedMapVectors).isEqualTo(myLayer[GEO_POSITIONS])
         return this
@@ -110,37 +76,6 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         }
 
         fail("No binding $aes -> $varName")
-    }
-
-    private fun getAesNamesInTooltips(): List<String> {
-        return myLayer.tooltips
-            ?.flatMap { it.data }
-            ?.filterIsInstance<MappedAes>()
-            ?.map(MappedAes::getAesName)
-            ?: emptyList()
-    }
-
-    private fun getVariableNamesInTooltips(): List<String> {
-        return myLayer.tooltips
-            ?.flatMap { it.data }
-            ?.filterIsInstance<VariableValue>()
-            ?.map(VariableValue::getVariableName)
-            ?: emptyList()
-    }
-
-    private fun getNameToLabelsInTooltips(): Map<String, String> {
-        return myLayer.tooltips
-            ?.flatMap { it.data }
-            ?.filterIsInstance<MappedAes>()
-            ?.associate { it.getAesName() to it.getLabel() }
-            ?.plus(
-                myLayer.tooltips
-                    ?.flatMap { it.data }
-                    ?.filterIsInstance<VariableValue>()
-                    ?.associate { it.getVariableName() to it.getLabel() }
-                    ?: emptyMap()
-            )
-            ?: emptyMap()
     }
 
     companion object {
