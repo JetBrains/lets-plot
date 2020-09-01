@@ -175,7 +175,8 @@ class GeocodingRequest(Request):
                  resolution: Optional[int],
                  region_queries: List[RegionQuery],
                  level: Optional[LevelKind],
-                 namesake_example_limit: int
+                 namesake_example_limit: int,
+                 allow_ambiguous: bool
                  ):
         super().__init__(requested_payload, resolution)
         assert_list_type(requested_payload, PayloadKind)
@@ -183,6 +184,7 @@ class GeocodingRequest(Request):
         assert_list_type(region_queries, RegionQuery)
         assert_optional_type(level, LevelKind)
         assert_type(namesake_example_limit, int)
+        assert_type(allow_ambiguous, bool)
 
         self._check_required_parameters(region_queries, level)
 
@@ -192,13 +194,18 @@ class GeocodingRequest(Request):
         self.region_queries: List[RegionQuery] = region_queries
         self.level: Optional[LevelKind] = level
         self.namesake_example_limit: int = namesake_example_limit
+        self.allow_ambiguous: bool = allow_ambiguous
 
     def __eq__(self, o: object) -> bool:
         return isinstance(o, GeocodingRequest) \
                and super().__eq__(o) \
                and self.region_queries == o.region_queries \
                and self.level == o.level \
-               and self.namesake_example_limit == o.namesake_example_limit
+               and self.namesake_example_limit == o.namesake_example_limit \
+               and self.allow_ambiguous == o.allow_ambiguous
+
+    def __ne__(self, o: object) -> bool:
+        return not self == o
 
 
 class ExplicitRequest(Request):
@@ -262,6 +269,7 @@ class RequestBuilder:
         self.region_queries: List[RegionQuery] = []
         self.level: Optional[LevelKind] = None
         self.namesake_limit: int = 10
+        self.allow_ambiguous: bool = False
 
         # reverse
         self.reverse_coordinates: List[GeoPoint] = None
@@ -312,13 +320,18 @@ class RequestBuilder:
         self.namesake_limit = v
         return self
 
+    def set_allow_ambiguous(self, v: bool) -> 'RequestBuilder':
+        assert_optional_type(v, bool)
+        self.allow_ambiguous = v
+        return self
+
     def build(self) -> 'Request':
         if self.request_kind == RequestKind.explicit:
             return ExplicitRequest(self.requested_payload, self.ids, self.resolution)
 
         elif self.request_kind == RequestKind.geocoding:
             return GeocodingRequest(self.requested_payload, self.resolution, self.region_queries, self.level,
-                                    self.namesake_limit)
+                                    self.namesake_limit, self.allow_ambiguous)
 
         elif self.request_kind == RequestKind.reverse:
             assert self.reverse_coordinates is not None

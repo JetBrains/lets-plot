@@ -38,7 +38,8 @@ class GeocodingService:
                 resolution=request.resolution,
                 region_queries=q,
                 level=request.level,
-                namesake_example_limit=request.namesake_example_limit
+                namesake_example_limit=request.namesake_example_limit,
+                allow_ambiguous=request.allow_ambiguous
             )
 
             response = self._execute(chunked_request)

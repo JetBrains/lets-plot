@@ -94,6 +94,7 @@ def test_ambiguity_resolver_with_box():
         .set_request_kind(RequestKind.geocoding) \
         .set_namesake_limit(10) \
         .set_queries([foo]) \
+        .set_allow_ambiguous(True) \
         .build()
 
     json = RequestFormatter().format(request).to_dict()
@@ -102,6 +103,7 @@ def test_ambiguity_resolver_with_box():
 
     assert isinstance(parsed_request, GeocodingRequest)
     assert 1 == len(parsed_request.region_queries)
+    assert parsed_request.allow_ambiguous
     assert_region_query(foo, parsed_request.region_queries[0])
 
 
