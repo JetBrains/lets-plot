@@ -108,6 +108,18 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
 <a href="https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/examples/jupyter-notebooks/quickstart.ipynb"> 
     <img src="https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.png" width="109" height="20" align="left">
 </a>
+<span>&nbsp;&nbsp;</span>
+<a href="https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP" title="View in Datalore"> 
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_datalore.svg" width="20" height="20">
+</a>
+<span>&nbsp;&nbsp;</span>
+<a href="https://www.kaggle.com/alshan/lets-plot-quickstart" title="View at Kaggle"> 
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
+</a>
+<span>&nbsp;&nbsp;</span>
+<a href="https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-?usp=sharing" title="View at Colab"> 
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_colab.svg" width="20" height="20">
+</a>
 <br>
 <br>
 
