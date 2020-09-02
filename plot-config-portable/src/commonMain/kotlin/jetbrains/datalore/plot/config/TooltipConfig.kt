@@ -43,7 +43,7 @@ class TooltipConfig(
         internal fun buildFormatters(): List<ValueSource> {
             return tooltipFormats.map {
                 val value = getValueSourceName(it.key as String)
-                val format = "{${it.value}}"
+                val format = formatPattern(it.value as String)
                 createValueSource(name = value, label = null, format = format)
             }
         }
@@ -74,11 +74,7 @@ class TooltipConfig(
 
         private fun createFormatPattern(name: String): String {
             val format = tooltipFormats[name] as String? ?: ""
-            return if (format.isNotEmpty()) {
-                "{$format}"
-            } else {
-                DEFAULT_VALUE_PATTERN
-            }
+            return formatPattern(format)
         }
 
         private fun createTooltipLineSpecification(
@@ -130,13 +126,14 @@ class TooltipConfig(
     }
 
     companion object {
-        private const val DEFAULT_VALUE_PATTERN = "{}"
         private const val VALUE_SOURCE_PREFIX = "$"
         private const val LABEL_SEPARATOR = "|"
         private const val USE_DEFAULT_LABEL = "@"
 
         private val SOURCE_RE_PATTERN = Regex("""\$(([^\s{}()'"]+)|(\{(.*?)}))""")
         private const val MATCHED_INDEX = 0
+
+        private fun formatPattern(format: String) = "%%{$format}"
 
         private fun getValueSourceName(value: String): String {
             return if (value.startsWith(VALUE_SOURCE_PREFIX)) {
