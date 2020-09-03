@@ -27,6 +27,7 @@ class Field(enum.Enum):
     map_region_values = 'values'
     match = 'match'
     namesake_example_limit = 'namesake_example_limit'
+    allow_ambiguous = 'allow_ambiguous'
     ambiguity_resolver = 'ambiguity_resolver'
     ambiguity_ignoring_strategy = 'ambiguity_resolver_ignoring_strategy'
     ambiguity_closest_coord = 'ambiguity_resolver_closest_coord'
@@ -63,7 +64,8 @@ class RequestFormatter:
             ._common(RequestKind.geocoding, request) \
             .put(Field.region_queries, RequestFormatter._format_region_queries(request.region_queries)) \
             .put(Field.level, request.level) \
-            .put(Field.namesake_example_limit, request.namesake_example_limit)
+            .put(Field.namesake_example_limit, request.namesake_example_limit) \
+            .put(Field.allow_ambiguous, request.allow_ambiguous)
 
     @staticmethod
     def _format_explicit_request(request: 'ExplicitRequest') -> FluentDict:
@@ -150,6 +152,7 @@ class RequestParser:
             request_dict \
                 .visit_enum_existing(Field.level, LevelKind, request.set_level) \
                 .visit_int(Field.namesake_example_limit, request.set_namesake_limit) \
+                .visit_bool(Field.allow_ambiguous, request.set_allow_ambiguous) \
                 .visit_list(Field.region_queries, lambda regions: request.set_queries(regions.map(RequestParser._parse_region_query).list()))
         elif request.request_kind == RequestKind.reverse:
             request_dict \

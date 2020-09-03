@@ -107,16 +107,18 @@ class RegionsBuilder:
                  scope: scope_types = None,
                  highlights: bool = False,
                  progress_callback = None,
-                 chunk_size = None
+                 chunk_size = None,
+                 allow_ambiguous = False
                  ):
 
         self._level: Optional[LevelKind] = _to_level_kind(level)
         self._overridings: List[RegionQuery] = []
-        self._default_ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty()
+        self._default_ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty() # TODO rename to geohint
         self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver)
         self._highlights: bool = highlights
         self._on_progress = progress_callback
         self._chunk_size = chunk_size
+        self._allow_ambiguous = allow_ambiguous
 
     def drop_not_found(self) -> 'RegionsBuilder':
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.skip_missing)
@@ -128,6 +130,7 @@ class RegionsBuilder:
 
     def allow_ambiguous(self) -> 'RegionsBuilder':
         self._default_ambiguity_resolver = AmbiguityResolver(IgnoringStrategyKind.take_namesakes)
+        self._allow_ambiguous = True
         return self
 
     def chunk_request(self, on_progress=None, chunk_size=40):
@@ -197,6 +200,7 @@ class RegionsBuilder:
             .set_queries(self._get_queries()) \
             .set_level(self._level) \
             .set_namesake_limit(NAMESAKE_MAX_COUNT) \
+            .set_allow_ambiguous(self._allow_ambiguous) \
             .build()
 
         # Too many queries - can fail with timeout. Chunk queries.
