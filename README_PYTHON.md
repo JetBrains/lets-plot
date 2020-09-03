@@ -117,7 +117,7 @@ ggplot(data, aes(x='rating', fill='cond')) + ggsize(500, 250) \
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
 </a>
 <span>&nbsp;&nbsp;</span>
-<a href="https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-?usp=sharing" title="View at Colab"> 
+<a href="https://colab.research.google.com/drive/1uYYZcG0g0kP4lJdPkpWB8aBS96ioDii2?usp=sharing" title="View at Colab"> 
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_colab.svg" width="20" height="20">
 </a>
 <br>
@@ -401,6 +401,10 @@ Examples:
 <span>&nbsp;&nbsp;</span>
 <a href="https://www.kaggle.com/alshan/lets-plot-titanic" title="View at Kaggle"> 
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_kaggle.svg" width="20" height="20">
+</a>
+<span>&nbsp;&nbsp;</span>
+<a href="https://colab.research.google.com/drive/1PerUfSCyStcbnlXnxBj-JVI25-cXB_N5?usp=sharing" title="View at Colab"> 
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/examples/images/logo_colab.svg" width="20" height="20">
 </a>
 
  
