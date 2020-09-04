@@ -23,10 +23,12 @@ def ggplot(data=None, mapping=None):
     mapping : dictionary, optional
         Default list of aesthetic mappings to use for the plot. If not specified, must be supplied in each layer
         added to the plot.
-     Returns
+
+    Returns
     -------
         plot specification
-    Notes
+
+    Note
     -----
         ggplot() initializes a ggplot object. It can be used to declare the input data frame for a graphic and to
         specify the set of plot aesthetics intended to be common throughout all subsequent layers unless specifically
@@ -36,19 +38,22 @@ def ggplot(data=None, mapping=None):
         and the order in which they are added. For complex graphics with multiple layers, initialization with
         ggplot() is recommended.
         There are three common ways to invoke ggplot (see examples below):
-        - ggplot(dat,aes(x,y)) :
-            This method is recommended if all layers use the same data and the same set of aesthetics, although
-            this method can also be used to add a layer using data from another data frame.
-        - ggplot(dat) :
-             This method specifies the default data frame to use for the plot, but no aesthetics are defined up front.
-             This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary
-             from one layer to another.
-        - ggplot() :
-            This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is
-            useful when multiple data frames are used to produce different layers, as is often the case in complex
-            graphics.
+
+            - ggplot(dat,aes(x,y)) :
+                This method is recommended if all layers use the same data and the same set of aesthetics, although
+                this method can also be used to add a layer using data from another data frame.
+            - ggplot(dat) :
+                This method specifies the default data frame to use for the plot, but no aesthetics are defined up front.
+                This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary
+                from one layer to another.
+            - ggplot() :
+                This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is
+                useful when multiple data frames are used to produce different layers, as is often the case in complex
+                graphics.
+
         ggplot() with no layers defined will produce an error message: "No layers in plot"
-     Examples
+
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -85,10 +90,12 @@ def ggsize(width, height):
         Width of plot in px.
     height : number
         Height of plot in px.
-     Returns
+
+    Returns
     -------
         plot size specification
-     Examples
+
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd

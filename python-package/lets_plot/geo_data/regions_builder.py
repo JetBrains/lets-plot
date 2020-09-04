@@ -165,7 +165,7 @@ class RegionsBuilder:
         -------
             RegionsBuilder object
 
-        Notes
+        Note
         -----
         If request is mixed with existing and new items scope will be specified for all of them.
         It is allowed to specify scope by chaihing calls of the where method as many times as needed

@@ -23,10 +23,12 @@ def position_dodge(width=None):
     Returns
     -------
         geom object position specification
-    Notes
+
+    Note
     -----
         Adjust position by dodging overlaps to the side.
-     Examples
+
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -39,8 +41,8 @@ def position_dodge(width=None):
     >>> X = X.astype(int) # comment this line to make variables continuous back
     >>> dat = pd.DataFrame(X)
     >>> dat = pd.melt(dat)
-    >>> ggplot(dat, aes(x='value', group='variable', fill='variable')) \
-    >>>     + geom_bar(stat='bin', position=position_dodge(width=5.0), width=10, alpha=0.8)
+    >>> ggplot(dat, aes(x='value', group='variable', fill='variable')) +
+    ... geom_bar(stat='bin', position=position_dodge(width=5.0), width=10, alpha=0.8)
     """
     return _pos('dodge', width=width)
 
@@ -59,9 +61,11 @@ def position_jitter(width=None, height=None):
     Returns
     -------
         geom object position specification
-    Notes
+
+    Note
     -----
         Adjust position by dodging overlaps to the side.
+
     Examples
     ---------
     >>> import numpy as np
@@ -88,10 +92,12 @@ def position_nudge(x=None, y=None):
     Returns
     -------
         geom object position specification
-    Notes
+
+    Note
     -----
         Adjust position by dodging overlaps to the side.
-     Examples
+
+    Examples
     ---------
     >>> x = [1, 2, 3]
     >>> y = [1, 2, 3]
@@ -117,10 +123,12 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
     Returns
     -------
         geom object position specification
-    Notes
+
+    Note
     -----
         Adjust position by dodging overlaps to the side.
-     Examples
+
+    Examples
     ---------
     >>> import pandas as pd
     >>> from lets_plot import *

@@ -43,8 +43,8 @@ def layer_tooltips(lines=None):
         using the function 'tooltip_line':
             tooltip_line(value = <variable_name>, label = <label_text>, format = <format>)
 
-        lines = None - default tooltips
-        lines = [] - no tooltips
+             - lines = None - default tooltips
+             - lines = [] - no tooltips
 
     Returns
     -------
@@ -56,9 +56,8 @@ def layer_tooltips(lines=None):
     >>> from lets_plot import *
     >>> mpg_url = 'https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/mpg.csv'
     >>> mpg = pd.read_csv(mpg_url)
-    >>> p = ggplot(mpg, aes(x='displ', y='hwy')) \)
-    >>>   + geom_point(aes(color='cty', shape='drv'), \
-    >>>                tooltips=layer_tooltips(lines=[tooltip_line(value='color', label='city miles per gallon:')]))
+    >>> p = ggplot(mpg, aes(x='displ', y='hwy')) + geom_point(aes(color='cty', shape='drv'),
+    ... tooltips=layer_tooltips(lines=[tooltip_line(value='color', label='city miles per gallon:')]))
     """
 
     return FeatureSpec('tooltips', name=None, lines=lines)

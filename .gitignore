@@ -20,3 +20,7 @@ __pycache__/
 /python-package/*.ipynb
 
 build_settings.yml
+
+# Sphinx-doc directories
+docs/sphinx-doc/build
+docs/sphinx-doc/jupyter_execute

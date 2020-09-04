@@ -91,9 +91,9 @@ def regions_builder(level=None, request=None, within=None, highlights=False) -> 
 
     Returns
     -------
-        RegionsBuilder object
+    RegionsBuilder object :
 
-    Notes
+    Note
     -----
     regions_builder() allows to refine ambiguous request with where() method. Call build() method to create Regions object
 
@@ -128,9 +128,9 @@ def regions(level=None, request=None, within=None) -> Regions:
 
     Returns
     -------
-        Regions object
+    Regions object :
 
-    Notes
+    Note
     -----
     regions() is used to get name and object id by level and request.
     If the given names are not found exception will be thrown.
@@ -156,9 +156,9 @@ def regions_country(request=None):
 
     Returns
     -------
-        Regions object
+    Regions object :
 
-    Notes
+    Note
     -----
     regions_country() is used to get name and object id by request.
     If the given names are not found exception will be thrown.
@@ -192,9 +192,9 @@ def regions_state(request=None, within=None):
 
     Returns
     -------
-        Regions object
+    Regions object :
 
-    Notes
+    Note
     -----
     regions_state() is used to get name and object id by request.
     If the given names are not found exception will be thrown.
@@ -226,9 +226,9 @@ def regions_county(request=None, within=None):
 
     Returns
     -------
-        Regions object
+    Regions object :
 
-    Notes
+    Note
     -----
     regions_county() is used to get name and object id by request.
     If the given names are not found exception will be thrown.
@@ -260,9 +260,9 @@ def regions_city(request=None, within=None):
 
     Returns
     -------
-        Regions object
+    Regions object :
 
-    Notes
+    Note
     -----
     regions_city() is used to get name and object id by request.
     If the given names are not found exception will be thrown.
@@ -300,9 +300,9 @@ def distance(lon0, lat0, lon1, lat1, units='km'):
 
     Returns
     -------
-        float object
+    object : float
 
-    Notes
+    Note
     -----
     distance() calculates the distance between two points.
 
