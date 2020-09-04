@@ -7,10 +7,7 @@ package jetbrains.datalore.plot.base.interact
 
 import jetbrains.datalore.plot.base.Aes
 
-interface ValueSource {
-
-    fun setDataContext(dataContext: DataContext)
-
+interface TooltipLineSpec {
     fun getDataPoint(index: Int): DataPoint?
 
     class DataPoint(

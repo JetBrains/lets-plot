@@ -5,24 +5,23 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
+import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.ValueSource
-import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
+import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 class MappedAes(
     val aes: Aes<*>,
     private val isOutlier: Boolean = false,
     private val isAxis: Boolean = false,
-    private val label: String? = null,
-    format: String? = null
+    private val format: String? = null
 ) : ValueSource {
 
     private lateinit var myDataAccess: MappedDataAccess
     private lateinit var myDataLabel: String
     private var myIsContinuous: Boolean = false
-    private val myFormatter = LineFormatter(format)
+    private val myFormatter: NumberFormat? = format?.let { NumberFormat(it) }
 
     override fun setDataContext(dataContext: DataContext) {
         myDataAccess = dataContext.mappedDataAccess
@@ -40,7 +39,6 @@ class MappedAes(
             else -> dataLabel
         }
         myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
-
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
@@ -49,8 +47,8 @@ class MappedAes(
         } else {
             val mappedDataValue = myDataAccess.getMappedData(aes, index).value
             DataPoint(
-                label = label ?: myDataLabel,
-                value = myFormatter.format(mappedDataValue, myIsContinuous),
+                label = myDataLabel,
+                value = ValueSource.formatValueSource(mappedDataValue, myFormatter),
                 isContinuous = myIsContinuous,
                 aes = aes,
                 isAxis = isAxis,
@@ -64,8 +62,7 @@ class MappedAes(
             aes = aes,
             isOutlier = true,
             isAxis = isAxis,
-            label = label,
-            format = myFormatter.formatPattern
+            format = format
         )
     }
 }

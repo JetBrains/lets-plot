@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.builder.tooltip.*
 
 class TooltipConfig(
@@ -14,109 +13,83 @@ class TooltipConfig(
     private val constantsMap: Map<Aes<*>, Any>
 ) : OptionsAccessor(opts) {
 
-    fun createTooltips(): List<TooltipLineSpecification>? {
-        return if (has(Option.Layer.TOOLTIP_LINES)) {
-            TooltipConfigParseHelper(
-                getStringList(Option.Layer.TOOLTIP_LINES),
-                getMap(Option.Layer.TOOLTIP_FORMATS)
-            ).parse()
-        } else {
-            null
-        }
-    }
-
-    fun getSourceFormatters(): List<ValueSource>? {
+    fun createTooltips(): TooltipLinesSpecification {
         return TooltipConfigParseHelper(
-            emptyList(),
-            getMap(Option.Layer.TOOLTIP_FORMATS)
-        ).buildFormatters()
+            tooltipLines = if (has(Option.Layer.TOOLTIP_LINES)) {
+                getStringList(Option.Layer.TOOLTIP_LINES)
+            } else {
+                null
+            },
+            tooltipFormats = getMap(Option.Layer.TOOLTIP_FORMATS)
+        ).parse()
     }
 
     private inner class TooltipConfigParseHelper(
-        private val tooltipLines: List<String>,
-        private val tooltipFormats: Map<*, *>
+        private val tooltipLines: List<String>?,
+        tooltipFormats: Map<*, *>
     ) {
-        internal fun parse(): List<TooltipLineSpecification> {
-            return tooltipLines.map(::parseLine)
-        }
+        private val myValueSources = tooltipFormats
+            .mapKeys { it.key.toString() }
+            .mapValues {
+                createValueSource(it.key, it.value as String)
+            }.toMutableMap()
 
-        internal fun buildFormatters(): List<ValueSource> {
-            return tooltipFormats.map {
-                val value = getValueSourceName(it.key as String)
-                val format = formatPattern(it.value as String)
-                createValueSource(name = value, label = null, format = format)
-            }
-        }
-
-        private fun parseLine(tooltipLine: String): TooltipLineSpecification {
-            val label = detachLabel(tooltipLine)
-            val valueString = tooltipLine.substringAfter(LABEL_SEPARATOR)
-
-            val matchResult = SOURCE_RE_PATTERN.findAll(valueString).map {
-                it.groupValues[MATCHED_INDEX]
-            }.toList()
-
-            var index = 0
-            val linePattern = SOURCE_RE_PATTERN.replace(valueString) {
-                createFormatPattern(matchResult[index++])
-            }
-
-            val valueSourceNames = if (matchResult.isNotEmpty()) {
-                matchResult
-            } else {
-                listOf(valueString)
-            }.map(::getValueSourceName)
-
-            return createTooltipLineSpecification(
-                valueSourceNames, label, linePattern
+        internal fun parse(): TooltipLinesSpecification {
+            val lines = tooltipLines?.map(::parseLine)
+            return TooltipLinesSpecification(
+                myValueSources.map { it.value },
+                lines
             )
         }
 
-        private fun createFormatPattern(name: String): String {
-            val format = tooltipFormats[name] as String? ?: ""
-            return formatPattern(format)
-        }
+        private fun parseLine(tooltipLine: String): ValueSourceTooltipLine {
+            val label = detachLabel(tooltipLine)
+            val valueString = tooltipLine.substringAfter(LABEL_SEPARATOR)
 
-        private fun createTooltipLineSpecification(
-            values: List<String>,
-            label: String?,
-            format: String?
-        ): TooltipLineSpecification {
-            return if (values.size == 1) {
-                TooltipLineSpecification.singleValueLine(
-                    label = "",
-                    format = "",
-                    datum = createValueSource(name = values.single(), label = label, format = format)
-                )
-            } else {
-                TooltipLineSpecification.multiValueLine(
-                    label = label ?: "",
-                    format = format ?: "",
-                    data = values.map { createValueSource(it) }
-                )
+            val usedValueSources = mutableListOf<ValueSource>()
+            val linePattern = SOURCE_RE_PATTERN.replace(valueString) { value ->
+                usedValueSources += getValueSource(value.value)
+                LinePatternFormatter.valueInLinePattern()
             }
+            return ValueSourceTooltipLine(
+                label,
+                linePattern,
+                usedValueSources
+            )
         }
 
-        private fun createValueSource(name: String, label: String? = null, format: String? = null): ValueSource {
+        private fun createValueSource(configName: String, format: String? = null): ValueSource {
             fun getAesByName(aesName: String): Aes<*> {
                 return Aes.values().find { it.name == aesName } ?: error("$aesName is not aes name")
             }
 
+            val name = if (configName.startsWith(VALUE_SOURCE_PREFIX)) {
+                configName.removePrefix(VALUE_SOURCE_PREFIX).removeSurrounding("{", "}")
+            } else {
+                configName
+            }
             return when {
-                name.startsWith("text@") -> StaticValue((name.removePrefix("text@")))
                 name.startsWith("var@") -> {
                     val varName = name.removePrefix("var@")
                     if (varName.isEmpty()) error("Variable name cannot be empty")
-                    VariableValue(varName, label, format)
+                    VariableValue(varName, format)
                 }
                 else -> {
                     val aes = getAesByName(name)
                     when (val constant = constantsMap[aes]) {
-                        null -> MappedAes(aes, label = label, format = format)
-                        else -> ConstantValue(label, constant, format)
+                        null -> MappedAes(aes, format = format)
+                        else -> ConstantValue(constant, format)
                     }
                 }
             }
+        }
+
+        private fun getValueSource(configName: String): ValueSource {
+            if (configName !in myValueSources) {
+                val newValueSource = createValueSource(configName)
+                myValueSources[configName] = newValueSource
+            }
+            return myValueSources[configName]!!
         }
 
         private fun detachLabel(tooltipLine: String): String? {
@@ -130,18 +103,7 @@ class TooltipConfig(
         private const val LABEL_SEPARATOR = "|"
         private const val USE_DEFAULT_LABEL = "@"
 
-        private val SOURCE_RE_PATTERN = Regex("""\$(([^\s{}()'"]+)|(\{(.*?)}))""")
-        private const val MATCHED_INDEX = 0
-
-        private fun formatPattern(format: String) = "%%{$format}"
-
-        private fun getValueSourceName(value: String): String {
-            return if (value.startsWith(VALUE_SOURCE_PREFIX)) {
-                value.removePrefix(VALUE_SOURCE_PREFIX).removeSurrounding("{", "}")
-            } else {
-                // mark as the text
-                "text@$value"
-            }
-        }
+        // $text or ${text with spaces}
+        private val SOURCE_RE_PATTERN = Regex("""\$(([^\s{}()\[\]'"]+)|(\{(.*?)}))""")
     }
 }

@@ -5,21 +5,21 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
+import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.DataContext
-import jetbrains.datalore.plot.base.interact.ValueSource
-import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
+import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
+import jetbrains.datalore.plot.builder.tooltip.ValueSource.Companion.formatValueSource
 
 class VariableValue(
     private val name: String,
-    private val label: String? = "",
     format: String? = null
 ) : ValueSource {
 
-    private val myFormatter = LineFormatter(format)
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
     private var myIsContinuous: Boolean = false
+    private val myFormatter = format?.let { NumberFormat(it) }
 
     override fun setDataContext(dataContext: DataContext) {
         myDataFrame = dataContext.dataFrame
@@ -31,19 +31,13 @@ class VariableValue(
     override fun getDataPoint(index: Int): DataPoint? {
         val originalValue = myDataFrame[myVariable][index]
         return DataPoint(
-            label = label ?: name,
-            value = format(originalValue),
+            label = name,
+            value = formatValueSource(originalValue, myFormatter),
             isContinuous = myIsContinuous,
             aes = null,
             isAxis = false,
             isOutlier = false
         )
-    }
-
-    private fun format(originalValue: Any?): String {
-        // todo Need proper formatter.
-        val strValue = originalValue.toString()
-        return myFormatter.format(strValue, myIsContinuous)
     }
 
     fun getVariableName(): String {

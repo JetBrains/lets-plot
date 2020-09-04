@@ -11,15 +11,15 @@ import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.builder.tooltip.MappedAes
+import jetbrains.datalore.plot.builder.tooltip.ValueSourceTooltipLine
 
 class GeomInteraction(builder: GeomInteractionBuilder) :
     ContextualMappingProvider {
 
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
-    private var myValueSourcesForTooltip: List<ValueSource> = builder.valueSourcesForTooltip
+    private var myTooltipLines: List<ValueSourceTooltipLine> = builder.tooltipLines
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
@@ -27,7 +27,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
 
     override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
         return createContextualMapping(
-            myValueSourcesForTooltip,
+            myTooltipLines,
             dataAccess,
             dataFrame
         )
@@ -41,30 +41,28 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame
         ): ContextualMapping {
-            val valueSources = GeomInteractionBuilder.defaultValueSourceList(
+            val defaultTooltipLines = GeomInteractionBuilder.defaultValueSourceTooltipLines(
                 aesListForTooltip,
                 axisAes,
                 outliers
             )
-            return createContextualMapping(valueSources, dataAccess, dataFrame)
+            return createContextualMapping(defaultTooltipLines, dataAccess, dataFrame)
         }
 
         private fun createContextualMapping(
-            tooltipValueSources: List<ValueSource>,
+            tooltipLines: List<ValueSourceTooltipLine>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame
         ): ContextualMapping {
             val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
 
-            val mappedValueSources = tooltipValueSources.filter { valueSource ->
-                when (valueSource) {
-                    is MappedAes -> dataAccess.isMapped(valueSource.aes)
-                    else -> true
-                }
+            val mappedTooltipLines = tooltipLines.filter { line ->
+                val dataAesList = line.data.filterIsInstance<MappedAes>()
+                dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
             }
-            mappedValueSources.forEach { it.setDataContext(dataContext) }
+            mappedTooltipLines.forEach { it.setDataContext(dataContext) }
 
-            return ContextualMapping(dataContext, mappedValueSources)
+            return ContextualMapping(dataContext, mappedTooltipLines)
         }
     }
 }

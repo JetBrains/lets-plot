@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
-import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
 import jetbrains.datalore.plot.builder.tooltip.VariableValue
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
@@ -129,11 +128,9 @@ open class PlotConfigServerSide(opts: Map<String, Any>) : PlotConfig(opts) {
                 }
 
                 // keep vars used in tooltips
-                val userTooltipVars = layerConfig.tooltips
-                    ?.flatMap(TooltipLineSpecification::data)
-                    ?.filterIsInstance<VariableValue>()
-                    ?.map(VariableValue::getVariableName)
-                    ?: emptyList()
+                val userTooltipVars = layerConfig.tooltips.valueSources
+                    .filterIsInstance<VariableValue>()
+                    .map(VariableValue::getVariableName)
 
                 // keep vars used in map_join
                 if (layerConfig.getMapJoin()?.first == varName) {

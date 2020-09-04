@@ -5,24 +5,27 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
+import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.interact.DataContext
-import jetbrains.datalore.plot.base.interact.ValueSource
+import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 open class ConstantValue(
-    private val label: String? = null,
     value: Any,
     format: String? = null
 ) : ValueSource {
 
     private var myIsContinuous: Boolean = value is Number
-    private val myDataValue = LineFormatter(format).format(value.toString(), myIsContinuous)
+    private val myDataValue = ValueSource.formatValueSource(
+        value,
+        formatter = format?.let { NumberFormat(it) }
+    )
 
     override fun setDataContext(dataContext: DataContext) {
     }
 
-    override fun getDataPoint(index: Int): ValueSource.DataPoint? {
-        return ValueSource.DataPoint(
-            label = label ?: "",
+    override fun getDataPoint(index: Int): DataPoint? {
+        return DataPoint(
+            label = "",
             value = myDataValue,
             isContinuous = myIsContinuous,
             aes = null,

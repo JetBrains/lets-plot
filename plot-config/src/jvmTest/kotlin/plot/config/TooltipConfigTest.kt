@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.ValueSource
+import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
@@ -259,12 +259,12 @@ class TooltipConfigTest {
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<String> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-            return dataPoints.filterNot(ValueSource.DataPoint::isOutlier).map(ValueSource.DataPoint::line)
+            return dataPoints.filterNot(DataPoint::isOutlier).map(DataPoint::line)
         }
 
-        private fun getAxisTooltips(geomLayer: GeomLayer): List<ValueSource.DataPoint> {
+        private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
-            return dataPoints.filter(ValueSource.DataPoint::isAxis)
+            return dataPoints.filter(DataPoint::isAxis)
         }
 
         private fun getOutlierLines(geomLayer: GeomLayer): Map<Aes<*>, String> {

@@ -13,12 +13,11 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
-import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.sampling.Sampling
-import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
+import jetbrains.datalore.plot.builder.tooltip.TooltipLinesSpecification
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
@@ -51,8 +50,7 @@ class LayerConfig(
     val constantsMap: Map<Aes<*>, Any>
     val statKind: StatKind
     private val mySamplings: List<Sampling>?
-    val tooltips: List<TooltipLineSpecification>?
-    var tooltipSourceFormatters: List<ValueSource>? = null
+    val tooltips: TooltipLinesSpecification
 
     var ownData: DataFrame? = null
         private set
@@ -139,20 +137,18 @@ class LayerConfig(
         tooltips = if (has(TOOLTIPS)) {
             when (get(TOOLTIPS)) {
                 is Map<*, *> -> {
-                    val tooltipConfigParser = TooltipConfig(getMap(TOOLTIPS), constantsMap)
-                    tooltipSourceFormatters = tooltipConfigParser.getSourceFormatters()
-                    tooltipConfigParser.createTooltips()
+                    TooltipConfig(getMap(TOOLTIPS), constantsMap).createTooltips()
                 }
                 NONE -> {
                     // reset tooltips
-                    emptyList()
+                    TooltipLinesSpecification.emptyTooltipLines()
                 }
                 else -> {
                     error("Incorrect tooltips specification")
                 }
             }
         } else {
-            null
+            TooltipLinesSpecification.defaultTooltipLines()
         }
 
         val varBindings = LayerConfigUtil.createBindings(

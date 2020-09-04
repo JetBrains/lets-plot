@@ -8,12 +8,9 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.plot.builder.tooltip.CompositeValue
-import jetbrains.datalore.plot.builder.tooltip.TooltipLineSpecification
 
 object GeomInteractionUtil {
     internal fun configGeomTargets(
@@ -40,8 +37,7 @@ object GeomInteractionUtil {
         return builder.axisAes(axisAes)
             .tooltipAes(aesList)
             .tooltipOutliers(outlierAesList)
-            .tooltipValueSources(createTooltipValueSourceList(layerConfig.tooltips))
-            .tooltipFormatters(layerConfig.tooltipSourceFormatters)
+            .tooltipLinesSpec(layerConfig.tooltips)
             .showAxisTooltip(!isLiveMap)
             .build()
     }
@@ -120,7 +116,7 @@ object GeomInteractionUtil {
         return aesListForTooltip
     }
 
-    fun createOutlierAesList(geomKind: GeomKind) = when (geomKind) {
+    private fun createOutlierAesList(geomKind: GeomKind) = when (geomKind) {
         GeomKind.CROSS_BAR,
         GeomKind.ERROR_BAR,
         GeomKind.LINE_RANGE,
@@ -128,28 +124,6 @@ object GeomInteractionUtil {
         GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
         GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
         else -> emptyList()
-    }
-
-    private fun createTooltipValueSourceList(tooltipLineSpecifications: List<TooltipLineSpecification>?): List<ValueSource>? {
-        if (tooltipLineSpecifications == null) {
-            return null
-        }
-
-        val tooltipValueSourceList = mutableListOf<ValueSource>()
-        tooltipLineSpecifications.forEach { tooltipLineSpecification ->
-            if (tooltipLineSpecification.data.size == 1) {
-                tooltipValueSourceList.add(tooltipLineSpecification.data.single())
-            } else {
-                tooltipValueSourceList.add(
-                    CompositeValue(
-                        tooltipLineSpecification.data,
-                        tooltipLineSpecification.label,
-                        tooltipLineSpecification.format
-                    )
-                )
-            }
-        }
-        return tooltipValueSourceList
     }
 
     private fun initGeomInteractionBuilder(
