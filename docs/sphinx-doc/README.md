@@ -23,7 +23,7 @@ This directory contains sources for building project documentation using Sphinx-
 
 3. Add paths to new docs in the `index.rst` file.
 
-4. Build documentation (HTML):   
+4. Build documentation (HTML): change dir to `docs/sphinx-doc` and execute the command:   
     `sphinx-build -b html source/ build/`
 
 5. Open `docs/sphinx-doc/build/index.html` in your browser and check result.
