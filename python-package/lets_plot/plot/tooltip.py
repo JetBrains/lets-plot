@@ -32,8 +32,7 @@ class layer_tooltips(FeatureSpec):
             .format({'$var@density':'.1f'})
         This format will be applied to the mapped value in the default tooltip or to the corresponding value
         specified in the 'line' template.
-        For specified tooltip lines the relationship between an aes and a variable is not supported,
-        the format parameter is applied to a specific name.
+        Aes and var formats are not interchangeable, i.e. var format will not be applied to aes, mapped to this variable.
 
     Use "none" to reset tooltips.
 
