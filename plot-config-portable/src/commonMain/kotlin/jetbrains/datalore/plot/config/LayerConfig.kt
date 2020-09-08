@@ -140,7 +140,7 @@ class LayerConfig(
                     TooltipConfig(getMap(TOOLTIPS), constantsMap).createTooltips()
                 }
                 NONE -> {
-                    // reset tooltips
+                    // not show tooltips
                     TooltipLinesSpecification.emptyTooltipLines()
                 }
                 else -> {

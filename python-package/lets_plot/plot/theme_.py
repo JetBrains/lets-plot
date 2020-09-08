@@ -21,7 +21,6 @@ def theme(*,
 
     Parameters
     ----------
-
     axis_title : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
         label of axes
 
@@ -73,15 +72,14 @@ def theme(*,
     axis_tooltip_x : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
         x axis tooltips
 
-     axis_tooltip_y : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
+    axis_tooltip_y : result of element_text() or [element_blank() | 'blank'] to draw nothing and assign no space.
         y axis tooltips
 
     Returns
     -------
         theme specification
 
-
-     Examples
+    Examples
     ---------
     >>> import pandas as pd
     >>> from sklearn.datasets import make_blobs
@@ -90,10 +88,9 @@ def theme(*,
     >>> dat = pd.DataFrame(dat)
     >>> colors = {0:'red', 1: 'blue', 2: 'green'}
     >>> dat['color'] = [colors[variable] for variable in dat['variable']]
-    >>> ggplot(dat, aes(x='x', y='y')) \
-    >>>     + geom_point(aes(color='y'))\
-    >>>     + scale_color_gradient(guide=guide_colorbar(nbin=10,barheight= 8, barwidth=300))\
-    >>>     + theme(legend_position='top')
+    >>> ggplot(dat, aes(x='x', y='y')) + geom_point(aes(color='y')) +
+    ... scale_color_gradient(guide=guide_colorbar(nbin=10,barheight= 8, barwidth=300)) +
+    ... theme(legend_position='top')
     """
     return FeatureSpec('theme', name=None,
                        axis_title=axis_title,

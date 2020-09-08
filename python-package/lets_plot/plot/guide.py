@@ -19,14 +19,16 @@ def guide_legend(nrow=None, ncol=None, byrow=None):
         Number of columns in legend's guide
     byrow : boolean, optional
         Type of output: by row (default), or by column
-     Returns
+
+    Returns
     -------
         legend guide specification
-    Notes
+
+    Note
     -----
     Legend type guide shows key (i.e., geoms) mapped onto values.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd
@@ -56,15 +58,17 @@ def guide_colorbar(barwidth=None, barheight=None, nbin=None):
         Color bar height
     nbin : int, optional
         Number of bins in color bar
-     Returns
+
+    Returns
     -------
         color guide specification
-    Notes
+
+    Note
     -----
     Color bar guide shows continuous color scales mapped onto values.
     Color bar is available with scale_fill and scale_color.
 
-     Examples
+    Examples
     ---------
     >>> import numpy as np
     >>> import pandas as pd

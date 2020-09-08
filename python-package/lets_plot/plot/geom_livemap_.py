@@ -27,6 +27,7 @@ def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, samplin
                  map=None, map_join=None, **other_args):
     """
     Display a live map.
+
     Parameters
     ----------
     mapping : set of aesthetic mappings created by aes() function.
@@ -67,13 +68,16 @@ def geom_livemap(mapping=None, data=None, symbol=None, show_legend=None, samplin
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3, stroke = 2 or shape = 21. They may also be parameters to
         the paired geom/stat.
+
     Returns
     -------
         geom object specification
-    Notes
+
+    Note
     -----
     geom_livemap draws map, which can be moved and zoomed.
     geom_livemap understands the following aesthetics mappings:
+
     - alpha : transparency level of a layer
         Understands numbers between 0 and 1.
     - color (colour) : color of a geometry lines

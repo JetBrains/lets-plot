@@ -63,8 +63,11 @@ def test_regions(mock_geocoding):
                          resolution=None,
                          region_queries=[REGION_QUERY_LA, REGION_QUERY_NY],
                          level=LEVEL_KIND,
-                         namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT
-                         )
+                         namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT,
+                         allow_ambiguous=False
+                         ),
+        None, # chunk_size
+        None # progress_callback
     )
 
 
@@ -80,8 +83,11 @@ def test_regions_with_highlights(mock_geocoding):
                          resolution=None,
                          region_queries=[REGION_QUERY_LA, REGION_QUERY_NY],
                          level=LEVEL_KIND,
-                         namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT
-                         )
+                         namesake_example_limit=NAMESAKES_EXAMPLE_LIMIT,
+                         allow_ambiguous=False
+                         ),
+        None, # chunk_size
+        None # progress_callback
     )
 
 

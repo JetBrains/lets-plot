@@ -41,14 +41,14 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
     -------
         scale specification
 
-    Notes
+    Note
     -----
         Input data expected: list of strings containing
             a) names of colors (i.e. 'green')
             b) hex codes of colors (i.e 'x00ff00')
-            b) css colors (i.e 'rgb(0,255,0)')
+            c) css colors (i.e 'rgb(0,255,0)')
 
-     Examples
+    Examples
     ---------
     >>> import pandas as pd
     >>> from lets_plot import *
@@ -95,14 +95,14 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
     -------
         scale specification
 
-    Notes
+    Note
     -----
         Input data expected: list of strings containing
             a) names of colors (i.e. 'green')
             b) hex codes of colors (i.e 'x00ff00')
-            b) css colors (i.e 'rgb(0,255,0)')
+            c) css colors (i.e 'rgb(0,255,0)')
 
-     Examples
+    Examples
     ---------
     >>> import pandas as pd
     >>> from lets_plot import *
@@ -149,11 +149,11 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
     -------
         scale specification
 
-    Notes
+    Note
     -----
         Input data expected: numetic codes of shapes.
 
-     Examples
+    Examples
     ---------
     >>> import pandas as pd
     >>> from lets_plot import *
@@ -201,12 +201,12 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
     -------
         scale specification
 
-    Notes
+    Note
     -----
         Input data expected: numetic codes or names of line types (i.e 'dotdash').
         The codes are: 0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
 
-     Examples
+    Examples
     ---------
     >>> import pandas as pd
     >>> from lets_plot import *
@@ -215,7 +215,8 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
     >>> y = x
     >>> l = range(1,7)
     >>> dat = pd.DataFrame({'x': x, 'y': y, 'xend':xend, 'l': l})
-    >>> ggplot(dat, aes('x', 'y', xend='xend', yend='y', linetype='l')) + geom_segment(size=2) + scale_linetype_identity()
+    >>> ggplot(dat, aes('x', 'y', xend='xend', yend='y', linetype='l')) +
+    ... geom_segment(size=2) + scale_linetype_identity()
     """
     return _scale('linetype',
                   name=name,
@@ -254,11 +255,11 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
     -------
         scale specification
 
-    Notes
+    Note
     -----
         Input data expected: numetic values in range [0..1]
 
-     Examples
+    Examples
     ---------
     >>> import pandas as pd
     >>> from lets_plot import *
@@ -305,11 +306,11 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
     -------
         scale specification
 
-    Notes
+    Note
     -----
         Input data expected: positive numetic values
 
-     Examples
+    Examples
     ---------
     >>> import pandas as pd
     >>> from lets_plot import *
