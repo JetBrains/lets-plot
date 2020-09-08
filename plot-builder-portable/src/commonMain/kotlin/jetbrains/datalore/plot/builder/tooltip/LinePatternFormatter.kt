@@ -26,11 +26,10 @@ class LinePatternFormatter(
     }
 
     private fun formatValue(originalValue: Any, replPattern: String): String {
-        val strValue = originalValue.toString()
-        return if (replPattern.isNotEmpty()) {
-            NumberFormat(replPattern).apply(strValue.toFloat())
+        return if (originalValue is Number && replPattern.isNotEmpty()) {
+            NumberFormat(replPattern).apply(originalValue)
         } else {
-            strValue
+            originalValue.toString()
         }
     }
 
