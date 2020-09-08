@@ -34,7 +34,7 @@ class layer_tooltips(FeatureSpec):
         specified in the 'line' template.
         Aes and var formats are not interchangeable, i.e. var format will not be applied to aes, mapped to this variable.
 
-    Use "none" to reset tooltips.
+    "none" to not show tooltips from this layer.
 
     Returns
     -------

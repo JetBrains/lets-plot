@@ -144,7 +144,7 @@ class LayerConfig(
                     tooltipConfigParser.createTooltips()
                 }
                 NONE -> {
-                    // reset tooltips
+                    // not show tooltips
                     emptyList()
                 }
                 else -> {
