@@ -6,6 +6,8 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
+import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
 import jetbrains.datalore.plot.builder.tooltip.*
 
 class TooltipConfig(
@@ -28,10 +30,9 @@ class TooltipConfig(
         private val tooltipLines: List<String>?,
         tooltipFormats: Map<*, *>
     ) {
-        private val myValueSources = tooltipFormats
-            .mapKeys { it.key.toString() }
+        private val myValueSources = prepareFormats(tooltipFormats)
             .mapValues {
-                createValueSource(it.key, it.value as String)
+                createValueSource(it.key, it.value)
             }.toMutableMap()
 
         internal fun parse(): TooltipLinesSpecification {
@@ -82,6 +83,29 @@ class TooltipConfig(
                     }
                 }
             }
+        }
+
+        private fun prepareFormats(tooltipFormats: Map<*, *>): Map<String, String> {
+            val allFormats = mutableMapOf<String, String>()
+            tooltipFormats.forEach {
+                val configName = it.key as String
+                if (configName.startsWith("@@")) {
+                    val positionals = when (configName.removePrefix("@@")) {
+                        "X" -> Aes.values().filter(::isPositionalX)
+                        "Y" -> Aes.values().filter(::isPositionalY)
+                        else -> error("X or Y is expected before '@@' as positional aes")
+                    }
+                    positionals.forEach { aes ->
+                        val newConfigName = VALUE_SOURCE_PREFIX + aes.name
+                        if (!allFormats.containsKey(newConfigName))
+                            allFormats[newConfigName] = it.value as String
+                    }
+
+                } else {
+                    allFormats[it.key as String] = it.value as String
+                }
+            }
+            return allFormats
         }
 
         private fun getValueSource(configName: String): ValueSource {
