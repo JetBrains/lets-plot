@@ -83,17 +83,10 @@ object Option {
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
         const val TOOLTIPS = "tooltips"
+        const val TOOLTIP_LINES = "tooltip_lines"
+        const val TOOLTIP_FORMATS = "tooltip_formats"
+        const val NONE = "none"
         const val MAP_JOIN = "map_join"
-    }
-
-    object LayerTooltips {
-        const val LINES = "lines"
-    }
-
-    object TooltipLine {
-        const val VALUE = "value"
-        const val LABEL = "label"
-        const val FORMAT = "format"
     }
 
     object Geom {

@@ -10,19 +10,28 @@ import jetbrains.datalore.plotDemo.data.AutoMpg
 import jetbrains.datalore.plotDemo.data.Iris
 import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 
-class TooltipConfig: PlotConfigDemoBase()  {
+class TooltipConfig : PlotConfigDemoBase() {
 
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
             mpg(),
             basic(),
+            redefineDefaults(),
             tooltipAesList(),
             tooltipEmptyList()
         )
     }
 
-    private fun mpg(): Map<String, Any> {
+    private val aesX = "\$x"
+    private val aesY = "\$y"
+    private val aesColor = "\$color"
+    private val aesFill = "\$fill"
+    private val vehicleName = "\${var@vehicle name}"
+    private val modelYear = "\${var@model year}"
+    private val originCar = "\${var@origin of car}"
 
+
+    private fun mpg(): Map<String, Any> {
         val spec = """
         {
            'kind': 'plot',
@@ -36,22 +45,56 @@ class TooltipConfig: PlotConfigDemoBase()  {
            'layers': [
                         {
                            'geom': 'point',
-                            'tooltips': { 
-                                'lines': [
-                                           { 'value':[ 'aes@x', 'aes@y'], 'label' : 'x/y', 'format': '{.1f} x {.2f}' },
-                                           { 'value':'aes@color', 'format': '{.2f} (miles per gallon)' },
-                                           { 'value': ['vehicle name', 'origin of car'], 'format' : 'car \'{}\' ({})'},
-                                           { 'value': 'model year', 'label': '{}', 'format': '19{d}'},              
-                                           'origin of car',
-                                           { 'value' : 'text@#mpg data set' }
-                                ]
-                            }
+                           'tooltips' : {
+                               'tooltip_lines': [  
+                                    'x/y|$aesX x $aesY', 
+                                    '$aesColor (miles per gallon)',
+                                    'car \'$vehicleName\' ($originCar)',
+                                    '@|19$modelYear',
+                                    '@|$originCar',
+                                    '#mpg data set'
+                               ],
+                               'tooltip_formats': {
+                                    '$aesX': '.1f', 
+                                    '$aesY': '.2f', 
+                                    '$aesColor': '.2f'
+                               }
+                           }
                         }
                      ]
         }
         """.trimIndent()
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = AutoMpg.df
+        return plotSpec
+    }
+
+    private fun redefineDefaults(): Map<String, Any> {
+        val spec = """
+        {
+           'kind': 'plot',
+           'ggtitle': {'text' : 'Define format for default tooltips'},
+           'mapping': {
+                         'x': 'sepal length (cm)',
+                         'color': 'sepal width (cm)',
+                         'fill': 'target'
+                      },
+           'layers': [
+                        {
+                           'geom': 'area',
+                           'stat': 'density',
+                           'tooltips' : {
+                                'tooltip_formats': {
+                                    '$aesColor': '.4f'
+                                 }
+                            }
+                        }
+                     ]
+        }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
         return plotSpec
     }
 
@@ -92,14 +135,14 @@ class TooltipConfig: PlotConfigDemoBase()  {
            'layers': [
                         {
                            'geom': 'area',
-                           'tooltips': {
-                                         'lines': [
-                                                     'aes@fill', 
-                                                     { 'value':'aes@x', 'label' : 'length (x)' },
-                                                     { 'value':'aes@y', 'label' : 'density (y)' },
-                                                     { 'value':'aes@color', 'label' : '' }
-                                                  ]
-                                       },
+                           'tooltips' : {
+                               'tooltip_lines': [  
+                                    '@|$aesFill',   
+                                    'length (x)|$aesX',
+                                    'density (y)|$aesY',
+                                    '$aesColor' 
+                                ]
+                           },
                            'stat': 'density'
                         }
                      ]
@@ -115,7 +158,7 @@ class TooltipConfig: PlotConfigDemoBase()  {
         val spec = """
         {
            'kind': 'plot',
-           'ggtitle': {'text' : 'Tooltip list = []'},
+           'ggtitle': {'text' : 'No tooltips'},
            'mapping': {
                          'x': 'sepal length (cm)',
                          'color': 'sepal width (cm)',
@@ -125,7 +168,7 @@ class TooltipConfig: PlotConfigDemoBase()  {
                         {
                            'geom': { 
                                'name': 'area',
-                               'tooltips': { 'lines': []}
+                               'tooltips': 'none'
                             },
                            'stat': 'density'
                         }

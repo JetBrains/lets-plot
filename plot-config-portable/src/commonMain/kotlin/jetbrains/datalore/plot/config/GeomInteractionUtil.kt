@@ -41,9 +41,9 @@ object GeomInteractionUtil {
             .tooltipAes(aesList)
             .tooltipOutliers(outlierAesList)
             .tooltipValueSources(createTooltipValueSourceList(layerConfig.tooltips))
+            .tooltipFormatters(layerConfig.tooltipSourceFormatters)
             .showAxisTooltip(!isLiveMap)
             .build()
-
     }
 
     private fun createGeomInteractionBuilder(
@@ -120,7 +120,7 @@ object GeomInteractionUtil {
         return aesListForTooltip
     }
 
-    fun createOutlierAesList(geomKind: GeomKind) = when (geomKind) {
+    private fun createOutlierAesList(geomKind: GeomKind) = when (geomKind) {
         GeomKind.CROSS_BAR,
         GeomKind.ERROR_BAR,
         GeomKind.LINE_RANGE,

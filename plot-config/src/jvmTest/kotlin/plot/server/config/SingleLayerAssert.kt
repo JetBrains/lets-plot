@@ -7,8 +7,6 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.builder.tooltip.MappedAes
-import jetbrains.datalore.plot.builder.tooltip.VariableValue
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import org.assertj.core.api.AbstractAssert
@@ -32,7 +30,7 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
-    fun haveBindings(expectedBindings: Map<Aes<*>, String>): SingleLayerAssert {
+    private fun haveBindings(expectedBindings: Map<Aes<*>, String>): SingleLayerAssert {
         for (aes in expectedBindings.keys) {
             assertBinding(aes, expectedBindings[aes]!!)
         }
@@ -44,7 +42,7 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
-    fun haveDataVectors(expectedDataVectors: Map<String, List<*>>): SingleLayerAssert {
+    private fun haveDataVectors(expectedDataVectors: Map<String, List<*>>): SingleLayerAssert {
         val df = myLayer.combinedData
         val layerData = DataFrameUtil.toMap(df)
         for (`var` in expectedDataVectors.keys) {
@@ -52,19 +50,6 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
             val vector = layerData[`var`]
             val expectedVector = expectedDataVectors[`var`]
             assertEquals(expectedVector, vector)
-        }
-        return this
-    }
-
-    fun haveTooltipList(expectedNames : List<String>?): SingleLayerAssert {
-        if (expectedNames != null) {
-            assertTooltipListCount(expectedNames.size)
-            for (aes in expectedNames)
-                assertExpectedTooltip(aes)
-        }
-        else {
-            val tooltipNames = getUserTooltipNames()
-            assertTrue(tooltipNames.isNullOrEmpty())
         }
         return this
     }
@@ -91,33 +76,6 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         }
 
         fail("No binding $aes -> $varName")
-    }
-
-    private fun getUserAesTooltipNames(): List<String> {
-        return myLayer.tooltips
-            ?.flatMap { it.data }
-            ?.filterIsInstance<MappedAes>()
-            ?.map(MappedAes::getAesName)
-            ?: emptyList()
-    }
-
-    private fun getUserVariableNames(): List<String> {
-        return myLayer.tooltips
-            ?.flatMap { it.data }
-            ?.filterIsInstance<VariableValue>()?.map(VariableValue::getVariableName)
-            ?: emptyList()
-    }
-
-    private fun getUserTooltipNames(): List<String> {
-        return getUserAesTooltipNames() + getUserVariableNames()
-    }
-
-    private fun assertExpectedTooltip(name: String) {
-        assertTrue(getUserTooltipNames().contains(name), "No tooltip for var with name: '$name'")
-    }
-
-    private fun assertTooltipListCount(expectedCount: Int) {
-        assertEquals(expectedCount, getUserTooltipNames().size, "Wrong size of tooltip list")
     }
 
     companion object {

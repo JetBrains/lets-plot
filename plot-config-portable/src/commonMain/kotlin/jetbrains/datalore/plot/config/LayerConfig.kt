@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
+import jetbrains.datalore.plot.base.interact.ValueSource
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
@@ -23,6 +24,7 @@ import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
+import jetbrains.datalore.plot.config.Option.Layer.NONE
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
@@ -50,6 +52,7 @@ class LayerConfig(
     val statKind: StatKind
     private val mySamplings: List<Sampling>?
     val tooltips: List<TooltipLineSpecification>?
+    var tooltipSourceFormatters: List<ValueSource>? = null
 
     var ownData: DataFrame? = null
         private set
@@ -134,7 +137,20 @@ class LayerConfig(
 
         // tooltip list
         tooltips = if (has(TOOLTIPS)) {
-            TooltipConfig(getMap(TOOLTIPS), constantsMap).createTooltips()
+            when (get(TOOLTIPS)) {
+                is Map<*, *> -> {
+                    val tooltipConfigParser = TooltipConfig(getMap(TOOLTIPS), constantsMap)
+                    tooltipSourceFormatters = tooltipConfigParser.getSourceFormatters()
+                    tooltipConfigParser.createTooltips()
+                }
+                NONE -> {
+                    // not show tooltips
+                    emptyList()
+                }
+                else -> {
+                    error("Incorrect tooltips specification")
+                }
+            }
         } else {
             null
         }

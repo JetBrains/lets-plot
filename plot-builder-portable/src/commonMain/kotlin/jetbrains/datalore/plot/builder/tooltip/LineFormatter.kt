@@ -48,7 +48,7 @@ internal class LineFormatter(
     }
 
     companion object {
-        val RE_PATTERN = """\{([^{}]*)}""".toRegex()
+        val RE_PATTERN = """%%\{([^{}]*)}""".toRegex()
         private const val MATCHED_INDEX = 1
     }
 }
