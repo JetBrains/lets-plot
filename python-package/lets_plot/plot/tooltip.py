@@ -18,18 +18,22 @@ class layer_tooltips(FeatureSpec):
 
     Parameters
     ----------
-    tooltip_lines : list of string - lines to show in the tooltip
-        The string describes the content of the tooltip line as a template using the aesthetics and DataFrame variables.
-        In the string aes names are prefixed with the '$' symbol, variable names have prefix "$var@".
-        If variable name contains spaces, curly brackets are used.
-        The label is separated with the '|' symbol. The '@' symbol as label value means the default label.
+    line() - line to show in the tooltip
+        Adds line template to the tooltip.
+        Variables and aesthetics can be accessed via a special syntax:
+            - $color for aes
+            - $var@year for variable
+            - ${var@number of cylinders} for variable with spaces in the name
+            - ${var@income in $} for variable with spaces and dollar sign in the name
+            - $var@income_$_per_month for variable with dollar sign in the name
 
-    tooltip_formats : map <source name> to <format>
-        Specifies the format of the displayed aes and DataFrame variables.
-        The naming rules are the same: '$' - before aes names, "$var@" - before variable names.
-        The specified format will be applied to the corresponding value in the 'line' template.
-        Note: the relationship between an aes and a variable is not supported,
-              the format parameter is applied to a specific name.
+    format() - map <displayable value> to <format>
+        Defines a format for the displayable value:
+            .format({'$var@density':'.1f'})
+        This format will be applied to the mapped value in the default tooltip or to the corresponding value
+        specified in the 'line' template.
+        For specified tooltip lines the relationship between an aes and a variable is not supported,
+        the format parameter is applied to a specific name.
 
     Use "none" to reset tooltips.
 
@@ -46,12 +50,11 @@ class layer_tooltips(FeatureSpec):
     >>> ggplot(mpg, aes(x='displ', y='hwy')) \
     >>>   + geom_point(aes(color='cty', shape='drv'), \
     >>>                tooltips=layer_tooltips()
-    >>>                         .format({'$color':'.1f'})                             # format for the aes value
-    >>>                         .line('$color (miles per gallon)')                    # formatted aes without label
-    >>>                         .line('@|$var@class')                                 # variable with the default label
-    >>>                         .line('number of cylinders|$var@cyl')                 # variable with the given label
-    >>>                         .line('${var@manufacturer} $var@model ($var@year)')   # complex line of 3 variables
-    >>>                         .line('--[mpg dataset] --'))                          # static text
+    >>>                         .format({'$color':'.1f'})                             # set the format for the aes value
+    >>>                         .line('$color (miles per gallon)')                    # "15.0 (miles per gallon)"
+    >>>                         .line('number of cylinders: $var@cyl')                # "number of cylinders: 4"
+    >>>                         .line('${var@manufacturer} $var@model ($var@year)')   # "ford mustang (1999)"
+    >>>                         .line('--[mpg dataset] --'))                          # "--[mpg dataset] --"
    """
 
     def __init__(self):
