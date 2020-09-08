@@ -19,14 +19,17 @@ class layer_tooltips(FeatureSpec):
     Parameters
     ----------
     tooltip_lines : list of string - lines to show in the tooltip
-        The string describes the content of the tooltip line.
-        The description can contain names of aes, variable, constant value and static text.
-        Aes names are prefixed with the '$' symbol, variable names have prefix "$var@".
+        The string describes the content of the tooltip line as a template using the aesthetics and DataFrame variables.
+        In the string aes names are prefixed with the '$' symbol, variable names have prefix "$var@".
         If variable name contains spaces, curly brackets are used.
-        The Label is separated with the '|' symbol. The '@' symbol as label value means the default label.
+        The label is separated with the '|' symbol. The '@' symbol as label value means the default label.
 
     tooltip_formats : map <source name> to <format>
-        Specifies the format of displayed variables
+        Specifies the format of the displayed aes and DataFrame variables.
+        The naming rules are the same: '$' - before aes names, "$var@" - before variable names.
+        The specified format will be applied to the corresponding value in the 'line' template.
+        Note: the relationship between an aes and a variable is not supported,
+              the format parameter is applied to a specific name.
 
     Use "none" to reset tooltips.
 
@@ -36,11 +39,19 @@ class layer_tooltips(FeatureSpec):
 
     Examples
     ---------
+    >>> import pandas as pd
+    >>> from lets_plot import *
+    >>> mpg_url = 'https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/mpg.csv'
+    >>> mpg = pd.read_csv(mpg_url)
     >>> ggplot(mpg, aes(x='displ', y='hwy')) \
     >>>   + geom_point(aes(color='cty', shape='drv'), \
     >>>                tooltips=layer_tooltips()
-    >>>                             .format({'$color':'.1f'})
-    >>>                             .line('$color (miles per gallon)'))
+    >>>                         .format({'$color':'.1f'})                             # format for the aes value
+    >>>                         .line('$color (miles per gallon)')                    # formatted aes without label
+    >>>                         .line('@|$var@class')                                 # variable with the default label
+    >>>                         .line('number of cylinders|$var@cyl')                 # variable with the given label
+    >>>                         .line('${var@manufacturer} $var@model ($var@year)')   # complex line of 3 variables
+    >>>                         .line('--[mpg dataset] --'))                          # static text
    """
 
     def __init__(self):
@@ -50,8 +61,8 @@ class layer_tooltips(FeatureSpec):
 
     def as_dict(self):
         d = super().as_dict()
-        d['tooltip_lines'] = self.tooltip_lines
         d['tooltip_formats'] = self.tooltip_formats
+        d['tooltip_lines'] = self.tooltip_lines
         return d
 
     def format(self, value):
