@@ -12,9 +12,252 @@ import jetbrains.datalore.plotDemo.model.PlotConfigDemoBase
 class SizeUnitDemo : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            corrDemo(),
-            corrDemoScaleIdentity()
+//            corrDemo(),
+//            corrDemoScaleIdentity(),
+            corrNull()
         )
+    }
+
+    private fun corrNull(): Map<String, Any> {
+        val spec = """
+{
+  "data": {
+    "1": [
+      0.7683776878100281,
+      0.4460541733799256,
+      0.7253490350216348,
+      0.08321921014657614,
+      0.4058974154433887,
+      0.5443292365530668,
+      -0.2847760641661342,
+      -1.62529962200089,
+      -0.1745461779730167,
+      -1.2275645460478073
+    ],
+    "-1": [
+      -0.7683776878100281,
+      -0.4460541733799256,
+      -0.7253490350216348,
+      -0.08321921014657614,
+      -0.4058974154433887,
+      -0.5443292365530668,
+      0.2847760641661342,
+      1.62529962200089,
+      0.1745461779730167,
+      1.2275645460478073
+    ],
+    "2": [
+      0.9136069264251846,
+      0.6530503352933137,
+      0.7367206546494426,
+      0.831325495459735,
+      -0.20091567747179143,
+      -0.8268377478408074,
+      -0.6763170430421451,
+      -0.648349268834604,
+      0.660501459563099,
+      1.1876689602434904
+    ],
+    "-2": [
+      -0.9136069264251846,
+      -0.6530503352933137,
+      -0.7367206546494426,
+      -0.831325495459735,
+      0.20091567747179143,
+      0.8268377478408074,
+      0.6763170430421451,
+      0.648349268834604,
+      -0.660501459563099,
+      -1.1876689602434904
+    ],
+    "3": [
+      -0.22824056389846809,
+      -0.5133218760867605,
+      0.5248945964257495,
+      -0.7797186246638409,
+      1.5053714363870352,
+      -0.3934257295008922,
+      -1.618937128435853,
+      0.7390598397515341,
+      -0.07154072039653744,
+      0.1307913793270005
+    ],
+    "-3": [
+      0.22824056389846809,
+      0.5133218760867605,
+      -0.5248945964257495,
+      0.7797186246638409,
+      -1.5053714363870352,
+      0.3934257295008922,
+      1.618937128435853,
+      -0.7390598397515341,
+      0.07154072039653744,
+      -0.1307913793270005
+    ],
+    "4": [
+      -0.18705429505687643,
+      0.269702493548651,
+      -0.9884440919055635,
+      1.0888343319312446,
+      -0.10043722576080027,
+      -1.7489171532972847,
+      0.7138020621698111,
+      1.2513787291391145,
+      0.9277116801298979,
+      -0.623227327042719
+    ],
+    "-4": [
+      0.18705429505687643,
+      -0.269702493548651,
+      0.9884440919055635,
+      -1.0888343319312446,
+      0.10043722576080027,
+      1.7489171532972847,
+      -0.7138020621698111,
+      -1.2513787291391145,
+      -0.9277116801298979,
+      0.623227327042719
+    ],
+    "5": [
+      1.4602350132958684,
+      -1.2926420810202017,
+      2.4342648202826562,
+      -0.00021031012466170586,
+      0.33517154362901763,
+      0.6968331613477866,
+      -0.8434429970722105,
+      1.6903074416140604,
+      0.9800412796204313,
+      -0.41730649296319694
+    ],
+    "-5": [
+      -1.4602350132958684,
+      1.2926420810202017,
+      -2.4342648202826562,
+      0.00021031012466170586,
+      -0.33517154362901763,
+      -0.6968331613477866,
+      0.8434429970722105,
+      -1.6903074416140604,
+      -0.9800412796204313,
+      0.41730649296319694
+    ]
+  },
+  "mapping": {
+    "x": null,
+    "y": null
+  },
+  "data_meta": {},
+  "theme": {
+    "axis_title": {
+      "name": "blank"
+    },
+    "axis_title_x": null,
+    "axis_title_y": null,
+    "axis_text": null,
+    "axis_text_x": null,
+    "axis_text_y": null,
+    "axis_ticks": null,
+    "axis_ticks_x": null,
+    "axis_ticks_y": null,
+    "axis_line": null,
+    "axis_line_x": null,
+    "axis_line_y": null,
+    "legend_position": null,
+    "legend_justification": null,
+    "legend_direction": null,
+    "axis_tooltip": null,
+    "axis_tooltip_x": null,
+    "axis_tooltip_y": null,
+    "legend_title": {
+      "name": "blank"
+    }
+  },
+  "coord": {
+    "name": "fixed",
+    "ratio": 1.0,
+    "xlim": null,
+    "ylim": null
+  },
+  "kind": "plot",
+  "scales": [
+    {
+      "name": "Correlation",
+      "aesthetic": "color",
+      "breaks": null,
+      "labels": null,
+      "limits": [
+        -1.0,
+        1.0
+      ],
+      "expand": null,
+      "na_value": null,
+      "guide": null,
+      "trans": null,
+      "low": "dark_blue",
+      "high": "red",
+      "scale_mapper_kind": "color_gradient"
+    },
+    {
+      "name": "Abs. corr",
+      "aesthetic": "size",
+      "breaks": null,
+      "labels": null,
+      "limits": null,
+      "expand": null,
+      "na_value": null,
+      "guide": null,
+      "trans": null,
+      "range": null
+    },
+    {
+      "aesthetic": "size",
+      "breaks": null,
+      "labels": null,
+      "limits": null,
+      "expand": null,
+      "na_value": null,
+      "guide": "none",
+      "trans": null,
+      "scale_mapper_kind": "identity"
+    },
+    {
+      "aesthetic": "y",
+      "breaks": null,
+      "labels": null,
+      "limits": null,
+      "expand": null,
+      "na_value": null,
+      "guide": null,
+      "trans": null,
+      "discrete": true,
+      "reverse": true
+    }
+  ],
+  "layers": [
+    {
+      "geom": "point",
+      "stat": "corr",
+      "data": null,
+      "mapping": {
+        "x": null,
+        "y": null
+      },
+      "position": null,
+      "show_legend": null,
+      "data_meta": {},
+      "sampling": null,
+      "map": null,
+      "map_join": null,
+      "animation": null,
+      "size_unit": "x",
+      "type": "upper"
+    }
+  ]
+}
+        """.trimMargin()
+
+        return parsePlotSpec(spec)
     }
 
     private fun corrDemoScaleIdentity(): Map<String, Any> {

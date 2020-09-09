@@ -72,7 +72,7 @@ open class PointGeom : GeomBase() {
         sizeUnit?.let {
             val aes = Aes.get(sizeUnit!!) as Aes<Double>
             val shape = p.shape()!!
-            sizeUnitScale = (p.size()?.div(shape.size(p)) ?: 1.0) * ctx.getUnitResolution(aes)
+            sizeUnitScale = (p.size()?.div(shape.size(p)) ?: 0.0) * ctx.getUnitResolution(aes)
         }
 
         return sizeUnitScale!!
