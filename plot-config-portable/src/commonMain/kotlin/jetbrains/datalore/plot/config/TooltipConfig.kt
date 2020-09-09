@@ -133,6 +133,6 @@ class TooltipConfig(
         private const val USE_DEFAULT_LABEL = "@"
 
         // \$ (dollar escaping) or $name or ${name with spaces}
-        private val SOURCE_RE_PATTERN = Regex("""(?:\\\$)|\$(([^\s(){}\[\]'"\\]+)|(\{(.*?)}))""")
+        private val SOURCE_RE_PATTERN = Regex("""(?:\\\$)|\$(((\w*@)?([\w$]*[^\s\W]+\$?))|(\{(.*?)}))""")
     }
 }
