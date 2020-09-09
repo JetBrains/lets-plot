@@ -59,7 +59,8 @@ class LiveMapFactory(
                             myMapProjection
                         )
                     ),
-                myZoom = myLiveMapSpec.zoom
+                myZoom = myLiveMapSpec.zoom,
+                myAttribution = myLiveMapSpec.attribution
             )
         )
     }

@@ -109,6 +109,7 @@ internal class LiveMapSpecBuilder {
                 myDevParams.isSet(DEBUG_TILES),
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
             ),
+            attribution = myLiveMapOptions.tileProvider[Tile.ATTRIBUTION] as String?,
             devParams = myDevParams
         )
     }
@@ -133,6 +134,7 @@ internal class LiveMapSpecBuilder {
             const val KIND = "kind"
             const val URL = "url"
             const val THEME = "theme"
+            const val ATTRIBUTION = "attribution"
 
             const val VECTOR_LETS_PLOT = "vector_lets_plot"
             const val RASTER_ZXY = "raster_zxy"
