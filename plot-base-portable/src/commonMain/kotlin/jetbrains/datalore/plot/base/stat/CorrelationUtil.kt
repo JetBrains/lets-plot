@@ -22,6 +22,7 @@ object CorrelationUtil {
     fun correlationMatrix(
         data: DataFrame,
         type: CorrelationStat.Type,
+        fillDiagonal: Boolean,
         corrfn: (DoubleArray, DoubleArray) -> Double
     ): DataFrame {
         val numerics = data.variables().filter { isNumeric(data, it.name) }
@@ -32,9 +33,11 @@ object CorrelationUtil {
 
         for ((i, vx) in numerics.withIndex()) {
 
-            var1.add(vx.label)
-            var2.add(vx.label)
-            corr.add(1.0)
+            if (fillDiagonal) {
+                var1.add(vx.label)
+                var2.add(vx.label)
+                corr.add(1.0)
+            }
 
             val xs = data.getNumeric(vx)
 
