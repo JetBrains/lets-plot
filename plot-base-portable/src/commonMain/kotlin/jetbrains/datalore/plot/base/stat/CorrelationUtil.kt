@@ -43,13 +43,13 @@ object CorrelationUtil {
                 val ys = data.getNumeric(vy)
                 val c = correlation(xs, ys, corrfn)
 
-                if (type == CorrelationStat.Type.FULL || type == CorrelationStat.Type.LOWER) {
+                if (type == CorrelationStat.Type.FULL || type == CorrelationStat.Type.UPPER) {
                     var1.add(vx.label)
                     var2.add(vy.label)
                     corr.add(c)
                 }
 
-                if (type == CorrelationStat.Type.FULL || type == CorrelationStat.Type.UPPER) {
+                if (type == CorrelationStat.Type.FULL || type == CorrelationStat.Type.LOWER) {
                     var1.add(vy.label)
                     var2.add(vx.label)
                     corr.add(c)
