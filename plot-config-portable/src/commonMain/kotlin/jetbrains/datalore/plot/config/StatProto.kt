@@ -197,6 +197,9 @@ class StatProto {
             }
         }
 
+        val opts = OptionsAccessor.over(options)
+        stat.fillDiagonal = opts.getBoolean(CorrelationStat.FILL_DIAGONAL, def = CorrelationStat.DEF_FILL_DIAGONAL)
+
         return stat
     }
 
