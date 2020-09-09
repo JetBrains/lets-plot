@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip
 
 open class TooltipLinesSpecification(
     val valueSources: List<ValueSource>,
-    val tooltipLinePatterns: List<ValueSourceTooltipLine>?
+    val tooltipLinePatterns: List<TooltipLine>?
 ) {
     companion object {
         fun emptyTooltipLines() =

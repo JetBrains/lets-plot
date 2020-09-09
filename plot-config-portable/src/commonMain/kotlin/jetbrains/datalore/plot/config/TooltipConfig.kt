@@ -43,7 +43,7 @@ class TooltipConfig(
             )
         }
 
-        private fun parseLine(tooltipLine: String): ValueSourceTooltipLine {
+        private fun parseLine(tooltipLine: String): TooltipLine {
             val label = detachLabel(tooltipLine)
             val valueString = tooltipLine.substringAfter(LABEL_SEPARATOR)
 
@@ -52,7 +52,7 @@ class TooltipConfig(
                 usedValueSources += getValueSource(value.value)
                 LinePatternFormatter.valueInLinePattern()
             }
-            return ValueSourceTooltipLine(
+            return TooltipLine(
                 label,
                 linePattern,
                 usedValueSources

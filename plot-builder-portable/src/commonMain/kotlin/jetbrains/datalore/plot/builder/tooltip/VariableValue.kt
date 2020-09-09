@@ -26,6 +26,9 @@ class VariableValue(
 
         myVariable = myDataFrame.variables().find { it.name == name } ?: error("Undefined variable with name '$name'")
         myIsContinuous = myDataFrame.isNumeric(myVariable)
+        if (myFormatter != null) {
+            require(myIsContinuous) { "Wrong format pattern: numeric for non-numeric variable" }
+        }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {

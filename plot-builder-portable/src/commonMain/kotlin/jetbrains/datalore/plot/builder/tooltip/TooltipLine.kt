@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
-open class ValueSourceTooltipLine(
+open class TooltipLine(
     val label: String?,
     val linePattern: String,
     val data: List<ValueSource>
@@ -48,7 +48,7 @@ open class ValueSourceTooltipLine(
     }
 
     companion object {
-        fun defaultLineForValueSource(valueSource: ValueSource): ValueSourceTooltipLine = ValueSourceTooltipLine(
+        fun defaultLineForValueSource(valueSource: ValueSource): TooltipLine = TooltipLine(
             label = null,
             linePattern = LinePatternFormatter.valueInLinePattern(),
             data = listOf(valueSource)

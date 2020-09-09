@@ -12,14 +12,14 @@ import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.tooltip.MappedAes
-import jetbrains.datalore.plot.builder.tooltip.ValueSourceTooltipLine
+import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 
 class GeomInteraction(builder: GeomInteractionBuilder) :
     ContextualMappingProvider {
 
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
-    private var myTooltipLines: List<ValueSourceTooltipLine> = builder.tooltipLines
+    private var myTooltipLines: List<TooltipLine> = builder.tooltipLines
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
@@ -50,7 +50,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
         }
 
         private fun createContextualMapping(
-            tooltipLines: List<ValueSourceTooltipLine>,
+            tooltipLines: List<TooltipLine>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame
         ): ContextualMapping {

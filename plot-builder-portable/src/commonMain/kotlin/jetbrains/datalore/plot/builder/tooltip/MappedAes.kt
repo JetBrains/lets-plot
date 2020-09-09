@@ -39,6 +39,9 @@ class MappedAes(
             else -> dataLabel
         }
         myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
+        if (myFormatter != null) {
+            require(myIsContinuous) { "Wrong format pattern: numeric for non-numeric value" }
+        }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
