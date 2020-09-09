@@ -46,19 +46,12 @@ open class PointGeom : GeomBase() {
             val p = aesthetics.dataPointAt(i)
             val x = p.x()
             val y = p.y()
-            val range = aesthetics.range(Aes.SIZE)
-            val ox_range = aesthetics.overallRange(Aes.X)
-            val oy_range = aesthetics.overallRange(Aes.Y)
 
             if (SeriesUtil.allFinite(x, y)) {
                 val location = helper.toClient(DoubleVector(x!!, y!!), p)
 
                 val shape = p.shape()!!
-                val sz = shape.size(p)
-                val p_sz = p.size()!!
-                var scale = getScaleBySizeUnit(ctx, p)
-                scale /= 12.0
-
+                val scale = getScaleBySizeUnit(ctx, p)
 
                 targetCollector.addPoint(
                     i, location, scale * shape.size(p) / 2,
@@ -79,10 +72,6 @@ open class PointGeom : GeomBase() {
         sizeUnit?.let {
             val aes = Aes.get(sizeUnit!!) as Aes<Double>
             val shape = p.shape()!!
-
-            val res = ctx.getResolution(aes)
-            val ures = ctx.getUnitResolution(aes)
-
             sizeUnitScale = (p.size()?.div(shape.size(p)) ?: 1.0) * ctx.getUnitResolution(aes)
         }
 
