@@ -48,9 +48,14 @@ class TooltipConfig(
             val valueString = tooltipLine.substringAfter(LABEL_SEPARATOR)
 
             val usedValueSources = mutableListOf<ValueSource>()
-            val linePattern = SOURCE_RE_PATTERN.replace(valueString) { value ->
-                usedValueSources += getValueSource(value.value)
-                LinePatternFormatter.valueInLinePattern()
+            val linePattern = SOURCE_RE_PATTERN.replace(valueString) { match ->
+                if (match.value == "\\$VALUE_SOURCE_PREFIX") {
+                    // it is a part of the text (not of the name)
+                    VALUE_SOURCE_PREFIX
+                } else {
+                    usedValueSources += getValueSource(match.value)
+                    LinePatternFormatter.valueInLinePattern()
+                }
             }
             return TooltipLine(
                 label,
@@ -127,7 +132,7 @@ class TooltipConfig(
         private const val LABEL_SEPARATOR = "|"
         private const val USE_DEFAULT_LABEL = "@"
 
-        // $text or ${text with spaces}
-        private val SOURCE_RE_PATTERN = Regex("""\$(([^\s{}()\[\]'"]+)|(\{(.*?)}))""")
+        // \$ (dollar escaping) or $name or ${name with spaces}
+        private val SOURCE_RE_PATTERN = Regex("""(?:\\\$)|\$(([^\s(){}\[\]'"\\]+)|(\{(.*?)}))""")
     }
 }

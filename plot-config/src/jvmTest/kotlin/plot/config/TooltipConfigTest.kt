@@ -72,7 +72,10 @@ class TooltipConfigTest {
                 "\${var@model name}",   // space in the name
                 "\$var@foo$",           // with '$' at the end
                 "\$var@\$bar",          // with '$' at the beginning
-                "\$var@foo\$bar"        // with '$' at the middle
+                "\$var@foo\$bar",       // with '$' at the middle
+                "\$var@foo$\\$",        // the second '$' is part of the result string
+                "\\\$text",             // '$' is part of the string (it's not the name)
+                "(\$var@foo\$)"         // with brackets as part of the result string
             )
         )
         val geomLayer = buildGeomPointLayer(myData, mapping, tooltips = tooltipConfig)
@@ -83,7 +86,10 @@ class TooltipConfigTest {
             "dodge",
             "foo",
             "bar",
-            "foobar"
+            "foobar",
+            "foo$",
+            "\$text",
+            "(foo)"
         )
         val lines = getGeneralTooltipLines(geomLayer)
         assertTooltipLines(expectedLines, lines)
