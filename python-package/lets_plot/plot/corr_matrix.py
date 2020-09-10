@@ -5,7 +5,7 @@
 """Correlation matrix implementation module"""
 
 from .geom import geom_point, geom_text
-from .scale import scale_color_continuous, scale_y_discrete_reversed
+from .scale import scale_color_continuous, scale_y_discrete_reversed, scale_size
 from .scale_identity import scale_size_identity
 from .coord import coord_fixed
 from .theme_ import theme, element_blank
@@ -55,8 +55,7 @@ def geom_corr_point(data=None, show_legend=None, type=None, fill_diagonal=None,
 
 
 def geom_corr_text(data=None, show_legend=None, type=None, fill_diagonal=None,
-                   format=None, low_color=None, high_color=None, **other):
-
+                   format=None, low_color=None, high_color=None, size=None, **other):
     """
     Correlation matrix implementation via geom_text
 
@@ -80,15 +79,15 @@ def geom_corr_text(data=None, show_legend=None, type=None, fill_diagonal=None,
 
     """
 
-
     type = type if type else 'full'
     format = format if format else '.2f'
     low_color = low_color if low_color else 'dark_blue'
     high_color = high_color if high_color else 'red'
 
-    return geom_text(data=data, stat='corr', show_legend=show_legend,
+    return geom_text(data=data, stat='corr', show_legend=show_legend, size=size,
                      type=type, fill_diagonal=fill_diagonal, label_format=format, **other) + \
            scale_color_continuous(name='Correlation', low=low_color, high=high_color, limits=[-1.0, 1.0]) + \
            coord_fixed() + \
            theme(axis_title=element_blank(), legend_title=element_blank()) + \
+           scale_size(name="") + \
            scale_y_discrete_reversed()
