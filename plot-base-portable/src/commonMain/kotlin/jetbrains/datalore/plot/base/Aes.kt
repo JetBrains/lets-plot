@@ -27,8 +27,6 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
     companion object {
         private val values = ArrayList<Aes<*>>()
 
-        fun get(name: String): Aes<*> = values.first { it.name == name }
-
         val X: Aes<Double> = Aes("x")
         val Y: Aes<Double> = Aes("y")
         val Z: Aes<Double> = Aes("z")
