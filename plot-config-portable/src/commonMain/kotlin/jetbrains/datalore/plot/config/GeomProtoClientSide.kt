@@ -120,14 +120,14 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
 
                 if (opts.has(Point.SIZE_UNIT)) {
-                    val sz_unit = opts.getString(Point.SIZE_UNIT)
+                    val sizeUnit = opts.getString(Point.SIZE_UNIT)
 
-                    if (sz_unit!= null) {
-                        if (sz_unit != "x" && sz_unit!= "y") {
-                            throw IllegalArgumentException("Expected: size_unit = 'x' or size_unit = 'y'")
+                    if ( sizeUnit != null) {
+                        if ( sizeUnit != Point.X && sizeUnit != Point.Y ) {
+                            throw IllegalArgumentException("Expected: size_unit = '${Point.X}' or size_unit = '${Point.Y}'")
                         }
 
-                        geom.sizeUnit = sz_unit
+                        geom.sizeUnit = sizeUnit
                     }
 
                 }
