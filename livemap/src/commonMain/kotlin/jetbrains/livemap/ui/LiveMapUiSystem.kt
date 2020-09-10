@@ -95,20 +95,20 @@ class LiveMapUiSystem(
         addListenersToMakeGeometryButton(buttonMakeGeometry)
 
         if (myAttribution != null) {
-            val osm = Text().apply {
+            val attributionText = Text().apply {
                 color = Color.BLACK
                 fontFamily = CONTRIBUTORS_FONT_FAMILY
                 fontHeight = 11.0
                 text = listOf(myAttribution)
             }
 
-            val contributors = Label(DoubleVector(myViewport.size.x, 0.0), osm).apply {
+            val attributionLabel = Label(DoubleVector(myViewport.size.x, 0.0), attributionText).apply {
                 background = Color(200, 200, 200, 179)
                 this.padding = 2.0
                 position = Label.LabelPosition.LEFT
             }
 
-            myUiService.addRenderable(contributors)
+            myUiService.addRenderable(attributionLabel)
         }
     }
 
