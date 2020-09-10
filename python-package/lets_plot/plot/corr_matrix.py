@@ -11,7 +11,7 @@ from .coord import coord_fixed
 from .theme_ import theme, element_blank
 from .tooltip import layer_tooltips
 
-__all__ = ['geom_corr_point', 'geom_corr_text']
+__all__ = ['geom_corr_point', 'geom_corr_text', 'geom_corr']
 
 
 def geom_corr_point(mapping=None, data=None, show_legend=None, type=None, fill_diagonal=None,
@@ -94,6 +94,25 @@ def geom_corr_text(mapping=None, data=None, show_legend=None, type=None, fill_di
 
     return geom_text(mapping=mapping, data=data, stat='corr', show_legend=show_legend, size=size,
                      type=type, fill_diagonal=fill_diagonal, label_format=format, **other) + \
+           scale_color_continuous(name='Correlation', low=low_color, high=high_color, limits=[-1.0, 1.0]) + \
+           coord_fixed() + \
+           theme(axis_title=element_blank(), legend_title=element_blank()) + \
+           scale_size(name="") + \
+           scale_y_discrete_reversed()
+
+
+def geom_corr(mapping=None, data=None, show_legend=None, format=None,
+              low_color=None, high_color=None, text_size=None, **other):
+
+    format = format if format else '.2f'
+    low_color = low_color if low_color else 'dark_blue'
+    high_color = high_color if high_color else 'red'
+
+    return geom_point(mapping=mapping, data=data, stat='corr', show_legend=show_legend,
+                      tooltips=layer_tooltips().format({'$color': format}).line('Corr|$color').line('$x and $y'),
+                      type="upper", fill_diagonal=True, **other) + \
+           geom_text(mapping=mapping, data=data, stat='corr', show_legend=show_legend,
+                     type="lower", fill_diagonal=False, label_format=format, size=text_size, **other) + \
            scale_color_continuous(name='Correlation', low=low_color, high=high_color, limits=[-1.0, 1.0]) + \
            coord_fixed() + \
            theme(axis_title=element_blank(), legend_title=element_blank()) + \
