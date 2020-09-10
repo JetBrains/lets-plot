@@ -5,11 +5,13 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.GeomHelper.Companion.getSizeUnitAes
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColorValue
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
@@ -70,7 +72,7 @@ open class PointGeom : GeomBase() {
         sizeUnitScale = 1.0
 
         sizeUnit?.let {
-            val aes = Aes.get(sizeUnit!!) as Aes<Double>
+            val aes = getSizeUnitAes(sizeUnit!!)
             val shape = p.shape()!!
             sizeUnitScale = (p.size()?.div(shape.size(p)) ?: 0.0) * ctx.getUnitResolution(aes)
         }
@@ -80,6 +82,8 @@ open class PointGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
+        const val X = "x"
+        const val Y = "y"
 
         fun tooltipParams(p: DataPointAesthetics): TooltipParams {
             var color = Color.TRANSPARENT
