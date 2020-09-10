@@ -14,13 +14,17 @@ from .tooltip import layer_tooltips
 __all__ = ['geom_corr_point', 'geom_corr_text']
 
 
-def geom_corr_point(data=None, show_legend=None, type=None, fill_diagonal=None,
+def geom_corr_point(mapping=None, data=None, show_legend=None, type=None, fill_diagonal=None,
                     format=None, low_color=None, high_color=None, **other):
     """
     Correlation matrix implementation via geom_point
 
     Parameters
     ----------
+    mapping : set of aesthetic mappings created by aes() function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+
     data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
@@ -44,7 +48,7 @@ def geom_corr_point(data=None, show_legend=None, type=None, fill_diagonal=None,
     low_color = low_color if low_color else 'dark_blue'
     high_color = high_color if high_color else 'red'
 
-    return geom_point(data=data, stat='corr', show_legend=show_legend, size_unit='x',
+    return geom_point(mapping=mapping, data=data, stat='corr', show_legend=show_legend, size_unit='x',
                       tooltips=layer_tooltips().format({'$color': format}).line('Corr|$color').line('$x and $y'),
                       type=type, fill_diagonal=fill_diagonal, **other) + \
            scale_color_continuous(name='Correlation', low=low_color, high=high_color, limits=[-1.0, 1.0]) + \
@@ -54,13 +58,17 @@ def geom_corr_point(data=None, show_legend=None, type=None, fill_diagonal=None,
            scale_y_discrete_reversed()
 
 
-def geom_corr_text(data=None, show_legend=None, type=None, fill_diagonal=None,
+def geom_corr_text(mapping=None, data=None, show_legend=None, type=None, fill_diagonal=None,
                    format=None, low_color=None, high_color=None, size=None, **other):
     """
     Correlation matrix implementation via geom_text
 
     Parameters
     ----------
+    mapping : set of aesthetic mappings created by aes() function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+
     data : dictionary, pandas DataFrame or GeoDataFrame (supported shapes Point and MultiPoint), optional
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
@@ -84,7 +92,7 @@ def geom_corr_text(data=None, show_legend=None, type=None, fill_diagonal=None,
     low_color = low_color if low_color else 'dark_blue'
     high_color = high_color if high_color else 'red'
 
-    return geom_text(data=data, stat='corr', show_legend=show_legend, size=size,
+    return geom_text(mapping=mapping, data=data, stat='corr', show_legend=show_legend, size=size,
                      type=type, fill_diagonal=fill_diagonal, label_format=format, **other) + \
            scale_color_continuous(name='Correlation', low=low_color, high=high_color, limits=[-1.0, 1.0]) + \
            coord_fixed() + \
