@@ -41,6 +41,8 @@ def maptiles_zxy(url: str, attribution: str = None) -> dict:
     """
     :param url:
         Template for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
+    :param attribution:
+        An attribution or a copyright notice to display on the map as required by the tile license.
     :return:
         Tile provider settings
     """
