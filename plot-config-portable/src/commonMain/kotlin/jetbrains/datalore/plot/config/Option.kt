@@ -140,6 +140,8 @@ object Option {
         object Point {
             const val ANIMATION = "animation"
             const val SIZE_UNIT = "size_unit"
+            const val X = "x"
+            const val Y = "y"
         }
 
         object Image {

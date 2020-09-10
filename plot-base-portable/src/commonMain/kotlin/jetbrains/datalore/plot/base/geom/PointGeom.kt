@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
@@ -63,12 +64,27 @@ open class PointGeom : GeomBase() {
         root.add(wrap(slimGroup))
     }
 
+    private fun getSizeUnitAes( sizeUnitName: String ) : Aes<Double> {
+        Preconditions.checkArgument(
+            sizeUnitName == X || sizeUnitName == Y,
+            "size_unit value must be either '${X}' or '${Y}'"
+        )
+
+        if ( sizeUnitName == X) {
+            return Aes.X
+        } else if ( sizeUnitName == Y) {
+            return Aes.Y
+        }
+
+        error("Wrong size_unit value")
+    }
+
     private fun getScaleBySizeUnit(ctx: GeomContext, p: DataPointAesthetics): Double {
         sizeUnitScale?.let { return sizeUnitScale!! }
         sizeUnitScale = 1.0
 
         sizeUnit?.let {
-            val aes = Aes.get(sizeUnit!!) as Aes<Double>
+            val aes = getSizeUnitAes(sizeUnit!!)
             val shape = p.shape()!!
             sizeUnitScale = (p.size()?.div(shape.size(p)) ?: 0.0) * ctx.getUnitResolution(aes)
         }
@@ -78,6 +94,8 @@ open class PointGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
+        const val X = "x"
+        const val Y = "y"
 
         fun tooltipParams(p: DataPointAesthetics): TooltipParams {
             var color = Color.TRANSPARENT
