@@ -5,13 +5,11 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.GeomHelper.Companion.getSizeUnitAes
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromColorValue
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
@@ -53,7 +51,7 @@ open class PointGeom : GeomBase() {
                 val location = helper.toClient(DoubleVector(x!!, y!!), p)
 
                 val shape = p.shape()!!
-                val scale = getScaleBySizeUnit(ctx, p)
+                val scale = getScale(ctx, p)
 
                 targetCollector.addPoint(
                     i, location, scale * shape.size(p) / 2,
@@ -66,13 +64,13 @@ open class PointGeom : GeomBase() {
         root.add(wrap(slimGroup))
     }
 
+    private fun getScale(ctx: GeomContext, p: DataPointAesthetics): Double {
 
-    private fun getScaleBySizeUnit(ctx: GeomContext, p: DataPointAesthetics): Double {
         sizeUnitScale?.let { return sizeUnitScale!! }
         sizeUnitScale = 1.0
 
         sizeUnit?.let {
-            val aes = getSizeUnitAes(sizeUnit!!)
+            val aes = GeomHelper.getSizeUnitAes(sizeUnit!!)
             val shape = p.shape()!!
             sizeUnitScale = (p.size()?.div(shape.size(p)) ?: 0.0) * ctx.getUnitResolution(aes)
         }
@@ -82,8 +80,6 @@ open class PointGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
-        const val X = "x"
-        const val Y = "y"
 
         fun tooltipParams(p: DataPointAesthetics): TooltipParams {
             var color = Color.TRANSPARENT

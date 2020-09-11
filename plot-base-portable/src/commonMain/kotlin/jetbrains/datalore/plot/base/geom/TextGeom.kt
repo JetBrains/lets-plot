@@ -20,7 +20,7 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.base.stringFormat.StringFormat
-import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class TextGeom : GeomBase() {
