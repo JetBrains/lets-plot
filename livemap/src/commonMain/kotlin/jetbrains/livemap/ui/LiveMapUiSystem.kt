@@ -36,7 +36,8 @@ class LiveMapUiSystem(
     private val myUiService: UiService,
     componentManager: EcsComponentManager,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
-    private val myLayerManager: LayerManager
+    private val myLayerManager: LayerManager,
+    private val myAttribution: String?
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLiveMapLocation: LiveMapLocation
     private lateinit var myZoomPlus: MutableImage
@@ -93,20 +94,22 @@ class LiveMapUiSystem(
         val buttonMakeGeometry = myUiService.addButton(myMakeGeometry)
         addListenersToMakeGeometryButton(buttonMakeGeometry)
 
-        val osm = Text().apply {
-            color = Color.BLACK
-            fontFamily = CONTRIBUTORS_FONT_FAMILY
-            fontHeight = 11.0
-            text = listOf(LINK_TO_OSM_CONTRIBUTORS)
-        }
+        if (myAttribution != null) {
+            val attributionText = Text().apply {
+                color = Color.BLACK
+                fontFamily = CONTRIBUTORS_FONT_FAMILY
+                fontHeight = 11.0
+                text = listOf(myAttribution)
+            }
 
-        val contributors = Label(DoubleVector(myViewport.size.x, 0.0), osm).apply {
-            background = Color(200, 200, 200, 179)
-            this.padding = 2.0
-            position = Label.LabelPosition.LEFT
-        }
+            val attributionLabel = Label(DoubleVector(myViewport.size.x, 0.0), attributionText).apply {
+                background = Color(200, 200, 200, 179)
+                this.padding = 2.0
+                position = Label.LabelPosition.LEFT
+            }
 
-        myUiService.addRenderable(contributors)
+            myUiService.addRenderable(attributionLabel)
+        }
     }
 
     private fun addListenersToGetCenterButton(button: EcsEntity) {
@@ -278,7 +281,6 @@ class LiveMapUiSystem(
                     + "XOCvF3bjfOJyAiRAAiRAv4wb94ohdcx3dRx6dEkcEiABEiAB+n9qCrfk+FVVdb5KCR4RwVrbnATv3tmq7CEBEiAB+vdA965tV16X1LabWFOow7bu8aSmIMe2ANUM9Mg36JuAiGgJAMYY"
                     + "ZyGKoihfV4qZlwCQ57mTf8lai/1+X3rZgpIkCdvt9reyvSwIAif6fqy1OB6PyPP80l42HA6jZjYAlkrTdHZuN5u4QMHMSyJaGmM+R1GUA8B3Hdvtjp1TGh0AAAAASUVORK5CYII=")
 
-        private const val LINK_TO_OSM_CONTRIBUTORS = "Map data \u00a9 OpenStreetMap contributors"
         private const val CONTRIBUTORS_FONT_FAMILY =
             "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, " + "\"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\""
 

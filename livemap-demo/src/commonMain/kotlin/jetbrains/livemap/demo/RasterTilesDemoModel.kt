@@ -14,6 +14,7 @@ class RasterTilesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
             tileSystemProvider = RasterTileSystemProvider("http://c.tile.stamen.com/toner/{z}/{x}/{y}@2x.png")
+            attribution = "© stamen.com"
         }
     }
 }

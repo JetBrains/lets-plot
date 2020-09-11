@@ -12,8 +12,8 @@ import kotlin.random.Random
 class LiveMap : PlotConfigDemoBase() {
     fun plotSpecList(): List<Map<String, Any>> {
         return listOf(
-            multiLayerTooltips()
-//            mapJoinBar()
+            multiLayerTooltips(),
+            mapJoinBar()
 //            antiMeridian()
 //            tooltips()
 //            symbol_point(),
@@ -53,7 +53,8 @@ class LiveMap : PlotConfigDemoBase() {
                     "tiles": {
                         "kind": "vector_lets_plot",
                         "url": "ws://10.0.0.127:3933",
-                        "theme": null
+                        "theme": "dark",
+                        "attribution": "Map data © OpenStreetMap contributors"
                     }
                 },
                 {
@@ -100,7 +101,8 @@ class LiveMap : PlotConfigDemoBase() {
       "display_mode": "pie",
       "tiles": {
         "kind": "raster_zxy",
-        "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}@2x.png"
+        "url": "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}@2x.png",
+        "attribution": "© wikimedia.org"
       },
       "geocoding": {
         "url": "http://10.0.0.127:3020"

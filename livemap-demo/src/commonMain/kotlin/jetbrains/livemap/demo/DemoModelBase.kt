@@ -37,6 +37,7 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
             // raster tiles without geocoding
             tileSystemProvider = RasterTileSystemProvider("https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png")
             geocodingService = Services.bogusGeocodingService()
+            attribution = "© wikimedia.org"
 
             // vector tiles and geocoding
             //tileSystemProvider = VectorTileSystemProvider(Services.devTileProvider())
