@@ -110,7 +110,14 @@ class AmbiguityResolver:
 
 
 class RegionQuery:
-    def __init__(self, request: Optional[str], scope: Optional[MapRegion], ambiguity_resolver: AmbiguityResolver):
+    def __init__(self,
+                 request: Optional[str],
+                 scope: Optional[MapRegion],
+                 ambiguity_resolver: AmbiguityResolver,
+                 country=None,
+                 state=None,
+                 county=None
+                 ):
         assert_optional_type(request, str)
         assert_optional_type(scope, MapRegion)
         assert_type(ambiguity_resolver, AmbiguityResolver)
@@ -118,12 +125,18 @@ class RegionQuery:
         self.request: Optional[str] = request
         self.scope: Optional[MapRegion] = scope
         self.ambiguity_resolver: AmbiguityResolver = ambiguity_resolver
+        self.country = country
+        self.state = state
+        self.county = county
 
     def __eq__(self, o: object) -> bool:
         return isinstance(o, RegionQuery) \
                and self.request == o.request \
                and self.scope == o.scope \
-               and self.ambiguity_resolver == o.ambiguity_resolver
+               and self.ambiguity_resolver == o.ambiguity_resolver \
+               and self.country == o.country \
+               and self.state == o.state \
+               and self.county == o.county
 
     def __ne__(self, o: object) -> bool:
         return not self == o

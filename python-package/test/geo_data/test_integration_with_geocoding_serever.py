@@ -10,7 +10,7 @@ from pandas import DataFrame
 from shapely.geometry import Point
 
 import lets_plot.geo_data as geodata
-from lets_plot.geo_data import DF_FOUND_NAME, DF_ID, DF_REQUEST
+from lets_plot.geo_data import DF_FOUND_NAME, DF_ID, DF_REQUEST, DF_PARENT_COUNTRY, DF_PARENT_STATE, DF_PARENT_COUNTY
 
 ShapelyPoint = shapely.geometry.Point
 
@@ -514,3 +514,50 @@ def test_incorrect_group_processing():
     boundaries: DataFrame = r.boundaries(resolution=10)
 
     assert 'group' not in boundaries.keys()
+
+
+@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+def test_parents_in_regions_object_and_geo_data_frame():
+    tx = geodata.regions_builder2(level='city', names='boston', counties='suffolk', states='massachusetts', countries='usa').build()
+
+    tx_df = tx.to_data_frame()
+
+    # Test columns order
+    assert tx_df.columns.tolist() == [DF_ID, DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY]
+
+    assert tx_df[DF_REQUEST][0] == 'boston'
+    assert tx_df[DF_PARENT_COUNTY][0] == 'suffolk'
+    assert tx_df[DF_PARENT_STATE][0] == 'massachusetts'
+    assert tx_df[DF_PARENT_COUNTRY][0] == 'usa'
+
+    tx_gdf = tx.limits()
+    assert tx_gdf.columns.tolist() == [DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY, 'geometry']
+    assert tx_gdf[DF_REQUEST][0] == 'boston'
+    assert tx_gdf[DF_PARENT_COUNTY][0] == 'suffolk'
+    assert tx_gdf[DF_PARENT_STATE][0] == 'massachusetts'
+    assert tx_gdf[DF_PARENT_COUNTRY][0] == 'usa'
+
+    tx_gdf = tx.centroids()
+    assert tx_gdf.columns.tolist() == [DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY, 'geometry']
+    assert tx_gdf[DF_REQUEST][0] == 'boston'
+    assert tx_gdf[DF_PARENT_COUNTY][0] == 'suffolk'
+    assert tx_gdf[DF_PARENT_STATE][0] == 'massachusetts'
+    assert tx_gdf[DF_PARENT_COUNTRY][0] == 'usa'
+
+    tx_gdf = tx.boundaries()
+    assert tx_gdf.columns.tolist() == [DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY, 'geometry']
+    assert tx_gdf[DF_REQUEST][0] == 'boston'
+    assert tx_gdf[DF_PARENT_COUNTY][0] == 'suffolk'
+    assert tx_gdf[DF_PARENT_STATE][0] == 'massachusetts'
+    assert tx_gdf[DF_PARENT_COUNTRY][0] == 'usa'
+
+    # antimeridian
+    ru = geodata.regions_builder2(level='country', names='russia').build()
+    ru_df = ru.to_data_frame()
+    assert ru_df.columns.tolist() == [DF_ID, DF_REQUEST, DF_FOUND_NAME]
+
+    ru_gdf = ru.limits()
+    assert ru_gdf[DF_REQUEST][0] == 'russia'
+    assert ru_gdf[DF_REQUEST][1] == 'russia'
+    assert ru_gdf.columns.tolist() == [DF_REQUEST, DF_FOUND_NAME, 'geometry']
+

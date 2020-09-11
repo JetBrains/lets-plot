@@ -5,7 +5,7 @@ from typing import List, Dict, Optional, Union
 from pandas import DataFrame, Series
 
 from .gis.geocoding_service import GeocodingService
-from .gis.request import PayloadKind, RequestBuilder, RequestKind, MapRegion
+from .gis.request import PayloadKind, RequestBuilder, RequestKind, MapRegion, RegionQuery
 from .gis.response import GeocodedFeature, Namesake, AmbiguousFeature, LevelKind
 from .gis.response import SuccessResponse, Response, AmbiguousResponse, ErrorResponse
 from .type_assertion import assert_type
@@ -19,6 +19,9 @@ DF_ID = 'id'
 DF_FOUND_NAME = 'found name'
 DF_HIGHLIGHTS = 'highlights'
 DF_GROUP = 'group'
+DF_PARENT_COUNTRY = 'country'
+DF_PARENT_STATE = 'state'
+DF_PARENT_COUNTY = 'county'
 
 
 class Resolution(enum.Enum):
@@ -39,28 +42,84 @@ class Resolution(enum.Enum):
     world_low = 1
 
 
+def contains_values(column):
+    return any(v is not None for v in column)
+
 def select_not_empty_name(feature: GeocodedFeature) -> str:
     return feature.name if feature.query is None or feature.query == '' else feature.query
 
+def select_parents(queries: List[RegionQuery] = None) -> Dict:
+    if queries is None:
+        return {}
 
-class DataFrameProvider():
+    data = {}
+
+    counties = [query.county for query in queries]
+    if contains_values(counties):
+        data[DF_PARENT_COUNTY] = counties
+
+    states = [query.state for query in queries]
+    if contains_values(states):
+        data[DF_PARENT_STATE] = states
+
+    countries = [query.country for query in queries]
+    if contains_values(countries):
+        data[DF_PARENT_COUNTRY] = countries
+
+    return data
+
+
+class PlacesDataFrameBuilder:
     def __init__(self):
         self._request: List[str] = []
         self._found_name: List[str] = []
+        self._county: List[str] = []
+        self._state: List[str] = []
+        self._country: List[str] = []
+
+    def append_row(self, request: str, found_name: str, parents: Dict, parent_row: int):
+        self._request.append(request)
+        self._found_name.append(found_name)
+
+        self._county.append(parents[DF_PARENT_COUNTY][parent_row] if DF_PARENT_COUNTY in parents else None)
+        self._state.append(parents[DF_PARENT_STATE][parent_row] if DF_PARENT_STATE in parents else None)
+        self._country.append(parents[DF_PARENT_COUNTRY][parent_row] if DF_PARENT_COUNTRY in parents else None)
+
+
+    def build_dict(self):
+        data = {}
+        data[DF_REQUEST] = self._request
+        data[DF_FOUND_NAME] = self._found_name
+
+        if contains_values(self._county):
+            data[DF_PARENT_COUNTY] = self._county
+
+        if contains_values(self._state):
+            data[DF_PARENT_STATE] = self._state
+
+        if contains_values(self._country):
+            data[DF_PARENT_COUNTRY] = self._country
+
+        return data
+
 
     @abstractmethod
-    def to_data_frame(self, features: List[GeocodedFeature]) -> DataFrame:
+    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = None) -> DataFrame:
         raise ValueError('Not implemented')
 
 
 class Regions(CanToDataFrame):
-    def __init__(self, level_kind: LevelKind, features: List[GeocodedFeature], highlights: bool = False):
+    def __init__(self, level_kind: LevelKind, features: List[GeocodedFeature], highlights: bool = False, queries: List[RegionQuery] = None):
         self._level_kind: LevelKind = level_kind
         self._geocoded_features: List[GeocodedFeature] = features
         self._highlights: bool = highlights
+        self._queries: List[RegionQuery] = queries
 
     def __repr__(self):
         return self.to_data_frame().to_string()
+
+    def __len__(self):
+        return len(self._geocoded_features)
 
     def as_list(self) -> List['Regions']:
         return [Regions(self._level_kind, [feature], self._highlights) for feature in self._geocoded_features]
@@ -176,26 +235,23 @@ class Regions(CanToDataFrame):
 
     # implements abstract in CanToDataFrame
     def to_data_frame(self) -> DataFrame:
-        keyMappers: Dict = {
-            DF_REQUEST: lambda feature: select_not_empty_name(feature),
-            DF_ID: lambda feature: feature.id,
-            DF_FOUND_NAME: lambda feature: feature.name,
-            DF_HIGHLIGHTS: lambda feature: feature.highlights
-        }
+        parents = select_parents(self._queries)
+        places = PlacesDataFrameBuilder()
 
-        keyList: List[str] = [DF_REQUEST, DF_ID, DF_FOUND_NAME]
+        data = {}
+        data[DF_ID] = [feature.id for feature in self._geocoded_features]
+
+        for i in range(len(self._geocoded_features)):
+            feature = self._geocoded_features[i]
+            places.append_row(select_not_empty_name(feature), feature.name, parents, i)
+
+        data = {**data, **places.build_dict()}
 
         if self._highlights:
-            keyList.append(DF_HIGHLIGHTS)
+            data[DF_HIGHLIGHTS] = [feature.highlights for feature in self._geocoded_features]
 
-        data: Dict = {}
-        for key in keyList:
-            data[key] = [keyMappers[key](feature) for feature in self._geocoded_features]
+        return DataFrame(data)
 
-        return DataFrame(data, columns=keyList)
-
-    def __len__(self):
-        return len(self._geocoded_features)
 
     def _execute(self, request_builder: RequestBuilder, df_converter):
         response = GeocodingService().do_request(request_builder.build())
@@ -205,7 +261,7 @@ class Regions(CanToDataFrame):
 
         self._join_payload(response.features)
 
-        return df_converter.to_data_frame(self._geocoded_features)
+        return df_converter.to_data_frame(self._geocoded_features, self._queries)
 
     def _request_builder(self, payload_kind: PayloadKind) -> RequestBuilder:
         assert_type(payload_kind, PayloadKind)
@@ -340,7 +396,7 @@ def _to_scope(location: scope_types) -> Optional[Union[List[MapRegion], MapRegio
         if isinstance(obj, str):
             return MapRegion.with_name(obj)
 
-        raise ValueError('Invalid region: ' + obj)
+        raise ValueError('Invalid region: ' + str(obj))
 
     if isinstance(location, list):
         return [_make_region(obj) for obj in location]

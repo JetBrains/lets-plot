@@ -5,8 +5,9 @@ from geopandas import GeoDataFrame
 from pandas import DataFrame
 from shapely.geometry import box
 
-from lets_plot.geo_data import DataFrameProvider, select_not_empty_name, DF_REQUEST, DF_FOUND_NAME, abstractmethod
+from lets_plot.geo_data import PlacesDataFrameBuilder, select_not_empty_name, select_parents, DF_REQUEST, DF_FOUND_NAME, abstractmethod
 from lets_plot.geo_data.gis.response import GeocodedFeature, GeoRect, Boundary, Multipolygon, Polygon, GeoPoint
+from lets_plot.geo_data.gis.request import RegionQuery
 
 ShapelyPoint = shapely.geometry.Point
 ShapelyLinearRing = shapely.geometry.LinearRing
@@ -22,7 +23,7 @@ def _create_geo_data_frame(data, geometry) -> DataFrame:
     )
 
 
-class RectGeoDataFrame(DataFrameProvider):
+class RectGeoDataFrame:
 
     @staticmethod
     def intersected_by_antimeridian(lonmin: float, lonmax: float):
@@ -39,27 +40,23 @@ class RectGeoDataFrame(DataFrameProvider):
         self._lonmax: List[float] = []
         self._latmax: List[float] = []
 
-    def to_data_frame(self, features: List[GeocodedFeature]) -> DataFrame:
-        data = self._calc_common_data(features)
-        geometry = [RectGeoDataFrame.limit2geometry(lmt[0], lmt[1], lmt[2], lmt[3]) for lmt in
-                    zip(self._lonmin, self._latmin, self._lonmax, self._latmax)]
-        return _create_geo_data_frame(data, geometry=geometry)
+    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = None) -> DataFrame:
+        places = PlacesDataFrameBuilder()
 
-    def _calc_common_data(self, features: List[GeocodedFeature]) -> dict:
-        for feature in features:
+        parents = select_parents(queries)
+        for i in range(len(features)):
+            feature = features[i]
             rects: GeoRect = self._read_rect(feature)
             for rect in rects:
+                places.append_row(request=select_not_empty_name(feature), found_name=feature.name, parents=parents, parent_row=i)
                 self._lonmin.append(rect.min_lon)
                 self._latmin.append(rect.min_lat)
                 self._lonmax.append(rect.max_lon)
                 self._latmax.append(rect.max_lat)
-                self._request.append(select_not_empty_name(feature))
-                self._found_name.append(feature.name)
+        geometry = [RectGeoDataFrame.limit2geometry(lmt[0], lmt[1], lmt[2], lmt[3]) for lmt in
+                    zip(self._lonmin, self._latmin, self._lonmax, self._latmax)]
+        return _create_geo_data_frame(places.build_dict(), geometry=geometry)
 
-        return {
-            DF_REQUEST: self._request,
-            DF_FOUND_NAME: self._found_name
-        }
 
     def _read_rect(self, feature: GeocodedFeature) -> List[GeoRect]:
         rect: GeoRect = self._select_rect(feature)
@@ -76,43 +73,41 @@ class RectGeoDataFrame(DataFrameProvider):
         pass
 
 
-class CentroidsGeoDataFrame(DataFrameProvider):
+class CentroidsGeoDataFrame:
     def __init__(self):
         super().__init__()
         self._lons: List[float] = []
         self._lats: List[float] = []
 
-    def to_data_frame(self, features: List[GeocodedFeature]) -> DataFrame:
-        for feature in features:
+    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = None) -> DataFrame:
+        places = PlacesDataFrameBuilder()
+
+        parents = select_parents(queries)
+        for i in range(len(features)):
+            feature = features[i]
+            places.append_row(request=select_not_empty_name(feature), found_name=feature.name, parents=parents, parent_row=i)
             self._lons.append(feature.centroid.lon)
             self._lats.append(feature.centroid.lat)
-            self._request.append(select_not_empty_name(feature))
-            self._found_name.append(feature.name)
 
-        data = {
-            DF_REQUEST: self._request,
-            DF_FOUND_NAME: self._found_name,
-        }
         geometry = [ShapelyPoint(pnt[0], pnt[1]) for pnt in zip(self._lons, self._lats)]
-        return _create_geo_data_frame(data, geometry)
+        return _create_geo_data_frame(places.build_dict(), geometry)
 
 
-class BoundariesGeoDataFrame(DataFrameProvider):
+class BoundariesGeoDataFrame:
     def __init__(self):
         super().__init__()
 
-    def to_data_frame(self, features: List[GeocodedFeature]) -> DataFrame:
+    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = None) -> DataFrame:
+        places = PlacesDataFrameBuilder()
+
         geometry = []
-        for feature in features:
-            self._request.append(select_not_empty_name(feature))
-            self._found_name.append(feature.name)
+        parents = select_parents(queries)
+        for i in range(len(features)):
+            feature = features[i]
+            places.append_row(request=select_not_empty_name(feature), found_name=feature.name, parents=parents, parent_row=i)
             geometry.append(self._geo_parse_geometry(feature.boundary))
 
-        df = {
-            DF_REQUEST: self._request,
-            DF_FOUND_NAME: self._found_name
-        }
-        return _create_geo_data_frame(df, geometry=geometry)
+        return _create_geo_data_frame(places.build_dict(), geometry=geometry)
 
     def _geo_parse_geometry(self, boundary: Boundary):
 

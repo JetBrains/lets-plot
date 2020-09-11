@@ -306,7 +306,7 @@ def test_ensure_is_list(arg, expected_result):
 def test_regions_to_data_frame_should_skip_highlights():
     regions = make_geocode_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS)
     regions_df = regions.to_data_frame()
-    assert [DF_REQUEST, DF_ID, DF_FOUND_NAME] == list(regions_df.columns.values)
+    assert [DF_ID, DF_REQUEST, DF_FOUND_NAME] == list(regions_df.columns.values)
 
 
 def test_regions_to_dict():

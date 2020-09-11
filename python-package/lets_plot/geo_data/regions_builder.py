@@ -49,29 +49,52 @@ def _split(box: Optional[Union[str, List[str], Regions, List[Regions], ShapelyPo
     return None, GeoRect(min_lon=box.bounds[0], min_lat=box.bounds[1], max_lon=box.bounds[2], max_lat=box.bounds[3])
 
 
-def _create_queries(request: request_types, scope: scope_types, ambiguity_resovler: AmbiguityResolver) -> List[RegionQuery]:
+def _create_queries(request: request_types, scope: scope_types, ambiguity_resovler: AmbiguityResolver, countries=None, states=None, counties=None) -> List[RegionQuery]:
     requests: Optional[List[str]] = _ensure_is_list(request)
-    scopes: Optional[Union[List[MapRegion], MapRegion]] = _to_scope(scope)
 
-    positional_matching = isinstance(scopes, list)
+    if (countries is None and states is None and counties is None) or requests is None:
+        scopes: Optional[Union[List[MapRegion], MapRegion]] = _to_scope(scope)
+        positional_matching = isinstance(scopes, list)
 
-    if positional_matching:
-        if len(requests) != len(scopes):
-            raise ValueError('Length of request and scope is not equal')
+        if positional_matching:
+            if len(requests) != len(scopes):
+                raise ValueError('Length of request and scope is not equal')
 
-        return [
-            RegionQuery(r, s, ambiguity_resovler) for r, s in zip(requests, scopes)
-        ]
+            return [
+                RegionQuery(r, s, ambiguity_resovler) for r, s in zip(requests, scopes)
+            ]
+        else:
+            # us-48 request - no requests, only scopes
+            if requests is None and scopes is not None:
+                return [RegionQuery(None, scopes, ambiguity_resovler)]
+
+            # countries request - no requests and scopes
+            if requests is None and scopes is None:
+                return []
+
+            return [RegionQuery(r, scopes, ambiguity_resovler) for r in requests]
     else:
-        # us-48 request - no requests, only scopes
-        if requests is None and scopes is not None:
-            return [RegionQuery(None, scopes, ambiguity_resovler)]
+        countries = _ensure_is_list(countries)
+        states = _ensure_is_list(states)
+        counties = _ensure_is_list(counties)
 
-        # countries request - no requests and scopes
-        if requests is None and scopes is None:
-            return []
+        assert countries is None or len(countries) == len(requests)
+        assert states is None or len(states) == len(requests)
+        assert counties is None or len(counties) == len(requests)
 
-        return [RegionQuery(r, scopes, ambiguity_resovler) for r in requests]
+        queries = []
+        for i in range(len(requests)):
+            name = requests[i] if requests is not None else None
+            country = countries[i] if countries is not None else None
+            state = states[i] if states is not None else None
+            county = counties[i] if counties is not None else None
+
+            query = RegionQuery(request=name, scope=scope, ambiguity_resolver=ambiguity_resovler,
+                                country=country, state=state, county=county)
+
+            queries.append(query)
+
+        return queries
 
 
 class ShapelyWrapper:
@@ -108,13 +131,16 @@ class RegionsBuilder:
                  highlights: bool = False,
                  progress_callback = None,
                  chunk_size = None,
-                 allow_ambiguous = False
+                 allow_ambiguous = False,
+                 countries=None,
+                 states=None,
+                 counties=None
                  ):
 
         self._level: Optional[LevelKind] = _to_level_kind(level)
         self._overridings: List[RegionQuery] = []
         self._default_ambiguity_resolver: AmbiguityResolver = AmbiguityResolver.empty() # TODO rename to geohint
-        self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver)
+        self._queries: List[RegionQuery] = _create_queries(request, scope, self._default_ambiguity_resolver, countries, states, counties)
         self._highlights: bool = highlights
         self._on_progress = progress_callback
         self._chunk_size = chunk_size
@@ -194,10 +220,11 @@ class RegionsBuilder:
         return self
 
     def build(self) -> Regions:
+        queries = self._get_queries()
         request = RequestBuilder() \
             .set_request_kind(RequestKind.geocoding) \
             .set_requested_payload([PayloadKind.highlights] if self._highlights else []) \
-            .set_queries(self._get_queries()) \
+            .set_queries(queries) \
             .set_level(self._level) \
             .set_namesake_limit(NAMESAKE_MAX_COUNT) \
             .set_allow_ambiguous(self._allow_ambiguous) \
@@ -212,7 +239,7 @@ class RegionsBuilder:
         if not isinstance(response, SuccessResponse):
             _raise_exception(response)
 
-        return Regions(response.level, response.features, self._highlights)
+        return Regions(response.level, response.features, self._highlights, queries)
 
     def _get_queries(self) -> List[RegionQuery]:
         for overriding in self._overridings:
@@ -233,7 +260,10 @@ class RegionsBuilder:
             RegionQuery(
                 q.request,
                 q.scope,
-                q.ambiguity_resolver if q.ambiguity_resolver != AmbiguityResolver.empty() else self._default_ambiguity_resolver
+                q.ambiguity_resolver if q.ambiguity_resolver != AmbiguityResolver.empty() else self._default_ambiguity_resolver,
+                country=q.country,
+                state=q.state,
+                county=q.county
             )
             for q in self._queries
         ]

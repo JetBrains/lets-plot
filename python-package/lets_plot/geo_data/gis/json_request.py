@@ -21,6 +21,9 @@ class Field(enum.Enum):
     geo_object_list = 'ids'
     region_queries = 'region_queries'
     region_query_names = 'region_query_names'
+    region_query_countries = 'region_query_countries'
+    region_query_states = 'region_query_states'
+    region_query_counties = 'region_query_counties'
     region_query_parent = 'region_query_parent'
     level = 'level'
     map_region_kind = 'kind'
@@ -98,6 +101,9 @@ class RequestFormatter:
             result.append(
                 FluentDict()
                     .put(Field.region_query_names, [] if query.request is None else [query.request])
+                    .put(Field.region_query_countries, query.country)
+                    .put(Field.region_query_states, query.state)
+                    .put(Field.region_query_counties, query.county)
                     .put(Field.ambiguity_resolver, None if query.ambiguity_resolver is None else FluentDict()
                          .put(Field.ambiguity_ignoring_strategy, query.ambiguity_resolver.ignoring_strategy)
                          .put(Field.ambiguity_box, RequestFormatter._format_box(query.ambiguity_resolver.box))
