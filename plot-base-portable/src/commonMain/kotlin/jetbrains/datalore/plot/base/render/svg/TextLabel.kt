@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.render.svg
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
@@ -31,6 +32,12 @@ class TextLabel(text: String) : SvgComponent() {
     override fun buildComponent() {
 
     }
+
+    val computedTextLength: Double
+        get() = myText.computedTextLength
+
+    val myBBox : DoubleRectangle
+        get() = myText.bBox
 
     fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
