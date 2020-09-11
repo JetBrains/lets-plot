@@ -5,15 +5,14 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
+import jetbrains.datalore.base.gcommon.base.Preconditions
 import jetbrains.datalore.base.gcommon.base.Strings
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
+import jetbrains.datalore.plot.base.geom.PointGeom
 import jetbrains.datalore.plot.base.render.svg.StrokeDashArraySupport
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.vis.svg.SvgElement
@@ -162,11 +161,11 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             "mono" to "monospace"
         )
 
-        fun decorate(label: TextLabel, p: DataPointAesthetics) {
+        fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double ) {
 
             label.textColor().set(p.color())
             label.textOpacity().set(p.alpha())
-            label.setFontSize(AesScaling.textSize(p))
+            label.setFontSize(AesScaling.textSize(p) * scale)
 
             // family
             var family = p.family()
@@ -254,6 +253,24 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             shape.setFill(fill, fillAlpha)
             shape.setStroke(stroke, strokeAlpha)
             shape.setStrokeWidth(AesScaling.strokeWidth(p))
+        }
+
+        const val X = "x"
+        const val Y = "y"
+
+        fun getSizeUnitAes( sizeUnitName: String ) : Aes<Double> {
+            Preconditions.checkArgument(
+                sizeUnitName == X || sizeUnitName == Y,
+                "size_unit value must be either '${X}' or '${Y}'"
+            )
+
+            if ( sizeUnitName == X) {
+                return Aes.X
+            } else if ( sizeUnitName == Y) {
+                return Aes.Y
+            }
+
+            error("Wrong size_unit value")
         }
     }
 }

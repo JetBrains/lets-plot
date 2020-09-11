@@ -161,6 +161,19 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     }
                 }
 
+                if (opts.has(Text.SIZE_UNIT)) {
+                    val sizeUnit = opts.getString(Text.SIZE_UNIT)
+
+                    if ( sizeUnit != null) {
+                        if ( sizeUnit != Text.X && sizeUnit != Text.Y ) {
+                            throw IllegalArgumentException("Expected: size_unit = '${Text.X}' or size_unit = '${Text.Y}'")
+                        }
+
+                        geom.sizeUnit = sizeUnit
+                    }
+
+                }
+
                 geom
             }
 

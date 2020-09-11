@@ -19,11 +19,15 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.common.data.SeriesUtil
+
 
 class TextGeom : GeomBase() {
     var formatter: StringFormat? = null
     var naValue = DEF_NA_VALUE
+    var sizeUnit: String? = null
+    var sizeUnitScale: Double? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory()
@@ -37,7 +41,8 @@ class TextGeom : GeomBase() {
             val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && !Strings.isNullOrEmpty(text)) {
                 val label = TextLabel(text)
-                GeomHelper.decorate(label, p)
+                val scale = getScale(ctx, p)
+                GeomHelper.decorate(label, p, scale )
 
                 val loc = helper.toClient(x, y, p)
                 label.moveTo(loc)
@@ -55,6 +60,25 @@ class TextGeom : GeomBase() {
         }
     }
 
+    private fun getScale(ctx: GeomContext, p: DataPointAesthetics) : Double {
+        sizeUnitScale?.let { return sizeUnitScale!! }
+        sizeUnitScale = 1.0
+
+        sizeUnit?.let {
+            val aes = GeomHelper.getSizeUnitAes(sizeUnit!!)
+            val testString = toString(testValue)
+            val label = TextLabel(testString)
+            GeomHelper.decorate(label, p, 1.0 )
+            val unitRes = ctx.getUnitResolution(aes)
+//            val textWidth = label.computedTextLength
+            val textWidth = 50.0
+
+            sizeUnitScale = unitRes / textWidth
+        }
+
+        return sizeUnitScale!!
+    }
+
     private fun toString(label: Any?): String {
         return when {
             label == null -> naValue
@@ -64,8 +88,9 @@ class TextGeom : GeomBase() {
     }
 
     companion object {
-        const val DEF_NA_VALUE = "n/a"
-        const val HANDLES_GROUPS = false
+        val DEF_NA_VALUE = "n/a"
+        val HANDLES_GROUPS = false
+        const val testValue = -9.99999
     }
 }
 
