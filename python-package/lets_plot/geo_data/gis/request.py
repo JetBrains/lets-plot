@@ -49,9 +49,14 @@ class MapRegionKind(enum.Enum):
 
 class MapRegion:
     @staticmethod
+    def with_single_id(parent_ids: List[str]):
+        assert_list_type(parent_ids, str)
+        assert len(parent_ids) == 1, 'Single id MapRegion expected. Actual number of ids: ' + len(parent_ids)
+        return MapRegion(MapRegionKind.id, parent_ids, ids_limit)
+
     def with_ids(parent_ids: List[str]):
         assert_list_type(parent_ids, str)
-        return MapRegion(MapRegionKind.id, parent_ids)
+        return MapRegion(MapRegionKind.id, parent_ids, ids_limit)
 
     @staticmethod
     def with_name(name: str):
@@ -64,6 +69,7 @@ class MapRegion:
 
         self.kind: MapRegionKind = kind
         self.values: Tuple[str] = tuple(values, )
+        self._ids_limit: Optional[int] = ids_limit
         self._hash = hash((self.values, self.kind))
 
     def __eq__(self, other: 'MapRegion'):
@@ -114,13 +120,16 @@ class RegionQuery:
                  request: Optional[str],
                  scope: Optional[MapRegion],
                  ambiguity_resolver: AmbiguityResolver,
-                 country=None,
-                 state=None,
-                 county=None
+                 country: Optional[MapRegion] = None,
+                 state: Optional[MapRegion] = None,
+                 county: Optional[MapRegion] = None
                  ):
         assert_optional_type(request, str)
         assert_optional_type(scope, MapRegion)
         assert_type(ambiguity_resolver, AmbiguityResolver)
+        assert_optional_type(county, MapRegion)
+        assert_optional_type(state, MapRegion)
+        assert_optional_type(country, MapRegion)
 
         self.request: Optional[str] = request
         self.scope: Optional[MapRegion] = scope

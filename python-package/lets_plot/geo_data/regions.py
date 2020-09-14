@@ -293,6 +293,7 @@ class Regions(CanToDataFrame):
 
 request_types = Optional[Union[str, List[str], Series]]
 scope_types = Optional[Union[str, List[str], Regions, List[Regions]]]
+parent_types = Optional[Union[str, Regions]]
 
 
 def _raise_exception(response: Response):
@@ -383,6 +384,19 @@ def _parse_resolution(resolution: str) -> Resolution:
         return Resolution[resolution]
 
     raise ValueError('Invalid resolution type: ' + type(resolution).__name__)
+
+
+def _make_parent_region(place: parent_types) -> Optional[MapRegion]:
+    if place is None:
+        return None
+
+    if isinstance(place, str):
+        return MapRegion.with_name(place)
+
+    if isinstance(place, Regions):
+        return MapRegion.with_single_id(place.unique_ids())
+
+    raise ValueError('Unsupported parent type: ' + str(type(place)))
 
 
 def _to_scope(location: scope_types) -> Optional[Union[List[MapRegion], MapRegion]]:

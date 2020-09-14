@@ -49,7 +49,8 @@ def _split(box: Optional[Union[str, List[str], Regions, List[Regions], ShapelyPo
     return None, GeoRect(min_lon=box.bounds[0], min_lat=box.bounds[1], max_lon=box.bounds[2], max_lat=box.bounds[3])
 
 
-def _create_queries(request: request_types, scope: scope_types, ambiguity_resovler: AmbiguityResolver, countries=None, states=None, counties=None) -> List[RegionQuery]:
+def _create_queries(request: request_types, scope: scope_types, ambiguity_resovler: AmbiguityResolver,
+                    countries: parent_types = None, states: parent_types = None, counties: parent_types = None) -> List[RegionQuery]:
     requests: Optional[List[str]] = _ensure_is_list(request)
 
     if (countries is None and states is None and counties is None) or requests is None:
