@@ -86,6 +86,7 @@ def geom_point(mapping=None, data=None, stat=None, position=None, show_legend=No
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> x = np.random.uniform(-1, 1, size=100)
         >>> y = np.random.normal(size=100)
         >>> dat = pd.DataFrame({'x': x, 'y': 25 * x ** 2 + y})
@@ -175,6 +176,7 @@ def geom_path(mapping=None, data=None, stat=None, position=None, show_legend=Non
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> T = 1
         >>> N = 1000
         >>> t = np.linspace(0, T, N)
@@ -258,6 +260,7 @@ def geom_line(mapping=None, data=None, stat=None, position=None, show_legend=Non
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> T = 1
         >>> N = 1000
         >>> t = np.linspace(0, T, N)
@@ -355,6 +358,7 @@ def geom_smooth(mapping=None, data=None, stat=None, position=None, show_legend=N
         >>> import pandas as pd
         >>> from scipy.stats import multivariate_normal
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> N = 100
         >>> t = np.linspace(1, N, N)
         >>> a = 1
@@ -430,6 +434,7 @@ def geom_bar(mapping=None, data=None, stat=None, position=None, show_legend=None
         >>> import pandas as pd
         >>> from scipy.stats import multivariate_normal
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> N = 100
         >>> M = 3
         >>> mean = np.zeros(M)
@@ -508,7 +513,7 @@ def geom_histogram(mapping=None, data=None, stat=None, position=None, show_legen
 
         >>> import numpy as np
         >>> from lets_plot import *
-        >>>
+        >>> LetsPlot.setup_html()
         >>> np.random.seed(123)
         >>> data = dict(
         >>>     x = np.random.normal(0, 1, 100)
@@ -585,7 +590,7 @@ def geom_bin2d(mapping=None, data=None, stat=None, position=None, show_legend=No
 
         >>> import numpy as np
         >>> from lets_plot import *
-        >>>
+        >>> LetsPlot.setup_html()
         >>> cov=[[1, 0],
         >>>      [0, 1]]
         >>> x, y = np.random.multivariate_normal(mean=[0,0], cov=cov, size=400).T
@@ -655,6 +660,7 @@ def geom_tile(mapping=None, data=None, stat=None, position=None, show_legend=Non
         >>> import numpy as np
         >>> import matplotlib.mlab as mlab
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> delta = 0.5
         >>> center_x = 6
         >>> center_y = 6
@@ -722,6 +728,7 @@ def geom_raster(mapping=None, data=None, stat=None, position=None, show_legend=N
         >>> import numpy as np
         >>> import matplotlib.mlab as mlab
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> delta = 0.5
         >>> center_x = 6
         >>> center_y = 6
@@ -798,6 +805,7 @@ def geom_errorbar(mapping=None, data=None, stat=None, position=None, show_legend
 
         >>> import numpy as np
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> N = 10
         >>> M = 10
         >>> m = np.random.random(M) * 5.0
@@ -867,7 +875,7 @@ def geom_crossbar(mapping=None, data=None, stat=None, position=None, show_legend
     .. jupyter-execute::
 
         >>> from lets_plot import *
-        >>>
+        >>> LetsPlot.setup_html()
         >>> data = dict(
         >>>     supp = ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
         >>>     dose = [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
@@ -937,7 +945,7 @@ def geom_pointrange(mapping=None, data=None, stat=None, position=None, show_lege
     .. jupyter-execute::
 
         >>> from lets_plot import *
-        >>>
+        >>> LetsPlot.setup_html()
         >>> data = dict(
         >>>     supp = ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
         >>>     dose = [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
@@ -1002,7 +1010,7 @@ def geom_linerange(mapping=None, data=None, stat=None, position=None, show_legen
     .. jupyter-execute::
 
         >>> from lets_plot import *
-        >>>
+        >>> LetsPlot.setup_html()
         >>> data = dict(
         >>>     supp = ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
         >>>     dose = [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
@@ -1078,6 +1086,7 @@ def geom_contour(mapping=None, data=None, stat=None, position=None, show_legend=
         >>> import pandas as pd
         >>> import matplotlib.mlab as mlab
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> delta = 0.5
         >>> center_x = 6
         >>> center_y = 6
@@ -1156,6 +1165,7 @@ def geom_contourf(mapping=None, data=None, stat=None, position=None, show_legend
         >>> import pandas as pd
         >>> import matplotlib.mlab as mlab
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> delta = 0.5
         >>> center_x = 6
         >>> center_y = 6
@@ -1240,6 +1250,7 @@ def geom_polygon(mapping=None, data=None, stat=None, position=None, show_legend=
 
         >>> import numpy as np
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> id = ["A", "B", "C", "D", "E", "F"]
         >>> val = np.random.uniform(3, 3.5, 6)
         >>> x = np.random.uniform(1, 3, 18)
@@ -1318,6 +1329,7 @@ def geom_map(mapping=None, data=None, stat=None, show_legend=None, sampling=None
     .. jupyter-execute::
 
         >>> import lets_plot.geo_data as gd
+        >>> LetsPlot.setup_html()
         >>> boundaries = gd.regions_state(request=['Texas', 'Iowa', 'Arizona'], within='US-48').boundaries()
         >>> regions = np.unique(boundaries['found name'])
         >>> num_of_regions = len(regions)
@@ -1401,6 +1413,7 @@ def geom_abline(mapping=None, data=None, stat=None, position=None, show_legend=N
     .. jupyter-execute::
 
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> ggplot() + geom_abline(intercept=1, slope=3, color='red', linetype='dashed', size=3)
     """
     return _geom('abline', mapping, data, stat, position, show_legend, sampling=sampling, slope=slope,
@@ -1458,6 +1471,7 @@ def geom_hline(mapping=None, data=None, stat=None, position=None, show_legend=No
     .. jupyter-execute::
 
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> ggplot() + geom_hline(yintercept=0.2, color='dark_blue', linetype='longdash', size=2)
     """
     return _geom('hline', mapping, data, stat, position, show_legend, sampling=sampling, yintercept=yintercept,
@@ -1515,6 +1529,7 @@ def geom_vline(mapping=None, data=None, stat=None, position=None, show_legend=No
     .. jupyter-execute::
 
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> ggplot() + geom_vline(xintercept=0.2, color='dark_green', linetype='dotdash', size=2)
     """
     return _geom('vline', mapping, data, stat, position, show_legend, sampling=sampling, xintercept=xintercept,
@@ -1588,7 +1603,7 @@ def geom_boxplot(mapping=None, data=None, stat=None, position=None, show_legend=
         >>> from pandas import DataFrame
         >>> import numpy as np
         >>> from lets_plot import *
-        >>>
+        >>> LetsPlot.setup_html()
         >>> np.random.seed(123)
         >>> data = DataFrame(dict(
         >>>     cond=np.repeat(['A','B'], 200),
@@ -1659,6 +1674,7 @@ def geom_ribbon(mapping=None, data=None, stat=None, position=None, show_legend=N
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> id = ["A", "A", "A", "B", "B", "B"]
         >>> x = [1, 2, 4, 1, 3, 4]
         >>> ymin = [-1, 0, 0, 3, 3, 4]
@@ -1721,6 +1737,7 @@ def geom_area(mapping=None, data=None, stat=None, position=None, show_legend=Non
     .. jupyter-execute::
 
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> x = [1,3,4,1,3,4]
         >>> y = [1,1,2,3,4,2]
         >>> g = [1,1,1,2,2,2]
@@ -1793,6 +1810,7 @@ def geom_density(mapping=None, data=None, stat=None, position=None, show_legend=
 
         >>> import numpy as np
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> x = np.random.normal(0,1,1000)
         >>> dat = dict(x=x)
         >>> ggplot(dat,aes('x')) + geom_density()
@@ -1866,6 +1884,7 @@ def geom_density2d(mapping=None, data=None, stat=None, position=None, show_legen
 
         >>> import numpy as np
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> x = np.random.normal(0,1,1000)
         >>> y = np.random.normal(0,1,1000)
         >>> dat = dict(x=x, y=y)
@@ -1935,6 +1954,7 @@ def geom_density2df(mapping=None, data=None, stat=None, position=None, show_lege
 
         >>> import numpy as np
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> x = np.random.normal(0,1,1000)
         >>> y = np.random.normal(0,1,1000)
         >>> dat = dict(x=x, y=y)
@@ -2002,6 +2022,7 @@ def geom_jitter(mapping=None, data=None, stat=None, position=None, show_legend=N
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> x = np.random.randint(3, size=100)
         >>> y = np.random.normal(size=100)
         >>> dat = pd.DataFrame({'x': x, 'y': y})
@@ -2065,6 +2086,7 @@ def geom_freqpoly(mapping=None, data=None, stat=None, position=None, show_legend
         >>> import pandas as pd
         >>> from scipy.stats import multivariate_normal
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> N = 100
         >>> M = 3
         >>> mean = np.zeros(M)
@@ -2133,6 +2155,7 @@ def geom_step(mapping=None, data=None, stat=None, position=None, show_legend=Non
         >>> import numpy as np
         >>> import pandas as pd
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> T = 1
         >>> N = 1000
         >>> t = np.linspace(0, T, N)
@@ -2218,6 +2241,7 @@ def geom_rect(mapping=None, data=None, stat=None, position=None, show_legend=Non
     .. jupyter-execute::
 
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> ggplot() + geom_rect(aes(xmin=[3], xmax=[4], ymin=[6], ymax=[10]), alpha=0.5, color='black', size=1)
 
     """
@@ -2291,6 +2315,7 @@ def geom_segment(mapping=None, data=None, stat=None, position=None, show_legend=
     .. jupyter-execute::
 
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> ggplot() + geom_segment(aes(x=[3], y=[6], xend=[4], yend=[10]))
     """
     return _geom('segment', mapping, data, stat, position, show_legend, sampling=sampling, arrow=arrow,
@@ -2362,6 +2387,7 @@ def geom_text(mapping=None, data=None, stat=None, position=None, show_legend=Non
     .. jupyter-execute::
 
         >>> from lets_plot import *
+        >>> LetsPlot.setup_html()
         >>> ggplot() + geom_text(aes(x=[1], y=[1], label=['Text'], angle=[30], family=['mono']), size = 10)
     """
 

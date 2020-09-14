@@ -110,6 +110,11 @@ class PlacesDataFrameBuilder:
 
 class Regions(CanToDataFrame):
     def __init__(self, level_kind: LevelKind, features: List[GeocodedFeature], highlights: bool = False, queries: List[RegionQuery] = None):
+        try:
+            import geopandas
+        except:
+            raise ValueError('Module \'geopandas\'is required for using regions') from None
+
         self._level_kind: LevelKind = level_kind
         self._geocoded_features: List[GeocodedFeature] = features
         self._highlights: bool = highlights
@@ -184,6 +189,14 @@ class Regions(CanToDataFrame):
                     If n < 5 => 13
                     If n < 50 => 4
                     else => 3
+
+        Examples
+        --------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> rb = regions_country(['germany', 'russia']).boundaries()
+            >>> rb
         """
         from lets_plot.geo_data.to_geo_data_frame import BoundariesGeoDataFrame
 
@@ -215,7 +228,8 @@ class Regions(CanToDataFrame):
         .. jupyter-execute::
 
             >>> from lets_plot.geo_data import *
-            >>> regions_country(['germany', 'russia']).limits()
+            >>> rl = regions_country(['germany', 'russia']).limits()
+            >>> rl
         """
         from lets_plot.geo_data.to_geo_data_frame import LimitsGeoDataFrame
         return self._execute(
@@ -226,6 +240,14 @@ class Regions(CanToDataFrame):
     def centroids(self):
         """
         Return centroids (Point geometry) for given regions in form of GeoDataFrame.
+
+        Examples
+        ---------
+        .. jupyter-execute::
+
+            >>> from lets_plot.geo_data import *
+            >>> rc = regions_country(['germany', 'russia']).centroids()
+            >>> rc
         """
         from lets_plot.geo_data.to_geo_data_frame import CentroidsGeoDataFrame
         return self._execute(

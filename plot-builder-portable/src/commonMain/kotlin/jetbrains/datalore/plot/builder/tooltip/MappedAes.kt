@@ -59,11 +59,6 @@ class MappedAes(
         }
     }
 
-    /* For tests only */
-    fun getAesName(): String {
-        return aes.name
-    }
-
     fun toOutlier() : MappedAes{
         return MappedAes(
             aes = aes,

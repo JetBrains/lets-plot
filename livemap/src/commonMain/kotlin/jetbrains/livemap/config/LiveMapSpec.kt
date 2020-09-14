@@ -30,5 +30,6 @@ class LiveMapSpec(
     val isLoopY: Boolean,
     val mapLocationConsumer: (DoubleRectangle) -> Unit,
     val tileSystemProvider: TileSystemProvider,
+    val attribution: String?,
     val devParams: DevParams
 )

@@ -58,6 +58,7 @@ class LiveMapBuilder {
 
     var mapLocationConsumer: (DoubleRectangle) -> Unit = { _ -> Unit }
 
+    var attribution: String? = null
 
     var devParams: DevParams =
         DevParams(HashMap<String, Any>())
@@ -82,6 +83,8 @@ class LiveMapBuilder {
             tileSystemProvider = tileSystemProvider,
 
             devParams = devParams,
+
+            attribution = attribution,
 
             // deprecated
             isClustering = false,

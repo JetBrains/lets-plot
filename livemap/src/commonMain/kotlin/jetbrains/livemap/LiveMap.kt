@@ -100,7 +100,8 @@ class LiveMap(
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myGeocodingService: GeocodingService,
     private val myMapLocationRect: Async<Rect<World>>?,
-    private val myZoom: Int?
+    private val myZoom: Int?,
+    private val myAttribution: String?
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
@@ -240,7 +241,13 @@ class LiveMap(
                 AnimationObjectSystem(componentManager),
                 AnimationSystem(componentManager),
                 ViewportUpdateSystem(componentManager),
-                LiveMapUiSystem(myUiService, componentManager, myMapLocationConsumer, myLayerManager),
+                LiveMapUiSystem(
+                    myUiService,
+                    componentManager,
+                    myMapLocationConsumer,
+                    myLayerManager,
+                    myAttribution
+                ),
 
                 CellStateUpdateSystem(componentManager),
                 TileRequestSystem(componentManager),

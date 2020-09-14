@@ -25,7 +25,7 @@ The `Lets-Plot for Python` package offers a ggplot-like API for data visualizati
 as well as in other notebooks like [Datalore](https://view.datalore.io/notebook/Zzg9EVS6i16ELQo3arzWsP), 
 [Kaggle](https://www.kaggle.com/alshan/lets-plot-quickstart) or [Colab](https://colab.research.google.com/drive/1o9rFQbkGqvvixYLTogrzIjFPp1ti2cH-).
   
-You can even craete plots using Python editor in PyCharm or IntelliJ IDEA (Scientific mode, the [Lets-Plot in SciView plugin](#pycharm_plugin) is required).   
+You can even create plots using Python editor in PyCharm or IntelliJ IDEA (Scientific mode, the [Lets-Plot in SciView plugin](#pycharm_plugin) is required).   
   
 Read the Lets-Plot for Python [documentation](README_PYTHON.md) to learn more about the package installation and usage.
 

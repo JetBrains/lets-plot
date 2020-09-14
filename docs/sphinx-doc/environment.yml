@@ -1,8 +1,10 @@
-name: sphinx
+name: lets-plot-sphinx
+channels:
+  - conda-forge
 dependencies:
   - python=3.7
   - sphinx
-  - jupyter-sphinx
+  - jupyter_sphinx
   - matplotlib
   - geopandas
   - numpy
