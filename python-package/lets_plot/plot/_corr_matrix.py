@@ -20,6 +20,7 @@ def common_corr_spec(data):
     res += theme(axis_title=element_blank(), legend_title=element_blank())
     res += coord_fixed()
     res += scale_y_discrete_reversed()
+    res += scale_size_identity(name="")
     res += scale_color_gradient2(name='Correlation',
                                  low='blue', mid='light_gray', high='red',
                                  limits=[-1.0, 1.0])
@@ -49,7 +50,7 @@ def corr_matrix_text(data, show_legend=None, type=None, fill_diagonal=None, form
     format = format if format else '.2f'
 
     res = common_corr_spec(data)
-    res += geom_text(stat='corr', show_legend=show_legend, label_format=format,
+    res += geom_text(stat='corr', show_legend=show_legend,  size_unit='x', label_format=format,
                      tooltips=corr_tooltips_spec(format),
                      type=type, fill_diagonal=fill_diagonal, **other)
 
@@ -77,22 +78,18 @@ def corr_matrix(data, show_legend=None,
         res += geom_point(stat='corr', show_legend=show_legend, size_unit='x',
                           tooltips=corr_tooltips_spec(format),
                           type=type, fill_diagonal=fill_diagonal, **other)
-
-        res += scale_size_identity(name="")
     elif draw == "text":
         res += geom_text(stat='corr', show_legend=show_legend, label_format=format,
                          tooltips=corr_tooltips_spec(format),
                          type=type, fill_diagonal=fill_diagonal, size=text_size, **other)
-        res += scale_size(name="")
-
     elif draw == "mixed":
-        res += geom_point(stat='corr', show_legend=show_legend,
+        res += geom_point(stat='corr', show_legend=show_legend,  size_unit='x',
                           tooltips=corr_tooltips_spec(format),
                           type="upper", fill_diagonal=True, **other)
 
-        res += geom_text(stat='corr', show_legend=show_legend, type="lower", fill_diagonal=False,
+        res += geom_text(stat='corr', show_legend=show_legend,  size_unit='x',
+                         type="lower", fill_diagonal=False,
                          label_format=format, size=text_size, **other)
 
-        res += scale_size(name="")
 
     return res
