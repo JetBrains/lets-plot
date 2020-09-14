@@ -55,6 +55,11 @@ class DataFrameProvider():
 
 class Regions(CanToDataFrame):
     def __init__(self, level_kind: LevelKind, features: List[GeocodedFeature], highlights: bool = False):
+        try:
+            import geopandas
+        except:
+            raise ValueError('Module \'geopandas\'is required for using regions') from None
+
         self._level_kind: LevelKind = level_kind
         self._geocoded_features: List[GeocodedFeature] = features
         self._highlights: bool = highlights
