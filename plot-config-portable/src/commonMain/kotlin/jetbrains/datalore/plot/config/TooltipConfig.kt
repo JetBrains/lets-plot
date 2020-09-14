@@ -22,13 +22,13 @@ class TooltipConfig(
             } else {
                 null
             },
-            tooltipFormats = getMap(Option.Layer.TOOLTIP_FORMATS)
+            tooltipFormats = getList(Option.Layer.TOOLTIP_FORMATS)
         ).parse()
     }
 
     private inner class TooltipConfigParseHelper(
         private val tooltipLines: List<String>?,
-        tooltipFormats: Map<*, *>
+        tooltipFormats: List<*>
     ) {
         private val myValueSources = prepareFormats(tooltipFormats)
             .mapValues {
@@ -64,16 +64,11 @@ class TooltipConfig(
             )
         }
 
-        private fun createValueSource(configName: String, format: String? = null): ValueSource {
+        private fun createValueSource(name: String, format: String? = null): ValueSource {
             fun getAesByName(aesName: String): Aes<*> {
                 return Aes.values().find { it.name == aesName } ?: error("$aesName is not aes name")
             }
 
-            val name = if (configName.startsWith(VALUE_SOURCE_PREFIX)) {
-                configName.removePrefix(VALUE_SOURCE_PREFIX).removeSurrounding("{", "}")
-            } else {
-                configName
-            }
             return when {
                 name.startsWith("var@") -> {
                     val varName = name.removePrefix("var@")
@@ -90,35 +85,39 @@ class TooltipConfig(
             }
         }
 
-        private fun prepareFormats(tooltipFormats: Map<*, *>): Map<String, String> {
+        private fun prepareFormats(tooltipFormats: List<*>): Map<String, String> {
             val allFormats = mutableMapOf<String, String>()
-            tooltipFormats.forEach {
-                val configName = it.key as String
-                if (configName.startsWith("@@")) {
-                    val positionals = when (configName.removePrefix("@@")) {
+            tooltipFormats.forEach { tooltipFormat ->
+                require(tooltipFormat is Map<*, *> ) { "Wrong tooltip 'format' arguments" }
+
+                val configName = tooltipFormat[Option.TooltipFormat.FIELD] as String
+                val configFormat = tooltipFormat[Option.TooltipFormat.FORMAT] as String
+
+                if (configName.startsWith("$")) {
+                    val positionals = when (configName.removePrefix("$")) {
                         "X" -> Aes.values().filter(::isPositionalX)
                         "Y" -> Aes.values().filter(::isPositionalY)
-                        else -> error("X or Y is expected before '@@' as positional aes")
+                        else -> error("X or Y is expected before '$' as positional aes")
                     }
                     positionals.forEach { aes ->
-                        val newConfigName = VALUE_SOURCE_PREFIX + aes.name
-                        if (!allFormats.containsKey(newConfigName))
-                            allFormats[newConfigName] = it.value as String
+                        if (!allFormats.containsKey(aes.name))
+                            allFormats[aes.name] = configFormat
                     }
-
                 } else {
-                    allFormats[it.key as String] = it.value as String
+                    allFormats[configName] = configFormat
                 }
             }
             return allFormats
         }
 
         private fun getValueSource(configName: String): ValueSource {
-            if (configName !in myValueSources) {
-                val newValueSource = createValueSource(configName)
-                myValueSources[configName] = newValueSource
+            val name = configName
+                .removePrefix(VALUE_SOURCE_PREFIX)
+                .removeSurrounding("{", "}")
+            if (name !in myValueSources) {
+                myValueSources[name] = createValueSource(name)
             }
-            return myValueSources[configName]!!
+            return myValueSources[name]!!
         }
 
         private fun detachLabel(tooltipLine: String): String? {

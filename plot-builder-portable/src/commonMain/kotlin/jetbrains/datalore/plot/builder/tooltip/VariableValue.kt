@@ -5,11 +5,9 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
-import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
-import jetbrains.datalore.plot.builder.tooltip.ValueSource.Companion.formatValueSource
 
 class VariableValue(
     private val name: String,
@@ -19,23 +17,23 @@ class VariableValue(
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
     private var myIsContinuous: Boolean = false
-    private val myFormatter = format?.let { NumberFormat(it) }
+    private val myFormatter = format?.let { TooltipLineFormatter.createTooltipLineFormatter(it) }
 
     override fun setDataContext(dataContext: DataContext) {
         myDataFrame = dataContext.dataFrame
 
         myVariable = myDataFrame.variables().find { it.name == name } ?: error("Undefined variable with name '$name'")
         myIsContinuous = myDataFrame.isNumeric(myVariable)
-        if (myFormatter != null) {
+        if (myFormatter != null && myFormatter is NumberValueFormatter) {
             require(myIsContinuous) { "Wrong format pattern: numeric for non-numeric variable" }
         }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        val originalValue = myDataFrame[myVariable][index]
+        val originalValue = myDataFrame[myVariable][index].toString()
         return DataPoint(
             label = name,
-            value = formatValueSource(originalValue, myFormatter),
+            value = myFormatter?.format(originalValue) ?: originalValue,
             isContinuous = myIsContinuous,
             aes = null,
             isAxis = false,

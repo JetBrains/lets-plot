@@ -100,15 +100,23 @@ class TooltipConfigTest {
     @Test
     fun changeFormatForTheDefault() {
         val tooltipConfig = mapOf(
-            Option.Layer.TOOLTIP_FORMATS to mapOf(
-                "\$color" to ".4f"
+            Option.Layer.TOOLTIP_FORMATS to listOf(
+                mapOf(
+                    Option.TooltipFormat.FIELD to "color",
+                    Option.TooltipFormat.FORMAT to ".4f"
+                ),
+                mapOf(
+                    Option.TooltipFormat.FIELD to "shape",
+                    Option.TooltipFormat.FORMAT to "{} type"
+                )
+
             )
         )
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
 
         val expectedLines = listOf(
             "cty: 15.0000",
-            "class: suv"
+            "class: suv type"
         )
         val lines = getGeneralTooltipLines(geomLayer)
         assertTooltipLines(expectedLines, lines)
@@ -145,10 +153,10 @@ class TooltipConfigTest {
                 "\${var@model name} car (\${var@origin})",  // multiple sources in the line
                 "x/y|\$x x \$y"                             // specify label
             ),
-            Option.Layer.TOOLTIP_FORMATS to mapOf(          //define formats
-                "\$color" to ".1f",
-                "\$x" to ".3f",
-                "\$y" to ".1f"
+            Option.Layer.TOOLTIP_FORMATS to listOf(          //define formats
+                mapOf(Option.TooltipFormat.FIELD to "color", Option.TooltipFormat.FORMAT to ".1f"),
+                mapOf(Option.TooltipFormat.FIELD to "x", Option.TooltipFormat.FORMAT to ".3f"),
+                mapOf(Option.TooltipFormat.FIELD to "y", Option.TooltipFormat.FORMAT to ".1f")
             )
         )
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
@@ -199,14 +207,15 @@ class TooltipConfigTest {
     fun configOutlierTooltips() {
         val tooltipConfig = mapOf(
             Option.Layer.TOOLTIP_LINES to listOf(
-                "min|\$ymin",
-                "\$middle",
-                "max|\$ymax"
+                "lower/upper|\$lower, \$upper"
             ),
-            Option.Layer.TOOLTIP_FORMATS to mapOf(
-                "\$ymin" to ".1f",
-                "\$middle" to ".4f",
-                "\$ymax" to ".1f"
+            Option.Layer.TOOLTIP_FORMATS to listOf(
+                mapOf(
+                    Option.TooltipFormat.FIELD to "\$Y",
+                    Option.TooltipFormat.FORMAT to ".1f"
+                ),       // all positionals
+                mapOf(Option.TooltipFormat.FIELD to "middle", Option.TooltipFormat.FORMAT to ".3f"),    // number format
+                mapOf(Option.TooltipFormat.FIELD to "ymax", Option.TooltipFormat.FORMAT to "{.1f}")     // line pattern
             )
         )
 
@@ -219,19 +228,23 @@ class TooltipConfigTest {
             ),
             tooltips = tooltipConfig
         )
-        val expectedLines = mapOf(
-            Aes.YMAX to "max: 11.5",
-            Aes.UPPER to "upper: 8.65",
-            Aes.MIDDLE to "6.8500",
-            Aes.LOWER to "lower: 6.10",
-            Aes.YMIN to "min: 4.2"
-        )
-        val lines = getOutlierLines(geomLayer)
 
-        assertEquals(expectedLines.size, lines.size, "Wrong number of outlier tooltips")
-        for (aes in lines.keys) {
-            assertEquals(expectedLines[aes], lines[aes], "Wrong line for ${aes.name} in the outliers")
+        // upper, lower will be in the general tooltip and will be removed from outliers
+        val expectedLines = mapOf(
+            Aes.YMAX to "11.5",
+            Aes.MIDDLE to "middle: 6.850",
+            Aes.YMIN to "y min: 4.2"
+        )
+        val generalExpectedLine = "lower/upper: 6.1, 8.6"
+
+        val outlierLines = getOutlierLines(geomLayer)
+        assertEquals(expectedLines.size, outlierLines.size, "Wrong number of outlier tooltips")
+        for (aes in outlierLines.keys) {
+            assertEquals(expectedLines[aes], outlierLines[aes], "Wrong line for ${aes.name} in the outliers")
         }
+
+        val generalLines = getGeneralTooltipLines(geomLayer)
+        assertTooltipLines(listOf(generalExpectedLine), generalLines)
     }
 
 

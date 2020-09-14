@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
-import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
@@ -14,11 +13,4 @@ interface ValueSource {
     fun setDataContext(dataContext: DataContext)
 
     fun getDataPoint(index: Int): DataPoint?
-
-    companion object {
-        fun formatValueSource(originalValue: Any?, formatter: NumberFormat?): String {
-            val strValue = originalValue.toString()
-            return formatter?.apply(strValue.toFloat()) ?: strValue
-        }
-    }
 }

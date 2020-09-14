@@ -54,11 +54,11 @@ class TooltipConfig : PlotConfigDemoBase() {
                                     '@|$originCar',
                                     '#mpg data set'
                                ],
-                               'tooltip_formats': {
-                                    '$aesX': '.1f', 
-                                    '$aesY': '.2f', 
-                                    '$aesColor': '.2f'
-                               }
+                               'tooltip_formats': [
+                                    { 'field' : 'x', 'format' : '.1f' }, 
+                                    { 'field' : 'y', 'format' : '{.2f}' }, 
+                                    { 'field' : 'color', 'format' : '{.2f} text' }
+                               ]
                            }
                         }
                      ]
@@ -84,9 +84,9 @@ class TooltipConfig : PlotConfigDemoBase() {
                            'geom': 'area',
                            'stat': 'density',
                            'tooltips' : {
-                                'tooltip_formats': {
-                                    '$aesColor': '.4f'
-                                 }
+                                'tooltip_formats': [
+                                    { 'field' : 'color', 'format' : 'is {.4f} (cm)' }
+                                 ]
                             }
                         }
                      ]
