@@ -67,7 +67,7 @@ class TextGeom : GeomBase() {
         val testString = toString(TEST_VAL)
         val fontSize = AesScaling.textSize(p)
 
-        return testString.length * fontSize * TEXT_WIDTH_NORM
+        return (testString.length) * fontSize * TEXT_WIDTH_NORM
     }
 
     private fun getScale(ctx: GeomContext, p: DataPointAesthetics): Double {
@@ -97,7 +97,7 @@ class TextGeom : GeomBase() {
         const val DEF_NA_VALUE = "n/a"
         const val HANDLES_GROUPS = false
         const val TEST_VAL = -9.99999
-        const val TEXT_WIDTH_NORM = 50.0
+        const val TEXT_WIDTH_NORM = 0.6
     }
 }
 
