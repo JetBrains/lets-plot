@@ -124,19 +124,10 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                 // Form value sources: user list + axis + outliers
                 val geomOutliers = myTooltipOutlierAesList.toMutableList()
 
-                val userTooltipLines = myUserTooltipLinesSpec.tooltipLinePatterns!!.map { line ->
-                    if (line.data.size == 1 && line.data.single() is MappedAes && (line.data.single() as MappedAes).aes in myTooltipOutlierAesList) {
-                        val valueSource = line.data.single() as MappedAes
-                            // use formatted mapped aes as outlier and exclude its aes from the outlier aes list
-                            geomOutliers.remove(valueSource.aes)
-                            TooltipLine(
-                                label = line.label,
-                                linePattern = line.linePattern,
-                                data = listOf(valueSource.toOutlier())
-                            )
-                    } else {
-                        line
-                    }
+                // Remove outlier tooltip if the mappedAes is used in the general tooltip
+                myUserTooltipLinesSpec.tooltipLinePatterns!!.forEach { line ->
+                    val userDataAesList = line.data.filterIsInstance<MappedAes>().map { it.aes }
+                    geomOutliers.removeAll(userDataAesList)
                 }
                 val axisValueSources = myTooltipAxisAes.map { aes -> MappedAes(aes, isOutlier = true, isAxis = true) }
                 val geomOutlierValueSources = geomOutliers.map { aes ->
@@ -144,7 +135,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                     formatted?.toOutlier() ?: MappedAes(aes, isOutlier = true)
                 }
 
-                userTooltipLines + (axisValueSources + geomOutlierValueSources).map { valueSource ->
+                myUserTooltipLinesSpec.tooltipLinePatterns!! + (axisValueSources + geomOutlierValueSources).map { valueSource ->
                     TooltipLine.defaultLineForValueSource(valueSource)
                 }
             }
