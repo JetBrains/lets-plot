@@ -17,8 +17,627 @@ class SizeUnitDemo : PlotConfigDemoBase() {
 //            corrNull(),
 //            corrMix(),
 //            corrText(),
-                npe()
+//                npe(),
+//            textDiag(),
+//            textNoDiag(),
+            circleNull()
         )
+    }
+
+//    """.trimMargin()
+//
+//        return parsePlotSpec(spec)
+//    }
+
+    private fun circleNull(): Map<String, Any> {
+        val spec = """
+{
+  "data": {
+    "1": [
+      0.9958628841374805,
+      -0.7386192223245941,
+      0.4836443231258696,
+      0.15162495013184718,
+      0.31772598423874393,
+      -1.7123243213110302,
+      -1.450802659920627,
+      -1.058155009612019,
+      -0.9552044574348463,
+      -0.49283623312719466
+    ],
+    "2": [
+      -0.07115945061173795,
+      0.7627161804347824,
+      0.27982740874118145,
+      -0.16845255740264464,
+      0.4010273269030288,
+      1.2136011692844728,
+      -0.32215094427671664,
+      1.9363264559719449,
+      0.41333888743856534,
+      -0.8176863808562546
+    ],
+    "3": [
+      -0.9921530146432562,
+      -0.02452810354701826,
+      0.08754903292641204,
+      -0.857276611301196,
+      -1.325173516349888,
+      -0.7054400056806489,
+      0.08372569405721828,
+      0.12794147409626058,
+      0.9760085624774684,
+      -0.3615225450114973
+    ],
+    "4": [
+      -1.266386719842317,
+      0.27594016616273703,
+      0.372768909975119,
+      0.20733926067802602,
+      -1.4303636702826237,
+      -1.113916434482344,
+      -2.212828734439785,
+      -0.7057946202326487,
+      1.182066179920106,
+      -1.4801714314365724
+    ],
+    "5": [
+      -1.2120388319580344,
+      0.16647044505837175,
+      1.4170033734817316,
+      -0.32810539358488566,
+      1.1767859854572764,
+      -1.2784728265598932,
+      1.9439764679996214,
+      -1.3699728165827887,
+      0.05137393829465916,
+      1.0212968914273466
+    ]
+  },
+  "mapping": null,
+  "theme": {
+    "axis_title": {
+      "name": "blank"
+    },
+    "axis_title_x": null,
+    "axis_title_y": null,
+    "axis_text": null,
+    "axis_text_x": null,
+    "axis_text_y": null,
+    "axis_ticks": null,
+    "axis_ticks_x": null,
+    "axis_ticks_y": null,
+    "axis_line": null,
+    "axis_line_x": null,
+    "axis_line_y": null,
+    "legend_position": null,
+    "legend_justification": null,
+    "legend_direction": null,
+    "axis_tooltip": null,
+    "axis_tooltip_x": null,
+    "axis_tooltip_y": null,
+    "legend_title": {
+      "name": "blank"
+    }
+  },
+  "coord": {
+    "name": "fixed",
+    "ratio": 1.0,
+    "xlim": null,
+    "ylim": null
+  },
+  "kind": "plot",
+  "scales": [
+    {
+      "aesthetic": "y",
+      "breaks": null,
+      "labels": null,
+      "limits": null,
+      "expand": null,
+      "na_value": null,
+      "guide": null,
+      "trans": null,
+      "discrete": true,
+      "reverse": true
+    },
+    {
+      "name": "",
+      "aesthetic": "size",
+      "breaks": null,
+      "labels": null,
+      "limits": null,
+      "expand": null,
+      "na_value": null,
+      "guide": "none",
+      "trans": null,
+      "scale_mapper_kind": "identity"
+    },
+    {
+      "name": "Correlation",
+      "aesthetic": "color",
+      "breaks": null,
+      "labels": null,
+      "limits": [
+        -1.0,
+        1.0
+      ],
+      "expand": null,
+      "na_value": null,
+      "guide": null,
+      "trans": null,
+      "low": "blue",
+      "mid": "light_gray",
+      "high": "red",
+      "midpoint": 0,
+      "scale_mapper_kind": "color_gradient2"
+    }
+  ],
+  "layers": [
+    {
+      "geom": "point",
+      "stat": "corr",
+      "data": null,
+      "mapping": {
+        "x": null,
+        "y": null
+      },
+      "position": null,
+      "show_legend": null,
+      "data_meta": {},
+      "sampling": null,
+      "map": null,
+      "map_join": null,
+      "animation": null,
+      "size_unit": "x",
+      "type": "upper",
+      "fill_diagonal": false,
+      "method": "pearson"
+    },
+    {
+      "geom": "text",
+      "stat": "corr",
+      "data": null,
+      "mapping": {
+        "x": null,
+        "y": null
+      },
+      "position": null,
+      "show_legend": null,
+      "tooltips": null,
+      "data_meta": {},
+      "sampling": null,
+      "map": null,
+      "map_join": null,
+      "label_format": ".2f",
+      "type": "lower",
+      "fill_diagonal": true,
+      "method": "pearson",
+      "na_value": "",
+      "size": 8.0
+    }
+  ]
+}
+            
+        """.trimMargin()
+
+        return parsePlotSpec(spec)
+    }
+
+    private fun textNoDiag(): Map<String, Any> {
+        val spec = """
+          
+{
+  "data": {
+    "1": [
+      0.4782767811164467,
+      0.06398822307276653,
+      -1.4250518801192893,
+      -1.373294965055069,
+      0.9227852046826135,
+      1.6374723205145747,
+      0.22543197361011205,
+      -0.6092197099513094,
+      1.9911033433526528,
+      1.1375131381039252
+    ],
+    "2": [
+      0.6717796459589993,
+      -0.7773976997169834,
+      0.48692791268774843,
+      -1.3659936341360404,
+      0.5500894152997399,
+      -2.0433861893390333,
+      1.1873192437385796,
+      0.6301432121154374,
+      0.5307214388748344,
+      0.14017528075569702
+    ],
+    "3": [
+      -1.2075474210661248,
+      -0.5027419477479621,
+      1.0734423098138388,
+      -1.8012507013980699,
+      1.705441767897342,
+      1.6606932691382903,
+      -0.6580678381469046,
+      0.08402388699754054,
+      0.6669843911995091,
+      1.3257094543287247
+    ],
+    "4": [
+      -0.17284456110794508,
+      2.05643655447737,
+      1.3000651159287624,
+      0.7530888417562419,
+      0.6441934751983627,
+      0.39973183053310096,
+      1.198472245394743,
+      1.66571649421751,
+      -0.20854457000836676,
+      -1.2623170695344335
+    ],
+    "5": [
+      0.1770360573889131,
+      -0.09365479872349633,
+      -0.3211466721495514,
+      1.6335647308688013,
+      -0.7325610577562206,
+      0.5381104351164157,
+      -1.6557282604803365,
+      0.6781497620411954,
+      0.8846821546028326,
+      0.6836398537913289
+    ],
+    "6": [
+      -0.22354139786077365,
+      -0.8860087861510734,
+      0.4912680776793776,
+      -0.7432718435602995,
+      1.2195428580821865,
+      -1.1303449388018625,
+      0.22139210161954445,
+      1.214027928164204,
+      0.5220649641034045,
+      -0.2502014486718785
+    ],
+    "7": [
+      -0.9564135022219188,
+      0.03313957462651969,
+      0.2441142364293138,
+      -0.0018928232478877215,
+      0.5109830974462503,
+      1.4951495354610096,
+      -0.43877136444664516,
+      0.3442636483433015,
+      -0.38709206493459614,
+      0.9948093059175287
+    ],
+    "8": [
+      -0.15059087177057068,
+      -0.37320297839912925,
+      0.012999160227475695,
+      0.15867602345041767,
+      -1.5383865816018811,
+      -0.19380034974593643,
+      -0.2526749723623012,
+      0.5831241314879302,
+      0.6211932758195702,
+      0.593336602666225
+    ]
+  },
+  "mapping": null,
+  "theme": {
+    "axis_title": {
+      "name": "blank"
+    },
+    "axis_title_x": null,
+    "axis_title_y": null,
+    "axis_text": null,
+    "axis_text_x": null,
+    "axis_text_y": null,
+    "axis_ticks": null,
+    "axis_ticks_x": null,
+    "axis_ticks_y": null,
+    "axis_line": null,
+    "axis_line_x": null,
+    "axis_line_y": null,
+    "legend_position": null,
+    "legend_justification": null,
+    "legend_direction": null,
+    "axis_tooltip": null,
+    "axis_tooltip_x": null,
+    "axis_tooltip_y": null,
+    "legend_title": {
+      "name": "blank"
+    }
+  },
+  "coord": {
+    "name": "fixed",
+    "ratio": 1.0,
+    "xlim": null,
+    "ylim": null
+  },
+  "kind": "plot",
+  "scales": [
+    {
+      "aesthetic": "y",
+      "breaks": null,
+      "labels": null,
+      "limits": null,
+      "expand": null,
+      "na_value": null,
+      "guide": null,
+      "trans": null,
+      "discrete": true,
+      "reverse": true
+    },
+    {
+      "name": "",
+      "aesthetic": "size",
+      "breaks": null,
+      "labels": null,
+      "limits": null,
+      "expand": null,
+      "na_value": null,
+      "guide": "none",
+      "trans": null,
+      "scale_mapper_kind": "identity"
+    },
+    {
+      "name": "Correlation",
+      "aesthetic": "color",
+      "breaks": null,
+      "labels": null,
+      "limits": [
+        -1.0,
+        1.0
+      ],
+      "expand": null,
+      "na_value": null,
+      "guide": null,
+      "trans": null,
+      "low": "blue",
+      "mid": "light_gray",
+      "high": "red",
+      "midpoint": 0,
+      "scale_mapper_kind": "color_gradient2"
+    }
+  ],
+  "layers": [
+    {
+      "geom": "text",
+      "stat": "corr",
+      "data": null,
+      "mapping": {
+        "x": null,
+        "y": null
+      },
+      "position": null,
+      "show_legend": null,
+      "tooltips": null,
+      "data_meta": {},
+      "sampling": null,
+      "map": null,
+      "map_join": null,
+      "label_format": ".2f",
+      "type": "lower",
+      "fill_diagonal": false,
+      "method": "pearson",
+      "size_unit": "x"
+    }
+  ]
+}
+        """.trimMargin()
+
+        return parsePlotSpec(spec)
+    }
+
+    private fun textDiag(): Map<String, Any> {
+        val spec = """
+{
+  "data": {
+    "1": [
+      0.4782767811164467,
+      0.06398822307276653,
+      -1.4250518801192893,
+      -1.373294965055069,
+      0.9227852046826135,
+      1.6374723205145747,
+      0.22543197361011205,
+      -0.6092197099513094,
+      1.9911033433526528,
+      1.1375131381039252
+    ],
+    "2": [
+      0.6717796459589993,
+      -0.7773976997169834,
+      0.48692791268774843,
+      -1.3659936341360404,
+      0.5500894152997399,
+      -2.0433861893390333,
+      1.1873192437385796,
+      0.6301432121154374,
+      0.5307214388748344,
+      0.14017528075569702
+    ],
+    "3": [
+      -1.2075474210661248,
+      -0.5027419477479621,
+      1.0734423098138388,
+      -1.8012507013980699,
+      1.705441767897342,
+      1.6606932691382903,
+      -0.6580678381469046,
+      0.08402388699754054,
+      0.6669843911995091,
+      1.3257094543287247
+    ],
+    "4": [
+      -0.17284456110794508,
+      2.05643655447737,
+      1.3000651159287624,
+      0.7530888417562419,
+      0.6441934751983627,
+      0.39973183053310096,
+      1.198472245394743,
+      1.66571649421751,
+      -0.20854457000836676,
+      -1.2623170695344335
+    ],
+    "5": [
+      0.1770360573889131,
+      -0.09365479872349633,
+      -0.3211466721495514,
+      1.6335647308688013,
+      -0.7325610577562206,
+      0.5381104351164157,
+      -1.6557282604803365,
+      0.6781497620411954,
+      0.8846821546028326,
+      0.6836398537913289
+    ],
+    "6": [
+      -0.22354139786077365,
+      -0.8860087861510734,
+      0.4912680776793776,
+      -0.7432718435602995,
+      1.2195428580821865,
+      -1.1303449388018625,
+      0.22139210161954445,
+      1.214027928164204,
+      0.5220649641034045,
+      -0.2502014486718785
+    ],
+    "7": [
+      -0.9564135022219188,
+      0.03313957462651969,
+      0.2441142364293138,
+      -0.0018928232478877215,
+      0.5109830974462503,
+      1.4951495354610096,
+      -0.43877136444664516,
+      0.3442636483433015,
+      -0.38709206493459614,
+      0.9948093059175287
+    ],
+    "8": [
+      -0.15059087177057068,
+      -0.37320297839912925,
+      0.012999160227475695,
+      0.15867602345041767,
+      -1.5383865816018811,
+      -0.19380034974593643,
+      -0.2526749723623012,
+      0.5831241314879302,
+      0.6211932758195702,
+      0.593336602666225
+    ]
+  },
+  "mapping": null,
+  "theme": {
+    "axis_title": {
+      "name": "blank"
+    },
+    "axis_title_x": null,
+    "axis_title_y": null,
+    "axis_text": null,
+    "axis_text_x": null,
+    "axis_text_y": null,
+    "axis_ticks": null,
+    "axis_ticks_x": null,
+    "axis_ticks_y": null,
+    "axis_line": null,
+    "axis_line_x": null,
+    "axis_line_y": null,
+    "legend_position": null,
+    "legend_justification": null,
+    "legend_direction": null,
+    "axis_tooltip": null,
+    "axis_tooltip_x": null,
+    "axis_tooltip_y": null,
+    "legend_title": {
+      "name": "blank"
+    }
+  },
+  "coord": {
+    "name": "fixed",
+    "ratio": 1.0,
+    "xlim": null,
+    "ylim": null
+  },
+  "kind": "plot",
+  "scales": [
+    {
+      "aesthetic": "y",
+      "breaks": null,
+      "labels": null,
+      "limits": null,
+      "expand": null,
+      "na_value": null,
+      "guide": null,
+      "trans": null,
+      "discrete": true,
+      "reverse": true
+    },
+    {
+      "name": "",
+      "aesthetic": "size",
+      "breaks": null,
+      "labels": null,
+      "limits": null,
+      "expand": null,
+      "na_value": null,
+      "guide": "none",
+      "trans": null,
+      "scale_mapper_kind": "identity"
+    },
+    {
+      "name": "Correlation",
+      "aesthetic": "color",
+      "breaks": null,
+      "labels": null,
+      "limits": [
+        -1.0,
+        1.0
+      ],
+      "expand": null,
+      "na_value": null,
+      "guide": null,
+      "trans": null,
+      "low": "blue",
+      "mid": "light_gray",
+      "high": "red",
+      "midpoint": 0,
+      "scale_mapper_kind": "color_gradient2"
+    }
+  ],
+  "layers": [
+    {
+      "geom": "text",
+      "stat": "corr",
+      "data": null,
+      "mapping": {
+        "x": null,
+        "y": null
+      },
+      "position": null,
+      "show_legend": null,
+      "tooltips": null,
+      "data_meta": {},
+      "sampling": null,
+      "map": null,
+      "map_join": null,
+      "label_format": ".2f",
+      "type": "lower",
+      "fill_diagonal": true,
+      "method": "pearson",
+      "size_unit": "x"
+    }
+  ]
+}
+                      """.trimMargin()
+
+        return parsePlotSpec(spec)
     }
 
     private fun npe(): Map<String, Any> {

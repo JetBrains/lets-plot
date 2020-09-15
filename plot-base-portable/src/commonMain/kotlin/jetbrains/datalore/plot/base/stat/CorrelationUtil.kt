@@ -33,10 +33,13 @@ object CorrelationUtil {
 
         for ((i, vx) in numerics.withIndex()) {
 
+            var1.add(vx.label)
+            var2.add(vx.label)
+
             if (fillDiagonal) {
-                var1.add(vx.label)
-                var2.add(vx.label)
                 corr.add(1.0)
+            } else {
+                corr.add(null)
             }
 
             val xs = data.getNumeric(vx)

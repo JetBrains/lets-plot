@@ -20,12 +20,13 @@ import jetbrains.datalore.plot.base.render.point.PointShapeSvg
 import jetbrains.datalore.plot.base.render.point.TinyPointShape
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.slim.SvgSlimElements
+import kotlin.math.max
 
 open class PointGeom : GeomBase() {
 
     var animation: Any? = null
     var sizeUnit: String? = null
-    var sizeUnitScale: Double? = null
+    private var sizeUnitScale: Double? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -51,7 +52,7 @@ open class PointGeom : GeomBase() {
                 val location = helper.toClient(DoubleVector(x!!, y!!), p)
 
                 val shape = p.shape()!!
-                val scale = getScale(ctx, p)
+                val scale = getScale(ctx, aesthetics)
 
                 targetCollector.addPoint(
                     i, location, scale * shape.size(p) / 2,
@@ -64,15 +65,29 @@ open class PointGeom : GeomBase() {
         root.add(wrap(slimGroup))
     }
 
-    private fun getScale(ctx: GeomContext, p: DataPointAesthetics): Double {
+    private fun getMaxPointSize(aesthetics: Aesthetics): Double {
+        var res = 0.0
 
+        val count = aesthetics.dataPointCount()
+        for (i in 0 until count) {
+            val p = aesthetics.dataPointAt(i)
+            val shape = p.shape()!!
+            val sz = shape.size(p)
+            res = max(res, sz)
+        }
+
+        return res
+    }
+
+    private fun getScale(ctx: GeomContext, aesthetics: Aesthetics): Double {
         sizeUnitScale?.let { return sizeUnitScale!! }
         sizeUnitScale = 1.0
 
         sizeUnit?.let {
             val aes = GeomHelper.getSizeUnitAes(sizeUnit!!)
-            val shape = p.shape()!!
-            sizeUnitScale = (p.size()?.div(shape.size(p)) ?: 0.0) * ctx.getUnitResolution(aes)
+            val unitRes = ctx.getUnitResolution(aes)
+            val maxSize = getMaxPointSize(aesthetics)
+            sizeUnitScale = unitRes / maxSize
         }
 
         return sizeUnitScale!!

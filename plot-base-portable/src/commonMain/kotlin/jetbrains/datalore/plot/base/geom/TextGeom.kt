@@ -43,7 +43,7 @@ class TextGeom : GeomBase() {
             val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && !Strings.isNullOrEmpty(text)) {
                 val label = TextLabel(text)
-                val scale = getScale(ctx, p)
+                val scale = getScale(ctx, aesthetics)
                 GeomHelper.decorate(label, p, scale)
 
                 val loc = helper.toClient(x, y, p)
@@ -63,21 +63,20 @@ class TextGeom : GeomBase() {
     }
 
 
-    private fun approximateMaxTextWidth(p: DataPointAesthetics): Double {
+    private fun estimateMaxTextWidth(fontSize: Double): Double {
         val testString = toString(TEST_VAL)
-        val fontSize = AesScaling.textSize(p)
-
         return testString.length * fontSize * TEXT_WIDTH_NORM
     }
 
-    private fun getScale(ctx: GeomContext, p: DataPointAesthetics): Double {
+    private fun getScale(ctx: GeomContext, aesthetics: Aesthetics): Double {
         sizeUnitScale?.let { return sizeUnitScale!! }
         sizeUnitScale = 1.0
 
         sizeUnit?.let {
             val aes = GeomHelper.getSizeUnitAes(sizeUnit!!)
             val unitRes = ctx.getUnitResolution(aes)
-            val maxTextWidth = approximateMaxTextWidth(p)
+            val fontSize = AesScaling.textSize(aesthetics.range(Aes.SIZE)?.upperEnd!!)
+            val maxTextWidth = estimateMaxTextWidth(fontSize)
 
             sizeUnitScale = unitRes / maxTextWidth
         }
@@ -96,7 +95,7 @@ class TextGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
         const val DEF_NA_VALUE = "n/a"
-        const val TEST_VAL = -9.99999
+        const val TEST_VAL = -9.40
         const val TEXT_WIDTH_NORM = 0.6
     }
 }
