@@ -53,36 +53,38 @@ class corr_matrix():
     def tooltip_spec(self, format):
         return layer_tooltips().format({'$color': self.get_format(format)}).line('Corr|$color')
 
-    def points(self, type=None, fill_diagonal=None, tooltip_format=None, shape=None):
+    def points(self, type=None, fill_diagonal=None, tooltip_format=None, **other_args):
+
         points = geom_point(stat='corr', show_legend=self.show_legend, size_unit='x',
                             tooltips=self.tooltip_spec(tooltip_format),
                             type=to_type(type), fill_diagonal=fill_diagonal,
-                            method=self.method, shape=shape)
+                            method=self.method, **other_args)
 
         self.layers.append(points)
 
         return self
 
-    def text(self, type=None, fill_diagonal=None, text_format=None, text_size=None):
-        if text_size:
-            kwargs = {'size': text_size}
-        else:
-            kwargs = {'size_unit': 'x'}
+    def text(self, type=None, fill_diagonal=None, **other_args):
+
+        if 'label_format' not in other_args:
+            other_args['label_format'] = self.format
+
+        if 'size' not in other_args:
+            other_args['size_unit'] = 'x'
 
         text = geom_text(stat='corr', show_legend=self.show_legend,
-                         label_format=self.get_format(text_format),
                          type=to_type(type), fill_diagonal=fill_diagonal,
-                         method=self.method, na_value='', **kwargs)
+                         method=self.method, na_value='', **other_args)
 
         self.layers.append(text)
 
         return self
 
-    def tiles(self, type=None, fill_diagonal=None, tooltip_format=None):
+    def tiles(self, type=None, fill_diagonal=None,  tooltip_format=None, **other_args):
         tiles = geom_tile(stat='corr', show_legend=self.show_legend, size_unit='x',
                           tooltips=self.tooltip_spec(tooltip_format),
                           type=to_type(type), fill_diagonal=fill_diagonal,
-                          method=self.method)
+                          method=self.method, **other_args)
 
         self.layers.append(tiles)
 
