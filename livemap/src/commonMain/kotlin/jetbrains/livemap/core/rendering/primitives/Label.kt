@@ -24,7 +24,7 @@ class Label(override var origin: DoubleVector, private var text: Text) : RenderB
             dimension = text.measureText(ctx) + DoubleVector(2 * padding, 2 * padding)
 
             rectangle.apply {
-                rect = DoubleRectangle(DoubleVector.ZERO, dimension)
+                rect = DoubleRectangle(DoubleVector.ZERO, this@Label.dimension)
                 color = background
             }
 

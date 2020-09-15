@@ -99,8 +99,11 @@ def regions_builder(level=None, request=None, within=None, highlights=False) -> 
 
     Examples
     ---------
-    >>> from lets_plot.geo_data import *
-    >>> r = regions_builder(level='city', request=['moscow', 'york']).where('york', regions_state('New York')).build()
+    .. jupyter-execute::
+
+        >>> from lets_plot.geo_data import *
+        >>> r = regions_builder(level='city', request=['moscow', 'york']).where('york', regions_state('New York')).build()
+        >>> r
     """
     return RegionsBuilder(level, request, within, highlights)
 
@@ -137,8 +140,11 @@ def regions(level=None, request=None, within=None) -> Regions:
 
     Examples
     ---------
-    >>> from lets_plot.geo_data import *
-    >>> r = regions(level='country', request=['Germany', 'USA'])
+    .. jupyter-execute::
+
+        >>> from lets_plot.geo_data import *
+        >>> r = regions(level='country', request=['Germany', 'USA'])
+        >>> r
     """
     return RegionsBuilder(level=level, request=request, scope=within).build()
 
@@ -166,8 +172,11 @@ def regions_country(request=None):
 
     Examples
     ---------
-    >>> from lets_plot.geo_data import *
-    >>> r_country = regions_country(request=['Germany', 'USA'])
+    .. jupyter-execute::
+
+        >>> from lets_plot.geo_data import *
+        >>> r_country = regions_country(request=['Germany', 'USA'])
+        >>> r_country
     """
     return regions('country', request, None)
 
@@ -202,8 +211,11 @@ def regions_state(request=None, within=None):
 
     Examples
     ---------
-    >>> from lets_plot.geo_data import *
-    >>> r_state = regions_state(request=['Texas', 'Iowa'], within='USA')
+    .. jupyter-execute::
+
+        >>> from lets_plot.geo_data import *
+        >>> r_state = regions_state(request=['Texas', 'Iowa'], within='USA')
+        >>> r_state
     """
     return regions('state', request, within)
 
@@ -236,8 +248,11 @@ def regions_county(request=None, within=None):
 
     Examples
     ---------
-    >>> from lets_plot.geo_data import *
-    >>> r_county = regions_county(request=['Calhoun County', 'Howard County'], within='Texas')
+    .. jupyter-execute::
+
+        >>> from lets_plot.geo_data import *
+        >>> r_county = regions_county(request=['Calhoun County', 'Howard County'], within='Texas')
+        >>> r_county
     """
     return regions('county', request, within)
 
@@ -270,8 +285,11 @@ def regions_city(request=None, within=None):
 
     Examples
     ---------
-    >>> from lets_plot.geo_data import *
-    >>> r_city = regions_city(request=['New York', 'Los Angeles'])
+    .. jupyter-execute::
+
+        >>> from lets_plot.geo_data import *
+        >>> r_city = regions_city(request=['New York', 'Los Angeles'])
+        >>> r_city
     """
     return regions('city', request, within)
 
@@ -308,8 +326,11 @@ def distance(lon0, lat0, lon1, lat1, units='km'):
 
     Examples
     ---------
-    >>> from lets_plot.geo_data import *
-    >>> dist = distance(-99.25061, 31.25044, -105.50083, 39.00027)
+    .. jupyter-execute::
+
+        >>> from lets_plot.geo_data import *
+        >>> dist = distance(-99.25061, 31.25044, -105.50083, 39.00027)
+        >>> dist
     """
     return _calc_distance(lon0, lat0, lon1, lat1, units)
 

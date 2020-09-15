@@ -39,10 +39,10 @@ def facet_grid(x=None, y=None):
         >>> from scipy.stats import norm
         >>> from lets_plot import *
         >>> LetsPlot.setup_html()
-        >>> mean=norm(loc=0, scale=5).rvs(size=3)
+        >>> mean = norm(loc=0, scale=5).rvs(size=3)
         >>> X = multivariate_normal(mean=mean, cov=0.1).rvs(1000)
         >>> df=pd.melt(pd.DataFrame(X))
-        >>> ggplot(df)+geom_histogram()+facet_grid(y='variable')
+        >>> ggplot(df) + geom_histogram(aes('value')) + facet_grid(y='variable')
     """
     return _facet('grid', x=x, y=y)
 
