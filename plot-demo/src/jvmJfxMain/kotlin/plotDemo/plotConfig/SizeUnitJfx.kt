@@ -7,7 +7,6 @@ package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.Style.JFX_PLOT_STYLESHEET
-import jetbrains.datalore.plotDemo.model.plotConfig.PolynomialRegression
 import jetbrains.datalore.plotDemo.model.plotConfig.SizeUnitDemo
 import jetbrains.datalore.vis.demoUtils.SceneMapperDemoFactory
 
