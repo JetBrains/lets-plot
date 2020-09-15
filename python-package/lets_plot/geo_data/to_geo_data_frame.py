@@ -42,6 +42,7 @@ class RectGeoDataFrame:
 
     def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
         places = PlacesDataFrameBuilder()
+        queries = queries if len(queries) == len(features) else None
 
         for i in range(len(features)):
             feature = features[i]
@@ -80,6 +81,7 @@ class CentroidsGeoDataFrame:
 
     def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
         places = PlacesDataFrameBuilder()
+        queries = queries if len(queries) == len(features) else None
 
         for i in range(len(features)):
             feature = features[i]
@@ -97,6 +99,7 @@ class BoundariesGeoDataFrame:
 
     def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
         places = PlacesDataFrameBuilder()
+        queries = queries if len(queries) == len(features) else None
 
         geometry = []
         for i in range(len(features)):

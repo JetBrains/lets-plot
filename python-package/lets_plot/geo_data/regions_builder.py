@@ -255,7 +255,7 @@ class RegionsBuilder:
                 self._queries.append(overriding)
 
         if len(self._queries) == 0:
-            return [RegionQuery(None, None, self._default_ambiguity_resolver)]
+            return []
 
         return [
             RegionQuery(

@@ -60,7 +60,7 @@ NOT_FOUND = None
 
 
 @pytest.mark.parametrize('address,drop_not_found,found,error', [
-    pytest.param(['NYC, NY', 'Dallas, TX'], DO_NOT_DROP, ['New York City', 'Dallas'], NO_ERROR),
+    pytest.param(['NYC, NY', 'Dallas, TX'], DO_NOT_DROP, ['New York', 'Dallas'], NO_ERROR),
     pytest.param(['NYC, NY', 'foobar, barbaz'], DO_NOT_DROP, NOT_FOUND, 'No objects were found for barbaz.\n'),
 ])
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -88,8 +88,8 @@ NO_REGION = None
     pytest.param('moscow, Latah County, Idaho, USA', NO_LEVEL, NO_REGION, 'Moscow'),
     # TODO: CHECK -  pytest.param('richmond, virginia, usa', NO_LEVEL, NO_REGION, 'Richmond City'),
     # TODO: CHECK - pytest.param('richmond, virginia, usa', 'county', NO_REGION, 'Richmond County'),
-    pytest.param('NYC, usa', NO_LEVEL, NO_REGION, 'New York City'),
-    pytest.param('NYC, NY', NO_LEVEL, 'usa', 'New York City'),
+    pytest.param('NYC, usa', NO_LEVEL, NO_REGION, 'New York'),
+    pytest.param('NYC, NY', NO_LEVEL, 'usa', 'New York'),
     pytest.param('dallas, TX', NO_LEVEL, NO_REGION, 'Dallas'),
     pytest.param('moscow, russia', NO_LEVEL, NO_REGION, 'Москва'),
 ])
@@ -139,8 +139,8 @@ def test_name_columns(geometry_getter):
 ])
 #@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_empty_request_name_columns(geometry_getter):
-    request = 'Missouri'
-    found_name = 'Missouri'
+    request = 'Vermont'
+    found_name = 'Vermont'
 
     states = geodata.regions_state('us-48')
 
@@ -163,14 +163,14 @@ NYC_LAT = 40.730610
 def test_reverse_geocoding_of_list_(lons, lats):
     r = geodata.regions_xy(lons, lats, 'city')
     assert_row(r.to_data_frame(), index=0, request='[-71.057083, 42.361145]', found_name='Boston')
-    assert_row(r.to_data_frame(), index=1, request='[-73.935242, 40.730610]', found_name='New York City')
+    assert_row(r.to_data_frame(), index=1, request='[-73.935242, 40.730610]', found_name='New York')
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_reverse_geocoding_of_nyc():
     r = geodata.regions_xy(NYC_LON, NYC_LAT, 'city')
 
-    assert_row(r.to_data_frame(), found_name='New York City')
+    assert_row(r.to_data_frame(), found_name='New York')
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -196,8 +196,8 @@ def test_only_one_sevastopol():
     assert_row(sevastopol.to_data_frame(), id=SEVASTOPOL_ID)
 
 
-WARWICK_LON = -71.4332743004962
-WARWICK_LAT = 41.7155512422323
+WARWICK_LON = -71.4332938210472
+WARWICK_LAT = 41.715542525053
 WARWICK_ID = '785807'
 
 
@@ -250,30 +250,30 @@ def test_ambiguity_near_boston_by_box():
     assert_row(r.centroids(), lon=WARWICK_LON, lat=WARWICK_LAT)
 
 
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_allow_ambiguous():
-    r = geodata.regions_builder(level='city', request=['gotham', 'new york city', 'manchester']) \
+    r = geodata.regions_builder(level='city', request=['gotham', 'new york', 'manchester']) \
         .allow_ambiguous() \
         .build()
 
     actual = r.to_data_frame()[DF_FOUND_NAME].tolist()
-    assert 28 == len(actual)  # 1 New York City + 27 Manchester
+    assert 29 == len(actual)  # 1 New York + 27 Manchester
 
 
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_drop_not_matched():
-    r = geodata.regions_builder(level='city', request=['gotham', 'new york city', 'manchester']) \
+    r = geodata.regions_builder(level='city', request=['gotham', 'new york', 'manchester']) \
         .drop_not_matched() \
         .build()
 
     actual = r.to_data_frame()[DF_FOUND_NAME].tolist()
-    assert ['New York City'] == actual
+    assert actual == ['New York']
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_ambiguity_drop_not_found():
     try:
-        r = geodata.regions_builder(level='city', request=['gotham', 'new york city', 'manchester']) \
+        r = geodata.regions_builder(level='city', request=['gotham', 'new york', 'manchester']) \
             .drop_not_found() \
             .build()
     except ValueError as ex:
@@ -285,10 +285,10 @@ def test_ambiguity_drop_not_found():
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_single_request_level_detection():
-    r = geodata.regions_builder(request=['new york city', 'boston']) \
+    r = geodata.regions_builder(request=['new york', 'boston'], within='usa') \
         .build()
 
-    assert [NYC_ID, BOSTON_ID] == r.to_data_frame().id.tolist()
+    assert r.to_data_frame().id.tolist() == [NYC_ID, BOSTON_ID]
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -309,12 +309,12 @@ def test_where_request_level_detection():
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_havana_new_york():
     try:
-        r = geodata.regions_builder(request=['havana', 'new york city']) \
+        r = geodata.regions_builder(request=['havana', 'new york']) \
             .where(request='havana', within=geodata.regions_country('cuba')) \
-            .where(request='new york city', within=geodata.regions_state('new york')) \
+            .where(request='new york', within=geodata.regions_state('new york')) \
             .build()
     except ValueError as ex:
-        assert 'No objects were found for new york city.\n' == str(ex)
+        assert 'No objects were found for new york.\n' == str(ex)
         return
 
     assert False, 'Should throw exception'
@@ -330,7 +330,7 @@ def test_positional_regions():
         ]
     ).to_data_frame()
 
-    assert ['New York City', 'Little York'] == df['found name'].tolist()
+    assert ['New York', 'Little York'] == df['found name'].tolist()
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -471,13 +471,14 @@ def test_duplication_with_us48():
 
     assert 51 == len(df['request'])
     assert_row(df, 'tx', 'Texas', 0)
-    assert_row(df, 'Missouri', 'Missouri', 1)
+    assert_row(df, 'Vermont', 'Vermont', 1)
     assert_row(df, 'tx', 'Texas', 50)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_empty_request_to_data_frame():
-    r = geodata.regions_city(within='orange county')
+    orange_county = geodata.regions_county('orange county', within='north carolina')
+    r = geodata.regions_city(within=orange_county)
     df = r.to_data_frame()
     assert set(['Chapel Hill', 'Town of Carrboro', 'Carrboro', 'Hillsborough', 'Town of Carrboro', 'City of Durham']) == \
            set(df['request'].tolist())
@@ -485,7 +486,8 @@ def test_empty_request_to_data_frame():
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_empty_request_centroid():
-    r = geodata.regions_city(within='orange county')
+    orange_county = geodata.regions_county('orange county', within='north carolina')
+    r = geodata.regions_city(within=orange_county)
     df = r.centroids()
     assert set(['Chapel Hill', 'Town of Carrboro', 'Carrboro', 'Hillsborough', 'Town of Carrboro', 'City of Durham']) == \
            set(df['request'].tolist())
@@ -495,16 +497,16 @@ def test_empty_request_centroid():
 def test_highlights():
     r = geodata.regions_builder(level='city', request='NY', highlights=True).build()
     df = r.to_data_frame()
-    assert ['Peel'] == df['found name'].tolist()
-    assert [['Purt ny h-Inshey']] == df['highlights'].tolist()
+    assert df['found name'].tolist() == ['Niamey']
+    assert df['highlights'].tolist() == [['NY']]
 
 
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_countries():
-    assert 221 == len(geodata.regions_country().centroids().request)
+    assert 217 == len(geodata.regions_country().centroids().request)
 
 
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_incorrect_group_processing():
     c = geodata.regions_country().centroids()
     c = list(c.request[141:142]) + list(c.request[143:144]) + list(c.request[136:137]) + list(c.request[114:134])

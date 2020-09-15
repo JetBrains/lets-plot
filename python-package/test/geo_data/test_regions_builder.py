@@ -131,7 +131,7 @@ def test_with_regions():
 
 
 def test_countries_alike():
-    assert [query()] == RegionsBuilder(level=LevelKind.country)._get_queries()
+    assert [] == RegionsBuilder(level=LevelKind.country)._get_queries()
 
 
 def test_us48_alike():
@@ -407,9 +407,7 @@ def test_empty():
     actual = \
         regions_builder()._get_queries()
 
-    expected = [
-        query()
-    ]
+    expected = []
 
     assert expected == actual
 
@@ -418,9 +416,7 @@ def test_positional_empty():
     actual = \
         regions_builder(request=[])._get_queries()
 
-    expected = [
-        query()
-    ]
+    expected = []
 
     assert expected == actual
 
