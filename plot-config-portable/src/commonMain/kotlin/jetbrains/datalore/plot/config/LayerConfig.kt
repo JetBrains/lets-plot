@@ -17,7 +17,7 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleProviderMap
 import jetbrains.datalore.plot.builder.sampling.Sampling
-import jetbrains.datalore.plot.builder.tooltip.TooltipLinesSpecification
+import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
@@ -50,7 +50,7 @@ class LayerConfig(
     val constantsMap: Map<Aes<*>, Any>
     val statKind: StatKind
     private val mySamplings: List<Sampling>?
-    val tooltips: TooltipLinesSpecification
+    val tooltips: TooltipSpecification
 
     var ownData: DataFrame? = null
         private set
@@ -141,14 +141,14 @@ class LayerConfig(
                 }
                 NONE -> {
                     // not show tooltips
-                    TooltipLinesSpecification.emptyTooltipLines()
+                    TooltipSpecification.withoutTooltip()
                 }
                 else -> {
                     error("Incorrect tooltips specification")
                 }
             }
         } else {
-            TooltipLinesSpecification.defaultTooltipLines()
+            TooltipSpecification.defaultTooltip()
         }
 
         val varBindings = LayerConfigUtil.createBindings(

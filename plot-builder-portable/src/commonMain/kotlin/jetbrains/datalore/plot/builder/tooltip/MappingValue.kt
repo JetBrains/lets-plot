@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.tooltip.TooltipLineFormatter.Companion.createTooltipLineFormatter
 
-class MappedAes(
+class MappingValue(
     val aes: Aes<*>,
     private val isOutlier: Boolean = false,
     private val isAxis: Boolean = false,
@@ -68,8 +68,8 @@ class MappedAes(
         }
     }
 
-    fun toOutlier(): MappedAes {
-        return MappedAes(
+    fun toOutlier(): MappingValue {
+        return MappingValue(
             aes = aes,
             isOutlier = true,
             isAxis = isAxis,

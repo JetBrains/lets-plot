@@ -15,7 +15,7 @@ class TooltipConfig(
     private val constantsMap: Map<Aes<*>, Any>
 ) : OptionsAccessor(opts) {
 
-    fun createTooltips(): TooltipLinesSpecification {
+    fun createTooltips(): TooltipSpecification {
         return TooltipConfigParseHelper(
             tooltipLines = if (has(Option.Layer.TOOLTIP_LINES)) {
                 getStringList(Option.Layer.TOOLTIP_LINES)
@@ -35,9 +35,9 @@ class TooltipConfig(
                 createValueSource(it.key, it.value)
             }.toMutableMap()
 
-        internal fun parse(): TooltipLinesSpecification {
+        internal fun parse(): TooltipSpecification {
             val lines = tooltipLines?.map(::parseLine)
-            return TooltipLinesSpecification(
+            return TooltipSpecification(
                 myValueSources.map { it.value },
                 lines
             )
@@ -73,12 +73,12 @@ class TooltipConfig(
                 name.startsWith("var@") -> {
                     val varName = name.removePrefix("var@")
                     if (varName.isEmpty()) error("Variable name cannot be empty")
-                    VariableValue(varName, format)
+                    DataFrameValue(varName, format)
                 }
                 else -> {
                     val aes = getAesByName(name)
                     when (val constant = constantsMap[aes]) {
-                        null -> MappedAes(aes, format = format)
+                        null -> MappingValue(aes, format = format)
                         else -> ConstantValue(constant, format)
                     }
                 }

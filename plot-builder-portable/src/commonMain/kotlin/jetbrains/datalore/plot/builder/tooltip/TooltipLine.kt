@@ -9,20 +9,20 @@ import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
-open class TooltipLine(
+class TooltipLine(
     val label: String?,
-    val linePattern: String,
-    val data: List<ValueSource>
+    val pattern: String,
+    val fields: List<ValueSource>
 ) : TooltipLineSpec {
     private val myLineFormatter =
-        LinePatternFormatter(linePattern)
+        LinePatternFormatter(pattern)
 
     fun setDataContext(dataContext: DataContext) {
-        data.forEach { it.setDataContext(dataContext) }
+        fields.forEach { it.setDataContext(dataContext) }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        val dataValues = data.map { dataValue ->
+        val dataValues = fields.map { dataValue ->
             dataValue.getDataPoint(index) ?: return null
         }
         return if (dataValues.size == 1) {
@@ -50,8 +50,8 @@ open class TooltipLine(
     companion object {
         fun defaultLineForValueSource(valueSource: ValueSource): TooltipLine = TooltipLine(
             label = null,
-            linePattern = LinePatternFormatter.valueInLinePattern(),
-            data = listOf(valueSource)
+            pattern = LinePatternFormatter.valueInLinePattern(),
+            fields = listOf(valueSource)
         )
     }
 }

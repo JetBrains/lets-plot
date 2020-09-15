@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
-class VariableValue(
+class DataFrameValue(
     private val name: String,
     format: String? = null
 ) : ValueSource {

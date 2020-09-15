@@ -47,7 +47,7 @@ class TooltipConfigTest {
     }
 
     @Test
-    fun resetTooltips() {
+    fun hideTooltips() {
         val geomLayer = buildGeomPointLayer(data, mapping, tooltips = "none")
 
         val lines = getGeneralTooltipLines(geomLayer)
@@ -103,11 +103,11 @@ class TooltipConfigTest {
             Option.Layer.TOOLTIP_FORMATS to listOf(
                 mapOf(
                     Option.TooltipFormat.FIELD to "color",
-                    Option.TooltipFormat.FORMAT to ".4f"
+                    Option.TooltipFormat.FORMAT to ".4f"         // number format
                 ),
                 mapOf(
                     Option.TooltipFormat.FIELD to "shape",
-                    Option.TooltipFormat.FORMAT to "{} type"
+                    Option.TooltipFormat.FORMAT to "{} {{type}}" // line pattern with curly brackets in the text
                 )
 
             )
@@ -116,7 +116,7 @@ class TooltipConfigTest {
 
         val expectedLines = listOf(
             "cty: 15.0000",
-            "class: suv type"
+            "class: suv {type}"
         )
         val lines = getGeneralTooltipLines(geomLayer)
         assertTooltipLines(expectedLines, lines)

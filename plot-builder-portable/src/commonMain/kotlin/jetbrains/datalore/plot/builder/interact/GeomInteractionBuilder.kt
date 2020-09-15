@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.builder.interact
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
-import jetbrains.datalore.plot.builder.tooltip.MappedAes
-import jetbrains.datalore.plot.builder.tooltip.TooltipLinesSpecification
+import jetbrains.datalore.plot.builder.tooltip.MappingValue
+import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.builder.tooltip.ValueSource
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 
@@ -24,7 +24,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
     private lateinit var myTooltipAxisAes: List<Aes<*>>
     private lateinit var myTooltipAes: List<Aes<*>>
     private lateinit var myTooltipOutlierAesList: List<Aes<*>>
-    private lateinit var myUserTooltipLinesSpec: TooltipLinesSpecification
+    private var myUserTooltipSpec: TooltipSpecification? = null
 
     val getAxisFromFunctionKind: List<Aes<*>>
         get() = myAxisAesFromFunctionKind ?: emptyList()
@@ -58,8 +58,8 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         return this
     }
 
-    fun tooltipLinesSpec(tooltipLinesSpec: TooltipLinesSpecification): GeomInteractionBuilder {
-        myUserTooltipLinesSpec = tooltipLinesSpec
+    fun tooltipLinesSpec(tooltipSpec: TooltipSpecification): GeomInteractionBuilder {
+        myUserTooltipSpec = tooltipSpec
         return this
     }
 
@@ -106,17 +106,20 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
         myTooltipAxisAes = if (!isAxisTooltipEnabled) emptyList() else getAxisFromFunctionKind
         myTooltipAes = mySupportedAesList - getAxisFromFunctionKind
         myTooltipOutlierAesList = emptyList()
-        myUserTooltipLinesSpec = TooltipLinesSpecification.defaultTooltipLines()
     }
 
     private fun prepareTooltipValueSources(): List<TooltipLine> {
 
         return when {
-            myUserTooltipLinesSpec.tooltipLinePatterns == null -> {
-                // No user list => use default tooltips
-                defaultValueSourceTooltipLines(myTooltipAes, myTooltipAxisAes, myTooltipOutlierAesList, myUserTooltipLinesSpec.valueSources)
+            myUserTooltipSpec == null -> {
+                // No user tooltip specification => use default tooltips
+                defaultValueSourceTooltipLines(myTooltipAes, myTooltipAxisAes, myTooltipOutlierAesList)
             }
-            myUserTooltipLinesSpec.tooltipLinePatterns!!.isEmpty() -> {
+            myUserTooltipSpec!!.tooltipLinePatterns == null -> {
+                // No user line patterns => use default tooltips with the given formatted valueSources
+                defaultValueSourceTooltipLines(myTooltipAes, myTooltipAxisAes, myTooltipOutlierAesList, myUserTooltipSpec!!.valueSources)
+            }
+            myUserTooltipSpec!!.tooltipLinePatterns!!.isEmpty() -> {
                 // User list is empty => not show tooltips
                 emptyList()
             }
@@ -125,17 +128,17 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                 val geomOutliers = myTooltipOutlierAesList.toMutableList()
 
                 // Remove outlier tooltip if the mappedAes is used in the general tooltip
-                myUserTooltipLinesSpec.tooltipLinePatterns!!.forEach { line ->
-                    val userDataAesList = line.data.filterIsInstance<MappedAes>().map { it.aes }
+                myUserTooltipSpec!!.tooltipLinePatterns!!.forEach { line ->
+                    val userDataAesList = line.fields.filterIsInstance<MappingValue>().map { it.aes }
                     geomOutliers.removeAll(userDataAesList)
                 }
-                val axisValueSources = myTooltipAxisAes.map { aes -> MappedAes(aes, isOutlier = true, isAxis = true) }
+                val axisValueSources = myTooltipAxisAes.map { aes -> MappingValue(aes, isOutlier = true, isAxis = true) }
                 val geomOutlierValueSources = geomOutliers.map { aes ->
-                    val formatted = myUserTooltipLinesSpec.valueSources.filterIsInstance<MappedAes>().find { it.aes == aes }
-                    formatted?.toOutlier() ?: MappedAes(aes, isOutlier = true)
+                    val formatted = myUserTooltipSpec!!.valueSources.filterIsInstance<MappingValue>().find { it.aes == aes }
+                    formatted?.toOutlier() ?: MappingValue(aes, isOutlier = true)
                 }
 
-                myUserTooltipLinesSpec.tooltipLinePatterns!! + (axisValueSources + geomOutlierValueSources).map { valueSource ->
+                myUserTooltipSpec!!.tooltipLinePatterns!! + (axisValueSources + geomOutlierValueSources).map { valueSource ->
                     TooltipLine.defaultLineForValueSource(valueSource)
                 }
             }
@@ -159,14 +162,14 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
             outliers: List<Aes<*>>,
             formattedList: List<ValueSource>? = null
         ): List<TooltipLine> {
-            val axisValueSources = axisAes.map { aes -> MappedAes(aes, isOutlier = true, isAxis = true) }
+            val axisValueSources = axisAes.map { aes -> MappingValue(aes, isOutlier = true, isAxis = true) }
             val outlierValueSources = outliers.map { aes ->
-                val formatted = formattedList?.filterIsInstance<MappedAes>()?.find { it.aes == aes }
-                formatted?.toOutlier() ?: MappedAes(aes, isOutlier = true)
+                val formatted = formattedList?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
+                formatted?.toOutlier() ?: MappingValue(aes, isOutlier = true)
             }
             val aesValueSources = aesListForTooltip.map { aes ->
-                val formatted = formattedList?.filterIsInstance<MappedAes>()?.find { it.aes == aes }
-                formatted ?: MappedAes(aes)
+                val formatted = formattedList?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
+                formatted ?: MappingValue(aes)
             }
             return (aesValueSources + axisValueSources + outlierValueSources).map { valueSource ->
                 TooltipLine.defaultLineForValueSource(valueSource)

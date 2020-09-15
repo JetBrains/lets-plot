@@ -5,14 +5,13 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
-open class TooltipLinesSpecification(
+class TooltipSpecification(
     val valueSources: List<ValueSource>,
     val tooltipLinePatterns: List<TooltipLine>?
 ) {
     companion object {
-        fun emptyTooltipLines() =
-            TooltipLinesSpecification(valueSources = emptyList(), tooltipLinePatterns = emptyList())
+        fun withoutTooltip() = TooltipSpecification(valueSources = emptyList(), tooltipLinePatterns = emptyList())
 
-        fun defaultTooltipLines() = TooltipLinesSpecification(valueSources = emptyList(), tooltipLinePatterns = null)
+        fun defaultTooltip() = TooltipSpecification(valueSources = emptyList(), tooltipLinePatterns = null)
     }
 }
