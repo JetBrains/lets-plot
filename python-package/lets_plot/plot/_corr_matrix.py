@@ -31,7 +31,7 @@ def add_common_params(plot):
     plot += theme(axis_title=element_blank(), legend_title=element_blank())
     plot += coord_fixed()
     plot += scale_y_discrete_reversed()
-    plot += scale_size_identity(name="")
+    plot += scale_size_identity(name="", na_value=0)
     plot += scale_color_gradient2(name='Correlation',
                                   low='blue', mid='light_gray', high='red',
                                   limits=[-1.0, 1.0])
@@ -53,27 +53,26 @@ class corr_matrix():
     def tooltip_spec(self, format):
         return layer_tooltips().format({'$color': self.get_format(format)}).line('Corr|$color')
 
-    def points(self, type=None, fill_diagonal=None, tooltip_format=None):
+    def points(self, type=None, fill_diagonal=None, tooltip_format=None, shape=None):
         points = geom_point(stat='corr', show_legend=self.show_legend, size_unit='x',
                             tooltips=self.tooltip_spec(tooltip_format),
                             type=to_type(type), fill_diagonal=fill_diagonal,
-                            method=self.method)
+                            method=self.method, shape=shape)
 
         self.layers.append(points)
 
         return self
 
     def text(self, type=None, fill_diagonal=None, text_format=None, text_size=None):
-
         if text_size:
-            kwargs = {'size': text_size }
+            kwargs = {'size': text_size}
         else:
             kwargs = {'size_unit': 'x'}
 
         text = geom_text(stat='corr', show_legend=self.show_legend,
                          label_format=self.get_format(text_format),
                          type=to_type(type), fill_diagonal=fill_diagonal,
-                         method=self.method, **kwargs )
+                         method=self.method, na_value='', **kwargs)
 
         self.layers.append(text)
 

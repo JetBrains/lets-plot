@@ -30,7 +30,9 @@ object AesScaling {
 
     fun textSize(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.size()!! * 2
+        return textSize(p.size()!!)
     }
+
+    fun textSize(size: Double) = size * 2
 
 }
