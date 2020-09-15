@@ -39,7 +39,7 @@ def add_common_params(plot):
     return plot
 
 
-class corr_matrix():
+class corr_matrix:
     def __init__(self, data, show_legend=None, format=None, method=None):
         self.data = data
         self.show_legend = show_legend
