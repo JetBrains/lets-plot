@@ -137,7 +137,7 @@ def test_name_columns(geometry_getter):
     pytest.param(lambda regions_obj: regions_obj.boundaries(5), id='boundaries(5)'),
     pytest.param(lambda regions_obj: regions_obj.boundaries(), id='boundaries()')
 ])
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_empty_request_name_columns(geometry_getter):
     request = 'Missouri'
     found_name = 'Missouri'
@@ -516,7 +516,7 @@ def test_incorrect_group_processing():
     assert 'group' not in boundaries.keys()
 
 
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_parents_in_regions_object_and_geo_data_frame():
     tx = geodata.regions_builder2(level='city', names='boston', counties='suffolk', states='massachusetts', countries='usa').build()
 
@@ -561,3 +561,12 @@ def test_parents_in_regions_object_and_geo_data_frame():
     assert ru_gdf[DF_REQUEST][1] == 'russia'
     assert ru_gdf.columns.tolist() == [DF_REQUEST, DF_FOUND_NAME, 'geometry']
 
+
+#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
+def test_regions_parents_in_regions_object_and_geo_data_frame():
+    ms = geodata.regions_builder2(level='state', names='massachusetts').build()
+    boston = geodata.regions_builder2(level='city', names='boston', states=ms).build()
+
+    boston_df = boston.to_data_frame()
+    print(boston_df[DF_PARENT_STATE][0])
+    assert boston_df[DF_PARENT_STATE][0] == 'massachusetts'

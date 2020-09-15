@@ -5,8 +5,8 @@ from .gis.geometry import GeoPoint
 from .gis.request import MapRegion, RegionQuery, RequestBuilder, RequestKind, PayloadKind, AmbiguityResolver, \
     IgnoringStrategyKind
 from .gis.response import LevelKind, Response, SuccessResponse, GeoRect
-from .regions import _to_level_kind, request_types, scope_types, Regions, _raise_exception, \
-    _ensure_is_list, _to_scope
+from .regions import _to_level_kind, request_types, parent_types, scope_types, Regions, _raise_exception, \
+    _ensure_is_list, _make_parent_region, _to_scope
 
 NAMESAKE_MAX_COUNT = 10
 
@@ -86,9 +86,9 @@ def _create_queries(request: request_types, scope: scope_types, ambiguity_resovl
         queries = []
         for i in range(len(requests)):
             name = requests[i] if requests is not None else None
-            country = countries[i] if countries is not None else None
-            state = states[i] if states is not None else None
-            county = counties[i] if counties is not None else None
+            country = _make_parent_region(countries[i]) if countries is not None else None
+            state = _make_parent_region(states[i]) if states is not None else None
+            county = _make_parent_region(counties[i]) if counties is not None else None
 
             query = RegionQuery(request=name, scope=scope, ambiguity_resolver=ambiguity_resovler,
                                 country=country, state=state, county=county)

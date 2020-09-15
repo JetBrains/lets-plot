@@ -5,7 +5,7 @@ from geopandas import GeoDataFrame
 from pandas import DataFrame
 from shapely.geometry import box
 
-from lets_plot.geo_data import PlacesDataFrameBuilder, select_not_empty_name, select_parents, DF_REQUEST, DF_FOUND_NAME, abstractmethod
+from lets_plot.geo_data import PlacesDataFrameBuilder, select_not_empty_name, DF_REQUEST, DF_FOUND_NAME, abstractmethod
 from lets_plot.geo_data.gis.response import GeocodedFeature, GeoRect, Boundary, Multipolygon, Polygon, GeoPoint
 from lets_plot.geo_data.gis.request import RegionQuery
 
@@ -40,15 +40,14 @@ class RectGeoDataFrame:
         self._lonmax: List[float] = []
         self._latmax: List[float] = []
 
-    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = None) -> DataFrame:
+    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
         places = PlacesDataFrameBuilder()
 
-        parents = select_parents(queries)
         for i in range(len(features)):
             feature = features[i]
-            rects: GeoRect = self._read_rect(feature)
+            rects: List[GeoRect] = self._read_rect(feature)
             for rect in rects:
-                places.append_row(request=select_not_empty_name(feature), found_name=feature.name, parents=parents, parent_row=i)
+                places.append_row(request=select_not_empty_name(feature), found_name=feature.name, queries=queries, parent_row=i)
                 self._lonmin.append(rect.min_lon)
                 self._latmin.append(rect.min_lat)
                 self._lonmax.append(rect.max_lon)
@@ -79,13 +78,12 @@ class CentroidsGeoDataFrame:
         self._lons: List[float] = []
         self._lats: List[float] = []
 
-    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = None) -> DataFrame:
+    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
         places = PlacesDataFrameBuilder()
 
-        parents = select_parents(queries)
         for i in range(len(features)):
             feature = features[i]
-            places.append_row(request=select_not_empty_name(feature), found_name=feature.name, parents=parents, parent_row=i)
+            places.append_row(request=select_not_empty_name(feature), found_name=feature.name, queries=queries, parent_row=i)
             self._lons.append(feature.centroid.lon)
             self._lats.append(feature.centroid.lat)
 
@@ -97,14 +95,13 @@ class BoundariesGeoDataFrame:
     def __init__(self):
         super().__init__()
 
-    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = None) -> DataFrame:
+    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
         places = PlacesDataFrameBuilder()
 
         geometry = []
-        parents = select_parents(queries)
         for i in range(len(features)):
             feature = features[i]
-            places.append_row(request=select_not_empty_name(feature), found_name=feature.name, parents=parents, parent_row=i)
+            places.append_row(request=select_not_empty_name(feature), found_name=feature.name, queries=queries, parent_row=i)
             geometry.append(self._geo_parse_geometry(feature.boundary))
 
         return _create_geo_data_frame(places.build_dict(), geometry=geometry)

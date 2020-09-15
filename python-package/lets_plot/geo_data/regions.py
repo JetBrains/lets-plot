@@ -48,42 +48,28 @@ def contains_values(column):
 def select_not_empty_name(feature: GeocodedFeature) -> str:
     return feature.name if feature.query is None or feature.query == '' else feature.query
 
-def select_parents(queries: List[RegionQuery] = None) -> Dict:
-    if queries is None:
-        return {}
-
-    data = {}
-
-    counties = [query.county for query in queries]
-    if contains_values(counties):
-        data[DF_PARENT_COUNTY] = counties
-
-    states = [query.state for query in queries]
-    if contains_values(states):
-        data[DF_PARENT_STATE] = states
-
-    countries = [query.country for query in queries]
-    if contains_values(countries):
-        data[DF_PARENT_COUNTRY] = countries
-
-    return data
-
 
 class PlacesDataFrameBuilder:
     def __init__(self):
         self._request: List[str] = []
         self._found_name: List[str] = []
-        self._county: List[str] = []
-        self._state: List[str] = []
-        self._country: List[str] = []
+        self._county: List[Optional[str]] = []
+        self._state: List[Optional[str]] = []
+        self._country: List[Optional[str]] = []
 
-    def append_row(self, request: str, found_name: str, parents: Dict, parent_row: int):
+    def append_row(self, request: str, found_name: str, queries: Optional[List[RegionQuery]], parent_row: int):
         self._request.append(request)
         self._found_name.append(found_name)
 
-        self._county.append(parents[DF_PARENT_COUNTY][parent_row] if DF_PARENT_COUNTY in parents else None)
-        self._state.append(parents[DF_PARENT_STATE][parent_row] if DF_PARENT_STATE in parents else None)
-        self._country.append(parents[DF_PARENT_COUNTRY][parent_row] if DF_PARENT_COUNTRY in parents else None)
+        if queries is None or len(queries) == 0:
+            self._county.append(None)
+            self._state.append(None)
+            self._country.append(None)
+        else:
+            query: RegionQuery = queries[parent_row]
+            self._county.append(MapRegion.request_or_none(query.county))
+            self._state.append(MapRegion.request_or_none(query.state))
+            self._country.append(MapRegion.request_or_none(query.country))
 
 
     def build_dict(self):
@@ -104,12 +90,12 @@ class PlacesDataFrameBuilder:
 
 
     @abstractmethod
-    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = None) -> DataFrame:
+    def to_data_frame(self, features: List[GeocodedFeature], queries: List[RegionQuery] = []) -> DataFrame:
         raise ValueError('Not implemented')
 
 
 class Regions(CanToDataFrame):
-    def __init__(self, level_kind: LevelKind, features: List[GeocodedFeature], highlights: bool = False, queries: List[RegionQuery] = None):
+    def __init__(self, level_kind: LevelKind, features: List[GeocodedFeature], highlights: bool = False, queries: List[RegionQuery] = []):
         try:
             import geopandas
         except:
@@ -125,6 +111,9 @@ class Regions(CanToDataFrame):
 
     def __len__(self):
         return len(self._geocoded_features)
+
+    def to_map_regions(self):
+        return [MapRegion.place(feature.id, feature.query, self._level_kind) for feature in self._geocoded_features]
 
     def as_list(self) -> List['Regions']:
         return [Regions(self._level_kind, [feature], self._highlights) for feature in self._geocoded_features]
@@ -257,15 +246,17 @@ class Regions(CanToDataFrame):
 
     # implements abstract in CanToDataFrame
     def to_data_frame(self) -> DataFrame:
-        parents = select_parents(self._queries)
         places = PlacesDataFrameBuilder()
 
         data = {}
         data[DF_ID] = [feature.id for feature in self._geocoded_features]
 
+        # for us-48 queries doesnt' count
+        queries = self._queries if len(self._queries) == len(self._geocoded_features) else None
+
         for i in range(len(self._geocoded_features)):
             feature = self._geocoded_features[i]
-            places.append_row(select_not_empty_name(feature), feature.name, parents, i)
+            places.append_row(select_not_empty_name(feature), feature.name, queries, i)
 
         data = {**data, **places.build_dict()}
 
@@ -416,7 +407,8 @@ def _make_parent_region(place: parent_types) -> Optional[MapRegion]:
         return MapRegion.with_name(place)
 
     if isinstance(place, Regions):
-        return MapRegion.with_single_id(place.unique_ids())
+        assert len(place.to_map_regions()) == 1, 'Region object used as parent should contain only single record'
+        return place.to_map_regions()[0]
 
     raise ValueError('Unsupported parent type: ' + str(type(place)))
 
@@ -427,7 +419,7 @@ def _to_scope(location: scope_types) -> Optional[Union[List[MapRegion], MapRegio
 
     def _make_region(obj: Union[str, Regions]) -> Optional[MapRegion]:
         if isinstance(obj, Regions):
-            return MapRegion.with_ids(obj.unique_ids())
+            return MapRegion.scope(obj.unique_ids())
 
         if isinstance(obj, str):
             return MapRegion.with_name(obj)
@@ -440,20 +432,17 @@ def _to_scope(location: scope_types) -> Optional[Union[List[MapRegion], MapRegio
     return _make_region(location)
 
 
-def _ensure_is_list(obj: request_types) -> Optional[List[str]]:
+def _ensure_is_list(obj) -> Optional[List[str]]:
     if obj is None:
         return None
 
     if isinstance(obj, list):
         return obj
 
-    if isinstance(obj, str):
-        return [obj]
-
     if isinstance(obj, Series):
         return obj.tolist()
 
-    raise ValueError("Wrong type")
+    return [obj]
 
 
 def _coerce_resolution(res: int) -> int:

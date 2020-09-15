@@ -22,7 +22,7 @@ ShapelyPoint = Point
 
 def make_query(name: str, region_id: str) -> Query:
     region_feataure = FeatureBuilder().set_query(name).set_name(name).set_id(region_id).build_geocoded()
-    return Query(name, region_id, MapRegion.with_ids([region_id]), region_feataure)
+    return Query(name, region_id, MapRegion.scope([region_id]), region_feataure)
 
 
 FOO = make_query('foo', 'foo_region')

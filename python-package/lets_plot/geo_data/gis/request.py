@@ -45,42 +45,77 @@ MODE_BY_ID = 'by_id'
 class MapRegionKind(enum.Enum):
     id = True
     name = False
+    place = 'place'
 
 
 class MapRegion:
+    '''
+    Represents three different entities:
+    scope - ids of already geocoded objects. The only kind of MapRegion allowed to store multiply objects
+    place - already geocoded single place. In addition to id it holds administrative level and requeted name.
+            Used mostly as parent object for geocoding other objects.
+    with_name - single name, not yet geocoded.
+    '''
     @staticmethod
-    def with_single_id(parent_ids: List[str]):
-        assert_list_type(parent_ids, str)
-        assert len(parent_ids) == 1, 'Single id MapRegion expected. Actual number of ids: ' + len(parent_ids)
-        return MapRegion(MapRegionKind.id, parent_ids, ids_limit)
+    def request_or_none(place: Optional['MapRegion']):
+        if place is None:
+            return None
 
-    def with_ids(parent_ids: List[str]):
+        assert place.kind == MapRegionKind.place, 'Only palce MapRegion contains request'
+        return place._request
+
+
+    @staticmethod
+    def place(id: str, request: str, level_kind: LevelKind):
+        assert_type(id, str)
+        assert_type(request, str)
+        assert_type(level_kind, LevelKind)
+        return MapRegion(MapRegionKind.place, [id], request, level_kind)
+
+    @staticmethod
+    def scope(parent_ids: List[str]):
         assert_list_type(parent_ids, str)
-        return MapRegion(MapRegionKind.id, parent_ids, ids_limit)
+        return MapRegion(MapRegionKind.id, parent_ids)
 
     @staticmethod
     def with_name(name: str):
         assert_type(name, str)
         return MapRegion(MapRegionKind.name, [name])
 
-    def __init__(self, kind: MapRegionKind, values: List[str]):
+    def __init__(self, kind: MapRegionKind, values: List[str], request: Optional[str] = None, level_kind: Optional[LevelKind] = None):
         assert_type(kind, MapRegionKind)
         assert_list_type(values, str)
+        assert_optional_type(request, str)
+        assert_optional_type(level_kind, LevelKind)
 
         self.kind: MapRegionKind = kind
         self.values: Tuple[str] = tuple(values, )
-        self._ids_limit: Optional[int] = ids_limit
+        self._request:Optional[str] = request
+        self._level_kind: Optional[LevelKind] = level_kind
         self._hash = hash((self.values, self.kind))
+
+    def request(self) -> Optional[str]:
+        assert self.kind == MapRegionKind.place, 'Invalid MapRegion kind: only place contains request'
+        return self._request
+
+    def level_kind(self) -> Optional[LevelKind]:
+        assert self.kind == MapRegionKind.place, 'Invalid MapRegion kind: only place contains level_kind'
+        return self._level_kind
 
     def __eq__(self, other: 'MapRegion'):
         return isinstance(other, MapRegion) \
                and self.kind == other.kind \
-               and self.values == other.values
+               and self.values == other.values \
+               and self._request == other._request \
+               and self._level_kind == other._level_kind
 
     def __ne__(self, o: object) -> bool:
         return not self == o
 
     def __str__(self):
+        if self.kind == MapRegionKind.place:
+            return '{} {} {}'.format(str(self.values), self._request, self._level_kind)
+
         return str(self.values)
 
     def __hash__(self):
@@ -134,9 +169,9 @@ class RegionQuery:
         self.request: Optional[str] = request
         self.scope: Optional[MapRegion] = scope
         self.ambiguity_resolver: AmbiguityResolver = ambiguity_resolver
-        self.country = country
-        self.state = state
-        self.county = county
+        self.country: Optional[MapRegion] = country
+        self.state: Optional[MapRegion] = state
+        self.county: Optional[MapRegion] = county
 
     def __eq__(self, o: object) -> bool:
         return isinstance(o, RegionQuery) \
@@ -284,7 +319,7 @@ class ReverseGeocodingRequest(Request):
 
 class RequestBuilder:
     def __init__(self):
-        self.request_kind: RequestKind = None
+        self.request_kind: Optional[RequestKind] = None
         self.requested_payload: List[PayloadKind] = []
         self.resolution: Optional[int] = None
         self.ids: List[str] = []
@@ -294,7 +329,7 @@ class RequestBuilder:
         self.allow_ambiguous: bool = False
 
         # reverse
-        self.reverse_coordinates: List[GeoPoint] = None
+        self.reverse_coordinates: Optional[List[GeoPoint]] = None
         self.reverse_scope: Optional[MapRegion] = None
 
     def set_reverse_coordinates(self, coordinates: List[GeoPoint]) -> 'RequestBuilder':
@@ -387,7 +422,7 @@ class MapRegionBuilder:
 
 class RegionQueryBuilder:
     def __init__(self):
-        self.request: Optional[str] = []
+        self.request: Optional[str] = None
         self.scope: Optional[MapRegion] = None
         self.ignoring_strategy: Optional[IgnoringStrategyKind] = None
         self.closest_coord: Optional[GeoPoint] = None

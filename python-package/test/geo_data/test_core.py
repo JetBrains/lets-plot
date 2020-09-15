@@ -112,7 +112,7 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
             FOO,
             BAR
         ]),
-     MapRegion.with_ids([FOO.id, BAR.id])
+     MapRegion.scope([FOO.id, BAR.id])
     ),
 
     # list of strings
@@ -132,8 +132,8 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
      ],
 
      [
-         MapRegion.with_ids([FOO.id]),
-         MapRegion.with_ids([BAR.id])
+         MapRegion.scope([FOO.id]),
+         MapRegion.scope([BAR.id])
      ]
     ),
 
@@ -144,7 +144,7 @@ BAR = FeatureBuilder().set_query('foo').set_name('barname').set_id('barid').buil
      ],
      [
          MapRegion.with_name(FOO.query),
-         MapRegion.with_ids([BAR.id])
+         MapRegion.scope([BAR.id])
      ]
     )
 ])
@@ -154,7 +154,7 @@ def test_to_parent_with_name(location, expected):
 
 
 def test_to_parent_with_id():
-    assert MapRegion.with_ids(REGION_LIST) == _to_scope(make_geocode_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS))
+    assert MapRegion.scope(REGION_LIST) == _to_scope(make_geocode_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS))
 
 
 @mock.patch.object(GeocodingService, 'do_request')
