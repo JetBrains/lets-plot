@@ -88,6 +88,7 @@ class corr_plot:
             other_args['color'] = self.text_color
 
         text = geom_text(stat='corr', show_legend=self.show_legend,
+                         tooltips=self.tooltip_spec(format),
                          type=self.get_type(type), fill_diagonal=fill_diagonal,
                          na_value='', **other_args)
 
