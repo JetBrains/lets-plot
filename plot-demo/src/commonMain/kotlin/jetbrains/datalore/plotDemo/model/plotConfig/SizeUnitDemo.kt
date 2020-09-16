@@ -18,10 +18,10 @@ class SizeUnitDemo : PlotConfigDemoBase() {
 //            corrMix(),
 //            corrText(),
 //                npe(),
-//            textDiag(),
+            textDiag()
 //            textNoDiag(),
 //            circleNull(),
-            nppe()
+//            nppe()
         )
     }
 
