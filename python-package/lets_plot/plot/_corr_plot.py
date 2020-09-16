@@ -12,7 +12,7 @@ from .coord import coord_fixed
 from .theme_ import theme, element_blank
 from .tooltip import layer_tooltips
 
-__all__ = ['corr_matrix']
+__all__ = ['corr_plot']
 
 
 def to_type(tp):
@@ -39,7 +39,7 @@ def add_common_params(plot):
     return plot
 
 
-class corr_matrix:
+class corr_plot:
     def __init__(self, data, show_legend=None, format=None, method=None):
         self.data = data
         self.show_legend = show_legend
