@@ -21,7 +21,8 @@ def add_common_params(plot, reverse_y):
     plot += scale_size_identity(name="", na_value=0)
     plot += scale_color_gradient2(name='Correlation',
                                   low='blue', mid='light_gray', high='red',
-                                  limits=[-1.0, 1.0])
+                                  breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
+                                  limits=[-1.0, 1.0] )
 
     if reverse_y:
         plot += scale_y_discrete_reversed()
@@ -43,7 +44,7 @@ class corr_plot:
     def __init__(self, data, show_legend=None, format=None, flip=None):
         self.data = data
         self.show_legend = show_legend
-        self.format = format if format else '.2g'
+        self.format = format if format else '.2f'
         self.reverse_y = flip if flip else False
         self.layers = []
 
