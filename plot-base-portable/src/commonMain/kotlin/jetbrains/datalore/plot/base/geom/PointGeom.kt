@@ -77,9 +77,10 @@ open class PointGeom : GeomBase() {
                 return 1.0
 
             sizeUnitScale = ctx.getUnitResolution(aes) * pointSize / size
+            return sizeUnitScale!!
         }
 
-        return sizeUnitScale!!
+        return 1.0
     }
 
     companion object {
