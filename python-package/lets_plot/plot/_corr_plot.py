@@ -51,7 +51,7 @@ class corr_plot:
         return format if format else self.format
 
     def tooltip_spec(self, format):
-        return layer_tooltips().format({'$color': self.get_format(format)}).line('$color')
+        return layer_tooltips().format({'$var@..corr..': self.get_format(format)}).line('$var@..corr..')
 
     def get_type(self, type):
         res = type if type else "full"
@@ -83,6 +83,7 @@ class corr_plot:
             other_args['size_unit'] = 'x'
 
         text = geom_text(stat='corr', show_legend=self.show_legend,
+                         tooltips=self.tooltip_spec(format),
                          type=self.get_type(type), fill_diagonal=fill_diagonal,
                          na_value='', **other_args)
 
