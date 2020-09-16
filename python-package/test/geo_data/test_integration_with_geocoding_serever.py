@@ -336,7 +336,7 @@ def test_positional_regions():
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_region_us48():
     df = geodata.regions_state(within='us-48').to_data_frame()
-    assert 49 == len(df['request'].tolist())
+    assert len(df['request'].tolist()) == 52
     for state in df.request:
         assert len(state) > 0
 
@@ -344,7 +344,7 @@ def test_region_us48():
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_filter_us48():
     df = geodata.regions_state(request='us-48').to_data_frame()
-    assert 49 == len(df['request'].tolist())
+    assert len(df['request'].tolist()) == 52
     for state in df.request:
         assert len(state) > 0
 
@@ -469,10 +469,10 @@ def test_duplications_in_filter_should_preserve_order():
 def test_duplication_with_us48():
     df = geodata.regions_state(request=['tx', 'us-48', 'tx']).to_data_frame()
 
-    assert 51 == len(df['request'])
+    assert len(df['request']) == 54
     assert_row(df, 'tx', 'Texas', 0)
     assert_row(df, 'Vermont', 'Vermont', 1)
-    assert_row(df, 'tx', 'Texas', 50)
+    assert_row(df, 'tx', 'Texas', 53)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -495,15 +495,15 @@ def test_empty_request_centroid():
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_highlights():
-    r = geodata.regions_builder(level='city', request='NY', highlights=True).build()
+    r = geodata.regions_builder(level='city', request='NYC', highlights=True).build()
     df = r.to_data_frame()
-    assert df['found name'].tolist() == ['Niamey']
-    assert df['highlights'].tolist() == [['NY']]
+    assert df['found name'].tolist() == ['New York']
+    assert df['highlights'].tolist() == [['NYC']]
 
 
 #@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_countries():
-    assert 217 == len(geodata.regions_country().centroids().request)
+    assert len(geodata.regions_country().centroids().request) == 266
 
 
 #@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
