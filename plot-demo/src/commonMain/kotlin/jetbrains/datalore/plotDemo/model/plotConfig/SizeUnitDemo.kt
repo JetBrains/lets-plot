@@ -20,7 +20,8 @@ class SizeUnitDemo : PlotConfigDemoBase() {
 //                npe(),
 //            textDiag(),
 //            textNoDiag(),
-            circleNull()
+//            circleNull(),
+            nppe()
         )
     }
 
@@ -28,6 +29,68 @@ class SizeUnitDemo : PlotConfigDemoBase() {
 //
 //        return parsePlotSpec(spec)
 //    }
+
+    private fun nppe(): Map<String, Any> {
+        val spec = """
+{
+  "data": {
+    "x": [
+      0.12209967499997681,
+      -0.7050127169915718,
+      0.7705464302256323,
+      1.5410761863990117,
+      -1.0946865856048935,
+      0.3840540382175106,
+      0.5638504587331721,
+      0.06240100847931369,
+      0.7892294929179295,
+      -1.1489957331048637
+    ],
+    "y": [
+      0.9716609523810396,
+      -0.11759178726430775,
+      -1.6676484237122242,
+      1.2369856263793804,
+      -0.32297315314212144,
+      0.6311658786892906,
+      1.2182813137955641,
+      -1.7653142857267279,
+      -0.6801387318297888,
+      -1.64488147447558
+    ]
+  },
+  "mapping": {
+    "x": "x",
+    "y": "y"
+  },
+  "data_meta": {},
+  "kind": "plot",
+  "scales": [],
+  "layers": [
+    {
+      "geom": "point",
+      "stat": null,
+      "data": null,
+      "mapping": {
+        "x": null,
+        "y": null
+      },
+      "position": null,
+      "show_legend": null,
+      "tooltips": null,
+      "data_meta": {},
+      "sampling": null,
+      "map": null,
+      "map_join": null,
+      "animation": null
+    }
+  ]
+}
+           
+    """.trimMargin()
+
+        return parsePlotSpec(spec)
+    }
 
     private fun circleNull(): Map<String, Any> {
         val spec = """

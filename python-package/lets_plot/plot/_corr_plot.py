@@ -74,10 +74,7 @@ class corr_plot:
 
     def labels(self, type=None, fill_diagonal=None, format=None, fit_size=None, **other_args):
 
-        if format:
-            other_args['label_format'] = format
-        elif 'label_format' not in other_args:
-            other_args['label_format'] = self.format
+        other_args['label_format'] = self.get_format(format)
 
         if fit_size:
             other_args['size_unit'] = 'x'
