@@ -20,7 +20,7 @@ from .scale_convenience import *
 from .scale_identity import *
 from .theme_ import *
 from .tooltip import *
-from ._corr_matrix import *
+from ._corr_plot import *
 
 __all__ = (coord.__all__ +
            core.__all__ +
@@ -40,4 +40,4 @@ __all__ = (coord.__all__ +
            scale_identity.__all__ +
            theme_.__all__ +
            tooltip.__all__ +
-           _corr_matrix.__all__)
+           _corr_plot.__all__)
