@@ -15,6 +15,18 @@ from .tooltip import layer_tooltips
 __all__ = ['corr_plot']
 
 
+def to_type(tp):
+    return tp if tp else 'full'
+
+
+def to_format(fmt):
+    return fmt if fmt else '.2f'
+
+
+def to_method(method):
+    return method if method else 'pearson'
+
+
 def add_common_params(plot, reverse_y):
     plot += theme(axis_title=element_blank(), legend_title=element_blank())
     plot += coord_fixed()
@@ -41,11 +53,11 @@ def reverse_type(type):
 
 class corr_plot:
 
-    def __init__(self, data, show_legend=None, format=None, flip=None):
+    def __init__(self, data, show_legend=None, format=None, reverse_y=None):
         self.data = data
         self.show_legend = show_legend
-        self.format = format if format else '.2f'
-        self.reverse_y = flip if flip else False
+        self.format = to_format(format)
+        self.reverse_y = reverse_y if reverse_y else False
         self.layers = []
         self.text_color = None
 
@@ -67,7 +79,7 @@ class corr_plot:
 
         points = geom_point(stat='corr', show_legend=self.show_legend, size_unit='x',
                             tooltips=self.tooltip_spec(format),
-                            type=self.get_type(type), fill_diagonal=fill_diagonal,
+                            type=to_type(type), fill_diagonal=fill_diagonal,
                             **other_args)
 
         self.layers.append(points)
@@ -88,8 +100,7 @@ class corr_plot:
             other_args['color'] = self.text_color
 
         text = geom_text(stat='corr', show_legend=self.show_legend,
-                         tooltips=self.tooltip_spec(format),
-                         type=self.get_type(type), fill_diagonal=fill_diagonal,
+                         type=to_type(type), fill_diagonal=fill_diagonal,
                          na_value='', **other_args)
 
         self.layers.append(text)
