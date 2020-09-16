@@ -31,11 +31,13 @@ class NumberValueFormatter(
     }
 
     override fun format(value: Any): String {
-        return if (value is Number) {
-            myNumberFormatter.apply(value)
-        } else {
-            val strValue = value.toString()
-            myNumberFormatter.apply(strValue.toFloat())
+        return when {
+            value is Number -> myNumberFormatter.apply(value)
+            value.toString().matches("-?\\d+(\\.\\d+)?".toRegex()) -> {
+                val strValue = value.toString()
+                myNumberFormatter.apply(strValue.toFloat())
+            }
+            else -> value.toString()
         }
     }
 }
@@ -67,22 +69,11 @@ class LinePatternFormatter(
             val replPattern = match.groupValues[MATCHED_INDEX]
             val originalValue = values[index++]
             if (replPattern.isNotEmpty()) {
-                formatValue(originalValue, replPattern)
+                NumberValueFormatter(replPattern).format(originalValue)
             } else {
                 originalValue.toString()
             }
         }.replace("{{", "{").replace("}}", "}")
-    }
-
-    private fun formatValue(originalValue: Any, replPattern: String): String {
-        return when {
-            originalValue is Number -> NumberFormat(replPattern).apply(originalValue)
-            originalValue.toString().matches("-?\\d+(\\.\\d+)?".toRegex()) -> {
-                val strValue = originalValue.toString()
-                NumberFormat(replPattern).apply(strValue.toFloat())
-            }
-            else -> originalValue.toString()
-        }
     }
 
     companion object {
