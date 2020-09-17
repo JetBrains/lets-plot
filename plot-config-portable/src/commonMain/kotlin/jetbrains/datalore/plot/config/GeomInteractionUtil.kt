@@ -29,7 +29,7 @@ object GeomInteractionUtil {
             layerConfig.statKind,
             multilayer
         )
-        val hiddenAesList = createHiddenAesList(layerConfig.geomProto.geomKind) + axisWithoutTooltip
+        val hiddenAesList = createHiddenAesList(layerConfig.geomProto.geomKind, layerConfig.geomProto.renders()) + axisWithoutTooltip
         val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind) - hiddenAesList
         val aesList = createTooltipAesList(layerConfig, builder.getAxisFromFunctionKind) - hiddenAesList
         val outlierAesList = createOutlierAesList(layerConfig.geomProto.geomKind)
@@ -69,10 +69,11 @@ object GeomInteractionUtil {
         return builder
     }
 
-    private fun createHiddenAesList(geomKind: GeomKind): List<Aes<*>> {
+    private fun createHiddenAesList(geomKind: GeomKind, renders: List<Aes<*>>): List<Aes<*>> {
         return when (geomKind) {
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
+            GeomKind.TEXT -> renders
             else -> emptyList()
         }
     }
@@ -154,6 +155,7 @@ object GeomInteractionUtil {
             GeomKind.LINE_RANGE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
             GeomKind.BOX_PLOT -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
             GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
+            GeomKind.TEXT,
             GeomKind.SMOOTH,
             GeomKind.POINT,
             GeomKind.CONTOUR,

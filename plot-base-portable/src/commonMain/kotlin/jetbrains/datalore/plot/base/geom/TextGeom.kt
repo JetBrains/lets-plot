@@ -12,6 +12,8 @@ import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.TextLabel
@@ -27,6 +29,7 @@ class TextGeom : GeomBase() {
 
     override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val helper = GeomHelper(pos, coord, ctx)
+        val targetCollector = getGeomTargetCollector(ctx)
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
@@ -38,6 +41,14 @@ class TextGeom : GeomBase() {
                 val loc = helper.toClient(x, y, p)
                 label.moveTo(loc)
                 root.add(label.rootGroup)
+
+                targetCollector.addPoint(
+                    p.index(),
+                    loc,
+                    0.0,
+                    GeomTargetCollector.TooltipParams.params()
+                        .setColor(HintColorUtil.fromColor(p))
+                )
             }
         }
     }
