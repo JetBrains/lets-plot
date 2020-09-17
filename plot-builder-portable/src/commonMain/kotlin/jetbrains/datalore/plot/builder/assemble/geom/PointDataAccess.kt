@@ -27,21 +27,25 @@ internal class PointDataAccess(
     override fun isMapped(aes: Aes<*>) = myBindings.containsKey(aes)
 
     override fun <T> getMappedData(aes: Aes<T>, index: Int): MappedDataAccess.MappedData<T> {
+        val originalValue = getMappedValue(aes, index)
+        val scale = getScale(aes)
+        val value = formatter(aes).invoke(originalValue)
+        return MappedDataAccess.MappedData(
+            label = scale.name,
+            value = value,
+            isContinuous = scale.isContinuous
+        )
+    }
+
+    override fun <T> getMappedValue(aes: Aes<T>, index: Int): Any? {
         checkArgument(isMapped(aes), "Not mapped: $aes")
 
         val binding = myBindings.getValue(aes)
         val scale = getScale(aes)
 
-        val originalValue = binding
-            .variable
+        return binding.variable
             .let { variable -> data.getNumeric(variable)[index] }
             .let { value -> scale.transform.applyInverse(value) }
-
-        return MappedDataAccess.MappedData(
-            label = scale.name,
-            value = formatter(aes).invoke(originalValue),
-            isContinuous = scale.isContinuous
-        )
     }
 
     override fun getMappedDataLabel(aes: Aes<*>): String = getScale(aes).name

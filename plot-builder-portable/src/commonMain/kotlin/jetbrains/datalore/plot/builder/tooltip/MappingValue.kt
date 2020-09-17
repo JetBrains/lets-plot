@@ -48,8 +48,8 @@ class MappingValue(
         return if (isAxis && !myIsContinuous) {
             null
         } else {
-            val mappedDataValue = myDataAccess.getMappedData(aes, index).value
-            val formattedValue = myFormatter?.format(mappedDataValue) ?: mappedDataValue
+            val mappedValue = myDataAccess.getMappedValue(aes, index)
+            val formattedValue = mappedValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedData(aes, index).value
 
             // for outliers: line pattern removes "name:" part of the line
             val value = if (isOutlier && myDataLabel.isNotEmpty() && myFormatter !is LinePatternFormatter) {
