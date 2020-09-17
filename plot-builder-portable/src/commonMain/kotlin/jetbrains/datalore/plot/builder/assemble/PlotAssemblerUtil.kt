@@ -55,7 +55,7 @@ internal object PlotAssemblerUtil {
         return wasRange
     }
 
-    private fun updateRange(values: Iterable<Double>, wasRange: ClosedRange<Double>?): ClosedRange<Double>? {
+    fun updateRange(values: Iterable<Double>, wasRange: ClosedRange<Double>?): ClosedRange<Double>? {
         if (!Iterables.isEmpty(values)) {
             var newRange = ClosedRange.encloseAll(values)
             if (wasRange != null) {

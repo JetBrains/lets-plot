@@ -11,6 +11,7 @@ import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
@@ -72,7 +73,16 @@ internal object PlotGuidesAssemblerUtil {
         for (aes in aesSet) {
             val binding = stitchedLayers.getBinding(aes)
             if (stitchedLayers.isNumericData(binding.variable)) {
-                val dataRange = stitchedLayers.getDataRange(binding.variable)
+                var dataRange = stitchedLayers.getDataRange(binding.variable)
+
+                val scale = stitchedLayers.getBinding(aes).scale!!
+                if (scale.isContinuousDomain) {
+                    dataRange =
+                        PlotAssemblerUtil.updateRange(
+                            ScaleUtil.transformedDefinedLimits(scale), dataRange
+                        )
+                }
+
                 if (dataRange != null) {
                     m[aes] = dataRange
                 }
