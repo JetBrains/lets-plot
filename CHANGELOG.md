@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
  - Mercator projection (`geom_map(), coord_map()`)
- - Handling of `xlim,ylim` in `coord_fixed(), coord_map()`  
+ - Handling of `xlim,ylim` in `coord_fixed(), coord_map()`
+ - Colorbars: take in account limits defined in continuous color/fill scales.  
 
 ## [1.5.2] - 2020-08-10
 ### Fixed
