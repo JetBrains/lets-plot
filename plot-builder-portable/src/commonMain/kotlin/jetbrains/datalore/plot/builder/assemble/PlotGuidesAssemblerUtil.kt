@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
+import kotlin.math.max
 
 internal object PlotGuidesAssemblerUtil {
     fun mappedRenderedAesToCreateGuides(
@@ -63,7 +64,7 @@ internal object PlotGuidesAssemblerUtil {
         stitchedLayers: StitchedPlotLayers,
         guideOptionsMap: Map<Aes<*>, GuideOptions>
     ): Map<Aes<*>, ClosedRange<Double>> {
-        val m = HashMap<Aes<*>, ClosedRange<Double>>()
+        val guideDomainByAes = HashMap<Aes<*>, ClosedRange<Double>>()
         val aesSet =
             mappedRenderedAesToCreateGuides(
                 stitchedLayers,
@@ -74,12 +75,25 @@ internal object PlotGuidesAssemblerUtil {
             if (stitchedLayers.isNumericData(binding.variable)) {
                 val dataRange = stitchedLayers.getDataRange(binding.variable)
                 if (dataRange != null) {
-                    m[aes] = dataRange
+                    val scale = stitchedLayers.getBinding(aes).scale!!
+
+                    val guideDomain =
+                        if (scale.isContinuousDomain && scale.hasDomainLimits()) {
+                            val limits = scale.domainLimits!!
+                            val lowerEnd = if (limits.lowerEnd.isFinite()) limits.lowerEnd else dataRange.lowerEnd
+                            val upperEnd = if (limits.upperEnd.isFinite()) limits.upperEnd else dataRange.upperEnd
+                            ClosedRange<Double>(lowerEnd, max(lowerEnd, upperEnd))
+                        } else {
+                            dataRange
+                        }
+
+
+                    guideDomainByAes[aes] = guideDomain
                 }
             }
         }
 
-        return m
+        return guideDomainByAes
     }
 
     fun createColorBarAssembler(
@@ -91,7 +105,6 @@ internal object PlotGuidesAssemblerUtil {
     ): ColorBarAssembler {
 
         val domain = dataRangeByAes[aes]
-//        checkState(domain != null, "Data range is not defined for aes $aes")
         val result = ColorBarAssembler(
             scaleName,
             ensureApplicableRange(domain),
