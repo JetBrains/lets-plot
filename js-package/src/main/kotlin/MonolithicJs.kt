@@ -167,14 +167,19 @@ private fun buildPlotSvg(
     plotContainer.ensureContentBuilt()
 
     val svg = plotContainer.svg
-    if (plotContainer.isLiveMap) {
-        // Plot - transparent for live-map base layer to be visible.
-        svg.addClass(Style.PLOT_TRANSPARENT)
-    }
 
     val mapper = SvgRootDocumentMapper(svg)
     SvgNodeContainer(svg)
     mapper.attachRoot()
+
+    if (plotContainer.isLiveMap) {
+        // Plot - transparent for live-map base layer to be visible.
+        svg.addClass(Style.PLOT_TRANSPARENT)
+
+        mapper.target.style.run {
+            setPosition(CssPosition.RELATIVE)
+        }
+    }
 
     eventTarget.addEventListener(DomEventType.MOUSE_DOWN.name, { e: Event ->
         e.preventDefault()
@@ -203,7 +208,6 @@ private fun buildPlotSvg(
             setTop(bounds.origin.y.toDouble())
             setWidth(bounds.dimension.x)
             setPosition(CssPosition.RELATIVE)
-            setZIndex(-1)
         }
 
         val canvasControl = DomCanvasControl(
