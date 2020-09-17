@@ -49,10 +49,6 @@ class TooltipSpecFactory(
             return myGeomTarget.aesTipLayoutHints
         }
 
-        private fun outlierAesList(): List<Aes<*>> {
-            return outlierHints().map { it.key }
-        }
-
         private fun outlierTooltipSpec(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
             val outlierDataPoints = outlierDataPoints()
@@ -121,8 +117,9 @@ class TooltipSpecFactory(
 
         private fun generalDataPoints(): List<DataPoint> {
             val nonOutlierDataPoints = myDataPoints.filterNot(DataPoint::isOutlier)
+            val outliers = outlierDataPoints().mapNotNull(DataPoint::aes)
             val generalAesList = removeDiscreteDuplicatedMappings(
-                aesWithoutOutliers = nonOutlierDataPoints.mapNotNull(DataPoint::aes) - outlierAesList()
+                aesWithoutOutliers = nonOutlierDataPoints.mapNotNull(DataPoint::aes) - outliers
             )
             return nonOutlierDataPoints.filter { dataPoint ->
                 when (dataPoint.aes){
