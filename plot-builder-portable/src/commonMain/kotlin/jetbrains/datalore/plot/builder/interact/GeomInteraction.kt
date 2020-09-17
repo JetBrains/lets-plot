@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
+import jetbrains.datalore.plot.builder.tooltip.ValueSource
 
 class GeomInteraction(builder: GeomInteractionBuilder) :
     ContextualMappingProvider {
@@ -34,17 +35,20 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     }
 
     companion object {
+        // For tests
         fun createContextualMapping(
             aesListForTooltip: List<Aes<*>>,
             axisAes: List<Aes<*>>,
             outliers: List<Aes<*>>,
             dataAccess: MappedDataAccess,
-            dataFrame: DataFrame
+            dataFrame: DataFrame,
+            userDefinedValueSources: List<ValueSource>? = null
         ): ContextualMapping {
             val defaultTooltipLines = GeomInteractionBuilder.defaultValueSourceTooltipLines(
                 aesListForTooltip,
                 axisAes,
-                outliers
+                outliers,
+                userDefinedValueSources
             )
             return createContextualMapping(defaultTooltipLines, dataAccess, dataFrame)
         }

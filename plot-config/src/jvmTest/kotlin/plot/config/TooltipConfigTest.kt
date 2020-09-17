@@ -19,6 +19,7 @@ class TooltipConfigTest {
         "displ" to listOf(1.6),
         "hwy" to listOf(160.0),
         "cty" to listOf(15.0),
+        "year" to listOf(1998),
         "class" to listOf("suv"),
         "origin" to listOf("US"),
         "model name" to listOf("dodge")
@@ -120,6 +121,57 @@ class TooltipConfigTest {
         )
         val lines = getGeneralTooltipLines(geomLayer)
         assertTooltipLines(expectedLines, lines)
+    }
+
+    @Test
+    fun changeFormatForTheAes() {
+        val mappingWithColor = mapOf(
+            Aes.X.name to "displ",
+            Aes.Y.name to "hwy",
+            Aes.COLOR.name to "year"
+        )
+
+        // default
+        val defaultGeomLayer = buildGeomPointLayer(data, mappingWithColor, tooltips = null)
+        assertTooltipLines(
+            listOf(
+                "year: 1,998.00"
+            ),
+            getGeneralTooltipLines(defaultGeomLayer)
+        )
+
+        // redefine format for the 'color' aes
+        val geomLayerWithAesInTooltip = buildGeomPointLayer(
+            data, mappingWithColor, tooltips = mapOf(
+                Option.Layer.TOOLTIP_FORMATS to listOf(
+                    mapOf(
+                        Option.TooltipFormat.FIELD to "color",
+                        Option.TooltipFormat.FORMAT to "{d}"
+                    )
+                )
+            )
+        )
+        assertTooltipLines(
+            listOf("year: 1998"),
+            getGeneralTooltipLines(geomLayerWithAesInTooltip)
+        )
+
+        // redefine format for the 'year' variable
+        val geomLayerWithVarInTooltip = buildGeomPointLayer(
+            data, mappingWithColor, tooltips = mapOf(
+                Option.Layer.TOOLTIP_LINES to listOf("@|\$var@year"),
+                Option.Layer.TOOLTIP_FORMATS to listOf(
+                    mapOf(
+                        Option.TooltipFormat.FIELD to "var@year",
+                        Option.TooltipFormat.FORMAT to "{d}"
+                    )
+                )
+            )
+        )
+        assertTooltipLines(
+            listOf("year: 1998"),
+            getGeneralTooltipLines(geomLayerWithVarInTooltip)
+        )
     }
 
     @Test
@@ -235,7 +287,7 @@ class TooltipConfigTest {
             Aes.MIDDLE to "middle: 6.850",
             Aes.YMIN to "y min: 4.2"
         )
-        val generalExpectedLine = "lower/upper: 6.1, 8.6"
+        val generalExpectedLine = "lower/upper: 6.1, 8.7"
 
         val outlierLines = getOutlierLines(geomLayer)
         assertEquals(expectedLines.size, outlierLines.size, "Wrong number of outlier tooltips")
