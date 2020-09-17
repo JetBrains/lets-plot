@@ -27,7 +27,7 @@ internal class PointDataAccess(
     override fun isMapped(aes: Aes<*>) = myBindings.containsKey(aes)
 
     override fun <T> getMappedData(aes: Aes<T>, index: Int): MappedDataAccess.MappedData<T> {
-        val originalValue = getMappedValue(aes, index)
+        val originalValue = getOriginalValue(aes, index)
         val scale = getScale(aes)
         val value = formatter(aes).invoke(originalValue)
         return MappedDataAccess.MappedData(
@@ -37,7 +37,7 @@ internal class PointDataAccess(
         )
     }
 
-    override fun <T> getMappedValue(aes: Aes<T>, index: Int): Any? {
+    override fun <T> getOriginalValue(aes: Aes<T>, index: Int): Any? {
         checkArgument(isMapped(aes), "Not mapped: $aes")
 
         val binding = myBindings.getValue(aes)

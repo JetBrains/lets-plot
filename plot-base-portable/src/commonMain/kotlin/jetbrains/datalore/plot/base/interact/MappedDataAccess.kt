@@ -15,7 +15,7 @@ interface MappedDataAccess {
 
     fun <T> getMappedData(aes: Aes<T>, index: Int): MappedData<T>
 
-    fun <T> getMappedValue(aes: Aes<T>, index: Int): Any?
+    fun <T> getOriginalValue(aes: Aes<T>, index: Int): Any?
 
     fun getMappedDataLabel(aes: Aes<*>): String
 
