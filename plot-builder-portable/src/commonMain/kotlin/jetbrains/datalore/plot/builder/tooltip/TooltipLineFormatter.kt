@@ -31,28 +31,35 @@ class NumberValueFormatter(
     }
 
     override fun format(value: Any): String {
-        return when {
-            value is Number -> myNumberFormatter.apply(value)
-            value.toString().matches("-?\\d+(\\.\\d+)?".toRegex()) -> {
-                val strValue = value.toString()
-                myNumberFormatter.apply(strValue.toFloat())
+        return when (value){
+            is Number -> myNumberFormatter.apply(value)
+            is String -> {
+                val numberValue = value.toFloatOrNull()
+                if (numberValue != null) {
+                    myNumberFormatter.apply(numberValue.toFloat())
+                } else {
+                    value
+                }
             }
-            else -> value.toString()
+            else -> error("Wrong value to format as number: $value")
         }
     }
 }
 
 class LinePatternFormatter(
-    private val linePattern: String
+    pattern: String
 ) : TooltipLineFormatter {
 
+    private val myLinePattern: String = pattern
+    private val myNumberFormatters: ArrayList<NumberValueFormatter?> = ArrayList()
+
     init {
-        val myFormatList = RE_PATTERN.findAll(linePattern).map { it.groupValues[MATCHED_INDEX] }.toList()
+        val myFormatList = RE_PATTERN.findAll(myLinePattern).map { it.groupValues[MATCHED_INDEX] }.toList()
         myFormatList.forEach { format ->
-            try {
-                NumberFormat(format)
-            } catch (e: Exception) {
-                error("Wrong pattern: $format. Number format is supported only:")
+            myNumberFormatters += if (format.isNotEmpty()) {
+                 NumberValueFormatter(format)
+            } else {
+                null
             }
         }
     }
@@ -60,20 +67,17 @@ class LinePatternFormatter(
     override fun format(value: Any): String = format(listOf(value))
 
     fun format(values: List<Any>): String {
-        val expectedCount = RE_PATTERN.findAll(linePattern).count()
-        if (expectedCount != values.size) {
+        if (myNumberFormatters.size != values.size) {
             return ""
         }
         var index = 0
-        return RE_PATTERN.replace(linePattern) { match ->
-            val replPattern = match.groupValues[MATCHED_INDEX]
-            val originalValue = values[index++]
-            if (replPattern.isNotEmpty()) {
-                NumberValueFormatter(replPattern).format(originalValue)
-            } else {
-                originalValue.toString()
-            }
-        }.replace("{{", "{").replace("}}", "}")
+        return RE_PATTERN.replace(myLinePattern) {
+            val originalValue = values[index]
+            val formatter = myNumberFormatters[index++]
+            formatter?.format(originalValue) ?: originalValue.toString()
+        }
+            .replace("{{", "{")
+            .replace("}}", "}")
     }
 
     companion object {
