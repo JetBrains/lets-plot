@@ -322,7 +322,7 @@ class TooltipConfigTest {
 
     // geom_text
     @Test
-    fun noTooltipsByDefaultForGeomText() {
+    fun `geom_text by default should not show tooltip`() {
         val geomTextLayer = buildGeomLayer(
             geom = "text",
             data = mapOf("label" to listOf("my text")),
@@ -336,7 +336,7 @@ class TooltipConfigTest {
     }
 
     @Test
-    fun defineTooltipLineForGeomText() {
+    fun `geom_text should support tooltips configuration`() {
         val geomTextLayer = buildGeomLayer(
             geom = "text",
             data = mapOf("label" to listOf("my text")),
