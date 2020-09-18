@@ -89,6 +89,11 @@ object Option {
         const val MAP_JOIN = "map_join"
     }
 
+    object TooltipFormat {
+        const val FIELD = "field"
+        const val FORMAT = "format"
+    }
+
     object Geom {
 
         object Choropleth {

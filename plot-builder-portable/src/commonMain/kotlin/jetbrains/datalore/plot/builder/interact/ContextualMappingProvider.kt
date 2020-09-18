@@ -18,7 +18,7 @@ interface ContextualMappingProvider {
             override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
                 return ContextualMapping(
                     DataContext(dataFrame, dataAccess),
-                    tooltipValueSources = emptyList()
+                    tooltipLines = emptyList()
                 )
             }
         }

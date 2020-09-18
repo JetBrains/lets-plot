@@ -7,43 +7,38 @@ package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.DataContext
-import jetbrains.datalore.plot.base.interact.ValueSource
-import jetbrains.datalore.plot.base.interact.ValueSource.DataPoint
+import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
-class VariableValue(
+class DataFrameValue(
     private val name: String,
-    private val label: String? = "",
     format: String? = null
 ) : ValueSource {
 
-    private val myFormatter = LineFormatter(format)
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
     private var myIsContinuous: Boolean = false
+    private val myFormatter = format?.let { TooltipLineFormatter.createTooltipLineFormatter(it) }
 
     override fun setDataContext(dataContext: DataContext) {
         myDataFrame = dataContext.dataFrame
 
         myVariable = myDataFrame.variables().find { it.name == name } ?: error("Undefined variable with name '$name'")
         myIsContinuous = myDataFrame.isNumeric(myVariable)
+        if (myFormatter != null && myFormatter is NumberValueFormatter) {
+            require(myIsContinuous) { "Wrong format pattern: numeric for non-numeric variable" }
+        }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
-        val originalValue = myDataFrame[myVariable][index]
+        val originalValue = myDataFrame[myVariable][index].toString()
         return DataPoint(
-            label = label ?: name,
-            value = format(originalValue),
+            label = name,
+            value = myFormatter?.format(originalValue) ?: originalValue,
             isContinuous = myIsContinuous,
             aes = null,
             isAxis = false,
             isOutlier = false
         )
-    }
-
-    private fun format(originalValue: Any?): String {
-        // todo Need proper formatter.
-        val strValue = originalValue.toString()
-        return myFormatter.format(strValue, myIsContinuous)
     }
 
     fun getVariableName(): String {

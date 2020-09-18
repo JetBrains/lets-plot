@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
+import jetbrains.datalore.plot.builder.tooltip.ValueSource
 import kotlin.test.assertEquals
 
 open class TooltipSpecTestHelper {
@@ -65,6 +66,12 @@ open class TooltipSpecTestHelper {
         assertEquals(expectedLines, tooltipSpec.lines)
     }
 
+    fun assertLines(expectedLines: List<String>, isOutlier: Boolean) {
+        val actualLines = myTooltipSpecs.filter { it.isOutlier == isOutlier }.flatMap { it.lines }
+        assertEquals(expectedLines.size, actualLines.size)
+        assertEquals(expectedLines, actualLines)
+    }
+
     internal fun assertTooltipsCount(expectedCount: Int) {
         assertEquals(expectedCount, myTooltipSpecs.size)
     }
@@ -85,6 +92,23 @@ open class TooltipSpecTestHelper {
                 geomTarget.aesTipLayoutHints.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build()
+            ),
+            DoubleVector.ZERO
+        ).create(geomTarget)
+    }
+
+    internal fun createTooltipSpecWithValueSources(
+        geomTarget: GeomTarget,
+        valueSources: List<ValueSource>
+    ) {
+        myTooltipSpecs = TooltipSpecFactory(
+            GeomInteraction.createContextualMapping(
+                emptyList(),
+                if (axisTooltipEnabled) axisAes else emptyList(),
+                geomTarget.aesTipLayoutHints.map { it.key },
+                mappedDataAccessMock.mappedDataAccess,
+                DataFrame.Builder().build(),
+                valueSources
             ),
             DoubleVector.ZERO
         ).create(geomTarget)
