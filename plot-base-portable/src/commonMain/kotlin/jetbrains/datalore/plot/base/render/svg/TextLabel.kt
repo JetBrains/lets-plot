@@ -33,12 +33,6 @@ class TextLabel(text: String) : SvgComponent() {
 
     }
 
-    val computedTextLength: Double
-        get() = myText.computedTextLength
-
-    val myBBox : DoubleRectangle
-        get() = myText.bBox
-
     fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
             override fun set(value: Color?) {
