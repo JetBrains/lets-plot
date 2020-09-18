@@ -320,6 +320,37 @@ class TooltipConfigTest {
         assertTooltipLines(expectedLines, lines)
     }
 
+    // geom_text
+    @Test
+    fun noTooltipsByDefaultForGeomText() {
+        val geomTextLayer = buildGeomLayer(
+            geom = "text",
+            data = mapOf("label" to listOf("my text")),
+            mapping = mapOf(Aes.LABEL.name to "label"),
+            tooltips = null
+        )
+        assertTooltipLines(
+            expectedLines = emptyList(),
+            actualLines = getGeneralTooltipLines(geomTextLayer)
+        )
+    }
+
+    @Test
+    fun defineTooltipLineForGeomText() {
+        val geomTextLayer = buildGeomLayer(
+            geom = "text",
+            data = mapOf("label" to listOf("my text")),
+            mapping = mapOf(Aes.LABEL.name to "label"),
+            tooltips = mapOf(
+                Option.Layer.TOOLTIP_LINES to listOf("\$label")
+            )
+        )
+        assertTooltipLines(
+            expectedLines = listOf("my text"),
+            actualLines = getGeneralTooltipLines(geomTextLayer)
+        )
+    }
+
     companion object {
 
         private fun buildGeomPointLayer(
