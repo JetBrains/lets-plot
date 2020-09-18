@@ -15,7 +15,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
  - Mercator projection (`geom_map(), coord_map()`)
  - Handling of `xlim,ylim` in `coord_fixed(), coord_map()`
- - Colorbars: take in account limits defined in continuous color/fill scales.  
+ - Colorbars: take in account limits defined in continuous color/fill scales.
+ 
+### Deprecated
+
+ - Function `gg_image_matrix()`. The new function is: `image_matrix()` in the `lets_plot.plot_flyer.im` module.
+    The new function is not any longer displaying matrix by itself but returns a GGBunch object instead. 
+    Unlike the depricated `gg_image_matrix()` function, it is not imported by `from lets_plot import *` statement.
+     
+    Usage: 
+    ```
+    from lets_plot.plot_flyer.im import image_matrix
+    image_matrix()
+    ```    
 
 ## [1.5.2] - 2020-08-10
 ### Fixed
