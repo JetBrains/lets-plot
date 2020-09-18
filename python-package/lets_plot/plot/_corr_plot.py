@@ -47,6 +47,7 @@ class corr_plot:
         self.format = format if format else '.2f'
         self.reverse_y = flip if flip else False
         self.layers = []
+        self.text_color = None
 
     def get_format(self, format):
         return format if format else self.format
@@ -83,6 +84,9 @@ class corr_plot:
         elif 'size' not in other_args:
             other_args['size_unit'] = 'x'
 
+        if 'color' not in other_args:
+            other_args['color'] = self.text_color
+
         text = geom_text(stat='corr', show_legend=self.show_legend,
                          tooltips=self.tooltip_spec(format),
                          type=self.get_type(type), fill_diagonal=fill_diagonal,
@@ -93,6 +97,8 @@ class corr_plot:
         return self
 
     def tiles(self, type=None, fill_diagonal=None, format=None, **other_args):
+
+        self.text_color = 'white'
 
         tiles = geom_point(stat='corr', show_legend=self.show_legend, size_unit='x',
                            tooltips=self.tooltip_spec(format),
