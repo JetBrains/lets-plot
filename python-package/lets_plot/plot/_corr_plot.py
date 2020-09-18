@@ -21,7 +21,7 @@ def add_common_params(plot, reverse_y):
     plot += scale_size_identity(name="", na_value=0)
     plot += scale_color_gradient2(name='Correlation',
                                   low='blue', mid='light_gray', high='red',
-                                  # breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
+                                  breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
                                   limits=[-1.0, 1.0])
 
     if reverse_y:
