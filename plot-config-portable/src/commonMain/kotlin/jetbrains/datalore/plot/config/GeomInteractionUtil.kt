@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
@@ -29,7 +30,7 @@ object GeomInteractionUtil {
             layerConfig.statKind,
             multilayer
         )
-        val hiddenAesList = createHiddenAesList(layerConfig.geomProto.geomKind, layerConfig.geomProto.renders()) + axisWithoutTooltip
+        val hiddenAesList = createHiddenAesList(layerConfig.geomProto.geomKind) + axisWithoutTooltip
         val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind) - hiddenAesList
         val aesList = createTooltipAesList(layerConfig, builder.getAxisFromFunctionKind) - hiddenAesList
         val outlierAesList = createOutlierAesList(layerConfig.geomProto.geomKind)
@@ -69,11 +70,12 @@ object GeomInteractionUtil {
         return builder
     }
 
-    private fun createHiddenAesList(geomKind: GeomKind, renders: List<Aes<*>>): List<Aes<*>> {
+    private fun createHiddenAesList(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
-            GeomKind.TEXT -> renders
+            // by default geom_text doesn't show tooltips, but user can enable them via tooltips config
+            GeomKind.TEXT -> GeomMeta.renders(GeomKind.TEXT)
             else -> emptyList()
         }
     }
