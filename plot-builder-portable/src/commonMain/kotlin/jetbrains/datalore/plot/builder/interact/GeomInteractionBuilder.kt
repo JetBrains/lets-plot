@@ -138,9 +138,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                     formatted?.toOutlier() ?: MappingValue(aes, isOutlier = true)
                 }
 
-                myUserTooltipSpec!!.tooltipLinePatterns!! + (axisValueSources + geomOutlierValueSources).map { valueSource ->
-                    TooltipLine.defaultLineForValueSource(valueSource)
-                }
+                myUserTooltipSpec!!.tooltipLinePatterns!! + (axisValueSources + geomOutlierValueSources).map(TooltipLine.Companion::defaultLineForValueSource)
             }
         }
     }
@@ -171,9 +169,7 @@ class GeomInteractionBuilder(private val mySupportedAesList: List<Aes<*>>) {
                 val userDefined = userDefinedValueSources?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
                 userDefined ?: MappingValue(aes)
             }
-            return (aesValueSources + axisValueSources + outlierValueSources).map { valueSource ->
-                TooltipLine.defaultLineForValueSource(valueSource)
-            }
+            return (aesValueSources + axisValueSources + outlierValueSources).map(TooltipLine.Companion::defaultLineForValueSource)
         }
     }
 }
