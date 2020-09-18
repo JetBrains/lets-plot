@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.render.svg
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
