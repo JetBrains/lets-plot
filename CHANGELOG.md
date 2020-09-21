@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - CorrelationStat
  - label_format
  - scale_x_discrete_reversed / scale_y_discrete_reversed
+ - `ggsave()` function (only SVG, HTML)
 
 ### Fixed
  - Mercator projection (`geom_map(), coord_map()`)
