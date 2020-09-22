@@ -16,78 +16,79 @@ class StringFormat(
     }
 
     private val myFormatType = detectFormatType(pattern)
+    private val myNumberFormatters: ArrayList<NumberFormat?> = ArrayList()
+
+    init {
+        fun initNumberFormat(pattern: String): NumberFormat {
+            try {
+                return NumberFormat(pattern)
+            } catch (e: Exception) {
+                error("Wrong number pattern: $pattern")
+            }
+        }
+
+        when (myFormatType) {
+            FormatType.NUMBER_FORMAT -> myNumberFormatters += initNumberFormat(pattern)
+            else -> {
+                val myFormatList = RE_PATTERN.findAll(pattern).map { it.groupValues[MATCH_INDEX] }.toList()
+                myFormatList.forEach { format ->
+                    myNumberFormatters += if (format.isNotEmpty()) {
+                        initNumberFormat(format)
+                    } else {
+                        null
+                    }
+                }
+            }
+        }
+    }
 
     fun format(value: Any): String = format(listOf(value))
 
     fun format(values: List<Any>): String {
+        if (myNumberFormatters.size != values.size) {
+            return "n/a"
+        }
         return when (myFormatType) {
-            FormatType.NUMBER_FORMAT -> values.joinToString { NumberValueFormat(pattern).format(it) }
-            FormatType.PATTERN_FORMAT -> LinePatternFormat(pattern).format(values)
-        }
-    }
-
-    inner class NumberValueFormat(
-        pattern: String
-    ) {
-        private val myNumberFormatter = try {
-            NumberFormat(pattern)
-        } catch (e: Exception) {
-            error("Wrong number pattern: $pattern")
-        }
-
-        fun format(value: Any): String {
-            return when (value) {
-                is Number -> myNumberFormatter.apply(value)
-                is String -> {
-                    val numberValue = value.toFloatOrNull()
-                    if (numberValue != null) {
-                        myNumberFormatter.apply(numberValue.toFloat())
-                    } else {
-                        value
-                    }
+            FormatType.NUMBER_FORMAT -> {
+                require(myNumberFormatters.size == 1)
+                formatValue(values.single(), myNumberFormatters.single())
+            }
+            FormatType.PATTERN_FORMAT -> {
+                var index = 0
+                RE_PATTERN.replace(pattern) {
+                    val originalValue = values[index]
+                    val formatter = myNumberFormatters[index++]
+                    formatValue(originalValue, formatter)
                 }
-                else -> error("Wrong value to format as number: $value")
+                    .replace("{{", "{")
+                    .replace("}}", "}")
             }
         }
     }
 
-    inner class LinePatternFormat(
-        private val pattern: String
-    ) {
-        // Format strings contain “replacement fields” surrounded by curly brackets {}.
-        // Anything that is not contained in brackets is considered literal text, which is copied unchanged to the output.
-        // To include a bracket character in the text - it can be escaped by doubling: {{ and }}.
-        private val myRegex = Regex("""(?![^{])(\{([^{}]*)})(?=[^}]|$)""")
-
-        private val myNumberFormatters: ArrayList<NumberValueFormat?> = ArrayList()
-
-        init {
-            val myFormatList = myRegex.findAll(pattern).map { it.groupValues[2] }.toList()
-            myFormatList.forEach { format ->
-                myNumberFormatters += if (format.isNotEmpty()) {
-                    NumberValueFormat(format)
+    private fun formatValue(value: Any, numberFormatter: NumberFormat?): String {
+        return when {
+            numberFormatter == null -> value.toString()
+            value is Number -> numberFormatter.apply(value)
+            value is String -> {
+                val numberValue = value.toFloatOrNull()
+                if (numberValue != null) {
+                    numberFormatter.apply(numberValue.toFloat())
                 } else {
-                    null
+                    value
                 }
             }
-        }
-
-        fun format(values: List<Any>): String {
-            if (myNumberFormatters.size != values.size) {
-                return ""
-            }
-            var index = 0
-            return myRegex.replace(pattern) {
-                val originalValue = values[index]
-                val formatter = myNumberFormatters[index++]
-                formatter?.format(originalValue) ?: originalValue.toString()
-            }
-                .replace("{{", "{")
-                .replace("}}", "}")
+            else -> error("Wrong value to format as number: $value")
         }
     }
 
     companion object {
+        // Format strings contain “replacement fields” surrounded by curly brackets {}.
+        // Anything that is not contained in brackets is considered literal text, which is copied unchanged to the output.
+        // To include a bracket character in the text - it can be escaped by doubling: {{ and }}.
+        private val RE_PATTERN = Regex("""(?![^{])(\{([^{}]*)})(?=[^}]|$)""")
+        const val MATCH_INDEX = 2
+
         fun detectFormatType(pattern: String): FormatType {
             return when {
                 NumberFormat.isNumberPattern(pattern) -> FormatType.NUMBER_FORMAT
