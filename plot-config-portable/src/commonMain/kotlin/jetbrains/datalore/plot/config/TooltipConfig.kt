@@ -121,15 +121,17 @@ class TooltipConfig(
         }
 
         private fun detachLabel(tooltipLine: String): String? {
-            val labelPart = tooltipLine.substringBefore(LABEL_SEPARATOR, "")
-            return if (labelPart == USE_DEFAULT_LABEL) null else labelPart
+            return if (LABEL_SEPARATOR in tooltipLine) {
+                tooltipLine.substringBefore(LABEL_SEPARATOR).trim()
+            } else {
+                null
+            }
         }
     }
 
     companion object {
         private const val VALUE_SOURCE_PREFIX = "$"
         private const val LABEL_SEPARATOR = "|"
-        private const val USE_DEFAULT_LABEL = "@"
 
         // \$ (dollar escaping) or $name or ${name with spaces}
         private val SOURCE_RE_PATTERN = Regex("""(?:\\\$)|\$(((\w*@)?([\w$]*[^\s\W]+\$?))|(\{(.*?)}))""")

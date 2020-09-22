@@ -11,8 +11,10 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
@@ -59,12 +61,12 @@ class TooltipBox : SvgComponent() {
         add(myTextBox)
     }
 
-    internal fun setContent(background: Color, lines: List<String>, style: String) {
+    internal fun setContent(background: Color, lines: List<TooltipSpec.LabelValue>, style: String) {
         addClassName(style)
         fillColor = Colors.mimicTransparency(background, background.alpha / 255.0, Color.WHITE)
         textColor = LIGHT_TEXT_COLOR.takeIf { fillColor.isDark() } ?: DARK_TEXT_COLOR
 
-        myTextBox.update(lines, textColor)
+        myTextBox.update(lines, labelTextColor = textColor, textColor = textColor)
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
@@ -83,18 +85,17 @@ class TooltipBox : SvgComponent() {
         }
 
         internal fun update(pointerCoord: DoubleVector, orientation: Orientation) {
-            pointerDirection = when {
-                orientation == HORIZONTAL -> when {
+            pointerDirection = when (orientation) {
+                HORIZONTAL -> when {
                     pointerCoord.x < contentRect.left -> LEFT
                     pointerCoord.x > contentRect.right -> RIGHT
                     else -> null
                 }
-                orientation == VERTICAL -> when {
+                VERTICAL -> when {
                     pointerCoord.y > contentRect.bottom -> DOWN
                     pointerCoord.y < contentRect.top -> UP
                     else -> null
                 }
-                else -> null
             }
 
             myPointerPath.strokeColor().set(textColor)
@@ -167,25 +168,86 @@ class TooltipBox : SvgComponent() {
             add(myContent)
         }
 
-        internal fun update(lines: List<String>, textColor: Color) {
-            val textSize = lines
-                .map { TextLabel(it).apply { textColor().set(textColor) } }
+        internal fun update(lines: List<TooltipSpec.LabelValue>, labelTextColor: Color, textColor: Color) {
+            val valueComponents = lines
+                .map { TextLabel(it.value).apply { textColor().set(textColor) } }
                 .onEach { myLines.children().add(it.rootGroup) }
-                .fold(DoubleVector.ZERO, { textDimension, label ->
-                    val labelBbox = label.rootGroup.bBox
+
+            val labelComponents: List<TextLabel?> = lines
+                .map(TooltipSpec.LabelValue::label)
+                .map { labelString ->
+                    if (labelString == null) {
+                        null
+                    } else {
+                        TextLabel(labelString).apply { textColor().set(labelTextColor) }
+                    }
+                }
+                .onEach { textLabel ->
+                    if (textLabel != null) {
+                        myLines.children().add(textLabel.rootGroup)
+                    }
+                }
+
+            val maxLabelWidth = labelComponents.filterNotNull().map {
+                it.rootGroup.bBox.width
+            }.max() ?: 0.0
+
+            var maxLineWidth = 0.0
+            valueComponents.forEachIndexed { index, valueTextLabel ->
+                val valueBbox = valueTextLabel.rootGroup.bBox
+                maxLineWidth = max(
+                    maxLineWidth,
+                    if (labelComponents[index] == null) {
+                        valueBbox.width
+                    } else {
+                        maxLabelWidth + valueBbox.width + LABEL_VALUE_INTERVAL
+                    }
+                )
+            }
+
+            val textSize = valueComponents
+                .foldIndexed(DoubleVector.ZERO, { index, textDimension, valueTextLabel ->
+                    val labelTextLabel = labelComponents[index]
+
+                    val valueBbox = valueTextLabel.rootGroup.bBox
+                    val labelBBox =
+                        labelTextLabel?.rootGroup?.bBox ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
 
                     // bBox.top is negative baseline of the text.
                     // Can't use bBox.height:
                     //  - in Batik it is close to the abs(bBox.top)
                     //  - in JavaFx it is constant = fontSize
-                    label.y().set(textDimension.y - labelBbox.top)
+                    val yPosition = textDimension.y - min(valueBbox.top, labelBBox.top)
+                    valueTextLabel.y().set(yPosition)
+                    labelTextLabel?.y()?.set(yPosition)
 
-                    // Again works differently in Batik(some positive padding) and JavaFX (always zero)
-                    label.x().set(-labelBbox.left)
+                    when {
+                        labelTextLabel != null -> {
+                            // Move label to the left border, value - to the right
+
+                            // Again works differently in Batik(some positive padding) and JavaFX (always zero)
+                            labelTextLabel.x().set(-labelBBox.left)
+
+                            valueTextLabel.x().set(maxLineWidth)
+                            valueTextLabel.setHorizontalAnchor(TextLabel.HorizontalAnchor.RIGHT)
+                        }
+                        valueBbox.width == maxLineWidth -> {
+                            // Again works differently in Batik(some positive padding) and JavaFX (always zero)
+                            valueTextLabel.x().set(-valueBbox.left)
+                        }
+                        else -> {
+                            // Move value to the center
+                            valueTextLabel.setHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
+                            valueTextLabel.x().set(maxLineWidth / 2)
+                        }
+                    }
 
                     DoubleVector(
-                        max(textDimension.x, labelBbox.width),
-                        label.y().get()!! + LINE_INTERVAL + (labelBbox.height + labelBbox.top)
+                        x = maxLineWidth,
+                        y = valueTextLabel.y().get()!! + max(
+                            valueBbox.height + valueBbox.top,
+                            labelBBox.height + labelBBox.top
+                        ) + LINE_INTERVAL
                     )
                 })
                 .subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
@@ -204,4 +266,3 @@ class TooltipBox : SvgComponent() {
         }
     }
 }
-

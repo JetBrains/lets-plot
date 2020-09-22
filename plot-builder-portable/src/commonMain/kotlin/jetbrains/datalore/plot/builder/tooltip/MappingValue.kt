@@ -19,7 +19,7 @@ class MappingValue(
 ) : ValueSource {
 
     private lateinit var myDataAccess: MappedDataAccess
-    private lateinit var myDataLabel: String
+    private var myDataLabel: String? = null
     private var myIsContinuous: Boolean = false
     private val myFormatter = format?.let { createTooltipLineFormatter(it) }
 
@@ -33,9 +33,9 @@ class MappingValue(
             .map(myDataAccess::getMappedDataLabel)
         val dataLabel = myDataAccess.getMappedDataLabel(aes)
         myDataLabel = when {
-            isAxis -> ""
+            isAxis -> null
             dataLabel.isEmpty() -> ""
-            dataLabel in axisLabels -> ""
+            dataLabel in axisLabels -> null
             else -> dataLabel
         }
         myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
@@ -53,13 +53,13 @@ class MappingValue(
                 originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedData(aes, index).value
 
             // for outliers: line pattern removes "name:" part of the line
-            val value = if (isOutlier && myDataLabel.isNotEmpty() && myFormatter !is LinePatternFormatter) {
+            val value = if (isOutlier && !myDataLabel.isNullOrEmpty() && myFormatter !is LinePatternFormatter) {
                 "$myDataLabel: $formattedValue"
             } else {
                 formattedValue
             }
             DataPoint(
-                label = if (isOutlier) "" else myDataLabel,
+                label = if (isOutlier) null else myDataLabel,
                 value = value,
                 isContinuous = myIsContinuous,
                 aes = aes,

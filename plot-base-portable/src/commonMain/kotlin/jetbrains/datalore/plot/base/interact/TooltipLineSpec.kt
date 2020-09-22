@@ -11,14 +11,15 @@ interface TooltipLineSpec {
     fun getDataPoint(index: Int): DataPoint?
 
     class DataPoint(
-        val label: String,
+        val label: String?,
         val value: String,
         val isContinuous: Boolean,
         val aes: Aes<*>?,
         val isAxis: Boolean,
         val isOutlier: Boolean
     ) {
+        // todo remove it, now it's used in test only
         val line: String
-            get() = if (label.isNotEmpty()) "$label: $value" else value
+            get() = if (label.isNullOrEmpty()) value else "$label: $value"
     }
 }
