@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
+import jetbrains.datalore.plot.base.util.StringFormat
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
@@ -15,7 +16,7 @@ open class ConstantValue(
 
     private var myIsContinuous: Boolean = value is Number
     private val myDataValue = if (format != null) {
-        TooltipLineFormatter.createTooltipLineFormatter(format).format(value)
+        StringFormat(format).format(value)
     } else {
         value.toString()
     }

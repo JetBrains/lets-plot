@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalX
 import jetbrains.datalore.plot.base.Aes.Companion.isPositionalY
+import jetbrains.datalore.plot.base.util.StringFormat
 import jetbrains.datalore.plot.builder.tooltip.*
 
 class TooltipConfig(
@@ -54,7 +55,7 @@ class TooltipConfig(
                     VALUE_SOURCE_PREFIX
                 } else {
                     usedValueSources += getValueSource(match.value)
-                    LinePatternFormatter.valueInLinePattern()
+                    StringFormat.valueInLinePattern()
                 }
             }
             return TooltipLine(

@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
-import jetbrains.datalore.plot.builder.tooltip.TooltipLineFormatter.Companion.createTooltipLineFormatter
+import jetbrains.datalore.plot.base.util.StringFormat
 
 class MappingValue(
     val aes: Aes<*>,
@@ -21,7 +21,7 @@ class MappingValue(
     private lateinit var myDataAccess: MappedDataAccess
     private lateinit var myDataLabel: String
     private var myIsContinuous: Boolean = false
-    private val myFormatter = format?.let { createTooltipLineFormatter(it) }
+    private val myFormatter = format?.let { StringFormat(it) }
 
     override fun setDataContext(dataContext: DataContext) {
         myDataAccess = dataContext.mappedDataAccess
@@ -39,7 +39,7 @@ class MappingValue(
             else -> dataLabel
         }
         myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
-        if (myFormatter != null && myFormatter is NumberValueFormatter) {
+        if (myFormatter != null && StringFormat.detectFormatType(myFormatter.pattern) == StringFormat.FormatType.NUMBER_FORMAT) {
             require(myIsContinuous) { "Wrong format pattern: numeric for non-numeric value" }
         }
     }
@@ -52,8 +52,10 @@ class MappingValue(
             val formattedValue =
                 originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedData(aes, index).value
 
-            // for outliers: line pattern removes "name:" part of the line
-            val value = if (isOutlier && myDataLabel.isNotEmpty() && myFormatter !is LinePatternFormatter) {
+            // for outliers: myDataLabel is a part of the value, but pattern format removes this part
+            val value = if (isOutlier && myDataLabel.isNotEmpty() &&
+                myFormatter?.pattern?.let { StringFormat.detectFormatType(it) } != StringFormat.FormatType.PATTERN_FORMAT
+            ) {
                 "$myDataLabel: $formattedValue"
             } else {
                 formattedValue

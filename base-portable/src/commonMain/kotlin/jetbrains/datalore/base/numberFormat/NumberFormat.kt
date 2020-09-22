@@ -474,10 +474,12 @@ class NumberFormat(private val spec: Spec) {
             return spec.copy(type = type, precision = precision, zero = zero, fill = fill, align = align, trim = trim)
         }
 
+        private val REGEX = """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?([%bcdefgosXx])?$""".toRegex()
+
+        fun isNumberPattern(spec: String) = REGEX.matches(spec)
+
         private fun parse(spec: String): Spec {
-            val patternRegex =
-                """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?([%bcdefgosXx])?$""".toRegex()
-            val matchResult = patternRegex.find(spec) ?: throw IllegalArgumentException("Wrong pattern format")
+            val matchResult = REGEX.find(spec) ?: throw IllegalArgumentException("Wrong pattern format")
 
             return Spec(
                 fill = matchResult.groups[1]?.value ?: " ",
