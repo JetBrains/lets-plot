@@ -33,7 +33,7 @@ def maptiles_lets_plot(url: str, theme: str = None) -> dict:
         MAPTILES_KIND: _VECTOR_LETS_PLOT,
         MAPTILES_URL: url,
         MAPTILES_THEME: theme,
-        MAPTILES_ATTRIBUTION: 'Map data © OpenStreetMap contributors'
+        MAPTILES_ATTRIBUTION: 'Map data <a href="https://www.openstreetmap.org/copyright">\\u00a9 OpenStreetMap</a> contributors'
     }
 
 

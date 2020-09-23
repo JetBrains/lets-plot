@@ -22,9 +22,11 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.input.EventListenerComponent
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
+import jetbrains.livemap.core.openLink
 import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.LayerManager
+import jetbrains.livemap.core.rendering.primitives.HorizontalLayout
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.MutableImage
 import jetbrains.livemap.core.rendering.primitives.Text
@@ -95,20 +97,37 @@ class LiveMapUiSystem(
         addListenersToMakeGeometryButton(buttonMakeGeometry)
 
         if (myAttribution != null) {
-            val attributionText = Text().apply {
-                color = Color.BLACK
-                fontFamily = CONTRIBUTORS_FONT_FAMILY
-                fontHeight = 11.0
-                text = listOf(myAttribution)
+            val parts = LinkParser(myAttribution).parse()
+            val texts = ArrayList<Text>()
+
+            for (part in parts) {
+                val c = if (part is AttributionParts.SimpleLink) Color(26, 13, 171) else Color.BLACK
+
+                val attributionText = Text().apply {
+                    color = c
+                    fontFamily = CONTRIBUTORS_FONT_FAMILY
+                    fontHeight = 11.0
+                    text = listOf(part.text)
+                }
+
+                if (part is AttributionParts.SimpleLink) {
+                    myUiService.addLink(attributionText).let {
+                        addListenerToLink(it) {
+                            openLink(part.href)
+                        }
+                    }
+                }
+
+                texts.add(attributionText)
             }
 
-            val attributionLabel = Label(DoubleVector(myViewport.size.x, 0.0), attributionText).apply {
+            val horizontalLayout = HorizontalLayout(DoubleVector(myViewport.size.x, 0.0), texts).apply {
                 background = Color(200, 200, 200, 179)
                 this.padding = 2.0
                 position = Label.LabelPosition.LEFT
             }
 
-            myUiService.addRenderable(attributionLabel)
+            myUiService.addRenderable(horizontalLayout)
         }
     }
 
@@ -153,6 +172,15 @@ class LiveMapUiSystem(
         }
 
         listeners.addDoubleClickListener(InputMouseEvent::stopPropagation)
+    }
+
+    private fun addListenerToLink(link: EcsEntity, hrefConsumer: () -> Unit) {
+        val listeners = link.getComponent<EventListenerComponent>()
+
+        listeners.addClickListener {
+            it.stopPropagation()
+            hrefConsumer()
+        }
     }
 
     private fun finishDrawing() {
