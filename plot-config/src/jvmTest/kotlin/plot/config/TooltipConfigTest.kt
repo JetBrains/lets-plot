@@ -299,6 +299,26 @@ class TooltipConfigTest {
         assertTooltipLines(listOf(generalExpectedLine), generalLines)
     }
 
+    @Test
+    fun `numeric format for non-numeric value will be ignored`() {
+        val tooltipConfig = mapOf(
+            Option.Layer.TOOLTIP_LINES to listOf(
+                "class is \$var@class"
+            ),
+            Option.Layer.TOOLTIP_FORMATS to listOf(
+                mapOf(
+                    Option.TooltipFormat.FIELD to "var@class",
+                    Option.TooltipFormat.FORMAT to ".2f"
+                )
+            )
+        )
+        val geomLayer = buildGeomPointLayer(data, mapping, tooltips = tooltipConfig)
+        val expectedLines = listOf(
+            "class is suv"
+        )
+        val lines = getGeneralTooltipLines(geomLayer)
+        assertTooltipLines(expectedLines, lines)
+    }
 
     companion object {
 

@@ -476,7 +476,7 @@ class NumberFormat(private val spec: Spec) {
 
         private val REGEX = """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?([%bcdefgosXx])?$""".toRegex()
 
-        fun isNumberPattern(spec: String) = REGEX.matches(spec)
+        fun isValidPattern(spec: String) = REGEX.matches(spec)
 
         private fun parse(spec: String): Spec {
             val matchResult = REGEX.find(spec) ?: throw IllegalArgumentException("Wrong pattern format")

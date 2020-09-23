@@ -39,9 +39,6 @@ class MappingValue(
             else -> dataLabel
         }
         myIsContinuous = myDataAccess.isMappedDataContinuous(aes)
-        if (myFormatter != null && StringFormat.detectFormatType(myFormatter.pattern) == StringFormat.FormatType.NUMBER_FORMAT) {
-            require(myIsContinuous) { "Wrong format pattern: numeric for non-numeric value" }
-        }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {
@@ -54,7 +51,7 @@ class MappingValue(
 
             // for outliers: myDataLabel is a part of the value, but pattern format removes this part
             val value = if (isOutlier && myDataLabel.isNotEmpty() &&
-                myFormatter?.pattern?.let { StringFormat.detectFormatType(it) } != StringFormat.FormatType.PATTERN_FORMAT
+                myFormatter?.formatType != StringFormat.FormatType.STRING_FORMAT
             ) {
                 "$myDataLabel: $formattedValue"
             } else {

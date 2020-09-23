@@ -8,15 +8,20 @@ package jetbrains.datalore.plot.base.util
 import jetbrains.datalore.base.numberFormat.NumberFormat
 
 class StringFormat(
-    val pattern: String
+    private val pattern: String
 ) {
     enum class FormatType {
         NUMBER_FORMAT,
-        PATTERN_FORMAT
+        STRING_FORMAT
     }
 
-    private val myFormatType = detectFormatType(pattern)
-    private val myNumberFormatters: ArrayList<NumberFormat?> = ArrayList()
+    val formatType = if (NumberFormat.isValidPattern(pattern)) {
+        FormatType.NUMBER_FORMAT
+    } else {
+        FormatType.STRING_FORMAT
+    }
+
+    private val myNumberFormatters: List<NumberFormat?>
 
     init {
         fun initNumberFormat(pattern: String): NumberFormat {
@@ -27,17 +32,17 @@ class StringFormat(
             }
         }
 
-        when (myFormatType) {
-            FormatType.NUMBER_FORMAT -> myNumberFormatters += initNumberFormat(pattern)
-            else -> {
-                val myFormatList = RE_PATTERN.findAll(pattern).map { it.groupValues[MATCH_INDEX] }.toList()
-                myFormatList.forEach { format ->
-                    myNumberFormatters += if (format.isNotEmpty()) {
-                        initNumberFormat(format)
-                    } else {
-                        null
+        myNumberFormatters = when (formatType) {
+            FormatType.NUMBER_FORMAT -> listOf(initNumberFormat(pattern))
+            FormatType.STRING_FORMAT -> {
+                RE_PATTERN.findAll(pattern).map { it.groupValues[MATCH_INDEX] }.toList()
+                    .map { format ->
+                        if (format.isNotEmpty()) {
+                            initNumberFormat(format)
+                        } else {
+                            null
+                        }
                     }
-                }
             }
         }
     }
@@ -48,12 +53,12 @@ class StringFormat(
         if (myNumberFormatters.size != values.size) {
             return "n/a"
         }
-        return when (myFormatType) {
+        return when (formatType) {
             FormatType.NUMBER_FORMAT -> {
                 require(myNumberFormatters.size == 1)
                 formatValue(values.single(), myNumberFormatters.single())
             }
-            FormatType.PATTERN_FORMAT -> {
+            FormatType.STRING_FORMAT -> {
                 var index = 0
                 RE_PATTERN.replace(pattern) {
                     val originalValue = values[index]
@@ -88,13 +93,6 @@ class StringFormat(
         // To include a bracket character in the text - it can be escaped by doubling: {{ and }}.
         private val RE_PATTERN = Regex("""(?![^{])(\{([^{}]*)})(?=[^}]|$)""")
         const val MATCH_INDEX = 2
-
-        fun detectFormatType(pattern: String): FormatType {
-            return when {
-                NumberFormat.isNumberPattern(pattern) -> FormatType.NUMBER_FORMAT
-                else -> FormatType.PATTERN_FORMAT
-            }
-        }
 
         fun valueInLinePattern() = "{}"
     }

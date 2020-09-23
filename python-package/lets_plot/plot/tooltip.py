@@ -34,6 +34,7 @@ class layer_tooltips(FeatureSpec):
         This format will be applied to the mapped value in the default tooltip or to the corresponding value
         specified in the 'line' template.
         The format contains a number format ('1.f') or a string template ('{.1f}').
+        The numeric format for non-numeric value will be ignored.
         The string template in format will allow to change lines for the default tooltip without 'line' specifying.
         Also the template will change the line for outliers.
         To include a bracket character in the literal text - it can be escaped by doubling: {{ and }}.
