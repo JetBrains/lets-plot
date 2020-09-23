@@ -15,10 +15,11 @@ import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.util.StringFormat
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class TextGeom : GeomBase() {
-    var formatter: NumberFormat? = null
+    var formatter: StringFormat? = null
     var naValue = DEF_NA_VALUE
 
     override val legendKeyElementFactory: LegendKeyElementFactory
@@ -42,20 +43,12 @@ class TextGeom : GeomBase() {
     }
 
     private fun toString(label: Any?): String {
-        if (label == null) {
-            return naValue
-        }
-
-        if (label is Double) {
-            formatter?.let { return it.apply(label) }
-        }
-
-        return label.toString()
+        return label?.let { formatter?.format(it) } ?: naValue
     }
 
     companion object {
-        val DEF_NA_VALUE = "n/a"
-        val HANDLES_GROUPS = false
+        const val DEF_NA_VALUE = "n/a"
+        const val HANDLES_GROUPS = false
     }
 }
 

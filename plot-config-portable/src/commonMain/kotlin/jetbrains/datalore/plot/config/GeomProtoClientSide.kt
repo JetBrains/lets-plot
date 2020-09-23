@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.gcommon.base.Preconditions
-import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
+import jetbrains.datalore.plot.base.util.StringFormat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
@@ -128,7 +128,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     val labelFormat = opts[Text.LABEL_FORMAT] as? String
 
                     if (labelFormat != null) {
-                        geom.formatter = NumberFormat(labelFormat)
+                        geom.formatter = StringFormat(labelFormat)
                     } else {
                         throw IllegalArgumentException("Expected: label_format = 'format string'")
                     }
