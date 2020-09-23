@@ -51,7 +51,7 @@ class StringFormat(
 
     fun format(values: List<Any>): String {
         if (myNumberFormatters.size != values.size) {
-            return "n/a"
+            error("Wrong format pattern \"$pattern\" to format values=$values")
         }
         return when (formatType) {
             FormatType.NUMBER_FORMAT -> {
@@ -83,7 +83,7 @@ class StringFormat(
                     value
                 }
             }
-            else -> error("Wrong value to format as number: $value")
+            else -> error("Wrong value to format as a number: $value")
         }
     }
 
