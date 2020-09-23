@@ -83,7 +83,7 @@ class StringFormat(
                     value
                 }
             }
-            else -> error("Wrong value to format as a number: $value")
+            else -> error("Failed to format value with type ${value::class.simpleName}. Supported types are Number and String.")
         }
     }
 

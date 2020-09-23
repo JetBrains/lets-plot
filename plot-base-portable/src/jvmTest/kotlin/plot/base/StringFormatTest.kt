@@ -86,6 +86,6 @@ class StringFormatTest {
         val exception = assertFailsWith(IllegalStateException::class) {
             StringFormat(formatPattern).format(valueToFormat)
         }
-        assertEquals("Wrong value to format as a number: {1=2}", exception.message)
+        assertEquals("Failed to format value with type SingletonMap. Supported types are Number and String.", exception.message)
     }
 }
