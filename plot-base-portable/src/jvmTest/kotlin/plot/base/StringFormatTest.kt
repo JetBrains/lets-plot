@@ -72,9 +72,10 @@ class StringFormatTest {
         val formatPattern = "{.1f} x {.2f} x {.3f}"
         val valuesToFormat = listOf(1, 2)
 
-        assertFailsWith(IllegalStateException::class) {
+        val exception = assertFailsWith(IllegalStateException::class) {
             StringFormat(formatPattern).format(valuesToFormat)
         }
+        assertEquals("Wrong format pattern \"$formatPattern\" to format values=$valuesToFormat", exception.message)
     }
 
     @Test
@@ -82,8 +83,9 @@ class StringFormatTest {
         val formatPattern = "{.1f}"
         val valueToFormat = mapOf(1 to 2)
 
-        assertFailsWith(IllegalStateException::class) {
+        val exception = assertFailsWith(IllegalStateException::class) {
             StringFormat(formatPattern).format(valueToFormat)
         }
+        assertEquals("Wrong value to format as a number: $valueToFormat", exception.message)
     }
 }
