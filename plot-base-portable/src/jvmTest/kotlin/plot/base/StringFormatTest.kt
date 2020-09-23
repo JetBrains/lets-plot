@@ -75,7 +75,7 @@ class StringFormatTest {
         val exception = assertFailsWith(IllegalStateException::class) {
             StringFormat(formatPattern).format(valuesToFormat)
         }
-        assertEquals("Wrong format pattern \"$formatPattern\" to format values=$valuesToFormat", exception.message)
+        assertEquals("Wrong format pattern \"{.1f} x {.2f} x {.3f}\" to format values=[1, 2]", exception.message)
     }
 
     @Test
@@ -86,6 +86,6 @@ class StringFormatTest {
         val exception = assertFailsWith(IllegalStateException::class) {
             StringFormat(formatPattern).format(valueToFormat)
         }
-        assertEquals("Wrong value to format as a number: $valueToFormat", exception.message)
+        assertEquals("Wrong value to format as a number: {1=2}", exception.message)
     }
 }
