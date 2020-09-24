@@ -13,7 +13,15 @@ open class TipLayoutHint(
     open val kind: Kind,
     open val coord: DoubleVector?,
     open val objectRadius: Double,
-    open val color: Color?) {
+    open val color: Color?,
+    open val showStem: Boolean = true
+) {
+    constructor(
+        kind: Kind,
+        coord: DoubleVector?,
+        objectRadius: Double,
+        color: Color?
+    ) : this(kind, coord, objectRadius, color, true)
 
     override fun toString(): String {
         return "$kind"
@@ -31,21 +39,23 @@ open class TipLayoutHint(
 
     companion object {
 
-        fun verticalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?): TipLayoutHint {
+        fun verticalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, showStem: Boolean = true): TipLayoutHint {
             return TipLayoutHint(
                 Kind.VERTICAL_TOOLTIP,
                 coord,
                 objectRadius,
-                color
+                color,
+                showStem
             )
         }
 
-        fun horizontalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?): TipLayoutHint {
+        fun horizontalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, showStem: Boolean = true): TipLayoutHint {
             return TipLayoutHint(
                 Kind.HORIZONTAL_TOOLTIP,
                 coord,
                 objectRadius,
-                color
+                color,
+                showStem
             )
         }
 

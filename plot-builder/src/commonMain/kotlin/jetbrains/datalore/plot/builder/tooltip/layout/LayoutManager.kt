@@ -236,10 +236,10 @@ class LayoutManager(
                 ) === TOP
             ) {
                 tooltipY = topTooltipRange.start()
-                stemY = targetTopPoint
+                stemY = if (measuredTooltip.tooltipSpec.showStem) targetTopPoint else tooltipY
             } else {
                 tooltipY = bottomTooltipRange.start()
-                stemY = targetBottomPoint
+                stemY = if (measuredTooltip.tooltipSpec.showStem) targetBottomPoint else tooltipY
             }
         }
 
@@ -291,11 +291,12 @@ class LayoutManager(
                 }
                 myPreferredHorizontalAlignment == HorizontalAlignment.LEFT && canFitLeft || !canFitRight -> {
                     tooltipX = leftTooltipPlacement.start()
-                    stemX = targetCoordX - hintSize
+                    stemX = if (measuredTooltip.tooltipSpec.showStem) targetCoordX - hintSize else tooltipX
+
                 }
                 else -> {
                     tooltipX = rightTooltipPlacement.start()
-                    stemX = targetCoordX + hintSize
+                    stemX = if (measuredTooltip.tooltipSpec.showStem) targetCoordX + hintSize else tooltipX
                 }
             }
         }

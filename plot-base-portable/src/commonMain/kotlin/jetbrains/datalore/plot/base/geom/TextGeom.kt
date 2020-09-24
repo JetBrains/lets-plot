@@ -48,6 +48,7 @@ class TextGeom : GeomBase() {
                     0.0,
                     GeomTargetCollector.TooltipParams.params()
                         .setColor(HintColorUtil.fromColor(p))
+                        .setShowStem(false)
                 )
             }
         }

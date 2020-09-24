@@ -46,6 +46,7 @@ interface GeomTargetCollector {
 
         private var myTipLayoutHints = emptyMap<Aes<*>, TipLayoutHint>()
         private var myColor = Color.GRAY
+        private var myShowStem = true
 
         fun getTipLayoutHints(): Map<Aes<*>, TipLayoutHint> {
             return myTipLayoutHints
@@ -62,6 +63,15 @@ interface GeomTargetCollector {
 
         fun setColor(color: Color): TooltipParams {
             myColor = color
+            return this
+        }
+
+        fun getShowStem(): Boolean{
+            return myShowStem
+        }
+
+        fun setShowStem(b: Boolean): TooltipParams {
+            myShowStem = b
             return this
         }
 

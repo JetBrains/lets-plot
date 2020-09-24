@@ -24,7 +24,7 @@ class TargetPrototype(
     internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
         return GeomTarget(
             hitIndex,
-            createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor(), tooltipKind),
+            createTipLayoutHint(hitCoord, hitShape, tooltipParams.getColor(), tooltipKind, tooltipParams.getShowStem()),
             tooltipParams.getTipLayoutHints()
         )
     }
@@ -34,24 +34,25 @@ class TargetPrototype(
             hitCoord: DoubleVector,
             hitShape: HitShape,
             fill: Color,
-            tooltipKind: TipLayoutHint.Kind
+            tooltipKind: TipLayoutHint.Kind,
+            showStem: Boolean = true
         ): TipLayoutHint {
 
             return when (hitShape.kind) {
                 POINT -> when (tooltipKind) {
-                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, hitShape.point.radius, fill)
+                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, hitShape.point.radius, fill, showStem)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for POINT")
                 }
 
                 RECT -> when (tooltipKind) {
-                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, 0.0, fill)
-                    HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, hitShape.rect.width / 2, fill)
+                    VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(hitCoord, 0.0, fill, showStem)
+                    HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, hitShape.rect.width / 2, fill, showStem)
                     CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(hitCoord, fill)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for RECT")
                 }
 
                 PATH -> when (tooltipKind) {
-                    HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, 0.0, fill)
+                    HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(hitCoord, 0.0, fill, showStem)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for PATH")
                 }
 

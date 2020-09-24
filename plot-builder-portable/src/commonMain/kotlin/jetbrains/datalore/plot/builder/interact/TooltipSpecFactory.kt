@@ -60,7 +60,8 @@ class TooltipSpecFactory(
                             layoutHint = hint,
                             lines = linesForAes,
                             fill = hint.color ?: tipLayoutHint().color!!,
-                            isOutlier = true
+                            isOutlier = true,
+                            showStem = hint.showStem
                         )
                     )
                 }
@@ -99,7 +100,8 @@ class TooltipSpecFactory(
                         tipLayoutHint(),
                         lines = generalLines,
                         fill = tipLayoutHint().color!!,
-                        isOutlier = false
+                        isOutlier = false,
+                        showStem = tipLayoutHint().showStem
                     )
                 )
             } else {
