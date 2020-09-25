@@ -67,9 +67,9 @@ class PlacesDataFrameBuilder:
             self._country.append(None)
         else:
             query: RegionQuery = queries[parent_row]
-            self._county.append(MapRegion.request_or_none(query.county))
-            self._state.append(MapRegion.request_or_none(query.state))
-            self._country.append(MapRegion.request_or_none(query.country))
+            self._county.append(MapRegion.name_or_none(query.county))
+            self._state.append(MapRegion.name_or_none(query.state))
+            self._country.append(MapRegion.name_or_none(query.country))
 
 
     def build_dict(self):

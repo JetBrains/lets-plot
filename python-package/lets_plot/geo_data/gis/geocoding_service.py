@@ -97,5 +97,5 @@ class GeocodingService:
         except Exception as e:
             return ResponseBuilder() \
                 .set_status(Status.error) \
-                .set_message('Geocoding service exception: {}'.format(str(e))) \
+                .set_message('Internal service exception: {}'.format(str(e))) \
                 .build()

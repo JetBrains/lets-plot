@@ -1,7 +1,6 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-import os
 from typing import List
 
 import pytest
@@ -11,6 +10,7 @@ from shapely.geometry import Point
 
 import lets_plot.geo_data as geodata
 from lets_plot.geo_data import DF_FOUND_NAME, DF_ID, DF_REQUEST, DF_PARENT_COUNTRY, DF_PARENT_STATE, DF_PARENT_COUNTY
+from .geo_data import run_intergration_tests, assert_row, assert_found_names
 
 ShapelyPoint = shapely.geometry.Point
 
@@ -18,38 +18,6 @@ BOSTON_ID = '4631409'
 NYC_ID = '351811'
 
 
-def run_intergration_tests() -> bool:
-    if 'RUN_GEOCODING_INTEGRATION_TEST' in os.environ.keys():
-        return os.environ.get('RUN_GEOCODING_INTEGRATION_TEST').lower() == 'true'
-    return False
-
-
-def use_local_server():
-    old = os.environ.copy()
-    os.environ.update({'GEOSERVER_URL': 'http://localhost:3012', **old})
-
-
-def assert_found_names(df: DataFrame, names: List[str]):
-    assert names == df[DF_FOUND_NAME].tolist()
-
-
-def assert_row(df: DataFrame, request: str = None, found_name: str = None, index=0, id=None, lon=None, lat=None):
-    if request is not None:
-        assert df[DF_REQUEST][index] == request
-
-    if found_name is not None:
-        assert df[DF_FOUND_NAME][index] == found_name
-
-    if id is not None:
-        assert df[DF_ID][index] == id
-
-    if lon is not None:
-        actual_lon = ShapelyPoint(df.geometry[index]).x
-        assert actual_lon == lon
-
-    if lat is not None:
-        actual_lat = ShapelyPoint(df.geometry[index]).y
-        assert actual_lat == lat
 
 
 TURN_OFF_INTERACTION_TEST = not run_intergration_tests()
@@ -470,9 +438,9 @@ def test_duplication_with_us48():
     df = geodata.regions_state(request=['tx', 'us-48', 'tx']).to_data_frame()
 
     assert len(df['request']) == 54
-    assert_row(df, 'tx', 'Texas', 0)
-    assert_row(df, 'Vermont', 'Vermont', 1)
-    assert_row(df, 'tx', 'Texas', 53)
+    assert_row(df, request='tx', found_name='Texas', index=0)
+    assert_row(df, request='Vermont', found_name='Vermont', index=1)
+    assert_row(df, request='tx', found_name='Texas', index=53)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -517,58 +485,3 @@ def test_incorrect_group_processing():
 
     assert 'group' not in boundaries.keys()
 
-
-#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_parents_in_regions_object_and_geo_data_frame():
-    tx = geodata.regions_builder2(level='city', names='boston', counties='suffolk', states='massachusetts', countries='usa').build()
-
-    tx_df = tx.to_data_frame()
-
-    # Test columns order
-    assert tx_df.columns.tolist() == [DF_ID, DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY]
-
-    assert tx_df[DF_REQUEST][0] == 'boston'
-    assert tx_df[DF_PARENT_COUNTY][0] == 'suffolk'
-    assert tx_df[DF_PARENT_STATE][0] == 'massachusetts'
-    assert tx_df[DF_PARENT_COUNTRY][0] == 'usa'
-
-    tx_gdf = tx.limits()
-    assert tx_gdf.columns.tolist() == [DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY, 'geometry']
-    assert tx_gdf[DF_REQUEST][0] == 'boston'
-    assert tx_gdf[DF_PARENT_COUNTY][0] == 'suffolk'
-    assert tx_gdf[DF_PARENT_STATE][0] == 'massachusetts'
-    assert tx_gdf[DF_PARENT_COUNTRY][0] == 'usa'
-
-    tx_gdf = tx.centroids()
-    assert tx_gdf.columns.tolist() == [DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY, 'geometry']
-    assert tx_gdf[DF_REQUEST][0] == 'boston'
-    assert tx_gdf[DF_PARENT_COUNTY][0] == 'suffolk'
-    assert tx_gdf[DF_PARENT_STATE][0] == 'massachusetts'
-    assert tx_gdf[DF_PARENT_COUNTRY][0] == 'usa'
-
-    tx_gdf = tx.boundaries()
-    assert tx_gdf.columns.tolist() == [DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY, 'geometry']
-    assert tx_gdf[DF_REQUEST][0] == 'boston'
-    assert tx_gdf[DF_PARENT_COUNTY][0] == 'suffolk'
-    assert tx_gdf[DF_PARENT_STATE][0] == 'massachusetts'
-    assert tx_gdf[DF_PARENT_COUNTRY][0] == 'usa'
-
-    # antimeridian
-    ru = geodata.regions_builder2(level='country', names='russia').build()
-    ru_df = ru.to_data_frame()
-    assert ru_df.columns.tolist() == [DF_ID, DF_REQUEST, DF_FOUND_NAME]
-
-    ru_gdf = ru.limits()
-    assert ru_gdf[DF_REQUEST][0] == 'russia'
-    assert ru_gdf[DF_REQUEST][1] == 'russia'
-    assert ru_gdf.columns.tolist() == [DF_REQUEST, DF_FOUND_NAME, 'geometry']
-
-
-#@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_regions_parents_in_regions_object_and_geo_data_frame():
-    ms = geodata.regions_builder2(level='state', names='massachusetts').build()
-    boston = geodata.regions_builder2(level='city', names='boston', states=ms).build()
-
-    boston_df = boston.to_data_frame()
-    print(boston_df[DF_PARENT_STATE][0])
-    assert boston_df[DF_PARENT_STATE][0] == 'massachusetts'

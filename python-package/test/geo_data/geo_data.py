@@ -4,7 +4,7 @@
 import json
 from typing import List, Union
 
-from lets_plot.geo_data import DF_REQUEST, DF_FOUND_NAME
+from lets_plot.geo_data import DF_ID, DF_REQUEST, DF_FOUND_NAME, DF_PARENT_COUNTY, DF_PARENT_STATE, DF_PARENT_COUNTRY
 from lets_plot.geo_data.gis.geometry import Ring, Polygon, Multipolygon
 from lets_plot.geo_data.gis.json_response import ResponseField, GeometryKind
 from lets_plot.geo_data.gis.response import GeocodedFeature, FeatureBuilder, LevelKind, Status, GeoRect, GeoPoint, \
@@ -12,6 +12,7 @@ from lets_plot.geo_data.gis.response import GeocodedFeature, FeatureBuilder, Lev
 from lets_plot.geo_data.regions import Regions
 
 from pandas import DataFrame
+from shapely.geometry import Point
 
 GEOJSON_TYPE = ResponseField.boundary_type.value
 GEOJSON_COORDINATES = ResponseField.boundary_coordinates.value
@@ -43,6 +44,57 @@ GEO_RECT_MIN_LON: float = 5
 GEO_RECT_MIN_LAT: float = 1
 GEO_RECT_MAX_LON: float = 9
 GEO_RECT_MAX_LAT: float = 7
+
+def run_intergration_tests() -> bool:
+    import os
+    if 'RUN_GEOCODING_INTEGRATION_TEST' in os.environ.keys():
+        return os.environ.get('RUN_GEOCODING_INTEGRATION_TEST').lower() == 'true'
+    return False
+
+
+def use_local_server():
+    old = os.environ.copy()
+    os.environ.update({'GEOSERVER_URL': 'http://localhost:3012', **old})
+
+NO_COLUMN = '<no column>'
+IGNORED = '__value_ignored__'
+
+def assert_row(df, index: int = 0, request: Union[str, List] = IGNORED, found_name: Union[str, List] = IGNORED, id: Union[str, List] = IGNORED, county: Union[str, List] = IGNORED, state: Union[str, List] = IGNORED, country: Union[str, List] = IGNORED, lon=None, lat=None) -> dict:
+    def assert_str(column, expected):
+        if expected == IGNORED:
+            return
+
+        if expected == NO_COLUMN:
+            assert column not in df.columns.tolist()
+            return
+
+        if isinstance(expected, str):
+            assert expected == df[column][index]
+            return
+
+        if isinstance(expected, list):
+            actual = df[column][index:index + len(expected)].tolist()
+            assert actual == expected
+            return
+
+        raise ValueError('Not support type of expected: {}'.format(str(type(expected))))
+
+
+    assert_str(DF_ID, id)
+    assert_str(DF_REQUEST, request)
+    assert_str(DF_FOUND_NAME, found_name)
+    assert_str(DF_PARENT_COUNTY, county)
+    assert_str(DF_PARENT_STATE, state)
+    assert_str(DF_PARENT_COUNTRY, country)
+    if lon is not None:
+        assert Point(df.geometry[index]).x == lon
+
+    if lat is not None:
+        assert Point(df.geometry[index]).y == lat
+
+
+def assert_found_names(df: DataFrame, names: List[str]):
+    assert names == df[DF_FOUND_NAME].tolist()
 
 
 def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str], level_kind: LevelKind = LevelKind.city) -> Regions:

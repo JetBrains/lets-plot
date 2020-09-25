@@ -43,7 +43,7 @@ _settings = {
     'dev_offline': _init_value('dev_offline', True),  # default: embed js into the notebook
     'dev_js_base_url': "http://0.0.0.0:8080",
     'dev_js_name': '',  # default: lets-plot-<version>.js
-    'dev_geocoding_url': _init_value('dev_geocoding_url', 'https://geo.datalore.jetbrains.com')
+    'dev_geocoding_url': _init_value('dev_geocoding_url', 'http://localhost:3012')
 }
 
 

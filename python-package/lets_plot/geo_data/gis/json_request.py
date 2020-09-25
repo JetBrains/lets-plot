@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple
 
 from .fluent_dict import FluentDict, FluentList
 from .geometry import GeoPoint
-from .request import RegionQuery, MapRegion, PayloadKind, RegionQueryBuilder, IgnoringStrategyKind, MapRegionBuilder
+from .request import RegionQuery, MapRegion, MapRegionKind, PayloadKind, RegionQueryBuilder, IgnoringStrategyKind, MapRegionBuilder
 from .request import Request, GeocodingRequest, ExplicitRequest, RequestBuilder, RequestKind, ReverseGeocodingRequest
 from .response import LevelKind, GeoRect
 
@@ -117,6 +117,14 @@ class RequestFormatter:
     def _format_map_region(parent: Optional[MapRegion]) -> Optional[Dict]:
         if parent is None:
             return None
+
+        # special case - place is just a geocoded object with id and extra information, used by client
+        # server doesn't need this extra information
+        if parent.kind.value == 'place':
+            return FluentDict() \
+                .put(Field.map_region_kind, MapRegionKind.id.value) \
+                .put(Field.map_region_values, parent.values) \
+                .to_dict()
 
         return FluentDict() \
             .put(Field.map_region_kind, parent.kind.value) \

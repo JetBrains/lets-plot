@@ -75,9 +75,23 @@ def _create_queries(request: request_types, scope: scope_types, ambiguity_resovl
 
             return [RegionQuery(r, scopes, ambiguity_resovler) for r in requests]
     else:
-        countries = _ensure_is_list(countries)
-        states = _ensure_is_list(states)
-        counties = _ensure_is_list(counties)
+        def ensure_is_parent_list(obj):
+            if obj is None:
+                return None
+
+            if isinstance(obj, str):
+                return [obj]
+            if isinstance(obj, Regions):
+                return obj.as_list()
+
+            if isinstance(obj, list):
+                return obj
+
+            return [obj]
+
+        countries = ensure_is_parent_list(countries)
+        states = ensure_is_parent_list(states)
+        counties = ensure_is_parent_list(counties)
 
         assert countries is None or len(countries) == len(requests)
         assert states is None or len(states) == len(requests)
@@ -232,7 +246,7 @@ class RegionsBuilder:
             .build()
 
         # Too many queries - can fail with timeout. Chunk queries.
-        if len(self._get_queries()) > 100 and self._chunk_size is None:
+        if len(self._get_queries()) > 100_000 and self._chunk_size is None:
             self.chunk_request(self._on_progress, 40)
 
         response: Response = GeocodingService().do_request(request, self._chunk_size, self._on_progress)

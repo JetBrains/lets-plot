@@ -57,12 +57,17 @@ class MapRegion:
     with_name - single name, not yet geocoded.
     '''
     @staticmethod
-    def request_or_none(place: Optional['MapRegion']):
+    def name_or_none(place: Optional['MapRegion']):
         if place is None:
             return None
 
-        assert place.kind == MapRegionKind.place, 'Only palce MapRegion contains request'
-        return place._request
+        if place.kind == MapRegionKind.place:
+            return place.request()
+
+        if place.kind == MapRegionKind.name:
+            return place.name()
+
+        raise ValueError('MapRegion with kind \'{}\' doesn\'t have a name'.format(place.kind))
 
 
     @staticmethod
@@ -94,9 +99,15 @@ class MapRegion:
         self._level_kind: Optional[LevelKind] = level_kind
         self._hash = hash((self.values, self.kind))
 
-    def request(self) -> Optional[str]:
-        assert self.kind == MapRegionKind.place, 'Invalid MapRegion kind: only place contains request'
+    def request(self) -> str:
+        assert self.kind == MapRegionKind.place, 'Invalid MapRegion kind. Expected \'place\', but was ' + str(self.kind)
+        assert_type(self._request, str)
         return self._request
+
+    def name(self) -> str:
+        assert self.kind == MapRegionKind.name, 'Invalid MapRegion kind. Expected \'name\', but was ' + str(self.kind)
+        assert_type(self.values[0], str)
+        return self.values[0]
 
     def level_kind(self) -> Optional[LevelKind]:
         assert self.kind == MapRegionKind.place, 'Invalid MapRegion kind: only place contains level_kind'
