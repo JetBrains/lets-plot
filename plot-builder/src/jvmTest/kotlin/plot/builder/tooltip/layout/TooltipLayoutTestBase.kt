@@ -301,8 +301,8 @@ internal open class TooltipLayoutTestBase {
         const val DEFAULT_OBJECT_RADIUS = 40.0
         private const val DOUBLE_COMPARE_EPSILON = 0.01
 
-        val NORMAL_STEM_LENGTH = TipLayoutHint.StemStyle.NORMAL.length
-        val AXIS_STEM_LENGTH = TipLayoutHint.StemStyle.NONE.length
+        val NORMAL_STEM_LENGTH = TipLayoutHint.StemLength.NORMAL.value
+        val AXIS_STEM_LENGTH = TipLayoutHint.StemLength.NONE.value
 
         fun makeText(text: String): List<String> {
             val textList = ArrayList<String>()

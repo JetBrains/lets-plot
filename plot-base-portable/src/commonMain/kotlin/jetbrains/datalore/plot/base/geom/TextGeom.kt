@@ -50,7 +50,7 @@ class TextGeom : GeomBase() {
                     AesScaling.textSize(p) / 2,
                     GeomTargetCollector.TooltipParams.params()
                         .setColor(HintColorUtil.fromColor(p))
-                        .setStemStyle(TipLayoutHint.StemStyle.NONE)
+                        .setStemLength(TipLayoutHint.StemLength.NONE)
                 )
             }
         }

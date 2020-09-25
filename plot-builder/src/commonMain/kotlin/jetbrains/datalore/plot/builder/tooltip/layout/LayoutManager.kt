@@ -458,7 +458,7 @@ class LayoutManager(
         internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
         internal val hintKind get() = tooltipSpec.layoutHint.kind
         internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius
-        internal val stemLength get() = tooltipSpec.layoutHint.stemStyle.length
+        internal val stemLength get() = tooltipSpec.layoutHint.stemLength.value
     }
 
     companion object {

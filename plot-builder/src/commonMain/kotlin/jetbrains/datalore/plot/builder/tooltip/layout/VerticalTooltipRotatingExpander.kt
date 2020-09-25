@@ -129,7 +129,7 @@ internal class VerticalTooltipRotatingExpander(private val verticalSpace: jetbra
         }
 
         fun rotate(alpha: Double): DoubleRectangle {
-            val r = TipLayoutHint.StemStyle.NORMAL.length
+            val r = TipLayoutHint.StemLength.NORMAL.value
             val newAttachmentCoord = DoubleVector(r * cos(alpha), r * sin(alpha)).add(myTargetCoord)
 
             val newTooltipCoord = when {
