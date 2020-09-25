@@ -38,7 +38,7 @@ def image_matrix(image_data_array, *, norm: bool = None, scale=1) -> GGBunch:
     Examples
     --------
     >>> import numpy as np
-    >>> from lets_plot.plot_flyer import im
+    >>> from lets_plot.bistro import im
     >>> image = np.random.choice([0.0, 1.0], [64, 64, 3])
     >>> X = np.empty([4, 6], dtype=object)
     >>> X.fill(image)

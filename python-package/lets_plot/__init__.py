@@ -17,7 +17,7 @@ from .frontend_context import *
 from .settings_utils import *
 
 __all__ = (plot.__all__ +
-           plot_flyer.__all__ +
+           bistro.__all__ +
            frontend_context.__all__ +
            settings_utils.__all__ +
            export.__all__ +

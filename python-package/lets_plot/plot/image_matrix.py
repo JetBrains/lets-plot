@@ -7,12 +7,12 @@ import sys
 
 __all__ = ['gg_image_matrix']
 
-from lets_plot.plot_flyer.im import image_matrix
+from lets_plot.bistro.im import image_matrix
 
 
 def gg_image_matrix(image_data_array, *, norm: bool = None, scale=1) -> None:
     """
-    Depricated, see `image_matrix` in `lets_plot.plot_flyer.image_matrix`
+    Depricated, see `image_matrix` in `lets_plot.bistro.im`
 
     Display images in a grid.
     The grid dimensions are determined by shape of the input 2D ndarray.
@@ -37,7 +37,7 @@ def gg_image_matrix(image_data_array, *, norm: bool = None, scale=1) -> None:
 
     sys.stderr.write(
         """gg_image_matrix is deprecated, use: 
-                from lets_plot.plot_flyer.im import image_matrix
+                from lets_plot.bistro.im import image_matrix
                 image_matrix()
         """)
 
