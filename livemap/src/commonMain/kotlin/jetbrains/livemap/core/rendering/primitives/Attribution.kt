@@ -11,7 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import kotlin.math.max
 
-class HorizontalLayout(override var origin: DoubleVector, private val texts: List<Text>) : RenderBox {
+class Attribution(override var origin: DoubleVector, private val texts: List<Text>) : RenderBox {
     override var dimension = DoubleVector.ZERO
     private val rectangle: Rectangle = Rectangle()
     var padding: Double = 0.0
@@ -43,7 +43,7 @@ class HorizontalLayout(override var origin: DoubleVector, private val texts: Lis
             }
 
             rectangle.apply {
-                rect = DoubleRectangle(this@HorizontalLayout.origin, this@HorizontalLayout.dimension)
+                rect = DoubleRectangle(this@Attribution.origin, this@Attribution.dimension)
                 color = background
             }
 

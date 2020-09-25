@@ -26,7 +26,7 @@ import jetbrains.livemap.core.openLink
 import jetbrains.livemap.core.rendering.layers.CanvasLayerComponent
 import jetbrains.livemap.core.rendering.layers.LayerGroup
 import jetbrains.livemap.core.rendering.layers.LayerManager
-import jetbrains.livemap.core.rendering.primitives.HorizontalLayout
+import jetbrains.livemap.core.rendering.primitives.Attribution
 import jetbrains.livemap.core.rendering.primitives.Label
 import jetbrains.livemap.core.rendering.primitives.MutableImage
 import jetbrains.livemap.core.rendering.primitives.Text
@@ -97,7 +97,7 @@ class LiveMapUiSystem(
         addListenersToMakeGeometryButton(buttonMakeGeometry)
 
         if (myAttribution != null) {
-            val parts = LinkParser(myAttribution).parse()
+            val parts = AttributionParser(myAttribution).parse()
             val texts = ArrayList<Text>()
 
             for (part in parts) {
@@ -121,13 +121,13 @@ class LiveMapUiSystem(
                 texts.add(attributionText)
             }
 
-            val horizontalLayout = HorizontalLayout(DoubleVector(myViewport.size.x, 0.0), texts).apply {
+            Attribution(DoubleVector(myViewport.size.x, 0.0), texts).apply {
                 background = Color(200, 200, 200, 179)
                 this.padding = 2.0
                 position = Label.LabelPosition.LEFT
+            }.run {
+                myUiService.addRenderable(this)
             }
-
-            myUiService.addRenderable(horizontalLayout)
         }
     }
 
