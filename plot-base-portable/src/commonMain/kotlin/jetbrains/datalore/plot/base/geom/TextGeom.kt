@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.gcommon.base.Strings
-import jetbrains.datalore.base.numberFormat.NumberFormat
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
@@ -57,7 +56,11 @@ class TextGeom : GeomBase() {
     }
 
     private fun toString(label: Any?): String {
-        return label?.let { formatter?.format(it) } ?: naValue
+        return when {
+            label == null -> naValue
+            formatter != null -> formatter!!.format(label)
+            else -> label.toString()
+        }
     }
 
     companion object {

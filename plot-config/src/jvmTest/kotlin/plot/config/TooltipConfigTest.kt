@@ -320,7 +320,6 @@ class TooltipConfigTest {
         assertTooltipLines(expectedLines, lines)
     }
 
-    // geom_text
     @Test
     fun `geom_text by default should not show tooltip`() {
         val geomTextLayer = buildGeomLayer(
