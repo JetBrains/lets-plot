@@ -14,14 +14,14 @@ open class TipLayoutHint(
     open val coord: DoubleVector?,
     open val objectRadius: Double,
     open val color: Color?,
-    open val showStem: Boolean = true
+    open val stemStyle: StemStyle
 ) {
-    constructor(
-        kind: Kind,
-        coord: DoubleVector?,
-        objectRadius: Double,
-        color: Color?
-    ) : this(kind, coord, objectRadius, color, true)
+
+    enum class StemStyle(val length: Double) {
+        NORMAL(12.0),
+        SHORT(5.0),
+        NONE(0.0)
+    }
 
     override fun toString(): String {
         return "$kind"
@@ -39,50 +39,53 @@ open class TipLayoutHint(
 
     companion object {
 
-        fun verticalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, showStem: Boolean = true): TipLayoutHint {
+        fun verticalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemStyle: StemStyle = StemStyle.NORMAL): TipLayoutHint {
             return TipLayoutHint(
                 Kind.VERTICAL_TOOLTIP,
                 coord,
                 objectRadius,
                 color,
-                showStem
+                stemStyle
             )
         }
 
-        fun horizontalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, showStem: Boolean = true): TipLayoutHint {
+        fun horizontalTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemStyle: StemStyle = StemStyle.NORMAL): TipLayoutHint {
             return TipLayoutHint(
                 Kind.HORIZONTAL_TOOLTIP,
                 coord,
                 objectRadius,
                 color,
-                showStem
+                stemStyle
             )
         }
 
-        fun cursorTooltip(coord: DoubleVector?, color: Color?): TipLayoutHint {
+        fun cursorTooltip(coord: DoubleVector?, color: Color?, stemStyle: StemStyle = StemStyle.NORMAL): TipLayoutHint {
             return TipLayoutHint(
                 kind = Kind.CURSOR_TOOLTIP,
                 coord = coord,
                 objectRadius = 0.0,
-                color = color
+                color = color,
+                stemStyle = stemStyle
             )
         }
 
-        fun xAxisTooltip(coord: DoubleVector?, color: Color?, axisRadius: Double = 0.0): TipLayoutHint {
+        fun xAxisTooltip(coord: DoubleVector?, color: Color?, axisRadius: Double = 0.0, stemStyle: StemStyle = StemStyle.NONE): TipLayoutHint {
             return TipLayoutHint(
                 kind = Kind.X_AXIS_TOOLTIP,
                 coord = coord,
                 objectRadius = axisRadius,
-                color = color
+                color = color,
+                stemStyle = stemStyle
             )
         }
 
-        fun yAxisTooltip(coord: DoubleVector?, color: Color?, axisRadius: Double = 0.0): TipLayoutHint {
+        fun yAxisTooltip(coord: DoubleVector?, color: Color?, axisRadius: Double = 0.0, stemStyle: StemStyle = StemStyle.NONE): TipLayoutHint {
             return TipLayoutHint(
                 kind = Kind.Y_AXIS_TOOLTIP,
                 coord = coord,
                 objectRadius = axisRadius,
-                color = color
+                color = color,
+                stemStyle = stemStyle
             )
         }
     }

@@ -12,8 +12,7 @@ class TooltipSpec(
     val layoutHint: TipLayoutHint,
     lines: List<String>,
     val fill: Color,
-    val isOutlier: Boolean,
-    val showStem: Boolean = true
+    val isOutlier: Boolean
 ) {
     val lines: List<String> = ArrayList(lines)
 

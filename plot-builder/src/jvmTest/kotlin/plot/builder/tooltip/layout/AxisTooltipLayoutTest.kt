@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_STEM_LENGTH
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.RIGHT
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM

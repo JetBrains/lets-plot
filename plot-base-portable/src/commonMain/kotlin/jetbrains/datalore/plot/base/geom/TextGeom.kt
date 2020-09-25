@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.TextLabel
@@ -48,7 +49,7 @@ class TextGeom : GeomBase() {
                     0.0,
                     GeomTargetCollector.TooltipParams.params()
                         .setColor(HintColorUtil.fromColor(p))
-                        .setShowStem(false)
+                        .setStemStyle(TipLayoutHint.StemStyle.NONE)
                 )
             }
         }
