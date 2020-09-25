@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
@@ -46,7 +47,7 @@ class TextGeom : GeomBase() {
                 targetCollector.addPoint(
                     p.index(),
                     loc,
-                    0.0,
+                    AesScaling.textSize(p) / 2,
                     GeomTargetCollector.TooltipParams.params()
                         .setColor(HintColorUtil.fromColor(p))
                         .setStemStyle(TipLayoutHint.StemStyle.NONE)
