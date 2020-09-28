@@ -32,7 +32,7 @@ internal class TooltipLayer(decorationLayer: SvgNode, viewport: DoubleRectangle,
             .filter { spec -> spec.lines.isNotEmpty() }
             .map { spec -> spec
                 .run { newTooltipBox().apply { visible = false } } // to not flicker on arrange
-                .apply { setContent(spec.fill, spec.labeledValues, spec.style) }
+                .apply { setContent(spec.fill, spec.labelValues, spec.style, spec.isOutlier) }
                 .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
             .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds = geomBounds) }

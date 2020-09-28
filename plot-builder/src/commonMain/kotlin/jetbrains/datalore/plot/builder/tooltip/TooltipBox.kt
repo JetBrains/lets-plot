@@ -61,12 +61,17 @@ class TooltipBox : SvgComponent() {
         add(myTextBox)
     }
 
-    internal fun setContent(background: Color, lines: List<TooltipSpec.LabelValue>, style: String) {
+    internal fun setContent(fill: Color, lines: List<TooltipSpec.LabelValue>, style: String, isOutlier: Boolean) {
         addClassName(style)
-        fillColor = Colors.mimicTransparency(background, background.alpha / 255.0, Color.WHITE)
-        textColor = LIGHT_TEXT_COLOR.takeIf { fillColor.isDark() } ?: DARK_TEXT_COLOR
+        if (isOutlier) {
+            fillColor = Colors.mimicTransparency(fill, fill.alpha / 255.0, Color.WHITE)
+            textColor = LIGHT_TEXT_COLOR.takeIf { fillColor.isDark() } ?: DARK_TEXT_COLOR
 
-        myTextBox.update(lines, labelTextColor = textColor, textColor = textColor)
+        } else {
+            fillColor = Color.WHITE
+            textColor = fill.changeAlpha(255).takeIf { fill.isDark() } ?: DARK_TEXT_COLOR
+        }
+        myTextBox.update(lines, labelTextColor = DARK_TEXT_COLOR, textColor = textColor)
     }
 
     internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {

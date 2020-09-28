@@ -13,7 +13,7 @@ class TooltipSpec(val layoutHint: TipLayoutHint, val fill: Color, val isOutlier:
     constructor(layoutHint: TipLayoutHint, lines: List<String>, fill: Color, isOutlier: Boolean) :
             this(layoutHint, fill, isOutlier, lines.map { LabelValue(null, it) })
 
-    val labeledValues: List<LabelValue> = ArrayList(labelValues)
+    val labelValues: List<LabelValue> = ArrayList(labelValues)
     val lines: List<String> = ArrayList(labelValues.map(LabelValue::toString))
 
 

@@ -37,7 +37,7 @@ class TooltipBoxTest {
 
         tooltipBox = TooltipBox().apply {
             root.children().add(rootGroup)
-            setContent(Color.BLACK, listOf(TooltipSpec.LabelValue(null,wordText)), "anyStyle")
+            setContent(Color.BLACK, listOf(TooltipSpec.LabelValue(null, wordText)), "anyStyle", isOutlier = false)
         }
     }
 
