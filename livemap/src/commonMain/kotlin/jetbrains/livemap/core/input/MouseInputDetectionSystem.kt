@@ -27,12 +27,38 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
             myInteractiveEntityView.setEntity(entity)
 
             MouseEventType.values().forEach { type ->
-                if (myInteractiveEntityView.needToAdd(type)) {
-                    myInteractiveEntityView
-                        .addTo(
-                            entitiesByEventTypeAndZIndex.getOrPut(type, ::HashMap),
-                            getZIndex(entity, canvasLayers)
-                        )
+                when(type) {
+                    MouseEventType.CLICK,
+                    MouseEventType.DOUBLE_CLICK,
+                    MouseEventType.PRESS -> {
+                        if (myInteractiveEntityView.needToAdd(type)) {
+                            myInteractiveEntityView
+                                .addTo(
+                                    entitiesByEventTypeAndZIndex.getOrPut(type, ::HashMap),
+                                    getZIndex(entity, canvasLayers)
+                                )
+                        }
+                    }
+                    MouseEventType.OVER -> {
+                        if (myInteractiveEntityView.needToCreateOverEvent()) {
+                            myInteractiveEntityView.createOverEvent()
+                            myInteractiveEntityView
+                                .addTo(
+                                    entitiesByEventTypeAndZIndex.getOrPut(type, ::HashMap),
+                                    getZIndex(entity, canvasLayers)
+                                )
+                        }
+                    }
+                    MouseEventType.OUT -> {
+                        if (myInteractiveEntityView.needToCreateOutEvent()) {
+                            myInteractiveEntityView.createOutEvent()
+                            myInteractiveEntityView
+                                .addTo(
+                                    entitiesByEventTypeAndZIndex.getOrPut(type, ::HashMap),
+                                    getZIndex(entity, canvasLayers)
+                                )
+                        }
+                    }
                 }
             }
         }
@@ -85,6 +111,34 @@ class MouseInputDetectionSystem(componentManager: EcsComponentManager) : Abstrac
             myInput = entity.get()
             myClickable = entity.get()
             myListeners = entity.get()
+        }
+
+        fun needToCreateOverEvent(): Boolean {
+            return myInput.location.let {
+                it != null
+                        && myListeners.contains(MouseEventType.OVER)
+                        && !myInput.isOver
+                        && myClickable.rect.contains(it.toDoubleVector())
+            }
+        }
+
+        fun createOverEvent() {
+            myInput.over = myInput.location?.let(::InputMouseEvent)
+            myInput.isOver = true
+        }
+
+        fun needToCreateOutEvent(): Boolean {
+            return myInput.location.let {
+                it != null
+                        && myListeners.contains(MouseEventType.OUT)
+                        && myInput.isOver
+                        && !myClickable.rect.contains(it.toDoubleVector())
+            }
+        }
+
+        fun createOutEvent() {
+            myInput.out = myInput.location?.let(::InputMouseEvent)
+            myInput.isOver = false
         }
 
         fun needToAdd(type: MouseEventType): Boolean {

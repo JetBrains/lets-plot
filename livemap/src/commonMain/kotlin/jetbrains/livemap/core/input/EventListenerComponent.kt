@@ -9,6 +9,8 @@ import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.input.MouseEventType.*
 
 class EventListenerComponent : EcsComponent {
+    private val overListeners = ArrayList<(InputMouseEvent) -> Unit>()
+    private val outListeners = ArrayList<(InputMouseEvent)  -> Unit>()
     private val pressListeners = ArrayList<(InputMouseEvent) -> Unit>()
     private val clickListeners = ArrayList<(InputMouseEvent) -> Unit>()
     private val doubleClickListeners = ArrayList<(InputMouseEvent) -> Unit>()
@@ -18,6 +20,8 @@ class EventListenerComponent : EcsComponent {
             PRESS -> pressListeners
             CLICK -> clickListeners
             DOUBLE_CLICK -> doubleClickListeners
+            OVER -> overListeners
+            OUT -> outListeners
         }
     }
 
@@ -59,5 +63,29 @@ class EventListenerComponent : EcsComponent {
 
     fun removeDoubleClickListener(onDoubleClick: (InputMouseEvent) -> Unit) {
         doubleClickListeners.remove(onDoubleClick)
+    }
+
+    fun addOverListener(onOver: (InputMouseEvent) -> Unit) {
+        overListeners.add(onOver)
+    }
+
+    fun removeOverListener() {
+        overListeners.clear()
+    }
+
+    fun removeOverListener(onOver: (InputMouseEvent) -> Unit) {
+        overListeners.remove(onOver)
+    }
+
+    fun addOutListener(onOut: (InputMouseEvent) -> Unit) {
+        outListeners.add(onOut)
+    }
+
+    fun removeOutListener() {
+        outListeners.clear()
+    }
+
+    fun removeOutListener(onOut: (InputMouseEvent) -> Unit) {
+        outListeners.remove(onOut)
     }
 }
