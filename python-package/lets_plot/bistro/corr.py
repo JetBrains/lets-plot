@@ -128,7 +128,7 @@ class corr_plot_builder:
 def corr_plot(data, draw_as='points', format=None):
     """
     :param data: dictionary or pandas DataFrame  required.
-    :param draw_as: Specifies how correlation matrix is drawn. Can be 'points', 'tiles' or 'text'. Default - 'points'
+    :param draw_as: Specifies how correlation matrix is drawn. Can be 'points', 'tiles' or 'labels'. Default - 'points'
     :param format: Format specification for tooltips and labels.
     :return: PlotSpec for correlation matrix
     """
