@@ -47,10 +47,12 @@ class StringFormat(
         }
     }
 
+    val argsNumber = myNumberFormatters.size
+
     fun format(value: Any): String = format(listOf(value))
 
     fun format(values: List<Any>): String {
-        if (myNumberFormatters.size != values.size) {
+        if (argsNumber != values.size) {
             error("Wrong format pattern \"$pattern\" to format values=$values")
         }
         return when (formatType) {

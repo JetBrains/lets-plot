@@ -18,7 +18,11 @@ class DataFrameValue(
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
     private var myIsContinuous: Boolean = false
-    private val myFormatter = format?.let { StringFormat(it) }
+    private val myFormatter = format?.let {
+        StringFormat(format).also {
+            require(it.argsNumber == 1) { "Wrong number of arguments in pattern=\'$format\' to format \'$name\'" }
+        }
+    }
 
     override fun setDataContext(dataContext: DataContext) {
         myDataFrame = dataContext.dataFrame

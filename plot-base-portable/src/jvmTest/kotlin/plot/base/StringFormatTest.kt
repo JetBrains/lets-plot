@@ -13,6 +13,15 @@ import kotlin.test.assertFailsWith
 class StringFormatTest {
 
     @Test
+    fun `check expected number of arguments`() {
+        assertEquals(0, StringFormat("text").argsNumber)
+        assertEquals(1, StringFormat("{.1f}").argsNumber)
+        assertEquals(1, StringFormat("{.1f} test").argsNumber)
+        assertEquals(2, StringFormat("{.1f} {}").argsNumber)
+        assertEquals(3, StringFormat("{.1f} {.2f} {.3f}").argsNumber)
+    }
+
+    @Test
     fun `numeric format`() {
         val formatPattern = ".2f"
         val valueToFormat = 4
@@ -86,6 +95,9 @@ class StringFormatTest {
         val exception = assertFailsWith(IllegalStateException::class) {
             StringFormat(formatPattern).format(valueToFormat)
         }
-        assertEquals("Failed to format value with type SingletonMap. Supported types are Number and String.", exception.message)
+        assertEquals(
+            "Failed to format value with type SingletonMap. Supported types are Number and String.",
+            exception.message
+        )
     }
 }

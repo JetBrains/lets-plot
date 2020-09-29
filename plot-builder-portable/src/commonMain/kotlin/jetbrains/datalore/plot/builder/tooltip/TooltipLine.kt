@@ -15,7 +15,9 @@ class TooltipLine(
     val pattern: String,
     val fields: List<ValueSource>
 ) : TooltipLineSpec {
-    private val myLineFormatter = StringFormat(pattern)
+    private val myLineFormatter = StringFormat(pattern).also {
+        require(it.argsNumber == fields.size) { "Wrong number of arguments in pattern \'$pattern\' to format ${fields.size} fields" }
+    }
 
     fun setDataContext(dataContext: DataContext) {
         fields.forEach { it.setDataContext(dataContext) }

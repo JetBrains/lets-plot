@@ -21,7 +21,11 @@ class MappingValue(
     private lateinit var myDataAccess: MappedDataAccess
     private lateinit var myDataLabel: String
     private var myIsContinuous: Boolean = false
-    private val myFormatter = format?.let { StringFormat(it) }
+    private val myFormatter = format?.let {
+        StringFormat(format).also {
+            require(it.argsNumber == 1) { "Wrong number of arguments in pattern \'$format\' to format \'${aes.name}\'" }
+        }
+    }
 
     override fun setDataContext(dataContext: DataContext) {
         myDataAccess = dataContext.mappedDataAccess
