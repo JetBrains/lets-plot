@@ -4,15 +4,15 @@
 
 """Correlation matrix implementation module"""
 
-from .core import PlotSpec
-from .geom import geom_point, geom_text
-from .scale import scale_y_discrete_reversed, scale_color_gradient2
-from .scale_identity import scale_size_identity
-from .coord import coord_fixed
-from .theme_ import theme, element_blank
-from .tooltip import layer_tooltips
+from lets_plot.plot.core import PlotSpec
+from lets_plot.plot.geom import geom_point, geom_text
+from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2
+from lets_plot.plot.scale_identity import scale_size_identity
+from lets_plot.plot.coord import coord_fixed
+from lets_plot.plot.theme_ import theme, element_blank
+from lets_plot.plot.tooltip import layer_tooltips
 
-__all__ = ['corr_plot']
+__all__ = ['corr_plot_builder', 'corr_plot']
 
 
 def add_common_params(plot, reverse_y):
@@ -39,7 +39,7 @@ def reverse_type(type):
     return type
 
 
-class corr_plot:
+class corr_plot_builder:
 
     def __init__(self, data, show_legend=None, format=None, flip=None):
         self.data = data
@@ -53,7 +53,9 @@ class corr_plot:
         return format if format else self.format
 
     def tooltip_spec(self, format):
-        return layer_tooltips().format({'$var@..corr..': self.get_format(format)}).line('$var@..corr..')
+        return layer_tooltips(). \
+            format(field='var@..corr..', format=self.get_format(format)). \
+            line('${var@..corr..}')
 
     def get_type(self, type):
         res = type if type else "full"
@@ -112,3 +114,24 @@ class corr_plot:
     def build(self):
         plot = PlotSpec(self.data, mapping=None, scales=[], layers=self.layers)
         return add_common_params(plot, self.reverse_y)
+
+
+def corr_plot(data, draw_as='points', format=None):
+    """
+    :param data: dictionary or pandas DataFrame  required.
+    :param draw_as: Specifies how correlation matrix is drawn. Can be 'points', 'tiles' or 'text'. Default - 'points'
+    :param format: Format specification for tooltips and labels.
+    :return: PlotSpec for correlation matrix
+    """
+
+    plot_builder = corr_plot_builder(data=data, format=format, flip=True)
+
+    if draw_as == 'points':
+        plot_builder.points()
+    elif draw_as == 'tiles':
+        plot_builder.tiles()
+        plot_builder.labels()
+    elif draw_as == 'labels':
+        plot_builder.labels()
+
+    return plot_builder.build()
