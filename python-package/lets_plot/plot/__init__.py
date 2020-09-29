@@ -39,4 +39,5 @@ __all__ = (coord.__all__ +
            scale_convenience.__all__ +
            scale_identity.__all__ +
            theme_.__all__ +
-           tooltip.__all__)
+           tooltip.__all__ )
+
