@@ -50,6 +50,8 @@ class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<E
                 press = myPressEvent
                 click = myClickEvent
                 doubleClick = myDoubleClickEvent
+                over = null
+                out = null
             }
         }
 

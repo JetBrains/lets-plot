@@ -31,6 +31,7 @@ import jetbrains.livemap.config.LiveMapSpec
 import jetbrains.livemap.core.projections.ProjectionType
 import jetbrains.livemap.tiles.TileSystemProvider
 import jetbrains.livemap.tiles.TileSystemProvider.*
+import jetbrains.livemap.ui.CursorProvider
 
 
 internal class LiveMapSpecBuilder {
@@ -42,6 +43,7 @@ internal class LiveMapSpecBuilder {
     private lateinit var mySize: DoubleVector
     private lateinit var myDevParams: DevParams
     private lateinit var myMapLocationConsumer: ((DoubleRectangle) -> Unit)
+    private lateinit var myCursorProvider: CursorProvider
 
     fun aesthetics(aesthetics: Aesthetics): LiveMapSpecBuilder {
         myAesthetics = aesthetics
@@ -78,6 +80,11 @@ internal class LiveMapSpecBuilder {
         return this
     }
 
+    fun cursorProvider(cursorProvider: CursorProvider): LiveMapSpecBuilder {
+        myCursorProvider = cursorProvider
+        return this
+    }
+
     fun build(): LiveMapSpec {
         val projectionType = convertProjectionType(myLiveMapOptions.projection)
 
@@ -110,6 +117,7 @@ internal class LiveMapSpecBuilder {
                 myDevParams.read(COMPUTATION_PROJECTION_QUANT)
             ),
             attribution = myLiveMapOptions.tileProvider[Tile.ATTRIBUTION] as String?,
+            cursorProvider = myCursorProvider,
             devParams = myDevParams
         )
     }

@@ -15,12 +15,18 @@ class MouseInputComponent : EcsComponent {
     var press: InputMouseEvent? = null
     var click: InputMouseEvent? = null
     var doubleClick: InputMouseEvent? = null
+    var over: InputMouseEvent? = null
+    var out: InputMouseEvent? = null
+
+    var isOver: Boolean = false
 
     fun getEvent(type: MouseEventType): InputMouseEvent? {
         return when (type) {
             PRESS -> press
             CLICK -> click
             DOUBLE_CLICK -> doubleClick
+            OVER -> over
+            OUT -> out
         }
     }
 }

@@ -10,6 +10,7 @@ import jetbrains.datalore.base.event.dom.DomEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.js.css.*
+import jetbrains.datalore.base.js.css.enumerables.CssCursor
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
@@ -138,12 +139,18 @@ private fun buildSinglePlotComponent(
     parentElement: HTMLElement
 ) {
 
+    LiveMapUtil.newCursorProvider()
+
     val assembler = plotBuildInfo.plotAssembler
     injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec)
 
     val plot = assembler.createPlot()
     val plotContainer = PlotContainer(plot, plotBuildInfo.size)
     val svg = buildPlotSvg(plotContainer, parentElement)
+
+    LiveMapUtil.setDefaultCursor { svg.style.setCursor(CssCursor.CROSSHAIR) }
+    LiveMapUtil.setPointerCursor { svg.style.setCursor(CssCursor.POINTER) }
+
     parentElement.appendChild(svg)
 }
 

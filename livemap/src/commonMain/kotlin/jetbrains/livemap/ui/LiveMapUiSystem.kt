@@ -39,7 +39,8 @@ class LiveMapUiSystem(
     componentManager: EcsComponentManager,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myLayerManager: LayerManager,
-    private val myAttribution: String?
+    private val myAttribution: String?,
+    private val myCursorProvider: CursorProvider
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLiveMapLocation: LiveMapLocation
     private lateinit var myZoomPlus: MutableImage
@@ -134,6 +135,8 @@ class LiveMapUiSystem(
     private fun addListenersToGetCenterButton(button: EcsEntity) {
         val listeners = button.getComponent<EventListenerComponent>()
 
+        changeCursorOnHover(listeners)
+
         listeners.addClickListener {
             it.stopPropagation()
             myMapLocationConsumer(myLiveMapLocation.viewLonLatRect)
@@ -145,6 +148,8 @@ class LiveMapUiSystem(
     private fun addListenersToZoomButton(button: EcsEntity, disablingZoom: Int, animationDelta: Double) {
         val camera = getSingletonEntity(CameraComponent::class)
         val listeners = button.getComponent<EventListenerComponent>()
+
+        changeCursorOnHover(listeners)
 
         listeners.addClickListener {
             it.stopPropagation()
@@ -166,6 +171,8 @@ class LiveMapUiSystem(
     private fun addListenersToMakeGeometryButton(button: EcsEntity) {
         val listeners = button.getComponent<EventListenerComponent>()
 
+        changeCursorOnHover(listeners)
+
         listeners.addClickListener {
             it.stopPropagation()
             if (containsEntity(MakeGeometryWidgetComponent::class)) finishDrawing() else activateCreateWidget()
@@ -177,9 +184,21 @@ class LiveMapUiSystem(
     private fun addListenerToLink(link: EcsEntity, hrefConsumer: () -> Unit) {
         val listeners = link.getComponent<EventListenerComponent>()
 
+        changeCursorOnHover(listeners)
+
         listeners.addClickListener {
             it.stopPropagation()
             hrefConsumer()
+        }
+    }
+
+    private fun changeCursorOnHover(listeners: EventListenerComponent) {
+        listeners.addOverListener {
+            myCursorProvider.pointer()
+        }
+
+        listeners.addOutListener {
+            myCursorProvider.default()
         }
     }
 
