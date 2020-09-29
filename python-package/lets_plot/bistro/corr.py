@@ -76,15 +76,16 @@ class corr_plot_builder:
 
         return self
 
-    def labels(self, type=None, fill_diagonal=None, format=None, fit_size=True, **other_args):
+    def labels(self, type=None, fill_diagonal=None, format=None, map_size=False, **other_args):
 
         other_args['label_format'] = self.get_format(format)
 
-        if fit_size:
-            other_args['size_unit'] = 'x'
-            other_args['size'] = 1
-        elif 'size' not in other_args:
-            other_args['size_unit'] = 'x'
+        if 'size' not in other_args:
+            if not map_size:
+                other_args['size_unit'] = 'x'
+                other_args['size'] = 1
+            else:
+                other_args['size_unit'] = 'x'
 
         if 'color' not in other_args:
             other_args['color'] = self.text_color
