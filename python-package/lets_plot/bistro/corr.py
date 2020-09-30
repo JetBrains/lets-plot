@@ -3,7 +3,19 @@
 #
 
 """Correlation matrix implementation module"""
+try:
+    import numpy
+except ImportError:
+    numpy = None
 
+try:
+    import pandas
+except ImportError:
+    pandas = None
+
+from lets_plot._type_utils import is_number
+from pandas.api.types import is_numeric_dtype
+from lets_plot.plot.plot import ggsize
 from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.geom import geom_point, geom_text
 from lets_plot.plot.scale import scale_y_discrete_reversed, scale_color_gradient2, scale_color_brewer
@@ -23,6 +35,36 @@ def _reverse_type(type):
         return 'upper'
 
     return type
+
+
+def _get_numeric_columns_count(data):
+    res = 0
+
+    for k in data:
+        values = data[k]
+
+        if numpy and isinstance(values, numpy.ndarray):
+            res += 1
+        elif pandas and isinstance(values, pandas.Series):
+            if is_numeric_dtype(data[k]):
+                res += 1
+        elif isinstance(values, list):
+
+            if len(values) == 0:
+                continue
+
+            value = values[0]
+
+            if is_number(value):
+                res += 1
+
+    return res
+
+
+_COLUMN_WIDTH = 60
+_MIN_PLOT_WIDTH = 400
+_MAX_PLOT_WIDTH = 900
+_PLOT_PROPORTION = 3.0 / 4.0
 
 
 class corr_plot_builder:
@@ -63,6 +105,12 @@ class corr_plot_builder:
 
         if self._reverse_y:
             plot += scale_y_discrete_reversed()
+
+        columns_count = _get_numeric_columns_count(self._data)
+        width = min(_MAX_PLOT_WIDTH, max(_MIN_PLOT_WIDTH, columns_count * _COLUMN_WIDTH))
+        height = width * _PLOT_PROPORTION
+
+        plot += ggsize(width, height)
 
         return plot
 
