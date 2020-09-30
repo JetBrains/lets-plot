@@ -41,7 +41,18 @@ def _reverse_type(type):
 
 class corr_plot_builder:
 
+    """
+    This class is intended to build correlation matrix plots.
+    """
+
     def __init__(self, data, show_legend=None, format=None, flip=None):
+        """
+        :param data:  dictionary or pandas DataFrame  required. Correlation will bw calculated for each variable pair.
+        :param show_legend: Boolean. If True legend is shown. Default - True.
+        :param format: format for tooltips and labels. Default '.2f'.
+        :param flip: Boolean. If True th y axis is flipped.
+        """
+
         self._data = data
         self._show_legend = show_legend
         self._format = format if format else '.2f'
@@ -69,6 +80,15 @@ class corr_plot_builder:
 
     def points(self, type=None, fill_diagonal=None, format=None, **other_args):
 
+        """
+        Method adds correlation matrix layer drawn by points to the plot.
+        :param type: Type of matrix. Possible values - "upper", "lower", "full". Default - "full"
+        :param fill_diagonal: Boolean parameter, if True the main diagonal is filled with values. Default - True
+        :param format: Text format for tooltips. Default - '.2f'
+        :param other_args: - other args, passed to geom_point.
+        :return: self
+        """
+
         self._points_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
                                         tooltips=self._tooltip_spec(format),
                                         type=self._get_type(type), fill_diagonal=fill_diagonal,
@@ -78,6 +98,15 @@ class corr_plot_builder:
 
     def labels(self, type=None, fill_diagonal=None, format=None, map_size=False, **other_args):
 
+        """
+        Method adds correlation matrix layer drawn with geom_text to the plot.
+        :param type: Type of matrix. Possible values - "upper", "lower", "full". Default - "full"
+        :param fill_diagonal: Boolean parameter, if True the main diagonal is filled with values. Default - True
+        :param format: Text format for tooltips and labels. Default - '.2f'
+        :param map_size - Boolen, if True, then absolute value of correlation is mapped to text size.
+        :param other_args: - other args, passed to geom_text.
+        :return: self
+        """
         other_args['label_format'] = self._get_format(format)
 
         if 'size' not in other_args:
@@ -99,6 +128,15 @@ class corr_plot_builder:
 
     def tiles(self, type=None, fill_diagonal=None, format=None, **other_args):
 
+        """
+        Method adds correlation matrix layer drawn as square tiles to the plot.
+        :param type: Type of matrix. Possible values - "upper", "lower", "full". Default - "full"
+        :param fill_diagonal: Boolean parameter, if True the main diagonal is filled with values. Default - True
+        :param format: Text format for tooltips and labels. Default - '.2f'
+        :param other_args: - other args, passed to geom_text.
+        :return: self
+        """
+
         self._text_color = 'white'
 
         self._tiles_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
@@ -109,6 +147,12 @@ class corr_plot_builder:
         return self
 
     def build(self):
+
+        """
+        This method create PlotSpec and returns it.
+        :return: PlotSpec for correlation matrix.
+        """
+
         layers = []
 
         if self._tiles_layer:
@@ -127,7 +171,7 @@ class corr_plot_builder:
 
 def corr_plot(data, draw_as='points', format=None):
     """
-    :param data: dictionary or pandas DataFrame  required.
+    :param data: dictionary or pandas DataFrame  required. Correlation will bw calculated for each variable pair.
     :param draw_as: Specifies how correlation matrix is drawn. Can be 'points', 'tiles' or 'labels'. Default - 'points'
     :param format: Format specification for tooltips and labels.
     :return: PlotSpec for correlation matrix
