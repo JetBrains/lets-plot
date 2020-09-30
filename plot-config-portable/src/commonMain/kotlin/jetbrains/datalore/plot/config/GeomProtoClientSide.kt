@@ -119,19 +119,18 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.animation = opts[Point.ANIMATION]
                 }
 
-                if (opts.has(Point.SizeUnit.SIZE_UNIT)) {
-                    val sizeUnit = opts.getString(Point.SizeUnit.SIZE_UNIT)
-
-                    if ( sizeUnit != null) {
-                        if ( sizeUnit != Point.SizeUnit.X && sizeUnit != Point.SizeUnit.Y ) {
-                            throw IllegalArgumentException("Expected: size_unit = '${Point.SizeUnit.X}' " +
-                                    "or size_unit = '${Point.SizeUnit.Y}'")
-                        }
-
-                        geom.sizeUnit = sizeUnit
+                val sizeUnit = opts.getString(Point.SizeUnit.SIZE_UNIT)?.toLowerCase()
+                sizeUnit?.let {
+                    if (sizeUnit != Point.SizeUnit.X && sizeUnit != Point.SizeUnit.Y) {
+                        throw IllegalArgumentException(
+                            "Expected: size_unit = '${Point.SizeUnit.X}' " +
+                                    "or size_unit = '${Point.SizeUnit.Y}'"
+                        )
                     }
 
+                    geom.sizeUnit = sizeUnit
                 }
+
                 geom
             }
 
@@ -162,18 +161,16 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     }
                 }
 
-                if (opts.has(Text.SizeUnit.SIZE_UNIT)) {
-                    val sizeUnit = opts.getString(Text.SizeUnit.SIZE_UNIT)
-
-                    if ( sizeUnit != null) {
-                        if ( sizeUnit != Text.SizeUnit.X && sizeUnit != Text.SizeUnit.Y ) {
-                            throw IllegalArgumentException("Expected: size_unit = '${Text.SizeUnit.X}' " +
-                                    "or size_unit = '${Text.SizeUnit.Y}'")
-                        }
-
-                        geom.sizeUnit = sizeUnit
+                val sizeUnit = opts.getString(Text.SizeUnit.SIZE_UNIT)?.toLowerCase()
+                sizeUnit?.let {
+                    if (sizeUnit != Text.SizeUnit.X && sizeUnit != Text.SizeUnit.Y) {
+                        throw IllegalArgumentException(
+                            "Expected: size_unit = '${Text.SizeUnit.X}' " +
+                                    "or size_unit = '${Text.SizeUnit.Y}'"
+                        )
                     }
 
+                    geom.sizeUnit = sizeUnit
                 }
 
                 geom
