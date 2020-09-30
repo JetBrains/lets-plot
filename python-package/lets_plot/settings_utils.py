@@ -5,6 +5,8 @@ MAPTILES_KIND = 'maptiles_kind'
 MAPTILES_URL = 'maptiles_url'
 MAPTILES_THEME = 'maptiles_theme'
 MAPTILES_ATTRIBUTION = 'maptiles_attribution'
+MAPTILES_MIN_ZOOM = 'maptiles_min_zoom'
+MAPTILES_MAX_ZOOM = 'maptiles_max_zoom'
 
 GEOCODING_PROVIDER_URL = 'geocoding_url'
 
@@ -37,13 +39,17 @@ def maptiles_lets_plot(url: str, theme: str = None) -> dict:
     }
 
 
-def maptiles_zxy(url: str, attribution: str = None) -> dict:
+def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zoom: int = None) -> dict:
     """
     :param url:
         Template for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
     :param attribution:
         An attribution or a copyright notice to display on the map as required by the tile license.
         Supports HTML links <a href="http://www.example.com">Example</a>
+    :param min_zoom:
+        Minimal zoom limit
+    :param max_zoom:
+        Maximal zoom limit
     :return:
         Tile provider settings
     """
@@ -53,7 +59,9 @@ def maptiles_zxy(url: str, attribution: str = None) -> dict:
     return {
         MAPTILES_KIND: _RASTER_ZXY,
         MAPTILES_URL: url,
-        MAPTILES_ATTRIBUTION: attribution
+        MAPTILES_ATTRIBUTION: attribution,
+        MAPTILES_MIN_ZOOM: min_zoom,
+        MAPTILES_MAX_ZOOM: max_zoom
     }
 
 def geocoding_service(url: str):

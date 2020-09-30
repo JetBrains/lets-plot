@@ -8,8 +8,6 @@ package jetbrains.livemap.ui
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.LiveMapConstants.MAX_ZOOM
-import jetbrains.livemap.LiveMapConstants.MIN_ZOOM
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.camera.CameraComponent
@@ -83,11 +81,11 @@ class LiveMapUiSystem(
 
         myZoomPlus = MutableImage(plusOrigin, size)
         val buttonPlus = myUiService.addButton(myZoomPlus)
-        addListenersToZoomButton(buttonPlus, MAX_ZOOM, 1.0)
+        addListenersToZoomButton(buttonPlus, myViewport.maxZoom, 1.0)
 
         myZoomMinus = MutableImage(minusOrigin, size)
         val buttonMinus = myUiService.addButton(myZoomMinus)
-        addListenersToZoomButton(buttonMinus, MIN_ZOOM, -1.0)
+        addListenersToZoomButton(buttonMinus, myViewport.minZoom, -1.0)
 
         myGetCenter = MutableImage(getCenterOrigin, size)
         val buttonGetCenter = myUiService.addButton(myGetCenter)
@@ -277,8 +275,8 @@ class LiveMapUiSystem(
         internal fun updateZoomButtons(zoom: Double) {
             val res = myUiService.resourceManager
 
-            myZoomMinus.snapshot = if (zoom == MIN_ZOOM.toDouble()) res[KEY_MINUS_DISABLED] else res[KEY_MINUS]
-            myZoomPlus.snapshot = if (zoom == MAX_ZOOM.toDouble()) res[KEY_PLUS_DISABLED] else res[KEY_PLUS]
+            myZoomMinus.snapshot = if (zoom == myViewport.minZoom.toDouble()) res[KEY_MINUS_DISABLED] else res[KEY_MINUS]
+            myZoomPlus.snapshot = if (zoom == myViewport.maxZoom.toDouble()) res[KEY_PLUS_DISABLED] else res[KEY_PLUS]
         }
     }
 

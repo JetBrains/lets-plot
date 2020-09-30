@@ -33,7 +33,9 @@ class LiveMapFactory(
         myViewport = Viewport.create(
             multiMapHelper,
             myLiveMapSpec.size.toClientPoint(),
-            mapRect.center
+            mapRect.center,
+            myLiveMapSpec.minZoom,
+            myLiveMapSpec.maxZoom
         )
     }
 

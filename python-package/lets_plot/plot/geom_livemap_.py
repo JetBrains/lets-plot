@@ -8,7 +8,8 @@ from typing import Union, Optional, List
 from .geom import _geom
 from .util import is_geo_data_regions, map_join_regions
 from .._global_settings import has_global_value, get_global_val
-from ..settings_utils import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, GEOCODING_PROVIDER_URL, _RASTER_ZXY, _VECTOR_LETS_PLOT
+from ..settings_utils import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, GEOCODING_PROVIDER_URL, \
+    _RASTER_ZXY, _VECTOR_LETS_PLOT, MAPTILES_MIN_ZOOM, MAPTILES_MAX_ZOOM
 
 try:
     import pandas
@@ -129,6 +130,8 @@ OPTIONS_MAPTILES_KIND = 'kind'
 OPTIONS_MAPTILES_URL = 'url'
 OPTIONS_MAPTILES_THEME = 'theme'
 OPTIONS_MAPTILES_ATTRIBUTION = 'attribution'
+OPTIONS_MAPTILES_MIN_ZOOM = 'min_zoom'
+OPTIONS_MAPTILES_MAX_ZOOM = 'max_zoom'
 OPTIONS_GEOCODING_PROVIDER_URL = 'url'
 
 
@@ -161,6 +164,8 @@ def _prepare_tiles(tiles: Union[str, dict]) -> Optional[dict]:
                 OPTIONS_MAPTILES_KIND: _RASTER_ZXY,
                 OPTIONS_MAPTILES_URL: tiles.get(MAPTILES_URL, None),
                 OPTIONS_MAPTILES_ATTRIBUTION: tiles.get(MAPTILES_ATTRIBUTION, None),
+                OPTIONS_MAPTILES_MIN_ZOOM: tiles.get(MAPTILES_MIN_ZOOM, None),
+                OPTIONS_MAPTILES_MAX_ZOOM: tiles.get(MAPTILES_MAX_ZOOM, None),
             }
         elif tiles.get(MAPTILES_KIND, None) == _VECTOR_LETS_PLOT:
             return {
@@ -181,6 +186,8 @@ def _prepare_tiles(tiles: Union[str, dict]) -> Optional[dict]:
                 OPTIONS_MAPTILES_KIND: _RASTER_ZXY,
                 OPTIONS_MAPTILES_URL: get_global_val(MAPTILES_URL),
                 OPTIONS_MAPTILES_ATTRIBUTION: get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(MAPTILES_ATTRIBUTION) else None,
+                OPTIONS_MAPTILES_MIN_ZOOM: get_global_val(MAPTILES_MIN_ZOOM) if has_global_value(MAPTILES_MIN_ZOOM) else None,
+                OPTIONS_MAPTILES_MAX_ZOOM: get_global_val(MAPTILES_MAX_ZOOM) if has_global_value(MAPTILES_MAX_ZOOM) else None,
             }
 
         if get_global_val(MAPTILES_KIND) == _VECTOR_LETS_PLOT:

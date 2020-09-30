@@ -9,7 +9,6 @@ import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.center
-import jetbrains.livemap.LiveMapConstants
 import jetbrains.livemap.LiveMapConstants.DEFAULT_LOCATION
 import jetbrains.livemap.LiveMapContext
 import jetbrains.livemap.camera.CameraComponent
@@ -92,15 +91,15 @@ class MapLocationInitializationSystem(
         val xZoom = calculateMaxZoom(rectSize.x, containerSize.x)
         val yZoom = calculateMaxZoom(rectSize.y, containerSize.y)
         val zoom = min(xZoom, yZoom)
-        return max(LiveMapConstants.MIN_ZOOM.toDouble(), min(zoom, LiveMapConstants.MAX_ZOOM.toDouble()))
+        return max(myViewport.minZoom.toDouble(), min(zoom, myViewport.maxZoom.toDouble()))
     }
 
     private fun calculateMaxZoom(regionLength: Double, containerLength: Double): Double {
         if (regionLength == 0.0) {
-            return LiveMapConstants.MAX_ZOOM.toDouble()
+            return myViewport.maxZoom.toDouble()
         }
         return if (containerLength == 0.0) {
-            LiveMapConstants.MIN_ZOOM.toDouble()
+            myViewport.minZoom.toDouble()
         } else (ln(containerLength / regionLength) / ln(2.0))
     }
 }
