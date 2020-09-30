@@ -120,6 +120,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
         fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics): SvgLineElement {
             @Suppress("NAME_SHADOWING")
             val start = toClient(start, p)
+
             @Suppress("NAME_SHADOWING")
             val end = toClient(end, p)
             val line = SvgLineElement(
@@ -160,7 +161,7 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             "mono" to "monospace"
         )
 
-        fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double ) {
+        fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double) {
 
             label.textColor().set(p.color())
             label.textOpacity().set(p.alpha())
@@ -254,22 +255,12 @@ open class GeomHelper(private val myPos: PositionAdjustment, coord: CoordinateSy
             shape.setStrokeWidth(AesScaling.strokeWidth(p))
         }
 
-        const val X = "x"
-        const val Y = "y"
-
-        fun getSizeUnitAes( sizeUnitName: String ) : Aes<Double> {
-            Preconditions.checkArgument(
-                sizeUnitName == X || sizeUnitName == Y,
-                "size_unit value must be either '${X}' or '${Y}'"
-            )
-
-            if ( sizeUnitName == X) {
-                return Aes.X
-            } else if ( sizeUnitName == Y) {
-                return Aes.Y
+        fun getSizeUnitAes(sizeUnitName: String): Aes<Double> {
+            return when (sizeUnitName.toLowerCase()) {
+                "x" -> Aes.X
+                "y" -> Aes.Y
+                else -> error("size_unit value must be either 'x' or 'y'")
             }
-
-            error("Wrong size_unit value")
         }
     }
 }
