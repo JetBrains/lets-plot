@@ -129,6 +129,8 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
                     if (labelFormat != null) {
                         geom.formatter = StringFormat(labelFormat)
+                        requireNotNull(geom.formatter)
+                        require(geom.formatter!!.argsNumber == 1) { "Wrong number of arguments in pattern \'$labelFormat\' to format label" }
                     } else {
                         throw IllegalArgumentException("Expected: label_format = 'format string'")
                     }

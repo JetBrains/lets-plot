@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 class TooltipConfigTest {
@@ -348,6 +349,64 @@ class TooltipConfigTest {
             expectedLines = listOf("my text"),
             actualLines = getGeneralTooltipLines(geomTextLayer)
         )
+    }
+
+    @Test
+    fun `wrong tooltip format (no arguments)`() {
+        assertFailTooltipSpec(
+            tooltipConfig = mapOf(Option.Layer.TOOLTIP_FORMATS to listOf(emptyMap<String, String>())),
+            expectedMessage = "Invalid 'format' arguments: 'field' and 'format' are expected"
+        )
+    }
+
+    @Test
+    fun `wrong tooltip format (list instead of map)`() {
+        assertFailTooltipSpec(
+            tooltipConfig = mapOf(
+                Option.Layer.TOOLTIP_FORMATS to listOf(
+                    listOf(
+                        Option.TooltipFormat.FIELD to "color",
+                        Option.TooltipFormat.FORMAT to ".2f"
+                    )
+                )
+            ),
+            expectedMessage = "Wrong tooltip 'format' arguments"
+        )
+    }
+
+    @Test
+    fun `wrong tooltip format (dollar in field name)`() {
+        assertFailTooltipSpec(
+            tooltipConfig = mapOf(
+                Option.Layer.TOOLTIP_FORMATS to listOf(
+                    mapOf(
+                        Option.TooltipFormat.FIELD to "\$color",
+                        Option.TooltipFormat.FORMAT to ".2f"
+                    )
+                )
+            ),
+            expectedMessage = "X or Y is expected before '\$' as positional aes"
+        )
+    }
+
+    private fun assertFailTooltipSpec(
+        tooltipConfig: Any?,
+        expectedMessage: String
+    ) {
+        val plotOpts = mutableMapOf(
+            Option.PlotBase.DATA to data,
+            Option.PlotBase.MAPPING to mapping,
+            Option.Plot.LAYERS to listOf(
+                mapOf(
+                    Option.Layer.GEOM to "point",
+                    Option.Layer.TOOLTIPS to tooltipConfig
+                )
+            )
+        )
+        val plotSpec = ServerSideTestUtil.serverTransformWithoutEncoding(plotOpts.toMutableMap())
+
+        assertTrue(PlotConfig.isFailure(plotSpec))
+        assertEquals(expectedMessage, PlotConfig.getErrorMessage(plotSpec))
     }
 
     companion object {

@@ -89,7 +89,10 @@ class TooltipConfig(
         private fun prepareFormats(tooltipFormats: List<*>): Map<String, String> {
             val allFormats = mutableMapOf<String, String>()
             tooltipFormats.forEach { tooltipFormat ->
-                require(tooltipFormat is Map<*, *> ) { "Wrong tooltip 'format' arguments" }
+                require(tooltipFormat is Map<*, *>) { "Wrong tooltip 'format' arguments" }
+                require(
+                    tooltipFormat.has(Option.TooltipFormat.FIELD) && tooltipFormat.has(Option.TooltipFormat.FORMAT)
+                ) { "Invalid 'format' arguments: 'field' and 'format' are expected" }
 
                 val configName = tooltipFormat[Option.TooltipFormat.FIELD] as String
                 val configFormat = tooltipFormat[Option.TooltipFormat.FORMAT] as String

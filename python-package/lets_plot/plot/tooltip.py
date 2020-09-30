@@ -74,9 +74,6 @@ class layer_tooltips(FeatureSpec):
         return d
 
     def format(self, field=None, format=None):
-        if field is None or format is None:
-            raise ValueError("Invalid 'format' arguments: 'field' and 'format' are expected.")
-
         self.tooltip_formats.append({"field": field, "format": format})
         return self
 
