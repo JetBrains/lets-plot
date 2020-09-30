@@ -51,33 +51,35 @@ open class PointGeom : GeomBase() {
                 val location = helper.toClient(DoubleVector(x!!, y!!), p)
 
                 val shape = p.shape()!!
-                val scale = getScale(ctx, p)
+                val scaleFactor = getSizeUnitScaleFactor(ctx, p)
 
                 targetCollector.addPoint(
-                    i, location, scale * shape.size(p) / 2,
+                    i, location, scaleFactor * shape.size(p) / 2,
                     tooltipParams(p)
                 )
-                val o = PointShapeSvg.create(shape, location, p, scale)
+                val o = PointShapeSvg.create(shape, location, p, scaleFactor)
                 o.appendTo(slimGroup)
             }
         }
         root.add(wrap(slimGroup))
     }
 
-    private fun getScale(ctx: GeomContext, p: DataPointAesthetics): Double {
+    private fun getSizeUnitScaleFactor(ctx: GeomContext, p: DataPointAesthetics): Double {
         sizeUnitScale?.let { return sizeUnitScale!! }
 
         sizeUnit?.let {
             val pointSize = p.size() ?: return 1.0
 
             val aes = GeomHelper.getSizeUnitAes(sizeUnit!!)
+            val unitRes = ctx.getUnitResolution(aes)
+
             val shape = p.shape()!!
             val size = shape.size(p)
 
             if (size == 0.0)
                 return 1.0
 
-            sizeUnitScale = ctx.getUnitResolution(aes) * pointSize / size
+            sizeUnitScale = unitRes * pointSize / size
             return sizeUnitScale!!
         }
 

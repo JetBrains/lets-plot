@@ -43,8 +43,8 @@ class TextGeom : GeomBase() {
             val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && !Strings.isNullOrEmpty(text)) {
                 val label = TextLabel(text)
-                val scale = getScale(ctx, aesthetics)
-                GeomHelper.decorate(label, p, scale)
+                val scaleFactor = getSizeUnitScaleFactor(ctx, aesthetics)
+                GeomHelper.decorate(label, p, scaleFactor)
 
                 val loc = helper.toClient(x, y, p)
                 label.moveTo(loc)
@@ -68,7 +68,7 @@ class TextGeom : GeomBase() {
         return testString.length * fontSize * TEXT_WIDTH_NORM
     }
 
-    private fun getScale(ctx: GeomContext, aesthetics: Aesthetics): Double {
+    private fun getSizeUnitScaleFactor(ctx: GeomContext, aesthetics: Aesthetics): Double {
         sizeUnitScale?.let { return sizeUnitScale!! }
         sizeUnitScale = 1.0
 
