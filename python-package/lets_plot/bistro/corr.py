@@ -15,21 +15,6 @@ from lets_plot.plot.tooltip import layer_tooltips
 __all__ = ['corr_plot_builder', 'corr_plot']
 
 
-def _add_common_params(plot, reverse_y):
-    plot += theme(axis_title=element_blank(), legend_title=element_blank())
-    plot += coord_fixed()
-    plot += scale_size_identity(name="", na_value=0)
-    plot += scale_color_gradient2(name='Correlation',
-                                  low='blue', mid='light_gray', high='red',
-                                  breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
-                                  limits=[-1.0, 1.0])
-
-    if reverse_y:
-        plot += scale_y_discrete_reversed()
-
-    return plot
-
-
 def _reverse_type(type):
     if type == 'upper':
         return 'lower'
@@ -40,7 +25,6 @@ def _reverse_type(type):
 
 
 class corr_plot_builder:
-
     """
     This class is intended to build correlation matrix plots.
     """
@@ -61,6 +45,24 @@ class corr_plot_builder:
         self._tiles_layer = None
         self._points_layer = None
         self._labels_layer = None
+
+    def _add_common_params(self, plot):
+        plot += theme(axis_title=element_blank(),
+                      legend_title=element_blank(),
+                      axis_line_x=element_blank(),
+                      axis_line_y=element_blank())
+
+        plot += coord_fixed()
+        plot += scale_size_identity(name="", na_value=0)
+        plot += scale_color_gradient2(name='Correlation',
+                                      low='red', mid='light_gray', high='blue',
+                                      breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
+                                      limits=[-1.0, 1.0])
+
+        if self._reverse_y:
+            plot += scale_y_discrete_reversed()
+
+        return plot
 
     def _get_format(self, format):
         return format if format else self._format
@@ -103,7 +105,7 @@ class corr_plot_builder:
         :param type: Type of matrix. Possible values - "upper", "lower", "full". Default - "full"
         :param fill_diagonal: Boolean parameter, if True the main diagonal is filled with values. Default - True
         :param format: Text format for tooltips and labels. Default - '.2f'
-        :param map_size - Boolen, if True, then absolute value of correlation is mapped to text size.
+        :param map_size - Boolean, if True, then absolute value of correlation is mapped to text size.
         :param other_args: - other args, passed to geom_text.
         :return: self
         """
@@ -166,7 +168,7 @@ class corr_plot_builder:
 
         plot = PlotSpec(self._data, mapping=None, scales=[], layers=layers)
 
-        return _add_common_params(plot, self._reverse_y)
+        return self._add_common_params(plot)
 
 
 def corr_plot(data, draw_as='points', format=None):
