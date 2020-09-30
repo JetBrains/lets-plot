@@ -12,7 +12,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
-import jetbrains.datalore.plot.base.geom.PointGeom
 import jetbrains.datalore.plot.base.render.svg.StrokeDashArraySupport
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.vis.svg.SvgElement
