@@ -50,7 +50,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
     fun geomProvider(opts: OptionsAccessor): GeomProvider {
         when (geomKind) {
-            GeomKind.CROSS_BAR -> return GeomProvider.crossBar() {
+            GeomKind.CROSS_BAR -> return GeomProvider.crossBar {
                 val geom = CrossBarGeom()
                 if (opts.hasOwn(CrossBar.FATTEN)) {
                     geom.fattenMidline = opts.getDouble(CrossBar.FATTEN)!!
@@ -58,7 +58,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
-            GeomKind.POINT_RANGE -> return GeomProvider.pointRange() {
+            GeomKind.POINT_RANGE -> return GeomProvider.pointRange {
                 val geom = PointRangeGeom()
                 if (opts.hasOwn(PointRange.FATTEN)) {
                     geom.fattenMidPoint = opts.getDouble(PointRange.FATTEN)!!
@@ -119,12 +119,13 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.animation = opts[Point.ANIMATION]
                 }
 
-                if (opts.has(Point.SIZE_UNIT)) {
-                    val sizeUnit = opts.getString(Point.SIZE_UNIT)
+                if (opts.has(Point.SizeUnit.SIZE_UNIT)) {
+                    val sizeUnit = opts.getString(Point.SizeUnit.SIZE_UNIT)
 
                     if ( sizeUnit != null) {
-                        if ( sizeUnit != Point.X && sizeUnit != Point.Y ) {
-                            throw IllegalArgumentException("Expected: size_unit = '${Point.X}' or size_unit = '${Point.Y}'")
+                        if ( sizeUnit != Point.SizeUnit.X && sizeUnit != Point.SizeUnit.Y ) {
+                            throw IllegalArgumentException("Expected: size_unit = '${Point.SizeUnit.X}' " +
+                                    "or size_unit = '${Point.SizeUnit.Y}'")
                         }
 
                         geom.sizeUnit = sizeUnit
@@ -161,12 +162,13 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     }
                 }
 
-                if (opts.has(Text.SIZE_UNIT)) {
-                    val sizeUnit = opts.getString(Text.SIZE_UNIT)
+                if (opts.has(Text.SizeUnit.SIZE_UNIT)) {
+                    val sizeUnit = opts.getString(Text.SizeUnit.SIZE_UNIT)
 
                     if ( sizeUnit != null) {
-                        if ( sizeUnit != Text.X && sizeUnit != Text.Y ) {
-                            throw IllegalArgumentException("Expected: size_unit = '${Text.X}' or size_unit = '${Text.Y}'")
+                        if ( sizeUnit != Text.SizeUnit.X && sizeUnit != Text.SizeUnit.Y ) {
+                            throw IllegalArgumentException("Expected: size_unit = '${Text.SizeUnit.X}' " +
+                                    "or size_unit = '${Text.SizeUnit.Y}'")
                         }
 
                         geom.sizeUnit = sizeUnit
