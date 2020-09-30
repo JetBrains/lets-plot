@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.rendering.primitives.RenderBox
 
-class ClickableComponent(rect: RenderBox) : EcsComponent {
-    val rect = DoubleRectangle(rect.origin, rect.dimension)
+class ClickableComponent(private val myRenderBox: RenderBox) : EcsComponent {
+    val rect
+        get() = DoubleRectangle(myRenderBox.origin, myRenderBox.dimension)
 }

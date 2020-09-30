@@ -48,10 +48,10 @@ class Label(override var origin: DoubleVector, private var text: Text) : RenderB
     }
 }
 
-private operator fun DoubleVector.minus(doubleVector: DoubleVector): DoubleVector {
+operator fun DoubleVector.minus(doubleVector: DoubleVector): DoubleVector {
     return subtract(doubleVector)
 }
 
-private operator fun DoubleVector.plus(doubleVector: DoubleVector): DoubleVector {
+operator fun DoubleVector.plus(doubleVector: DoubleVector): DoubleVector {
     return add(doubleVector)
 }
