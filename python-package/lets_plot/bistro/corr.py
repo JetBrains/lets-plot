@@ -15,7 +15,7 @@ from lets_plot.plot.tooltip import layer_tooltips
 __all__ = ['corr_plot_builder', 'corr_plot']
 
 
-def add_common_params(plot, reverse_y):
+def _add_common_params(plot, reverse_y):
     plot += theme(axis_title=element_blank(), legend_title=element_blank())
     plot += coord_fixed()
     plot += scale_size_identity(name="", na_value=0)
@@ -30,7 +30,7 @@ def add_common_params(plot, reverse_y):
     return plot
 
 
-def reverse_type(type):
+def _reverse_type(type):
     if type == 'upper':
         return 'lower'
     elif type == 'lower':
@@ -42,43 +42,43 @@ def reverse_type(type):
 class corr_plot_builder:
 
     def __init__(self, data, show_legend=None, format=None, flip=None):
-        self.data = data
-        self.show_legend = show_legend
-        self.format = format if format else '.2f'
-        self.reverse_y = flip if flip else False
-        self.text_color = None
-        self.tiles_layer = None
-        self.points_layer = None
-        self.labels_layer = None
+        self._data = data
+        self._show_legend = show_legend
+        self._format = format if format else '.2f'
+        self._reverse_y = flip if flip else False
+        self._text_color = None
+        self._tiles_layer = None
+        self._points_layer = None
+        self._labels_layer = None
 
-    def get_format(self, format):
-        return format if format else self.format
+    def _get_format(self, format):
+        return format if format else self._format
 
-    def tooltip_spec(self, format):
+    def _tooltip_spec(self, format):
         return layer_tooltips(). \
-            format(field='var@..corr..', format=self.get_format(format)). \
+            format(field='var@..corr..', format=self._get_format(format)). \
             line('${var@..corr..}')
 
-    def get_type(self, type):
+    def _get_type(self, type):
         res = type if type else "full"
 
-        if self.reverse_y:
-            res = reverse_type(res)
+        if self._reverse_y:
+            res = _reverse_type(res)
 
         return res
 
     def points(self, type=None, fill_diagonal=None, format=None, **other_args):
 
-        self.points_layer = geom_point(stat='corr', show_legend=self.show_legend, size_unit='x',
-                                       tooltips=self.tooltip_spec(format),
-                                       type=self.get_type(type), fill_diagonal=fill_diagonal,
-                                       **other_args)
+        self._points_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
+                                        tooltips=self._tooltip_spec(format),
+                                        type=self._get_type(type), fill_diagonal=fill_diagonal,
+                                        **other_args)
 
         return self
 
     def labels(self, type=None, fill_diagonal=None, format=None, map_size=False, **other_args):
 
-        other_args['label_format'] = self.get_format(format)
+        other_args['label_format'] = self._get_format(format)
 
         if 'size' not in other_args:
             if not map_size:
@@ -88,41 +88,41 @@ class corr_plot_builder:
                 other_args['size_unit'] = 'x'
 
         if 'color' not in other_args:
-            other_args['color'] = self.text_color
+            other_args['color'] = self._text_color
 
-        self.labels_layer = geom_text(stat='corr', show_legend=self.show_legend,
-                                      tooltips=self.tooltip_spec(format),
-                                      type=self.get_type(type), fill_diagonal=fill_diagonal,
-                                      na_value='', **other_args)
+        self._labels_layer = geom_text(stat='corr', show_legend=self._show_legend,
+                                       tooltips=self._tooltip_spec(format),
+                                       type=self._get_type(type), fill_diagonal=fill_diagonal,
+                                       na_value='', **other_args)
 
         return self
 
     def tiles(self, type=None, fill_diagonal=None, format=None, **other_args):
 
-        self.text_color = 'white'
+        self._text_color = 'white'
 
-        self.tiles_layer = geom_point(stat='corr', show_legend=self.show_legend, size_unit='x',
-                                      tooltips=self.tooltip_spec(format),
-                                      type=self.get_type(type), fill_diagonal=fill_diagonal,
-                                      size=1.0, shape=15, **other_args)
+        self._tiles_layer = geom_point(stat='corr', show_legend=self._show_legend, size_unit='x',
+                                       tooltips=self._tooltip_spec(format),
+                                       type=self._get_type(type), fill_diagonal=fill_diagonal,
+                                       size=1.0, shape=15, **other_args)
 
         return self
 
     def build(self):
         layers = []
 
-        if self.tiles_layer:
-            layers.append(self.tiles_layer)
+        if self._tiles_layer:
+            layers.append(self._tiles_layer)
 
-        if self.points_layer:
-            layers.append(self.points_layer)
+        if self._points_layer:
+            layers.append(self._points_layer)
 
-        if self.labels_layer:
-            layers.append(self.labels_layer)
+        if self._labels_layer:
+            layers.append(self._labels_layer)
 
-        plot = PlotSpec(self.data, mapping=None, scales=[], layers=layers)
+        plot = PlotSpec(self._data, mapping=None, scales=[], layers=layers)
 
-        return add_common_params(plot, self.reverse_y)
+        return _add_common_params(plot, self._reverse_y)
 
 
 def corr_plot(data, draw_as='points', format=None):
