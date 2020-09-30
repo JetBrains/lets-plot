@@ -46,6 +46,10 @@ class corr_plot_builder:
         self._tiles_layer = None
         self._points_layer = None
         self._labels_layer = None
+        self._color_scale = scale_color_gradient2(name='Correlation',
+                                                  low='red', mid='light_gray', high='blue',
+                                                  breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
+                                                  limits=[-1.0, 1.0])
 
     def _add_common_params(self, plot):
         plot += theme(axis_title=element_blank(),
@@ -55,10 +59,7 @@ class corr_plot_builder:
 
         plot += coord_fixed()
         plot += scale_size_identity(name="", na_value=0)
-        plot += scale_color_gradient2(name='Correlation',
-                                      low='red', mid='light_gray', high='blue',
-                                      breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
-                                      limits=[-1.0, 1.0])
+        plot += self._color_scale
 
         if self._reverse_y:
             plot += scale_y_discrete_reversed()
@@ -80,6 +81,21 @@ class corr_plot_builder:
             res = _reverse_type(res)
 
         return res
+
+    def palette_gradient(self, low, mid, high):
+        """
+        Set scale_color_gradient2 for corr plot/
+        :param low: color, corresponded to correlation -1
+        :param mid: color, corresponded to correlation 0
+        :param high:color, corresponded to correlation 1
+        :return: self
+        """
+        self._color_scale = scale_color_gradient2(name='Correlation',
+                                                  low=low, mid=mid, high=high,
+                                                  breaks=[-1.0, -0.5, 0.0, 0.5, 1.0],
+                                                  limits=[-1.0, 1.0])
+
+        return self
 
     def points(self, type=None, fill_diagonal=None, format=None, **other_args):
 
