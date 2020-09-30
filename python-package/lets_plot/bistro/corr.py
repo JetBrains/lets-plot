@@ -12,7 +12,8 @@ from lets_plot.plot.coord import coord_fixed
 from lets_plot.plot.theme_ import theme, element_blank
 from lets_plot.plot.tooltip import layer_tooltips
 
-__all__ = ['corr_plot_builder', 'corr_plot']
+__all__ = ['corr_plot_builder', 'corr_plot_scatter', 'corr_plot_tiles',
+           'corr_plot_tileslab', 'corr_plot_scatterlab']
 
 
 def _reverse_type(type):
@@ -171,22 +172,60 @@ class corr_plot_builder:
         return self._add_common_params(plot)
 
 
-def corr_plot(data, draw_as='points', format=None):
+def corr_plot_scatter(data, format=None):
     """
-    :param data: dictionary or pandas DataFrame  required. Correlation will bw calculated for each variable pair.
-    :param draw_as: Specifies how correlation matrix is drawn. Can be 'points', 'tiles' or 'labels'. Default - 'points'
+    Draws correlation matrix as scatterplot
+    :param data: dictionary or pandas DataFrame  required. Correlation will be calculated
+    for each variable pair.
     :param format: Format specification for tooltips and labels.
     :return: PlotSpec for correlation matrix
     """
 
     plot_builder = corr_plot_builder(data=data, format=format, flip=True)
+    plot_builder.points()
 
-    if draw_as == 'points':
-        plot_builder.points()
-    elif draw_as == 'tiles':
-        plot_builder.tiles()
-        plot_builder.labels()
-    elif draw_as == 'labels':
-        plot_builder.labels()
+    return plot_builder.build()
+
+
+def corr_plot_tiles(data, format=None):
+    """
+    Draws correlation matrix as tiles
+    :param data: dictionary or pandas DataFrame  required. Correlation will be calculated
+    for each variable pair.
+    :param format: Format specification for tooltips and labels.
+    :return: PlotSpec for correlation matrix
+    """
+    plot_builder = corr_plot_builder(data=data, format=format, flip=True)
+    plot_builder.tiles()
+
+    return plot_builder.build()
+
+
+def corr_plot_tileslab(data, format=None):
+    """
+    Draws correlation matrix as tiles with labels
+    :param data: dictionary or pandas DataFrame  required. Correlation will be calculated
+    for each variable pair.
+    :param format: Format specification for tooltips and labels.
+    :return: PlotSpec for correlation matrix
+    """
+    plot_builder = corr_plot_builder(data=data, format=format, flip=True)
+    plot_builder.tiles()
+    plot_builder.labels()
+
+    return plot_builder.build()
+
+
+def corr_plot_scatterlab(data, format=None):
+    """
+    Draws correlation matrix as mix of scattrplot and labels
+    :param data: dictionary or pandas DataFrame  required. Correlation will be calculated
+    for each variable pair.
+    :param format: Format specification for tooltips and labels.
+    :return: PlotSpec for correlation matrix
+    """
+    plot_builder = corr_plot_builder(data=data, format=format, flip=True)
+    plot_builder.points(type='lower')
+    plot_builder.labels(type='upper', fill_diagonal=False, map_size=False)
 
     return plot_builder.build()
