@@ -39,7 +39,7 @@ def maptiles_lets_plot(url: str, theme: str = None) -> dict:
     }
 
 
-def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zoom: int = None) -> dict:
+def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zoom: int = None, **other_args) -> dict:
     """
     :param url:
         Template for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards, e.g. 'http://my.tile.com/{z}/{x}/{y}.png'
@@ -55,6 +55,10 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
     """
     assert isinstance(url, (str, type(None))), "'url' argument is not str: {}".format(type(url))
     assert isinstance(attribution, (str, type(None))), "'attribution' argument is not str: {}".format(type(url))
+
+    for k, v in other_args.items():
+        assert k not in ["x", "y", "z"], "other_args can't contain keys x, y and z"
+        url = url.replace("{" + k + "}", v)
 
     return {
         MAPTILES_KIND: _RASTER_ZXY,
